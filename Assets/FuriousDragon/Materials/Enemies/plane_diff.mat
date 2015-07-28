@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: plane_diff
+  m_Shader: {fileID: 4800000, guid: 46f300259b21448e08b115c15e0c0330, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: b773536b806b83d479971b5bd2f0298a, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _CausticTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 1d83d7b51c7ac164fb313bfe54d2c8b1, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Rimsize
+        second: .267857134
+      data:
+        first:
+          name: _RimIntensity
+        second: .857142866
+      data:
+        first:
+          name: _CausticSpeed
+        second: .0357142873
+      data:
+        first:
+          name: _CausticScaleX
+        second: 0
+      data:
+        first:
+          name: _CausticScaleY
+        second: 0
+      data:
+        first:
+          name: _TintIntensity
+        second: 0
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: .588235319, g: .588235319, b: .588235319, a: 1}
+      data:
+        first:
+          name: _RimColour
+        second: {r: 1, g: .890466511, b: .602941155, a: 1}
+      data:
+        first:
+          name: _CausticColour
+        second: {r: .236321345, g: .291331589, b: .345588207, a: 1}
+      data:
+        first:
+          name: _Tint
+        second: {r: 1, g: 1, b: 1, a: 1}

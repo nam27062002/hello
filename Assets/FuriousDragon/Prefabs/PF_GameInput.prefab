@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &178280
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 481480}
+  - 114: {fileID: 11407390}
+  - 114: {fileID: 11460204}
+  m_Layer: 5
+  m_Name: PF_GameInput
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &481480
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!114 &11407390
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3766138b118844ef2b8dd5800d9cb9ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_defaultTiltSensitivity: .5
+  m_tiltSensitivityScaleMin: 8
+  m_tiltSensitivityScaleMax: 16
+  m_dodgyCalibratePosition: .474999994
+  m_tiltFilter: .100000001
+--- !u!114 &11460204
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 346fc1ec8f1214aae905ea9c434d56b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_boostWithRadiusCheck: 0
+  m_boostWithSecondTouch: 1
+  touchAction: 0
+  m_isFixed: 0
+  m_dpadCirclePrefab: {fileID: 100006, guid: 268121844994a1a4181d3539dee84446, type: 2}
+  m_dpadDotPrefab: {fileID: 100000, guid: d9e71f2c8e6140f4fb70c596003f376d, type: 2}
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 178280}
+  m_IsPrefabParent: 1

@@ -1,0 +1,967 @@
+fileFormatVersion: 2
+guid: 63c4792dccf98492eab95922974f7c04
+timeCreated: 1431598079
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: arm_L
+    100002: arm_L_001
+    100004: arm_L_002
+    100006: arm_R
+    100008: arm_R_001
+    100010: arm_R_002
+    100012: armature_base
+    100014: chain
+    100016: clavicle_L
+    100018: clavicle_R
+    100020: finger_L_003
+    100022: finger_L_004
+    100024: finger_L_005
+    100026: finger_L_006
+    100028: finger_L_007
+    100030: finger_L_008
+    100032: finger_L_009
+    100034: finger_L_010
+    100036: finger_L_011
+    100038: finger_L_012
+    100040: finger_R_003
+    100042: finger_R_004
+    100044: finger_R_005
+    100046: finger_R_006
+    100048: finger_R_007
+    100050: finger_R_008
+    100052: finger_R_009
+    100054: finger_R_010
+    100056: finger_R_011
+    100058: finger_R_012
+    100060: gun
+    100062: gun_0
+    100064: head
+    100066: leg_L
+    100068: leg_L_001
+    100070: leg_L_002
+    100072: leg_R
+    100074: leg_R_001
+    100076: leg_R_002
+    100078: Soldier
+    100080: //RootNode
+    100082: soldier_armature
+    100084: spin
+    100086: spin_001
+    100088: gun_shot
+    400000: arm_L
+    400002: arm_L_001
+    400004: arm_L_002
+    400006: arm_R
+    400008: arm_R_001
+    400010: arm_R_002
+    400012: armature_base
+    400014: chain
+    400016: clavicle_L
+    400018: clavicle_R
+    400020: finger_L_003
+    400022: finger_L_004
+    400024: finger_L_005
+    400026: finger_L_006
+    400028: finger_L_007
+    400030: finger_L_008
+    400032: finger_L_009
+    400034: finger_L_010
+    400036: finger_L_011
+    400038: finger_L_012
+    400040: finger_R_003
+    400042: finger_R_004
+    400044: finger_R_005
+    400046: finger_R_006
+    400048: finger_R_007
+    400050: finger_R_008
+    400052: finger_R_009
+    400054: finger_R_010
+    400056: finger_R_011
+    400058: finger_R_012
+    400060: gun
+    400062: gun_0
+    400064: head
+    400066: leg_L
+    400068: leg_L_001
+    400070: leg_L_002
+    400072: leg_R
+    400074: leg_R_001
+    400076: leg_R_002
+    400078: Soldier
+    400080: //RootNode
+    400082: soldier_armature
+    400084: spin
+    400086: spin_001
+    400088: gun_shot
+    4300000: gun
+    4300002: Soldier
+    7400000: Default Take
+    7400002: idle
+    7400004: run
+    7400006: shot_front
+    7400008: shot_test
+    7400010: shot_up
+    7400012: walk
+    9500000: //RootNode
+    13700000: gun
+    13700002: Soldier
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Default Take
+      takeName: Default Take
+      firstFrame: 0
+      lastFrame: 9
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gun
+        weight: 1
+      - path: Soldier
+        weight: 1
+      - path: soldier_armature
+        weight: 1
+      - path: soldier_armature/armature_base
+        weight: 1
+      - path: soldier_armature/armature_base/leg_L_002
+        weight: 1
+      - path: soldier_armature/armature_base/leg_R_002
+        weight: 1
+      - path: soldier_armature/chain
+        weight: 1
+      - path: soldier_armature/chain/leg_L
+        weight: 1
+      - path: soldier_armature/chain/leg_L/leg_L_001
+        weight: 1
+      - path: soldier_armature/chain/leg_R
+        weight: 1
+      - path: soldier_armature/chain/leg_R/leg_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003/finger_L_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004/finger_L_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005/finger_L_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006/finger_L_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011/finger_L_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003/finger_R_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004/finger_R_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005/finger_R_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006/finger_R_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011/finger_R_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0/gun_shot
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/head
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: idle
+      takeName: idle
+      firstFrame: -1
+      lastFrame: 89
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gun
+        weight: 1
+      - path: Soldier
+        weight: 1
+      - path: soldier_armature
+        weight: 1
+      - path: soldier_armature/armature_base
+        weight: 1
+      - path: soldier_armature/armature_base/leg_L_002
+        weight: 1
+      - path: soldier_armature/armature_base/leg_R_002
+        weight: 1
+      - path: soldier_armature/chain
+        weight: 1
+      - path: soldier_armature/chain/leg_L
+        weight: 1
+      - path: soldier_armature/chain/leg_L/leg_L_001
+        weight: 1
+      - path: soldier_armature/chain/leg_R
+        weight: 1
+      - path: soldier_armature/chain/leg_R/leg_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003/finger_L_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004/finger_L_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005/finger_L_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006/finger_L_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011/finger_L_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003/finger_R_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004/finger_R_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005/finger_R_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006/finger_R_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011/finger_R_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/head
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: run
+      takeName: run
+      firstFrame: -1
+      lastFrame: 63
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gun
+        weight: 1
+      - path: Soldier
+        weight: 1
+      - path: soldier_armature
+        weight: 1
+      - path: soldier_armature/armature_base
+        weight: 1
+      - path: soldier_armature/armature_base/leg_L_002
+        weight: 1
+      - path: soldier_armature/armature_base/leg_R_002
+        weight: 1
+      - path: soldier_armature/chain
+        weight: 1
+      - path: soldier_armature/chain/leg_L
+        weight: 1
+      - path: soldier_armature/chain/leg_L/leg_L_001
+        weight: 1
+      - path: soldier_armature/chain/leg_R
+        weight: 1
+      - path: soldier_armature/chain/leg_R/leg_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003/finger_L_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004/finger_L_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005/finger_L_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006/finger_L_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011/finger_L_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003/finger_R_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004/finger_R_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005/finger_R_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006/finger_R_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011/finger_R_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/head
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: shot_front
+      takeName: shot_front
+      firstFrame: -1
+      lastFrame: 9
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gun
+        weight: 1
+      - path: Soldier
+        weight: 1
+      - path: soldier_armature
+        weight: 1
+      - path: soldier_armature/armature_base
+        weight: 1
+      - path: soldier_armature/armature_base/leg_L_002
+        weight: 1
+      - path: soldier_armature/armature_base/leg_R_002
+        weight: 1
+      - path: soldier_armature/chain
+        weight: 1
+      - path: soldier_armature/chain/leg_L
+        weight: 1
+      - path: soldier_armature/chain/leg_L/leg_L_001
+        weight: 1
+      - path: soldier_armature/chain/leg_R
+        weight: 1
+      - path: soldier_armature/chain/leg_R/leg_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003/finger_L_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004/finger_L_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005/finger_L_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006/finger_L_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011/finger_L_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003/finger_R_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004/finger_R_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005/finger_R_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006/finger_R_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011/finger_R_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/head
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: shot_test
+      takeName: shot_test
+      firstFrame: -1
+      lastFrame: 7
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gun
+        weight: 1
+      - path: Soldier
+        weight: 1
+      - path: soldier_armature
+        weight: 1
+      - path: soldier_armature/armature_base
+        weight: 1
+      - path: soldier_armature/armature_base/leg_L_002
+        weight: 1
+      - path: soldier_armature/armature_base/leg_R_002
+        weight: 1
+      - path: soldier_armature/chain
+        weight: 1
+      - path: soldier_armature/chain/leg_L
+        weight: 1
+      - path: soldier_armature/chain/leg_L/leg_L_001
+        weight: 1
+      - path: soldier_armature/chain/leg_R
+        weight: 1
+      - path: soldier_armature/chain/leg_R/leg_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003/finger_L_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004/finger_L_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005/finger_L_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006/finger_L_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011/finger_L_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003/finger_R_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004/finger_R_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005/finger_R_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006/finger_R_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011/finger_R_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/head
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: shot_up
+      takeName: shot_up
+      firstFrame: -1
+      lastFrame: 9
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gun
+        weight: 1
+      - path: Soldier
+        weight: 1
+      - path: soldier_armature
+        weight: 1
+      - path: soldier_armature/armature_base
+        weight: 1
+      - path: soldier_armature/armature_base/leg_L_002
+        weight: 1
+      - path: soldier_armature/armature_base/leg_R_002
+        weight: 1
+      - path: soldier_armature/chain
+        weight: 1
+      - path: soldier_armature/chain/leg_L
+        weight: 1
+      - path: soldier_armature/chain/leg_L/leg_L_001
+        weight: 1
+      - path: soldier_armature/chain/leg_R
+        weight: 1
+      - path: soldier_armature/chain/leg_R/leg_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003/finger_L_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004/finger_L_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005/finger_L_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006/finger_L_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011/finger_L_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003/finger_R_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004/finger_R_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005/finger_R_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006/finger_R_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011/finger_R_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/head
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: walk
+      takeName: walk
+      firstFrame: -1
+      lastFrame: 23
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gun
+        weight: 1
+      - path: Soldier
+        weight: 1
+      - path: soldier_armature
+        weight: 1
+      - path: soldier_armature/armature_base
+        weight: 1
+      - path: soldier_armature/armature_base/leg_L_002
+        weight: 1
+      - path: soldier_armature/armature_base/leg_R_002
+        weight: 1
+      - path: soldier_armature/chain
+        weight: 1
+      - path: soldier_armature/chain/leg_L
+        weight: 1
+      - path: soldier_armature/chain/leg_L/leg_L_001
+        weight: 1
+      - path: soldier_armature/chain/leg_R
+        weight: 1
+      - path: soldier_armature/chain/leg_R/leg_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_003/finger_L_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_004/finger_L_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_005/finger_L_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_006/finger_L_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_L/arm_L/arm_L_001/arm_L_002/finger_L_011/finger_L_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_003/finger_R_007
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_004/finger_R_008
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_005/finger_R_009
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_006/finger_R_010
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/finger_R_011/finger_R_012
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/clavicle_R/arm_R/arm_R_001/arm_R_002/gun_0
+        weight: 1
+      - path: soldier_armature/chain/spin/spin_001/head
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
