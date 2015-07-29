@@ -36,6 +36,7 @@ public static class GameEvents {
 	#region PLAYER EVENTS ----------------------------------------------------------------------------------------------
 	public const string PLAYER_IMPACT_RECEIVED = "PlayerImpactReceived";	// params: float fDamage, DamageDealer source
 	public const string PLAYER_STARVING_TOGGLED = "PlayerStarvingToggled";	// params: bool bIsStarving
+	public const string PLAYER_STATE_CHANGED = "PayerStateChanged";	// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	#endregion
 
 	#region COLLECTIBLE EVENTS -----------------------------------------------------------------------------------------

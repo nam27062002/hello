@@ -15,11 +15,11 @@ using System.Collections;
 /// </summary>
 public class DragonPlayer : MonoBehaviour {
 	#region CONSTANTS ----------------------------------------------------------
-	enum EState {
+	public enum EState {
 		INIT,
 		IDLE,
 		EATING,
-		TARGET_BOOST,
+		BOOST,
 		DYING,
 		DEAD,
 		DEAD_GORUND
@@ -96,13 +96,15 @@ public class DragonPlayer : MonoBehaviour {
 
 	// Control vars
 	EState mState = EState.INIT;
+	public EState state {
+		get { return mState; }
+	}
 	float mStateTimer = 0f;
 
 	// Movement
 	Vector3 impulse;
 	Vector3 dir = Vector3.right;
 	Vector3 pos;
-	Vector3 boostTarget;
 	bool    allowFire = true;
 	bool 	allowBoost = true;
 	bool	allowMovement = true;
@@ -190,18 +192,6 @@ public class DragonPlayer : MonoBehaviour {
 					}
 				}
 			} break;
-
-			case EState.TARGET_BOOST: {
-				
-				Vector3 d = boostTarget - transform.position;
-				mStateTimer -= Time.deltaTime;
-
-				if (d.magnitude > 10 && mStateTimer > 0f){
-					transform.position = Vector3.Lerp (transform.position,boostTarget,0.15f);
-				}else{
-					ChangeState(EState.IDLE);
-				}
-			}break;
 				
 			case EState.EATING: {
 
@@ -290,12 +280,6 @@ public class DragonPlayer : MonoBehaviour {
 
 			} break;
 
-			case EState.TARGET_BOOST:{
-					
-				mStateTimer = 0.4f;
-				
-			} break;
-
 			case EState.EATING: {
 				// Start state timer
 				mStateTimer = 0.35f;
@@ -334,8 +318,10 @@ public class DragonPlayer : MonoBehaviour {
 			}break;
 		}
 
-		// Store new state
+		// Store new state and notify game
+		EState oldState = mState;	// Just for the event broadcast
 		mState = _eNewState;
+		Messenger.Broadcast<EState, EState>(GameEvents.PLAYER_STATE_CHANGED, oldState, _eNewState);
 	}
 
 	/// <summary>
@@ -615,14 +601,6 @@ public class DragonPlayer : MonoBehaviour {
 		if ((mState == EState.IDLE || mState == EState.EATING) && grab == null){
 			grab = other;
 			grab.Grab ();
-		}
-	}
-
-	public void OnFlameTarget(Vector3 target){
-
-		if (mState == EState.IDLE){
-			ChangeState(EState.TARGET_BOOST);
-			boostTarget = target;
 		}
 	}
 
