@@ -86,27 +86,8 @@ public class MainMenu : MonoBehaviour {
 	/// <summary
 	/// The play button has been clicked.
 	/// </summary>
-	public void OnPlayBoostClick() {
-		// Go to main menu
-		DragonPlayer.fireMode = DragonPlayer.EFireMode.BOOST;
-		App.Instance.flowManager.GoToScene(FlowManager.EScenes.GAME);
-	}
-
-	/// <summary
-	/// The play button has been clicked.
-	/// </summary>
-	public void OnPlayHommingClick() {
-		// Go to main menu
-		DragonPlayer.fireMode = DragonPlayer.EFireMode.HOMING;
-		App.Instance.flowManager.GoToScene(FlowManager.EScenes.GAME);
-	}
-
-	/// <summary
-	/// The play button has been clicked.
-	/// </summary>
 	public void OnPlayFuryClick() {
 		// Go to main menu
-		DragonPlayer.fireMode = DragonPlayer.EFireMode.FRENZY;
 		App.Instance.flowManager.GoToScene(FlowManager.EScenes.GAME);
 	}
 
