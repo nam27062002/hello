@@ -62,6 +62,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	#region PUBLIC MEMBERS -----------------------------------------------------
 	[HideInInspector] public float energy;
+	[HideInInspector] public Rigidbody rbody;
 
 	private float mLife;
 	[HideInInspector] public float life {
@@ -89,7 +90,6 @@ public class DragonPlayer : MonoBehaviour {
 	// Game objects
 	TouchControlsDPad	touchControls;
 	DragonFireInterface fireBreath;
-	Rigidbody       	rbody;
 	Animator  			animator;
 	DragonOrientation   orientation;
 	Transform    		mouth;
@@ -500,6 +500,49 @@ public class DragonPlayer : MonoBehaviour {
 	}
 	#endregion
 
+	#region PUBLIC METHODS -----------------------------------------------------
+	/// <summary>
+	/// Apply damage to the dragon.
+	/// </summary>
+	/// <param name="_damage">Amount of damage to be applied.</param>
+	/// <param name="_source">The source of the damage.</param>
+	public void ApplyDamage(float _damage, DamageDealer _source) {
+		// Ignore if dragon is not alive
+		if(!IsAlive()) return;
+
+		// Ignore if dragon is invulnerable
+		if(IsInvulnerable()) return;
+		
+		// Apply damage
+		life -= _damage;
+			
+		// Have we died?
+		if(life <= 0) {
+			life = 0;
+			ChangeState(EState.DYING);
+		}
+
+		// Notify the game
+		Messenger.Broadcast<float, DamageDealer>(GameEvents.PLAYER_DAMAGE_RECEIVED, _damage, _source);
+	}
+
+	/// <summary>
+	/// Pretty straightforward.
+	/// </summary>
+	/// <param name="_force">The force vector to be applied.</param>
+	public void ApplyForce(Vector3 _force) {
+		// Just do it
+		rbody.AddForce(_force);
+	}
+
+	/// <summary>
+	/// Stop dragon's movement
+	/// </summary>
+	public void Stop() {
+		rbody.velocity = Vector3.zero;
+	}
+	#endregion
+
 	#region GETTERS ------------------------------------------------------------
 	/// <summary>
 	/// Is the dragon alive?
@@ -614,28 +657,28 @@ public class DragonPlayer : MonoBehaviour {
 
 	}
 
-	public void OnImpact(Vector3 origin, float damage, float intensity, DamageDealer _source){
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_origin">Origin.</param>
+	/// <param name="_damage">Damage.</param>
+	/// <param name="_intensity">Intensity.</param>
+	/// <param name="_source">_source.</param>
+	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source){
 		// Ignore if dragon is not alive
 		if(!IsAlive()) return;
 
-		// Ignore if dragon is invulnerable as well
-		if(IsInvulnerable()) return;
-
-		life -= damage;
-		
-		// Have we died?
-		if(life <= 0) {
-			life = 0;
-			ChangeState(EState.DYING);
+		// Apply force
+		if(_intensity != 0f) {
+			Vector3 impactDir = (transform.position - _origin).normalized;
+			ApplyForce(impactDir * _intensity);
 		}
 
-		Vector3 expForce = transform.position - origin;
-		rbody.AddForce(expForce*400f*intensity);
+		// Apply damage
+		ApplyDamage(_damage, _source);
 
-		Camera.main.GetComponent<CameraController>().Shake ();
-
-		// Dispatch game event
-		Messenger.Broadcast<float, DamageDealer>(GameEvents.PLAYER_IMPACT_RECEIVED, damage, _source);
+		// Shake camera
+		Camera.main.GetComponent<CameraController>().Shake();
 	}
 
 	#endregion

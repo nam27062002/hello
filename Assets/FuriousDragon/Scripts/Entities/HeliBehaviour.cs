@@ -204,7 +204,7 @@ public class HeliBehaviour : MonoBehaviour {
 		
 		if (collision != null && collision.collider.GetComponent<DragonPlayer>() != null){
 			if (collision.collider.transform.position.y > transform.position.y + 50){ // Collision with top of the heli
-				collision.collider.GetComponent<DragonPlayer>().OnImpact(transform.position, 10f, 1f, GetComponent<DamageDealer>());
+				collision.collider.GetComponent<DragonPlayer>().OnImpact(transform.position, 10f, 100f, GetComponent<DamageDealer>());
 			}
 		}
 		

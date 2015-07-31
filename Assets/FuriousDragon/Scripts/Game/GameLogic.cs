@@ -351,7 +351,7 @@ public class GameLogic : MonoBehaviour {
 				// Unsubscribe from external events
 				Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 				Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-				Messenger.RemoveListener<float, DamageDealer>(GameEvents.PLAYER_IMPACT_RECEIVED, OnPlayerDamage);
+				Messenger.RemoveListener<float, DamageDealer>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 			} break;
 		}
 
@@ -366,7 +366,7 @@ public class GameLogic : MonoBehaviour {
 				// Subscribe to external events
 				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-				Messenger.AddListener<float, DamageDealer>(GameEvents.PLAYER_IMPACT_RECEIVED, OnPlayerDamage);
+				Messenger.AddListener<float, DamageDealer>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 			} break;
 
 			case EStates.PAUSED: {

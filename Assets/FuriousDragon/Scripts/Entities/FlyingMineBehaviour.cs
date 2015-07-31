@@ -45,7 +45,7 @@ public class FlyingMineBehaviour : MonoBehaviour {
 			if (collision != null){
 				DragonPlayer player = collision.collider.GetComponent<DragonPlayer>();
 				if (player != null && edible.edibleFromType > player.dragonType){
-					player.OnImpact(transform.position, damage, 1f, GetComponent<DamageDealer>());
+					player.OnImpact(transform.position, damage, 100f, GetComponent<DamageDealer>());
 					FinalExplosion();
 				}
 			}
