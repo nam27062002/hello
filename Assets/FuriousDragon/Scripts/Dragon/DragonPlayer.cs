@@ -15,11 +15,11 @@ using System.Collections;
 /// </summary>
 public class DragonPlayer : MonoBehaviour {
 	#region CONSTANTS ----------------------------------------------------------
-	enum EState {
+	public enum EState {
 		INIT,
 		IDLE,
 		EATING,
-		TARGET_BOOST,
+		BOOST,
 		DYING,
 		DEAD,
 		DEAD_GORUND
@@ -54,6 +54,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	#region PUBLIC MEMBERS -----------------------------------------------------
 	[HideInInspector] public float energy;
+	[HideInInspector] public Rigidbody rbody;
 
 	private float mLife;
 	[HideInInspector] public float life {
@@ -81,20 +82,21 @@ public class DragonPlayer : MonoBehaviour {
 	// Game objects
 	DragonControl		controls;
 	DragonFireInterface fireBreath;
-	Rigidbody       	rbody;
 	Animator  			animator;
 	DragonOrientation   orientation;
 	Transform    		mouth;
 
 	// Control vars
 	EState mState = EState.INIT;
+	public EState state {
+		get { return mState; }
+	}
 	float mStateTimer = 0f;
 
 	// Movement
 	Vector3 impulse;
 	Vector3 dir = Vector3.right;
 	Vector3 pos;
-	Vector3 boostTarget;
 	bool    allowFire = true;
 	bool 	allowBoost = true;
 	bool	allowMovement = true;
@@ -184,18 +186,6 @@ public class DragonPlayer : MonoBehaviour {
 					}
 				}
 			} break;
-
-			case EState.TARGET_BOOST: {
-				
-				Vector3 d = boostTarget - transform.position;
-				mStateTimer -= Time.deltaTime;
-
-				if (d.magnitude > 10 && mStateTimer > 0f){
-					transform.position = Vector3.Lerp (transform.position,boostTarget,0.15f);
-				}else{
-					ChangeState(EState.IDLE);
-				}
-			}break;
 				
 			case EState.EATING: {
 
@@ -278,12 +268,6 @@ public class DragonPlayer : MonoBehaviour {
 
 			} break;
 
-			case EState.TARGET_BOOST:{
-					
-				mStateTimer = 0.4f;
-				
-			} break;
-
 			case EState.EATING: {
 				// Start state timer
 				mStateTimer = 0.35f;
@@ -322,8 +306,10 @@ public class DragonPlayer : MonoBehaviour {
 			}break;
 		}
 
-		// Store new state
+		// Store new state and notify game
+		EState oldState = mState;	// Just for the event broadcast
 		mState = _eNewState;
+		Messenger.Broadcast<EState, EState>(GameEvents.PLAYER_STATE_CHANGED, oldState, _eNewState);
 	}
 
 	/// <summary>
@@ -495,6 +481,49 @@ public class DragonPlayer : MonoBehaviour {
 	}
 	#endregion
 
+	#region PUBLIC METHODS -----------------------------------------------------
+	/// <summary>
+	/// Apply damage to the dragon.
+	/// </summary>
+	/// <param name="_damage">Amount of damage to be applied.</param>
+	/// <param name="_source">The source of the damage.</param>
+	public void ApplyDamage(float _damage, DamageDealer _source) {
+		// Ignore if dragon is not alive
+		if(!IsAlive()) return;
+
+		// Ignore if dragon is invulnerable
+		if(IsInvulnerable()) return;
+		
+		// Apply damage
+		life -= _damage;
+			
+		// Have we died?
+		if(life <= 0) {
+			life = 0;
+			ChangeState(EState.DYING);
+		}
+
+		// Notify the game
+		Messenger.Broadcast<float, DamageDealer>(GameEvents.PLAYER_DAMAGE_RECEIVED, _damage, _source);
+	}
+
+	/// <summary>
+	/// Pretty straightforward.
+	/// </summary>
+	/// <param name="_force">The force vector to be applied.</param>
+	public void ApplyForce(Vector3 _force) {
+		// Just do it
+		rbody.AddForce(_force);
+	}
+
+	/// <summary>
+	/// Stop dragon's movement
+	/// </summary>
+	public void Stop() {
+		rbody.velocity = Vector3.zero;
+	}
+	#endregion
+
 	#region GETTERS ------------------------------------------------------------
 	/// <summary>
 	/// Is the dragon alive?
@@ -599,14 +628,6 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
-	public void OnFlameTarget(Vector3 target){
-
-		if (mState == EState.IDLE){
-			ChangeState(EState.TARGET_BOOST);
-			boostTarget = target;
-		}
-	}
-
 	/// <summary>
 	/// Triggered whenever the fury rush is toggled.
 	/// </summary>
@@ -617,28 +638,28 @@ public class DragonPlayer : MonoBehaviour {
 
 	}
 
-	public void OnImpact(Vector3 origin, float damage, float intensity, DamageDealer _source){
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_origin">Origin.</param>
+	/// <param name="_damage">Damage.</param>
+	/// <param name="_intensity">Intensity.</param>
+	/// <param name="_source">_source.</param>
+	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source){
 		// Ignore if dragon is not alive
 		if(!IsAlive()) return;
 
-		// Ignore if dragon is invulnerable as well
-		if(IsInvulnerable()) return;
-
-		life -= damage;
-		
-		// Have we died?
-		if(life <= 0) {
-			life = 0;
-			ChangeState(EState.DYING);
+		// Apply force
+		if(_intensity != 0f) {
+			Vector3 impactDir = (transform.position - _origin).normalized;
+			ApplyForce(impactDir * _intensity);
 		}
 
-		Vector3 expForce = transform.position - origin;
-		rbody.AddForce(expForce*400f*intensity);
+		// Apply damage
+		ApplyDamage(_damage, _source);
 
-		Camera.main.GetComponent<CameraController>().Shake ();
-
-		// Dispatch game event
-		Messenger.Broadcast<float, DamageDealer>(GameEvents.PLAYER_IMPACT_RECEIVED, damage, _source);
+		// Shake camera
+		Camera.main.GetComponent<CameraController>().Shake();
 	}
 
 	#endregion

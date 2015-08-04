@@ -232,7 +232,7 @@ public class PlaneBehaviour : MonoBehaviour {
 		DragonPlayer p = _collision.collider.GetComponent<DragonPlayer>();
 		if(p != null) {
 			// Yes! Deal some damage.
-			p.OnImpact(transform.position, 10f, 1f, GetComponent<DamageDealer>());
+			p.OnImpact(transform.position, 10f, 100f, GetComponent<DamageDealer>());
 		}
 	}
 

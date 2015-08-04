@@ -59,7 +59,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<long, GameEntity>(GameEvents.REWARD_SCORE, OnScoreReward);
 		Messenger.AddListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-		Messenger.AddListener<float, DamageDealer>(GameEvents.PLAYER_IMPACT_RECEIVED, OnPlayerDamage);
+		Messenger.AddListener<float, DamageDealer>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnPlayerStarving);
 		Messenger.AddListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
 	}
@@ -72,7 +72,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<long, GameEntity>(GameEvents.REWARD_SCORE, OnScoreReward);
 		Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-		Messenger.RemoveListener<float, DamageDealer>(GameEvents.PLAYER_IMPACT_RECEIVED, OnPlayerDamage);
+		Messenger.RemoveListener<float, DamageDealer>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnPlayerStarving);
 		Messenger.RemoveListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
 	}

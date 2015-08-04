@@ -18,6 +18,11 @@ public class CameraController : MonoBehaviour {
 	float defaultZ;
 	Interpolator zInterpolator;
 
+	// Properties
+	public float currentZoom {
+		get { return transform.position.z - defaultZ; }
+	}
+
 	// Use this for initialization
 	void Start () {
 		target = GameObject.Find("Player").transform;
@@ -55,7 +60,7 @@ public class CameraController : MonoBehaviour {
 	/// <summary>
 	/// Zoom to a specific offset from camera's default zoom.
 	/// </summary>
-	/// <param name="_fOffset">The offset from the default camera's zoom level.</param>
+	/// <param name="_fOffset">The offset from the default camera's zoom level in world units.</param>
 	/// <param name="_fDuration">The duration in seconds of the zoom animation.</param>
 	public void Zoom(float _fOffset, float _fDuration) {
 		// Override any previous zoom anim
@@ -64,6 +69,22 @@ public class CameraController : MonoBehaviour {
 
 		// Restart interpolator
 		zInterpolator.Start(transform.position.z, targetZ, _fDuration);
+	}
+
+	/// <summary>
+	/// Zoom to aspecific offset from camera's default zoom using speed rather than a fixed duration.
+	/// </summary>
+	/// <param name="_fOffset">The offset from the default camera's zoom level in world units.</param>
+	/// <param name="_fSpeed">The speed of the zoom animation in world units per second.</param>
+	public void ZoomAtSpeed(float _fOffset, float _fSpeed) {
+		// Compute the actual distance to go
+		float dist = _fOffset - currentZoom;
+
+		// Compute the time required to go that distance at the given speed
+		float duration = Mathf.Abs(dist)/_fSpeed;
+
+		// Launch the zoom animation
+		Zoom(_fOffset, duration);
 	}
 
 	public void Shake(){

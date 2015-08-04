@@ -35,7 +35,7 @@ public class BulletBehaviour : MonoBehaviour {
 
 		if ((pos - player.transform.position).sqrMagnitude < impactDist){
 
-			player.OnImpact(pos,damage, 1f, source);
+			player.OnImpact(pos,damage, 100f, source);
 			DestroyObject(this.gameObject);
 		}
 	}
