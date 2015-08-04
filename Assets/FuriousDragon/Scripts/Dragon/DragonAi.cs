@@ -5,7 +5,7 @@ public class DragonAi : MonoBehaviour {
 
 
 	#region CONSTANTS ----------------------------------------------------------
-	enum EState {
+	public enum EState {
 		INIT,
 		IDLE,
 		DYING,
@@ -17,19 +17,9 @@ public class DragonAi : MonoBehaviour {
 	
 	#region EXPOSED MEMBERS ----------------------------------------------------
 	[Header("Generic Settings")]
-	[Range(0, 1)] public int dragonType = 0;  
 	public float dragonSpeed = 100f;
 	public float boostMultiplier = 2.5f;
 	public Range movementLimitX = new Range(-10000, 10000);
-	
-	[Header("Life")]
-	public float maxLife = 100f;
-
-	[Header("Energy")]
-	public float maxEnergy = 50f;
-	public float energyDrainPerSecond = 10f;
-	public float energyRefillPerSecond = 25f;
-	public float energyMinRequired = 25f;
 	
 	[Header("Components")]
 	public SkinnedMeshRenderer bodyMesh;
@@ -37,8 +27,6 @@ public class DragonAi : MonoBehaviour {
 	#endregion
 	
 	#region PUBLIC MEMBERS -----------------------------------------------------
-	[HideInInspector] public float energy;
-	[HideInInspector] public float life;
 	[HideInInspector] public bool invulnerable = false;	// Debug purposes
 	#endregion
 	
@@ -50,7 +38,7 @@ public class DragonAi : MonoBehaviour {
 	Animator  			animator;
 	DragonOrientation   orientation;
 	Transform    		mouth;
-	
+
 	// Control vars
 	EState mState = EState.INIT;
 	float mStateTimer = 0f;
@@ -81,8 +69,6 @@ public class DragonAi : MonoBehaviour {
 		animator = transform.FindChild("view").GetComponent<Animator>();
 		orientation = GetComponent<DragonOrientation>();
 		mouth = transform.FindSubObjectTransform("eat");
-		life = maxLife;
-		energy = maxEnergy;
 		pos = transform.position;
 		impulseMulti = 4f;
 		
@@ -124,7 +110,7 @@ public class DragonAi : MonoBehaviour {
 			allowMovement = true;
 			
 			// Should we be firing?
-			UpdateFire(Input.GetKey(KeyCode.X) || controls.action);
+			UpdateFire(controls.action);
 
 		} break;
 			
@@ -181,7 +167,7 @@ public class DragonAi : MonoBehaviour {
 	/// <para>Nothing will be done if state is the same as current one.</para>
 	/// </summary>
 	/// <param name="_eNewState">The state to change to.</param>
-	void ChangeState(EState _eNewState) {
+	public void ChangeState(EState _eNewState) {
 		// Ignore if state hasn't changed
 		if(mState == _eNewState) return;
 		
@@ -269,19 +255,7 @@ public class DragonAi : MonoBehaviour {
 		}
 		//rbody.velocity = impulse;
 		rbody.angularVelocity = Vector3.zero;
-		
-		// limit movement
-		pos = transform.position;
-		if (pos.x < movementLimitX.min){
-			pos.x = movementLimitX.min;
-			transform.position = pos;
-		}else if (pos.x > movementLimitX.max){
-			pos.x = movementLimitX.max;
-			transform.position = pos;
-		}else if (pos.y > 5000f){
-			pos.y = 5000f;
-			transform.position = pos;
-		}
+
 		
 		// decide if flying
 		bool flying = controls.moving;
@@ -331,24 +305,13 @@ public class DragonAi : MonoBehaviour {
 		
 		if (activate && allowBoost){
 			
-			energy -= Time.deltaTime*energyDrainPerSecond;
-			
 			speedMulti=boostMultiplier;
-			
-			if (energy < 0f){
-				energy = 0f;
-				allowBoost = false;
-			}
+
 		}else{
 			
-			if (energy > 0f && !activate)
+			if (!activate)
 				allowBoost = true;
-			
-			if (!activate){
-				energy += Time.deltaTime*energyRefillPerSecond;
-				if (energy > maxEnergy)
-					energy = maxEnergy;
-			}
+
 		}
 	}
 
@@ -398,13 +361,6 @@ public class DragonAi : MonoBehaviour {
 	#endregion
 	
 	#region CALLBACKS ----------------------------------------------------------
-	/// <summary>
-	/// Collision with another object
-	/// </summary>
-	/// <param name="other">The object which we've collided with.</param>
-	void OnTriggerStay(Collider other) {
-
-	}
 
 	
 	public void OnImpact(Vector3 origin, float damage, float intensity, DamageDealer _source){
@@ -415,16 +371,13 @@ public class DragonAi : MonoBehaviour {
 		// Ignore if dragon is invulnerable as well
 		if(IsInvulnerable()) return;
 		
-		life -= damage;
-		
-		// Have we died?
-		if(life <= 0) {
-			life = 0;
-			ChangeState(EState.DYING);
-		}
-		
 		Vector3 expForce = transform.position - origin;
-		rbody.AddForce(expForce*400f*intensity);
+		rbody.AddForce(expForce*300f*intensity);
+	}
+
+	public void AddForce(Vector3 force){
+	
+		rbody.AddForce(force);
 	}
 	
 	#endregion

@@ -40,7 +40,8 @@ public class FlamableAnimal : FlamableBehaviour {
 		
 		entity.health -= power;
 		if (entity.health < 0){
-			GetComponent<AnimalBehaviour>().OnExplode(pos);
+			if (GetComponent<AnimalBehaviour>())
+				GetComponent<AnimalBehaviour>().OnExplode(pos);
 		}
 	}
 }
