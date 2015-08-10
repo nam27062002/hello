@@ -115,9 +115,9 @@ public class CameraController : MonoBehaviour {
 	public void SetDangerousEntity(Transform _entity) {
 
 		if (_entity == null) {
-			Zoom(0, 0.5f);
+			Zoom(0, 0.25f);
 		} else {
-			Zoom(m_MaxZoom - currentZoom, 1f);
+			Zoom(m_MaxZoom - currentZoom, 0.5f);
 		}
 
 		dangerousEntity = _entity;
