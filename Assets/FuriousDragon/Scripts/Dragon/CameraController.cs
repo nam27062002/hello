@@ -5,9 +5,14 @@ public class CameraController : MonoBehaviour {
 
 	public float movementSmoothing = 0.15f;
 	public float forwardOffset = 300f;
+	public float m_MaxZoom = -500f;
 	public float[] limitX = new float[2];
 
-	Transform target;
+	Vector3 targetPosition;
+
+	Transform player;
+	Transform dangerousEntity;
+
 	Vector3 playerDirection = Vector3.right;
 	Vector3 forward = Vector3.right;
 
@@ -25,7 +30,11 @@ public class CameraController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		target = GameObject.Find("Player").transform;
+		player = GameObject.Find("Player").transform;
+		dangerousEntity = null;
+
+		targetPosition = player.transform.position;
+
 		defaultZ = transform.position.z;
 		zInterpolator = new Interpolator();
 	}
@@ -34,7 +43,14 @@ public class CameraController : MonoBehaviour {
 	void Update () {
 
 		forward = forward*0.95f + playerDirection*0.05f;
-		Vector3 pos = Vector3.Lerp (transform.position, target.position+forward*forwardOffset,movementSmoothing);
+
+		if (dangerousEntity == null) {
+			targetPosition = Vector3.Lerp(targetPosition, player.position, movementSmoothing * 1.5f);
+		} else {
+			targetPosition = Vector3.Lerp(targetPosition, (player.position + dangerousEntity.position) * 0.5f, movementSmoothing * 0.5f);
+		}
+
+		Vector3 pos = Vector3.Lerp (transform.position, targetPosition+forward*forwardOffset,movementSmoothing);
 
 		if (pos.x < limitX[0])
 			pos.x = limitX[0];
@@ -95,4 +111,15 @@ public class CameraController : MonoBehaviour {
 		playerDirection = direction;
 	}
 
+
+	public void SetDangerousEntity(Transform _entity) {
+
+		if (_entity == null) {
+			Zoom(0, 0.5f);
+		} else {
+			Zoom(m_MaxZoom - currentZoom, 1f);
+		}
+
+		dangerousEntity = _entity;
+	}
 }
