@@ -36,4 +36,12 @@ public class DangerousEntity : MonoBehaviour {
 			m_InRange = false;
 		}
 	}
+
+	public void Disable () {
+
+		enabled = false;
+		m_CameraController.SetDangerousEntity(null);
+		m_InRange = false;
+		
+	}
 }
