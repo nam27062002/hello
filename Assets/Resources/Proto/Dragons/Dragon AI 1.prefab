@@ -93,6 +93,7 @@ GameObject:
   - 114: {fileID: 11430292}
   - 114: {fileID: 11413402}
   - 114: {fileID: 11436856}
+  - 114: {fileID: 11477178}
   m_Layer: 10
   m_Name: Dragon AI 1
   m_TagString: Untagged
@@ -3800,21 +3801,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95909db89121d40e2934e2aa46e2cded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragonType: 0
-  dragonSpeed: 300
-  boostMultiplier: 2.5
+  dragonSpeed: 350
+  boostMultiplier: 5
   movementLimitX:
     min: -10000
     max: 10000
-  maxLife: 100
-  maxEnergy: 50
-  energyDrainPerSecond: 10
-  energyRefillPerSecond: 25
-  energyMinRequired: 25
   bodyMesh: {fileID: 0}
   wingsMesh: {fileID: 0}
-  energy: 0
-  life: 0
   invulnerable: 0
 --- !u!114 &11413402
 MonoBehaviour:
@@ -3829,11 +3822,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moving: 0
   action: 0
-  reactionDistance: 800
+  reactionDistance: 900
   homeDistance: 5000
   attackDistance: 600
   attackTime: 3
+  damage: 20
   fearTreshold: 80
+  state: 0
 --- !u!114 &11421056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3857,7 +3852,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeID: dragon
-  health: 3000
+  health: 2000
   rewardScore: 1000
   rewardCoins: 100
   rewardCoinsProbability: .5
@@ -3895,6 +3890,18 @@ MonoBehaviour:
   fireRate: 30
   firePower: 10
   collisionDepth: 1000
+--- !u!114 &11477178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbaa5bb6468c54688bdb0eb759056cdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FocusDistance: 1200
 --- !u!135 &13575196
 SphereCollider:
   m_ObjectHideFlags: 1
