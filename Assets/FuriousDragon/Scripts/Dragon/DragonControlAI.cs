@@ -15,11 +15,9 @@ public class DragonControlAI : DragonControl {
 	DragonPlayer 	player;
 	DragonAi 		dragon;
 	GameEntity 	 	entity;
-<<<<<<< HEAD
 	EdibleBehaviour	edible;
-=======
 	DangerousEntity cameraFocus;
->>>>>>> 335978920ad663c16172f0f62b55b99a1a602679
+
 
 	
 	Vector3 origin;
@@ -55,11 +53,8 @@ public class DragonControlAI : DragonControl {
 		dragon = GetComponent<DragonAi>();
 		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 		entity = GetComponent<GameEntity>();
-<<<<<<< HEAD
 		edible = GetComponent<EdibleBehaviour>();
-=======
 		cameraFocus = GetComponent<DangerousEntity>();
->>>>>>> 335978920ad663c16172f0f62b55b99a1a602679
 		origin = transform.position;
 		moving = true;
 	}
