@@ -51,10 +51,7 @@ public class Flamable3DProp : FlamableBehaviour {
 	
 	override protected void BurnImpl(Vector3 pos, float power){
 		
-		if (state == State.IDLE){
-			entity.health -= power;	// Die instantly when burned
-			
-			if (entity.health <= 0){
+		if (state == State.IDLE && hasBurned){
 				
 				state = State.BURNING;
 				timer = 0f;
@@ -71,7 +68,6 @@ public class Flamable3DProp : FlamableBehaviour {
 						fire.GetComponent<FireParticle>().Burn(t.position,delay);
 					}
 				}
-			}
 		}
 	}
 }

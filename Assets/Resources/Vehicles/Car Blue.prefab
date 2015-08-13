@@ -18,9 +18,9 @@ GameObject:
   - 114: {fileID: 11432864}
   - 114: {fileID: 11450842}
   - 114: {fileID: 11406520}
-  - 114: {fileID: 11405438}
+  - 114: {fileID: 11427332}
   m_Layer: 10
-  m_Name: RoadCar Blue
+  m_Name: Car Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,14 +43,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &184220
+--- !u!1 &180370
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 490926}
+  - 4: {fileID: 482752}
   m_Layer: 10
   m_Name: GrabPoint
   m_TagString: Untagged
@@ -81,17 +81,17 @@ Transform:
   m_LocalScale: {x: 90, y: 90, z: 90}
   m_Children:
   - {fileID: 429890}
-  - {fileID: 490926}
+  - {fileID: 482752}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!4 &490926
+--- !u!4 &482752
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 184220}
+  m_GameObject: {fileID: 180370}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: .920000017, z: 0}
+  m_LocalPosition: {x: .223000005, y: 1.00899994, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 455926}
@@ -186,17 +186,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.35707498, y: 1.01512599, z: 1.458529}
   m_Center: {x: 0, y: .522709131, z: .000746756792}
---- !u!114 &11405438
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 111734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f424de4b1c184dc78175823dcedd2d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11406520
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -228,14 +217,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: 
   health: 1
+  isGolden: 0
   rewardScore: 25
   rewardCoins: 20
   rewardCoinsProbability: .5
   rewardPC: 0
   rewardHealth: 0
   rewardEnergy: 0
-  rewardFury: 20
+  rewardFury: 25
   scoreBurnedMultiplier: 1
+--- !u!114 &11427332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 111734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f424de4b1c184dc78175823dcedd2d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11432864
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -261,10 +262,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 111734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cc1c6673ae1046bea9363a890cd2c46, type: 3}
+  m_Script: {fileID: 11500000, guid: 9684d18afb9584dfe911b7f046887027, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
+  mass: 1.5
 --- !u!114 &11450842
 MonoBehaviour:
   m_ObjectHideFlags: 1

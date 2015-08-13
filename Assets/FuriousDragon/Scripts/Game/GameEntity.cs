@@ -21,6 +21,7 @@ public class GameEntity : MonoBehaviour {
 
 	[Header("Base Stats")]
 	public float health = 1;
+	public bool isGolden = false;
 
 	[Header("Base Rewards")]
 	[SerializeField] private int rewardScore = 0;	// Private, use GetScoreReward() method to compute it
@@ -97,11 +98,17 @@ public class GameEntity : MonoBehaviour {
 		if(mFlamableBehaviour != null && mFlamableBehaviour.hasBurned) {
 			return rewardCoins;
 		}
+		else if (isGolden){
+			return rewardCoins;
+		}
 
 		// Otherwise just use probability
+		// [PAC] only give coins if burned or golden
+		/*
 		else if(UnityEngine.Random.Range(0f, 1f) < rewardCoinsProbability) {
 			return rewardCoins;
 		}
+		*/
 		return 0;
 	}
 

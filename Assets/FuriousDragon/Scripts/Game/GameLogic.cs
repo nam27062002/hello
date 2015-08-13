@@ -389,7 +389,7 @@ public class GameLogic : MonoBehaviour {
 			DestroyImmediate( debugDragon);
 
 		// Create the Dragon
-		UnityEngine.Object dragon = Resources.Load ("Proto/Dragons/"+GameSettings.dragonType);
+		UnityEngine.Object dragon = Resources.Load ("Dragons/"+GameSettings.dragonType);
 		GameObject dragonObj = (GameObject)UnityEngine.Object.Instantiate(dragon);
 		dragonObj.name = "Player";
 		dragonObj.transform.position = GameObject.Find ("PlayerSpawn").transform.position;

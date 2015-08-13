@@ -51,25 +51,21 @@ public class FlamableProp : FlamableBehaviour {
 	
 	override protected void BurnImpl(Vector3 pos, float power){
 		
-		if (state == State.IDLE){
-			entity.health -= power;	// Die instantly when burned
+		if (state == State.IDLE && hasBurned){
+
+			state = State.BURNING;
+			timer = 0f;
 			
-			if (entity.health <= 0){
+			FirePool pool = GameObject.Find ("FirePool").GetComponent<FirePool>();
+			
+			foreach(Transform t in burnPoints){
 				
-				state = State.BURNING;
-				timer = 0f;
-				
-				FirePool pool = GameObject.Find ("FirePool").GetComponent<FirePool>();
-				
-				foreach(Transform t in burnPoints){
+				GameObject fire = pool.GetParticle();
+				if (fire){
 					
-					GameObject fire = pool.GetParticle();
-					if (fire){
-						
-						float delay = (t.position - pos).magnitude*0.002f;
-						
-						fire.GetComponent<FireParticle>().Burn(t.position,delay);
-					}
+					float delay = (t.position - pos).magnitude*0.002f;
+					
+					fire.GetComponent<FireParticle>().Burn(t.position,delay);
 				}
 			}
 		}

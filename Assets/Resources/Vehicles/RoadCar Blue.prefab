@@ -18,9 +18,9 @@ GameObject:
   - 114: {fileID: 11432864}
   - 114: {fileID: 11450842}
   - 114: {fileID: 11406520}
-  - 114: {fileID: 11453288}
+  - 114: {fileID: 11405438}
   m_Layer: 10
-  m_Name: RoadCar Sedan
+  m_Name: RoadCar Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,14 +43,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &191764
+--- !u!1 &184220
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 468702}
+  - 4: {fileID: 490926}
   m_Layer: 10
   m_Name: GrabPoint
   m_TagString: Untagged
@@ -77,21 +77,21 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 111734}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4628.86133, y: 160, z: 124.534454}
+  m_LocalPosition: {x: 2839, y: 143, z: 102.300003}
   m_LocalScale: {x: 90, y: 90, z: 90}
   m_Children:
   - {fileID: 429890}
-  - {fileID: 468702}
+  - {fileID: 490926}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!4 &468702
+--- !u!4 &490926
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 191764}
+  m_GameObject: {fileID: 184220}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: .850000024, z: 0}
+  m_LocalPosition: {x: 0, y: .920000017, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 455926}
@@ -106,7 +106,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:
-  - {fileID: 2100000, guid: 727a61b24c010433dafe091805a65ad6, type: 2}
+  - {fileID: 2100000, guid: a322e70adbdc84bc0acacb4dcd30980a, type: 2}
   - {fileID: 2100000, guid: 172db0ff73c7e4a7796ebbe31ff10d8a, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
@@ -186,6 +186,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.35707498, y: 1.01512599, z: 1.458529}
   m_Center: {x: 0, y: .522709131, z: .000746756792}
+--- !u!114 &11405438
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 111734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f424de4b1c184dc78175823dcedd2d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11406520
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -217,6 +228,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: 
   health: 1
+  isGolden: 0
   rewardScore: 25
   rewardCoins: 20
   rewardCoinsProbability: .5
@@ -278,17 +290,6 @@ MonoBehaviour:
   rotationRange:
     min: 0
     max: 360
---- !u!114 &11453288
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 111734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f424de4b1c184dc78175823dcedd2d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11464704
 MonoBehaviour:
   m_ObjectHideFlags: 1

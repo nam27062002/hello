@@ -30,18 +30,21 @@ public class FlamableBehaviour : MonoBehaviour {
 	/// </summary>
 	/// <param name="_pos">The position where the burn is taking place?</param>
 	public void Burn(Vector3 pos, float power = 10f) {
-		float fPreviousHealth = entity.health;
 
-		// Let heirs do their custom stuff
-		BurnImpl(pos, power);
+		if (entity.health > 0f){
+			entity.health -= power;
 
-		// Have we died?
-		if(fPreviousHealth > 0 && entity.health <= 0) {
-			// Update flag
-			hasBurned = true;
+			// Have we died?
+			if(entity.health <= 0) {
+				// Update flag
+				hasBurned = true;
+				
+				// Send game event
+				Messenger.Broadcast<GameEntity>(GameEvents.ENTITY_BURNED, entity);
+			}
 
-			// Send game event
-			Messenger.Broadcast<GameEntity>(GameEvents.ENTITY_BURNED, entity);
+			// Let heirs do their custom stuff
+			BurnImpl(pos, power);
 		}
 	}
 

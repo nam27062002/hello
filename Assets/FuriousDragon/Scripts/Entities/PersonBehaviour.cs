@@ -50,6 +50,7 @@ public class PersonBehaviour : MonoBehaviour {
 		panicDistanceSqr = panicDistance*panicDistance*Random.Range (0.75f,1.25f);
 		runSpeed *= Random.Range (0.75f,1.25f);
 		pos = transform.position;
+
 	}
 
 	void Update () {
@@ -233,6 +234,18 @@ public class PersonBehaviour : MonoBehaviour {
 		transform.localScale = originScale;
 
 		GetComponent<GameEntity>().RestoreHealth();
+		if (Random.Range(0,1000) < 200){
+			GetComponent<GameEntity>().isGolden = true;
+			Material goldMat = Resources.Load ("Materials/Gold") as Material;
+			Material[] materials = transform.FindChild ("view").GetComponentInChildren<SkinnedMeshRenderer>().materials;
+			for(int i=0;i<materials.Length;i++){
+				materials[i] = goldMat;
+			}
+			transform.FindChild ("view").GetComponentInChildren<SkinnedMeshRenderer>().materials = materials;
+		}else{
+			GetComponent<GameEntity>().isGolden = false;
+		}
+
 		edible.OnSpawn();
 	}
 

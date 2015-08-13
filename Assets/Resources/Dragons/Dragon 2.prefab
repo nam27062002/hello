@@ -88,11 +88,11 @@ GameObject:
   - 114: {fileID: 11421056}
   - 136: {fileID: 13600810}
   - 136: {fileID: 13699376}
-  - 135: {fileID: 13575196}
-  - 114: {fileID: 11439936}
-  - 114: {fileID: 11452638}
+  - 135: {fileID: 13531150}
+  - 114: {fileID: 11431218}
+  - 114: {fileID: 11420672}
   m_Layer: 0
-  m_Name: Dragon 3
+  m_Name: Dragon 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2039,7 +2039,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9252, y: 3667, z: 0}
+  m_LocalPosition: {x: 9673.5791, y: 3834.07373, z: 0}
   m_LocalScale: {x: -1.25, y: 1.25, z: 1.25}
   m_Children:
   - {fileID: 464464}
@@ -2574,8 +2574,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 182248}
   m_LocalRotation: {x: 0, y: .70710659, z: 0, w: -.707106948}
-  m_LocalPosition: {x: 0, y: -74, z: 0}
-  m_LocalScale: {x: 14, y: 14, z: 14}
+  m_LocalPosition: {x: 14.6000004, y: -102.800003, z: 0}
+  m_LocalScale: {x: 20, y: 20, z: 20}
   m_Children:
   - {fileID: 479666}
   - {fileID: 400062}
@@ -3787,62 +3787,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11421056
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 105000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20bece88168c34eaa8589c1a54ccefd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11439936
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 105000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fireRate: 30
-  firePower: 10
-  collisionDepth: 1000
---- !u!114 &11449270
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 105000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fc55bb9f3dab45f69260a937e250b5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dragonType: 0
-  dragonSpeed: 500
-  speedDirectionMultiplier: 2
-  boostMultiplier: 2.25
-  eatRange: 100
-  movementLimitX:
-    min: -27700
-    max: 25600
-  maxLife: 100
-  lifeDrainPerSecond: 7
-  lifeWarningThreshold: .349999994
-  maxEnergy: 50
-  energyDrainPerSecond: 30
-  energyRefillPerSecond: 16
-  energyMinRequired: 10
-  bodyMesh: {fileID: 13729606}
-  wingsMesh: {fileID: 13735968}
-  energy: 0
-  invulnerable: 0
---- !u!114 &11452638
+--- !u!114 &11420672
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -3856,7 +3801,66 @@ MonoBehaviour:
   maxIdleTime: 5
   idleZoom: -700
   zoomSpeed: 200
---- !u!135 &13575196
+--- !u!114 &11421056
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20bece88168c34eaa8589c1a54ccefd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11431218
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24a9aeacf3a1d4e0e9dff3f7c65b2d02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firePower: 1
+  maxRayLength: 800
+  rayMaterial: {fileID: 2100000, guid: 9d64f4bb6337f444fa17883fdb4bf074, type: 2}
+  particleStartPrefab: {fileID: 198710, guid: ddeef16cba4b54f0ca786af9b5f83e4c, type: 2}
+  particleEndPrefab: {fileID: 198710, guid: ddeef16cba4b54f0ca786af9b5f83e4c, type: 2}
+--- !u!114 &11449270
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fc55bb9f3dab45f69260a937e250b5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dragonType: 1
+  dragonSpeed: 700
+  speedDirectionMultiplier: 2
+  boostMultiplier: 2.25
+  eatRange: 140
+  movementLimitX:
+    min: -27700
+    max: 25600
+  grabTime: 2
+  maxLife: 100
+  lifeDrainPerSecond: 3.5
+  lifeWarningThreshold: .349999994
+  maxEnergy: 100
+  energyDrainPerSecond: 40
+  energyRefillPerSecond: 16
+  energyMinRequired: 10
+  bodyMesh: {fileID: 13729606}
+  wingsMesh: {fileID: 13735968}
+  energy: 0
+  rbody: {fileID: 0}
+  invulnerable: 0
+--- !u!135 &13531150
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -3866,8 +3870,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 150
-  m_Center: {x: -58.6699982, y: 23.4400005, z: 0}
+  m_Radius: 250
+  m_Center: {x: -67.25, y: 66.6999969, z: 0}
 --- !u!136 &13600810
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -3877,10 +3881,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 50
-  m_Height: 105.599998
+  m_Radius: 63.4000015
+  m_Height: 185.619995
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 27.6000004, z: 0}
 --- !u!136 &13699376
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -3890,10 +3894,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 50
-  m_Height: 99.9000015
+  m_Radius: 61.4000015
+  m_Height: 136.100006
   m_Direction: 2
-  m_Center: {x: -60, y: 35, z: 0}
+  m_Center: {x: -99.5, y: 90.9000015, z: 0}
 --- !u!137 &13729606
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

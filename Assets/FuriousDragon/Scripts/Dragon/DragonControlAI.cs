@@ -15,6 +15,7 @@ public class DragonControlAI : DragonControl {
 	DragonPlayer 	player;
 	DragonAi 		dragon;
 	GameEntity 	 	entity;
+	EdibleBehaviour	edible;
 
 	
 	Vector3 origin;
@@ -50,12 +51,16 @@ public class DragonControlAI : DragonControl {
 		dragon = GetComponent<DragonAi>();
 		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 		entity = GetComponent<GameEntity>();
+		edible = GetComponent<EdibleBehaviour>();
 		origin = transform.position;
 		moving = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (edible.state != EdibleBehaviour.State.NONE)
+			return;
 
 		playerDir = (player.transform.position+targetOffset) - transform.position;
 		float playerDistance = playerDir.magnitude;
