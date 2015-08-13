@@ -5,8 +5,9 @@ public class TouchControlsDPad : TouchControls {
 	
 	// INSPECTOR VARIABLES
 	public bool m_isFixed = false;
-	public GameObject m_dpadCirclePrefab;
-	public GameObject m_dpadDotPrefab;
+	public GameObject m_dpadObj;
+	public GameObject m_dpadDotObj;
+
 	
 	// PRIVATE VARIABLES - DPAD SPECIFIC
 	private float m_radiusToCheck = 40.0f;
@@ -17,16 +18,10 @@ public class TouchControlsDPad : TouchControls {
 	
 	// DPAD Rendering
 	private bool m_isInitialTouchPosSet = false;
-	
-	private GameObject m_dpadObj;					// dpad controls represented by a large circle and a small dot
-	private GameObject m_dpadDotObj;
-	private Renderer m_dpadRenderer;
-	private Renderer m_dpadDotRenderer;
-	
+		
 	private Vector3 m_dpadPos = Vector3.zero;
 	private Vector3 m_dpadDotPos = Vector3.zero;
-	
-	private float m_screenToDefaultResScale = 1.0f;
+
 	
 	// Use this for initialization
 	override public void Start () 
@@ -34,49 +29,26 @@ public class TouchControlsDPad : TouchControls {
 		base.Start();
 		
 		m_type = TouchControlsType.dpad;
-		
-		// DPAD render - instantiate prefabs
+				
 
-		Camera camera = GameObject.Find("UICamera").GetComponent<Camera>();
-		
-		m_dpadObj = GameObject.Instantiate(m_dpadCirclePrefab) as GameObject;
+		RectTransform rt = m_dpadObj.GetComponent<RectTransform>();
 
-		// cache the prefab's local pos and scale before parenting it to camera, as we'll lose this otherwise
-		Transform dpadTrans = m_dpadObj.transform;
-		Vector3 pos = dpadTrans.localPosition;
-		Vector3 scale = dpadTrans.localScale;
-		dpadTrans.parent = camera.transform;
-		dpadTrans.localPosition = pos;
-		dpadTrans.localScale = scale;
-		
-		m_dpadDotObj = GameObject.Instantiate(m_dpadDotPrefab) as GameObject;
+		if (rt != null) {
+			m_radiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 0.45f;
+			m_boostRadiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 1.65f;
+		} else {
+			m_radiusToCheck = Screen.height * 0.09f;
+			m_boostRadiusToCheck = Screen.height * 0.15f;
+		}
 
-		// cache the prefab's local pos and scale before parenting it to camera, as we'll lose this otherwise
-		Transform dpadDotTrans = m_dpadDotObj.transform;
-		Vector3 dotPos = dpadDotTrans.localPosition;
-		Vector3 dotScale = dpadDotTrans.localScale;
-		dpadDotTrans.parent = camera.transform;
-		dpadDotTrans.localPosition = dotPos;
-		dpadDotTrans.localScale = dotScale;
-		
-		m_dpadRenderer = m_dpadObj.GetComponentInChildren<Renderer>();
-		m_dpadRenderer.enabled = false;
-		
-		m_dpadDotRenderer = m_dpadDotObj.GetComponentInChildren<Renderer>();
-		m_dpadDotRenderer.enabled = false;
-
-		
-		m_radiusToCheck = Screen.height * 0.09f;
-		m_boostRadiusToCheck = Screen.height * 0.15f;
-
-		m_screenToDefaultResScale = (float)Screen.height / (float)GameObject.Find("UICamera").GetComponent<UICamera>().manualHeight;
+		m_dpadObj.SetActive(false);
+		m_dpadDotObj.SetActive(false);
 	}
 	
 	override public void SetRender(bool enable)
 	{
-
-		m_dpadRenderer.enabled = enable;
-		m_dpadDotRenderer.enabled = enable;
+		m_dpadObj.SetActive(enable);
+		m_dpadDotObj.SetActive(enable);
 	}
 	
 	override public void SetTouchObjRendering(bool on)
@@ -90,10 +62,10 @@ public class TouchControlsDPad : TouchControls {
 				// sync the circle and dot position to touch positions in screen space
 				// NOTE: the positions are scaled because the camera quadrants are each in the range (+/- 960, +/-640)
 				// while the screen quadrants (extents) are screen-dependent... 1280 x 960 or 1024 x 768.., etc.,
-				m_dpadPos.x = (m_initialTouchPos.x - (Screen.width/2)) / m_screenToDefaultResScale;
-				m_dpadPos.y = (m_initialTouchPos.y - (Screen.height/2)) / m_screenToDefaultResScale;
-				m_dpadPos.z = -10;
-				m_dpadObj.transform.localPosition = m_dpadPos;
+				m_dpadPos.x = m_initialTouchPos.x;
+				m_dpadPos.y = m_initialTouchPos.y;
+				m_dpadPos.z = 0;
+				m_dpadObj.transform.position = m_dpadPos;
 				
 				// project current touch pos on circle
 				Vector3 diffUnit = (m_currentTouchPos - m_initialTouchPos);
@@ -103,17 +75,17 @@ public class TouchControlsDPad : TouchControls {
 					diffUnit *= m_radiusToCheck;
 					diffUnit += m_initialTouchPos;
 					
-					m_dpadDotPos.x = (diffUnit.x - Screen.width/2) / m_screenToDefaultResScale; 
-					m_dpadDotPos.y = (diffUnit.y - Screen.height/2) / m_screenToDefaultResScale;
-					m_dpadDotPos.z = -0.1f;
-					m_dpadDotObj.transform.localPosition = m_dpadDotPos;
+					m_dpadDotPos.x = diffUnit.x;
+					m_dpadDotPos.y = diffUnit.y;
+					m_dpadDotPos.z = 0;
+					m_dpadDotObj.transform.position = m_dpadDotPos;
 				}
 				else
 				{
-					m_dpadDotPos.x = (m_currentTouchPos.x - Screen.width/2) / m_screenToDefaultResScale; 
-					m_dpadDotPos.y = (m_currentTouchPos.y - Screen.height/2) / m_screenToDefaultResScale;
-					m_dpadDotPos.z = -0.1f;
-					m_dpadDotObj.transform.localPosition = m_dpadDotPos;
+					m_dpadDotPos.x = m_currentTouchPos.x;
+					m_dpadDotPos.y = m_currentTouchPos.y;
+					m_dpadDotPos.z = 0;
+					m_dpadDotObj.transform.position = m_dpadDotPos;
 				}
 			}
 		}
@@ -123,9 +95,7 @@ public class TouchControlsDPad : TouchControls {
 	{
 		m_initialTouchPos.x = Screen.width * 0.5f;
 		m_initialTouchPos.y = Screen.height * 0.5f;
-		m_initialTouchPos.z = 0f;//-GameLogic.gameCamera.transform.position.z;
-		
-		m_initialTouchPosWorldSpace = GameObject.Find("UICamera").GetComponent<Camera>().ScreenToWorldPoint(m_initialTouchPos);
+		m_initialTouchPos.z = 0f;
 
 		SetTouchObjRendering(true);
 	}
@@ -170,13 +140,8 @@ public class TouchControlsDPad : TouchControls {
 				else
 					m_initialTouchPos.y = touchPos.y;
 								
-				//DB - this is also used from the kempy lab, so we can't rely on the gamelogic camera
-				Camera cam = GameObject.Find("UICamera").GetComponent<Camera>();
 
-				m_initialTouchPos.z = -cam.transform.position.z;
-				
-				// calculate the touch position in world space
-				m_initialTouchPosWorldSpace = cam.ScreenToWorldPoint(m_initialTouchPos);
+				m_initialTouchPos.z = 0;
 			}			
 			return true;
 		}

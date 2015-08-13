@@ -12,7 +12,6 @@ abstract public class TouchControls : MonoBehaviour {
 	
 	protected TouchState m_currentTouchState = TouchState.none;
 	protected Vector3 m_currentTouchPos = Vector3.zero;
-	protected Vector3 m_currentTouchPosWorldSpace = Vector3.zero;
 	protected Vector3 m_initialTouchPos = Vector3.zero;
 	protected Vector3 m_initialTouchPosWorldSpace = Vector3.zero;
 	protected Vector3 m_diffVecNorm = Vector3.zero;
@@ -34,7 +33,6 @@ abstract public class TouchControls : MonoBehaviour {
 	public bool touchAction = false;
 
 
-	Camera uiCamera;
 	
 	// Use this for initialization
 	virtual public void Start () {
@@ -53,15 +51,12 @@ abstract public class TouchControls : MonoBehaviour {
 			Input.GetMouseButtonUp(0);
 			Input.GetMouseButtonUp(1);
 		}
-
-		uiCamera = GameObject.Find("UICamera").GetComponent<Camera>();
 	}
 	
 	private void ResetTouchValues()
 	{
 		m_currentTouchState = TouchState.none;
 		m_currentTouchPos = Vector3.zero;
-		m_currentTouchPosWorldSpace = Vector3.zero;
 		m_initialTouchPos = Vector3.zero;
 		m_initialTouchPosWorldSpace = Vector3.zero;
 		m_diffVecNorm = Vector3.zero;
@@ -85,10 +80,7 @@ abstract public class TouchControls : MonoBehaviour {
 	{
 		m_currentTouchPos.x = GameInput.touchPosition[0].x;
 		m_currentTouchPos.y = GameInput.touchPosition[0].y;
-
-		m_currentTouchPos.z = -uiCamera.transform.position.z;
-		m_currentTouchPosWorldSpace = uiCamera.ScreenToWorldPoint(m_currentTouchPos);
-
+		m_currentTouchPos.z = 0;
 	}
 	
 	virtual public void SetRender(bool enable)
