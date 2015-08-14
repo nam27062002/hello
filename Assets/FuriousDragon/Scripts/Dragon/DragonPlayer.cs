@@ -102,6 +102,8 @@ public class DragonPlayer : MonoBehaviour {
 	bool    allowFire = true;
 	bool 	allowBoost = true;
 	bool	allowMovement = true;
+	bool 	inWater = false;
+	float   waterOriginY = 0f;
 	float   speedMulti;
 	float 	impulseMulti;
 	float   glideTimer = 0f;
@@ -203,7 +205,7 @@ public class DragonPlayer : MonoBehaviour {
 					ChangeState(EState.IDLE);
 				}
 			} break;
-		
+
 			case EState.DYING: {
 				
 				// Simulate gravity with values we like
@@ -241,15 +243,67 @@ public class DragonPlayer : MonoBehaviour {
 
 		if (grab != null)
 			UpdateGrab ();
+
+
 	}
 	
 	void FixedUpdate(){
 
 		// Update dragon's movement
-		if(allowMovement) {
+		if (inWater) {			
+
+			float depth = Mathf.Min(1500f, (waterOriginY - transform.position.y));
+
+			if (depth < 100) {
+				animator.SetBool("swim",false);
+				rbody.drag = 1.5f;	
+				if(allowMovement) {
+					UpdateMovement(speedMulti);
+				}
+			} else {
+				Vector3 repulsion = Vector3.up * depth; 
+
+				//if (speedMulti != 1f) {
+					if (depth < 200) {
+						rbody.drag = 1.5f;
+						repulsion *= 4;
+					} else {
+						//rbody.drag = Mathf.Clamp(1.5f - ((depth - 200f) / 200f), 0, 1.5f);
+						rbody.drag = 0;
+					}
+			//	}
+
+				if (rbody.velocity.y > 0) {
+				}
+
+				//lets check if player wants to modify a bit the movement
+				Vector3 impulse = controls.GetImpulse(dragonSpeed*speedMulti); 
+				impulse.y = 0;
+				
+				impulse *= 0.5f;
+				repulsion += impulse;
+
+				rbody.AddForce(repulsion);
+
+				animator.SetBool("fly",true);
+				animator.SetBool("swim",true);				
+			}
+				orientation.SetDirection(rbody.velocity);
+		} else if(allowMovement) {
 			UpdateMovement(speedMulti);
 		}
-
+				
+		// limit movement
+		pos = transform.position;
+		pos.z = 0;
+		if (pos.x < movementLimitX.min){
+			pos.x = movementLimitX.min;
+		}else if (pos.x > movementLimitX.max){
+			pos.x = movementLimitX.max;
+		}else if (pos.y > 5000f){
+			pos.y = 5000f;
+		}
+		transform.position = pos;
 	}
 	#endregion
 
@@ -371,19 +425,6 @@ public class DragonPlayer : MonoBehaviour {
 		}
 		//rbody.velocity = impulse;
 		rbody.angularVelocity = Vector3.zero;
-
-		// limit movement
-		pos = transform.position;
-		if (pos.x < movementLimitX.min){
-			pos.x = movementLimitX.min;
-			transform.position = pos;
-		}else if (pos.x > movementLimitX.max){
-			pos.x = movementLimitX.max;
-			transform.position = pos;
-		}else if (pos.y > 5000f){
-			pos.y = 5000f;
-			transform.position = pos;
-		}
 
 		// decide if flying
 		bool flying = controls.moving;
@@ -595,11 +636,38 @@ public class DragonPlayer : MonoBehaviour {
 	#endregion
 	
 	#region CALLBACKS ----------------------------------------------------------
+
+	void OnTriggerEnter(Collider other) {
+
+		if (other.tag == "Water" && !inWater) {
+			inWater = true;
+			waterOriginY = other.transform.position.y;
+
+			//Add particles
+		}
+	}
+
+	void OnTriggerExit(Collider other) {
+		
+		if (other.tag == "Water") {
+			inWater = false;
+			rbody.drag = 1.5f;
+			animator.SetBool("swim",false);
+		}
+	}
+
+
+
 	/// <summary>
 	/// Collision with another object
 	/// </summary>
 	/// <param name="other">The object which we've collided with.</param>
 	void OnTriggerStay(Collider other) {
+
+		if (other.tag == "Water") {
+			inWater = true;
+			return;
+		}
 
 		// Only care if we're in idle state
 		if(mState == EState.IDLE || mState == EState.EATING) {

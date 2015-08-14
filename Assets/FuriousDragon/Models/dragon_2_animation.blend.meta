@@ -491,6 +491,7 @@ ModelImporter:
     7400034: flight_up
     7400036: turn_left
     7400038: turn_right
+    7400040: swim
     9500000: //RootNode
     13700000: dragon_mesh
     13700002: dragon_mesh_02_001
@@ -507,6 +508,10 @@ ModelImporter:
     bakeSimulation: 0
     optimizeGameObjects: 0
     motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
     animationCompression: 1
     animationRotationError: .5
     animationPositionError: .5
@@ -708,65 +713,7 @@ ModelImporter:
         weight: 1
       - path: dragon_mesh_02
         weight: 1
-      - path: Empty_001
-        weight: 1
-      - path: Empty_001/arm
-        weight: 1
-      - path: Empty_001/Circle
-        weight: 1
-      - path: Empty_001/Circle_001
-        weight: 1
-      - path: Empty_001/Circle_002
-        weight: 1
-      - path: Empty_001/Circle_003
-        weight: 1
-      - path: Empty_001/Circle_004
-        weight: 1
-      - path: Empty_001/Circle_005
-        weight: 1
-      - path: Empty_001/CircleX
-        weight: 1
-      - path: Empty_001/CircleX_001
-        weight: 1
-      - path: Empty_001/CircleY
-        weight: 1
-      - path: Empty_001/CircleY_001
-        weight: 1
-      - path: Empty_001/CircleY_002
-        weight: 1
-      - path: Empty_001/CircleY_003
-        weight: 1
-      - path: Empty_001/CircleY_004
-        weight: 1
-      - path: Empty_001/CircleY_005
-        weight: 1
-      - path: Empty_001/CircleY_006
-        weight: 1
-      - path: Empty_001/CircleY_007
-        weight: 1
-      - path: Empty_001/CircleZ
-        weight: 1
-      - path: Empty_001/CircleZ_001
-        weight: 1
-      - path: Empty_001/CircleZ_002
-        weight: 1
-      - path: Empty_001/CUBE
-        weight: 1
-      - path: Empty_001/e_footstep_00
-        weight: 1
-      - path: Empty_001/e_footstep_001
-        weight: 1
-      - path: Empty_001/Empty
-        weight: 1
-      - path: Empty_001/Empty_002
-        weight: 1
-      - path: Empty_001/Empty_003
-        weight: 1
-      - path: Empty_001/Empty_006
-        weight: 1
-      - path: Empty_001/Empty_007
-        weight: 1
-      - path: Empty_001/Empty_008
+      - path: dragon_wings_02_001
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}
@@ -5041,6 +4988,204 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Cube_004
+        weight: 1
+      - path: dragon_armature_02
+        weight: 1
+      - path: dragon_armature_02/main
+        weight: 1
+      - path: dragon_armature_02/main/chain
+        weight: 1
+      - path: dragon_armature_02/main/chain/leg_L
+        weight: 1
+      - path: dragon_armature_02/main/chain/leg_L/leg_L_001
+        weight: 1
+      - path: dragon_armature_02/main/chain/leg_L/leg_L_001/leg_L_002
+        weight: 1
+      - path: dragon_armature_02/main/chain/leg_R
+        weight: 1
+      - path: dragon_armature_02/main/chain/leg_R/leg_R_001
+        weight: 1
+      - path: dragon_armature_02/main/chain/leg_R/leg_R_001/leg_R_002
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_L
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_L/arm_L
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_L/arm_L/arm_L_001
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_L/arm_L/arm_L_002
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_L/arm_L/arm_L_002/arm_L_004
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_L/arm_L/arm_L_002/arm_L_004/arm_L_005
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_R
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_R/arm_R
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_R/arm_R/arm_R_001
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_R/arm_R/arm_R_002
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_R/arm_R/arm_R_002/arm_R_004
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/clavicle_R/arm_R/arm_R_002/arm_R_004/arm_R_005
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/neck
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/neck/neck_002
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/neck/neck_002/neck_003
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/neck/neck_002/neck_003/head
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/neck/neck_002/neck_003/head/eat
+        weight: 1
+      - path: dragon_armature_02/main/chain/spin/neck/neck_002/neck_003/head/jaws_dwn
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08/tail_07
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08/tail_07/tail_06
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08/tail_07/tail_06/tail_05
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08/tail_07/tail_06/tail_05/tail_04
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08/tail_07/tail_06/tail_05/tail_04/tail_03
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08/tail_07/tail_06/tail_05/tail_04/tail_03/tail_02
+        weight: 1
+      - path: dragon_armature_02/main/chain/tail_base/tail_08/tail_07/tail_06/tail_05/tail_04/tail_03/tail_02/tail_01
+        weight: 1
+      - path: dragon_armature_02/main/foot_L
+        weight: 1
+      - path: dragon_armature_02/main/foot_L/leg_fing_L_001
+        weight: 1
+      - path: dragon_armature_02/main/foot_L/leg_fing_L_001/leg_fing_L_002
+        weight: 1
+      - path: dragon_armature_02/main/foot_L/leg_fing_L_003
+        weight: 1
+      - path: dragon_armature_02/main/foot_L/leg_fing_L_003/leg_fing_L_004
+        weight: 1
+      - path: dragon_armature_02/main/foot_L/leg_fing_L_005
+        weight: 1
+      - path: dragon_armature_02/main/foot_L/leg_fing_L_005/leg_fing_L_006
+        weight: 1
+      - path: dragon_armature_02/main/foot_R
+        weight: 1
+      - path: dragon_armature_02/main/foot_R/leg_fing_R
+        weight: 1
+      - path: dragon_armature_02/main/foot_R/leg_fing_R/leg_fing_R_001
+        weight: 1
+      - path: dragon_armature_02/main/foot_R/leg_fing_R_002
+        weight: 1
+      - path: dragon_armature_02/main/foot_R/leg_fing_R_002/leg_fing_R_003
+        weight: 1
+      - path: dragon_armature_02/main/foot_R/leg_fing_R_004
+        weight: 1
+      - path: dragon_armature_02/main/foot_R/leg_fing_R_004/leg_fing_R_005
+        weight: 1
+      - path: dragon_armature_02/main/hand_L
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_001
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_001/hand_fing_L_001
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_001/hand_fing_L_001/hand_fing_L_002
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_001/hand_fing_L_001/hand_fing_L_002/hand_fing_L_003
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_002
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_002/hand_fing_L_004
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_002/hand_fing_L_004/hand_fing_L_005
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_002/hand_fing_L_004/hand_fing_L_005/hand_fing_L_006
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_002/hand_fing_L_004/hand_fing_L_005/hand_fing_L_006/hand_fing_L_007
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_003
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_003/hand_fing_L_008
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_003/hand_fing_L_008/hand_fing_L_009
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_003/hand_fing_L_008/hand_fing_L_009/hand_fing_L_010
+        weight: 1
+      - path: dragon_armature_02/main/hand_L/hand_L_003/hand_fing_L_008/hand_fing_L_009/hand_fing_L_010/hand_fing_L_011
+        weight: 1
+      - path: dragon_armature_02/main/hand_R
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_001
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_001/hand_fing_R
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_001/hand_fing_R/hand_fing_R_001
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_001/hand_fing_R/hand_fing_R_001/hand_fing_R_002
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_001/hand_fing_R/hand_fing_R_001/hand_fing_R_002/hand_fing_R_011
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_002
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_002/hand_fing_R_003
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_002/hand_fing_R_003/hand_fing_R_004
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_002/hand_fing_R_003/hand_fing_R_004/hand_fing_R_005
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_002/hand_fing_R_003/hand_fing_R_004/hand_fing_R_005/hand_fing_R_010
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_003
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_003/hand_fing_R_006
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_003/hand_fing_R_006/hand_fing_R_007
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_003/hand_fing_R_006/hand_fing_R_007/hand_fing_R_008
+        weight: 1
+      - path: dragon_armature_02/main/hand_R/hand_R_003/hand_fing_R_006/hand_fing_R_007/hand_fing_R_008/hand_fing_R_009
+        weight: 1
+      - path: dragon_mesh_02
+        weight: 1
+      - path: dragon_wings_02_001
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: swim
+      takeName: swim
+      firstFrame: -1
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
