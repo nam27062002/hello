@@ -4,119 +4,36 @@ using System.Collections.Generic;
 
 public class ThunderStorm : MonoBehaviour {
 
-	/**************************************************/
+	//-----------------------------------------------
 	struct Segment {
 		public Vector3 pointA;
 		public Vector3 pointB;
-
+		
 		public Segment(Vector3 _pointA, Vector3 _pointB) {
 			pointA = _pointA;
 			pointB = _pointB;
 		}
 	};
 
-	class ThunderBranch {
+	struct ThunderBranch {
 		public List<Segment> segments;
 		public int generationAt;
+		public GameObject gameObject;
 
-		private GameObject gameObject;
-		private LineRenderer lineRenderer;
-
-		private bool m_enabled;
-
-
-		public ThunderBranch(GameObject _parent) {
-			
+		public ThunderBranch(int _generation) {
 			segments = new List<Segment>();
-			generationAt = 0;
-
-			gameObject = new GameObject();
-			gameObject.name = "ThunderBranch";
-			gameObject.transform.parent = _parent.transform;
-			
-			lineRenderer = gameObject.AddComponent<LineRenderer>();
-			lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-			lineRenderer.receiveShadows = false;
-			lineRenderer.enabled = true; 
-
-			m_enabled = true;
-		}
-	
-		public void Destroy () {
-
-			Clear();
-			GameObject.Destroy(gameObject);
-		}
-		
-		public void Clear () {
-			segments.Clear();	
-		}
-
-		public void BuildLineRenderer (float _width, Color _color, Material _material) {
-						
-			if (generationAt > 0) {
-				_width /= generationAt + 1;
-			}
-
-			lineRenderer.SetColors(_color, _color);
-			lineRenderer.material = _material;
-			lineRenderer.SetWidth( _width, 2);
-			
-			// populate line renderer with vertex
-			int i = 0;
-			lineRenderer.SetVertexCount(segments.Count + 1);
-			for (i = 0; i < segments.Count; i++) {
-				lineRenderer.SetPosition(i, segments[i].pointA);
-			}
-			lineRenderer.SetPosition(i, segments[i - 1].pointB);
-		}
-
-		public void SetColor (Color _color) {
-			
-			lineRenderer.SetColors(_color, _color);
-		}
-
-		public void Enable(bool _value) {
-			m_enabled = _value;
-			lineRenderer.enabled = _value;
-		}
-
-		public bool IsEnabled() {
-			return m_enabled;
+			generationAt = _generation;
+			gameObject = null;
 		}
 	};
 
-	class ThunderBranchPool {
-
-		private static List<ThunderBranch> m_instances;
-
-		public static ThunderBranch Get(GameObject _parent) {
-
-			if (m_instances == null) {
-				m_instances = new List<ThunderBranch>();
-			}
-
-			for (int i = 0; i < m_instances.Count; i++) {
-				if (!m_instances[i].IsEnabled()) {
-					m_instances[i].Clear();
-					m_instances[i].Enable(true);
-					return m_instances[i];
-				}
-			}
-
-			m_instances.Add(new ThunderBranch(_parent));
-
-			return m_instances[m_instances.Count - 1];
-		}
-	}
+	/**************************************************/	
 
 	class Thunder {
 
 		//---------------------
 		// Attributes			 
 		//---------------------
-		
-		private GameObject m_gameObject;
 
 		private List<ThunderBranch> m_branches;
 
@@ -128,7 +45,7 @@ public class ThunderStorm : MonoBehaviour {
 		private float m_branchOffsetFactor = 0.5f;
 		private float m_branchLengthFactor = 0.7f;
 
-					
+		private PoolController m_poolController;
 
 		private float m_alpha;
 
@@ -136,31 +53,25 @@ public class ThunderStorm : MonoBehaviour {
 		//---------------------
 		// Methods			 
 		//---------------------
-		public Thunder (GameObject _parent) {
-
-			m_gameObject = new GameObject();
-			m_gameObject.name = "Thunder";
-			m_gameObject.transform.parent = _parent.transform;
-
-			m_branches = new List<ThunderBranch>();
+		public Thunder () {
+			m_branches = new List<ThunderBranch>();			
+			
+			//add a thunder branch into Pool Controller
+			m_poolController = GameObject.Find ("Pool Controller").GetComponent<PoolController>();		
+			m_poolController.CreatePool((GameObject)Resources.Load("Proto/WeatherEffects/ThunderStorm/ThunderBranch"));
 		}
 		
-		public void Destroy () {		
-
+		public void Destroy () {
 			for (int i = 0; i < m_branches.Count; i++) {
-				
-				m_branches[i].Destroy();
+				m_branches[i].segments.Clear();
+				GameObject.Destroy(m_branches[i].gameObject);
 			}
 			m_branches.Clear();
-
-			GameObject.Destroy(m_gameObject);
 		}
 
 		public void Clear () {
-
-			for (int i = 0; i < m_branches.Count; i++) {
-				
-				m_branches[i].Enable(false);
+			for (int i = 0; i < m_branches.Count; i++) {				
+				m_branches[i].gameObject.SetActive(false);
 			}
 			m_branches.Clear();
 		}
@@ -175,9 +86,9 @@ public class ThunderStorm : MonoBehaviour {
 			float maxOffsetValue = m_pathOffsetFactor * (_target - _source).magnitude;
 			float maxBranches = Random.Range(5, (m_segmentDivisions - 1) * (m_segmentDivisions - 1));
 
-			ThunderBranch main = ThunderBranchPool.Get(m_gameObject);
+			ThunderBranch main = new ThunderBranch(0);
+			main.gameObject = m_poolController.GetInstance("ThunderBranch");
 			main.segments.Add(new Segment(_source, _target));
-			main.generationAt = 0;
 			m_branches.Add(main);
 
 			for (int d = 0; d < m_segmentDivisions; d++) { // number of divisions
@@ -207,9 +118,9 @@ public class ThunderStorm : MonoBehaviour {
 								dir += new Vector3(Random.Range(-maxBranchDirOffset, maxBranchDirOffset), Random.Range(-maxBranchDirOffset, 0), 0);
 								Vector3 pointD = pointC + dir * m_branchLengthFactor;
 
-								ThunderBranch branch = ThunderBranchPool.Get(m_gameObject);
+								ThunderBranch branch = new ThunderBranch(d);
+								branch.gameObject = m_poolController.GetInstance("ThunderBranch");; // get from pool
 								branch.segments.Add(new Segment(pointC, pointD));
-								branch.generationAt = d;
 								m_branches.Add(branch);	
 							}
 						}
@@ -225,7 +136,26 @@ public class ThunderStorm : MonoBehaviour {
 
 			for (int i = 0; i < m_branches.Count; i++) {
 
-				m_branches[i].BuildLineRenderer(m_width, _color, _material);
+				if (m_branches[i].generationAt > 0) {
+					m_width /= m_branches[i].generationAt + 1;
+				}
+				
+				LineRenderer lineRenderer = m_branches[i].gameObject.GetComponent<LineRenderer>();
+				lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+				lineRenderer.receiveShadows = false;
+				lineRenderer.enabled = true; 
+				
+				lineRenderer.SetColors(_color, _color);
+				lineRenderer.material = _material;
+				lineRenderer.SetWidth( m_width, 2);
+				
+				// populate line renderer with vertex
+				int s = 0;
+				lineRenderer.SetVertexCount(m_branches[i].segments.Count + 1);
+				for (s = 0; s < m_branches[i].segments.Count; s++) {
+					lineRenderer.SetPosition(s, m_branches[i].segments[s].pointA);
+				}
+				lineRenderer.SetPosition(s, m_branches[i].segments[s - 1].pointB);
 			}
 
 			SetAlpha(1);
@@ -238,7 +168,8 @@ public class ThunderStorm : MonoBehaviour {
 			Color color = Color.white;
 			color.a = m_alpha;
 			for (int i = 0; i < m_branches.Count; i++) {
-				m_branches[i].SetColor(color);
+				LineRenderer lineRenderer = m_branches[i].gameObject.GetComponent<LineRenderer>();
+				lineRenderer.SetColors(color, color);
 			}
 		}
 
@@ -274,15 +205,18 @@ public class ThunderStorm : MonoBehaviour {
 	private int m_targetIndex;
 
 	private bool m_doDamage;
+	private bool m_onScreen;
+
 
 	// Use this for initialization
 	void Start () {
-		m_thunder = new Thunder(gameObject);
+		m_thunder = new Thunder();
 
 		spawnTimer = thunderSpawnTime;
 		changeTimer = thunderChangeTime;
 		changeCount = 0;
 		m_doDamage = false;
+		m_onScreen = false;
 	}
 
 	void OnDestroy() {
@@ -290,10 +224,7 @@ public class ThunderStorm : MonoBehaviour {
 	}
 		
 	void SpawnThunder () {
-		if (m_thunder != null) {
-			m_thunder.Clear();
-		}
-	
+		m_thunder.Clear();	
 		m_thunder.Generate(m_width, m_source[m_sourceIndex].position, m_target[m_targetIndex].position);
 		m_thunder.BuildLineRenderer(gameObject, Color.white, rayMaterial);		
 	}
@@ -313,6 +244,7 @@ public class ThunderStorm : MonoBehaviour {
 
 		Vector3 screenPoint = Camera.main.WorldToViewportPoint (transform.position);
 		if (screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1) {
+			m_onScreen = true;
 
 			if (spawnTimer > 0) {
 				
@@ -345,7 +277,10 @@ public class ThunderStorm : MonoBehaviour {
 				}
 			}
 		} else {
-			FadeOutThunder(1f);
+			if (m_onScreen) {
+				m_thunder.Clear();
+				m_onScreen = false;
+			}
 		}
 	}
 
