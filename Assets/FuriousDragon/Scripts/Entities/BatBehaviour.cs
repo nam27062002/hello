@@ -20,7 +20,7 @@ public class BatBehaviour : MonoBehaviour {
 		flock = GetComponent<FlockBehaviour>();
 		anim = transform.FindChild("view").GetComponent<Animator>();
 		originScale = transform.localScale;
-
+	
 	}
 	
 	// Update is called once per frame
@@ -52,5 +52,18 @@ public class BatBehaviour : MonoBehaviour {
 		anim.speed = Random.Range (1.5f,2.2f);
 
 		GetComponent<GameEntity>().RestoreHealth();
+
+
+		if (Random.Range(0,1000) < 200){
+			GetComponent<GameEntity>().isGolden = true;
+			Material goldMat = Resources.Load ("Materials/Gold") as Material;
+			Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
+			for(int i=0;i<materials.Length;i++){
+				materials[i] = goldMat;
+			}
+			GetComponentInChildren<SkinnedMeshRenderer>().materials = materials;
+		}else{
+			GetComponent<GameEntity>().isGolden = false;
+		}
 	}
 }

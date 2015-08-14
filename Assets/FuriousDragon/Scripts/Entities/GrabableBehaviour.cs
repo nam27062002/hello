@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GrabableBehaviour : MonoBehaviour {
 
+	public float weight = 1.5f;
+	public bool limitRotation  = false;
 
 	public delegate void GrabDelegate();
 	public GrabDelegate grabDelegate;
@@ -17,7 +19,13 @@ public class GrabableBehaviour : MonoBehaviour {
 
 	float timer = 0f;
 
-	bool grabbed = false;
+	enum State{
+		IDLE,
+		GRABBED,
+		RELEASED
+	}
+
+	State state = State.IDLE;
 
 	// Use this for initialization
 	void Start () {
@@ -31,7 +39,7 @@ public class GrabableBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-		if (grabbed){
+		if (state == State.GRABBED){
 			timer  += Time.deltaTime;
 			if (timer < 0.5f){
 				transform.position = Vector3.Lerp (transform.position,footPoint.position-(grabPoint.position - transform.position),0.3f);
@@ -39,8 +47,14 @@ public class GrabableBehaviour : MonoBehaviour {
 				transform.position = footPoint.position-(grabPoint.position - transform.position);
 			}
 
-			transform.rotation = Quaternion.Lerp (transform.rotation,rotation*footPoint.rotation*Quaternion.AngleAxis(90f,Vector3.right),0.2f);
-		}else{
+			if (!limitRotation)
+				transform.rotation = Quaternion.Lerp (transform.rotation,rotation*footPoint.rotation*Quaternion.AngleAxis(90f,Vector3.right),0.2f);
+			else{
+			
+			}
+
+		
+		}else if (state == State.IDLE){
 		
 			Vector3 p = footPoint.position;
 			p.z = 0f;
@@ -54,26 +68,31 @@ public class GrabableBehaviour : MonoBehaviour {
 
 	public void Grab(){
 
-		if (!grabbed){
+		if (state == State.IDLE){
 			if (grabDelegate != null)
 				grabDelegate();
 
 			GetComponent<BoxCollider>().enabled = false;
-			grabbed = true;
+			state = State.GRABBED;
 			timer = 0f;
 		}
 	}
 
 	public void Release(Vector3 momentum){
 
-		if (grabbed){
+		if (state == State.GRABBED){
 
 			if (releaseDelegate != null)
 				releaseDelegate(momentum);
 
 			GetComponent<BoxCollider>().enabled = false;
 
-			grabbed = false;
+			state = State.RELEASED;
 		}
+	}
+
+	public void ResetGrab(){
+		GetComponent<BoxCollider>().enabled = true;
+		state = State.IDLE;
 	}
 }

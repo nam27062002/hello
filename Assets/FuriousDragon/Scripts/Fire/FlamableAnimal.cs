@@ -10,8 +10,7 @@ public class FlamableAnimal : FlamableBehaviour {
 
 	override protected void BurnImpl(Vector3 pos, float power){
 
-		entity.health -= power;	// Die instantly when burned
-		if (entity.health <= 0){
+		if (hasBurned){
 
 			if (useMeat && burnedPrefab != null){
 				GameObject burnedObj = (GameObject)Object.Instantiate(burnedPrefab);
@@ -31,8 +30,10 @@ public class FlamableAnimal : FlamableBehaviour {
 
 			if (destroyOnBurn)
 				DestroyObject(this.gameObject);
-			else
+			else{
 				this.gameObject.SetActive (false);
+			}
+
 		}
 	}
 

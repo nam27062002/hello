@@ -35,6 +35,8 @@ public class DragonPlayer : MonoBehaviour {
 	public float boostMultiplier = 2.5f;
 	public float eatRange = 80f;
 	public Range movementLimitX = new Range(-10000, 10000);
+	public float grabTime = 3f;
+	public float chargeDamage = 50f;
 
 	[Header("Life")]
 	public float maxLife = 100f;
@@ -105,6 +107,7 @@ public class DragonPlayer : MonoBehaviour {
 	float   glideTimer = 0f;
 	float   sqrEatRange;
 	GrabableBehaviour grab = null;
+	float 	grabTimer = 0f;
 
 	#endregion
 
@@ -130,8 +133,8 @@ public class DragonPlayer : MonoBehaviour {
 		// Load selected skin
 		// Load both materials
 		/*
-		Material bodyMat = Resources.Load<Material>("Proto/Materials/Dragon/MT_dragon_" + GameSettings.skinName);
-		Material wingsMat = Resources.Load<Material>("Proto/Materials/Dragon/MT_dragon_" + GameSettings.skinName + "_alphaTest");
+		Material bodyMat = Resources.Load<Material>("Materials/Dragon/MT_dragon_" + GameSettings.skinName);
+		Material wingsMat = Resources.Load<Material>("Materials/Dragon/MT_dragon_" + GameSettings.skinName + "_alphaTest");
 		if(bodyMat != null && wingsMat != null) {
 			// Apply body materials
 			bodyMesh.material = bodyMat;
@@ -318,6 +321,9 @@ public class DragonPlayer : MonoBehaviour {
 	/// <param name="_fSpeedMultiplier">The multiplier of the dragon's movement speed.</param>
 	void UpdateMovement(float _fSpeedMultiplier) {
 
+		if (grab != null)
+			_fSpeedMultiplier *= 1f/grab.weight;
+
 		impulse = controls.GetImpulse(dragonSpeed*_fSpeedMultiplier); 
 
 		bool plummeting = (dir.y < -0.75f && rbody.velocity.y < -dragonSpeed*0.85f) || (_fSpeedMultiplier == boostMultiplier  && rbody.velocity.magnitude > dragonSpeed*0.85f);
@@ -457,14 +463,28 @@ public class DragonPlayer : MonoBehaviour {
 
 	void UpdateGrab(){
 
-		// try to detect fly height
+		// if not try to detect fly height
+		float flyHeight = 1000f;
 		RaycastHit ground;
 		if (Physics.Linecast( transform.position, transform.position + Vector3.down * 10000f, out ground, 1 << LayerMask.NameToLayer("Ground"))){
-			float flyHeight =  transform.position.y - ground.point.y;
+			flyHeight =  transform.position.y - ground.point.y;
 			if (flyHeight > 1000f || (flyHeight > 400f &&  speedMulti != 1f)){
 				grab.Release(impulse);
 				grab = null;
 			}
+		}
+
+		//try and release by time
+		grabTimer += Time.deltaTime;
+		if (grabTimer > grabTime && flyHeight > 400){
+			grab.Release(impulse);
+			grab = null;
+			return;
+		}
+
+		if (flyHeight < 200f){
+			pos.y = ground.point.y+200f;
+			transform.position = pos;
 		}
 	}
 
@@ -620,11 +640,25 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
+	void OnCollisionEnter(Collision collision) {
+
+		HittableBehaviour hit = collision.gameObject.GetComponent<HittableBehaviour>();
+		if (hit != null){
+			float finalDamage = (chargeDamage*rbody.velocity.magnitude)/(dragonSpeed*boostMultiplier);
+			if (hit.OnHit(finalDamage)){
+				//ContactPoint contact =  collision.contacts[0];
+				//Vector3 reflection = Vector3.Reflect(dir,contact.normal).normalized;
+				rbody.AddForce(-dir*(finalDamage/chargeDamage)*100000f);
+			}
+		}
+	}
+
 	public void Grab(GrabableBehaviour other){
 
 		if ((mState == EState.IDLE || mState == EState.EATING) && grab == null){
 			grab = other;
 			grab.Grab ();
+			grabTimer = 0f;
 		}
 	}
 

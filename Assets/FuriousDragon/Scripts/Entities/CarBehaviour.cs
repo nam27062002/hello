@@ -3,9 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(GameEntity))]
 public class CarBehaviour : MonoBehaviour {
-
-	public float mass = 1.5f;
-
+	
 	FlamableHeli flamable;
 	GameEntity entity;
 		
@@ -25,6 +23,7 @@ public class CarBehaviour : MonoBehaviour {
 	Vector3 releaseSpeed = Vector3.zero;
 	Vector3 releaseTorque;
 	int groundMask;
+	float weight;
 
 	// Use this for initialization
 	void Initialize () {
@@ -34,6 +33,7 @@ public class CarBehaviour : MonoBehaviour {
 		spawn = GetComponent<SpawnableBehaviour>();
 		GetComponent<GrabableBehaviour>().grabDelegate = GrabDelegate;
 		GetComponent<GrabableBehaviour>().releaseDelegate = ReleaseDelegate;
+		weight = GetComponent<GrabableBehaviour>().weight;
 
 		GameObject.Find("Spawn").GetComponent<SpawnZonesController>().Add(this.gameObject);
 
@@ -78,7 +78,7 @@ public class CarBehaviour : MonoBehaviour {
 			}
 		}else if (state == State.RELEASED){
 
-			releaseSpeed += Vector3.down*(800f*mass)*Time.deltaTime;
+			releaseSpeed += Vector3.down*(800f*weight)*Time.deltaTime;
 			transform.position = transform.position+releaseSpeed*Time.deltaTime;
 			transform.Rotate(releaseTorque*Time.deltaTime);
 
@@ -122,7 +122,7 @@ public class CarBehaviour : MonoBehaviour {
 			explosion.Explode();
 		}
 
-		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
+		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
 		exp.finalRadius = 500f;
 		Vector3 p = transform.position;
 		p.z = 0f;
@@ -158,8 +158,12 @@ public class CarBehaviour : MonoBehaviour {
 
 	public void ReleaseDelegate(Vector3 momentum){
 
-		releaseSpeed = momentum*0.75f*mass;
-		releaseTorque = new Vector3(Random.value*300f-150f,Random.value*300f-150f,Random.value*300f);
+		releaseSpeed = momentum/(weight*0.5f);
+
+		if (weight < 5f)
+			releaseTorque = new Vector3(Random.value*300f-150f,Random.value*300f-150f,Random.value*300f);
+		else
+			releaseTorque = Vector3.zero;
 
 		state = State.RELEASED;
 	}

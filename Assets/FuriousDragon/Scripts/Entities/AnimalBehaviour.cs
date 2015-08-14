@@ -34,6 +34,7 @@ public class AnimalBehaviour : MonoBehaviour {
 	bool initialized = false;
 	float panicDistanceSqr = 600f;
 
+	Material[] originalMaterials;
 	
 	void Initialize() {
 		
@@ -51,11 +52,6 @@ public class AnimalBehaviour : MonoBehaviour {
 		bounceTimer = Random.Range (0f,1f);
 
 		panicDistanceSqr *= panicDistanceSqr;
-
-		SpriteChanger sprite = GetComponent<SpriteChanger>();
-		if (sprite != null){
-			sprite.SetSprite(Random.Range(0,22));
-		}
 	}
 	
 	void Update () {
@@ -242,6 +238,22 @@ public class AnimalBehaviour : MonoBehaviour {
 		transform.localScale = originScale;
 
 		GetComponent<GameEntity>().RestoreHealth();
+
+		if (Random.Range(0,1000) < 200){
+			entity.isGolden = true;
+			Material goldMat = Resources.Load ("Materials/Gold") as Material;
+			if (originalMaterials == null)
+				 originalMaterials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
+			Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
+			for(int i=0;i<materials.Length;i++){
+				materials[i] = goldMat;
+			}
+			GetComponentInChildren<SkinnedMeshRenderer>().materials = materials;
+		}else{
+			entity.isGolden = false;
+			if (originalMaterials != null)
+				GetComponentInChildren<SkinnedMeshRenderer>().materials = originalMaterials;
+		}
 
 		edible.OnSpawn();
 
