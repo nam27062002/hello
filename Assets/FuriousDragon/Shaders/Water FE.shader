@@ -9,7 +9,15 @@
 		_SpeedX1 ("X Speed Layer 1", Range (-10.0,10.0)) = 1.0
 		_SpeedX2 ("X Speed Layer 2", Range (-10.0,10.0)) = 1.0
 		_FixedTransp ("Fixed Transparency Value", Range(0,1.0)) = 0.0	
-		_WaveAmplitude ("Wave Amplitude", float) = 50.0
+		
+		[HideInInspector]
+		_WaveAmplitude ("Wave Amplitude", float) = 50.0		
+		[HideInInspector]
+		_Width ("Mesh Width", float) = 2000.0
+		[HideInInspector]
+		_Near ("Near Fade", float) = 200.0
+		[HideInInspector]
+		_Far ("Far Fade", float) = 500.0
 	}
 	
 	SubShader 
@@ -61,7 +69,10 @@
 			float _SpeedX1;
 			float _SpeedX2;
 			float _FixedTransp;
-			float _WaveAmplitude;
+			float _WaveAmplitude;		
+			float _Width;
+			float _Near;
+			float _Far;
 			
 			v2f vert (appdata v)
 			{
@@ -132,17 +143,17 @@
 				if ( _FixedTransp == 0.0)
 				{
 					// Fade off towards the back of the water
-					if(i.depth.y > 2000.0)
+					if(i.depth.y > _Width - _Far)
 					{
-						float fAlpha = 1.0-(abs(i.depth.y - 2000.f) / 500.0);
+						float fAlpha = 1.0-(abs(i.depth.y - (_Width - _Far)) / _Far);
 						clamp(fAlpha,0,1);
 						finalTex.w *= fAlpha;	
 					}
 					
 					// Fade out towards the front of the water
-					if(i.depth.y < 200.0)
+					if(i.depth.y < _Near)
 					{
-						float fAlpha = (abs(i.depth.y) / 200.0) ;
+						float fAlpha = (abs(i.depth.y) / _Near);
 						clamp(fAlpha,0,1);
 						finalTex.w *= fAlpha;	
 					}

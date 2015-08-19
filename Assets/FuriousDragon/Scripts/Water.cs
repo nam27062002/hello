@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Water : MonoBehaviour 
 {
-	public int CellSpacing;
+	private int CellSpacing;
 	
 	private Transform m_transform = null;
 	private int _NumCellsPerRow;
@@ -26,8 +26,17 @@ public class Water : MonoBehaviour
 	void Awake()
 	{
 		BoxCollider bounds = GetComponent<BoxCollider>();
+		
+		CellSpacing = (int)Mathf.Max(1, Mathf.Max(bounds.size.x * 0.01f, bounds.size.z * 0.01f));
+
 		int numVertsPerRow = (int)bounds.size.x / CellSpacing;
-		int numVertsPerCol = (int)bounds.size.y / CellSpacing;
+		int numVertsPerCol = (int)bounds.size.z / CellSpacing;
+
+		MeshRenderer renderer = GetComponent<MeshRenderer>();
+		renderer.material.SetFloat("_Width", bounds.size.y);
+		renderer.material.SetFloat("_Near", bounds.size.y / 10f);
+		renderer.material.SetFloat("_Far", bounds.size.y / 4f);
+		renderer.material.SetFloat("_WaveAmplitude", CellSpacing / 2f);
 
 		_NumCellsPerRow = numVertsPerRow - 1;
 		_NumCellsPerCol = numVertsPerCol - 1;
