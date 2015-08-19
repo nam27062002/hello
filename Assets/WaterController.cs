@@ -3,9 +3,12 @@ using System.Collections;
 
 public class WaterController : MonoBehaviour {
 
+	
+	public GameObject m_waterTrailPrefab;
 
+	public GameObject m_waterSplashSmallPrefab;
+	public GameObject m_waterSplashMediumPrefab;
 	public GameObject m_waterSplashLargePrefab;
-	public GameObject m_waterSplashJumpPregab;
 
 	private DragonPlayer m_player;
 	private BoxCollider m_bounds;
@@ -19,7 +22,7 @@ public class WaterController : MonoBehaviour {
 		m_player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 		m_bounds = GetComponent<BoxCollider>();
 
-		m_waterTrail = (GameObject)Object.Instantiate(m_waterSplashLargePrefab, Vector3.zero, Quaternion.identity);
+		m_waterTrail = (GameObject)Object.Instantiate(m_waterTrailPrefab, Vector3.zero, Quaternion.identity);
 		m_waterTrail.SetActive(false);
 	}
 	
@@ -46,37 +49,38 @@ public class WaterController : MonoBehaviour {
 		}
 
 		if (activeTrail && !m_waterTrail.activeInHierarchy) {
+
 			m_waterTrail.SetActive(true);
 			m_waterTrail.GetComponent<ParticleSystem>().Play();
 		} else if (!activeTrail && m_waterTrail.activeInHierarchy) {
+
 			m_waterTrail.SetActive(false);
 			m_waterTrail.GetComponent<ParticleSystem>().Stop();
 		}
 	}
 
 	void OnTriggerEnter (Collider _other) {
-		Vector3 pos = m_player.transform.position;
-		float waterY = transform.position.y;
-
-		if (Mathf.Abs(pos.y - waterY) < 50) {
-			pos.y = waterY;
-
-			Object.Instantiate(m_waterSplashJumpPregab, pos, Quaternion.identity);
-		}
+		CreateSplash();
 	}
 
 	void OnTriggerExit (Collider _other) {
-		Vector3 pos = m_player.transform.position;
-		float waterY = transform.position.y;
-		
-		if (Mathf.Abs(pos.y - waterY) < 50) {
-			pos.y = waterY;
-			
-			Object.Instantiate(m_waterSplashJumpPregab, pos, Quaternion.identity);
-		}
+		CreateSplash();
 	}
 
-	void CreateParticles (Vector3 _pos) {
+	void CreateSplash () {
+		float yVelocity = Mathf.Abs(m_player.rbody.velocity.y);
 
+		if (yVelocity > 100) {
+			Vector3 pos = m_player.transform.position;
+			float waterY = transform.position.y;
+			
+			if (Mathf.Abs(pos.y - waterY) < 50) {
+				pos.y = waterY;
+
+				if (yVelocity > 1000) 		Object.Instantiate(m_waterSplashLargePrefab,  pos, Quaternion.identity);
+				else if (yVelocity > 500) 	Object.Instantiate(m_waterSplashMediumPrefab, pos, Quaternion.identity);
+				else 						Object.Instantiate(m_waterSplashSmallPrefab,  pos, Quaternion.identity);
+			}
+		}
 	}
 }
