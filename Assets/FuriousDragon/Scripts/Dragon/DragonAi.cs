@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DragonAi : MonoBehaviour {
@@ -33,7 +33,7 @@ public class DragonAi : MonoBehaviour {
 	#region INTERNAL MEMBERS ---------------------------------------------------
 	// Game objects
 	DragonControl		controls;
-	DragonFireInterface fireBreath;
+	DragonBreathBehaviour fireBreath;
 	Rigidbody       	rbody;
 	Animator  			animator;
 	DragonOrientation   orientation;
@@ -65,7 +65,7 @@ public class DragonAi : MonoBehaviour {
 		
 		// Initialize some internal vars
 		controls = GetComponent<DragonControl>();
-		fireBreath = GetComponent<DragonFireInterface>();
+		fireBreath = GetComponent<DragonBreathBehaviour>();
 		rbody = GetComponent<Rigidbody>();
 		animator = transform.FindChild("view").GetComponent<Animator>();
 		orientation = GetComponent<DragonOrientation>();

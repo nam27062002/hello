@@ -2532,7 +2532,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159196}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fb69b72f043840a7983e50675c4b63c, type: 3}
   m_Name: 
@@ -2540,8 +2540,8 @@ MonoBehaviour:
   m_type: 0
   m_level: 0
   m_eatSpeed: 10
-  m_speed: 100
-  m_boostMultiplier: 2.5
+  m_speed: 400
+  m_boostMultiplier: 1.70000005
   m_maxLife: 100
   m_maxEnergy: 50
 --- !u!114 &11437562
@@ -2550,12 +2550,12 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159196}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2a2e8769664845b3bb5e24fbeb63523, type: 3}
+  m_Script: {fileID: 11500000, guid: edc67609b2d3b4d1a80b3d911f145143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eatRange: 0
+  m_eatRange: 80
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2578,20 +2578,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc55bb9f3dab45f69260a937e250b5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragonType: 0
-  dragonSpeed: 400
   speedDirectionMultiplier: 2
-  boostMultiplier: 1.70000005
-  eatRange: 100
   movementLimitX:
     min: -27700
     max: 51000
   grabTime: 2
   chargeDamage: 25
-  maxLife: 100
   lifeDrainPerSecond: 7
   lifeWarningThreshold: .349999994
-  maxEnergy: 50
   energyDrainPerSecond: 30
   energyRefillPerSecond: 16
   energyMinRequired: 10
@@ -2906,7 +2900,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_speed
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_boostMultiplier
+      value: 1.70000005
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatRange
+      value: 80
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

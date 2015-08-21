@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class FireLightning : DragonFireInterface {
+public class FireLightning : DragonBreathBehaviour {
 
 	public float firePower = 1f;
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class FireBreath : DragonFireInterface {
+public class FireBreath : DragonBreathBehaviour {
 
 
 	public float fireRate = 10f; // Fire particles per second
@@ -18,7 +18,7 @@ public class FireBreath : DragonFireInterface {
 	Transform mouthPosition;
 	Transform headPosition;
 
-	void Start () {
+	override protected void ExtendedStart() {
 
 		Transform instances = GameObject.Find ("Instances").transform;
 

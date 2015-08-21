@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class FireRay : DragonFireInterface {
+public class FireRay : DragonBreathBehaviour {
 
 	public float firePower = 1f; // Damage per impact
 	float timer;

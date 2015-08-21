@@ -123,8 +123,8 @@ public class MainHUDController : MonoBehaviour {
 			mPlayer = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 
 		// Set max values
-		lifeBar.maxValue = mPlayer.maxLife;
-		energyBar.maxValue = mPlayer.maxEnergy;
+		lifeBar.maxValue = mPlayer.GetComponent<DragonStats>().maxLife;
+		energyBar.maxValue = mPlayer.GetComponent<DragonStats>().maxEnergy;
 		furyBar.maxValue = App.Instance.gameLogic.FURY_RUSH_THRESHOLD;
 		
 		// Init score and coins

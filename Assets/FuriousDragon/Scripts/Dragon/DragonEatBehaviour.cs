@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DragonEat : MonoBehaviour {
+public class DragonEatBehaviour : MonoBehaviour {
 
 	[SerializeField] private float m_eatRange;
 
@@ -19,7 +19,7 @@ public class DragonEat : MonoBehaviour {
 		m_eatRangeSqr = m_eatRange * m_eatRange;
 
 		m_mouth = transform.FindSubObjectTransform("eat");
-		m_animator = GetComponent<Animator>();
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_dragon = GetComponent<DragonStats>();
 	}
 
@@ -72,6 +72,8 @@ public class DragonEat : MonoBehaviour {
 					
 					m_animator.SetBool("big_prey", edible.bigPrey);
 					m_animator.SetBool("bite", true);
+
+					m_eatingTimer = 0.5f;
 				}
 			}
 		}
