@@ -13,10 +13,12 @@ public class PoolController : MonoBehaviour {
 
 		private List<GameObject> m_instances;
 
+		private int m_growth;
+
 		//-----------------------------------------------
 		// Methods
 		//-----------------------------------------------
-		public Pool(GameObject _prefab, Transform _parent) {
+		public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow) {
 			m_prefab = _prefab;
 
 			gameObject = new GameObject();
@@ -24,24 +26,46 @@ public class PoolController : MonoBehaviour {
 			gameObject.transform.parent = _parent;
 
 			m_instances = new List<GameObject>();
+
+			Instantiate(_initSize);
+
+			if (_canGrow) {
+				m_growth = _initSize;
+			} else {
+				m_growth = 0;
+			}
 		}
 
 		public GameObject Get() {			
-			for (int i = 0; i < m_instances.Count; i++) {
+			int i = 0; 
+			for (i = 0; i < m_instances.Count; i++) {
 				if (!m_instances[i].activeInHierarchy) {
 					m_instances[i].SetActive(true);
 					return m_instances[i];
 				}
 			}
 
-			GameObject inst = (GameObject)Object.Instantiate(m_prefab);					
-			inst.name = m_prefab.name;
-			inst.transform.parent = gameObject.transform;
-			inst.SetActive(true);
+			if (m_growth > 0) {
+				Instantiate(m_growth);
+				m_growth = Mathf.Max(1, m_growth / 2);
+				
+				m_instances[i].SetActive(true);
+				return m_instances[i];
+			}
 
-			m_instances.Add(inst);
+			return null;
+		}
 
-			return m_instances[m_instances.Count - 1];
+		private void Instantiate(int _count) {
+
+			for (int i = 0; i < _count; i++) {
+				GameObject inst = (GameObject)Object.Instantiate(m_prefab);					
+				inst.name = m_prefab.name;
+				inst.transform.parent = gameObject.transform;
+				inst.SetActive(false);
+				
+				m_instances.Add(inst);
+			}
 		}
 	};
 
@@ -56,9 +80,9 @@ public class PoolController : MonoBehaviour {
 		}
 	}
 
-	public void CreatePool(GameObject _gameObject) {
+	public void CreatePool(GameObject _gameObject, int _initSize = 10, bool _canGrow = true) {
 		if (!m_pools.ContainsKey(_gameObject.name)) {
-			Pool pool = new Pool(_gameObject, transform);
+			Pool pool = new Pool(_gameObject, transform, _initSize, _canGrow);
 			m_pools.Add(_gameObject.name, pool);
 		}
 	}

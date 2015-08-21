@@ -37,7 +37,7 @@ public class ThunderStorm : MonoBehaviour {
 
 		private List<ThunderBranch> m_branches;
 
-		private float m_segmentDivisions = 5f;
+		private int m_segmentDivisions = 5;
 		private float m_pathOffsetFactor = 0.3f;
 		private float m_width = 20f;
 
@@ -58,7 +58,7 @@ public class ThunderStorm : MonoBehaviour {
 			
 			//add a thunder branch into Pool Controller
 			m_poolController = GameObject.Find ("Pool Controller").GetComponent<PoolController>();		
-			m_poolController.CreatePool((GameObject)Resources.Load("Proto/WeatherEffects/ThunderStorm/ThunderBranch"));
+			m_poolController.CreatePool((GameObject)Resources.Load("Proto/WeatherEffects/ThunderStorm/ThunderBranch"), (m_segmentDivisions - 1) * (m_segmentDivisions - 1), false);
 		}
 		
 		public void Destroy () {
@@ -101,7 +101,7 @@ public class ThunderStorm : MonoBehaviour {
 					for (int s = 0; s < segmentCount; s++) {
 
 						Segment currentSegment = currentBranch.segments[0];
-						Vector3 pointC = ((currentSegment.pointA + currentSegment.pointB) * 0.5f) + new Vector3(Random.Range(-maxOffsetValue, maxOffsetValue), Random.Range(-maxOffsetValue, maxOffsetValue), 0);
+						Vector3 pointC = ((currentSegment.pointA + currentSegment.pointB) * 0.5f) + new Vector3(Random.Range(-maxOffsetValue, maxOffsetValue), Random.Range(-maxOffsetValue, 0), 0);
 
 						currentBranch.segments.RemoveAt(0);
 						currentBranch.segments.Add(new Segment(currentSegment.pointA, pointC));
@@ -111,17 +111,19 @@ public class ThunderStorm : MonoBehaviour {
 						if (d < m_segmentDivisions - 1 && m_branches.Count < maxBranches) {
 
 							if (Random.Range(0f, 1f) < m_branchingProbability) {
+								GameObject branchGO = m_poolController.GetInstance("ThunderBranch");; // get from pool
+								if (branchGO != null) {
+									Vector3 dir = pointC - currentSegment.pointA;
+									float maxBranchDirOffset = dir.magnitude * m_branchOffsetFactor;
 
-								Vector3 dir = pointC - currentSegment.pointA;
-								float maxBranchDirOffset = dir.magnitude * m_branchOffsetFactor;
+									dir += new Vector3(Random.Range(-maxBranchDirOffset, maxBranchDirOffset), Random.Range(-maxBranchDirOffset, 0), 0);
+									Vector3 pointD = pointC + dir * m_branchLengthFactor;
 
-								dir += new Vector3(Random.Range(-maxBranchDirOffset, maxBranchDirOffset), Random.Range(-maxBranchDirOffset, 0), 0);
-								Vector3 pointD = pointC + dir * m_branchLengthFactor;
-
-								ThunderBranch branch = new ThunderBranch(d);
-								branch.gameObject = m_poolController.GetInstance("ThunderBranch");; // get from pool
-								branch.segments.Add(new Segment(pointC, pointD));
-								m_branches.Add(branch);	
+									ThunderBranch branch = new ThunderBranch(d);
+									branch.gameObject = branchGO;
+									branch.segments.Add(new Segment(pointC, pointD));
+									m_branches.Add(branch);	
+								}
 							}
 						}
 					}

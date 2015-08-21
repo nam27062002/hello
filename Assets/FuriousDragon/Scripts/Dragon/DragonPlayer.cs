@@ -34,8 +34,8 @@ public class DragonPlayer : MonoBehaviour {
 	public float speedDirectionMultiplier = 2f;
 	public float boostMultiplier = 2.5f;
 	public float eatRange = 80f;
-	public Range movementLimitX = new Range(-10000, 10000);
-	public float grabTime = 3f;
+	public Range movementLimitX = new Range(-10000, 50000);
+	public float grabTime = 5f;
 	public float chargeDamage = 50f;
 
 	[Header("Life")]
@@ -109,7 +109,8 @@ public class DragonPlayer : MonoBehaviour {
 	float   glideTimer = 0f;
 	float   sqrEatRange;
 	GrabableBehaviour grab = null;
-	float 	grabTimer = 0f;
+	float 	grabReleaseTimer = 0f;
+	float	grabTimer = 0f; //wait a few seconds before trying to grab again
 
 	#endregion
 
@@ -241,10 +242,13 @@ public class DragonPlayer : MonoBehaviour {
 		animator.SetBool("bite", mState == EState.EATING);
 		animator.SetBool ("fire", allowFire);
 
+		grabTimer -= Time.deltaTime;
+		if (grabTimer < 0) {
+			grabTimer = 0;
+		}
+
 		if (grab != null)
 			UpdateGrab ();
-
-
 	}
 	
 	void FixedUpdate(){
@@ -300,8 +304,8 @@ public class DragonPlayer : MonoBehaviour {
 			pos.x = movementLimitX.min;
 		}else if (pos.x > movementLimitX.max){
 			pos.x = movementLimitX.max;
-		}else if (pos.y > 5000f){
-			pos.y = 5000f;
+		}else if (pos.y > 15000f){
+			pos.y = 15000f;
 		}
 		transform.position = pos;
 	}
@@ -383,7 +387,7 @@ public class DragonPlayer : MonoBehaviour {
 		bool plummeting = (dir.y < -0.75f && rbody.velocity.y < -dragonSpeed*0.85f) || (_fSpeedMultiplier == boostMultiplier  && rbody.velocity.magnitude > dragonSpeed*0.85f);
 		plummeting = plummeting && grab == null;
 
-		bool flyUp = !plummeting && dir.y > 0.75f &&  _fSpeedMultiplier == 1f;
+		bool flyUp = !plummeting && dir.y > 0.75f &&  _fSpeedMultiplier == 1f && grab == null;
 
 		if(!impulse.Equals(Vector3.zero)) {
 
@@ -506,20 +510,26 @@ public class DragonPlayer : MonoBehaviour {
 
 		// if not try to detect fly height
 		float flyHeight = 1000f;
+		float minHeight = 400f;
+		float maxHeight = 1500f / (grab.weight * 0.125f);
+		float customGrabTime = Mathf.Min (1, grabTime / (grab.weight * 0.5f));
+
 		RaycastHit ground;
 		if (Physics.Linecast( transform.position, transform.position + Vector3.down * 10000f, out ground, 1 << LayerMask.NameToLayer("Ground"))){
 			flyHeight =  transform.position.y - ground.point.y;
-			if (flyHeight > 1000f || (flyHeight > 400f &&  speedMulti != 1f)){
+			if (flyHeight > maxHeight || (flyHeight > minHeight &&  speedMulti != 1f)){
 				grab.Release(impulse);
 				grab = null;
+				grabTimer = 1f;
 			}
 		}
 
 		//try and release by time
-		grabTimer += Time.deltaTime;
-		if (grabTimer > grabTime && flyHeight > 400){
+		grabReleaseTimer += Time.deltaTime;
+		if (grabReleaseTimer > customGrabTime){
 			grab.Release(impulse);
 			grab = null;
+			grabTimer = 1f;
 			return;
 		}
 
@@ -710,23 +720,32 @@ public class DragonPlayer : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision) {
 
-		HittableBehaviour hit = collision.gameObject.GetComponent<HittableBehaviour>();
-		if (hit != null){
-			float finalDamage = (chargeDamage*rbody.velocity.magnitude)/(dragonSpeed*boostMultiplier);
-			if (hit.OnHit(finalDamage)){
+		float hitAngle = Vector3.Angle(rbody.velocity, Vector3.right);
+
+		if (hitAngle >= 45f) {
+			HittableBehaviour hit = collision.gameObject.GetComponent<HittableBehaviour>();
+			if (hit != null){
+				float finalDamage = (chargeDamage*rbody.velocity.magnitude)/(dragonSpeed*boostMultiplier);
+				hit.OnHit(finalDamage);
+
 				//ContactPoint contact =  collision.contacts[0];
 				//Vector3 reflection = Vector3.Reflect(dir,contact.normal).normalized;
-				rbody.AddForce(-dir*(finalDamage/chargeDamage)*100000f);
+				//rbody.AddForce(reflection*12500f);
+				//orientation.SetDirection(rbody.velocity);
+
+				Stop();
+
+				grabTimer = 1f;
 			}
 		}
 	}
 
 	public void Grab(GrabableBehaviour other){
-
-		if ((mState == EState.IDLE || mState == EState.EATING) && grab == null){
+		return;
+		if (grabTimer <= 0 && (mState == EState.IDLE || mState == EState.EATING) && grab == null){
 			grab = other;
 			grab.Grab ();
-			grabTimer = 0f;
+			grabReleaseTimer = 0f;
 		}
 	}
 
