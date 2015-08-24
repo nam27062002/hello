@@ -26,12 +26,17 @@ public class DragonStats : MonoBehaviour {
 	[SerializeField] private float m_maxEnergy = 50f;
 	public float maxEnergy { get { return m_maxEnergy; } }
 
+	[SerializeField] private float m_maxFury = 160f;
+	public float maxFury { get { return m_maxFury; } }
+
 	private float m_life;
 	public float life { get { return m_life; } }
 
 	private float m_energy;
 	public float energy { get { return m_energy; } }
-
+	
+	private float m_fury;
+	public float fury { get { return m_fury; } }
 	
 	//-----------------------------------------------
 	// Methods
@@ -39,6 +44,7 @@ public class DragonStats : MonoBehaviour {
 	void Start () {
 		m_life = m_maxLife;
 		m_energy = m_maxEnergy;
+		m_fury = 0;
 	}
 
 	public void AddLife(float _offset) {
@@ -48,7 +54,10 @@ public class DragonStats : MonoBehaviour {
 	public void AddEnergy(float _offset) {
 		m_energy = Mathf.Min(m_maxEnergy, Mathf.Max(0, m_energy + _offset)); 
 	}
-
+		
+	public void AddFury(float _offset) {
+		m_fury = Mathf.Min(m_maxFury, Mathf.Max(0, m_fury + _offset)); 
+	}
 
 	private void SetupFromLevel() {
 		// add formulas and stuff to calculate values

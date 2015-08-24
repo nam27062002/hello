@@ -37,17 +37,6 @@ public class GameLogic : MonoBehaviour {
 	#endregion
 
 	#region EXPOSED CONFIGURATION --------------------------------------------------------------------------------------
-	// [AOC] We want these to be consulted but never set from outside (except the inspector), so don't add a setter
-	[SerializeField] private float _FURY_RUSH_THRESHOLD = 150;	// When to trigger the fury rush! Scale equivalent to score
-	public float FURY_RUSH_THRESHOLD {
-		get { return _FURY_RUSH_THRESHOLD; }
-	}
-
-	[SerializeField] private float _FURY_RUSH_DURATION = 15;	// Seconds
-	public float FURY_RUSH_DURATION {
-		get { return _FURY_RUSH_DURATION; }
-	}
-
 	[SerializeField] private float _SCORE_MULTIPLIER_DURATION = 15;	// Time before ending the current killing streak, seconds
 	public float SCORE_MULTIPLIER_DURATION {
 		get { return _SCORE_MULTIPLIER_DURATION; }
@@ -68,12 +57,6 @@ public class GameLogic : MonoBehaviour {
 	private int mScoreMultiplierIdx;
 	public float scoreMultiplier {
 		get { return SCORE_MULTIPLIERS[mScoreMultiplierIdx].multiplier; }
-	}
-	
-	// Fury/Gold Rush/Rage
-	private float mFury;
-	public float fury {
-		get { return mFury; }
 	}
 
 	// Time
@@ -96,7 +79,6 @@ public class GameLogic : MonoBehaviour {
 	#endregion
 
 	#region INTERNAL MEMBERS -------------------------------------------------------------------------------------------
-	float mFuryRushTimer = -1;	// Timer of the fury rush
 	float mTimer = -1;	// Misc use
 	float mScoreMultiplierTimer = -1;	// Time to end the current killing streak
 	int mScoreMultiplierStreak = 0;		// Amount of consecutive eaten/burnt entities without taking damage
@@ -146,25 +128,6 @@ public class GameLogic : MonoBehaviour {
 				// Update time
 				mElapsedSeconds += Time.deltaTime;
 
-				// Update fury rush
-				if(mFuryRushTimer > 0) {
-					// Update fury amount (decrease the same proportion as elapsed time)
-					float fDelta = Time.deltaTime/FURY_RUSH_DURATION;
-					AddFury(-(fDelta * FURY_RUSH_THRESHOLD));
-
-					// Update timer
-					mFuryRushTimer -= Time.deltaTime;
-					if(mFuryRushTimer <= 0) {
-						// Fury rush has ended!!
-						// Reset fury
-						// [AOC] TODO!! HSE Starts with the fury meter filled to some percentage based on shark type (and maybe some other params)
-						mFury = 0;
-
-						// Dispatch game event
-						Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
-					}
-				}
-
 				// Update score multiplier
 				if(mScoreMultiplierTimer > 0) {
 					// Update timer
@@ -198,10 +161,6 @@ public class GameLogic : MonoBehaviour {
 		// Reset timer
 		mElapsedSeconds = 0;
 
-		// Reset fury meter
-		mFury = 0;
-		mFuryRushTimer = -1;
-
 		// Reset score
 		mScore = 0;
 		SetScoreMultiplier(0);
@@ -222,12 +181,6 @@ public class GameLogic : MonoBehaviour {
 	public void EndGame() {
 		// Change state
 		ChangeState(EStates.FINISHED);
-
-		// Stop fury rush (if active)
-		if(mFuryRushTimer > 0) {
-			mFuryRushTimer = -1;
-			Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
-		}
 
 		// Update global stats
 		// [AOC] TODO!!
@@ -274,65 +227,6 @@ public class GameLogic : MonoBehaviour {
 		mScore += _iAmount;
 		Messenger.Broadcast<long, long>(GameEvents.SCORE_CHANGED, mScore - _iAmount, mScore);
 		Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_SCORE, _iAmount, _entity);
-
-		// If the score comes from an entity, add fury as well!
-		if(_entity != null) {
-			AddFury(_entity.GetFuryReward());
-		}
-	}
-
-	/// <summary>
-	/// Add fury to the meter. Wont do anything during fury rush.
-	/// </summary>
-	/// <param name="_fAmount">Amount to add. Negative to subtract.</param>
-	private void AddFury(float _fAmount) {
-		// Don't add fury during fury rush
-		if(mFuryRushTimer > 0 && _fAmount >= 0) return;
-
-		// Compute new value and dispatch event
-		mFury += _fAmount;
-		Messenger.Broadcast<float, float>(GameEvents.FURY_CHANGED, mFury - _fAmount, mFury);
-
-		// If we've reached the threshold, start fury rush!!
-		if(mFury >= FURY_RUSH_THRESHOLD) {
-			// Cap to avoid triggering twice
-			mFury = FURY_RUSH_THRESHOLD;
-
-			// Start timer and dispatch game event
-			mFuryRushTimer = FURY_RUSH_DURATION;
-			Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
-		}
-	}
-
-	/// <summary>
-	/// Whether the fury rush is active at this moment.
-	/// </summary>
-	/// <returns><c>true</c> if this fury rush is active; otherwise, <c>false</c>.</returns>
-	public bool IsFuryRushActive() {
-		return (mFuryRushTimer > 0);
-	}
-
-	/// <summary>
-	/// Forces the fury rush. For debug purposes only.
-	/// </summary>
-	/// <param name="_bActive">Whether to activate or de-activate fury rush.</param>
-	public void ForceFuryRush(bool _bActive) {
-		bool bWasActive = IsFuryRushActive();
-		if(_bActive) {
-			mFury = FURY_RUSH_THRESHOLD;
-			mFuryRushTimer = FURY_RUSH_DURATION;
-			if(!bWasActive) {
-				// Dispatch game event
-				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
-			}
-		} else {
-			mFury = 0;
-			mFuryRushTimer = 0;
-			if(bWasActive) {
-				// Dispatch game event
-				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
-			}
-		}
 	}
 	#endregion
 

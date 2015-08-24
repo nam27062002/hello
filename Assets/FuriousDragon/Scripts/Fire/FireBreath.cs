@@ -8,7 +8,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	public float fireRate = 10f; // Fire particles per second
 	public float firePower = 1f;
-	float timer;
+	//float timer;
 
     const int maxFireParticles = 256;
 	GameObject[] fire = new GameObject[maxFireParticles];
@@ -34,16 +34,16 @@ public class FireBreath : DragonBreathBehaviour {
 			fire[i] = fireObj;
 		}
 
-		timer = 0f;
+		//timer = 0f;
 
 		mouthPosition = transform.FindSubObjectTransform("eat");
 		headPosition = transform.FindSubObjectTransform("head");
 
 	}
-	
+	/*
 	void Update () {
 		timer -= Time.deltaTime;
-	}
+	}*/
 
 	override public void Fire(Vector3 direction){
 
@@ -59,7 +59,7 @@ public class FireBreath : DragonBreathBehaviour {
 					fireObj.GetComponent<FlameParticle>().Activate(mouthPosition.position+dir.normalized*(i*1100f*Time.deltaTime),dir, collisionDepth, firePower);
 					// We inlcude some of the dragon momentum in the particles initial speed
 					// also, for eahc frame we fire two particles so we need to space them properly
-					timer = 1f/fireRate;
+					//timer = 1f/fireRate;
 					break;
 				}
 			}

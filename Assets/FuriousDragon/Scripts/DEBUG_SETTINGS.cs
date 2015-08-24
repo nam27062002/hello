@@ -39,6 +39,7 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 
 	#region INTERNAL VARS ----------------------------------------------------------------------------------------------
 	DragonPlayer mPlayer = null;
+	DragonStats mPlayerStats = null;
 	#endregion
 
 	#region PUBLIC METHODS ---------------------------------------------------------------------------------------------
@@ -54,7 +55,8 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 
 		if (mPlayer == null){
 			mPlayer = GameObject.Find("Player").GetComponent<DragonPlayer>();
-		
+			mPlayerStats = mPlayer.GetComponent<DragonStats>();
+
 			// Backup modifiable values
 			mOriginalEnergyDrain = mPlayer.energyDrainPerSecond;
 		}
@@ -77,9 +79,8 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 		// Infinite fire
 		if(mInfiniteFire != infiniteFire) {
 			mInfiniteFire = infiniteFire;
-			App.Instance.gameLogic.ForceFuryRush(mInfiniteFire);
 		} else if(mInfiniteFire) {	// Prevent fire to turn off
-			App.Instance.gameLogic.ForceFuryRush(true);
+			mPlayerStats.AddFury(mPlayerStats.maxFury);
 		}
 	}
 

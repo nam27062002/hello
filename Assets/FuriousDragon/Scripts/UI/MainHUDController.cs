@@ -38,7 +38,7 @@ public class MainHUDController : MonoBehaviour {
 	#region INTERNAL MEMBERS -------------------------------------------------------------------------------------------
 	private long mLastDisplayedTime = -1;
 	private Animator mAnimator = null;
-	private DragonPlayer mPlayer;
+	private DragonStats mPlayerStats;
 	#endregion
 	
 	#region GENERIC METHODS --------------------------------------------------------------------------------------------
@@ -75,17 +75,18 @@ public class MainHUDController : MonoBehaviour {
 	/// </summary>
 	void Update() {
 
-		if (mPlayer == null)
-			mPlayer = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		if (mPlayerStats == null) {
+			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonStats>();
+		}
 
 		// Update life bar
-		lifeBar.value = mPlayer.life;
+		lifeBar.value = mPlayerStats.life;
 
 		// Update energy bar
-		energyBar.value = mPlayer.energy;
+		energyBar.value = mPlayerStats.energy;
 
 		// Update fury bar
-		furyBar.value = App.Instance.gameLogic.fury;
+		furyBar.value = mPlayerStats.fury;
 
 		// Update time - only if changed by more than 1 second
 		long currentTime = (long)App.Instance.gameLogic.elapsedSeconds;
@@ -119,13 +120,13 @@ public class MainHUDController : MonoBehaviour {
 	/// </summary>
 	private void OnGameStarted() {
 
-		if (mPlayer == null)
-			mPlayer = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		if (mPlayerStats == null)
+			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonStats>();
 
 		// Set max values
-		lifeBar.maxValue = mPlayer.GetComponent<DragonStats>().maxLife;
-		energyBar.maxValue = mPlayer.GetComponent<DragonStats>().maxEnergy;
-		furyBar.maxValue = App.Instance.gameLogic.FURY_RUSH_THRESHOLD;
+		lifeBar.maxValue = mPlayerStats.maxLife;
+		energyBar.maxValue = mPlayerStats.maxEnergy;
+		furyBar.maxValue = mPlayerStats.maxFury;
 		
 		// Init score and coins
 		OnScoreChanged(0, App.Instance.gameLogic.score);

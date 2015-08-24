@@ -2544,6 +2544,7 @@ MonoBehaviour:
   m_boostMultiplier: 1.70000005
   m_maxLife: 100
   m_maxEnergy: 50
+  m_maxFury: 160
 --- !u!114 &11437562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2591,7 +2592,6 @@ MonoBehaviour:
   energyMinRequired: 10
   bodyMesh: {fileID: 13772804}
   wingsMesh: {fileID: 13730530}
-  energy: 0
   rbody: {fileID: 0}
   invulnerable: 0
 --- !u!114 &11491186
@@ -2605,6 +2605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_furyDuration: 15
   fireRate: 30
   firePower: 10
   collisionDepth: 1000
@@ -2913,6 +2914,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_eatRange
       value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxFury
+      value: 160
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

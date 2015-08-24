@@ -48,21 +48,20 @@ public class DragonPlayer : MonoBehaviour {
 	#endregion
 
 	#region PUBLIC MEMBERS -----------------------------------------------------
-	[HideInInspector] public float energy;
 	[HideInInspector] public Rigidbody rbody;
 	[HideInInspector] public int dragonType { get { return stats.type; } }
-	[HideInInspector] public float life { get { return stats.life; } }
 	[HideInInspector] public bool invulnerable = false;	// Debug purposes
 	#endregion
 
 	#region INTERNAL MEMBERS ---------------------------------------------------
 	// Game objects
-	DragonControl		controls;
-	DragonBreathBehaviour fireBreath;
-	Animator  			animator;
-	DragonOrientation   orientation;
-	DragonEatBehaviour	eatBehaviour;
-	DragonStats			stats;
+	DragonControl			controls;
+	DragonBreathBehaviour 	fireBreath;
+	Animator  				animator;
+	DragonOrientation   	orientation;
+	DragonEatBehaviour		eatBehaviour;
+	DragonBreathBehaviour 	m_breathBehaviour;
+	DragonStats				stats;
 
 	// Control vars
 	EState mState = EState.INIT;
@@ -75,7 +74,7 @@ public class DragonPlayer : MonoBehaviour {
 	Vector3 impulse;
 	Vector3 dir = Vector3.right;
 	Vector3 pos;
-	bool    allowFire = true;
+
 	bool 	allowBoost = true;
 	bool	allowMovement = true;
 	bool 	inWater = false;
@@ -109,6 +108,7 @@ public class DragonPlayer : MonoBehaviour {
 
 
 		eatBehaviour = GetComponent<DragonEatBehaviour>();
+		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 		stats = GetComponent<DragonStats>();
 
 
@@ -129,15 +129,10 @@ public class DragonPlayer : MonoBehaviour {
 		// Go to IDLE state
 		ChangeState(EState.IDLE);
 
-		allowFire = false;
-
-		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-
 	}
 
 	void OnDestroy(){
 
-		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 	
 	/// <summary>
@@ -168,7 +163,7 @@ public class DragonPlayer : MonoBehaviour {
 				allowMovement = true;
 			
 				// Should we be firing?
-				UpdateFire(Input.GetKey(KeyCode.X) || controls.action);
+				UpdateBoost(Input.GetKey(KeyCode.X) || controls.action);
 				
 				// Update life (unless invulnerable)
 				if(stats.life > 0f && !IsInvulnerable()) {
@@ -181,11 +176,10 @@ public class DragonPlayer : MonoBehaviour {
 				}
 
 				if (eatBehaviour.IsEating()) {
-					allowMovement = true;
-					
-					UpdateFire(false);
-					
+					allowMovement = true;					
 					speedMulti = 0.3f;
+				} else if (m_breathBehaviour.IsFuryOn()) {
+					speedMulti = Mathf.Max ( speedMulti, 1.45f);
 				}
 
 			} break;
@@ -220,9 +214,6 @@ public class DragonPlayer : MonoBehaviour {
 				
 			} break;
 		}
-
-		// Update animations
-		animator.SetBool ("fire", allowFire);
 
 		grabTimer -= Time.deltaTime;
 		if (grabTimer < 0) {
@@ -313,9 +304,7 @@ public class DragonPlayer : MonoBehaviour {
 
 			case EState.DYING: {
 				eatBehaviour.enabled = false;
-
-				// Stop any active fire breath and starving status
-				UpdateFire(false);
+				m_breathBehaviour.enabled = false;
 				
 				// Stop starving feedback as well
 				ToggleStarving(false);
@@ -434,44 +423,20 @@ public class DragonPlayer : MonoBehaviour {
 		animator.SetFloat ("glide_time",glideTimer);
 	}
 
-	/// <summary>
-	/// Enable/disable firebreath.
-	/// </summary>
-	/// <param name="_bActivate">Whether to activate or deactivate the dragon's firebreath.</param>
-	void UpdateFire(bool _bActivate) {
-
-		UpdateBoost (_bActivate);
-
-		
-		if (allowFire){
-
-			
-			if (impulse.magnitude > 0)
-				fireBreath.Fire(impulse);
-			else
-				fireBreath.Fire(dir);
-			
-			speedMulti = Mathf.Max ( speedMulti, 1.45f);
-			
-		}
-	}
-
-	
 	void UpdateBoost(bool activate){
 		
 		if (activate && allowBoost){
-			
-			energy -= Time.deltaTime*energyDrainPerSecond;
+
+			stats.AddEnergy(-Time.deltaTime*energyDrainPerSecond);
 			
 			speedMulti=stats.boostMultiplier;
 			
-			if (energy < 0f){
-				energy = 0f;
+			if (stats.energy <= 0f) {
 				allowBoost = false;
 			}
 		}else{
 			
-			if (energy > 0f && !activate)
+			if (stats.energy > 0f && !activate)
 				allowBoost = true;
 
 			if (!activate){
@@ -588,6 +553,7 @@ public class DragonPlayer : MonoBehaviour {
 		return IsAlive() && (stats.life > stats.maxLife * lifeWarningThreshold);
 	}
 
+	/*
 	/// <summary>
 	/// Whether the dragon is firing or not.
 	/// </summary>
@@ -595,6 +561,7 @@ public class DragonPlayer : MonoBehaviour {
 	public bool IsFiring() {
 		return allowFire;	// [AOC] This may only be ok in Frenzy mode
 	}
+	*/
 
 	/// <summary>
 	/// Whether the dragon can take damage or not.
@@ -602,7 +569,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns><c>true</c> if the dragon currently is invulnerable; otherwise, <c>false</c>.</returns>
 	public bool IsInvulnerable() {
 		// During fire, we're invulnerable
-		if(IsFiring()) return true;
+		if(m_breathBehaviour.IsFuryOn()) return true;
 
 		// If cheat is enable
 		if(invulnerable) return true;
@@ -687,15 +654,6 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Triggered whenever the fury rush is toggled.
-	/// </summary>
-	/// <param name="_bActivated">Whether the fury rush started or ended.</param>
-	public void OnFuryToggled(bool _bActivated) {
-		// Allow fire
-		allowFire = _bActivated;
-
-	}
 
 	/// <summary>
 	/// 

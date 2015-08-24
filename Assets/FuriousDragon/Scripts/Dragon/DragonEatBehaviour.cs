@@ -23,6 +23,12 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_dragon = GetComponent<DragonStats>();
 	}
 
+	void OnDisable() {
+		
+		m_animator.SetBool("big_prey", false);
+		m_animator.SetBool("bite", false);
+	}
+
 	public bool IsEating() {
 
 		return m_eatingTimer > 0;
@@ -68,6 +74,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 					GameEntity entity = edible.GetComponent<GameEntity>();
 					if(entity != null) {
 						m_dragon.AddLife(entity.rewardHealth);
+						m_dragon.AddFury(entity.GetFuryReward());
 					}
 					
 					m_animator.SetBool("big_prey", edible.bigPrey);
