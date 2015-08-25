@@ -2,12 +2,6 @@
 using System.Collections;
 
 public class DragonBreathBehaviour : MonoBehaviour {
-	//-----------------------------------------------
-	// Properties
-	//-----------------------------------------------
-	[SerializeField] private float m_furyDuration = 15f; //seconds
-	public float furyDuration { get { return m_furyDuration; } }
-
 
 	//-----------------------------------------------
 	// Attributes
@@ -48,7 +42,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		if (m_isFuryOn) {
 
-			float dt = Time.deltaTime / m_furyDuration;
+			float dt = Time.deltaTime / m_dragon.furyDuration;
 			m_dragon.AddFury(-(dt * m_dragon.maxFury));
 
 			if (m_dragon.fury <= 0) {

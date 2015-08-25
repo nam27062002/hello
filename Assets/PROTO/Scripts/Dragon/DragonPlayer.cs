@@ -32,16 +32,7 @@ public class DragonPlayer : MonoBehaviour {
 	public Range movementLimitX = new Range(-10000, 50000);
 	public float grabTime = 5f;
 	public float chargeDamage = 50f;
-
-	[Header("Life")]
-	public float lifeDrainPerSecond = 10f;
-	public float lifeWarningThreshold = 0.2f;	// Percentage of maxLife
-
-	[Header("Energy")]
-	public float energyDrainPerSecond = 10f;
-	public float energyRefillPerSecond = 25f;
-	public float energyMinRequired = 25f;
-
+	
 	[Header("Components")]
 	public SkinnedMeshRenderer bodyMesh;
 	public SkinnedMeshRenderer wingsMesh;
@@ -141,7 +132,7 @@ public class DragonPlayer : MonoBehaviour {
 	void Update() {
 
 		// Check warning threshold
-		float fThresholdValue = stats.maxLife * lifeWarningThreshold;
+		float fThresholdValue = stats.maxLife * stats.lifeWarningThreshold;
 		if(stats.life <= fThresholdValue && !isStarving) {
 			// [AOC] Start warning threshold
 			ToggleStarving(true);
@@ -167,7 +158,7 @@ public class DragonPlayer : MonoBehaviour {
 				
 				// Update life (unless invulnerable)
 				if(stats.life > 0f && !IsInvulnerable()) {
-					stats.AddLife(-Time.deltaTime * lifeDrainPerSecond);
+					stats.AddLife(-Time.deltaTime * stats.lifeDrainPerSecond);
 
 					// Have we died?
 					if(stats.life <= 0) {
@@ -426,7 +417,7 @@ public class DragonPlayer : MonoBehaviour {
 		
 		if (activate && allowBoost){
 
-			stats.AddEnergy(-Time.deltaTime*energyDrainPerSecond);
+			stats.AddEnergy(-Time.deltaTime*stats.energyDrainPerSecond);
 			
 			speedMulti=stats.boostMultiplier;
 			
@@ -439,7 +430,7 @@ public class DragonPlayer : MonoBehaviour {
 				allowBoost = true;
 
 			if (!activate){
-				stats.AddEnergy(Time.deltaTime*energyRefillPerSecond);
+				stats.AddEnergy(Time.deltaTime*stats.energyRefillPerSecond);
 			}
 		}
 	}
@@ -516,7 +507,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return IsAlive() && (stats.life > stats.maxLife * lifeWarningThreshold);
+		return IsAlive() && (stats.life > stats.maxLife * stats.lifeWarningThreshold);
 	}
 
 	/*

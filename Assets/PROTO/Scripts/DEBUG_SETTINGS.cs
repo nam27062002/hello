@@ -27,7 +27,6 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 	// Infinite dash
 	public bool infiniteDash = false;
 	private bool mInfiniteDash = false;
-	private float mOriginalEnergyDrain;
 
 	// Infinite fire
 	public bool infiniteFire = false;
@@ -56,9 +55,6 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 		if (mPlayer == null){
 			mPlayer = GameObject.Find("Player").GetComponent<DragonPlayer>();
 			mPlayerStats = mPlayer.GetComponent<DragonStats>();
-
-			// Backup modifiable values
-			mOriginalEnergyDrain = mPlayer.energyDrainPerSecond;
 		}
 
 		// Invulnerable
@@ -69,11 +65,8 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 		// Infinite Dash
 		if(mInfiniteDash != infiniteDash) {
 			mInfiniteDash = infiniteDash;
-			if(mInfiniteDash) {
-				mPlayer.energyDrainPerSecond = 0;
-			} else {
-				mPlayer.energyDrainPerSecond = mOriginalEnergyDrain;
-			}
+		} else if(mInfiniteDash) {
+			mPlayerStats.AddEnergy(mPlayerStats.maxEnergy);
 		}
 
 		// Infinite fire
