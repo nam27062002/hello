@@ -28,11 +28,9 @@ public class GameFlow : Singleton<GameFlow> {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 
-
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -40,22 +38,25 @@ public class GameFlow : Singleton<GameFlow> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
-
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
 	}
 	
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	void Update() {
-
+	override protected void Update() {
+		// Call parent
+		base.Update();
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
-
+	override protected void OnDestroy() {
+		// Call parent
+		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//

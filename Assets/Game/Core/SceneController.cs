@@ -1,7 +1,7 @@
-﻿// MenuSceneController.cs
+﻿// SceneController.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 21/08/2015.
+// Created by Alger Ortín Castellví on 25/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -13,22 +13,22 @@ using UnityEngine;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Main controller for the menu scene.
+/// Base class for all scene controllers.
+/// Each scene should have an object containing one of these, usually a custom
+/// implementation of this class.
 /// </summary>
-public class MenuSceneController : SceneController {
+public class SceneController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Menu";
-
-	//------------------------------------------------------------------//
-	// MEMBERS															//
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -36,40 +36,17 @@ public class MenuSceneController : SceneController {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	override protected void Awake() {
-		// Call parent
-		base.Awake();
-	}
-
-	/// <summary>
-	/// First update.
-	/// </summary>
-	void Start() {
-
-	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	void Update() {
-
+	protected virtual void Awake() {
+		// Register ourselves to the instance manager
+		InstanceManager.sceneController = this;
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	override protected void OnDestroy() {
-		// Call parent
-		base.OnDestroy();
-	}
-
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	public void OnPlayButton() {
-		// Go to game!
-		// [AOC] No need to block the button, the GameFlow already controls spamming
-		GameFlow.GoToGame();
+	protected virtual void OnDestroy() {
+		// Unregister ourselves from the instance manager
+		InstanceManager.sceneController = null;
 	}
 }
 

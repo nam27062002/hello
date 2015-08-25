@@ -95,6 +95,13 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
+	protected virtual void Awake() {
+		// Nothing to do
+	}
+
+	/// <summary>
+	/// First update.
+	/// </summary>
 	protected virtual void Start() {
 		// Nothing to do
 	}

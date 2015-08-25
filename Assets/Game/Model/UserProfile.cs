@@ -58,22 +58,17 @@ public class UserProfile : Singleton<UserProfile> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
-
-	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	void Update() {
-
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
-
+	override protected void OnDestroy() {
+		// Call parent
+		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//

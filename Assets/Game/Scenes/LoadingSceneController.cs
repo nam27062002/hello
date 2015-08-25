@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Main controller for the loading scene.
 /// </summary>
-public class LoadingSceneController : MonoBehaviour {
+public class LoadingSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -38,7 +38,11 @@ public class LoadingSceneController : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
+
+		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!");
 		DebugUtils.Assert(m_loadingBar != null, "Required component!");
 	}
@@ -73,8 +77,8 @@ public class LoadingSceneController : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
-
+	override protected void OnDestroy() {
+		base.OnDestroy();
 	}
 }
 

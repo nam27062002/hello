@@ -39,7 +39,10 @@ public class PopupManager : Singleton<PopupManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
+
 		// Create and initialize canvas
 		if(canvas == null) {
 			canvas = gameObject.AddComponent<Canvas>();
@@ -64,22 +67,28 @@ public class PopupManager : Singleton<PopupManager> {
 	/// <summary>
 	/// First update call.
 	/// </summary>
-	void Start() {
-
+	override protected void Start() {
+		// Call parent
+		base.Start();
 	}
 	
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	void Update() {
-	
+	override protected void Update() {
+		// Call parent
+		base.Update();
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	void OnDestroy() {
-	
+	override protected void OnDestroy() {
+		// Clear references
+		canvas = null;
+
+		// Call parent
+		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//

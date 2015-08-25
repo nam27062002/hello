@@ -62,24 +62,13 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
+
 		// Forces a different code path in the BinaryFormatter that doesn't rely on run-time code generation (which would break on iOS).
 		// From http://answers.unity3d.com/questions/30930/why-did-my-binaryserialzer-stop-working.html
 		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
-	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	void OnDestroy() {
-
 	}
 
 	//------------------------------------------------------------------//

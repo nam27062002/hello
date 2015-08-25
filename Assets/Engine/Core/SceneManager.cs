@@ -83,7 +83,10 @@ public class SceneManager : Singleton<SceneManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake () {
+	override protected void Awake () {
+		// Call parent
+		base.Awake();
+
 		// Setup the array of update delegates
 		m_updateDelegates = new SceneUpdateDelegate[(int)ESceneState.COUNT];
 		m_updateDelegates[(int)ESceneState.RESET] = UpdateReset;
@@ -103,7 +106,10 @@ public class SceneManager : Singleton<SceneManager> {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	void Update () {
+	override protected void Update () {
+		// Call parent
+		base.Update();
+
 		// Invoke delegate for the current scene state
 		if(m_updateDelegates[(int)sceneState] != null) {
 			m_updateDelegates[(int)sceneState]();
@@ -113,7 +119,7 @@ public class SceneManager : Singleton<SceneManager> {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
+	override protected void OnDestroy() {
 		// Clean up the update delegates
 		if(m_updateDelegates != null) {
 			for(int i = 0; i < (int)ESceneState.COUNT; i++) {
@@ -121,6 +127,9 @@ public class SceneManager : Singleton<SceneManager> {
 			}
 			m_updateDelegates = null;
 		}
+
+		// Call parent
+		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//

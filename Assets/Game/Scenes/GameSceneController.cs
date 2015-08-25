@@ -18,7 +18,7 @@ using UnityEngine.UI;
 /// [AOC] TODO!! Split score management into a different component
 /// [AOC] TODO!! Score multipliers
 /// </summary>
-public class GameSceneController : MonoBehaviour {
+public class GameSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -79,8 +79,9 @@ public class GameSceneController : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
-
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
 	}
 
 	/// <summary>
@@ -129,8 +130,9 @@ public class GameSceneController : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
-
+	override protected void OnDestroy() {
+		// Call parent
+		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//
@@ -318,6 +320,9 @@ public class GameSceneController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// The player has died.
+	/// </summary>
 	private void OnPlayerDied() {
 		// End game
 		EndGame();
