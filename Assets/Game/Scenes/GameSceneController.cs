@@ -290,7 +290,7 @@ public class GameSceneController : MonoBehaviour {
 		// Give coins reward
 		long iRewardCoins = _entity.GetCoinsReward();
 		if(iRewardCoins > 0) {
-			App.Instance.userData.AddCoins(iRewardCoins);
+			UserProfile.AddCoins(iRewardCoins);
 			Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_COINS, iRewardCoins, _entity);
 		}
 	}
@@ -312,7 +312,7 @@ public class GameSceneController : MonoBehaviour {
 			// Coins
 			long iRewardCoins = _entity.GetCoinsReward();
 			if(iRewardCoins > 0) {
-				App.Instance.userData.AddCoins(iRewardCoins);
+				UserProfile.AddCoins(iRewardCoins);
 				Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_COINS, iRewardCoins, _entity);
 			}
 		}

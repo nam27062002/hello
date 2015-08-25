@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -22,11 +23,19 @@ public class UserProfile : Singleton<UserProfile> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Auxiliar serializable class to save/load to persistence.
+	/// </summary>
+	[Serializable]
+	public class SaveData {
+		// Add here any required data
+		public long coins;
+		public long pc;
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -90,6 +99,35 @@ public class UserProfile : Singleton<UserProfile> {
 		// Compute new value and dispatch event
 		instance.m_pc += _iAmount;
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _iAmount, pc);
+	}
+
+	//------------------------------------------------------------------//
+	// PERSISTENCE														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Load state from a persistence object.
+	/// </summary>
+	/// <param name="_data">The data object loaded from persistence.</param>
+	public static void Load(SaveData _data) {
+		// Just read values from persistence object
+		instance.m_coins = _data.coins;
+		instance.m_pc = _data.pc;
+	}
+
+	/// <summary>
+	/// Create and return a persistence save data object initialized with the data.
+	/// </summary>
+	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
+	public static SaveData Save() {
+		// Create new object
+		SaveData data = new SaveData();
+
+		// Initialize it
+		data.coins = instance.m_coins;
+		data.pc = instance.m_pc;
+
+		// Return it
+		return data;
 	}
 }
 

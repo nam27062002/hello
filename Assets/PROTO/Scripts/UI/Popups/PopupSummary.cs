@@ -46,7 +46,7 @@ public class PopupSummary : MonoBehaviour {
 		timeLabel.text = String.Format("{0:00}:{1:00}", iMins, iSecs);
 
 		// Set coins
-		coinsAnimator.SetValue(0, (int)App.Instance.userData.coins);
+		coinsAnimator.SetValue(0, (int)UserProfile.coins);
 	}
 	
 	/// <summary>
