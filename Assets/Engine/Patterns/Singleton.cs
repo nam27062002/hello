@@ -95,21 +95,21 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Start () {
+	protected virtual void Start() {
 		// Nothing to do
 	}
 	
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	void Update () {
+	protected virtual void Update() {
 		// Nothing to do
 	}
 	
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	void OnDestroy() {
+	protected virtual void OnDestroy() {
 		// Make sure instance reference is cleaned up
 		// [AOC] I think it's useless, but they do it: https://youtu.be/64uOVmQ5R1k?t=20m16s
 		if(m_instance != null) m_instance = null;

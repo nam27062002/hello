@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// </summary>
 public class PopupSummary : MonoBehaviour {
 	#region CONSTANTS --------------------------------------------------------------------------------------------------
-
+	public static readonly string PATH = "Proto/Prefabs/UI/Popups/PF_PopupSummary";
 	#endregion
 
 	#region EXPOSED MEMBERS ----------------------------------------------------------------------------------------------------

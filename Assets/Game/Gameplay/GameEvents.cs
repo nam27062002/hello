@@ -32,6 +32,7 @@ public static class GameEvents {
 	public const string PLAYER_DAMAGE_RECEIVED = "PLAYER_DAMAGE_RECEIVED";		// params: float _damage, DamageDealer _source
 	public const string PLAYER_STARVING_TOGGLED = "PLAYER_STARVING_TOGGLED";	// params: bool _isStarving
 	public const string PLAYER_STATE_CHANGED = "PLAYER_STATE_CHANGED";			// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
+	public const string PLAYER_DIED = "PLAYER_DIED";							// no params
 
 	// Collectible events
 	public const string COLLECTIBLE_COLLECTED = "COLLECTIBLE_COLLECTED";		// params: Collectible _collectible

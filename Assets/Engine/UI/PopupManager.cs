@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -18,8 +19,10 @@ using System.Collections.Generic;
 /// TODO:
 /// - Keep an updated list of open popups
 /// - Allow popup queues
+/// - Optional delay before opening a popup
+/// - Stacked popups (popup over popup)
 /// </summary>
-public class PopupManager : MonoBehaviour {
+public class PopupManager : Singleton<PopupManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -27,13 +30,8 @@ public class PopupManager : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Use our own canvas for practicity.
 	private Canvas canvas = null;
-
-	//------------------------------------------------------------------//
-	// SINGLETON INSTANCE												//
-	//------------------------------------------------------------------//
-	// [AOC] Unsafe version assuming the instance is already on the scene
-	public static PopupManager instance = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -41,33 +39,39 @@ public class PopupManager : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake () {
-		if(instance == null) {
-			// Initialize singleton instance
-			instance = this;
+	void Awake() {
+		// Create and initialize canvas
+		if(canvas == null) {
+			canvas = gameObject.AddComponent<Canvas>();
 
-			// Make sure our object is not destroyed between scenes
-			GameObject.DontDestroyOnLoad(gameObject);
+			// Setup scaling technique
+			CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+			if(scaler != null) {
+				// Copied from default canvas usage, feel free to modify any of these parameters
+				scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+				scaler.referenceResolution = new Vector2(800, 600);
+				scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+				scaler.matchWidthOrHeight = 0;
+				scaler.referencePixelsPerUnit = 100;
+			}
 
-			// Get canvas reference
-			canvas = GetComponent<Canvas>();
-		} else if(instance != this) {
-			// Only one object of this type!!
-			Destroy(gameObject);
+			// Assume we want the popups to show on top of the rest of the UI, so we will setup the canvas accordingly
+			gameObject.layer = LayerMask.NameToLayer("UI");
+			canvas.sortingOrder = 100;	// Should be enough, default value is 0 and we don't usually have more than one canvas in the UI layer
 		}
 	}
 
 	/// <summary>
-	/// Initialization.
+	/// First update call.
 	/// </summary>
-	void Start () {
+	void Start() {
 
 	}
 	
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	void Update () {
+	void Update() {
 	
 	}
 
@@ -79,18 +83,18 @@ public class PopupManager : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------//
-	// PUBLIC UTILS														//
+	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Loads a popup from the resources folder, instantiates it and opens it.
 	/// </summary>
 	/// <param name="_sResourcesPath">The path of the popup in the resources folder.</param>
-	public GameObject OpenPopup(string _sResourcesPath) {
+	public static GameObject OpenPopup(string _sResourcesPath) {
 		// Load it from resources
 		GameObject popupObj = Instantiate(Resources.Load<GameObject>(_sResourcesPath));
 
 		// Instantiate it to the canvas
-		popupObj.transform.SetParent(canvas.transform, false);
+		popupObj.transform.SetParent(instance.canvas.transform, false);
 
 		// Open the popup
 		popupObj.GetComponent<PopupController>().Open();

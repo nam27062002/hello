@@ -306,9 +306,8 @@ public class DragonPlayer : MonoBehaviour {
 				ToggleStarving(false);
 				
 				// Notify the logic that the game has to end
-				// [AOC] TODO!! Probably this shouldn't be controlled from the dragon itself
-				//		 Maybe sending a global game event?
-				App.Instance.gameLogic.EndGame();
+				App.Instance.gameLogic.EndGame();	// [AOC] DEPRECATED
+				Messenger.Broadcast(GameEvents.PLAYER_DIED);
 
 				// Play death animation
 				animator.SetTrigger ("dead");
