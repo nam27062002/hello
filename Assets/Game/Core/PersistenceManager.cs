@@ -90,10 +90,10 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	/// </summary>
 	public static void Load() {
 		// From https://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
-		if(File.Exists(saveFile)) {
+		if(File.Exists(instance.saveFile)) {
 			// Open the file
 			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Open(saveFile, FileMode.Open);
+			FileStream file = File.Open(instance.saveFile, FileMode.Open);
 			
 			// Load the data object
 			try {
@@ -109,7 +109,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 				UserProfile.Load(data.profile);
 			} catch(Exception e) {
 				Debug.Log("An error has occurred when loading persistence, deleting saved data" + e);
-				File.Delete(saveFile);
+				File.Delete(instance.saveFile);
 			}
 		} else {
 			Debug.Log("No saved games were found, starting from 0");
@@ -123,7 +123,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 		// From https://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
 		// Open the file
 		BinaryFormatter bf = new BinaryFormatter();
-		FileStream file = File.Create(saveFile);
+		FileStream file = File.Create(instance.saveFile);
 		
 		// Create a temp data object and fill it
 		PersistenceManager.SaveData data = new PersistenceManager.SaveData();
