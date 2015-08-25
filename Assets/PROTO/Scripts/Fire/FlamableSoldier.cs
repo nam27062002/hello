@@ -9,10 +9,19 @@ public class FlamableSoldier : FlamableBehaviour {
 		if (hasBurned){
 
 			SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
-			if (soldier != null)
+			if (soldier != null) {
 				soldier.OnBurn();
-			else
-				GetComponent<PersonBehaviour>().OnBurn();
+			} else {
+				PersonBehaviour person = GetComponent<PersonBehaviour>();
+				if (person != null) {
+					person.OnBurn();
+				} else {
+					CagePersonBehaviour cage = GetComponent<CagePersonBehaviour>();
+					if (cage != null) {
+						cage.OnBurn();
+					}
+				}
+			}
 		}
 	}
 
@@ -22,10 +31,19 @@ public class FlamableSoldier : FlamableBehaviour {
 		entity.health -= power;
 		if (entity.health < 0){
 			SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
-			if (soldier != null)
+			if (soldier != null) {
 				soldier.OnExplode(pos);
-			else
-				GetComponent<PersonBehaviour>().OnExplode(pos);
+			} else {
+				PersonBehaviour person = GetComponent<PersonBehaviour>();
+				if (person != null) {
+					person.OnBurn();
+				} else {
+					CagePersonBehaviour cage = GetComponent<CagePersonBehaviour>();
+					if (cage != null) {
+						cage.OnBurn();
+					}
+				}
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class DragonBreathBehaviour : MonoBehaviour {
@@ -35,7 +35,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_isFuryOn) {
 			m_isFuryOn = false;
 			m_animator.SetBool("fire", false);// Stop fury rush (if active)
-			Messenger.Broadcast<bool>(GameEvents_OLD.FURY_RUSH_TOGGLED, false);
+			Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 		}
 	}
 
@@ -55,10 +55,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 				m_isFuryOn = false;
 				m_animator.SetBool("fire", false);
-				Messenger.Broadcast<bool>(GameEvents_OLD.FURY_RUSH_TOGGLED, false);
+				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 			} else {
 				
-				Fire(Vector3.right);
+				Fire(500f);
 				m_animator.SetBool("fire", true);
 			}
 		} else {
@@ -66,12 +66,15 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			if (m_dragon.fury >= m_dragon.maxFury) {
 
 				m_isFuryOn = true;
-				Messenger.Broadcast<bool>(GameEvents_OLD.FURY_RUSH_TOGGLED, true);
+				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
 			}
 		}
+
+		ExtendedUpdate();
 	}
 
 
 	virtual protected void ExtendedStart() {}
-	virtual public void Fire(Vector3 direction) {}
+	virtual protected void ExtendedUpdate() {}
+	virtual protected void Fire(float _magnitude) {}
 }

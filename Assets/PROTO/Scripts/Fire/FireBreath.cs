@@ -41,17 +41,17 @@ public class FireBreath : DragonBreathBehaviour {
 
 	}
 	/*
-	void Update () {
+	override protected void ExtendedUpdate () {
 		timer -= Time.deltaTime;
 	}*/
 
-	override public void Fire(Vector3 direction){
+	override protected void Fire(float _magnitude){
 
 
 		Vector3 dir = mouthPosition.position - headPosition.position;
 		dir.z = 0f;
 		dir.Normalize();
-		dir *= direction.magnitude;
+		dir *= _magnitude;
 	
 		for(int i=0;i<2;i++){
 			foreach(GameObject fireObj in fire){

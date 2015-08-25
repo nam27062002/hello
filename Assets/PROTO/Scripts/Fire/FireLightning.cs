@@ -96,7 +96,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
+	override protected void ExtendedStart () {
 	
 
 
@@ -130,7 +130,7 @@ public class FireLightning : DragonBreathBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	override protected void ExtendedUpdate () {
 
 		
 		if (firing){
@@ -191,7 +191,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 	}
 
-	override public void Fire(Vector3 direction){
+	override protected void Fire(float _magnitude){
 		
 		if (!firing){
 			

@@ -1,4 +1,4 @@
-// DragonPlayer.cs
+﻿// DragonPlayer.cs
 // Hungry Dragon
 // 
 // Created by Pere Alsina on 20/03/2015.
@@ -61,6 +61,7 @@ public class DragonPlayer : MonoBehaviour {
 	DragonOrientation   	orientation;
 	DragonEatBehaviour		eatBehaviour;
 	DragonBreathBehaviour 	m_breathBehaviour;
+	DragonGrabBehaviour		m_grabBehaviour;
 	DragonStats				stats;
 
 	// Control vars
@@ -83,9 +84,7 @@ public class DragonPlayer : MonoBehaviour {
 	float 	impulseMulti;
 	float   glideTimer = 0f;
 	float   sqrEatRange;
-	GrabableBehaviour grab = null;
-	float 	grabReleaseTimer = 0f;
-	float	grabTimer = 0f; //wait a few seconds before trying to grab again
+
 
 	bool isStarving = false;
 
@@ -109,6 +108,7 @@ public class DragonPlayer : MonoBehaviour {
 
 		eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
+		m_grabBehaviour = GetComponent<DragonGrabBehaviour>();
 		stats = GetComponent<DragonStats>();
 
 
@@ -215,13 +215,8 @@ public class DragonPlayer : MonoBehaviour {
 			} break;
 		}
 
-		grabTimer -= Time.deltaTime;
-		if (grabTimer < 0) {
-			grabTimer = 0;
-		}
 
-		if (grab != null)
-			UpdateGrab ();
+
 	}
 	
 	void FixedUpdate(){
@@ -305,6 +300,7 @@ public class DragonPlayer : MonoBehaviour {
 			case EState.DYING: {
 				eatBehaviour.enabled = false;
 				m_breathBehaviour.enabled = false;
+				m_grabBehaviour.enabled = false;
 				
 				// Stop starving feedback as well
 				ToggleStarving(false);
@@ -335,7 +331,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Store new state and notify game
 		EState oldState = mState;	// Just for the event broadcast
 		mState = _eNewState;
-		Messenger.Broadcast<EState, EState>(GameEvents_OLD.PLAYER_STATE_CHANGED, oldState, _eNewState);
+		Messenger.Broadcast<EState, EState>(GameEvents.PLAYER_STATE_CHANGED, oldState, _eNewState);
 	}
 
 	/// <summary>
@@ -344,17 +340,21 @@ public class DragonPlayer : MonoBehaviour {
 	/// <param name="_fSpeedMultiplier">The multiplier of the dragon's movement speed.</param>
 	void UpdateMovement(float _fSpeedMultiplier) {
 
-		if (grab != null)
-			_fSpeedMultiplier *= 1f/grab.weight;
+
+
+		bool grab = m_grabBehaviour.HasGrabbedEntity();
+
+		if (grab)
+			_fSpeedMultiplier *= 1f / m_grabBehaviour.WeightCarried();
 
 		impulse = controls.GetImpulse(stats.speed*_fSpeedMultiplier); 
 
 		bool plummeting = (dir.y < -0.75f && rbody.velocity.y < -stats.speed*0.85f) || (_fSpeedMultiplier == stats.boostMultiplier  && rbody.velocity.magnitude > stats.speed*0.85f);
-		plummeting = plummeting && grab == null;
+		plummeting = plummeting && !grab;
 
-		bool flyUp = !plummeting && dir.y > 0.75f &&  _fSpeedMultiplier == 1f && grab == null;
+		bool flyUp = !plummeting && dir.y > 0.75f &&  _fSpeedMultiplier == 1f && !grab;
 
-		if(!impulse.Equals(Vector3.zero)) {
+		if (!impulse.Equals(Vector3.zero)) {
 
 			Vector3 oldDir = dir; 
 			dir = impulse;
@@ -368,7 +368,7 @@ public class DragonPlayer : MonoBehaviour {
 					animator.SetTrigger("turn_right");
 			}
 
-		}else{
+		} else {
 
 			plummeting = false;
 		}
@@ -399,10 +399,10 @@ public class DragonPlayer : MonoBehaviour {
 		bool flying = controls.moving;
 
 		// use fly animation if flying, but use idle animation if carrying something
-		animator.SetBool("fly",flying && grab == null); 
+		animator.SetBool("fly", flying); 
 
 		if(flying) {
-			if (grab == null){ // Orientation with something grabbed is limited
+			if (!grab){ // Orientation with something grabbed is limited
 				orientation.SetDirection(impulse);
 			}else{
 				Vector3 grabOrientation = impulse;
@@ -445,39 +445,6 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
-	void UpdateGrab(){
-
-		// if not try to detect fly height
-		float flyHeight = 1000f;
-		float minHeight = 400f;
-		float maxHeight = 1500f / (grab.weight * 0.125f);
-		float customGrabTime = Mathf.Min (1, grabTime / (grab.weight * 0.5f));
-
-		RaycastHit ground;
-		if (Physics.Linecast( transform.position, transform.position + Vector3.down * 10000f, out ground, 1 << LayerMask.NameToLayer("Ground"))){
-			flyHeight =  transform.position.y - ground.point.y;
-			if (flyHeight > maxHeight || (flyHeight > minHeight &&  speedMulti != 1f)){
-				grab.Release(impulse);
-				grab = null;
-				grabTimer = 1f;
-			}
-		}
-
-		//try and release by time
-		grabReleaseTimer += Time.deltaTime;
-		if (grabReleaseTimer > customGrabTime){
-			grab.Release(impulse);
-			grab = null;
-			grabTimer = 1f;
-			return;
-		}
-
-		if (flyHeight < 200f){
-			pos.y = ground.point.y+200f;
-			transform.position = pos;
-		}
-	}
-
 	/// <summary>
 	/// Enable/Disable the "starving" status.
 	/// </summary>
@@ -487,7 +454,7 @@ public class DragonPlayer : MonoBehaviour {
 		animator.SetBool("is_starving", _bIsStarving);
 
 		// Send game event
-		Messenger.Broadcast<bool>(GameEvents_OLD.PLAYER_STARVING_TOGGLED, _bIsStarving);
+		Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, _bIsStarving);
 
 		//
 		isStarving = _bIsStarving;
@@ -516,7 +483,7 @@ public class DragonPlayer : MonoBehaviour {
 		}
 
 		// Notify the game
-		Messenger.Broadcast<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, _damage, _source);
+		Messenger.Broadcast<float, DamageDealer>(GameEvents.PLAYER_DAMAGE_RECEIVED, _damage, _source);
 	}
 
 	/// <summary>
@@ -639,18 +606,7 @@ public class DragonPlayer : MonoBehaviour {
 				//orientation.SetDirection(rbody.velocity);
 
 				Stop();
-
-				grabTimer = 1f;
 			}
-		}
-	}
-
-	public void Grab(GrabableBehaviour other){
-		return;
-		if (grabTimer <= 0 && (mState == EState.IDLE || eatBehaviour.IsEating()) && grab == null){
-			grab = other;
-			grab.Grab ();
-			grabReleaseTimer = 0f;
 		}
 	}
 

@@ -115,7 +115,7 @@ public class DragonAi : MonoBehaviour {
 			allowMovement = true;
 			
 			// Should we be firing?
-			UpdateFire(controls.action);
+			//UpdateFire(controls.action);
 
 		} break;
 			
@@ -185,7 +185,7 @@ public class DragonAi : MonoBehaviour {
 			
 		case EState.DYING: {
 			// Stop any active fire breath and starving status
-			UpdateFire(false);
+			//UpdateFire(false);
 		
 			// Play death animation
 			animator.SetTrigger ("dead");
@@ -283,29 +283,7 @@ public class DragonAi : MonoBehaviour {
 		
 		animator.SetFloat ("glide_time",glideTimer);
 	}
-	
-	/// <summary>
-	/// Enable/disable firebreath.
-	/// </summary>
-	/// <param name="_bActivate">Whether to activate or deactivate the dragon's firebreath.</param>
-	void UpdateFire(bool _bActivate) {
 		
-		UpdateBoost (_bActivate);
-
-		if (allowFire){
-			
-			
-			if (impulse.magnitude > 0)
-				fireBreath.Fire(impulse);
-			else
-				fireBreath.Fire(dir);
-			
-			speedMulti = Mathf.Max ( speedMulti, 1.45f);
-			
-		}
-	}
-	
-	
 	void UpdateBoost(bool activate){
 		
 		if (activate && allowBoost){

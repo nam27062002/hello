@@ -27,7 +27,7 @@ public class FireRay : DragonBreathBehaviour {
 	GameObject particleEnd;
 
 
-	void Start () {
+	override protected void ExtendedStart () {
 
 		timer = 0f;
 		
@@ -55,7 +55,7 @@ public class FireRay : DragonBreathBehaviour {
 		groundMask = 1 << LayerMask.NameToLayer("Ground");
 	}
 	
-	void Update () {
+	override protected void ExtendedUpdate () {
 
 		if (firing){
 			timer += Time.deltaTime;
@@ -110,7 +110,7 @@ public class FireRay : DragonBreathBehaviour {
 
 	}
 	
-	override public void Fire(Vector3 direction){
+	override protected void Fire(float _magnitude) {
 
 		if (!firing){
 				

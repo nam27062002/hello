@@ -15,7 +15,7 @@ public class GrabableBehaviour : MonoBehaviour {
 	Transform grabPoint;
 	Transform footPoint;
 	Quaternion rotation;
-	DragonPlayer player;
+	DragonGrabBehaviour player;
 
 	float timer = 0f;
 
@@ -31,7 +31,7 @@ public class GrabableBehaviour : MonoBehaviour {
 	void Start () {
 
 		grabPoint = transform.FindChild("GrabPoint");
-		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		player = GameObject.Find ("Player").GetComponent<DragonGrabBehaviour>();
 		footPoint = player.transform.FindSubObjectRecursive("leg_fing_R_002");
 		rotation = transform.rotation;
 	}
