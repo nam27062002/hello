@@ -28,6 +28,15 @@ public class InstanceManager : Singleton<InstanceManager> {
 		set { instance.m_sceneController = value; }
 	}
 
+	// Only during game scene, reference to the dragon
+	public static DragonPlayer player {
+		get {
+			// Only in game scene!!
+			DebugUtils.Assert(SceneManager.currentScene == GameSceneController.NAME, "Attemting to retrieve the player outside the game scene!!");
+			return (sceneController as GameSceneController).player;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

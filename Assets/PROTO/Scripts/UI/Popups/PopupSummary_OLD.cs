@@ -1,4 +1,4 @@
-﻿// PopupSummary.cs
+﻿// PopupSummary_OLD.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 31/03/2015.
@@ -14,7 +14,7 @@ using UnityEngine.UI;
 /// <summary>
 /// End of game popup.
 /// </summary>
-public class PopupSummary : MonoBehaviour {
+public class PopupSummary_OLD : MonoBehaviour {
 	#region CONSTANTS --------------------------------------------------------------------------------------------------
 	public static readonly string PATH = "Proto/Prefabs/UI/Popups/PF_PopupSummary";
 	#endregion
@@ -46,7 +46,7 @@ public class PopupSummary : MonoBehaviour {
 		timeLabel.text = String.Format("{0:00}:{1:00}", iMins, iSecs);
 
 		// Set coins
-		coinsAnimator.SetValue(0, (int)UserProfile.coins);
+		coinsAnimator.SetValue(0, (int)App.Instance.userData.coins);
 	}
 	
 	/// <summary>

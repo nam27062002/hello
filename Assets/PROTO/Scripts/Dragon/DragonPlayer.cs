@@ -40,7 +40,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	#region PUBLIC MEMBERS -----------------------------------------------------
 	[HideInInspector] public Rigidbody rbody;
-	[HideInInspector] public int dragonType { get { return stats.type; } }
+	[HideInInspector] public int dragonType { get { return m_stats.type; } }
 	[HideInInspector] public bool invulnerable = false;	// Debug purposes
 	#endregion
 
@@ -53,7 +53,10 @@ public class DragonPlayer : MonoBehaviour {
 	DragonEatBehaviour		eatBehaviour;
 	DragonBreathBehaviour 	m_breathBehaviour;
 	DragonGrabBehaviour		m_grabBehaviour;
-	DragonStats				stats;
+
+	// Since stats are very frequently used and accessed from outside, do a shortcut getter for them
+	private DragonStats		m_stats;
+	public DragonStats		stats { get { return m_stats; }}
 
 	// Control vars
 	EState mState = EState.INIT;
@@ -100,7 +103,7 @@ public class DragonPlayer : MonoBehaviour {
 		eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 		m_grabBehaviour = GetComponent<DragonGrabBehaviour>();
-		stats = GetComponent<DragonStats>();
+		m_stats = GetComponent<DragonStats>();
 
 
 		// Load selected skin
@@ -132,11 +135,11 @@ public class DragonPlayer : MonoBehaviour {
 	void Update() {
 
 		// Check warning threshold
-		float fThresholdValue = stats.maxLife * stats.lifeWarningThreshold;
-		if(stats.life <= fThresholdValue && !isStarving) {
+		float fThresholdValue = m_stats.maxLife * m_stats.lifeWarningThreshold;
+		if(m_stats.life <= fThresholdValue && !isStarving) {
 			// [AOC] Start warning threshold
 			ToggleStarving(true);
-		} else if(stats.life > fThresholdValue && isStarving) {
+		} else if(m_stats.life > fThresholdValue && isStarving) {
 			// [AOC] Stop warning threshold
 			ToggleStarving(false);
 		}
@@ -157,11 +160,11 @@ public class DragonPlayer : MonoBehaviour {
 				UpdateBoost(Input.GetKey(KeyCode.X) || controls.action);
 				
 				// Update life (unless invulnerable)
-				if(stats.life > 0f && !IsInvulnerable()) {
-					stats.AddLife(-Time.deltaTime * stats.lifeDrainPerSecond);
+				if(m_stats.life > 0f && !IsInvulnerable()) {
+					m_stats.AddLife(-Time.deltaTime * m_stats.lifeDrainPerSecond);
 
 					// Have we died?
-					if(stats.life <= 0) {
+					if(m_stats.life <= 0) {
 						ChangeState(EState.DYING);
 					}
 				}
@@ -240,7 +243,7 @@ public class DragonPlayer : MonoBehaviour {
 				}
 
 				//lets check if player wants to modify a bit the movement
-				Vector3 impulse = controls.GetImpulse(stats.speed*speedMulti); 
+				Vector3 impulse = controls.GetImpulse(m_stats.speed*speedMulti); 
 				impulse.y = 0;
 				
 				impulse *= 0.5f;
@@ -310,7 +313,11 @@ public class DragonPlayer : MonoBehaviour {
 
 			case EState.DEAD: {
 				// Open summary popup
-				GameObject.Find("CanvasPopups").GetComponent<UIPrefabLoader>().InstantiatePrefab("Proto/Prefabs/UI/Popups/PF_PopupSummary");
+				// [AOC] DEPRECATED!!
+				GameObject popupsCanvas = GameObject.Find("CanvasPopups");
+				if(popupsCanvas != null && popupsCanvas.GetComponent<UIPrefabLoader>() != null) {
+					popupsCanvas.GetComponent<UIPrefabLoader>().InstantiatePrefab("Proto/Prefabs/UI/Popups/PF_PopupSummary");
+				}
 			} break;
 
 			case EState.DEAD_GORUND: {
@@ -337,9 +344,9 @@ public class DragonPlayer : MonoBehaviour {
 		if (grab)
 			_fSpeedMultiplier *= 1f / m_grabBehaviour.WeightCarried();
 
-		impulse = controls.GetImpulse(stats.speed*_fSpeedMultiplier); 
+		impulse = controls.GetImpulse(m_stats.speed*_fSpeedMultiplier); 
 
-		bool plummeting = (dir.y < -0.75f && rbody.velocity.y < -stats.speed*0.85f) || (_fSpeedMultiplier == stats.boostMultiplier  && rbody.velocity.magnitude > stats.speed*0.85f);
+		bool plummeting = (dir.y < -0.75f && rbody.velocity.y < -m_stats.speed*0.85f) || (_fSpeedMultiplier == m_stats.boostMultiplier  && rbody.velocity.magnitude > m_stats.speed*0.85f);
 		plummeting = plummeting && !grab;
 
 		bool flyUp = !plummeting && dir.y > 0.75f &&  _fSpeedMultiplier == 1f && !grab;
@@ -417,20 +424,20 @@ public class DragonPlayer : MonoBehaviour {
 		
 		if (activate && allowBoost){
 
-			stats.AddEnergy(-Time.deltaTime*stats.energyDrainPerSecond);
+			m_stats.AddEnergy(-Time.deltaTime*m_stats.energyDrainPerSecond);
 			
-			speedMulti=stats.boostMultiplier;
+			speedMulti=m_stats.boostMultiplier;
 			
-			if (stats.energy <= 0f) {
+			if (m_stats.energy <= 0f) {
 				allowBoost = false;
 			}
 		}else{
 			
-			if (stats.energy > 0f && !activate)
+			if (m_stats.energy > 0f && !activate)
 				allowBoost = true;
 
 			if (!activate){
-				stats.AddEnergy(Time.deltaTime*stats.energyRefillPerSecond);
+				m_stats.AddEnergy(Time.deltaTime*m_stats.energyRefillPerSecond);
 			}
 		}
 	}
@@ -465,10 +472,10 @@ public class DragonPlayer : MonoBehaviour {
 		if(IsInvulnerable()) return;
 		
 		// Apply damage
-		stats.AddLife(-_damage);
+		m_stats.AddLife(-_damage);
 			
 		// Have we died?
-		if(stats.life <= 0) {
+		if(m_stats.life <= 0) {
 			ChangeState(EState.DYING);
 		}
 
@@ -507,7 +514,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return IsAlive() && (stats.life > stats.maxLife * stats.lifeWarningThreshold);
+		return IsAlive() && (m_stats.life > m_stats.maxLife * m_stats.lifeWarningThreshold);
 	}
 
 	/*
@@ -587,7 +594,7 @@ public class DragonPlayer : MonoBehaviour {
 		if (hitAngle >= 45f) {
 			HittableBehaviour hit = collision.gameObject.GetComponent<HittableBehaviour>();
 			if (hit != null){
-				float finalDamage = (chargeDamage*rbody.velocity.magnitude)/(stats.speed*stats.boostMultiplier);
+				float finalDamage = (chargeDamage*rbody.velocity.magnitude)/(m_stats.speed*m_stats.boostMultiplier);
 				hit.OnHit(finalDamage);
 
 				//ContactPoint contact =  collision.contacts[0];

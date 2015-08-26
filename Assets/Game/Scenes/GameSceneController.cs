@@ -45,7 +45,7 @@ public class GameSceneController : SceneController {
 	// Time
 	private float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
-		get { return m_timer; }
+		get { return m_elapsedSeconds; }
 	}
 	
 	// Logic state
@@ -69,6 +69,7 @@ public class GameSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private string m_dragonResourcesPath = "Dragons/";
+	[SerializeField] private Text m_hpText = null;
 
 	// Internal vars
 	private float m_timer = -1;	// Misc use
@@ -82,6 +83,8 @@ public class GameSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
+
+		DebugUtils.Assert(m_hpText != null, "Required field not initialized!");
 	}
 
 	/// <summary>
@@ -106,12 +109,18 @@ public class GameSceneController : SceneController {
 					if(m_timer <= 0) {
 						ChangeState(EStates.RUNNING);
 					}
+
+					// Show countdown
+					m_hpText.text = StringUtils.FormatNumber(Mathf.Ceil(m_timer), 0);
 				}
 			} break;
 				
 			case EStates.RUNNING: {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
+
+				// Update HP textfield
+				if(player != null) m_hpText.text = string.Format("{0} HP", StringUtils.FormatNumber(player.stats.life, 0));
 			} break;
 
 			case EStates.FINISHED: {
@@ -213,7 +222,7 @@ public class GameSceneController : SceneController {
 		switch(_newState) {
 			case EStates.COUNTDOWN: {
 				// Start countdown timer
-				m_timer = 1f;	// [AOC] TODO!! Do it properly
+				m_timer = 3f;	// [AOC] TODO!! Do it properly
 			} break;
 				
 			case EStates.RUNNING: {
@@ -244,7 +253,7 @@ public class GameSceneController : SceneController {
 		}
 		
 		// Instantiate the Dragon defined in GameSettings
-		Debug.Log("Attempting to load resource: " + m_dragonResourcesPath + GameSettings.dragonType);
+		Debug.Log("Attempting to load dragon: " + m_dragonResourcesPath + GameSettings.dragonType);
 		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + GameSettings.dragonType));
 		dragonObj.name = "Player";
 

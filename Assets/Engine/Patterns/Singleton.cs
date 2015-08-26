@@ -49,7 +49,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 	// In principle, a Singleton is only destroyed when application quits.
 	// If any script calls instance after it has been destroyed, it will create a buggy ghost object that will stay on the Editor scene even after stopping playing the Application. Really bad!
 	// So, this was made to be sure we're not creating that buggy ghost object.
-	private static bool m_applicationIsQuitting = false;
+	protected static bool m_applicationIsQuitting = false;
 
 	//------------------------------------------------------------------//
 	// SINGLETON INSTANCE												//

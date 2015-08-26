@@ -145,12 +145,13 @@ public class TimeUtils {
 					writer.Write(StringUtils.FormatNumber(iVal));
 					
 					// Insert field name, abbreviation, singular or plural
-					writer.Write(" ");
 					if(_eFormat == EFormat.ABBREVIATIONS || _eFormat == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES) {
 						writer.Write(Localization.Localize(TIDS_ABBREVIATED[i]));
 					} else if(iVal == 1) {
+						writer.Write(" ");
 						writer.Write(Localization.Localize(TIDS_SINGULAR[i]));
 					} else {
+						writer.Write(" ");
 						writer.Write(Localization.Localize(TIDS_PLURAL[i]));
 					}
 				} break;

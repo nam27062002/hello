@@ -19,7 +19,10 @@ public class FireBreath : DragonBreathBehaviour {
 	Transform headPosition;
 
 	override protected void ExtendedStart() {
-
+		GameObject instancesObj = GameObject.Find ("Instances");
+		if(instancesObj == null) {
+			instancesObj = new GameObject("Instances");
+		}
 		Transform instances = GameObject.Find ("Instances").transform;
 
 		Object firePrefab;

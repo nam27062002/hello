@@ -23,15 +23,15 @@ public class NumberTextAnimator : MonoBehaviour {
 	#endregion
 
 	#region EXPOSED MEMBERS --------------------------------------------------------------------------------------------
-	public float mDuration = 0.5f;
+	public float m_duration = 0.5f;
 	#endregion
 
 	#region INTERNAL MEMBERS -------------------------------------------------------------------------------------------
-	private Text mTargetTxt;
-	private int mInitialValue = 0;
-	private int mFinalValue = 0;
-	private int mCurrentValue = 0;
-	private float mStartTime = 0;
+	private Text m_targetTxt;
+	private int m_initialValue = 0;
+	private int m_finalValue = 0;
+	private int m_currentValue = 0;
+	private float m_startTime = 0;
 	#endregion
 
 	#region GENERIC METHODS --------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	void Awake() {
 		// Get target text component
-		mTargetTxt = gameObject.GetComponent<Text>();	// Should have one, since we're using the [RequireComponent] tag
+		m_targetTxt = gameObject.GetComponent<Text>();	// Should have one, since we're using the [RequireComponent] tag
 	}
 	
 	/// <summary>
@@ -48,14 +48,14 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	void Update() {
 		// Skip if we've reached the final value
-		if(mCurrentValue != mFinalValue) {
+		if(m_currentValue != m_finalValue) {
 			// Update current value
-			int iNewValue = (int)Mathf.SmoothStep(mInitialValue, mFinalValue, (Time.time - mStartTime)/mDuration);
+			int iNewValue = (int)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.time - m_startTime)/m_duration);
 
 			// If value has changed, update textfield
-			if(iNewValue != mCurrentValue) {
+			if(iNewValue != m_currentValue) {
 				ApplyValue(iNewValue);
-				mCurrentValue = iNewValue;
+				m_currentValue = iNewValue;
 			}
 		}
 	}
@@ -67,15 +67,15 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// <param name="_iFinalValue">Final value of the textfield.</param>
 	public void SetValue(int _iInitialValue, int _iFinalValue) {
 		// Store parameters
-		mInitialValue = _iInitialValue;
-		mFinalValue = _iFinalValue;
+		m_initialValue = _iInitialValue;
+		m_finalValue = _iFinalValue;
 
 		// Reset timestamp and current value
-		mCurrentValue = mInitialValue;
-		mStartTime = Time.time;
+		m_currentValue = m_initialValue;
+		m_startTime = Time.time;
 
 		// Initialize textfield
-		ApplyValue(mInitialValue);
+		ApplyValue(m_initialValue);
 	}
 
 	/// <summary>
@@ -84,7 +84,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// <param name="_iFinalValue">Final value of the textfield.</param>
 	public void SetValue(int _iFinalValue) {
 		// Call the other version
-		SetValue(mCurrentValue, _iFinalValue);
+		SetValue(m_currentValue, _iFinalValue);
 	}
 	#endregion
 
@@ -95,7 +95,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// <param name="_iValue">The value to be applied.</param>
 	private void ApplyValue(int _iValue) {
 		// Just do it
-		mTargetTxt.text = _iValue.ToString("N0", CultureInfo.CurrentCulture);
+		m_targetTxt.text = _iValue.ToString("N0", CultureInfo.CurrentCulture);
 	}
 	#endregion
 }
