@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(GameEntity))]
@@ -142,7 +142,7 @@ public class CarBehaviour : MonoBehaviour {
 		GetComponent<Rigidbody>().AddForce(force);
 		GetComponent<Rigidbody>().AddTorque(new Vector3(Random.Range(-1f,1f)*130000f,Random.Range(-1f,1f)*130000f,Random.Range(-1f,1f)*130000f));
 
-		Camera.main.GetComponent<CameraController>().Shake ();
+		Camera.main.GetComponent<CameraController_OLD>().Shake ();
 		GetComponent<GrabableBehaviour>().enabled = false;
 
 		state = State.EXPLODE;

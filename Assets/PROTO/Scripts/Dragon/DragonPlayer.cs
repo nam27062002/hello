@@ -1,4 +1,4 @@
-﻿// DragonPlayer.cs
+// DragonPlayer.cs
 // Hungry Dragon
 // 
 // Created by Pere Alsina on 20/03/2015.
@@ -629,7 +629,7 @@ public class DragonPlayer : MonoBehaviour {
 		ApplyDamage(_damage, _source);
 
 		// Shake camera
-		Camera.main.GetComponent<CameraController>().Shake();
+		Camera.main.GetComponent<CameraController_OLD>().Shake();
 	}
 
 	#endregion

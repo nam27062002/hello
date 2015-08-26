@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DangerousEntity : MonoBehaviour {
 
 	public float m_FocusDistance;
 
-	private CameraController m_CameraController;
+	private CameraController_OLD m_CameraController;
 	private Transform m_PlayerTransform;
 
 	private float m_FocusDistanceSQR;
@@ -14,7 +14,7 @@ public class DangerousEntity : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		m_CameraController = Camera.main.GetComponent<CameraController>();
+		m_CameraController = Camera.main.GetComponent<CameraController_OLD>();
 		m_PlayerTransform = GameObject.Find ("Player").transform;
 
 		m_FocusDistanceSQR = m_FocusDistance * m_FocusDistance;

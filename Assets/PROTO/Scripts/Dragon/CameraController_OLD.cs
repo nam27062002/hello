@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraController : MonoBehaviour {
+public class CameraController_OLD : MonoBehaviour {
 
 	public float movementSmoothing = 0.15f;
 	public float forwardOffset = 300f;

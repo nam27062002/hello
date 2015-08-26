@@ -1,4 +1,4 @@
-﻿// SlowMotionController.cs
+// SlowMotionController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 29/04/2015.
@@ -41,7 +41,7 @@ public class SlowMotionController : MonoBehaviour {
 	#endregion
 
 	#region REFERENCES -------------------------------------------------------------------------------------------------
-	private CameraController mMainCameraController = null;
+	private CameraController_OLD mMainCameraController = null;
 	private MotionBlur mMotionBlur = null;
 	#endregion
 
@@ -50,7 +50,7 @@ public class SlowMotionController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	public void Start() {
-		mMainCameraController = Camera.main.GetComponent<CameraController>();
+		mMainCameraController = Camera.main.GetComponent<CameraController_OLD>();
 		mMotionBlur = Camera.main.GetComponent<MotionBlur>();
 	}
 
