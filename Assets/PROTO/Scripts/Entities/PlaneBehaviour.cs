@@ -254,7 +254,7 @@ public class PlaneBehaviour : MonoBehaviour {
 
 
 		// Shake camera
-		Camera.main.GetComponent<CameraController>().Shake();
+		Camera.main.GetComponent<CameraController_OLD>().Shake();
 		
 		// Destroy ourselves
 		DestroyObject(this.gameObject);

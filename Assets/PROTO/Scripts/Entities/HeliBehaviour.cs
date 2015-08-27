@@ -232,7 +232,7 @@ public class HeliBehaviour : MonoBehaviour {
 		exp.center = p;
 
 
-		Camera.main.GetComponent<CameraController>().Shake ();
+		Camera.main.GetComponent<CameraController_OLD>().Shake ();
 	}
 
 	IEnumerator DelayedDestruction(float _fDelay) {

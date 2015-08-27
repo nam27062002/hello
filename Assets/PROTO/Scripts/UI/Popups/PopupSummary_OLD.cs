@@ -1,4 +1,4 @@
-﻿// PopupSummary.cs
+﻿// PopupSummary_OLD.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 31/03/2015.
@@ -14,7 +14,7 @@ using UnityEngine.UI;
 /// <summary>
 /// End of game popup.
 /// </summary>
-public class PopupSummary : MonoBehaviour {
+public class PopupSummary_OLD : MonoBehaviour {
 	#region CONSTANTS --------------------------------------------------------------------------------------------------
 	public static readonly string PATH = "Proto/Prefabs/UI/Popups/PF_PopupSummary";
 	#endregion

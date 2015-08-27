@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class FlyingMineBehaviour : MonoBehaviour {
@@ -55,7 +55,7 @@ public class FlyingMineBehaviour : MonoBehaviour {
 
 	void FinalExplosion(){
 		// Shake camera
-		Camera.main.GetComponent<CameraController>().Shake ();
+		Camera.main.GetComponent<CameraController_OLD>().Shake ();
 
 
 		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();

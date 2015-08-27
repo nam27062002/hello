@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Main controller for the menu scene.
 /// </summary>
-public class MenuSceneController : MonoBehaviour {
+public class MenuSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -36,8 +36,9 @@ public class MenuSceneController : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
-
+	override protected void Awake() {
+		// Call parent
+		base.Awake();
 	}
 
 	/// <summary>
@@ -57,8 +58,9 @@ public class MenuSceneController : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
-
+	override protected void OnDestroy() {
+		// Call parent
+		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//

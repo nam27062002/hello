@@ -49,31 +49,21 @@ public class PopupController : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake () {
+	protected virtual void Awake () {
 		// Get required components
 		mAnimator = GetComponent<Animator>();
 		DebugUtils.Assert(mAnimator != null, "Required Component!!");
 	}
 
 	/// <summary>
-	/// Initialization.
-	/// </summary>
-	void Start () {
-
-	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	void Update () {
-	
-	}
-
-	/// <summary>
 	/// Destructor
 	/// </summary>
-	void OnDestroy() {
-	
+	protected virtual void OnDestroy() {
+		// Loose references to delegates
+		onOpenPreAnimationDelegate = null;
+		onOpenPostAnimationDelegate = null;
+		onClosePreAnimationDelegate = null;
+		onClosePostAnimationDelegate = null;
 	}
 
 	//------------------------------------------------------------------//

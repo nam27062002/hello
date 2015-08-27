@@ -33,7 +33,7 @@ public class DragonAutoZoom : MonoBehaviour {
 
 	// References
 	private DragonPlayer player = null;
-	private CameraController mainCamera = null;
+	private CameraController_OLD mainCamera = null;
 
 	// Internal
 	float timer = 0f;
@@ -49,7 +49,7 @@ public class DragonAutoZoom : MonoBehaviour {
 		player = GetComponent<DragonPlayer>();
 		DebugUtils.Assert(player != null, "Required member!");
 
-		mainCamera = Camera.main.GetComponent<CameraController>();
+		mainCamera = Camera.main.GetComponent<CameraController_OLD>();
 		DebugUtils.Assert(mainCamera != null, "Required member!");
 	}
 
