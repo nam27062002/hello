@@ -10,6 +10,7 @@ public class DangerousEntity : MonoBehaviour {
 
 	private float m_FocusDistanceSQR;
 	private bool m_InRange;
+	private bool m_enabled;
 
 	// Use this for initialization
 	void Start () {
@@ -19,29 +20,35 @@ public class DangerousEntity : MonoBehaviour {
 
 		m_FocusDistanceSQR = m_FocusDistance * m_FocusDistance;
 		m_InRange = false;
+		m_enabled = true;
+	}
+
+	void OnEnable() {
+		m_enabled = true;
+	}
+
+	void OnDisable() {
+		if (m_CameraController)
+			m_CameraController.SetDangerousEntity(null);
+		m_InRange = false;
+		m_enabled = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
-		float distance = (transform.position - m_PlayerTransform.position).sqrMagnitude;
 
-		if (distance < m_FocusDistanceSQR) {
-			if (!m_InRange) {
-				m_CameraController.SetDangerousEntity(transform);
-				m_InRange = true;
+		if (m_enabled) {
+			float distance = (transform.position - m_PlayerTransform.position).sqrMagnitude;
+
+			if (distance < m_FocusDistanceSQR) {
+				if (!m_InRange) {
+					m_CameraController.SetDangerousEntity(transform);
+					m_InRange = true;
+				}
+			} else if (m_InRange) {			
+				m_CameraController.SetDangerousEntity(null);
+				m_InRange = false;
 			}
-		} else if (m_InRange) {			
-			m_CameraController.SetDangerousEntity(null);
-			m_InRange = false;
 		}
-	}
-
-	public void Disable () {
-
-		enabled = false;
-		m_CameraController.SetDangerousEntity(null);
-		m_InRange = false;
-		
 	}
 }

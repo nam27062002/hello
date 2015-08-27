@@ -19,6 +19,7 @@ public static class GameEvents {
 	public const string SCORE_MULTIPLIER_CHANGED = "SCORE_MULTIPLIER_CHANGED";	// params: ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier
 	public const string FURY_CHANGED = "FURY_CHANGED";		// params: float _oldAmount, float _newAmount
 	public const string FURY_RUSH_TOGGLED = "FURY_RUSH_TOGGLED";	// params: bool _activated
+	public const string HUNT_EVENT_TOGGLED = "HUNT_EVENT_TOGGLED";	// params: Transform _entityLocation, bool _activated
 
 	// Reward events
 	public const string REWARD_SCORE = "REWARD_SCORE";	// params: long _amount, GameEntity _entity

@@ -117,7 +117,7 @@ public class EdibleBehaviour : MonoBehaviour {
 			if (timer <= 0f){
 
 				state = State.DEAD;
-				timer = 4.0f;
+				timer = 2.0f;
 
 				// Support for both 2D and 3D objects
 				Renderer renderer = GetComponentInChildren<Renderer>();

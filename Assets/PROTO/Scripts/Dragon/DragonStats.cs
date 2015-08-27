@@ -56,7 +56,6 @@ public class DragonStats : MonoBehaviour {
 	public float furyDuration { get { return m_furyDuration; } }
 
 
-
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
@@ -66,9 +65,10 @@ public class DragonStats : MonoBehaviour {
 	private float m_energy;
 	public float energy { get { return m_energy; } }
 	
-	private float m_fury;
-	public float fury { get { return m_fury; } }
-
+	private float[] m_fury = new float[2];//we'll use a secondary variable to store all the fury got while in Rush mode 
+	private bool m_furyActive = false;
+	public float fury { get { return m_fury[0]; } }
+		
 
 
 	//-----------------------------------------------
@@ -77,7 +77,9 @@ public class DragonStats : MonoBehaviour {
 	void Start () {
 		m_life = m_maxLife;
 		m_energy = m_maxEnergy;
-		m_fury = 0;
+		m_fury[0] = 0;
+		m_fury[1] = 0;
+		m_furyActive = false;
 	}
 
 	public void AddLife(float _offset) {
@@ -89,7 +91,22 @@ public class DragonStats : MonoBehaviour {
 	}
 		
 	public void AddFury(float _offset) {
-		m_fury = Mathf.Min(m_maxFury, Mathf.Max(0, m_fury + _offset)); 
+		if (m_furyActive && _offset >= 0) {
+			m_fury[1] = Mathf.Min(m_maxFury, Mathf.Max(0, m_fury[1] + _offset)); 
+		} else {
+			m_fury[0] = Mathf.Min(m_maxFury, Mathf.Max(0, m_fury[0] + _offset)); 
+		}
+	}
+
+	public void ActivateFury() {
+		m_furyActive = true;
+	}
+
+	public void FinishFury() {
+		//when player used all the fury, we swap all the fury we got while throwing fire
+		m_furyActive = false;
+		m_fury[0] = m_fury[1];
+		m_fury[1] = 0;
 	}
 
 	private void SetupFromLevel() {

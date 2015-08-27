@@ -48,6 +48,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			if (m_dragon.fury <= 0) {
 
 				m_isFuryOn = false;
+				m_dragon.FinishFury();
 				m_animator.SetBool("fire", false);
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 			} else {
@@ -59,7 +60,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 			if (m_dragon.fury >= m_dragon.maxFury) {
 
-				m_isFuryOn = true;
+				m_isFuryOn = true;				
+				m_dragon.ActivateFury();
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
 			}
 		}

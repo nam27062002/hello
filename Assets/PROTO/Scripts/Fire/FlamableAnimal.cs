@@ -15,7 +15,7 @@ public class FlamableAnimal : FlamableBehaviour {
 			if (useMeat && burnedPrefab != null){
 				GameObject burnedObj = (GameObject)Object.Instantiate(burnedPrefab);
 				burnedObj.transform.position = transform.position;
-			}else if (!useMeat){
+			} else if (!useMeat) {
 
 				if (burnedParticle != null){
 					GameObject burnedObj = (GameObject)Object.Instantiate(burnedParticle);
@@ -28,9 +28,9 @@ public class FlamableAnimal : FlamableBehaviour {
 				Messenger.Broadcast<GameEntity>(GameEvents_OLD.ENTITY_EATEN, GetComponent<GameEntity>());			
 			}
 
-			if (destroyOnBurn)
+			if (destroyOnBurn) {
 				DestroyObject(this.gameObject);
-			else{
+			} else {
 				this.gameObject.SetActive (false);
 			}
 
