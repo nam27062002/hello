@@ -16,7 +16,6 @@ public class DragonControlAI : DragonControl {
 	DragonAi 		dragon;
 	GameEntity 	 	entity;
 	EdibleBehaviour	edible;
-	DangerousEntity cameraFocus;
 
 
 	
@@ -54,7 +53,6 @@ public class DragonControlAI : DragonControl {
 		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 		entity = GetComponent<GameEntity>();
 		edible = GetComponent<EdibleBehaviour>();
-		cameraFocus = GetComponent<DangerousEntity>();
 		origin = transform.position;
 		moving = true;
 	}
@@ -146,7 +144,6 @@ public class DragonControlAI : DragonControl {
 		if (state != State.DEAD && entity.health <= 0f){
 			state = State.DEAD;
 			action = false;
-			cameraFocus.Disable();
 			dragon.ChangeState(DragonAi.EState.DYING);
 		}
 	}
