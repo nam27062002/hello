@@ -42,7 +42,7 @@ public class RangeEditor : PropertyDrawer {
 		// Aux vars
 		float padding = 5f;
 		GUIContent content = new GUIContent();
-		GUIStyle style = new GUIStyle();	// Default style
+		GUIStyle style = GUI.skin.label;	// Default label style, useful to compute text widths
 
 		// Group all
 		_label = EditorGUI.BeginProperty(_position, _label, _property);

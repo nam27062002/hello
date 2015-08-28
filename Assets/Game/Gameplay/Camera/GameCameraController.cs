@@ -14,8 +14,8 @@ using UnityEngine;
 //----------------------------------------------------------------------//
 /// <summary>
 /// Controller for the camera in the game scene.
-/// In this particular game, the camera will always be looking at Z-0, making everything
-/// much easier.
+/// In this particular game, the camera will always be looking at Z-0 and never rotate, 
+/// making everything much easier.
 /// </summary>
 public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
@@ -26,15 +26,17 @@ public class GameCameraController : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed members
-	[Header("Movement")]
+	[Separator("Movement")]
 	[SerializeField] private float m_smoothFactor = 0.15f;
 	[SerializeField] private float m_forwardOffset = 300f;	// The distance looking ahead
 	[SerializeField] private Range m_limitX = new Range(-100, 100);
 
-	[Header("Zoom")]
+	[Separator("Zoom")]
+	[InfoBox("All zoom related values are in relative terms [0..1] to Zoom Range")]
+	[SerializeField] [Range(0, 1)] private float m_defaultZoom = 0;
 	[SerializeField] private Range m_zoomRange = new Range(10f, 300f);	// Zoom factor, distance from Z-0 in world units
 
-	[Header("Shaking")]
+	[Separator("Shaking")]
 	[SerializeField] private Vector3 m_shakeDefaultAmount = new Vector3(0.5f, 0.5f, 0f);
 	[SerializeField] private float m_shakeDefaultDuration = 0.15f;
 	[SerializeField] private bool m_shakeDecayOverTime = true;
@@ -49,8 +51,7 @@ public class GameCameraController : MonoBehaviour {
 	private Vector3 m_playerDir = Vector3.right;
 	private Vector3 m_forward = Vector3.right;
 
-	// Zoom - all zoom related values are in relative terms [0..1] to m_zoomRange
-	private float m_defaultZoom = 0;	// Will be initialized based on initial camera's position in the scene
+	// Zoom
 	private Interpolator m_zInterpolator = new Interpolator();
 
 	// Shake
