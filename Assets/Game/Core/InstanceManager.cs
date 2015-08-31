@@ -37,6 +37,13 @@ public class InstanceManager : Singleton<InstanceManager> {
 		}
 	}
 
+	// Main pool of game objects, we use it to store all the objects that will be destroyed and spawned several times 
+	private PoolController m_poolController = null;
+	public static PoolController pools { 
+		get { return instance.m_poolController; }
+		set { instance.m_poolController = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

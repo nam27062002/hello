@@ -83,7 +83,7 @@ public class GameEntity : MonoBehaviour {
 		}
 
 		// Apply streak multiplier
-		iScore = (long)(iScore * App.Instance.gameLogic.scoreMultiplier);
+		//iScore = (long)(iScore * App.Instance.gameLogic.scoreMultiplier); //TODO: we have to apply the score multiplier
 
 		// Done! ^_^
 		return iScore;

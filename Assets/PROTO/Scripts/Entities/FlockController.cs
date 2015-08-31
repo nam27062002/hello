@@ -4,13 +4,12 @@ using System.Collections;
 public class FlockController : MonoBehaviour {
 
 	// Normal spawn
-	public Object entityPrefab;
+	public GameObject entityPrefab;
 	public int numEntities = 4;
 	public float range = 800f;
 	public float guideSpeed = 2f;
 
 	[HideInInspector]
-	public GameObject[] entities;
 	GameObject player;
 	bool 	playerInRange = false;
 	float 	sqrRange;
@@ -26,21 +25,17 @@ public class FlockController : MonoBehaviour {
 		FAST_FLOCK
 	};
 
+	public GameObject[] m_entities;
+
 	public GuideFunction guideFunction = GuideFunction.SMALL_FLOCK;
 	
 	// Use this for initialization
 	void Start () {
-		
-		entities = new GameObject[numEntities];
-		for(int i=0;i<numEntities;i++){
-			
-			GameObject obj = (GameObject)Object.Instantiate(entityPrefab);
-			obj.transform.parent = transform;
-			obj.GetComponent<FlockBehaviour>().flock = this;
-			obj.SetActive(false);
-			entities[i] = obj;
-		}
-		
+
+		InstanceManager.pools.CreatePool(entityPrefab);
+
+		m_entities = new GameObject[numEntities];
+
 		player = GameObject.Find ("Player");
 		sqrRange = range*range;
 		
@@ -55,25 +50,33 @@ public class FlockController : MonoBehaviour {
 		followPos = bounds.center;
 	}
 
+	private GameObject Instantiate() {
+		GameObject obj = InstanceManager.pools.GetInstance(entityPrefab.name);
+		obj.GetComponent<FlockBehaviour>().flock = this;
+		obj.GetComponent<SpawnableBehaviour>().Spawn(bounds);
+		return obj;
+	}
+
 	void OnDestroy(){
-		foreach(GameObject obj in entities){
-			
-			DestroyObject (obj);
+		for (int i = 0; i < numEntities; i++) {			
+			m_entities[i].SetActive (false);
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		// Control flocking
-		// Move target for follow behaviour
-		timer += Time.deltaTime*guideSpeed;
-		if (guideFunction== GuideFunction.SMALL_FLOCK){
-			followPos.x = bounds.center.x + Mathf.Sin (timer*0.5f)*bounds.size.x*0.5f+Mathf.Cos (timer*0.25f)*bounds.size.x*0.5f;
-			followPos.y = bounds.center.y + Mathf.Sin (timer*0.35f)*bounds.size.y*0.5f+Mathf.Cos (timer*0.65f)*bounds.size.y*0.5f;
-		}else if (guideFunction== GuideFunction.FAST_FLOCK){
-			followPos.x = bounds.center.x + Mathf.Sin (timer)*bounds.size.x;
-			followPos.y = bounds.center.y + Mathf.Cos (timer)*bounds.size.y;
+		if (playerInRange) {
+			// Control flocking
+			// Move target for follow behaviour
+			timer += Time.deltaTime*guideSpeed;
+			if (guideFunction== GuideFunction.SMALL_FLOCK){
+				followPos.x = bounds.center.x + Mathf.Sin (timer*0.5f)*bounds.size.x*0.5f+Mathf.Cos (timer*0.25f)*bounds.size.x*0.5f;
+				followPos.y = bounds.center.y + Mathf.Sin (timer*0.35f)*bounds.size.y*0.5f+Mathf.Cos (timer*0.65f)*bounds.size.y*0.5f;
+			}else if (guideFunction== GuideFunction.FAST_FLOCK){
+				followPos.x = bounds.center.x + Mathf.Sin (timer)*bounds.size.x;
+				followPos.y = bounds.center.y + Mathf.Cos (timer)*bounds.size.y;
+			}
 		}
 
 		// Hide/respawn depending on player distance
@@ -83,22 +86,19 @@ public class FlockController : MonoBehaviour {
 			
 			playerInRange = true;
 			
-			foreach(GameObject obj in entities){
-				
-				obj.GetComponent<SpawnableBehaviour>().Spawn(bounds);
-				obj.SetActive (true);
+			for (int i = 0; i < numEntities; i++) {
+				m_entities[i] = Instantiate();
 			}
 		}else if (d > sqrRange && playerInRange){
 			
 			playerInRange = false;
 			
-			foreach(GameObject obj in entities){
+			for (int i = 0; i < numEntities; i++) {
 				
-				obj.SetActive (false);
+				m_entities[i].SetActive (false);
 			}
 
 			Messenger.Broadcast<GameObject>("SpawnOutOfRange",this.gameObject);
 		}
-
 	}
 }

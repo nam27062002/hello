@@ -78,6 +78,8 @@ public class PoolController : MonoBehaviour {
 		foreach (GameObject go in m_prefabs) {
 			CreatePool(go);
 		}
+
+		InstanceManager.pools = this;
 	}
 
 	public void CreatePool(GameObject _gameObject, int _initSize = 10, bool _canGrow = true) {

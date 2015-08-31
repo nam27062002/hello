@@ -13,7 +13,7 @@ public class TouchControlsDPad : TouchControls {
 	private float m_radiusToCheck = 40.0f;
 	private float m_boostRadiusToCheck = 50.0f;// another 10 pixels 
 	
-	private const float m_decelerationTimeLimit = 1.0f; // 1 second to come to a halt
+	private const float m_decelerationTimeLimit = 0.25f; // 0.5 seconds to come to a halt
 	private float m_decelerationTimer = 0.0f;
 	
 	// DPAD Rendering
@@ -227,7 +227,7 @@ public class TouchControlsDPad : TouchControls {
 			else
 			{
 				decelerationMult = (m_decelerationTimeLimit - m_decelerationTimer) / m_decelerationTimeLimit;
-				decelerationMult = Mathf.Clamp(decelerationMult, 0.0f, 1.0f);
+				decelerationMult = Mathf.Clamp(decelerationMult, 0.0f, 0.85f);
 			}
 		}
 		

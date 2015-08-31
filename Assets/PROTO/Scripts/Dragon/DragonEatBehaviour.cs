@@ -59,13 +59,15 @@ public class DragonEatBehaviour : MonoBehaviour {
 				Vector3 p2 = m_mouth.position;
 				
 				p1.z = 0f;
-				p1.y += edible.modelbounds.extents.y;
 				p2.z = 0f;
 				
-				float distance = (p1 - p2).sqrMagnitude;
+				float distanceSqr = (p1 - p2).sqrMagnitude;
+				float entityRadius = Mathf.Max(edible.modelbounds.extents.x, edible.modelbounds.extents.y);
+				float entityRadiusSqr = entityRadius * entityRadius;
 				
 				// Is  within mouth range?
-				if (distance < m_eatRangeSqr) {
+				if (distanceSqr < m_eatRangeSqr + entityRadiusSqr)
+				{
 					
 					// Yes!! Eat it!
 					edible.OnEat();

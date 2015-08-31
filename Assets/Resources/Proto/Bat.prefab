@@ -526,9 +526,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flock: {fileID: 0}
-  speed: 600
+  speed: 900
   trackGround: 1
-  fleeFactor: 1.25
+  fleeFactor: .25
   faceDirection: 0
   useFlee: 1
 --- !u!114 &11434528
@@ -570,6 +570,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: bat
   health: 1
+  isGolden: 0
   rewardScore: 10
   rewardCoins: 5
   rewardCoinsProbability: .25
@@ -654,7 +655,19 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: speed
+      value: 900
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: fleeFactor
+      value: .25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: trackGround
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 180924}
