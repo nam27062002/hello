@@ -42,7 +42,7 @@ public class RangeEditor : PropertyDrawer {
 		// Aux vars
 		float padding = 5f;
 		GUIContent content = new GUIContent();
-		GUIStyle style = new GUIStyle();	// Default style
+		GUIStyle style = GUI.skin.label;	// Default label style, useful to compute text widths
 
 		// Group all
 		_label = EditorGUI.BeginProperty(_position, _label, _property);
@@ -74,7 +74,7 @@ public class RangeEditor : PropertyDrawer {
 		// Draw label and initialize position helpers
 		Rect contentRect = EditorGUI.PrefixLabel(_position, _label);	// Remaining space for the content
 		Rect cursor = contentRect;
-		cursor.height = contentRect.height/2f;	// Size of a single line
+		//cursor.height = contentRect.height/2f;	// Size of a single line
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Draw min value
@@ -176,10 +176,10 @@ public class RangeEditor : PropertyDrawer {
 	/// <returns>The height required by this property drawer.</returns>
 	/// <param name="_property">The property we're drawing.</param>
 	/// <param name="_label">The label of the property.</param>
-	public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label) {
+	/*public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label) {
 		// Let's get a double line
 		return base.GetPropertyHeight(_property, _label) * 2f;
-	}
+	}*/
 
 	/// <summary>
 	/// Update the limits of the slider based on current zoom and range's min and max.
