@@ -30,47 +30,57 @@ public class CameraController_OLD : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		player = GameObject.Find("Player").transform;
-		dangerousEntity = null;
 
-		targetPosition = player.transform.position;
-
-		defaultZ = transform.position.z;
-		zInterpolator = new Interpolator();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		forward = forward*0.95f + playerDirection*0.05f;
+		if (player == null) {
 
-		if (dangerousEntity == null) {
-			targetPosition = Vector3.Lerp(targetPosition, player.position, movementSmoothing * 1.5f);
+			player = GameObject.Find("Player").transform;
+
+			if (player != null) {
+				dangerousEntity = null;
+				
+				targetPosition = player.transform.position;
+				
+				defaultZ = transform.position.z;
+				zInterpolator = new Interpolator();
+			}
+
 		} else {
-			targetPosition = Vector3.Lerp(targetPosition, (player.position + dangerousEntity.position) * 0.5f, movementSmoothing * 0.5f);
+
+			forward = forward*0.95f + playerDirection*0.05f;
+
+			if (dangerousEntity == null) {
+				targetPosition = Vector3.Lerp(targetPosition, player.position, movementSmoothing * 1.5f);
+			} else {
+				targetPosition = Vector3.Lerp(targetPosition, (player.position + dangerousEntity.position) * 0.5f, movementSmoothing * 0.5f);
+			}
+
+			Vector3 pos = Vector3.Lerp (transform.position, targetPosition+forward*forwardOffset,movementSmoothing);
+
+			if (pos.x < limitX[0])
+				pos.x = limitX[0];
+
+			if (pos.x > limitX[1])
+				pos.x = limitX[1];
+
+			if (shakeTimer > 0f){
+				shakeTimer -= Time.deltaTime;
+				pos.y += Random.value*shakeAmt*2 - shakeAmt;
+			}
+
+			// Z is defined by the zoom
+			if(zInterpolator.IsFinished()) {
+				pos.z = transform.position.z;	// Don't move
+			} else {
+				pos.z = zInterpolator.GetExponential();
+			}
+
+			transform.position = pos;
 		}
-
-		Vector3 pos = Vector3.Lerp (transform.position, targetPosition+forward*forwardOffset,movementSmoothing);
-
-		if (pos.x < limitX[0])
-			pos.x = limitX[0];
-
-		if (pos.x > limitX[1])
-			pos.x = limitX[1];
-
-		if (shakeTimer > 0f){
-			shakeTimer -= Time.deltaTime;
-			pos.y += Random.value*shakeAmt*2 - shakeAmt;
-		}
-
-		// Z is defined by the zoom
-		if(zInterpolator.IsFinished()) {
-			pos.z = transform.position.z;	// Don't move
-		} else {
-			pos.z = zInterpolator.GetExponential();
-		}
-
-		transform.position = pos;
 	}
 
 	/// <summary>

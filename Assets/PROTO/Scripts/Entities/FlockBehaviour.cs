@@ -36,7 +36,7 @@ public class FlockBehaviour : MonoBehaviour {
 	
 	void Update () {
 
-		if (flock != null){
+		if (flock != null) {
 
 			// Follow the target
 			follow = flock.followPos - pos;
@@ -46,7 +46,7 @@ public class FlockBehaviour : MonoBehaviour {
 			// Avoid other entities from the same flock
 			avoid = Vector3.zero;
 			Vector3 dist = Vector3.zero;
-			foreach (GameObject obj in flock.entities){
+			foreach (GameObject obj in flock.m_entities){
 				if (obj != this.gameObject){
 					dist = pos-obj.transform.position;
 					float m = dist.magnitude;
@@ -56,32 +56,31 @@ public class FlockBehaviour : MonoBehaviour {
 			}
 
 			avoid.Normalize();
-			avoid *= speed*Time.deltaTime;
+			avoid *= speed * Time.deltaTime;
 
 			if (useFlee){
-				flee = pos-player.transform.position;
+				flee = pos - player.transform.position;
 				float d = flee.magnitude;
 				if (d < speed)
-					flee = flee.normalized*(speed-d*0.5f)*fleeFactor*Time.deltaTime;
+					flee = flee.normalized * (speed - d * 0.5f) * fleeFactor * Time.deltaTime;
 				else
 					flee = Vector3.zero;
 
-
-				impulse = Vector3.Lerp (impulse, follow*0.5f+avoid*0.4f+flee*0.75f,0.2f);
+				impulse = Vector3.Lerp (impulse, follow * 0.5f + avoid * 0.4f + flee * 0.75f, 0.2f);
 			}else{
-				impulse = Vector3.Lerp (impulse, follow*0.85f+avoid*0.15f,0.4f);
+				impulse = Vector3.Lerp (impulse, follow * 0.85f + avoid * 0.15f, 0.4f);
 			}
 			pos += impulse;
 
 			frame++;
 			Vector3 dir = impulse.normalized;
-			if (trackGround && frame > 2){
+			if (trackGround && frame > 2) {
 
 				// Don't go into the ground
 				RaycastHit ground;
-				if (Physics.Linecast( pos, pos+dir*50f, out ground, groundMask)){
-					pos = new Vector3(ground.point.x,ground.point.y,0f)-dir*50f;
-				}else{
+				if (Physics.Linecast(pos, pos+dir * 50f, out ground, groundMask)) {
+					pos = new Vector3(ground.point.x, ground.point.y, 0f) - dir * 50f;
+				} else {
 					frame = 0;
 				}
 			}
@@ -89,23 +88,21 @@ public class FlockBehaviour : MonoBehaviour {
 			pos.z = 0f;
 			transform.position = pos;
 
-			if (faceDirection){
+			if (faceDirection) {
 				float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 				transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
-			}else{
+			} else {
 				// Rotate so it faces the right direction (replaces 2D sprite flip)
 				float fRotationSpeed = 2f;	// [AOC] Deg/sec?
 				float fAngleY = 0f;
+
 				if(impulse.x < 0f) {
 					fAngleY = 180;
 				}
+
 				Quaternion q = Quaternion.Euler(0, fAngleY, 0);
 				transform.localRotation = Quaternion.Slerp(transform.localRotation, q, Time.deltaTime * fRotationSpeed);
-
-				//Vector3 lscale = transform.localScale;
-				//lscale.x = Mathf.Sign(impulse.x)*-scale.x;
-				//transform.localScale = lscale;
 			}
 		}
 	}
@@ -113,8 +110,6 @@ public class FlockBehaviour : MonoBehaviour {
 	public void OnSpawn(Bounds bounds){
 
 		pos = bounds.center;
-		//pos.x  += Random.Range (-bounds.extents.x,bounds.extents.x);
-		//pos.y  += Random.Range (-bounds.extents.y,bounds.extents.y);
 		pos.x  += Random.Range (-300f,300f);
 		pos.y  += Random.Range (-300f,300f);
 		pos.z = 0f;

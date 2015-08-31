@@ -337,8 +337,6 @@ public class DragonPlayer : MonoBehaviour {
 	/// <param name="_fSpeedMultiplier">The multiplier of the dragon's movement speed.</param>
 	void UpdateMovement(float _fSpeedMultiplier) {
 
-
-
 		bool grab = m_grabBehaviour.HasGrabbedEntity();
 
 		if (grab)
@@ -353,20 +351,25 @@ public class DragonPlayer : MonoBehaviour {
 
 		if (!impulse.Equals(Vector3.zero)) {
 
+			rbody.drag = 1.5f;
+
 			Vector3 oldDir = dir; 
 			dir = impulse;
 			dir.Normalize();
 
 			// Check sharp turn
-			if (Vector3.Dot(oldDir,dir) < 0f && Mathf.Abs (dir.y) < 0.35f && Mathf.Abs (oldDir.y) < 0.35f){
+			if (Vector3.Dot(oldDir, dir) < 0.5f && Mathf.Abs (dir.y) < 0.75f && Mathf.Abs (oldDir.y) < 0.75f){
 				if (dir.x < 0f)
 					animator.SetTrigger("turn_left");
 				else
 					animator.SetTrigger("turn_right");
+
+				rbody.velocity = Vector3.zero;
+				rbody.drag = 10f;
 			}
 
 		} else {
-
+			rbody.drag = Mathf.Min(10f, rbody.drag + 1.5f);
 			plummeting = false;
 		}
 
@@ -409,6 +412,12 @@ public class DragonPlayer : MonoBehaviour {
 			glideTimer += Time.deltaTime;
 			if (glideTimer > 6f)
 				glideTimer = 0f;
+		} else {
+			if (dir.x < 0)
+				dir = Vector3.left;
+			else 
+				dir = Vector3.right;
+			orientation.SetDirection(dir);
 		}
 
 		// Glide timer controls how long we do the glide animation

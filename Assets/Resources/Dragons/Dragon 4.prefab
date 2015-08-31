@@ -192,7 +192,7 @@ GameObject:
   m_Layer: 0
   m_Name: eat
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -818,6 +818,7 @@ GameObject:
   - 114: {fileID: 11408036}
   - 114: {fileID: 11437562}
   - 114: {fileID: 11455602}
+  - 136: {fileID: 13641966}
   m_Layer: 0
   m_Name: Dragon 4
   m_TagString: Untagged
@@ -2563,7 +2564,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edc67609b2d3b4d1a80b3d911f145143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eatRange: 80
+  m_eatRange: 150
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2630,10 +2631,10 @@ SphereCollider:
   m_GameObject: {fileID: 159196}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 150
-  m_Center: {x: -58.6699982, y: 23.4400005, z: 0}
+  m_Radius: 100
+  m_Center: {x: -110, y: 70.3000031, z: 0}
 --- !u!136 &13630308
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -2647,6 +2648,19 @@ CapsuleCollider:
   m_Height: 105.599998
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!136 &13641966
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 150
+  m_Height: 500
+  m_Direction: 2
+  m_Center: {x: -117.730003, y: 65, z: 0}
 --- !u!136 &13695044
 CapsuleCollider:
   m_ObjectHideFlags: 1

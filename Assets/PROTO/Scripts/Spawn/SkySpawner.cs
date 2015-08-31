@@ -52,23 +52,24 @@ public class SkySpawner : MonoBehaviour {
 		}
 	}
 
-	bool GroupExists(Vector3 pos){
+	bool GroupExists(Vector3 pos) {
 
 		// first test if the position is in the sky
 		float minHeight = pos.y-400f;
 		Vector3 testPoint = pos;
 		testPoint.y = 10000f;
 		RaycastHit hit;
-		if (Physics.Linecast (testPoint, testPoint+Vector3.down*20000f,out hit,groundMask)){
+
+		if (Physics.Linecast(testPoint, testPoint+Vector3.down*20000f,out hit,groundMask)) {
 			// if collision point is to close or above ground
 			if (hit.point.y > minHeight)
 				return true;
 		}
 
-		for(int i=0;i<spawnedList.Count;i++){
-
-			float dist = (spawnedList[i].position - pos).magnitude;
-			if (dist < spawnDistance)
+		float spawnDistanceSqr = spawnDistance * spawnDistance;
+		for(int i = 0; i < spawnedList.Count; i++) {
+			float distSqr = (spawnedList[i].position - pos).sqrMagnitude;
+			if (distSqr < spawnDistanceSqr)
 				return true;
 		}
 
@@ -88,10 +89,10 @@ public class SkySpawner : MonoBehaviour {
 		spawnedList.Add(sgroup);
 	}
 
-	public void OnSpawnOutOfRange(GameObject obj){
+	public void OnSpawnOutOfRange(GameObject obj) {
 
-		for(int i=0;i<spawnedList.Count;i++){
-			if(spawnedList[i].group == obj){
+		for(int i = 0; i < spawnedList.Count; i++){
+			if (spawnedList[i].group == obj) {
 				spawnedList.Remove(spawnedList[i]);
 				DestroyObject(obj);
 				break;
