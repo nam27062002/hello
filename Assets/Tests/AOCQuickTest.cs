@@ -24,11 +24,11 @@ public class AOCQuickTest : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	public Range m_range = new Range(0, 10);
+	[Range(0, 1)] public float m_factor = 0.5f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -44,18 +44,18 @@ public class AOCQuickTest : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	void Start() {
-		float[] floats = {-250f, -100f, -35f, -4f, -1, 0f, 1f, 4f, 35f, 100f, 250f};
-		foreach(float f in floats) {
-			float mag = MathUtils.GetMagnitude(f);
-			Debug.Log(string.Format("{0}: magnitude {1}, prev {2}, next {3}", f, mag, MathUtils.PreviousMultiple(f, mag), MathUtils.NextMultiple(f, mag)));
-		}
+
 	}
 	
 	/// <summary>
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-
+		if(Input.GetMouseButtonDown(0)) {
+			Debug.Log("_____________________________");
+			Debug.Log("Manual: " + (m_range.max * m_factor + m_range.min * (1f - m_factor)));
+			Debug.Log("  Lerp: " + Mathf.Lerp(m_range.min, m_range.max, m_factor));
+		}
 	}
 
 	/// <summary>

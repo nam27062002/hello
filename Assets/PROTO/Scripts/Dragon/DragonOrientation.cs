@@ -64,7 +64,7 @@ public class DragonOrientation : MonoBehaviour {
 
 		targetDir = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
 
-		Camera.main.GetComponent<CameraController_OLD>().SetPlayerDirection(dir);
+		//Camera.main.GetComponent<CameraController_OLD>().SetPlayerDirection(dir);
 	}
 
 	public void OnDeath(){
