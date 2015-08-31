@@ -28,20 +28,20 @@ public class GameCameraController : MonoBehaviour {
 	// Exposed members
 	[Separator("Movement")]
 	[SerializeField] [Range(0, 1)] [Tooltip("The delay towards the dragon position. [0..1] -> [DragonPos..CurrentPos] -> [Hard..Smooth].")] 
-	private float m_movementSmoothing = 0.15f;
+	private float m_movementSmoothing = 0.85f;
 	[SerializeField] [Range(0, 1)] [Tooltip("The delay when adapting the forward offset to the dragon's direction. [0..1] -> [DragonDir..CurrentDir]. -> [Hard..Smooth]")]
-	private float m_forwardSmoothing = 0.05f;
+	private float m_forwardSmoothing = 0.95f;
 	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon")] 
 	private float m_forwardOffset = 300f;
 	[SerializeField] [Tooltip("Horizontal scroll limits in world coords")]
 	private Range m_limitX = new Range(-100, 100);
 
 	[Separator("Zoom")]
-	[InfoBox("All zoom related values are in relative terms [0..1] to Zoom Range")]
 	[SerializeField] [Range(0, 1)] [Tooltip("Initial zoom value")]
 	private float m_defaultZoom = 0.5f;
 	[Tooltip("Zoom factor, distance from Z-0 in world units. Change this based on dragon type.")]
-	public Range m_zoomRange = new Range(10f, 300f);
+	public Range m_zoomRange = new Range(500f, 2000f);
+	[InfoBox("All zoom related values are in relative terms [0..1] to Zoom Range")]
 
 	[Separator("Shaking")]
 	[SerializeField] private Vector3 m_shakeDefaultAmount = new Vector3(0.5f, 0.5f, 0f);
@@ -69,7 +69,7 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Current zoom level [0..1]
 	public float zoom {
-		get { return m_zoomRange.InverseLerp(transform.position.z); }
+		get { return m_zoomRange.InverseLerp(-transform.position.z); }
 	}
 
 	// Default zoom level
@@ -100,6 +100,9 @@ public class GameCameraController : MonoBehaviour {
 		m_danger = null;
 		m_currentPos = gameObject.transform.position;
 		m_targetPos = playerPos;
+
+		// Initialize zoom interpolator
+		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
 	}
 	
 	/// <summary>
@@ -125,10 +128,11 @@ public class GameCameraController : MonoBehaviour {
 		m_targetPos.x = Mathf.Clamp(m_targetPos.x, m_limitX.min, m_limitX.max);
 
 		// Compute Z, defined by the zoom factor
-		m_targetPos.z = m_zInterpolator.GetExponential();
+		m_targetPos.z = -m_zoomRange.Lerp(m_zInterpolator.GetExponential());	// Reverse-signed
 
 		// Apply movement smoothing
-		Vector3 newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing); 
+		Vector3 newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
+		newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
 
 		// Apply shaking - after smoothing, we don't want shaking to be affected by it
 		if(m_shakeTimer > 0f){
@@ -171,11 +175,7 @@ public class GameCameraController : MonoBehaviour {
 	/// <param name="_duration">The duration in seconds of the zoom animation.</param>
 	public void Zoom(float _zoomLevel, float _duration) {
 		// Override any previous zoom anim
-		// Compute target Z
-		float targetZ = m_zoomRange.Lerp(_zoomLevel);
-		
-		// Restart interpolator
-		m_zInterpolator.Start(transform.position.z, targetZ, _duration);
+		m_zInterpolator.Start(zoom, _zoomLevel, _duration);
 	}
 	
 	/// <summary>

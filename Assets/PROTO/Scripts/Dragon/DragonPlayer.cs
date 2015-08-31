@@ -86,7 +86,15 @@ public class DragonPlayer : MonoBehaviour {
 
 	#region GENERIC METHODS ----------------------------------------------------
 	/// <summary>
-	/// Use this for initialization.
+	/// Initialization.
+	/// </summary>
+	void Awake() {
+		// Store reference into Instance Manager for global access
+		InstanceManager.player = this;
+	}
+
+	/// <summary>
+	/// First update.
 	/// </summary>
 	void Start() {
 
@@ -125,8 +133,9 @@ public class DragonPlayer : MonoBehaviour {
 
 	}
 
-	void OnDestroy(){
-
+	void OnDestroy() {
+		// Clear Instance Manager's reference
+		InstanceManager.player = null;
 	}
 	
 	/// <summary>

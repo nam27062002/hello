@@ -29,12 +29,13 @@ public class InstanceManager : Singleton<InstanceManager> {
 	}
 
 	// Only during game scene, reference to the dragon
+	private DragonPlayer m_player = null;
 	public static DragonPlayer player {
 		get {
-			// Only in game scene!!
-			DebugUtils.Assert(SceneManager.currentScene == GameSceneController.NAME, "Attemting to retrieve the player outside the game scene!!");
-			return (sceneController as GameSceneController).player;
+			DebugUtils.Assert(instance.m_player != null, "Attempting to retrieve the player, but no player has been created yet.");
+			return instance.m_player;
 		}
+		set { instance.m_player = value; }
 	}
 
 	// Main pool of game objects, we use it to store all the objects that will be destroyed and spawned several times 
@@ -53,6 +54,7 @@ public class InstanceManager : Singleton<InstanceManager> {
 	override protected void OnDestroy() {
 		// Clear all references
 		m_sceneController = null;
+		m_player = null;
 
 		// Call parent
 		base.OnDestroy();

@@ -98,9 +98,7 @@ public class SceneManager : Singleton<SceneManager> {
 		m_updateDelegates[(int)ESceneState.RUN] = UpdateRun;
 
 		// [AOC] Pick current scene as initial scene and put it to run state
-		m_currentScene = Application.loadedLevelName;
-		m_nextScene = m_currentScene;
-		m_sceneState = ESceneState.RUN;
+		SetCurrentScene(Application.loadedLevelName);
 	}
 	
 	/// <summary>
@@ -145,6 +143,18 @@ public class SceneManager : Singleton<SceneManager> {
 			// Store next scene, the load will begin on the next Update() call
 			instance.m_nextScene = _nextSceneName;
 		}
+	}
+
+	/// <summary>
+	/// Specially for debugging, force the name of the current scene.
+	/// Doesn't do any flow change, only sets internal vars.
+	/// </summary>
+	/// <param name="_sceneName">The name of the currently loaded scene.</param>
+	public static void SetCurrentScene(string _sceneName) {
+		instance.m_prevScene = instance.m_currentScene;
+		instance.m_currentScene = _sceneName;
+		instance.m_nextScene = _sceneName;
+		instance.m_sceneState = ESceneState.RUN;
 	}
 
 	//------------------------------------------------------------------//
