@@ -24,9 +24,10 @@ public class DragonEatBehaviour : MonoBehaviour {
 	}
 
 	void OnDisable() {
-		
-		m_animator.SetBool("big_prey", false);
-		m_animator.SetBool("bite", false);
+		if(m_animator != null) {
+			m_animator.SetBool("big_prey", false);
+			m_animator.SetBool("bite", false);
+		}
 	}
 
 	public bool IsEating() {

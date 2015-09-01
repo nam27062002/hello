@@ -74,7 +74,7 @@ public class DragonStats : MonoBehaviour {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	void Start () {
+	void Awake () {
 		m_life = m_maxLife;
 		m_energy = m_maxEnergy;
 		m_fury[0] = 0;

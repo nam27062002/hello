@@ -89,8 +89,20 @@ public class DragonPlayer : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		// Store reference into Instance Manager for global access
+		// Store reference into Instance Manager for immediate global access
 		InstanceManager.player = this;
+
+		// Initialize references to the rest of the dragon's components as well
+		controls = GetComponent<DragonControl>();
+		fireBreath = GetComponent<DragonBreathBehaviour>();
+		rbody = GetComponent<Rigidbody>();
+		animator = transform.FindChild("view").GetComponent<Animator>();
+		orientation = GetComponent<DragonOrientation>();
+
+		eatBehaviour = GetComponent<DragonEatBehaviour>();
+		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
+		m_grabBehaviour = GetComponent<DragonGrabBehaviour>();
+		m_stats = GetComponent<DragonStats>();
 	}
 
 	/// <summary>
@@ -99,20 +111,8 @@ public class DragonPlayer : MonoBehaviour {
 	void Start() {
 
 		// Initialize some internal vars
-		controls = GetComponent<DragonControl>();
-		fireBreath = GetComponent<DragonBreathBehaviour>();
-		rbody = GetComponent<Rigidbody>();
-		animator = transform.FindChild("view").GetComponent<Animator>();
-		orientation = GetComponent<DragonOrientation>();
 		pos = transform.position;
 		impulseMulti = 4f;
-
-
-		eatBehaviour = GetComponent<DragonEatBehaviour>();
-		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
-		m_grabBehaviour = GetComponent<DragonGrabBehaviour>();
-		m_stats = GetComponent<DragonStats>();
-
 
 		// Load selected skin
 		// Load both materials

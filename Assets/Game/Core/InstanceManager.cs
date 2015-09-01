@@ -35,7 +35,7 @@ public class InstanceManager : Singleton<InstanceManager> {
 			DebugUtils.Assert(instance.m_player != null, "Attempting to retrieve the player, but no player has been created yet.");
 			return instance.m_player;
 		}
-		set { instance.m_player = value; }
+		set { if(instance != null) instance.m_player = value; }
 	}
 
 	// Main pool of game objects, we use it to store all the objects that will be destroyed and spawned several times 

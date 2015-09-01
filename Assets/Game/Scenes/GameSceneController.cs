@@ -23,6 +23,7 @@ public class GameSceneController : SceneController {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly string NAME = "SC_Game";
+	public static readonly float COUNTDOWN = 3f;	// Seconds
 
 	public enum EStates {
 		INIT,
@@ -47,6 +48,16 @@ public class GameSceneController : SceneController {
 	public float elapsedSeconds {
 		get { return m_elapsedSeconds; }
 	}
+
+	public float countdown {
+		get {
+			if(state == EStates.COUNTDOWN) {
+				return m_timer;
+			} else {
+				return 0f;
+			}
+		}
+	}
 	
 	// Logic state
 	private EStates m_state = EStates.INIT;
@@ -57,19 +68,12 @@ public class GameSceneController : SceneController {
 	public bool paused {
 		get { return m_state == EStates.PAUSED; }
 	}
-	
-	// Reference to player
-	private DragonPlayer m_player = null;
-	public DragonPlayer player {
-		get { return m_player; }
-	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private string m_dragonResourcesPath = "Dragons/";
-	[SerializeField] private Text m_hpText = null;
 
 	// Internal vars
 	private float m_timer = -1;	// Misc use
@@ -84,7 +88,8 @@ public class GameSceneController : SceneController {
 		// Call parent
 		base.Awake();
 
-		DebugUtils.Assert(m_hpText != null, "Required field not initialized!");
+		// Load the dragon
+		LoadDragon();
 	}
 
 	/// <summary>
@@ -103,24 +108,17 @@ public class GameSceneController : SceneController {
 		switch(m_state) {
 			// During countdown, let's just wait
 			case EStates.COUNTDOWN: {
-				// [AOC] TODO!! Show some feedback
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
 						ChangeState(EStates.RUNNING);
 					}
-
-					// Show countdown
-					m_hpText.text = StringUtils.FormatNumber(Mathf.Ceil(m_timer), 0);
 				}
 			} break;
 				
 			case EStates.RUNNING: {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
-
-				// Update HP textfield
-				if(player != null) m_hpText.text = string.Format("{0} HP", StringUtils.FormatNumber(player.stats.life, 0));
 			} break;
 
 			case EStates.FINISHED: {
@@ -151,9 +149,6 @@ public class GameSceneController : SceneController {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
-		// Load the dragon
-		LoadDragon();
-		
 		// Reset timer
 		m_elapsedSeconds = 0;
 		
@@ -161,9 +156,6 @@ public class GameSceneController : SceneController {
 		m_score = 0;
 		
 		// [AOC] TODO!! Reset game stats
-
-		// Dispatch game event
-		Messenger.Broadcast(GameEvents.GAME_STARTED);
 		
 		// Change state
 		ChangeState(EStates.COUNTDOWN);
@@ -216,25 +208,47 @@ public class GameSceneController : SceneController {
 				Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 				Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 			} break;
+
+			case EStates.PAUSED: {
+				// Notify the game
+				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
+			} break;
 		}
 		
 		// Actions to perform when entering the new state
 		switch(_newState) {
 			case EStates.COUNTDOWN: {
 				// Start countdown timer
-				m_timer = 3f;	// [AOC] TODO!! Do it properly
+				m_timer = COUNTDOWN;
+
+				// Disable dragon so its HP doesn't go down
+				InstanceManager.player.gameObject.SetActive(false);
+
+				// Notify the game
+				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_STARTED);
 			} break;
 				
 			case EStates.RUNNING: {
+				// Enable dragon back!
+				InstanceManager.player.gameObject.SetActive(true);
+
 				// Subscribe to external events
 				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 				Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+
+				// Notify the game
+				if(m_state == EStates.COUNTDOWN) {
+					Messenger.Broadcast(GameEvents.GAME_STARTED);
+				}
 			} break;
 				
 			case EStates.PAUSED: {
 				// Ignore if not running
 				if(m_state != EStates.RUNNING) return;
+
+				// Notify the game
+				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
 			} break;
 		}
 		
@@ -245,7 +259,7 @@ public class GameSceneController : SceneController {
 	/// <summary>
 	/// Load and instantiate a dragon prefab based on current game settings.
 	/// </summary>
-	private void LoadDragon(){
+	private void LoadDragon() {
 		// Destroy any previously created player
 		GameObject debugDragon = GameObject.Find("Player");
 		if(debugDragon != null) {
@@ -253,7 +267,7 @@ public class GameSceneController : SceneController {
 		}
 		
 		// Instantiate the Dragon defined in GameSettings
-		Debug.Log("Attempting to load dragon: " + m_dragonResourcesPath + GameSettings.dragonType);
+		//Debug.Log("Attempting to load dragon: " + m_dragonResourcesPath + GameSettings.dragonType);
 		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + GameSettings.dragonType));
 		dragonObj.name = "Player";
 
@@ -266,9 +280,6 @@ public class GameSceneController : SceneController {
 		if(spawnPointObj != null) {
 			dragonObj.transform.position = spawnPointObj.transform.position;
 		}
-		
-		// Store reference to the dragon for faster access
-		m_player = dragonObj.GetComponent<DragonPlayer>();
 	}
 
 	/// <summary>
