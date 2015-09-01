@@ -45,6 +45,11 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 	// Multithread lock - just in case instance getter is requested from two different threads at the same time
 	private static object m_threadLock = new object();
 
+	// If the instance getter is called while the instance is being created (i.e. from T's Awake() function)
+	// we will enter into an infinite loop of instances creation.
+	// This variable will be used to prevent this.
+	private static bool m_isCreatingInstance = false;
+
 	// When Unity quits, it destroys objects in a random order.
 	// In principle, a Singleton is only destroyed when application quits.
 	// If any script calls instance after it has been destroyed, it will create a buggy ghost object that will stay on the Editor scene even after stopping playing the Application. Really bad!
@@ -67,10 +72,19 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 				return null;
 			}
 
-			// Make sure this only one thread is doing this!
+			// Make sure that only one thread is doing this!
 			lock(m_threadLock) {
 				// Is the static instance created?
 				if(m_instance == null) {
+					// If instance creation is locked, throw a warning
+					if(m_isCreatingInstance) {
+						Debug.LogWarning("[Singleton] Instance for " + typeof(T) + " is currently being created. Avoid calling the instance getter during the Awake function of your singleton class.");
+						return null;
+					}
+
+					// Lock instance creation
+					m_isCreatingInstance = true;
+
 					// If the singleton container has not been created, do it now
 					GameObject containerObj = GameObject.Find(CONTAINER_NAME);
 					if(containerObj == null) {
@@ -81,6 +95,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 					// Create the instance by adding it as a component of the game object we just created
 					// Store its reference so this is only done once
 					m_instance = containerObj.AddComponent<T>();
+
+					// Instance has been created and stored, unlock instance creation
+					m_isCreatingInstance = false;
 				}
 
 				// Instance is created! Return it

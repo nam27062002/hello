@@ -25,7 +25,7 @@ public class InstanceManager : Singleton<InstanceManager> {
 	private SceneController m_sceneController = null;
 	public static SceneController sceneController { 
 		get { return instance.m_sceneController; }
-		set { instance.m_sceneController = value; }
+		set { if(instance != null) instance.m_sceneController = value; }
 	}
 
 	// Only during game scene, reference to the dragon
@@ -42,7 +42,7 @@ public class InstanceManager : Singleton<InstanceManager> {
 	private PoolController m_poolController = null;
 	public static PoolController pools { 
 		get { return instance.m_poolController; }
-		set { instance.m_poolController = value; }
+		set { if(instance != null) instance.m_poolController = value; }
 	}
 
 	//------------------------------------------------------------------//

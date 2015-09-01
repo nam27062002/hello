@@ -98,7 +98,7 @@ public class SceneManager : Singleton<SceneManager> {
 		m_updateDelegates[(int)ESceneState.RUN] = UpdateRun;
 
 		// [AOC] Pick current scene as initial scene and put it to run state
-		SetCurrentScene(Application.loadedLevelName);
+		SetCurrentSceneInternal(Application.loadedLevelName);
 	}
 	
 	/// <summary>
@@ -151,10 +151,19 @@ public class SceneManager : Singleton<SceneManager> {
 	/// </summary>
 	/// <param name="_sceneName">The name of the currently loaded scene.</param>
 	public static void SetCurrentScene(string _sceneName) {
-		instance.m_prevScene = instance.m_currentScene;
-		instance.m_currentScene = _sceneName;
-		instance.m_nextScene = _sceneName;
-		instance.m_sceneState = ESceneState.RUN;
+		instance.SetCurrentSceneInternal(_sceneName);
+	}
+
+	/// <summary>
+	/// Internal version of SetCurrentScene to be called when the instance is not
+	/// ready yet (during the Awake() function).
+	/// </summary>
+	/// <param name="_sceneName">The name of the currently loaded scene.</param>
+	private void SetCurrentSceneInternal(string _sceneName) {
+		m_prevScene = m_currentScene;
+		m_currentScene = _sceneName;
+		m_nextScene = _sceneName;
+		m_sceneState = ESceneState.RUN;
 	}
 
 	//------------------------------------------------------------------//
