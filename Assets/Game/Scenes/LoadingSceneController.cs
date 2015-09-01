@@ -71,7 +71,7 @@ public class LoadingSceneController : SceneController {
 		m_loadingBar.normalizedValue = loadProgress;
 
 		// Once load is finished, navigate to the menu scene
-		if(loadProgress >= 1f && !SceneManager.isLoading) GameFlow.GoToMenu();
+		if(loadProgress >= 1f && !SceneManager.isLoading) FlowManager.GoToMenu();
 	}
 
 	/// <summary>

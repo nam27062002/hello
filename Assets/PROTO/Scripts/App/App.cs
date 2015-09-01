@@ -1,4 +1,4 @@
-﻿// App.cs
+// App.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 02/04/2015.
@@ -46,7 +46,7 @@ public class App : MonoBehaviour {
 	public GameStats gameStats;
 	public GameStats gameStatsGlobal;
 	public GameLogic gameLogic;
-	public FlowManager flowManager;
+	public FlowManager_OLD flowManager;
 	#endregion
 	
 	#region GENERIC METHODS --------------------------------------------------------------------------------------------

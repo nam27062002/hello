@@ -1,4 +1,4 @@
-﻿// MainMenu.cs
+// MainMenu.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 31/03/2015.
@@ -88,7 +88,7 @@ public class MainMenu : MonoBehaviour {
 	/// </summary>
 	public void OnPlayFuryClick() {
 		// Go to main menu
-		App.Instance.flowManager.GoToScene(FlowManager.EScenes.GAME);
+		App.Instance.flowManager.GoToScene(FlowManager_OLD.EScenes.GAME);
 	}
 
 	/// <summary>

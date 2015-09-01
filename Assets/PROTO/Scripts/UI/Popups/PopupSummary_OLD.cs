@@ -1,4 +1,4 @@
-﻿// PopupSummary_OLD.cs
+// PopupSummary_OLD.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 31/03/2015.
@@ -63,7 +63,7 @@ public class PopupSummary_OLD : MonoBehaviour {
 	/// </summary>
 	public void OnAcceptClick() {
 		// Go to main menu
-		App.Instance.flowManager.GoToScene(FlowManager.EScenes.MAIN_MENU);
+		App.Instance.flowManager.GoToScene(FlowManager_OLD.EScenes.MAIN_MENU);
 	}
 	#endregion
 }

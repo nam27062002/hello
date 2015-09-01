@@ -15,7 +15,7 @@ using System.Collections;
 /// <summary>
 /// Behaviour to control the flow navigation between scenes.
 /// </summary>
-public class FlowManager : MonoBehaviour {
+public class FlowManager_OLD : MonoBehaviour {
 	#region CONSTANTS --------------------------------------------------------------------------------------------------
 	public enum EScenes {
 		MAIN_MENU,
@@ -50,7 +50,7 @@ public class FlowManager : MonoBehaviour {
 	/// Load a new scene and forget current one.
 	/// </summary>
 	/// <param name="_eNewScene">The scene to go to.</param>
-	public void GoToScene(FlowManager.EScenes _eNewScene) {
+	public void GoToScene(FlowManager_OLD.EScenes _eNewScene) {
 		// [AOC] TODO!! Check:
 		//		 - Async
 		//		 - DontDestroyOnLoad
@@ -90,7 +90,7 @@ public class FlowManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="_eScene">The scene whose name we want.</param>
 	/// <returns>The scene name.</returns>
-	public static string GetSceneName(FlowManager.EScenes _eScene) {
+	public static string GetSceneName(FlowManager_OLD.EScenes _eScene) {
 		return SCENE_NAMES[(int)_eScene];
 	}
 	#endregion

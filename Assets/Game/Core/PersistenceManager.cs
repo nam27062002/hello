@@ -30,7 +30,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	/// Auxiliar private serializable class to save/load a game state to persistence.
 	/// </summary>
 	[Serializable]
-	class SaveData {
+	public class SaveData {
 		// Add here any required data
 		public UserProfile.SaveData profile;
 		public DateTime timestamp;
