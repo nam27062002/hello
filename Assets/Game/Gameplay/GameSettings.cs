@@ -10,6 +10,6 @@
 public static class GameSettings {
 	#region DRAGON SETUP ----------------------------------------------------------------------------------------------
 	public static string skinName = "red2";
-	public static string dragonType = "Dragon 4";
+	public static string dragonType = "Small Dragon";//"Dragon 4";
 	#endregion
 }

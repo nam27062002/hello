@@ -148,7 +148,7 @@ public class TornadoBehaviour : MonoBehaviour {
 			// Different approach: random direction and intensity :P
 			Vector3 force = Vector3.zero;
 			float angle = impactAngle.GetRandom() * Mathf.Deg2Rad;
-			float direction = player.rbody.velocity.x < 0 ? -1 : 1;	// Keep dragon's current direction
+			float direction = player.m_rbody.velocity.x < 0 ? -1 : 1;	// Keep dragon's current direction
 			force.x = Mathf.Cos(angle) * impactIntensity * direction;
 			force.y = Mathf.Sin(angle) * impactIntensity;
 			player.Stop();
