@@ -50,18 +50,10 @@ public class DragonOrientation : MonoBehaviour {
 
 
 	public void SetDirection(Vector3 direction){
-
+	
 		dir = direction.normalized;
 		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-		//RaycastHit ground;
-		/*
-		if (angle > 0 && Physics.Linecast( transform.position, transform.position+dir*200f, out ground, groundMask)){
-			targetDir = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle*0.5f, Vector3.left);
-		}else{
-			targetDir = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
-		}
-		*/
-
+	
 		targetDir = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
 
 		//Camera.main.GetComponent<CameraController_OLD>().SetPlayerDirection(dir);

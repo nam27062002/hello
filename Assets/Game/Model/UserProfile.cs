@@ -55,7 +55,7 @@ public class UserProfile : Singleton<UserProfile> {
 	}
 
 	[Separator("Progression")]
-	[SerializeField] private string m_currentDragon = "Dragon 4";	// [AOC] TODO!! Proper default initialization
+	[SerializeField] private string m_currentDragon = "Small Dragon";	// [AOC] TODO!! Proper default initialization
 	public static string currentDragon {
 		get { return instance.m_currentDragon; }
 		set { instance.m_currentDragon = value; }

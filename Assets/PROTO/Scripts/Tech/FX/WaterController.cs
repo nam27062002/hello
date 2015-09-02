@@ -40,7 +40,7 @@ public class WaterController : MonoBehaviour {
 			if (pos.y > waterPos.y - 200 && pos.y < waterPos.y + 50) {
 
 				pos.y = waterPos.y;
-				if (Mathf.Abs(m_player.rbody.velocity.x) > 150) {
+				if (Mathf.Abs(m_player.m_rbody.velocity.x) > 150) {
 					//CreateParticles(pos);
 					activeTrail = true;
 					m_waterTrail.transform.position = pos;
@@ -68,7 +68,7 @@ public class WaterController : MonoBehaviour {
 	}
 
 	void CreateSplash () {
-		float yVelocity = Mathf.Abs(m_player.rbody.velocity.y);
+		float yVelocity = Mathf.Abs(m_player.m_rbody.velocity.y);
 
 		if (yVelocity > 100) {
 			Vector3 pos = m_player.transform.position;
