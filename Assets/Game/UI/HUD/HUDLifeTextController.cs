@@ -1,21 +1,23 @@
-﻿// AOCFastTest.cs
+﻿// HUDLifeTextController.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on DD/MM/2015.
+// Created by Alger Ortín Castellví on 31/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Simple controller to update a textfield with the current HP of the player.
 /// </summary>
-public class AOCQuickTest : MonoBehaviour {
+[RequireComponent(typeof(Text))]
+public class HUDLifeTextController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -23,12 +25,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public Range m_range = new Range(0, 10);
-	[Range(0, 1)] public float m_factor = 0.5f;
-
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
+	// References
+	private Text m_text = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -36,37 +34,43 @@ public class AOCQuickTest : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
-
+	private void Awake() {
+		// Get required references
+		m_text = GetComponent<Text>();
+		DebugUtils.Assert(m_text != null, "Required component!");
 	}
 
 	/// <summary>
-	/// First update call.
+	/// First update.
 	/// </summary>
-	void Start() {
-
+	private void Start() {
+		// Initialize text
+		UpdateText();
 	}
 	
 	/// <summary>
-	/// Called once per frame.
+	/// Called every frame.
 	/// </summary>
-	void Update() {
-		if(Input.GetMouseButtonDown(0)) {
-			Debug.Log("_____________________________");
-			Debug.Log("Manual: " + (m_range.max * m_factor + m_range.min * (1f - m_factor)));
-			Debug.Log("  Lerp: " + Mathf.Lerp(m_range.min, m_range.max, m_factor));
-		}
+	private void Update() {
+		// Just keep text updated
+		UpdateText();
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
+	private void OnDestroy() {
 
 	}
 
 	//------------------------------------------------------------------//
-	// OTHER METHODS													//
+	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
-
+	/// <summary>
+	/// Update the textfield with the current value.
+	/// </summary>
+	private void UpdateText() {
+		m_text.text = System.String.Format("{0} HP", StringUtils.FormatNumber(InstanceManager.player.stats.life, 0));
+	}
 }
+

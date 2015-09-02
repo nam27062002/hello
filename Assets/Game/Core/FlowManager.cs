@@ -1,4 +1,4 @@
-﻿// GameFlow.cs
+﻿// FlowManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 20/08/2015.
@@ -19,7 +19,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class GameFlow : Singleton<GameFlow> {
+public class FlowManager : Singleton<FlowManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

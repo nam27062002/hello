@@ -80,6 +80,8 @@ public class DragonBirdsSceneController : SceneController {
 	/// Initialization.
 	/// </summary>
 	override protected void Awake() {
+		// [AOC] HACK!! Fool the SceneManager into thinking we're playing the game
+		SceneManager.SetCurrentScene(GameSceneController.NAME);
 
 		// Load the dragon
 		LoadDragon();
@@ -246,7 +248,6 @@ public class DragonBirdsSceneController : SceneController {
 		}
 		
 		// Instantiate the Dragon defined in GameSettings
-		Debug.Log("Attempting to load dragon: " + m_dragonResourcesPath + GameSettings.dragonType);
 		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + GameSettings.dragonType));
 		dragonObj.name = "Player";
 

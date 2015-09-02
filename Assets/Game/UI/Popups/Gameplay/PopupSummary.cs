@@ -1,4 +1,4 @@
-﻿// PopupSummary.cs
+// PopupSummary.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 25/05/2015.
@@ -92,7 +92,7 @@ public class PopupSummary : MonoBehaviour {
 	/// </summary>
 	public void OnClosePostAnimation() {
 		// Go back to main menu
-		GameFlow.GoToMenu();
+		FlowManager.GoToMenu();
 	}
 
 	//------------------------------------------------------------------//

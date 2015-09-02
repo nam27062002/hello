@@ -91,7 +91,7 @@ public class GameLogic : MonoBehaviour {
 	void Awake() {
 		// [PAC] HACK!! Small hack to load the dragon even if we don't come from menu
 		if(state == EStates.INIT 
-		   && Application.loadedLevelName == FlowManager.GetSceneName(FlowManager.EScenes.GAME)) {
+		   && Application.loadedLevelName == FlowManager_OLD.GetSceneName(FlowManager_OLD.EScenes.GAME)) {
 			//StartGame();
 		}
 	}
@@ -104,7 +104,7 @@ public class GameLogic : MonoBehaviour {
 
 		// [AOC] HACK!! Small hack to be able to start the game directly from the game scene
 		if(state == EStates.INIT 
-		&& !Application.loadedLevelName.Equals(FlowManager.GetSceneName(FlowManager.EScenes.MAIN_MENU))) {
+		&& !Application.loadedLevelName.Equals(FlowManager_OLD.GetSceneName(FlowManager_OLD.EScenes.MAIN_MENU))) {
 			StartGame();
 		}
 	}

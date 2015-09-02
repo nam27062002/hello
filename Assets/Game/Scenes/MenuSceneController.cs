@@ -1,4 +1,4 @@
-﻿// MenuSceneController.cs
+// MenuSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/08/2015.
@@ -69,7 +69,7 @@ public class MenuSceneController : SceneController {
 	public void OnPlayButton() {
 		// Go to game!
 		// [AOC] No need to block the button, the GameFlow already controls spamming
-		GameFlow.GoToGame();
+		FlowManager.GoToGame();
 	}
 }
 

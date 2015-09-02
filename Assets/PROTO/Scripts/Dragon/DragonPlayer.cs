@@ -86,25 +86,33 @@ public class DragonPlayer : MonoBehaviour {
 
 	#region GENERIC METHODS ----------------------------------------------------
 	/// <summary>
-	/// Use this for initialization.
+	/// Initialization.
 	/// </summary>
-	void Start() {
+	void Awake() {
+		// Store reference into Instance Manager for immediate global access
+		InstanceManager.player = this;
 
-		// Initialize some internal vars
+		// Initialize references to the rest of the dragon's components as well
 		controls = GetComponent<DragonControl>();
 		fireBreath = GetComponent<DragonBreathBehaviour>();
 		rbody = GetComponent<Rigidbody>();
 		animator = transform.FindChild("view").GetComponent<Animator>();
 		orientation = GetComponent<DragonOrientation>();
-		pos = transform.position;
-		impulseMulti = 4f;
-
 
 		eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 		m_grabBehaviour = GetComponent<DragonGrabBehaviour>();
 		m_stats = GetComponent<DragonStats>();
+	}
 
+	/// <summary>
+	/// First update.
+	/// </summary>
+	void Start() {
+
+		// Initialize some internal vars
+		pos = transform.position;
+		impulseMulti = 4f;
 
 		// Load selected skin
 		// Load both materials
@@ -125,8 +133,9 @@ public class DragonPlayer : MonoBehaviour {
 
 	}
 
-	void OnDestroy(){
-
+	void OnDestroy() {
+		// Clear Instance Manager's reference
+		InstanceManager.player = null;
 	}
 	
 	/// <summary>
