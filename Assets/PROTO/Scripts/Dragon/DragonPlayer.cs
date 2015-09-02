@@ -79,28 +79,26 @@ public class DragonPlayer : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		// Store reference into Instance Manager for global access
 		// Store reference into Instance Manager for immediate global access
 		InstanceManager.player = this;
-	}
 
-	/// <summary>
-	/// Use this for initialization.
-	/// </summary>
-	void Start() {
-
-		// Initialize some internal vars
+		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_orientation	 	= GetComponent<DragonOrientation>();
 		m_eatBehaviour	 	= GetComponent<DragonEatBehaviour>();
 		m_breathBehaviour 	= GetComponent<DragonBreathBehaviour>();
 		m_grabBehaviour 	= GetComponent<DragonGrabBehaviour>();
-
+		
 		m_rbody = GetComponent<Rigidbody>();
 		m_stats = GetComponent<DragonStats>();
+	}
 
-
+	/// <summary>
+	/// Use this for initialization.
+	/// </summary>
+	void Start() {
+		// Initialize some internal vars
 		m_accMultiplier = 1.25f;
 		m_speedMultiplier = 0.5f;
 		m_boostMultiplier = 1f;
