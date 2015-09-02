@@ -31,6 +31,7 @@ public class UserProfile : Singleton<UserProfile> {
 		// Add here any required data
 		public long coins;
 		public long pc;
+		public string currentDragon;
 	}
 
 	//------------------------------------------------------------------//
@@ -42,6 +43,7 @@ public class UserProfile : Singleton<UserProfile> {
 	//------------------------------------------------------------------//
 	// Set default values in the inspector, use static methods to set them from code
 	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
+	[Separator("Economy")]
 	[SerializeField] private long m_coins;
 	public static long coins {
 		get { return instance.m_coins; }
@@ -50,6 +52,13 @@ public class UserProfile : Singleton<UserProfile> {
 	[SerializeField] private long m_pc;
 	public static long pc { 
 		get { return instance.m_pc; }
+	}
+
+	[Separator("Progression")]
+	[SerializeField] private string m_currentDragon = "Dragon 4";	// [AOC] TODO!! Proper default initialization
+	public static string currentDragon {
+		get { return instance.m_currentDragon; }
+		set { instance.m_currentDragon = value; }
 	}
 
 	//------------------------------------------------------------------//

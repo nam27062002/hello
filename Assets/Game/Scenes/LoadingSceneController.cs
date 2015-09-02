@@ -55,6 +55,9 @@ public class LoadingSceneController : SceneController {
 		//GameFlow.GoToMenu();
 		// [AOC] TEMP!! Simulate loading time with a timer for now
 		timer = 0;
+
+		// Load persistence
+		PersistenceManager.Load();
 	}
 	
 	/// <summary>

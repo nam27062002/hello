@@ -1,4 +1,4 @@
-﻿// GameSceneController.cs
+// GameSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/08/2015.
@@ -248,18 +248,8 @@ public class DragonBirdsSceneController : SceneController {
 		}
 		
 		// Instantiate the Dragon defined in GameSettings
-		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + GameSettings.dragonType));
+		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + "Dragon 4"));
 		dragonObj.name = "Player";
-
-		// Look for the default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find("PlayerSpawn" + GameSettings.dragonType);
-		if(spawnPointObj == null) {
-			// We couldn't find a spawn point for this specific type, try to find a generic one
-			spawnPointObj = GameObject.Find("PlayerSpawn");
-		}
-		if(spawnPointObj != null) {
-			dragonObj.transform.position = spawnPointObj.transform.position;
-		}
 		
 		// Store reference to the dragon for faster access
 		m_player = dragonObj.GetComponent<DragonPlayer>();

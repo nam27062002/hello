@@ -1,4 +1,4 @@
-﻿// GameSceneController.cs
+// GameSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/08/2015.
@@ -170,6 +170,9 @@ public class GameSceneController : SceneController {
 		
 		// [AOC] TODO!! Update global stats
 
+		// Save persistence
+		PersistenceManager.Save();
+
 		// Dispatch game event
 		Messenger.Broadcast(GameEvents.GAME_ENDED);
 	}
@@ -267,12 +270,12 @@ public class GameSceneController : SceneController {
 		}
 		
 		// Instantiate the Dragon defined in GameSettings
-		//Debug.Log("Attempting to load dragon: " + m_dragonResourcesPath + GameSettings.dragonType);
-		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + GameSettings.dragonType));
+		//Debug.Log("Attempting to load dragon: " + m_dragonResourcesPath + UserProfile.currentDragon);
+		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + UserProfile.currentDragon));
 		dragonObj.name = "Player";
 
 		// Look for the default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find("PlayerSpawn" + GameSettings.dragonType);
+		GameObject spawnPointObj = GameObject.Find("PlayerSpawn" + UserProfile.currentDragon);
 		if(spawnPointObj == null) {
 			// We couldn't find a spawn point for this specific type, try to find a generic one
 			spawnPointObj = GameObject.Find("PlayerSpawn");

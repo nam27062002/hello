@@ -76,7 +76,7 @@ public class MainMenu : MonoBehaviour {
 		if (dragonView != null)
 			DestroyObject(dragonView);
 
-		dragonView = (GameObject)Object.Instantiate(Resources.Load ("Dragons/Menu"+GameSettings.dragonType));
+		dragonView = (GameObject)Object.Instantiate(Resources.Load ("Dragons/Menu"+UserProfile.currentDragon));
 		dragonView.transform.SetParent (dragonPivot,false);
 	}
 
@@ -97,13 +97,13 @@ public class MainMenu : MonoBehaviour {
 	/// <param name="_sSkinName">The skin to be selected.</param>
 	public void OnSkinChangeClick(string _sSkinName) {
 		// Skip if skin is already selected
-		if(_sSkinName == GameSettings.skinName) return;
+		/*if(_sSkinName == GameSettings.skinName) return;
 
 		// Load the skin into the preview
 	//	LoadSkin(_sSkinName);
 
 		// Tell the game settings which skin to load upon starting the game
-		GameSettings.skinName = _sSkinName;
+		GameSettings.skinName = _sSkinName;*/
 	}
 
 	/// <summary>
@@ -117,10 +117,10 @@ public class MainMenu : MonoBehaviour {
 
 		// Skip if dragon is already selected
 		string sDragon = "Dragon "+_iDragonType.ToString();
-		if(GameSettings.dragonType.Equals(sDragon)) return;
+		if(UserProfile.currentDragon.Equals(sDragon)) return;
 
 		// Tell the game settings which skin to load upon starting the game
-		GameSettings.dragonType = sDragon;
+		UserProfile.currentDragon = sDragon;
 
 		ReloadDragon();
 	}
