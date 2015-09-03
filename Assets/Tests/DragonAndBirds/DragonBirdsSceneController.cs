@@ -320,6 +320,10 @@ public class DragonBirdsSceneController : SceneController {
 		m_timer = 1f;
 	}
 
+	/// <summary>
+	/// Callback for the dragon change button.
+	/// </summary>
+	/// <param name="_newDragonType">The new dragon to be loaded.</param>
 	public void OnChangeDragonType(string _newDragonType) {
 		// Store new dragon type into the user profile
 		UserProfile.currentDragon = _newDragonType;
