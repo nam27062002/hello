@@ -22,7 +22,7 @@ public class DragonBirdsSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Game";
+	public static readonly string NAME = "SC_Dragon_and_Birds";
 
 	public enum EStates {
 		INIT,
@@ -248,7 +248,7 @@ public class DragonBirdsSceneController : SceneController {
 		}
 		
 		// Instantiate the Dragon defined in GameSettings
-		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + "Dragon 4"));
+		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + UserProfile.currentDragon));
 		dragonObj.name = "Player";
 		
 		// Store reference to the dragon for faster access
@@ -318,6 +318,14 @@ public class DragonBirdsSceneController : SceneController {
 
 		// Open summary popup after some delay
 		m_timer = 1f;
+	}
+
+	public void OnChangeDragonType(string _newDragonType) {
+		// Store new dragon type into the user profile
+		UserProfile.currentDragon = _newDragonType;
+
+		// Reload scene
+		Application.LoadLevel(Application.loadedLevel);		// [AOC] Trick to hard-reload current level
 	}
 }
 
