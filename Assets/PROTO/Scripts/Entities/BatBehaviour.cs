@@ -6,7 +6,7 @@ public class BatBehaviour : MonoBehaviour {
 	
 	Vector3 originScale;
 	float timer;
-	EdibleBehaviour edible;
+	EdibleBehaviour_OLD edible;
 	SpawnableBehaviour spawn;
 	FlockBehaviour flock;
 	Animator anim;
@@ -16,7 +16,7 @@ public class BatBehaviour : MonoBehaviour {
 		
 		initialized = true;
 		spawn = GetComponent<SpawnableBehaviour>();
-		edible = GetComponent<EdibleBehaviour>();
+		edible = GetComponent<EdibleBehaviour_OLD>();
 		flock = GetComponent<FlockBehaviour>();
 		anim = transform.FindChild("view").GetComponent<Animator>();
 		originScale = transform.localScale;
@@ -29,14 +29,13 @@ public class BatBehaviour : MonoBehaviour {
 		if (!initialized) 
 			Initialize();
 		
-		if (spawn.state == SpawnableBehaviour.State.SPAWN)
+		if (spawn.state == SpawnableBehaviour.State.SPAWN) {
 			Spawn ();
-		
-		
-		if (edible.state != EdibleBehaviour.State.NONE){
+		}
+				
+		if (edible.state != EdibleBehaviour_OLD.State.NONE) {
 			flock.enabled = false;
 		}
-		
 	}
 	
 	public void Spawn(){
@@ -53,16 +52,15 @@ public class BatBehaviour : MonoBehaviour {
 
 		GetComponent<GameEntity>().RestoreHealth();
 
-
-		if (Random.Range(0,1000) < 200){
+		if (Random.Range(0,1000) < 200) {
 			GetComponent<GameEntity>().isGolden = true;
 			Material goldMat = Resources.Load ("Materials/Gold") as Material;
 			Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
-			for(int i=0;i<materials.Length;i++){
+			for (int i = 0; i < materials.Length; i++) {
 				materials[i] = goldMat;
 			}
 			GetComponentInChildren<SkinnedMeshRenderer>().materials = materials;
-		}else{
+		} else {
 			GetComponent<GameEntity>().isGolden = false;
 		}
 	}

@@ -38,7 +38,7 @@ public class GameEntity : MonoBehaviour {
 
 	#region INTERNAL MEMBERS -------------------------------------------------------------------------------------------
 	// Shortcut references to some interesting components
-	private EdibleBehaviour mEdibleBehaviour = null;
+	private EdibleBehaviour_OLD mEdibleBehaviour = null;
 	private FlamableBehaviour mFlamableBehaviour = null;
 	private float mHealth = 1;
 	#endregion
@@ -49,7 +49,7 @@ public class GameEntity : MonoBehaviour {
 	/// </summary>
 	void Start() {
 		// Initialize component shortcuts
-		mEdibleBehaviour = gameObject.GetComponent<EdibleBehaviour>();
+		mEdibleBehaviour = gameObject.GetComponent<EdibleBehaviour_OLD>();
 		mFlamableBehaviour = gameObject.GetComponent<FlamableBehaviour>();
 		mHealth = health;
 	}

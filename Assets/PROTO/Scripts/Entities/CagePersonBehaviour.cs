@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class CagePersonBehaviour : MonoBehaviour {
@@ -24,7 +24,7 @@ public class CagePersonBehaviour : MonoBehaviour {
 	float timer = 0f;
 	Animator anim;
 	GameEntity entity;
-	EdibleBehaviour edible;
+	EdibleBehaviour_OLD edible;
 	SpawnableBehaviour spawn;
 	Transform player;
 	Vector3 originScale;
@@ -42,7 +42,7 @@ public class CagePersonBehaviour : MonoBehaviour {
 
 		initialized = true;
 		entity = GetComponent<GameEntity>();
-		edible = GetComponent<EdibleBehaviour>();
+		edible = GetComponent<EdibleBehaviour_OLD>();
 		originScale = transform.localScale;
 		anim = transform.FindChild ("view").GetComponent<Animator>();
 		spawn = GetComponent<SpawnableBehaviour>();
@@ -61,7 +61,7 @@ public class CagePersonBehaviour : MonoBehaviour {
 		if (!initialized)
 			Initialize();
 
-		if (edible.state != EdibleBehaviour.State.NONE){
+		if (edible.state != EdibleBehaviour_OLD.State.NONE){
 			if (fire != null){
 				fire.SetActive(false);
 				fire = null;

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class AnimalBehaviour : MonoBehaviour {
@@ -22,7 +22,7 @@ public class AnimalBehaviour : MonoBehaviour {
 	float bounceTimer = 0f;
 	Animator anim;
 	GameEntity entity;
-	EdibleBehaviour edible;
+	EdibleBehaviour_OLD edible;
 	SpawnableBehaviour spawn;
 	Vector3 originScale;
 	Transform player;
@@ -40,7 +40,7 @@ public class AnimalBehaviour : MonoBehaviour {
 		
 		initialized = true;
 		entity = GetComponent<GameEntity>();
-		edible = GetComponent<EdibleBehaviour>();
+		edible = GetComponent<EdibleBehaviour_OLD>();
 		originScale = transform.localScale;
 		anim = GetComponent<Animator>();
 		anim.SetTrigger("idle");
@@ -59,7 +59,7 @@ public class AnimalBehaviour : MonoBehaviour {
 		if (!initialized)
 			Initialize();
 		
-		if (edible.state != EdibleBehaviour.State.NONE)
+		if (edible.state != EdibleBehaviour_OLD.State.NONE)
 			return;
 		
 		if (spawn.state == SpawnableBehaviour.State.SPAWN)

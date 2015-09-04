@@ -819,6 +819,8 @@ GameObject:
   - 114: {fileID: 11437562}
   - 114: {fileID: 11455602}
   - 136: {fileID: 13641966}
+  - 114: {fileID: 11434674}
+  - 114: {fileID: 11488270}
   m_Layer: 0
   m_Name: Big Dragon
   m_TagString: Untagged
@@ -2541,11 +2543,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_type: 0
   m_level: 0
-  m_eatSpeed: 10
+  m_eatTime: .25
   m_speed: 1000
   m_boostMultiplier: 3
   m_maxLife: 150
-  m_lifeDrainPerSecond: 20
+  m_lifeDrainPerSecond: 1
   m_lifeWarningThreshold: .200000003
   m_maxEnergy: 100
   m_energyDrainPerSecond: 15
@@ -2553,6 +2555,17 @@ MonoBehaviour:
   m_energyMinRequired: 20
   m_maxFury: 200
   m_furyDuration: 10
+--- !u!114 &11434674
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11437562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2564,7 +2577,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edc67609b2d3b4d1a80b3d911f145143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eatRange: 150
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2605,6 +2617,17 @@ MonoBehaviour:
     max: 51000
   m_rbody: {fileID: 0}
   invulnerable: 0
+--- !u!114 &11488270
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15467f0022fed4eb987a8de2bafce36d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11491186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2936,7 +2959,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_eatRange
-      value: 80
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxFury
@@ -2961,6 +2984,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_LocalScale.z
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatTime
+      value: .25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_lifeDrainPerSecond
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

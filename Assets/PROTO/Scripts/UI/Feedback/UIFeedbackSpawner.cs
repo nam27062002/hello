@@ -189,7 +189,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 		// Does it have any feedback to be displayed?
 		if(_entity) {
 			// Entity should always have an edible behaviour if it has been eaten, but just in case
-			EdibleBehaviour edible = _entity.GetComponent<EdibleBehaviour>();
+			EdibleBehaviour_OLD edible = _entity.GetComponent<EdibleBehaviour_OLD>();
 			if(edible && edible.eatFeedbacks.Count > 0) {
 				// Probability of spawning a feedback message
 				if(UnityEngine.Random.Range(0f, 1f) < edible.feedbackProbability) {

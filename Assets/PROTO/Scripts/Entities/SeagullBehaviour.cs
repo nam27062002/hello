@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class SeagullBehaviour : MonoBehaviour {
@@ -6,7 +6,7 @@ public class SeagullBehaviour : MonoBehaviour {
 
 	Vector3 originScale;
 	float timer;
-	EdibleBehaviour edible;
+	EdibleBehaviour_OLD edible;
 	SpawnableBehaviour spawn;
 	FlockBehaviour flock;
 	bool initialized = false;
@@ -15,7 +15,7 @@ public class SeagullBehaviour : MonoBehaviour {
 
 		initialized = true;
 		spawn = GetComponent<SpawnableBehaviour>();
-		edible = GetComponent<EdibleBehaviour>();
+		edible = GetComponent<EdibleBehaviour_OLD>();
 		flock = GetComponent<FlockBehaviour>();
 		originScale = transform.localScale;
 
@@ -36,7 +36,7 @@ public class SeagullBehaviour : MonoBehaviour {
 			Spawn ();
 
 
-		if (edible.state != EdibleBehaviour.State.NONE){
+		if (edible.state != EdibleBehaviour_OLD.State.NONE){
 			flock.enabled = false;
 		}
 

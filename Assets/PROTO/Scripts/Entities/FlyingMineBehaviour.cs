@@ -6,7 +6,7 @@ public class FlyingMineBehaviour : MonoBehaviour {
 	public float damage = 25f;
 	 
 	GameEntity mEntity;
-	EdibleBehaviour edible;
+	EdibleBehaviour_OLD edible;
 
 	Vector3 origin;
 	Vector3 pos;
@@ -18,13 +18,13 @@ public class FlyingMineBehaviour : MonoBehaviour {
 
 	void Start () {
 
-		edible = GetComponent<EdibleBehaviour>();
+		edible = GetComponent<EdibleBehaviour_OLD>();
 		origin = transform.position;
 	}
 	
 	void Update () {
 
-		if (edible.state != EdibleBehaviour.State.NONE)
+		if (edible.state != EdibleBehaviour_OLD.State.NONE)
 			return;
 
 		timer += Time.deltaTime;
@@ -40,7 +40,7 @@ public class FlyingMineBehaviour : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision) {
 
-		if (edible.state == EdibleBehaviour.State.NONE){
+		if (edible.state == EdibleBehaviour_OLD.State.NONE){
 
 			if (collision != null){
 				DragonPlayer player = collision.collider.GetComponent<DragonPlayer>();

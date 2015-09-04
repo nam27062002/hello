@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DragonControlAI : DragonControl {
@@ -15,7 +15,7 @@ public class DragonControlAI : DragonControl {
 	DragonPlayer 	player;
 	DragonAi 		dragon;
 	GameEntity 	 	entity;
-	EdibleBehaviour	edible;
+	EdibleBehaviour_OLD	edible;
 
 
 	
@@ -52,7 +52,7 @@ public class DragonControlAI : DragonControl {
 		dragon = GetComponent<DragonAi>();
 		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 		entity = GetComponent<GameEntity>();
-		edible = GetComponent<EdibleBehaviour>();
+		edible = GetComponent<EdibleBehaviour_OLD>();
 		origin = transform.position;
 		moving = true;
 	}
@@ -60,7 +60,7 @@ public class DragonControlAI : DragonControl {
 	// Update is called once per frame
 	void Update () {
 
-		if (edible.state != EdibleBehaviour.State.NONE)
+		if (edible.state != EdibleBehaviour_OLD.State.NONE)
 			return;
 
 		playerDir = (player.transform.position+targetOffset) - transform.position;

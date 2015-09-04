@@ -38,7 +38,7 @@ public class DragonAi : MonoBehaviour {
 	Animator  			animator;
 	DragonOrientation   orientation;
 	Transform    		mouth;
-	EdibleBehaviour 	edible;
+	EdibleBehaviour_OLD 	edible;
 
 	// Control vars
 	EState mState = EState.INIT;
@@ -69,7 +69,7 @@ public class DragonAi : MonoBehaviour {
 		rbody = GetComponent<Rigidbody>();
 		animator = transform.FindChild("view").GetComponent<Animator>();
 		orientation = GetComponent<DragonOrientation>();
-		edible = GetComponent<EdibleBehaviour>();
+		edible = GetComponent<EdibleBehaviour_OLD>();
 		mouth = transform.FindSubObjectTransform("eat");
 		pos = transform.position;
 		impulseMulti = 4f;
@@ -99,7 +99,7 @@ public class DragonAi : MonoBehaviour {
 	/// </summary>
 	void Update() {
 
-		if (edible.state != EdibleBehaviour.State.NONE)
+		if (edible.state != EdibleBehaviour_OLD.State.NONE)
 			return;
 
 		// Aux vars
