@@ -72,8 +72,8 @@ public class GameLogic : MonoBehaviour {
 	}
 
 	// Reference to player
-	private DragonPlayer mPlayer = null;
-	public DragonPlayer player {
+	private DragonMotion mPlayer = null;
+	public DragonMotion player {
 		get { return mPlayer; }
 	}
 	#endregion
@@ -289,7 +289,7 @@ public class GameLogic : MonoBehaviour {
 		dragonObj.transform.position = GameObject.Find ("PlayerSpawn").transform.position;
 
 		// Store reference to the dragon for global fast access
-		mPlayer = dragonObj.GetComponent<DragonPlayer>();
+		mPlayer = dragonObj.GetComponent<DragonMotion>();
 	}
 
 	/// <summary>

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DragonBoostBehaviour : MonoBehaviour {
@@ -7,7 +7,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private DragonStats 	m_dragon;
+	private DragonPlayer 	m_dragon;
 	private DragonControl 	m_controls;
 	private DragonHealthBehaviour m_healthBehaviour;
 
@@ -19,7 +19,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Use this for initialization
 	void Start () {
-		m_dragon = GetComponent<DragonStats>();	
+		m_dragon = GetComponent<DragonPlayer>();	
 		m_controls = GetComponent<DragonControl>();
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
 

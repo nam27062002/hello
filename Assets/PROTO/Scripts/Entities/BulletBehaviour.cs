@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class BulletBehaviour : MonoBehaviour {
@@ -10,13 +10,13 @@ public class BulletBehaviour : MonoBehaviour {
 	[HideInInspector] public Vector3 dir;
 	[HideInInspector] public DamageDealer source;
 
-	DragonPlayer player;
+	DragonMotion player;
 
 	Vector3 pos;
 	float impactDist;
 
 	void Start(){
-		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		impactDist = 100f*100f;
 	}
 

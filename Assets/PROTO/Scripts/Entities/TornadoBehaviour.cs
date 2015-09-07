@@ -37,7 +37,7 @@ public class TornadoBehaviour : MonoBehaviour {
 	public Range impactAngle = new Range(-30f, 45f);
 
 	// Properties
-	private DragonPlayer player {
+	private DragonMotion player {
 		get { return App.Instance.gameLogic.player; }
 	}
 
@@ -121,7 +121,7 @@ public class TornadoBehaviour : MonoBehaviour {
 	/// <param name="_collision">The collision that triggered the event.</param>
 	void OnCollisionEnter(Collision _collision) {
 		// Is it the player?
-		if(_collision != null && _collision.collider.GetComponent<DragonPlayer>() != null) {
+		if(_collision != null && _collision.collider.GetComponent<DragonMotion>() != null) {
 			// Find out collision point
 			Vector3 p = transform.position;
 			if(_collision.contacts.Length > 0) {
@@ -140,7 +140,7 @@ public class TornadoBehaviour : MonoBehaviour {
 	/// <param name="_target">The object that has invaded our personal space.</param>
 	void OnTriggerEnter(Collider _target) {
 		// Is it the player?
-		if(_target != null && _target.GetComponent<DragonPlayer>() != null) {
+		if(_target != null && _target.GetComponent<DragonMotion>() != null) {
 			// Dragon has multiple colliders, to avoid triggering more than once, put a small timer before detecting the new collision
 			if(timeSinceLastCollision < 0.25f) return;
 			timeSinceLastCollision = 0f;	// Reset timer

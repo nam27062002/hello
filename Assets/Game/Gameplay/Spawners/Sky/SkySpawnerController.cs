@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -26,7 +26,7 @@ public class SkySpawnerController : MonoBehaviour {
 	private Bounds m_bounds;
 	private float m_timer;
 
-	private DragonPlayer m_player;
+	private DragonMotion m_player;
 
 	List<SpawnedGroup> m_spawnedList = new List<SpawnedGroup>();
 	
@@ -38,7 +38,7 @@ public class SkySpawnerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		m_player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		m_player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		m_timer = 0;
 
 		m_bounds = GetComponent<RectArea2D>().bounds;

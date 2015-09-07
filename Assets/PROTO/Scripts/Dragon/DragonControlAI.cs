@@ -12,7 +12,7 @@ public class DragonControlAI : DragonControl {
 	public int fearTreshold = 80;
 
 
-	DragonPlayer 	player;
+	DragonMotion 	player;
 	DragonAi 		dragon;
 	GameEntity 	 	entity;
 	EdibleBehaviour_OLD	edible;
@@ -50,7 +50,7 @@ public class DragonControlAI : DragonControl {
 	void Start () {
 
 		dragon = GetComponent<DragonAi>();
-		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		entity = GetComponent<GameEntity>();
 		edible = GetComponent<EdibleBehaviour_OLD>();
 		origin = transform.position;
@@ -179,7 +179,7 @@ public class DragonControlAI : DragonControl {
 	
 		if (state == State.CHARGE && attackTimer < 0.75f){
 
-			DragonPlayer player = other.gameObject.GetComponent<DragonPlayer>();
+			DragonMotion player = other.gameObject.GetComponent<DragonMotion>();
 			if (player != null && (player.transform.position-transform.position).magnitude < 300f){
 			
 				player.OnImpact(transform.position,damage,0.75f,null);

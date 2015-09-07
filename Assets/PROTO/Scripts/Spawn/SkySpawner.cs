@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ public class SkySpawner : MonoBehaviour {
 	public Object[] spawnables;
 	public float    spawnDistance;
 
-	DragonPlayer player;
+	DragonMotion player;
 	
 
 	class SpawnedGroup{
@@ -24,7 +24,7 @@ public class SkySpawner : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		groundMask = 1 << LayerMask.NameToLayer("Ground");
 
 		Messenger.AddListener<GameObject>("SpawnOutOfRange",OnSpawnOutOfRange);

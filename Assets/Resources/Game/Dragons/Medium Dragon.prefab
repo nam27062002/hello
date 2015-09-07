@@ -2536,23 +2536,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 159196}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fb69b72f043840a7983e50675c4b63c, type: 3}
+  m_Script: {fileID: 11500000, guid: 95e7a49c765b74dfaaa8e8fd4dbb21fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 0
-  m_level: 0
-  m_eatTime: .5
-  m_speed: 600
-  m_boostMultiplier: 3
-  m_maxLife: 100
-  m_lifeDrainPerSecond: 10
-  m_lifeWarningThreshold: .200000003
-  m_maxEnergy: 50
-  m_energyDrainPerSecond: 10
-  m_energyRefillPerSecond: 25
-  m_energyMinRequired: 25
-  m_maxFury: 160
-  m_furyDuration: 15
+  speedDirectionMultiplier: 2
+  movementLimitX:
+    min: -27700
+    max: 51000
+  m_rbody: {fileID: 0}
+  invulnerable: 0
 --- !u!114 &11437562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2598,12 +2590,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc55bb9f3dab45f69260a937e250b5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedDirectionMultiplier: 2
-  movementLimitX:
-    min: -27700
-    max: 51000
-  m_rbody: {fileID: 0}
-  invulnerable: 0
+  m_type: 0
+  m_level: 0
+  m_eatTime: .5
+  m_speed: 600
+  m_boostMultiplier: 3
+  m_maxLife: 100
+  m_lifeDrainPerSecond: 10
+  m_lifeWarningThreshold: .200000003
+  m_maxEnergy: 50
+  m_energyDrainPerSecond: 10
+  m_energyRefillPerSecond: 25
+  m_energyMinRequired: 25
+  m_maxFury: 160
+  m_furyDuration: 15
 --- !u!114 &11491186
 MonoBehaviour:
   m_ObjectHideFlags: 1

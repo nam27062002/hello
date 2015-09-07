@@ -1,4 +1,4 @@
-﻿// DEBUG_SETTINGS.cs
+// DEBUG_SETTINGS.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 05/05/2015.
@@ -37,8 +37,8 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 	#endregion
 
 	#region INTERNAL VARS ----------------------------------------------------------------------------------------------
-	DragonPlayer mPlayer = null;
-	DragonStats mPlayerStats = null;
+	DragonMotion mPlayer = null;
+	DragonPlayer mPlayerStats = null;
 	#endregion
 
 	#region PUBLIC METHODS ---------------------------------------------------------------------------------------------
@@ -53,8 +53,8 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 	void Update() {
 
 		if (mPlayer == null){
-			mPlayer = GameObject.Find("Player").GetComponent<DragonPlayer>();
-			mPlayerStats = mPlayer.GetComponent<DragonStats>();
+			mPlayer = GameObject.Find("Player").GetComponent<DragonMotion>();
+			mPlayerStats = mPlayer.GetComponent<DragonPlayer>();
 		}
 
 		// Invulnerable

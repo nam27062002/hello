@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DragonGrabBehaviour : MonoBehaviour {
@@ -9,7 +9,7 @@ public class DragonGrabBehaviour : MonoBehaviour {
 	
 	private Transform m_mouth;
 	private Animator m_animator;
-	private DragonStats m_dragon;
+	private DragonPlayer m_dragon;
 	
 	private float m_grabReleaseTimer = 0f;
 	private float m_grabTimer = 0f; //wait a few seconds before trying to grab again
@@ -22,7 +22,7 @@ public class DragonGrabBehaviour : MonoBehaviour {
 		
 		m_mouth = transform.FindSubObjectTransform("eat");
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_dragon = GetComponent<DragonStats>();
+		m_dragon = GetComponent<DragonPlayer>();
 	}
 	
 	

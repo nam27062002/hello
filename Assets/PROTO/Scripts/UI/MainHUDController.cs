@@ -38,7 +38,7 @@ public class MainHUDController : MonoBehaviour {
 	#region INTERNAL MEMBERS -------------------------------------------------------------------------------------------
 	private long mLastDisplayedTime = -1;
 	private Animator mAnimator = null;
-	private DragonStats mPlayerStats;
+	private DragonPlayer mPlayerStats;
 	#endregion
 	
 	#region GENERIC METHODS --------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ public class MainHUDController : MonoBehaviour {
 	void Update() {
 
 		if (mPlayerStats == null) {
-			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonStats>();
+			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 		}
 
 		// Update life bar
@@ -121,7 +121,7 @@ public class MainHUDController : MonoBehaviour {
 	private void OnGameStarted() {
 
 		if (mPlayerStats == null)
-			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonStats>();
+			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonPlayer>();
 
 		// Set max values
 		lifeBar.maxValue = mPlayerStats.maxLife;

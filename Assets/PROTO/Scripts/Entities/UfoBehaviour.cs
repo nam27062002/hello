@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class UfoBehaviour : MonoBehaviour {
 
 
-	DragonPlayer player;
+	DragonMotion player;
 	CannonBehaviour cannon;
 	Object shootPrefab;
 	DamageDealer damageDealer;
@@ -33,7 +33,7 @@ public class UfoBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		cannon = GetComponentInChildren<CannonBehaviour>();
-		player = GameObject.Find("Player").GetComponent<DragonPlayer>();
+		player = GameObject.Find("Player").GetComponent<DragonMotion>();
 		shootPrefab = Resources.Load("PROTO/UfoLaser");
 		damageDealer = GetComponent<DamageDealer>();
 		pos = transform.position;

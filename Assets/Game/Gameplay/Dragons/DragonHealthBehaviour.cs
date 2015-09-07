@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DragonHealthBehaviour : MonoBehaviour {
@@ -7,7 +7,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private DragonStats 	m_dragon;
+	private DragonPlayer 	m_dragon;
 
 	
 	//-----------------------------------------------
@@ -16,7 +16,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		m_dragon = GetComponent<DragonStats>();		
+		m_dragon = GetComponent<DragonPlayer>();		
 	}
 	
 	// Update is called once per frame

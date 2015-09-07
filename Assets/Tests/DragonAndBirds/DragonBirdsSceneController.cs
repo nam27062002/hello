@@ -59,8 +59,8 @@ public class DragonBirdsSceneController : SceneController {
 	}
 	
 	// Reference to player
-	private DragonPlayer m_player = null;
-	public DragonPlayer player {
+	private DragonMotion m_player = null;
+	public DragonMotion player {
 		get { return m_player; }
 	}
 
@@ -252,7 +252,7 @@ public class DragonBirdsSceneController : SceneController {
 		dragonObj.name = "Player";
 		
 		// Store reference to the dragon for faster access
-		m_player = dragonObj.GetComponent<DragonPlayer>();
+		m_player = dragonObj.GetComponent<DragonMotion>();
 		m_player.invulnerable = true;
 	}
 

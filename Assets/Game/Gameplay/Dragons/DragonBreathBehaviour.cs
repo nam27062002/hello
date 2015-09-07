@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DragonBreathBehaviour : MonoBehaviour {
@@ -6,7 +6,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private DragonStats m_dragon;
+	private DragonPlayer m_dragon;
 	private Animator m_animator;
 
 	private bool m_isFuryOn;
@@ -17,7 +17,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	void Start() {
 
-		m_dragon = GetComponent<DragonStats>();
+		m_dragon = GetComponent<DragonPlayer>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_isFuryOn = false;
 

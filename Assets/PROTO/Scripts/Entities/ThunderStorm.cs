@@ -289,7 +289,7 @@ public class ThunderStorm : MonoBehaviour {
 	void OnTriggerStay (Collider collider) {
 		
 		if (collider != null){
-			DragonPlayer player = collider.GetComponent<DragonPlayer>();
+			DragonMotion player = collider.GetComponent<DragonMotion>();
 			if (player != null){
 				if (m_doDamage) {
 					player.OnImpact(transform.position, damage, 0, GetComponent<DamageDealer>());

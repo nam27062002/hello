@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class WaterController : MonoBehaviour {
@@ -10,7 +10,7 @@ public class WaterController : MonoBehaviour {
 	public GameObject m_waterSplashMediumPrefab;
 	public GameObject m_waterSplashLargePrefab;
 
-	private DragonPlayer m_player;
+	private DragonMotion m_player;
 	private BoxCollider m_bounds;
 
 	private GameObject m_waterTrail;
@@ -19,7 +19,7 @@ public class WaterController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		m_player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		m_player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		m_bounds = GetComponent<BoxCollider>();
 
 		m_waterTrail = (GameObject)Object.Instantiate(m_waterTrailPrefab, Vector3.zero, Quaternion.identity);

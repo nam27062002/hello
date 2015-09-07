@@ -17,7 +17,7 @@ using UnityEngine;
 /// For this first version we will be based in dragon's state rather than distance towards enemies, 
 /// which seems more complicated and less efficient.
 /// </summary>
-[RequireComponent(typeof(DragonPlayer))]
+[RequireComponent(typeof(DragonMotion))]
 public class DragonAutoZoom : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -32,7 +32,7 @@ public class DragonAutoZoom : MonoBehaviour {
 	public float zoomSpeed = 350f;	// World units per second
 
 	// References
-	private DragonPlayer player = null;
+	private DragonMotion player = null;
 	private CameraController_OLD mainCamera = null;
 
 	// Internal
@@ -46,7 +46,7 @@ public class DragonAutoZoom : MonoBehaviour {
 	/// </summary>
 	void Awake() {
 		// Check required members
-		player = GetComponent<DragonPlayer>();
+		player = GetComponent<DragonMotion>();
 		DebugUtils.Assert(player != null, "Required member!");
 
 		mainCamera = Camera.main.GetComponent<CameraController_OLD>();
@@ -65,14 +65,14 @@ public class DragonAutoZoom : MonoBehaviour {
 	/// </summary>
 	void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonPlayer.EState, DragonPlayer.EState>(GameEvents_OLD.PLAYER_STATE_CHANGED, OnPlayerStateChanged);
+		Messenger.AddListener<DragonMotion.EState, DragonMotion.EState>(GameEvents_OLD.PLAYER_STATE_CHANGED, OnPlayerStateChanged);
 	}
 
 	/// <summary>
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		if(player.state == DragonPlayer.EState.IDLE) {
+		if(player.state == DragonMotion.EState.IDLE) {
 			// Only if not already zooming
 			if(timer > 0) {
 				// Update timer
@@ -90,7 +90,7 @@ public class DragonAutoZoom : MonoBehaviour {
 	/// </summary>
 	void OnDisable() {
 		// Subscribe to external events
-		Messenger.RemoveListener<DragonPlayer.EState, DragonPlayer.EState>(GameEvents_OLD.PLAYER_STATE_CHANGED, OnPlayerStateChanged);
+		Messenger.RemoveListener<DragonMotion.EState, DragonMotion.EState>(GameEvents_OLD.PLAYER_STATE_CHANGED, OnPlayerStateChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -101,14 +101,14 @@ public class DragonAutoZoom : MonoBehaviour {
 	/// </summary>
 	/// <param name="_oldState">Previuos state of the dragon.</param>
 	/// <param name="_newState">New state of the dragon.</param>
-	private void OnPlayerStateChanged(DragonPlayer.EState _oldState, DragonPlayer.EState _newState) {
+	private void OnPlayerStateChanged(DragonMotion.EState _oldState, DragonMotion.EState _newState) {
 		// Going to idle? Reset timer
-		if(_newState == DragonPlayer.EState.IDLE) {
+		if(_newState == DragonMotion.EState.IDLE) {
 			timer = maxIdleTime;
 		}
 
 		// Leaving idle? Go back to default zoom
-		else if(_oldState == DragonPlayer.EState.IDLE) {
+		else if(_oldState == DragonMotion.EState.IDLE) {
 			mainCamera.ZoomAtSpeed(0f, zoomSpeed);
 		}
 	}

@@ -43,7 +43,7 @@ public class EdibleBehaviour_OLD : MonoBehaviour {
 	public Bounds modelbounds; // bounds for the 3d model of the entity
 
 	float timer = 0f;
-	DragonPlayer 	player;
+	DragonMotion 	player;
 	Transform	 	playerMouth;
 	Transform	 	playerHead;
 	Animator 		animator;
@@ -56,7 +56,7 @@ public class EdibleBehaviour_OLD : MonoBehaviour {
 	void Start () {
 
 		entity = gameObject.GetComponent<GameEntity>();
-		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		playerMouth = player.FindSubObjectTransform("eat");
 		playerHead = player.FindSubObjectTransform("head");
 	

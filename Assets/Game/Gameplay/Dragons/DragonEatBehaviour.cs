@@ -9,7 +9,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 	private Transform m_mouth;
 	private Transform m_head;
 	private Animator m_animator;
-	private DragonStats m_dragon;
+	private DragonPlayer m_dragon;
 
 	private EdibleBehaviour m_prey;
 	
@@ -25,7 +25,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_head = transform.FindSubObjectTransform("head");
 
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_dragon = GetComponent<DragonStats>();
+		m_dragon = GetComponent<DragonPlayer>();
 
 		m_prey = null;
 		m_bloodEmitter = null;

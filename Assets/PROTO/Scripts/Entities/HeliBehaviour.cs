@@ -7,7 +7,7 @@ public class HeliBehaviour : MonoBehaviour {
 	// Heli components
 	private GameEntity entity = null;
 	private FlamableHeli flamable = null;
-	private DragonPlayer player = null;
+	private DragonMotion player = null;
 	private CannonBehaviour cannon = null;
 	private GameObject mMainRotor = null;
 	private GameObject mTailRotor = null;
@@ -39,7 +39,7 @@ public class HeliBehaviour : MonoBehaviour {
 		entity = GetComponent<GameEntity>();
 		flamable = GetComponent<FlamableHeli>();
 		cannon = GetComponentInChildren<CannonBehaviour>();
-		player = GameObject.Find ("Player").GetComponent<DragonPlayer>();
+		player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		mExplosion = GetComponent<CompositeExplosion>();
 		pos = transform.position;
 		oriPos = pos;
@@ -202,9 +202,9 @@ public class HeliBehaviour : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision) {
 		
-		if (collision != null && collision.collider.GetComponent<DragonPlayer>() != null){
+		if (collision != null && collision.collider.GetComponent<DragonMotion>() != null){
 			if (collision.collider.transform.position.y > transform.position.y + 50){ // Collision with top of the heli
-				collision.collider.GetComponent<DragonPlayer>().OnImpact(transform.position, 10f, 100f, GetComponent<DamageDealer>());
+				collision.collider.GetComponent<DragonMotion>().OnImpact(transform.position, 10f, 100f, GetComponent<DamageDealer>());
 			}
 		}
 		

@@ -40,7 +40,7 @@ public class PlaneBehaviour : MonoBehaviour {
 	private Vector3 mTargetVelocity;
 
 	// Some important game objects
-	private DragonPlayer mPlayer;
+	private DragonMotion mPlayer;
 	private FlamableHeli mFlamable;
 	private GameEntity mEntity;
 	private CompositeExplosion mExplosion;
@@ -68,7 +68,7 @@ public class PlaneBehaviour : MonoBehaviour {
 	/// </summary>
 	public void Start() {
 		// Make sure we start in the right place and state
-		mPlayer = GameObject.Find("Player").GetComponent<DragonPlayer>();
+		mPlayer = GameObject.Find("Player").GetComponent<DragonMotion>();
 		transform.SetPosX(mFlyRect.x);
 		transform.SetPosY(mFlyRect.center.y);
 		mState = EState.FLYING;
@@ -229,7 +229,7 @@ public class PlaneBehaviour : MonoBehaviour {
 	/// <param name="_collision">The collision data.</param>
 	private void OnCollisionEnter(Collision _collision) {
 		// Is it the dragon
-		DragonPlayer p = _collision.collider.GetComponent<DragonPlayer>();
+		DragonMotion p = _collision.collider.GetComponent<DragonMotion>();
 		if(p != null) {
 			// Yes! Deal some damage.
 			p.OnImpact(transform.position, 10f, 100f, GetComponent<DamageDealer>());
