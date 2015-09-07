@@ -16,7 +16,7 @@ namespace ProBuilder2.EditorCommon
 		[PostProcessScene]
 		public static void OnPostprocessScene()
 		{ 
-			Material invisibleFaceMaterial = (Material)Resources.Load("Materials/InvisibleFace");
+			Material invisibleFaceMaterial = (Material)Resources.Load("PROTO/Materials/InvisibleFace");
 
 			/**
 			 * Hide nodraw faces if present.

@@ -28,7 +28,7 @@ public class HuntEventSpawner : MonoBehaviour {
 		m_player = GameObject.Find ("Player").GetComponent<DragonGrabBehaviour>();
 		m_poolController = GameObject.Find ("Pool Controller").GetComponent<PoolController>();
 
-		m_poolController.CreatePool(Resources.Load<GameObject>("Proto/HuntFalcon"), 2, true);
+		m_poolController.CreatePool(Resources.Load<GameObject>("PROTO/HuntFalcon"), 2, true);
 
 		m_spawners = new List<Transform>();
 		m_spawnChance = new List<float>();

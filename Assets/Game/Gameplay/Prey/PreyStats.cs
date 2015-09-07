@@ -47,7 +47,7 @@ public class PreyStats : Initializable {
 
 	private void SetGolden(bool _value) {
 		if (_value) {
-			Material goldMat = Resources.Load ("Materials/Gold") as Material;
+			Material goldMat = Resources.Load ("PROTO/Materials/Gold") as Material;
 			Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
 			for (int i = 0; i < materials.Length; i++) {
 				materials[i] = goldMat;

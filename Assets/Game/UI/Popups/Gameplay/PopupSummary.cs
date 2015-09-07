@@ -22,7 +22,7 @@ public class PopupSummary : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "Game/UI/Popups/Gameplay/PF_PopupSummary";
+	public static readonly string PATH = "UI/Popups/Gameplay/PF_PopupSummary";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//

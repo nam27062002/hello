@@ -241,7 +241,7 @@ public class AnimalBehaviour : MonoBehaviour {
 
 		if (Random.Range(0,1000) < 200){
 			entity.isGolden = true;
-			Material goldMat = Resources.Load ("Materials/Gold") as Material;
+			Material goldMat = Resources.Load ("PROTO/Materials/Gold") as Material;
 			if (originalMaterials == null)
 				 originalMaterials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
 			Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;

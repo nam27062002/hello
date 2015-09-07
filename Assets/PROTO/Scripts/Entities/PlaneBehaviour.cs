@@ -246,7 +246,7 @@ public class PlaneBehaviour : MonoBehaviour {
 		}
 		
 		// Look for any other burnable object around us
-		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
+		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("PROTO/Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
 		exp.finalRadius = 400f;
 		Vector3 p = transform.position;
 		p.z = 0f;

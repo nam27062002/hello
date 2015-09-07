@@ -106,7 +106,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_animator.SetBool("bite", true);
 
 				// spawn blood particle TEMP - use some kind of particle manager
-				GameObject  effect = (GameObject)Object.Instantiate(Resources.Load("Proto/bloodchurn-large"));
+				GameObject  effect = (GameObject)Object.Instantiate(Resources.Load("PROTO/bloodchurn-large"));
 				effect.transform.localPosition = Vector3.zero;
 				effect.transform.position =Vector3.zero;
 				m_bloodEmitter = effect.GetComponent<ParticleSystem>();

@@ -63,8 +63,8 @@ public class MainMenu : MonoBehaviour {
 	/// <param name="_sSkinName">The name of the skin to be loaded.</param>
 	void LoadSkin(string _sSkinName) {
 		// Load both materials
-		Material bodyMat = Resources.Load<Material>("Materials/Dragon/MT_dragon_" + _sSkinName + "_bump");
-		Material wingsMat = Resources.Load<Material>("Materials/Dragon/MT_dragon_" + _sSkinName + "_alphaTest");
+		Material bodyMat = Resources.Load<Material>("PROTO/Materials/Dragon/MT_dragon_" + _sSkinName + "_bump");
+		Material wingsMat = Resources.Load<Material>("PROTO/Materials/Dragon/MT_dragon_" + _sSkinName + "_alphaTest");
 
 		// Apply body material
 		mDragonBodyMesh.material = bodyMat;
@@ -76,7 +76,7 @@ public class MainMenu : MonoBehaviour {
 		if (dragonView != null)
 			DestroyObject(dragonView);
 
-		dragonView = (GameObject)Object.Instantiate(Resources.Load ("Dragons/Menu"+UserProfile.currentDragon));
+		dragonView = (GameObject)Object.Instantiate(Resources.Load ("PROTO/Dragons/Menu"+UserProfile.currentDragon));
 		dragonView.transform.SetParent (dragonPivot,false);
 	}
 

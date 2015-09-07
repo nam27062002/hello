@@ -54,7 +54,7 @@ public class BatBehaviour : MonoBehaviour {
 
 		if (Random.Range(0,1000) < 200) {
 			GetComponent<GameEntity>().isGolden = true;
-			Material goldMat = Resources.Load ("Materials/Gold") as Material;
+			Material goldMat = Resources.Load ("PROTO/Materials/Gold") as Material;
 			Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
 			for (int i = 0; i < materials.Length; i++) {
 				materials[i] = goldMat;

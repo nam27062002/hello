@@ -18,7 +18,7 @@ using System;
 /// </summary>
 public class App : MonoBehaviour {
 	#region CONSTANTS --------------------------------------------------------------------------------------------------
-	private static readonly string PREFAB_PATH = "Proto/Prefabs/App/PF_App";
+	private static readonly string PREFAB_PATH = "PROTO/Prefabs/App/PF_App";
 	#endregion
 
 	#region SINGLETON INSTANCE -----------------------------------------------------------------------------------------

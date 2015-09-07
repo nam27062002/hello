@@ -11,7 +11,7 @@ public class FirePool : MonoBehaviour {
 	
 		Transform instances = GameObject.Find ("Instances").transform;
 		
-		Object firePrefab = Resources.Load("Proto/FireSprite");
+		Object firePrefab = Resources.Load("PROTO/FireSprite");
 		for(int i=0;i<maxFireParticles;i++){
 			GameObject fireObj = (GameObject)Object.Instantiate(firePrefab);
 			fireObj.transform.parent = instances;

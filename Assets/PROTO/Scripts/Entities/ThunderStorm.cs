@@ -58,7 +58,7 @@ public class ThunderStorm : MonoBehaviour {
 			
 			//add a thunder branch into Pool Controller
 			m_poolController = GameObject.Find ("Pool Controller").GetComponent<PoolController>();		
-			m_poolController.CreatePool((GameObject)Resources.Load("Proto/WeatherEffects/ThunderStorm/ThunderBranch"), (m_segmentDivisions - 1) * (m_segmentDivisions - 1), false);
+			m_poolController.CreatePool((GameObject)Resources.Load("PROTO/WeatherEffects/ThunderStorm/ThunderBranch"), (m_segmentDivisions - 1) * (m_segmentDivisions - 1), false);
 		}
 		
 		public void Destroy () {

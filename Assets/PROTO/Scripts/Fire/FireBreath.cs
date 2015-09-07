@@ -26,7 +26,7 @@ public class FireBreath : DragonBreathBehaviour {
 		Transform instances = GameObject.Find ("Instances").transform;
 
 		Object firePrefab;
-		firePrefab = Resources.Load("Proto/Flame");
+		firePrefab = Resources.Load("PROTO/Flame");
 
 
 		for(int i=0;i<maxFireParticles;i++){

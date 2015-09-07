@@ -149,7 +149,7 @@ public class RoadVehicleBehaviour : MonoBehaviour {
 		}
 
 		
-		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
+		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("PROTO/Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
 		exp.finalRadius = 500f;
 		Vector3 p = transform.position;
 		p.z = 0f;

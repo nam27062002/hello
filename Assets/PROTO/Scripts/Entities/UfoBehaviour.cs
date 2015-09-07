@@ -34,7 +34,7 @@ public class UfoBehaviour : MonoBehaviour {
 	void Start() {
 		cannon = GetComponentInChildren<CannonBehaviour>();
 		player = GameObject.Find("Player").GetComponent<DragonPlayer>();
-		shootPrefab = Resources.Load("Proto/UfoLaser");
+		shootPrefab = Resources.Load("PROTO/UfoLaser");
 		damageDealer = GetComponent<DamageDealer>();
 		pos = transform.position;
 		oriPos = pos;
