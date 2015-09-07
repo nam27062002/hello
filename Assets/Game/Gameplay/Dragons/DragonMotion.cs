@@ -1,20 +1,25 @@
-// DragonPlayer.cs
+// DragonMotion.cs
 // Hungry Dragon
 // 
 // Created by Pere Alsina on 20/03/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
-#region INCLUDES AND PREPROCESSOR ----------------------------------------------
+//----------------------------------------------------------------------//
+// INCLUDES																//
+//----------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
-#endregion
 
-#region CLASSES ----------------------------------------------------------------
+//----------------------------------------------------------------------//
+// CLASSES																//
+//----------------------------------------------------------------------//
 /// <summary>
-/// Main control of a dragon
+/// Main control of the dragon movement.
 /// </summary>
 public class DragonMotion : MonoBehaviour {
-	#region CONSTANTS ----------------------------------------------------------
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
 	public enum EState {
 		INIT,
 		IDLE,
@@ -24,23 +29,18 @@ public class DragonMotion : MonoBehaviour {
 		DEAD_GORUND
 	};
 
-	#endregion
-
-	#region EXPOSED MEMBERS ----------------------------------------------------
-	[Header("Generic Settings")]
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
+	// Exposed members
 	public float speedDirectionMultiplier = 2f;
 	public Range movementLimitX = new Range(-10000, 50000);
 
-	#endregion
-
-	#region PUBLIC MEMBERS -----------------------------------------------------
+	// Public members
 	[HideInInspector] public Rigidbody m_rbody;
-	[HideInInspector] public int dragonType { get { return m_stats.type; } }
 	[HideInInspector] public bool invulnerable = false;	// Debug purposes
-	#endregion
-
-	#region INTERNAL MEMBERS ---------------------------------------------------
-	// Game objects
+	
+	// References to components
 	Animator  				m_animator;
 	DragonControl			m_controls;
 	DragonOrientation   	m_orientation;
@@ -48,9 +48,20 @@ public class DragonMotion : MonoBehaviour {
 	DragonBreathBehaviour 	m_breathBehaviour;
 	DragonGrabBehaviour		m_grabBehaviour;
 
+	// Movement control
+	private Vector3 m_impulse;
+	private Vector3 m_direction;
+	private float m_accMultiplier;
+	private float m_speedMultiplier;
+
+	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
 	// Since stats are very frequently used and accessed from outside, do a shortcut getter for them
 	private DragonPlayer		m_stats;
-	public DragonPlayer		stats { get { return m_stats; }}
+	public DragonPlayer		stats { 
+		get { return m_stats; }
+	}
 
 	// Control vars
 	EState mState = EState.INIT;
@@ -59,20 +70,13 @@ public class DragonMotion : MonoBehaviour {
 	}
 	float mStateTimer = 0f;
 
+	public int dragonType { 
+		get { return m_stats.type; } 
+	}
 
-
-
-	private float m_accMultiplier;
-	private float m_speedMultiplier;
-
-	private Vector3 m_impulse;
-	private Vector3 m_direction;
-
-
-
-	#endregion
-
-	#region GENERIC METHODS ----------------------------------------------------
+	//------------------------------------------------------------------//
+	// GENERIC METHODS													//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Initialization.
 	/// </summary>
@@ -104,6 +108,9 @@ public class DragonMotion : MonoBehaviour {
 		m_direction = Vector3.right;
 	}
 
+	/// <summary>
+	/// Destructor.
+	/// </summary>
 	void OnDestroy(){
 
 	}
@@ -114,7 +121,10 @@ public class DragonMotion : MonoBehaviour {
 	void Update() {
 
 	}
-	
+
+	/// <summary>
+	/// Called once per frame at regular intervals.
+	/// </summary>
 	void FixedUpdate(){
 
 		UpdateMovement();
@@ -133,12 +143,13 @@ public class DragonMotion : MonoBehaviour {
 
 		transform.position = pos;
 	}
-	#endregion
-
-	#region INTERNAL UTILS -----------------------------------------------------
-
 	
-
+	//------------------------------------------------------------------//
+	// INTERNAL UTILS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Updates the movement.
+	/// </summary>
 	void UpdateMovement() {
 
 		Vector3 oldDirection = m_direction;
@@ -185,7 +196,6 @@ public class DragonMotion : MonoBehaviour {
 		}
 	}
 	
-
 	/// <summary>
 	/// Enable/Disable the "starving" status.
 	/// </summary>
@@ -193,9 +203,10 @@ public class DragonMotion : MonoBehaviour {
 	void ToggleStarving(bool _bIsStarving) {
 
 	}
-	#endregion
 
-	#region PUBLIC METHODS -----------------------------------------------------
+	//------------------------------------------------------------------//
+	// PUBLIC METHODS													//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Apply damage to the dragon.
 	/// </summary>
@@ -219,9 +230,10 @@ public class DragonMotion : MonoBehaviour {
 	public void Stop() {
 		m_rbody.velocity = Vector3.zero;
 	}
-	#endregion
-
-	#region GETTERS ------------------------------------------------------------
+	
+	//------------------------------------------------------------------//
+	// GETTERS															//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Is the dragon alive?
 	/// </summary>
@@ -253,18 +265,22 @@ public class DragonMotion : MonoBehaviour {
 		return false;
 	}
 
-
+	/// <summary>
+	/// Obtain the current direction of the dragon.
+	/// </summary>
+	/// <returns>The direction the dragon is currently moving towards.</returns>
 	public Vector3 GetDirection(){
 		return m_direction;
 	}
-	#endregion
 	
-	#region CALLBACKS ----------------------------------------------------------
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
 	void OnTriggerEnter(Collider other) {}
 	void OnTriggerExit(Collider other) {}
 	void OnTriggerStay(Collider other) {}
 	void OnCollisionEnter(Collision collision) {}
 	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source){}
-	#endregion
+	
 }
-#endregion
+
