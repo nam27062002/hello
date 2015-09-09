@@ -42,7 +42,7 @@ public class RangeEditor : PropertyDrawer {
 		// Aux vars
 		float padding = 5f;
 		GUIContent content = new GUIContent();
-		GUIStyle style = GUI.skin.label;	// Default label style, useful to compute text widths
+		GUIStyle style = new GUIStyle(EditorStyles.label);	// Default label style, useful to compute text widths
 
 		// Group all
 		_label = EditorGUI.BeginProperty(_position, _label, _property);
@@ -76,13 +76,17 @@ public class RangeEditor : PropertyDrawer {
 		Rect cursor = contentRect;
 		//cursor.height = contentRect.height/2f;	// Size of a single line
 
+		// Reset indentation level since we're already drawing within the content rect
+		int indentLevelBackup = EditorGUI.indentLevel;
+		EditorGUI.indentLevel = 0;
+
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Draw min value
 		EditorGUI.BeginChangeCheck();
 
-		cursor.width = contentRect.width/2 - padding/2;
+		cursor.width = contentRect.width/2;
 		content.text = "min";
-		EditorGUIUtility.labelWidth = style.CalcSize(content).x + padding;	// Adjust label to "min" word
+		EditorGUIUtility.labelWidth = style.CalcSize(content).x;	// Adjust label to "min" word
 		minValue = EditorGUI.FloatField(cursor, content, minValue);
 
 		if(EditorGUI.EndChangeCheck()) {
@@ -166,7 +170,8 @@ public class RangeEditor : PropertyDrawer {
 		*/
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// DONE!!
+		// DONE!! Restore indentation level and end the property group
+		EditorGUI.indentLevel = indentLevelBackup;
 		EditorGUI.EndProperty ();
 	}
 
