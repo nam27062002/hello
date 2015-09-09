@@ -39,4 +39,8 @@ public static class GameEvents {
 
 	// Collectible events
 	public const string COLLECTIBLE_COLLECTED = "COLLECTIBLE_COLLECTED";		// params: Collectible _collectible
+
+	// Dragon collection events
+	public const string DRAGON_LEVEL_UP = "DRAGON_LEVEL_UP";					// params: DragonData _data
+	public const string DRAGON_SKILL_UPGRADED = "DRAGON_SKILL_UPGRADED";		// params: DragonSkill _skill	// [AOC] TODO!! We might want to know whose dragon this skill belongs to - figure out how
 }

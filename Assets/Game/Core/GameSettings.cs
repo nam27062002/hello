@@ -9,4 +9,7 @@
 /// </summary>
 public static class GameSettings {
 	// [AOC] TODO!! Add here any global setup variable such as quality, server ip, debug enabled, ...
+
+	// Game
+	public static readonly string PLAYER_NAME = "Player";	// Name of the dragon instance on the scene
 }
