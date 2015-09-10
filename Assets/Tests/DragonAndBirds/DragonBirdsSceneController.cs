@@ -331,5 +331,16 @@ public class DragonBirdsSceneController : SceneController {
 		// Reload scene
 		Application.LoadLevel(Application.loadedLevel);		// [AOC] Trick to hard-reload current level
 	}
+
+
+	public void OnToggleEat() {
+		DragonEatBehaviour b = m_player.GetComponent<DragonEatBehaviour>();
+		b.enabled = !b.enabled;
+	}
+
+	public void OnToggleBreath() {
+		DragonBreathBehaviour b = m_player.GetComponent<DragonBreathBehaviour>();
+		b.enabled = !b.enabled;		
+	}
 }
 
