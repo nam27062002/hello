@@ -13,8 +13,8 @@ public class PreyStats : Initializable {
 	[SerializeField] private Reward m_reward;
 	public Reward reward { get { return m_reward; } }
 	
-	[SerializeField] private float m_maxLife = 100f;
-	public float maxLife { get { return m_maxLife; } }
+	[SerializeField] private float m_maxHealth = 100f;
+	public float maxHealth { get { return m_maxHealth; } }
 
 
 
@@ -24,7 +24,8 @@ public class PreyStats : Initializable {
 	private bool m_isGolden;
 	public bool isGolden { get { return m_isGolden; } }
 
-	private float m_life;
+	private float m_health;
+	public float health { get { return m_health; } }
 
 	private Material[] m_materials;
 
@@ -34,15 +35,19 @@ public class PreyStats : Initializable {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Start() {
+	void Awake() {
 		// keep the original materials, sometimes it will become Gold!
 		m_materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
 	}
 
 	public override void Initialize() {
 
-		m_life = m_maxLife;		
+		m_health = m_maxHealth;		
 		SetGolden((Random.Range(0, 1000) < 200));
+	}
+
+	public void AddLife(float _offset) {
+		m_health = Mathf.Min(m_maxHealth, Mathf.Max(0, m_health + _offset)); 
 	}
 
 	private void SetGolden(bool _value) {

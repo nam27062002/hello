@@ -18,6 +18,7 @@ public class EdibleBehaviour : Initializable {
 	
 	[SerializeField] private bool m_destroyOnEat = false;
 
+
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
@@ -30,16 +31,20 @@ public class EdibleBehaviour : Initializable {
 	private Quaternion m_originalRotation;
 	private Vector3 m_originalScale;
 
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Start () {
-	
-		m_prey = GetComponent<PreyStats>();
+	void Awake() {
 
 		m_originalRotation = transform.rotation;
 		m_originalScale = transform.localScale;
+	}
+
+	void Start() {
+		
+		m_prey = GetComponent<PreyStats>();
 	}
 
 	public override void Initialize() {
@@ -78,6 +83,8 @@ public class EdibleBehaviour : Initializable {
 
 		if (!m_prey.isGolden) {
 			reward.coins = 0;
+
+			//TODO: Drop money event?
 		}
 
 		// start go to mouth animation

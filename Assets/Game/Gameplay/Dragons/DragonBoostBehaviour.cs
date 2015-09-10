@@ -38,11 +38,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 			if (!m_active) {
 				StartBoost();
 			}
-		} else if (m_active && m_dragon.energy <= 0f) {
+		} else if (m_active && (!activate || m_dragon.energy <= 0f)) {
 			StopBoost();
 		}
 
-		if (activate || m_active) {
+		if (m_active) {
 			m_dragon.AddEnergy(-Time.deltaTime * m_dragon.energyDrainPerSecond);
 		} else {
 			m_dragon.AddEnergy(Time.deltaTime * m_dragon.energyRefillPerSecond);
@@ -52,13 +52,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	private void StartBoost() {
 		m_active = true;
-		m_healthBehaviour.enabled = false;
+		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 		m_dragon.SetSpeedMultiplier(m_dragon.boostMultiplier);
 	}
 
 	private void StopBoost() {
 		m_active = false;
-		m_healthBehaviour.enabled = true;
+		if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 		m_dragon.SetSpeedMultiplier(1f);
 	}
 }

@@ -2,7 +2,11 @@ using UnityEngine;
 using System.Collections;
 
 public class DragonEatBehaviour : MonoBehaviour {
-	
+
+
+	//-----------------------------------------------
+	// Attributes
+	//-----------------------------------------------
 	private float m_eatingTimer;
 	private float m_eatingTime;
 
@@ -15,7 +19,10 @@ public class DragonEatBehaviour : MonoBehaviour {
 	
 	private ParticleSystem m_bloodEmitter;
 
-
+	
+	//-----------------------------------------------
+	// Methods
+	//-----------------------------------------------
 	// Use this for initialization
 	void Start () {
 	
@@ -42,7 +49,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	public bool IsEating() {
 
-		return m_eatingTimer > 0;
+		return enabled && m_eatingTimer > 0;
 	}
 
 	// Update is called once per frame
@@ -89,7 +96,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	void OnTriggerStay(Collider _other) {
 
-		if (m_eatingTimer <= 0) {
+		if (enabled && m_eatingTimer <= 0) {
 			// Can object be eaten?
 			m_prey = _other.gameObject.GetComponent<EdibleBehaviour>();
 
@@ -98,15 +105,14 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_eatingTimer = m_eatingTime = (m_dragon.eatTime * m_prey.size) / m_dragon.GetSpeedMultiplier(); // (  time  ) / speedMultiplier
 
 				Reward reward = m_prey.Eat(m_eatingTime);
-
 				m_dragon.AddLife(reward.health);
 				m_dragon.AddFury(reward.fury);
-								
+
 				m_animator.SetBool("big_prey", m_prey.isBig);
 				m_animator.SetBool("bite", true);
 
 				// spawn blood particle TEMP - use some kind of particle manager
-				GameObject  effect = (GameObject)Object.Instantiate(Resources.Load("Proto/bloodchurn-large"));
+				GameObject effect = (GameObject)Object.Instantiate(Resources.Load("Proto/bloodchurn-large"));
 				effect.transform.localPosition = Vector3.zero;
 				effect.transform.position =Vector3.zero;
 				m_bloodEmitter = effect.GetComponent<ParticleSystem>();

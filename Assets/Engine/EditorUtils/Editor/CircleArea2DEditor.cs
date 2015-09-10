@@ -27,7 +27,7 @@ public class CircleArea2DEditor : Editor {
 		bool isTargetDirty = false;
 
 		if (m_target) {
-			DrawHandle(m_target.bounds);
+			DrawHandle(m_target.bounds.bounds);
 
 			isTargetDirty = isTargetDirty || UpdateCenterHandle();
 			isTargetDirty = isTargetDirty || UpdateHorizontalHandles();
@@ -58,11 +58,11 @@ public class CircleArea2DEditor : Editor {
 	private bool UpdateCenterHandle() {
 
 		EditorGUI.BeginChangeCheck();
-		Vector3 position = MoveHandle(m_target.bounds.center);
+		Vector3 position = MoveHandle(m_target.bounds.bounds.center);
 		
 		if (EditorGUI.EndChangeCheck()) {
 
-			m_target.offset += (Vector2)(position - m_target.bounds.center);
+			m_target.offset += (Vector2)(position - m_target.bounds.bounds.center);
 			return true;
 		}
 		

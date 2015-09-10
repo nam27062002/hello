@@ -62,9 +62,9 @@ public class FlameParticle : MonoBehaviour {
 						if (hit.collider != null){
 							
 							// Burn whatever burnable
-							FlamableBehaviour flamable =  hit.collider.GetComponent<FlamableBehaviour>();
-							if (flamable != null){
-								flamable.Burn (hit.point, flamePower);
+							InflammableBehaviour flamable =  hit.collider.GetComponent<InflammableBehaviour>();
+							if (flamable != null) {
+								flamable.Burn(flamePower);
 							}
 						}
 					}

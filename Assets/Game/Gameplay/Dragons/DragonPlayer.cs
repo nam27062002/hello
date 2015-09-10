@@ -254,8 +254,17 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 
-	public Vector3 GetDirection(){
+	public Vector3 GetDirection() {
 		return m_direction;
+	}
+
+	public Vector3 GetVelocity() {
+		return m_rbody.velocity;
+	}
+
+	// max speed without boost
+	public float GetMaxSpeed() {
+		return m_stats.speed * m_accMultiplier;
 	}
 	#endregion
 	

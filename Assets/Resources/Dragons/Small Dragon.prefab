@@ -819,6 +819,7 @@ GameObject:
   - 114: {fileID: 11437562}
   - 114: {fileID: 11455602}
   - 136: {fileID: 13641966}
+  - 114: {fileID: 11475944}
   m_Layer: 0
   m_Name: Small Dragon
   m_TagString: Untagged
@@ -2552,7 +2553,7 @@ MonoBehaviour:
   m_energyRefillPerSecond: 15
   m_energyMinRequired: 15
   m_maxFury: 100
-  m_furyDuration: 12
+  m_furyDuration: 6
 --- !u!114 &11437562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2564,7 +2565,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edc67609b2d3b4d1a80b3d911f145143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eatRange: 150
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2605,13 +2605,24 @@ MonoBehaviour:
     max: 51000
   m_rbody: {fileID: 0}
   invulnerable: 0
---- !u!114 &11491186
+--- !u!114 &11475944
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159196}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11491186
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
@@ -2924,7 +2935,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_speed
@@ -2961,6 +2972,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_LocalScale.z
       value: .75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_furyDuration
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatTime
+      value: .5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
