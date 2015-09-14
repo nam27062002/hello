@@ -32,8 +32,9 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	[Serializable]
 	public class SaveData {
 		// Add here any required data
-		public UserProfile.SaveData profile;
 		public DateTime timestamp;
+		public UserProfile.SaveData profile;
+		public DragonData.SaveData[] dragons;
 	}
 
 	//------------------------------------------------------------------//
@@ -90,12 +91,15 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 				PersistenceManager.SaveData data = (PersistenceManager.SaveData)bf.Deserialize(file);
 				file.Close();
 				
-				// Restore loaded values - order is relevant!
+				// Restore loaded values
 				// Last save timestamp
 				instance.m_saveTimestamp = data.timestamp;
 
 				// User profile
 				UserProfile.Load(data.profile);
+
+				// Dragons data
+				DragonManager.Load(data.dragons);
 			} catch(Exception e) {
 				Debug.Log("An error has occurred when loading persistence, deleting saved data" + e);
 				File.Delete(instance.saveFile);
@@ -122,6 +126,9 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
 		// User profile
 		data.profile = UserProfile.Save();
+
+		// Dragons data
+		data.dragons = DragonManager.Save();
 		
 		// Save and close the file
 		bf.Serialize(file, data);

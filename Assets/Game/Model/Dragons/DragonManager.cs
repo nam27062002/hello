@@ -28,7 +28,10 @@ public class DragonManager : Singleton<DragonManager> {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// The data
+	// The array allows us to easily setup values from inspector, while the dictionary helps us with faster searches during gameplay
+	// Both contain exactly the same data, unless the array length is modified during gameplay (which shouldn't happen)
 	[SerializeField] private DragonData[] m_dragons = new DragonData[(int)DragonID.COUNT];
+	private Dictionary<DragonID, DragonData> m_dragonsById = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -38,6 +41,12 @@ public class DragonManager : Singleton<DragonManager> {
 	/// </summary>
 	override protected void Awake() {
 		base.Awake();
+
+		// Keep the dragons indexed by id as well for faster searches
+		m_dragonsById = new Dictionary<DragonID, DragonData>();
+		for(int i = 0; i < m_dragons.Length; i++) {
+			m_dragonsById[m_dragons[i].id] = m_dragons[i];
+		}
 	}
 
 	/// <summary>
@@ -70,12 +79,19 @@ public class DragonManager : Singleton<DragonManager> {
 	/// <returns>The data corresponding to the dragon with the given ID. Null if not found.</returns>
 	/// <param name="_id">The ID of the dragon whose data we want.</param>
 	public static DragonData GetDragonData(DragonID _id) {
+		DragonData data = null;
+		if(instance.m_dragonsById.TryGetValue(_id, data)) {
+			return data;
+		}
+		return null;
+		/*
 		for(int i = 0; i < instance.m_dragons.Length; i++) {
 			if(instance.m_dragons[i].id == _id) {
 				return instance.m_dragons[i];
 			}
 		}
 		return null;
+		*/
 	}
 
 	/// <summary>
@@ -134,5 +150,32 @@ public class DragonManager : Singleton<DragonManager> {
 		if(spawnPointObj != null) {
 			playerObj.transform.position = spawnPointObj.transform.position;
 		}
+	}
+
+	//------------------------------------------------------------------//
+	// PERSISTENCE														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Load state from a persistence object.
+	/// </summary>
+	/// <param name="_data">The data object loaded from persistence.</param>
+	public static void Load(DragonData.SaveData[] _data) {
+		// We don't trust array order, so do it by id
+		for(int i = 0; i < _data.Length; i++) {
+			GetDragonData(_data[i].id).Load(_data[i]);
+		}
+	}
+	
+	/// <summary>
+	/// Create and return a persistence save data object initialized with the data.
+	/// </summary>
+	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
+	public DragonData.SaveData[] Save() {
+		// Create new object, initialize and return it
+		DragonData.SaveData[] data = new DragonData.SaveData[instance.m_dragons.Length];
+		for(int i = 0; i < instance.m_dragons.Length; i++) {
+			data[i] = instance.m_dragons[i].Save();
+		}
+		return data;
 	}
 }

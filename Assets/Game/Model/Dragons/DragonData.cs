@@ -31,6 +31,7 @@ public class DragonData {
 	[Serializable]
 	public class SaveData {
 		// Only dynamic data is relevant
+		public DragonID id;	// We don't the array order however, so keep the unique dragon ID with each data pack
 		public float xp;
 		public int level;
 		public int[] skillLevels;
@@ -138,6 +139,11 @@ public class DragonData {
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SaveData _data) {
+		// Make sure the persistence object corresponds to this dragon
+		if(!DebugUtils.Assert(_data.id == id, "Attempting to load persistence data corresponding to a different dragon ID, aborting")) {
+			return;
+		}
+
 		// Just read values from persistence object
 		progression.Load(_data.xp, _data.level);
 	}
@@ -150,6 +156,7 @@ public class DragonData {
 		// Create new object, initialize and return it
 		SaveData data = new SaveData();
 
+		data.id = id;
 		data.xp = progression.xp;
 		data.level = progression.level;
 
