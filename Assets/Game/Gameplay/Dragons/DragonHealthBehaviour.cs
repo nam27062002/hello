@@ -21,7 +21,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		m_dragon.AddLife(-Time.deltaTime * m_dragon.data.lifeDrainPerSecond);	
+		m_dragon.AddLife(-Time.deltaTime * m_dragon.data.healthDrainPerSecond);	
 	}
 
 	public void ReceiveDamage(float _value) {

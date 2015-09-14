@@ -811,14 +811,16 @@ GameObject:
   - 136: {fileID: 13630308}
   - 136: {fileID: 13695044}
   - 135: {fileID: 13519470}
-  - 114: {fileID: 11416400}
+  - 136: {fileID: 13641966}
   - 114: {fileID: 11473758}
+  - 114: {fileID: 11416400}
   - 114: {fileID: 11491186}
   - 114: {fileID: 11444574}
   - 114: {fileID: 11408036}
   - 114: {fileID: 11437562}
   - 114: {fileID: 11455602}
-  - 136: {fileID: 13641966}
+  - 114: {fileID: 11447224}
+  - 114: {fileID: 11424726}
   m_Layer: 0
   m_Name: PF_DragonMedium
   m_TagString: Untagged
@@ -2544,7 +2546,17 @@ MonoBehaviour:
     min: -27700
     max: 51000
   m_rbody: {fileID: 0}
-  invulnerable: 0
+--- !u!114 &11424726
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15467f0022fed4eb987a8de2bafce36d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11437562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2565,6 +2577,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 20bece88168c34eaa8589c1a54ccefd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11447224
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11455602
@@ -2591,8 +2614,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_id: 0
-  m_lifeWarningThreshold: .200000003
-  m_energyMinRequired: 25
+  invulnerable: 0
 --- !u!114 &11491186
 MonoBehaviour:
   m_ObjectHideFlags: 1

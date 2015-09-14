@@ -36,17 +36,12 @@ public class DragonProgression : SerializableClass {
 	// XP
 	private float m_xp = 0;
 	public float xp { get { return m_xp; }}
-	public float xpToNextLevel {
-		get {
-			// If we've already reached the last level, 0
-			if(m_level >= lastLevel) return 0f;
-			return m_levelsXp[nextLevel] - m_levelsXp[level];
-		}
-	}
-	
+	public float xpToNextLevel { get { return m_levelsXp[nextLevel] - m_levelsXp[level]; }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
+	public Range xpRange { get { return new Range(m_levelsXp[level], m_levelsXp[nextLevel]); }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
+		
 	// Level
 	private int m_level = 0;
-	public int level { get { return m_level; }}
+	public int level { get { return m_level; }}	// Should never be > lastLevel
 	public int nextLevel { get { return Mathf.Min(m_level + 1, lastLevel); }}
 	public int lastLevel { get { return m_levelsXp.Length - 1; }}
 

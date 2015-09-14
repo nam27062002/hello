@@ -61,17 +61,17 @@ public class DragonData {
 
 	[Header("Level-dependant stats")]
 	[SerializeField] private Range m_healthRange = new Range(1, 100);
-	public float health { get { return m_healthRange.Lerp(progression.progressByLevel); }}
+	public float maxHealth { get { return m_healthRange.Lerp(progression.progressByLevel); }}
 
 	[SerializeField] private Range m_scaleRange = new Range(0.5f, 1.5f);
 	public float scale { get { return m_scaleRange.Lerp(progression.progressByLevel); }}
 
 	[Header("Constant stats")]
-	[SerializeField] private float m_lifeDrainPerSecond = 10f;
-	public float lifeDrainPerSecond { get { return m_lifeDrainPerSecond; }}
+	[SerializeField] private float m_healthDrainPerSecond = 10f;
+	public float healthDrainPerSecond { get { return m_healthDrainPerSecond; }}
 
-	[SerializeField] private float m_energy = 160f;
-	public float energy { get { return m_energy; }}
+	[SerializeField] private float m_maxEnergy = 160f;
+	public float maxEnergy { get { return m_maxEnergy; }}
 
 	[SerializeField] private float m_energyDrainPerSecond = 10f;
 	public float energyDrainPerSecond { get { return m_energyDrainPerSecond; }}
@@ -79,8 +79,8 @@ public class DragonData {
 	[SerializeField] private float m_energyRefillPerSecond = 25f;
 	public float energyRefillPerSecond { get { return m_energyRefillPerSecond; }}
 
-	[SerializeField] private float m_fury = 160f;
-	public float fury { get { return m_fury; }}
+	[SerializeField] private float m_maxFury = 160f;
+	public float maxFury { get { return m_maxFury; }}
 	
 	[SerializeField] private float m_furyDuration = 15f; //seconds
 	public float furyDuration { get { return m_furyDuration; }}

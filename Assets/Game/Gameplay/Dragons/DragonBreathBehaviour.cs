@@ -43,7 +43,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_isFuryOn) {
 
 			float dt = Time.deltaTime / m_dragon.data.furyDuration;
-			m_dragon.AddFury(-(dt * m_dragon.data.fury));
+			m_dragon.AddFury(-(dt * m_dragon.data.maxFury));
 
 			if (m_dragon.fury <= 0) {
 
@@ -58,7 +58,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}
 		} else {
 
-			if (m_dragon.fury >= m_dragon.data.fury) {
+			if (m_dragon.fury >= m_dragon.data.maxFury) {
 
 				m_isFuryOn = true;				
 				m_dragon.StartFury();

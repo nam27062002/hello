@@ -64,8 +64,8 @@ public class DragonPlayer : MonoBehaviour {
 		InstanceManager.player = this;
 
 		// Initialize stats
-		m_health = data.health;
-		m_energy = data.energy;
+		m_health = data.maxHealth;
+		m_energy = data.maxEnergy;
 		m_fury[0] = 0;
 		m_fury[1] = 0;
 		m_furyActive = false;
@@ -84,7 +84,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
 	public void AddLife(float _offset) {
-		m_health = Mathf.Min(m_data.health, Mathf.Max(0, m_health + _offset)); 
+		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset)); 
 	}
 
 	/// <summary>
@@ -92,7 +92,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of energy to be added/removed.</param>
 	public void AddEnergy(float _offset) {
-		m_energy = Mathf.Min(m_data.energy, Mathf.Max(0, m_energy + _offset)); 
+		m_energy = Mathf.Min(m_data.maxEnergy, Mathf.Max(0, m_energy + _offset)); 
 	}
 		
 	/// <summary>
@@ -101,9 +101,9 @@ public class DragonPlayer : MonoBehaviour {
 	/// <param name="_offset">The amount of fury to be added/removed.</param>
 	public void AddFury(float _offset) {
 		if (m_furyActive && _offset >= 0) {
-			m_fury[1] = Mathf.Min(m_data.fury, Mathf.Max(0, m_fury[1] + _offset)); 
+			m_fury[1] = Mathf.Min(m_data.maxFury, Mathf.Max(0, m_fury[1] + _offset)); 
 		} else {
-			m_fury[0] = Mathf.Min(m_data.fury, Mathf.Max(0, m_fury[0] + _offset)); 
+			m_fury[0] = Mathf.Min(m_data.maxFury, Mathf.Max(0, m_fury[0] + _offset)); 
 		}
 	}
 
@@ -158,7 +158,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return (health > data.health * GameSettings.healthWarningThreshold);
+		return (health > data.maxHealth * GameSettings.healthWarningThreshold);
 	}
 	
 	/// <summary>

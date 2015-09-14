@@ -84,6 +84,7 @@ public class DragonManagerEditorWindow : EditorWindow {
 			EditorGUILayout.PropertyField(dragonProperty, label, true);
 
 			// Done
+			GUILayout.Space(10);
 			EditorGUILayout.EndVertical();
 
 			// Draw a separator
