@@ -31,7 +31,7 @@ public class UserProfile : Singleton<UserProfile> {
 		// Add here any required data
 		public long coins;
 		public long pc;
-		public string currentDragon;
+		public DragonID currentDragon;
 	}
 
 	//------------------------------------------------------------------//
@@ -55,8 +55,8 @@ public class UserProfile : Singleton<UserProfile> {
 	}
 
 	[Separator("Progression")]
-	[SerializeField] private string m_currentDragon = "Small Dragon";	// [AOC] TODO!! Proper default initialization
-	public static string currentDragon {
+	[SerializeField] private DragonID m_currentDragon = DragonID.SMALL;	// [AOC] TODO!! Proper default initialization
+	public static DragonID currentDragon {
 		get { return instance.m_currentDragon; }
 		set { instance.m_currentDragon = value; }
 	}

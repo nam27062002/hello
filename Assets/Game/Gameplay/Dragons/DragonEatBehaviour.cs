@@ -93,9 +93,9 @@ public class DragonEatBehaviour : MonoBehaviour {
 			// Can object be eaten?
 			m_prey = _other.gameObject.GetComponent<EdibleBehaviour>();
 
-			if (m_prey != null && m_prey.edibleFromTier <= m_dragon.type) {
+			if (m_prey != null && m_prey.edibleFromTier <= m_dragon.data.tier) {
 				// Yes!! Eat it!
-				m_eatingTimer = m_eatingTime = (m_dragon.eatTime * m_prey.size) / m_dragon.GetSpeedMultiplier(); // (  time  ) / speedMultiplier
+				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * m_prey.size) / m_dragon.GetSpeedMultiplier(); // (  time  ) / speedMultiplier
 
 				Reward reward = m_prey.Eat(m_eatingTime);
 

@@ -49,6 +49,7 @@ public class GameCameraController : MonoBehaviour {
 	[SerializeField] private bool m_shakeDecayOverTime = true;
 
 	// References
+	private DragonMotion m_dragonMotion = null;
 	private Transform m_danger = null;
 
 	// Positioning
@@ -96,6 +97,9 @@ public class GameCameraController : MonoBehaviour {
 	/// First update.
 	/// </summary>
 	private void Start() {
+		// Acquire external references
+		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+
 		// Reset camera target
 		m_danger = null;
 		m_currentPos = gameObject.transform.position;
@@ -121,7 +125,7 @@ public class GameCameraController : MonoBehaviour {
 		}
 
 		// Update forward direction and apply forward offset too look a bit ahead in the direction the dragon is moving
-		m_forward = Vector3.Lerp(InstanceManager.player.GetDirection(), m_forward, m_forwardSmoothing);
+		m_forward = Vector3.Lerp(m_dragonMotion.GetDirection(), m_forward, m_forwardSmoothing);
 		m_targetPos = m_targetPos + m_forward * m_forwardOffset;
 
 		// Clamp X to defined limits

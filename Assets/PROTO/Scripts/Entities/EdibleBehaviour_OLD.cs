@@ -7,7 +7,7 @@ public class EdibleBehaviour_OLD : MonoBehaviour {
 
 	GameEntity entity = null;
 
-	[Range(0, 1)] public int edibleFromType = 0;  // From which dragon type is this edible
+	public int edibleFromTier = 0;  // From which dragon tier is this edible
 
 
 
@@ -43,7 +43,6 @@ public class EdibleBehaviour_OLD : MonoBehaviour {
 	public Bounds modelbounds; // bounds for the 3d model of the entity
 
 	float timer = 0f;
-	DragonMotion 	player;
 	Transform	 	playerMouth;
 	Transform	 	playerHead;
 	Animator 		animator;
@@ -56,9 +55,8 @@ public class EdibleBehaviour_OLD : MonoBehaviour {
 	void Start () {
 
 		entity = gameObject.GetComponent<GameEntity>();
-		player = GameObject.Find ("Player").GetComponent<DragonMotion>();
-		playerMouth = player.FindSubObjectTransform("eat");
-		playerHead = player.FindSubObjectTransform("head");
+		playerMouth = InstanceManager.player.FindSubObjectTransform("eat");
+		playerHead = InstanceManager.player.FindSubObjectTransform("head");
 	
 		animator = GetComponent<Animator>();
 

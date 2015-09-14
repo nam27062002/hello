@@ -38,7 +38,6 @@ public class MainHUDController : MonoBehaviour {
 	#region INTERNAL MEMBERS -------------------------------------------------------------------------------------------
 	private long mLastDisplayedTime = -1;
 	private Animator mAnimator = null;
-	private DragonPlayer mPlayerStats;
 	#endregion
 	
 	#region GENERIC METHODS --------------------------------------------------------------------------------------------
@@ -75,18 +74,14 @@ public class MainHUDController : MonoBehaviour {
 	/// </summary>
 	void Update() {
 
-		if (mPlayerStats == null) {
-			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonPlayer>();
-		}
-
 		// Update life bar
-		lifeBar.value = mPlayerStats.life;
+		lifeBar.value = InstanceManager.player.health;
 
 		// Update energy bar
-		energyBar.value = mPlayerStats.energy;
+		energyBar.value = InstanceManager.player.energy;
 
 		// Update fury bar
-		furyBar.value = mPlayerStats.fury;
+		furyBar.value = InstanceManager.player.fury;
 
 		// Update time - only if changed by more than 1 second
 		long currentTime = (long)App.Instance.gameLogic.elapsedSeconds;
@@ -120,13 +115,10 @@ public class MainHUDController : MonoBehaviour {
 	/// </summary>
 	private void OnGameStarted() {
 
-		if (mPlayerStats == null)
-			mPlayerStats = GameObject.Find ("Player").GetComponent<DragonPlayer>();
-
 		// Set max values
-		lifeBar.maxValue = mPlayerStats.maxLife;
-		energyBar.maxValue = mPlayerStats.maxEnergy;
-		furyBar.maxValue = mPlayerStats.maxFury;
+		lifeBar.maxValue = InstanceManager.player.data.health;
+		energyBar.maxValue = InstanceManager.player.data.energy;
+		furyBar.maxValue = InstanceManager.player.data.fury;
 		
 		// Init score and coins
 		OnScoreChanged(0, App.Instance.gameLogic.score);

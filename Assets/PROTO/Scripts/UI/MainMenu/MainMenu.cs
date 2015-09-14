@@ -120,7 +120,8 @@ public class MainMenu : MonoBehaviour {
 		if(UserProfile.currentDragon.Equals(sDragon)) return;
 
 		// Tell the game settings which skin to load upon starting the game
-		UserProfile.currentDragon = sDragon;
+		//UserProfile.currentDragon = sDragon;
+		UserProfile.currentDragon = DragonID.SMALL;
 
 		ReloadDragon();
 	}

@@ -1,4 +1,4 @@
-﻿// HUDLifeTextController.cs
+// HUDLifeTextController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 31/08/2015.
@@ -70,7 +70,7 @@ public class HUDLifeTextController : MonoBehaviour {
 	/// Update the textfield with the current value.
 	/// </summary>
 	private void UpdateText() {
-		m_text.text = System.String.Format("{0} HP", StringUtils.FormatNumber(InstanceManager.player.stats.life, 0));
+		m_text.text = System.String.Format("{0} HP", StringUtils.FormatNumber(InstanceManager.player.health, 0));
 	}
 }
 

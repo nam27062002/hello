@@ -72,9 +72,6 @@ public class GameSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Exposed members
-	[SerializeField] private string m_dragonResourcesPath = "Dragons/";
-
 	// Internal vars
 	private float m_timer = -1;	// Misc use
 
@@ -89,7 +86,7 @@ public class GameSceneController : SceneController {
 		base.Awake();
 
 		// Load the dragon
-		LoadDragon();
+		DragonManager.LoadDragon(UserProfile.currentDragon);
 	}
 
 	/// <summary>
@@ -257,32 +254,6 @@ public class GameSceneController : SceneController {
 		
 		// Store new state
 		m_state = _newState;
-	}
-	
-	/// <summary>
-	/// Load and instantiate a dragon prefab based on current game settings.
-	/// </summary>
-	private void LoadDragon() {
-		// Destroy any previously created player
-		GameObject debugDragon = GameObject.Find("Player");
-		if(debugDragon != null) {
-			DestroyImmediate(debugDragon);
-		}
-		
-		// Instantiate the Dragon defined in GameSettings
-		//Debug.Log("Attempting to load dragon: " + m_dragonResourcesPath + UserProfile.currentDragon);
-		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + UserProfile.currentDragon));
-		dragonObj.name = "Player";
-
-		// Look for the default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find("PlayerSpawn" + UserProfile.currentDragon);
-		if(spawnPointObj == null) {
-			// We couldn't find a spawn point for this specific type, try to find a generic one
-			spawnPointObj = GameObject.Find("PlayerSpawn");
-		}
-		if(spawnPointObj != null) {
-			dragonObj.transform.position = spawnPointObj.transform.position;
-		}
 	}
 
 	/// <summary>

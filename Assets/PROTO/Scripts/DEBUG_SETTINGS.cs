@@ -26,19 +26,19 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 
 	// Infinite dash
 	public bool infiniteDash = false;
-	private bool mInfiniteDash = false;
+	private bool m_infiniteDash = false;
 
 	// Infinite fire
 	public bool infiniteFire = false;
-	private bool mInfiniteFire = false;
+	private bool m_infiniteFire = false;
 
 	// Draw collision meshes
 	public bool drawColliders = false;
 	#endregion
 
 	#region INTERNAL VARS ----------------------------------------------------------------------------------------------
-	DragonMotion mPlayer = null;
-	DragonPlayer mPlayerStats = null;
+	DragonMotion m_playerMotion = null;
+	DragonPlayer m_player = null;
 	#endregion
 
 	#region PUBLIC METHODS ---------------------------------------------------------------------------------------------
@@ -52,28 +52,28 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 	/// </summary>
 	void Update() {
 
-		if (mPlayer == null){
-			mPlayer = GameObject.Find("Player").GetComponent<DragonMotion>();
-			mPlayerStats = mPlayer.GetComponent<DragonPlayer>();
+		if (m_playerMotion == null){
+			m_playerMotion = GameObject.Find("Player").GetComponent<DragonMotion>();
+			m_player = m_playerMotion.GetComponent<DragonPlayer>();
 		}
 
 		// Invulnerable
-		if(mPlayer.invulnerable != invulnerable) {
-			mPlayer.invulnerable = invulnerable;
+		if(m_playerMotion.invulnerable != invulnerable) {
+			m_playerMotion.invulnerable = invulnerable;
 		}
 
 		// Infinite Dash
-		if(mInfiniteDash != infiniteDash) {
-			mInfiniteDash = infiniteDash;
-		} else if(mInfiniteDash) {
-			mPlayerStats.AddEnergy(mPlayerStats.maxEnergy);
+		if(m_infiniteDash != infiniteDash) {
+			m_infiniteDash = infiniteDash;
+		} else if(m_infiniteDash) {
+			m_player.AddEnergy(m_player.data.energy);
 		}
 
 		// Infinite fire
-		if(mInfiniteFire != infiniteFire) {
-			mInfiniteFire = infiniteFire;
-		} else if(mInfiniteFire) {	// Prevent fire to turn off
-			mPlayerStats.AddFury(mPlayerStats.maxFury);
+		if(m_infiniteFire != infiniteFire) {
+			m_infiniteFire = infiniteFire;
+		} else if(m_infiniteFire) {	// Prevent fire to turn off
+			m_player.AddFury(m_player.data.fury);
 		}
 	}
 

@@ -67,9 +67,6 @@ public class DragonBirdsSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Exposed members
-	[SerializeField] private string m_dragonResourcesPath = "Dragons/";
-
 	// Internal vars
 	private float m_timer = -1;	// Misc use
 
@@ -84,7 +81,7 @@ public class DragonBirdsSceneController : SceneController {
 		SceneManager.SetCurrentScene(GameSceneController.NAME);
 
 		// Load the dragon
-		LoadDragon();
+		DragonManager.LoadDragon(UserProfile.currentDragon);
 
 		// Call parent
 		base.Awake();
@@ -236,25 +233,6 @@ public class DragonBirdsSceneController : SceneController {
 		// Store new state
 		m_state = _newState;
 	}
-	
-	/// <summary>
-	/// Load and instantiate a dragon prefab based on current game settings.
-	/// </summary>
-	private void LoadDragon(){
-		// Destroy any previously created player
-		GameObject debugDragon = GameObject.Find("Player");
-		if(debugDragon != null) {
-			DestroyImmediate(debugDragon);
-		}
-		
-		// Instantiate the Dragon defined in GameSettings
-		GameObject dragonObj = Instantiate(Resources.Load<GameObject>(m_dragonResourcesPath + UserProfile.currentDragon));
-		dragonObj.name = "Player";
-		
-		// Store reference to the dragon for faster access
-		m_player = dragonObj.GetComponent<DragonMotion>();
-		m_player.invulnerable = true;
-	}
 
 	/// <summary>
 	/// Add coins.
@@ -324,9 +302,9 @@ public class DragonBirdsSceneController : SceneController {
 	/// Callback for the dragon change button.
 	/// </summary>
 	/// <param name="_newDragonType">The new dragon to be loaded.</param>
-	public void OnChangeDragonType(string _newDragonType) {
+	public void OnChangeDragonType(int _newDragonType) {
 		// Store new dragon type into the user profile
-		UserProfile.currentDragon = _newDragonType;
+		UserProfile.currentDragon = (DragonID)_newDragonType;
 
 		// Reload scene
 		Application.LoadLevel(Application.loadedLevel);		// [AOC] Trick to hard-reload current level

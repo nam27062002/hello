@@ -42,6 +42,7 @@ public class DragonMotion : MonoBehaviour {
 	
 	// References to components
 	Animator  				m_animator;
+	DragonPlayer			m_dragon;
 	DragonControl			m_controls;
 	DragonOrientation   	m_orientation;
 	DragonEatBehaviour		m_eatBehaviour;
@@ -57,22 +58,12 @@ public class DragonMotion : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// Since stats are very frequently used and accessed from outside, do a shortcut getter for them
-	private DragonPlayer		m_stats;
-	public DragonPlayer		stats { 
-		get { return m_stats; }
-	}
-
 	// Control vars
 	EState mState = EState.INIT;
 	public EState state {
 		get { return mState; }
 	}
 	float mStateTimer = 0f;
-
-	public int dragonType { 
-		get { return m_stats.type; } 
-	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -81,11 +72,9 @@ public class DragonMotion : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		// Store reference into Instance Manager for immediate global access
-		InstanceManager.player = this;
-
 		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
+		m_dragon			= GetComponent<DragonPlayer>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_orientation	 	= GetComponent<DragonOrientation>();
 		m_eatBehaviour	 	= GetComponent<DragonEatBehaviour>();
@@ -93,7 +82,6 @@ public class DragonMotion : MonoBehaviour {
 		m_grabBehaviour 	= GetComponent<DragonGrabBehaviour>();
 		
 		m_rbody = GetComponent<Rigidbody>();
-		m_stats = GetComponent<DragonPlayer>();
 	}
 
 	/// <summary>
@@ -153,11 +141,11 @@ public class DragonMotion : MonoBehaviour {
 	void UpdateMovement() {
 
 		Vector3 oldDirection = m_direction;
-		Vector3 impulse = m_controls.GetImpulse(m_stats.speed * m_speedMultiplier); 
+		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speed.value * m_speedMultiplier); 
 
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
-			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, Mathf.Max(m_accMultiplier, stats.GetSpeedMultiplier()), 0.25f); //accelerate from stop to normal or boost velocity
+			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, Mathf.Max(m_accMultiplier, m_dragon.GetSpeedMultiplier()), 0.25f); //accelerate from stop to normal or boost velocity
 
 			float v = impulse.magnitude;
 			m_impulse = Vector3.Lerp(m_impulse, impulse, 0.5f);
@@ -239,7 +227,7 @@ public class DragonMotion : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is not dead or dying; otherwise, <c>false</c>.</returns>
 	public bool IsAlive() {
-		return m_stats.life > 0;
+		return m_dragon.health > 0;
 	}
 
 	/// <summary>
@@ -247,7 +235,7 @@ public class DragonMotion : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return (m_stats.life > m_stats.maxLife * m_stats.lifeWarningThreshold);
+		return (m_dragon.health > m_dragon.data.health * m_dragon.lifeWarningThreshold);
 	}
 
 	/// <summary>

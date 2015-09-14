@@ -54,12 +54,12 @@ public class DebugUtils {
 			// Get information on the script that triggered the assert
 			StackTrace myTrace = new StackTrace(true);
 			StackFrame myFrame = myTrace.GetFrame(1);
-			string sAssertInfo = "Filename: " + myFrame.GetFileName() + "\nMethod: " + myFrame.GetMethod() + "\nLine: " + myFrame.GetFileLineNumber();
+			string sAssertInfo = _message + "\n" + "Filename: " + myFrame.GetFileName() + "\nMethod: " + myFrame.GetMethod() + "\nLine: " + myFrame.GetFileLineNumber();
 
 			// If using the editor, show dialog
 			if(!_softAssert) {
 				#if UNITY_EDITOR
-				if(UnityEditor.EditorUtility.DisplayDialog("ASSERT!", _message + "\n" + sAssertInfo, "Ok")) {
+				if(UnityEditor.EditorUtility.DisplayDialog("ASSERT!", sAssertInfo, "Ok")) {
 					// Ok pressed
 					// Open editor at the file and line that triggered the assert
 					UnityEditorInternal.InternalEditorUtility.OpenFileAtLineExternal(myFrame.GetFileName(), myFrame.GetFileLineNumber());
@@ -72,7 +72,7 @@ public class DebugUtils {
 			}
 
 			// Trace to the console as well
-			UnityEngine.Debug.Log(sAssertInfo);
+			UnityEngine.Debug.LogError("ASSERT! " + sAssertInfo);
 
 			// Break execution
 			if(!_softAssert) {

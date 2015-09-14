@@ -106,11 +106,23 @@ public class DragonManagerEditorWindow : EditorWindow {
 			m_scrollPos.x = float.PositiveInfinity;
 		}
 
+		// Add button to save & close
+		if(GUILayout.Button("Close", GUILayout.Height(50))) {
+			// Make sure all changes are saved
+			m_target.ApplyModifiedProperties();
+
+			// Close the window
+			this.Close();
+		}
+
 		// Done
 		GUILayout.EndVertical();
 
 		// We're done!
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.EndScrollView();
+
+		// Save any change performed
+		m_target.ApplyModifiedProperties();
 	}
 }

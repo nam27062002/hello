@@ -813,16 +813,14 @@ GameObject:
   - 135: {fileID: 13519470}
   - 114: {fileID: 11416400}
   - 114: {fileID: 11473758}
-  - 114: {fileID: 11444574}
   - 114: {fileID: 11491186}
+  - 114: {fileID: 11444574}
   - 114: {fileID: 11408036}
   - 114: {fileID: 11437562}
   - 114: {fileID: 11455602}
   - 136: {fileID: 13641966}
-  - 114: {fileID: 11434674}
-  - 114: {fileID: 11488270}
   m_Layer: 0
-  m_Name: Big Dragon
+  m_Name: PF_DragonMedium
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2129,7 +2127,7 @@ Transform:
   m_GameObject: {fileID: 159196}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -2, y: 2, z: 2}
+  m_LocalScale: {x: -1.25, y: 1.25, z: 1.25}
   m_Children:
   - {fileID: 448508}
   m_Father: {fileID: 0}
@@ -2540,24 +2538,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 95e7a49c765b74dfaaa8e8fd4dbb21fb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   speedDirectionMultiplier: 2
   movementLimitX:
     min: -27700
     max: 51000
   m_rbody: {fileID: 0}
-  invulnerable: 0 
---- !u!114 &11434674
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 159196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  invulnerable: 0
 --- !u!114 &11437562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2603,31 +2590,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc55bb9f3dab45f69260a937e250b5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 0
-  m_level: 0
-  m_eatTime: .25
-  m_speed: 1000
-  m_boostMultiplier: 3
-  m_maxLife: 150
-  m_lifeDrainPerSecond: 1
+  m_id: 0
   m_lifeWarningThreshold: .200000003
-  m_maxEnergy: 100
-  m_energyDrainPerSecond: 15
-  m_energyRefillPerSecond: 20
-  m_energyMinRequired: 20
-  m_maxFury: 200
-  m_furyDuration: 10
---- !u!114 &11488270
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 159196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15467f0022fed4eb987a8de2bafce36d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_energyMinRequired: 25
 --- !u!114 &11491186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2959,7 +2924,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_eatRange
-      value: 400
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxFury
@@ -2972,26 +2937,6 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_LocalPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_LocalScale.x
-      value: -2
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_LocalScale.z
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_eatTime
-      value: .25
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_lifeDrainPerSecond
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

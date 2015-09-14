@@ -29,10 +29,10 @@ public class InstanceManager : Singleton<InstanceManager> {
 	}
 
 	// Only during game scene, reference to the dragon
-	private DragonMotion m_player = null;
-	public static DragonMotion player {
+	private DragonPlayer m_player = null;
+	public static DragonPlayer player {
 		get {
-			DebugUtils.Assert(instance.m_player != null, "Attempting to retrieve the player, but no player has been created yet.");
+			DebugUtils.SoftAssert(instance.m_player != null, "Attempting to retrieve the player, but no player has been created yet.");
 			return instance.m_player;
 		}
 		set { if(instance != null) instance.m_player = value; }
