@@ -34,7 +34,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	void Update () {
 		bool activate = Input.GetKey(KeyCode.X) || m_controls.action;
 
-		if (activate && m_dragon.energy > m_dragon.energyMinRequired) {
+		if (activate && m_dragon.energy > GameSettings.energyRequiredToBoost) {
 			if (!m_active) {
 				StartBoost();
 			}

@@ -226,7 +226,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 	/// <param name="_source">The object that dealt the damage.</param>
 	void OnPlayerDamage(float _fDamage, DamageDealer _source) {
 		// Don't show message if starving - already have the starving warning
-		if(App.Instance.gameLogic.player.IsStarving()) return;
+		//if(App.Instance.gameLogic.player.IsStarving()) return;
 
 		// Does it have any feedback to be displayed?
 		if(_source && _source.damageFeedbacks.Count > 0) {

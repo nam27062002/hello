@@ -37,8 +37,6 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 	#endregion
 
 	#region INTERNAL VARS ----------------------------------------------------------------------------------------------
-	DragonMotion m_playerMotion = null;
-	DragonPlayer m_player = null;
 	#endregion
 
 	#region PUBLIC METHODS ---------------------------------------------------------------------------------------------
@@ -51,29 +49,26 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 	/// Called every frame.
 	/// </summary>
 	void Update() {
-
-		if (m_playerMotion == null){
-			m_playerMotion = GameObject.Find("Player").GetComponent<DragonMotion>();
-			m_player = m_playerMotion.GetComponent<DragonPlayer>();
-		}
+		// Player must exist
+		if(InstanceManager.player == null) return;
 
 		// Invulnerable
-		if(m_playerMotion.invulnerable != invulnerable) {
-			m_playerMotion.invulnerable = invulnerable;
+		if(InstanceManager.player.invulnerable != invulnerable) {
+			InstanceManager.player.invulnerable = invulnerable;
 		}
 
 		// Infinite Dash
 		if(m_infiniteDash != infiniteDash) {
 			m_infiniteDash = infiniteDash;
 		} else if(m_infiniteDash) {
-			m_player.AddEnergy(m_player.data.energy);
+			InstanceManager.player.AddEnergy(InstanceManager.player.data.energy);
 		}
 
 		// Infinite fire
 		if(m_infiniteFire != infiniteFire) {
 			m_infiniteFire = infiniteFire;
 		} else if(m_infiniteFire) {	// Prevent fire to turn off
-			m_player.AddFury(m_player.data.fury);
+			InstanceManager.player.AddFury(InstanceManager.player.data.fury);
 		}
 	}
 

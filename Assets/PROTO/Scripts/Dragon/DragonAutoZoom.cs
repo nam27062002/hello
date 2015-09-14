@@ -63,7 +63,7 @@ public class DragonAutoZoom : MonoBehaviour {
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
-	void OnEnable() {
+	/*void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<DragonMotion.EState, DragonMotion.EState>(GameEvents_OLD.PLAYER_STATE_CHANGED, OnPlayerStateChanged);
 	}
@@ -111,5 +111,5 @@ public class DragonAutoZoom : MonoBehaviour {
 		else if(_oldState == DragonMotion.EState.IDLE) {
 			mainCamera.ZoomAtSpeed(0f, zoomSpeed);
 		}
-	}
+	}*/
 }

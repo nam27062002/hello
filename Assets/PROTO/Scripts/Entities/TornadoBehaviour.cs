@@ -152,7 +152,7 @@ public class TornadoBehaviour : MonoBehaviour {
 			force.x = Mathf.Cos(angle) * impactIntensity * direction;
 			force.y = Mathf.Sin(angle) * impactIntensity;
 			player.Stop();
-			player.ApplyForce(force);
+			//player.ApplyForce(force);	// [AOC] TODO!! With the new dragon implementation
 
 			// Apply damage, no force applied (we've just done it)
 			player.OnImpact(Vector3.zero, impactDamage, 0f, null);

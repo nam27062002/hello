@@ -20,14 +20,6 @@ public class DragonMotion : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public enum EState {
-		INIT,
-		IDLE,
-		BOOST,
-		DYING,
-		DEAD,
-		DEAD_GORUND
-	};
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -38,16 +30,12 @@ public class DragonMotion : MonoBehaviour {
 
 	// Public members
 	[HideInInspector] public Rigidbody m_rbody;
-	[HideInInspector] public bool invulnerable = false;	// Debug purposes
-	
+
 	// References to components
 	Animator  				m_animator;
 	DragonPlayer			m_dragon;
 	DragonControl			m_controls;
 	DragonOrientation   	m_orientation;
-	DragonEatBehaviour		m_eatBehaviour;
-	DragonBreathBehaviour 	m_breathBehaviour;
-	DragonGrabBehaviour		m_grabBehaviour;
 
 	// Movement control
 	private Vector3 m_impulse;
@@ -58,12 +46,6 @@ public class DragonMotion : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// Control vars
-	EState mState = EState.INIT;
-	public EState state {
-		get { return mState; }
-	}
-	float mStateTimer = 0f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -77,9 +59,6 @@ public class DragonMotion : MonoBehaviour {
 		m_dragon			= GetComponent<DragonPlayer>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_orientation	 	= GetComponent<DragonOrientation>();
-		m_eatBehaviour	 	= GetComponent<DragonEatBehaviour>();
-		m_breathBehaviour 	= GetComponent<DragonBreathBehaviour>();
-		m_grabBehaviour 	= GetComponent<DragonGrabBehaviour>();
 		
 		m_rbody = GetComponent<Rigidbody>();
 	}
@@ -183,35 +162,10 @@ public class DragonMotion : MonoBehaviour {
 			m_animator.SetBool("flight_up", false);
 		}
 	}
-	
-	/// <summary>
-	/// Enable/Disable the "starving" status.
-	/// </summary>
-	/// <param name="_bIsStarving">Whether the dragon is starving or not.</param>
-	void ToggleStarving(bool _bIsStarving) {
-
-	}
 
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Apply damage to the dragon.
-	/// </summary>
-	/// <param name="_damage">Amount of damage to be applied.</param>
-	/// <param name="_source">The source of the damage.</param>
-	public void ApplyDamage(float _damage, DamageDealer _source) {
-
-	}
-
-	/// <summary>
-	/// Pretty straightforward.
-	/// </summary>
-	/// <param name="_force">The force vector to be applied.</param>
-	public void ApplyForce(Vector3 _force) {
-	
-	}
-
 	/// <summary>
 	/// Stop dragon's movement
 	/// </summary>
@@ -222,37 +176,6 @@ public class DragonMotion : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GETTERS															//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Is the dragon alive?
-	/// </summary>
-	/// <returns><c>true</c> if the dragon is not dead or dying; otherwise, <c>false</c>.</returns>
-	public bool IsAlive() {
-		return m_dragon.health > 0;
-	}
-
-	/// <summary>
-	/// Is the dragon starving?
-	/// </summary>
-	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
-	public bool IsStarving() {
-		return (m_dragon.health > m_dragon.data.health * m_dragon.lifeWarningThreshold);
-	}
-
-	/// <summary>
-	/// Whether the dragon can take damage or not.
-	/// </summary>
-	/// <returns><c>true</c> if the dragon currently is invulnerable; otherwise, <c>false</c>.</returns>
-	public bool IsInvulnerable() {
-		// During fire, we're invulnerable
-		if (m_breathBehaviour.IsFuryOn()) return true;
-
-		// If cheat is enable
-		if (invulnerable) return true;
-
-		// All checks passed, we're not invulnerable
-		return false;
-	}
-
 	/// <summary>
 	/// Obtain the current direction of the dragon.
 	/// </summary>

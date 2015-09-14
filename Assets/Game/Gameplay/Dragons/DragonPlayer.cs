@@ -36,18 +36,18 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_energy;
 	public float energy { get { return m_energy; } }
 
-	[SerializeField] private float m_lifeWarningThreshold = 0.2f;	// Percentage of maxLife
-	public float lifeWarningThreshold { get { return m_lifeWarningThreshold; } }
-
-	[SerializeField] private float m_energyMinRequired = 25f;
-	public float energyMinRequired { get { return m_energyMinRequired; } }
-
 	private float[] m_fury = new float[2];	//we'll use a secondary variable to store all the fury got while in Rush mode 
 	private bool m_furyActive = false;
 	public float fury { get { return m_fury[0]; } }
 
 	// Internal
 	private float m_speedMultiplier;
+
+	// References
+	private DragonBreathBehaviour m_breathBehaviour = null;
+
+	// Debug
+	[HideInInspector] public bool invulnerable = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -71,6 +71,9 @@ public class DragonPlayer : MonoBehaviour {
 		m_furyActive = false;
 
 		m_speedMultiplier = 1f;
+
+		// Get external refernces
+		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 	}
 
 	//------------------------------------------------------------------//
@@ -137,5 +140,39 @@ public class DragonPlayer : MonoBehaviour {
 		//we'll return the current speed factor. The dragon can be slowed down because it grabbed something or speed up by boost
 		//calculate the final value, multiplying all the factors
 		return m_speedMultiplier;
+	}
+
+	//------------------------------------------------------------------//
+	// GETTERS															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Is the dragon alive?
+	/// </summary>
+	/// <returns><c>true</c> if the dragon is not dead or dying; otherwise, <c>false</c>.</returns>
+	public bool IsAlive() {
+		return health > 0;
+	}
+	
+	/// <summary>
+	/// Is the dragon starving?
+	/// </summary>
+	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
+	public bool IsStarving() {
+		return (health > data.health * GameSettings.healthWarningThreshold);
+	}
+	
+	/// <summary>
+	/// Whether the dragon can take damage or not.
+	/// </summary>
+	/// <returns><c>true</c> if the dragon currently is invulnerable; otherwise, <c>false</c>.</returns>
+	public bool IsInvulnerable() {
+		// During fire, we're invulnerable
+		if(m_breathBehaviour.IsFuryOn()) return true;
+		
+		// If cheat is enable
+		if(invulnerable) return true;
+		
+		// All checks passed, we're not invulnerable
+		return false;
 	}
 }

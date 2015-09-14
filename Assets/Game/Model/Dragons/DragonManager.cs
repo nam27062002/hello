@@ -107,7 +107,7 @@ public class DragonManager : Singleton<DragonManager> {
 	/// <param name="_id">The ID of the dragon we want to instantiate on the scene.</param>
 	public static void LoadDragon(DragonID _id) {
 		// Destroy any previously created player
-		GameObject playerObj = GameObject.Find(GameSettings.PLAYER_NAME);
+		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {
 			DestroyImmediate(playerObj);
 			playerObj = null;
@@ -123,7 +123,7 @@ public class DragonManager : Singleton<DragonManager> {
 
 		// Create a new instance
 		playerObj = Instantiate<GameObject>(prefabObj);
-		playerObj.name = GameSettings.PLAYER_NAME;
+		playerObj.name = GameSettings.playerName;
 		
 		// Look for a default spawn point for this dragon type in the scene and move the dragon there
 		GameObject spawnPointObj = GameObject.Find("PlayerSpawn" + _id);
