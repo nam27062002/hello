@@ -91,15 +91,8 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 				PersistenceManager.SaveData data = (PersistenceManager.SaveData)bf.Deserialize(file);
 				file.Close();
 				
-				// Restore loaded values
-				// Last save timestamp
-				instance.m_saveTimestamp = data.timestamp;
-
-				// User profile
-				UserProfile.Load(data.profile);
-
-				// Dragons data
-				DragonManager.Load(data.dragons);
+				// Load from the object we just read
+				LoadFromObject(data);
 			} catch(Exception e) {
 				Debug.Log("An error has occurred when loading persistence, deleting saved data" + e);
 				File.Delete(instance.saveFile);
@@ -107,6 +100,26 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 		} else {
 			Debug.Log("No saved games were found, starting from 0");
 		}
+	}
+
+	/// <summary>
+	/// Load the game persistence from a given object.
+	/// Can be used to load debug profiles (probably require a game restart).
+	/// </summary>
+	/// <param name="_data">The data object to be loaded.</param>
+	public static void LoadFromObject(PersistenceManager.SaveData _data) {
+		// Make sure given object is valid
+		if(_data == null) return;
+
+		// Restore loaded values
+		// Last save timestamp
+		instance.m_saveTimestamp = _data.timestamp;
+		
+		// User profile
+		UserProfile.Load(_data.profile);
+		
+		// Dragons data
+		DragonManager.Load(_data.dragons);
 	}
 
 	/// <summary>
