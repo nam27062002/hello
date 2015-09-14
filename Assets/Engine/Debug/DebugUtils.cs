@@ -40,10 +40,11 @@ public class DebugUtils {
 	/// <summary>
 	/// Evaluate a boolean predicate and, if false, interrupt execution and throw an error.
 	/// </summary>
+	/// <returns>The result of evaluating the condition.</returns>
 	/// <param name="_checkCondition">The condition to be evaluated. If false, the assert will be triggered.</param> 
 	/// <param name="_message">The message to be displayed in case of error.</param>
 	/// <param name="_softAssert">If true, execution won't be interrupted.</param>
-	static public void Assert(bool _checkCondition, string _message, bool _softAssert = false) {
+	static public bool Assert(bool _checkCondition, string _message, bool _softAssert = false) {
 		#if ENABLE_ASSERTS
 		// Skip if we've reached the asserts limit
 		if(s_assertCount >= MAX_ASSERTS) return;
@@ -85,14 +86,17 @@ public class DebugUtils {
 			}
 		}
 		#endif
+
+		return _checkCondition;
 	}
 
 	/// <summary>
 	/// Evaluate a boolean predicate and, if false, throw an error in the console without interrupting the execution.
 	/// </summary>
+	/// <returns>The result of evaluating the condition.</returns>
 	/// <param name="_checkCondition">The condition to be evaluated. If false, the assert will be triggered.</param> 
 	/// <param name="_message">The message to be displayed in case of error.</param>
-	static public void SoftAssert(bool _checkCondition, string _message) {
-		DebugUtils.Assert(_checkCondition, _message);
+	static public bool SoftAssert(bool _checkCondition, string _message) {
+		return DebugUtils.Assert(_checkCondition, _message);
 	}
 }
