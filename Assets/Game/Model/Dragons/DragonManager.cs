@@ -80,7 +80,7 @@ public class DragonManager : Singleton<DragonManager> {
 	/// <param name="_id">The ID of the dragon whose data we want.</param>
 	public static DragonData GetDragonData(DragonID _id) {
 		DragonData data = null;
-		if(instance.m_dragonsById.TryGetValue(_id, data)) {
+		if(instance.m_dragonsById.TryGetValue(_id, out data)) {
 			return data;
 		}
 		return null;
@@ -170,7 +170,7 @@ public class DragonManager : Singleton<DragonManager> {
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public DragonData.SaveData[] Save() {
+	public static DragonData.SaveData[] Save() {
 		// Create new object, initialize and return it
 		DragonData.SaveData[] data = new DragonData.SaveData[instance.m_dragons.Length];
 		for(int i = 0; i < instance.m_dragons.Length; i++) {

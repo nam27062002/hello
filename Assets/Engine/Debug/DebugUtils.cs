@@ -47,7 +47,7 @@ public class DebugUtils {
 	static public bool Assert(bool _checkCondition, string _message, bool _softAssert = false) {
 		#if ENABLE_ASSERTS
 		// Skip if we've reached the asserts limit
-		if(s_assertCount >= MAX_ASSERTS) return;
+		if(s_assertCount >= MAX_ASSERTS) return _checkCondition;
 
 		// Do we pass the check?
 		if(!_checkCondition) {
