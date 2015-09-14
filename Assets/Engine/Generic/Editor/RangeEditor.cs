@@ -116,8 +116,8 @@ public class RangeEditor : PropertyDrawer {
 			// [AOC] Remove, we may want a range whose max is lesser that its min
 			/*if(maxValue < min.floatValue) {
 				maxValue = min.floatValue;
-			}
-			max.floatValue = maxValue;*/
+			}*/
+			max.floatValue = maxValue;
 
 			// Update limits
 			UpdateLimits(minValue, maxValue);
