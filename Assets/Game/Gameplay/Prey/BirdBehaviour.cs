@@ -38,6 +38,9 @@ public class BirdBehaviour : Initializable {
 
 	[Header("Attack")]
 	[SerializeField] private bool m_canAttack = false;
+	[SerializeField] private float m_damage;
+	[SerializeField] private float m_attackTime;
+	[SerializeField] private float m_attackDistance;
 
 	//
 	// Lets' Wander around and alone ;P
@@ -60,6 +63,7 @@ public class BirdBehaviour : Initializable {
 	private float m_avoidRadius;
 
 	private float m_timer;
+	private float m_attackTimer;
 
 	private State m_state;
 
@@ -92,12 +96,16 @@ public class BirdBehaviour : Initializable {
 	public override void Initialize() {
 		
 		m_target = m_position = transform.position;
+		
+		//start at random anim position
+		Animator animator = transform.FindChild("view").GetComponent<Animator>();
+		animator.Play("fly", 0, Random.Range(0f, 1f));
 	}
 
 	public override void SetAreaBounds(AreaBounds _area) {
 
 		base.SetAreaBounds(_area);
-		m_target = _area.randomInside();
+		m_target = _area.RandomInside();
 	}
 
 	public void AttachFlock(FlockController _flock) {
@@ -132,18 +140,27 @@ public class BirdBehaviour : Initializable {
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0) {
 
-					m_target = m_area.randomInside();
+					m_target = m_area.RandomInside();
 					m_timer = m_changeTargetTime;
 				}
 			}
 		}
 
-		// Update Flee behaviour
-		if (m_state != State.Attack) {
-			if (m_fleeForce > 0) {
-				Vector2 vectorToPlayer = (Vector2)m_player.transform.position - m_position;
-				float distanceSqr = vectorToPlayer.sqrMagnitude;
+		if (m_fleeForce > 0 || m_canAttack) {
+			Vector2 vectorToPlayer = (Vector2)m_player.transform.position - m_position;
+			float distanceSqr = vectorToPlayer.sqrMagnitude;
 
+			if (m_state == State.Pursuit && distanceSqr < m_attackDistance * m_attackDistance) {
+
+				m_target = m_position;
+
+				m_attackTimer -= Time.deltaTime;
+				if (m_attackTimer <= 0) {
+					m_player.OnImpact(transform.position, m_damage, 1, null);
+					m_attackTimer = m_attackTime;
+				}
+			
+			} else {
 				if (distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {
 					// check if the dragon is inside the sense zone
 					if (distanceSqr < m_sensorMinRadius * m_sensorMinRadius) {

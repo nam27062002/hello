@@ -10,8 +10,13 @@ public struct CircleAreaBounds : AreaBounds {
 
 	public Bounds bounds { get { return m_bounds; } }
 
-	public Vector3 randomInside() {
+	public Vector3 RandomInside() {
 		Vector2 offset = Random.insideUnitCircle * m_bounds.extents.x;
 		return m_bounds.center + (Vector3)offset;
+	}
+
+	public bool Contains(Vector3 _point) {
+		_point.z = m_bounds.center.z;
+		return m_bounds.Contains(_point);
 	}
 }

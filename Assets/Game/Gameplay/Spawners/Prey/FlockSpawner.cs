@@ -16,7 +16,7 @@ public class FlockSpawner : Spawner {
 
 	override protected void ExtendedSpawn() {
 
-		Vector3 position = m_area.randomInside();
+		Vector3 position = m_area.RandomInside();
 		for (int i = 0; i < m_entities.Length; i++) {
 			if (m_entities[i] != null) {
 				m_entities[i].transform.position = position;

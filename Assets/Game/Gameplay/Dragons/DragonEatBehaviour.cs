@@ -17,7 +17,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	private EdibleBehaviour m_prey;
 	
-	private ParticleSystem m_bloodEmitter;
+	private GameObject m_bloodEmitter;
 
 	
 	//-----------------------------------------------
@@ -82,11 +82,6 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 				m_prey.OnSwallow();
 				m_prey = null;
-								
-				if (m_bloodEmitter != null) {
-					DestroyObject(m_bloodEmitter.gameObject);
-					m_bloodEmitter = null;
-				}
 
 				m_animator.SetBool("big_prey", false);
 				m_animator.SetBool("bite", false);
@@ -112,14 +107,12 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_animator.SetBool("bite", true);
 
 				// spawn blood particle TEMP - use some kind of particle manager
-				GameObject effect = (GameObject)Object.Instantiate(Resources.Load("Proto/bloodchurn-large"));
-				effect.transform.localPosition = Vector3.zero;
-				effect.transform.position =Vector3.zero;
-				m_bloodEmitter = effect.GetComponent<ParticleSystem>();
-				m_bloodEmitter.GetComponent<Renderer>().sortingLayerName = "enemies";
+				m_bloodEmitter = (GameObject)Object.Instantiate(Resources.Load("Proto/bloodchurn-large"));
+				m_bloodEmitter.transform.localPosition = Vector3.zero;
 				m_bloodEmitter.transform.position = m_mouth.position;
-				m_bloodEmitter.Stop();
-				m_bloodEmitter.Play();
+				m_bloodEmitter.GetComponent<Renderer>().sortingLayerName = "enemies";
+				m_bloodEmitter.GetComponent<ParticleSystem>().Clear();
+				m_bloodEmitter.GetComponent<ParticleSystem>().Play(); 
 			}
 		}
 	}

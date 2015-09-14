@@ -120,7 +120,10 @@ public class Spawner : MonoBehaviour {
 	}
 
 	bool CheckPlayerDistance() {
-		bool playerNear = true; //TODO: disable spawners when player is far away
+		DragonPlayer player = InstanceManager.player;
+		float distanceSqr = (player.transform.position - m_area.bounds.center).sqrMagnitude;
+
+		bool playerNear = distanceSqr <= (m_playerDistance * m_playerDistance);
 
 		if (!playerNear) {
 			// disable all entities
@@ -136,16 +139,26 @@ public class Spawner : MonoBehaviour {
 		return playerNear;
 	}
 
+	bool IsPlayerInsideArea() {
+
+		DragonPlayer player = InstanceManager.player;
+
+		return m_area.Contains(player.transform.position);
+	}
+
 	void Spawn() {
 
 		int count = m_quantity.GetRandom();
 		for (int i = 0; i < count; i++) {			
 			m_entities[i] = InstanceManager.pools.GetInstance(m_entityPrefab.name);
-			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
-			spawn.Spawn(m_area, this);
 		}
 
 		ExtendedSpawn();
+
+		for (int i = 0; i < count; i++) {			
+			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
+			spawn.Spawn(m_area, this);
+		}
 
 		// Disable this spawner after a number of spawns
 		if (m_maxSpawns > 0) {

@@ -273,7 +273,10 @@ public class DragonPlayer : MonoBehaviour {
 	void OnTriggerExit(Collider other) {}
 	void OnTriggerStay(Collider other) {}
 	void OnCollisionEnter(Collision collision) {}
-	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source){}
+	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source) {
+
+		m_stats.AddLife(-_damage);
+	}
 	#endregion
 }
 #endregion

@@ -36,10 +36,10 @@ public class SpawnBehaviour : MonoBehaviour {
 		
 		Spawn();
 	}
-	
+
 	private void Spawn() {
 		
-		transform.position = m_area.randomInside();
+		transform.position = m_area.RandomInside();
 
 		Initializable[] components = GetComponents<Initializable>();
 		

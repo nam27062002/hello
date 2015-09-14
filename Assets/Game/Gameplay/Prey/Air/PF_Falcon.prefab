@@ -604,7 +604,7 @@ MonoBehaviour:
   m_mass: 3
   m_speed: 10
   m_slowingRadius: 250
-  m_fleeForce: 1.44000006
+  m_fleeForce: 1
   m_sensorMinRadius: 762.5
   m_sensorMaxRadius: 764.299988
   m_sensorAngle: 98
@@ -613,6 +613,9 @@ MonoBehaviour:
     min: 80
     max: 150
   m_canAttack: 1
+  m_damage: 10
+  m_attackTime: 5
+  m_attackDistance: 250
 --- !u!114 &11486564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -738,7 +741,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fleeForce
-      value: 1.44000006
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_canAttack
@@ -755,6 +758,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_faceDirection
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_attackTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_attackDistance
+      value: 250
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
