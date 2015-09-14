@@ -8,6 +8,8 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -23,8 +25,6 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public Range m_range = new Range(0, 10);
-	[Range(0, 1)] public float m_factor = 0.5f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -33,6 +33,13 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	/*AOCQuickTest() {
+		myArray = new AOCDragonData[2];
+		for(int i = 0; i < myArray.Length; i++) {
+			myArray[i] = new AOCDragonData(i);
+		}
+	}*/
+
 	/// <summary>
 	/// Initialization.
 	/// </summary>
@@ -51,11 +58,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		if(Input.GetMouseButtonDown(0)) {
-			Debug.Log("_____________________________");
-			Debug.Log("Manual: " + (m_range.max * m_factor + m_range.min * (1f - m_factor)));
-			Debug.Log("  Lerp: " + Mathf.Lerp(m_range.min, m_range.max, m_factor));
-		}
+
 	}
 
 	/// <summary>

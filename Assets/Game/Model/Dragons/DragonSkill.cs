@@ -17,7 +17,7 @@ using System;
 /// Auxiliar class to be able to manage a dragon's skill upgrades.
 /// </summary>
 [Serializable]
-public class DragonSkill {
+public class DragonSkill : SerializableClass {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -67,13 +67,27 @@ public class DragonSkill {
 
 	// Internal
 	// Only to be set once
+	[NonSerialized]
 	private DragonData m_owner = null;
-	public DragonData owner {
+	/*public DragonData owner {
 		get { return m_owner; }
 		set {
 			if(m_owner != null) return;	// Owner already set, ignore setter
 			m_owner = value;
 		}
+	}*/
+
+	//------------------------------------------------------------------//
+	// GENERIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Parametrized constructor.
+	/// </summary>
+	/// <param name="_owner">The dragon data this progression belongs to.</param>
+	/// <param name="_type">The type of this skill.</param>
+	public DragonSkill(DragonData _owner, EType _type) {
+		m_owner = _owner;
+		m_type = _type;
 	}
 
 	//------------------------------------------------------------------//

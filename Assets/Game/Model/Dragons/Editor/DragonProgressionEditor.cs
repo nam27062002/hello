@@ -31,6 +31,7 @@ public class DragonProgressionEditor : PropertyDrawer {
 	// Useful to compute text widths and line heights
 	private GUIStyle m_labelStyle = new GUIStyle(EditorStyles.label);
 	private GUIStyle m_textAreaStyle = new GUIStyle(EditorStyles.textArea);
+	private GUIStyle m_numberFieldStyle = new GUIStyle(EditorStyles.numberField);
 	private float m_padding = 5f;	// Spacing between elements
 
 	//------------------------------------------------------------------//
@@ -80,8 +81,7 @@ public class DragonProgressionEditor : PropertyDrawer {
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Max XP editor
 		// Setup custom styles
-		GUIStyle numberFieldStyle = EditorStyles.numberField;
-		numberFieldStyle.alignment = TextAnchor.MiddleRight;
+		m_numberFieldStyle.alignment = TextAnchor.MiddleRight;
 		m_labelStyle.alignment = TextAnchor.MiddleRight;
 
 		// Adjust label size to text
@@ -92,7 +92,7 @@ public class DragonProgressionEditor : PropertyDrawer {
 		pos.height = m_heights[0];
 
 		// Draw it and get the new value
-		float newMaxXp = EditorGUI.FloatField(pos, content, maxXpProperty.floatValue, numberFieldStyle);
+		float newMaxXp = EditorGUI.FloatField(pos, content, maxXpProperty.floatValue, m_numberFieldStyle);
 
 		// Check value - can't be negative - and store it
 		if(newMaxXp < 0) newMaxXp = 0;

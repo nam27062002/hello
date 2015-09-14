@@ -91,9 +91,10 @@ public class RangeEditor : PropertyDrawer {
 
 		if(EditorGUI.EndChangeCheck()) {
 			// Check new value validity, cap if invalid
-			if(minValue > max.floatValue) {
+			// [AOC] Remove, we may want a range whose max is lesser that its min
+			/*if(minValue > max.floatValue) {
 				minValue = max.floatValue;
-			}
+			}*/
 			min.floatValue = minValue;
 
 			// Update limits
@@ -112,10 +113,11 @@ public class RangeEditor : PropertyDrawer {
 
 		if(EditorGUI.EndChangeCheck()) {
 			// Check new value validity, cap if invalid
-			if(maxValue < min.floatValue) {
+			// [AOC] Remove, we may want a range whose max is lesser that its min
+			/*if(maxValue < min.floatValue) {
 				maxValue = min.floatValue;
 			}
-			max.floatValue = maxValue;
+			max.floatValue = maxValue;*/
 
 			// Update limits
 			UpdateLimits(minValue, maxValue);

@@ -56,7 +56,7 @@ public class DragonData {
 	public string prefabPath { get { return m_prefabPath; }}
 
 	[Header("Evolution")]
-	[SerializeField] private DragonProgression m_progression = new DragonProgression();	// Will be exposed via a custom editor
+	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}
 
 	[Header("Level-dependant stats")]
@@ -67,7 +67,7 @@ public class DragonData {
 	public float scale { get { return m_scaleRange.Lerp(progression.progressByLevel); }}
 
 	[Header("Skills")]
-	[SerializeField] private DragonSkill[] m_skills = new DragonSkill[(int)DragonSkill.EType.COUNT];
+	[SerializeField] private DragonSkill[] m_skills;
 	public DragonSkill[] skills { get { return m_skills; }}
 	public DragonSkill bite { get { return GetSkill(DragonSkill.EType.BITE); }}
 	public DragonSkill speed { get { return GetSkill(DragonSkill.EType.SPEED); }}
@@ -84,10 +84,13 @@ public class DragonData {
 	/// Default constructor
 	/// </summary>
 	public DragonData() {
-		// Link this dragon data to its sub-classes
-		m_progression.owner = this;
+		// Progression
+		m_progression = new DragonProgression(this, 500f);
+		
+		// Skills
+		m_skills = new DragonSkill[(int)DragonSkill.EType.COUNT];
 		for(int i = 0; i < m_skills.Length; i++) {
-			m_skills[i].owner = this;
+			m_skills[i] = new DragonSkill(this, (DragonSkill.EType)i);
 		}
 	}
 

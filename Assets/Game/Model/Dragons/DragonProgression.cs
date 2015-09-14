@@ -21,13 +21,13 @@ using System;
 /// added via the AddXp() method.
 /// </summary>
 [Serializable]
-public class DragonProgression {
+public class DragonProgression : SerializableClass {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// To be set on the inspector only
 	[SerializeField] private float m_maxXp = 1000f; // Determine the XP required to reach the maximum value
-	[SerializeField] private AnimationCurve m_curve = AnimationCurve.Linear(0, 1f, DragonData.NUM_LEVELS - 1, 1000f);	// Will be used by the inspector to easily setup the values for each level
+	[SerializeField] private AnimationCurve m_curve = AnimationCurve.Linear(0, 0, DragonData.NUM_LEVELS - 1, 1000f);	// Will be used by the inspector to easily setup the values for each level
 	[SerializeField] private float[] m_levelsXp = new float[DragonData.NUM_LEVELS];	// Will be interpolated using the max value and the curve
 
 	//------------------------------------------------------------------//
@@ -63,13 +63,27 @@ public class DragonProgression {
 
 	// Internal
 	// Only to be set once
-	private DragonData m_owner = null;
-	public DragonData owner {
+	[NonSerialized] private DragonData m_owner = null;	// [AOC] Avoid recursive serialization!!
+	/*public DragonData owner {
 		get { return m_owner; }
 		set {
 			if(m_owner != null) return;	// Owner already set, ignore setter
 			m_owner = value;
 		}
+	}*/
+
+	//------------------------------------------------------------------//
+	// GENERIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Parametrized constructor.
+	/// </summary>
+	/// <param name="_owner">The dragon data this progression belongs to.</param>
+	/// <param name="_maxXP">The initial XP value for the highest level.</param>
+	public DragonProgression(DragonData _owner, float _maxXP) {
+		m_owner = _owner;
+		m_maxXp = _maxXP;
+		m_curve = AnimationCurve.Linear(0, 0f, lastLevel, m_maxXp);
 	}
 
 	//------------------------------------------------------------------//
@@ -131,7 +145,7 @@ public class DragonProgression {
 			levelUpCount++;
 
 			// Dispatch global event
-			Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, owner);
+			Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, m_owner);
 		}
 
 		return levelUpCount;
