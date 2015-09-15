@@ -152,7 +152,7 @@ public class PersonBehaviour : MonoBehaviour {
 		}
 
 
-		anim.SetBool ("run", state == State.FLEE);
+		anim.SetBool ("", state == State.FLEE);
 		anim.SetBool ("idle", state == State.IDLE);
 		anim.SetBool ("scared", state == State.AFRAID);
 

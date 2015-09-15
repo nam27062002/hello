@@ -21,10 +21,10 @@ public class SpawnBehaviour : MonoBehaviour {
 		}
 	}
 
-	public void Spawn(AreaBounds _bounds, Spawner _spawner) {
+	public void Spawn(Spawner _spawner, AreaBounds _bounds) {
 		
-		m_area = _bounds;
 		m_spawner = _spawner;
+		m_area = _bounds;
 		
 		Spawn();
 	}
@@ -45,8 +45,8 @@ public class SpawnBehaviour : MonoBehaviour {
 		
 		foreach (Initializable component in components) {
 			
-			component.Initialize();
 			component.SetAreaBounds(m_area);
+			component.Initialize();
 		}
 	}
 }

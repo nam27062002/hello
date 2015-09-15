@@ -157,7 +157,7 @@ public class Spawner : MonoBehaviour {
 
 		for (int i = 0; i < count; i++) {			
 			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
-			spawn.Spawn(m_area, this);
+			spawn.Spawn(this, m_area);
 		}
 
 		// Disable this spawner after a number of spawns

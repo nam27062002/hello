@@ -51,6 +51,9 @@ public class InflammableBehaviour : Initializable {
 
 				//TODO: Drop money event?
 				//
+
+				// Particles
+				InstanceManager.particles.Spaw("SmokePuff", transform.position);
 								
 				// deactivate
 				if (m_destroyOnBurn) {

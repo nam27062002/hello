@@ -21,7 +21,7 @@ public class FlockSpawner : Spawner {
 			if (m_entities[i] != null) {
 				m_entities[i].transform.position = position;
 
-				BirdBehaviour bird = m_entities[i].GetComponent<BirdBehaviour>();
+				Flock bird = m_entities[i].GetComponent<Flock>();
 				if (bird != null) {
 					bird.AttachFlock(m_flockController);
 				}

@@ -6,8 +6,8 @@ public class ParticleController : MonoBehaviour {
 	Dictionary<string, Pool> m_particles;
 
 	void Awake () {
-		m_particles = new Dictionary<string, Pool>();
-				
+
+		m_particles = new Dictionary<string, Pool>();				
 		InstanceManager.particles = this;
 	}
 
