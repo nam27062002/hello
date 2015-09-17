@@ -35,13 +35,13 @@ public class SceneManager : Singleton<SceneManager> {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Scene tracking
-	private string m_prevScene;
+	private string m_prevScene = "";
 	public static string prevScene { get { return instance.m_prevScene; }}
 
-	private string m_currentScene;
+	private string m_currentScene = "";
 	public static string currentScene { get { return instance.m_currentScene; }}
 
-	private string m_nextScene;
+	private string m_nextScene = "";
 	public static string nextScene { get { return instance.m_nextScene; }}
 
 	private ESceneState m_sceneState;

@@ -147,5 +147,14 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 		bf.Serialize(file, data);
 		file.Close();
 	}
+
+	/// <summary>
+	/// Deletes local persistence file.
+	/// The game should be reloaded afterwards.
+	/// </summary>
+	public static void Clear() {
+		// Just delete persistence file
+		File.Delete(instance.saveFile);
+	}
 }
 

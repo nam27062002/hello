@@ -43,24 +43,44 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	private static readonly string CONTAINER_NAME = "Singletons";
-
+	
+	private enum EState {
+		// Instance hasn't been created yet
+		INIT,
+		
+		// If the instance getter is called while the instance is being created (i.e. from T's Awake() function)
+		// we will enter into an infinite loop of instances creation.
+		// This variable will be used to prevent this.
+		CREATING_INSTANCE,
+		
+		// Everything ok
+		READY,
+		
+		// When Unity quits, it destroys objects in a random order.
+		// In principle, a Singleton is only destroyed when application quits.
+		// If any script calls instance after it has been destroyed, it will create a buggy ghost object that will stay on the Editor scene even after stopping playing the Application. Really bad!
+		// So, this was made to be sure we're not creating that buggy ghost object.
+		DESTROYING_INSTANCE,
+		
+		// Skip the previous statement if we want manually destroying the singleton
+		APPLICATION_QUITTING
+	};
+	
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Logic state
+	private static EState m_state = EState.INIT;
+	
 	// Multithread lock - just in case instance getter is requested from two different threads at the same time
 	private static object m_threadLock = new object();
 
-	// If the instance getter is called while the instance is being created (i.e. from T's Awake() function)
-	// we will enter into an infinite loop of instances creation.
-	// This variable will be used to prevent this.
-	private static bool m_isCreatingInstance = false;
-
-	// When Unity quits, it destroys objects in a random order.
-	// In principle, a Singleton is only destroyed when application quits.
-	// If any script calls instance after it has been destroyed, it will create a buggy ghost object that will stay on the Editor scene even after stopping playing the Application. Really bad!
-	// So, this was made to be sure we're not creating that buggy ghost object.
-	protected static bool m_applicationIsQuitting = false;
-
+	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
+	// Only for very particular uses
+	public static bool isInstanceCreated { get { return m_instance != null; }}
+	
 	//------------------------------------------------------------------//
 	// SINGLETON INSTANCE												//
 	//------------------------------------------------------------------//
@@ -72,31 +92,31 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> {
 	protected static T instance {
 		get {
 			// Avoid re-creating the instance while the application is quitting
-			if(m_applicationIsQuitting) {
+			if(m_state == EState.APPLICATION_QUITTING) {
 				Debug.LogWarning("[Singleton] Instance '" + typeof(T) + "' already destroyed on application quit. Won't create again - returning null.");
 				return null;
 			}
-
+			
 			// Make sure that only one thread is doing this!
 			lock(m_threadLock) {
 				// Is the static instance created?
 				if(m_instance == null) {
 					// If instance creation is locked, throw a warning
-					if(m_isCreatingInstance) {
+					if(m_state == EState.CREATING_INSTANCE) {
 						Debug.LogWarning("[Singleton] Instance for " + typeof(T) + " is currently being created. Avoid calling the instance getter during the Awake function of your singleton class.");
 						return null;
 					}
-
+					
 					// Lock instance creation
-					m_isCreatingInstance = true;
-
+					m_state = EState.CREATING_INSTANCE;
+					
 					// If the singletons container has not been created, do it now
 					GameObject containerObj = GameObject.Find(CONTAINER_NAME);
 					if(containerObj == null) {
 						containerObj = new GameObject(CONTAINER_NAME);
 						GameObject.DontDestroyOnLoad(containerObj);	// Persist throughout scene changes
 					}
-
+					
 					// Is there a pre-made prefab for this class in the Resources folder?
 					GameObject singletonObj = null;
 					GameObject prefabObj = Resources.Load<GameObject>("Singletons/PF_" + typeof(T).Name);
@@ -135,17 +155,17 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> {
 					// Attach the singleton object as child of the Singletons container to keep the hierarchy clean
 					singletonObj.transform.SetParent(containerObj.transform, false);
 					GameObject.DontDestroyOnLoad(singletonObj);	// [AOC] Shouldn't be needed since we will attach it as child of the singleton's container.
-
+					
 					// Instance has been created and stored, unlock instance creation
-					m_isCreatingInstance = false;
+					m_state = EState.READY;
 				}
-
+				
 				// Instance is created! Return it
 				return m_instance;
 			}
 		}
 	}
-
+	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -155,7 +175,7 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> {
 	protected virtual void Awake() {
 		// Nothing to do
 	}
-
+	
 	/// <summary>
 	/// First update.
 	/// </summary>
@@ -178,9 +198,29 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> {
 		// [AOC] I think it's useless, but they do it: https://youtu.be/64uOVmQ5R1k?t=20m16s
 		// [AOC] In any case make sure to do it only if we're the singleton instance!
 		if(m_instance != null && m_instance == this) m_instance = null;
-
+		
 		// Avoid re-creating the instance while the application is quitting
-		m_applicationIsQuitting = true;
+		// Unless manually destroying the instance
+		if(m_state != EState.DESTROYING_INSTANCE) {
+			m_state = EState.APPLICATION_QUITTING;
+		}
+	}
+	
+	//------------------------------------------------------------------//
+	// PUBLIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Delete the singleton instance of this type and the object containing it in the scene.
+	/// </summary>
+	public static void DestroyInstance() {
+		// Skip if already quitting application or instance hasn't been created
+		if(m_state == EState.APPLICATION_QUITTING || m_instance == null) return;
+
+		// Remember that we're manually destroying the singleton so recreation of the instance is not banned
+		m_state = EState.DESTROYING_INSTANCE;
+		
+		// Immediately destroy game object holding the singleton
+		DestroyImmediate(m_instance.gameObject);
 	}
 }
 

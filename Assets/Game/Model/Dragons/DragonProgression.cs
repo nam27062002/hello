@@ -37,7 +37,7 @@ public class DragonProgression : SerializableClass {
 	private float m_xp = 0;
 	public float xp { get { return m_xp; }}
 	public float xpToNextLevel { get { return m_levelsXp[nextLevel] - m_levelsXp[level]; }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
-	public Range xpRange { get { return new Range(m_levelsXp[level], m_levelsXp[nextLevel]); }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
+	public Range xpRange { get { return GetXpRangeForLevel(level); }}
 		
 	// Level
 	private int m_level = 0;
@@ -59,13 +59,7 @@ public class DragonProgression : SerializableClass {
 	// Internal
 	// Only to be set once
 	[NonSerialized] private DragonData m_owner = null;	// [AOC] Avoid recursive serialization!!
-	/*public DragonData owner {
-		get { return m_owner; }
-		set {
-			if(m_owner != null) return;	// Owner already set, ignore setter
-			m_owner = value;
-		}
-	}*/
+	public DragonData owner { get { return m_owner; }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -109,6 +103,20 @@ public class DragonProgression : SerializableClass {
 			}
 		}
 		return lastLevel;	// We're at the last level
+	}
+
+	/// <summary>
+	/// Get the xp values of a specific level.
+	/// </summary>
+	/// <returns>The min and max absolute xp values for the given level.</returns>
+	/// <param name="_level">The level whose data we want.</param>
+	public Range GetXpRangeForLevel(int _level) {
+		// Check level
+		DebugUtils.Assert(_level >= 0 && _level <= lastLevel, "Level out of bounds!");
+
+		// Special case for laast level
+		int nextLevel = Mathf.Min(_level + 1, lastLevel);
+		return new Range(m_levelsXp[_level], m_levelsXp[nextLevel]);
 	}
 
 	/// <summary>

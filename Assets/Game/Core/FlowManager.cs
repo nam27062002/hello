@@ -83,5 +83,18 @@ public class FlowManager : Singleton<FlowManager> {
 		// Change scene
 		SceneManager.SwitchScene(GameSceneController.NAME);
 	}
+
+	/// <summary>
+	/// Interrupts current flow and restarts the application.
+	/// </summary>
+	public static void Restart() {
+		// Delete key singletons that must be reloaded
+		DragonManager.DestroyInstance();
+		UserProfile.DestroyInstance();
+		InstanceManager.DestroyInstance();
+
+		// Change to the loading scene
+		SceneManager.SwitchScene(LoadingSceneController.NAME);
+	}
 }
 

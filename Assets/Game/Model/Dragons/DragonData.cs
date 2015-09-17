@@ -62,10 +62,10 @@ public class DragonData {
 
 	[Header("Level-dependant stats")]
 	[SerializeField] private Range m_healthRange = new Range(1, 100);
-	public float maxHealth { get { return m_healthRange.Lerp(progression.progressByLevel); }}
+	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
 
 	[SerializeField] private Range m_scaleRange = new Range(0.5f, 1.5f);
-	public float scale { get { return m_scaleRange.Lerp(progression.progressByLevel); }}
+	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
 	[Header("Constant stats")]
 	[SerializeField] private float m_healthDrainPerSecond = 10f;
@@ -131,6 +131,26 @@ public class DragonData {
 		return null;
 	}
 
+	/// <summary>
+	/// Compute the max health at a specific level.
+	/// </summary>
+	/// <returns>The dragon max health at the given level.</returns>
+	/// <param name="_level">The level at which we want to know the max health value.</param>
+	public float GetMaxHealthAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
+		return m_healthRange.Lerp(levelDelta);
+	}
+
+	/// <summary>
+	/// Compute the scale at a specific level.
+	/// </summary>
+	/// <returns>The dragon scale at the given level.</returns>
+	/// <param name="_level">The level at which we want to know the scale value.</param>
+	public float GetScaleAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
+		return m_scaleRange.Lerp(levelDelta);
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
@@ -146,6 +166,10 @@ public class DragonData {
 
 		// Just read values from persistence object
 		progression.Load(_data.xp, _data.level);
+
+		for(int i = 0; i < _data.skillLevels.Length; i++) {
+			m_skills[i].Load(_data.skillLevels[i]);
+		}
 	}
 	
 	/// <summary>

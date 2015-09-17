@@ -33,6 +33,11 @@ public class DragonManager : Singleton<DragonManager> {
 	[SerializeField] private DragonData[] m_dragons = new DragonData[(int)DragonID.COUNT];
 	private Dictionary<DragonID, DragonData> m_dragonsById = null;
 
+	// Shortcut to get the data of the currently selected dragon
+	public static DragonData currentDragonData {
+		get { return GetDragonData(UserProfile.currentDragon); }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
