@@ -23,7 +23,7 @@ public class SkySpawnerController : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------
 
-	private Bounds m_bounds;
+	private AreaBounds m_area;
 	private float m_timer;
 
 	private DragonMotion m_player;
@@ -41,8 +41,7 @@ public class SkySpawnerController : MonoBehaviour {
 		m_player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		m_timer = 0;
 
-		m_bounds = GetComponent<RectArea2D>().bounds;
-		m_bounds.extents = new Vector3(m_bounds.extents.x, m_bounds.extents.y, 1000);
+		m_area = GetComponent<RectArea2D>().bounds;
 
 		Messenger.AddListener<GameObject>("SpawnOutOfRange", OnSpawnOutOfRange);
 	}
@@ -57,8 +56,8 @@ public class SkySpawnerController : MonoBehaviour {
 		// Update this spawner only if player is inside
 		Vector3 playerPos = m_player.transform.position;
 
-		if (playerPos.x > m_bounds.min.x && playerPos.x < m_bounds.max.x 
-		&&  playerPos.y > m_bounds.min.y && playerPos.y < m_bounds.max.y) {
+		if (playerPos.x > m_area.bounds.min.x && playerPos.x < m_area.bounds.max.x 
+		&&  playerPos.y > m_area.bounds.min.y && playerPos.y < m_area.bounds.max.y) {
 
 			m_timer -= Time.deltaTime;
 
@@ -78,7 +77,7 @@ public class SkySpawnerController : MonoBehaviour {
 
 	bool CanCreateGroupAt(Vector3 pos) {
 
-		if (m_bounds.Contains(pos)) {
+		if (m_area.bounds.Contains(pos)) {
 
 			float spawnDistanceSqr = m_spawnDistance * m_spawnDistance;
 			for (int i = 0; i < m_spawnedList.Count; i++) {

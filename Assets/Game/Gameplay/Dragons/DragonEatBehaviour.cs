@@ -2,7 +2,11 @@ using UnityEngine;
 using System.Collections;
 
 public class DragonEatBehaviour : MonoBehaviour {
-	
+
+
+	//-----------------------------------------------
+	// Attributes
+	//-----------------------------------------------
 	private float m_eatingTimer;
 	private float m_eatingTime;
 
@@ -13,9 +17,12 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	private EdibleBehaviour m_prey;
 	
-	private ParticleSystem m_bloodEmitter;
+	private GameObject m_bloodEmitter;
 
-
+	
+	//-----------------------------------------------
+	// Methods
+	//-----------------------------------------------
 	// Use this for initialization
 	void Start () {
 	
@@ -42,7 +49,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	public bool IsEating() {
 
-		return m_eatingTimer > 0;
+		return enabled && m_eatingTimer > 0;
 	}
 
 	// Update is called once per frame
@@ -75,11 +82,6 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 				m_prey.OnSwallow();
 				m_prey = null;
-								
-				if (m_bloodEmitter != null) {
-					DestroyObject(m_bloodEmitter.gameObject);
-					m_bloodEmitter = null;
-				}
 
 				m_animator.SetBool("big_prey", false);
 				m_animator.SetBool("bite", false);
@@ -89,7 +91,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	void OnTriggerStay(Collider _other) {
 
-		if (m_eatingTimer <= 0) {
+		if (enabled && m_eatingTimer <= 0) {
 			// Can object be eaten?
 			m_prey = _other.gameObject.GetComponent<EdibleBehaviour>();
 
@@ -98,14 +100,14 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * m_prey.size) / m_dragon.GetSpeedMultiplier(); // (  time  ) / speedMultiplier
 
 				Reward reward = m_prey.Eat(m_eatingTime);
-
 				m_dragon.AddLife(reward.health);
 				m_dragon.AddFury(reward.fury);
-								
+
 				m_animator.SetBool("big_prey", m_prey.isBig);
 				m_animator.SetBool("bite", true);
 
 				// spawn blood particle TEMP - use some kind of particle manager
+<<<<<<< HEAD
 				GameObject  effect = (GameObject)Object.Instantiate(Resources.Load("PROTO/bloodchurn-large"));
 				effect.transform.localPosition = Vector3.zero;
 				effect.transform.position =Vector3.zero;
@@ -114,6 +116,10 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_bloodEmitter.transform.position = m_mouth.position;
 				m_bloodEmitter.Stop();
 				m_bloodEmitter.Play();
+=======
+				m_bloodEmitter = InstanceManager.particles.Spaw("bloodchurn-large", m_mouth.position);
+				//m_bloodEmitter.GetComponent<Renderer>().sortingLayerName = "enemies";
+>>>>>>> Bird_IA
 			}
 		}
 	}

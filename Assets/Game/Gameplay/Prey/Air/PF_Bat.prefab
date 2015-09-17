@@ -83,13 +83,12 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 405168}
-  - 114: {fileID: 11446458}
-  - 114: {fileID: 11427886}
-  - 114: {fileID: 11452240}
-  - 114: {fileID: 11427754}
-  - 114: {fileID: 11476520}
-  - 114: {fileID: 11479818}
-  - 65: {fileID: 6551718}
+  - 135: {fileID: 13548572}
+  - 114: {fileID: 11402130}
+  - 114: {fileID: 11471252}
+  - 114: {fileID: 11495124}
+  - 114: {fileID: 11459194}
+  - 114: {fileID: 11419202}
   m_Layer: 8
   m_Name: PF_Bat
   m_TagString: Untagged
@@ -256,7 +255,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 132400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -83, y: -239, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 443172}
@@ -456,18 +455,6 @@ Transform:
   - {fileID: 456060}
   m_Father: {fileID: 460014}
   m_RootOrder: 0
---- !u!65 &6551718
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 45, y: 30, z: 59.6599998}
-  m_Center: {x: 7, y: 14, z: 0}
 --- !u!95 &9554912
 Animator:
   serializedVersion: 3
@@ -485,7 +472,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11427754
+--- !u!114 &11402130
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -493,17 +480,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 132400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 951473bb61c474c17b52f56a0c9fec3a, type: 3}
+  m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
-  bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
-  position: {x: 0, y: 0, z: 0}
-  scale: {x: 0, y: 0, z: 0}
-  rotation: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &11427886
+--- !u!114 &11419202
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -511,102 +491,85 @@ MonoBehaviour:
   m_GameObject: {fileID: 132400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d7f236c99d0e40868787d65d324cfe1, type: 3}
+  m_Script: {fileID: 11500000, guid: b0812d89f9cb54c12a01a4c42f3a9a9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11446458
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c70d3e48d1aeb40479c46a81d7b0ec28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  edibleFromType: 0
-  m_size: 1
-  bloodEmitter: 50726f746f2f626c6f6f64636875726e2d6c61726765
-  meatChunks: []
-  destroyOnEat: 0
-  state: 0
-  feedbackProbability: .100000001
-  eatFeedbacks:
-  - text: 59554d4d5921
-    type: 3
-  - text: 4641535420464f4f4421
-    type: 3
-  bigPrey: 0
-  modelbounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
---- !u!114 &11452240
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27f7c5839d8404bc6897fb117270cb8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  feedbackProbability: .100000001
-  burnFeedbacks:
-  - text: AIR BARBECUE!
-    type: 4
-  - text: ROASTED CHICKEN!
-    type: 4
-  giveRewardsOnBurn: 0
-  hasBurned: 0
-  burnedPrefab: {fileID: 0}
-  burnedParticle: {fileID: 135524, guid: 19c7029deae2241929211df00647ce1a, type: 2}
-  destroyOnBurn: 0
-  useMeat: 0
---- !u!114 &11476520
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83fe9de12a2ab439f858682ccb8dc3c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  typeID: bat
-  health: 1
-  isGolden: 0
-  rewardScore: 10
-  rewardCoins: 5
-  rewardCoinsProbability: .25
-  rewardPC: 0
-  rewardHealth: 10
-  rewardEnergy: 0
-  rewardFury: 10
-  scoreBurnedMultiplier: 1
---- !u!114 &11479818
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d38a0ec23dccf4b2b86c84e8267ea659, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flock: {fileID: 0}
-  m_speed: 600
-  m_trackGround: 1
   m_faceDirection: 0
-  m_followFactor: .850000024
-  m_avoidFactor: .850000024
-  m_avoidDistance: 100
-  m_fleeFactor: 0
-  m_sensorAngleDeg: 180
-  m_sensorDistance: 1000
+  m_steerForce: .5
+  m_mass: 1
+  m_speed: 5
+  m_slowingRadius: 50
+  m_fleeForce: 1
+  m_sensorMinRadius: 500
+  m_sensorMaxRadius: 600
+  m_sensorAngle: 360
+  m_changeTargetTime: 5
+  m_avoidRadiusRange:
+    min: 30
+    max: 60
+  m_canAttack: 0
+  m_damage: 0
+  m_attackTime: 0
+  m_attackDistance: 0
+--- !u!114 &11459194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 279d857c822824ee89d79e757d0876fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_destroyOnBurn: 0
+--- !u!114 &11471252
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_typeID: Bat
+  m_reward:
+    score: 0
+    coins: 0
+    pc: 0
+    health: 10
+    energy: 0
+    fury: 6
+  m_maxHealth: 60
+--- !u!114 &11495124
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_edibleFromTier: 0
+  m_size: 1
+  m_isBig: 0
+  m_destroyOnEat: 0
+--- !u!135 &13548572
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 20
+  m_Center: {x: 0, y: 6.5, z: 0}
 --- !u!137 &13764670
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -679,7 +642,71 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_speed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: Bat
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.health
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.fury
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxHealth
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_steerForce
+      value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_mass
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_slowingRadius
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_fleeForce
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorMinRadius
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorMaxRadius
       value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorAngle
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_changeTargetTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_avoidRadius
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_avoidRadiusRange.max
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_avoidRadiusRange.min
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

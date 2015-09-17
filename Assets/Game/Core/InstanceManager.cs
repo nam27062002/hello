@@ -45,6 +45,14 @@ public class InstanceManager : Singleton<InstanceManager> {
 		set { if(instance != null) instance.m_poolController = value; }
 	}
 
+	// Spawner of particles. It also maintains and reuse instances. Its like a pool of particles
+	private ParticleController m_particleController = null;
+	public static ParticleController particles { 
+		get { return instance.m_particleController; }
+		set { if(instance != null) instance.m_particleController = value; }
+	}
+	
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
