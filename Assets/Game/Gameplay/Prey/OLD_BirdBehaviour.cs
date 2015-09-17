@@ -57,7 +57,7 @@ public class BirdBehaviour : Initializable {
 
 	private Vector2 m_target;
 
-	private DragonPlayer m_player; // some birds will flee from the player
+	private DragonMotion m_player; // some birds will flee from the player
 
 	private FlockController m_flock; // turn into flock controller
 	private float m_avoidRadius;
@@ -71,7 +71,7 @@ public class BirdBehaviour : Initializable {
 	// Use this for initialization
 	void Start() {
 	
-		m_player = InstanceManager.player;
+		m_player = InstanceManager.player.GetComponent<DragonMotion>();
 		m_mass = Mathf.Max(1f, m_mass);				
 		m_target = m_position = transform.position;
 		m_direction = Vector2.right;
@@ -157,6 +157,7 @@ public class BirdBehaviour : Initializable {
 				m_attackTimer -= Time.deltaTime;
 				if (m_attackTimer <= 0) {
 					m_player.OnImpact(transform.position, m_damage, 1, null);
+
 					m_attackTimer = m_attackTime;
 				}
 			

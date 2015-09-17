@@ -38,7 +38,7 @@ public class HumanBehaviour : PreyBehaviour {
 				if (playerDetected) {
 					ChangeState(State.Flee);
 				} else {
-					if (m_velocity.sqrMagnitude < 0.125f * 0.125f) {
+					if (m_velocity.sqrMagnitude < 0.25f * 0.25f) {
 						m_animator.SetBool("run", false);
 					} else {
 						m_animator.SetBool("run", true);
@@ -48,7 +48,7 @@ public class HumanBehaviour : PreyBehaviour {
 
 			case State.Flee:
 				if (playerDetected) {
-					if (m_velocity.sqrMagnitude < (0.125f * 0.125f) || !m_area.Contains(m_position)) {
+					if (m_velocity.sqrMagnitude < (0.25f * 0.25f) || !m_area.Contains(m_position)) {
 						ChangeState(State.Afraid);
 					} 
 				} else {

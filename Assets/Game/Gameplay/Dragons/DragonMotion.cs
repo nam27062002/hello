@@ -145,6 +145,8 @@ public class DragonMotion : MonoBehaviour {
 		}
 
 		m_rbody.velocity = m_impulse;
+		m_rbody.angularVelocity = Vector3.zero;
+
 
 		// Animator state
 		if (impulse != Vector3.zero) {	
@@ -183,7 +185,16 @@ public class DragonMotion : MonoBehaviour {
 	public Vector3 GetDirection(){
 		return m_direction;
 	}
+		
+	public Vector3 GetVelocity() {
+		return m_rbody.velocity;
+	}
 	
+	// max speed without boost
+	public float GetMaxSpeed() {
+		return m_dragon.data.speed.value * m_accMultiplier;
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -191,7 +202,9 @@ public class DragonMotion : MonoBehaviour {
 	void OnTriggerExit(Collider other) {}
 	void OnTriggerStay(Collider other) {}
 	void OnCollisionEnter(Collision collision) {}
-	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source){}
-	
+	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source) {
+		
+		m_dragon.AddLife(-_damage);
+	}	
 }
 

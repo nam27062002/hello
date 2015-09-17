@@ -78,7 +78,7 @@ public class PreyBehaviour : Initializable {
 
 			if (m_pursuit && playerDetected) {
 
-				DragonPlayer player = InstanceManager.player;
+				DragonMotion player = InstanceManager.player.GetComponent<DragonMotion>();
 				target = m_pursuit.GetTarget(player.transform.position, player.GetVelocity(), player.GetMaxSpeed());
 
 			} else if (m_flock && m_flock.HasController()) {

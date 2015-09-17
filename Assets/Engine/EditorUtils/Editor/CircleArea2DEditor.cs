@@ -142,6 +142,7 @@ public class CircleArea2DEditor : Editor {
 	private Vector3 MoveHandle(Vector3 _pos) {
 
 		Handles.color = new Color(0.76f, 0.23f, 0.13f, 1f);
-		return Handles.FreeMoveHandle(_pos, Quaternion.identity, 12f, Vector3.zero, Handles.DotCap);
+		float size = HandleUtility.GetHandleSize(Vector3.zero) * 0.05f;
+		return Handles.FreeMoveHandle(_pos, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
 	}
 }

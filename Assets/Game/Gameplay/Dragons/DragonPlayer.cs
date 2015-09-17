@@ -175,33 +175,5 @@ public class DragonPlayer : MonoBehaviour {
 		// All checks passed, we're not invulnerable
 		return false;
 	}
-<<<<<<< HEAD
-=======
-
-
-	public Vector3 GetDirection() {
-		return m_direction;
-	}
-
-	public Vector3 GetVelocity() {
-		return m_rbody.velocity;
-	}
-
-	// max speed without boost
-	public float GetMaxSpeed() {
-		return m_stats.speed * m_accMultiplier;
-	}
-	#endregion
 	
-	#region CALLBACKS ----------------------------------------------------------
-	void OnTriggerEnter(Collider other) {}
-	void OnTriggerExit(Collider other) {}
-	void OnTriggerStay(Collider other) {}
-	void OnCollisionEnter(Collision collision) {}
-	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source) {
-
-		m_stats.AddLife(-_damage);
-	}
-	#endregion
->>>>>>> Bird_IA
 }

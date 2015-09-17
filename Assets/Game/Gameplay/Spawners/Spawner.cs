@@ -43,7 +43,14 @@ public class Spawner : MonoBehaviour {
 		
 		InstanceManager.pools.CreatePool(m_entityPrefab);
 		m_entities = new GameObject[m_quantity.max];
-		m_area = GetComponent<Area>().bounds;
+
+		Area area = GetComponent<Area>();
+		if (area != null) {
+			m_area = area.bounds;
+		} else {
+			// spawner for static objects with a fixed position
+			m_area = new CircleAreaBounds(transform.position, 0);
+		}
 	}
 
 	protected virtual void OnEnable() {

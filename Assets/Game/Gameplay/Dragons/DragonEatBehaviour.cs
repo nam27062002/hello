@@ -6,7 +6,10 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	//-----------------------------------------------
 	// Attributes
-	//-----------------------------------------------
+	//-----------------------------------------------	
+	private float m_absorbTimer;
+	[SerializeField]private float m_absorbTime;
+
 	private float m_eatingTimer;
 	private float m_eatingTime;
 
@@ -57,8 +60,9 @@ public class DragonEatBehaviour : MonoBehaviour {
 	
 		if (m_eatingTimer > 0) {
 			m_eatingTimer -= Time.deltaTime;
+			m_absorbTimer -= Time.deltaTime;
 
-			float t = 1 - (m_eatingTimer / m_eatingTime);
+			float t = 1 - Mathf.Max(0, m_absorbTimer / m_absorbTime);
 
 			// swallow entity
 			Vector3 playerMouthDir = (m_head.position - m_mouth.position);
@@ -66,8 +70,8 @@ public class DragonEatBehaviour : MonoBehaviour {
 			float d = playerMouthDir.magnitude;
 			playerMouthDir.Normalize();
 
-			Vector3 targetPosition = m_mouth.position + playerMouthDir * d * 0.5f;
-			targetPosition.z = 100f;
+			Vector3 targetPosition = m_mouth.position;// + playerMouthDir * d * 0.5f;
+			targetPosition.z = 50f;
 
 			m_prey.transform.position = Vector3.Lerp(m_prey.transform.position, targetPosition, t);
 			m_prey.transform.rotation = Quaternion.Lerp(m_prey.transform.rotation, Quaternion.AngleAxis(-90f, playerMouthDir), t);
@@ -97,6 +101,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 			if (m_prey != null && m_prey.edibleFromTier <= m_dragon.data.tier) {
 				// Yes!! Eat it!
+				m_absorbTimer = m_absorbTime;
 				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * m_prey.size) / m_dragon.GetSpeedMultiplier(); // (  time  ) / speedMultiplier
 
 				Reward reward = m_prey.Eat(m_eatingTime);
@@ -107,19 +112,8 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_animator.SetBool("bite", true);
 
 				// spawn blood particle TEMP - use some kind of particle manager
-<<<<<<< HEAD
-				GameObject  effect = (GameObject)Object.Instantiate(Resources.Load("PROTO/bloodchurn-large"));
-				effect.transform.localPosition = Vector3.zero;
-				effect.transform.position =Vector3.zero;
-				m_bloodEmitter = effect.GetComponent<ParticleSystem>();
-				m_bloodEmitter.GetComponent<Renderer>().sortingLayerName = "enemies";
-				m_bloodEmitter.transform.position = m_mouth.position;
-				m_bloodEmitter.Stop();
-				m_bloodEmitter.Play();
-=======
 				m_bloodEmitter = InstanceManager.particles.Spaw("bloodchurn-large", m_mouth.position);
 				//m_bloodEmitter.GetComponent<Renderer>().sortingLayerName = "enemies";
->>>>>>> Bird_IA
 			}
 		}
 	}

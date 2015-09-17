@@ -28,14 +28,6 @@ public class SpawnBehaviour : MonoBehaviour {
 		
 		Spawn();
 	}
-	
-	public void Spawn(Vector3 _position, Spawner _spawner) {
-		
-		m_area = new CircleAreaBounds(_position, 0);
-		m_spawner = _spawner;
-		
-		Spawn();
-	}
 
 	private void Spawn() {
 		

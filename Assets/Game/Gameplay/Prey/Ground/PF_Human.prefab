@@ -724,7 +724,7 @@ MonoBehaviour:
     score: 0
     coins: 0
     pc: 0
-    health: 0
+    health: 30
     energy: 0
     fury: 20
   m_maxHealth: 10
@@ -918,6 +918,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.health
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

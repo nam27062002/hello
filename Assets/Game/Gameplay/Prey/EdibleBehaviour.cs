@@ -71,8 +71,8 @@ public class EdibleBehaviour : Initializable {
 				float t = 1f - (m_timer / m_time);
 
 				// make it small
-				//Vector3 scale = Vector3.Lerp(transform.localScale, Vector3.zero, t);
-				//transform.localScale = scale;
+				Vector3 scale = Vector3.Lerp(transform.localScale, Vector3.one * 0.75f, t);
+				transform.localScale = scale;
 			} 
 		}
 	}
