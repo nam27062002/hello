@@ -7,32 +7,37 @@ public class SpawnBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private Bounds m_bounds;
+	private AreaBounds m_area;
+	private Spawner m_spawner;
 	
 	
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	public void Spawn(Bounds _bounds) {
+	void OnDisable() {
+		if (m_spawner) {
+			m_spawner.RemoveEntity(gameObject);
+			m_spawner = null;
+		}
+	}
+
+	public void Spawn(Spawner _spawner, AreaBounds _bounds) {
 		
-		m_bounds = _bounds;
+		m_spawner = _spawner;
+		m_area = _bounds;
 		
 		Spawn();
 	}
-	
-	public void Spawn(Vector3 _position) {
-		
-		m_bounds = new Bounds(_position, Vector3.zero);
-		
-		Spawn();
-	}
-	
+
 	private void Spawn() {
 		
+		transform.position = m_area.RandomInside();
+
 		Initializable[] components = GetComponents<Initializable>();
 		
 		foreach (Initializable component in components) {
 			
+			component.SetAreaBounds(m_area);
 			component.Initialize();
 		}
 	}

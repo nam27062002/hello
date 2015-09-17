@@ -25,7 +25,7 @@ public class RectArea2DEditor : Editor {
 		bool isTargetDirty = false;
 
 		if (m_target) {
-			DrawHandle(m_target.bounds);
+			DrawHandle(m_target.bounds.bounds);
 		
 			for (int i = 0; i < 4; i++) {
 				isTargetDirty = isTargetDirty || UpdateVertexHandles(i);
@@ -81,11 +81,11 @@ public class RectArea2DEditor : Editor {
 	private bool UpdateCenterHandle() {
 
 		EditorGUI.BeginChangeCheck();
-		Vector3 position = MoveHandle(m_target.bounds.center);
+		Vector3 position = MoveHandle(m_center);
 		
 		if (EditorGUI.EndChangeCheck()) {
 
-			m_target.offset += (Vector2)(position - m_target.bounds.center);
+			m_target.offset += (Vector2)(position - m_center);
 			return true;
 		}
 		
@@ -173,6 +173,7 @@ public class RectArea2DEditor : Editor {
 	private Vector3 MoveHandle(Vector3 _pos) {
 
 		Handles.color = new Color(0.76f, 0.23f, 0.13f, 1f);
-		return Handles.FreeMoveHandle(_pos, Quaternion.identity, 12f, Vector3.zero, Handles.DotCap);
+		float size = HandleUtility.GetHandleSize(Vector3.zero) * 0.05f;
+		return Handles.FreeMoveHandle(_pos, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
 	}
 }

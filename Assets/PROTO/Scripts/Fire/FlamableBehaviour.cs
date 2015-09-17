@@ -25,10 +25,6 @@ public class FlamableBehaviour : MonoBehaviour {
 		Messenger.RemoveListener<Vector3,float>("OnExplosion",OnExplosion);
 	}
 
-	/// <summary>
-	/// Start burning
-	/// </summary>
-	/// <param name="_pos">The position where the burn is taking place?</param>
 	public void Burn(Vector3 pos, float power = 10f) {
 
 		if (entity.health > 0f){

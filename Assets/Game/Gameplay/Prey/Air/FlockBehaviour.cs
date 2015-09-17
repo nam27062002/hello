@@ -33,7 +33,7 @@ public class FlockBehaviour : MonoBehaviour {
 	private Quaternion m_rotation;
 
 	private Transform m_player;
-	private int m_frame = 0;
+	private int m_frame;
 	private int m_groundMask;
 	
 
@@ -42,19 +42,19 @@ public class FlockBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	void Start () {
 
-		m_pos = transform.position;
+	/*	m_pos = transform.position;
 		m_scale = transform.localScale;
 		m_rotation = transform.localRotation;
 
 		m_frame = 0;
 		m_player = GameObject.Find ("Player").transform;
 
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground");*/
 	}
 	
 	void Update () {
 
-		if (flock != null) {
+	/*	if (flock != null) {
 
 			// Follow the target
 			Vector3 follow = flock.followPos - m_pos;
@@ -141,12 +141,12 @@ public class FlockBehaviour : MonoBehaviour {
 				Quaternion q = Quaternion.Euler(0, fAngleY, 0);
 				transform.localRotation = Quaternion.Slerp(transform.localRotation, q, Time.deltaTime * fRotationSpeed);
 			}
-		}
+		}*/
 	}
 
 	public void OnSpawn(Bounds bounds){
 
-		m_pos = bounds.center;
+	/*	m_pos = bounds.center;
 		m_pos.x  += Random.Range (-300f,300f);
 		m_pos.y  += Random.Range (-300f,300f);
 		m_pos.z = 0f;
@@ -156,6 +156,6 @@ public class FlockBehaviour : MonoBehaviour {
 		transform.localRotation = m_rotation;
 		m_impulse = Vector3.zero;
 
-		GetComponent<GameEntity>().RestoreHealth();
+		GetComponent<GameEntity>().RestoreHealth();*/
 	}
 }
