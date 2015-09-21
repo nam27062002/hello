@@ -7,7 +7,7 @@ public class EdibleBehaviour_OLD : MonoBehaviour {
 
 	GameEntity entity = null;
 
-	public int edibleFromTier = 0;  // From which dragon tier is this edible
+	public DragonTier edibleFromTier = 0;  // From which dragon tier is this edible
 
 
 

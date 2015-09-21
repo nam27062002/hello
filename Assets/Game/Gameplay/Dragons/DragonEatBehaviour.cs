@@ -67,7 +67,6 @@ public class DragonEatBehaviour : MonoBehaviour {
 			// swallow entity
 			Vector3 playerMouthDir = (m_head.position - m_mouth.position);
 
-			float d = playerMouthDir.magnitude;
 			playerMouthDir.Normalize();
 
 			Vector3 targetPosition = m_mouth.position;// + playerMouthDir * d * 0.5f;

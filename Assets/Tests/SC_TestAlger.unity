@@ -37,9 +37,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
---- !u!127 &3
-LevelGameManager:
-  m_ObjectHideFlags: 0
 --- !u!157 &4
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -68,6 +65,7 @@ LightmapSettings:
     m_TextureCompression: 1
     m_FinalGather: 0
     m_FinalGatherRayCount: 1024
+    m_ReflectionCompression: 2
   m_LightmapSnapshot: {fileID: 0}
   m_RuntimeCPUUsage: 25
 --- !u!196 &5
@@ -114,10 +112,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d61040ea2758d4710aace026531ff195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_range:
-    min: 0
-    max: 10
-  m_factor: .5
+  m_dragon:
+    m_id: 0
+    m_tier: 0
+    m_tidName: 
+    m_tidDescription: 
+    m_prefabPath: 
+    m_progression:
+      m_maxXp: 500
+      m_curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 55.5555573
+          tangentMode: 0
+        - time: 9
+          value: 500
+          inSlope: 55.5555573
+          outSlope: 0
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+      m_levelsXp:
+      - 0
+      - 55.5555573
+      - 111.111115
+      - 166.666672
+      - 222.222229
+      - 277.777771
+      - 333.333344
+      - 388.888916
+      - 444.444458
+      - 500
+    m_healthRange:
+      min: 1
+      max: 100
+    m_scaleRange:
+      min: .5
+      max: 1.5
+    m_healthDrainPerSecond: 10
+    m_maxEnergy: 160
+    m_energyDrainPerSecond: 10
+    m_energyRefillPerSecond: 25
+    m_maxFury: 160
+    m_furyDuration: 15
+    m_skills:
+    - m_type: 0
+      m_tidName: 
+      m_tidDescription: 
+      m_valueRange:
+        min: 0
+        max: 1
+      m_unlockPrices: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    - m_type: 1
+      m_tidName: 
+      m_tidDescription: 
+      m_valueRange:
+        min: 0
+        max: 1
+      m_unlockPrices: 00000000000000000a000000000000001400000000000000180000000000000028000000000000003200000000000000
+    - m_type: 2
+      m_tidName: 
+      m_tidDescription: 
+      m_valueRange:
+        min: 0
+        max: 1
+      m_unlockPrices: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    - m_type: 3
+      m_tidName: 
+      m_tidDescription: 
+      m_valueRange:
+        min: 0
+        max: 1
+      m_unlockPrices: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!4 &172715674
 Transform:
   m_ObjectHideFlags: 0
@@ -159,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 1997211142, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AllowActivationOnStandalone: 0
+  m_ForceModuleActive: 0
 --- !u!114 &1083616014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +246,7 @@ MonoBehaviour:
   m_CancelButton: Cancel
   m_InputActionsPerSecond: 10
   m_RepeatDelay: .5
-  m_AllowActivationOnMobileDevice: 0
+  m_ForceModuleActive: 0
 --- !u!114 &1083616015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,11 +354,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22489242, guid: 58d17277d49ed450e85792c0bb4ed220, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: .240999997
       objectReference: {fileID: 0}
     - target: {fileID: 22489242, guid: 58d17277d49ed450e85792c0bb4ed220, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11435892, guid: 58d17277d49ed450e85792c0bb4ed220, type: 2}
       propertyPath: m_Color.r
@@ -530,6 +599,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -594,6 +664,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 9306b7762ae4b4544a6309d97f887fcb, type: 3}
     m_FontSize: 25

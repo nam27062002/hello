@@ -1,4 +1,4 @@
-﻿// DragonManager.cs
+// DragonManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 07/01/2015.
@@ -30,8 +30,8 @@ public class DragonManager : Singleton<DragonManager> {
 	// The data
 	// The array allows us to easily setup values from inspector, while the dictionary helps us with faster searches during gameplay
 	// Both contain exactly the same data, unless the array length is modified during gameplay (which shouldn't happen)
-	[SerializeField] private DragonData[] m_dragons = new DragonData[(int)DragonID.COUNT];
-	private Dictionary<DragonID, DragonData> m_dragonsById = null;
+	[SerializeField] private DragonData[] m_dragons = new DragonData[(int)DragonId.COUNT];
+	private Dictionary<DragonId, DragonData> m_dragonsById = null;
 
 	// Shortcut to get the data of the currently selected dragon
 	public static DragonData currentDragonData {
@@ -48,7 +48,7 @@ public class DragonManager : Singleton<DragonManager> {
 		base.Awake();
 
 		// Keep the dragons indexed by id as well for faster searches
-		m_dragonsById = new Dictionary<DragonID, DragonData>();
+		m_dragonsById = new Dictionary<DragonId, DragonData>();
 		for(int i = 0; i < m_dragons.Length; i++) {
 			m_dragonsById[m_dragons[i].id] = m_dragons[i];
 		}
@@ -83,7 +83,7 @@ public class DragonManager : Singleton<DragonManager> {
 	/// </summary>
 	/// <returns>The data corresponding to the dragon with the given ID. Null if not found.</returns>
 	/// <param name="_id">The ID of the dragon whose data we want.</param>
-	public static DragonData GetDragonData(DragonID _id) {
+	public static DragonData GetDragonData(DragonId _id) {
 		DragonData data = null;
 		if(instance.m_dragonsById.TryGetValue(_id, out data)) {
 			return data;
@@ -104,7 +104,7 @@ public class DragonManager : Singleton<DragonManager> {
 	/// </summary>
 	/// <returns>The data of the dragons at the given tier.</returns>
 	/// <param name="_tier">The tier to look for.</param>
-	public static List<DragonData> GetDragonsByTier(int _tier) {
+	public static List<DragonData> GetDragonsByTier(DragonTier _tier) {
 		// Iterate the dragons list looking for those belonging to the target tier
 		List<DragonData> list = new List<DragonData>();
 		for(int i = 0; i < instance.m_dragons.Length; i++) {
@@ -126,7 +126,7 @@ public class DragonManager : Singleton<DragonManager> {
 	/// The newly created instance can be accessed through the InstanceManager.player property.
 	/// </summary>
 	/// <param name="_id">The ID of the dragon we want to instantiate on the scene.</param>
-	public static void LoadDragon(DragonID _id) {
+	public static void LoadDragon(DragonId _id) {
 		// Destroy any previously created player
 		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {

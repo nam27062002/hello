@@ -1,4 +1,4 @@
-﻿// HUDCoinsTextController.cs
+// HUDCoinsTextController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/09/2015.
@@ -66,7 +66,7 @@ public class DebugMenuDragonSelector : MonoBehaviour {
 	/// Changes dragon selected to the given one.
 	/// </summary>
 	/// <param name="_id">The id of the dragon we want to be the current one.</param>
-	public void SetSelectedDragon(DragonID _id) {
+	public void SetSelectedDragon(DragonId _id) {
 		// Update profile
 		UserProfile.currentDragon = _id;
 
@@ -89,8 +89,8 @@ public class DebugMenuDragonSelector : MonoBehaviour {
 	/// </summary>
 	public void SelectNextDragon() {
 		// Figure out next dragon's id
-		DragonID newId = UserProfile.currentDragon + 1;
-		if(newId == DragonID.COUNT) newId = DragonID.NONE + 1;
+		DragonId newId = UserProfile.currentDragon + 1;
+		if(newId == DragonId.COUNT) newId = DragonId.NONE + 1;
 
 		// Change selection
 		SetSelectedDragon(newId);
@@ -101,8 +101,8 @@ public class DebugMenuDragonSelector : MonoBehaviour {
 	/// </summary>
 	public void SelectPreviousDragon() {
 		// Figure out previous dragon's id
-		DragonID newId = UserProfile.currentDragon - 1;
-		if((int)newId < 0) newId = DragonID.COUNT - 1;
+		DragonId newId = UserProfile.currentDragon - 1;
+		if((int)newId < 0) newId = DragonId.COUNT - 1;
 
 		// Change selection
 		SetSelectedDragon(newId);

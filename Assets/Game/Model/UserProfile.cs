@@ -1,4 +1,4 @@
-﻿// UserData.cs
+// UserData.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 24/08/2015.
@@ -31,7 +31,7 @@ public class UserProfile : Singleton<UserProfile> {
 		// Add here any required data
 		public long coins;
 		public long pc;
-		public DragonID currentDragon;
+		public DragonId currentDragon;
 	}
 
 	//------------------------------------------------------------------//
@@ -55,8 +55,8 @@ public class UserProfile : Singleton<UserProfile> {
 	}
 
 	[Separator("Progression")]
-	[SerializeField] private DragonID m_currentDragon = DragonID.SMALL;	// [AOC] TODO!! Proper default initialization
-	public static DragonID currentDragon {
+	[SerializeField] private DragonId m_currentDragon = DragonId.SMALL;	// [AOC] TODO!! Proper default initialization
+	public static DragonId currentDragon {
 		get { return instance.m_currentDragon; }
 		set { instance.m_currentDragon = value; }
 	}
