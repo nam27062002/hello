@@ -48,8 +48,8 @@ public class DragonSkill : SerializableClass {
 
 	// Values
 	[SerializeField] private Range m_valueRange = new Range(0f, 1f);
-	public float value { get { return m_valueRange.Lerp(progress); }}
-	public float nextLevelValue { get { return m_valueRange.Lerp(nextLevelProgress); }}
+	public float value { get { return GetValueAtLevel(level); }}
+	public float nextLevelValue { get { return GetValueAtLevel(nextLevel); }}
 
 	// Levels
 	private int m_level = 0;
@@ -63,19 +63,11 @@ public class DragonSkill : SerializableClass {
 
 	// Progress
 	public float progress { get { return Mathf.InverseLerp(0, lastLevel, level); }}
-	private float nextLevelProgress { get { return Mathf.InverseLerp(0, lastLevel, level + 1); }}	// Internal usage
 
 	// Internal
 	// Only to be set once
-	[NonSerialized]
-	private DragonData m_owner = null;
-	/*public DragonData owner {
-		get { return m_owner; }
-		set {
-			if(m_owner != null) return;	// Owner already set, ignore setter
-			m_owner = value;
-		}
-	}*/
+	[NonSerialized] private DragonData m_owner = null;	// [AOC] Avoid recursive serialization!!
+	public DragonData owner { get { return m_owner; }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -132,6 +124,16 @@ public class DragonSkill : SerializableClass {
 		return true;
 	}
 
+	/// <summary>
+	/// Compute the skill's value at a specific level.
+	/// </summary>
+	/// <returns>The skill's value at the given level.</returns>
+	/// <param name="_level">The level at which we want to know the skill's value.</param>
+	public float GetValueAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, lastLevel, _level);
+		return m_valueRange.Lerp(levelDelta);
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
@@ -139,7 +141,7 @@ public class DragonSkill : SerializableClass {
 	/// Initialize the progression with the given level.
 	/// </summary>
 	/// <param name="_level">The level to be used as current level.</param>
-	public void Load(float _xp, int _level) {
+	public void Load(int _level) {
 		// Check and apply level
 		m_level = Mathf.Clamp(_level, 0, lastLevel);
 	}

@@ -25,6 +25,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	public DragonData m_dragon;
+	//public DragonSkill[] m_skills;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -33,12 +35,6 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/*AOCQuickTest() {
-		myArray = new AOCDragonData[2];
-		for(int i = 0; i < myArray.Length; i++) {
-			myArray[i] = new AOCDragonData(i);
-		}
-	}*/
 
 	/// <summary>
 	/// Initialization.

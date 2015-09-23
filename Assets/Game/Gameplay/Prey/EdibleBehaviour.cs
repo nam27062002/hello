@@ -7,8 +7,8 @@ public class EdibleBehaviour : Initializable {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
-	[SerializeField] private uint m_edibleFromTier = 0;
-	public float edibleFromTier { get { return m_edibleFromTier; } }
+	[SerializeField] private DragonTier m_edibleFromTier = 0;
+	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
 	
 	[SerializeField][Range(1, 10)] private float m_size = 1f;
 	public float size { get { return m_size; } }

@@ -53,7 +53,6 @@ public class GameCameraController : MonoBehaviour {
 	private Transform m_danger = null;
 
 	// Positioning
-	private Vector3 m_currentPos = Vector3.zero;
 	private Vector3 m_targetPos = Vector3.zero;
 	private Vector3 m_forward = Vector3.right;
 
@@ -102,7 +101,6 @@ public class GameCameraController : MonoBehaviour {
 
 		// Reset camera target
 		m_danger = null;
-		m_currentPos = gameObject.transform.position;
 		m_targetPos = playerPos;
 
 		// Initialize zoom interpolator

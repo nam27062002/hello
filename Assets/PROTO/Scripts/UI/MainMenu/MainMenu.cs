@@ -121,7 +121,7 @@ public class MainMenu : MonoBehaviour {
 
 		// Tell the game settings which skin to load upon starting the game
 		//UserProfile.currentDragon = sDragon;
-		UserProfile.currentDragon = DragonID.SMALL;
+		UserProfile.currentDragon = DragonId.SMALL;
 
 		ReloadDragon();
 	}

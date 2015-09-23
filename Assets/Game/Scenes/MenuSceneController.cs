@@ -66,10 +66,24 @@ public class MenuSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Play button has been pressed.
+	/// </summary>
 	public void OnPlayButton() {
 		// Go to game!
 		// [AOC] No need to block the button, the GameFlow already controls spamming
 		FlowManager.GoToGame();
+	}
+
+	/// <summary>
+	/// Reset button has been pressed.
+	/// </summary>
+	public void OnResetButton() {
+		// Clear persistence
+		PersistenceManager.Clear();
+
+		// Restart game
+		FlowManager.Restart();
 	}
 }
 

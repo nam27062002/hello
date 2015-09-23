@@ -24,6 +24,7 @@
 //#define LOG_ADD_LISTENER
 //#define LOG_BROADCAST_MESSAGE
 //#define REQUIRE_LISTENER
+//#define CLEAR_LISTENERS_ON_LEVEL_CHANGE
 
 using System;
 using System.Collections.Generic;
@@ -31,12 +32,14 @@ using UnityEngine;
 
 static internal class Messenger {
 	#region Internal variables
-	
+
+	#if CLEAR_LISTENERS_ON_LEVEL_CHANGE
 	//Disable the unused variable warning
 	#pragma warning disable 0414
 	//Ensures that the MessengerHelper will be created automatically upon start of the game.
 	static private MessengerHelper messengerHelper = ( new GameObject("MessengerHelper") ).AddComponent< MessengerHelper >();
 	#pragma warning restore 0414
+	#endif
 	
 	static public Dictionary<string, Delegate> eventTable = new Dictionary<string, Delegate>();
 	
@@ -294,6 +297,7 @@ static internal class Messenger {
 }
 
 //This manager will ensure that the messenger's eventTable will be cleaned up upon loading of a new level.
+#if CLEAR_LISTENERS_ON_LEVEL_CHANGE
 public sealed class MessengerHelper : MonoBehaviour {
 	void Awake ()
 	{
@@ -302,6 +306,7 @@ public sealed class MessengerHelper : MonoBehaviour {
 	
 	//Clean up eventTable every time a new level loads.
 	public void OnLevelWasLoaded(int unused) {
-		//Messenger.Cleanup();
+		Messenger.Cleanup();
 	}
 }
+#endif

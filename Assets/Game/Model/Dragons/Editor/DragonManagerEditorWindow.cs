@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -18,6 +19,12 @@ using System.Collections.Generic;
 /// External window to setup the dragon manager's content.
 /// </summary>
 public class DragonManagerEditorWindow : EditorWindow {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	private static readonly float COLUMN_WIDTH = 350f;
+	private static readonly float TOOLBAR_WIDTH = 100f;
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -45,9 +52,27 @@ public class DragonManagerEditorWindow : EditorWindow {
 	}
 
 	/// <summary>
+	/// Show the window from the menu.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Content/Dragon Manager")]
+	public static void ShowWindowFromMenu() {
+		// Load dragon's manager prefab and use normal opener
+		GameObject prefab = Resources.Load<GameObject>("Singletons/PF_DragonManager");
+		DragonManager mng = prefab.GetComponent<DragonManager>();
+		SerializedObject target = new SerializedObject(mng);
+		ShowWindow(target);
+	}
+
+	/// <summary>
 	/// Update window's view.
 	/// </summary>
 	public void OnGUI() {
+		// If the target is not valid, close the window (probably window was kept open from another session)
+		if(m_target == null) {
+			this.Close();
+			return;
+		}
+
 		// Group everything into a scroll view
 		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos, false, false);
 
@@ -55,57 +80,39 @@ public class DragonManagerEditorWindow : EditorWindow {
 		EditorGUILayout.BeginHorizontal();
 
 		// Display current dragons
-		SerializedProperty dragonsProperty = m_target.FindProperty("m_dragons");
-		for(int i = 0; i < dragonsProperty.arraySize; i++) {
+		// Force exactly 1 dragon per DragonId
+		SerializedProperty dragonsArrayProp = m_target.FindProperty("m_dragons");
+		dragonsArrayProp.arraySize = (int)DragonId.COUNT;	// This will delete any unnecessary entries or add any missing entries
+		for(int i = 0; i < dragonsArrayProp.arraySize; i++) {
 			// Vertical layout to group everything on this column
-			EditorGUILayout.BeginVertical(GUILayout.Width(350));	// A fixed width is more suitable in this case
+			EditorGUILayout.BeginVertical(GUILayout.Width(COLUMN_WIDTH));	// A fixed width is more suitable in this case
 			GUILayout.Space(10);
 
-			// Add a button to remove this entry (except if we only have one dragon, we want to have at least one dragon)
-			if(dragonsProperty.arraySize > 1) {
-				if(GUILayout.Button("Remove Dragon", GUILayout.Height(25))) {
-					// Do it! remove this entry
-					// [AOC] TODO!! Add a confirmation popup
-					dragonsProperty.DeleteArrayElementAtIndex(i);
+			// Get the data for this dragon ID
+			SerializedProperty dragonProp = dragonsArrayProp.GetArrayElementAtIndex(i);
 
-					// Stop iterating
-					break;
-				}
-			}
-
-			// Get dragon data
-			SerializedProperty dragonProperty = dragonsProperty.GetArrayElementAtIndex(i);
-
-			// Replace array's "Element X" by dragon ID
-			SerializedProperty idProperty = dragonProperty.FindPropertyRelative("m_id");
-			GUIContent label = new GUIContent(idProperty.enumDisplayNames[idProperty.enumValueIndex]);
+			// Make sure it has the right ID assigned
+			// [AOC] Tricky: The serialized property expects the real index of the enum entry [0..N-1], we can't use 
+			//		 the DragonId vaule directly since it's [-1..N]. Luckily, C# gives us the tools to do so via the enum name.
+			SerializedProperty idProp = dragonProp.FindPropertyRelative("m_id");
+			idProp.enumValueIndex = Array.IndexOf(idProp.enumNames, ((DragonId)i).ToString());
 
 			// Default dragon drawer
-			EditorGUILayout.PropertyField(dragonProperty, label, true);
+			EditorGUILayout.PropertyField(dragonProp, GUIContent.none, true);
 
 			// Done
 			GUILayout.Space(10);
 			EditorGUILayout.EndVertical();
 
-			// Draw a separator
+			// Draw a vertical separator to the next dragon
 			GUILayout.Space(5);
 			GUILayout.Box("", GUILayout.Width(2), GUILayout.ExpandHeight(true));
 			GUILayout.Space(5);
 		}
 
 		// Extra column for extended functions
-		GUILayout.BeginVertical(GUILayout.Width(100), GUILayout.ExpandHeight(true));
+		EditorGUILayout.BeginVertical(GUILayout.Width(TOOLBAR_WIDTH), GUILayout.ExpandHeight(true));
 		GUILayout.Space(10);
-
-		// Add button to create a new dragon entry
-		if(GUILayout.Button("Add Dragon", GUILayout.Height(50))) {
-			// [AOC] Append a new dragon at the end of the array
-			dragonsProperty.InsertArrayElementAtIndex(dragonsProperty.arraySize);
-
-			// Scroll to the last column
-			m_scrollPos.y = 0;
-			m_scrollPos.x = float.PositiveInfinity;
-		}
 
 		// Add button to save & close
 		if(GUILayout.Button("Close", GUILayout.Height(50))) {
@@ -117,7 +124,7 @@ public class DragonManagerEditorWindow : EditorWindow {
 		}
 
 		// Done
-		GUILayout.EndVertical();
+		EditorGUILayout.EndVertical();
 
 		// We're done!
 		EditorGUILayout.EndHorizontal();

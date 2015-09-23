@@ -23,22 +23,17 @@ public class SeparatorAttribute : PropertyAttribute {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	public string m_title = "";
+	public float m_size = 40f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Default empty constructor.
+	/// Parametrized constructor with default values.
 	/// </summary>
-	public SeparatorAttribute() {
-		m_title = "";
-	}
-
-	/// <summary>
-	/// Parametrized constructor.
-	/// </summary>
-	public SeparatorAttribute(string _title) {
+	public SeparatorAttribute(string _title = "", float _size = 40f) {
 		m_title = _title;
+		m_size = _size;
 	}
 }
 

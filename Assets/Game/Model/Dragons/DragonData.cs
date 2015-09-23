@@ -31,7 +31,7 @@ public class DragonData {
 	[Serializable]
 	public class SaveData {
 		// Only dynamic data is relevant
-		public DragonID id;	// We don't the array order however, so keep the unique dragon ID with each data pack
+		public DragonId id;	// We don't the array order however, so keep the unique dragon ID with each data pack
 		public float xp;
 		public int level;
 		public int[] skillLevels;
@@ -40,12 +40,12 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	[Header("Basic data")]
-	[SerializeField] private DragonID m_id = DragonID.NONE;
-	public DragonID id { get { return m_id; }}
+	// General Data
+	[SerializeField] private DragonId m_id = DragonId.NONE;
+	public DragonId id { get { return m_id; }}
 	
-	[SerializeField] private int m_tier = 0;
-	public int tier { get { return m_tier; }}
+	[SerializeField] private DragonTier m_tier = 0;
+	public DragonTier tier { get { return m_tier; }}
 
 	[SerializeField] private string m_tidName = "";
 	public string tidName { get { return m_tidName; }}
@@ -56,18 +56,18 @@ public class DragonData {
 	[SerializeField] private string m_prefabPath = "";
 	public string prefabPath { get { return m_prefabPath; }}
 
-	[Header("Evolution")]
+	// Progression
 	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}
 
-	[Header("Level-dependant stats")]
+	// Level-dependant stats
 	[SerializeField] private Range m_healthRange = new Range(1, 100);
-	public float maxHealth { get { return m_healthRange.Lerp(progression.progressByLevel); }}
+	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
 
 	[SerializeField] private Range m_scaleRange = new Range(0.5f, 1.5f);
-	public float scale { get { return m_scaleRange.Lerp(progression.progressByLevel); }}
+	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
-	[Header("Constant stats")]
+	// Constant stats
 	[SerializeField] private float m_healthDrainPerSecond = 10f;
 	public float healthDrainPerSecond { get { return m_healthDrainPerSecond; }}
 
@@ -86,7 +86,7 @@ public class DragonData {
 	[SerializeField] private float m_furyDuration = 15f; //seconds
 	public float furyDuration { get { return m_furyDuration; }}
 
-	[Header("Skills")]
+	// Skills
 	[SerializeField] private DragonSkill[] m_skills;
 	public DragonSkill[] skills { get { return m_skills; }}
 	public DragonSkill bite { get { return GetSkill(DragonSkill.EType.BITE); }}
@@ -94,7 +94,7 @@ public class DragonData {
 	public DragonSkill boost { get { return GetSkill(DragonSkill.EType.BOOST); }}
 	public DragonSkill fire { get { return GetSkill(DragonSkill.EType.FIRE); }}
 
-	//[Header("Items")]
+	// Items
 	// [AOC] TODO!!
 
 	//------------------------------------------------------------------//
@@ -131,6 +131,26 @@ public class DragonData {
 		return null;
 	}
 
+	/// <summary>
+	/// Compute the max health at a specific level.
+	/// </summary>
+	/// <returns>The dragon max health at the given level.</returns>
+	/// <param name="_level">The level at which we want to know the max health value.</param>
+	public float GetMaxHealthAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
+		return m_healthRange.Lerp(levelDelta);
+	}
+
+	/// <summary>
+	/// Compute the scale at a specific level.
+	/// </summary>
+	/// <returns>The dragon scale at the given level.</returns>
+	/// <param name="_level">The level at which we want to know the scale value.</param>
+	public float GetScaleAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
+		return m_scaleRange.Lerp(levelDelta);
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
@@ -146,6 +166,10 @@ public class DragonData {
 
 		// Just read values from persistence object
 		progression.Load(_data.xp, _data.level);
+
+		for(int i = 0; i < _data.skillLevels.Length; i++) {
+			m_skills[i].Load(_data.skillLevels[i]);
+		}
 	}
 	
 	/// <summary>

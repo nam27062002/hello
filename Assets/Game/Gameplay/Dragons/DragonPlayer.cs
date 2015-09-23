@@ -1,4 +1,4 @@
-﻿// DragonPlayer.cs
+// DragonPlayer.cs
 // Hungry Dragon
 // 
 // Created by Marc Saña Forrellach on 05/08/2015.
@@ -23,8 +23,8 @@ public class DragonPlayer : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[Header("Type and general data")]
-	[SerializeField] private DragonID m_id = 0; 
-	public DragonID id { get { return m_id; } }
+	[SerializeField] private DragonId m_id = 0; 
+	public DragonId id { get { return m_id; } }
 
 	private DragonData m_data = null;
 	public DragonData data { get { return m_data; }}

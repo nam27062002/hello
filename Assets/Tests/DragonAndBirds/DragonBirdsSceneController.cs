@@ -304,7 +304,7 @@ public class DragonBirdsSceneController : SceneController {
 	/// <param name="_newDragonType">The new dragon to be loaded.</param>
 	public void OnChangeDragonType(int _newDragonType) {
 		// Store new dragon type into the user profile
-		UserProfile.currentDragon = (DragonID)_newDragonType;
+		UserProfile.currentDragon = (DragonId)_newDragonType;
 
 		// Reload scene
 		Application.LoadLevel(Application.loadedLevel);		// [AOC] Trick to hard-reload current level
