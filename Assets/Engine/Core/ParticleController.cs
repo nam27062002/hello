@@ -34,7 +34,7 @@ public class ParticleController : MonoBehaviour {
 
 	private void CreatePool(string _id) {
 		
-		GameObject prefab = (GameObject)Object.Instantiate(Resources.Load("Particles/" + _id));
+		GameObject prefab = (GameObject)Resources.Load("Particles/" + _id);
 		Pool pool = new Pool(prefab, transform, 5, false);
 		m_particles.Add(_id, pool);
 	}

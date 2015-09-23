@@ -17,16 +17,15 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		m_dragon = GetComponent<DragonPlayer>();
-		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnBreath);
 	}
-
-	void OnDestroy() {
-		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnBreath);
-	}
-	
+		
 	// Update is called once per frame
 	void Update() {
 		m_dragon.AddLife(-Time.deltaTime * m_dragon.data.healthDrainPerSecond);	
+	}
+
+	public bool IsAlive() {
+		return m_dragon.IsAlive();
 	}
 
 	public void ReceiveDamage(float _value) {
@@ -34,7 +33,4 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			m_dragon.AddLife(-_value);
 	}
 
-	private void OnBreath(bool _enabled) {
-		enabled = !_enabled;
-	}
 }

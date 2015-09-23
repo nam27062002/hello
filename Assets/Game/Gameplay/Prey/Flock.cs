@@ -2,7 +2,7 @@
 using System.Collections;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(PreyBehaviour))]
+[AddComponentMenu("Behaviour/Prey/Flock")]
 public class Flock : Steering {
 	
 	[SerializeField] private Range m_avoidRadiusRange;

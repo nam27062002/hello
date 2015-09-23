@@ -3,12 +3,17 @@ using System.Collections;
 
 public class DragonOrientation : MonoBehaviour {
 
-	
+	Vector3 m_direction;
+	Animator m_animator;
 	Quaternion m_targetRotation;
 	Quaternion m_rotation;
 
 	float angle;
 	float timer;
+
+
+	bool m_turningRight;
+	bool m_turningLeft;
 
 	enum State{
 
@@ -22,9 +27,11 @@ public class DragonOrientation : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+		
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_targetRotation = transform.rotation;
 		m_rotation = transform.rotation;
+		m_direction = Vector3.right;
 	}
 	
 	// Update is called once per frame
@@ -33,6 +40,18 @@ public class DragonOrientation : MonoBehaviour {
 		if (state == State.PLAYING) {
 
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, 0.12f);
+
+			float angle = Quaternion.Angle(m_rotation, m_targetRotation);
+			if (m_turningRight) {
+				// change direction
+				m_turningRight = angle > 25f;
+			} else if (m_turningLeft) {
+				// change direction
+				m_turningLeft = angle > 25f;
+			}
+			
+			m_animator.SetBool("turn_right", m_turningRight);
+			m_animator.SetBool("turn_left", m_turningLeft);
 
 		} else if (state == State.DYING) {
 
@@ -58,7 +77,15 @@ public class DragonOrientation : MonoBehaviour {
 	
 		m_targetRotation = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
 
-		//Camera.main.GetComponent<CameraController_OLD>().SetPlayerDirection(dir);
+		if (m_direction.x >= 0f && dir.x < 0) {
+			m_turningRight = true;
+			m_turningLeft = false;
+		} else if (m_direction.x < 0f && dir.x >= 0) {
+			m_turningLeft = true;
+			m_turningRight = false;
+		}
+
+		m_direction = dir;
 	}
 
 	public void OnDeath() {

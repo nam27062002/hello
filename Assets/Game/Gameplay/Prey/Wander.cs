@@ -2,7 +2,7 @@
 using System.Collections;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(PreyBehaviour))]
+[AddComponentMenu("Behaviour/Prey/Wander")]
 public class Wander : Steering {
 
 

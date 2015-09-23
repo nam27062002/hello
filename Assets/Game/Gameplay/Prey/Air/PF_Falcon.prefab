@@ -38,12 +38,19 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 473546}
+  - 135: {fileID: 13502270}
   - 114: {fileID: 11486564}
   - 114: {fileID: 11420202}
-  - 114: {fileID: 11450170}
   - 114: {fileID: 11489274}
   - 114: {fileID: 11405390}
-  - 135: {fileID: 13502270}
+  - 114: {fileID: 11474426}
+  - 114: {fileID: 11406306}
+  - 114: {fileID: 11493032}
+  - 114: {fileID: 11471648}
+  - 114: {fileID: 11462948}
+  - 114: {fileID: 11442960}
+  - 114: {fileID: 11452716}
+  - 114: {fileID: 11482134}
   m_Layer: 8
   m_Name: PF_Falcon
   m_TagString: Untagged
@@ -404,7 +411,7 @@ Transform:
   m_GameObject: {fileID: 140750}
   m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 15, z: 15}
+  m_LocalScale: {x: 18, y: 18, z: 18}
   m_Children:
   - {fileID: 444710}
   - {fileID: 404374}
@@ -470,7 +477,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 119150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1619.69995, y: -66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 454310}
@@ -568,6 +575,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
+--- !u!114 &11406306
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sensorMinRadius: 700
+  m_sensorMaxRadius: 750
+  m_sensorAngle: 145
+  m_sensorAngleOffset: 0
 --- !u!114 &11420202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -588,7 +610,7 @@ MonoBehaviour:
     energy: 0
     fury: 15
   m_maxHealth: 150
---- !u!114 &11450170
+--- !u!114 &11442960
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -596,26 +618,72 @@ MonoBehaviour:
   m_GameObject: {fileID: 119150}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0812d89f9cb54c12a01a4c42f3a9a9d, type: 3}
+  m_Script: {fileID: 11500000, guid: 2565a47f8a17a4aed9d58f0da1b58f15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 1
-  m_steerForce: .600000024
-  m_mass: 3
-  m_speed: 10
-  m_slowingRadius: 250
-  m_fleeForce: 1
-  m_sensorMinRadius: 762.5
-  m_sensorMaxRadius: 764.299988
-  m_sensorAngle: 98
-  m_changeTargetTime: .25
-  m_avoidRadiusRange:
-    min: 80
-    max: 150
-  m_canAttack: 1
-  m_damage: 10
-  m_attackTime: 5
-  m_attackDistance: 250
+--- !u!114 &11452716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8be910e9aa77c4d1db7cc011e47ecba8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_changeTargetTime: 5
+--- !u!114 &11462948
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d45badd589d5641d0a9804caa11f68a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11471648
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60206d1e8b07a4861aa5c618f53be70e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11474426
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 192d94688d2bc4a09b81caccd7cda615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_range: 100
+  m_delay: 1
+  m_damage: 5
+--- !u!114 &11482134
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c4d83eb9f1e45d4a89a4ccb9d05509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_faceDirection: 0
+  m_steerForce: 1
+  m_maxSpeed: 10
+  m_mass: 2
 --- !u!114 &11486564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -642,6 +710,18 @@ MonoBehaviour:
   m_size: 1
   m_isBig: 0
   m_destroyOnEat: 0
+--- !u!114 &11493032
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e18c3b1f8222e4161bb3262b6517bcaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_slowingRadius: 150
 --- !u!135 &13502270
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -652,8 +732,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 52.7999992
-  m_Center: {x: 12.5699997, y: -12.3500004, z: 0}
+  m_Radius: 62.9000015
+  m_Center: {x: 14.8999996, y: 2.5, z: 0}
 --- !u!137 &13756092
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -729,11 +809,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: .600000024
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_speed
@@ -749,11 +829,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 250
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
-      value: .25
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_faceDirection
@@ -761,7 +841,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_attackTime
@@ -770,6 +850,34 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_attackDistance
       value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_avoidRadiusRange.min
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorMinRadius
+      value: 700
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_delay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_range
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorMaxRadius
+      value: 750
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorAngle
+      value: 145
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxSpeed
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

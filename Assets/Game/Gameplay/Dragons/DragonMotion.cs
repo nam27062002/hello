@@ -28,6 +28,8 @@ public class DragonMotion : MonoBehaviour {
 	public float speedDirectionMultiplier = 2f;
 	public Range movementLimitX = new Range(-10000, 50000);
 
+	[SerializeField] private float m_stunnedTime;
+
 	// Public members
 	[HideInInspector] public Rigidbody m_rbody;
 
@@ -39,9 +41,12 @@ public class DragonMotion : MonoBehaviour {
 
 	// Movement control
 	private Vector3 m_impulse;
+	private Vector3 m_externalImpulse;
 	private Vector3 m_direction;
 	private float m_accMultiplier;
 	private float m_speedMultiplier;
+	private float m_stunnedTimer;
+	private float m_glideTimer;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -71,6 +76,9 @@ public class DragonMotion : MonoBehaviour {
 		m_accMultiplier = 1.25f;
 		m_speedMultiplier = 0.5f;
 
+		m_stunnedTimer = 0;
+		m_glideTimer = 6f;
+
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
 	}
@@ -87,6 +95,19 @@ public class DragonMotion : MonoBehaviour {
 	/// </summary>
 	void Update() {
 
+		if (m_stunnedTimer > 0) {
+			m_stunnedTimer -= Time.deltaTime;
+			if (m_stunnedTimer <= 0) {
+				m_stunnedTimer = 0;
+			}
+		}
+
+		if (m_glideTimer > 0) {
+			m_glideTimer -= Time.deltaTime;
+			if (m_glideTimer <= 0) {
+				m_glideTimer = 0;
+			}
+		}
 	}
 
 	/// <summary>
@@ -144,20 +165,30 @@ public class DragonMotion : MonoBehaviour {
 			m_orientation.SetDirection(m_direction);
 		}
 
-		m_rbody.velocity = m_impulse;
+		if (m_stunnedTimer <= 0) {
+			m_rbody.velocity = m_impulse + (m_externalImpulse * m_speedMultiplier);
+		} else {
+			m_rbody.velocity = (m_externalImpulse * m_speedMultiplier);
+		}
+				
 		m_rbody.angularVelocity = Vector3.zero;
-
+		
+		m_externalImpulse = Vector3.Lerp(m_externalImpulse, Vector3.zero, 0.05f * m_speedMultiplier);
 
 		// Animator state
 		if (impulse != Vector3.zero) {	
-			if (Vector3.Dot(oldDirection, m_direction) < 0.75f && Mathf.Abs(oldDirection.y) < 0.75f && Mathf.Abs(m_direction.y) < 0.75f) {
-				if (m_direction.x < 0f)	m_animator.SetTrigger("turn_left");
-				else					m_animator.SetTrigger("turn_right");
+			m_animator.SetBool("fly", true);
+			m_animator.SetBool("plummet", m_speedMultiplier > 1.5f || m_direction.y < -0.65f);
+			m_animator.SetBool("flight_up", m_direction.y > 0.65f);
+
+			if (m_direction.y > -0.65f && m_direction.y < 0.65f) {
+				if (m_glideTimer <= 0) {
+					m_animator.SetTrigger("glide");
+					m_glideTimer = 6f;
+				}
 			} else {
-				m_animator.SetBool("fly", true);
+				m_glideTimer = 2f;
 			}
-			m_animator.SetBool("plummet", m_speedMultiplier > 2f || m_direction.y < -0.75f);
-			m_animator.SetBool("flight_up", m_direction.y > 0.75f);
 		} else {
 			m_animator.SetBool("fly", false);
 			m_animator.SetBool("plummet", false);
@@ -173,6 +204,13 @@ public class DragonMotion : MonoBehaviour {
 	/// </summary>
 	public void Stop() {
 		m_rbody.velocity = Vector3.zero;
+	}
+
+	public void AddForce(Vector3 _force) {
+
+		m_externalImpulse += _force;
+		m_stunnedTimer = m_stunnedTimer;
+		m_animator.SetTrigger("damage");
 	}
 	
 	//------------------------------------------------------------------//

@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 409598}
   - 212: {fileID: 21280924}
   - 95: {fileID: 9520622}
-  - 114: {fileID: 11497952}
+  - 114: {fileID: 11432326}
   m_Layer: 0
   m_Name: PF_ExplosionAOC
   m_TagString: Untagged
@@ -47,7 +47,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11497952
+--- !u!114 &11432326
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -55,10 +55,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 156574}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3308c52ad26414b99a22aacceb794e7e, type: 3}
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 2
+  m_activeTime: 2
 --- !u!212 &21280924
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -91,7 +91,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_activeTime
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 156574}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent]
+[AddComponentMenu("Behaviour/Prey/Generic")]
 public class PreyBehaviour : Initializable {
 	
 	[SerializeField] private bool m_faceDirection;
@@ -34,8 +35,10 @@ public class PreyBehaviour : Initializable {
 	protected Flock 	m_flock;
 	protected Wander	m_wander;
 	protected Pursuit 	m_pursuit;
+	protected Evade		m_evade;
+	protected Attack	m_attack;
 	protected SensePlayer m_sensor;
-	
+
 	protected Animator m_animator;
 
 	void Awake() {
@@ -47,6 +50,8 @@ public class PreyBehaviour : Initializable {
 		m_flock = GetComponent<Flock>();
 		m_wander = GetComponent<Wander>();
 		m_pursuit = GetComponent<Pursuit>();
+		m_evade = GetComponent<Evade>();
+		m_attack = GetComponent<Attack>();
 
 		m_sensor = GetComponent<SensePlayer>();
 
@@ -72,16 +77,16 @@ public class PreyBehaviour : Initializable {
 
 		Vector2 steering = Vector2.zero;
 
-		if (m_seek) {
+		if (m_pursuit && playerDetected) {
 
-			Vector2 target = Vector2.zero;
+			DragonMotion player = InstanceManager.player.GetComponent<DragonMotion>();
+			steering += m_pursuit.GetForce(player.transform.position, player.GetVelocity(), player.GetMaxSpeed());
 
-			if (m_pursuit && playerDetected) {
+		} else if (m_seek) {
 
-				DragonMotion player = InstanceManager.player.GetComponent<DragonMotion>();
-				target = m_pursuit.GetTarget(player.transform.position, player.GetVelocity(), player.GetMaxSpeed());
+			Vector2 target = transform.position;
 
-			} else if (m_flock && m_flock.HasController()) {
+			if (m_flock && m_flock.HasController()) {
 
 				target = m_flock.GetTarget();
 
@@ -95,11 +100,21 @@ public class PreyBehaviour : Initializable {
 
 		if (playerDetected) {
 
-			if (m_flee) {
+			if (m_attack && !m_attack.enabled) {
+				m_attack.enabled = true;
+			}
 
+			if (m_evade) {
+				DragonPlayer player = InstanceManager.player;
+				steering += m_flee.GetForce(player.transform.position);
+			} else if (m_flee) {
 				DragonPlayer player = InstanceManager.player;
 				steering += m_flee.GetForce(player.transform.position);
 			} 
+		} else {
+			if (m_attack && m_attack.enabled) {
+				m_attack.enabled = false;
+			}
 		}
 
 		if (m_flock && m_flock.HasController()) {

@@ -6,6 +6,7 @@ public class FlameParticle : MonoBehaviour {
 	public float life = 5f;
 	public float initialSpeed = 200f;
 	public float drag = 50f;
+	public float size = 1f;
 
 	float speed;
 	float timer;
@@ -94,8 +95,8 @@ public class FlameParticle : MonoBehaviour {
 		collisionDepth = _fCollisionDepth;
 		speed = initialSpeed+direction.magnitude;
 		timer = life;
-		tscale = Random.Range (1.75f,3f);
-		cscale = 0.25f;
+		tscale = Random.Range (1.75f,3f) * size;
+		cscale = 0.25f * size;
 		transform.localScale = Vector3.one*cscale;
 		transform.Rotate(rot*Random.Range(0f,360f));
 		fireMask = 1 << LayerMask.NameToLayer("Edible") | 1 << LayerMask.NameToLayer("Burnable");

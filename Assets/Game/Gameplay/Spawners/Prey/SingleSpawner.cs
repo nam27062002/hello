@@ -24,7 +24,7 @@ public class SingleSpawner : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Start () {
+	void Start () {  
 		
 		InstanceManager.pools.CreatePool(m_entityPrefab);
 	

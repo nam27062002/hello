@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class VerticalMotion : MonoBehaviour {
+public class VerticalMotion : Initializable {
 
 	public static float DEFAULT_AMPLITUDE { get { return 100f; } }
 
@@ -13,11 +13,17 @@ public class VerticalMotion : MonoBehaviour {
 
 	private float m_time;
 	private Vector3 m_originalPostion;
+	public Vector3 originalPostion { get { return m_originalPostion; } }
 
 	void Start() {
-
 		m_originalPostion = transform.position;
 	}
+
+	
+	public override void Initialize() {		
+		m_originalPostion = transform.position;
+	}
+
 
 	// Update is called once per frame
 	void Update() {

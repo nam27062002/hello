@@ -1,0 +1,82 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class MineBehaviour : Initializable {
+
+	[SerializeField] private float m_damage;
+	[SerializeField] private float m_forceStrength;
+
+	[Header("Explosion")]
+	[SerializeField] private GameObject m_explosionPrefab = null;
+	[SerializeField] private int m_explosionsAmount = 8;
+	[SerializeField] private Range m_delayRange = new Range(0f, 0.25f);
+	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
+	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
+
+
+	private float m_timer;
+
+
+	// Use this for initialization
+	void Start() {
+	
+		InstanceManager.pools.CreatePool(m_explosionPrefab, 5, false);
+
+		m_timer = 0;
+	}
+
+	public override void Initialize() {
+
+	}
+
+	void OnEnable() {
+		MeshRenderer renderer = transform.FindChild("view").GetComponent<MeshRenderer>();
+		renderer.enabled = true;
+		GetComponent<Collider>().enabled = true;
+	}
+
+	void Update() {
+
+		if (m_timer > 0) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0) {
+
+				m_timer = 0;
+				GameObject explosion = InstanceManager.pools.GetInstance(m_explosionPrefab.name);
+
+				// Random position within range
+				explosion.transform.position = transform.position;
+								
+				// Random scale within range
+				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();
+				
+				// Random rotation within range
+				explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+
+				gameObject.SetActive(false);
+			}
+		}
+	}
+
+	void OnTriggerEnter(Collider _other) {
+
+		DragonMotion player = _other.GetComponent<DragonMotion>();
+		if (player != null) {
+			DragonHealthBehaviour health = player.GetComponent<DragonHealthBehaviour>();
+			health.ReceiveDamage(m_damage);
+			player.AddForce((player.transform.position - transform.position).normalized * m_forceStrength);
+			Explode();
+		}
+	}
+
+	private void Explode() {
+
+		// Hide mesh and destroy object after all explosions have been triggered
+		MeshRenderer renderer = transform.FindChild("view").GetComponent<MeshRenderer>();
+		renderer.enabled = false;
+
+		m_timer = m_delayRange.GetRandom();
+
+		GetComponent<Collider>().enabled = false;
+	}
+}

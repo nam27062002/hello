@@ -28,7 +28,6 @@ public class FireBreath : DragonBreathBehaviour {
 		Object firePrefab;
 		firePrefab = Resources.Load("PROTO/Flame");
 
-
 		for(int i=0;i<maxFireParticles;i++){
 			GameObject fireObj = (GameObject)Object.Instantiate(firePrefab);
 			fireObj.transform.parent = instances;
@@ -39,7 +38,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 		//timer = 0f;
 
-		mouthPosition = transform.FindSubObjectTransform("eat");
+		mouthPosition = transform.FindSubObjectTransform("fire");
 		headPosition = transform.FindSubObjectTransform("head");
 
 	}
@@ -59,7 +58,9 @@ public class FireBreath : DragonBreathBehaviour {
 		for(int i=0;i<2;i++){
 			foreach(GameObject fireObj in fire){
 				if (!fireObj.activeInHierarchy){
+					fireObj.GetComponent<FlameParticle>().size = fireRate / 10f;
 					fireObj.GetComponent<FlameParticle>().Activate(mouthPosition.position+dir.normalized*(i*1100f*Time.deltaTime),dir, collisionDepth, firePower);
+				
 					// We inlcude some of the dragon momentum in the particles initial speed
 					// also, for eahc frame we fire two particles so we need to space them properly
 					//timer = 1f/fireRate;
