@@ -31,6 +31,9 @@ public class EdibleBehaviour : Initializable {
 	private Quaternion m_originalRotation;
 	private Vector3 m_originalScale;
 
+	private DragonEatBehaviour m_dragon;
+	private Transform m_dragonMouth;
+	private float m_radiusSqr;
 
 	//-----------------------------------------------
 	// Methods
@@ -43,8 +46,14 @@ public class EdibleBehaviour : Initializable {
 	}
 
 	void Start() {
-		
+
+		Bounds bounds = GetComponent<Collider>().bounds;
+		m_radiusSqr = Mathf.Max(bounds.extents.x, bounds.extents.y);
+		m_radiusSqr *= m_radiusSqr;
+
 		m_prey = GetComponent<PreyStats>();
+		m_dragon = InstanceManager.player.GetComponent<DragonEatBehaviour>();
+		m_dragonMouth = m_dragon.transform.FindSubObjectTransform("fire");
 	}
 
 	public override void Initialize() {
@@ -53,12 +62,6 @@ public class EdibleBehaviour : Initializable {
 
 		transform.rotation = m_originalRotation;
 		transform.localScale = m_originalScale;
-
-		// enable colliders
-		Collider[] colliders = GetComponents<Collider>();
-		foreach (Collider collider in colliders) {
-			collider.enabled = true;
-		}
 	}
 
 	void Update() {
@@ -73,11 +76,18 @@ public class EdibleBehaviour : Initializable {
 				// make it small
 				Vector3 scale = Vector3.Lerp(transform.localScale, Vector3.one * 0.75f, t);
 				transform.localScale = scale;
-			} 
+			}
+		} else if (m_dragon.enabled) {
+			// check distance to dragon mouth
+			Vector2 v = (transform.position - m_dragonMouth.transform.position);
+			float distanceSqr = v.sqrMagnitude - m_radiusSqr;
+			if (distanceSqr <= m_dragon.eatDistanceSqr) {
+				m_isBeingEaten = m_dragon.Eat(this);
+			}
 		}
 	}
 	
-	public Reward Eat(float _time) {
+	public Reward OnSwallow(float _time) {
 
 		Reward reward = m_prey.reward;
 
@@ -88,25 +98,15 @@ public class EdibleBehaviour : Initializable {
 		}
 
 		// start go to mouth animation
-		m_isBeingEaten = true;
 		m_timer = m_time = _time; // amount of time the dragon needs to eat this entity
-				
-		// disable colliders
-		Collider[] colliders = GetComponents<Collider>();
-		foreach (Collider collider in colliders) {
-			collider.enabled = false;
-		}
-
-		return reward;
-	}
-
-	public void OnSwallow() {
 
 		// deactivate
 		if (m_destroyOnEat) {
-			DestroyObject(gameObject);
+			Destroy(gameObject);
 		} else {
 			gameObject.SetActive(false);
 		}
+
+		return reward;
 	}
 }

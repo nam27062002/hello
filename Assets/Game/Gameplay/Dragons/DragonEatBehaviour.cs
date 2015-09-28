@@ -11,6 +11,8 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	[SerializeField]private float m_absorbTime;
 	[SerializeField]private float m_minEatAnimTime;
+	[SerializeField]private float m_eatDistance;
+	public float eatDistanceSqr { get { return m_eatDistance * m_eatDistance; } }
 
 	private List<float> m_absorbTimer;
 	private List<float> m_eatingAnimationTimer; 
@@ -63,13 +65,12 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_absorbTimer.Clear();
 		m_eatingAnimationTimer.Clear();
 
-		m_animator.SetBool("big_prey", false);
 		m_animator.SetBool("bite", false);
 	}
 
 	public bool IsEating() {
 
-		return enabled && m_eatingTimer > 0;
+		return enabled && m_prey.Count > 0;
 	}
 
 	// Update is called once per frame
@@ -117,8 +118,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_prey.Clear();
 				m_absorbTimer.Clear();
 				m_eatingAnimationTimer.Clear();
-				
-				m_animator.SetBool("big_prey", false);
+
 				m_animator.SetBool("bite", false);
 			}
 		}
@@ -132,40 +132,36 @@ public class DragonEatBehaviour : MonoBehaviour {
 		}		
 	}
 
-	void OnTriggerStay(Collider _other) {
-
+	public bool Eat(EdibleBehaviour _prey) {
 		if (enabled && m_eatingTimer <= 0) {
-			// Can object be eaten?
-			EdibleBehaviour prey = _other.gameObject.GetComponent<EdibleBehaviour>();
-
-			if (prey != null && prey.edibleFromTier <= m_dragon.data.tier) {
-
+			if (_prey.edibleFromTier <= m_dragon.data.tier) {
 				// Yes!! Eat it!!
 				float speed = (m_dragon.GetSpeedMultiplier() > 1)? 1.5f : 1f;
-				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * prey.size) / speed;
+				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * _prey.size) / speed;
 
-				m_prey.Add(prey);
+				m_prey.Add(_prey);
 				m_absorbTimer.Add(m_absorbTime);
 				m_eatingAnimationTimer.Add(Mathf.Max(m_minEatAnimTime, m_eatingTimer));
 
 				m_animator.SetBool("bite", true);
-				m_animator.SetBool("big_prey", m_prey.Count > 2);
 
 				if (m_bloodEmitter == null) {
 					Vector3 bloodPos = m_mouth.position;
 					bloodPos.z = -50f;
 					m_bloodEmitter = InstanceManager.particles.Spaw("bloodchurn-large", bloodPos);
 				}
+
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 	private void Swallow(EdibleBehaviour _prey) {
 
-		Reward reward = _prey.Eat(m_eatingTime);
+		Reward reward = _prey.OnSwallow(m_eatingTime);
 		m_dragon.AddLife(reward.health);
 		m_dragon.AddFury(reward.fury);
-
-		_prey.OnSwallow();
 	}
 }

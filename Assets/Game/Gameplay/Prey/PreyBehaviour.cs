@@ -148,7 +148,7 @@ public class PreyBehaviour : Initializable {
 	}
 
 	protected void ApplyPosition() {
-		transform.position = new Vector3(m_position.x, m_position.y, m_posZ);
+		transform.position = new Vector3(m_position.x, m_position.y, m_area.bounds.center.z + m_posZ);
 	}
 
 	protected void UpdateOrientation() {

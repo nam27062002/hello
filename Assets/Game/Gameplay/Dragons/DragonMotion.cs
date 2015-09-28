@@ -177,17 +177,20 @@ public class DragonMotion : MonoBehaviour {
 
 		// Animator state
 		if (impulse != Vector3.zero) {	
-			m_animator.SetBool("fly", true);
-			m_animator.SetBool("plummet", m_speedMultiplier > 1.5f || m_direction.y < -0.65f);
-			m_animator.SetBool("flight_up", m_direction.y > 0.65f);
+			bool plummet = m_speedMultiplier > 1.5f || m_direction.y < -0.65f;
+			bool flyUp = m_direction.y > 0.65f;
 
-			if (m_direction.y > -0.65f && m_direction.y < 0.65f) {
+			m_animator.SetBool("fly", true);
+			m_animator.SetBool("plummet", plummet);
+			m_animator.SetBool("flight_up", flyUp);
+
+			if (!plummet && !flyUp && !m_animator.GetBool("bite") && !m_animator.GetBool("fire")) {
 				if (m_glideTimer <= 0) {
 					m_animator.SetTrigger("glide");
-					m_glideTimer = 6f;
+					m_glideTimer = Random.Range(3f, 5f);
 				}
 			} else {
-				m_glideTimer = 2f;
+				m_glideTimer = Random.Range(3f, 5f);
 			}
 		} else {
 			m_animator.SetBool("fly", false);

@@ -5,6 +5,7 @@ public class MineBehaviour : Initializable {
 
 	[SerializeField] private float m_damage;
 	[SerializeField] private float m_forceStrength;
+	[SerializeField] private float m_radius;
 
 	[Header("Explosion")]
 	[SerializeField] private GameObject m_explosionPrefab = null;
@@ -15,12 +16,15 @@ public class MineBehaviour : Initializable {
 
 
 	private float m_timer;
+	private DragonHealthBehaviour m_dragon;
 
 
 	// Use this for initialization
 	void Start() {
 	
 		InstanceManager.pools.CreatePool(m_explosionPrefab, 5, false);
+
+		m_dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 
 		m_timer = 0;
 	}
@@ -32,7 +36,7 @@ public class MineBehaviour : Initializable {
 	void OnEnable() {
 		MeshRenderer renderer = transform.FindChild("view").GetComponent<MeshRenderer>();
 		renderer.enabled = true;
-		GetComponent<Collider>().enabled = true;
+		m_timer = 0;
 	}
 
 	void Update() {
@@ -46,7 +50,7 @@ public class MineBehaviour : Initializable {
 
 				// Random position within range
 				explosion.transform.position = transform.position;
-								
+
 				// Random scale within range
 				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();
 				
@@ -55,17 +59,15 @@ public class MineBehaviour : Initializable {
 
 				gameObject.SetActive(false);
 			}
-		}
-	}
-
-	void OnTriggerEnter(Collider _other) {
-
-		DragonMotion player = _other.GetComponent<DragonMotion>();
-		if (player != null) {
-			DragonHealthBehaviour health = player.GetComponent<DragonHealthBehaviour>();
-			health.ReceiveDamage(m_damage);
-			player.AddForce((player.transform.position - transform.position).normalized * m_forceStrength);
-			Explode();
+		} else if (m_dragon.enabled) {
+			Vector2 v = (m_dragon.transform.position - transform.position);
+			float distanceSqr = v.sqrMagnitude;
+			if (distanceSqr <= m_radius * m_radius) {
+				m_dragon.ReceiveDamage(m_damage);
+				DragonMotion motion = m_dragon.GetComponent<DragonMotion>();
+				motion.AddForce(v.normalized * m_forceStrength);
+				Explode();
+			}
 		}
 	}
 
@@ -76,7 +78,13 @@ public class MineBehaviour : Initializable {
 		renderer.enabled = false;
 
 		m_timer = m_delayRange.GetRandom();
+	}
 
-		GetComponent<Collider>().enabled = false;
+	void OnDrawGizmos() {
+		Color color = Color.red;
+		color.a = 0.25f;
+
+		Gizmos.color = color;
+		Gizmos.DrawWireSphere(transform.position, m_radius);
 	}
 }

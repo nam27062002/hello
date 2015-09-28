@@ -550,7 +550,6 @@ GameObject:
   - 4: {fileID: 467264}
   - 54: {fileID: 5453550}
   - 136: {fileID: 13695044}
-  - 136: {fileID: 13641966}
   - 114: {fileID: 11473758}
   - 114: {fileID: 11416400}
   - 114: {fileID: 11491186}
@@ -1891,6 +1890,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_absorbTime: .25
   m_minEatAnimTime: .5
+  m_eatDistance: 100
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1952,19 +1952,6 @@ MonoBehaviour:
   fireRate: 60
   firePower: 20
   collisionDepth: 1000
---- !u!136 &13641966
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 159196}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 107.800003
-  m_Height: 500
-  m_Direction: 2
-  m_Center: {x: 222.399994, y: 15.1000004, z: 0}
 --- !u!136 &13695044
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -2163,6 +2150,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_minEatAnimTime
       value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatDistance
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -181,7 +181,8 @@ public class Spawner : MonoBehaviour {
 
 
 	void OnDrawGizmos() {
-		Gizmos.color = Color.yellow;
-		Gizmos.DrawSphere(transform.position, 25);
+		Area area = GetComponent<Area>();
+		if (area != null)
+			area.bounds.DrawGizmo();
 	}
 }

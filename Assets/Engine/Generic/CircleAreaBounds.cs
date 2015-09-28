@@ -5,7 +5,7 @@ public struct CircleAreaBounds : AreaBounds {
 
 	public CircleAreaBounds(Vector3 _center, float _radius) {
 	
-		m_bounds = new Bounds(_center, new Vector3(_radius * 2f, _radius * 2f, 0f));
+		m_bounds = new Bounds(_center, new Vector3(_radius * 2f, _radius * 2f, _radius * 2f));
 	}
 
 	public Bounds bounds { get { return m_bounds; } }
@@ -18,5 +18,13 @@ public struct CircleAreaBounds : AreaBounds {
 	public bool Contains(Vector3 _point) {
 		_point.z = m_bounds.center.z;
 		return m_bounds.Contains(_point);
+	}
+
+	public void DrawGizmo() {
+		Color color = Color.yellow;
+		color.a = 0.1f;
+
+		Gizmos.color = color;
+		Gizmos.DrawSphere(m_bounds.center, m_bounds.extents.x);
 	}
 }

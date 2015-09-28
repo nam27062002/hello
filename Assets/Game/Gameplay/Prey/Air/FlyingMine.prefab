@@ -8,7 +8,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 403548}
-  - 135: {fileID: 13549340}
   - 114: {fileID: 11415042}
   - 114: {fileID: 11496622}
   - 114: {fileID: 11478026}
@@ -106,6 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damage: 25
   m_forceStrength: 1000
+  m_radius: 200
   m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
   m_explosionsAmount: 10
   m_delayRange:
@@ -153,18 +153,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_amplitude: 111.092346
   m_frequency: 2.42319894
---- !u!135 &13549340
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 170486}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.04999995
-  m_Center: {x: .00889533758, y: .0401768051, z: -.010683354}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -175,6 +163,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_radius
+      value: 200
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
