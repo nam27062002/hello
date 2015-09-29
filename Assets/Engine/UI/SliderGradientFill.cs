@@ -58,7 +58,9 @@ public class SliderGradientFill : MonoBehaviour {
 	/// </summary>
 	public void OnDestroy() {
 		// Unsubscribe from external events
-		slider.onValueChanged.RemoveListener(delegate { OnSliderValueChanged(); });
+		if(slider != null) {
+			slider.onValueChanged.RemoveListener(delegate { OnSliderValueChanged(); });
+		}
 	}
 	
 	//------------------------------------------------------------------//
