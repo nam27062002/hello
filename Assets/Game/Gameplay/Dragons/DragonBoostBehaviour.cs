@@ -25,6 +25,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_ready = true;
 	}
 
+	void OnEnable() {
+		
+		m_active = false;
+		m_ready = true;
+	}
+
 	void OnDisable() {
 		StopBoost();
 	}
@@ -63,8 +69,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_dragon.SetSpeedMultiplier(m_dragon.data.boost.value);
 	}
 
-	private void StopBoost() {
+	public void StopBoost() {
 		m_active = false;
 		m_dragon.SetSpeedMultiplier(1f);
+	}
+
+	public void ResumeBoost() {
+		m_ready = true;
 	}
 }

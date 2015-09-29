@@ -43,7 +43,6 @@ public class DragonMotion : MonoBehaviour {
 	private Vector3 m_impulse;
 	private Vector3 m_externalImpulse;
 	private Vector3 m_direction;
-	private float m_accMultiplier;
 	private float m_speedMultiplier;
 	private float m_stunnedTimer;
 	private float m_glideTimer;
@@ -73,7 +72,6 @@ public class DragonMotion : MonoBehaviour {
 	/// </summary>
 	void Start() {
 		// Initialize some internal vars
-		m_accMultiplier = 1.25f;
 		m_speedMultiplier = 0.5f;
 
 		m_stunnedTimer = 0;
@@ -145,7 +143,7 @@ public class DragonMotion : MonoBehaviour {
 
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
-			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, Mathf.Max(m_accMultiplier, m_dragon.GetSpeedMultiplier()), 0.25f); //accelerate from stop to normal or boost velocity
+			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier(), 0.25f); //accelerate from stop to normal or boost velocity
 
 			float v = impulse.magnitude;
 			m_impulse = Vector3.Lerp(m_impulse, impulse, 0.5f);
@@ -233,7 +231,7 @@ public class DragonMotion : MonoBehaviour {
 	
 	// max speed without boost
 	public float GetMaxSpeed() {
-		return m_dragon.data.speed.value * m_accMultiplier;
+		return m_dragon.data.speed.value * m_speedMultiplier;
 	}
 
 	//------------------------------------------------------------------//

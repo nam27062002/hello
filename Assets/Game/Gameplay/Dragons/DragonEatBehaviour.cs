@@ -20,12 +20,13 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	private float m_eatingTimer;
 	private float m_eatingTime;
-
+	private bool m_slowedDown;
 
 	private Transform m_mouth;
 	private Transform m_tongue;
 	private Animator m_animator;
 	private DragonPlayer m_dragon;
+	private DragonBoostBehaviour m_dragonBoost;
 			
 	private GameObject m_bloodEmitter;
 
@@ -43,17 +44,21 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_dragon = GetComponent<DragonPlayer>();
+		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
 
 		m_prey = new List<EdibleBehaviour>();
 		m_absorbTimer = new List<float>();
 		m_eatingAnimationTimer = new List<float>();
 
 		m_bloodEmitter = null;
+
+		m_slowedDown = false;
 	}
 
 	void OnDisable() {
 
 		m_eatingTimer = 0;
+		m_slowedDown = false;
 
 		for (int i = 0; i < m_prey.Count; i++) {			
 			if (m_prey[i] != null) {
@@ -119,6 +124,12 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_absorbTimer.Clear();
 				m_eatingAnimationTimer.Clear();
 
+				if (m_slowedDown) {
+					m_dragon.SetSpeedMultiplier(1f);
+					m_dragonBoost.ResumeBoost();
+					m_slowedDown = false;
+				}
+
 				m_animator.SetBool("bite", false);
 			}
 		}
@@ -136,8 +147,13 @@ public class DragonEatBehaviour : MonoBehaviour {
 		if (enabled && m_eatingTimer <= 0) {
 			if (_prey.edibleFromTier <= m_dragon.data.tier) {
 				// Yes!! Eat it!!
-				float speed = (m_dragon.GetSpeedMultiplier() > 1)? 1.5f : 1f;
-				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * _prey.size) / speed;
+				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * _prey.size);
+
+				if (m_eatingTime >= 0.5f) {
+					m_dragonBoost.StopBoost();
+					m_dragon.SetSpeedMultiplier(0.25f);
+					m_slowedDown = true;
+				}
 
 				m_prey.Add(_prey);
 				m_absorbTimer.Add(m_absorbTime);

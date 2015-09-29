@@ -15,15 +15,15 @@ public class GameSettings : Singleton<GameSettings> {
 	// Add here any global setup variable such as quality, server ip, debug enabled, ...
 
 	[Header("Gameplay")]
-	// Name of the dragon instance on the scene
+	[Tooltip("Name of the dragon instance on the scene")]
 	[SerializeField] private string m_playerName = "Player";
 	public static string playerName { get { return instance.m_playerName; }}
 
-	// Percentage of maxHealth where to trigger the starving warning
+	[Tooltip("Percentage of maxHealth where to trigger the starving warning")]
 	[SerializeField] [Range(0, 1)] private float m_healthWarningThreshold = 0.2f;
 	public static float healthWarningThreshold { get { return instance.m_healthWarningThreshold; }}
 
-	// Minimum amount of energy required to boost
+	[Tooltip("Minimum amount of energy required to boost")]
 	[SerializeField] private float m_energyRequiredToBoost = 25f;
 	public static float energyRequiredToBoost { get { return instance.m_energyRequiredToBoost; }}
 }
