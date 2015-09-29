@@ -29,9 +29,9 @@ public class UserProfile : Singleton<UserProfile> {
 	[Serializable]
 	public class SaveData {
 		// Add here any required data
-		public long coins;
-		public long pc;
-		public DragonId currentDragon;
+		public long coins = 0;
+		public long pc = 0;
+		[HideEnumValues(true, true)] public DragonId currentDragon = DragonId.SMALL;
 	}
 
 	//------------------------------------------------------------------//
@@ -116,6 +116,7 @@ public class UserProfile : Singleton<UserProfile> {
 		// Just read values from persistence object
 		instance.m_coins = _data.coins;
 		instance.m_pc = _data.pc;
+		instance.m_currentDragon = _data.currentDragon;
 	}
 
 	/// <summary>
@@ -129,6 +130,7 @@ public class UserProfile : Singleton<UserProfile> {
 		// Initialize it
 		data.coins = instance.m_coins;
 		data.pc = instance.m_pc;
+		data.currentDragon = instance.m_currentDragon;
 
 		// Return it
 		return data;

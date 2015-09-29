@@ -55,10 +55,10 @@ MonoBehaviour:
           inSlope: 8.39511108
           outSlope: 8.39511108
           tangentMode: 0
-        - time: 6.21667624
-          value: 123.188766
-          inSlope: 55.6182861
-          outSlope: 55.6182861
+        - time: 7.51103115
+          value: 261.47113
+          inSlope: 74.2121429
+          outSlope: 74.2121429
           tangentMode: 0
         - time: 9
           value: 500
@@ -69,14 +69,14 @@ MonoBehaviour:
         m_PostInfinity: 2
       m_levelsXp:
       - 0
-      - 6.94112492
-      - 13.4978008
-      - 23.4553089
-      - 40.5989342
-      - 68.7139587
-      - 111.585663
-      - 188.147095
-      - 323.378174
+      - 10.4136267
+      - 25.7848854
+      - 47.4946671
+      - 76.9238815
+      - 115.453415
+      - 164.464188
+      - 225.337067
+      - 317.504486
       - 500
     m_healthRange:
       min: 50
@@ -277,85 +277,6 @@ MonoBehaviour:
         min: 1
         max: 2
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
-  - m_id: 3
-    m_tier: 2
-    m_tidName: TID_DRAGON_NEW_NAME
-    m_tidDescription: TID_DRAGON_NEW_DESC
-    m_prefabPath: Game/Dragons/PF_DragonNew
-    m_progression:
-      m_maxXp: 7500
-      m_curve:
-        serializedVersion: 2
-        m_Curve:
-        - time: 0
-          value: 0
-          inSlope: 8.39511108
-          outSlope: 8.39511108
-          tangentMode: 0
-        - time: 7.0876441
-          value: 1797.86108
-          inSlope: 723.680542
-          outSlope: 723.680542
-          tangentMode: 0
-        - time: 9
-          value: 7500
-          inSlope: 2898.86865
-          outSlope: 2898.86865
-          tangentMode: 0
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-      m_levelsXp:
-      - 0
-      - 15.7633867
-      - 64.1595612
-      - 172.032867
-      - 366.227661
-      - 673.588257
-      - 1120.95911
-      - 1735.18445
-      - 3973.79834
-      - 7500
-    m_healthRange:
-      min: 200
-      max: 500
-    m_scaleRange:
-      min: .5
-      max: 1.5
-    m_healthDrainPerSecond: 10
-    m_maxEnergy: 160
-    m_energyDrainPerSecond: 10
-    m_energyRefillPerSecond: 25
-    m_maxFury: 160
-    m_furyDuration: 15
-    m_skills:
-    - m_type: 0
-      m_tidName: TID_SKILL_BITE_NAME
-      m_tidDescription: TID_SKILL_BITE_DESC
-      m_valueRange:
-        min: .5
-        max: 10
-      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
-    - m_type: 1
-      m_tidName: TID_SKILL_SPEED_NAME
-      m_tidDescription: TID_SKILL_SPEED_DESC
-      m_valueRange:
-        min: 800
-        max: 1200
-      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
-    - m_type: 2
-      m_tidName: TID_SKILL_BOOST_NAME
-      m_tidDescription: TID_SKILL_BOOST_DESC
-      m_valueRange:
-        min: 2
-        max: 4
-      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
-    - m_type: 3
-      m_tidName: TID_SKILL_FIRE_NAME
-      m_tidDescription: TID_SKILL_FIRE_DESC
-      m_valueRange:
-        min: 1
-        max: 2
-      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -365,7 +286,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.size
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_skills.Array.size
@@ -549,51 +470,51 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[1].time
-      value: 6.21667624
+      value: 7.51103115
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[1].value
-      value: 123.188766
+      value: 261.47113
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[1].inSlope
-      value: 55.6182861
+      value: 74.2121429
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[1].outSlope
-      value: 55.6182861
+      value: 74.2121429
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[1]
-      value: 6.94112492
+      value: 10.4136267
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[2]
-      value: 13.4978008
+      value: 25.7848854
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[3]
-      value: 23.4553089
+      value: 47.4946671
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[4]
-      value: 40.5989342
+      value: 76.9238815
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[5]
-      value: 68.7139587
+      value: 115.453415
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[6]
-      value: 111.585663
+      value: 164.464188
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[7]
-      value: 188.147095
+      value: 225.337067
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[8]
-      value: 323.378174
+      value: 317.504486
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[0].inSlope
@@ -1077,7 +998,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[3].m_id
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[3].m_tier
@@ -1742,6 +1663,42 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[4].m_skills.Array.data[3].m_unlockPrices.Array.data[5]
       value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_tier
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_maxXp
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[2].value
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_levelsXp.Array.data[9]
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[2].time
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[3].time
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[3].value
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[3].inSlope
+      value: 191.112717
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[0].m_progression.m_curve.m_Curve.Array.data[3].outSlope
+      value: 191.112717
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

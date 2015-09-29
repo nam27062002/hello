@@ -31,20 +31,20 @@ public class DragonData {
 	[Serializable]
 	public class SaveData {
 		// Only dynamic data is relevant
-		public DragonId id;	// We don't the array order however, so keep the unique dragon ID with each data pack
-		public float xp;
-		public int level;
-		public int[] skillLevels;
+		[HideEnumValues(true, true)] public DragonId id;	// We don't trust the array order however, so keep the unique dragon ID with each data pack
+		public float xp = 0;
+		public int level = 0;
+		public int[] skillLevels = new int[(int)DragonSkill.EType.COUNT];
 	}
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// General Data
-	[SerializeField] private DragonId m_id = DragonId.NONE;
+	[SerializeField] [HideEnumValues(true, true)] private DragonId m_id = DragonId.NONE;
 	public DragonId id { get { return m_id; }}
 	
-	[SerializeField] private DragonTier m_tier = 0;
+	[SerializeField] [HideEnumValues(false, true)] private DragonTier m_tier = 0;
 	public DragonTier tier { get { return m_tier; }}
 
 	[SerializeField] private string m_tidName = "";
@@ -123,12 +123,7 @@ public class DragonData {
 	/// <returns>The skill.</returns>
 	/// <param name="_type">_type.</param>
 	public DragonSkill GetSkill(DragonSkill.EType _type) {
-		for(int i = 0; i < m_skills.Length; i++) {
-			if(m_skills[i].type == _type) {
-				return m_skills[i];
-			}
-		}
-		return null;
+		return m_skills[(int)_type];
 	}
 
 	/// <summary>

@@ -74,61 +74,56 @@ public class DragonManagerEditorWindow : EditorWindow {
 		}
 
 		// Group everything into a scroll view
-		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos, false, false);
+		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos, false, false); {
+			// We want to display dragons horizontally for easier comparison
+			EditorGUILayout.BeginHorizontal(); {
+				// Display current dragons
+				// Force exactly 1 dragon per DragonId
+				SerializedProperty dragonsArrayProp = m_target.FindProperty("m_dragons");
+				dragonsArrayProp.arraySize = (int)DragonId.COUNT;	// This will delete any unnecessary entries or add any missing entries
+				for(int i = 0; i < dragonsArrayProp.arraySize; i++) {
+					// Vertical layout to group everything on this column
+					EditorGUILayout.BeginVertical(GUILayout.Width(COLUMN_WIDTH)); {	// A fixed width is more suitable in this case
+						// Space above
+						GUILayout.Space(10);
 
-		// We want to display dragons horizontally for easier comparison
-		EditorGUILayout.BeginHorizontal();
+						// Get the data for this dragon ID
+						SerializedProperty dragonProp = dragonsArrayProp.GetArrayElementAtIndex(i);
 
-		// Display current dragons
-		// Force exactly 1 dragon per DragonId
-		SerializedProperty dragonsArrayProp = m_target.FindProperty("m_dragons");
-		dragonsArrayProp.arraySize = (int)DragonId.COUNT;	// This will delete any unnecessary entries or add any missing entries
-		for(int i = 0; i < dragonsArrayProp.arraySize; i++) {
-			// Vertical layout to group everything on this column
-			EditorGUILayout.BeginVertical(GUILayout.Width(COLUMN_WIDTH));	// A fixed width is more suitable in this case
-			GUILayout.Space(10);
+						// Make sure it has the right ID assigned
+						// [AOC] Tricky: The serialized property expects the real index of the enum entry [0..N-1], we can't use 
+						//		 the DragonId vaule directly since it's [-1..N]. Luckily, C# gives us the tools to do so via the enum name.
+						SerializedProperty idProp = dragonProp.FindPropertyRelative("m_id");
+						idProp.enumValueIndex = Array.IndexOf(idProp.enumNames, ((DragonId)i).ToString());
 
-			// Get the data for this dragon ID
-			SerializedProperty dragonProp = dragonsArrayProp.GetArrayElementAtIndex(i);
+						// Default dragon drawer
+						EditorGUILayout.PropertyField(dragonProp, GUIContent.none, true);
 
-			// Make sure it has the right ID assigned
-			// [AOC] Tricky: The serialized property expects the real index of the enum entry [0..N-1], we can't use 
-			//		 the DragonId vaule directly since it's [-1..N]. Luckily, C# gives us the tools to do so via the enum name.
-			SerializedProperty idProp = dragonProp.FindPropertyRelative("m_id");
-			idProp.enumValueIndex = Array.IndexOf(idProp.enumNames, ((DragonId)i).ToString());
+						// Space below
+						GUILayout.Space(10);
+					} EditorGUILayout.EndVertical();
 
-			// Default dragon drawer
-			EditorGUILayout.PropertyField(dragonProp, GUIContent.none, true);
+					// Draw a vertical separator to the next dragon
+					GUILayout.Space(5);
+					GUILayout.Box("", GUILayout.Width(2), GUILayout.ExpandHeight(true));
+					GUILayout.Space(5);
+				}
 
-			// Done
-			GUILayout.Space(10);
-			EditorGUILayout.EndVertical();
+				// Extra column for extended functions
+				EditorGUILayout.BeginVertical(GUILayout.Width(TOOLBAR_WIDTH), GUILayout.ExpandHeight(true)); {
+					GUILayout.Space(10);
 
-			// Draw a vertical separator to the next dragon
-			GUILayout.Space(5);
-			GUILayout.Box("", GUILayout.Width(2), GUILayout.ExpandHeight(true));
-			GUILayout.Space(5);
-		}
+					// Add button to save & close
+					if(GUILayout.Button("Close", GUILayout.Height(50))) {
+						// Make sure all changes are saved
+						m_target.ApplyModifiedProperties();
 
-		// Extra column for extended functions
-		EditorGUILayout.BeginVertical(GUILayout.Width(TOOLBAR_WIDTH), GUILayout.ExpandHeight(true));
-		GUILayout.Space(10);
-
-		// Add button to save & close
-		if(GUILayout.Button("Close", GUILayout.Height(50))) {
-			// Make sure all changes are saved
-			m_target.ApplyModifiedProperties();
-
-			// Close the window
-			this.Close();
-		}
-
-		// Done
-		EditorGUILayout.EndVertical();
-
-		// We're done!
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.EndScrollView();
+						// Close the window
+						this.Close();
+					}
+				} EditorGUILayout.EndVertical();
+			} EditorGUILayout.EndHorizontal();
+		} EditorGUILayout.EndScrollView();
 
 		// Save any change performed
 		m_target.ApplyModifiedProperties();

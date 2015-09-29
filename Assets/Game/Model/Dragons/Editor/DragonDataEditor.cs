@@ -1,4 +1,4 @@
-﻿ // DragonDataEditor.cs
+ // DragonDataEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 14/09/2015.
@@ -58,29 +58,23 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 		// Iterate through all the children of the property
 		_property.NextVisible(true);	// Enter to the first level of depth
 		int targetDepth = _property.depth;
+		float propertyHeight = 0;
 		while(_property.depth == targetDepth) {		// Only direct children, not brothers or grand-children (the latter will be drawn by default if using the default EditorGUI.PropertyField)
 			// Draw property as default except for the ones we want to customize
 			// ID and start of the General Data section
 			if(_property.name == "m_id") {
 				// Draw a separator
-				EditorUtils.DrawSeparator(ref m_pos, "General Data");
-				AdvancePos();
+				propertyHeight = EditorUtils.Separator(m_pos, "General Data");
+				AdvancePos(propertyHeight);
 
 				// ID can't be changed, so don't do anything else
-			}
-
-			// Tier
-			else if(_property.name == "m_tier") {
-				// Custom enum drawing to avoid selecting COUNT
-				EditorUtils.EnumField(ref m_pos, _property, false, true);
-				AdvancePos();
 			}
 
 			// Start of the Progression section
 			else if(_property.name == "m_progression") {
 				// Draw a separator first
-				EditorUtils.DrawSeparator(ref m_pos, "Progression");
-				AdvancePos();
+				propertyHeight = EditorUtils.Separator(m_pos, "Progression");
+				AdvancePos(propertyHeight);
 
 				// Default property drawing
 				m_pos.height = EditorGUI.GetPropertyHeight(_property);
@@ -91,8 +85,8 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Start of the Level-dependant Stats section
 			else if(_property.name == "m_healthRange") {
 				// Draw a separator first
-				EditorUtils.DrawSeparator(ref m_pos, "Level-dependant Stats");
-				AdvancePos();
+				propertyHeight = EditorUtils.Separator(m_pos, "Level-dependant Stats");
+				AdvancePos(propertyHeight);
 				
 				// Default property drawing
 				m_pos.height = EditorGUI.GetPropertyHeight(_property);
@@ -103,8 +97,8 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Start of the Constant Stats section
 			else if(_property.name == "m_healthDrainPerSecond") {
 				// Draw a separator first
-				EditorUtils.DrawSeparator(ref m_pos, "Constant Stats");
-				AdvancePos();
+				propertyHeight = EditorUtils.Separator(m_pos, "Constant Stats");
+				AdvancePos(propertyHeight);
 				
 				// Default property drawing
 				m_pos.height = EditorGUI.GetPropertyHeight(_property);
@@ -115,8 +109,8 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Skills
 			else if(_property.name == "m_skills") {
 				// Draw a separator first
-				EditorUtils.DrawSeparator(ref m_pos, "Skills");
-				AdvancePos();
+				propertyHeight = EditorUtils.Separator(m_pos, "Skills");
+				AdvancePos(propertyHeight);
 
 				// Skills is an array of fixed length (4), but we will display each skill as an individual property - since we don't want to allow changing its size or order
 				// Each skill must be foldable
