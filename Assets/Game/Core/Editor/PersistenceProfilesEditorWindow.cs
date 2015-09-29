@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
+using System.IO;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -20,13 +22,36 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private static readonly float PROFILE_LIST_COLUMN_WIDTH = 200f;
+	private static readonly float PROFILE_VIEW_COLUMN_WIDTH = 400f;
+	private static readonly float MIN_WINDOW_HEIGHT = 400f;
+	private static readonly float SPACING = 5f;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Profiles management
+	public static string m_selectedProfile = "";	// Static to keep it between window openings
+	private Dictionary<string, GameObject> m_profilePrefabs = new Dictionary<string, GameObject>();
+	private string m_newProfileName = "";
+	private Vector2 m_profileListScrollPos = Vector2.zero;
+
+	// Savegames management
+	public static string m_selectedSavegame = "";	// Static to keep it between window openings
+	private string[] m_saveGames = null;
+	private Vector2 m_savegameListScrollPos = Vector2.zero;
+
+	// View management
+	private Vector2 m_viewScrollPos = Vector2.zero;
+	private PersistenceProfile m_saveGameTempProfile = null;
+
+	// Custom styles
+	private GUIStyle m_selectionGridStyle = null;
+	private GUIStyle m_titleLabelStyle = null;
+	private GUIStyle m_centeredLabelStyle = null;
 
 	//------------------------------------------------------------------//
-	// METHODS															//
+	// STATIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Add menu item to be able to open the editor.
@@ -34,14 +59,462 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	[MenuItem("Hungry Dragon/Persistence Profiles")]
 	public static void ShowWindow() {
 		// Show existing window instance. If one doesn't exist, make one.
-		EditorWindow.GetWindow(typeof(PersistenceProfilesEditorWindow));
+		PersistenceProfilesEditorWindow window = (PersistenceProfilesEditorWindow)EditorWindow.GetWindow(typeof(PersistenceProfilesEditorWindow));
+
+		// Setup window
+		window.titleContent = new GUIContent("Persistence Profiles");
+		window.minSize = new Vector2(SPACING + PROFILE_LIST_COLUMN_WIDTH + PROFILE_VIEW_COLUMN_WIDTH + SPACING, MIN_WINDOW_HEIGHT);	// Fixed width, arbitrary minimum
+		window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);						// Fixed width, limitless
+
+		// Reset some vars
+		window.m_newProfileName = "";
+
+		// Show it
+		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
 	}
 
+	//------------------------------------------------------------------//
+	// GENERIC METHODS													//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Update the inspector window.
 	/// </summary>
 	public void OnGUI() {
-		// Let's do it babe!
+		// Initialize custom styles
+		InitStyles();
 
+		// Reset indentation
+		EditorGUI.indentLevel = 0;
+
+		// Load all profiles in the resources folder and the list of savegames
+		// [AOC] Probably it's not optimal to do this every time, but we want to detect any change performed directly on the inspector
+		ReloadData();
+
+		// 2 columns: Profile list and Profile editor
+		EditorGUILayout.BeginHorizontal(); {
+			// Some spacing at the start
+			GUILayout.Space(SPACING);
+
+			// Profile list column: composed by 3 elements - profile list, savegame list and current savegame
+			EditorGUILayout.BeginVertical(GUILayout.Width(PROFILE_LIST_COLUMN_WIDTH), GUILayout.ExpandHeight(true)); {
+				// Some spacing
+				GUILayout.Space(SPACING);
+
+				// 1) Profile List
+				EditorGUILayout.BeginVertical(EditorStyles.helpBox); {
+					// Label
+					GUILayout.Label("Profiles", m_centeredLabelStyle);
+
+					// Add button + name textfield
+					EditorGUILayout.BeginHorizontal(); {
+						// Name textfield
+						m_newProfileName = EditorGUILayout.TextField(m_newProfileName);
+						
+						// Button
+						if(GUILayout.Button("Add Profile")) {
+							// Create a new profile with the name at the textfield
+							GameObject newProfilePrefab = CreateNewProfile(m_newProfileName);
+							
+							// Was it successfully created?
+							if(newProfilePrefab != null) {
+								// Yes!!
+								ResetSelection();
+								m_selectedProfile = m_newProfileName;	// Make it the selected one
+								m_newProfileName = "";	// Clear textfield
+							}
+						}
+					} EditorGUILayout.EndHorizontal();
+					
+					// Spacing
+					GUILayout.Space(SPACING);
+						
+					// Scroll - draw a box around it
+					EditorGUILayout.BeginVertical(EditorStyles.helpBox); {
+						m_profileListScrollPos = EditorGUILayout.BeginScrollView(m_profileListScrollPos); {
+							// Profiles list
+							// Generate labels
+							string[] labels = new string[m_profilePrefabs.Count];
+							int currentSelectionIdx = -1;
+							int i = 0;
+							foreach(string key in m_profilePrefabs.Keys) {
+								labels[i] = key;
+								if(key == m_selectedProfile) {
+									currentSelectionIdx = i;
+								}
+								i++;
+							}
+							
+							// Detect selection change
+							GUI.changed = false;
+							int newSelectionIdx = GUILayout.SelectionGrid(currentSelectionIdx, labels, 1, m_selectionGridStyle);
+							if(GUI.changed) {
+								// Save new selection
+								ResetSelection();
+								m_selectedProfile = labels[newSelectionIdx];
+							}
+						} EditorGUILayout.EndScrollView();
+					} EditorGUILayout.EndVertical();
+				} EditorGUILayout.EndVertical();
+
+				// Some spacing
+				GUILayout.Space(SPACING);
+
+				// 2) Active Profile
+				EditorGUILayout.BeginHorizontal(); {
+					// Label
+					GUILayout.Label("Active Profile:");
+
+					// Dropdown menu
+					// Generate label list and figure out current selected index
+					string[] labels = new string[m_profilePrefabs.Count];
+					int currentIdx = -1;
+					int i = 0;
+					foreach(string key in m_profilePrefabs.Keys) {
+						labels[i] = key;
+						if(key == PersistenceManager.activeProfile) {
+							currentIdx = i;
+						}
+						i++;
+					}
+
+					// Detect selection change
+					GUI.changed = false;
+					int newIdx = EditorGUILayout.Popup(currentIdx, labels);
+					if(GUI.changed) {
+						// Store new selected profile as active one
+						PersistenceManager.activeProfile = labels[newIdx];
+					}
+				} EditorGUILayout.EndHorizontal();
+
+				// Some spacing
+				GUILayout.Space(SPACING);
+
+				// 3) Savegame List
+				EditorGUILayout.BeginVertical(EditorStyles.helpBox); {
+					// Label
+					GUILayout.Label("Saved Games", m_centeredLabelStyle);
+
+					// Info
+					EditorGUILayout.HelpBox("Every profile has a save game linked to it, automatically created when creating the profile. The save game can then be edited or reset to its linked profile values.", MessageType.Info);
+					
+					// Scroll - Create a box around it
+					GUILayout.BeginVertical(EditorStyles.helpBox); {
+						m_savegameListScrollPos = EditorGUILayout.BeginScrollView(m_savegameListScrollPos); {
+							// Save games list
+							// Generate labels and find selected index
+							string[] labels = new string[m_saveGames.Length];
+							int currentSelectionIdx = -1;
+							for(int i = 0; i < m_saveGames.Length; i++) {
+								labels[i] = m_saveGames[i];
+								if(labels[i] == m_selectedSavegame) {
+									currentSelectionIdx = i;
+								}
+							}
+							
+							// Detect selection change
+							GUI.changed = false;
+							int newSelectionIdx = GUILayout.SelectionGrid(currentSelectionIdx, labels, 1, m_selectionGridStyle);
+							if(GUI.changed) {
+								// Save new selection
+								ResetSelection();
+								m_selectedSavegame = labels[newSelectionIdx];
+							}
+						} EditorGUILayout.EndScrollView();
+					} EditorGUILayout.EndVertical();
+				} EditorGUILayout.EndVertical();
+
+				// Some spacing
+				GUILayout.Space(SPACING);
+			} EditorGUILayout.EndVertical();
+
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			// Profile view column
+			EditorGUILayout.BeginVertical(GUILayout.Width(PROFILE_VIEW_COLUMN_WIDTH)); {
+				// Some spacing
+				GUILayout.Space(SPACING);
+
+				// Add scroll - within a box
+				EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true)); {
+					m_viewScrollPos = EditorGUILayout.BeginScrollView(m_viewScrollPos, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true)); {
+						// Different logic for profiles and saved games
+						if(m_selectedProfile != "") {
+							ShowSelectedProfile();
+						} else if(m_selectedSavegame != "") {
+							ShowSelectedSavegame();
+						} else {
+							// Nothing to show
+						}
+					} EditorGUILayout.EndScrollView();
+				}	EditorGUILayout.EndVertical();
+
+				// Some spacing
+				GUILayout.Space(SPACING);
+			} EditorGUILayout.EndVertical();
+
+			// Some spacing at the end
+			GUILayout.Space(SPACING);
+		} EditorGUILayout.EndHorizontal();
+	}
+
+	/// <summary>
+	/// Window has gotten focus.
+	/// </summary>
+	private void OnFocus() {
+		// If not done, create a temp object to hold the save games displayed
+		if(m_saveGameTempProfile == null) {
+			GameObject obj = new GameObject("TEMP");
+			obj.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave;	// We don't want the scene to get dirty
+			m_saveGameTempProfile = obj.AddComponent<PersistenceProfile>();
+		}
+	}
+
+	/// <summary>
+	/// Window has lost focus.
+	/// </summary>
+	private void OnLostFocus() {
+		// Clear the created temp object
+		// As a consequence any selected savegame won't be visible while the window doesn't have the focus, but we need to
+		// make sure that the temp object we have created is always deleted.
+		if(m_saveGameTempProfile != null) {
+			DestroyImmediate(m_saveGameTempProfile.gameObject);
+			m_saveGameTempProfile = null;
+		}
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL UTILS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize custom styles.
+	/// </summary>
+	private void InitStyles() {
+		// Selection grid
+		if(m_selectionGridStyle == null) {
+			Texture2D selectedTexture = new Texture2D(2, 2);
+			selectedTexture.Fill(Colors.gray);
+
+			Texture2D idleTexture = new Texture2D(2, 2);
+			idleTexture.Fill(Colors.transparentBlack);
+
+			m_selectionGridStyle = new GUIStyle(EditorStyles.miniButton);
+			m_selectionGridStyle.onActive.background = idleTexture;
+			m_selectionGridStyle.active.background = idleTexture;
+			
+			m_selectionGridStyle.onHover.textColor = Color.white;
+			m_selectionGridStyle.onHover.background = selectedTexture;
+			m_selectionGridStyle.hover.background = idleTexture;
+			
+			m_selectionGridStyle.onNormal.textColor = Color.white;
+			m_selectionGridStyle.onNormal.background = selectedTexture;
+			m_selectionGridStyle.normal.background = idleTexture;
+		}
+		
+		// Title label
+		if(m_titleLabelStyle == null) {
+			m_titleLabelStyle = new GUIStyle(EditorStyles.largeLabel);
+			m_titleLabelStyle.fontStyle = FontStyle.Bold;
+			m_titleLabelStyle.fontSize = 14;
+			m_titleLabelStyle.fixedHeight = m_titleLabelStyle.lineHeight * 1.25f;
+			m_titleLabelStyle.alignment = TextAnchor.MiddleCenter;
+		}
+		
+		// Centered Label
+		if(m_centeredLabelStyle == null) {
+			m_centeredLabelStyle = new GUIStyle(EditorStyles.label);
+			m_centeredLabelStyle.alignment = TextAnchor.MiddleCenter;
+			m_centeredLabelStyle.fontStyle = FontStyle.Bold;
+		}
+	}
+
+	/// <summary>
+	/// Show the current selected profile into the view column.
+	/// </summary>
+	private void ShowSelectedProfile() {
+		// Some checks first
+		if(m_selectedProfile == "") return;
+		if(!m_profilePrefabs.ContainsKey(m_selectedProfile)) return;
+
+		// Name - Draw a big, juicy title showing the name of the profile
+		GUILayout.Label(m_selectedProfile + " Profile", m_titleLabelStyle);
+		GUILayout.Space(10f);
+
+		// Get the actual profile object
+		PersistenceProfile profile = m_profilePrefabs[m_selectedProfile].GetComponent<PersistenceProfile>();
+			
+		// Delete button - only if allowed
+		GUI.enabled = profile.canBeDeleted;
+		bool delete = GUILayout.Button("Delete Profile");
+		GUI.enabled = true;
+		if(delete) {
+			DeleteCurrentProfile();
+		}
+			
+		// If not deleted, draw profile content
+		else {
+			// Create a serialized object for this profile
+			SerializedObject target = new SerializedObject(m_profilePrefabs[m_selectedProfile].GetComponent<PersistenceProfile>());
+
+			// Find the Profile object and draw it
+			SerializedProperty p = target.FindProperty("m_data");
+			EditorGUILayout.PropertyField(p, true);
+
+			// Save changes
+			target.ApplyModifiedProperties();
+		}
+	}
+
+	/// <summary>
+	/// Show the current selected savegame into the view column.
+	/// </summary>
+	private void ShowSelectedSavegame() {
+		// Some checks first
+		if(m_selectedSavegame == "") return;
+		if(!m_profilePrefabs.ContainsKey(m_selectedSavegame)) return;
+
+		// Name - Draw a big, juicy title showing the name of the profile
+		GUILayout.Label(m_selectedSavegame + " Saved Game", m_titleLabelStyle);
+		GUILayout.Space(10f);
+
+		// Clear button
+		if(GUILayout.Button("Reset")) {
+			PersistenceManager.Clear(m_selectedSavegame);
+		}
+
+		// If not cleared, draw content
+		else {
+			// Use the temp PersistenceProfile object to display the data of the selected savegame
+			if(m_saveGameTempProfile) {
+				m_saveGameTempProfile.data = PersistenceManager.LoadToObject(m_selectedSavegame);
+
+				// Create a serialized object for the temp profile we just created
+				SerializedObject target = new SerializedObject(m_saveGameTempProfile);
+				
+				// Find the Profile object and draw it
+				SerializedProperty p = target.FindProperty("m_data");
+				EditorGUILayout.PropertyField(p, true);
+				
+				// Save changes
+				target.ApplyModifiedProperties();
+
+				// Update persistence
+				PersistenceManager.SaveFromObject(m_selectedSavegame, m_saveGameTempProfile.data);
+				m_saveGameTempProfile.data = null;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Clears the current profiles dictionary and loads them from the resources folder.
+	/// It also clears the current savegames list and gets it again, making sure there are exactly one savegame per 
+	/// profile by creating new savegames and deleting old ones.
+	/// </summary>
+	private void ReloadData() {
+		// Load all gameobjects in the target resources folder
+		GameObject[] prefabs = Resources.LoadAll<GameObject>(PersistenceProfile.RESOURCES_FOLDER);
+
+		// Use a dictionary for easier access
+		m_profilePrefabs.Clear();
+		for(int i = 0; i < prefabs.Length; i++) {
+			m_profilePrefabs.Add(prefabs[i].name, prefabs[i]);
+		}
+
+		// If the default profile doesn't exist, create it immediately
+		if(!m_profilePrefabs.ContainsKey(PersistenceProfile.DEFAULT_PROFILE)) {
+			// Profile doesn't exist! Create it
+			CreateNewProfile(PersistenceProfile.DEFAULT_PROFILE);
+		}
+
+		// Make sure current selection is still valid
+		if(!m_profilePrefabs.ContainsKey(m_selectedProfile)) {
+			m_selectedProfile = "";
+		}
+
+		// Get save games list
+		m_saveGames = PersistenceManager.GetSavedGamesList();
+		
+		// Make sure we still have exactly one savegame for each profile
+		// Make sure current selection is still valid
+		// a) Check for savegames to be deleted
+		for(int i = 0; i < m_saveGames.Length; i++) {
+			if(!m_profilePrefabs.ContainsKey(m_saveGames[i])) {
+				PersistenceManager.Clear(m_saveGames[i]);
+			}
+		}
+
+		// b) Check for profiles needing a new savegame
+		foreach(string key in m_profilePrefabs.Keys) {
+			if(!PersistenceManager.HasSavedGame(key)) {
+				CreateNewSavegame(m_profilePrefabs[key].GetComponent<PersistenceProfile>());
+			}
+		}
+
+		// Update savegames list
+		m_saveGames = PersistenceManager.GetSavedGamesList();
+	}
+
+	/// <summary>
+	/// Creates a new profile prefab with the given name and adds it to the dictionary.
+	/// </summary>
+	/// <returns>A reference to the newly created profile prefab, null if it couldn't be created.</returns>
+	/// <param name="_name">The name to give to the new profile.</param>
+	private GameObject CreateNewProfile(string _name) {
+		// Check that the given name is valid
+		if(_name == "") {
+			EditorUtility.DisplayDialog("Empty profile name", "Please enter a valid name for the new profile", "Ok");
+			return null;
+		}
+		
+		// Check that there is no profile with this name already
+		if(m_profilePrefabs.ContainsKey(_name)) {
+			EditorUtility.DisplayDialog("Profile already exists", "Another profile with this name already exists.\nPlease choos a different name.", "Ok");
+			return null;
+		}
+		
+		// Everything ok, create new profile
+		// Create a new game object and add a persistence profile component
+		GameObject newProfileObj = new GameObject();
+		newProfileObj.AddComponent<PersistenceProfile>();
+		
+		// Set profile name
+		newProfileObj.name = _name;
+
+		// Store new profile to the resources folder
+		GameObject newPrefab = PrefabUtility.CreatePrefab("Assets/Resources/" + PersistenceProfile.RESOURCES_FOLDER + _name + ".prefab", newProfileObj);
+		
+		// Add it to the dictionary
+		m_profilePrefabs.Add(_name, newPrefab);
+
+		// Destroy temp reference object and return prefab reference
+		DestroyImmediate(newProfileObj);
+		return newPrefab;
+	}
+
+	/// <summary>
+	/// Deletes the current profile.
+	/// </summary>
+	private void DeleteCurrentProfile() {
+		// Should be simple
+		AssetDatabase.MoveAssetToTrash("Assets/Resources/" + PersistenceProfile.RESOURCES_FOLDER + m_selectedProfile + ".prefab");
+		ResetSelection();
+	}
+
+	/// <summary>
+	/// Creates a new savegame for the given persistence profile. If one already exists, it will be overwritten.
+	/// The newly created savegame will be initialized with the profile data.
+	/// </summary>
+	/// <param name="_profile">The profile to which we want to create a new savegame.</param>
+	private void CreateNewSavegame(PersistenceProfile _profile) {
+		PersistenceManager.SaveFromObject(_profile.gameObject.name, _profile.data);
+	}
+
+	/// <summary>
+	/// Unselect any profile/savegame and clear current focus.
+	/// </summary>
+	private void ResetSelection() {
+		m_selectedProfile = "";		// Unselect any profile
+		m_selectedSavegame = "";	// Unselect any savegame
+		m_viewScrollPos = Vector2.zero;	// Reset scroll view
+		GUI.FocusControl("");	// Lose focus on the name textfield
 	}
 }

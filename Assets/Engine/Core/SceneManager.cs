@@ -235,7 +235,6 @@ public class SceneManager : Singleton<SceneManager> {
 	/// </summary>
 	private void UpdatePostload() {
 		// Update scene tracking
-		m_prevScene = m_currentScene;
 		m_currentScene = m_nextScene;
 		ChangeState(ESceneState.READY);
 	}
@@ -256,6 +255,10 @@ public class SceneManager : Singleton<SceneManager> {
 	private void UpdateRun() {
 		// Just wait for an external scene change request
 		if(currentScene != nextScene) {
+			// Update scene tracking
+			m_prevScene = m_currentScene;
+
+			// Start loading of the new scene
 			ChangeState(ESceneState.RESET);
 		}
 	}

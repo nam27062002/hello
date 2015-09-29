@@ -68,7 +68,7 @@ public class DebugMenuSimulate : MonoBehaviour {
 
 		// Compute a rewards multiplication factor based on current dragon's evolution state
 		DragonData currentData = DragonManager.currentDragonData;
-		DragonData tier0Data = DragonManager.GetDragonsByTier(0)[0];	// Should at least be one dragon of tier 0
+		DragonData tier0Data = DragonManager.GetDragonsByTier(DragonTier.TIER_0)[0];	// Should at least be one dragon of tier 0
 
 		// Health factor -> scales with level/xp, that way xp is already computed as a factor
 		float factorHealth = currentData.maxHealth/tier0Data.GetMaxHealthAtLevel(0);	// tier0.level0 factor is 1f + current value relative to tier0.level0 value

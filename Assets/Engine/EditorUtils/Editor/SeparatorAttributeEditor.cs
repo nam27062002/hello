@@ -1,4 +1,4 @@
-﻿// SeparatorAttributeEditor.cs
+// SeparatorAttributeEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 28/08/2015.
@@ -38,7 +38,7 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 	/// <param name="_area">The area designated by the inspector to draw this decoration.</param>
 	public override void OnGUI(Rect _area) {
 		// Use static method
-		EditorUtils.DrawSeparator(ref _area, separator.m_title, separator.m_size);
+		EditorUtils.Separator(_area, separator.m_title, separator.m_size);
 	}
 
 	/// <summary>

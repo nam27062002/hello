@@ -18,9 +18,25 @@ using UnityEngine;
 /// </summary>
 public class PersistenceProfile : MonoBehaviour {
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public PersistenceManager.SaveData m_profile = new PersistenceManager.SaveData();
+	public static readonly string RESOURCES_FOLDER = "Game/PersistenceProfiles/";
+	public static readonly string DEFAULT_PROFILE = "PF_Default";	// This one must always exist
+
+	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
+	// To prevent some important profiles from being deleted
+	// Don't serialize, can only be set from code or from debug inspector
+	private bool m_canBeDeleted = true;	
+	public bool canBeDeleted { get { return m_canBeDeleted; }}
+
+	// The actual data
+	[SerializeField] private PersistenceManager.SaveData m_data = new PersistenceManager.SaveData();
+	public PersistenceManager.SaveData data {
+		get { return m_data; }
+		set { m_data = value; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

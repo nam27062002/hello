@@ -25,8 +25,11 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public DragonData m_dragon;
+	//public DragonData m_dragon;
 	//public DragonSkill[] m_skills;
+	//public PersistenceManager.SaveData m_myData;
+	//public GUIStyle m_myStlye;
+	public PersistenceProfile m_selectedProfile;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -40,7 +43,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-
+		Debug.Log(PlayerPrefs.GetInt("test", -1));
 	}
 
 	/// <summary>
