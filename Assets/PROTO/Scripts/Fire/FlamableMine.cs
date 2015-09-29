@@ -6,6 +6,6 @@ public class FlamableMine : FlamableBehaviour {
 	override protected void BurnImpl(Vector3 pos, float power){
 
 		if (hasBurned)
-			GetComponent<FlyingMineBehaviour>().OnBurn();
+			GetComponent<OLD_FlyingMineBehaviour>().OnBurn();
 	}
 }

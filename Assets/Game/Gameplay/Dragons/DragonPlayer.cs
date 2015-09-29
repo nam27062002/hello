@@ -84,7 +84,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
 	public void AddLife(float _offset) {
-		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset)); 
+		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset));
 	}
 
 	/// <summary>
@@ -92,7 +92,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of energy to be added/removed.</param>
 	public void AddEnergy(float _offset) {
-		m_energy = Mathf.Min(m_data.maxEnergy, Mathf.Max(0, m_energy + _offset)); 
+		m_energy = Mathf.Min(m_data.maxEnergy, Mathf.Max(0, m_energy + _offset));
 	}
 		
 	/// <summary>

@@ -56,19 +56,12 @@ public class SensePlayerEditor : Editor {
 
 		// Rotation
 		float alphaFactor = 1f;//Mathf.Min(1f, m_target.fleeForce);
-		float angle = m_target.sensorAngle;
+		float fromAngle = (-m_target.sensorAngle * 0.5f) + m_target.sensorAngleOffset;
+		float toAngle = (m_target.sensorAngle * 0.5f) + m_target.sensorAngleOffset;
 
-		Vector3 from;
-		Vector3 to;
-		/*if (m_target.prey.direction.x < 0) {
-			from = Vector3.right.RotateXYDegrees(-m_target.sensorAngle * 0.5f + 180f);
-			to = Vector3.right.Rot*ateXYDegrees(m_target.sensorAngle * 0.5f + 180f);
-		} else */
-		{
-			from = Vector3.right.RotateXYDegrees(-m_target.sensorAngle * 0.5f);
-			to = Vector3.right.RotateXYDegrees(m_target.sensorAngle * 0.5f);
-		}
-
+		Vector3 from = Vector3.right.RotateXYDegrees(fromAngle);
+		Vector3 to = Vector3.right.RotateXYDegrees(toAngle);
+			
 		// Outter area
 		Handles.color =  new Color(1f, 1f, 224f/255f, 0.125f * alphaFactor);
 		Handles.DrawSolidDisc(m_target.transform.position, Vector3.forward, m_target.sensorMaxRadius);

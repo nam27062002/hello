@@ -12,10 +12,13 @@ public class VerticalMotionEditor : Editor {
 	// Use this for initialization
 	void Awake() {
 		m_target = (VerticalMotion)target;	
+		m_initialPosition = m_target.transform.position;
 	}
 	
 	// Update is called once per frame
 	void OnSceneGUI() {
+		m_initialPosition = m_target.transform.position;
+
 		DrawHandle();
 				
 		bool isTargetDirty = false;
@@ -29,6 +32,8 @@ public class VerticalMotionEditor : Editor {
 	}
 
 	public override void OnInspectorGUI() {
+		m_initialPosition = m_target.transform.position;
+
 		GUI.changed = false;
 
 		m_target.amplitude = EditorGUILayout.FloatField("Amplitude", m_target.amplitude);

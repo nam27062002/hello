@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(PreyBehaviour))]
+[AddComponentMenu("Behaviour/Prey/Flee")]
 public class Flee : Steering {
 
 	public Vector2 GetForce(Vector2 _from) {

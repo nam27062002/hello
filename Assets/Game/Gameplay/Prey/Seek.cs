@@ -2,7 +2,7 @@
 using System.Collections;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(PreyBehaviour))]
+[AddComponentMenu("Behaviour/Prey/Seek")]
 public class Seek : Steering {
 
 	[SerializeField] private float m_slowingRadius;

@@ -7,6 +7,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------
 	private DragonPlayer m_dragon;
+	private DragonHealthBehaviour m_healthBehaviour;
+	private DragonEatBehaviour m_eatBehaviour;
 	private Animator m_animator;
 
 	private bool m_isFuryOn;
@@ -18,6 +20,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	void Start() {
 
 		m_dragon = GetComponent<DragonPlayer>();
+		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
+		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_isFuryOn = false;
 
@@ -29,6 +33,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_isFuryOn) {
 			m_isFuryOn = false;
 			m_animator.SetBool("fire", false);// Stop fury rush (if active)
+			if (m_healthBehaviour) m_healthBehaviour.enabled = true;
+			if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 			Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 		}
 	}
@@ -50,6 +56,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				m_isFuryOn = false;
 				m_dragon.StopFury();
 				m_animator.SetBool("fire", false);
+				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
+				if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 			} else {
 				
@@ -62,6 +70,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 				m_isFuryOn = true;				
 				m_dragon.StartFury();
+				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
+				if (m_eatBehaviour) m_eatBehaviour.enabled = false;
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
 			}
 		}

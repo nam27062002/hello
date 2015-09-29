@@ -177,4 +177,12 @@ public class Spawner : MonoBehaviour {
 	}
 
 	protected virtual void ExtendedSpawn() {}
+
+
+
+	void OnDrawGizmos() {
+		Area area = GetComponent<Area>();
+		if (area != null)
+			area.bounds.DrawGizmo();
+	}
 }

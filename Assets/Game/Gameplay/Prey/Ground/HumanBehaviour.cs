@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[AddComponentMenu("Behaviour/Prey/Humans")]
 public class HumanBehaviour : PreyBehaviour {
 
 	private enum State {
@@ -48,7 +49,7 @@ public class HumanBehaviour : PreyBehaviour {
 
 			case State.Flee:
 				if (playerDetected) {
-					if (m_velocity.sqrMagnitude < (0.25f * 0.25f) || !m_area.Contains(m_position)) {
+					if (/*m_velocity.sqrMagnitude < (0.25f * 0.25f) ||*/ !m_area.Contains(m_position)) {
 						ChangeState(State.Afraid);
 					} 
 				} else {
@@ -58,8 +59,7 @@ public class HumanBehaviour : PreyBehaviour {
 
 			case State.Afraid:
 				if (playerDetected) {
-					Vector3 player = InstanceManager.player.transform.position;
-					
+					Vector3 player = InstanceManager.player.transform.position;				
 					if (player.x < m_position.x) {
 						m_direction = Vector2.left;
 					} else {
@@ -115,7 +115,11 @@ public class HumanBehaviour : PreyBehaviour {
 		if (m_state != _newSate) {
 			// exit State
 			switch (m_state) {
-				case State.Wander:										
+				case State.Wander:
+					m_animator.SetBool("run", false);
+					m_animator.speed = 1f;
+					break;
+
 				case State.Flee:
 					m_animator.SetBool("run", false);
 					break;
@@ -128,6 +132,10 @@ public class HumanBehaviour : PreyBehaviour {
 			// enter State
 			switch (_newSate) {
 				case State.Wander:
+					m_animator.SetBool("run", true);
+					m_animator.speed = 0.5f;
+					break;
+
 				case State.Flee:
 					m_animator.SetBool("run", true);
 					break;

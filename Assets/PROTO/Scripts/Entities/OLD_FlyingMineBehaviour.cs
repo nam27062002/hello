@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class FlyingMineBehaviour : MonoBehaviour {
+public class OLD_FlyingMineBehaviour : MonoBehaviour {
 
 	public float damage = 25f;
 	 
