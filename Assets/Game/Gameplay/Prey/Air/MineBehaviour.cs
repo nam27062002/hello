@@ -27,10 +27,17 @@ public class MineBehaviour : Initializable {
 		m_dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 
 		m_timer = 0;
+
 	}
 
 	public override void Initialize() {
-
+		
+		EdibleBehaviour edible = GetComponent<EdibleBehaviour>();
+		if (edible != null) {
+			if (edible.edibleFromTier <= InstanceManager.player.data.tier) {
+				enabled = false;
+			}
+		}
 	}
 
 	void OnEnable() {

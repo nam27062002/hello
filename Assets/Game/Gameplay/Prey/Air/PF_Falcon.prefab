@@ -38,7 +38,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 473546}
-  - 135: {fileID: 13502270}
   - 114: {fileID: 11486564}
   - 114: {fileID: 11420202}
   - 114: {fileID: 11489274}
@@ -51,6 +50,7 @@ GameObject:
   - 114: {fileID: 11442960}
   - 114: {fileID: 11452716}
   - 114: {fileID: 11482134}
+  - 114: {fileID: 11487176}
   m_Layer: 8
   m_Name: PF_Falcon
   m_TagString: Untagged
@@ -477,7 +477,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 119150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1619.69995, y: -66, z: 0}
+  m_LocalPosition: {x: 1622.90002, y: -77.1999969, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 454310}
@@ -695,6 +695,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11487176
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 16.0327148, y: 4.80980301}
+  radius: 57.2145996
+  color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11489274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -722,18 +736,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_slowingRadius: 150
---- !u!135 &13502270
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119150}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 62.9000015
-  m_Center: {x: 14.8999996, y: 2.5, z: 0}
 --- !u!137 &13756092
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

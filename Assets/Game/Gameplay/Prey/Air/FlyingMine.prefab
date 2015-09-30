@@ -12,6 +12,9 @@ GameObject:
   - 114: {fileID: 11496622}
   - 114: {fileID: 11478026}
   - 114: {fileID: 11490742}
+  - 114: {fileID: 11463056}
+  - 114: {fileID: 11488518}
+  - 114: {fileID: 11455984}
   m_Layer: 10
   m_Name: FlyingMine
   m_TagString: Untagged
@@ -117,6 +120,35 @@ MonoBehaviour:
   m_rotationRange:
     min: 0
     max: 360
+--- !u!114 &11455984
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 112.527466
+  color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
+--- !u!114 &11463056
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_edibleFromTier: 2
+  m_size: 2
+  m_isBig: 0
+  m_destroyOnEat: 0
 --- !u!114 &11478026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -129,6 +161,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_rotationSpeed: {x: 20, y: 20, z: 20}
+--- !u!114 &11488518
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_typeID: FlyingMine
+  m_reward:
+    score: 0
+    coins: 0
+    pc: 0
+    health: 0
+    energy: 0
+    fury: 0
+  m_maxHealth: 1
 --- !u!114 &11490742
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -167,6 +219,22 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_radius
       value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_edibleFromTier
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxHealth
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: FlyingMine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -14,15 +14,17 @@ public class HumanBehaviour : PreyBehaviour {
 
 	private int m_groundMask;
 
-	// Use this for initialization
-	void Start () {
+	private Transform m_groundSensor;
 	
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
-	}
-	
+
 	public override void Initialize() {
 
 		base.Initialize();
+
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_groundSensor = transform.FindChild("ground_sensor").transform;
+
+		m_positionLast = m_position = m_groundSensor.transform.position;
 
 		//start at random anim position
 		ChangeState(State.Wander);
@@ -108,6 +110,8 @@ public class HumanBehaviour : PreyBehaviour {
 			m_position.y = ground.point.y;
 			m_velocity.y = 0;
 		}
+
+		m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 	}
 
 	private void ChangeState(State _newSate) {

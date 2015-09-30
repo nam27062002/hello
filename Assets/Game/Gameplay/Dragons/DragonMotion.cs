@@ -157,10 +157,13 @@ public class DragonMotion : MonoBehaviour {
 		} else {
 			// idle
 			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, 0.5f, 0.025f); //don't reduce multipliers too fast 
+
 			m_impulse = Vector3.zero;
 			if (oldDirection.x < 0)	m_direction = Vector3.left;
 			else 					m_direction = Vector3.right;
 			m_orientation.SetDirection(m_direction);
+
+			m_glideTimer = Random.Range(3f, 5f);
 		}
 
 		if (m_stunnedTimer <= 0) {

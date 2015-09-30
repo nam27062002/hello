@@ -123,14 +123,18 @@ public class Spawner : MonoBehaviour {
 		if (playerPos.x < m_area.bounds.center.x - distX ||  playerPos.x > m_area.bounds.center.x + distX
 		||  playerPos.y < m_area.bounds.center.y - distY ||  playerPos.y > m_area.bounds.center.y + distY) {
 
-			// disable all entities
-			for (int i = 0; i < m_entities.Length; i++) {				
-				if (m_entities[i] != null) {
-					m_entities[i].SetActive(false);
-					m_entities[i] = null;
+			// disable all alive entities
+			if (m_entityAlive > 0) {
+				for (int i = 0; i < m_entities.Length; i++) {				
+					if (m_entities[i] != null) {
+						m_entities[i].SetActive(false);
+						m_entities[i] = null;
+					}
 				}
+				m_spawnTimer = 0; // this spawner will be restarted when player is near again
+				m_entityAlive = 0;
 			}
-			m_entityAlive = 0;
+
 			return false;
 		}
 
@@ -143,10 +147,10 @@ public class Spawner : MonoBehaviour {
 	}
 
 	void Spawn() {
-
 		int count = m_quantity.GetRandom();
 		for (int i = 0; i < count; i++) {			
 			m_entities[i] = InstanceManager.pools.GetInstance(m_entityPrefab.name);
+			m_entityAlive++;
 		}
 
 		ExtendedSpawn();
