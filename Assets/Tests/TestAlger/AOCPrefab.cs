@@ -1,15 +1,13 @@
-﻿// AOCQuickTest.cs
+﻿// AOCPrefab.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on DD/MM/2015.
+// Created by Alger Ortín Castellví on 02/10/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using System;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -17,7 +15,8 @@ using System.Collections.Generic;
 /// <summary>
 /// 
 /// </summary>
-public class AOCQuickTest : MonoBehaviour {
+[ExecuteInEditMode]
+public class AOCPrefab : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -25,6 +24,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	public string m_name = "";
+	public float m_value = 0;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -38,14 +39,14 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-
+		Debug.Log("AWAKEN!");
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	void Start() {
-
+		Debug.Log("START");
 	}
 	
 	/// <summary>
@@ -61,9 +62,4 @@ public class AOCQuickTest : MonoBehaviour {
 	void OnDestroy() {
 
 	}
-
-	//------------------------------------------------------------------//
-	// OTHER METHODS													//
-	//------------------------------------------------------------------//
-
 }

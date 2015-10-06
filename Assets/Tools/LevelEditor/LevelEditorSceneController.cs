@@ -1,55 +1,53 @@
-﻿// AOCQuickTest.cs
+// LevelEditorSceneController.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on DD/MM/2015.
+// Created by Alger Ortín Castellví on 29/09/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using System;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Scene controller for the level editor scene.
 /// </summary>
-public class AOCQuickTest : MonoBehaviour {
+public class LevelEditorSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public static readonly string NAME = "SC_LevelEditor";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-
-	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	override protected void Awake() {
+		// Load the dragon
+		DragonManager.LoadDragon(LevelEditor.testDragon);
 
+		// Call parent
+		base.Awake();
 	}
 
 	/// <summary>
-	/// First update call.
+	/// First update.
 	/// </summary>
 	void Start() {
-
+	
 	}
 	
 	/// <summary>
-	/// Called once per frame.
+	/// Called every frame.
 	/// </summary>
 	void Update() {
 
@@ -58,12 +56,9 @@ public class AOCQuickTest : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	void OnDestroy() {
-
+	override protected void OnDestroy() {
+		// Call parent
+		base.OnDestroy();
 	}
-
-	//------------------------------------------------------------------//
-	// OTHER METHODS													//
-	//------------------------------------------------------------------//
-
 }
+

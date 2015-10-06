@@ -291,11 +291,8 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	private void InitStyles() {
 		// Selection grid
 		if(m_selectionGridStyle == null) {
-			Texture2D selectedTexture = new Texture2D(2, 2);
-			selectedTexture.Fill(Colors.gray);
-
-			Texture2D idleTexture = new Texture2D(2, 2);
-			idleTexture.Fill(Colors.transparentBlack);
+			Texture2D selectedTexture = Texture2DExtensions.Create(2, 2, Colors.gray);
+			Texture2D idleTexture = Texture2DExtensions.Create(2, 2, Colors.transparentBlack);
 
 			m_selectionGridStyle = new GUIStyle(EditorStyles.miniButton);
 			m_selectionGridStyle.onActive.background = idleTexture;

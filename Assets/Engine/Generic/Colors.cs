@@ -61,4 +61,25 @@ public static class Colors {
 	// Special
 	public static readonly Color transparentBlack = new Color(0f, 0f, 0f, 0f);
 	public static readonly Color transparentWhite = new Color(1f, 1f, 1f, 0f);
+
+	//------------------------------------------------------------------//
+	// STATIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Get a color applying a given alpha value in a single line, for example:
+	/// <code>
+	/// Color c = Colors.WithAlpha(Colors.red, 0.5f);
+	/// </code>
+	/// instead of
+	/// <code>
+	/// Color c = Colors.red;
+	/// c.a = 0.5f;
+	/// </code>
+	/// </summary>
+	/// <returns>The input color with the given alpha applied.</returns>
+	/// <param name="_color">The base color.</param>
+	/// <param name="_alpha">The alpha to be used.</param>
+	public static Color WithAlpha(Color _color, float _alpha) {
+		return new Color(_color.r, _color.g, _color.b, _alpha);
+	}
 }
