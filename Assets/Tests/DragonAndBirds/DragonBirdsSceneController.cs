@@ -22,7 +22,7 @@ public class DragonBirdsSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Dragon_and_Birds";
+	public static readonly string NAME = "SC_World_Scale";
 
 	public enum EStates {
 		INIT,

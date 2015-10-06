@@ -43,7 +43,7 @@ public class PreyBehaviour : Initializable {
 
 	void Awake() {
 		
-		m_posZ = Random.Range(-150, 150);
+		m_posZ = Random.Range(-1, 1);
 
 		m_seek = GetComponent<Seek>();
 		m_flee = GetComponent<Flee>();
@@ -64,8 +64,7 @@ public class PreyBehaviour : Initializable {
 		m_positionLast = m_position = transform.position;
 
 		//start at random anim position - Move to Bird Behaviour
-		//Animator animator = transform.FindChild("view").GetComponent<Animator>();
-		//animator.Play("fly", 0, Random.Range(0f, 1f));
+		m_animator.Play("fly", 0, Random.Range(0f, 1f));
 	}
 
 
@@ -136,6 +135,8 @@ public class PreyBehaviour : Initializable {
 		
 		m_velocity = Vector2.ClampMagnitude(m_velocity + _steering, m_maxSpeed);
 
+		Debug.Log(m_velocity);
+
 		if (m_velocity != Vector2.zero) {
 			m_direction = m_velocity.normalized;
 		}
@@ -144,7 +145,7 @@ public class PreyBehaviour : Initializable {
 	protected void UpdatePosition() {
 
 		m_positionLast = m_position;
-		m_position = m_position + m_velocity;
+		m_position = m_position + (m_velocity * Time.fixedDeltaTime);
 	}
 
 	protected void ApplyPosition() {

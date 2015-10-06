@@ -3,9 +3,9 @@ using System.Collections;
 
 public class VerticalMotion : Initializable {
 
-	public static float DEFAULT_AMPLITUDE { get { return 100f; } }
+	public static float DEFAULT_AMPLITUDE { get { return 2f; } }
 
-	[SerializeField] private float m_amplitude = 100f;
+	[SerializeField] private float m_amplitude = 2f;
 	public float amplitude { set { m_amplitude = value; } get { return m_amplitude; } }
 
 	[SerializeField] private float m_frequency = 1;

@@ -259,7 +259,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 132400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1555.40002, y: -69, z: 0}
+  m_LocalPosition: {x: 102.940002, y: 6.69999981, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 443172}
@@ -338,8 +338,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 132418}
   m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 15, y: 15, z: 15}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: .125, y: .125, z: .125}
   m_Children:
   - {fileID: 479232}
   - {fileID: 460014}
@@ -509,8 +509,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 4.44421387, y: 4.44419098}
-  radius: 30.0011444
+  offset: {x: .0199999996, y: .0199999996}
+  radius: .25
   color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11459194
 MonoBehaviour:
@@ -535,8 +535,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 400
-  m_sensorMaxRadius: 500
+  m_sensorMinRadius: 6
+  m_sensorMaxRadius: 8
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11471252
@@ -571,8 +571,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_avoidRadiusRange:
-    min: 80
-    max: 100
+    min: .75
+    max: 1.25
 --- !u!114 &11479610
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -584,7 +584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18c3b1f8222e4161bb3262b6517bcaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_slowingRadius: 100
+  m_slowingRadius: .5
 --- !u!114 &11495124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -613,8 +613,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_faceDirection: 0
   m_steerForce: .5
-  m_maxSpeed: 8
-  m_mass: 1
+  m_maxSpeed: 2
+  m_mass: .25
 --- !u!137 &13764670
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -711,11 +711,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
-      value: 1
+      value: .25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 100
+      value: .5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fleeForce
@@ -723,11 +723,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 400
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 500
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorAngle
@@ -743,11 +743,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadiusRange.max
-      value: 100
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadiusRange.min
-      value: 80
+      value: .75
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsTrigger
@@ -755,7 +755,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 8
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
