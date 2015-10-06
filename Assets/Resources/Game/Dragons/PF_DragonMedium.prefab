@@ -581,6 +581,7 @@ GameObject:
   - 4: {fileID: 467264}
   - 54: {fileID: 5453550}
   - 136: {fileID: 13630308}
+  - 135: {fileID: 13517900}
   - 114: {fileID: 11473758}
   - 114: {fileID: 11416400}
   - 114: {fileID: 11491186}
@@ -1952,6 +1953,18 @@ MonoBehaviour:
   fireRate: 45
   firePower: 15
   collisionDepth: 1000
+--- !u!135 &13517900
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 70
+  m_Center: {x: -50, y: 90, z: 0}
 --- !u!136 &13630308
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -1961,10 +1974,10 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: 68803d9d7883048d7a6c72ce90a556d6, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 57.4000015
-  m_Height: 200.699997
+  m_Radius: 60
+  m_Height: 210
   m_Direction: 0
-  m_Center: {x: 43, y: 31.5599995, z: 0}
+  m_Center: {x: 110, y: 70, z: 0}
 --- !u!137 &13729950
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
