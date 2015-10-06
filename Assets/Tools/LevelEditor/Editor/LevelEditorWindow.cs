@@ -236,7 +236,7 @@ public class LevelEditorWindow : EditorWindow {
 					GUI.enabled = true;
 
 					// Separator
-					EditorUtils.Separator(EditorUtils.Orientation.VERTICAL, 5f, "", 1f, Colors.silver);
+					EditorUtils.Separator(EditorUtils.Orientation.VERTICAL, 5f, "", 1f, EditorUtils.DEFAULT_SEPARATOR_COLOR);
 
 					// Unload - only if there is a level loaded
 					GUI.enabled = (m_activeLevel != null && !EditorApplication.isPlaying);
@@ -254,7 +254,7 @@ public class LevelEditorWindow : EditorWindow {
 				} EditorUtils.EndHorizontalSafe();
 
 				// Separator
-				EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 5f, "", 1, Colors.silver);
+				EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 5f, "", 1, EditorUtils.DEFAULT_SEPARATOR_COLOR);
 
 				// Dragon selector
 				// Only enabled if a level is active and application is not active

@@ -25,6 +25,8 @@ public static class EditorUtils {
 		VERTICAL
 	};
 
+	public static readonly Color DEFAULT_SEPARATOR_COLOR = new Color(0.65f, 0.65f, 0.65f);	// Silver-ish
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -40,6 +42,13 @@ public static class EditorUtils {
 	/// <param name="_title">The title to be displayed on the separator, optional.</param>
 	/// <param name="_size">The size in pixels of the separator, optional.</param>
 	public static float Separator(Rect _pos, string _title = "", float _size = 40f) {
+		// Initialized style for a line
+		// [AOC] We will be drawing a box actually, so copy some values from the box style
+		GUIStyle lineStyle = new GUIStyle();
+		lineStyle.normal.background = Texture2DExtensions.Create(2, 2, DEFAULT_SEPARATOR_COLOR);
+		lineStyle.margin = EditorStyles.helpBox.margin;
+		lineStyle.padding = EditorStyles.helpBox.padding;
+
 		// Store separator size
 		_pos.height = _size;
 
@@ -53,7 +62,7 @@ public static class EditorUtils {
 			// No! Draw a single line from left to right
 			lineBounds.x = _pos.x;
 			lineBounds.width = _pos.width;
-			GUI.Box(lineBounds, "");
+			GUI.Box(lineBounds, "", lineStyle);
 		} else {
 			// Yes!
 			// Compute title's width
@@ -61,13 +70,14 @@ public static class EditorUtils {
 			GUIStyle titleStyle = new GUIStyle(EditorStyles.label);	// Default label style
 			titleStyle.alignment = TextAnchor.MiddleCenter;	// Alignment!
 			titleStyle.fontStyle = FontStyle.Italic;
+			titleStyle.normal.textColor = Colors.gray;
 			float titleWidth = titleStyle.CalcSize(titleContent).x;
 			titleWidth += 10f;	// Add some spacing around the title
 			
 			// Draw line at the left of the title
 			lineBounds.x = _pos.x;
 			lineBounds.width = _pos.width/2f - titleWidth/2f;
-			GUI.Box(lineBounds, "");
+			GUI.Box(lineBounds, "", lineStyle);
 			
 			// Draw title
 			Rect titleBounds = _pos;	// Using whole area's height
@@ -78,7 +88,7 @@ public static class EditorUtils {
 			// Draw line at the right of the title
 			lineBounds.x = titleBounds.xMax;	// Concatenate to the title label
 			lineBounds.width = _pos.width/2f - titleWidth/2f;
-			GUI.Box(lineBounds, "");
+			GUI.Box(lineBounds, "", lineStyle);
 		}
 
 		return _pos.height;
@@ -96,7 +106,7 @@ public static class EditorUtils {
 		// Initialized style for a line
 		// [AOC] We will be drawing a box actually, so copy some values from the box style
 		GUIStyle lineStyle = new GUIStyle();
-		Color lineColor = _color ?? new Color(0.70f, 0.70f, 0.70f);	// Silver-ish, Nullable type check, see https://msdn.microsoft.com/en-us/library/1t3y8s4s.aspx
+		Color lineColor = _color ?? DEFAULT_SEPARATOR_COLOR;	// Nullable type check, see https://msdn.microsoft.com/en-us/library/1t3y8s4s.aspx
 		lineStyle.normal.background = Texture2DExtensions.Create(2, 2, lineColor);
 		lineStyle.margin = EditorStyles.helpBox.margin;
 		lineStyle.padding = EditorStyles.helpBox.padding;
@@ -122,6 +132,7 @@ public static class EditorUtils {
 			GUIStyle textStyle = new GUIStyle(EditorStyles.label);	// Default label style
 			textStyle.alignment = TextAnchor.MiddleCenter;	// Alignment!
 			textStyle.fontStyle = FontStyle.Italic;
+			textStyle.normal.textColor = Colors.gray;
 			Vector2 textSize = textStyle.CalcSize(textContent);
 
 			// We need to create a layout with flexible spaces to each part so the line and the title are aligned
