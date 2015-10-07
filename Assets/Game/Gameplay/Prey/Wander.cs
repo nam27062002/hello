@@ -12,6 +12,9 @@ public class Wander : Steering {
 	private float m_timer;
 	private Vector2 m_target;
 
+	void OnEnable() {
+		m_timer = 0;
+	}
 
 	void Update() {
 

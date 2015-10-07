@@ -32,7 +32,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 	private DragonPlayer m_dragon;
 	private DragonBoostBehaviour m_dragonBoost;
 			
-	private GameObject m_bloodEmitter;
+	private List<GameObject> m_bloodEmitter;
 
 	
 	//-----------------------------------------------
@@ -52,8 +52,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
 
 		m_prey = new List<PreyData>();
-
-		m_bloodEmitter = null;
+		m_bloodEmitter = new List<GameObject>();
 
 		m_slowedDown = false;
 	}
@@ -128,13 +127,24 @@ public class DragonEatBehaviour : MonoBehaviour {
 			}
 		}
 
-		if (m_bloodEmitter != null && m_bloodEmitter.activeInHierarchy) {
+		if (m_bloodEmitter.Count > 0) {
+			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -50f;
-			m_bloodEmitter.transform.position = bloodPos;
-		} else {
-			m_bloodEmitter = null;
-		}		
+			bloodPos.z = -1f;
+
+			for (int i = 0; i < m_bloodEmitter.Count; i++) {
+				if (m_bloodEmitter[i] != null && m_bloodEmitter[i].activeInHierarchy) {
+					m_bloodEmitter[i].transform.position = bloodPos;
+					empty = false;
+				} else {
+					m_bloodEmitter[i] = null;
+				}
+			}
+
+			if (empty) {
+				m_bloodEmitter.Clear();
+			}
+		}
 	}
 
 	public bool Eat(EdibleBehaviour _prey) {
@@ -164,11 +174,9 @@ public class DragonEatBehaviour : MonoBehaviour {
 					m_animator.SetTrigger("crazy_eat");
 				}
 
-				if (m_bloodEmitter == null) {
-					Vector3 bloodPos = m_mouth.position;
-					bloodPos.z = -50f;
-					m_bloodEmitter = InstanceManager.particles.Spaw("bloodchurn-large", bloodPos);
-				}
+				Vector3 bloodPos = m_mouth.position;
+				bloodPos.z = -50f;
+				m_bloodEmitter.Add(InstanceManager.particles.Spaw("bloodchurn-large", bloodPos));
 
 				return true;
 			}

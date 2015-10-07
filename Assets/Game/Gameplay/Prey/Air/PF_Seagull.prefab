@@ -614,8 +614,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_avoidRadiusRange:
-    min: 100
-    max: 150
+    min: 5
+    max: 6
 --- !u!114 &11430510
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -651,7 +651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
-  m_steerForce: .600000024
+  m_steerForce: 2
   m_maxSpeed: 3
   m_mass: .349999994
 --- !u!114 &11468634
@@ -696,8 +696,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 4
-  m_sensorMaxRadius: 5
+  m_sensorMinRadius: 5
+  m_sensorMaxRadius: 6
   m_sensorAngle: 93
   m_sensorAngleOffset: 0
 --- !u!114 &11491362
@@ -775,7 +775,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: .600000024
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
@@ -803,11 +803,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 400
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 500
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
@@ -815,11 +815,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadiusRange.min
-      value: 100
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadiusRange.max
-      value: 150
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_canAttack
