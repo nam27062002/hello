@@ -40,4 +40,10 @@ public class ParticleManager : Singleton<ParticleManager> {
 	public static void Clear() {
 		instance.m_particles.Clear();
 	}
+
+	private void OnLevelWasLoaded() {
+		// Clear the manager with every new scene
+		// Avoid creating new pools in the Awake calls, do it on the Start at least
+		Clear();
+	}
 }

@@ -66,7 +66,7 @@ public class FlowManager : Singleton<FlowManager> {
 	/// Navigate to the menu scene.
 	/// </summary>
 	public static void GoToMenu() {
-		// Skip if next scene is already game
+		// Skip if next scene is already menu
 		if(SceneManager.nextScene == MenuSceneController.NAME) return;
 
 		// Change scene

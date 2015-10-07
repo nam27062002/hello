@@ -27,4 +27,10 @@ public class PoolManager : Singleton<PoolManager> {
 	public static void Clear() {
 		instance.m_pools.Clear();
 	}
+
+	private void OnLevelWasLoaded() {
+		// Clear the pool manager with every new scene
+		// Avoid creating new pools in the Awake calls, do it on the Start at least
+		Clear();
+	}
 }
