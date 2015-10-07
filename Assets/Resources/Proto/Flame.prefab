@@ -106,8 +106,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   life: .25
-  initialSpeed: 1100
-  drag: 1000
+  initialSpeed: 1
+  drag: 1
   size: 1
 --- !u!212 &21210206
 SpriteRenderer:
@@ -171,6 +171,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: drag
       value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: initialSpeed
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

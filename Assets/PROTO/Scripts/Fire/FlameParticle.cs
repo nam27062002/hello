@@ -4,8 +4,8 @@ using System.Collections;
 public class FlameParticle : MonoBehaviour {
 
 	public float life = 5f;
-	public float initialSpeed = 200f;
-	public float drag = 50f;
+	public float initialSpeed = 1f;
+	public float drag = 0.25f;
 	public float size = 1f;
 
 	float speed;
@@ -45,7 +45,7 @@ public class FlameParticle : MonoBehaviour {
 				
 				transform.position = pos;
 
-				transform.Rotate(rot*200*Time.deltaTime);
+				transform.Rotate(rot*0.2f*Time.deltaTime);
 				
 				if (cscale < tscale){
 					cscale += Time.deltaTime*15f;
@@ -57,7 +57,7 @@ public class FlameParticle : MonoBehaviour {
 					frame = 0;
 					
 					// Create a sphere at pos - (0, 0, collisionDepth/2) and move it to pos + (0, 0, collisionDepth/2), detecting collisions in the path
-					RaycastHit[] hits = Physics.SphereCastAll(new Vector3(pos.x, pos.y, pos.z - collisionDepth/2f), 10, new Vector3(0, 0, 1), collisionDepth, fireMask);
+					RaycastHit[] hits = Physics.SphereCastAll(new Vector3(pos.x, pos.y, pos.z - collisionDepth/2f), 1f, new Vector3(0, 0, 1), collisionDepth, fireMask);
 					//Debug.DrawLine(new Vector3(pos.x, pos.y, pos.z - collisionDepth/2f), new Vector3(pos.x, pos.y, pos.z + collisionDepth/2f));
 					foreach(RaycastHit hit in hits){
 						if (hit.collider != null){

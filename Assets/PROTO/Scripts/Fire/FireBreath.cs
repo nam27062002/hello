@@ -59,7 +59,7 @@ public class FireBreath : DragonBreathBehaviour {
 			foreach(GameObject fireObj in fire){
 				if (!fireObj.activeInHierarchy){
 					fireObj.GetComponent<FlameParticle>().size = fireRate / 10f;
-					fireObj.GetComponent<FlameParticle>().Activate(mouthPosition.position+dir.normalized*(i*1100f*Time.deltaTime),dir, collisionDepth, firePower);
+					fireObj.GetComponent<FlameParticle>().Activate(mouthPosition.position+dir.normalized*(i*10f*Time.deltaTime),dir, collisionDepth, firePower);
 				
 					// We inlcude some of the dragon momentum in the particles initial speed
 					// also, for eahc frame we fire two particles so we need to space them properly

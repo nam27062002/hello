@@ -61,7 +61,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 			} else {
 				
-				Fire(500f);
+				Fire(15f);
 				m_animator.SetBool("fire", true);
 			}
 		} else {
