@@ -148,7 +148,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 				if (m_bloodEmitter == null) {
 					Vector3 bloodPos = m_mouth.position;
 					bloodPos.z = -50f;
-					m_bloodEmitter = InstanceManager.particles.Spaw("bloodchurn-large", bloodPos);
+					m_bloodEmitter = ParticleManager.Spawn("bloodchurn-large", bloodPos);
 				}
 
 				return true;

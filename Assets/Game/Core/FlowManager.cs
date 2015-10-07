@@ -93,6 +93,7 @@ public class FlowManager : Singleton<FlowManager> {
 		UserProfile.DestroyInstance();
 		InstanceManager.DestroyInstance();
 		PoolManager.Clear();
+		ParticleManager.Clear();
 
 		// Change to the loading scene
 		SceneManager.SwitchScene(LoadingSceneController.NAME);
