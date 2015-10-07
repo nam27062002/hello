@@ -44,7 +44,7 @@ public class LevelEditorWindow : EditorWindow {
 		
 		// Setup window
 		window.titleContent = new GUIContent("Level Editor");
-		window.minSize = new Vector2(250f, 200f);
+		window.minSize = new Vector2(280f, 200f);
 		//window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
 
 		// Make sure everything is initialized properly
@@ -324,8 +324,8 @@ public class LevelEditorWindow : EditorWindow {
 
 				// Add spawner
 				if(GUILayout.Button("Add Spawner")) {
-					// [AOC] TODO!!
-					ShowNotification(new GUIContent("TODO!!"));
+					// An external window will manage it
+					AddSpawnerWindow.Show(m_activeLevel);
 				}
 			}
 

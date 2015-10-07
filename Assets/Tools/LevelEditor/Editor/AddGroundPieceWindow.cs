@@ -134,15 +134,13 @@ public class AddGroundPieceWindow : EditorWindow {
 					groundPieceObj.transform.SetPosZ(0f);
 				}
 
-				// Focus camera to the new object
-				sceneCamera.transform.LookAt(groundPieceObj.transform.position);
-				SceneView.lastActiveSceneView.pivot = groundPieceObj.transform.position;	// Apparently changing the camera doesn't work properly
-				SceneView.lastActiveSceneView.Repaint();
-				
 				// Select new object in the hierarchy
 				Selection.activeGameObject = groundPieceObj;
 				EditorGUIUtility.PingObject(groundPieceObj);
-				
+
+				// Focus camera to the new object
+				SceneView.FrameLastActiveSceneView();
+
 				// Close window
 				Close();
 			}

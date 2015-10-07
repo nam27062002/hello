@@ -8,7 +8,7 @@ public class Spawner : MonoBehaviour {
 	// Properties
 	//-----------------------------------------------
 	[Header("Entity")]
-	[SerializeField] private GameObject m_entityPrefab;
+	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] protected RangeInt m_quantity;
 
 	[Header("Activation")]
