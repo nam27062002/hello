@@ -105,13 +105,12 @@ public class HumanBehaviour : PreyBehaviour {
 		// teleport to ground
 		RaycastHit ground;
 		Vector3 testPosition = m_positionLast + Vector2.up * 5f;
-		
-		if (Physics.Linecast(testPosition, testPosition + Vector3.down * m_area.bounds.size.y * 2, out ground, m_groundMask)) {
+
+		if (Physics.Linecast(testPosition, testPosition + Vector3.down * 15f, out ground, m_groundMask)) {
 			m_position.y = ground.point.y;
+			m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 			m_velocity.y = 0;
 		}
-
-		m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 	}
 
 	private void ChangeState(State _newSate) {

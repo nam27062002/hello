@@ -9,12 +9,12 @@ public class Spawner : MonoBehaviour {
 	//-----------------------------------------------
 	[Header("Entity")]
 	[SerializeField] private GameObject m_entityPrefab;
-	[SerializeField] protected RangeInt m_quantity;
+	[SerializeField] protected RangeInt m_quantity = new RangeInt(1, 1);
 
 	[Header("Activation")]
 	[SerializeField] private float m_enableTime;
 	[SerializeField] private float m_disableTime;
-	[SerializeField] private float m_playerDistance;
+	[SerializeField] private float m_playerDistance = 15f;
 
 	[Header("Respawn")]
 	[SerializeField] private Range m_spawnTime;
@@ -178,7 +178,10 @@ public class Spawner : MonoBehaviour {
 		if (area != null) {
 			area.bounds.DrawGizmo();
 		} else {
-			Gizmos.DrawSphere(transform.position, 100);
+			Color color = Color.yellow;
+			color.a = 0.25f;
+			Gizmos.color = color;
+			Gizmos.DrawSphere(transform.position, 0.5f);
 		}
 	}
 }

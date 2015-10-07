@@ -64,7 +64,7 @@ public class PreyBehaviour : Initializable {
 		m_positionLast = m_position = transform.position;
 
 		//start at random anim position - Move to Bird Behaviour
-		m_animator.Play("fly", 0, Random.Range(0f, 1f));
+		//m_animator.Play("fly", 0, Random.Range(0f, 1f));
 	}
 
 
@@ -134,8 +134,6 @@ public class PreyBehaviour : Initializable {
 		_steering = _steering / m_mass;
 		
 		m_velocity = Vector2.ClampMagnitude(m_velocity + _steering, m_maxSpeed);
-
-		Debug.Log(m_velocity);
 
 		if (m_velocity != Vector2.zero) {
 			m_direction = m_velocity.normalized;
