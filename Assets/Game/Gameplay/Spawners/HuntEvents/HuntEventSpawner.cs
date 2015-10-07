@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class HuntEventSpawner : MonoBehaviour {
@@ -19,16 +19,14 @@ public class HuntEventSpawner : MonoBehaviour {
 	private GameObject m_currentTarget;
 
 	private DragonGrabBehaviour m_player;
-	private PoolController m_poolController;
 
 
 	// Use this for initialization
 	void Start() {
 
 		m_player = GameObject.Find ("Player").GetComponent<DragonGrabBehaviour>();
-		m_poolController = GameObject.Find ("Pool Controller").GetComponent<PoolController>();
 
-		m_poolController.CreatePool(Resources.Load<GameObject>("PROTO/HuntFalcon"), 2, true);
+		PoolManager.CreatePool(Resources.Load<GameObject>("PROTO/HuntFalcon"), 2, true);
 
 		m_spawners = new List<Transform>();
 		m_spawnChance = new List<float>();
@@ -90,7 +88,7 @@ public class HuntEventSpawner : MonoBehaviour {
 
 		Vector3 pos = bounds.center;
 
-		m_currentTarget = m_poolController.GetInstance("HuntFalcon");
+		m_currentTarget = PoolManager.GetInstance("HuntFalcon");
 		m_currentTarget.transform.position = pos;
 		m_currentTarget.GetComponent<SpawnableBehaviour>().Spawn(bounds);
 

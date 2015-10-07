@@ -178,6 +178,35 @@ public class SceneManager : Singleton<SceneManager> {
 		ESceneState oldState = m_sceneState;
 		m_sceneState = _newState;
 
+		// Perform actions based on new state
+		switch(_newState) {
+			case ESceneState.RESET: {
+				// Run a GC pass
+				System.GC.Collect();
+			} break;
+
+			case ESceneState.PRELOAD: {
+				// Trigger the load of the new scene
+				m_loadTask = Application.LoadLevelAsync(nextScene);
+			} break;
+
+			case ESceneState.UNLOAD: {
+				// Trigger the unload of the current scene
+				m_unloadTask = Resources.UnloadUnusedAssets();
+			} break;
+
+			case ESceneState.POSTLOAD: {
+				// Update scene tracking
+				m_currentScene = m_nextScene;
+			} break;
+
+			case ESceneState.READY: {
+				// Run a GC pass
+				// [AOC] WARNING!! If we have assets loaded in the scene that are currentlu unused but may be used later, DON'T do this here (comment the following line)
+				System.GC.Collect();
+			} break;
+		}
+
 		// Dispatch event
 		Messenger.Broadcast<ESceneState, ESceneState>(EngineEvents.SCENE_STATE_CHANGED, oldState, m_sceneState);
 	}
@@ -189,8 +218,7 @@ public class SceneManager : Singleton<SceneManager> {
 	/// Update delegate for the RESET scene state.
 	/// </summary>
 	private void UpdateReset() {
-		// Just run a GC pass
-		System.GC.Collect();
+		// Immediately move to next state
 		ChangeState(ESceneState.PRELOAD);
 	}
 
@@ -198,8 +226,7 @@ public class SceneManager : Singleton<SceneManager> {
 	/// Update delegate for the PRELOAD scene state.
 	/// </summary>
 	private void UpdatePreload() {
-		// Trigger the load of the new scene
-		m_loadTask = Application.LoadLevelAsync(nextScene);
+		// Immediately move to next state
 		ChangeState(ESceneState.LOAD);
 	}
 
@@ -218,15 +245,10 @@ public class SceneManager : Singleton<SceneManager> {
 	/// Update delegate for the UNLOAD scene state.
 	/// </summary>
 	private void UpdateUnload() {
-		// Are we already cleaning up?
-		if(m_unloadTask == null) {
-			m_unloadTask = Resources.UnloadUnusedAssets();
-		} else {
-			// Have we finished cleaning up?
-			if(m_unloadTask.isDone) {
-				m_unloadTask = null;
-				ChangeState(ESceneState.POSTLOAD);
-			}
+		// Have we finished cleaning up?
+		if(m_unloadTask.isDone) {
+			m_unloadTask = null;
+			ChangeState(ESceneState.POSTLOAD);
 		}
 	}
 
@@ -234,8 +256,7 @@ public class SceneManager : Singleton<SceneManager> {
 	/// Update delegate for the POSTLOAD scene state.
 	/// </summary>
 	private void UpdatePostload() {
-		// Update scene tracking
-		m_currentScene = m_nextScene;
+		// Immediately move to next state
 		ChangeState(ESceneState.READY);
 	}
 
@@ -243,9 +264,7 @@ public class SceneManager : Singleton<SceneManager> {
 	/// Update delegate for the READY scene state.
 	/// </summary>
 	private void UpdateReady() {
-		// Run a GC pass
-		// [AOC] WARNING!! If we have assets loaded in the scene that are currentlu unused but may be used later, DON'T do this here (comment the following line)
-		System.GC.Collect();
+		// Immediately move to next state
 		ChangeState(ESceneState.RUN);
 	}
 

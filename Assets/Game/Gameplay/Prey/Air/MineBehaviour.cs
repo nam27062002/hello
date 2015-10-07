@@ -22,7 +22,7 @@ public class MineBehaviour : Initializable {
 	// Use this for initialization
 	void Start() {
 	
-		InstanceManager.pools.CreatePool(m_explosionPrefab, 5, false);
+		PoolManager.CreatePool(m_explosionPrefab, 5, false);
 
 		m_dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 
@@ -46,7 +46,7 @@ public class MineBehaviour : Initializable {
 			if (m_timer <= 0) {
 
 				m_timer = 0;
-				GameObject explosion = InstanceManager.pools.GetInstance(m_explosionPrefab.name);
+				GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);
 
 				// Random position within range
 				explosion.transform.position = transform.position;

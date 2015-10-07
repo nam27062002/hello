@@ -92,6 +92,7 @@ public class FlowManager : Singleton<FlowManager> {
 		DragonManager.DestroyInstance();
 		UserProfile.DestroyInstance();
 		InstanceManager.DestroyInstance();
+		PoolManager.Clear();
 
 		// Change to the loading scene
 		SceneManager.SwitchScene(LoadingSceneController.NAME);

@@ -45,8 +45,6 @@ public class ThunderStorm : MonoBehaviour {
 		private float m_branchOffsetFactor = 0.5f;
 		private float m_branchLengthFactor = 0.7f;
 
-		private PoolController m_poolController;
-
 		private float m_alpha;
 
 
@@ -57,8 +55,7 @@ public class ThunderStorm : MonoBehaviour {
 			m_branches = new List<ThunderBranch>();			
 			
 			//add a thunder branch into Pool Controller
-			m_poolController = GameObject.Find ("Pool Controller").GetComponent<PoolController>();		
-			m_poolController.CreatePool((GameObject)Resources.Load("PROTO/WeatherEffects/ThunderStorm/ThunderBranch"), (m_segmentDivisions - 1) * (m_segmentDivisions - 1), false);
+			PoolManager.CreatePool((GameObject)Resources.Load("PROTO/WeatherEffects/ThunderStorm/ThunderBranch"), (m_segmentDivisions - 1) * (m_segmentDivisions - 1), false);
 		}
 		
 		public void Destroy () {
@@ -87,7 +84,7 @@ public class ThunderStorm : MonoBehaviour {
 			float maxBranches = Random.Range(5, (m_segmentDivisions - 1) * (m_segmentDivisions - 1));
 
 			ThunderBranch main = new ThunderBranch(0);
-			main.gameObject = m_poolController.GetInstance("ThunderBranch");
+			main.gameObject = PoolManager.GetInstance("ThunderBranch");
 			main.segments.Add(new Segment(_source, _target));
 			m_branches.Add(main);
 
@@ -111,7 +108,7 @@ public class ThunderStorm : MonoBehaviour {
 						if (d < m_segmentDivisions - 1 && m_branches.Count < maxBranches) {
 
 							if (Random.Range(0f, 1f) < m_branchingProbability) {
-								GameObject branchGO = m_poolController.GetInstance("ThunderBranch");; // get from pool
+								GameObject branchGO = PoolManager.GetInstance("ThunderBranch");; // get from pool
 								if (branchGO != null) {
 									Vector3 dir = pointC - currentSegment.pointA;
 									float maxBranchDirOffset = dir.magnitude * m_branchOffsetFactor;

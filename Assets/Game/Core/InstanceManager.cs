@@ -38,13 +38,6 @@ public class InstanceManager : Singleton<InstanceManager> {
 		set { if(instance != null) instance.m_player = value; }
 	}
 
-	// Main pool of game objects, we use it to store all the objects that will be destroyed and spawned several times 
-	private PoolController m_poolController = null;
-	public static PoolController pools { 
-		get { return instance.m_poolController; }
-		set { if(instance != null) instance.m_poolController = value; }
-	}
-
 	// Spawner of particles. It also maintains and reuse instances. Its like a pool of particles
 	private ParticleController m_particleController = null;
 	public static ParticleController particles { 
