@@ -60,7 +60,11 @@ public class DragonEatBehaviour : MonoBehaviour {
 	void OnDisable() {
 
 		m_eatingTimer = 0;
-		m_slowedDown = false;
+		if (m_slowedDown) {
+			m_dragon.SetSpeedMultiplier(1f);
+			m_dragonBoost.ResumeBoost();
+			m_slowedDown = false;
+		}
 
 		for (int i = 0; i < m_prey.Count; i++) {			
 			if (m_prey[i].prey != null) {

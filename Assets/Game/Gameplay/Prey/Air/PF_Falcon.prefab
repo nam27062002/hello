@@ -51,7 +51,6 @@ GameObject:
   - 114: {fileID: 11452716}
   - 114: {fileID: 11482134}
   - 114: {fileID: 11487176}
-  - 135: {fileID: 13503310}
   m_Layer: 8
   m_Name: PF_Falcon
   m_TagString: Untagged
@@ -576,6 +575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
+  m_checkFireTime: .100000001
 --- !u!114 &11406306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -737,18 +737,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_slowingRadius: 1
---- !u!135 &13503310
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119150}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .980000019
-  m_Center: {x: .239999995, y: .209999993, z: 0}
 --- !u!137 &13756092
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -893,6 +881,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_checkFireTime
+      value: .100000001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

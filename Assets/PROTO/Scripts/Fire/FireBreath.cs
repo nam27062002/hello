@@ -5,18 +5,30 @@ using System.Collections.Generic;
 
 public class FireBreath : DragonBreathBehaviour {
 
+	[SerializeField]private AnimationCurve m_sizeCurve = AnimationCurve.Linear(0, 0, 1, 3f);	// Will be used by the inspector to easily setup the values for each level
 
-	public float fireRate = 10f; // Fire particles per second
-	public float firePower = 1f;
-	//float timer;
+	public int spawn = 2;
 
     const int maxFireParticles = 256;
 	GameObject[] fire = new GameObject[maxFireParticles];
 
-	public float collisionDepth = 1000f;
+
 
 	Transform mouthPosition;
 	Transform headPosition;
+
+
+	Vector3 direction;
+	Vector3 directionP;
+	float magnitude;
+
+
+	Vector3 m_p0;
+	Vector3 m_p1;
+	Vector3 m_p2;
+
+	float m_area;
+
 
 	override protected void ExtendedStart() {
 		GameObject instancesObj = GameObject.Find ("Instances");
@@ -42,31 +54,51 @@ public class FireBreath : DragonBreathBehaviour {
 		headPosition = transform.FindSubObjectTransform("head");
 
 	}
-	/*
-	override protected void ExtendedUpdate () {
-		timer -= Time.deltaTime;
-	}*/
 
-	override protected void Fire(float _magnitude){
-
-
-		Vector3 dir = mouthPosition.position - headPosition.position;
-		dir.z = 0f;
-		dir.Normalize();
-		dir *= _magnitude;
+	override public bool IsInsideArea(Vector3 _point) { 
 	
-		for(int i=0;i<2;i++){
-			foreach(GameObject fireObj in fire){
-				if (!fireObj.activeInHierarchy){
-					fireObj.GetComponent<FlameParticle>().size = fireRate / 10f;
-					fireObj.GetComponent<FlameParticle>().Activate(mouthPosition.position+dir.normalized*(i*10f*Time.deltaTime),dir, collisionDepth, firePower);
-				
-					// We inlcude some of the dragon momentum in the particles initial speed
-					// also, for eahc frame we fire two particles so we need to space them properly
-					//timer = 1f/fireRate;
+		if (m_isFuryOn) {
+			float sign = m_area < 0 ? -1 : 1;
+			float s = (m_p0.y * m_p2.x - m_p0.x * m_p2.y + (m_p2.y - m_p0.y) * _point.x + (m_p0.x - m_p2.x) * _point.y) * sign;
+			float t = (m_p0.x * m_p1.y - m_p0.y * m_p1.x + (m_p0.y - m_p1.y) * _point.x + (m_p1.x - m_p0.x) * _point.y) * sign;
+			
+			return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
+		}
+
+		return false; 
+	}
+
+	override protected void Fire(){
+
+
+		direction = mouthPosition.position - headPosition.position;
+		direction.z = 0f;
+		direction.Normalize();
+		magnitude = m_length;
+
+		directionP = new Vector3(direction.y, -direction.x, 0);
+	
+		int count = 0;
+		foreach(GameObject fireObj in fire){
+			if (!fireObj.activeInHierarchy){
+				fireObj.GetComponent<FlameParticle>().Activate(mouthPosition, direction * m_length, Random.Range(0.75f, 1.25f), m_sizeCurve);
+			
+				count++;
+
+				if (count > spawn)
 					break;
-				}
 			}
 		}
+	
+		// Pre-Calculate Triangle
+		m_p0 = mouthPosition.position;
+		m_p1 = m_p0 + direction * m_length - directionP * m_sizeCurve.Evaluate(1) * 0.5f;
+		m_p2 = m_p0 + direction * m_length + directionP * m_sizeCurve.Evaluate(1) * 0.5f;
+		m_area = (-m_p1.y * m_p2.x + m_p0.y * (-m_p1.x + m_p2.x) + m_p0.x * (m_p1.y - m_p2.y) + m_p1.x * m_p2.y) * 0.5f;
+
+
+		Debug.DrawLine(m_p0, m_p1, Color.white);
+		Debug.DrawLine(m_p1, m_p2, Color.white);
+		Debug.DrawLine(m_p2, m_p0, Color.white);
 	}
 }

@@ -110,7 +110,7 @@ public class FireRay : DragonBreathBehaviour {
 
 	}
 	
-	override protected void Fire(float _magnitude) {
+	override protected void Fire() {
 
 		if (!firing){
 				

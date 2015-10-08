@@ -1950,9 +1950,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 30
-  firePower: 10
-  collisionDepth: 1000
+  m_length: 4.86000013
+  m_damage: 25
+  m_sizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: .851489484
+      outSlope: .851489484
+      tangentMode: 0
+    - time: 1.1070329
+      value: 5.39926863
+      inSlope: 2.63044333
+      outSlope: 2.63044333
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spawn: 4
 --- !u!135 &13519264
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -2084,6 +2099,10 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
@@ -2155,6 +2174,62 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: movementLimitX.min
       value: -500
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].value
+      value: 5.39926863
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].time
+      value: 1.1070329
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].inSlope
+      value: 2.63044333
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].outSlope
+      value: 2.63044333
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].inSlope
+      value: .851489484
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].outSlope
+      value: .851489484
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_length
+      value: 4.86000013
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].time
+      value: 1.00542963
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].value
+      value: 5.0848403
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].inSlope
+      value: 2.27242064
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].outSlope
+      value: 2.27242064
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: spawn
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damage
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

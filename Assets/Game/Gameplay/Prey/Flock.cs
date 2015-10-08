@@ -63,7 +63,7 @@ public class Flock : Steering {
 			}
 		}
 		
-		Debug.DrawLine(m_prey.position, m_prey.position + avoid);
+		Debug.DrawLine(m_prey.position, m_prey.position + avoid, Color.yellow);
 		
 		return avoid;
 	}

@@ -259,7 +259,6 @@ GameObject:
   - 114: {fileID: 11426808}
   - 114: {fileID: 11409122}
   - 114: {fileID: 11402296}
-  - 65: {fileID: 6558578}
   m_Layer: 8
   m_Name: PF_Human
   m_TagString: Untagged
@@ -684,18 +683,6 @@ Transform:
   - {fileID: 436356}
   m_Father: {fileID: 474536}
   m_RootOrder: 0
---- !u!65 &6558578
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167244}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: .419999987, y: 1.90999997, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &9598238
 Animator:
   serializedVersion: 3
@@ -739,6 +726,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
+  m_checkFireTime: .100000001
 --- !u!114 &11411800
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -783,7 +771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
-  m_size: 7.73999977
+  m_size: 2
   m_isBig: 1
   m_destroyOnEat: 0
 --- !u!114 &11461256
@@ -949,7 +937,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_size
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
@@ -982,6 +970,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_LocalScale.z
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_checkFireTime
+      value: .100000001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

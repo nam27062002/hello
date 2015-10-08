@@ -96,12 +96,19 @@ public class PreyBehaviour : Initializable {
 
 			steering += m_seek.GetForce(target);
 		}
+		
+		if (m_flock && m_flock.HasController()) {
+			
+			steering += m_flock.GetForce();
+		}
 
 		if (playerDetected) {
 
 			if (m_attack && !m_attack.enabled) {
 				m_attack.enabled = true;
 			}
+
+			steering *= 0.5f;
 
 			if (m_evade) {
 				DragonPlayer player = InstanceManager.player;
@@ -116,10 +123,9 @@ public class PreyBehaviour : Initializable {
 			}
 		}
 
-		if (m_flock && m_flock.HasController()) {
 
-			steering += m_flock.GetForce();
-		}
+		
+		Debug.DrawLine(m_position, m_position + steering, Color.magenta);
 				
 		UpdateVelocity(steering);
 		UpdatePosition();

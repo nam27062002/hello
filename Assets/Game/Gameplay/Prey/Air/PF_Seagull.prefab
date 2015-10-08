@@ -291,7 +291,6 @@ GameObject:
   - 114: {fileID: 11418280}
   - 114: {fileID: 11404788}
   - 114: {fileID: 11405894}
-  - 135: {fileID: 13586180}
   m_Layer: 8
   m_Name: PF_Seagull
   m_TagString: Untagged
@@ -640,6 +639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
+  m_checkFireTime: .100000001
 --- !u!114 &11444670
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -652,7 +652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
-  m_steerForce: 2
+  m_steerForce: .25
   m_maxSpeed: 6
   m_mass: .349999994
 --- !u!114 &11468634
@@ -697,9 +697,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 5
-  m_sensorMaxRadius: 6
-  m_sensorAngle: 93
+  m_sensorMinRadius: 8.43000031
+  m_sensorMaxRadius: 8.43000031
+  m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11491362
 MonoBehaviour:
@@ -713,18 +713,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_slowingRadius: 1
---- !u!135 &13586180
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 196200}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .889999986
-  m_Center: {x: .150000006, y: .360000014, z: 0}
 --- !u!137 &13774860
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -788,7 +776,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: 2
+      value: .25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
@@ -808,7 +796,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorAngle
-      value: 93
+      value: 360
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fleeForce
@@ -820,7 +808,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
@@ -849,6 +837,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_checkFireTime
+      value: .100000001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
