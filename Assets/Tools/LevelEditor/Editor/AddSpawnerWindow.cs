@@ -229,6 +229,13 @@ public class AddSpawnerWindow : EditorWindow {
 			newSpawnerObj.transform.SetPosZ(0f);
 		}
 
+		// Add and initialize the transform lock component
+		// Arbitrary default values fitted to the most common usage when level editing
+		TransformLock newLock = newSpawnerObj.AddComponent<TransformLock>();
+		newLock.SetPositionLock(false, false, true);
+		newLock.SetRotationLock(true, true, true);
+		newLock.SetScaleLock(true, true, true);
+
 		// Add the spawner component - and optionally a suffix
 		Spawner sp = null;
 		switch(m_type) {

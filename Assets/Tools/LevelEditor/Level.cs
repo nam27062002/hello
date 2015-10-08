@@ -54,6 +54,9 @@ public class Level : MonoBehaviour {
 		m_terrainObj = InitComponent(TERRAIN);
 		m_spawnersObj = InitComponent(SPAWNERS);
 		m_decoObj = InitComponent(DECO);
+
+		// Make ouselves static, we don't want to accidentally move the parent object
+		this.gameObject.isStatic = true;
 	}
 
 	/// <summary>
@@ -85,7 +88,7 @@ public class Level : MonoBehaviour {
 	/// not found, it will be created. If found outside the level object, it will 
 	/// be moved into it.
 	/// </summary>
-	/// <param name="_componentName">_component name.</param>
+	/// <param name="_componentName">The name of the component to be found.</param>
 	private GameObject InitComponent(string _componentName) {
 		// Look for the object
 		GameObject obj = GameObject.Find(_componentName);
@@ -101,6 +104,9 @@ public class Level : MonoBehaviour {
 			// No! Put it as child of the level object
 			obj.transform.SetParent(this.transform, true);
 		}
+
+		// Make it static, we don't want to accidentally move the parent object
+		obj.isStatic = true;
 
 		// Everything fine, return the object
 		return obj;

@@ -134,6 +134,13 @@ public class AddGroundPieceWindow : EditorWindow {
 					groundPieceObj.transform.SetPosZ(0f);
 				}
 
+				// Add and initialize the transform lock component
+				// Arbitrary default values fitted to the most common usage when level editing
+				TransformLock newLock = groundPieceObj.AddComponent<TransformLock>();
+				newLock.SetPositionLock(false, false, true);
+				newLock.SetRotationLock(true, true, false);
+				newLock.SetScaleLock(false, true, true);
+
 				// Select new object in the hierarchy
 				Selection.activeGameObject = groundPieceObj;
 				EditorGUIUtility.PingObject(groundPieceObj);
