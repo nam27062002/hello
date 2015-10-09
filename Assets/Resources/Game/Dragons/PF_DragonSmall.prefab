@@ -1950,8 +1950,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_length: 4.86000013
   m_damage: 25
+  m_length: 4.86000013
   m_sizeCurve:
     serializedVersion: 2
     m_Curve:
@@ -1967,7 +1967,14 @@ MonoBehaviour:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-  spawn: 4
+  m_particleSpawn: 2
+  m_maxParticles: 100
+  m_lifeTime: .5
+  m_dyingTime: 2
+  m_dyingSpeed: 4
+  m_finalScale:
+    min: .75
+    max: 1.25
 --- !u!135 &13519264
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -2230,6 +2237,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_damage
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxParticles
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dyingTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_lifeTime
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

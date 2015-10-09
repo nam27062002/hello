@@ -6,7 +6,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	[SerializeField]protected float m_length = 6f;
 	[SerializeField]private float m_damage = 25f;
 	public float damage { get { return m_damage; } }
 
@@ -84,7 +83,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		ExtendedUpdate();
 	}
 
-	virtual public bool IsInsideArea(Vector3 _point) { return false; }
+	virtual public bool IsInsideArea(Vector2 _point) { return false; }
 	virtual protected void ExtendedStart() {}
 	virtual protected void ExtendedUpdate() {}
 	virtual protected void Fire() {}
