@@ -12,66 +12,53 @@ public class FireBreath : DragonBreathBehaviour {
 	[SerializeField]private int m_maxParticles = 75;
 
 	[Header("Particle")]
-	[SerializeField]private float m_lifeTime = 5f;	
+	[SerializeField]private float m_lifeTime = 5f;
 	[SerializeField]private float m_dyingTime = 0.25f;
 	[SerializeField]private float m_dyingSpeed = 3f;
 	[SerializeField]private Range m_finalScale = new Range(0.75f, 1.25f);
 
-	GameObject[] fire;
+	private int m_groundMask;
 
+	private Transform m_mouthTransform;
+	private Transform m_headTransform;
 
-	Transform mouthPosition;
-	Transform headPosition;
+	private Vector2 m_direction;
+	private Vector2 m_directionP;
 
+	private Vector2 m_triP0;
+	private Vector2 m_triP1;
+	private Vector2 m_triP2;
 
-	Vector2 direction;
-	Vector2 directionP;
+	private Vector2 m_sphCenter;
+	private float m_sphRadius;
+	private float m_sphRadiusSqr;
 
-
-	Vector2 m_triP0;
-	Vector2 m_triP1;
-	Vector2 m_triP2;
-
-	Vector2 m_sphCenter;
-	float m_sphRadius;
-	float m_sphRadiusSqr;
-
-	float m_area;
+	private float m_area;
 
 
 
 
 	override protected void ExtendedStart() {
-		GameObject instancesObj = GameObject.Find ("Instances");
-		if(instancesObj == null) {
-			instancesObj = new GameObject("Instances");
-		}
-		Transform instances = GameObject.Find ("Instances").transform;
 
-		Object firePrefab;
-		firePrefab = Resources.Load("PROTO/Flame");
+		InstanceManager.pools.CreatePool((GameObject)Resources.Load("PROTO/Flame"), m_maxParticles, false);
 
-		fire = new GameObject[m_maxParticles];
-		for(int i=0;i<m_maxParticles;i++){
-			GameObject fireObj = (GameObject)Object.Instantiate(firePrefab);
-			fireObj.transform.parent = instances;
-			fireObj.transform.localPosition = Vector3.zero;
-			fireObj.SetActive(false);
-			fire[i] = fireObj;
-		}
 
-		//timer = 0f;
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
-		mouthPosition = transform.FindSubObjectTransform("fire");
-		headPosition = transform.FindSubObjectTransform("head");
+		m_mouthTransform = transform.FindSubObjectTransform("fire");
+		m_headTransform = transform.FindSubObjectTransform("head");
+
+		m_sphCenter = m_mouthTransform.position;
+		m_sphRadius = 0;
+		m_sphRadiusSqr = 0;
 	}
 
 	override public bool IsInsideArea(Vector2 _point) { 
 	
-		float d = (m_sphCenter - _point).sqrMagnitude;
+		if (m_isFuryOn) {
+			float d = (m_sphCenter - _point).sqrMagnitude;
 
-		if (d < m_sphRadiusSqr) {
-			if (m_isFuryOn) {
+			if (d < m_sphRadiusSqr) {
 				float sign = m_area < 0 ? -1 : 1;
 				float s = (m_triP0.y * m_triP2.x - m_triP0.x * m_triP2.y + (m_triP2.y - m_triP0.y) * _point.x + (m_triP0.x - m_triP2.x) * _point.y) * sign;
 				float t = (m_triP0.x * m_triP1.y - m_triP0.y * m_triP1.x + (m_triP0.y - m_triP1.y) * _point.x + (m_triP1.x - m_triP0.x) * _point.y) * sign;
@@ -85,48 +72,61 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override protected void Fire(){
 
+		float length = m_length;
+		m_direction = m_mouthTransform.position - m_headTransform.position;
+		m_direction.Normalize();
+		m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
 
-		direction = mouthPosition.position - headPosition.position;
-		direction.Normalize();
+		// Raycast to ground
+		RaycastHit ground;				
+		if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) {
+			length = ground.distance;
+		}
 
-		directionP = new Vector3(direction.y, -direction.x, 0);
-	
+		// Spawn particles
 		int count = 0;
-		foreach(GameObject fireObj in fire){
-			if (!fireObj.activeInHierarchy){
-				FlameParticle particle = fireObj.GetComponent<FlameParticle>();
+		for (int i = 0; i < m_particleSpawn; i++) {
 
+			GameObject obj = InstanceManager.pools.GetInstance("Flame");
+
+			if (obj != null) {
+				FlameParticle particle = obj.GetComponent<FlameParticle>();
 				particle.lifeTime = m_lifeTime;
 				particle.dyingTime = m_dyingTime;
 				particle.dyingSpeed = m_dyingSpeed;
 				particle.finalScale = m_finalScale;
-				particle.Activate(mouthPosition, direction * m_length, Random.Range(0.75f, 1.25f), m_sizeCurve);
-			
-				count++;
-
-				if (count > m_particleSpawn)
-					break;
+				particle.Activate(m_mouthTransform, m_direction * length, Random.Range(0.75f, 1.25f), m_sizeCurve);
 			}
 		}
-	
+		
 		// Pre-Calculate Triangle: wider bounding triangle to make burning easier
-		m_triP0 = mouthPosition.position;
-		m_triP1 = m_triP0 + direction * (m_length + m_finalScale.max) - directionP * m_sizeCurve.Evaluate(1) * m_finalScale.max * 0.5f;
-		m_triP2 = m_triP0 + direction * (m_length + m_finalScale.max) + directionP * m_sizeCurve.Evaluate(1) * m_finalScale.max * 0.5f;
+		m_triP0 = m_mouthTransform.position;
+		m_triP1 = m_triP0 + m_direction * (length + m_finalScale.max) - m_directionP * m_sizeCurve.Evaluate(1) * m_finalScale.max * 0.5f;
+		m_triP2 = m_triP0 + m_direction * (length + m_finalScale.max) + m_directionP * m_sizeCurve.Evaluate(1) * m_finalScale.max * 0.5f;
 		m_area = (-m_triP1.y * m_triP2.x + m_triP0.y * (-m_triP1.x + m_triP2.x) + m_triP0.x * (m_triP1.y - m_triP2.y) + m_triP1.x * m_triP2.y) * 0.5f;
 
-		m_sphCenter = m_triP0 + direction * (m_length + m_finalScale.max) * 0.5f;
+		// Circumcenter
+		float c = ((m_triP0.x + m_triP1.x) * 0.5f) + ((m_triP0.y + m_triP1.y) * 0.5f) * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
+		float d = ((m_triP2.x + m_triP1.x) * 0.5f) + ((m_triP2.y + m_triP1.y) * 0.5f) * ((m_triP2.y - m_triP1.y) / (m_triP2.x - m_triP1.x)); 
+
+		m_sphCenter.y = (d - c) / (((m_triP2.y - m_triP1.y) / (m_triP2.x - m_triP1.x)) - ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x)));
+		m_sphCenter.x = c - m_sphCenter.y * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
+
 		m_sphRadius = (m_sphCenter - m_triP1).magnitude;
 		m_sphRadiusSqr = m_sphRadius * m_sphRadius;
 	}
 
 	void OnDrawGizmos() {
-		Gizmos.color = Color.white;
+
+		Gizmos.color = Color.magenta;
 
 		Gizmos.DrawLine(m_triP0, m_triP1);
 		Gizmos.DrawLine(m_triP1, m_triP2);
 		Gizmos.DrawLine(m_triP2, m_triP0);
 
 		Gizmos.DrawWireSphere(m_sphCenter, m_sphRadius);
+
+		Gizmos.color = Color.green;
+		Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
 	}
 }
