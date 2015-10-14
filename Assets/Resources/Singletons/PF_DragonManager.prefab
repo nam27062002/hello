@@ -95,15 +95,15 @@ MonoBehaviour:
       m_tidName: TID_SKILL_BITE_NAME
       m_tidDescription: TID_SKILL_BITE_DESC
       m_valueRange:
-        min: .125
-        max: .0125000002
+        min: .25
+        max: .0250000004
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
     - m_type: 1
       m_tidName: TID_SKILL_SPEED_NAME
       m_tidDescription: TID_SKILL_SPEED_DESC
       m_valueRange:
-        min: 700
-        max: 800
+        min: 10
+        max: 16
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
     - m_type: 2
       m_tidName: TID_SKILL_BOOST_NAME
@@ -174,22 +174,22 @@ MonoBehaviour:
       m_tidName: TID_SKILL_BITE_NAME
       m_tidDescription: TID_SKILL_BITE_DESC
       m_valueRange:
-        min: 1
-        max: 2
+        min: .125
+        max: .0125000002
       m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
     - m_type: 1
       m_tidName: TID_SKILL_SPEED_NAME
       m_tidDescription: TID_SKILL_SPEED_DESC
       m_valueRange:
-        min: 600
-        max: 800
+        min: 13
+        max: 19
       m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
     - m_type: 2
       m_tidName: TID_SKILL_BOOST_NAME
       m_tidDescription: TID_SKILL_BOOST_DESC
       m_valueRange:
-        min: 2
-        max: 4
+        min: 2.5
+        max: 4.5
       m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
     - m_type: 3
       m_tidName: TID_SKILL_FIRE_NAME
@@ -238,36 +238,36 @@ MonoBehaviour:
       - 5000
     m_healthRange:
       min: 200
-      max: 500
+      max: 400
     m_scaleRange:
       min: .5
       max: 1.5
     m_healthDrainPerSecond: 10
-    m_maxEnergy: 160
-    m_energyDrainPerSecond: 10
-    m_energyRefillPerSecond: 25
-    m_maxFury: 160
-    m_furyDuration: 15
+    m_maxEnergy: 200
+    m_energyDrainPerSecond: 15
+    m_energyRefillPerSecond: 30
+    m_maxFury: 200
+    m_furyDuration: 10
     m_skills:
     - m_type: 0
       m_tidName: TID_SKILL_BITE_NAME
       m_tidDescription: TID_SKILL_BITE_DESC
       m_valueRange:
-        min: .5
-        max: 10
+        min: .0500000007
+        max: .00499999989
       m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
     - m_type: 1
       m_tidName: TID_SKILL_SPEED_NAME
       m_tidDescription: TID_SKILL_SPEED_DESC
       m_valueRange:
-        min: 800
-        max: 1200
+        min: 16
+        max: 22
       m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
     - m_type: 2
       m_tidName: TID_SKILL_BOOST_NAME
       m_tidDescription: TID_SKILL_BOOST_DESC
       m_valueRange:
-        min: 2
+        min: 3
         max: 4
       m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
     - m_type: 3
@@ -414,7 +414,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_skills.Array.data[1].m_valueRange.max
-      value: 800
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_skills.Array.data[1].m_tidName
@@ -542,7 +542,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_healthRange.max
-      value: 500
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_scaleRange.min
@@ -554,7 +554,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[0].m_valueRange.max
-      value: 10
+      value: .00499999989
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[1].m_type
@@ -562,7 +562,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[1].m_valueRange.max
-      value: 1200
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[2].m_type
@@ -630,7 +630,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[0].m_valueRange.max
-      value: 1
+      value: .0125000002
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[1].m_type
@@ -638,7 +638,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[1].m_valueRange.max
-      value: 800
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[2].m_type
@@ -646,7 +646,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[2].m_valueRange.max
-      value: 4
+      value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[3].m_type
@@ -894,11 +894,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[0].m_valueRange.min
-      value: .5
+      value: .0500000007
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[1].m_valueRange.min
-      value: 800
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[1].m_unlockPrices.Array.data[1]
@@ -922,7 +922,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[2].m_valueRange.min
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[2].m_unlockPrices.Array.data[1]
@@ -946,7 +946,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_skills.Array.data[0].m_valueRange.min
-      value: .125
+      value: .25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[2].m_skills.Array.data[3].m_unlockPrices.Array.data[1]
@@ -1278,11 +1278,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_skills.Array.data[1].m_valueRange.min
-      value: 700
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[1].m_valueRange.min
-      value: 600
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_skills.Array.data[2].m_valueRange.min
@@ -1290,7 +1290,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[1].m_skills.Array.data[2].m_valueRange.min
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_healthDrainPerSecond
@@ -1310,7 +1310,31 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_skills.Array.data[0].m_valueRange.max
-      value: .0125000002
+      value: .0250000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[1].m_skills.Array.data[0].m_valueRange.min
+      value: .125
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[2].m_maxEnergy
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[2].m_energyDrainPerSecond
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[2].m_energyRefillPerSecond
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[2].m_maxFury
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragons.Array.data[2].m_furyDuration
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dragons.Array.data[0].m_tier

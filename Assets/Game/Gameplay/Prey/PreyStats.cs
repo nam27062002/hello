@@ -37,7 +37,10 @@ public class PreyStats : Initializable {
 	// Use this for initialization
 	void Awake() {
 		// keep the original materials, sometimes it will become Gold!
-		m_materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
+		SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();		
+		if (renderer) {
+			m_materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
+		}
 	}
 
 	public override void Initialize() {
@@ -51,15 +54,19 @@ public class PreyStats : Initializable {
 	}
 
 	private void SetGolden(bool _value) {
-		if (_value) {
-			Material goldMat = Resources.Load ("PROTO/Materials/Gold") as Material;
-			Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
-			for (int i = 0; i < materials.Length; i++) {
-				materials[i] = goldMat;
+		SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+
+		if (renderer) {
+			if (_value) {
+				Material goldMat = Resources.Load ("PROTO/Materials/Gold") as Material;
+				Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
+				for (int i = 0; i < materials.Length; i++) {
+					materials[i] = goldMat;
+				}
+				GetComponentInChildren<SkinnedMeshRenderer>().materials = materials;
+			} else {
+				GetComponentInChildren<SkinnedMeshRenderer>().materials = m_materials;
 			}
-			GetComponentInChildren<SkinnedMeshRenderer>().materials = materials;
-		} else {
-			GetComponentInChildren<SkinnedMeshRenderer>().materials = m_materials;
 		}
 
 		m_isGolden = _value;

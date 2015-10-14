@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Spawner : MonoBehaviour {
@@ -9,12 +9,12 @@ public class Spawner : MonoBehaviour {
 	//-----------------------------------------------
 	[Header("Entity")]
 	[SerializeField] public GameObject m_entityPrefab;
-	[SerializeField] protected RangeInt m_quantity;
+	[SerializeField] protected RangeInt m_quantity = new RangeInt(1, 1);
 
 	[Header("Activation")]
 	[SerializeField] private float m_enableTime;
 	[SerializeField] private float m_disableTime;
-	[SerializeField] private float m_playerDistance;
+	[SerializeField] private float m_playerDistance = 15f;
 
 	[Header("Respawn")]
 	[SerializeField] private Range m_spawnTime;
@@ -32,7 +32,8 @@ public class Spawner : MonoBehaviour {
 	private float m_enableTimer;
 	private float m_disableTimer;
 	private float m_spawnTimer;
-	private uint m_spawnCount;	
+	private uint m_spawnCount;
+	private uint m_entityAlive;
 
 	
 	//-----------------------------------------------
@@ -60,6 +61,7 @@ public class Spawner : MonoBehaviour {
 
 		m_spawnTimer = 0;
 		m_spawnCount = 0;
+		m_entityAlive = 0;
 	}
 
 	// entities can remove themselves when are destroyed or auto-disabled
@@ -68,6 +70,7 @@ public class Spawner : MonoBehaviour {
 		for (int i = 0; i < m_entities.Length; i++) {			
 			if (m_entities[i] == _entity) {
 				m_entities[i] = null;
+				m_entityAlive--;
 			}
 		}
 	}
@@ -75,7 +78,7 @@ public class Spawner : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		bool playerNear = CheckPlayerDistance();
+		bool playerNear = IsPlayerNear();
 
 		// A spawner can have a delay time before it can spawn things
 		if (m_enableTimer > 0) {
@@ -88,76 +91,66 @@ public class Spawner : MonoBehaviour {
 			// TODO: spawners can have more or less respawn time while we keep playing
 
 			// Spawn logic
-			bool allDisabled = CheckEntities();
-			if (allDisabled) {
+			if (m_entityAlive == 0) {
 				if (m_spawnTimer > 0) {
 					m_spawnTimer -= Time.deltaTime;
 					if (m_spawnTimer <= 0) {
 						m_spawnTimer = 0;
 					}
 				} else {
-					if (playerNear) {
+					if (playerNear && !IsPlayerInsideArea()) {
 						Spawn();
 						m_spawnTimer = m_spawnTime.GetRandom();
 					}
 				}
 			}
-		}
-
-		// Check if we have to disable this spawner after few seconds
-		if (m_disableTimer > 0) {
-			m_disableTimer -= Time.deltaTime;
-			if (m_disableTimer <= 0) {
-				enabled = false;
-			}
-		}
-	}
-
-	bool CheckEntities() {
-		bool allDisabled = true;
-
-		for (int i = 0; i < m_entities.Length; i++) {
-
-			if (m_entities[i] != null) {
-				allDisabled = false;
-			}
-		}
-
-		return allDisabled;
-	}
-
-	bool CheckPlayerDistance() {
-		DragonPlayer player = InstanceManager.player;
-		float distanceSqr = (player.transform.position - m_area.bounds.center).sqrMagnitude;
-
-		bool playerNear = distanceSqr <= (m_playerDistance * m_playerDistance);
-
-		if (!playerNear) {
-			// disable all entities
-			for (int i = 0; i < m_entities.Length; i++) {
-				
-				if (m_entities[i] != null) {
-					m_entities[i].SetActive(false);
-					m_entities[i] = null;
+			
+			// Check if we have to disable this spawner after few seconds
+			if (m_disableTimer > 0) {
+				m_disableTimer -= Time.deltaTime;
+				if (m_disableTimer <= 0) {
+					enabled = false;
 				}
 			}
 		}
+	}
 
-		return playerNear;
+	bool IsPlayerNear() {
+		Vector2 playerPos = InstanceManager.player.transform.position;
+		float distX = m_area.bounds.extents.x + m_playerDistance;
+		float distY = m_area.bounds.extents.y + m_playerDistance;
+
+		if (playerPos.x < m_area.bounds.center.x - distX ||  playerPos.x > m_area.bounds.center.x + distX
+		||  playerPos.y < m_area.bounds.center.y - distY ||  playerPos.y > m_area.bounds.center.y + distY) {
+
+			// disable all alive entities
+			if (m_entityAlive > 0) {
+				for (int i = 0; i < m_entities.Length; i++) {				
+					if (m_entities[i] != null) {
+						m_entities[i].SetActive(false);
+						m_entities[i] = null;
+					}
+				}
+				m_spawnTimer = 0; // this spawner will be restarted when player is near again
+				m_entityAlive = 0;
+			}
+
+			return false;
+		}
+
+		return true;
 	}
 
 	bool IsPlayerInsideArea() {
-
 		DragonPlayer player = InstanceManager.player;
-
 		return m_area.Contains(player.transform.position);
 	}
 
 	void Spawn() {
-
 		int count = m_quantity.GetRandom();
 		for (int i = 0; i < count; i++) {			
 			m_entities[i] = PoolManager.GetInstance(m_entityPrefab.name);
+			m_entityAlive++;
 		}
 
 		ExtendedSpawn();
@@ -171,7 +164,7 @@ public class Spawner : MonoBehaviour {
 		if (m_maxSpawns > 0) {
 			m_spawnCount++;			
 			if (m_spawnCount == m_maxSpawns) {
-				enabled = false;
+				gameObject.SetActive(false);
 			}
 		}
 	}
@@ -182,7 +175,13 @@ public class Spawner : MonoBehaviour {
 
 	void OnDrawGizmos() {
 		Area area = GetComponent<Area>();
-		if (area != null)
+		if (area != null) {
 			area.bounds.DrawGizmo();
+		} else {
+			Color color = Color.yellow;
+			color.a = 0.25f;
+			Gizmos.color = color;
+			Gizmos.DrawSphere(transform.position, 0.5f);
+		}
 	}
 }

@@ -82,7 +82,7 @@ public class RangeInt {
 	/// </summary>
 	/// <returns>A randomly selected value between min and max.</returns>
 	public int GetRandom() {
-		return UnityEngine.Random.Range(min, max);
+		return UnityEngine.Random.Range(min, max + 1);
 	}
 
 	/// <summary>

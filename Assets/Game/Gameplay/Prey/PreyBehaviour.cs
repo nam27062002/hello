@@ -43,7 +43,7 @@ public class PreyBehaviour : Initializable {
 
 	void Awake() {
 		
-		m_posZ = Random.Range(-150, 150);
+		m_posZ = Random.Range(-1, 1);
 
 		m_seek = GetComponent<Seek>();
 		m_flee = GetComponent<Flee>();
@@ -64,8 +64,7 @@ public class PreyBehaviour : Initializable {
 		m_positionLast = m_position = transform.position;
 
 		//start at random anim position - Move to Bird Behaviour
-		//Animator animator = transform.FindChild("view").GetComponent<Animator>();
-		//animator.Play("fly", 0, Random.Range(0f, 1f));
+		//m_animator.Play("fly", 0, Random.Range(0f, 1f));
 	}
 
 
@@ -97,12 +96,19 @@ public class PreyBehaviour : Initializable {
 
 			steering += m_seek.GetForce(target);
 		}
+		
+		if (m_flock && m_flock.HasController()) {
+			
+			steering += m_flock.GetForce();
+		}
 
 		if (playerDetected) {
 
 			if (m_attack && !m_attack.enabled) {
 				m_attack.enabled = true;
 			}
+
+			steering *= 0.5f;
 
 			if (m_evade) {
 				DragonPlayer player = InstanceManager.player;
@@ -117,10 +123,9 @@ public class PreyBehaviour : Initializable {
 			}
 		}
 
-		if (m_flock && m_flock.HasController()) {
 
-			steering += m_flock.GetForce();
-		}
+		
+		Debug.DrawLine(m_position, m_position + steering, Color.magenta);
 				
 		UpdateVelocity(steering);
 		UpdatePosition();
@@ -144,7 +149,7 @@ public class PreyBehaviour : Initializable {
 	protected void UpdatePosition() {
 
 		m_positionLast = m_position;
-		m_position = m_position + m_velocity;
+		m_position = m_position + (m_velocity * Time.fixedDeltaTime);
 	}
 
 	protected void ApplyPosition() {

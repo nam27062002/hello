@@ -149,16 +149,16 @@ public class RectArea2DEditor : Editor {
 	private void DrawHandle(Bounds _bounds) {
 				
 		m_vertexs[0] = _bounds.max;
-		m_vertexs[1] = new Vector3(_bounds.max.x, _bounds.min.y, _bounds.max.z);
+		m_vertexs[1] = new Vector3(_bounds.max.x, _bounds.min.y, _bounds.center.z);
 		m_vertexs[2] = _bounds.min;
-		m_vertexs[3] = new Vector3(_bounds.min.x, _bounds.max.y, _bounds.max.z);
+		m_vertexs[3] = new Vector3(_bounds.min.x, _bounds.max.y, _bounds.center.z);
 		m_vertexs[4] = _bounds.max;
 
 		m_center	= _bounds.center;
-		m_right 	= new Vector3(_bounds.max.x, _bounds.center.y, _bounds.max.z);
-		m_left 		= new Vector3(_bounds.min.x, _bounds.center.y, _bounds.max.z);
-		m_top 		= new Vector3(_bounds.center.x, _bounds.max.y, _bounds.max.z);
-		m_bottom 	= new Vector3(_bounds.center.x, _bounds.min.y, _bounds.max.z);
+		m_right 	= new Vector3(_bounds.max.x, _bounds.center.y, _bounds.center.z);
+		m_left 		= new Vector3(_bounds.min.x, _bounds.center.y, _bounds.center.z);
+		m_top 		= new Vector3(_bounds.center.x, _bounds.max.y, _bounds.center.z);
+		m_bottom 	= new Vector3(_bounds.center.x, _bounds.min.y, _bounds.center.z);
 
 		Handles.color = m_target.color;
 		Handles.DrawAAConvexPolygon(m_vertexs);

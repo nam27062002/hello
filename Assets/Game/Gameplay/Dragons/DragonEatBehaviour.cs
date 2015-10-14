@@ -3,7 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class DragonEatBehaviour : MonoBehaviour {
-
+		
+	struct PreyData {		
+		public float absorbTimer;
+		public float eatingAnimationTimer;
+		public Vector3 absorbPosition;
+		public EdibleBehaviour prey;
+	};
 
 	//-----------------------------------------------
 	// Attributes
@@ -14,20 +20,19 @@ public class DragonEatBehaviour : MonoBehaviour {
 	[SerializeField]private float m_eatDistance;
 	public float eatDistanceSqr { get { return m_eatDistance * m_eatDistance; } }
 
-	private List<float> m_absorbTimer;
-	private List<float> m_eatingAnimationTimer; 
-	private List<EdibleBehaviour> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
+	private List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
 
 	private float m_eatingTimer;
 	private float m_eatingTime;
-
+	private bool m_slowedDown;
 
 	private Transform m_mouth;
-	private Transform m_tongue;
+	private Vector3 m_tongueDirection;
 	private Animator m_animator;
 	private DragonPlayer m_dragon;
+	private DragonBoostBehaviour m_dragonBoost;
 			
-	private GameObject m_bloodEmitter;
+	private List<GameObject> m_bloodEmitter;
 
 	
 	//-----------------------------------------------
@@ -39,31 +44,35 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_eatingTimer = 0;
 
 		m_mouth = transform.FindSubObjectTransform("fire");
-		m_tongue = transform.FindSubObjectTransform("tongue_02");
+		m_tongueDirection = transform.FindSubObjectTransform("tongue_02").position - transform.FindSubObjectTransform("tongue_01").position;
+		m_tongueDirection.Normalize();
 
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_dragon = GetComponent<DragonPlayer>();
+		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
 
-		m_prey = new List<EdibleBehaviour>();
-		m_absorbTimer = new List<float>();
-		m_eatingAnimationTimer = new List<float>();
+		m_prey = new List<PreyData>();
+		m_bloodEmitter = new List<GameObject>();
 
-		m_bloodEmitter = null;
+		m_slowedDown = false;
 	}
 
 	void OnDisable() {
 
 		m_eatingTimer = 0;
+		if (m_slowedDown) {
+			m_dragon.SetSpeedMultiplier(1f);
+			m_dragonBoost.ResumeBoost();
+			m_slowedDown = false;
+		}
 
 		for (int i = 0; i < m_prey.Count; i++) {			
-			if (m_prey[i] != null) {
-				Swallow(m_prey[i]);
+			if (m_prey[i].prey != null) {
+				Swallow(m_prey[i].prey);
 			}
 		}
 		
 		m_prey.Clear();
-		m_absorbTimer.Clear();
-		m_eatingAnimationTimer.Clear();
 
 		m_animator.SetBool("bite", false);
 	}
@@ -83,73 +92,95 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_eatingTimer = 0;
 			}
 
-			Vector3 playerMouthDir = (m_tongue.position - m_mouth.position);
-			float d = playerMouthDir.magnitude;
-			playerMouthDir.Normalize();
-
 			bool empty = true;
 			for (int i = 0; i < m_prey.Count; i++) {
 
-				if (m_prey[i] != null) {
+				if (m_prey[i].prey != null) {
+					PreyData prey = m_prey[i];
 
-					m_absorbTimer[i] -= Time.deltaTime;
-					m_eatingAnimationTimer[i] -= Time.deltaTime;
+					prey.absorbTimer -= Time.deltaTime;
+					prey.eatingAnimationTimer -= Time.deltaTime;
 					
-					float t = 1 - Mathf.Max(0, m_absorbTimer[i] / m_absorbTime);
+					float t = 1 - Mathf.Max(0, m_prey[i].absorbTimer / m_absorbTime);
 					
 					// swallow entity
-					Bounds bounds = m_prey[i].GetComponent<Collider>().bounds;
-					Vector3 targetPosition = m_mouth.position + (m_prey[i].transform.position - bounds.center) + playerMouthDir * d * 0.5f;
-					
-					m_prey[i].transform.position = Vector3.Lerp(m_prey[i].transform.position, targetPosition, t);
-					m_prey[i].transform.rotation = Quaternion.Lerp(m_prey[i].transform.rotation, Quaternion.AngleAxis(-90f, playerMouthDir), 0.25f);
-					
+					prey.prey.transform.position = Vector3.Lerp(prey.absorbPosition, m_mouth.position, t);
+					prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, m_tongueDirection), 0.25f);
+										
 					// remaining time eating
-					if (m_eatingAnimationTimer[i] < 0) {
-						Swallow(m_prey[i]);
-						m_prey[i] = null;
+					if (m_prey[i].eatingAnimationTimer < 0) {
+						Swallow(prey.prey);
+						prey.prey = null;
 					}
 
+					m_prey[i] = prey;
 					empty = false;
 				}
 			}
 
 			if (empty) {
 				m_prey.Clear();
-				m_absorbTimer.Clear();
-				m_eatingAnimationTimer.Clear();
+
+				if (m_slowedDown) {
+					m_dragon.SetSpeedMultiplier(1f);
+					m_dragonBoost.ResumeBoost();
+					m_slowedDown = false;
+				}
 
 				m_animator.SetBool("bite", false);
 			}
 		}
 
-		if (m_bloodEmitter != null && m_bloodEmitter.activeInHierarchy) {
+		if (m_bloodEmitter.Count > 0) {
+			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -50f;
-			m_bloodEmitter.transform.position = bloodPos;
-		} else {
-			m_bloodEmitter = null;
-		}		
+			bloodPos.z = -1f;
+
+			for (int i = 0; i < m_bloodEmitter.Count; i++) {
+				if (m_bloodEmitter[i] != null && m_bloodEmitter[i].activeInHierarchy) {
+					m_bloodEmitter[i].transform.position = bloodPos;
+					empty = false;
+				} else {
+					m_bloodEmitter[i] = null;
+				}
+			}
+
+			if (empty) {
+				m_bloodEmitter.Clear();
+			}
+		}
 	}
 
 	public bool Eat(EdibleBehaviour _prey) {
 		if (enabled && m_eatingTimer <= 0) {
 			if (_prey.edibleFromTier <= m_dragon.data.tier) {
 				// Yes!! Eat it!!
-				float speed = (m_dragon.GetSpeedMultiplier() > 1)? 1.5f : 1f;
-				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * _prey.size) / speed;
+				m_eatingTimer = m_eatingTime = (m_dragon.data.bite.value * _prey.size);
 
-				m_prey.Add(_prey);
-				m_absorbTimer.Add(m_absorbTime);
-				m_eatingAnimationTimer.Add(Mathf.Max(m_minEatAnimTime, m_eatingTimer));
+				if (m_eatingTime >= 0.5f) {
+					m_dragonBoost.StopBoost();
+					m_dragon.SetSpeedMultiplier(0.25f);
+					m_slowedDown = true;
+				}
 
+				PreyData preyData = new PreyData();
+
+				preyData.absorbTimer = m_absorbTime;
+				preyData.eatingAnimationTimer = Mathf.Max(m_minEatAnimTime, m_eatingTimer);
+				preyData.absorbPosition = _prey.transform.position;
+				preyData.prey = _prey;
+
+				m_prey.Add(preyData);
+					
 				m_animator.SetBool("bite", true);
 
-				if (m_bloodEmitter == null) {
-					Vector3 bloodPos = m_mouth.position;
-					bloodPos.z = -50f;
-					m_bloodEmitter = ParticleManager.Spawn("bloodchurn-large", bloodPos);
+				if (m_eatingTime >= 0.5f || m_prey.Count > 2) {
+					m_animator.SetTrigger("crazy_eat");
 				}
+
+				Vector3 bloodPos = m_mouth.position;
+				bloodPos.z = -50f;
+				m_bloodEmitter.Add(ParticleManager.Spawn("bloodchurn-large", bloodPos));
 
 				return true;
 			}

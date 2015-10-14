@@ -90,7 +90,7 @@ namespace LevelEditor {
 			EditorGUILayout.BeginVertical(); {
 				// Size input - store it to editor preferences to save it between pieces
 				// Pseudo-static var, we need to do it this way because static vars are reset when entering/exiting play mode
-				Vector3 size = new Vector3(500f, 10f, 100f);
+				Vector3 size = new Vector3(50f, 1f, 15f);
 				size.x = EditorPrefs.GetFloat(GetType().Name + ".size.x", size.x);
 				size.y = EditorPrefs.GetFloat(GetType().Name + ".size.y", size.y);
 				size.z = EditorPrefs.GetFloat(GetType().Name + ".size.z", size.z);

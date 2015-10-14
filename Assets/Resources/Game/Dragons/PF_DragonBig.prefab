@@ -550,6 +550,7 @@ GameObject:
   - 4: {fileID: 467264}
   - 54: {fileID: 5453550}
   - 136: {fileID: 13695044}
+  - 135: {fileID: 13530628}
   - 114: {fileID: 11473758}
   - 114: {fileID: 11416400}
   - 114: {fileID: 11491186}
@@ -1888,9 +1889,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edc67609b2d3b4d1a80b3d911f145143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_absorbTime: .25
-  m_minEatAnimTime: .5
-  m_eatDistance: 100
+  m_absorbTime: .5
+  m_minEatAnimTime: .649999976
+  m_eatDistance: 300
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1925,7 +1926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc55bb9f3dab45f69260a937e250b5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_id: 0
+  m_id: 2
   invulnerable: 0
 --- !u!114 &11488270
 MonoBehaviour:
@@ -1952,6 +1953,18 @@ MonoBehaviour:
   fireRate: 60
   firePower: 20
   collisionDepth: 1000
+--- !u!135 &13530628
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 84.9000015
+  m_Center: {x: -63, y: 101, z: 0}
 --- !u!136 &13695044
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -1962,9 +1975,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 64.8000031
-  m_Height: 323.399994
+  m_Height: 323.700012
   m_Direction: 0
-  m_Center: {x: 39.7999992, y: 35, z: 0}
+  m_Center: {x: 132, y: 81, z: 0}
 --- !u!137 &13795376
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -2133,7 +2146,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_absorbTime
-      value: .25
+      value: .5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Avatar
@@ -2149,11 +2162,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_minEatAnimTime
-      value: .5
+      value: .649999976
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_eatDistance
-      value: 100
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_id
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

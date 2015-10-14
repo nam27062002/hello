@@ -5,68 +5,139 @@ using System.Collections.Generic;
 
 public class FireBreath : DragonBreathBehaviour {
 
+	[Header("Emitter")]
+	[SerializeField]private float m_length = 6f;
+	[SerializeField]private AnimationCurve m_sizeCurve = AnimationCurve.Linear(0, 0, 1, 3f);	// Will be used by the inspector to easily setup the values for each level
+	[SerializeField]private int m_particleSpawn = 2;
+	[SerializeField]private int m_maxParticles = 75;
 
-	public float fireRate = 10f; // Fire particles per second
-	public float firePower = 1f;
-	//float timer;
+	[Header("Particle")]
+	[SerializeField]private float m_lifeTime = 5f;
+	[SerializeField]private float m_dyingTime = 0.25f;
+	[SerializeField]private float m_dyingSpeed = 3f;
+	[SerializeField]private Range m_finalScale = new Range(0.75f, 1.25f);
 
-    const int maxFireParticles = 256;
-	GameObject[] fire = new GameObject[maxFireParticles];
+	private int m_groundMask;
 
-	public float collisionDepth = 1000f;
+	private Transform m_mouthTransform;
+	private Transform m_headTransform;
 
-	Transform mouthPosition;
-	Transform headPosition;
+	private Vector2 m_direction;
+	private Vector2 m_directionP;
+	private float m_actualLength;
+
+	private Vector2 m_triP0;
+	private Vector2 m_triP1;
+	private Vector2 m_triP2;
+
+	private Vector2 m_sphCenter;
+	private float m_sphRadius;
+	private float m_sphRadiusSqr;
+
+	private float m_area;
+
+	private int m_frame;
+
+
 
 	override protected void ExtendedStart() {
-		GameObject instancesObj = GameObject.Find ("Instances");
-		if(instancesObj == null) {
-			instancesObj = new GameObject("Instances");
-		}
-		Transform instances = GameObject.Find ("Instances").transform;
 
-		Object firePrefab;
-		firePrefab = Resources.Load("PROTO/Flame");
+		PoolManager.CreatePool((GameObject)Resources.Load("PROTO/Flame"), m_maxParticles, false);
 
-		for(int i=0;i<maxFireParticles;i++){
-			GameObject fireObj = (GameObject)Object.Instantiate(firePrefab);
-			fireObj.transform.parent = instances;
-			fireObj.transform.localPosition = Vector3.zero;
-			fireObj.SetActive(false);
-			fire[i] = fireObj;
-		}
 
-		//timer = 0f;
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
-		mouthPosition = transform.FindSubObjectTransform("fire");
-		headPosition = transform.FindSubObjectTransform("head");
+		m_mouthTransform = transform.FindSubObjectTransform("fire");
+		m_headTransform = transform.FindSubObjectTransform("head");
 
+		m_actualLength = m_length;
+
+		m_sphCenter = m_mouthTransform.position;
+		m_sphRadius = 0;
+		m_sphRadiusSqr = 0;
+
+		m_frame = 0;
 	}
-	/*
-	override protected void ExtendedUpdate () {
-		timer -= Time.deltaTime;
-	}*/
 
-	override protected void Fire(float _magnitude){
-
-
-		Vector3 dir = mouthPosition.position - headPosition.position;
-		dir.z = 0f;
-		dir.Normalize();
-		dir *= _magnitude;
+	override public bool IsInsideArea(Vector2 _point) { 
 	
-		for(int i=0;i<2;i++){
-			foreach(GameObject fireObj in fire){
-				if (!fireObj.activeInHierarchy){
-					fireObj.GetComponent<FlameParticle>().size = fireRate / 10f;
-					fireObj.GetComponent<FlameParticle>().Activate(mouthPosition.position+dir.normalized*(i*1100f*Time.deltaTime),dir, collisionDepth, firePower);
+		if (m_isFuryOn) {
+			float d = (m_sphCenter - _point).sqrMagnitude;
+
+			if (d < m_sphRadiusSqr) {
+				float sign = m_area < 0 ? -1 : 1;
+				float s = (m_triP0.y * m_triP2.x - m_triP0.x * m_triP2.y + (m_triP2.y - m_triP0.y) * _point.x + (m_triP0.x - m_triP2.x) * _point.y) * sign;
+				float t = (m_triP0.x * m_triP1.y - m_triP0.y * m_triP1.x + (m_triP0.y - m_triP1.y) * _point.x + (m_triP1.x - m_triP0.x) * _point.y) * sign;
 				
-					// We inlcude some of the dragon momentum in the particles initial speed
-					// also, for eahc frame we fire two particles so we need to space them properly
-					//timer = 1f/fireRate;
-					break;
-				}
+				return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
 			}
 		}
+
+		return false; 
+	}
+
+	override protected void Fire(){
+
+		if (m_frame == 0) {
+			m_direction = m_mouthTransform.position - m_headTransform.position;
+			m_direction.Normalize();
+			m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
+
+			// Raycast to ground
+			RaycastHit ground;				
+			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_groundMask)) {
+				m_actualLength = ground.distance;
+			} else {
+				m_actualLength = m_length;
+			}
+					
+			// Pre-Calculate Triangle: wider bounding triangle to make burning easier
+			m_triP0 = m_mouthTransform.position;
+			m_triP1 = m_triP0 + m_direction * m_actualLength - m_directionP * m_sizeCurve.Evaluate(1) * 0.5f;
+			m_triP2 = m_triP0 + m_direction * m_actualLength + m_directionP * m_sizeCurve.Evaluate(1) * 0.5f;
+			m_area = (-m_triP1.y * m_triP2.x + m_triP0.y * (-m_triP1.x + m_triP2.x) + m_triP0.x * (m_triP1.y - m_triP2.y) + m_triP1.x * m_triP2.y) * 0.5f;
+
+			// Circumcenter
+			float c = ((m_triP0.x + m_triP1.x) * 0.5f) + ((m_triP0.y + m_triP1.y) * 0.5f) * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
+			float d = ((m_triP2.x + m_triP1.x) * 0.5f) + ((m_triP2.y + m_triP1.y) * 0.5f) * ((m_triP2.y - m_triP1.y) / (m_triP2.x - m_triP1.x)); 
+
+			m_sphCenter.y = (d - c) / (((m_triP2.y - m_triP1.y) / (m_triP2.x - m_triP1.x)) - ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x)));
+			m_sphCenter.x = c - m_sphCenter.y * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
+
+			m_sphRadius = (m_sphCenter - m_triP1).magnitude;
+			m_sphRadiusSqr = m_sphRadius * m_sphRadius;
+		}
+
+		// Spawn particles
+		int count = 0;
+		for (int i = 0; i < m_particleSpawn; i++) {
+			
+			GameObject obj = PoolManager.GetInstance("Flame");
+			
+			if (obj != null) {
+				FlameParticle particle = obj.GetComponent<FlameParticle>();
+				particle.lifeTime = m_lifeTime;
+				particle.dyingTime = m_dyingTime;
+				particle.dyingSpeed = m_dyingSpeed;
+				particle.finalScale = m_finalScale;
+				particle.Activate(m_mouthTransform, m_direction * m_actualLength, Random.Range(0.75f, 1.25f), m_sizeCurve);
+			}
+		}
+
+		m_frame = (m_frame + 1) % 4;
+	}
+
+	void OnDrawGizmos() {
+
+		Gizmos.color = Color.magenta;
+
+		Gizmos.DrawLine(m_triP0, m_triP1);
+		Gizmos.DrawLine(m_triP1, m_triP2);
+		Gizmos.DrawLine(m_triP2, m_triP0);
+
+		Gizmos.DrawWireSphere(m_sphCenter, m_sphRadius);
+
+		Gizmos.color = Color.green;
+		Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
 	}
 }

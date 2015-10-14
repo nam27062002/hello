@@ -33,7 +33,7 @@ public class EdibleBehaviour : Initializable {
 
 	private DragonEatBehaviour m_dragon;
 	private Transform m_dragonMouth;
-	private float m_radiusSqr;
+	private CircleArea2D m_Bounds;
 
 	//-----------------------------------------------
 	// Methods
@@ -47,9 +47,7 @@ public class EdibleBehaviour : Initializable {
 
 	void Start() {
 
-		Bounds bounds = GetComponent<Collider>().bounds;
-		m_radiusSqr = Mathf.Max(bounds.extents.x, bounds.extents.y);
-		m_radiusSqr *= m_radiusSqr;
+		m_Bounds = GetComponent<CircleArea2D>();
 
 		m_prey = GetComponent<PreyStats>();
 		m_dragon = InstanceManager.player.GetComponent<DragonEatBehaviour>();
@@ -79,8 +77,8 @@ public class EdibleBehaviour : Initializable {
 			}
 		} else if (m_dragon.enabled) {
 			// check distance to dragon mouth
-			Vector2 v = (transform.position - m_dragonMouth.transform.position);
-			float distanceSqr = v.sqrMagnitude - m_radiusSqr;
+			Vector2 v = (m_Bounds.bounds.bounds.center - m_dragonMouth.transform.position);
+			float distanceSqr = v.sqrMagnitude - (m_Bounds.radius * m_Bounds.radius);
 			if (distanceSqr <= m_dragon.eatDistanceSqr) {
 				m_isBeingEaten = m_dragon.Eat(this);
 			}

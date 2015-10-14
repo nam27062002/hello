@@ -6,11 +6,9 @@ public class DragonGrabBehaviour : MonoBehaviour {
 	public float m_grabTime = 5f;
 	
 	private GrabableBehaviour m_entity;
-	
-	private Transform m_mouth;
+
 	private Animator m_animator;
-	private DragonPlayer m_dragon;
-	
+		
 	private float m_grabReleaseTimer = 0f;
 	private float m_grabTimer = 0f; //wait a few seconds before trying to grab again
 	
@@ -19,10 +17,8 @@ public class DragonGrabBehaviour : MonoBehaviour {
 	void Start () {
 		
 		m_entity = null;
-		
-		m_mouth = transform.FindSubObjectTransform("eat");
+
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_dragon = GetComponent<DragonPlayer>();
 	}
 	
 	

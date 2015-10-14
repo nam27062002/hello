@@ -44,10 +44,10 @@ public class DragonOrientation : MonoBehaviour {
 			float angle = Quaternion.Angle(m_rotation, m_targetRotation);
 			if (m_turningRight) {
 				// change direction
-				m_turningRight = angle > 25f;
+				m_turningRight = angle > 60f;
 			} else if (m_turningLeft) {
 				// change direction
-				m_turningLeft = angle > 25f;
+				m_turningLeft = angle > 60f;
 			}
 			
 			m_animator.SetBool("turn_right", m_turningRight);

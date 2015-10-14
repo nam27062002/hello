@@ -8,15 +8,16 @@ public class InflammableBehaviour : Initializable {
 	// Properties
 	//-----------------------------------------------
 	[SerializeField] private bool m_destroyOnBurn = false;
-
+	[SerializeField] private float m_checkFireTime = 0.25f;
 
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
 	private PreyStats m_prey;
+	private DragonBreathBehaviour m_breath;
 
-
+	private float m_timer;
 	
 	//-----------------------------------------------
 	// Methods
@@ -24,6 +25,9 @@ public class InflammableBehaviour : Initializable {
 	// Use this for initialization
 	void Start() {
 		m_prey = GetComponent<PreyStats>();
+		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
+
+		m_timer = m_checkFireTime;
 	}
 
 	void OnEnable() {
@@ -38,7 +42,17 @@ public class InflammableBehaviour : Initializable {
 
 	}
 
-	// Update is called once per frame
+	void Update() {
+
+		m_timer -= Time.deltaTime;
+		if (m_timer <= 0) {
+			if (m_breath.IsInsideArea(transform.position)) {
+				Burn(m_breath.damage);
+			}
+			m_timer = m_checkFireTime;
+		}
+	}
+
 	public void Burn(float _damage) {
 
 		if (m_prey.health > 0) {
