@@ -3,28 +3,33 @@ using System.Collections;
 
 public class FlameParticle : MonoBehaviour {
 
-	public float life = 5f;
-	public float initialSpeed = 200f;
-	public float drag = 50f;
-	public float size = 1f;
+	private float m_lifeTime = 5f;
+	public float lifeTime { set { m_lifeTime = value; } }
 
-	float speed;
+	private float m_dyingTime = 0.25f;
+	public float dyingTime { set { m_dyingTime = value; } }
+
+	private float m_dyingSpeed = 3f;
+	public float dyingSpeed { set { m_dyingSpeed = value; } }
+
+	private Range m_finalScale = new Range(0.75f, 1.25f);
+	public Range finalScale { set { m_finalScale = value; } }
+
+	float distance;
 	float timer;
 	float tscale;
-	float cscale;
+	float speed;
 	Vector3 dir;
-	Vector3 pos;
-	float collisionDepth;
-	int  frame = 0;
-	Vector3 rot = new Vector3(0f,0f,1f);
-	int fireMask;
-	float flamePower = 1f;
+
+	AnimationCurve m_scaleCurve;
+
+	Transform mouthPosition;
 
 
 	enum State{
 		INACTIVE,
 		ACTIVE,
-		DIYING
+		DYING
 	}
 	
 	
@@ -33,74 +38,38 @@ public class FlameParticle : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		if (state == State.ACTIVE){
-			
-			timer -= Time.deltaTime;
-			if (timer > 0){
-				
-				speed -= drag*Time.deltaTime;
-				if (speed < 0) speed = 0;
-				
-				pos += dir*(speed*Time.deltaTime);
-				
-				transform.position = pos;
-
-				transform.Rotate(rot*200*Time.deltaTime);
-				
-				if (cscale < tscale){
-					cscale += Time.deltaTime*15f;
-					transform.localScale = Vector3.one*cscale;
-				}
-
-				frame++;
-				if (frame >2){
-					frame = 0;
-					
-					// Create a sphere at pos - (0, 0, collisionDepth/2) and move it to pos + (0, 0, collisionDepth/2), detecting collisions in the path
-					RaycastHit[] hits = Physics.SphereCastAll(new Vector3(pos.x, pos.y, pos.z - collisionDepth/2f), 10, new Vector3(0, 0, 1), collisionDepth, fireMask);
-					//Debug.DrawLine(new Vector3(pos.x, pos.y, pos.z - collisionDepth/2f), new Vector3(pos.x, pos.y, pos.z + collisionDepth/2f));
-					foreach(RaycastHit hit in hits){
-						if (hit.collider != null){
-							
-							// Burn whatever burnable
-							InflammableBehaviour flamable =  hit.collider.GetComponent<InflammableBehaviour>();
-							if (flamable != null) {
-								flamable.Burn(flamePower);
-							}
-						}
-					}
-				}
-				
-			}else{
-				state = State.DIYING;
-				timer =1f;
+		if (state == State.ACTIVE){			
+			timer -= Time.deltaTime * speed;
+			if (timer > 0) {
+				float t = (1 - (timer / m_lifeTime));
+				transform.position = mouthPosition.position +  dir * (distance * t);
+				transform.localScale = Vector3.one * m_scaleCurve.Evaluate(t) * tscale;				
+			} else {
+				state = State.DYING;
+				timer = m_dyingTime;
 			}
-		}else if (state == State.DIYING){
-			
-			timer -= Time.deltaTime*3f;
-			if (timer > 0){
-				transform.localScale = Vector3.one*tscale*timer;
-			}else{
+		} else if (state == State.DYING){			
+			timer -= Time.deltaTime * m_dyingSpeed;
+			if (timer > 0) {
+				transform.localScale = Vector3.one * tscale * timer;
+			} else {
 				state = State.INACTIVE;
 				gameObject.SetActive(false);
 			}
 		}
 	}
 	
-	public void Activate(Vector3 position, Vector3 direction, float _fCollisionDepth, float firePower){
-		
-		transform.position = position;
-		pos = position;
+	public void Activate(Transform _mouth, Vector3 direction, float _speed, AnimationCurve _scaleCurve){
+
+		mouthPosition = _mouth;
 		dir = direction.normalized;
-		collisionDepth = _fCollisionDepth;
-		speed = initialSpeed+direction.magnitude;
-		timer = life;
-		tscale = Random.Range (1.75f,3f) * size;
-		cscale = 0.25f * size;
-		transform.localScale = Vector3.one*cscale;
-		transform.Rotate(rot*Random.Range(0f,360f));
-		fireMask = 1 << LayerMask.NameToLayer("Edible") | 1 << LayerMask.NameToLayer("Burnable");
-		flamePower = firePower;
+		distance = direction.magnitude;
+		timer = m_lifeTime;
+		tscale = m_finalScale.GetRandom();
+		speed = _speed;
+		transform.Rotate(Vector3.forward * Random.Range(0f, 360f));
+
+		m_scaleCurve = _scaleCurve;
 		
 		gameObject.SetActive(true);
 		state = State.ACTIVE;

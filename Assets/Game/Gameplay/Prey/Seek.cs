@@ -24,7 +24,7 @@ public class Seek : Steering {
 		
 		desiredVelocity -= m_prey.velocity;
 		
-		Debug.DrawLine(m_prey.position, m_prey.position + desiredVelocity);
+		Debug.DrawLine(m_prey.position, m_prey.position + desiredVelocity, Color.green);
 		
 		return desiredVelocity;
 	}

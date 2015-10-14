@@ -6,12 +6,16 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
+	[SerializeField]private float m_damage = 25f;
+	public float damage { get { return m_damage; } }
+
+
 	private DragonPlayer m_dragon;
 	private DragonHealthBehaviour m_healthBehaviour;
 	private DragonEatBehaviour m_eatBehaviour;
 	private Animator m_animator;
 
-	private bool m_isFuryOn;
+	protected bool m_isFuryOn;
 
 
 	//-----------------------------------------------
@@ -45,7 +49,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	void Update() {
-
+		m_dragon.AddFury(200);
 		if (m_isFuryOn) {
 
 			float dt = Time.deltaTime / m_dragon.data.furyDuration;
@@ -61,7 +65,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 			} else {
 				
-				Fire(500f);
+				Fire();
 				m_animator.SetBool("fire", true);
 			}
 		} else {
@@ -79,8 +83,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		ExtendedUpdate();
 	}
 
-
+	virtual public bool IsInsideArea(Vector2 _point) { return false; }
 	virtual protected void ExtendedStart() {}
 	virtual protected void ExtendedUpdate() {}
-	virtual protected void Fire(float _magnitude) {}
+	virtual protected void Fire() {}
 }

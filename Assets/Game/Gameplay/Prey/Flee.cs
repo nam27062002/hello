@@ -9,7 +9,7 @@ public class Flee : Steering {
 		Vector2 desiredVelocity = m_prey.position - _from;
 		desiredVelocity = (desiredVelocity - m_prey.velocity);
 		
-		Debug.DrawLine(m_prey.position, m_prey.position + desiredVelocity);
+		Debug.DrawLine(m_prey.position, m_prey.position + desiredVelocity, Color.red);
 		
 		return desiredVelocity;
 	}

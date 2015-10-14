@@ -404,8 +404,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 167244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalPosition: {x: 96.6679993, y: .973999977, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 426152}
   - {fileID: 471516}
@@ -443,8 +443,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118296}
   m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
-  m_LocalPosition: {x: 0, y: -52, z: 0}
-  m_LocalScale: {x: 14, y: 14, z: 14}
+  m_LocalPosition: {x: 0, y: -1, z: -0}
+  m_LocalScale: {x: .25, y: .25, z: .25}
   m_Children:
   - {fileID: 474536}
   - {fileID: 422060}
@@ -582,7 +582,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129600}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -51.5999985, z: 0}
+  m_LocalPosition: {x: .023, y: -.95599997, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 409376}
@@ -711,8 +711,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 4.00912857, y: 21.9675159}
-  radius: 70.0456696
+  offset: {x: .0599999987, y: .379999995}
+  radius: .610000014
   color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11409122
 MonoBehaviour:
@@ -726,6 +726,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
+  m_checkFireTime: .00999999978
 --- !u!114 &11411800
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -770,7 +771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
-  m_size: 7.73999977
+  m_size: 2
   m_isBig: 1
   m_destroyOnEat: 0
 --- !u!114 &11461256
@@ -796,9 +797,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
-  m_steerForce: .5
-  m_maxSpeed: 4
-  m_mass: 4
+  m_steerForce: 1
+  m_maxSpeed: 3
+  m_mass: 1
 --- !u!114 &11472258
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -810,7 +811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18c3b1f8222e4161bb3262b6517bcaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_slowingRadius: 250
+  m_slowingRadius: .75
 --- !u!114 &11477934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -833,8 +834,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 406.929993
-  m_sensorMaxRadius: 677.590027
+  m_sensorMinRadius: 4
+  m_sensorMaxRadius: 6
   m_sensorAngle: 120
   m_sensorAngleOffset: 90
 --- !u!137 &13703782
@@ -900,11 +901,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: .5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
@@ -936,7 +937,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_size
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
@@ -969,6 +970,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_LocalScale.z
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_checkFireTime
+      value: .00999999978
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

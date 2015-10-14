@@ -641,6 +641,7 @@ GameObject:
   - 4: {fileID: 467264}
   - 54: {fileID: 5453550}
   - 136: {fileID: 13630308}
+  - 135: {fileID: 13519264}
   - 114: {fileID: 11473758}
   - 114: {fileID: 11416400}
   - 114: {fileID: 11491186}
@@ -1579,8 +1580,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 186840}
   m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
-  m_LocalPosition: {x: -75, y: 15, z: 0}
-  m_LocalScale: {x: 150, y: 150, z: 150}
+  m_LocalPosition: {x: -1.34000003, y: .699999988, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 426430}
   - {fileID: 477920}
@@ -1593,7 +1594,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159196}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1237, y: 0, z: -21}
+  m_LocalPosition: {x: 109.089996, y: .529999971, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 467106}
@@ -1873,8 +1874,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedDirectionMultiplier: 2
   movementLimitX:
-    min: -27700
-    max: 51000
+    min: -500
+    max: 500
   m_stunnedTime: 0
   m_rbody: {fileID: 0}
 --- !u!114 &11425292
@@ -1901,7 +1902,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_absorbTime: .5
   m_minEatAnimTime: .649999976
-  m_eatDistance: 150
+  m_eatDistance: 2
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1944,14 +1945,48 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159196}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 30
-  firePower: 10
-  collisionDepth: 1000
+  m_damage: 25
+  m_length: 4.86000013
+  m_sizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: .851489484
+      outSlope: .851489484
+      tangentMode: 0
+    - time: 1.1070329
+      value: 5.39926863
+      inSlope: 2.63044333
+      outSlope: 2.63044333
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  m_particleSpawn: 2
+  m_maxParticles: 100
+  m_lifeTime: .5
+  m_dyingTime: 2
+  m_dyingSpeed: 4
+  m_finalScale:
+    min: .75
+    max: 1.25
+--- !u!135 &13519264
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: .800000012
+  m_Center: {x: -1.11000001, y: 1.14999998, z: 0}
 --- !u!136 &13630308
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -1961,10 +1996,10 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: 68803d9d7883048d7a6c72ce90a556d6, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 50
-  m_Height: 164.300003
+  m_Radius: .600000024
+  m_Height: 2.5
   m_Direction: 0
-  m_Center: {x: 25.7000008, y: 25.7099991, z: 0}
+  m_Center: {x: .639999986, y: .75999999, z: 0}
 --- !u!137 &13732522
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -2071,6 +2106,10 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
@@ -2081,11 +2120,11 @@ Prefab:
         type: 2}
     - target: {fileID: 0}
       propertyPath: movementLimitX.max
-      value: 51000
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_speed
@@ -2105,7 +2144,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalPosition.x
-      value: -75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalPosition.y
@@ -2137,7 +2176,79 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_eatDistance
-      value: 150
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: movementLimitX.min
+      value: -500
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].value
+      value: 5.39926863
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].time
+      value: 1.1070329
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].inSlope
+      value: 2.63044333
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].outSlope
+      value: 2.63044333
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].inSlope
+      value: .851489484
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].outSlope
+      value: .851489484
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_length
+      value: 4.86000013
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].time
+      value: 1.00542963
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].value
+      value: 5.0848403
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].inSlope
+      value: 2.27242064
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].outSlope
+      value: 2.27242064
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: spawn
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damage
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxParticles
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dyingTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_lifeTime
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

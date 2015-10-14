@@ -71,7 +71,7 @@ public class FlockController : MonoBehaviour {
 			}
 		}
 	}
-	
+	private int count = 0;
 	// Update is called once per frame
 	void Update () {
 	
@@ -86,12 +86,12 @@ public class FlockController : MonoBehaviour {
 			m_target.x = m_area.bounds.center.x + Mathf.Sin(m_timer) * m_area.bounds.extents.x;
 			m_target.y = m_area.bounds.center.y + Mathf.Cos(m_timer) * m_area.bounds.extents.y;
 		} else if (m_guideFunction == GuideFunction.WANDER) {
-			if (m_timer > 10f) { // seconds
-				m_target.x = m_area.bounds.center.x + Random.Range(-m_area.bounds.extents.x, m_area.bounds.extents.x);
-				m_target.y = m_area.bounds.center.y + Random.Range(-m_area.bounds.extents.y, m_area.bounds.extents.y);
+			if (m_timer >= 10f) { // seconds
+				m_target = m_area.RandomInside();
 				m_target.z = 0;
 
 				m_timer = 0;
+				count++;
 			}
 		}
 	}
@@ -100,7 +100,7 @@ public class FlockController : MonoBehaviour {
 
 		if (Application.isPlaying) {
 			Gizmos.color = Color.blue;
-			Gizmos.DrawSphere(m_target, 50);
+			Gizmos.DrawSphere(m_target, 0.25f);
 		}
 	}
 }

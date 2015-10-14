@@ -46,7 +46,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 170486}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1476, y: -99, z: 0}
+  m_LocalPosition: {x: 130.005005, y: 7.00299978, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 405044}
@@ -60,7 +60,7 @@ Transform:
   m_GameObject: {fileID: 185214}
   m_LocalRotation: {x: 0, y: .873728991, z: 0, w: -.486413181}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 60, y: 60, z: 60}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 403548}
   m_RootOrder: 0
@@ -107,16 +107,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_damage: 25
-  m_forceStrength: 1000
-  m_radius: 200
+  m_forceStrength: 10
+  m_radius: 2
   m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
-  m_explosionsAmount: 10
+  m_explosionsAmount: 5
   m_delayRange:
     min: 0
     max: .100000001
   m_scaleRange:
-    min: 6
-    max: 12
+    min: 1
+    max: 1.5
   m_rotationRange:
     min: 0
     max: 360
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 112.527466
+  radius: 1
   color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11463056
 MonoBehaviour:
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c28447e5a0434b5bb4ef7346dabab11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_rotationSpeed: {x: 20, y: 20, z: 20}
+  m_rotationSpeed: {x: 10, y: 10, z: 10}
 --- !u!114 &11488518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -203,8 +203,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c3935b25f9e54b058102e55c7851942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_amplitude: 111.092346
-  m_frequency: 2.42319894
+  m_amplitude: 3
+  m_frequency: 1.5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -235,6 +235,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_typeID
       value: FlyingMine
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_rotationSpeed.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_rotationSpeed.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_rotationSpeed.z
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

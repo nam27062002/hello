@@ -22,7 +22,7 @@ public struct CircleAreaBounds : AreaBounds {
 
 	public void DrawGizmo() {
 		Color color = Color.yellow;
-		color.a = 0.1f;
+		color.a = 0.25f;
 
 		Gizmos.color = color;
 		Gizmos.DrawSphere(m_bounds.center, m_bounds.extents.x);

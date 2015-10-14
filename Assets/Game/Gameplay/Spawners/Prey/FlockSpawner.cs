@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(FlockController))]
 public class FlockSpawner : Spawner {
 	
 	private FlockController m_flockController;

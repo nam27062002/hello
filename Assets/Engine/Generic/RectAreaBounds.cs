@@ -26,7 +26,7 @@ public struct RectAreaBounds : AreaBounds {
 
 	public void DrawGizmo() {		
 		Color color = Color.yellow;
-		color.a = 0.1f;
+		color.a = 0.25f;
 
 		Gizmos.color = color;
 		Gizmos.DrawCube(m_bounds.center, m_bounds.size);
