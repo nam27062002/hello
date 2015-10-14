@@ -291,6 +291,14 @@ namespace LevelEditor {
 						GUI.enabled = true;
 					}
 					GUI.enabled = true;
+
+					// Separator
+					EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 5f, "", 1, EditorUtils.DEFAULT_SEPARATOR_COLOR);
+					
+					// Snap size
+					EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("Snap Size:")).x;
+					LevelEditor.snapSize = Mathf.Max(EditorGUILayout.IntField("Snap Size:", (int)LevelEditor.snapSize), 0);
+					EditorGUIUtility.labelWidth = 0;
 				} EditorUtils.EndVerticalSafe();
 
 				// A level is loaded, show editing stuff

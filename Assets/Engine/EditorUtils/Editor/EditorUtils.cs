@@ -1,4 +1,4 @@
-﻿// EditorUtils.cs
+// EditorUtils.cs
 // 
 // Created by Alger Ortín Castellví on 17/09/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
@@ -45,7 +45,7 @@ public static class EditorUtils {
 		// Initialized style for a line
 		// [AOC] We will be drawing a box actually, so copy some values from the box style
 		GUIStyle lineStyle = new GUIStyle();
-		lineStyle.normal.background = Texture2DExtensions.Create(2, 2, DEFAULT_SEPARATOR_COLOR);
+		lineStyle.normal.background = Texture2DExt.Create(2, 2, DEFAULT_SEPARATOR_COLOR);
 		lineStyle.margin = EditorStyles.helpBox.margin;
 		lineStyle.padding = EditorStyles.helpBox.padding;
 
@@ -107,7 +107,7 @@ public static class EditorUtils {
 		// [AOC] We will be drawing a box actually, so copy some values from the box style
 		GUIStyle lineStyle = new GUIStyle();
 		Color lineColor = _color ?? DEFAULT_SEPARATOR_COLOR;	// Nullable type check, see https://msdn.microsoft.com/en-us/library/1t3y8s4s.aspx
-		lineStyle.normal.background = Texture2DExtensions.Create(2, 2, lineColor);
+		lineStyle.normal.background = Texture2DExt.Create(2, 2, lineColor);
 		lineStyle.margin = EditorStyles.helpBox.margin;
 		lineStyle.padding = EditorStyles.helpBox.padding;
 

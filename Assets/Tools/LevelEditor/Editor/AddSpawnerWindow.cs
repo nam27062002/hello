@@ -159,8 +159,8 @@ namespace LevelEditor {
 						style.imagePosition = ImagePosition.ImageAbove;
 						style.alignment = TextAnchor.MiddleCenter;
 						style.padding = new RectOffset(5, 5, 5, 5);
-						style.onActive.background = Texture2DExtensions.Create(2, 2, Colors.skyBlue);
-						style.onNormal.background = Texture2DExtensions.Create(2, 2, Colors.skyBlue);
+						style.onActive.background = Texture2DExt.Create(2, 2, Colors.skyBlue);
+						style.onNormal.background = Texture2DExt.Create(2, 2, Colors.skyBlue);
 
 						// The selection grid will do the job
 						m_entityPrefabIdx = GUILayout.SelectionGrid(m_entityPrefabIdx, contents, (int)THUMB_GRID.x, style);

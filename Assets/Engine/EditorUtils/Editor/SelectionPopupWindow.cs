@@ -92,12 +92,12 @@ public class SelectionPopupWindow : EditorWindow {
 		m_optionStyle.border = new RectOffset();
 		
 		// Hover color
-		Texture2D hoverTex = Texture2DExtensions.Create(2, 2, Colors.gray);
+		Texture2D hoverTex = Texture2DExt.Create(2, 2, Colors.gray);
 		m_optionStyle.onHover.background = hoverTex;
 		m_optionStyle.hover.background = hoverTex;
 
 		// Active color
-		Texture2D activeTex = Texture2DExtensions.Create(2, 2, Colors.darkGray);
+		Texture2D activeTex = Texture2DExt.Create(2, 2, Colors.darkGray);
 		m_optionStyle.onActive.background = activeTex;
 		m_optionStyle.active.background = activeTex;
 		m_optionStyle.onActive.textColor = Colors.white;

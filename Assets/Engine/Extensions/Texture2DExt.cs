@@ -14,7 +14,7 @@ using UnityEngine;
 /// <summary>
 /// Custom extensions to the Texture2D class.
 /// </summary>
-public static class Texture2DExtensions {
+public static class Texture2DExt {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

@@ -31,24 +31,13 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// We need to store it to prefs because Unity clears all static variables when entering play mode - and we don't want that
 		public static DragonId testDragon {
-			get { 
-				#if UNITY_EDITOR
-				return (DragonId)EditorPrefs.GetInt(testDragonPrefKey, 0);
-				#else
-				return (DragonId)PlayerPrefs.GetInt(testDragonPrefKey, 0);
-				#endif
-			}
-			set {
-				#if UNITY_EDITOR
-				EditorPrefs.SetInt(testDragonPrefKey, (int)value);
-				#else
-				PlayerPrefs.SetInt(testDragonPrefKey, (int)value);
-				#endif
-			}
+			get { return (DragonId)PrefsExt.Get("LevelEditor.testDragon", 0); }
+			set { PrefsExt.Set("LevelEditor.testDragon", (int)value); }
 		}
 
-		private static string testDragonPrefKey {
-			get { return typeof(LevelEditor).Name + ".testDragon"; }
+		public static float snapSize {
+			get { return PrefsExt.Get("LevelEditor.snapSize", 0f); }
+			set { PrefsExt.Set("LevelEditor.snapSize", value); }
 		}
 
 		//------------------------------------------------------------------//
@@ -140,17 +129,19 @@ namespace LevelEditor {
 			// In-scene GUI
 			Handles.BeginGUI(); {
 				// Aux vars
-				Rect pos = new Rect(5, 5, 200, GUI.skin.label.lineHeight + GUI.skin.label.margin.vertical);
+				GUIStyle style = new GUIStyle(GUI.skin.label);
+				style.normal.textColor = Colors.silver;
+				Rect pos = new Rect(5, 5, Screen.width, style.lineHeight + style.margin.vertical);
 
 				// Selected object data
 				GameObject selectedObj = Selection.activeGameObject;
 				if(selectedObj != null) {
 					// Name
-					GUI.Label(pos, selectedObj.name);
+					GUI.Label(pos, selectedObj.name, style);
 
 					// ?? TODO
 					pos.y += pos.height;
-					GUI.Label(pos, "");
+					GUI.Label(pos, "", style);
 				}
 			} Handles.EndGUI();
 		}

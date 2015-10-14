@@ -142,6 +142,9 @@ namespace LevelEditor {
 					newLock.SetRotationLock(true, true, false);
 					newLock.SetScaleLock(false, true, true);
 
+					// Add a Ground Piece component as well to facilitate edition
+					groundPieceObj.AddComponent<GroundPiece>();
+
 					// Select new object in the hierarchy
 					Selection.activeGameObject = groundPieceObj;
 					EditorGUIUtility.PingObject(groundPieceObj);
