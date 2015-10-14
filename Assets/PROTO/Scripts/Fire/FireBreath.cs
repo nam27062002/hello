@@ -42,7 +42,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override protected void ExtendedStart() {
 
-		InstanceManager.pools.CreatePool((GameObject)Resources.Load("PROTO/Flame"), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("PROTO/Flame"), m_maxParticles, false);
 
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
@@ -112,7 +112,7 @@ public class FireBreath : DragonBreathBehaviour {
 		int count = 0;
 		for (int i = 0; i < m_particleSpawn; i++) {
 			
-			GameObject obj = InstanceManager.pools.GetInstance("Flame");
+			GameObject obj = PoolManager.GetInstance("Flame");
 			
 			if (obj != null) {
 				FlameParticle particle = obj.GetComponent<FlameParticle>();
