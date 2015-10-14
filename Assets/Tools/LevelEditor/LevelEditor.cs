@@ -36,7 +36,7 @@ namespace LevelEditor {
 		}
 
 		public static float snapSize {
-			get { return PrefsExt.Get("LevelEditor.snapSize", 0f); }
+			get { return PrefsExt.Get("LevelEditor.snapSize", 5f); }
 			set { PrefsExt.Set("LevelEditor.snapSize", value); }
 		}
 
