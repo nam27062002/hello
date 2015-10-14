@@ -66,7 +66,7 @@ public class FlowManager : Singleton<FlowManager> {
 	/// Navigate to the menu scene.
 	/// </summary>
 	public static void GoToMenu() {
-		// Skip if next scene is already game
+		// Skip if next scene is already menu
 		if(SceneManager.nextScene == MenuSceneController.NAME) return;
 
 		// Change scene
@@ -92,6 +92,8 @@ public class FlowManager : Singleton<FlowManager> {
 		DragonManager.DestroyInstance();
 		UserProfile.DestroyInstance();
 		InstanceManager.DestroyInstance();
+		PoolManager.Clear();
+		ParticleManager.Clear();
 
 		// Change to the loading scene
 		SceneManager.SwitchScene(LoadingSceneController.NAME);

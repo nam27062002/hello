@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class InflammableBehaviour : Initializable {
@@ -53,7 +53,7 @@ public class InflammableBehaviour : Initializable {
 				//
 
 				// Particles
-				InstanceManager.particles.Spaw("SmokePuff", transform.position);
+				ParticleManager.Spawn("SmokePuff", transform.position);
 								
 				// deactivate
 				if (m_destroyOnBurn) {

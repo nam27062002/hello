@@ -26,7 +26,7 @@ public class SingleSpawner : MonoBehaviour {
 	// Use this for initialization
 	void Start () {  
 		
-		InstanceManager.pools.CreatePool(m_entityPrefab);
+		PoolManager.CreatePool(m_entityPrefab);
 	
 		m_area = GetComponent<Area>().bounds;
 
@@ -43,7 +43,7 @@ public class SingleSpawner : MonoBehaviour {
 			if (m_spawnTimer <= 0) {
 
 				m_spawnTimer = 0;
-				m_entity = InstanceManager.pools.GetInstance(m_entityPrefab.name);
+				m_entity = PoolManager.GetInstance(m_entityPrefab.name);
 				SpawnBehaviour spawn = m_entity.GetComponent<SpawnBehaviour>();
 				//spawn.Spawn(m_area);
 			}

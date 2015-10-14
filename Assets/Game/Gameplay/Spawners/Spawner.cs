@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Spawner : MonoBehaviour {
@@ -8,7 +8,7 @@ public class Spawner : MonoBehaviour {
 	// Properties
 	//-----------------------------------------------
 	[Header("Entity")]
-	[SerializeField] private GameObject m_entityPrefab;
+	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] protected RangeInt m_quantity;
 
 	[Header("Activation")]
@@ -42,7 +42,7 @@ public class Spawner : MonoBehaviour {
 	// Use this for initialization
 	protected virtual void Start () {
 		
-		InstanceManager.pools.CreatePool(m_entityPrefab);
+		PoolManager.CreatePool(m_entityPrefab);
 		m_entities = new GameObject[m_quantity.max];
 
 		Area area = GetComponent<Area>();
@@ -149,7 +149,7 @@ public class Spawner : MonoBehaviour {
 	void Spawn() {
 		int count = m_quantity.GetRandom();
 		for (int i = 0; i < count; i++) {			
-			m_entities[i] = InstanceManager.pools.GetInstance(m_entityPrefab.name);
+			m_entities[i] = PoolManager.GetInstance(m_entityPrefab.name);
 			m_entityAlive++;
 		}
 

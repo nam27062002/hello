@@ -124,10 +124,10 @@ public class CircleArea2DEditor : Editor {
 		m_radius 	= _bounds.extents.x;
 
 		m_center	= _bounds.center;
-		m_right 	= new Vector3(_bounds.max.x, _bounds.center.y, _bounds.max.z);
-		m_left 		= new Vector3(_bounds.min.x, _bounds.center.y, _bounds.max.z);
-		m_top 		= new Vector3(_bounds.center.x, _bounds.max.y, _bounds.max.z);
-		m_bottom 	= new Vector3(_bounds.center.x, _bounds.min.y, _bounds.max.z);
+		m_right 	= new Vector3(_bounds.max.x, _bounds.center.y, _bounds.center.z);
+		m_left 		= new Vector3(_bounds.min.x, _bounds.center.y, _bounds.center.z);
+		m_top 		= new Vector3(_bounds.center.x, _bounds.max.y, _bounds.center.z);
+		m_bottom 	= new Vector3(_bounds.center.x, _bounds.min.y, _bounds.center.z);
 
 		Handles.color =  m_target.color;
 		Handles.DrawSolidDisc(m_center, Vector3.forward, m_radius);

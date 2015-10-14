@@ -31,6 +31,7 @@ public class MathUtils {
 	/// <param name="_factor">Multiple of this.</param>
 	public static float NextMultiple(float _value, float _factor) {
 		if(_value == 0f) return _factor;	// BIG exception for 0
+		if(_factor == 0f) return _value;
 		return Mathf.Ceil(_value/_factor) * _factor;
 	}
 
@@ -42,7 +43,20 @@ public class MathUtils {
 	/// <param name="_factor">Multiple of this.</param>
 	public static float PreviousMultiple(float _value, float _factor) {
 		if(_value == 0f) return -_factor;	// BIG exception for 0
+		if(_factor == 0f) return _value;
 		return Mathf.Floor(_value/_factor) * _factor;
+	}
+
+	/// <summary>
+	/// Find the multiple of a given number nearest than the given value.
+	/// </summary>
+	/// <returns>The multiple.</returns>
+	/// <param name="_value">Base value.</param>
+	/// <param name="_factor">Multiple of this.</param>
+	public static float Snap(float _value, float _factor) {
+		if(_value == 0f) return _factor;	// BIG exception for 0
+		if(_factor == 0f) return _value;
+		return Mathf.Round(_value/_factor) * _factor;
 	}
 
 	/// <summary>
