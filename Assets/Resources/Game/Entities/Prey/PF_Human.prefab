@@ -121,6 +121,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &129600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 471516}
+  m_Layer: 8
+  m_Name: ground_sensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &129758
 GameObject:
   m_ObjectHideFlags: 1
@@ -243,7 +258,7 @@ GameObject:
   - 114: {fileID: 11412942}
   - 114: {fileID: 11426808}
   - 114: {fileID: 11409122}
-  - 65: {fileID: 6568390}
+  - 114: {fileID: 11402296}
   m_Layer: 8
   m_Name: PF_Human
   m_TagString: Untagged
@@ -389,10 +404,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 167244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.90565491, z: .000846862793}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalPosition: {x: 96.6679993, y: .973999977, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 426152}
+  - {fileID: 471516}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &416392
@@ -427,8 +443,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118296}
   m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
-  m_LocalPosition: {x: 0, y: -1.90565491, z: -.000846862793}
-  m_LocalScale: {x: 14, y: 14, z: 14}
+  m_LocalPosition: {x: 0, y: -1, z: -0}
+  m_LocalScale: {x: .25, y: .25, z: .25}
   m_Children:
   - {fileID: 474536}
   - {fileID: 422060}
@@ -559,6 +575,18 @@ Transform:
   - {fileID: 468626}
   m_Father: {fileID: 461318}
   m_RootOrder: 0
+--- !u!4 &471516
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129600}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: .023, y: -.95599997, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 409376}
+  m_RootOrder: 1
 --- !u!4 &474536
 Transform:
   m_ObjectHideFlags: 1
@@ -655,18 +683,6 @@ Transform:
   - {fileID: 436356}
   m_Father: {fileID: 474536}
   m_RootOrder: 0
---- !u!65 &6568390
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167244}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 31.0799999, y: 110.5, z: 40.2000008}
-  m_Center: {x: 0, y: 49.9500008, z: 0}
 --- !u!95 &9598238
 Animator:
   serializedVersion: 3
@@ -684,6 +700,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11402296
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: .0599999987, y: .379999995}
+  radius: .610000014
+  color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11409122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -696,6 +726,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
+  m_checkFireTime: .00999999978
 --- !u!114 &11411800
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -766,9 +797,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
-  m_steerForce: .5
-  m_maxSpeed: 4
-  m_mass: 4
+  m_steerForce: 1
+  m_maxSpeed: 3
+  m_mass: 1
 --- !u!114 &11472258
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -780,7 +811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18c3b1f8222e4161bb3262b6517bcaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_slowingRadius: 250
+  m_slowingRadius: .75
 --- !u!114 &11477934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -803,8 +834,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 406.929993
-  m_sensorMaxRadius: 677.590027
+  m_sensorMinRadius: 4
+  m_sensorMaxRadius: 6
   m_sensorAngle: 120
   m_sensorAngleOffset: 90
 --- !u!137 &13703782
@@ -870,11 +901,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: .5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
@@ -939,6 +970,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_LocalScale.z
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_checkFireTime
+      value: .00999999978
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

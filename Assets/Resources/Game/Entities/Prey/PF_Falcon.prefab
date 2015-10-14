@@ -38,7 +38,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 473546}
-  - 135: {fileID: 13502270}
   - 114: {fileID: 11486564}
   - 114: {fileID: 11420202}
   - 114: {fileID: 11489274}
@@ -51,6 +50,7 @@ GameObject:
   - 114: {fileID: 11442960}
   - 114: {fileID: 11452716}
   - 114: {fileID: 11482134}
+  - 114: {fileID: 11487176}
   m_Layer: 8
   m_Name: PF_Falcon
   m_TagString: Untagged
@@ -411,7 +411,7 @@ Transform:
   m_GameObject: {fileID: 140750}
   m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 18, y: 18, z: 18}
+  m_LocalScale: {x: .300000012, y: .300000012, z: .300000012}
   m_Children:
   - {fileID: 444710}
   - {fileID: 404374}
@@ -477,7 +477,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 119150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1619.69995, y: -66, z: 0}
+  m_LocalPosition: {x: 170, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 454310}
@@ -575,6 +575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
+  m_checkFireTime: .00999999978
 --- !u!114 &11406306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -586,8 +587,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 700
-  m_sensorMaxRadius: 750
+  m_sensorMinRadius: 6
+  m_sensorMaxRadius: 6.5
   m_sensorAngle: 145
   m_sensorAngleOffset: 0
 --- !u!114 &11420202
@@ -632,7 +633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be910e9aa77c4d1db7cc011e47ecba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_changeTargetTime: 5
+  m_changeTargetTime: 3
 --- !u!114 &11462948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -666,7 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 192d94688d2bc4a09b81caccd7cda615, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_range: 100
+  m_range: 1.5
   m_delay: 1
   m_damage: 5
 --- !u!114 &11482134
@@ -682,8 +683,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_faceDirection: 0
   m_steerForce: 1
-  m_maxSpeed: 10
-  m_mass: 2
+  m_maxSpeed: 8
+  m_mass: .5
 --- !u!114 &11486564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -695,6 +696,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11487176
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: .214797974, y: .173210144}
+  radius: .875288725
+  color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11489274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -721,19 +736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18c3b1f8222e4161bb3262b6517bcaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_slowingRadius: 150
---- !u!135 &13502270
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119150}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 62.9000015
-  m_Center: {x: 14.8999996, y: 2.5, z: 0}
+  m_slowingRadius: 1
 --- !u!137 &13756092
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -833,7 +836,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_faceDirection
@@ -877,7 +880,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 10
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_checkFireTime
+      value: .00999999978
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
