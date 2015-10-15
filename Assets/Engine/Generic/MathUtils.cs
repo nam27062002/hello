@@ -54,7 +54,6 @@ public class MathUtils {
 	/// <param name="_value">Base value.</param>
 	/// <param name="_factor">Multiple of this.</param>
 	public static float Snap(float _value, float _factor) {
-		if(_value == 0f) return _factor;	// BIG exception for 0
 		if(_factor == 0f) return _value;
 		return Mathf.Round(_value/_factor) * _factor;
 	}
