@@ -259,6 +259,9 @@ namespace LevelEditor {
 				} break;
 			}
 
+			// Make operation undoable
+			Undo.RegisterCreatedObjectUndo(newSpawnerObj, "LevelEditor AddSpawner");
+
 			// Set position more or less to where the camera is pointing, forcing Z-0
 			// Select new object in the hierarchy and center camera to it
 			LevelEditor.PlaceInFrontOfCameraAtZPlane(newSpawnerObj, true);

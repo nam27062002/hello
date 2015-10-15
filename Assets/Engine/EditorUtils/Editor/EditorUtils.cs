@@ -352,4 +352,18 @@ public static class EditorUtils {
 			
 		}
 	}
+
+	/// <summary>
+	/// Same as EditorGUILayout.EndScrollView(), but catching exceptions.
+	/// For some reason an exception is thrown when opening doing complex operations within a layout scope, for example 
+	/// opening another editor window from a button in the layout. Since it's editor code, we don't care about the exception
+	/// at all, but we don't want it adding noise to our console, so we will catch it.
+	/// </summary>
+	public static void EndScrollViewSafe() {
+		try {
+			EditorGUILayout.EndScrollView(); 
+		} catch { 
+			
+		}
+	}
 }

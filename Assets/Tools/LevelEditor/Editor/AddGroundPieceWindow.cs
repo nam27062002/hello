@@ -132,6 +132,9 @@ namespace LevelEditor {
 					// Add a Ground Piece component as well to facilitate edition
 					groundPieceObj.AddComponent<GroundPiece>();
 
+					// Make operation undoable
+					Undo.RegisterCreatedObjectUndo(groundPieceObj, "LevelEditor AddGroundPiece");
+
 					// Set position more or less to where the camera is pointing, forcing Z-0
 					// Select new object in the hierarchy and center camera to it
 					LevelEditor.PlaceInFrontOfCameraAtZPlane(groundPieceObj, true);
