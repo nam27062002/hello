@@ -42,7 +42,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override protected void ExtendedStart() {
 
-		PoolManager.CreatePool((GameObject)Resources.Load("PROTO/Flame"), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/Flame"), m_maxParticles, false);
 
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
@@ -62,9 +62,7 @@ public class FireBreath : DragonBreathBehaviour {
 	override public bool IsInsideArea(Vector2 _point) { 
 	
 		if (m_isFuryOn) {
-			float d = (m_sphCenter - _point).sqrMagnitude;
-
-			if (d < m_sphRadiusSqr) {
+			if (m_bounds2D.Contains(_point)) {
 				float sign = m_area < 0 ? -1 : 1;
 				float s = (m_triP0.y * m_triP2.x - m_triP0.x * m_triP2.y + (m_triP2.y - m_triP0.y) * _point.x + (m_triP0.x - m_triP2.x) * _point.y) * sign;
 				float t = (m_triP0.x * m_triP1.y - m_triP0.y * m_triP1.x + (m_triP0.y - m_triP1.y) * _point.x + (m_triP1.x - m_triP0.x) * _point.y) * sign;
@@ -77,12 +75,11 @@ public class FireBreath : DragonBreathBehaviour {
 	}
 
 	override protected void Fire(){
+		m_direction = m_mouthTransform.position - m_headTransform.position;
+		m_direction.Normalize();
+		m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
 
 		if (m_frame == 0) {
-			m_direction = m_mouthTransform.position - m_headTransform.position;
-			m_direction.Normalize();
-			m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
-
 			// Raycast to ground
 			RaycastHit ground;				
 			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_groundMask)) {
@@ -106,6 +103,8 @@ public class FireBreath : DragonBreathBehaviour {
 
 			m_sphRadius = (m_sphCenter - m_triP1).magnitude;
 			m_sphRadiusSqr = m_sphRadius * m_sphRadius;
+
+			m_bounds2D.Set(m_sphCenter.x - m_sphRadius, m_sphCenter.y - m_sphRadius, m_sphRadius * 2f, m_sphRadius * 2f);
 		}
 
 		// Spawn particles
