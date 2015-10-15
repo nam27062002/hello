@@ -75,12 +75,11 @@ public class FireBreath : DragonBreathBehaviour {
 	}
 
 	override protected void Fire(){
+		m_direction = m_mouthTransform.position - m_headTransform.position;
+		m_direction.Normalize();
+		m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
 
 		if (m_frame == 0) {
-			m_direction = m_mouthTransform.position - m_headTransform.position;
-			m_direction.Normalize();
-			m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
-
 			// Raycast to ground
 			RaycastHit ground;				
 			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_groundMask)) {
