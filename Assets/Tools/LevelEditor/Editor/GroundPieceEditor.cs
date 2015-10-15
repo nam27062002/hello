@@ -72,7 +72,6 @@ namespace LevelEditor {
 			Vector3 oldRotation = targetPiece.transform.eulerAngles;
 
 			// Draw handlers and store new values
-			GUI.changed = false;
 			Handles.color = Colors.coral;
 			Vector3 newLeftPos = Handles.FreeMoveHandle(oldLeftPos, Quaternion.identity, HandleUtility.GetHandleSize(oldLeftPos) * 0.25f, Vector3.zero, Handles.SphereCap);
 
@@ -83,10 +82,15 @@ namespace LevelEditor {
 			newLeftPos.z = oldLeftPos.z;
 			newRightPos.z = oldRightPos.z;
 
-			// Snap to round values
-			for(int i = 0; i < 3; i++) {
-				newLeftPos[i] = MathUtils.Snap(newLeftPos[i], LevelEditor.snapSize);
-				newRightPos[i] = MathUtils.Snap(newRightPos[i], LevelEditor.snapSize);
+			// Detect changes
+			bool leftChanged = (oldLeftPos != newLeftPos);
+			bool rightChanged = (oldRightPos != newRightPos);
+
+			// Snap to round values - only if value has changed
+			// Skip Z as well
+			for(int i = 0; i < 2; i++) {
+				if(leftChanged) newLeftPos[i] = MathUtils.Snap(newLeftPos[i], LevelEditor.snapSize);
+				if(rightChanged) newRightPos[i] = MathUtils.Snap(newRightPos[i], LevelEditor.snapSize);
 			}
 
 			// Compute new transformations
@@ -98,7 +102,7 @@ namespace LevelEditor {
 			float newRotationZ = Vector3.right.Angle360(newAxis, Vector3.forward);
 
 			// Apply transformations (only if there were actually changes)
-			if(GUI.changed) {
+			if(leftChanged || rightChanged) {
 				Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
 				targetPiece.transform.position = newPos;
 				targetPiece.transform.localScale = new Vector3(newScaleX, targetPiece.transform.localScale.y, targetPiece.transform.localScale.z);

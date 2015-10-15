@@ -36,10 +36,12 @@ namespace LevelEditor {
 		private static readonly float THUMB_SIZE = 100f;	// pixels
 		private static readonly Vector2 THUMB_GRID = new Vector2(6, 4);
 
+		private static readonly string PREFIX = "SP_";
+
 		//------------------------------------------------------------------//
 		// MEMBERS															//
 		//------------------------------------------------------------------//
-		private Level m_targetLevel = null;
+		private Group m_targetGroup = null;
 		private GameObject[] m_entityPrefabs = null;
 
 		private Shape m_shape = Shape.POINT;
@@ -53,10 +55,10 @@ namespace LevelEditor {
 		/// <summary>
 		/// Show the window.
 		/// </summary>
-		/// <param name="_targetLevel">The level where to add the new ground piece</param>
-		public static void Show(Level _targetLevel) {
+		/// <param name="_targetGroup">The group where to add the new spawner</param>
+		public static void Show(Group _targetGroup) {
 			// Nothing to do if given level is not valid
-			if(_targetLevel == null) return;
+			if(_targetGroup == null) return;
 
 			// Create a new window instance
 			AddSpawnerWindow window = new AddSpawnerWindow();
@@ -65,12 +67,12 @@ namespace LevelEditor {
 			Vector2 initialSize = new Vector2(THUMB_SIZE * THUMB_GRID.x + 40f, THUMB_SIZE * THUMB_GRID.y + 160f);	// XxY thumbs plus some room for extra controls (approx)
 			window.minSize = initialSize;
 			window.maxSize = initialSize;
-			window.m_targetLevel = _targetLevel;
+			window.m_targetGroup = _targetGroup;
 
-			// Open at cursor's Y, centered to current window in X
+			// Open at cursor's position
 			// The window expects the position in screen coords
 			Rect pos = new Rect();
-			pos.x = 10f;
+			pos.x = Event.current.mousePosition.x - window.maxSize.x/2f;
 			pos.y = Event.current.mousePosition.y + 7f;	// A little bit lower
 			pos.position = EditorGUIUtility.GUIToScreenPoint(pos.position);
 			
@@ -201,8 +203,8 @@ namespace LevelEditor {
 		/// </summary>
 		private void AddNewSpawner() {
 			// Check all required parameters
-			if(m_targetLevel == null) { ShowNotification(new GUIContent("Target level is not valid")); return; }
-			if(m_targetLevel.spawnersObj == null) { ShowNotification(new GUIContent("Target level doesn't have a container for new spawners")); return; }
+			if(m_targetGroup == null) { ShowNotification(new GUIContent("Target level is not valid")); return; }
+			if(m_targetGroup.spawnersObj == null) { ShowNotification(new GUIContent("Target level doesn't have a container for new spawners")); return; }
 			if(m_entityPrefabIdx < 0 || m_entityPrefabIdx >= m_entityPrefabs.Length) { ShowNotification(new GUIContent("Please select an entity prefab from the list")); return; }
 
 			// Get target entity prefab
@@ -210,25 +212,11 @@ namespace LevelEditor {
 
 			// Create a new object and add it to the scene
 			GameObject newSpawnerObj = new GameObject();
-			newSpawnerObj.transform.SetParent(m_targetLevel.spawnersObj.transform, true);
+			newSpawnerObj.transform.SetParent(m_targetGroup.spawnersObj.transform, true);
 
 			// Add a name based on the entity prefab
 			string entityName = entityPrefab.name.Replace("PF_", "");	// Entity name without the preffix (if any)
-			newSpawnerObj.name = "SP_" + entityName;	// Add a prefix of our own
-
-			// Set position more or less to where the camera is pointing, at Z-0
-			Camera sceneCamera = SceneView.lastActiveSceneView.camera;
-			Ray cameraRay = sceneCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));	// Z is ignored
-			Plane zPlane = new Plane(Vector3.forward, Vector3.zero);
-			float dist = 0;
-			if(zPlane.Raycast(cameraRay, out dist)) {
-				// Looking at z-0
-				newSpawnerObj.transform.position = cameraRay.GetPoint(dist);
-			} else {
-				// Not looking at z-0, put object at an arbitrary distance from the camera and force z-0
-				newSpawnerObj.transform.position = cameraRay.GetPoint(100f);
-				newSpawnerObj.transform.SetPosZ(0f);
-			}
+			newSpawnerObj.SetUniqueName(PREFIX + entityName);	// Add a prefix of our own and generate unique name
 
 			// Add and initialize the transform lock component
 			// Arbitrary default values fitted to the most common usage when level editing
@@ -254,26 +242,31 @@ namespace LevelEditor {
 			sp.m_entityPrefab = entityPrefab;
 
 			// Add the shape component
+			float size = 25f;	// Will be used to focus the camera. Start with the default size for a point.
 			switch(m_shape) {
 				case Shape.POINT: {
 					// Nothing to do :)
 				} break;
 
 				case Shape.RECTANGLE: {
-					newSpawnerObj.AddComponent<RectArea2D>();
+					RectArea2D area = newSpawnerObj.AddComponent<RectArea2D>();
+					size = area.size.magnitude;
 				} break;
 
 				case Shape.CIRCLE: {
-					newSpawnerObj.AddComponent<CircleArea2D>();
+					CircleArea2D area = newSpawnerObj.AddComponent<CircleArea2D>();
+					size = area.radius * 2f;
 				} break;
 			}
 
-			// Select new object in the hierarchy
-			Selection.activeGameObject = newSpawnerObj;
-			EditorGUIUtility.PingObject(newSpawnerObj);
+			// Set position more or less to where the camera is pointing, forcing Z-0
+			// Select new object in the hierarchy and center camera to it
+			LevelEditor.PlaceInFrontOfCameraAtZPlane(newSpawnerObj, true);
 			
-			// Focus camera to the new object
-			SceneView.FrameLastActiveSceneView();
+			// [AOC] Unfortunately FrameLastActiveSceneView fails to figure out the actual bounds of the spawner, so we 
+			//       move the camera manually (based on the SceneView source code found in https://github.com/MattRix/UnityDecompiled/blob/cc432a3de42b53920d5d5dae85968ff993f4ec0e/UnityEditor/UnityEditor/SceneView.cs)
+			SceneView scene = SceneView.lastActiveSceneView;
+			scene.LookAt(newSpawnerObj.transform.position, scene.rotation, size, scene.orthographic, EditorApplication.isPlaying);
 			
 			// Close window
 			Close();

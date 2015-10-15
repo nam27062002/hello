@@ -146,6 +146,46 @@ namespace LevelEditor {
 			} Handles.EndGUI();
 		}
 	#endif
+
+		//------------------------------------------------------------------//
+		// STATIC UTILS														//
+		//------------------------------------------------------------------//
+	#if UNITY_EDITOR
+		/// <summary>
+		/// Places the given game object at in front of the current scene camera, 
+		/// snapping it to Z0 plane.
+		/// </summary>
+		/// <param name="_obj">The object to be moved.</param>
+		/// <param name="_selectAndFocus">Whether to make target object the selected one and focus the scene camera to it.</param>
+		public static void PlaceInFrontOfCameraAtZPlane(GameObject _obj, bool _selectAndFocus) {
+			// If there is a transform lock, make it ignore the following transform changes
+			TransformLock lockComponent = _obj.GetComponent<TransformLock>();
+			if(lockComponent != null) {
+				lockComponent.ignoreLock = true;	// This will ignore changes for a single frame
+			}
+
+			// Put the object where the camera is looking, at z-0 plane
+			Camera sceneCamera = SceneView.lastActiveSceneView.camera;
+			Ray cameraRay = sceneCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));	// Z is ignored
+			Plane zPlane = new Plane(Vector3.forward, Vector3.zero);
+			float dist = 0;
+			if(zPlane.Raycast(cameraRay, out dist)) {
+				// Looking at z-0
+				_obj.transform.position = cameraRay.GetPoint(dist);
+			} else {
+				// Not looking at z-0, put object at an arbitrary distance from the camera and force z-0
+				_obj.transform.position = cameraRay.GetPoint(100f);
+				_obj.transform.SetPosZ(0f);
+			}
+
+			// If required, select the object in the hierarchy and move camera towards it
+			if(_selectAndFocus) {
+				Selection.activeGameObject = _obj;
+				EditorGUIUtility.PingObject(_obj);
+				SceneView.FrameLastActiveSceneView();
+			}
+		}
+	#endif
 	}
 }
 

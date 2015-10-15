@@ -1,7 +1,7 @@
-// AddGroundPieceWindow.cs
+// AddGroupWindow.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 02/10/2015.
+// Created by Alger Ortín Castellví on 15/10/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -15,18 +15,23 @@ using UnityEditor;
 //----------------------------------------------------------------------//
 namespace LevelEditor {
 	/// <summary>
-	/// Auxiliar window to add a ground piece from the editor.
+	/// Auxiliar window to create a new group in the current loaded level.
 	/// </summary>
-	public class AddGroundPieceWindow : EditorWindow {
+	public class AddGroupWindow : EditorWindow {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
-		private static readonly string PREFIX = "GR_";
+		private static readonly string PREFIX = "GRP_";
+
+		// Group created delegate
+		public delegate void GroupCreatedDelegate(Group _newGroup);
 
 		//------------------------------------------------------------------//
 		// MEMBERS															//
 		//------------------------------------------------------------------//
-		private Group m_targetGroup = null;
+		private Level m_targetLevel = null;
+		private string m_name = "";
+		private GroupCreatedDelegate m_groupCreatedDelegate = null;
 
 		//------------------------------------------------------------------//
 		// STATIC METHODS													//
@@ -34,18 +39,20 @@ namespace LevelEditor {
 		/// <summary>
 		/// Show the window.
 		/// </summary>
-		/// <param name="_targetGroup">The group where to add the new ground piece</param>
-		public static void Show(Group _targetGroup) {
+		/// <param name="_targetLevel">The level where to add the new group</param>
+		/// <param name="_groupCreatedDelegate">Optional delegate method to be called whenever the group is created.</param> 
+		public static void Show(Level _targetLevel, GroupCreatedDelegate _groupCreatedDelegate = null) {
 			// Nothing to do if given level is not valid
-			if(_targetGroup == null) return;
+			if(_targetLevel == null) return;
 
 			// Create a new window instance
-			AddGroundPieceWindow window = new AddGroundPieceWindow();
+			AddGroupWindow window = new AddGroupWindow();
 			
 			// Setup window
 			window.minSize = new Vector2(200f, 70f);
 			window.maxSize = window.minSize;
-			window.m_targetGroup = _targetGroup;
+			window.m_targetLevel = _targetLevel;
+			window.m_groupCreatedDelegate = _groupCreatedDelegate;
 
 			// Open at cursor's position
 			// The window expects the position in screen coords
@@ -65,7 +72,7 @@ namespace LevelEditor {
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public AddGroundPieceWindow() {
+		public AddGroupWindow() {
 			// Nothing to do
 		}
 		
@@ -89,52 +96,47 @@ namespace LevelEditor {
 			
 			// Show all options in a list
 			EditorGUILayout.BeginVertical(); {
-				// Size input - store it to editor preferences to save it between pieces
-				// Pseudo-static var, we need to do it this way because static vars are reset when entering/exiting play mode
-				Vector3 size = new Vector3(50f, 1f, 15f);
-				size.x = EditorPrefs.GetFloat(GetType().Name + ".size.x", size.x);
-				size.y = EditorPrefs.GetFloat(GetType().Name + ".size.y", size.y);
-				size.z = EditorPrefs.GetFloat(GetType().Name + ".size.z", size.z);
+				// Name input
+				EditorGUILayout.BeginHorizontal(); {
+					GUILayout.Label("Name", GUILayout.ExpandWidth(false));
 
-				size = EditorGUILayout.Vector3Field("Size", size);
+					GUI.enabled = false;
+					GUILayout.TextField(PREFIX, GUILayout.ExpandWidth(false));
+					GUI.enabled = true;
 
-				EditorPrefs.SetFloat(GetType().Name + ".size.x", size.x);
-				EditorPrefs.SetFloat(GetType().Name + ".size.y", size.y);
-				EditorPrefs.SetFloat(GetType().Name + ".size.z", size.z);
+					m_name = GUILayout.TextField(m_name);
+				} EditorUtils.EndHorizontalSafe();
 
-				// Some spacing
-				GUILayout.Space(5f);
-				
 				// Confirm button
 				if(GUILayout.Button("Add")) {
 					// Do it!!
-					// We could have a prefab, specially if we need some custom scripts attached to it, but for now a simple cube is just fine
-					// Create game object
-					GameObject groundPieceObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+					// Create a new game object and add to it the Group component
+					// It will automatically be initialized with the required hierarchy
+					GameObject newGroupObj = new GameObject("", typeof(Group));
+					Group newGroup = newGroupObj.GetComponent<Group>();
 
-					// Apply size: luckily scale is 1:1m
-					groundPieceObj.transform.localScale = size;
-					
-					// Put it into the ground layer
-					groundPieceObj.layer = LayerMask.NameToLayer("Ground");
-					
-					// Add it to the editor group in the level's hierarchy and generate unique name
-					groundPieceObj.transform.SetParent(m_targetGroup.groundObj.transform, true);
-					groundPieceObj.SetUniqueName(PREFIX);	// GR_0, GR_1...
+					// Add it to the level's hierarchy and generate unique name
+					newGroupObj.transform.SetParent(m_targetLevel.gameObject.transform, true);
+					newGroupObj.SetUniqueName(PREFIX + m_name);
 
+					// Since groups are empty at the start, use one of Unity's default icons
+					EditorUtils.SetObjectIcon(newGroupObj, EditorUtils.ObjectIcon.LABEL_GRAY);
+					
 					// Add and initialize the transform lock component
 					// Arbitrary default values fitted to the most common usage when level editing
-					TransformLock newLock = groundPieceObj.AddComponent<TransformLock>();
+					TransformLock newLock = newGroupObj.AddComponent<TransformLock>();
 					newLock.SetPositionLock(false, false, true);
 					newLock.SetRotationLock(true, true, false);
-					newLock.SetScaleLock(false, true, true);
-
-					// Add a Ground Piece component as well to facilitate edition
-					groundPieceObj.AddComponent<GroundPiece>();
+					newLock.SetScaleLock(true, true, true);
 
 					// Set position more or less to where the camera is pointing, forcing Z-0
 					// Select new object in the hierarchy and center camera to it
-					LevelEditor.PlaceInFrontOfCameraAtZPlane(groundPieceObj, true);
+					LevelEditor.PlaceInFrontOfCameraAtZPlane(newGroupObj, true);
+
+					// Invoke delegate (if any)
+					if(m_groupCreatedDelegate != null) {
+						m_groupCreatedDelegate(newGroup);
+					}
 
 					// Close window
 					Close();
