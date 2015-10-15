@@ -311,26 +311,6 @@ namespace LevelEditor {
 					// Spacing
 					GUILayout.Space(10f);
 
-					// Duplicate selected
-					// Only for game objects within the level (and not the level itself)
-					/*
-					GUI.enabled = Selection.activeGameObject != null
-							&& Selection.activeGameObject != m_activeLevel.gameObject
-							&& Selection.activeGameObject.GetComponentInParent<Level>() != null;
-					if(GUILayout.Button("Duplicate Selected Object")) {
-						GameObject selectedObj = Selection.activeGameObject;
-						GameObject copyObj = GameObject.Instantiate<GameObject>(selectedObj);
-						copyObj.name = selectedObj.name;
-						copyObj.transform.SetParent(selectedObj.transform.parent, false);
-						Selection.activeGameObject = copyObj;
-						EditorGUIUtility.PingObject(copyObj);
-					}
-					GUI.enabled = true;
-
-					// Spacing
-					GUILayout.Space(10f);
-					*/
-
 					// Group Editing Section
 					DoGroupSection();
 				}
@@ -405,8 +385,56 @@ namespace LevelEditor {
 					// Aux vars
 					Group[] groups = m_activeLevel.GetComponentsInChildren<Group>();
 
-					// Groups list
+					// Groups section
 					EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(Screen.width/2 - m_boxStyle.padding.left)); {
+						// Spacing
+						GUILayout.Space(2);
+
+						// Buttons Toolbar
+						EditorGUILayout.BeginHorizontal(); {
+							if(GUILayout.Button("New")) {
+								// An external window will manage it
+								AddGroupWindow.Show(m_activeLevel, OnGroupCreated);
+							}
+							
+							GUI.enabled = (m_selectedGroup != null);
+							if(GUILayout.Button("Delete")) {
+								// Remove from the local groups list!
+								ArrayUtility.Remove<Group>(ref groups, m_selectedGroup);
+
+								// Now we can remove it from the scene and delete it
+								Undo.DestroyObjectImmediate(m_selectedGroup.gameObject);	// Make it undoable!
+								m_selectedGroup = null;
+							}
+							
+							if(GUILayout.Button("Duplicate")) {
+								// Create the copy
+								GameObject sourceObj = m_selectedGroup.gameObject;
+								GameObject copyObj = GameObject.Instantiate<GameObject>(sourceObj);
+								copyObj.name = sourceObj.name;
+								copyObj.transform.SetParent(sourceObj.transform.parent, false);
+								EditorUtils.SetObjectIcon(copyObj, EditorUtils.ObjectIcon.LABEL_GRAY);
+
+								// Move a bit aside so we can see that it was actually duplicated
+								copyObj.transform.SetPosX(copyObj.transform.position.x + 10f);
+								copyObj.transform.SetPosY(copyObj.transform.position.y + 10f);
+
+								// Make operation undoable
+								Undo.RegisterCreatedObjectUndo(copyObj, "LevelEditor DuplicateGroup");
+								
+								// Focus the duplicate
+								m_selectedGroup = copyObj.GetComponent<Group>();
+								Selection.activeGameObject = copyObj;
+								EditorGUIUtility.PingObject(copyObj);
+								SceneView.FrameLastActiveSceneView();
+							}
+							GUI.enabled = true;
+						} EditorUtils.EndHorizontalSafe();
+
+						// Separator
+						EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 2);
+
+						// Scroll list
 						m_scrollPosGroupList = EditorGUILayout.BeginScrollView(m_scrollPosGroupList, m_scrollListStyle); {
 							// Generate labels and found selected index
 							int selectedIdx = -1;
@@ -428,38 +456,7 @@ namespace LevelEditor {
 								EditorGUIUtility.PingObject(m_selectedGroup.gameObject);
 								SceneView.FrameLastActiveSceneView();
 							}
-						} EditorGUILayout.EndScrollView();
-
-						// Buttons Toolbar
-						EditorGUILayout.BeginHorizontal(); {
-							if(GUILayout.Button("New")) {
-								// An external window will manage it
-								AddGroupWindow.Show(m_activeLevel, OnGroupCreated);
-							}
-
-							GUI.enabled = (m_selectedGroup != null);
-							if(GUILayout.Button("Delete")) {
-								// Easy
-								DestroyImmediate(m_selectedGroup.gameObject);
-								m_selectedGroup = null;
-							}
-
-							if(GUILayout.Button("Duplicate")) {
-								// Create the copy
-								GameObject sourceObj = m_selectedGroup.gameObject;
-								GameObject copyObj = GameObject.Instantiate<GameObject>(sourceObj);
-								copyObj.name = sourceObj.name;
-								copyObj.transform.SetParent(sourceObj.transform.parent, false);
-								EditorUtils.SetObjectIcon(copyObj, EditorUtils.ObjectIcon.LABEL_GRAY);
-
-								// Focus the duplicate
-								m_selectedGroup = copyObj.GetComponent<Group>();
-								Selection.activeGameObject = copyObj;
-								EditorGUIUtility.PingObject(copyObj);
-								SceneView.FrameLastActiveSceneView();
-							}
-							GUI.enabled = true;
-						} EditorUtils.EndHorizontalSafe();
+						} EditorUtils.EndScrollViewSafe();
 					} EditorUtils.EndVerticalSafe();
 
 					// Actions - only enabled if there is a group selected

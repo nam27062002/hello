@@ -129,6 +129,9 @@ namespace LevelEditor {
 					newLock.SetRotationLock(true, true, false);
 					newLock.SetScaleLock(true, true, true);
 
+					// Make operation undoable
+					Undo.RegisterCreatedObjectUndo(newGroupObj, "LevelEditor AddGroup");
+
 					// Set position more or less to where the camera is pointing, forcing Z-0
 					// Select new object in the hierarchy and center camera to it
 					LevelEditor.PlaceInFrontOfCameraAtZPlane(newGroupObj, true);
