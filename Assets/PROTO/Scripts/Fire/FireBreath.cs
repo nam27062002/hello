@@ -42,7 +42,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override protected void ExtendedStart() {
 
-		PoolManager.CreatePool((GameObject)Resources.Load("PROTO/Flame"), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/Flame"), m_maxParticles, false);
 
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
@@ -62,9 +62,7 @@ public class FireBreath : DragonBreathBehaviour {
 	override public bool IsInsideArea(Vector2 _point) { 
 	
 		if (m_isFuryOn) {
-			float d = (m_sphCenter - _point).sqrMagnitude;
-
-			if (d < m_sphRadiusSqr) {
+			if (m_bounds2D.Contains(_point)) {
 				float sign = m_area < 0 ? -1 : 1;
 				float s = (m_triP0.y * m_triP2.x - m_triP0.x * m_triP2.y + (m_triP2.y - m_triP0.y) * _point.x + (m_triP0.x - m_triP2.x) * _point.y) * sign;
 				float t = (m_triP0.x * m_triP1.y - m_triP0.y * m_triP1.x + (m_triP0.y - m_triP1.y) * _point.x + (m_triP1.x - m_triP0.x) * _point.y) * sign;
@@ -106,6 +104,8 @@ public class FireBreath : DragonBreathBehaviour {
 
 			m_sphRadius = (m_sphCenter - m_triP1).magnitude;
 			m_sphRadiusSqr = m_sphRadius * m_sphRadius;
+
+			m_bounds2D.Set(m_sphCenter.x - m_sphRadius, m_sphCenter.y - m_sphRadius, m_sphRadius * 2f, m_sphRadius * 2f);
 		}
 
 		// Spawn particles

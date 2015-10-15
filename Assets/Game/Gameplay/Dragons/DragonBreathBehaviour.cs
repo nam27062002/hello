@@ -8,7 +8,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	[SerializeField]private float m_damage = 25f;
 	public float damage { get { return m_damage; } }
-
+	
+	protected Rect m_bounds2D;
+	public Rect bounds2D { get { return m_bounds2D; } }
 
 	private DragonPlayer m_dragon;
 	private DragonHealthBehaviour m_healthBehaviour;
@@ -16,7 +18,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private Animator m_animator;
 
 	protected bool m_isFuryOn;
-
 
 	//-----------------------------------------------
 	// Methods
@@ -28,6 +29,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_isFuryOn = false;
+
+		m_bounds2D = new Rect();
 
 		ExtendedStart();
 	}
@@ -49,7 +52,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	void Update() {
-		m_dragon.AddFury(200);
 		if (m_isFuryOn) {
 
 			float dt = Time.deltaTime / m_dragon.data.furyDuration;

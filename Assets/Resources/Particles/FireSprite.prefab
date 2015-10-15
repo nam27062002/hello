@@ -27,7 +27,6 @@ GameObject:
   - 4: {fileID: 437932}
   - 212: {fileID: 21237932}
   - 95: {fileID: 9537932}
-  - 114: {fileID: 11470454}
   m_Layer: 0
   m_Name: FireSprite
   m_TagString: Untagged
@@ -54,8 +53,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 137932}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .25, y: .25, z: 1}
+  m_LocalPosition: {x: .300000012, y: 5.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 437930}
   m_Father: {fileID: 0}
@@ -94,20 +93,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11470454
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 137932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 639b628a338ec445f9b07509c26eb9bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  life: .25
-  initialSpeed: 1500
-  drag: 500
 --- !u!212 &21237930
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -166,7 +151,15 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 137932}

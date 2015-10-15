@@ -13,23 +13,21 @@ public class FireNode : MonoBehaviour {
 	[SerializeField] private float m_resistance;
 	[SerializeField] private float m_burningTime;
 	[SerializeField] private float m_damage;
-	[SerializeField] private float m_checkFireTime = 0.25f;
 	[SerializeField] private float m_maxDistanceLinkNode = 5f;
 
-	private DragonBreathBehaviour m_breath;
+
 	private List<FireNode> m_neighbours;
 	private State m_state;
 	
 	private float m_timer;
 
+	private GameObject m_fireSprite;
 
 
 	// Use this for initialization
 	void Start () {
 	
-		// get player breath component
-		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
-		m_timer = m_checkFireTime;
+		FirePropagationManager.Insert(transform);
 
 		// get two closets neighbours
 		m_neighbours = new List<FireNode>();
@@ -46,22 +44,24 @@ public class FireNode : MonoBehaviour {
 		}
 
 		m_state = State.Idle;
+		m_fireSprite = null;
 	}
 
 	void Update() {
 
-		if (m_state == State.Idle || m_state == State.Damaged) {
-			
-			//check if this intersecs with dragon breath
-			m_timer -= Time.deltaTime;
-			if (m_timer <= 0) {
-				m_timer = m_checkFireTime;
-				if (m_breath.IsInsideArea(transform.position)) {
-					Burn(m_breath.damage);
-				}
+		if (m_state == State.Burning) {	
+			//check if we have to render the particle
+			Vector2 pos = transform.position;
+			Vector2 cameraPos = Camera.main.transform.position;
+			float d = (pos - cameraPos).sqrMagnitude;
+
+			if (d < 20f * 20f) 	StartFire();
+			else 	 			StopFire();
+
+			if (m_fireSprite != null) {
+				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.one * 1.5f, Time.smoothDeltaTime * 1.5f);
 			}
-		} else if (m_state == State.Burning) {
-			
+
 			//burn near nodes and fuel them
 			m_timer -= Time.deltaTime;
 			if (m_timer > 0) {
@@ -71,7 +71,19 @@ public class FireNode : MonoBehaviour {
 			} else {
 				m_state = State.Burned;
 			}
+		} else if (m_state == State.Burned) {
+			if (m_fireSprite != null) {
+				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.zero, Time.smoothDeltaTime);
+
+				if (m_fireSprite.transform.localScale.x < 0.1f) {
+					StopFire();
+				}
+			}
 		}
+	}
+
+	public bool IsBurned() {
+		return m_state > State.Damaged && m_timer < m_burningTime * 0.5f;
 	}
 
 	public void Burn(float _damage) {
@@ -83,10 +95,31 @@ public class FireNode : MonoBehaviour {
 			if (m_resistance <= 0) {
 				m_state = State.Burning;
 				m_timer = m_burningTime;
+
+				FirePropagationManager.Remove(transform);
 			}
 		}
 	}
 
+
+	private void StartFire() {
+		if (m_fireSprite == null) {
+			m_fireSprite = PoolManager.GetInstance("FireSprite");
+			m_fireSprite.transform.position = transform.position;
+			m_fireSprite.transform.localScale = Vector3.zero;
+		}
+	}
+
+	private void StopFire() {		
+		if (m_fireSprite != null) {
+			m_fireSprite.SetActive(false);
+		}
+		m_fireSprite = null;
+	}
+
+	/// <summary>
+	/// Raises the draw gizmos event.
+	/// </summary>
 	void OnDrawGizmos() {
 
 		Gizmos.color = new Color(0.69f, 0.09f, 0.12f);
