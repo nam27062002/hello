@@ -61,11 +61,12 @@ namespace LevelEditor {
 			Vector3 newRot = targetLock.transform.rotation.eulerAngles;
 			Vector3 newScale = targetLock.transform.localScale;
 
-			// If component is not enabled, just update cached values
-			if(!targetLock.isActiveAndEnabled) {
+			// If component is not enabled or the ignore flag is active, just update cached values
+			if(!targetLock.isActiveAndEnabled || targetLock.ignoreLock) {
 				m_lastPos = newPos;
 				m_lastRot = newRot;
 				m_lastScale = newScale;
+				targetLock.ignoreLock = false;
 				return;
 			}
 

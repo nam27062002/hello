@@ -25,6 +25,12 @@ namespace LevelEditor {
 		public bool[] m_scaleLock = new bool[3];
 
 		//------------------------------------------------------------------//
+		// PROPERTIES														//
+		//------------------------------------------------------------------//
+		// Set on a per-frame basis, transformation changes performed during that frame will be ignored if set to true
+		public bool ignoreLock {get; set;}
+
+		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
 		//------------------------------------------------------------------//
 		/// <summary>
