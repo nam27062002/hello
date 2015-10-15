@@ -9,6 +9,7 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.Reflection;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -23,13 +24,49 @@ public static class EditorUtils {
 	public enum Orientation {
 		HORIZONTAL,
 		VERTICAL
-	};
+	}
+
+	public enum ObjectIcon {
+		LABEL_ICONS_START = 0,
+			LABEL_GRAY = LABEL_ICONS_START,
+			LABEL_BLUE,
+			LABEL_TEAL,
+			LABEL_GREEN,
+			LABEL_YELLOW,
+			LABEL_ORANGE,
+			LABEL_RED,
+			LABEL_PURPLE,
+		LABEL_ICONS_END = LABEL_PURPLE,
+
+		SHAPE_ICONS_START,
+			CIRCLE_GRAY = SHAPE_ICONS_START,
+			CIRCLE_BLUE,
+			CIRCLE_TEAL,
+			CIRCLE_GREEN,
+			CIRCLE_YELLOW,
+			CIRCLE_ORANGE,
+			CIRCLE_RED,
+			CIRCLE_PURPLE,
+			DIAMOND_GRAY,
+			DIAMOND_BLUE,
+			DIAMOND_TEAL,
+			DIAMOND_GREEN,
+			DIAMOND_YELLOW,
+			DIAMOND_ORANGE,
+			DIAMOND_RED,
+			DIAMOND_PURPLE,
+		SHAPE_ICONS_END = DIAMOND_PURPLE,
+
+		COUNT
+	}
 
 	public static readonly Color DEFAULT_SEPARATOR_COLOR = new Color(0.65f, 0.65f, 0.65f);	// Silver-ish
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// GameObject Icons
+	private static GUIContent[] s_objectIcons;
 	
 	//------------------------------------------------------------------//
 	// CUSTOM DECORATIONS												//
@@ -253,6 +290,36 @@ public static class EditorUtils {
 		}
 
 		return totalHeight;
+	}
+
+	//------------------------------------------------------------------//
+	// OBJECT ICONS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Defines the icon of the given game object (from Unity's editor default icons).
+	/// </summary>
+	/// <param name="_obj">The object whose icon we want to change.</param>
+	/// <param name="_icon">The icon to be applied.</param>
+	public static void SetObjectIcon(GameObject _obj, ObjectIcon _icon) {
+		// From http://sassybot.com/blog/snippet-automatically-add-scene-labels/
+		// If textures haven't yet been cached, do it now
+		if(s_objectIcons == null) {
+			s_objectIcons = new GUIContent[(int)ObjectIcon.COUNT];
+
+			for(int i = 0; i < (int)ObjectIcon.COUNT; i++) {
+				// Label icons go apart
+				if(i <= (int)ObjectIcon.LABEL_ICONS_END) {
+					s_objectIcons[i] = EditorGUIUtility.IconContent("sv_label_" + i);
+				} else {
+					s_objectIcons[i] = EditorGUIUtility.IconContent("sv_icon_dot" + (i - (int)ObjectIcon.SHAPE_ICONS_START) + "_pix16_gizmo");
+				}
+			}
+		}
+
+		// Apply the icon - reflection black magic since hte SetIconForObject method is internal
+		Texture2D iconTex = s_objectIcons[(int)_icon].image as Texture2D;
+		MethodInfo method = typeof(EditorGUIUtility).GetMethod("SetIconForObject", BindingFlags.NonPublic | BindingFlags.Static);
+		method.Invoke(null, new object[] { _obj, iconTex});
 	}
 
 	//------------------------------------------------------------------//
