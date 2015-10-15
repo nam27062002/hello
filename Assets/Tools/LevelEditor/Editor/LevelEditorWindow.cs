@@ -32,6 +32,15 @@ namespace LevelEditor {
 		[SerializeField] private FileInfo[] m_fileList = null;
 		[SerializeField] private string m_sceneName = "";
 
+		// Group List
+		private Vector2 m_scrollPosGroupList = Vector2.zero;
+		private Group m_selectedGroup = null;
+
+		// Styles
+		private GUIStyle m_scrollListStyle = null;
+		private GUIStyle m_groupListStyle = null;
+		private GUIStyle m_boxStyle = null;
+
 		//------------------------------------------------------------------//
 		// STATIC METHODS													//
 		//------------------------------------------------------------------//
@@ -45,7 +54,7 @@ namespace LevelEditor {
 			
 			// Setup window
 			window.titleContent = new GUIContent("Level Editor");
-			window.minSize = new Vector2(280f, 200f);
+			window.minSize = new Vector2(330f, 350f);	// Min required width to properly fit all the content
 			//window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
 
 			// Make sure everything is initialized properly
@@ -190,6 +199,9 @@ namespace LevelEditor {
 		/// Update the inspector window.
 		/// </summary>
 		public void OnGUI() {
+			// Initialize styles
+			InitStyles();
+
 			// Reset indentation
 			EditorGUI.indentLevel = 0;
 
@@ -211,30 +223,24 @@ namespace LevelEditor {
 				GUILayout.Space(5f);
 
 				// Toolbar
-				GUIStyle boxStyle = new GUIStyle(EditorStyles.helpBox);
-				boxStyle.padding = new RectOffset(10, 10, 10, 10);
-				EditorGUILayout.BeginVertical(boxStyle); {
+				EditorGUILayout.BeginVertical(m_boxStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 					EditorGUILayout.BeginHorizontal(); {
 						// Create
 						GUI.enabled = !EditorApplication.isPlaying;
 						if(GUILayout.Button("New")) {
 							OnNewLevelButton();
 						}
-						GUI.enabled = true;
 
 						// Load
-						GUI.enabled = !EditorApplication.isPlaying;
 						if(GUILayout.Button("Open")) {
 							OnOpenLevelButton();
 						}
-						GUI.enabled = true;
-						
+
 						// Save - only if there is a level loaded and changes have been made
 						GUI.enabled = (m_activeLevel != null && !EditorApplication.isPlaying) && CheckChanges();
 						if(GUILayout.Button("Save")) { 
 							OnSaveLevelButton(); 
 						}
-						GUI.enabled = true;
 
 						// Separator
 						EditorUtils.Separator(EditorUtils.Orientation.VERTICAL, 5f, "", 1f, EditorUtils.DEFAULT_SEPARATOR_COLOR);
@@ -244,13 +250,13 @@ namespace LevelEditor {
 						if(GUILayout.Button("Close")) { 
 							OnCloseLevelButton(); 
 						}
-						GUI.enabled = true;
 
 						// Delete - only if there is a level loaded
 						GUI.enabled = (m_activeLevel != null && !EditorApplication.isPlaying);
 						if(GUILayout.Button("Delete")) { 
 							OnDeleteLevelButton();
 						}
+
 						GUI.enabled = true;
 					} EditorUtils.EndHorizontalSafe();
 
@@ -288,7 +294,6 @@ namespace LevelEditor {
 							// Just start execution mode
 							EditorApplication.isPlaying = true;
 						}
-						GUI.enabled = true;
 					}
 					GUI.enabled = true;
 
@@ -307,15 +312,12 @@ namespace LevelEditor {
 					GUILayout.Space(10f);
 
 					// Duplicate selected
-					// Only for game objects within the level (and not the level itself or their main objects)
+					// Only for game objects within the level (and not the level itself)
+					/*
 					GUI.enabled = Selection.activeGameObject != null
 							&& Selection.activeGameObject != m_activeLevel.gameObject
-							&& Selection.activeGameObject != m_activeLevel.decoObj
-							&& Selection.activeGameObject != m_activeLevel.editorObj
-							&& Selection.activeGameObject != m_activeLevel.spawnersObj
-							&& Selection.activeGameObject != m_activeLevel.terrainObj
 							&& Selection.activeGameObject.GetComponentInParent<Level>() != null;
-					if(GUILayout.Button("Duplicated Selected Object")) {
+					if(GUILayout.Button("Duplicate Selected Object")) {
 						GameObject selectedObj = Selection.activeGameObject;
 						GameObject copyObj = GameObject.Instantiate<GameObject>(selectedObj);
 						copyObj.name = selectedObj.name;
@@ -325,27 +327,162 @@ namespace LevelEditor {
 					}
 					GUI.enabled = true;
 
-					// Add ground piece
-					if(GUILayout.Button("Add Ground Piece")) {
-						// An external window will manage it
-						AddGroundPieceWindow.Show(m_activeLevel);
-					}
+					// Spacing
+					GUILayout.Space(10f);
+					*/
 
-					// Add spawner
-					if(GUILayout.Button("Add Spawner")) {
-						// An external window will manage it
-						AddSpawnerWindow.Show(m_activeLevel);
-					}
+					// Group Editing Section
+					DoGroupSection();
 				}
 
 				// Flexible space to fill up the rest of the window
-				GUILayout.FlexibleSpace();
+				//GUILayout.FlexibleSpace();
 			} EditorUtils.EndVerticalSafe();
 		}
 
 		//------------------------------------------------------------------//
 		// INTERNAL UTILS													//
 		//------------------------------------------------------------------//
+		/// <summary>
+		/// Initialize the custom styles used in this window.
+		/// </summary>
+		private void InitStyles() {
+			// Group list elements
+			{//if(m_groupListStyle == null) {
+				m_groupListStyle = new GUIStyle(EditorStyles.miniButton);
+
+				Texture2D selectedTexture = Texture2DExt.Create(2, 2, Colors.gray);
+				Texture2D idleTexture = Texture2DExt.Create(2, 2, Colors.transparentBlack);
+
+				m_groupListStyle.alignment = TextAnchor.MiddleLeft;
+				
+				m_groupListStyle.onActive.background = idleTexture;
+				m_groupListStyle.active.background = idleTexture;
+				
+				m_groupListStyle.onHover.textColor = Color.white;
+				m_groupListStyle.onHover.background = selectedTexture;
+				m_groupListStyle.hover.background = idleTexture;
+				
+				m_groupListStyle.onNormal.textColor = Color.white;
+				m_groupListStyle.onNormal.background = selectedTexture;
+				m_groupListStyle.normal.background = idleTexture;
+			}
+
+			// Scroll list white background
+			if(m_scrollListStyle == null) {
+				m_scrollListStyle = new GUIStyle(EditorStyles.helpBox);
+
+				Texture2D whiteTexture = Texture2DExt.Create(2, 2, Colors.white);
+
+				m_scrollListStyle.normal.background = whiteTexture;
+				m_scrollListStyle.onNormal.background = whiteTexture;
+			}
+
+			// Background boxes
+			if(m_boxStyle == null) {
+				m_boxStyle = new GUIStyle(EditorStyles.helpBox);
+				m_boxStyle.padding = new RectOffset(10, 10, 10, 10);
+			}
+		}
+
+		/// <summary>
+		/// Perform the OnGUI call on the group editing section.
+		/// </summary>
+		private void DoGroupSection() {
+			// Only if there is a level loaded and we're not testing the level
+			if(m_activeLevel == null) return;
+			if(EditorApplication.isPlaying) return;
+
+			// Group everything within a box
+			EditorGUILayout.BeginVertical(m_boxStyle); {
+				// Title
+				GUI.skin.label.alignment = TextAnchor.UpperCenter;
+				GUILayout.Label("Groups");
+				GUI.skin.label.alignment = TextAnchor.UpperLeft;
+
+				// List + Action buttons
+				EditorGUILayout.BeginHorizontal(); {
+					// Aux vars
+					Group[] groups = m_activeLevel.GetComponentsInChildren<Group>();
+
+					// Groups list
+					EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(Screen.width/2 - m_boxStyle.padding.left)); {
+						m_scrollPosGroupList = EditorGUILayout.BeginScrollView(m_scrollPosGroupList, m_scrollListStyle); {
+							// Generate labels and found selected index
+							int selectedIdx = -1;
+							string[] labels = new string[groups.Length];
+							for(int i = 0; i < groups.Length; i++) {
+								labels[i] = groups[i].gameObject.name;
+								if(groups[i] == m_selectedGroup) {
+									selectedIdx = i;
+								}
+							}
+							
+							// Detect selection change
+							GUI.changed = false;
+							selectedIdx = GUILayout.SelectionGrid(selectedIdx, labels, 1, m_groupListStyle);
+							if(GUI.changed) {
+								// Focus new selected group
+								m_selectedGroup = groups[selectedIdx];
+								Selection.activeGameObject = m_selectedGroup.gameObject;
+								EditorGUIUtility.PingObject(m_selectedGroup.gameObject);
+								SceneView.FrameLastActiveSceneView();
+							}
+						} EditorGUILayout.EndScrollView();
+
+						// Buttons Toolbar
+						EditorGUILayout.BeginHorizontal(); {
+							if(GUILayout.Button("New")) {
+								// An external window will manage it
+								AddGroupWindow.Show(m_activeLevel, OnGroupCreated);
+							}
+
+							GUI.enabled = (m_selectedGroup != null);
+							if(GUILayout.Button("Delete")) {
+								// Easy
+								DestroyImmediate(m_selectedGroup.gameObject);
+								m_selectedGroup = null;
+							}
+
+							if(GUILayout.Button("Duplicate")) {
+								// Create the copy
+								GameObject sourceObj = m_selectedGroup.gameObject;
+								GameObject copyObj = GameObject.Instantiate<GameObject>(sourceObj);
+								copyObj.name = sourceObj.name;
+								copyObj.transform.SetParent(sourceObj.transform.parent, false);
+								EditorUtils.SetObjectIcon(copyObj, EditorUtils.ObjectIcon.LABEL_GRAY);
+
+								// Focus the duplicate
+								m_selectedGroup = copyObj.GetComponent<Group>();
+								Selection.activeGameObject = copyObj;
+								EditorGUIUtility.PingObject(copyObj);
+								SceneView.FrameLastActiveSceneView();
+							}
+							GUI.enabled = true;
+						} EditorUtils.EndHorizontalSafe();
+					} EditorUtils.EndVerticalSafe();
+
+					// Actions - only enabled if there is a group selected
+					GUI.enabled = (m_selectedGroup != null);
+					EditorGUILayout.BeginVertical(); {
+						// Add ground piece
+						if(GUILayout.Button("Add Ground")) {
+							// An external window will manage it
+							AddGroundPieceWindow.Show(m_selectedGroup);
+						}
+						
+						// Add spawner
+						if(GUILayout.Button("Add Spawner")) {
+							// An external window will manage it
+							AddSpawnerWindow.Show(m_selectedGroup);
+						}
+					} EditorUtils.EndVerticalSafe();
+					GUI.enabled = true;
+					
+				} EditorUtils.EndHorizontalSafe();
+			} EditorUtils.EndVerticalSafe();
+		}
+
 		/// <summary>
 		/// Prompts the save dialog and saves/discards the current level based on user's answer.
 		/// </summary>
@@ -591,6 +728,15 @@ namespace LevelEditor {
 		private void OnInspectorUpdate() {
 			// Just force a repaint
 			Repaint();
+		}
+
+		/// <summary>
+		/// Delegate for when a group was created from the AddGroupWindow window.
+		/// </summary>
+		/// <param name="_newGroup">The group that was just created.</param>
+		private void OnGroupCreated(Group _newGroup) {
+			// Make it the selected one
+			m_selectedGroup = _newGroup;
 		}
 	}
 }
