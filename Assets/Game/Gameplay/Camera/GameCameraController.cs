@@ -79,7 +79,7 @@ public class GameCameraController : MonoBehaviour {
 
 	// Internal
 	private Vector3 playerPos {
-		get { return InstanceManager.player.transform.position; }
+		get { return InstanceManager.player.transform.position + Vector3.up * 2f; }
 	}
 
 	//------------------------------------------------------------------//

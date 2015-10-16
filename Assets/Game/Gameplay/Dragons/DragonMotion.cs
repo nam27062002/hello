@@ -46,6 +46,9 @@ public class DragonMotion : MonoBehaviour {
 	private float m_speedMultiplier;
 	private float m_stunnedTimer;
 	private float m_glideTimer;
+	
+	private int m_groundMask;
+	private bool m_nearGround;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -58,6 +61,9 @@ public class DragonMotion : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
+		
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+
 		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
 		m_dragon			= GetComponent<DragonPlayer>();
@@ -100,7 +106,7 @@ public class DragonMotion : MonoBehaviour {
 			}
 		}
 
-		if (m_glideTimer > 0) {
+		if (m_glideTimer > 0 && !m_nearGround) {
 			m_glideTimer -= Time.deltaTime;
 			if (m_glideTimer <= 0) {
 				m_glideTimer = 0;
@@ -145,13 +151,47 @@ public class DragonMotion : MonoBehaviour {
 			// accelerate the dragon
 			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier(), 0.25f); //accelerate from stop to normal or boost velocity
 
+			// we keep the velocity value
 			float v = impulse.magnitude;
-			m_impulse = Vector3.Lerp(m_impulse, impulse, 0.5f);
-			m_impulse.Normalize();
+																		
+			// check collision with ground, only down!!
+			RaycastHit sensorA;
+			RaycastHit sensorB;
+			Vector3 sourceSensorA = transform.position + Vector3.up * 0.5f;
+			Vector3 sourceSensorB = transform.position + Vector3.up * 0.5f + Vector3.right * 2f;
+			Vector3 distance = Vector3.down * 2f;
+			bool hit_A = Physics.Linecast(sourceSensorA, sourceSensorA + distance, out sensorA, m_groundMask);
+			bool hit_B = Physics.Linecast(sourceSensorB, sourceSensorB + distance, out sensorB, m_groundMask);
 
-			m_direction = m_impulse;
+			float dot = 0;
 
-			m_impulse *= v; 
+			m_nearGround = hit_A && hit_B;
+
+			if (m_nearGround) {
+				// we are moving towards ground or away?
+				dot = Vector3.Dot(sensorA.normal, impulse.normalized);
+				m_nearGround = dot < 0;
+			}
+
+			if (m_nearGround) {
+				if (impulse.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
+				else 				m_direction = (sensorB.point - sensorA.point).normalized;
+
+				if ((sensorA.distance <= 0.75f || sensorB.distance <= 0.75f)) {
+					float f = 1 + ((dot - (-0.5f)) / (-1 - (-0.5f))) * (0 - 1);
+					m_impulse = m_direction * Mathf.Min(1f, Mathf.Max(0f, f));
+				} else {
+					// the direction will be parallel to ground, but we'll still moving down until the dragon is near enough
+					m_impulse = impulse.normalized;				
+				}			
+			} else {
+				// on air impulse formula, we don't fully change the velocity vector 
+				m_impulse = Vector3.Lerp(m_impulse, impulse, 0.5f);
+				m_impulse.Normalize();
+				m_direction = m_impulse;
+			}			
+
+			m_impulse *= v;
 
 			m_orientation.SetDirection(m_direction);
 		} else {
@@ -185,7 +225,7 @@ public class DragonMotion : MonoBehaviour {
 			m_animator.SetBool("plummet", plummet);
 			m_animator.SetBool("flight_up", flyUp);
 
-			if (!plummet && !flyUp && !m_animator.GetBool("bite") && !m_animator.GetBool("fire")) {
+			if (!plummet && !flyUp && !m_nearGround && !m_animator.GetBool("bite") && !m_animator.GetBool("fire")) {
 				if (m_glideTimer <= 0) {
 					m_animator.SetTrigger("glide");
 					m_glideTimer = Random.Range(3f, 5f);

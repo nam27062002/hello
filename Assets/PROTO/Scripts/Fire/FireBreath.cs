@@ -127,16 +127,17 @@ public class FireBreath : DragonBreathBehaviour {
 	}
 
 	void OnDrawGizmos() {
+		if (m_isFuryOn) {
+			Gizmos.color = Color.magenta;
 
-		Gizmos.color = Color.magenta;
+			Gizmos.DrawLine(m_triP0, m_triP1);
+			Gizmos.DrawLine(m_triP1, m_triP2);
+			Gizmos.DrawLine(m_triP2, m_triP0);
 
-		Gizmos.DrawLine(m_triP0, m_triP1);
-		Gizmos.DrawLine(m_triP1, m_triP2);
-		Gizmos.DrawLine(m_triP2, m_triP0);
+			Gizmos.DrawWireSphere(m_sphCenter, m_sphRadius);
 
-		Gizmos.DrawWireSphere(m_sphCenter, m_sphRadius);
-
-		Gizmos.color = Color.green;
-		Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
+			Gizmos.color = Color.green;
+			Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
+		}
 	}
 }
