@@ -89,14 +89,6 @@ public class DragonManager : Singleton<DragonManager> {
 			return data;
 		}
 		return null;
-		/*
-		for(int i = 0; i < instance.m_dragons.Length; i++) {
-			if(instance.m_dragons[i].id == _id) {
-				return instance.m_dragons[i];
-			}
-		}
-		return null;
-		*/
 	}
 
 	/// <summary>

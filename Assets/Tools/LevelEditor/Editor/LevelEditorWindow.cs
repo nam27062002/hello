@@ -302,7 +302,10 @@ namespace LevelEditor {
 					
 					// Snap size
 					EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("Snap Size:")).x;
-					LevelEditor.snapSize = Mathf.Max(EditorGUILayout.IntField("Snap Size:", (int)LevelEditor.snapSize), 0);
+					float newSnapSize = EditorGUILayout.FloatField("Snap Size:", LevelEditor.snapSize);
+					newSnapSize = MathUtils.Snap(newSnapSize, 0.01f);	// Round up to 2 decimals
+					newSnapSize = Mathf.Max(newSnapSize, 0f);	// Not negative
+					LevelEditor.snapSize = newSnapSize;
 					EditorGUIUtility.labelWidth = 0;
 				} EditorUtils.EndVerticalSafe();
 
