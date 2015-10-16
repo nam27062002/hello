@@ -10,10 +10,11 @@ public class FireNode : MonoBehaviour {
 		Burned
 	};
 
-	[SerializeField] private float m_resistance;
-	[SerializeField] private float m_burningTime;
-	[SerializeField] private float m_damage;
+	[SerializeField] private float m_resistance = 50f;
+	[SerializeField] private float m_burningTime = 10f;
+	[SerializeField] private float m_damagePerTick = 0.75f;
 	[SerializeField] private float m_maxDistanceLinkNode = 5f;
+	[SerializeField] private Range m_fireScale = new Range(2.25f, 2.75f);
 
 
 	private List<FireNode> m_neighbours;
@@ -22,6 +23,7 @@ public class FireNode : MonoBehaviour {
 	private float m_timer;
 
 	private GameObject m_fireSprite;
+	private float m_spriteScale;
 
 
 	// Use this for initialization
@@ -45,6 +47,8 @@ public class FireNode : MonoBehaviour {
 
 		m_state = State.Idle;
 		m_fireSprite = null;
+
+		m_spriteScale = m_fireScale.GetRandom();
 	}
 
 	void Update() {
@@ -59,14 +63,14 @@ public class FireNode : MonoBehaviour {
 			else 	 			StopFire();
 
 			if (m_fireSprite != null) {
-				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.one * 1.5f, Time.smoothDeltaTime * 1.5f);
+				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.one * m_spriteScale, Time.smoothDeltaTime * 1.5f);
 			}
 
 			//burn near nodes and fuel them
 			m_timer -= Time.deltaTime;
 			if (m_timer > 0) {
 				for (int i = 0; i < m_neighbours.Count; i++) {
-					m_neighbours[i].Burn(m_damage); // what amount of damage should
+					m_neighbours[i].Burn(m_damagePerTick); // what amount of damage should
 				}
 			} else {
 				m_state = State.Burned;
