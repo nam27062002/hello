@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Reflection;
+using System.IO;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -365,5 +366,44 @@ public static class EditorUtils {
 		} catch { 
 			
 		}
+	}
+
+	//------------------------------------------------------------------//
+	// SCRIPTABLE OBJECTS MANAGEMENT									//
+	//------------------------------------------------------------------//
+	/// <summary>
+	///	This makes it easy to create, name and place unique new ScriptableObject asset files.
+	/// Based in http://wiki.unity3d.com/index.php?title=CreateScriptableObjectAsset
+	/// </summary>
+	/// <returns>The newly created asset.</returns>
+	/// <param name="_name">The name for the new asset.</param>
+	/// <param name="_path">The path where to store the new asset, typically "Assets/MyFolder". Leave empty to try to fetch currentl path in the project window.</param>
+	public static T CreateScriptableObjectAsset<T>(string _name, string _path = "") where T : ScriptableObject {
+		// Create a new instance of the given scriptable object
+		T asset = ScriptableObject.CreateInstance<T>();
+
+		// Is there a path already defined?
+		if(_path == "") {
+			// Try to put it in the currently selected folder
+			_path = AssetDatabase.GetAssetPath(Selection.activeObject);
+			if(_path == "") {
+				_path = "Assets";
+			} else if(Path.GetExtension(_path) != "") {
+				_path = _path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
+			}
+		}
+
+		// Compose full path and create asset
+		if(_name == "") _name = "New " + typeof(T).ToString();
+		_path = AssetDatabase.GenerateUniqueAssetPath(_path + "/" + _name + ".asset");
+		AssetDatabase.CreateAsset(asset, _path);
+
+		// Save asset database and select newly created object
+		AssetDatabase.SaveAssets();
+		AssetDatabase.Refresh();
+		EditorUtility.FocusProjectWindow();
+		Selection.activeObject = asset;
+
+		return asset;
 	}
 }

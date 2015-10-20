@@ -1,4 +1,4 @@
-﻿// FlowManager.cs
+// FlowManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 20/08/2015.
@@ -19,7 +19,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class FlowManager : Singleton<FlowManager> {
+public class FlowManager : SingletonMonoBehaviour<FlowManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -35,29 +35,6 @@ public class FlowManager : Singleton<FlowManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	override protected void Awake() {
-		// Call parent
-		base.Awake();
-	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	override protected void Update() {
-		// Call parent
-		base.Update();
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	override protected void OnDestroy() {
-		// Call parent
-		base.OnDestroy();
-	}
 
 	//------------------------------------------------------------------//
 	// SCENE NAVIGATION													//

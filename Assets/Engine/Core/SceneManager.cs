@@ -1,4 +1,4 @@
-﻿// SceneManager.cs
+// SceneManager.cs
 // 
 // Created by Alger Ortín Castellví on 20/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
@@ -16,7 +16,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class SceneManager : Singleton<SceneManager> {
+public class SceneManager : SingletonMonoBehaviour<SceneManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -84,10 +84,7 @@ public class SceneManager : Singleton<SceneManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	override protected void Awake () {
-		// Call parent
-		base.Awake();
-
+	protected void Awake () {
 		// [AOC] Pick current scene as initial scene and put it to run state
 		SetCurrentSceneInternal(Application.loadedLevelName);
 	}
@@ -95,20 +92,9 @@ public class SceneManager : Singleton<SceneManager> {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	override protected void Update () {
-		// Call parent
-		base.Update();
-
+	protected void Update () {
 		// Update based on current state
 		UpdateState();
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	override protected void OnDestroy() {
-		// Call parent
-		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//

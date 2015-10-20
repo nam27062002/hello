@@ -1,4 +1,4 @@
-﻿// GameSettings.cs
+// GameSettings.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 30/04/2015.
@@ -11,7 +11,7 @@ using UnityEngine;
 /// <summary>
 /// Global setup of the game.
 /// </summary>
-public class GameSettings : Singleton<GameSettings> {
+public class GameSettings : SingletonMonoBehaviour<GameSettings> {
 	// Add here any global setup variable such as quality, server ip, debug enabled, ...
 
 	[Header("Gameplay")]

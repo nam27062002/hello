@@ -1,13 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
-public class ParticleManager : Singleton<ParticleManager> {
+public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 	
 	private Dictionary<string, Pool> m_particles = new Dictionary<string, Pool>();
-
-	void Awake () {
-		base.Awake();
-	}
 
 	public static GameObject Spawn(string _id, Vector3 _at) {
 

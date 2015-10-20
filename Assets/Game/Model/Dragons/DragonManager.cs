@@ -1,4 +1,4 @@
-// DragonManager.cs
+// DragonManagerSO.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 07/01/2015.
@@ -16,10 +16,10 @@ using System.Collections.Generic;
 /// <summary>
 /// Global manager of dragons. Contains the definitions from all the dragons in
 /// the game, as well as storing their current state (level, stats, upgrades, etc).
-/// Has its own prefab in the Resources/Singletons folder, all content must be
+/// Has its own asset in the Resources/Singletons folder, all content must be
 /// initialized there.
 /// </summary>
-public class DragonManager : Singleton<DragonManager> {
+public class DragonManager : SingletonScriptableObject<DragonManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -44,35 +44,12 @@ public class DragonManager : Singleton<DragonManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	override protected void Awake() {
-		base.Awake();
-
+	protected void OnEnable() {
 		// Keep the dragons indexed by id as well for faster searches
 		m_dragonsById = new Dictionary<DragonId, DragonData>();
 		for(int i = 0; i < m_dragons.Length; i++) {
 			m_dragonsById[m_dragons[i].id] = m_dragons[i];
 		}
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	override protected void Start() {
-		base.Start();
-	}
-	
-	/// <summary>
-	/// Called once per frame.
-	/// </summary>
-	override protected void Update() {
-		base.Update();
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	override protected void OnDestroy() {
-		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//
