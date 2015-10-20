@@ -127,7 +127,7 @@ namespace LevelEditor {
 					TransformLock newLock = groundPieceObj.AddComponent<TransformLock>();
 					newLock.SetPositionLock(false, false, true);
 					newLock.SetRotationLock(true, true, false);
-					newLock.SetScaleLock(false, true, true);
+					newLock.SetScaleLock(false, false, true);
 
 					// Add a Ground Piece component as well to facilitate edition
 					groundPieceObj.AddComponent<GroundPiece>();
