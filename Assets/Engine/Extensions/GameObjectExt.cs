@@ -59,7 +59,7 @@ public static class GameObjectExt {
 	/// <param name="_layerName">The name of the layer to be applied.</param>
 	public static void SetLayerRecursively(this GameObject _obj, string _layerName) {
 		// Get layer mask
-		int layerMask = LayerMask.GetMask(_layerName);
+		int layerMask = LayerMask.NameToLayer(_layerName);
 
 		// Apply the layer to the object itself
 		_obj.layer = layerMask;
