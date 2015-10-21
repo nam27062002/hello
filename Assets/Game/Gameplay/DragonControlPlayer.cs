@@ -21,14 +21,14 @@ public class DragonControlPlayer : DragonControl {
 		if(touchControls != null) {
 			touchControls.UpdateTouchControls();
 
-			moving = touchControls.CurrentTouchState != TouchState.none ;
+			moving = touchControls.CurrentTouchState != TouchState.none;
 			action = touchControls.touchAction;
 		}
 	}
 
 	override public Vector3 GetImpulse(float desiredVelocity){
 
-		if (touchControls != null){
+		if (touchControls != null && moving){
 
 			touchControls.CalcSharkDesiredVelocity(desiredVelocity, false);
 			return new Vector3(touchControls.SharkDesiredVel.x, touchControls.SharkDesiredVel.y, 0f);

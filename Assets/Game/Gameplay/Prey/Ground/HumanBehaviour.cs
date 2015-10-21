@@ -21,11 +21,6 @@ public class HumanBehaviour : PreyBehaviour {
 
 		base.Initialize();
 
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
-		m_groundSensor = transform.FindChild("ground_sensor").transform;
-
-		m_positionLast = m_position = m_groundSensor.transform.position;
-
 		//start at random anim position
 		ChangeState(State.Wander);
 
@@ -98,19 +93,6 @@ public class HumanBehaviour : PreyBehaviour {
 		UpdateOrientation();
 
 		ApplyPosition();
-	}
-
-	private void UpdateCollisions() {
-
-		// teleport to ground
-		RaycastHit ground;
-		Vector3 testPosition = m_positionLast + Vector2.up * 5f;
-
-		if (Physics.Linecast(testPosition, testPosition + Vector3.down * 15f, out ground, m_groundMask)) {
-			m_position.y = ground.point.y;
-			m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
-			m_velocity.y = 0;
-		}
 	}
 
 	private void ChangeState(State _newSate) {
