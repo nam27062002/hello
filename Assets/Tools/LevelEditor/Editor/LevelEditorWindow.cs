@@ -222,7 +222,7 @@ namespace LevelEditor {
 			// Aux vars
 			bool levelLoaded = (m_activeLevel != null);
 			bool playing = EditorApplication.isPlaying;
-			DragonId oldDragon = LevelEditor.testDragon;
+			DragonId oldDragon = LevelEditor.settings.testDragon;
 			DragonId newDragon = oldDragon;
 
 			// Reset indentation
@@ -302,7 +302,7 @@ namespace LevelEditor {
 							options[i] = enumNames[i];
 						}
 						newDragon = (DragonId)EditorGUILayout.Popup((int)oldDragon, options);
-						if(oldDragon != newDragon) LevelEditor.testDragon = newDragon;
+						if(oldDragon != newDragon) LevelEditor.settings.testDragon = newDragon;
 					} EditorUtils.EndHorizontalSafe();
 					GUI.enabled = true;
 
@@ -361,10 +361,10 @@ namespace LevelEditor {
 					
 					// Snap size
 					EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("Snap Size:")).x;
-					float newSnapSize = EditorGUILayout.FloatField("Snap Size:", LevelEditor.snapSize);
+					float newSnapSize = EditorGUILayout.FloatField("Snap Size:", LevelEditor.settings.snapSize);
 					newSnapSize = MathUtils.Snap(newSnapSize, 0.01f);	// Round up to 2 decimals
 					newSnapSize = Mathf.Max(newSnapSize, 0f);	// Not negative
-					LevelEditor.snapSize = newSnapSize;
+					LevelEditor.settings.snapSize = newSnapSize;
 					EditorGUIUtility.labelWidth = 0;
 				} EditorUtils.EndVerticalSafe();
 
@@ -536,7 +536,7 @@ namespace LevelEditor {
 						if(GUILayout.Button("Create Dragon Preview")) {
 							// Create an instance of the dragon model - just the model, no logic whatsoever
 							// Load the prefab for the dragon with the given ID
-							DragonData data = DragonManager.GetDragonData(LevelEditor.testDragon);
+							DragonData data = DragonManager.GetDragonData(LevelEditor.settings.testDragon);
 							GameObject prefabObj = Resources.Load<GameObject>(data.prefabPath);
 							
 							// We're only interested in the view subobject, get it and create an instance
@@ -544,7 +544,8 @@ namespace LevelEditor {
 							GameObject previewObj = Instantiate<GameObject>(viewPrefabObj);
 							previewObj.name = "DragonPreview" + data.id;
 							previewObj.layer = LayerMask.NameToLayer("LevelEditor");
-							previewObj.transform.SetParent(m_selectedGroup.editorObj.transform, true);
+							previewObj.transform.SetParent(m_selectedGroup.editorObj.transform, false);
+							previewObj.transform.localPosition = Vector3.zero;
 
 							// Add and initialize a transform lock component
 							// Arbitrary default values fitted to the most common usage when level editing

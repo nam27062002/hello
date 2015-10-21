@@ -102,6 +102,7 @@ namespace LevelEditor {
 			// c) Object doesn't exist
 			if(_obj == null) {
 				_obj = new GameObject(_name);
+				_obj.transform.position = this.transform.position;	// Trick to place the new object at 0,0,0 after the SetParent call
 			}
 			
 			// Put it in the right place

@@ -43,7 +43,7 @@ namespace LevelEditor {
 			AddGroundPieceWindow window = new AddGroundPieceWindow();
 			
 			// Setup window
-			window.minSize = new Vector2(200f, 70f);
+			window.minSize = new Vector2(300f, 70f);
 			window.maxSize = window.minSize;
 			window.m_targetGroup = _targetGroup;
 
@@ -88,21 +88,17 @@ namespace LevelEditor {
 			EditorGUI.indentLevel = 0;
 			
 			// Show all options in a list
-			EditorGUILayout.BeginVertical(); {
-				// Size input - store it to editor preferences to save it between pieces
-				// Pseudo-static var, we need to do it this way because static vars are reset when entering/exiting play mode
-				Vector3 size = new Vector3(50f, 1f, 15f);
-				size.x = EditorPrefs.GetFloat(GetType().Name + ".size.x", size.x);
-				size.y = EditorPrefs.GetFloat(GetType().Name + ".size.y", size.y);
-				size.z = EditorPrefs.GetFloat(GetType().Name + ".size.z", size.z);
+			EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true)); {
+				// Store vars into editor preferences to save them between pieces
+				// Size input
+				//LevelEditor.settings.groundPieceSize = EditorGUILayout.Vector3Field("Size", LevelEditor.settings.groundPieceSize);
+				LevelEditor.settings.groundPieceSize = EditorUtils.Vector3Field("Size", LevelEditor.settings.groundPieceSize);
 
-				size = EditorGUILayout.Vector3Field("Size", size);
+				// Color Input
+				EditorGUIUtility.labelWidth = 55f;
+				LevelEditor.settings.groundPieceColor = EditorGUILayout.ColorField("Color", LevelEditor.settings.groundPieceColor);
+				EditorGUIUtility.labelWidth = 0f;
 
-				EditorPrefs.SetFloat(GetType().Name + ".size.x", size.x);
-				EditorPrefs.SetFloat(GetType().Name + ".size.y", size.y);
-				EditorPrefs.SetFloat(GetType().Name + ".size.z", size.z);
-
-				// Some spacing
 				GUILayout.Space(5f);
 				
 				// Confirm button
@@ -112,8 +108,11 @@ namespace LevelEditor {
 					// Create game object
 					GameObject groundPieceObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
+					// Apply color
+					groundPieceObj.GetComponent<Renderer>().sharedMaterial.color = LevelEditor.settings.groundPieceColor;
+
 					// Apply size: luckily scale is 1:1m
-					groundPieceObj.transform.localScale = size;
+					groundPieceObj.transform.localScale = LevelEditor.settings.groundPieceSize;
 					
 					// Put it into the ground layer
 					groundPieceObj.layer = LayerMask.NameToLayer("Ground");

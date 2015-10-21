@@ -89,8 +89,8 @@ namespace LevelEditor {
 			// Snap to round values - only if value has changed
 			// Skip Z as well
 			for(int i = 0; i < 2; i++) {
-				if(leftChanged) newLeftPos[i] = MathUtils.Snap(newLeftPos[i], LevelEditor.snapSize);
-				if(rightChanged) newRightPos[i] = MathUtils.Snap(newRightPos[i], LevelEditor.snapSize);
+				if(leftChanged) newLeftPos[i] = MathUtils.Snap(newLeftPos[i], LevelEditor.settings.snapSize);
+				if(rightChanged) newRightPos[i] = MathUtils.Snap(newRightPos[i], LevelEditor.settings.snapSize);
 			}
 
 			// Compute new transformations
