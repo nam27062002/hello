@@ -368,6 +368,19 @@ public static class EditorUtils {
 		}
 	}
 
+	/// <summary>
+	/// Focuses the given object.
+	/// </summary>
+	/// <param name="_obj">The object to be focused.</param>
+	/// <param name="_select">Make it selected object?</param>
+	/// <param name="_focusScene">Focus scene camera on it? Overrides _select parameter if true.</param>
+	/// <param name="_ping">Ping effect. Overrides _select parameter if true.</param>
+	public static void FocusObject(UnityEngine.Object _obj, bool _select = true, bool _focusScene = true, bool _ping = true) {
+		if(_select || _focusScene || _ping) Selection.activeGameObject = (GameObject)_obj;
+		if(_ping) EditorGUIUtility.PingObject(_obj);
+		if(_focusScene) SceneView.FrameLastActiveSceneView();
+	}
+
 	//------------------------------------------------------------------//
 	// SCRIPTABLE OBJECTS MANAGEMENT									//
 	//------------------------------------------------------------------//

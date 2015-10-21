@@ -116,10 +116,10 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 		playerObj.name = GameSettings.playerName;
 		
 		// Look for a default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find("PlayerSpawn" + _id);
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.Level.DRAGON_SPAWN_POINT_NAME + _id);
 		if(spawnPointObj == null) {
 			// We couldn't find a spawn point for this specific type, try to find a generic one
-			spawnPointObj = GameObject.Find("PlayerSpawn");
+			spawnPointObj = GameObject.Find(LevelEditor.Level.DRAGON_SPAWN_POINT_NAME);
 		}
 		if(spawnPointObj != null) {
 			playerObj.transform.position = spawnPointObj.transform.position;
