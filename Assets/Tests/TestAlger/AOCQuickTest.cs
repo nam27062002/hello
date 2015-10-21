@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
@@ -45,7 +46,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	void Start() {
-
+		//Debug.Log("START!");
 	}
 	
 	/// <summary>
@@ -61,9 +62,4 @@ public class AOCQuickTest : MonoBehaviour {
 	void OnDestroy() {
 
 	}
-
-	//------------------------------------------------------------------//
-	// OTHER METHODS													//
-	//------------------------------------------------------------------//
-
 }

@@ -1,0 +1,251 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e73fbe804037413ebdb95ed3e8676d2, type: 3}
+  m_Name: DragonManager
+  m_EditorClassIdentifier: 
+  m_dragons:
+  - m_id: 0
+    m_tier: 0
+    m_tidName: TID_DRAGON_SMALL_NAME
+    m_tidDescription: TID_DRAGON_SMALL_DESC
+    m_prefabPath: Game/Dragons/PF_DragonSmall
+    m_progression:
+      m_maxXp: 500
+      m_curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 8.39511108
+          outSlope: 8.39511108
+          tangentMode: 0
+        - time: 7.51103115
+          value: 261.47113
+          inSlope: 74.2121429
+          outSlope: 74.2121429
+          tangentMode: 0
+        - time: 9
+          value: 500
+          inSlope: 191.112717
+          outSlope: 191.112717
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+      m_levelsXp:
+      - 0
+      - 10.4136267
+      - 25.7848854
+      - 47.4946671
+      - 76.9238815
+      - 115.453415
+      - 164.464188
+      - 225.337067
+      - 317.504486
+      - 500
+    m_healthRange:
+      min: 50
+      max: 100
+    m_scaleRange:
+      min: .5
+      max: 1.5
+    m_healthDrainPerSecond: 2
+    m_maxEnergy: 50
+    m_energyDrainPerSecond: 10
+    m_energyRefillPerSecond: 5
+    m_maxFury: 160
+    m_furyDuration: 10
+    m_skills:
+    - m_type: 0
+      m_tidName: TID_SKILL_BITE_NAME
+      m_tidDescription: TID_SKILL_BITE_DESC
+      m_valueRange:
+        min: .25
+        max: .0250000004
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+    - m_type: 1
+      m_tidName: TID_SKILL_SPEED_NAME
+      m_tidDescription: TID_SKILL_SPEED_DESC
+      m_valueRange:
+        min: 10
+        max: 16
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+    - m_type: 2
+      m_tidName: TID_SKILL_BOOST_NAME
+      m_tidDescription: TID_SKILL_BOOST_DESC
+      m_valueRange:
+        min: 2
+        max: 4
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+    - m_type: 3
+      m_tidName: TID_SKILL_FIRE_NAME
+      m_tidDescription: TID_SKILL_FIRE_DESC
+      m_valueRange:
+        min: 1
+        max: 2
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+  - m_id: 1
+    m_tier: 1
+    m_tidName: TID_DRAGON_MEDIUM_NAME
+    m_tidDescription: TID_DRAGON_MEDIUM_DESC
+    m_prefabPath: Game/Dragons/PF_DragonMedium
+    m_progression:
+      m_maxXp: 1000
+      m_curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 8.39511108
+          outSlope: 8.39511108
+          tangentMode: 0
+        - time: 6.51909542
+          value: 284.03302
+          inSlope: 116.479462
+          outSlope: 116.479462
+          tangentMode: 0
+        - time: 9
+          value: 1000
+          inSlope: 601.652222
+          outSlope: 601.652222
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+      m_levelsXp:
+      - 0
+      - 8.8901186
+      - 22.3219719
+      - 45.6231384
+      - 84.1212006
+      - 143.143738
+      - 228.018311
+      - 345.500397
+      - 558.449463
+      - 1000
+    m_healthRange:
+      min: 100
+      max: 200
+    m_scaleRange:
+      min: .5
+      max: 1.5
+    m_healthDrainPerSecond: 10
+    m_maxEnergy: 160
+    m_energyDrainPerSecond: 10
+    m_energyRefillPerSecond: 25
+    m_maxFury: 160
+    m_furyDuration: 15
+    m_skills:
+    - m_type: 0
+      m_tidName: TID_SKILL_BITE_NAME
+      m_tidDescription: TID_SKILL_BITE_DESC
+      m_valueRange:
+        min: .125
+        max: .0125000002
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+    - m_type: 1
+      m_tidName: TID_SKILL_SPEED_NAME
+      m_tidDescription: TID_SKILL_SPEED_DESC
+      m_valueRange:
+        min: 13
+        max: 19
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+    - m_type: 2
+      m_tidName: TID_SKILL_BOOST_NAME
+      m_tidDescription: TID_SKILL_BOOST_DESC
+      m_valueRange:
+        min: 2.5
+        max: 4.5
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+    - m_type: 3
+      m_tidName: TID_SKILL_FIRE_NAME
+      m_tidDescription: TID_SKILL_FIRE_DESC
+      m_valueRange:
+        min: 1
+        max: 2
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+  - m_id: 2
+    m_tier: 2
+    m_tidName: TID_DRAGON_BIG_NAME
+    m_tidDescription: TID_DRAGON_BIG_DESC
+    m_prefabPath: Game/Dragons/PF_DragonBig
+    m_progression:
+      m_maxXp: 5000
+      m_curve:
+        serializedVersion: 2
+        m_Curve:
+        - time: 0
+          value: 0
+          inSlope: 8.39511108
+          outSlope: 8.39511108
+          tangentMode: 0
+        - time: 7.0876441
+          value: 1797.86108
+          inSlope: 723.680542
+          outSlope: 723.680542
+          tangentMode: 0
+        - time: 9
+          value: 5000
+          inSlope: 2898.86865
+          outSlope: 2898.86865
+          tangentMode: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+      m_levelsXp:
+      - 0
+      - 15.7633867
+      - 64.1595612
+      - 172.032867
+      - 366.227661
+      - 673.588257
+      - 1120.95911
+      - 1735.18445
+      - 2809.67017
+      - 5000
+    m_healthRange:
+      min: 200
+      max: 400
+    m_scaleRange:
+      min: .5
+      max: 1.5
+    m_healthDrainPerSecond: 10
+    m_maxEnergy: 200
+    m_energyDrainPerSecond: 15
+    m_energyRefillPerSecond: 30
+    m_maxFury: 200
+    m_furyDuration: 10
+    m_skills:
+    - m_type: 0
+      m_tidName: TID_SKILL_BITE_NAME
+      m_tidDescription: TID_SKILL_BITE_DESC
+      m_valueRange:
+        min: .0500000007
+        max: .00499999989
+      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
+    - m_type: 1
+      m_tidName: TID_SKILL_SPEED_NAME
+      m_tidDescription: TID_SKILL_SPEED_DESC
+      m_valueRange:
+        min: 16
+        max: 22
+      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
+    - m_type: 2
+      m_tidName: TID_SKILL_BOOST_NAME
+      m_tidDescription: TID_SKILL_BOOST_DESC
+      m_valueRange:
+        min: 3
+        max: 4
+      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
+    - m_type: 3
+      m_tidName: TID_SKILL_FIRE_NAME
+      m_tidDescription: TID_SKILL_FIRE_DESC
+      m_valueRange:
+        min: 1
+        max: 2
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000

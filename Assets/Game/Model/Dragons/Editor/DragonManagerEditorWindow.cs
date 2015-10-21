@@ -42,25 +42,15 @@ public class DragonManagerEditorWindow : EditorWindow {
 	}
 
 	/// <summary>
-	/// Show existing window instance. If one doesn't exist, make one.
-	/// </summary>
-	public static void ShowWindow(SerializedObject _target) {
-		DragonManagerEditorWindow window = (DragonManagerEditorWindow)EditorWindow.GetWindow(typeof(DragonManagerEditorWindow));
-		window.m_target = _target;
-		window.titleContent = new GUIContent("Dragon Manager Editor");
-		window.ShowUtility();	// To avoid window getting automatically closed when losing focus
-	}
-
-	/// <summary>
 	/// Show the window from the menu.
 	/// </summary>
 	[MenuItem("Hungry Dragon/Content/Dragon Manager")]
-	public static void ShowWindowFromMenu() {
-		// Load dragon's manager prefab and use normal opener
-		GameObject prefab = Resources.Load<GameObject>("Singletons/PF_DragonManager");
-		DragonManager mng = prefab.GetComponent<DragonManager>();
-		SerializedObject target = new SerializedObject(mng);
-		ShowWindow(target);
+	public static void ShowWindow() {
+		// Serialize manager to be able to show private members
+		DragonManagerEditorWindow window = (DragonManagerEditorWindow)EditorWindow.GetWindow(typeof(DragonManagerEditorWindow));
+		window.m_target = new SerializedObject(DragonManager.instance);
+		window.titleContent = new GUIContent("Dragon Manager Editor");
+		window.ShowUtility();	// To avoid window getting automatically closed when losing focus
 	}
 
 	/// <summary>

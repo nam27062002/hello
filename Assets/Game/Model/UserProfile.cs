@@ -19,7 +19,7 @@ using System;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class UserProfile : Singleton<UserProfile> {
+public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -64,21 +64,6 @@ public class UserProfile : Singleton<UserProfile> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	override protected void Awake() {
-		// Call parent
-		base.Awake();
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	override protected void OnDestroy() {
-		// Call parent
-		base.OnDestroy();
-	}
 
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//

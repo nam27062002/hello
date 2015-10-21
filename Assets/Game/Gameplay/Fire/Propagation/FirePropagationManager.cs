@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 // This is a Quadtree! a Quadtree full of fires
-public class FirePropagationManager : Singleton<FirePropagationManager> {
+public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationManager> {
 	
 	[SerializeField] private float m_checkFireTime = 0.25f;
 
@@ -14,7 +14,6 @@ public class FirePropagationManager : Singleton<FirePropagationManager> {
 
 
 	void Awake() {
-		base.Awake();
 		m_fireNodes = new QuadTree(-100f, -100f, 400f, 200f);
 	}
 

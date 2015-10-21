@@ -23,14 +23,15 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		private static readonly string RESOURCES_DIR = "Game/Levels";
+		private static readonly float AUTOSAVE_FREQUENCY = 60f;	// Seconds
 
 		//------------------------------------------------------------------//
 		// MEMBERS															//
 		//------------------------------------------------------------------//
 		// Level control
-		[SerializeField] private Level m_activeLevel = null;
-		[SerializeField] private FileInfo[] m_fileList = null;
-		[SerializeField] private string m_sceneName = "";
+		private Level m_activeLevel = null;
+		private FileInfo[] m_fileList = null;
+		private string m_sceneName = "";
 
 		// Group List
 		private Vector2 m_scrollPosGroupList = Vector2.zero;
@@ -40,6 +41,9 @@ namespace LevelEditor {
 		private GUIStyle m_scrollListStyle = null;
 		private GUIStyle m_groupListStyle = null;
 		private GUIStyle m_boxStyle = null;
+
+		// Auto-save timer
+		private float m_autoSaveTimer = 0f;
 
 		//------------------------------------------------------------------//
 		// STATIC METHODS													//
@@ -95,6 +99,15 @@ namespace LevelEditor {
 				m_sceneName = EditorApplication.currentScene;
 				Init();
 			}
+
+			// Update auto-save timer
+			if(m_activeLevel != null) {
+				m_autoSaveTimer -= Time.deltaTime;
+				if(m_autoSaveTimer <= 0f) {
+					SaveLevel();
+					m_autoSaveTimer = AUTOSAVE_FREQUENCY;
+				}
+			}
 		}
 
 		/// <summary>
@@ -102,7 +115,8 @@ namespace LevelEditor {
 		/// </summary>
 		public void OnDestroy() {
 			// Unload (prompting to save) active level
-			UnloadLevel(true);
+			// [AOC] We don't want to spam so much for now, besides, it's not obvious what to do here
+			//UnloadLevel(true);
 
 			// Clear any other reference
 			m_fileList = null;
@@ -190,6 +204,9 @@ namespace LevelEditor {
 					m_activeLevel = null;
 				}
 			}
+
+			// Reset autosave timer
+			m_autoSaveTimer = 0f;
 		}
 
 		//------------------------------------------------------------------//
@@ -201,6 +218,12 @@ namespace LevelEditor {
 		public void OnGUI() {
 			// Initialize styles
 			InitStyles();
+
+			// Aux vars
+			bool levelLoaded = (m_activeLevel != null);
+			bool playing = EditorApplication.isPlaying;
+			DragonId oldDragon = LevelEditor.settings.testDragon;
+			DragonId newDragon = oldDragon;
 
 			// Reset indentation
 			EditorGUI.indentLevel = 0;
@@ -226,7 +249,7 @@ namespace LevelEditor {
 				EditorGUILayout.BeginVertical(m_boxStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 					EditorGUILayout.BeginHorizontal(); {
 						// Create
-						GUI.enabled = !EditorApplication.isPlaying;
+						GUI.enabled = !playing;
 						if(GUILayout.Button("New")) {
 							OnNewLevelButton();
 						}
@@ -237,7 +260,7 @@ namespace LevelEditor {
 						}
 
 						// Save - only if there is a level loaded and changes have been made
-						GUI.enabled = (m_activeLevel != null && !EditorApplication.isPlaying) && CheckChanges();
+						GUI.enabled = levelLoaded && !playing && CheckChanges();
 						if(GUILayout.Button("Save")) { 
 							OnSaveLevelButton(); 
 						}
@@ -246,13 +269,13 @@ namespace LevelEditor {
 						EditorUtils.Separator(EditorUtils.Orientation.VERTICAL, 5f, "", 1f, EditorUtils.DEFAULT_SEPARATOR_COLOR);
 
 						// Unload - only if there is a level loaded
-						GUI.enabled = (m_activeLevel != null && !EditorApplication.isPlaying);
+						GUI.enabled = levelLoaded && !playing;
 						if(GUILayout.Button("Close")) { 
 							OnCloseLevelButton(); 
 						}
 
 						// Delete - only if there is a level loaded
-						GUI.enabled = (m_activeLevel != null && !EditorApplication.isPlaying);
+						GUI.enabled = levelLoaded && !playing;
 						if(GUILayout.Button("Delete")) { 
 							OnDeleteLevelButton();
 						}
@@ -260,12 +283,14 @@ namespace LevelEditor {
 						GUI.enabled = true;
 					} EditorUtils.EndHorizontalSafe();
 
+					// If level was deleted or closed, don't continue (avoid null references)
+					if(levelLoaded && m_activeLevel == null) return;
+
 					// Separator
 					EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 5f, "", 1, EditorUtils.DEFAULT_SEPARATOR_COLOR);
 
 					// Dragon selector
-					// Only enabled if a level is active and application is not active
-					GUI.enabled = (m_activeLevel != null && !EditorApplication.isPlaying);
+					GUI.enabled = levelLoaded && !playing;
 					EditorGUILayout.BeginHorizontal(); {
 						// Label
 						GUILayout.Label("Test Dragon:");
@@ -276,9 +301,39 @@ namespace LevelEditor {
 						for(int i = 0; i < options.Length; i++) {
 							options[i] = enumNames[i];
 						}
-						LevelEditor.testDragon = (DragonId)EditorGUILayout.Popup((int)LevelEditor.testDragon, options);
-					}  EditorUtils.EndHorizontalSafe();
+						newDragon = (DragonId)EditorGUILayout.Popup((int)oldDragon, options);
+						if(oldDragon != newDragon) LevelEditor.settings.testDragon = newDragon;
+					} EditorUtils.EndHorizontalSafe();
 					GUI.enabled = true;
+
+					// Dragon test tools
+					EditorGUILayout.BeginHorizontal(); {
+						// Show/Create spawn point
+						GameObject spawnPointObj = null;
+						if(levelLoaded) spawnPointObj = m_activeLevel.GetDragonSpawnPoint(newDragon, false);
+						if(spawnPointObj == null) {
+							GUI.enabled = levelLoaded && !playing;
+							if(GUILayout.Button("Create Spawn")) {
+								spawnPointObj = m_activeLevel.GetDragonSpawnPoint(newDragon, true);
+								EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);
+								EditorUtils.FocusObject(spawnPointObj);
+							}
+						} else {
+							GUI.enabled = true;
+							if(GUILayout.Button("Show Spawn")) {
+								EditorUtils.FocusObject(spawnPointObj);
+							}
+						}
+						
+						// Focus default spawn point
+						GUI.enabled = levelLoaded;
+						if(GUILayout.Button("Show Default Spawn")) {
+							spawnPointObj = m_activeLevel.GetDragonSpawnPoint(DragonId.NONE);
+							EditorUtils.FocusObject(spawnPointObj);
+						}
+
+						GUI.enabled = true;
+					} EditorUtils.EndHorizontalSafe();
 
 					// Test button
 					// Reuse the same button to stop the test
@@ -297,15 +352,19 @@ namespace LevelEditor {
 					}
 					GUI.enabled = true;
 
+					/*if(GUILayout.Button("Load Dragon", GUILayout.Height(40f))) {
+						DragonManager.LoadDragon(DragonId.SMALL);
+					}*/
+
 					// Separator
 					EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 5f, "", 1, EditorUtils.DEFAULT_SEPARATOR_COLOR);
 					
 					// Snap size
 					EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("Snap Size:")).x;
-					float newSnapSize = EditorGUILayout.FloatField("Snap Size:", LevelEditor.snapSize);
+					float newSnapSize = EditorGUILayout.FloatField("Snap Size:", LevelEditor.settings.snapSize);
 					newSnapSize = MathUtils.Snap(newSnapSize, 0.01f);	// Round up to 2 decimals
 					newSnapSize = Mathf.Max(newSnapSize, 0f);	// Not negative
-					LevelEditor.snapSize = newSnapSize;
+					LevelEditor.settings.snapSize = newSnapSize;
 					EditorGUIUtility.labelWidth = 0;
 				} EditorUtils.EndVerticalSafe();
 
@@ -427,9 +486,7 @@ namespace LevelEditor {
 								
 								// Focus the duplicate
 								m_selectedGroup = copyObj.GetComponent<Group>();
-								Selection.activeGameObject = copyObj;
-								EditorGUIUtility.PingObject(copyObj);
-								SceneView.FrameLastActiveSceneView();
+								EditorUtils.FocusObject(copyObj);
 							}
 							GUI.enabled = true;
 						} EditorUtils.EndHorizontalSafe();
@@ -455,9 +512,7 @@ namespace LevelEditor {
 							if(GUI.changed) {
 								// Focus new selected group
 								m_selectedGroup = groups[selectedIdx];
-								Selection.activeGameObject = m_selectedGroup.gameObject;
-								EditorGUIUtility.PingObject(m_selectedGroup.gameObject);
-								SceneView.FrameLastActiveSceneView();
+								EditorUtils.FocusObject(m_selectedGroup.gameObject);
 							}
 						} EditorUtils.EndScrollViewSafe();
 					} EditorUtils.EndVerticalSafe();
@@ -475,6 +530,31 @@ namespace LevelEditor {
 						if(GUILayout.Button("Add Spawner")) {
 							// An external window will manage it
 							AddSpawnerWindow.Show(m_selectedGroup);
+						}
+
+						// Create dragon preview
+						if(GUILayout.Button("Create Dragon Preview")) {
+							// Create an instance of the dragon model - just the model, no logic whatsoever
+							// Load the prefab for the dragon with the given ID
+							DragonData data = DragonManager.GetDragonData(LevelEditor.settings.testDragon);
+							GameObject prefabObj = Resources.Load<GameObject>(data.prefabPath);
+							
+							// We're only interested in the view subobject, get it and create an instance
+							GameObject viewPrefabObj = prefabObj.FindSubObject("view");	// Naming convention
+							GameObject previewObj = Instantiate<GameObject>(viewPrefabObj);
+							previewObj.name = "DragonPreview" + data.id;
+							previewObj.layer = LayerMask.NameToLayer("LevelEditor");
+							previewObj.transform.SetParent(m_selectedGroup.editorObj.transform, false);
+							previewObj.transform.localPosition = Vector3.zero;
+
+							// Add and initialize a transform lock component
+							// Arbitrary default values fitted to the most common usage when level editing
+							TransformLock newLock = previewObj.AddComponent<TransformLock>();
+							newLock.SetPositionLock(false, false, true);
+							newLock.SetRotationLock(true, false, false);
+							newLock.SetScaleLock(true, true, true);
+
+							EditorUtils.FocusObject(previewObj);
 						}
 					} EditorUtils.EndVerticalSafe();
 					GUI.enabled = true;
@@ -545,6 +625,8 @@ namespace LevelEditor {
 			
 			// Delete current level
 			DestroyImmediate(m_activeLevel.gameObject);
+
+			// Clear some references
 			m_activeLevel = null;
 		}
 
@@ -670,9 +752,6 @@ namespace LevelEditor {
 				// Find level prefab and delete it
 				GameObject prefabObj = PrefabUtility.GetPrefabParent(m_activeLevel.gameObject) as GameObject;
 				if(prefabObj != null) {
-					// Ping it before deleting it
-					EditorGUIUtility.PingObject(prefabObj);
-
 					// Do it
 					string path = "Assets/Resources/" + RESOURCES_DIR + "/" + prefabObj.name + ".prefab";
 					AssetDatabase.DeleteAsset(path);

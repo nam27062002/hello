@@ -29,15 +29,30 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS															//
 		//------------------------------------------------------------------//
-		// We need to store it to prefs because Unity clears all static variables when entering play mode - and we don't want that
-		public static DragonId testDragon {
-			get { return (DragonId)PrefsExt.Get("LevelEditor.testDragon", 0); }
-			set { PrefsExt.Set("LevelEditor.testDragon", (int)value); }
-		}
+		// Store all settings in a scriptable object so they can be persisted between sessions and edit/play modes
+		private static LevelEditorSettings m_settings = null;
+		public static LevelEditorSettings settings {
+			get {
+				// Settings not yet initialized
+				if(m_settings == null) {
+#if UNITY_EDITOR
+					// Load stored settings object
+					string path = "Assets/Tools/LevelEditor/LevelEditorSettings.asset";
+					m_settings = AssetDatabase.LoadAssetAtPath<LevelEditorSettings>(path);
 
-		public static float snapSize {
-			get { return PrefsExt.Get("LevelEditor.snapSize", 5f); }
-			set { PrefsExt.Set("LevelEditor.snapSize", value); }
+					// No object stored, create it and save it
+					if(m_settings == null) {
+						m_settings = ScriptableObject.CreateInstance<LevelEditorSettings>();
+						AssetDatabase.CreateAsset(m_settings, path);
+					}
+#else
+					// Shouldn't happen, since level editor is not meant to be run outside the editor
+					// Just create a new instance of the scriptable object
+					m_settings = ScriptableObject.CreateInstance<LevelEditorSettings>();
+#endif
+				}
+				return m_settings;
+			}
 		}
 
 		//------------------------------------------------------------------//
