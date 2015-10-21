@@ -1,4 +1,4 @@
-﻿// PopupManager.cs
+// PopupManager.cs
 // Monster
 // 
 // Created by Alger Ortín Castellví on 17/06/2015.
@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// - Optional delay before opening a popup
 /// - Stacked popups (popup over popup)
 /// </summary>
-public class PopupManager : Singleton<PopupManager> {
+public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -39,10 +39,7 @@ public class PopupManager : Singleton<PopupManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	override protected void Awake() {
-		// Call parent
-		base.Awake();
-
+	protected void Awake() {
 		// Create and initialize canvas
 		if(canvas == null) {
 			// Create container object at the root of the scene
@@ -70,22 +67,6 @@ public class PopupManager : Singleton<PopupManager> {
 			GraphicRaycaster raycaster = canvasObj.AddComponent<GraphicRaycaster>();
 			raycaster.ignoreReversedGraphics = true;
 		}
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	override protected void Start() {
-		// Call parent
-		base.Start();
-	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	override protected void Update() {
-		// Call parent
-		base.Update();
 	}
 
 	/// <summary>

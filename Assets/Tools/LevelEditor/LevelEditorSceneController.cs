@@ -34,7 +34,7 @@ namespace LevelEditor {
 		/// </summary>
 		override protected void Awake() {
 			// Load the dragon
-			DragonManager.LoadDragon(LevelEditor.testDragon);
+			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
 
 			// Call parent
 			base.Awake();

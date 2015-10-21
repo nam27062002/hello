@@ -22,26 +22,30 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		// Mandatory objects names
-		public static readonly string GROUND = "Ground";
-		public static readonly string TERRAIN = "Terrain";
-		public static readonly string SPAWNERS = "Spawners";
-		public static readonly string DECO = "Deco";
+		public static readonly string GROUND = "Ground";		// Only ref physical objects for level design, won't be used in game
+		public static readonly string TERRAIN = "Terrain";		// Art representation of the ground
+		public static readonly string SPAWNERS = "Spawners";	// All game spawners
+		public static readonly string DECO = "Deco";			// Random art decorations
+		public static readonly string EDITOR = "Editor";		// Internal editor stuff, won't make it to the game
 
 		//------------------------------------------------------------------//
 		// PROPERTIES														//
 		//------------------------------------------------------------------//
 		// Mandatory objects
 		private GameObject m_groundObj = null;
-		public GameObject groundObj { get { return m_groundObj; }}
+		public GameObject groundObj { get { return CreateIfNull(ref m_groundObj, GROUND); }}
 
 		private GameObject m_terrainObj = null;
-		public GameObject terrainObj { get { return m_terrainObj; }}
+		public GameObject terrainObj { get { return CreateIfNull(ref m_terrainObj, TERRAIN); }}
 
 		private GameObject m_spawnersObj = null;
-		public GameObject spawnersObj { get { return m_spawnersObj; }}
+		public GameObject spawnersObj { get { return CreateIfNull(ref m_spawnersObj, SPAWNERS); }}
 
 		private GameObject m_decoObj = null;
-		public GameObject decoObj { get { return m_decoObj; }}
+		public GameObject decoObj { get { return CreateIfNull(ref m_decoObj, DECO); }}
+
+		private GameObject m_editorObj = null;
+		public GameObject editorObj { get { return CreateIfNull(ref m_editorObj, EDITOR); }}
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
@@ -50,12 +54,6 @@ namespace LevelEditor {
 		/// Initialization.
 		/// </summary>
 		private void Awake() {
-			// Get mandatory object references. If they don't exist, create them
-			m_groundObj = InitComponent(GROUND);
-			m_terrainObj = InitComponent(TERRAIN);
-			m_spawnersObj = InitComponent(SPAWNERS);
-			m_decoObj = InitComponent(DECO);
-
 			// Make ouselves static, we don't want to accidentally move the parent object
 			this.gameObject.isStatic = true;
 		}
@@ -85,33 +83,40 @@ namespace LevelEditor {
 		// INTERNAL METHODS													//
 		//------------------------------------------------------------------//
 		/// <summary>
-		/// Get the reference to one of the components of the scene. If the object is 
-		/// not found, it will be created. If found outside the level object, it will 
-		/// be moved into it.
+		/// Very specific internal usage. Checks wether the input object is null.
+		/// If it's not, returns it without any modifications.
+		/// If it is, looks for a game object within the group with the given name.
+		/// If found, makes sure it's in the right hierarchy and assigns it to the param object (and returns it).
+		/// If not found, creates a new object and does the same with it.
 		/// </summary>
-		/// <param name="_componentName">The name of the component to be found.</param>
-		private GameObject InitComponent(string _componentName) {
-			// Look for the object within the group hierarchy
-			//GameObject obj = GameObject.Find(_componentName);
-			GameObject obj = gameObject.FindSubObject(_componentName);
-
-			// Does object exist?
-			if(obj == null) {
-				// No! Create it
-				obj = new GameObject(_componentName);
+		/// <returns>The passed object, properly initialized.</returns>
+		/// <param name="_obj">The object to be checked.</param>
+		/// <param name="_name">The name identifying to the object.</param>
+		private GameObject CreateIfNull(ref GameObject _obj, string _name) {
+			// a) Object is valid
+			if(_obj != null) return _obj;
+			
+			// b) Object exists in the hierarchy
+			_obj = gameObject.FindSubObject(_name);
+			
+			// c) Object doesn't exist
+			if(_obj == null) {
+				_obj = new GameObject(_name);
+				_obj.transform.position = this.transform.position;	// Trick to place the new object at 0,0,0 after the SetParent call
 			}
+			
+			// Put it in the right place
+			_obj.transform.SetParent(this.transform, true);
 
-			// Is object in the right hierarchy?
-			if(obj.transform.parent != this.gameObject) {
-				// No! Put it as child of the level object
-				obj.transform.SetParent(this.transform, true);
+			// Make sure it's static, we don't want to accidentally move the parent object
+			_obj.isStatic = true;
+
+			// Some objects must be in specific layers
+			if(_name == GROUND || _name == EDITOR) {
+				_obj.layer = LayerMask.NameToLayer("LevelEditor");
 			}
-
-			// Make it static, we don't want to accidentally move the parent object
-			obj.isStatic = true;
-
-			// Everything fine, return the object
-			return obj;
+			
+			return _obj;
 		}
 	}
 }

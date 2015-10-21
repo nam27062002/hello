@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Reflection;
+using System.IO;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -292,6 +293,33 @@ public static class EditorUtils {
 		return totalHeight;
 	}
 
+	/// <summary>
+	/// Custom version of the EditorGUILayout.Vector3Field, putting the label at the same row as the XYZ textfields.
+	/// </summary>
+	/// <returns>The value entered by the user.</returns>
+	/// <param name="_label">Label to display before the field. Leave empty for no label.</param>
+	/// <param name="_value">The value to edit.</param>
+	/// <param name="_options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style. See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
+	public static Vector3 Vector3Field(string _label, Vector3 _value, params GUILayoutOption[] _options) {
+		// Group everything in an horizontal layout
+		// Apply custom options here - may not work with all options
+		EditorGUILayout.BeginHorizontal(_options); {
+			// Label (if not empty)
+			if(_label != "") {
+				GUILayout.Label(_label);
+			}
+
+			// XYZ values
+			EditorGUIUtility.labelWidth = 15;
+			_value.x = EditorGUILayout.FloatField("X", _value.x);
+			_value.y = EditorGUILayout.FloatField("Y", _value.y);
+			_value.z = EditorGUILayout.FloatField("Z", _value.z);
+			EditorGUIUtility.labelWidth = 0;
+		} EditorUtils.EndHorizontalSafe();
+
+		return _value;
+	}
+
 	//------------------------------------------------------------------//
 	// OBJECT ICONS														//
 	//------------------------------------------------------------------//
@@ -365,5 +393,57 @@ public static class EditorUtils {
 		} catch { 
 			
 		}
+	}
+
+	/// <summary>
+	/// Focuses the given object.
+	/// </summary>
+	/// <param name="_obj">The object to be focused.</param>
+	/// <param name="_select">Make it selected object?</param>
+	/// <param name="_focusScene">Focus scene camera on it? Overrides _select parameter if true.</param>
+	/// <param name="_ping">Ping effect. Overrides _select parameter if true.</param>
+	public static void FocusObject(UnityEngine.Object _obj, bool _select = true, bool _focusScene = true, bool _ping = true) {
+		if(_select || _focusScene || _ping) Selection.activeGameObject = (GameObject)_obj;
+		if(_ping) EditorGUIUtility.PingObject(_obj);
+		if(_focusScene) SceneView.FrameLastActiveSceneView();
+	}
+
+	//------------------------------------------------------------------//
+	// SCRIPTABLE OBJECTS MANAGEMENT									//
+	//------------------------------------------------------------------//
+	/// <summary>
+	///	This makes it easy to create, name and place unique new ScriptableObject asset files.
+	/// Based in http://wiki.unity3d.com/index.php?title=CreateScriptableObjectAsset
+	/// </summary>
+	/// <returns>The newly created asset.</returns>
+	/// <param name="_name">The name for the new asset.</param>
+	/// <param name="_path">The path where to store the new asset, typically "Assets/MyFolder". Leave empty to try to fetch currentl path in the project window.</param>
+	public static T CreateScriptableObjectAsset<T>(string _name, string _path = "") where T : ScriptableObject {
+		// Create a new instance of the given scriptable object
+		T asset = ScriptableObject.CreateInstance<T>();
+
+		// Is there a path already defined?
+		if(_path == "") {
+			// Try to put it in the currently selected folder
+			_path = AssetDatabase.GetAssetPath(Selection.activeObject);
+			if(_path == "") {
+				_path = "Assets";
+			} else if(Path.GetExtension(_path) != "") {
+				_path = _path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
+			}
+		}
+
+		// Compose full path and create asset
+		if(_name == "") _name = "New " + typeof(T).ToString();
+		_path = AssetDatabase.GenerateUniqueAssetPath(_path + "/" + _name + ".asset");
+		AssetDatabase.CreateAsset(asset, _path);
+
+		// Save asset database and select newly created object
+		AssetDatabase.SaveAssets();
+		AssetDatabase.Refresh();
+		EditorUtility.FocusProjectWindow();
+		Selection.activeObject = asset;
+
+		return asset;
 	}
 }

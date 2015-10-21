@@ -1,14 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PoolManager : Singleton<PoolManager> {
+public class PoolManager : SingletonMonoBehaviour<PoolManager> {
 
 	private Dictionary<string, Pool> m_pools = new Dictionary<string, Pool>();
-
-	void Awake() {
-		base.Awake();
-	}
 
 	public static void CreatePool(GameObject _gameObject, int _initSize = 10, bool _canGrow = true) {
 		if(!instance.m_pools.ContainsKey(_gameObject.name)) {
