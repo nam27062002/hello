@@ -112,8 +112,8 @@ namespace LevelEditor {
 			_obj.isStatic = true;
 
 			// Some objects must be in specific layers
-			if(_name == GROUND || _name == EDITOR) {
-				_obj.layer = LayerMask.NameToLayer("LevelEditor");
+			if(_name == EDITOR) {
+				_obj.SetLayerRecursively("LevelEditor");
 			}
 			
 			return _obj;

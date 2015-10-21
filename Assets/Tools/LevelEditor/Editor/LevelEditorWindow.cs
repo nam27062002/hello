@@ -101,6 +101,7 @@ namespace LevelEditor {
 			}
 
 			// Update auto-save timer
+			/*
 			if(m_activeLevel != null) {
 				m_autoSaveTimer -= Time.deltaTime;
 				if(m_autoSaveTimer <= 0f) {
@@ -108,6 +109,7 @@ namespace LevelEditor {
 					m_autoSaveTimer = AUTOSAVE_FREQUENCY;
 				}
 			}
+			*/
 		}
 
 		/// <summary>
@@ -542,8 +544,8 @@ namespace LevelEditor {
 							// We're only interested in the view subobject, get it and create an instance
 							GameObject viewPrefabObj = prefabObj.FindSubObject("view");	// Naming convention
 							GameObject previewObj = Instantiate<GameObject>(viewPrefabObj);
+							previewObj.SetLayerRecursively("LevelEditor");
 							previewObj.name = "DragonPreview" + data.id;
-							previewObj.layer = LayerMask.NameToLayer("LevelEditor");
 							previewObj.transform.SetParent(m_selectedGroup.editorObj.transform, false);
 							previewObj.transform.localPosition = Vector3.zero;
 

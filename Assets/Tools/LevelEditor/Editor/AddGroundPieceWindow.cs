@@ -109,13 +109,18 @@ namespace LevelEditor {
 					GameObject groundPieceObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
 					// Apply color
-					groundPieceObj.GetComponent<Renderer>().sharedMaterial.color = LevelEditor.settings.groundPieceColor;
+					// We have to create a new material instance so not all the pieces sharing the material are changed!
+					// @see http://answers.unity3d.com/questions/283271/material-leak-in-editor.html
+					Renderer pieceRenderer = groundPieceObj.GetComponent<Renderer>();
+					Material newMat = new Material(pieceRenderer.sharedMaterial);
+					newMat.color = LevelEditor.settings.groundPieceColor;
+					pieceRenderer.sharedMaterial = newMat;
 
 					// Apply size: luckily scale is 1:1m
 					groundPieceObj.transform.localScale = LevelEditor.settings.groundPieceSize;
 					
 					// Put it into the ground layer
-					groundPieceObj.layer = LayerMask.NameToLayer("Ground");
+					groundPieceObj.SetLayerRecursively("Ground");
 					
 					// Add it to the editor group in the level's hierarchy and generate unique name
 					groundPieceObj.transform.SetParent(m_targetGroup.groundObj.transform, true);
