@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class SoldierBehaviour : MonoBehaviour {
+public class SoldierBehaviourOLD : MonoBehaviour {
 
 	public enum State{
 	

@@ -10,7 +10,7 @@ public class FlamableSoldier : FlamableBehaviour {
 
 			SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
 			if (soldier != null) {
-				soldier.OnBurn();
+				//soldier.OnBurn();
 			} else {
 				PersonBehaviour person = GetComponent<PersonBehaviour>();
 				if (person != null) {
@@ -32,7 +32,7 @@ public class FlamableSoldier : FlamableBehaviour {
 		if (entity.health < 0){
 			SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
 			if (soldier != null) {
-				soldier.OnExplode(pos);
+				//soldier.OnExplode(pos);
 			} else {
 				PersonBehaviour person = GetComponent<PersonBehaviour>();
 				if (person != null) {

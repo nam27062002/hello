@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -27,6 +29,7 @@ namespace LevelEditor {
 		// MEMBERS															//
 		//------------------------------------------------------------------//
 		private Group m_targetGroup = null;
+		private Material[] m_materials = null;
 
 		//------------------------------------------------------------------//
 		// STATIC METHODS													//
@@ -43,7 +46,7 @@ namespace LevelEditor {
 			AddGroundPieceWindow window = new AddGroundPieceWindow();
 			
 			// Setup window
-			window.minSize = new Vector2(300f, 70f);
+			window.minSize = new Vector2(500f, 270f);
 			window.maxSize = window.minSize;
 			window.m_targetGroup = _targetGroup;
 
@@ -68,6 +71,31 @@ namespace LevelEditor {
 		public AddGroundPieceWindow() {
 			// Nothing to do
 		}
+
+		/// <summary>
+		/// Pseudo-constructor.
+		/// </summary>
+		public void OnEnable() {
+			// Load all the editor materials
+			// Can't be done in the constructor -_-
+			m_materials = EditorUtils.LoadAllAssetsAtPath<Material>("Tools/LevelEditor/Materials/", "mat", true);
+
+			// We want them displayed in columns of 3, so re-sort them
+			Material[] tmpList = new Material[m_materials.Length];
+			int rows = 3;
+			int cols = Mathf.CeilToInt(m_materials.Length/(float)rows);
+			int matIdx = 0;
+			for(int col = 0; col < cols; col++) {
+				for(int row = 0; row < rows; row++) {
+					int i = col + row*cols;
+					if(matIdx < m_materials.Length) {
+						tmpList[i] = m_materials[matIdx];
+						matIdx++;
+					}
+				}
+			}
+			m_materials = tmpList;
+		}
 		
 		/// <summary>
 		/// Called every frame.
@@ -83,39 +111,71 @@ namespace LevelEditor {
 		/// Update the inspector window.
 		/// </summary>
 		public void OnGUI() {
+			// Store vars into editor preferences to save them between pieces
 			// Reset indentation
 			int indentLevelBackup = EditorGUI.indentLevel;
 			EditorGUI.indentLevel = 0;
 			
 			// Show all options in a list
 			EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true)); {
-				// Store vars into editor preferences to save them between pieces
-				// Size input
-				//LevelEditor.settings.groundPieceSize = EditorGUILayout.Vector3Field("Size", LevelEditor.settings.groundPieceSize);
-				LevelEditor.settings.groundPieceSize = EditorUtils.Vector3Field("Size", LevelEditor.settings.groundPieceSize);
-
 				// Color Input
-				EditorGUIUtility.labelWidth = 55f;
-				LevelEditor.settings.groundPieceColor = EditorGUILayout.ColorField("Color", LevelEditor.settings.groundPieceColor);
-				EditorGUIUtility.labelWidth = 0f;
+				// Unfortunately changing the color of a single object sharing material with others is not that simple in editor-time :-/
+				// We will have a limited set of colors instead, each with its own material
+				GUILayout.Label("Color");
+				EditorGUILayout.BeginHorizontal(EditorStyles.helpBox); {
+					// Center
+					GUILayout.FlexibleSpace();
+					
+					// Selector
+					// Create a custom content for each material, containing the asset preview and the material name
+					GUIContent[] contents = new GUIContent[m_materials.Length];
+					for(int i = 0; i < contents.Length; i++) {
+						contents[i] = new GUIContent(m_materials[i].name, AssetPreview.GetAssetPreview(m_materials[i]));
+					}
+					
+					// Use custom button styles
+					GUIStyle style = new GUIStyle();
+					style.fixedWidth = 48f;
+					style.fixedHeight = style.fixedWidth;
+					style.imagePosition = ImagePosition.ImageOnly;
+					style.alignment = TextAnchor.MiddleCenter;
+					style.padding = new RectOffset(2, 2, 2, 2);
+					style.onActive.background = Texture2DExt.Create(2, 2, Colors.red);
+					style.onNormal.background = Texture2DExt.Create(2, 2, Colors.red);
+					style.onActive.textColor = Colors.red;
+					style.onNormal.textColor = Colors.red;
+					
+					// The selection grid will do the job
+					LevelEditor.settings.groundPieceColorIdx = GUILayout.SelectionGrid(LevelEditor.settings.groundPieceColorIdx, contents, Mathf.CeilToInt(m_materials.Length/(float)3), style);	// Group materials in columns of 3 (whiteTint, neutral, blackTint)
+
+					// Center
+					GUILayout.FlexibleSpace();
+				} EditorUtils.EndHorizontalSafe();
+
+				GUILayout.Space(5f);
+
+				// Size input
+				//LevelEditor.settings.groundPieceSize = EditorUtils.Vector3Field("Size", LevelEditor.settings.groundPieceSize);
+				LevelEditor.settings.groundPieceSize = EditorGUILayout.Vector3Field("Size", LevelEditor.settings.groundPieceSize);
 
 				GUILayout.Space(5f);
 				
 				// Confirm button
-				if(GUILayout.Button("Add")) {
+				if(GUILayout.Button("Add", GUILayout.Height(40))) {
 					// Do it!!
 					// We could have a prefab, specially if we need some custom scripts attached to it, but for now a simple cube is just fine
 					// Create game object
 					GameObject groundPieceObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
 					// Apply color
-					groundPieceObj.GetComponent<Renderer>().sharedMaterial.color = LevelEditor.settings.groundPieceColor;
+					Renderer pieceRenderer = groundPieceObj.GetComponent<Renderer>();
+					pieceRenderer.sharedMaterial = m_materials[LevelEditor.settings.groundPieceColorIdx];
 
 					// Apply size: luckily scale is 1:1m
 					groundPieceObj.transform.localScale = LevelEditor.settings.groundPieceSize;
 					
 					// Put it into the ground layer
-					groundPieceObj.layer = LayerMask.NameToLayer("Ground");
+					groundPieceObj.SetLayerRecursively("Ground");
 					
 					// Add it to the editor group in the level's hierarchy and generate unique name
 					groundPieceObj.transform.SetParent(m_targetGroup.groundObj.transform, true);
@@ -129,7 +189,7 @@ namespace LevelEditor {
 					newLock.SetScaleLock(false, false, true);
 
 					// Add a Ground Piece component as well to facilitate edition
-					groundPieceObj.AddComponent<GroundPiece>();
+					GroundPiece groundComp = groundPieceObj.AddComponent<GroundPiece>();
 
 					// Make operation undoable
 					Undo.RegisterCreatedObjectUndo(groundPieceObj, "LevelEditor AddGroundPiece");

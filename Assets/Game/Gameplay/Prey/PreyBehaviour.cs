@@ -38,6 +38,9 @@ public class PreyBehaviour : Initializable {
 	protected Evade		m_evade;
 	protected Attack	m_attack;
 	protected SensePlayer m_sensor;
+	
+	private int m_groundMask;	
+	private Transform m_groundSensor;
 
 	protected Animator m_animator;
 
@@ -55,13 +58,20 @@ public class PreyBehaviour : Initializable {
 
 		m_sensor = GetComponent<SensePlayer>();
 
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_groundSensor = transform.FindChild("ground_sensor");
+
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 	
 	
 	public override void Initialize() {
-		
-		m_positionLast = m_position = transform.position;
+
+		if (m_groundSensor) {
+			m_positionLast = m_position = m_groundSensor.transform.position;
+		} else {
+			m_positionLast = m_position = transform.position;
+		}
 
 		//start at random anim position - Move to Bird Behaviour
 		//m_animator.Play("fly", 0, Random.Range(0f, 1f));
@@ -179,4 +189,19 @@ public class PreyBehaviour : Initializable {
 		
 		transform.localRotation = Quaternion.Slerp(transform.localRotation, targetDir, Time.deltaTime * rotationSpeed);
 	}
+
+	protected void UpdateCollisions() {
+		
+		// teleport to ground
+		RaycastHit ground;
+		Vector3 testPosition = m_positionLast + Vector2.up * 5f;
+		
+		if (Physics.Linecast(testPosition, testPosition + Vector3.down * 15f, out ground, m_groundMask)) {
+			m_position.y = ground.point.y;
+			m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
+			m_velocity.y = 0;
+		}
+	}
+
+	virtual public void OnAttack() {}
 }
