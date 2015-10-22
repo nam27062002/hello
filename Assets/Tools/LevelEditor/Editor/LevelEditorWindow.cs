@@ -332,6 +332,7 @@ namespace LevelEditor {
 						if(GUILayout.Button("Show Default Spawn")) {
 							spawnPointObj = m_activeLevel.GetDragonSpawnPoint(DragonId.NONE);
 							EditorUtils.FocusObject(spawnPointObj);
+							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
 						}
 
 						GUI.enabled = true;

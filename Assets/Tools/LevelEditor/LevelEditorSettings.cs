@@ -37,7 +37,7 @@ namespace LevelEditor {
 		public Vector3 groundPieceSize = new Vector3(50f, 1f, 15f);
 
 		// Ground pieces default color
-		public Color groundPieceColor = Colors.white;
+		public int groundPieceColorIdx = 0;
 	}
 }
 
