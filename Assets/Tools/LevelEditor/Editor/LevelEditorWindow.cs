@@ -559,6 +559,12 @@ namespace LevelEditor {
 
 							EditorUtils.FocusObject(previewObj);
 						}
+
+						// Create dummy
+						if(GUILayout.Button("Create Dummy")) {
+							// An external window will manage it
+							AddDummyWindow.Show(m_selectedGroup);
+						}
 					} EditorUtils.EndVerticalSafe();
 					GUI.enabled = true;
 					

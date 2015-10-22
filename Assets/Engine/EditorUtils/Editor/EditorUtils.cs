@@ -351,7 +351,7 @@ public static class EditorUtils {
 	}
 
 	//------------------------------------------------------------------//
-	// UTILS															//
+	// LAYOUT UTILS														//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Same as EditorGUILayout.EndHorizontal(), but catching exceptions.
@@ -395,6 +395,9 @@ public static class EditorUtils {
 		}
 	}
 
+	//------------------------------------------------------------------//
+	// SCENE UTILS														//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Focuses the given object.
 	/// </summary>
@@ -445,5 +448,27 @@ public static class EditorUtils {
 		Selection.activeObject = asset;
 
 		return asset;
+	}
+
+	//------------------------------------------------------------------//
+	// ASSETS MANAGEMENT												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Extension of the AssetDatabase.LoadAssetAtPath method to load ALL the assets in a given directory.
+	/// </summary>
+	/// <returns>An array with all the assets found under the given directory.</returns>
+	/// <param name="_dirPath">The path of the directory to be checked, starting at the "Assets" folder. Example "MyAssetsDir/".</param>
+	/// <param name="_fileExtension">File extension for the expected type T. Must match. Example "mat" for Materials, "asset" for ScriptableObjects or "prefab" for GameObjects.</param>
+	/// <param name="_recursive">Whether to include nested directories.</param>
+	/// <typeparam name="T">The type of asset we're loading.</typeparam>
+	public static T[] LoadAllAssetsAtPath<T>(string _dirPath, string _fileExtension, bool _recursive) where T : UnityEngine.Object {
+		string[] files = Directory.GetFiles(Application.dataPath + "/" + _dirPath, "*." + _fileExtension, _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+		files.SortAlphanumeric();	// [AOC] Yeah, we don't want _0, _1, _10, _11..., we want it as it's displayed in the project window
+		T[] assets = new T[files.Length];
+		for(int i = 0; i < files.Length; i++) {
+			string assetPath = "Assets" + files[i].Replace(Application.dataPath, "").Replace('\\', '/');
+			assets[i] = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+		}
+		return assets;
 	}
 }

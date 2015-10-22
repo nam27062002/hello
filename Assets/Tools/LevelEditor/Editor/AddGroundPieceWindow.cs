@@ -78,13 +78,7 @@ namespace LevelEditor {
 		public void OnEnable() {
 			// Load all the editor materials
 			// Can't be done in the constructor -_-
-			string[] materialFiles = Directory.GetFiles(Application.dataPath + "/Tools/LevelEditor/Materials/", "*.mat", SearchOption.AllDirectories);
-			materialFiles.SortAlphanumeric();	// [AOC] Yeah, we don't want _0, _1, _10, _11...
-			m_materials = new Material[materialFiles.Length];
-			for(int i = 0; i < materialFiles.Length; i++) {
-				string assetPath = "Assets" + materialFiles[i].Replace(Application.dataPath, "").Replace('\\', '/');
-				m_materials[i] = AssetDatabase.LoadAssetAtPath<Material>(assetPath);
-			}
+			m_materials = EditorUtils.LoadAllAssetsAtPath<Material>("Tools/LevelEditor/Materials/", "mat", true);
 
 			// We want them displayed in columns of 3, so re-sort them
 			Material[] tmpList = new Material[m_materials.Length];
@@ -168,7 +162,6 @@ namespace LevelEditor {
 				
 				// Confirm button
 				if(GUILayout.Button("Add", GUILayout.Height(40))) {
-					for(int i = 0; i < m_materials.Length; i++) {
 					// Do it!!
 					// We could have a prefab, specially if we need some custom scripts attached to it, but for now a simple cube is just fine
 					// Create game object
@@ -176,8 +169,7 @@ namespace LevelEditor {
 
 					// Apply color
 					Renderer pieceRenderer = groundPieceObj.GetComponent<Renderer>();
-					//pieceRenderer.sharedMaterial = m_materials[LevelEditor.settings.groundPieceColorIdx];
-						pieceRenderer.sharedMaterial = m_materials[i];
+					pieceRenderer.sharedMaterial = m_materials[LevelEditor.settings.groundPieceColorIdx];
 
 					// Apply size: luckily scale is 1:1m
 					groundPieceObj.transform.localScale = LevelEditor.settings.groundPieceSize;
@@ -205,16 +197,6 @@ namespace LevelEditor {
 					// Set position more or less to where the camera is pointing, forcing Z-0
 					// Select new object in the hierarchy and center camera to it
 					LevelEditor.PlaceInFrontOfCameraAtZPlane(groundPieceObj, true);
-
-						int col = i%10;
-						int row = i/10;
-						Vector2 pos = new Vector2(
-							LevelEditor.settings.groundPieceSize.x * col,
-							LevelEditor.settings.groundPieceSize.y * 1.25f * row
-							);
-						groundPieceObj.transform.SetPosX(pos.x);
-						groundPieceObj.transform.SetPosY(pos.y);
-					}
 
 					// Close window
 					Close();
