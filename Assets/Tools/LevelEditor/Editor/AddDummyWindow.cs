@@ -43,7 +43,7 @@ namespace LevelEditor {
 		/// <summary>
 		/// Show the window.
 		/// </summary>
-		/// <param name="_targetGroup">The group where to add the new spawner</param>
+		/// <param name="_targetGroup">The group where to add the new dummy</param>
 		public static void Show(Group _targetGroup) {
 			// Nothing to do if given level is not valid
 			if(_targetGroup == null) return;
@@ -175,12 +175,12 @@ namespace LevelEditor {
 		}
 
 		/// <summary>
-		/// Creates and adds a new spawner to the current level, using the selected parameters.
+		/// Creates and adds a new dummy to the current level, using the selected parameters.
 		/// </summary>
 		private void AddNewDummy() {
 			// Check all required parameters
 			if(m_targetGroup == null) { ShowNotification(new GUIContent("Target level is not valid")); return; }
-			if(m_targetGroup.spawnersObj == null) { ShowNotification(new GUIContent("Target level doesn't have a container for new spawners")); return; }
+			if(m_targetGroup.editorObj == null) { ShowNotification(new GUIContent("Target level doesn't have a container for new dummies")); return; }
 			if(m_prefabIdx < 0 || m_prefabIdx >= m_prefabs.Length) { ShowNotification(new GUIContent("Please select an entity prefab from the list")); return; }
 
 			// Get dummy prefab
