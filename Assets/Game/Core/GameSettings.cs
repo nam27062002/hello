@@ -11,7 +11,7 @@ using UnityEngine;
 /// <summary>
 /// Global setup of the game.
 /// </summary>
-public class GameSettings : SingletonMonoBehaviour<GameSettings> {
+public class GameSettings : SingletonScriptableObject<GameSettings> {
 	// Add here any global setup variable such as quality, server ip, debug enabled, ...
 
 	[Header("Gameplay")]

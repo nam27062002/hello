@@ -17,7 +17,6 @@ namespace LevelEditor {
 	/// Data class to store preferences for the level editor. Best way to keep 
 	/// preferences between sessions and edit/play mode.
 	/// </summary>
-	[CreateAssetMenu]
 	public class LevelEditorSettings : ScriptableObject {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
