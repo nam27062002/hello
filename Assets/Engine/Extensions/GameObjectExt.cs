@@ -51,4 +51,23 @@ public static class GameObjectExt {
 		// We found our index, set new name to the target object
 		_obj.name = targetName;
 	}
+
+	/// <summary>
+	/// Set the layer to an object and all its children.
+	/// </summary>
+	/// <param name="_obj">The object we're changing.</param>
+	/// <param name="_layerName">The name of the layer to be applied.</param>
+	public static void SetLayerRecursively(this GameObject _obj, string _layerName) {
+		// Get layer mask
+		int layerMask = LayerMask.NameToLayer(_layerName);
+
+		// Apply the layer to the object itself
+		_obj.layer = layerMask;
+
+		// Apply the layer to all children as well
+		Transform[] children = _obj.GetComponentsInChildren<Transform>(true);
+		for(int i = 0; i < children.Length; i++) {
+			children[i].gameObject.layer = layerMask;
+		}
+	}
 }
