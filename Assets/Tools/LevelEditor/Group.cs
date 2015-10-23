@@ -96,8 +96,13 @@ namespace LevelEditor {
 			// a) Object is valid
 			if(_obj != null) return _obj;
 			
-			// b) Object exists in the hierarchy
-			_obj = gameObject.FindSubObject(_name);
+			// b) Object exists in the hierarchy - only care if it's an immediate children, allowing us to put groups as children of other groups
+			foreach(Transform t in this.transform) {
+				if(t.name == _name) {
+					_obj = t.gameObject;
+					break;
+				}
+			}
 			
 			// c) Object doesn't exist
 			if(_obj == null) {
@@ -112,8 +117,8 @@ namespace LevelEditor {
 			_obj.isStatic = true;
 
 			// Some objects must be in specific layers
-			if(_name == GROUND || _name == EDITOR) {
-				_obj.layer = LayerMask.NameToLayer("LevelEditor");
+			if(_name == EDITOR) {
+				_obj.SetLayerRecursively("LevelEditor");
 			}
 			
 			return _obj;

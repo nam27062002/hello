@@ -101,6 +101,7 @@ namespace LevelEditor {
 			}
 
 			// Update auto-save timer
+			/*
 			if(m_activeLevel != null) {
 				m_autoSaveTimer -= Time.deltaTime;
 				if(m_autoSaveTimer <= 0f) {
@@ -108,6 +109,7 @@ namespace LevelEditor {
 					m_autoSaveTimer = AUTOSAVE_FREQUENCY;
 				}
 			}
+			*/
 		}
 
 		/// <summary>
@@ -330,6 +332,7 @@ namespace LevelEditor {
 						if(GUILayout.Button("Show Default Spawn")) {
 							spawnPointObj = m_activeLevel.GetDragonSpawnPoint(DragonId.NONE);
 							EditorUtils.FocusObject(spawnPointObj);
+							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
 						}
 
 						GUI.enabled = true;
@@ -542,8 +545,8 @@ namespace LevelEditor {
 							// We're only interested in the view subobject, get it and create an instance
 							GameObject viewPrefabObj = prefabObj.FindSubObject("view");	// Naming convention
 							GameObject previewObj = Instantiate<GameObject>(viewPrefabObj);
+							previewObj.SetLayerRecursively("LevelEditor");
 							previewObj.name = "DragonPreview" + data.id;
-							previewObj.layer = LayerMask.NameToLayer("LevelEditor");
 							previewObj.transform.SetParent(m_selectedGroup.editorObj.transform, false);
 							previewObj.transform.localPosition = Vector3.zero;
 
@@ -555,6 +558,12 @@ namespace LevelEditor {
 							newLock.SetScaleLock(true, true, true);
 
 							EditorUtils.FocusObject(previewObj);
+						}
+
+						// Create dummy
+						if(GUILayout.Button("Create Dummy")) {
+							// An external window will manage it
+							AddDummyWindow.Show(m_selectedGroup);
 						}
 					} EditorUtils.EndVerticalSafe();
 					GUI.enabled = true;
