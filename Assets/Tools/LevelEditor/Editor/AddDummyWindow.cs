@@ -180,7 +180,7 @@ namespace LevelEditor {
 		private void AddNewDummy() {
 			// Check all required parameters
 			if(m_targetGroup == null) { ShowNotification(new GUIContent("Target level is not valid")); return; }
-			if(m_targetGroup.editorObj == null) { ShowNotification(new GUIContent("Target level doesn't have a container for new dummy")); return; }
+			if(m_targetGroup.editorObj == null) { ShowNotification(new GUIContent("Target level doesn't have a container for new dummies")); return; }
 			if(m_prefabIdx < 0 || m_prefabIdx >= m_prefabs.Length) { ShowNotification(new GUIContent("Please select an entity prefab from the list")); return; }
 
 			// Get dummy prefab
