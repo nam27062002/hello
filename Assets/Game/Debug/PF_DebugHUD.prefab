@@ -276,6 +276,8 @@ GameObject:
   - 222: {fileID: 22261272}
   - 114: {fileID: 11442686}
   - 114: {fileID: 11476582}
+  - 95: {fileID: 9508662}
+  - 114: {fileID: 11486092}
   m_Layer: 5
   m_Name: TextScoreValue
   m_TagString: Untagged
@@ -551,6 +553,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!95 &9508662
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 152156}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c087dde8af3c84f758ff3b25404442aa, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &11400570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1231,6 +1250,17 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &11486092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 152156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b07e75ba145dd4f00aad84966855d684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11488664
 MonoBehaviour:
   m_ObjectHideFlags: 1
