@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(PreyStats))]
 public class EdibleBehaviour : Initializable {
-
-	
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -86,14 +85,14 @@ public class EdibleBehaviour : Initializable {
 	}
 	
 	public Reward OnSwallow(float _time) {
-
+		// Create a copy of the base rewards and tune them
 		Reward reward = m_prey.reward;
-
-		if (!m_prey.isGolden) {
+		if(!m_prey.isGolden) {
 			reward.coins = 0;
-
-			//TODO: Drop money event?
 		}
+
+		// Dispatch global event
+		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
 
 		// start go to mouth animation
 		m_timer = m_time = _time; // amount of time the dragon needs to eat this entity

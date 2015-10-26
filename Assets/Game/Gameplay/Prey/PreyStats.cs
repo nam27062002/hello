@@ -29,8 +29,6 @@ public class PreyStats : Initializable {
 
 	private Material[] m_materials;
 
-
-
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------

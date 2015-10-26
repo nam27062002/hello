@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(PreyStats))]
 public class InflammableBehaviour : Initializable {
 	
 	
@@ -60,11 +61,17 @@ public class InflammableBehaviour : Initializable {
 			m_prey.AddLife(-_damage);
 
 			if (m_prey.health <= 0) {
-
+				// Let heirs do their magic
 				OnBurn();
 
-				//TODO: Drop money event?
-				//
+				// Create a copy of the base rewards and tune them
+				Reward reward = m_prey.reward;
+				if(!m_prey.isGolden) {
+					reward.coins = 0;
+				}
+
+				// Dispatch global event
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, this.transform, reward);
 
 				// Particles
 				ParticleManager.Spawn("SmokePuff", transform.position);
