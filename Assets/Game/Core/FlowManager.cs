@@ -69,7 +69,7 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
 		DragonManager.DestroyInstance();
 		UserProfile.DestroyInstance();
 		InstanceManager.DestroyInstance();
-		PoolManager.Clear();
+		PoolManager.Clear(true);
 		ParticleManager.Clear();
 
 		// Change to the loading scene

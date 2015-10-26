@@ -29,7 +29,7 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 	private static void CreatePool(string _id) {
 
 		GameObject prefab = (GameObject)Resources.Load("Particles/" + _id);
-		Pool pool = new Pool(prefab, instance.transform, 5, false);
+		Pool pool = new Pool(prefab, instance.transform, 5, false, true);
 		instance.m_particles.Add(_id, pool);
 	}
 
