@@ -61,7 +61,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
 		Messenger.AddListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 		Messenger.AddListener<bool>(GameEvents_OLD.PLAYER_STARVING_TOGGLED, OnPlayerStarving);
-		Messenger.AddListener<ScoreMultiplier, ScoreMultiplier>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
+		Messenger.AddListener<ScoreMultiplier_OLD, ScoreMultiplier_OLD>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
 	}
 
 	/// <summary>
@@ -74,7 +74,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
 		Messenger.RemoveListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 		Messenger.RemoveListener<bool>(GameEvents_OLD.PLAYER_STARVING_TOGGLED, OnPlayerStarving);
-		Messenger.RemoveListener<ScoreMultiplier, ScoreMultiplier>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
+		Messenger.RemoveListener<ScoreMultiplier_OLD, ScoreMultiplier_OLD>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
 	}
 	#endregion
 
@@ -256,7 +256,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 	/// </summary>
 	/// <param name="_oldMultiplier">Old value of the score multiplier.</param>
 	/// <param name="_newMultiplier">New value of the score multiplier.</param>
-	void OnScoreMultiplierChanged(ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier) {
+	void OnScoreMultiplierChanged(ScoreMultiplier_OLD _oldMultiplier, ScoreMultiplier_OLD _newMultiplier) {
 		// If score multiplier is back to 1, hide any active feedback
 		if(_newMultiplier.multiplier == 1) {
 			StopFeedback(EUIFeedbackType.MULTIPLIER);

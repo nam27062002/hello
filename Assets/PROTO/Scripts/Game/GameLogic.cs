@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// Aux class to represent the score multipliers.
 /// </summary>
 [Serializable]
-public class ScoreMultiplier {
+public class ScoreMultiplier_OLD {
 	public float multiplier = 1;
 	public int requiredKillStreak = 1;	// Both eat and burn count - TODO!! Solve the burn+eat counting twice
 	public List<UIFeedbackMessage> feedbackMessages = new List<UIFeedbackMessage>();
@@ -42,7 +42,7 @@ public class GameLogic : MonoBehaviour {
 		get { return _SCORE_MULTIPLIER_DURATION; }
 	}
 
-	[SerializeField] private ScoreMultiplier[] SCORE_MULTIPLIERS;
+	[SerializeField] private ScoreMultiplier_OLD[] SCORE_MULTIPLIERS;
 	#endregion
 
 	#region PROPERTIES -------------------------------------------------------------------------------------------------
@@ -308,7 +308,7 @@ public class GameLogic : MonoBehaviour {
 
 		// Dispatch game event (only if actually changing)
 		if(_iMultiplierIdx != mScoreMultiplierIdx) {
-			Messenger.Broadcast<ScoreMultiplier, ScoreMultiplier>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, SCORE_MULTIPLIERS[mScoreMultiplierIdx], SCORE_MULTIPLIERS[_iMultiplierIdx]);
+			Messenger.Broadcast<ScoreMultiplier_OLD, ScoreMultiplier_OLD>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, SCORE_MULTIPLIERS[mScoreMultiplierIdx], SCORE_MULTIPLIERS[_iMultiplierIdx]);
 		}
 
 		// Store new multiplier value

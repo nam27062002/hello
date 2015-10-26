@@ -8,10 +8,23 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
+/// <summary>
+/// Aux class to represent the score multipliers.
+/// </summary>
+[Serializable]
+public class ScoreMultiplier {
+	public float multiplier = 1;
+	public int requiredKillStreak = 1;	// Eat, burn and destroy count
+	public float duration = 20f;	// Seconds to keep the streak alive
+	public List<string> feedbackMessages = new List<string>();
+}
+
 /// <summary>
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
@@ -24,7 +37,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-
+	// Score multiplier
+	[SerializeField] private ScoreMultiplier[] m_scoreMultipliers;
+	private int m_scoreMultiplierStreak = 0;	// Amount of consecutive eaten/burnt/destroyed entities without taking damage
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -44,6 +59,21 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_pc; }
 	}
 
+	// Score multiplier
+	private int m_currentScoreMultiplier = 0;
+	public static ScoreMultiplier currentScoreMultiplier {
+		get { return instance.m_scoreMultipliers[instance.m_currentScoreMultiplier]; }
+	}
+	public static ScoreMultiplier defaultScoreMultiplier {
+		get { return instance.m_scoreMultipliers[0]; }
+	}
+
+	// Time to end the current killing streak
+	private float m_scoreMultiplierTimer = -1;
+	public static float scoreMultiplierTimer {
+		get { return instance.m_scoreMultiplierTimer; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -52,9 +82,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnReward);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnReward);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnReward);
+		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnKill);
+		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 	}
 
 	/// <summary>
@@ -62,9 +92,25 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnReward);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnReward);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnReward);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnKill);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		// Update score multiplier (won't be called if we're in the first multiplier)
+		if(m_scoreMultiplierTimer > 0) {
+			// Update timer
+			m_scoreMultiplierTimer -= Time.deltaTime;
+			
+			// If timer has ended, end multiplier streak
+			if(m_scoreMultiplierTimer <= 0) {
+				SetScoreMultiplier(0);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -80,6 +126,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		instance.m_pc = 0;
 
 		// Multipliers
+		instance.SetScoreMultiplier(0);
 	}
 
 	//------------------------------------------------------------------//
@@ -92,7 +139,8 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// <param name="_entity">The entity that has triggered the reward. Can be null.</param>
 	private void ApplyReward(Reward _reward, Transform _entity) {
 		// Score
-		// [AOC] TODO!! Apply multiplier
+		// Apply multiplier
+		_reward.score = (int)(_reward.score * currentScoreMultiplier.multiplier);
 		instance.m_score += _reward.score;
 
 		// Coins
@@ -105,17 +153,62 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.Broadcast<Reward, Transform>(GameEvents.REWARD_APPLIED, _reward, _entity);
 	}
 
+	/// <summary>
+	/// Define the new score multiplier.
+	/// </summary>
+	/// <param name="_multiplierIdx">The index of the new multiplier in the SCORE_MULTIPLIERS array.</param>
+	private void SetScoreMultiplier(int _multiplierIdx) {
+		// Make sure given index is valid
+		if(_multiplierIdx < 0 || _multiplierIdx >= m_scoreMultipliers.Length) return;
+		
+		// Reset everything when going to 0
+		if(_multiplierIdx == 0) {
+			m_scoreMultiplierTimer = -1;
+			m_scoreMultiplierStreak = 0;
+		}
+
+		// Store new multiplier value
+		ScoreMultiplier old = m_scoreMultipliers[m_currentScoreMultiplier];
+		m_currentScoreMultiplier = _multiplierIdx;
+
+		// Dispatch game event (only if actually changing)
+		if(old != currentScoreMultiplier) {
+			Messenger.Broadcast<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, old, currentScoreMultiplier);
+		}
+	}
+	
+	/// <summary>
+	/// Update the score multiplier with a new kill (eat/burn/destroy).
+	/// </summary>
+	private void UpdateScoreMultiplier() {
+		// Update current streak
+		m_scoreMultiplierStreak++;
+		
+		// Reset timer
+		m_scoreMultiplierTimer = currentScoreMultiplier.duration;
+		
+		// Check if we've reached next threshold
+		if(m_currentScoreMultiplier < m_scoreMultipliers.Length - 1 
+		&& m_scoreMultiplierStreak >= m_scoreMultipliers[m_currentScoreMultiplier + 1].requiredKillStreak) {
+			// Yes!! Change current multiplier
+			SetScoreMultiplier(m_currentScoreMultiplier + 1);
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// An event requiring a reward has been triggered. Groups the entity eaten, 
-	/// burned and destroyed events. If any of them requires a specific 
-	/// implementation, just create a custom callback for it.
+	/// An entity has been eaten, burned or killed. If any of these events requires 
+	/// a specific implementation, just create a custom callback for it.
 	/// </summary>
-	/// <param name="_entity">The entity that has been eaten.</param>
+	/// <param name="_entity">The entity that has been killed.</param>
 	/// <param name="_reward">The reward linked to this event.</param>
-	private void OnReward(Transform _entity, Reward _reward) {
+	private void OnKill(Transform _entity, Reward _reward) {
+		// Add the reward
 		ApplyReward(_reward, _entity);
+
+		// Update multiplier
+		UpdateScoreMultiplier();
 	}
 }

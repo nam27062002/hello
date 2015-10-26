@@ -96,7 +96,7 @@ public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBe
 					
 					// Is there a pre-made prefab for this class in the Resources folder?
 					GameObject singletonObj = null;
-					GameObject prefabObj = Resources.Load<GameObject>(Singleton.PARENT_OBJECT_NAME + "PF_" + typeof(T).Name);
+					GameObject prefabObj = Resources.Load<GameObject>(Singleton.PARENT_OBJECT_NAME + "/PF_" + typeof(T).Name);
 					if(prefabObj != null) {
 						// Make sure the prefab contains a component of the required type
 						if(prefabObj.GetComponent<T>() == null) {

@@ -1,4 +1,4 @@
-﻿// DebugHUDScoreController.cs
+﻿// DebugHUDMultiplierController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/10/2015.
@@ -17,12 +17,12 @@ using System;
 /// <summary>
 /// Simple controller for a score counter in the debug hud.
 /// </summary>
-public class DebugHUDScoreController : MonoBehaviour {
+public class DebugHUDMultiplierController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private Text m_valueTxt;
-	private Animator m_anim;
+	private Text m_text = null;
+	private Animator m_anim = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -32,8 +32,8 @@ public class DebugHUDScoreController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_valueTxt = GetComponent<Text>();
-		m_valueTxt.text = "0";
+		m_text = GetComponent<Text>();
+		m_text.text = "";
 
 		m_anim = GetComponent<Animator>();
 	}
@@ -42,7 +42,7 @@ public class DebugHUDScoreController : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		UpdateScore();
+		UpdateText(RewardManager.currentScoreMultiplier);
 	}
 
 	/// <summary>
@@ -50,7 +50,7 @@ public class DebugHUDScoreController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 	
 	/// <summary>
@@ -58,33 +58,52 @@ public class DebugHUDScoreController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		if(m_anim != null) {
+			m_anim.SetFloat("timer", RewardManager.scoreMultiplierTimer);
+		}
 	}
 
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Updates the displayed score.
+	/// Updates the displayed multiplier.
 	/// </summary>
-	private void UpdateScore() {
-		// Do it!
-		m_valueTxt.text = StringUtils.FormatNumber(RewardManager.score);
+	/// <param name="_mult">The multiplier we want to display.</param>
+	private void UpdateText(ScoreMultiplier _mult) {
+		// Do it! Except if going back to "no multiplier"
+		if(_mult != RewardManager.defaultScoreMultiplier) {
+			m_text.text = "x" + StringUtils.FormatNumber(_mult.multiplier, 0);
+		}
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// A reward has been applied, show feedback for it.
+	/// Current score multiplier has changed.
 	/// </summary>
-	/// <param name="_reward">The reward that has been applied.</param>
-	/// <param name="_entity">The entity that triggered the reward. Can be null.</param>
-	private void OnRewardApplied(Reward _reward, Transform _entity) {
-		// We only care about score rewards
-		if(_reward.score > 0) {
-			UpdateScore();
-			if(m_anim != null) m_anim.SetTrigger("start");
+	/// <param name="_oldMultiplier">The previous multiplier.</param>
+	/// <param name="_newMultiplier">The new multiplier.</param>
+	private void OnMultiplierChanged(ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier) {
+		// Update text
+		UpdateText(_newMultiplier);
+
+		// Launch anim
+		if(m_anim != null) {
+			// If it's the default multiplier, fade out
+			if(_newMultiplier == RewardManager.defaultScoreMultiplier) {
+				m_anim.SetTrigger("out");
+			} else {
+				m_anim.SetTrigger("start");
+			}
 		}
 	}
 }
