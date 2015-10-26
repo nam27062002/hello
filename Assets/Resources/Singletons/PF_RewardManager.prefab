@@ -47,19 +47,31 @@ MonoBehaviour:
   - multiplier: 2
     requiredKillStreak: 3
     duration: 10
-    feedbackMessages: []
+    feedbackMessages:
+    - Bird Killer!
+    - Kill Streak!
+    - Serious Stuff!
   - multiplier: 4
     requiredKillStreak: 5
     duration: 10
-    feedbackMessages: []
+    feedbackMessages:
+    - Run you fools!
+    - Hungry Dragon!
+    - Creating Panick!
   - multiplier: 8
     requiredKillStreak: 10
     duration: 10
-    feedbackMessages: []
+    feedbackMessages:
+    - Killing Beast!
+    - Infamous!
+    - Kill'em'all!
   - multiplier: 16
     requiredKillStreak: 15
     duration: 10
-    feedbackMessages: []
+    feedbackMessages:
+    - Terror of the Skies!
+    - Legendary!
+    - Annihilator!
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -70,6 +82,22 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_scoreMultipliers.Array.size
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[1].feedbackMessages.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[2].feedbackMessages.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[4].feedbackMessages.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[3].feedbackMessages.Array.size
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_scoreMultipliers.Array.data[0].multiplier
@@ -126,6 +154,54 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_scoreMultipliers.Array.data[4].duration
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[1].feedbackMessages.Array.data[0]
+      value: Bird Killer!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[1].feedbackMessages.Array.data[1]
+      value: Kill Streak!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[1].feedbackMessages.Array.data[2]
+      value: Serious Stuff!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[4].feedbackMessages.Array.data[0]
+      value: Terror of the Skies!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[4].feedbackMessages.Array.data[1]
+      value: Legendary!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[4].feedbackMessages.Array.data[2]
+      value: Annihilator!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[3].feedbackMessages.Array.data[0]
+      value: Killing Beast!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[2].feedbackMessages.Array.data[0]
+      value: Run you fools!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[2].feedbackMessages.Array.data[1]
+      value: Hungry Dragon!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[2].feedbackMessages.Array.data[2]
+      value: Creating Panick!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[3].feedbackMessages.Array.data[1]
+      value: Infamous!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_scoreMultipliers.Array.data[3].feedbackMessages.Array.data[2]
+      value: Kill'em'all!
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
