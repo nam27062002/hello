@@ -11,18 +11,19 @@ public class Wander : Steering {
 
 	private float m_timer;
 	private Vector2 m_target;
+	
+	private Transform m_dragon;
 
 	void OnEnable() {
 		m_timer = 0;
+		m_dragon = InstanceManager.player.transform;
 	}
 
 	void Update() {
-
 		if (m_prey.area != null) {
 			// Update Wander behaviour
 			m_timer -= Time.deltaTime;
-			if (m_timer <= 0) {
-				
+			if (m_timer <= 0) {				
 				m_target = m_prey.area.RandomInside();
 				m_timer = m_changeTargetTime;
 			}

@@ -11,15 +11,17 @@ public class HumanBehaviour : PreyBehaviour {
 	};
 
 	private State m_state;
+	private float m_timer;
 
-	private int m_groundMask;
+	private Transform m_dragon;
 
-	private Transform m_groundSensor;
 	
 
 	public override void Initialize() {
 
 		base.Initialize();
+
+		m_dragon = InstanceManager.player.transform;
 
 		//start at random anim position
 		ChangeState(State.Wander);
@@ -28,10 +30,7 @@ public class HumanBehaviour : PreyBehaviour {
 	}
 
 	void Update() {
-
-
 		switch (m_state) {
-
 			case State.Wander:
 				if (playerDetected) {
 					ChangeState(State.Flee);
@@ -45,25 +44,24 @@ public class HumanBehaviour : PreyBehaviour {
 				break;
 
 			case State.Flee:
-				if (playerDetected) {
-					if (/*m_velocity.sqrMagnitude < (0.25f * 0.25f) ||*/ !m_area.Contains(m_position)) {
-						ChangeState(State.Afraid);
-					} 
-				} else {
-					ChangeState(State.Wander);
+				if (!playerDetected || !m_area.Contains(m_position)) {
+					ChangeState(State.Afraid);
 				}
 				break;
 
 			case State.Afraid:
-				if (playerDetected) {
-					Vector3 player = InstanceManager.player.transform.position;				
-					if (player.x < m_position.x) {
-						m_direction = Vector2.left;
-					} else {
-						m_direction = Vector2.right;
-					}
+				Vector3 player = m_dragon.position;
+				if (player.x < m_position.x) {
+					m_direction = Vector2.left;
 				} else {
-					ChangeState(State.Wander);
+					m_direction = Vector2.right;
+				}
+
+				if (!playerDetected) {
+					m_timer -= Time.deltaTime;
+					if (m_timer <= 0) {
+						ChangeState(State.Wander);
+					}
 				}
 				break;
 		}
@@ -128,6 +126,7 @@ public class HumanBehaviour : PreyBehaviour {
 				case State.Afraid:
 					m_animator.SetBool("scared", true);
 					m_velocity = Vector2.zero;
+					m_timer = 5f; // 5 sconds before wandering around
 					break;
 			}
 
