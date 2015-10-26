@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 public class InflammableDecoration : MonoBehaviour {
 	
-	private SpriteRenderer m_renderer;
+	private GameObject m_view;
+	private GameObject m_viewBurned;
 
 	private FireNode[] m_fireNodes;
 	private bool m_burned;
@@ -11,7 +12,8 @@ public class InflammableDecoration : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		m_renderer = GetComponent<SpriteRenderer>();
+		m_view = transform.FindChild("view").gameObject;
+		m_viewBurned = transform.FindChild("view_burned").gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>();
 		m_burned = false;
 	}
@@ -19,7 +21,8 @@ public class InflammableDecoration : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {	
 		if (m_burned) {
-			m_renderer.color = Color.Lerp(m_renderer.color, Color.black, Time.smoothDeltaTime * 1.5f);
+			m_view.SetActive(false);
+			m_viewBurned.SetActive(true);
 		} else {
 			m_burned = true;
 			for (int i = 0; i < m_fireNodes.Length && m_burned; i++) {
