@@ -60,6 +60,28 @@ public static class ListExt {
 	}
 
 	/// <summary>
+	/// Obtain a random value from the given list.
+	/// </summary>
+	/// <returns>A random value from the ones within the list.</returns>
+	/// <param name="_list">The list conatining the candidate values.</param>
+	public static T GetRandomValue<T>(this IList<T> _list) {
+		// Check for empty lists
+		if(_list.Count == 0) return default(T);
+		return _list[UnityEngine.Random.Range(0, _list.Count)];
+	}
+	
+	/// <summary>
+	/// Obtain a random value from the given array.
+	/// </summary>
+	/// <returns>A random value from the ones within the array.</returns>
+	/// <param name="_array">The array conatining the candidate values.</param>
+	public static T GetRandomValue<T>(this Array _array) {
+		// Check for empty arrays
+		if(_array.Length == 0) return default(T);
+		return (T)_array.GetValue(UnityEngine.Random.Range(0, _array.Length));
+	}
+
+	/// <summary>
 	/// Sorts a string list alphanumerically.
 	/// See http://www.dotnetperls.com/alphanumeric-sorting.
 	/// </summary>
