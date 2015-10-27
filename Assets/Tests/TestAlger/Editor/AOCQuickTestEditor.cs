@@ -33,20 +33,5 @@ public class AOCQuickTestEditor : Editor {
 	public override void OnInspectorGUI() {
 		// Default
 		DrawDefaultInspector();
-		/*
-		EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 10);
-		AOCData[] data = AOCDataManager.GetData();
-		for(int i = 0; i < data.Length; i++) {
-			GUILayout.Label(data[i].m_id.ToString());
-		}
-
-		EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 10);
-
-		if(GUILayout.Button("Save AOCDataManager")) {
-			AOCDataManager mng = AOCDataManager.GetInstance();
-			AssetDatabase.CreateAsset(mng, "Assets/Resources/Singletons/AOCDataManager.asset");
-			EditorUtility.FocusProjectWindow();
-			Selection.activeObject = mng;
-		}*/
 	}
 }

@@ -324,6 +324,28 @@ public static class EditorUtils {
 	// OBJECT ICONS														//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// Get the current icon of the given GameObject.
+	/// </summary>
+	/// <returns>The icon texture.</returns>
+	/// <param name="_obj">The game object whose icon we want.</param>
+	public static Texture2D GetObjectIcon(GameObject _obj) {
+		// Reflection black magic since the GetIconForObject method is internal
+		MethodInfo method = typeof(EditorGUIUtility).GetMethod("GetIconForObject", BindingFlags.NonPublic | BindingFlags.Static);
+		return method.Invoke(null, new object[] { _obj}) as Texture2D;
+	}
+
+	/// <summary>
+	/// Manually defines the icon of the given game object.
+	/// </summary>
+	/// <param name="_obj">The object whose icon we want to change.</param>
+	/// <param name="_text">The texture to be used as icon for the given object.</param>
+	public static void SetObjectIcon(GameObject _obj, Texture2D _tex) {
+		// Apply the icon - reflection black magic since the SetIconForObject method is internal
+		MethodInfo method = typeof(EditorGUIUtility).GetMethod("SetIconForObject", BindingFlags.NonPublic | BindingFlags.Static);
+		method.Invoke(null, new object[] { _obj, _tex});
+	}
+
+	/// <summary>
 	/// Defines the icon of the given game object (from Unity's editor default icons).
 	/// </summary>
 	/// <param name="_obj">The object whose icon we want to change.</param>
@@ -344,10 +366,19 @@ public static class EditorUtils {
 			}
 		}
 
-		// Apply the icon - reflection black magic since hte SetIconForObject method is internal
+		// Apply the icon using texture method
 		Texture2D iconTex = s_objectIcons[(int)_icon].image as Texture2D;
-		MethodInfo method = typeof(EditorGUIUtility).GetMethod("SetIconForObject", BindingFlags.NonPublic | BindingFlags.Static);
-		method.Invoke(null, new object[] { _obj, iconTex});
+		SetObjectIcon(_obj, iconTex);
+	}
+
+	/// <summary>
+	/// Changes the icon of the given object to match its prefab preview.
+	/// </summary>
+	/// <param name="_obj">The object whose icon we want to change.</param>
+	public static void SetObjectIcon(GameObject _obj) {
+		// Get the preview texture and set it
+		Texture2D iconTex = AssetPreview.GetAssetPreview(_obj);
+		SetObjectIcon(_obj, iconTex);
 	}
 
 	//------------------------------------------------------------------//
