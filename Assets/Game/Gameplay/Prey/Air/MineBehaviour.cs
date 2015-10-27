@@ -70,7 +70,7 @@ public class MineBehaviour : Initializable {
 			Vector2 v = (m_dragon.transform.position - transform.position);
 			float distanceSqr = v.sqrMagnitude;
 			if (distanceSqr <= m_radius * m_radius) {
-				m_dragon.ReceiveDamage(m_damage);
+				m_dragon.ReceiveDamage(m_damage, this.transform);
 				DragonMotion motion = m_dragon.GetComponent<DragonMotion>();
 				motion.AddForce(v.normalized * m_forceStrength);
 				Explode();

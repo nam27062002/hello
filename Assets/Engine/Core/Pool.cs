@@ -5,22 +5,29 @@ class Pool {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private GameObject gameObject = null;
+	private GameObject m_containerObj = null;
 	private GameObject m_prefab = null;
 	
 	private List<GameObject> m_instances;
 	
 	private int m_growth;
+	private bool m_dontDestroyContainer;
 	
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow) {
+	public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow, bool _createContainer) {
 		m_prefab = _prefab;
-		
-		gameObject = new GameObject();
-		gameObject.name = "Pool of " + m_prefab.name;
-		gameObject.transform.parent = _parent;
+
+		// Create a new container or use parent transform as a container?
+		m_dontDestroyContainer = !_createContainer;
+		if(_createContainer) {
+			m_containerObj = new GameObject();
+			m_containerObj.name = "Pool of " + m_prefab.name;
+			m_containerObj.transform.parent = _parent;
+		} else {
+			m_containerObj = _parent.gameObject;
+		}
 		
 		m_instances = new List<GameObject>();
 		
@@ -31,6 +38,24 @@ class Pool {
 		} else {
 			m_growth = 0;
 		}
+	}
+
+	/// <summary>
+	/// Manually destroy all created instances. No need to call it for scene changes, 
+	/// since scene hierarchy is already cleared.
+	/// </summary>
+	public void Clear() {
+		// Destroy all the created instances
+		// Destroying the container is enough, but we don't want to do that if the container wasn't created by us
+		if(m_dontDestroyContainer) {
+			for(int i = 0; i < m_instances.Count; i++) {
+				GameObject.Destroy(m_instances[i]);
+			}
+		} else {
+			GameObject.Destroy(m_containerObj);
+		}
+		m_instances.Clear();
+		m_containerObj = null;
 	}
 	
 	public GameObject Get() {			
@@ -58,7 +83,7 @@ class Pool {
 		for (int i = 0; i < _count; i++) {
 			GameObject inst = (GameObject)Object.Instantiate(m_prefab);					
 			inst.name = m_prefab.name;
-			inst.transform.parent = gameObject.transform;
+			inst.transform.SetParent(m_containerObj.transform, false);
 			inst.SetActive(false);
 			
 			m_instances.Add(inst);

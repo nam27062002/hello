@@ -36,12 +36,6 @@ public class DragonBirdsSceneController : SceneController {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
-	// Score
-	private long m_score;
-	public long score { 
-		get { return m_score; }
-	}
-	
 	// Time
 	private float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
@@ -148,10 +142,10 @@ public class DragonBirdsSceneController : SceneController {
 				
 		// Reset timer
 		m_elapsedSeconds = 0;
-		
-		// Reset score
-		m_score = 0;
-		
+
+		// Reset rewards
+		RewardManager.Reset();
+
 		// [AOC] TODO!! Reset game stats
 
 		// Dispatch game event
@@ -204,8 +198,6 @@ public class DragonBirdsSceneController : SceneController {
 		switch(m_state) {
 			case EStates.RUNNING: {
 				// Unsubscribe from external events
-				Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-				Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 				Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 			} break;
 		}
@@ -219,8 +211,6 @@ public class DragonBirdsSceneController : SceneController {
 				
 			case EStates.RUNNING: {
 				// Subscribe to external events
-				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 				Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 			} break;
 				
@@ -234,59 +224,9 @@ public class DragonBirdsSceneController : SceneController {
 		m_state = _newState;
 	}
 
-	/// <summary>
-	/// Add coins.
-	/// </summary>
-	/// <param name="_iAmount">Amount to add. Negative to subtract.</param>
-	/// <param name="_entity">Optionally define the entity that triggered this score. Leave <c>null</c> if none.</param> 
-	private void AddScore(long _iAmount, GameEntity _entity = null) {
-		// Skip checks for now
-		// Compute new value and dispatch event
-		m_score += _iAmount;
-		Messenger.Broadcast<long, long>(GameEvents.SCORE_CHANGED, m_score - _iAmount, m_score);
-		Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_SCORE, _iAmount, _entity);
-	}
-
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// An entity has been eaten, give appropriate rewards.
-	/// </summary>
-	/// <param name="_entity">The entity that has been eaten.</param>
-	private void OnEntityEaten(GameEntity _entity) {
-
-		// Give score reward
-		AddScore(_entity.GetScoreReward(), _entity);
-		
-		// Give coins reward
-		long iRewardCoins = _entity.GetCoinsReward();
-		if(iRewardCoins > 0) {
-			UserProfile.AddCoins(iRewardCoins);
-			Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_COINS, iRewardCoins, _entity);
-		}
-	}
-	
-	/// <summary>
-	/// An entity has been eaten, give appropriate rewards.
-	/// </summary>
-	/// <param name="_entity">The entity that has been eaten.</param>
-	private void OnEntityBurned(GameEntity _entity) {
-		// Give rewards if required
-		FlamableBehaviour flamable = _entity.GetComponent<FlamableBehaviour>();	// Should always have one
-		if(flamable.giveRewardsOnBurn) {
-			// Score
-			AddScore(_entity.GetScoreReward(), _entity);
-			
-			// Coins
-			long iRewardCoins = _entity.GetCoinsReward();
-			if(iRewardCoins > 0) {
-				UserProfile.AddCoins(iRewardCoins);
-				Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_COINS, iRewardCoins, _entity);
-			}
-		}
-	}
-
 	/// <summary>
 	/// The player has died.
 	/// </summary>

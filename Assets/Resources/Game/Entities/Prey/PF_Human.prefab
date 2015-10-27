@@ -259,6 +259,7 @@ GameObject:
   - 114: {fileID: 11426808}
   - 114: {fileID: 11409122}
   - 114: {fileID: 11402296}
+  - 114: {fileID: 11460448}
   m_Layer: 8
   m_Name: PF_Human
   m_TagString: Untagged
@@ -752,7 +753,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_typeID: 
   m_reward:
-    score: 0
+    score: 50
     coins: 0
     pc: 0
     health: 30
@@ -774,6 +775,33 @@ MonoBehaviour:
   m_size: 2
   m_isBig: 1
   m_destroyOnEat: 0
+--- !u!114 &11460448
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_probabilities:
+  - 0
+  - .5
+  - .5
+  - 0
+  m_feedbacks:
+  - data: []
+  - data:
+    - Tasty!
+    - Natural Selection
+    - Chubby!
+  - data:
+    - Medium-rare!
+    - Barbecue!
+    - Rostisserie
+  - data: []
 --- !u!114 &11461256
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -900,6 +928,14 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[2].data.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: m_maxSpeed
       value: 3
       objectReference: {fileID: 0}
@@ -974,6 +1010,42 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_checkFireTime
       value: .00999999978
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.score
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[1]
+      value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[2]
+      value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[0]
+      value: Tasty!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[1]
+      value: Natural Selection
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[2]
+      value: Chubby!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[2].data.Array.data[0]
+      value: Medium-rare!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[2].data.Array.data[1]
+      value: Barbecue!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[2].data.Array.data[2]
+      value: Rostisserie
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -363,7 +363,7 @@ public class DragonMotion : MonoBehaviour {
 	//------------------------------------------------------------------//
 
 
-	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source) {
+	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer_OLD _source) {
 		
 		m_dragon.AddLife(-_damage);
 	}

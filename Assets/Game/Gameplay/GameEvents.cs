@@ -17,22 +17,18 @@ public static class GameEvents {
 	public const string GAME_STARTED = "GAME_STARTED";		// no params
 	public const string GAME_PAUSED = "GAME_PAUSED";		// params: bool _paused
 	public const string GAME_ENDED = "GAME_ENDED";			// no params
-	public const string SCORE_CHANGED = "SCORE_CHANGED";	// params: long _oldAmount, long _newAmount, GameEntity _entity
+	public const string REWARD_APPLIED = "REWARD_APPLIED";	// params: Reward _reward, Transform _entity
 	public const string SCORE_MULTIPLIER_CHANGED = "SCORE_MULTIPLIER_CHANGED";	// params: ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier
-	public const string FURY_CHANGED = "FURY_CHANGED";		// params: float _oldAmount, float _newAmount
 	public const string FURY_RUSH_TOGGLED = "FURY_RUSH_TOGGLED";	// params: bool _activated
 	public const string HUNT_EVENT_TOGGLED = "HUNT_EVENT_TOGGLED";	// params: Transform _entityLocation, bool _activated
 
-	// Reward events
-	public const string REWARD_SCORE = "REWARD_SCORE";	// params: long _amount, GameEntity _entity
-	public const string REWARD_COINS = "REWARD_COINS";	// params: long _amount, GameEntity _entity
-
 	// Entity events
-	public const string ENTITY_EATEN = "ENTITY_EATEN";		// params: GameEntity _entity
-	public const string ENTITY_BURNED = "ENTITY_BURNED";	// params: GameEntity _entity
+	public const string ENTITY_EATEN = "ENTITY_EATEN";			// params: Transform _entity, Reward _reward
+	public const string ENTITY_BURNED = "ENTITY_BURNED";		// params: Transform _entity, Reward _reward
+	public const string ENTITY_DESTROYED = "ENTITY_DESTROYED";	// params: Transform _entity, Reward _reward
 
 	// Player events
-	public const string PLAYER_DAMAGE_RECEIVED = "PLAYER_DAMAGE_RECEIVED";		// params: float _damage, DamageDealer _source
+	public const string PLAYER_DAMAGE_RECEIVED = "PLAYER_DAMAGE_RECEIVED";		// params: float _damage, Transform _source
 	public const string PLAYER_STARVING_TOGGLED = "PLAYER_STARVING_TOGGLED";	// params: bool _isStarving
 	public const string PLAYER_STATE_CHANGED = "PLAYER_STATE_CHANGED";			// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	public const string PLAYER_DIED = "PLAYER_DIED";							// no params

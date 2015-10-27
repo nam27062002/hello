@@ -346,7 +346,7 @@ public class DragonAi : MonoBehaviour {
 	#region CALLBACKS ----------------------------------------------------------
 
 	
-	public void OnImpact(Vector3 origin, float damage, float intensity, DamageDealer _source){
+	public void OnImpact(Vector3 origin, float damage, float intensity, DamageDealer_OLD _source){
 
 		// Ignore if dragon is not alive
 		if(!IsAlive()) return;

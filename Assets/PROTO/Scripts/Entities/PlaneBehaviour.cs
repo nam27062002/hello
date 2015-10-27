@@ -232,7 +232,7 @@ public class PlaneBehaviour : MonoBehaviour {
 		DragonMotion p = _collision.collider.GetComponent<DragonMotion>();
 		if(p != null) {
 			// Yes! Deal some damage.
-			p.OnImpact(transform.position, 10f, 100f, GetComponent<DamageDealer>());
+			p.OnImpact(transform.position, 10f, 100f, GetComponent<DamageDealer_OLD>());
 		}
 	}
 

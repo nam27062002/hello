@@ -56,7 +56,7 @@ public class Attack : Steering {
 			if (m_timer <= 0) {
 				m_hitCount++;
 				m_timer = m_delay;
-				m_dragon.ReceiveDamage(m_damage);
+				m_dragon.ReceiveDamage(m_damage, this.transform);
 				m_animator.SetTrigger("attack");
 				if (!m_dragon.IsAlive()) {
 					enabled = false;

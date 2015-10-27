@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class CannonBehaviour : MonoBehaviour {
@@ -12,7 +12,7 @@ public class CannonBehaviour : MonoBehaviour {
 
 	SpriteRenderer flash;
 	GameObject player;
-	DamageDealer damageDealer;
+	DamageDealer_OLD damageDealer;
 
 	float timer;
 	int shootsFired;
@@ -29,7 +29,7 @@ public class CannonBehaviour : MonoBehaviour {
 	void Start () {
 
 		player = GameObject.Find ("Player");
-		damageDealer = GetComponent<DamageDealer>();
+		damageDealer = GetComponent<DamageDealer_OLD>();
 		GetComponent<Animator>().SetTrigger("flash");
 		flash = GetComponent<SpriteRenderer>();
 	}

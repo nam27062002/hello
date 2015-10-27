@@ -93,6 +93,7 @@ GameObject:
   - 114: {fileID: 11473208}
   - 114: {fileID: 11438592}
   - 114: {fileID: 11453876}
+  - 114: {fileID: 11425644}
   m_Layer: 8
   m_Name: PF_Bat
   m_TagString: Untagged
@@ -487,6 +488,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11425644
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_probabilities:
+  - 0
+  - .5
+  - .5
+  - 0
+  m_feedbacks:
+  - data: []
+  - data:
+    - Batman!
+    - Blind Taste
+    - Hairy Stuff
+  - data:
+    - Barbecue!
+    - Batman!
+    - Instant Combustion
+  - data: []
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -553,7 +581,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_typeID: Bat
   m_reward:
-    score: 0
+    score: 10
     coins: 0
     pc: 0
     health: 10
@@ -773,6 +801,30 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_checkFireTime
       value: .00999999978
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.score
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[0]
+      value: Batman!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[1]
+      value: Blind Taste
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[2]
+      value: Hairy Stuff
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[2].data.Array.data[1]
+      value: Batman!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[2].data.Array.data[2]
+      value: Instant Combustion
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

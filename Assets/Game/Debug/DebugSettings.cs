@@ -12,15 +12,14 @@ using UnityEngine;
 /// <summary>
 /// Global setup of the game.
 /// </summary>
-public static class DebugSettings {
+public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	// Add here any global debug variable such as invincibility, infinite fire, debug profile...
 
-	/*[Header("Gameplay")]
+	[Header("Gameplay")]
 	// Invulnerable
-	[SerializeField] private static bool m_invulnerability = false;
-	public static float healthWarningThreshold { get { return instance.m_healthWarningThreshold; }}
+	[SerializeField] private bool m_invulnerability = false;
+	public static bool invulnerability { get { return instance.m_invulnerability; }}
 
-	// Minimum amount of energy required to boost
-	[SerializeField] private float m_energyRequiredToBoost = 25f;
-	public static float energyRequiredToBoost { get { return instance.m_energyRequiredToBoost; }}*/
+	[SerializeField] private bool m_inifinteFire = false;
+	public static bool infiniteFire { get { return instance.m_inifinteFire; }}
 }
