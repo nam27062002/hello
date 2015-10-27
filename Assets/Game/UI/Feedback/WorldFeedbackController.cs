@@ -1,7 +1,7 @@
-﻿// RewardScoreFeedbackController.cs
+﻿// WorldFeedbackController.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 23/10/2015.
+// Created by Alger Ortín Castellví on 27/10/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -14,11 +14,11 @@ using UnityEngine.UI;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Controller for the score feedback.
+/// Generic controller for any feedback to be placed in relation to the 3D world.
 /// </summary>
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Text))]
-public class RewardScoreFeedbackController : MonoBehaviour {
+public class WorldFeedbackController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -65,16 +65,16 @@ public class RewardScoreFeedbackController : MonoBehaviour {
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Start the animation of this score feedback with the given data.
+	/// Start the animation of this feedback with the given data.
 	/// </summary>
-	/// <param name="_score">The points rewarded.</param>
-	/// <param name="_worldPos">The reference world position where the score was obtained.</param>
-	public void Spawn(long _score, Vector3 _worldPos) {
+	/// <param name="_text">The text to be displayed.</param>
+	/// <param name="_worldPos">The reference world position to follow.</param>
+	public void Spawn(string _text, Vector3 _worldPos) {
 		// Store params
 		m_targetWorldPos = _worldPos;
 
 		// Init text
-		m_text.text = System.String.Format("+{0}", StringUtils.FormatNumber(_score));
+		m_text.text = _text;
 
 		// Move to initial position, activate object and start animation
 		ApplyPosOffset();

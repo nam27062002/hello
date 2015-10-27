@@ -15,7 +15,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Behaviour for any entity able to do damage to the dragon who should display some kind of feedback.
 /// </summary>
-public class DamageDealer : MonoBehaviour {
+public class DamageDealer_OLD : MonoBehaviour {
 	#region EXPOSED MEMBERS ---------------------------------------------------------------------------------------------
 	[Range(0, 1)] public float feedbackProbability = 0.5f;
 	public List<UIFeedbackMessage> damageFeedbacks = new List<UIFeedbackMessage>();

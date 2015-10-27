@@ -245,7 +245,7 @@ public class GameLogic : MonoBehaviour {
 				// Unsubscribe from external events
 				Messenger.RemoveListener<GameEntity>(GameEvents_OLD.ENTITY_EATEN, OnEntityEaten);
 				Messenger.RemoveListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
-				Messenger.RemoveListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
+				Messenger.RemoveListener<float, DamageDealer_OLD>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 			} break;
 		}
 
@@ -260,7 +260,7 @@ public class GameLogic : MonoBehaviour {
 				// Subscribe to external events
 				Messenger.AddListener<GameEntity>(GameEvents_OLD.ENTITY_EATEN, OnEntityEaten);
 				Messenger.AddListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
-				Messenger.AddListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
+				Messenger.AddListener<float, DamageDealer_OLD>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 			} break;
 
 			case EStates.PAUSED: {
@@ -388,7 +388,7 @@ public class GameLogic : MonoBehaviour {
 	/// </summary>
 	/// <param name="_fDamage">The amaount of damage dealt.</param>
 	/// <param name="_source">The object that dealt the damage.</param>
-	void OnPlayerDamage(float _fDamage, DamageDealer _source) {
+	void OnPlayerDamage(float _fDamage, DamageDealer_OLD _source) {
 		// End any active streak
 		SetScoreMultiplier(0);
 	}

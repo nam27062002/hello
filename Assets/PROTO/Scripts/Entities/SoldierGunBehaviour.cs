@@ -11,7 +11,7 @@ public class SoldierGunBehaviour : MonoBehaviour {
 	public bool autoTarget = true;
 
 	GameObject player;
-	DamageDealer damageDealer;
+	DamageDealer_OLD damageDealer;
 	Transform  cannon;
 
 	float timer;
@@ -31,7 +31,7 @@ public class SoldierGunBehaviour : MonoBehaviour {
 		player = GameObject.Find ("Player");
 		cannon = transform.FindSubObjectTransform("gun_0");
 
-		damageDealer = GetComponent<DamageDealer>();
+		damageDealer = GetComponent<DamageDealer_OLD>();
 	}
 	
 	// Update is called once per frame

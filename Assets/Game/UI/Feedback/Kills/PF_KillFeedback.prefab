@@ -12,9 +12,9 @@ GameObject:
   - 222: {fileID: 22259630}
   - 114: {fileID: 11434518}
   - 114: {fileID: 11496032}
-  - 114: {fileID: 11444956}
+  - 114: {fileID: 11457990}
   m_Layer: 5
-  m_Name: PF_ScoreFeedback
+  m_Name: PF_KillFeedback
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Animator:
   m_GameObject: {fileID: 129384}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: db7c32d17bfd7420d8a43c844e90ab18, type: 2}
+  m_Controller: {fileID: 9100000, guid: 44dc1d1d59a9f435eba036bc99ab1e2a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -62,8 +62,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: +200
---- !u!114 &11444956
+  m_Text: Barbecue!
+--- !u!114 &11457990
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -117,7 +117,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 44dc1d1d59a9f435eba036bc99ab1e2a, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 129384}

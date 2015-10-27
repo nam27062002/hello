@@ -7,7 +7,7 @@ public class UfoBehaviour : MonoBehaviour {
 	DragonMotion player;
 	CannonBehaviour cannon;
 	Object shootPrefab;
-	DamageDealer damageDealer;
+	DamageDealer_OLD damageDealer;
 		
 	enum State {
 			
@@ -35,7 +35,7 @@ public class UfoBehaviour : MonoBehaviour {
 		cannon = GetComponentInChildren<CannonBehaviour>();
 		player = GameObject.Find("Player").GetComponent<DragonMotion>();
 		shootPrefab = Resources.Load("PROTO/UfoLaser");
-		damageDealer = GetComponent<DamageDealer>();
+		damageDealer = GetComponent<DamageDealer_OLD>();
 		pos = transform.position;
 		oriPos = pos;
 		groundMask = 1 << LayerMask.NameToLayer("Ground");

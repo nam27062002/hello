@@ -59,7 +59,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<long, GameEntity>(GameEvents_OLD.REWARD_SCORE, OnScoreReward);
 		Messenger.AddListener<GameEntity>(GameEvents_OLD.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
-		Messenger.AddListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
+		Messenger.AddListener<float, DamageDealer_OLD>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 		Messenger.AddListener<bool>(GameEvents_OLD.PLAYER_STARVING_TOGGLED, OnPlayerStarving);
 		Messenger.AddListener<ScoreMultiplier_OLD, ScoreMultiplier_OLD>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
 	}
@@ -72,7 +72,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<long, GameEntity>(GameEvents_OLD.REWARD_SCORE, OnScoreReward);
 		Messenger.RemoveListener<GameEntity>(GameEvents_OLD.ENTITY_EATEN, OnEntityEaten);
 		Messenger.RemoveListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
-		Messenger.RemoveListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
+		Messenger.RemoveListener<float, DamageDealer_OLD>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 		Messenger.RemoveListener<bool>(GameEvents_OLD.PLAYER_STARVING_TOGGLED, OnPlayerStarving);
 		Messenger.RemoveListener<ScoreMultiplier_OLD, ScoreMultiplier_OLD>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, OnScoreMultiplierChanged);
 	}
@@ -224,7 +224,7 @@ public class UIFeedbackSpawner : MonoBehaviour {
 	/// </summary>
 	/// <param name="_fDamage">The amaount of damage dealt.</param>
 	/// <param name="_source">The object that dealt the damage.</param>
-	void OnPlayerDamage(float _fDamage, DamageDealer _source) {
+	void OnPlayerDamage(float _fDamage, DamageDealer_OLD _source) {
 		// Don't show message if starving - already have the starving warning
 		//if(App.Instance.gameLogic.player.IsStarving()) return;
 

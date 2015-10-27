@@ -8,7 +8,7 @@ public class BulletBehaviour : MonoBehaviour {
 	public int damage = 10;
 
 	[HideInInspector] public Vector3 dir;
-	[HideInInspector] public DamageDealer source;
+	[HideInInspector] public DamageDealer_OLD source;
 
 	DragonMotion player;
 

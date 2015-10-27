@@ -15,6 +15,7 @@ GameObject:
   - 114: {fileID: 11463056}
   - 114: {fileID: 11488518}
   - 114: {fileID: 11455984}
+  - 114: {fileID: 11491110}
   m_Layer: 10
   m_Name: PF_FlyingMine
   m_TagString: Untagged
@@ -174,7 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_typeID: FlyingMine
   m_reward:
-    score: 0
+    score: 10
     coins: 0
     pc: 0
     health: 0
@@ -192,6 +193,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11491110
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_probabilities:
+  - 1
+  - .5
+  - 0
+  - 0
+  m_feedbacks:
+  - data:
+    - Watch Out!
+    - Minefield!
+    - Boooom!
+  - data:
+    - Minesweeper!
+    - Iron Stomach!
+    - Tasty!
+  - data: []
+  - data: []
 --- !u!114 &11496622
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -212,6 +240,30 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsTrigger
       value: 1
@@ -247,6 +299,98 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_rotationSpeed.z
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.score
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbackProbability
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.data[0]
+      value: Booom!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.data[1]
+      value: Watch Out!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.data[2]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.data[0]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.data[1]
+      value: Steel Stomach!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.data[2]
+      value: Hot!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbackProbability
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.data[0]
+      value: Boooom!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.data[1]
+      value: Minefield!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.data[2]
+      value: Watch Out!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.data[0]
+      value: Iron Stomach!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.data[1]
+      value: Hot!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.data[2]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[1]
+      value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[0]
+      value: Watch Out!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[1]
+      value: Minefield!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[2]
+      value: Boooom!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[0]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[1]
+      value: Iron Stomach!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[2]
+      value: Tasty!
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

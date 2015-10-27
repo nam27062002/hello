@@ -1,4 +1,4 @@
-﻿// DebugHUDMultiplierController.cs
+﻿// HUDMultiplierMessage.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/10/2015.
@@ -15,9 +15,9 @@ using System;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Simple controller for the score multiplier display in the debug hud.
+/// Simple controller showing a message whenever a new score multiplier is triggered.
 /// </summary>
-public class DebugHUDMultiplierController : MonoBehaviour {
+public class HUDMultiplierMessage : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -39,13 +39,6 @@ public class DebugHUDMultiplierController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		UpdateText(RewardManager.currentScoreMultiplier);
-	}
-
-	/// <summary>
 	/// The spawner has been enabled.
 	/// </summary>
 	private void OnEnable() {
@@ -61,29 +54,6 @@ public class DebugHUDMultiplierController : MonoBehaviour {
 		Messenger.RemoveListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-		if(m_anim != null) {
-			m_anim.SetFloat("timer", RewardManager.scoreMultiplierTimer);
-		}
-	}
-
-	//------------------------------------------------------------------//
-	// INTERNAL UTILS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Updates the displayed multiplier.
-	/// </summary>
-	/// <param name="_mult">The multiplier we want to display.</param>
-	private void UpdateText(ScoreMultiplier _mult) {
-		// Do it! Except if going back to "no multiplier"
-		if(_mult != RewardManager.defaultScoreMultiplier) {
-			m_text.text = "x" + StringUtils.FormatNumber(_mult.multiplier, 0);
-		}
-	}
-
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -93,17 +63,12 @@ public class DebugHUDMultiplierController : MonoBehaviour {
 	/// <param name="_oldMultiplier">The previous multiplier.</param>
 	/// <param name="_newMultiplier">The new multiplier.</param>
 	private void OnMultiplierChanged(ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier) {
-		// Update text
-		UpdateText(_newMultiplier);
+		// Multiplier must have messages!
+		if(_newMultiplier.feedbackMessages.Count == 0) return;
 
-		// Launch anim
-		if(m_anim != null) {
-			// If it's the default multiplier, fade out
-			if(_newMultiplier == RewardManager.defaultScoreMultiplier) {
-				m_anim.SetTrigger("out");
-			} else {
-				m_anim.SetTrigger("start");
-			}
-		}
+		// Select a random message from the multiplier definition
+		string message = _newMultiplier.feedbackMessages.GetRandomValue<string>();
+		m_text.text = message;
+		m_anim.SetTrigger("start");
 	}
 }
