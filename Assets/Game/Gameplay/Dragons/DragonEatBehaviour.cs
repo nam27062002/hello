@@ -43,7 +43,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 	
 		m_eatingTimer = 0;
 
-		m_mouth = transform.FindSubObjectTransform("fire");
+		m_mouth = GetComponent<DragonMotion>().mouth;
 		m_tongueDirection = transform.FindSubObjectTransform("tongue_02").position - transform.FindSubObjectTransform("tongue_01").position;
 		m_tongueDirection.Normalize();
 

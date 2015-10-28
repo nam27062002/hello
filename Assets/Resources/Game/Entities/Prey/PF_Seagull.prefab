@@ -284,14 +284,11 @@ GameObject:
   - 114: {fileID: 11468634}
   - 114: {fileID: 11403204}
   - 114: {fileID: 11438482}
-  - 114: {fileID: 11444670}
-  - 114: {fileID: 11491362}
-  - 114: {fileID: 11478440}
-  - 114: {fileID: 11430510}
-  - 114: {fileID: 11418280}
-  - 114: {fileID: 11404788}
-  - 114: {fileID: 11405894}
   - 114: {fileID: 11449692}
+  - 114: {fileID: 11405894}
+  - 114: {fileID: 11457498}
+  - 114: {fileID: 11404694}
+  - 114: {fileID: 11478440}
   m_Layer: 8
   m_Name: PF_Seagull
   m_TagString: Untagged
@@ -577,7 +574,7 @@ MonoBehaviour:
   m_size: 1
   m_isBig: 0
   m_destroyOnEat: 0
---- !u!114 &11404788
+--- !u!114 &11404694
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -585,10 +582,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 196200}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8be910e9aa77c4d1db7cc011e47ecba8, type: 3}
+  m_Script: {fileID: 11500000, guid: 074c80ccf21fd47af93cdab945e85fc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_changeTargetTime: 5
 --- !u!114 &11405894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -603,31 +599,6 @@ MonoBehaviour:
   offset: {x: .272569567, y: .265086174}
   radius: .930770874
   color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
---- !u!114 &11418280
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 196200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45a38f2a1b5c44cd984b9c607e610dc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_avoidRadiusRange:
-    min: 5
-    max: 6
---- !u!114 &11430510
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 196200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d45badd589d5641d0a9804caa11f68a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11438482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -641,21 +612,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: .00999999978
---- !u!114 &11444670
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 196200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e595e5be74175421f93c2f1cd2f51052, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_faceDirection: 0
-  m_steerForce: .25
-  m_maxSpeed: 6
-  m_mass: .349999994
 --- !u!114 &11449692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -683,6 +639,25 @@ MonoBehaviour:
     - Roasted!
     - Medium-rare!
   - data: []
+--- !u!114 &11457498
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 196200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_faceDirection: 0
+  m_steerForce: .25
+  m_maxSpeed: 6
+  m_mass: .349999994
+  m_slowingRadius: 1
+  m_flockAvoidRadiusRange:
+    min: 5
+    max: 6
 --- !u!114 &11468634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -729,18 +704,6 @@ MonoBehaviour:
   m_sensorMaxRadius: 8.43000031
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
---- !u!114 &11491362
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 196200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e18c3b1f8222e4161bb3262b6517bcaf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_slowingRadius: 1
 --- !u!137 &13774860
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -816,7 +779,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
-      value: 2
+      value: .349999994
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
@@ -824,7 +787,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 100
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadius
@@ -913,6 +876,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_feedbacks.Array.data[2].data.Array.data[2]
       value: Medium-rare!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_flockAvoidRadiusRange.min
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_flockAvoidRadiusRange.max
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

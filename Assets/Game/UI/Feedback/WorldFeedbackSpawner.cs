@@ -131,8 +131,10 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 		// Get an instance from the pool and spawn it!
 		GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name);
-		WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-		worldFeedback.Spawn(text, _entity.position);
+		if (obj != null) {
+			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
+			worldFeedback.Spawn(text, _entity.position);
+		}
 	}
 	
 	//------------------------------------------------------------------//

@@ -2,7 +2,7 @@
 using System.Collections;
 
 [AddComponentMenu("Behaviour/Prey/Sense Player")]
-public class SensePlayer : Steering {
+public class SensePlayer : MonoBehaviour {
 	
 	[SerializeField] private float m_sensorMinRadius;
 	public float sensorMinRadius { get { return m_sensorMinRadius; } set { m_sensorMinRadius = value; } }
@@ -23,7 +23,15 @@ public class SensePlayer : Steering {
 	private float m_distanceSqr;
 	public float distanceSqr { get { return m_distanceSqr; } }
 
+	private PreyMotion m_motion;
+	private Transform m_dragonMouth; 
+
+	void Awake() {
+		m_motion = GetComponent<PreyMotion>();
+	}
+
 	void OnEnable() {
+		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().mouth;
 
 		m_alert = false;
 		m_distanceSqr = 0;
@@ -31,12 +39,9 @@ public class SensePlayer : Steering {
 
 	// Update is called once per frame
 	void Update () {
-	
-		DragonPlayer player = InstanceManager.player;
+		if (m_motion.area == null || m_motion.area.Contains(m_dragonMouth.position)) {
 
-		if (m_prey.area == null || m_prey.area.Contains(player.transform.position)) {
-
-			Vector2 vectorToPlayer = (Vector2)player.transform.position - m_prey.position;
+			Vector2 vectorToPlayer = (Vector2)m_dragonMouth.position - m_motion.position;
 			m_distanceSqr = vectorToPlayer.sqrMagnitude;
 
 			if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {
@@ -46,9 +51,9 @@ public class SensePlayer : Steering {
 					if (sensorAngle == 360) {
 						m_alert = true;
 					} else {
-						Vector2 direction = (m_prey.direction.x < 0)? Vector2.left : Vector2.right;
+						Vector2 direction = (m_motion.direction.x < 0)? Vector2.left : Vector2.right;
 						float angle = Vector2.Angle(direction, vectorToPlayer); // angle between them: from 0 to 180
-						Vector3 cross = Vector3.Cross(m_prey.direction, vectorToPlayer);					
+						Vector3 cross = Vector3.Cross(m_motion.direction, vectorToPlayer);					
 						if (cross.z > 0) {
 							angle = 306 - angle;
 						}
