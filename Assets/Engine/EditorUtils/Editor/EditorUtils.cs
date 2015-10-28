@@ -28,6 +28,8 @@ public static class EditorUtils {
 	}
 
 	public enum ObjectIcon {
+		NONE = -2,
+		CUSTOM = -1,
 		LABEL_ICONS_START = 0,
 			LABEL_GRAY = LABEL_ICONS_START,
 			LABEL_BLUE,
@@ -335,6 +337,31 @@ public static class EditorUtils {
 	}
 
 	/// <summary>
+	/// Get the current icon of the given GameObject if it's one of the predefined.
+	/// </summary>
+	/// <returns>The enum value of the object icon, NONE if it's not defined or CUSTOM if it's not one of the predefined.</returns>
+	/// <param name="_obj">The object whose icon we want.</param>
+	public static ObjectIcon GetObjectIconEnum(GameObject _obj) {
+		// Aux vars
+		Texture2D currentTex = GetObjectIcon(_obj);
+
+		// Is it null?
+		if(currentTex == null) return ObjectIcon.NONE;
+
+		// Let's try to figure out whether the current icon matches one of the default ones
+		InitDefaultIconsCache();	// Make sure cached textures are initialized
+		for(int i = 0; i < s_objectIcons.Length; i++) {
+			Texture2D tex = s_objectIcons[i].image as Texture2D;
+			if(tex == currentTex) {
+				return (ObjectIcon)i;
+			}
+		}
+
+		// Texture not found within the default ones, return custom
+		return ObjectIcon.CUSTOM;
+	}
+
+	/// <summary>
 	/// Manually defines the icon of the given game object.
 	/// </summary>
 	/// <param name="_obj">The object whose icon we want to change.</param>
@@ -351,24 +378,16 @@ public static class EditorUtils {
 	/// <param name="_obj">The object whose icon we want to change.</param>
 	/// <param name="_icon">The icon to be applied.</param>
 	public static void SetObjectIcon(GameObject _obj, ObjectIcon _icon) {
-		// From http://sassybot.com/blog/snippet-automatically-add-scene-labels/
-		// If textures haven't yet been cached, do it now
-		if(s_objectIcons == null) {
-			s_objectIcons = new GUIContent[(int)ObjectIcon.COUNT];
-
-			for(int i = 0; i < (int)ObjectIcon.COUNT; i++) {
-				// Label icons go apart
-				if(i <= (int)ObjectIcon.LABEL_ICONS_END) {
-					s_objectIcons[i] = EditorGUIUtility.IconContent("sv_label_" + i);
-				} else {
-					s_objectIcons[i] = EditorGUIUtility.IconContent("sv_icon_dot" + (i - (int)ObjectIcon.SHAPE_ICONS_START) + "_pix16_gizmo");
-				}
-			}
+		// Special case if NONE or CUSTOM
+		if(_icon == ObjectIcon.NONE || _icon == ObjectIcon.CUSTOM) {
+			SetObjectIcon(_obj, null);
+			return;
 		}
 
 		// Apply the icon using texture method
-		Texture2D iconTex = s_objectIcons[(int)_icon].image as Texture2D;
-		SetObjectIcon(_obj, iconTex);
+		InitDefaultIconsCache();	// Make sure cache is initialized
+		Texture2D tex = s_objectIcons[(int)_icon].image as Texture2D;
+		SetObjectIcon(_obj, tex);
 	}
 
 	/// <summary>
@@ -379,6 +398,26 @@ public static class EditorUtils {
 		// Get the preview texture and set it
 		Texture2D iconTex = AssetPreview.GetAssetPreview(_obj);
 		SetObjectIcon(_obj, iconTex);
+	}
+
+	/// <summary>
+	/// Initialize the default object icons. Safe to spam it, will only happen if the cache was not initialized.
+	/// </summary>
+	private static void InitDefaultIconsCache() {
+		// From http://sassybot.com/blog/snippet-automatically-add-scene-labels/
+		// If textures haven't yet been cached, do it now
+		if(s_objectIcons == null) {
+			s_objectIcons = new GUIContent[(int)ObjectIcon.COUNT];
+			
+			for(int i = 0; i < (int)ObjectIcon.COUNT; i++) {
+				// Label icons go apart
+				if(i <= (int)ObjectIcon.LABEL_ICONS_END) {
+					s_objectIcons[i] = EditorGUIUtility.IconContent("sv_label_" + i);
+				} else {
+					s_objectIcons[i] = EditorGUIUtility.IconContent("sv_icon_dot" + (i - (int)ObjectIcon.SHAPE_ICONS_START) + "_pix16_gizmo");
+				}
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
