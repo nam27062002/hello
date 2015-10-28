@@ -46,6 +46,7 @@ public class CommentAttributeEditor : DecoratorDrawer {
 		m_labelStyle = new GUIStyle(EditorStyles.label);
 		m_labelStyle.fontStyle = FontStyle.Italic;
 		m_labelStyle.normal.textColor = Colors.gray;
+		m_labelStyle.wordWrap = true;
 	}
 
 	/// <summary>
