@@ -1,7 +1,7 @@
-﻿// InfoBoxAttribute.cs
+﻿// CommentAttribute.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 28/08/2015.
+// Created by Alger Ortín Castellví on 28/10/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -13,9 +13,9 @@ using UnityEngine;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Simple custom attribute to draw a text box before a property.
+/// Simple custom attribute to draw a single text line before a property.
 /// </summary>
-public class InfoBoxAttribute : PropertyAttribute {
+public class CommentAttribute : PropertyAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -28,7 +28,7 @@ public class InfoBoxAttribute : PropertyAttribute {
 	/// Parametrized constructor.
 	/// </summary>
 	/// <param name="_text">The text to be displayed in the infobox.</param>
-	public InfoBoxAttribute(string _text) {
+	public CommentAttribute(string _text) {
 		m_text = _text;
 	}
 }
