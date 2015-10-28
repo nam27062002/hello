@@ -2,7 +2,7 @@
 using System.Collections;
 
 [DisallowMultipleComponent]
-public class WanderBehaviour : MonoBehaviour {
+public class WanderBehaviour : Initializable {
 
 	protected enum State {
 		None = 0,
@@ -29,13 +29,13 @@ public class WanderBehaviour : MonoBehaviour {
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
-
-	// Use this for initialization
-	void Start () {
+		
+	public override void Initialize() {			
 		m_state = State.None;
 		m_nextState = State.Idle;
+		m_motion.ApplySteering();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (m_state != m_nextState) {

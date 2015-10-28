@@ -39,8 +39,8 @@ public class SensePlayer : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (m_motion.area == null || m_motion.area.Contains(m_dragonMouth.position)) {
-
+		// we have too much erro if we only sense the dragon when it is inside the spawn area, it can be too small
+		//if (m_motion.area == null || m_motion.area.Contains(m_dragonMouth.position)) 	{
 			Vector2 vectorToPlayer = (Vector2)m_dragonMouth.position - m_motion.position;
 			m_distanceSqr = vectorToPlayer.sqrMagnitude;
 
@@ -76,8 +76,8 @@ public class SensePlayer : MonoBehaviour {
 			} else {
 				m_alert = false;
 			}
-		} else {
+		/*} else {
 			m_alert = false;
-		}
+		}*/
 	}
 }

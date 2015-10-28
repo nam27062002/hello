@@ -60,7 +60,10 @@ public class PreyMotion : Initializable {
 		} else {
 			m_lastPosition = m_position = transform.position;
 		}
-
+		
+		m_steering = Vector3.zero;
+		m_velocity = Vector3.zero;
+		m_direction = (Random.Range(0f, 1f) < 0.5f)? Vector3.right : Vector3.left;
 		m_currentSpeed = 0;
 	}
 
