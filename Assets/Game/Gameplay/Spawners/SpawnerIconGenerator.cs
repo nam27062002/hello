@@ -1,37 +1,35 @@
-﻿// AOCQuickTestEditor.cs
+// SpawnerIconGenerator.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 02/10/2015.
+// Created by Alger Ortín Castellví on 28/10/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEditor;
-using System;
-using System.Collections.Generic;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Auxiliar component for spawners generating a custom icon for that spawner.
 /// </summary>
-[CustomEditor(typeof(AOCQuickTest))]
-public class AOCQuickTestEditor : Editor {
+public class SpawnerIconGenerator : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	public Color m_backgroundColor = new Color(0f, 0f, 0f, 0.25f);	// Make it quite transparent - full transparent is confusing, looks like a 3D object
+	public Texture2D m_tex = null;	// The actual icon texture
 
 	//------------------------------------------------------------------//
-	// METHODS															//
+	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// 
+	/// Initialization.
 	/// </summary>
-	public override void OnInspectorGUI() {
-		// Default
-		DrawDefaultInspector();
+	protected void Awake() {
+		// Not much to do
 	}
 }

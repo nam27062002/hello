@@ -215,8 +215,7 @@ namespace LevelEditor {
 			newSpawnerObj.transform.SetParent(m_targetGroup.spawnersObj.transform, true);
 
 			// Add a name based on the entity prefab
-			string entityName = entityPrefab.name.Replace("PF_", "");	// Entity name without the preffix (if any)
-			newSpawnerObj.SetUniqueName(PREFIX + entityName);	// Add a prefix of our own and generate unique name
+			string spawnerName = entityPrefab.name.Replace("PF_", "");	// Entity name without the preffix (if any)
 
 			// Add and initialize the transform lock component
 			// Arbitrary default values fitted to the most common usage when level editing
@@ -234,9 +233,12 @@ namespace LevelEditor {
 
 				case Type.FLOCK: {
 					sp = newSpawnerObj.AddComponent<FlockSpawner>();
-					newSpawnerObj.name = newSpawnerObj.name + "Flock";
+					spawnerName += "Flock";
 				} break;
 			}
+
+			// Add a prefix of our own and generate unique name
+			newSpawnerObj.SetUniqueName(PREFIX + spawnerName);
 
 			// Initialize spawner with the target prefab
 			sp.m_entityPrefab = entityPrefab;
@@ -258,6 +260,9 @@ namespace LevelEditor {
 					size = area.radius * 2f;
 				} break;
 			}
+
+			// Add a spawner icon generator component as well
+			newSpawnerObj.AddComponent<SpawnerIconGenerator>();
 
 			// Make operation undoable
 			Undo.RegisterCreatedObjectUndo(newSpawnerObj, "LevelEditor AddSpawner");

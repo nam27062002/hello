@@ -1,5 +1,5 @@
 ﻿// PopupController.cs
-// Monster
+// Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 17/06/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.

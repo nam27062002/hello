@@ -26,6 +26,14 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	[Comment("This is a float añsldkfjañ añsld kasñlf kasñd kasñlfkas ñak ñalskfjasñlk fjasñk sñak sñl adfaf")]
+	public float m_myFloat = 5;
+
+	[Comment("This is a string")]
+	public string m_myString = "AOC";
+
+	[Comment("This is not a pipe")]
+	public int m_myInt = -5;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//

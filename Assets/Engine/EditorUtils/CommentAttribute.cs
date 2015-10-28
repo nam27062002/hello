@@ -1,37 +1,35 @@
-﻿// AOCQuickTestEditor.cs
+﻿// CommentAttribute.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 02/10/2015.
+// Created by Alger Ortín Castellví on 28/10/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEditor;
-using System;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Simple custom attribute to draw a single text line before a property.
 /// </summary>
-[CustomEditor(typeof(AOCQuickTest))]
-public class AOCQuickTestEditor : Editor {
+public class CommentAttribute : PropertyAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	public string m_text = "";
 
 	//------------------------------------------------------------------//
-	// METHODS															//
+	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// 
+	/// Parametrized constructor.
 	/// </summary>
-	public override void OnInspectorGUI() {
-		// Default
-		DrawDefaultInspector();
+	/// <param name="_text">The text to be displayed in the infobox.</param>
+	public CommentAttribute(string _text) {
+		m_text = _text;
 	}
 }
+
