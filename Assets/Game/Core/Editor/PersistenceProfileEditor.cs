@@ -69,7 +69,7 @@ public class PersistenceProfileEditor : ExtendedPropertyDrawer {
 		else if(newSelection == labels.Length - 1) {
 			// Open profile manager window with the current profile selected
 			PersistenceProfilesEditorWindow.m_selectedProfile = labels[currentSelectedIdx];
-			PersistenceProfilesEditorWindow.ShowWindow();
+			HungryDragonEditorMenu.ShowPersistenceProfilesWindow();
 		}
 
 		// c) Different profile than the current one

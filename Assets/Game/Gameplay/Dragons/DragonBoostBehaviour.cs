@@ -17,7 +17,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		m_dragon = GetComponent<DragonPlayer>();	
 		m_controls = GetComponent<DragonControl>();
 

@@ -151,8 +151,6 @@ public class SceneManager : SingletonMonoBehaviour<SceneManager> {
 		switch(_newState) {
 			// Reclaim some memory before loading a scene. 1-Frame state.
 			case ESceneState.RESET: {
-				Debug.Log("==================== " + currentScene + " -> " + nextScene + " via " + loadingScene);
-
 				// Run a GC pass
 				System.GC.Collect();
 			} break;
@@ -208,7 +206,6 @@ public class SceneManager : SingletonMonoBehaviour<SceneManager> {
 		}
 
 		// Dispatch event
-		Debug.Log(oldState + " -> " + m_sceneState);
 		Messenger.Broadcast<ESceneState, ESceneState>(EngineEvents.SCENE_STATE_CHANGED, oldState, m_sceneState);
 	}
 

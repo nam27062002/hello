@@ -22,10 +22,10 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private static readonly float PROFILE_LIST_COLUMN_WIDTH = 200f;
-	private static readonly float PROFILE_VIEW_COLUMN_WIDTH = 400f;
-	private static readonly float MIN_WINDOW_HEIGHT = 400f;
-	private static readonly float SPACING = 5f;
+	public static readonly float PROFILE_LIST_COLUMN_WIDTH = 200f;
+	public static readonly float PROFILE_VIEW_COLUMN_WIDTH = 400f;
+	public static readonly float MIN_WINDOW_HEIGHT = 400f;
+	public static readonly float SPACING = 5f;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -33,7 +33,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	// Profiles management
 	public static string m_selectedProfile = "";	// Static to keep it between window openings
 	private Dictionary<string, GameObject> m_profilePrefabs = new Dictionary<string, GameObject>();
-	private string m_newProfileName = "";
+	public string m_newProfileName = "";
 	private Vector2 m_profileListScrollPos = Vector2.zero;
 
 	// Savegames management
@@ -49,29 +49,6 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	private GUIStyle m_selectionGridStyle = null;
 	private GUIStyle m_titleLabelStyle = null;
 	private GUIStyle m_centeredLabelStyle = null;
-
-	//------------------------------------------------------------------//
-	// STATIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Add menu item to be able to open the editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Persistence Profiles")]
-	public static void ShowWindow() {
-		// Show existing window instance. If one doesn't exist, make one.
-		PersistenceProfilesEditorWindow window = (PersistenceProfilesEditorWindow)EditorWindow.GetWindow(typeof(PersistenceProfilesEditorWindow));
-
-		// Setup window
-		window.titleContent = new GUIContent("Persistence Profiles");
-		window.minSize = new Vector2(SPACING + PROFILE_LIST_COLUMN_WIDTH + PROFILE_VIEW_COLUMN_WIDTH + SPACING, MIN_WINDOW_HEIGHT);	// Fixed width, arbitrary minimum
-		window.maxSize = new Vector2(window.minSize.x, float.PositiveInfinity);						// Fixed width, limitless
-
-		// Reset some vars
-		window.m_newProfileName = "";
-
-		// Show it
-		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
-	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

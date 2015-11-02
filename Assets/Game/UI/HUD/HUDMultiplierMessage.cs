@@ -17,7 +17,7 @@ using System;
 /// <summary>
 /// Simple controller showing a message whenever a new score multiplier is triggered.
 /// </summary>
-public class DebugHUDMultiplierMessage : MonoBehaviour {
+public class HUDMultiplierMessage : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//

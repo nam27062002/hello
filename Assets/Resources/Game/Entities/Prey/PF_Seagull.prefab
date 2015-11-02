@@ -697,7 +697,7 @@ MonoBehaviour:
   m_typeID: Seagull
   m_reward:
     score: 10
-    coins: 0
+    coins: 5
     pc: 0
     health: 15
     energy: 0
@@ -913,6 +913,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_feedbacks.Array.data[2].data.Array.data[2]
       value: Medium-rare!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.coins
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

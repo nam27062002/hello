@@ -40,11 +40,26 @@ public class DragonPlayer : MonoBehaviour {
 	private bool m_furyActive = false;
 	public float fury { get { return m_fury[0]; } }
 
-	// Internal
-	private float m_speedMultiplier;
+	// Interaction
+	public bool playable {
+		set {
+			// Enable/disable all the components that make the dragon playable
+			// Add as many as needed
+			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
+			GetComponent<DragonEatBehaviour>().enabled = value;		// Eat stuff
+			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
+			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
+		}
+	}
 
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
 	// References
 	private DragonBreathBehaviour m_breathBehaviour = null;
+
+	// Internal
+	private float m_speedMultiplier;
 
 	// Debug
 	[HideInInspector] public bool invulnerable = false;
@@ -85,6 +100,15 @@ public class DragonPlayer : MonoBehaviour {
 	/// <param name="_offset">The amount of health to be added/removed.</param>
 	public void AddLife(float _offset) {
 		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset));
+
+		// Check for death!
+		if(m_health <= 0f) {
+			// Send global even
+			Messenger.Broadcast(GameEvents.PLAYER_DIED);
+
+			// Make dragon unplayable (xD)
+			playable = false;
+		}
 	}
 
 	/// <summary>

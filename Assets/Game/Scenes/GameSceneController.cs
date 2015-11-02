@@ -25,6 +25,7 @@ public class GameSceneController : SceneController {
 
 	public enum EStates {
 		INIT,
+		LOADING_LEVEL,
 		COUNTDOWN,
 		RUNNING,
 		PAUSED,
@@ -61,6 +62,22 @@ public class GameSceneController : SceneController {
 		get { return m_state == EStates.PAUSED; }
 	}
 
+	// Level loading
+	private ResourceRequest m_levelLoadingTask = null;
+	public float levelLoadingProgress {
+		get {
+			if(state == EStates.LOADING_LEVEL) {
+				//return m_levelLoadingTask.progress;	// Shouldn't be null at this state
+				float p = (m_levelLoadingTask != null) ? m_levelLoadingTask.progress : 1f;
+				return Mathf.Min(1f - Mathf.Max(m_timer/3f, 0f), p);
+			} else if(state > EStates.LOADING_LEVEL) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -95,6 +112,14 @@ public class GameSceneController : SceneController {
 	void Update() {
 		// Different actions based on current state
 		switch(m_state) {
+			// During loading, wait until level is loaded
+			case EStates.LOADING_LEVEL: {
+				m_timer -= Time.deltaTime;
+				if(levelLoadingProgress >= 1) {
+					ChangeState(EStates.COUNTDOWN);
+				}
+			} break;
+
 			// During countdown, let's just wait
 			case EStates.COUNTDOWN: {
 				if(m_timer > 0) {
@@ -127,6 +152,9 @@ public class GameSceneController : SceneController {
 	/// Destructor.
 	/// </summary>
 	override protected void OnDestroy() {
+		// Clear pools
+		PoolManager.Clear(true);
+
 		// Call parent
 		base.OnDestroy();
 	}
@@ -140,14 +168,17 @@ public class GameSceneController : SceneController {
 	public void StartGame() {
 		// Reset timer
 		m_elapsedSeconds = 0;
-		
+
+		// Disable dragon until the game actually starts so its HP doesn't go down
+		InstanceManager.player.gameObject.SetActive(false);
+
 		// Reset rewards
 		RewardManager.Reset();
 		
 		// [AOC] TODO!! Reset game stats
 		
 		// Change state
-		ChangeState(EStates.COUNTDOWN);
+		ChangeState(EStates.LOADING_LEVEL);
 	}
 	
 	/// <summary>
@@ -156,8 +187,11 @@ public class GameSceneController : SceneController {
 	public void EndGame() {
 		// Change state
 		ChangeState(EStates.FINISHED);
-		
+
 		// [AOC] TODO!! Update global stats
+
+		// Apply rewards to user profile
+		RewardManager.ApplyRewardsToProfile();
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -194,6 +228,24 @@ public class GameSceneController : SceneController {
 		
 		// Actions to perform when leaving the current state
 		switch(m_state) {
+			case EStates.LOADING_LEVEL: {
+				// Instantiate level and delete loader
+				GameObject levelObj = GameObject.Instantiate<GameObject>((GameObject)m_levelLoadingTask.asset);
+				m_levelLoadingTask = null;
+
+				// Dispatch game event
+				Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+
+				// Enable dragon back and put it in the spawn point
+				// Don't make it playable until the countdown ends
+				InstanceManager.player.playable = false;
+				InstanceManager.player.gameObject.SetActive(true);
+				LevelEditor.Level level = levelObj.GetComponent<LevelEditor.Level>();
+				GameObject spawnPoint = level.GetDragonSpawnPoint(InstanceManager.player.data.id);
+				if(spawnPoint == null) spawnPoint = level.GetDragonSpawnPoint(DragonId.NONE);
+				InstanceManager.player.transform.position = spawnPoint.transform.position;
+			} break;
+
 			case EStates.RUNNING: {
 				// Unsubscribe from external events
 				Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
@@ -207,23 +259,27 @@ public class GameSceneController : SceneController {
 		
 		// Actions to perform when entering the new state
 		switch(_newState) {
+			case EStates.LOADING_LEVEL: {
+				// Start loading current level
+				m_levelLoadingTask = LevelManager.LoadLevelPrefab(LevelManager.currentLevel);
+				// TEMP!! Simulate larger loading time
+				m_timer = 3;
+			} break;
+
 			case EStates.COUNTDOWN: {
 				// Start countdown timer
 				m_timer = COUNTDOWN;
-
-				// Disable dragon so its HP doesn't go down
-				InstanceManager.player.gameObject.SetActive(false);
 
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_STARTED);
 			} break;
 				
 			case EStates.RUNNING: {
-				// Enable dragon back!
-				InstanceManager.player.gameObject.SetActive(true);
-
 				// Subscribe to external events
 				Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+
+				// Make dragon playable!
+				InstanceManager.player.playable = true;
 
 				// Notify the game
 				if(m_state == EStates.COUNTDOWN) {

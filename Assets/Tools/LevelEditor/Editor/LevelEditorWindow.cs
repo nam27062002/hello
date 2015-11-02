@@ -46,29 +46,6 @@ namespace LevelEditor {
 		private float m_autoSaveTimer = 0f;
 
 		//------------------------------------------------------------------//
-		// STATIC METHODS													//
-		//------------------------------------------------------------------//
-		/// <summary>
-		/// Add menu item to be able to open the editor.
-		/// </summary>
-		[MenuItem("Hungry Dragon/Level Editor")]
-		public static void ShowWindow() {
-			// Show existing window instance. If one doesn't exist, make one.
-			LevelEditorWindow window = (LevelEditorWindow)EditorWindow.GetWindow(typeof(LevelEditorWindow));
-			
-			// Setup window
-			window.titleContent = new GUIContent("Level Editor");
-			window.minSize = new Vector2(330f, 350f);	// Min required width to properly fit all the content
-			//window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
-
-			// Make sure everything is initialized properly
-			window.Init();
-			
-			// Show it
-			window.ShowTab();
-		}
-
-		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
 		//------------------------------------------------------------------//
 		/// <summary>

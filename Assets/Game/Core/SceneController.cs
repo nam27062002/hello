@@ -29,7 +29,7 @@ public class SceneController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	[InfoBox("Mark it only if the scene doesn't have any dependence with previous scenes.")]
+	[Comment("Mark it only if the scene doesn't have any dependency with previous scenes.")]
 	[SerializeField] private bool m_standaloneScene = false;
 
 	//------------------------------------------------------------------//

@@ -13,6 +13,21 @@ public class DragonControlPlayer : DragonControl {
 			touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
 	}
+
+	void OnEnable() {
+		if(touchControls != null) {
+			touchControls.enabled = true;
+		}
+	}
+
+	void OnDisable() {
+		if(touchControls != null) {
+			touchControls.SetTouchObjRendering(false);
+			touchControls.enabled = false;
+			moving = false;
+			action = false;
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {

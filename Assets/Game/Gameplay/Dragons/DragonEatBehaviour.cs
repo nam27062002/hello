@@ -39,7 +39,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 	
 		m_eatingTimer = 0;
 

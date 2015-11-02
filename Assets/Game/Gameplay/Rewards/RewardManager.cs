@@ -131,6 +131,16 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		instance.SetScoreMultiplier(0);
 	}
 
+	/// <summary>
+	/// Adds the current rewards to the user profile. To be called at the end of 
+	/// the game, for example.
+	/// </summary>
+	public static void ApplyRewardsToProfile() {
+		// Just do it :)
+		UserProfile.AddCoins(instance.m_coins);
+		UserProfile.AddPC(instance.m_pc);
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//

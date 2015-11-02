@@ -13,6 +13,7 @@ public static class GameEvents {
 	public const string PROFILE_PC_CHANGED = "PROFILE_PC_CHANGED";			// params: long _oldAmount, long _newAmount
 	
 	// Game logic events
+	public const string GAME_LEVEL_LOADED = "GAME_LEVEL_LOADED";	// no params
 	public const string GAME_COUNTDOWN_STARTED = "GAME_COUNTDOWN_STARTED";		// no params
 	public const string GAME_STARTED = "GAME_STARTED";		// no params
 	public const string GAME_PAUSED = "GAME_PAUSED";		// params: bool _paused

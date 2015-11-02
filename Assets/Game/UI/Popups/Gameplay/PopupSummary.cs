@@ -83,8 +83,8 @@ public class PopupSummary : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPostAnimation() {
 		// Launch number animators
-		scoreAnimator.SetValue(0, (int)App.Instance.gameLogic.score);
-		coinsAnimator.SetValue(0, (int)UserProfile.coins);
+		scoreAnimator.SetValue(0, (int)RewardManager.score);
+		coinsAnimator.SetValue(0, (int)RewardManager.coins);
 	}
 
 	/// <summary>

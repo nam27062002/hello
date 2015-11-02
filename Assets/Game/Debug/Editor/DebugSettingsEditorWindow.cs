@@ -30,23 +30,6 @@ public class DebugSettingsEditorWindow : EditorWindow {
 	// METHODS															//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Add menu item to be able to open the editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Debug Settings")]
-	public static void ShowWindow() {
-		// Show existing window instance. If one doesn't exist, make one.
-		DebugSettingsEditorWindow window = (DebugSettingsEditorWindow)EditorWindow.GetWindow(typeof(DebugSettingsEditorWindow));
-
-		// Setup window
-		window.titleContent = new GUIContent("Debug Settings");
-		//window.minSize = new Vector2(300f, 300f);
-		//window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
-
-		// Show it
-		window.ShowTab();
-	}
-
-	/// <summary>
 	/// Update the inspector window.
 	/// </summary>
 	public void OnGUI() {

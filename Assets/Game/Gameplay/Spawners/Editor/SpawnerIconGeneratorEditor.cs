@@ -104,7 +104,6 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// <summary>
 	/// Regenerate the icon for all the spawners in the scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons")]
 	public static void GenerateSpawnerIconsInScene() {
 		Spawner[] spawners = FindObjectsOfType<Spawner>();
 		for(int i = 0; i < spawners.Length; i++) {
