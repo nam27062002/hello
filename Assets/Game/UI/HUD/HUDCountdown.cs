@@ -68,8 +68,10 @@ public class HUDCountdown : MonoBehaviour {
 				// [AOC] Special case for 0 value
 				if(value == 0) {
 					m_text.text = "GO!";	// [AOC] HARDCODED!!
+					m_anim.SetBool("exit", true);
 				} else {
 					m_text.text = StringUtils.FormatNumber(value);
+					m_anim.SetBool("exit", false);
 				}
 				m_anim.SetTrigger("start");
 				m_lastValue = value;

@@ -57,6 +57,7 @@ public class LoadingSceneController : SceneController {
 		timer = 0;
 
 		// Load persistence
+		PersistenceManager.Init();
 		PersistenceManager.Load();
 	}
 	
