@@ -258,6 +258,7 @@ GameObject:
   - 114: {fileID: 11427164}
   - 114: {fileID: 11421280}
   - 114: {fileID: 11478512}
+  - 114: {fileID: 11495808}
   m_Layer: 8
   m_Name: PF_Human
   m_TagString: Untagged
@@ -757,8 +758,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074c80ccf21fd47af93cdab945e85fc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_idleTime: 20
-  m_idleProbability: .799000025
+  m_idleTime: 10
+  m_idleProbability: 1
 --- !u!114 &11426808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -846,6 +847,17 @@ MonoBehaviour:
   m_sensorMaxRadius: 6
   m_sensorAngle: 120
   m_sensorAngleOffset: 90
+--- !u!114 &11495808
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e6af407cd1e44ae8665f51325b3da5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &13703782
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1033,11 +1045,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleTime
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleProbability
-      value: .799000025
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

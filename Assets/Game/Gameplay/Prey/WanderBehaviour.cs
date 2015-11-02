@@ -16,7 +16,7 @@ public class WanderBehaviour : Initializable {
 	protected PreyMotion m_motion;
 	private Animator m_animator;
 
-	private Vector2 m_target;
+	protected Vector2 m_target;
 	private float m_timer;
 
 	protected State m_state;
@@ -56,10 +56,10 @@ public class WanderBehaviour : Initializable {
 				ChooseTarget();
 			} else {
 				if ((m_target - m_motion.position).sqrMagnitude < 1f) {
-					if (Random.Range(0f, 1f) < 0.5f) {
-						ChooseTarget();
-					} else {
+					if (Random.Range(0f, 1f) < m_idleProbability) {
 						m_nextState = State.Idle;
+					} else {
+						ChooseTarget();
 					}
 				}
 			}
@@ -81,7 +81,7 @@ public class WanderBehaviour : Initializable {
 		m_state = m_nextState;
 	}
 
-	private void ChooseTarget() {
+	virtual protected void ChooseTarget() {
 		if (m_motion.HasFlockController()) {
 			m_target = m_motion.GetFlockTarget();
 		} else {

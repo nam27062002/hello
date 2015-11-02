@@ -39,10 +39,10 @@ public class PreyMotion : Initializable {
 
 	// Properties
 	public Vector2 position 	{ get { return m_position; } }
-	public Vector2 direction 	{ get { return m_direction; } }
-	public Vector2 velocity		{ get { return m_velocity; } }
+	public Vector2 direction 	{ get { return m_direction; } set { m_direction = value.normalized; } }
+	public Vector2 velocity		{ get { return m_velocity; } set { m_velocity = value; } }
 	public float   speed		{ get { return m_currentSpeed; } }
-
+	//
 	// ----------------------------------------------------------------------------- //
 
 	// Methods
@@ -172,7 +172,7 @@ public class PreyMotion : Initializable {
 
 	// ------------------------------------------------------------------------------------------------------------------------------ //
 
-	private  void FlockSeparation() {
+	private void FlockSeparation() {
 		Vector2 avoid = Vector2.zero;
 		Vector2 direction = Vector2.zero;
 		for (int i = 0; i < m_flock.entities.Length; i++) {			

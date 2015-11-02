@@ -11,12 +11,9 @@ public class Wander : Steering {
 
 	private float m_timer;
 	private Vector2 m_target;
-	
-	private Transform m_dragon;
 
 	void OnEnable() {
 		m_timer = 0;
-		m_dragon = InstanceManager.player.transform;
 	}
 
 	void Update() {

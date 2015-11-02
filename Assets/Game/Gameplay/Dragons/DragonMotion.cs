@@ -255,7 +255,6 @@ public class DragonMotion : MonoBehaviour {
 	/// Updates the movement.
 	/// </summary>
 	void UpdateMovement() {
-		Vector3 oldDirection = m_direction;
 		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speed.value * m_speedMultiplier); 
 
 		if (impulse != Vector3.zero) {

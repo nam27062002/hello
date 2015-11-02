@@ -25,4 +25,17 @@ public class WanderFleeBehaviour : WanderBehaviour {
 
 		base.FixedUpdate();
 	}
+
+	override protected void ChooseTarget() {
+		if (m_sensor.alert) {
+			Vector3 direction = transform.position - m_dragonMouth.position;
+			if (direction.x < 0) {
+				m_target = m_motion.ProjectToGround(m_area.bounds.min);
+			} else {
+				m_target = m_motion.ProjectToGround(m_area.bounds.max);
+			}
+		} else {
+			base.ChooseTarget();
+		}
+	}
 }
