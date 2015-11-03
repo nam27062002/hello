@@ -94,17 +94,76 @@ namespace LevelEditor {
 
 			// Draw editor for each type
 			for(int i = 0; i < numTypes; i++) {
-				// Title
-				EditorUtils.Separator(EditorUtils.Orientation.HORIZONTAL, 5, ((FeedbackData.Type)i).ToString());
+				// Make it foldable
+				// Reuse the isExpanded property of the Probability field to store the folded status
+				// Show probability slider next to property name
+				SerializedProperty probabilityProp = probabilitesProp.GetArrayElementAtIndex(i);
+				EditorGUILayout.BeginHorizontal(); {
+					// Foldable
+					probabilityProp.isExpanded = EditorGUILayout.Foldout(probabilityProp.isExpanded, ((FeedbackData.Type)i).ToString());
 
-				// Probability slider
-				EditorGUILayout.Slider(probabilitesProp.GetArrayElementAtIndex(i), 0f, 1f, "Probability");
+					// Probability slider
+					EditorGUIUtility.labelWidth = EditorStyles.largeLabel.CalcSize(new GUIContent("Probability")).x;
+					EditorGUILayout.Slider(probabilityProp, 0f, 1f, "Probability");
+					EditorGUIUtility.labelWidth = 0;
+				} EditorUtils.EndHorizontalSafe();
 
-				// Feedback list
-				// Since multidimensional arrays are not serializable, we had to create a custom class FeedbackList
-				// http://answers.unity3d.com/questions/411696/how-to-initialize-array-via-serializedproperty.html
-				SerializedProperty feedbacksListProp = feedbacksProp.GetArrayElementAtIndex(i);
-				EditorGUILayout.PropertyField(feedbacksListProp.FindPropertyRelative("data"), new GUIContent("Feedbacks"), true);
+				// Foldable content
+				if(probabilityProp.isExpanded) {
+					// Indented
+					EditorGUI.indentLevel++;
+
+					// Feedback list
+					// Since multidimensional arrays are not serializable, we had to create a custom class FeedbackList
+					// http://answers.unity3d.com/questions/411696/how-to-initialize-array-via-serializedproperty.html
+					// Display it beautifully though
+					SerializedProperty feedbacksListProp = feedbacksProp.GetArrayElementAtIndex(i);
+					SerializedProperty actualListProp = feedbacksListProp.FindPropertyRelative("data");
+
+					// Special message if list is empty
+					if(actualListProp.arraySize == 0) {
+						// Comment-like label
+						GUIStyle style = new GUIStyle(EditorStyles.label);
+						style.normal.textColor = Colors.gray;
+						style.fontStyle = FontStyle.Italic;
+						style.wordWrap = true;
+						EditorGUILayout.LabelField("", "Feedbacks list for " + ((FeedbackData.Type)i).ToString() + " is empty. Add some with the \"+\" button.", style);
+					} else {
+						// Current entries
+						for(int j = 0; j < actualListProp.arraySize; j++) {
+							// Single line
+							EditorGUILayout.BeginHorizontal(); {
+								// Feedback text
+								SerializedProperty feedbackStringProp = actualListProp.GetArrayElementAtIndex(j);
+								feedbackStringProp.stringValue = EditorGUILayout.TextField(feedbackStringProp.stringValue);
+
+								// Remove button
+								if(GUILayout.Button("-", GUILayout.Width(30))) {
+									// Delete entry
+									actualListProp.DeleteArrayElementAtIndex(j);
+									j--;	// We just deleted element j, so all remaining elements have moved up one position - keep up
+								}
+							} EditorUtils.EndHorizontalSafe();
+						}
+					}
+
+					// Add new entry button
+					// Centered
+					EditorGUILayout.BeginHorizontal(); {
+						GUILayout.FlexibleSpace();
+						if(GUILayout.Button("+", GUILayout.Width(100))) {
+							// Just add a new empty entry at the end of the list
+							actualListProp.arraySize++;
+						}
+						GUILayout.FlexibleSpace();
+					} EditorUtils.EndHorizontalSafe();
+
+					// Some spacing to breath
+					GUILayout.Space(10);
+
+					// Restore indentation
+					EditorGUI.indentLevel--;
+				}
 			}
 
 			// Make sure changed are stored!
