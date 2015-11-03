@@ -87,7 +87,7 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 		// Load the prefab for the level with the given index
 		//GameObject prefabObj = Resources.Load<GameObject>(data.prefabPath);
 		ResourceRequest request = Resources.LoadAsync<GameObject>(data.prefabPath);
-		DebugUtils.SoftAssert(request != null, "The prefab defined to dragon " + _levelIdx + " couldn't be found");	// [AOC] TODO!! Check path
+		DebugUtils.SoftAssert(request != null, "The prefab defined to level " + _levelIdx + " couldn't be found");	// [AOC] TODO!! Check path
 		return request;
 	}
 }

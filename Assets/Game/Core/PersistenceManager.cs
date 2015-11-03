@@ -33,7 +33,7 @@ public static class PersistenceManager {
 	public class SaveData {
 		// Add here any required data
 		public DateTime timestamp = DateTime.UtcNow;
-		public UserProfile.SaveData profile;
+		public UserProfile.SaveData profile = new UserProfile.SaveData();
 		public DragonData.SaveData[] dragons = new DragonData.SaveData[(int)DragonId.COUNT];
 	}
 
@@ -182,6 +182,7 @@ public static class PersistenceManager {
 		// Just delete persistence file
 		string path = GetPersistenceFilePath(_profileName);
 		File.Delete(path);
+		SaveFromObject(_profileName, new SaveData());
 	}
 
 	//------------------------------------------------------------------//

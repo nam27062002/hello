@@ -136,6 +136,10 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	public static void Load(DragonData.SaveData[] _data) {
 		// We don't trust array order, so do it by id
 		for(int i = 0; i < _data.Length; i++) {
+			if(_data[i] == null) {
+				_data[i] = new DragonData.SaveData();
+				_data[i].id = (DragonId)i;
+			}
 			GetDragonData(_data[i].id).Load(_data[i]);
 		}
 	}
