@@ -592,6 +592,9 @@ namespace LevelEditor {
 
 				// Create the prefab
 				prefabObj = PrefabUtility.CreatePrefab(path, m_activeLevel.gameObject, ReplacePrefabOptions.ConnectToPrefab) as GameObject;
+
+				// Save assets to disk!!
+				AssetDatabase.SaveAssets();
 			}
 
 			// Highlight prefab in project browser
