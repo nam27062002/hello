@@ -25,8 +25,8 @@ public class PopupController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	private Animator mAnimator = null;
-	private bool mDestroyAfterClose = true;
+	private Animator m_anim = null;
+	private bool m_destroyAfterClose = true;
 
 	//------------------------------------------------------------------//
 	// DELEGATES														//
@@ -51,14 +51,20 @@ public class PopupController : MonoBehaviour {
 	/// </summary>
 	protected virtual void Awake () {
 		// Get required components
-		mAnimator = GetComponent<Animator>();
-		DebugUtils.Assert(mAnimator != null, "Required Component!!");
+		m_anim = GetComponent<Animator>();
+		DebugUtils.Assert(m_anim != null, "Required Component!!");
+
+		// Dispatch message
+		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CREATED, this);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	protected virtual void OnDestroy() {
+		// Dispatch message - it could be problematic using "this" at this point
+		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_DESTROYED, this);
+
 		// Loose references to delegates
 		onOpenPreAnimationDelegate = null;
 		onOpenPostAnimationDelegate = null;
@@ -73,13 +79,16 @@ public class PopupController : MonoBehaviour {
 	/// Launches the open animation.
 	/// </summary>
 	public void Open() {
+		// Dispatch message
+		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_OPENED, this);
+
 		// Invoke delegate
 		if(onOpenPreAnimationDelegate != null) {
 			onOpenPreAnimationDelegate();
 		}
 
 		// Launch anim
-		mAnimator.SetTrigger("open");
+		m_anim.SetTrigger("open");
 	}
 
 	/// <summary>
@@ -88,7 +97,7 @@ public class PopupController : MonoBehaviour {
 	/// <param name="_bDestroy">Whether to destroy the popup once the close animation has finished.</param>
 	public void Close(bool _bDestroy) {
 		// Store flag
-		mDestroyAfterClose = _bDestroy;
+		m_destroyAfterClose = _bDestroy;
 
 		// Invoke delegate
 		if(onClosePreAnimationDelegate != null) {
@@ -96,7 +105,7 @@ public class PopupController : MonoBehaviour {
 		}
 
 		// Launch anim
-		mAnimator.SetTrigger("close");
+		m_anim.SetTrigger("close");
 	}
 
 	//------------------------------------------------------------------//
@@ -122,8 +131,11 @@ public class PopupController : MonoBehaviour {
 			onClosePostAnimationDelegate();
 		}
 
+		// Dispatch message
+		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CLOSED, this);
+
 		// Delete ourselves if required
-		if(mDestroyAfterClose) {
+		if(m_destroyAfterClose) {
 			GameObject.Destroy(gameObject);
 		}
 	}

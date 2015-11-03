@@ -141,7 +141,7 @@ public class GameSceneController : SceneController {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
 						// Open popup!
-						PopupManager.OpenPopup(PopupSummary.PATH);
+						PopupManager.OpenPopupAsync(PopupSummary.PATH);
 					}
 				}
 			} break;
