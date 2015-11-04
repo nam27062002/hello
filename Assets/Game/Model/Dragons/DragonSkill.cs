@@ -48,6 +48,7 @@ public class DragonSkill : SerializableClass {
 
 	// Values
 	[SerializeField] private Range m_valueRange = new Range(0f, 1f);
+	private float m_valueOffset = 0;
 	public float value { get { return GetValueAtLevel(level); }}
 	public float nextLevelValue { get { return GetValueAtLevel(nextLevel); }}
 
@@ -80,6 +81,8 @@ public class DragonSkill : SerializableClass {
 	public DragonSkill(DragonData _owner, EType _type) {
 		m_owner = _owner;
 		m_type = _type;
+
+		m_valueOffset = 0;
 	}
 
 	//------------------------------------------------------------------//
@@ -131,16 +134,14 @@ public class DragonSkill : SerializableClass {
 	/// <param name="_level">The level at which we want to know the skill's value.</param>
 	public float GetValueAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, lastLevel, _level);
-		return m_valueRange.Lerp(levelDelta);
+		return m_valueRange.Lerp(levelDelta) + m_valueOffset;
 	}
 
-
 	/// <summary>
-	/// Overrides the skill value. Used for Debug purposes on Preproduction fase.
+	/// Offsets the skill value. Used for Debug purposes on Preproduction fase.
 	/// </summary>
-	public void OverrideValue(float _speed) {
-		m_valueRange.min = _speed;
-		m_valueRange.max = _speed;
+	public void OffsetValue(float _value) {
+		m_valueOffset += _value;
 	}
 
 	//------------------------------------------------------------------//

@@ -5,11 +5,9 @@ using System.Collections;
 public class DragonHealthToggle : MonoBehaviour {
 
 	private bool m_enabled;
-	private Toggle m_toggle;
 	private DragonHealthBehaviour m_healthComponent;
 
 	void Start() {
-		m_toggle = GetComponent<Toggle>();
 		if (InstanceManager.player != null) {
 			m_healthComponent = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 		}

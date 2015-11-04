@@ -5,11 +5,9 @@ using System.Collections;
 public class DragonFireToggle : MonoBehaviour {
 
 	private bool m_enabled;
-	private Toggle m_toggle;
 	private DragonBreathBehaviour m_breathComponent;
 	
 	void Start() {
-		m_toggle = GetComponent<Toggle>();
 		if (InstanceManager.player != null) {
 			m_breathComponent = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 		}
