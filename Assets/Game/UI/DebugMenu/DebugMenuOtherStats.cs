@@ -63,6 +63,6 @@ public class DebugMenuOtherStats : MonoBehaviour {
 		m_healthText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.maxHealth, 0));
 
 		// Scale
-		m_scaleText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.scale, 0));
+		m_scaleText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.scale, 2));
 	}
 }

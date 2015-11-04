@@ -1861,10 +1861,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e7a49c765b74dfaaa8e8fd4dbb21fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedDirectionMultiplier: 2
-  movementLimitX:
-    min: -27700
-    max: 51000
   m_stunnedTime: 0
   m_rbody: {fileID: 0}
 --- !u!114 &11424726
@@ -1950,9 +1946,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 45
-  firePower: 15
-  collisionDepth: 1000
+  m_damage: 25
+  m_length: 6
+  m_sizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 3
+      tangentMode: 0
+    - time: 1
+      value: 3
+      inSlope: 3
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  m_particleSpawn: 2
+  m_maxParticles: 75
+  m_lifeTime: 5
+  m_dyingTime: .25
+  m_dyingSpeed: 3
+  m_finalScale:
+    min: .75
+    max: 1.25
 --- !u!135 &13517900
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -62,9 +62,7 @@ public class Water : MonoBehaviour
 				
 		int i = 0;
 		float fDepth = 0.0f;
-		float fPerc;
-					
-		
+
 		float fZ = 0.0f;
 		
 		float fWaterStep = 0.0f;

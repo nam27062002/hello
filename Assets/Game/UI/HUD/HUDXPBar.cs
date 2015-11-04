@@ -45,13 +45,13 @@ public class HUDXPBar : MonoBehaviour {
 			// Bar value
 			Range xpRange = InstanceManager.player.data.progression.xpRange;
 			m_bar.minValue = xpRange.min;
-			m_bar.maxValue = Mathf.Ceil(xpRange.max);
+			m_bar.maxValue = xpRange.max;
 			m_bar.value = InstanceManager.player.data.progression.xp;
 
 			// Text
 			m_valueTxt.text = String.Format("{0}/{1} (lv. {2}/{3})",
 			                                StringUtils.FormatNumber(m_bar.value - m_bar.minValue, 2),
-			                                StringUtils.FormatNumber(m_bar.maxValue - m_bar.minValue, 2),
+			                                StringUtils.FormatNumber(Mathf.Ceil(m_bar.maxValue - m_bar.minValue), 2),
 			                                StringUtils.FormatNumber(InstanceManager.player.data.progression.level + 1),
 			                                StringUtils.FormatNumber(InstanceManager.player.data.progression.lastLevel + 1));
 		}

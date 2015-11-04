@@ -50,7 +50,7 @@ public class EdibleBehaviour : Initializable {
 
 		m_prey = GetComponent<PreyStats>();
 		m_dragon = InstanceManager.player.GetComponent<DragonEatBehaviour>();
-		m_dragonMouth = m_dragon.transform.FindSubObjectTransform("fire");
+		m_dragonMouth = m_dragon.GetComponent<DragonMotion>().mouth;
 	}
 
 	public override void Initialize() {

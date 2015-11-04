@@ -70,8 +70,8 @@ public class DebugMenuXPBar : MonoBehaviour {
 
 		// Text
 		m_valueText.text = String.Format("{0}/{1}xp ({2}%)",
-		                                StringUtils.FormatNumber(m_bar.value - m_bar.minValue, 0),
-		                                StringUtils.FormatNumber(xpRange.distance, 0),
+		                                StringUtils.FormatNumber(m_bar.value - m_bar.minValue, 2),
+		                                StringUtils.FormatNumber(Mathf.Ceil(xpRange.distance), 2),
 		                                StringUtils.FormatNumber(data.progression.progressCurrentLevel * 100f, 0));
 
 		// Special case on last level
@@ -80,8 +80,8 @@ public class DebugMenuXPBar : MonoBehaviour {
 
 			Range previousLevelRange = data.progression.GetXpRangeForLevel(data.progression.level - 1);
 			m_valueText.text = String.Format("{0}/{1}xp ({2}%)",
-			                                 StringUtils.FormatNumber(previousLevelRange.distance, 0),
-			                                 StringUtils.FormatNumber(previousLevelRange.distance, 0),
+			                                 StringUtils.FormatNumber(Mathf.Ceil(previousLevelRange.distance), 2),
+			                         		 StringUtils.FormatNumber(Mathf.Ceil(previousLevelRange.distance), 2),
 			                                 StringUtils.FormatNumber(data.progression.progressCurrentLevel * 100f, 0));
 		}
 	}

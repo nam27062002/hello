@@ -2,13 +2,13 @@
 
 public class PreyAnimationEvents : MonoBehaviour {
 
-	private PreyBehaviour m_prey;
+	private AttackBehaviour m_attackBehaviour;
 
 	void Start() {
-		m_prey = transform.parent.GetComponent<PreyBehaviour>();
+		m_attackBehaviour = transform.parent.GetComponent<AttackBehaviour>();
 	}
 
 	public void OnAttackEvent() {
-		m_prey.OnAttack();
+		m_attackBehaviour.OnAttack();
 	}
 }
