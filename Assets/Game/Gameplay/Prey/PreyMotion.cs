@@ -152,7 +152,6 @@ public class PreyMotion : Initializable {
 			UpdateCollisions();
 		}
 
-		UpdateOrientation();		
 		ApplyPosition();
 
 		m_steering = Vector2.zero;
@@ -168,6 +167,10 @@ public class PreyMotion : Initializable {
 		}
 
 		return _point;
+	}
+
+	void Update() {		
+		UpdateOrientation();
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------------------ //

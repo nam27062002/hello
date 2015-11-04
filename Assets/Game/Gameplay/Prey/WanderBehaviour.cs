@@ -2,6 +2,7 @@
 using System.Collections;
 
 [DisallowMultipleComponent]
+[RequireComponent(typeof(PreyMotion))]
 public class WanderBehaviour : Initializable {
 
 	protected enum State {
@@ -31,9 +32,18 @@ public class WanderBehaviour : Initializable {
 	}
 		
 	public override void Initialize() {			
+		OnEnable();
+	}
+
+	void OnEnable() {
 		m_state = State.None;
 		m_nextState = State.Idle;
-		m_motion.ApplySteering();
+	}
+
+	void OnDisable() {		
+		if (m_animator && m_animator.isInitialized) {
+			m_animator.SetBool("move", false);
+		}
 	}
 
 	// Update is called once per frame

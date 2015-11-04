@@ -134,6 +134,15 @@ public class DragonSkill : SerializableClass {
 		return m_valueRange.Lerp(levelDelta);
 	}
 
+
+	/// <summary>
+	/// Overrides the skill value. Used for Debug purposes on Preproduction fase.
+	/// </summary>
+	public void OverrideValue(float _speed) {
+		m_valueRange.min = _speed;
+		m_valueRange.max = _speed;
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//

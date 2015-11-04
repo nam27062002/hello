@@ -8,7 +8,7 @@ public class FlamableSoldier : FlamableBehaviour {
 
 		if (hasBurned){
 
-			SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
+		/*	SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
 			if (soldier != null) {
 				//soldier.OnBurn();
 			} else {
@@ -21,7 +21,7 @@ public class FlamableSoldier : FlamableBehaviour {
 						cage.OnBurn();
 					}
 				}
-			}
+			}*/
 		}
 	}
 
@@ -30,7 +30,7 @@ public class FlamableSoldier : FlamableBehaviour {
 
 		entity.health -= power;
 		if (entity.health < 0){
-			SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
+		/*	SoldierBehaviour soldier = GetComponent<SoldierBehaviour>();
 			if (soldier != null) {
 				//soldier.OnExplode(pos);
 			} else {
@@ -43,7 +43,7 @@ public class FlamableSoldier : FlamableBehaviour {
 						cage.OnBurn();
 					}
 				}
-			}
+			}*/
 		}
 	}
 }

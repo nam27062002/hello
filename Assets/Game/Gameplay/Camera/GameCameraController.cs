@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -64,6 +65,10 @@ public class GameCameraController : MonoBehaviour {
 	private float m_shakeDuration = 0f;
 	private float m_shakeTimer = 0f;
 
+	private Range m_zoomRangeStart;
+	private float m_nearStart;
+	private float m_farStart;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -75,6 +80,12 @@ public class GameCameraController : MonoBehaviour {
 	// Default zoom level
 	public float defaultZoom {
 		get { return m_defaultZoom; }
+	}
+
+	public void ZoomRangeOffset(float _value) {
+		m_zoomRange = m_zoomRangeStart + _value;
+		Camera.main.nearClipPlane = Mathf.Max(1, m_nearStart + _value);
+		Camera.main.farClipPlane = Mathf.Max(60, m_farStart + _value);
 	}
 
 	// Internal
@@ -105,6 +116,10 @@ public class GameCameraController : MonoBehaviour {
 
 		// Initialize zoom interpolator
 		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
+
+		m_zoomRangeStart = m_zoomRange;
+		m_nearStart = Camera.main.nearClipPlane;
+		m_farStart = Camera.main.farClipPlane;
 	}
 	
 	/// <summary>

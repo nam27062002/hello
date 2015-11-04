@@ -146,6 +146,13 @@ public class DragonData {
 		return m_scaleRange.Lerp(levelDelta);
 	}
 
+	/// <summary>
+	/// Overrides speed value. Used for Debug purposes on Preproduction fase.
+	/// </summary>
+	public void OverrideSpeedValue(float _speed) {
+		GetSkill(DragonSkill.EType.SPEED).OverrideValue(_speed);
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//

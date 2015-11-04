@@ -4,6 +4,7 @@
 //#define TEST_KEYBOARD_IN_EDITOR	// MattG: this bypasses some new control stuff to allow us to run on PC with arrow keys and ctrl to boost, as before
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 
@@ -299,6 +300,10 @@ public class GameInput : MonoBehaviour
 			//Debug.Log("Touch phase for effective Finger id " + effectiveFingerId + " is: " + touch.phase.ToString());
 			if (( touch.phase == UnityEngine.TouchPhase.Began ) && (effectiveFingerId == id))
 			{
+				if (WasJustADamnedButton(effectiveFingerId)) {
+					return TouchState.none;
+				}
+
 				m_touchPosition[id].Set(touch.position.x, touch.position.y);
 				m_touchID = effectiveFingerId;
 				
@@ -325,6 +330,10 @@ public class GameInput : MonoBehaviour
 		#else
 		if(Input.GetMouseButtonDown(id))
 		{
+			if (WasJustADamnedButton(-1)) {
+				return TouchState.none;
+			}
+
 			Vector3 mousePos = Input.mousePosition;
 			m_touchPosition[id].Set(mousePos.x, mousePos.y);
 			m_touchID = id;
@@ -349,7 +358,22 @@ public class GameInput : MonoBehaviour
 		//Debug.Log("Returning Touch " + id + " none.");
 		return TouchState.none;
 	}
-	
+
+	//guarro guarro
+	//http://answers.unity3d.com/questions/784617/how-do-i-block-touch-events-from-propagating-throu.html
+	private static bool WasJustADamnedButton(int _pointerID)
+	{
+		UnityEngine.EventSystems.EventSystem ct
+			= UnityEngine.EventSystems.EventSystem.current;
+		
+		if (! ct.IsPointerOverGameObject(_pointerID) ) return false;
+		if (! ct.currentSelectedGameObject ) return false;
+		if (ct.currentSelectedGameObject.GetComponent<RectTransform>() == null )
+			return false;
+		
+		return true;
+	}
+
 	// get position of initial touch. externally - if this is within the pickup radius of the directional control, dc claims this ID until quit.
 	public bool GetTapPosition()
 	{

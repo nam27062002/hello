@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[AddComponentMenu("Behaviour/Prey/Humans")]
+[DisallowMultipleComponent]
+[AddComponentMenu("Behaviour/Prey/Human Tactics")]
 [RequireComponent(typeof(WanderFleeBehaviour))]
-public class HumanBehaviour : Initializable {
+public class HumanTactics : Initializable {
 
 	private enum State {
 		Wander = 0,
@@ -11,8 +12,9 @@ public class HumanBehaviour : Initializable {
 	};
 
 	private State m_state;
-	private float m_timer;
+	private State m_nextState;
 
+	private float m_timer;
 	private bool m_playerDetected;
 
 	private PreyMotion m_motion;
@@ -56,8 +58,6 @@ public class HumanBehaviour : Initializable {
 				} else {
 					m_motion.direction = Vector2.right;
 				}
-
-				m_motion.ApplySteering();
 
 				if (!playerDetected) {
 					m_timer -= Time.deltaTime;
