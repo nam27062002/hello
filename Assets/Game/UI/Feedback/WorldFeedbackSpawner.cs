@@ -131,7 +131,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 		// Get an instance from the pool and spawn it!
 		GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name);
-		if(obj != null) {
+		if (obj != null) {
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
 			worldFeedback.Spawn(text, _entity.position);
 		}
@@ -146,16 +146,16 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_reward">The reward that has been applied.</param>
 	/// <param name="_entity">The entity that triggered the reward. Can be null.</param>
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
-		// Find out spawn position
-		Vector3 worldPos = Vector3.zero;
-		if(_entity != null) worldPos = _entity.position;
-
 		// Show different feedback for different reward types
 		// Score
 		if(m_scoreFeedbackPrefab != null && _reward.score > 0) {
 			// Get an instance from the pool
 			GameObject obj = PoolManager.GetInstance(m_scoreFeedbackPrefab.name);
 			WorldFeedbackController scoreFeedback = obj.GetComponent<WorldFeedbackController>();
+
+			// Find out spawn position
+			Vector3 worldPos = Vector3.zero;
+			if(_entity != null) worldPos = _entity.position;
 
 			// Format text and spawn!
 			string text = "+" + StringUtils.FormatNumber(_reward.score);
@@ -164,12 +164,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 		// Coins
 		if(m_coinsFeedbackPrefab != null && _reward.coins > 0) {
-			// Get an instance from the pool
-			GameObject obj = PoolManager.GetInstance(m_coinsFeedbackPrefab.name);
-			CoinsFeedbackController coinsFeedback = obj.GetComponent<CoinsFeedbackController>();
-
-			// Spawn!
-			coinsFeedback.Launch(worldPos, _reward.coins);
+			// [AOC] TODO!!
 		}
 
 		// PC

@@ -2,7 +2,7 @@
 using System.Collections;
 
 [AddComponentMenu("Behaviour/Prey/Sense Player")]
-public class SensePlayer : Steering {
+public class SensePlayer : MonoBehaviour {
 	
 	[SerializeField] private float m_sensorMinRadius;
 	public float sensorMinRadius { get { return m_sensorMinRadius; } set { m_sensorMinRadius = value; } }
@@ -20,59 +20,88 @@ public class SensePlayer : Steering {
 	private bool m_alert;
 	public bool alert { get { return m_alert; } }
 
+	private bool m_isInsideMinArea;
+	public bool isInsideMinArea { get { return m_isInsideMinArea; } }
+
+	private bool m_isInsideMaxArea;
+	public bool isInsideMaxArea { get { return m_isInsideMaxArea; } }
+
 	private float m_distanceSqr;
 	public float distanceSqr { get { return m_distanceSqr; } }
 
+	private PreyMotion m_motion;
+	private Transform m_dragonMouth; 
+
+	private float m_dragonRadiusSqr;
+
+	void Awake() {
+		m_motion = GetComponent<PreyMotion>();
+	}
+
 	void OnEnable() {
+		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().mouth;
+
+		m_dragonRadiusSqr = 0;
+		Collider[] colliders = InstanceManager.player.GetComponents<Collider>();
+		for (int i = 0; i < colliders.Length; i++) {
+			if (m_dragonRadiusSqr > colliders[i].bounds.extents.x) {
+				m_dragonRadiusSqr = colliders[i].bounds.extents.x;
+			}
+		}
+		m_dragonRadiusSqr *= m_dragonRadiusSqr;
 
 		m_alert = false;
+		m_isInsideMinArea = false;
+		m_isInsideMaxArea = false;
 		m_distanceSqr = 0;
 	}
 
 	// Update is called once per frame
 	void Update () {
-	
-		DragonPlayer player = InstanceManager.player;
+		// we have too much erro if we only sense the dragon when it is inside the spawn area, it can be too small
+		Vector2 vectorToPlayer = (Vector2)m_dragonMouth.position - m_motion.position;
+		m_distanceSqr = vectorToPlayer.sqrMagnitude - m_dragonRadiusSqr;
 
-		if (m_prey.area == null || m_prey.area.Contains(player.transform.position)) {
-
-			Vector2 vectorToPlayer = (Vector2)player.transform.position - m_prey.position;
-			m_distanceSqr = vectorToPlayer.sqrMagnitude;
-
-			if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {
-				// check if the dragon is inside the sense zone
-				if (m_distanceSqr < m_sensorMinRadius * m_sensorMinRadius) {
-					// Check if this entity can see the player
-					if (sensorAngle == 360) {
-						m_alert = true;
-					} else {
-						Vector2 direction = (m_prey.direction.x < 0)? Vector2.left : Vector2.right;
-						float angle = Vector2.Angle(direction, vectorToPlayer); // angle between them: from 0 to 180
-						Vector3 cross = Vector3.Cross(m_prey.direction, vectorToPlayer);					
-						if (cross.z > 0) {
-							angle = 306 - angle;
-						}
-
-						float sensorAngleFrom = sensorAngleOffset - (sensorAngle * 0.5f);
-						if (sensorAngleFrom < 0) {
-							sensorAngleFrom += 360;
-						}
-
-						float sensorAngleTo = sensorAngleOffset + (sensorAngle * 0.5f);
-						if (sensorAngleTo > 360) {
-							sensorAngleTo -= 360;
-						}
-
-						if (angle >= sensorAngleFrom || angle <= sensorAngleTo) {
-							m_alert = true;
-						}
+		if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {
+			// check if the dragon is inside the sense zone
+			if (m_distanceSqr < m_sensorMinRadius * m_sensorMinRadius) {
+				// Check if this entity can see the player
+				if (sensorAngle == 360) {
+					m_alert = true;
+					m_isInsideMinArea = true;
+				} else {
+					Vector2 direction = (m_motion.direction.x < 0)? Vector2.left : Vector2.right;
+					float angle = Vector2.Angle(direction, vectorToPlayer); // angle between them: from 0 to 180
+					Vector3 cross = Vector3.Cross(m_motion.direction, vectorToPlayer);					
+					if (cross.z > 0) {
+						angle = 306 - angle;
 					}
-				} 
+
+					float sensorAngleFrom = sensorAngleOffset - (sensorAngle * 0.5f);
+					if (sensorAngleFrom < 0) {
+						sensorAngleFrom += 360;
+					}
+
+					float sensorAngleTo = sensorAngleOffset + (sensorAngle * 0.5f);
+					if (sensorAngleTo > 360) {
+						sensorAngleTo -= 360;
+					}
+
+					if (angle >= sensorAngleFrom || angle <= sensorAngleTo) {
+						m_alert = true;
+						m_isInsideMinArea = true;
+					} else {
+						m_isInsideMinArea = false;
+					}
+				}
 			} else {
-				m_alert = false;
+				m_isInsideMinArea = false;
 			}
+			m_isInsideMaxArea = true;
 		} else {
 			m_alert = false;
+			m_isInsideMinArea = false;
+			m_isInsideMaxArea = false;
 		}
 	}
 }

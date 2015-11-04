@@ -22,9 +22,9 @@ public class FlockSpawner : Spawner {
 			if (m_entities[i] != null) {
 				m_entities[i].transform.position = position;
 
-				Flock bird = m_entities[i].GetComponent<Flock>();
-				if (bird != null) {
-					bird.AttachFlock(m_flockController);
+				PreyMotion motion = m_entities[i].GetComponent<PreyMotion>();
+				if (motion != null) {
+					motion.AttachFlock(m_flockController);
 				}
 			}
 		}

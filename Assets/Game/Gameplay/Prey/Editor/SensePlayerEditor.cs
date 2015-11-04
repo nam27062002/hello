@@ -6,11 +6,9 @@ using System.Collections;
 public class SensePlayerEditor : Editor {
 
 	private SensePlayer m_target;
-	private bool m_isTargetDirty;
 
 	public void Awake() {
 		m_target = (SensePlayer)target;
-		m_isTargetDirty = false;
 	}
 
 	void OnSceneGUI() {

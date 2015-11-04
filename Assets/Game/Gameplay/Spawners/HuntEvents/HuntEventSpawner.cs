@@ -18,13 +18,8 @@ public class HuntEventSpawner : MonoBehaviour {
 	private int m_currentSpawnIndex;
 	private GameObject m_currentTarget;
 
-	private DragonGrabBehaviour m_player;
-
-
 	// Use this for initialization
 	void Start() {
-
-		m_player = GameObject.Find ("Player").GetComponent<DragonGrabBehaviour>();
 
 		PoolManager.CreatePool(Resources.Load<GameObject>("PROTO/HuntFalcon"), 2, true);
 

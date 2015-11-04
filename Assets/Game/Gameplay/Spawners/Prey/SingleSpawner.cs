@@ -15,7 +15,7 @@ public class SingleSpawner : MonoBehaviour {
 	//-----------------------------------------------
 	private float m_spawnTimer;
 
-	private AreaBounds m_area;
+//	private AreaBounds m_area;
 
 	private GameObject m_entity;
 	
@@ -28,7 +28,7 @@ public class SingleSpawner : MonoBehaviour {
 		
 		PoolManager.CreatePool(m_entityPrefab);
 	
-		m_area = GetComponent<Area>().bounds;
+//		m_area = GetComponent<Area>().bounds;
 
 		m_spawnTimer = m_spawnTime;
 		m_entity = null;
