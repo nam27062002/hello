@@ -99,6 +99,10 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
 	public void AddLife(float _offset) {
+		// If invulnerable and taking damage, don't apply
+		if(IsInvulnerable() && _offset < 0) return;
+
+		// Update health
 		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset));
 
 		// Check for death!

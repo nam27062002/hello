@@ -36,6 +36,9 @@ namespace LevelEditor {
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
 
+			// We don't want the dragon to die during the level testing
+			InstanceManager.player.invulnerable = true;
+
 			// Call parent
 			base.Awake();
 		}
