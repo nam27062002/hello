@@ -65,6 +65,7 @@ public class DragonData {
 	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
 
 	[SerializeField] private Range m_scaleRange = new Range(0.5f, 1.5f);
+	private float m_scaleOffset = 0;
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
 	// Constant stats
@@ -112,6 +113,8 @@ public class DragonData {
 		for(int i = 0; i < m_skills.Length; i++) {
 			m_skills[i] = new DragonSkill(this, (DragonSkill.EType)i);
 		}
+
+		m_scaleOffset = 0;
 	}
 
 	//------------------------------------------------------------------//
@@ -143,7 +146,21 @@ public class DragonData {
 	/// <param name="_level">The level at which we want to know the scale value.</param>
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
-		return m_scaleRange.Lerp(levelDelta);
+		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
+	}
+
+	/// <summary>
+	/// Offsets speed value. Used for Debug purposes on Preproduction fase.
+	/// </summary>
+	public void OffsetSpeedValue(float _speed) {
+		GetSkill(DragonSkill.EType.SPEED).OffsetValue(_speed);
+	}
+
+	/// <summary>
+	/// Offsets the scale value.
+	/// </summary>
+	public void OffsetScaleValue(float _scale) {
+		m_scaleOffset += _scale;
 	}
 
 	//------------------------------------------------------------------//

@@ -47,7 +47,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
-		m_mouthTransform = transform.FindSubObjectTransform("fire");
+		m_mouthTransform = GetComponent<DragonMotion>().mouth;
 		m_headTransform = transform.FindSubObjectTransform("head");
 
 		m_actualLength = m_length;
@@ -108,7 +108,6 @@ public class FireBreath : DragonBreathBehaviour {
 		}
 
 		// Spawn particles
-		int count = 0;
 		for (int i = 0; i < m_particleSpawn; i++) {
 			
 			GameObject obj = PoolManager.GetInstance("Flame");

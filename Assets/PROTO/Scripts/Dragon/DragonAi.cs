@@ -216,7 +216,7 @@ public class DragonAi : MonoBehaviour {
 		impulse = controls.GetImpulse(dragonSpeed*_fSpeedMultiplier); 
 		
 		bool plummeting = (dir.y < -0.75f && rbody.velocity.y < -dragonSpeed*0.85f) || (_fSpeedMultiplier == boostMultiplier  && rbody.velocity.magnitude > dragonSpeed*0.85f);
-		plummeting = plummeting;
+		//plummeting = plummeting;
 		
 		bool flyUp = !plummeting && dir.y > 0.75f &&  _fSpeedMultiplier == 1f;
 		
