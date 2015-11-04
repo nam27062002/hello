@@ -46,8 +46,8 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 	/// </summary>
 	/// <returns>The height required by this decorator drawer.</returns>
 	public override float GetHeight() {
-		// Very short
-		return separator.m_size;
+		// Add extra room at the bottom for spacing with the next element
+		return separator.m_size + EditorGUIUtility.standardVerticalSpacing;
 	}
 }
 

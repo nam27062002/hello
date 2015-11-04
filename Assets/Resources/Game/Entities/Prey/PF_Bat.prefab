@@ -501,15 +501,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_probabilities:
   - 0
-  - .5
-  - .5
+  - .25
+  - .25
   - 0
   m_feedbacks:
   - data: []
   - data:
     - Batman!
-    - Blind Taste
     - Hairy Stuff
+    - BlindTaste
   - data:
     - Barbecue!
     - Batman!
@@ -587,6 +587,7 @@ MonoBehaviour:
     health: 10
     energy: 0
     fury: 6
+    xp: .400000006
   m_maxHealth: 60
 --- !u!114 &11473208
 MonoBehaviour:
@@ -698,6 +699,14 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fleeFactor
       value: 0
@@ -812,11 +821,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_feedbacks.Array.data[1].data.Array.data[1]
-      value: Blind Taste
+      value: Hairy Stuff
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_feedbacks.Array.data[1].data.Array.data[2]
-      value: Hairy Stuff
+      value: BlindTaste
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_feedbacks.Array.data[2].data.Array.data[1]
@@ -829,6 +838,34 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_reward.coins
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[3]
+      value: BlindTaste
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[0]
+      value: careful!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[1]
+      value: careful!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.xp
+      value: .400000006
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[1]
+      value: .25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[2]
+      value: .25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

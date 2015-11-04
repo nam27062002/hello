@@ -161,6 +161,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		// PC
 		instance.m_pc += _reward.pc;
 
+		// XP
+		InstanceManager.player.data.progression.AddXp(_reward.xp, true);
+
 		// Global notification (i.e. to show feedback)
 		Messenger.Broadcast<Reward, Transform>(GameEvents.REWARD_APPLIED, _reward, _entity);
 	}

@@ -91,6 +91,25 @@ public class DragonPlayer : MonoBehaviour {
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 	}
 
+	/// <summary>
+	/// The component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+
+		// Make sure the dragon has the scale according to its level
+		gameObject.transform.localScale = Vector3.one * data.scale;
+	}
+
+	/// <summary>
+	/// The component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+	}
+
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
@@ -203,5 +222,17 @@ public class DragonPlayer : MonoBehaviour {
 		// All checks passed, we're not invulnerable
 		return false;
 	}
-	
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// The dragon has leveled up.
+	/// </summary>
+	/// <param name="_data">The data of the dragon that just leveled up.</param>
+	private void OnLevelUp(DragonData _data) {
+		// Assume it's this dragon
+		// Make sure the dragon has the scale according to its level
+		gameObject.transform.localScale = Vector3.one * data.scale;
+	}
 }

@@ -181,6 +181,7 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
+    xp: 0
   m_maxHealth: 1
 --- !u!114 &11490742
 MonoBehaviour:
@@ -206,7 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_probabilities:
   - 1
-  - .5
+  - .25
   - 0
   - 0
   m_feedbacks:
@@ -366,7 +367,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_probabilities.Array.data[1]
-      value: .5
+      value: .25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_feedbacks.Array.data[0].data.Array.data[0]

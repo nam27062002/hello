@@ -80,15 +80,21 @@ public class DragonProgression : SerializableClass {
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Add experience to this progression.
-	/// Doesn't check for level ups, must be manually done by calling the IsLevelUpReady() method.
+	/// Optionally check for level ups, otherwise can be manually done by calling the IsLevelUpReady() and LevelUp() methods.
 	/// </summary>
-	/// <param name="_xpToAdd">The amount of xp to be added..</param>
-	public void AddXp(float _xpToAdd) {
+	/// <param name="_xpToAdd">The amount of xp to be added.</param>
+	/// <param name="_checkLevelUp">Whether to check for level ups or not.</param>
+	public void AddXp(float _xpToAdd, bool _checkLevelUp = false) {
 		// Experience can't be subtracted
 		if(_xpToAdd <= 0) return;
 
 		// Just do it
 		m_xp += _xpToAdd;
+
+		// Check for level ups
+		if(_checkLevelUp) {
+			LevelUp();
+		}
 	}
 
 	/// <summary>
