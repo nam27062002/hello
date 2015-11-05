@@ -25,7 +25,7 @@ public class DragonMotion : MonoBehaviour {
 		Idle = 0,
 		Fly,
 		Fly_Up,
-		Plummet,
+		Fly_Down,
 		Stunned
 	};
 
@@ -50,7 +50,6 @@ public class DragonMotion : MonoBehaviour {
 	private float m_speedMultiplier;
 
 	private float m_stunnedTimer;
-	private float m_glideTimer;
 
 	private int m_groundMask;
 	private bool m_nearGround;
@@ -67,7 +66,8 @@ public class DragonMotion : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 
-	public Transform mouth { get { return transform.FindSubObjectTransform("fire"); } }
+	public Transform tongue { get { return transform.FindSubObjectTransform("Dragon_Tongue"); } }
+	public Transform jaw { get { return transform.FindSubObjectTransform("Dragon_Jaw"); } }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -100,7 +100,6 @@ public class DragonMotion : MonoBehaviour {
 		m_speedMultiplier = 0.5f;
 
 		m_stunnedTimer = 0;
-		m_glideTimer = 6f;
 
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
@@ -117,15 +116,14 @@ public class DragonMotion : MonoBehaviour {
 			// we are leaving old state
 			switch (m_state) {
 				case State.Fly:
-					m_glideTimer = Random.Range(3f, 5f);
 					break;
 
 				case State.Fly_Up:
-					m_animator.SetBool("flight_up", false);
+					m_animator.SetBool("fly up", false);
 					break;
 
-				case State.Plummet:
-					m_animator.SetBool("plummet", false);
+				case State.Fly_Down:
+					m_animator.SetBool("fly down", false);
 					break;
 
 				case State.Stunned:
@@ -151,12 +149,12 @@ public class DragonMotion : MonoBehaviour {
 
 				case State.Fly_Up:
 					m_animator.SetBool("fly", true);
-					m_animator.SetBool("flight_up", true);
+					m_animator.SetBool("fly up", true);
 					break;
 
-				case State.Plummet:
+				case State.Fly_Down:
 					m_animator.SetBool("fly", true);
-					m_animator.SetTrigger("start_plummet");
+					m_animator.SetBool("fly down", true);
 					break;
 
 				case State.Stunned:
@@ -186,35 +184,23 @@ public class DragonMotion : MonoBehaviour {
 				break;
 
 			case State.Fly:
-				if (m_speedMultiplier > 1.5f || m_direction.y < -0.65f) {
-					ChangeState(State.Plummet);
+				if (m_direction.y < -0.65f) {
+					ChangeState(State.Fly_Down);
 				} else if (m_direction.y > 0.65f) {
 					ChangeState(State.Fly_Up);				
-				} else if (!m_nearGround) {
-					if (m_glideTimer > 0) {
-						m_glideTimer -= Time.deltaTime;
-						if (m_glideTimer <= 0) {
-							if (!m_animator.GetBool("bite") && !m_animator.GetBool("fire")) {
-								m_animator.SetTrigger("glide");
-							}
-							m_glideTimer = Random.Range(3f, 5f);
-						}
-					}
 				}
 				break;
 
 			case State.Fly_Up:
 				if (m_speedMultiplier > 1.5f) {
-					ChangeState(State.Plummet);
+					ChangeState(State.Fly_Down);
 				} else if (m_direction.y < 0.65f) {
 					ChangeState(State.Fly);			
 				}
 				break;
 
-			case State.Plummet:
-				if (m_speedMultiplier > 1.5f || m_direction.y < -0.65f) {
-					m_animator.SetBool("plummet", true);
-				} else {
+			case State.Fly_Down:
+				if (m_speedMultiplier < 1.5f && m_direction.y > -0.65f) {
 					ChangeState(State.Fly);
 				}
 				break;
@@ -236,7 +222,7 @@ public class DragonMotion : MonoBehaviour {
 		switch (m_state) {
 			case State.Fly:
 			case State.Fly_Up:
-			case State.Plummet:
+			case State.Fly_Down:
 				UpdateMovement();
 				break;
 		}

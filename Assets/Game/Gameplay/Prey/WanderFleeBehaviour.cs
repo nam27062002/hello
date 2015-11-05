@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(SensePlayer))]
@@ -9,7 +9,7 @@ public class WanderFleeBehaviour : WanderBehaviour {
 
 	override protected void Awake() {
 		m_sensor = GetComponent<SensePlayer>();
-		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().mouth;
+		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
 
 		base.Awake();
 	}

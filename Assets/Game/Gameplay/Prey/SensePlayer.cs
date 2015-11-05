@@ -39,7 +39,7 @@ public class SensePlayer : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().mouth;
+		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
 
 		m_dragonRadiusSqr = 0;
 		Collider[] colliders = InstanceManager.player.GetComponents<Collider>();

@@ -41,7 +41,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		if (m_isFuryOn) {
 			m_isFuryOn = false;
-			m_animator.SetBool("fire", false);// Stop fury rush (if active)
+			m_animator.SetBool("breath", false);// Stop fury rush (if active)
 			if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 			if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 			if (m_attackBehaviour) m_attackBehaviour.enabled = true;
@@ -64,7 +64,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 				m_isFuryOn = false;
 				m_dragon.StopFury();
-				m_animator.SetBool("fire", false);
+				m_animator.SetBool("breath", false);
 				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 				if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
@@ -72,7 +72,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			} else {
 				
 				Fire();
-				m_animator.SetBool("fire", true);
+				m_animator.SetBool("breath", true);
 			}
 		} else {
 

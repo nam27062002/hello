@@ -47,8 +47,8 @@ public class FireBreath : DragonBreathBehaviour {
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
-		m_mouthTransform = GetComponent<DragonMotion>().mouth;
-		m_headTransform = transform.FindSubObjectTransform("head");
+		m_mouthTransform = GetComponent<DragonMotion>().tongue;
+		m_headTransform = GetComponent<DragonMotion>().jaw;
 
 		m_actualLength = m_length;
 

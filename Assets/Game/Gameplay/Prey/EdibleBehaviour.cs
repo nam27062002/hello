@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(PreyStats))]
@@ -50,7 +50,7 @@ public class EdibleBehaviour : Initializable {
 
 		m_prey = GetComponent<PreyStats>();
 		m_dragon = InstanceManager.player.GetComponent<DragonEatBehaviour>();
-		m_dragonMouth = m_dragon.GetComponent<DragonMotion>().mouth;
+		m_dragonMouth = m_dragon.GetComponent<DragonMotion>().tongue;
 	}
 
 	public override void Initialize() {
