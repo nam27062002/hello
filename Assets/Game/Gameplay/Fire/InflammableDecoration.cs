@@ -16,6 +16,20 @@ public class InflammableDecoration : MonoBehaviour {
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>();
 		m_burned = false;
+
+		int coins = 0;
+
+		if (GetComponent<PreyStats>() != null) {
+			coins = GetComponent<PreyStats>().reward.coins;
+		}
+
+		int coinsPerNode = coins / m_fireNodes.Length;
+
+		for (int i = 0; i < m_fireNodes.Length - 1; i++) {
+			m_fireNodes[i].Init(coinsPerNode);
+		}
+
+		m_fireNodes[m_fireNodes.Length - 1].Init(coins - (coinsPerNode * (m_fireNodes.Length - 1)));
 	}
 	
 	// Update is called once per frame

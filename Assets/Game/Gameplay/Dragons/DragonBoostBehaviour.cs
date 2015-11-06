@@ -69,13 +69,15 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private void StartBoost() {
 		m_active = true;
 		m_dragon.SetSpeedMultiplier(m_dragon.data.boost.value);
-		m_animator.SetBool("boost", true);
+		if (m_animator && m_animator.isInitialized)
+			m_animator.SetBool("boost", true);
 	}
 
 	public void StopBoost() {
 		m_active = false;
 		m_dragon.SetSpeedMultiplier(1f);
-		m_animator.SetBool("boost", false);
+		if (m_animator && m_animator.isInitialized)
+			m_animator.SetBool("boost", false);
 	}
 
 	public void ResumeBoost() {

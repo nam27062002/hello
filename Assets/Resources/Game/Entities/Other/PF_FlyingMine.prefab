@@ -111,7 +111,6 @@ MonoBehaviour:
   m_forceStrength: 10
   m_radius: 2
   m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
-  m_explosionsAmount: 5
   m_delayRange:
     min: 0
     max: .100000001
@@ -183,6 +182,7 @@ MonoBehaviour:
     fury: 0
     xp: 0
   m_maxHealth: 1
+  m_goldenChance: 0
 --- !u!114 &11490742
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -392,6 +392,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_feedbacks.Array.data[1].data.Array.data[2]
       value: Tasty!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_goldenChance
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

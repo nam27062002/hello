@@ -10,7 +10,7 @@ public class FireNode : MonoBehaviour {
 		Burned
 	};
 
-	[SerializeField] private float m_resistance = 50f;
+	[SerializeField] private float m_resistanceMax = 50f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerTick = 0.75f;
 	[SerializeField] private float m_maxDistanceLinkNode = 5f;
@@ -19,7 +19,10 @@ public class FireNode : MonoBehaviour {
 
 	private List<FireNode> m_neighbours;
 	private State m_state;
-	
+
+	private int m_goldReward;
+	private float m_goldPerResistancePoint;
+	private float m_resistance;
 	private float m_timer;
 
 	private GameObject m_fireSprite;
@@ -44,11 +47,17 @@ public class FireNode : MonoBehaviour {
 				}
 			}
 		}
+	}
 
-		m_state = State.Idle;
-		m_fireSprite = null;
-
+	public void Init(int _goldReward) {
+		m_goldReward = _goldReward;
+		m_goldPerResistancePoint = m_goldReward / m_resistanceMax;
+		
+		m_resistance = m_resistanceMax;
 		m_spriteScale = m_fireScale.GetRandom();
+		m_state = State.Idle;
+		
+		m_fireSprite = null;
 	}
 
 	void Update() {
@@ -95,13 +104,23 @@ public class FireNode : MonoBehaviour {
 		if (m_state == State.Idle || m_state == State.Damaged) {
 			m_resistance -= _damage;
 			m_state = State.Damaged;
+						
+			Reward reward = new Reward();
 
 			if (m_resistance <= 0) {
 				m_state = State.Burning;
 				m_timer = m_burningTime;
 
+				reward.coins = m_goldReward;
+
 				FirePropagationManager.Remove(transform);
+			} else {
+				int gold = Mathf.FloorToInt(_damage * m_goldPerResistancePoint);
+				reward.coins = gold;
+				m_goldReward -= gold;
 			}
+
+			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);
 		}
 	}
 
