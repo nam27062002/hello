@@ -44,7 +44,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_eatingTimer = 0;
 
 		m_mouth = GetComponent<DragonMotion>().tongue;
-		m_tongueDirection = GetComponent<DragonMotion>().tongue.position - GetComponent<DragonMotion>().jaw.position;
+		m_tongueDirection = GetComponent<DragonMotion>().tongue.position - GetComponent<DragonMotion>().head.position;
 		m_tongueDirection.Normalize();
 
 		m_animator = transform.FindChild("view").GetComponent<Animator>();

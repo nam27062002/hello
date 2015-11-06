@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -48,7 +48,7 @@ public class FireBreath : DragonBreathBehaviour {
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
-		m_headTransform = GetComponent<DragonMotion>().jaw;
+		m_headTransform = GetComponent<DragonMotion>().head;
 
 		m_actualLength = m_length;
 
