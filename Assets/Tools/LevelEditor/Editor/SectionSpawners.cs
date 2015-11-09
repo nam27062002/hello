@@ -1,0 +1,205 @@
+// SectionSpawners.cs
+// Hungry Dragon
+// 
+// Created by Alger Ortín Castellví on 05/11/2015.
+// Copyright (c) 2015 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------//
+// INCLUDES																//
+//----------------------------------------------------------------------//
+using UnityEngine;
+using UnityEditor;
+using System.IO;
+
+//----------------------------------------------------------------------//
+// CLASSES																//
+//----------------------------------------------------------------------//
+namespace LevelEditor {
+	/// <summary>
+	/// 
+	/// </summary>
+	public class SectionSpawners : ILevelEditorSection {
+		//------------------------------------------------------------------//
+		// CONSTANTS														//
+		//------------------------------------------------------------------//
+		private static readonly string RESOURCES_DIR = "Game/Entities";
+		private static readonly string PREFIX = "SP_";
+		
+		//------------------------------------------------------------------//
+		// MEMBERS															//
+		//------------------------------------------------------------------//
+		private SelectionGrid m_grid = new SelectionGrid();
+		
+		//------------------------------------------------------------------//
+		// INTERFACE IMPLEMENTATION											//
+		//------------------------------------------------------------------//
+		/// <summary>
+		/// Initialize this section.
+		/// </summary>
+		public void Init() {
+			// Refresh grid data
+
+			// Get folder structure
+			string dirPath = Application.dataPath + "/Resources/" + RESOURCES_DIR;
+			DirectoryInfo rootDirInfo = new DirectoryInfo(dirPath);
+
+			// Let's do one group per directory for now
+			DirectoryInfo[] dirs = rootDirInfo.GetDirectories();
+			foreach(DirectoryInfo dirInfo in dirs) {
+				// Get/Create group linked to this directory
+				SelectionGrid.Group dirGroup = m_grid.GetGroup(dirInfo.Name, true);
+				if(dirGroup != null) {
+					// Basic properties
+					dirGroup.m_name = dirInfo.Name;
+					dirGroup.m_data = Resources.LoadAll<GameObject>(RESOURCES_DIR + "/" + dirInfo.Name);
+					dirGroup.m_contents = new GUIContent[dirGroup.m_data.Length];
+					
+					// Init contents
+					for(int i = 0; i < dirGroup.m_data.Length; i++) {
+						dirGroup.m_contents[i] = new GUIContent(dirGroup.m_data[i].name, AssetPreview.GetAssetPreview(dirGroup.m_data[i]));
+					}
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Draw the section.
+		/// </summary>
+		public void OnGUI() {
+			// Show all options in a list
+			EditorGUILayout.BeginVertical(); {
+				// Spacing
+				GUILayout.Space(5);
+
+				// Shape
+				EditorGUIUtility.labelWidth = 50f;
+				LevelEditor.settings.spawnerShape = (SpawnerShape)EditorGUILayout.EnumPopup("Shape:", LevelEditor.settings.spawnerShape, GUILayout.Height(20));
+				EditorGUIUtility.labelWidth = 0f;
+				
+				// Type
+				EditorGUIUtility.labelWidth = 50f;
+				LevelEditor.settings.spawnerType = (SpawnerType)EditorGUILayout.EnumPopup("Type:", LevelEditor.settings.spawnerType, GUILayout.Height(20));
+				EditorGUIUtility.labelWidth = 0f;
+				
+				// Label
+				GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
+				labelStyle.alignment = TextAnchor.MiddleCenter;
+				GUILayout.Label("Entity:", labelStyle);
+				
+				// Grid list!
+				m_grid.OnGUI();
+				
+				// Spacing
+				GUILayout.Space(5);
+				
+				// Do it button
+				EditorGUILayout.BeginHorizontal(); {
+					// Center button
+					GUILayout.FlexibleSpace();
+					
+					// Button
+					GUI.enabled = (m_grid.selectedContent != null);
+					if(GUILayout.Button("ADD SPAWNER", GUILayout.Width(200), GUILayout.Height(30))) {
+						// Just do it!
+						AddNewSpawner();
+					}
+					GUI.enabled = true;
+					
+					// Center button
+					GUILayout.FlexibleSpace();
+				}EditorGUILayoutExt.EndHorizontalSafe();
+				
+				// Spacing
+				GUILayout.Space(5);
+			} EditorGUILayoutExt.EndVerticalSafe();
+		}
+
+		//------------------------------------------------------------------//
+		// INTERNAL METHODS													//
+		//------------------------------------------------------------------//
+		/// <summary>
+		/// Creates and adds a new spawner to the current group, using the selected parameters.
+		/// </summary>
+		private void AddNewSpawner() {
+			// First of all check that we have a selected group to add the preview to
+			Group targetGroup = LevelEditorWindow.instance.sectionGroups.selectedGroup;
+			if(targetGroup == null) {
+				LevelEditorWindow.instance.ShowNotification(new GUIContent("A group must be selected first!"));
+				return;
+			}
+			
+			// Make sure selected prefab is valid
+			GameObject entityPrefab = m_grid.selectedObject as GameObject;
+			if(entityPrefab == null) { 
+				LevelEditorWindow.instance.ShowNotification(new GUIContent("Please select a prefab from the list")); 
+				return; 
+			}
+			
+			// Create a new object and add it to the scene
+			GameObject newSpawnerObj = new GameObject();
+			newSpawnerObj.transform.SetParent(targetGroup.spawnersObj.transform, true);
+			
+			// Add a name based on the entity prefab
+			string spawnerName = entityPrefab.name.Replace("PF_", "");	// Entity name without the preffix (if any)
+			
+			// Add and initialize the transform lock component
+			// Arbitrary default values fitted to the most common usage when level editing
+			TransformLock newLock = newSpawnerObj.AddComponent<TransformLock>();
+			newLock.SetPositionLock(false, false, true);
+			newLock.SetRotationLock(true, true, true);
+			newLock.SetScaleLock(true, true, true);
+			
+			// Add the spawner component - and optionally a suffix
+			Spawner sp = null;
+			switch(LevelEditor.settings.spawnerType) {
+				case SpawnerType.STANDARD: {
+					sp = newSpawnerObj.AddComponent<Spawner>();
+				} break;
+					
+				case SpawnerType.FLOCK: {
+					sp = newSpawnerObj.AddComponent<FlockSpawner>();
+					spawnerName += "Flock";
+				} break;
+			}
+			
+			// Add a prefix of our own and generate unique name
+			newSpawnerObj.SetUniqueName(PREFIX + spawnerName);
+			
+			// Initialize spawner with the target prefab
+			sp.m_entityPrefab = entityPrefab;
+			
+			// Add the shape component
+			float size = 25f;	// Will be used to focus the camera. Start with the default size for a point.
+			switch(LevelEditor.settings.spawnerShape) {
+				case SpawnerShape.POINT: {
+					// Nothing to do :)
+				} break;
+					
+				case SpawnerShape.RECTANGLE: {
+					RectArea2D area = newSpawnerObj.AddComponent<RectArea2D>();
+					size = area.size.magnitude;
+				} break;
+					
+				case SpawnerShape.CIRCLE: {
+					CircleArea2D area = newSpawnerObj.AddComponent<CircleArea2D>();
+					size = area.radius * 2f;
+				} break;
+			}
+			
+			// Add a spawner icon generator component as well
+			newSpawnerObj.AddComponent<SpawnerIconGenerator>();
+			
+			// Make operation undoable
+			Undo.RegisterCreatedObjectUndo(newSpawnerObj, "LevelEditor AddSpawner");
+			
+			// Set position more or less to where the camera is pointing, forcing Z-0
+			// Select new object in the hierarchy and center camera to it
+			LevelEditor.PlaceInFrontOfCameraAtZPlane(newSpawnerObj, true);
+			
+			// [AOC] Unfortunately FrameLastActiveSceneView fails to figure out the actual bounds of the spawner, so we 
+			//       move the camera manually (based on the SceneView source code found in https://github.com/MattRix/UnityDecompiled/blob/cc432a3de42b53920d5d5dae85968ff993f4ec0e/UnityEditor/UnityEditor/SceneView.cs)
+			SceneView scene = SceneView.lastActiveSceneView;
+			scene.LookAt(newSpawnerObj.transform.position, scene.rotation, size, scene.orthographic, EditorApplication.isPlaying);
+		}
+	}
+}

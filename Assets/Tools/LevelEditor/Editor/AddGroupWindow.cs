@@ -105,7 +105,7 @@ namespace LevelEditor {
 					GUI.enabled = true;
 
 					m_name = GUILayout.TextField(m_name);
-				} EditorUtils.EndHorizontalSafe();
+				} EditorGUILayoutExt.EndHorizontalSafe();
 
 				// Confirm button
 				if(GUILayout.Button("Add")) {

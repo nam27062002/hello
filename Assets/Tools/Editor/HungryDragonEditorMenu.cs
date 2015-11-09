@@ -55,12 +55,13 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Level Editor", false, 10)]
 	public static void ShowLevelEditorWindow() {
 		// Show existing window instance. If one doesn't exist, make one.
-		LevelEditor.LevelEditorWindow window = (LevelEditor.LevelEditorWindow)EditorWindow.GetWindow(typeof(LevelEditor.LevelEditorWindow));
+		LevelEditor.LevelEditorWindow window = LevelEditor.LevelEditorWindow.instance;
 		
 		// Setup window
 		window.titleContent = new GUIContent("Level Editor");
 		window.minSize = new Vector2(330f, 350f);	// Min required width to properly fit all the content
 		//window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
+		window.position = new Rect(100f, 100f, 540f, Screen.currentResolution.height - 110f);
 		
 		// Make sure everything is initialized properly
 		window.Init();

@@ -104,7 +104,7 @@ public class PersistenceManagerSaveDataEditor : ExtendedPropertyDrawer {
 			// Dragons save data: fixed length with custom labels for each level, allow folding it
 			if(_property.name == "dragons") {
 				// Draw array without allowing resize
-				float height = EditorUtils.FixedLengthArray(m_pos, _property, DrawDragonSaveData, (int)DragonId.COUNT);
+				float height = EditorGUILayoutExt.FixedLengthArray(m_pos, _property, DrawDragonSaveData, (int)DragonId.COUNT);
 				AdvancePos(height);
 			}
 			
@@ -182,7 +182,7 @@ public class DragonDataSaveDataEditor : ExtendedPropertyDrawer {
 				// Skills save data: fixed length with custom labels for each level, allow folding it
 				else if(_property.name == "skillLevels") {
 					// Draw array without allowing resize
-					float height = EditorUtils.FixedLengthArray(m_pos, _property, DrawSkillLevel, (int)DragonSkill.EType.COUNT);
+					float height = EditorGUILayoutExt.FixedLengthArray(m_pos, _property, DrawSkillLevel, (int)DragonSkill.EType.COUNT);
 					AdvancePos(height);
 				}
 				
