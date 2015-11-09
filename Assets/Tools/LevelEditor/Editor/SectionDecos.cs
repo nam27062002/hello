@@ -102,11 +102,11 @@ namespace LevelEditor {
 		/// <param name="_dirInfo">The directory to be loaded.</param>
 		private void CreateGroup(DirectoryInfo _dirInfo) {
 			// Create ID - dir path starting at root dir
-			string id = _dirInfo.FullName;
+			string id = _dirInfo.FullName.Replace('\\', '/');	// [AOC] Windows uses backward slashes, which Unity doesn't recognize;
 			id = id.Substring(id.IndexOf(ROOT_DIR) + ROOT_DIR.Length);
 			
 			// Format dir path to something that Unity Resources API understands
-			string resourcePath = _dirInfo.FullName;
+			string resourcePath = _dirInfo.FullName.Replace('\\', '/');	// [AOC] Windows uses backward slashes, which Unity doesn't recognize
 			resourcePath = resourcePath.Substring(resourcePath.IndexOf(RESOURCES_DIR));
 
 			// Get all prefabs in the target directory, but don't include subdirectories
