@@ -153,7 +153,7 @@ public class DragonData {
 	/// Offsets speed value. Used for Debug purposes on Preproduction fase.
 	/// </summary>
 	public void OffsetSpeedValue(float _speed) {
-		GetSkill(DragonSkill.EType.SPEED).OffsetValue(_speed);
+ 		GetSkill(DragonSkill.EType.SPEED).OffsetValue(_speed);
 	}
 
 	/// <summary>
