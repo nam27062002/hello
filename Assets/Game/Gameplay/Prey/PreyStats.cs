@@ -16,7 +16,7 @@ public class PreyStats : Initializable {
 	[SerializeField] private float m_maxHealth = 100f;
 	public float maxHealth { get { return m_maxHealth; } }
 
-
+	[SerializeField][Range(0,1)] private float m_goldenChance = 1f;
 
 	//-----------------------------------------------
 	// Attributes
@@ -44,7 +44,7 @@ public class PreyStats : Initializable {
 	public override void Initialize() {
 
 		m_health = m_maxHealth;		
-		SetGolden((Random.Range(0, 1000) < 200));
+		SetGolden((Random.Range(0f, 1f) <= m_goldenChance));
 	}
 
 	public void AddLife(float _offset) {

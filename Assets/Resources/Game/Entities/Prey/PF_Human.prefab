@@ -748,6 +748,7 @@ MonoBehaviour:
     fury: 20
     xp: .800000012
   m_maxHealth: 10
+  m_goldenChance: .300999999
 --- !u!114 &11421280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1047,8 +1048,6 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_reward.xp
       value: .800000012
-      propertyPath: m_mass
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleTime
@@ -1057,6 +1056,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_idleProbability
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_goldenChance
+      value: .300999999
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

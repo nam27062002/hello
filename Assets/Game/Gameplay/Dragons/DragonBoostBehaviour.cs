@@ -9,6 +9,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	private DragonPlayer 	m_dragon;
 	private DragonControl 	m_controls;
+	private Animator 		m_animator;
 
 	private bool m_active;
 	private bool m_ready;
@@ -20,6 +21,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	void Awake () {
 		m_dragon = GetComponent<DragonPlayer>();	
 		m_controls = GetComponent<DragonControl>();
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
 		m_active = false;
 		m_ready = true;
@@ -67,11 +69,15 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private void StartBoost() {
 		m_active = true;
 		m_dragon.SetSpeedMultiplier(m_dragon.data.boost.value);
+		if (m_animator && m_animator.isInitialized)
+			m_animator.SetBool("boost", true);
 	}
 
 	public void StopBoost() {
 		m_active = false;
 		m_dragon.SetSpeedMultiplier(1f);
+		if (m_animator && m_animator.isInitialized)
+			m_animator.SetBool("boost", false);
 	}
 
 	public void ResumeBoost() {

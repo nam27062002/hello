@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 481428}
   - 114: {fileID: 11474064}
+  - 114: {fileID: 11411230}
   m_Layer: 0
   m_Name: PF_Pine_03
   m_TagString: Untagged
@@ -230,6 +231,28 @@ Transform:
   - {fileID: 454170}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11411230
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_typeID: Tree
+  m_reward:
+    score: 15
+    coins: 50
+    pc: 0
+    health: 0
+    energy: 0
+    fury: 0
+    xp: .100000001
+  m_maxHealth: 0
+  m_goldenChance: 0
 --- !u!114 &11415916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -241,7 +264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistance: 50
+  m_resistanceMax: 50
   m_burningTime: 10
   m_damagePerTick: .75
   m_maxDistanceLinkNode: 5
@@ -259,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistance: 50
+  m_resistanceMax: 50
   m_burningTime: 10
   m_damagePerTick: .75
   m_maxDistanceLinkNode: 5
@@ -288,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistance: 50
+  m_resistanceMax: 50
   m_burningTime: 10
   m_damagePerTick: .75
   m_maxDistanceLinkNode: 5
@@ -306,7 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistance: 50
+  m_resistanceMax: 50
   m_burningTime: 10
   m_damagePerTick: .75
   m_maxDistanceLinkNode: 5
@@ -371,7 +394,31 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: Tree
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.score
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.coins
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.xp
+      value: .100000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxHealth
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_goldenChance
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 153034}

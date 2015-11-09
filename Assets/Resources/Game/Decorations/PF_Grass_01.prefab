@@ -25,6 +25,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 464112}
   - 114: {fileID: 11415582}
+  - 114: {fileID: 11473396}
   m_Layer: 0
   m_Name: PF_Grass_01
   m_TagString: Untagged
@@ -165,13 +166,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistance: 50
+  m_resistanceMax: 50
   m_burningTime: 10
   m_damagePerTick: .75
   m_maxDistanceLinkNode: 5
   m_fireScale:
     min: .75
     max: 1.25
+--- !u!114 &11473396
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 121244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_typeID: Bush
+  m_reward:
+    score: 1
+    coins: 5
+    pc: 0
+    health: 0
+    energy: 0
+    fury: 0
+    xp: 0
+  m_maxHealth: 0
+  m_goldenChance: 0
 --- !u!212 &21204766
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -230,7 +253,27 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: Bush
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.score
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.coins
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_goldenChance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxHealth
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 121244}

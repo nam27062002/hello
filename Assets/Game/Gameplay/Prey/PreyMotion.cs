@@ -171,6 +171,12 @@ public class PreyMotion : Initializable {
 
 	void Update() {		
 		UpdateOrientation();
+
+		if (m_groundSensor != null) {
+			UpdateCollisions();
+		}
+		
+		ApplyPosition();
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------------------ //
