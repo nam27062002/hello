@@ -22,7 +22,8 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
-		private static readonly string RESOURCES_DIR = "Game/Levels";
+		private static readonly string ASSETS_DIR = "Assets/Resources/Game/Levels";
+		private static readonly string EDITOR_SCENE_PATH = "Assets/Tools/LevelEditor/SC_LevelEditor.unity";
 		private static readonly float AUTOSAVE_FREQUENCY = 60f;	// Seconds
 		
 		//------------------------------------------------------------------//
@@ -138,9 +139,17 @@ namespace LevelEditor {
 			titleStyle.fontSize = 20;
 			titleStyle.alignment = TextAnchor.MiddleCenter;
 			if(m_activeLevel != null) {
-				GUILayout.Label(m_activeLevel.gameObject.name, titleStyle);
+				//GUILayout.Label(m_activeLevel.gameObject.name, titleStyle);
+				m_activeLevel.gameObject.name = GUILayout.TextField(m_activeLevel.gameObject.name, titleStyle);
 			} else {
-				GUILayout.Label("No level loaded", titleStyle);
+				EditorGUILayout.BeginHorizontal(); {
+					GUILayout.FlexibleSpace();
+					GUILayout.Label("No level loaded", titleStyle);
+					if(GUILayout.Button("Detect", GUILayout.Height(30f))) {
+						Init();
+					}
+					GUILayout.FlexibleSpace();
+				} EditorGUILayoutExt.EndHorizontalSafe();
 			}
 			
 			// Some more spacing
@@ -293,33 +302,18 @@ namespace LevelEditor {
 		private void SaveLevel() {
 			// Nothing to do if there is no loaded level
 			if(m_activeLevel == null) return;
-			
-			// Save changes
-			// If the level is linked to a prefab, replace it
-			// Otherwise create a new prefab for it
-			GameObject prefabObj = PrefabUtility.GetPrefabParent(m_activeLevel.gameObject) as GameObject;
-			if(prefabObj != null) {
-				// Replace prefab with the new data
-				prefabObj = PrefabUtility.ReplacePrefab(m_activeLevel.gameObject, prefabObj, ReplacePrefabOptions.ConnectToPrefab) as GameObject;
-			} else {
-				// Generate a unique name
-				string dirPath = "Assets/Resources/" + RESOURCES_DIR;
-				string path = AssetDatabase.GenerateUniqueAssetPath(dirPath + "/" + m_activeLevel.gameObject.name + ".prefab");
-				
-				// GenerateUniqueAssetPath creates the name with spaces, whereas we don't want them in our prefab names (naming convention)
-				string filename = Path.GetFileName(path);
-				filename = filename.Replace(' ', '_');
-				path = dirPath + "/" + filename;
-				
-				// Create the prefab
-				prefabObj = PrefabUtility.CreatePrefab(path, m_activeLevel.gameObject, ReplacePrefabOptions.ConnectToPrefab) as GameObject;
-				
-				// Save assets to disk!!
-				AssetDatabase.SaveAssets();
-			}
-			
-			// Highlight prefab in project browser
-			EditorGUIUtility.PingObject(prefabObj);
+
+			// Delete all editor stuff before saving the scene
+			UnloadLevelEditorStuff();
+
+			// Save scene to disk - will automatically overwrite any existing scene with the same name
+			EditorApplication.SaveScene(ASSETS_DIR + "/" + m_activeLevel.gameObject.name + ".unity");
+
+			// Reload editor stuff
+			LoadLevelEditorStuff();
+
+			// Save assets to disk!!
+			AssetDatabase.SaveAssets();
 		}
 		
 		/// <summary>
@@ -333,8 +327,8 @@ namespace LevelEditor {
 			// Ask for save
 			if(_promptSave) PromptSaveDialog();
 			
-			// Delete current level
-			GameObject.DestroyImmediate(m_activeLevel.gameObject);
+			// Just create a new empty scene
+			EditorApplication.NewEmptyScene();
 			
 			// Clear some references
 			m_activeLevel = null;
@@ -383,9 +377,32 @@ namespace LevelEditor {
 		/// </summary>
 		private void RefreshLevelsList() {
 			// C# makes it easy for us
-			string dirPath = Application.dataPath + "/Resources/" + RESOURCES_DIR;
+			string dirPath = Application.dataPath + ASSETS_DIR.Replace("Assets", "");	// dataPath already contains the "Assets" directory
 			DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-			m_fileList = dirInfo.GetFiles("*.prefab");
+			m_fileList = dirInfo.GetFiles("*.unity");	// Levels are scenes
+		}
+
+		/// <summary>
+		/// Load all the stuff specific from the level editor. If already loaded, it will be reloaded.
+		/// </summary>
+		private void LoadLevelEditorStuff() {
+			// Make sure we don't have it twice
+			UnloadLevelEditorStuff();
+
+			// Load it as an additive scene into the current one
+			EditorApplication.OpenSceneAdditive(EDITOR_SCENE_PATH);
+		}
+
+		/// <summary>
+		/// Unloads the level editor specific stuff.
+		/// </summary>
+		private void UnloadLevelEditorStuff() {
+			// Just destroy all objects with the level editor tag
+			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
+			for(int i = 0; i < editorStuff.Length; i++) {
+				GameObject.DestroyImmediate(editorStuff[i]);
+				editorStuff[i] = null;
+			}
 		}
 
 		//------------------------------------------------------------------//
@@ -401,16 +418,19 @@ namespace LevelEditor {
 			// Find out a suitable name for the new level
 			int i = 0;
 			string name = "";
-			string path = Application.dataPath + "/Resources/" + RESOURCES_DIR + "/";
+			string path = Application.dataPath + ASSETS_DIR.Replace("Assets", "") + "/";	// dataPath already includes the "Assets" directory
 			do {
-				name = "PF_Level_" + i;
+				name = "SC_Level_" + i;
 				i++;
-			} while(File.Exists(path + name + ".prefab"));
+			} while(File.Exists(path + name + ".unity"));
 			
 			// Create a new game object and add to it the Level component
 			// It will automatically be initialized with the required hierarchy
 			GameObject newLevelObj = new GameObject(name, typeof(Level));
 			m_activeLevel = newLevelObj.GetComponent<Level>();
+
+			// Add all the editor stuff
+			LoadLevelEditorStuff();
 		}
 		
 		/// <summary>
@@ -459,14 +479,9 @@ namespace LevelEditor {
 		private void OnDeleteLevelButton() {
 			// Show confirmation dialog
 			if(EditorUtility.DisplayDialog("Delete Level", "Are you sure?", "Yes", "No")) {
-				// Find level prefab and delete it
-				GameObject prefabObj = PrefabUtility.GetPrefabParent(m_activeLevel.gameObject) as GameObject;
-				if(prefabObj != null) {
-					// Do it
-					string path = "Assets/Resources/" + RESOURCES_DIR + "/" + prefabObj.name + ".prefab";
-					AssetDatabase.DeleteAsset(path);
-				}
-				
+				// Just do it
+				AssetDatabase.MoveAssetToTrash(ASSETS_DIR + "/" + m_activeLevel.gameObject.name + ".unity");
+
 				// Unload level - don't prompt for saving, of course
 				UnloadLevel(false);
 			}
@@ -483,16 +498,16 @@ namespace LevelEditor {
 			// Do it!!
 			// Unload current level - will ask to save it
 			UnloadLevel(true);
+
+			// Load the new level scene and store reference to the level object
+			EditorApplication.OpenScene(ASSETS_DIR + "/" + m_fileList[_selectedIdx].Name);
+			m_activeLevel = Object.FindObjectOfType<Level>();
 			
-			// Load the new level from resources and instantiate it into the scene
-			string path = RESOURCES_DIR + "/" + Path.GetFileNameWithoutExtension(m_fileList[_selectedIdx].Name);
-			GameObject levelPrefab = Resources.Load<GameObject>(path);
-			GameObject levelObj = PrefabUtility.InstantiatePrefab(levelPrefab) as GameObject;
-			m_activeLevel = levelObj.GetComponent<Level>();
-			
-			// Focus the prefab in the project window as well as the new instance in the hierarchy
-			EditorGUIUtility.PingObject(levelPrefab);
+			// Focus the level object in the hierarchy
 			Selection.activeObject = m_activeLevel.gameObject;
+
+			// Add the level editor stuff
+			LoadLevelEditorStuff();
 		}
 	}
 }
