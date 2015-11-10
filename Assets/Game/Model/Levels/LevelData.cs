@@ -31,6 +31,6 @@ public class LevelData {
 	[SerializeField] private string m_tidDescription = "";
 	public string tidDescription { get { return m_tidDescription; }}
 
-	[SerializeField] private string m_prefabPath = "";
-	public string prefabPath { get { return m_prefabPath; }}
+	[SerializeField] private string m_sceneName = "";
+	public string sceneName { get { return m_sceneName; }}
 }

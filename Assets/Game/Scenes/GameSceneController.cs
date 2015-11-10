@@ -22,6 +22,7 @@ public class GameSceneController : SceneController {
 	//------------------------------------------------------------------//
 	public static readonly string NAME = "SC_Game";
 	public static readonly float COUNTDOWN = 3f;	// Seconds
+	public static readonly float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
 
 	public enum EStates {
 		INIT,
@@ -63,13 +64,13 @@ public class GameSceneController : SceneController {
 	}
 
 	// Level loading
-	private ResourceRequest m_levelLoadingTask = null;
+	private AsyncOperation m_levelLoadingTask = null;
+	//private ResourceRequest m_levelLoadingTask = null;
 	public float levelLoadingProgress {
 		get {
 			if(state == EStates.LOADING_LEVEL) {
-				//return m_levelLoadingTask.progress;	// Shouldn't be null at this state
-				float p = (m_levelLoadingTask != null) ? m_levelLoadingTask.progress : 1f;
-				return Mathf.Min(1f - Mathf.Max(m_timer/3f, 0f), p);
+				float progress = (m_levelLoadingTask != null) ? m_levelLoadingTask.progress : 1f;	// Shouldn't be null at this state
+				return Mathf.Min(progress, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
 			} else if(state > EStates.LOADING_LEVEL) {
 				return 1;
 			} else {
@@ -230,8 +231,8 @@ public class GameSceneController : SceneController {
 		// Actions to perform when leaving the current state
 		switch(m_state) {
 			case EStates.LOADING_LEVEL: {
-				// Instantiate level and delete loader
-				GameObject levelObj = GameObject.Instantiate<GameObject>((GameObject)m_levelLoadingTask.asset);
+				// Delete loading task and get level object
+				LevelEditor.Level level = GameObject.FindObjectOfType<LevelEditor.Level>();
 				m_levelLoadingTask = null;
 
 				// Dispatch game event
@@ -241,7 +242,6 @@ public class GameSceneController : SceneController {
 				// Don't make it playable until the countdown ends
 				InstanceManager.player.playable = false;
 				InstanceManager.player.gameObject.SetActive(true);
-				LevelEditor.Level level = levelObj.GetComponent<LevelEditor.Level>();
 				GameObject spawnPoint = level.GetDragonSpawnPoint(InstanceManager.player.data.id);
 				if(spawnPoint == null) spawnPoint = level.GetDragonSpawnPoint(DragonId.NONE);
 				InstanceManager.player.transform.position = spawnPoint.transform.position;
@@ -262,9 +262,10 @@ public class GameSceneController : SceneController {
 		switch(_newState) {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
-				m_levelLoadingTask = LevelManager.LoadLevelPrefab(LevelManager.currentLevel);
-				// TEMP!! Simulate larger loading time
-				m_timer = 3;
+				m_levelLoadingTask = LevelManager.LoadLevel(LevelManager.currentLevel);
+
+				// Initialize minimum loading time as well
+				m_timer = MIN_LOADING_TIME;
 			} break;
 
 			case EStates.COUNTDOWN: {
@@ -309,7 +310,7 @@ public class GameSceneController : SceneController {
 		EndGame();
 
 		// Open summary popup after some delay
-		m_timer = 1f;
+		m_timer = 0.5f;
 	}
 }
 

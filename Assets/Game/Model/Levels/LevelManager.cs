@@ -67,13 +67,13 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Starts loading the prefab of the level with the given index.
+	/// Starts loading the scene of the level with the given index.
 	/// Deletes any level in the current scene.
-	/// Loading is asynchronous, use the returned object to check when the level has finished loading and access to it.
+	/// Loading is asynchronous, use the returned object to check when the level has finished loading.
 	/// </summary>
-	/// <returns>The loading request, where you can check the progress and access the loaded object once finished.</returns>
+	/// <returns>The loading request, where you can check the loading progress.</returns>
 	/// <param name="_levelIdx">The index of the level we want to load.</param>
-	public static ResourceRequest LoadLevelPrefab(int _levelIdx) {
+	public static AsyncOperation LoadLevel(int _levelIdx) {
 		// Destroy any existing level in the game scene
 		LevelEditor.Level[] activeLevels = Component.FindObjectsOfType<LevelEditor.Level>();
 		for(int i = 0; i < activeLevels.Length; i++) {
@@ -84,10 +84,9 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 		LevelData data = LevelManager.GetLevelData(_levelIdx);
 		DebugUtils.SoftAssert(data != null, "Attempting to load level with index " + _levelIdx + ", but the manager has no data linked to this index");
 
-		// Load the prefab for the level with the given index
-		//GameObject prefabObj = Resources.Load<GameObject>(data.prefabPath);
-		ResourceRequest request = Resources.LoadAsync<GameObject>(data.prefabPath);
-		DebugUtils.SoftAssert(request != null, "The prefab defined to level " + _levelIdx + " couldn't be found");	// [AOC] TODO!! Check path
-		return request;
+		// Load the scene for the level with the given index
+		AsyncOperation loadingTask = Application.LoadLevelAdditiveAsync(data.sceneName);
+		DebugUtils.SoftAssert(loadingTask != null, "The prefab defined to level " + _levelIdx + " couldn't be found");
+		return loadingTask;
 	}
 }
