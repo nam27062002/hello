@@ -21,8 +21,8 @@
 	 	{
 		
 			CGPROGRAM
-// Upgrade NOTE: excluded shader from Xbox360; has structs without semantics (struct v2f members colour)
-#pragma exclude_renderers xbox360
+			// Upgrade NOTE: excluded shader from Xbox360; has structs without semantics (struct v2f members colour)
+			#pragma exclude_renderers xbox360
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 3.0 
@@ -36,18 +36,18 @@
 
 			struct v2f 
 			{
-			    float4 pos : SV_POSITION;
-			    float2 uv : TEXCOORD0;
-			    float2 uv1 : TEXCOORD1;
+			    	float4 pos : SV_POSITION;
+			    	float2 uv : TEXCOORD0;
+		    		float2 uv1 : TEXCOORD1;
 				float4 color : COLOR;	 
 				float3 cube : TEXCOORD2;  
 			};
 			
 			struct appdata 
 			{
-    			float4 vertex : POSITION;
-    			float3 normal : NORMAL;
-  			    float2 texcoord : TEXCOORD0;
+    				float4 vertex : POSITION;
+    				float3 normal : NORMAL;
+  				float2 texcoord : TEXCOORD0;
  			};
 			
 			
@@ -67,8 +67,8 @@
 
 				float fTime = _Time;
 
-			    o.pos = mul (UNITY_MATRIX_MVP, float4( v.vertex.xyz, 1.0f ));
-			    float3 viewN = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
+	    			o.pos = mul (UNITY_MATRIX_MVP, float4( v.vertex.xyz, 1.0f ));
+    				float3 viewN = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
 
 
 
@@ -77,30 +77,30 @@
   				N = normalize(N);
   				float3 I = positionW - _WorldSpaceCameraPos;
   				float3 R = reflect(I,N);
-               	o.cube = R;
+				o.cube = R;
 
-			    // Apply the rim effect
+	    			// Apply the rim effect
  				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-                float dotProduct = 1 - dot(v.normal, viewDir);
-                o.color = smoothstep(1 - _Rimsize, 1.0, dotProduct);
-                o.color *= _RimIntensity;
+                		float dotProduct = 1 - dot(v.normal, viewDir);
+                		o.color = smoothstep(1 - _Rimsize, 1.0, dotProduct);
+                		o.color *= _RimIntensity;
 
-			    o.uv = v.texcoord;
+			    	o.uv = v.texcoord;
 			    
-			    return o;
+			    	return o;
 			}
 			
 			half4 frag (v2f i) : COLOR
 			{
-			    half4 texcol = tex2D (_MainTex, i.uv);
-			    half4 cube =  half4(texCUBE(_Cube, i.cube).xyz,1.0);
-			    cube *= _CubeIntensity;
-			    texcol *= _Tint;
-			    texcol += cube;
-			    //texcol *= 1.5;
-			    texcol.xyz += (i.color.xyz * _RimColour.xyz);
-			    texcol.a = 1.0f;
- 			    return texcol;
+				half4 texcol = tex2D (_MainTex, i.uv);
+				half4 cube =  half4(texCUBE(_Cube, i.cube).xyz,1.0);
+				cube *= _CubeIntensity;
+				texcol *= _Tint;
+				texcol += cube;
+				//texcol *= 1.5;
+				texcol.xyz += (i.color.xyz * _RimColour.xyz);
+				texcol.a = 1.0f;
+				return texcol;
 			}
 			
 			ENDCG	
