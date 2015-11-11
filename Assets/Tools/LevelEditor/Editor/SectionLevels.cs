@@ -265,14 +265,24 @@ namespace LevelEditor {
 				
 				// Separator
 				EditorGUILayoutExt.Separator(new SeparatorAttribute(5f));
-				
-				// Snap size
-				EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("Snap Size:")).x;
-				float newSnapSize = EditorGUILayout.FloatField("Snap Size:", LevelEditor.settings.snapSize);
-				newSnapSize = MathUtils.Snap(newSnapSize, 0.01f);	// Round up to 2 decimals
-				newSnapSize = Mathf.Max(newSnapSize, 0f);	// Not negative
-				LevelEditor.settings.snapSize = newSnapSize;
-				EditorGUIUtility.labelWidth = 0;
+
+				// Other settings
+				EditorGUILayout.BeginHorizontal(); {
+					// Snap size
+					EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("Snap Size:")).x;
+					float newSnapSize = EditorGUILayout.FloatField("Snap Size:", LevelEditor.settings.snapSize);
+					newSnapSize = MathUtils.Snap(newSnapSize, 0.01f);	// Round up to 2 decimals
+					newSnapSize = Mathf.Max(newSnapSize, 0f);	// Not negative
+					LevelEditor.settings.snapSize = newSnapSize;
+
+					// Handler size
+					EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("Handlers Size:")).x;
+					float newHandlersSize = EditorGUILayout.FloatField("Handlers Size:", LevelEditor.settings.handlersSize);
+					newHandlersSize = MathUtils.Snap(newHandlersSize, 0.1f);	// Round up to 1 decimal
+					newHandlersSize = Mathf.Max(newHandlersSize, 0f);	// Not negative
+					LevelEditor.settings.handlersSize = newHandlersSize;
+					EditorGUIUtility.labelWidth = 0;
+				} EditorGUILayoutExt.EndHorizontalSafe();
 			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 

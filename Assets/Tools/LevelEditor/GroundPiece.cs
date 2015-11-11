@@ -64,15 +64,24 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnDrawGizmos() {
 			if(m_mesh != null) {
-				Vector3 left = new Vector3(m_mesh.bounds.min.x, 0f, 0f);		// 0,0,0 is the center
-				left = transform.TransformPoint(left);
-				Vector3 right = new Vector3(m_mesh.bounds.max.x, 0f, 0f);		// 0,0,0 is the center
-				right = transform.TransformPoint(right);
-				
-				// Draw handlers and store new values
+				// 0,0,0 is the center
+				Vector3[] edges = new Vector3[4] {
+					new Vector3(m_mesh.bounds.min.x, 0f, 0f),	// left
+					new Vector3(m_mesh.bounds.max.x, 0f, 0f),	// right
+					new Vector3(0f, m_mesh.bounds.min.y, 0f),	// bottom
+					new Vector3(0f, m_mesh.bounds.max.y, 0f)	// top
+				};
+
+				// Draw a handler for each edge
 				Handles.color = Colors.WithAlpha(Colors.skyBlue, 0.25f);
-				Handles.SphereCap(0, left, Quaternion.identity, HandleUtility.GetHandleSize(left) * 0.25f);
-				Handles.SphereCap(0, right, Quaternion.identity, HandleUtility.GetHandleSize(right) * 0.25f);
+				for(int i = 0; i < edges.Length; i++) {
+					// Transform to world coords
+					edges[i] = transform.TransformPoint(edges[i]);
+
+					// Draw the handler
+					//Handles.SphereCap(0, left, Quaternion.identity, HandleUtility.GetHandleSize(edges[i]) * 0.25f);
+					Handles.SphereCap(0, edges[i], Quaternion.identity, LevelEditor.settings.handlersSize);
+				}
 			}
 		}
 	#endif

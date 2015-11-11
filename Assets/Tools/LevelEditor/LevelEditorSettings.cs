@@ -44,6 +44,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		[Separator("General Settings", 20)]
 		public float snapSize = 5f;	// Snap size for ground pieces
+		public float handlersSize = 1f;	// Size of the custom handlers (i.e. ground pieces)
 		public int selectedTab = 0;	// Selected section tab
 
 		[Separator("Level Settings", 20)]
