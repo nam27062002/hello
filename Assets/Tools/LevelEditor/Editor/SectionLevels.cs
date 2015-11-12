@@ -244,22 +244,6 @@ namespace LevelEditor {
 					
 					GUI.enabled = true;
 				} EditorGUILayoutExt.EndHorizontalSafe();
-				
-				// Test button
-				// Reuse the same button to stop the test
-				if(EditorApplication.isPlaying) {
-					if(GUILayout.Button("Stop Test", GUILayout.Height(40f))) {
-						// Just stop execution mode
-						EditorApplication.isPlaying = false;
-					}
-				} else {
-					// Only if we have a valid level
-					GUI.enabled = (m_activeLevel != null);
-					if(GUILayout.Button("Test Level", GUILayout.Height(40f))) {
-						// Just start execution mode
-						EditorApplication.isPlaying = true;
-					}
-				}
 				GUI.enabled = true;
 				
 				// Separator
