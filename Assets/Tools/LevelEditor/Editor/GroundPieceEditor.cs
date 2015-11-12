@@ -86,7 +86,12 @@ namespace LevelEditor {
 				changes[i].oldValue = targetPiece.transform.TransformPoint(m_sides[i]);
 
 				// Draw handler and store new value
-				Handles.color = Colors.coral;
+				// Different color for horizontal and vertical handles
+				if(i < 2) {
+					Handles.color = Colors.coral;
+				} else {
+					Handles.color = Colors.orange;
+				}
 				//changes[i].newValue = Handles.FreeMoveHandle(changes[i].oldValue, Quaternion.identity, HandleUtility.GetHandleSize(changes[i].oldValue) * 0.25f, Vector3.zero, Handles.SphereCap);
 				changes[i].newValue = Handles.FreeMoveHandle(changes[i].oldValue, Quaternion.identity, LevelEditor.settings.handlersSize, Vector3.zero, Handles.SphereCap);
 
@@ -119,11 +124,12 @@ namespace LevelEditor {
 					newRotationZ = Vector3.right.Angle360(newAxis, Vector3.forward);
 				} else {
 					// Vertical axis
+					// [AOC] As requested by design, vertical handlers only affect scale
 					oldAxis = changes[3].oldValue - changes[2].oldValue;
 					newAxis = changes[3].newValue - changes[2].newValue;
 					newScale.y = newAxis.magnitude;
-					newPos = changes[2].newValue + newAxis/2f;
-					newRotationZ = Vector3.up.Angle360(newAxis, Vector3.forward);
+					//newPos = changes[2].newValue + newAxis/2f;
+					//newRotationZ = Vector3.up.Angle360(newAxis, Vector3.forward);
 				}
 
 				// Apply transformations (only if there were actually changes)
