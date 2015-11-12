@@ -23,6 +23,8 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
+		private static readonly string EDITOR_SCENE_PATH = "Assets/Tools/LevelEditor/SC_LevelEditor.unity";
+
 		public class Styles {
 			public GUIStyle groupListStyle = null;	// Option style for a SelectionGrid element
 			public GUIStyle whiteScrollListStyle = null;	// Scroll list with white background
@@ -112,7 +114,13 @@ namespace LevelEditor {
 				m_sceneName = EditorApplication.currentScene;
 				Init();
 			}
+		}
 
+		/// <summary>
+		/// OnInspectorUpdate is called at 10 frames per second to give the inspector a chance to update.
+		/// Called less times as if it was OnGUI/Update
+		/// </summary>
+		public void OnInspectorUpdate() {
 			// Force repainting while loading asset previews
 			if(AssetPreview.IsLoadingAssetPreviews()) {
 				Repaint();
@@ -135,6 +143,29 @@ namespace LevelEditor {
 			// Init sections
 			for(int i = 0; i < m_sections.Length; i++) {
 				m_sections[i].Init();
+			}
+		}
+
+		/// <summary>
+		/// Load all the stuff specific from the level editor. If already loaded, it will be reloaded.
+		/// </summary>
+		public void LoadLevelEditorStuff() {
+			// Make sure we don't have it twice
+			UnloadLevelEditorStuff();
+			
+			// Load it as an additive scene into the current one
+			EditorApplication.OpenSceneAdditive(EDITOR_SCENE_PATH);
+		}
+		
+		/// <summary>
+		/// Unloads the level editor specific stuff.
+		/// </summary>
+		public void UnloadLevelEditorStuff() {
+			// Just destroy all objects with the level editor tag
+			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
+			for(int i = 0; i < editorStuff.Length; i++) {
+				GameObject.DestroyImmediate(editorStuff[i]);
+				editorStuff[i] = null;
 			}
 		}
 
@@ -243,6 +274,16 @@ namespace LevelEditor {
 		public void OnPlayModeChanged() {
 			// Window is recreated and all values are lost, so re-init everything
 			Init();
+
+			// Make sure we have the level editor stuff loaded
+			// This could be quite hardcore on performance, maybe do it less frequently
+			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
+			if(editorStuff.Length == 0) {
+				LoadLevelEditorStuff();
+			}
+
+			// Force a repaint
+			Repaint();
 		}
 	}
 }

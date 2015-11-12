@@ -23,7 +23,6 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		private static readonly string ASSETS_DIR = "Assets/Resources/Game/Levels";
-		private static readonly string EDITOR_SCENE_PATH = "Assets/Tools/LevelEditor/SC_LevelEditor.unity";
 		private static readonly float AUTOSAVE_FREQUENCY = 60f;	// Seconds
 		
 		//------------------------------------------------------------------//
@@ -314,13 +313,13 @@ namespace LevelEditor {
 			if(m_activeLevel == null) return;
 
 			// Delete all editor stuff before saving the scene
-			UnloadLevelEditorStuff();
+			LevelEditorWindow.instance.UnloadLevelEditorStuff();
 
 			// Save scene to disk - will automatically overwrite any existing scene with the same name
 			EditorApplication.SaveScene(ASSETS_DIR + "/" + m_activeLevel.gameObject.name + ".unity");
 
 			// Reload editor stuff
-			LoadLevelEditorStuff();
+			LevelEditorWindow.instance.LoadLevelEditorStuff();
 
 			// Save assets to disk!!
 			AssetDatabase.SaveAssets();
@@ -392,29 +391,6 @@ namespace LevelEditor {
 			m_fileList = dirInfo.GetFiles("*.unity");	// Levels are scenes
 		}
 
-		/// <summary>
-		/// Load all the stuff specific from the level editor. If already loaded, it will be reloaded.
-		/// </summary>
-		private void LoadLevelEditorStuff() {
-			// Make sure we don't have it twice
-			UnloadLevelEditorStuff();
-
-			// Load it as an additive scene into the current one
-			EditorApplication.OpenSceneAdditive(EDITOR_SCENE_PATH);
-		}
-
-		/// <summary>
-		/// Unloads the level editor specific stuff.
-		/// </summary>
-		private void UnloadLevelEditorStuff() {
-			// Just destroy all objects with the level editor tag
-			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
-			for(int i = 0; i < editorStuff.Length; i++) {
-				GameObject.DestroyImmediate(editorStuff[i]);
-				editorStuff[i] = null;
-			}
-		}
-
 		//------------------------------------------------------------------//
 		// CALLBACKS														//
 		//------------------------------------------------------------------//
@@ -440,7 +416,7 @@ namespace LevelEditor {
 			m_activeLevel = newLevelObj.GetComponent<Level>();
 
 			// Add all the editor stuff
-			LoadLevelEditorStuff();
+			LevelEditorWindow.instance.LoadLevelEditorStuff();
 		}
 		
 		/// <summary>
@@ -517,7 +493,7 @@ namespace LevelEditor {
 			Selection.activeObject = m_activeLevel.gameObject;
 
 			// Add the level editor stuff
-			LoadLevelEditorStuff();
+			LevelEditorWindow.instance.LoadLevelEditorStuff();
 		}
 	}
 }
