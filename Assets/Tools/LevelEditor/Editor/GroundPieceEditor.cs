@@ -106,7 +106,7 @@ namespace LevelEditor {
 				}
 			}
 
-			// Compute new transformations
+			// Compute and apply new transformations
 			// Only if actually there are changes
 			if(changedIdx >= 0) {
 				// Different for horizontal and vertical axis
@@ -116,27 +116,46 @@ namespace LevelEditor {
 				Vector3 newPos = targetPiece.transform.position;
 				float newRotationZ = oldRotation.z;
 				if(changedIdx < 2) {
+					// Allow undoing
+					Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
+
 					// Horizontal axis
 					oldAxis = changes[1].oldValue - changes[0].oldValue;
 					newAxis = changes[1].newValue - changes[0].newValue;
-					newScale.x = newAxis.magnitude;
+					
+					// Position
 					newPos = changes[0].newValue + newAxis/2f;
+					targetPiece.transform.position = newPos;
+
+					// Scale
+					newScale.x = newAxis.magnitude;
+					targetPiece.transform.localScale = newScale;
+
+					// Rotation
 					newRotationZ = Vector3.right.Angle360(newAxis, Vector3.forward);
+					targetPiece.transform.eulerAngles = new Vector3(oldRotation.x, oldRotation.y, newRotationZ);
 				} else {
+					// Allow undoing
+					Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
+
 					// Vertical axis
-					// [AOC] As requested by design, vertical handlers only affect scale
+					// [AOC] As requested by design, vertical handlers only affect scale, and only in the dragged edge
 					oldAxis = changes[3].oldValue - changes[2].oldValue;
 					newAxis = changes[3].newValue - changes[2].newValue;
-					newScale.y = newAxis.magnitude;
-					//newPos = changes[2].newValue + newAxis/2f;
-					//newRotationZ = Vector3.up.Angle360(newAxis, Vector3.forward);
-				}
 
-				// Apply transformations (only if there were actually changes)
-				Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
-				targetPiece.transform.position = newPos;
-				targetPiece.transform.localScale = newScale;
-				targetPiece.transform.eulerAngles = new Vector3(oldRotation.x, oldRotation.y, newRotationZ);
+					// Scale
+					newScale.y = newAxis.magnitude;
+					targetPiece.transform.localScale = newScale;
+
+					// We must reposition anyway, but only in the dragging direction
+					// To do so, compute new position of the edges after the scaling has been applied, and apply de difference to the piece's position
+					Vector3[] verticalEdges = new Vector3[2] {
+						targetPiece.transform.TransformPoint(m_sides[2]),
+						targetPiece.transform.TransformPoint(m_sides[3])
+					};
+					Vector3 offset = verticalEdges[changedIdx-2] - changes[changedIdx].oldValue;
+					targetPiece.transform.position = newPos + offset;
+				}
 			}
 		}
 
