@@ -85,6 +85,112 @@ NavMeshSettings:
     cellSize: .166666672
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &13993282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 13993283}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit3_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &13993283
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 13993282}
+  m_LocalRotation: {x: -.00509697665, y: -.264212847, z: -.00947554596, w: .964404404}
+  m_LocalPosition: {x: -.665640831, y: 0, z: 9.68933094e-08}
+  m_LocalScale: {x: .999997139, y: .999998689, z: 1.00000334}
+  m_Children: []
+  m_Father: {fileID: 1848764476}
+  m_RootOrder: 0
+--- !u!1 &30483808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 30483809}
+  - 95: {fileID: 30483812}
+  - 114: {fileID: 30483811}
+  - 114: {fileID: 30483810}
+  m_Layer: 13
+  m_Name: PF_DragonSmallDummy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &30483809
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30483808}
+  m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
+  m_LocalPosition: {x: 0, y: 8.88999939, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_Children:
+  - {fileID: 1898807553}
+  - {fileID: 668721288}
+  - {fileID: 1170774206}
+  - {fileID: 877362184}
+  - {fileID: 1397727547}
+  - {fileID: 2042743282}
+  - {fileID: 1758660246}
+  m_Father: {fileID: 1247476441}
+  m_RootOrder: 0
+--- !u!114 &30483810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30483808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_positionLock: 000001
+  m_rotationLock: 010000
+  m_scaleLock: 010101
+--- !u!114 &30483811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30483808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &30483812
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 30483808}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
+  m_Controller: {fileID: 9100000, guid: d2eadadb6cb2144519c27d855a149337, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &35460129
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,6 +291,33 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 35460129}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &37595616
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 37595617}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit1_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &37595617
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 37595616}
+  m_LocalRotation: {x: -.00345807406, y: .330346525, z: -.0128444619, w: .943765998}
+  m_LocalPosition: {x: -.759220004, y: 0, z: 9.68933094e-08}
+  m_LocalScale: {x: .999955058, y: 1.00001931, z: 1.00002551}
+  m_Children: []
+  m_Father: {fileID: 441438410}
+  m_RootOrder: 0
 --- !u!1 &39640350
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,6 +518,33 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 43252038}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &59638515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 59638516}
+  m_Layer: 13
+  m_Name: Dragon_Tongue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &59638516
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 59638515}
+  m_LocalRotation: {x: -5.96311711e-09, y: 3.41442927e-08, z: .401111156, w: .916029394}
+  m_LocalPosition: {x: -.120800085, y: -.0152467433, z: 5.9612093e-09}
+  m_LocalScale: {x: .999998808, y: 1.00000072, z: 1.00000036}
+  m_Children: []
+  m_Father: {fileID: 1937205511}
+  m_RootOrder: 0
 --- !u!1 &71637992
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,6 +1000,174 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 112346028}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &115594535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 115594536}
+  m_Layer: 13
+  m_Name: Dragon_LWing_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &115594536
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 115594535}
+  m_LocalRotation: {x: -.70799464, y: -.148599863, z: .240449131, w: .647183061}
+  m_LocalPosition: {x: -.30872339, y: 4.84466547e-08, z: -9.68933094e-08}
+  m_LocalScale: {x: 1.00001812, y: 1.00001013, z: .999970913}
+  m_Children:
+  - {fileID: 2072579656}
+  - {fileID: 548575890}
+  - {fileID: 1848764476}
+  - {fileID: 769198578}
+  m_Father: {fileID: 899118411}
+  m_RootOrder: 0
+--- !u!1 &121154576
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 121154577}
+  m_Layer: 13
+  m_Name: Dragon_LLeg_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &121154577
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 121154576}
+  m_LocalRotation: {x: -.0661003143, y: .112248667, z: -.647770226, w: .750616252}
+  m_LocalPosition: {x: -.233198121, y: 3.22170263e-06, z: 1.69563293e-06}
+  m_LocalScale: {x: 1.00000727, y: .999993086, z: .999999046}
+  m_Children:
+  - {fileID: 1751823091}
+  m_Father: {fileID: 814628262}
+  m_RootOrder: 0
+--- !u!1 &127400228
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 127400229}
+  m_Layer: 13
+  m_Name: Dragon_LWing_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &127400229
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 127400228}
+  m_LocalRotation: {x: .247269988, y: .683011711, z: .253448009, w: .638840199}
+  m_LocalPosition: {x: .0822616443, y: -.2895208, z: .0766165853}
+  m_LocalScale: {x: .99999994, y: 1, z: 1}
+  m_Children:
+  - {fileID: 919426535}
+  m_Father: {fileID: 1119341704}
+  m_RootOrder: 2
+--- !u!1 &145181459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 145181460}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit2_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &145181460
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 145181459}
+  m_LocalRotation: {x: -.000919257, y: -.320858389, z: -.0129634095, w: .947037995}
+  m_LocalPosition: {x: -.763302267, y: -9.68933094e-08, z: -9.68933094e-08}
+  m_LocalScale: {x: 1.00000441, y: .999998569, z: .999996126}
+  m_Children: []
+  m_Father: {fileID: 548575890}
+  m_RootOrder: 0
+--- !u!1 &151762270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 151762271}
+  m_Layer: 13
+  m_Name: Dragon_Extra_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &151762271
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 151762270}
+  m_LocalRotation: {x: 3.20709077e-08, y: 2.19920739e-08, z: .973933101, w: .226835519}
+  m_LocalPosition: {x: .1244689, y: -.205553874, z: 1.15505826e-14}
+  m_LocalScale: {x: .999999821, y: .99999994, z: 1}
+  m_Children: []
+  m_Father: {fileID: 668721288}
+  m_RootOrder: 0
+--- !u!1 &158446118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 158446119}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit4_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &158446119
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 158446118}
+  m_LocalRotation: {x: .00742804166, y: .236444116, z: -.00580319995, w: .9715994}
+  m_LocalPosition: {x: -.467825085, y: 9.68933094e-08, z: 0}
+  m_LocalScale: {x: 1.00000024, y: 1.00001895, z: .999979913}
+  m_Children: []
+  m_Father: {fileID: 1033651941}
+  m_RootOrder: 0
 --- !u!1 &163401761
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,7 +1193,7 @@ Transform:
   m_GameObject: {fileID: 163401761}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 1467826850}
   - {fileID: 1282916658}
@@ -886,7 +1214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_positionLock: 000001
   m_rotationLock: 010100
-  m_scaleLock: 010101
+  m_scaleLock: 000000
 --- !u!114 &163401764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1754,6 +2082,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 261448556}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &273625879
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 273625880}
+  m_Layer: 13
+  m_Name: Dragon_RArm_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &273625880
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 273625879}
+  m_LocalRotation: {x: .0382847451, y: -.127104402, z: -.350973457, w: .926928461}
+  m_LocalPosition: {x: -.351545483, y: -3.02791591e-07, z: -1.45339968e-07}
+  m_LocalScale: {x: .999999821, y: .999999881, z: 1.00000012}
+  m_Children:
+  - {fileID: 1992345261}
+  m_Father: {fileID: 524570873}
+  m_RootOrder: 0
 --- !u!1 &316116509
 GameObject:
   m_ObjectHideFlags: 0
@@ -1954,6 +2310,61 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 318872136}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &325670544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 325670545}
+  m_Layer: 13
+  m_Name: Dragon_RWing_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &325670545
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 325670544}
+  m_LocalRotation: {x: -.24726975, y: -.683011651, z: .253448188, w: .638840139}
+  m_LocalPosition: {x: .0822616443, y: -.2895208, z: -.0766165704}
+  m_LocalScale: {x: 1.00000012, y: 1.00000012, z: .999999881}
+  m_Children:
+  - {fileID: 918072173}
+  m_Father: {fileID: 1119341704}
+  m_RootOrder: 5
+--- !u!1 &327359089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 327359090}
+  m_Layer: 13
+  m_Name: Fire_Dummy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &327359090
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 327359089}
+  m_LocalRotation: {x: 1.68694001e-07, y: 1.59617912e-07, z: -.00395585736, w: .999992192}
+  m_LocalPosition: {x: -.391336471, y: .116427585, z: 1.93798442e-07}
+  m_LocalScale: {x: .466930419, y: .466929406, z: .466929495}
+  m_Children: []
+  m_Father: {fileID: 896299884}
+  m_RootOrder: 5
 --- !u!1 &372500445
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,6 +2565,118 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 375370399}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &407935728
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 407935729}
+  m_Layer: 13
+  m_Name: Dragon_Tail6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &407935729
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 407935728}
+  m_LocalRotation: {x: 5.08661415e-08, y: 5.37701439e-09, z: .0599516667, w: .998201311}
+  m_LocalPosition: {x: -.339561135, y: 0, z: 1.15505826e-14}
+  m_LocalScale: {x: 1.00000012, y: 1.00000012, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1956434080}
+  m_RootOrder: 0
+--- !u!1 &426062107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 426062108}
+  m_Layer: 13
+  m_Name: Dragon_Neck2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &426062108
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 426062107}
+  m_LocalRotation: {x: -7.22234972e-06, y: -8.95633366e-06, z: .173866585, w: .984769225}
+  m_LocalPosition: {x: -.250395179, y: -.000320765306, z: -6.15580632e-07}
+  m_LocalScale: {x: .999999344, y: 1.00000107, z: .99999994}
+  m_Children:
+  - {fileID: 1724248394}
+  m_Father: {fileID: 1179504236}
+  m_RootOrder: 1
+--- !u!1 &439187681
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 439187682}
+  m_Layer: 13
+  m_Name: Dragon_Spine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &439187682
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 439187681}
+  m_LocalRotation: {x: -4.50955486e-06, y: -7.03199403e-05, z: -.124156035, w: .992262721}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: .999999821}
+  m_Children:
+  - {fileID: 1119341704}
+  - {fileID: 906181990}
+  m_Father: {fileID: 668721288}
+  m_RootOrder: 3
+--- !u!1 &441438409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 441438410}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit1_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &441438410
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 441438409}
+  m_LocalRotation: {x: .00433152355, y: .301320791, z: .0134819457, w: .953417659}
+  m_LocalPosition: {x: -.249171942, y: .000198340611, z: .0606365129}
+  m_LocalScale: {x: .999965549, y: 1.00001895, z: 1.00001442}
+  m_Children:
+  - {fileID: 37595617}
+  m_Father: {fileID: 1411972350}
+  m_RootOrder: 0
 --- !u!1 &449314746
 GameObject:
   m_ObjectHideFlags: 0
@@ -2254,6 +2777,33 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 449314746}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &457909763
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 457909764}
+  m_Layer: 13
+  m_Name: Dragon_Extra_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &457909764
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 457909763}
+  m_LocalRotation: {x: -2.29686947e-07, y: -3.02246747e-07, z: .744230688, w: .667922676}
+  m_LocalPosition: {x: .00233730883, y: -.196960211, z: -1.96559977e-05}
+  m_LocalScale: {x: .999999762, y: 1.00000012, z: 1.00000012}
+  m_Children: []
+  m_Father: {fileID: 1179504236}
+  m_RootOrder: 0
 --- !u!1 &470355285
 GameObject:
   m_ObjectHideFlags: 0
@@ -2454,6 +3004,61 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 481722163}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &524570872
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 524570873}
+  m_Layer: 13
+  m_Name: Dragon_RArm_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &524570873
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 524570872}
+  m_LocalRotation: {x: -.611068904, y: .776596367, z: -.099984467, w: -.116172269}
+  m_LocalPosition: {x: -.00549738714, y: -.0216043014, z: -.193109378}
+  m_LocalScale: {x: .999999881, y: .999999285, z: .99999994}
+  m_Children:
+  - {fileID: 273625880}
+  m_Father: {fileID: 1119341704}
+  m_RootOrder: 4
+--- !u!1 &524928708
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 524928709}
+  m_Layer: 13
+  m_Name: Dragon_RLeg_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &524928709
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 524928708}
+  m_LocalRotation: {x: -.0817390457, y: -.0567993373, z: -.548308671, w: .830331385}
+  m_LocalPosition: {x: -.188418686, y: -9.08374798e-09, z: 2.42233273e-08}
+  m_LocalScale: {x: 1.00000215, y: .999998093, z: 1.00000012}
+  m_Children: []
+  m_Father: {fileID: 1174828720}
+  m_RootOrder: 0
 --- !u!1 &547435956
 GameObject:
   m_ObjectHideFlags: 0
@@ -2554,6 +3159,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 547435956}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &548575889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 548575890}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit2_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &548575890
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 548575889}
+  m_LocalRotation: {x: -.00865781959, y: -.455878973, z: .0169298295, w: .889838636}
+  m_LocalPosition: {x: -.198201269, y: -8.72039777e-07, z: -.0981639922}
+  m_LocalScale: {x: 1.00004911, y: .99998033, z: .999969959}
+  m_Children:
+  - {fileID: 145181460}
+  m_Father: {fileID: 115594536}
+  m_RootOrder: 1
 --- !u!1 &586230724
 GameObject:
   m_ObjectHideFlags: 0
@@ -3081,6 +3714,65 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 644661012}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &648725607
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 648725608}
+  m_Layer: 13
+  m_Name: Dragon_LArm_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &648725608
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 648725607}
+  m_LocalRotation: {x: -.0215364099, y: .00020028693, z: -.631111681, w: .775393009}
+  m_LocalPosition: {x: -.24197793, y: -4.84466547e-08, z: 0}
+  m_LocalScale: {x: 1.00000083, y: .999999046, z: .99999994}
+  m_Children: []
+  m_Father: {fileID: 722876308}
+  m_RootOrder: 0
+--- !u!1 &668721287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 668721288}
+  m_Layer: 13
+  m_Name: Dragon_Hip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &668721288
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 668721287}
+  m_LocalRotation: {x: .707106888, y: -5.3385012e-08, z: -.70710665, w: -5.33850333e-08}
+  m_LocalPosition: {x: -7.31496501e-14, y: .742307842, z: 2.33022661e-07}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 151762271}
+  - {fileID: 2098928280}
+  - {fileID: 1188692999}
+  - {fileID: 439187682}
+  - {fileID: 1473072346}
+  m_Father: {fileID: 30483809}
+  m_RootOrder: 1
 --- !u!1 &671269949
 GameObject:
   m_ObjectHideFlags: 0
@@ -3291,6 +3983,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 719292620}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &722876307
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 722876308}
+  m_Layer: 13
+  m_Name: Dragon_LArm_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &722876308
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 722876307}
+  m_LocalRotation: {x: -.0381412655, y: .127427682, z: -.350814164, w: .926950276}
+  m_LocalPosition: {x: -.351545453, y: -2.5434494e-07, z: 1.45339968e-07}
+  m_LocalScale: {x: 1.00000024, y: .999999404, z: 1.0000006}
+  m_Children:
+  - {fileID: 648725608}
+  m_Father: {fileID: 1024894916}
+  m_RootOrder: 0
 --- !u!1 &734905150
 GameObject:
   m_ObjectHideFlags: 0
@@ -3391,6 +4111,33 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 734905150}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &747407384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 747407385}
+  m_Layer: 13
+  m_Name: Dragon_Extra_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &747407385
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 747407384}
+  m_LocalRotation: {x: -7.57903784e-09, y: 2.11353619e-08, z: -.303811848, w: .952732027}
+  m_LocalPosition: {x: -.0743482113, y: .150618136, z: 0}
+  m_LocalScale: {x: .99999994, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1473072346}
+  m_RootOrder: 0
 --- !u!1 &767321473
 GameObject:
   m_ObjectHideFlags: 0
@@ -3491,6 +4238,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 767321473}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &769198577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 769198578}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit4_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &769198578
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 769198577}
+  m_LocalRotation: {x: -.000169483261, y: -.777069211, z: .000805083895, w: .629414678}
+  m_LocalPosition: {x: -.0671240017, y: .000217816167, z: -.0913588107}
+  m_LocalScale: {x: 1.00002193, y: .999998689, z: .999978244}
+  m_Children:
+  - {fileID: 1203874672}
+  m_Father: {fileID: 115594536}
+  m_RootOrder: 3
 --- !u!1 &785543642
 GameObject:
   m_ObjectHideFlags: 0
@@ -3691,6 +4466,258 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 809070759}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &809634501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 809634502}
+  m_Layer: 13
+  m_Name: Dragon_RLeg_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &809634502
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 809634501}
+  m_LocalRotation: {x: -.0657408461, y: -.0696326643, z: .562274814, w: .821386933}
+  m_LocalPosition: {x: -.320628196, y: 0, z: -2.42233273e-08}
+  m_LocalScale: {x: 1.00000131, y: .99999851, z: 1.00000012}
+  m_Children:
+  - {fileID: 1174828720}
+  m_Father: {fileID: 1188692999}
+  m_RootOrder: 0
+--- !u!1 &814628261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 814628262}
+  m_Layer: 13
+  m_Name: Dragon_LLeg_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &814628262
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 814628261}
+  m_LocalRotation: {x: .0657412484, y: .0696324557, z: .562275767, w: .821386278}
+  m_LocalPosition: {x: -.320628136, y: 0, z: 0}
+  m_LocalScale: {x: 1.00000167, y: .999998331, z: .999999821}
+  m_Children:
+  - {fileID: 121154577}
+  m_Father: {fileID: 2098928280}
+  m_RootOrder: 0
+--- !u!1 &825698894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 825698895}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit1_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &825698895
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 825698894}
+  m_LocalRotation: {x: .00345678278, y: -.33038035, z: -.0128453467, w: .943754196}
+  m_LocalPosition: {x: -.759220183, y: 0, z: 0}
+  m_LocalScale: {x: 1.00005281, y: .99998045, z: .999966383}
+  m_Children: []
+  m_Father: {fileID: 2072579656}
+  m_RootOrder: 0
+--- !u!1 &847113160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 847113161}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit2_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &847113161
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 847113160}
+  m_LocalRotation: {x: .000918176316, y: .320829004, z: -.0129621467, w: .947048008}
+  m_LocalPosition: {x: -.763302207, y: 9.68933094e-08, z: 9.68933094e-08}
+  m_LocalScale: {x: .999995887, y: 1.00000095, z: 1.00000286}
+  m_Children: []
+  m_Father: {fileID: 1510336450}
+  m_RootOrder: 0
+--- !u!1 &877362183
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 877362184}
+  m_Layer: 13
+  m_Name: Dragon_LLeg_Platform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &877362184
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 877362183}
+  m_LocalRotation: {x: .500000119, y: -.49999997, z: -.499999881, w: .50000006}
+  m_LocalPosition: {x: -.31382817, y: 7.23951672e-08, z: -.151823744}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 30483809}
+  m_RootOrder: 3
+--- !u!1 &896299883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 896299884}
+  m_Layer: 13
+  m_Name: Dragon_Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &896299884
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 896299883}
+  m_LocalRotation: {x: -3.52507854e-08, y: -3.0064399e-08, z: -.0738010108, w: .997272968}
+  m_LocalPosition: {x: -.00495289546, y: -.102755547, z: 0}
+  m_LocalScale: {x: 1.00000143, y: .999998093, z: 1.00000036}
+  m_Children:
+  - {fileID: 1937205511}
+  - {fileID: 1076805210}
+  - {fileID: 2136731358}
+  - {fileID: 2126289965}
+  - {fileID: 898349195}
+  - {fileID: 327359090}
+  m_Father: {fileID: 1724248394}
+  m_RootOrder: 0
+--- !u!1 &898349194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 898349195}
+  m_Layer: 13
+  m_Name: Dragon_R_Up_EyeLead
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &898349195
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 898349194}
+  m_LocalRotation: {x: -.201542422, y: -.540554702, z: -.0679781735, w: .813978016}
+  m_LocalPosition: {x: -.245605543, y: -.0444028601, z: -.0559346899}
+  m_LocalScale: {x: .999998987, y: .999998331, z: 1.00000298}
+  m_Children: []
+  m_Father: {fileID: 896299884}
+  m_RootOrder: 4
+--- !u!1 &899118410
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 899118411}
+  m_Layer: 13
+  m_Name: Dragon_LWing_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &899118411
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 899118410}
+  m_LocalRotation: {x: -.0768096149, y: .107104518, z: -.777929425, w: .614373446}
+  m_LocalPosition: {x: -.286653161, y: 0, z: -9.68933094e-08}
+  m_LocalScale: {x: .999998629, y: 1.00000739, z: .999993503}
+  m_Children:
+  - {fileID: 115594536}
+  m_Father: {fileID: 919426535}
+  m_RootOrder: 0
+--- !u!1 &906181989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 906181990}
+  m_Layer: 13
+  m_Name: Dragon_Extra_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &906181990
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 906181989}
+  m_LocalRotation: {x: 6.13562952e-05, y: 3.4828965e-05, z: .897657037, w: .440694749}
+  m_LocalPosition: {x: -.224850714, y: -.378853619, z: -3.75955751e-05}
+  m_LocalScale: {x: 1, y: .999999821, z: .99999994}
+  m_Children: []
+  m_Father: {fileID: 439187682}
+  m_RootOrder: 1
 --- !u!1 &914205465
 GameObject:
   m_ObjectHideFlags: 0
@@ -3791,6 +4818,62 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 914205465}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &918072172
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 918072173}
+  m_Layer: 13
+  m_Name: Dragon_RWing_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &918072173
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 918072172}
+  m_LocalRotation: {x: .569330096, y: -.464627832, z: .22152622, w: .641022921}
+  m_LocalPosition: {x: -.251636803, y: 0, z: 0}
+  m_LocalScale: {x: 1.00000167, y: .99999994, z: .999998331}
+  m_Children:
+  - {fileID: 1009184661}
+  m_Father: {fileID: 325670545}
+  m_RootOrder: 0
+--- !u!1 &919426534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 919426535}
+  m_Layer: 13
+  m_Name: Dragon_LWing_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &919426535
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 919426534}
+  m_LocalRotation: {x: -.569329977, y: .464627981, z: .221526444, w: .641022921}
+  m_LocalPosition: {x: -.251636803, y: 0, z: -4.84466547e-08}
+  m_LocalScale: {x: .99999851, y: .999999821, z: 1.00000143}
+  m_Children:
+  - {fileID: 899118411}
+  m_Father: {fileID: 127400229}
+  m_RootOrder: 0
 --- !u!1 &920596565
 GameObject:
   m_ObjectHideFlags: 0
@@ -4033,6 +5116,61 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 984822600}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1002137074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1002137075}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit3_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1002137075
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1002137074}
+  m_LocalRotation: {x: .0050965785, y: .264185786, z: -.00947461464, w: .964411795}
+  m_LocalPosition: {x: -.665640771, y: -9.68933094e-08, z: 0}
+  m_LocalScale: {x: .999984205, y: 1.00001907, z: .999995649}
+  m_Children: []
+  m_Father: {fileID: 1840644816}
+  m_RootOrder: 0
+--- !u!1 &1009184660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1009184661}
+  m_Layer: 13
+  m_Name: Dragon_RWing_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1009184661
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1009184660}
+  m_LocalRotation: {x: .0768100396, y: -.107105002, z: -.777929127, w: .614373684}
+  m_LocalPosition: {x: -.286653131, y: 0, z: 0}
+  m_LocalScale: {x: 1.00000179, y: .999991596, z: 1.00000596}
+  m_Children:
+  - {fileID: 1411972350}
+  m_Father: {fileID: 918072173}
+  m_RootOrder: 0
 --- !u!1 &1012150891
 GameObject:
   m_ObjectHideFlags: 0
@@ -4233,6 +5371,62 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1020992563}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1024894915
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1024894916}
+  m_Layer: 13
+  m_Name: Dragon_LArm_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1024894916
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1024894915}
+  m_LocalRotation: {x: -.611112356, y: .776521683, z: .100154929, w: .116296038}
+  m_LocalPosition: {x: -.00549743557, y: -.021604253, z: .193109363}
+  m_LocalScale: {x: 1.00000048, y: .999999583, z: 1.00000012}
+  m_Children:
+  - {fileID: 722876308}
+  m_Father: {fileID: 1119341704}
+  m_RootOrder: 1
+--- !u!1 &1033651940
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1033651941}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit4_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1033651941
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1033651940}
+  m_LocalRotation: {x: .000169628664, y: .777074754, z: .000805023708, w: .629407883}
+  m_LocalPosition: {x: -.0671203658, y: .000217816167, z: .0913621038}
+  m_LocalScale: {x: .999978662, y: 1.0000006, z: 1.00001943}
+  m_Children:
+  - {fileID: 158446119}
+  m_Father: {fileID: 1411972350}
+  m_RootOrder: 3
 --- !u!1 &1035672618
 GameObject:
   m_ObjectHideFlags: 0
@@ -4255,7 +5449,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1035672618}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -126.099998, y: 8.19999981, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 73144736}
@@ -4442,6 +5636,150 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1049353000}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1076805209
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1076805210}
+  m_Layer: 13
+  m_Name: Dragon_L_Down_EyeLead
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1076805210
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1076805209}
+  m_LocalRotation: {x: .812611043, y: -.0827314854, z: -.544121623, w: -.191704139}
+  m_LocalPosition: {x: -.245605648, y: -.0444028117, z: .0559346899}
+  m_LocalScale: {x: .999996603, y: 1.00000083, z: 1.00000286}
+  m_Children: []
+  m_Father: {fileID: 896299884}
+  m_RootOrder: 1
+--- !u!1 &1119341703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1119341704}
+  m_Layer: 13
+  m_Name: Dragon_Chest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1119341704
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1119341703}
+  m_LocalRotation: {x: -4.43529188e-06, y: 7.01828976e-05, z: -.00329178758, w: .999994576}
+  m_LocalPosition: {x: -.515497208, y: 0, z: -1.47847463e-11}
+  m_LocalScale: {x: 1.00000024, y: .99999994, z: 1}
+  m_Children:
+  - {fileID: 1954668738}
+  - {fileID: 1024894916}
+  - {fileID: 127400229}
+  - {fileID: 1179504236}
+  - {fileID: 524570873}
+  - {fileID: 325670545}
+  m_Father: {fileID: 439187682}
+  m_RootOrder: 0
+--- !u!1 &1170774205
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1170774206}
+  m_Layer: 13
+  m_Name: Dragon_LArm_Platform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1170774206
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1170774205}
+  m_LocalRotation: {x: .500000119, y: -.49999997, z: -.499999881, w: .50000006}
+  m_LocalPosition: {x: -.294352919, y: .0304789264, z: .365996987}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 30483809}
+  m_RootOrder: 2
+--- !u!1 &1174828719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1174828720}
+  m_Layer: 13
+  m_Name: Dragon_RLeg_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1174828720
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1174828719}
+  m_LocalRotation: {x: .0661001131, y: -.112247698, z: -.647768438, w: .750617921}
+  m_LocalPosition: {x: -.233198136, y: 3.17325589e-06, z: -1.69563293e-06}
+  m_LocalScale: {x: 1.00000346, y: .999998391, z: .999998569}
+  m_Children:
+  - {fileID: 524928709}
+  m_Father: {fileID: 809634502}
+  m_RootOrder: 0
+--- !u!1 &1179504235
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1179504236}
+  m_Layer: 13
+  m_Name: Dragon_Neck1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1179504236
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1179504235}
+  m_LocalRotation: {x: 8.499258e-06, y: -4.84598713e-05, z: -.058204066, w: .998304725}
+  m_LocalPosition: {x: -.0743340775, y: -.0270190872, z: 1.99239238e-08}
+  m_LocalScale: {x: .999999523, y: 1.00000036, z: 1.00000024}
+  m_Children:
+  - {fileID: 457909764}
+  - {fileID: 426062108}
+  m_Father: {fileID: 1119341704}
+  m_RootOrder: 3
 --- !u!1 &1185394468
 GameObject:
   m_ObjectHideFlags: 0
@@ -4542,6 +5880,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1185394468}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1188692998
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1188692999}
+  m_Layer: 13
+  m_Name: Dragon_RLeg_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1188692999
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1188692998}
+  m_LocalRotation: {x: .731855392, y: -.666429281, z: .105400391, w: .0956582054}
+  m_LocalPosition: {x: 3.72736615e-08, y: .0967406034, z: -.208600461}
+  m_LocalScale: {x: .999999583, y: .99999994, z: .999999881}
+  m_Children:
+  - {fileID: 809634502}
+  m_Father: {fileID: 668721288}
+  m_RootOrder: 2
 --- !u!1 &1200132973
 GameObject:
   m_ObjectHideFlags: 0
@@ -4642,6 +6008,33 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1200132973}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1203874671
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1203874672}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit4_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1203874672
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1203874671}
+  m_LocalRotation: {x: -.00742817903, y: -.236445352, z: -.00580315245, w: .971599102}
+  m_LocalPosition: {x: -.467825025, y: 9.68933094e-08, z: -4.84466547e-08}
+  m_LocalScale: {x: .999981105, y: .999998569, z: 1.00001931}
+  m_Children: []
+  m_Father: {fileID: 769198578}
+  m_RootOrder: 0
 --- !u!1 &1207566365
 GameObject:
   m_ObjectHideFlags: 0
@@ -4842,6 +6235,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1225639171}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1247476440
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1247476441}
+  m_Layer: 13
+  m_Name: Editor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1247476441
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1247476440}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 30483809}
+  m_Father: {fileID: 2084568272}
+  m_RootOrder: 1
 --- !u!1 &1262716884
 GameObject:
   m_ObjectHideFlags: 0
@@ -5470,6 +6891,35 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1360528252}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1371157161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1371157162}
+  m_Layer: 13
+  m_Name: Dragon_Tail2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1371157162
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1371157161}
+  m_LocalRotation: {x: 3.85306507e-08, y: 3.50816478e-08, z: -.0431046113, w: .999070585}
+  m_LocalPosition: {x: -.305415958, y: 4.84466547e-08, z: 0}
+  m_LocalScale: {x: 1.00000012, y: 1.00000012, z: 1}
+  m_Children:
+  - {fileID: 1491450800}
+  - {fileID: 1976703178}
+  m_Father: {fileID: 1473072346}
+  m_RootOrder: 1
 --- !u!1 &1376370726
 GameObject:
   m_ObjectHideFlags: 0
@@ -5670,6 +7120,131 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1387506082}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1397727546
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1397727547}
+  - 137: {fileID: 1397727548}
+  m_Layer: 13
+  m_Name: Dragon_Mesh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1397727547
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1397727546}
+  m_LocalRotation: {x: -.722037613, y: 3.35105714e-18, z: -3.35105776e-18, w: .691853821}
+  m_LocalPosition: {x: -4.91618584e-18, y: 0, z: 0}
+  m_LocalScale: {x: 39.370079, y: 39.3700752, z: 39.3700752}
+  m_Children: []
+  m_Father: {fileID: 30483809}
+  m_RootOrder: 4
+--- !u!137 &1397727548
+SkinnedMeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1397727546}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 6f4c95455bacf4afb8acce584bb5ac4f, type: 2}
+  - {fileID: 2100000, guid: b20ad904ec1124d75a37d6b2cd537298, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  serializedVersion: 2
+  m_Quality: 0
+  m_UpdateWhenOffscreen: 0
+  m_Mesh: {fileID: 4300000, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
+  m_Bones:
+  - {fileID: 1179504236}
+  - {fileID: 1024894916}
+  - {fileID: 1119341704}
+  - {fileID: 127400229}
+  - {fileID: 1473072346}
+  - {fileID: 2098928280}
+  - {fileID: 668721288}
+  - {fileID: 151762271}
+  - {fileID: 1203874672}
+  - {fileID: 1371157162}
+  - {fileID: 426062108}
+  - {fileID: 457909764}
+  - {fileID: 896299884}
+  - {fileID: 1937205511}
+  - {fileID: 906181990}
+  - {fileID: 1954668738}
+  - {fileID: 1976703178}
+  - {fileID: 1829317612}
+  - {fileID: 1956434080}
+  - {fileID: 407935729}
+  - {fileID: 814628262}
+  - {fileID: 121154577}
+  - {fileID: 1751823091}
+  - {fileID: 722876308}
+  - {fileID: 648725608}
+  - {fileID: 2136731358}
+  - {fileID: 919426535}
+  - {fileID: 1076805210}
+  - {fileID: 59638516}
+  - {fileID: 747407385}
+  - {fileID: 1491450800}
+  - {fileID: 115594536}
+  - {fileID: 899118411}
+  - {fileID: 769198578}
+  - {fileID: 1848764476}
+  - {fileID: 548575890}
+  - {fileID: 13993283}
+  - {fileID: 145181460}
+  - {fileID: 2072579656}
+  - {fileID: 825698895}
+  - {fileID: 524570873}
+  - {fileID: 325670545}
+  - {fileID: 1188692999}
+  - {fileID: 918072173}
+  - {fileID: 158446119}
+  - {fileID: 809634502}
+  - {fileID: 1009184661}
+  - {fileID: 1411972350}
+  - {fileID: 1174828720}
+  - {fileID: 524928709}
+  - {fileID: 273625880}
+  - {fileID: 1992345261}
+  - {fileID: 898349195}
+  - {fileID: 2126289965}
+  - {fileID: 1033651941}
+  - {fileID: 1510336450}
+  - {fileID: 1840644816}
+  - {fileID: 441438410}
+  - {fileID: 1002137075}
+  - {fileID: 847113161}
+  - {fileID: 37595617}
+  m_BlendShapeWeights: []
+  m_RootBone: {fileID: 668721288}
+  m_AABB:
+    m_Center: {x: .278286874, y: .0914588571, z: -5.47170639e-05}
+    m_Extent: {x: 1.84734988, y: .737869918, z: 2.21094751}
+  m_DirtyAABB: 0
 --- !u!1 &1409058194
 GameObject:
   m_ObjectHideFlags: 0
@@ -5770,6 +7345,37 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1409058194}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1411972349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1411972350}
+  m_Layer: 13
+  m_Name: Dragon_RWing_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1411972350
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1411972349}
+  m_LocalRotation: {x: .707993686, y: .148602992, z: .240451127, w: .647182643}
+  m_LocalPosition: {x: -.308723509, y: 0, z: 0}
+  m_LocalScale: {x: .99998188, y: .999989629, z: 1.00002766}
+  m_Children:
+  - {fileID: 441438410}
+  - {fileID: 1510336450}
+  - {fileID: 1840644816}
+  - {fileID: 1033651941}
+  m_Father: {fileID: 1009184661}
+  m_RootOrder: 0
 --- !u!1 &1424568489
 GameObject:
   m_ObjectHideFlags: 0
@@ -6002,6 +7608,35 @@ Transform:
   - {fileID: 1049353001}
   m_Father: {fileID: 163401762}
   m_RootOrder: 0
+--- !u!1 &1473072345
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1473072346}
+  m_Layer: 13
+  m_Name: Dragon_Tail1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1473072346
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1473072345}
+  m_LocalRotation: {x: 4.32034994e-08, y: 1.73178506e-07, z: .996249855, w: -.0865229443}
+  m_LocalPosition: {x: .210711166, y: .0270855557, z: -4.08980716e-09}
+  m_LocalScale: {x: 1, y: 1.00000012, z: 1}
+  m_Children:
+  - {fileID: 747407385}
+  - {fileID: 1371157162}
+  m_Father: {fileID: 668721288}
+  m_RootOrder: 4
 --- !u!1 &1479598018
 GameObject:
   m_ObjectHideFlags: 0
@@ -6102,6 +7737,33 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1479598018}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1491450799
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1491450800}
+  m_Layer: 13
+  m_Name: Dragon_Extra_06
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1491450800
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1491450799}
+  m_LocalRotation: {x: 3.39739934e-08, y: 1.49934021e-08, z: -.148848221, w: .988860071}
+  m_LocalPosition: {x: -.0676678196, y: .129610837, z: 9.94888616e-09}
+  m_LocalScale: {x: .999999881, y: .99999994, z: .99999994}
+  m_Children: []
+  m_Father: {fileID: 1371157162}
+  m_RootOrder: 0
 --- !u!1 &1496494837
 GameObject:
   m_ObjectHideFlags: 0
@@ -6257,6 +7919,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1503736022}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1510336449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1510336450}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit2_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1510336450
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1510336449}
+  m_LocalRotation: {x: .00865901448, y: .455860883, z: .0169298612, w: .889847875}
+  m_LocalPosition: {x: -.198193565, y: -7.75146475e-07, z: .0981639698}
+  m_LocalScale: {x: .99995172, y: 1.00001907, z: 1.00002837}
+  m_Children:
+  - {fileID: 847113161}
+  m_Father: {fileID: 1411972350}
+  m_RootOrder: 1
 --- !u!1 &1543040491
 GameObject:
   m_ObjectHideFlags: 0
@@ -7621,6 +9311,88 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1721196408}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1724248393
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1724248394}
+  m_Layer: 13
+  m_Name: Dragon_Head_Ctrl
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1724248394
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1724248393}
+  m_LocalRotation: {x: 1.62987162e-05, y: 5.59056607e-05, z: .0353249907, w: .99937588}
+  m_LocalPosition: {x: -.227602482, y: 0, z: 5.91389828e-12}
+  m_LocalScale: {x: .999997973, y: 1.00000143, z: 1.00000024}
+  m_Children:
+  - {fileID: 896299884}
+  m_Father: {fileID: 426062108}
+  m_RootOrder: 0
+--- !u!1 &1751823090
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1751823091}
+  m_Layer: 13
+  m_Name: Dragon_LLeg_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1751823091
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1751823090}
+  m_LocalRotation: {x: .0817397982, y: .056798663, z: -.548308969, w: .830331147}
+  m_LocalPosition: {x: -.188418657, y: -6.05583184e-09, z: 0}
+  m_LocalScale: {x: 1.0000093, y: .999990582, z: 1.00000048}
+  m_Children: []
+  m_Father: {fileID: 121154577}
+  m_RootOrder: 0
+--- !u!1 &1758660245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1758660246}
+  m_Layer: 13
+  m_Name: Dragon_RLeg_Platform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1758660246
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1758660245}
+  m_LocalRotation: {x: .500000119, y: -.49999997, z: -.499999881, w: .50000006}
+  m_LocalPosition: {x: .31382823, y: 7.23952027e-08, z: -.151823655}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 30483809}
+  m_RootOrder: 6
 --- !u!1 &1766141999
 GameObject:
   m_ObjectHideFlags: 0
@@ -7726,6 +9498,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1766141999}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1829317611
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1829317612}
+  m_Layer: 13
+  m_Name: Dragon_Tail4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1829317612
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1829317611}
+  m_LocalRotation: {x: 3.65882147e-09, y: 6.13049309e-08, z: .0112464465, w: .999936759}
+  m_LocalPosition: {x: -.299268067, y: 0, z: -1.15505826e-14}
+  m_LocalScale: {x: .99999994, y: .99999994, z: 1}
+  m_Children:
+  - {fileID: 1956434080}
+  m_Father: {fileID: 1976703178}
+  m_RootOrder: 0
 --- !u!1 &1836705375
 GameObject:
   m_ObjectHideFlags: 0
@@ -7826,6 +9626,62 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1836705375}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1840644815
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1840644816}
+  m_Layer: 13
+  m_Name: Dragon_RWing_Digit3_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1840644816
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1840644815}
+  m_LocalRotation: {x: .0216183458, y: .641179383, z: .0258438047, w: .766650975}
+  m_LocalPosition: {x: -.12064869, y: -9.68933094e-08, z: .0979901627}
+  m_LocalScale: {x: .999938786, y: 1.00001884, z: 1.00004113}
+  m_Children:
+  - {fileID: 1002137075}
+  m_Father: {fileID: 1411972350}
+  m_RootOrder: 2
+--- !u!1 &1848764475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1848764476}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit3_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1848764476
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1848764475}
+  m_LocalRotation: {x: -.0216105916, y: -.641184926, z: .0258477684, w: .766646445}
+  m_LocalPosition: {x: -.120653294, y: -1.93786619e-07, z: -.0979901627}
+  m_LocalScale: {x: 1.00006258, y: .99998039, z: .999956429}
+  m_Children:
+  - {fileID: 13993283}
+  m_Father: {fileID: 115594536}
+  m_RootOrder: 2
 --- !u!1 &1887191643
 GameObject:
   m_ObjectHideFlags: 0
@@ -7926,6 +9782,61 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1887191643}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1898807552
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1898807553}
+  m_Layer: 13
+  m_Name: Dragon_
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1898807553
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1898807552}
+  m_LocalRotation: {x: .500000119, y: -.49999997, z: -.499999881, w: .50000006}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 30483809}
+  m_RootOrder: 0
+--- !u!1 &1937205510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1937205511}
+  m_Layer: 13
+  m_Name: Dragon_Jaw
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1937205511
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1937205510}
+  m_LocalRotation: {x: -2.71130567e-08, y: -8.60855351e-08, z: -.342788875, w: .939412475}
+  m_LocalPosition: {x: .00965910032, y: .0618484542, z: 3.27275131e-08}
+  m_LocalScale: {x: 1.0000006, y: .999998987, z: 1.00000048}
+  m_Children:
+  - {fileID: 59638516}
+  m_Father: {fileID: 896299884}
+  m_RootOrder: 0
 --- !u!1 &1953801266
 GameObject:
   m_ObjectHideFlags: 0
@@ -8026,6 +9937,61 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1953801266}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1954668737
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1954668738}
+  m_Layer: 13
+  m_Name: Dragon_Extra_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1954668738
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1954668737}
+  m_LocalRotation: {x: 3.77137361e-08, y: 4.20416093e-08, z: .719938099, w: .694038272}
+  m_LocalPosition: {x: .0786259621, y: -.365763128, z: 5.52298971e-08}
+  m_LocalScale: {x: 1.00000024, y: .999999702, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1119341704}
+  m_RootOrder: 0
+--- !u!1 &1956434079
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1956434080}
+  m_Layer: 13
+  m_Name: Dragon_Tail5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1956434080
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1956434079}
+  m_LocalRotation: {x: -5.01192332e-09, y: -3.88988752e-08, z: .0599516369, w: .998201311}
+  m_LocalPosition: {x: -.279595822, y: 0, z: 0}
+  m_LocalScale: {x: 1.00000012, y: 1.00000024, z: .99999994}
+  m_Children:
+  - {fileID: 407935729}
+  m_Father: {fileID: 1829317612}
+  m_RootOrder: 0
 --- !u!1 &1964929164
 GameObject:
   m_ObjectHideFlags: 0
@@ -8126,6 +10092,61 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1964929164}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1976703177
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1976703178}
+  m_Layer: 13
+  m_Name: Dragon_Tail3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1976703178
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1976703177}
+  m_LocalRotation: {x: 4.12409022e-08, y: -1.21751796e-07, z: -.0155795077, w: .999878645}
+  m_LocalPosition: {x: -.3653467, y: 0, z: 0}
+  m_LocalScale: {x: .99999994, y: .99999994, z: 1}
+  m_Children:
+  - {fileID: 1829317612}
+  m_Father: {fileID: 1371157162}
+  m_RootOrder: 1
+--- !u!1 &1992345260
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1992345261}
+  m_Layer: 13
+  m_Name: Dragon_RArm_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1992345261
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1992345260}
+  m_LocalRotation: {x: .0213380419, y: -.000649045105, z: -.631041706, w: .775455117}
+  m_LocalPosition: {x: -.241977915, y: 0, z: 2.42233273e-08}
+  m_LocalScale: {x: 1, y: .999999881, z: 1}
+  m_Children: []
+  m_Father: {fileID: 273625880}
+  m_RootOrder: 0
 --- !u!1 &1996510737
 GameObject:
   m_ObjectHideFlags: 0
@@ -8181,6 +10202,33 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 44477ad3715d87440849bc5d146d304d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+--- !u!1 &2042743281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2042743282}
+  m_Layer: 13
+  m_Name: Dragon_RArm_Platform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2042743282
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2042743281}
+  m_LocalRotation: {x: .500000119, y: -.49999997, z: -.499999881, w: .50000006}
+  m_LocalPosition: {x: .2943528, y: .0304789264, z: .365997076}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 30483809}
+  m_RootOrder: 5
 --- !u!1 &2045734126
 GameObject:
   m_ObjectHideFlags: 0
@@ -8381,6 +10429,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2054535024}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2072579655
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2072579656}
+  m_Layer: 13
+  m_Name: Dragon_LWing_Digit1_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2072579656
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2072579655}
+  m_LocalRotation: {x: -.00433125766, y: -.301340073, z: .0134820016, w: .953411579}
+  m_LocalPosition: {x: -.249181494, y: .000198146823, z: -.0606359541}
+  m_LocalScale: {x: 1.00003481, y: .999998689, z: .999965906}
+  m_Children:
+  - {fileID: 825698895}
+  m_Father: {fileID: 115594536}
+  m_RootOrder: 0
 --- !u!1 &2084568271
 GameObject:
   m_ObjectHideFlags: 0
@@ -8405,10 +10481,11 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2084568271}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -125, y: 10, z: 0}
+  m_LocalPosition: {x: 1.10000002, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1035672619}
+  - {fileID: 1247476441}
   m_Father: {fileID: 163401762}
   m_RootOrder: 2
 --- !u!114 &2084568273
@@ -8638,6 +10715,34 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2094282268}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2098928279
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2098928280}
+  m_Layer: 13
+  m_Name: Dragon_LLeg_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2098928280
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2098928279}
+  m_LocalRotation: {x: .731855214, y: -.66642952, z: -.105400503, w: -.0956580713}
+  m_LocalPosition: {x: 8.00801869e-10, y: .0967406034, z: .208600461}
+  m_LocalScale: {x: .999999642, y: .999999642, z: .999999762}
+  m_Children:
+  - {fileID: 814628262}
+  m_Father: {fileID: 668721288}
+  m_RootOrder: 1
 --- !u!1 &2111680816
 GameObject:
   m_ObjectHideFlags: 0
@@ -8938,3 +11043,57 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2122754821}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2126289964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2126289965}
+  m_Layer: 13
+  m_Name: Dragon_R_EyeLead_
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2126289965
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2126289964}
+  m_LocalRotation: {x: .812611043, y: -.0827314407, z: .544121623, w: .191704065}
+  m_LocalPosition: {x: -.245605543, y: -.0444028601, z: -.0559346899}
+  m_LocalScale: {x: .999998629, y: .999997854, z: 1.00000298}
+  m_Children: []
+  m_Father: {fileID: 896299884}
+  m_RootOrder: 3
+--- !u!1 &2136731357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2136731358}
+  m_Layer: 13
+  m_Name: Dragon_L_Up_EyeLead
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2136731358
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2136731357}
+  m_LocalRotation: {x: .201542392, y: .540554702, z: -.0679782256, w: .813978016}
+  m_LocalPosition: {x: -.245605648, y: -.0444028117, z: .0559346899}
+  m_LocalScale: {x: .999996483, y: 1.00000048, z: 1.00000274}
+  m_Children: []
+  m_Father: {fileID: 896299884}
+  m_RootOrder: 2
