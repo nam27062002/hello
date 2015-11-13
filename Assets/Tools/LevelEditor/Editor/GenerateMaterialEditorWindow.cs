@@ -165,12 +165,12 @@ namespace LevelEditor {
 					GUILayout.Box("", style, GUILayout.Width(50), GUILayout.Height(50));
 					
 					if(i%numRows == numRows-1) {
-						EditorUtils.EndVerticalSafe();
+						EditorGUILayoutExt.EndVerticalSafe();
 						if(i != m_colors.Count - 1) GUILayout.Space(5);
 					}
 				}
 				GUILayout.FlexibleSpace();
-			} EditorUtils.EndHorizontalSafe();
+			} EditorGUILayoutExt.EndHorizontalSafe();
 
 			GUILayout.Space(10);
 			

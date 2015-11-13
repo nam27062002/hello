@@ -106,7 +106,7 @@ namespace LevelEditor {
 					EditorGUIUtility.labelWidth = EditorStyles.largeLabel.CalcSize(new GUIContent("Probability")).x;
 					EditorGUILayout.Slider(probabilityProp, 0f, 1f, "Probability");
 					EditorGUIUtility.labelWidth = 0;
-				} EditorUtils.EndHorizontalSafe();
+				} EditorGUILayoutExt.EndHorizontalSafe();
 
 				// Foldable content
 				if(probabilityProp.isExpanded) {
@@ -143,7 +143,7 @@ namespace LevelEditor {
 									actualListProp.DeleteArrayElementAtIndex(j);
 									j--;	// We just deleted element j, so all remaining elements have moved up one position - keep up
 								}
-							} EditorUtils.EndHorizontalSafe();
+							} EditorGUILayoutExt.EndHorizontalSafe();
 						}
 					}
 
@@ -156,7 +156,7 @@ namespace LevelEditor {
 							actualListProp.arraySize++;
 						}
 						GUILayout.FlexibleSpace();
-					} EditorUtils.EndHorizontalSafe();
+					} EditorGUILayoutExt.EndHorizontalSafe();
 
 					// Some spacing to breath
 					GUILayout.Space(10);

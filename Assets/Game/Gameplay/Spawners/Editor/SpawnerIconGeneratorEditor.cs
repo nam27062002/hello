@@ -69,8 +69,8 @@ public class SpawnerIconGeneratorEditor : Editor {
 				GUILayout.Label("Background Color:");
 				newColor = EditorGUILayout.ColorField(typedTarget.m_backgroundColor);
 				GUILayout.FlexibleSpace();
-			} EditorUtils.EndVerticalSafe();
-		} EditorUtils.EndHorizontalSafe();
+			} EditorGUILayoutExt.EndVerticalSafe();
+		} EditorGUILayoutExt.EndHorizontalSafe();
 
 		// Button to manually recreate object's icon
 		GUILayout.Space(5);

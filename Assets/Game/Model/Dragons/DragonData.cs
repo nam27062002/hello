@@ -109,7 +109,7 @@ public class DragonData {
 	/// </summary>
 	public DragonData() {
 		// Progression
-		m_progression = new DragonProgression(this, 500f);
+		m_progression = new DragonProgression(this);
 		
 		// Skills
 		m_skills = new DragonSkill[(int)DragonSkill.EType.COUNT];

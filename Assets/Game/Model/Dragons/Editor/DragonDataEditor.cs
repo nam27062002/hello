@@ -64,7 +64,7 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// ID and start of the General Data section
 			if(_property.name == "m_id") {
 				// Draw a separator
-				propertyHeight = EditorUtils.Separator(m_pos, "General Data");
+				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("General Data", 30f));
 				AdvancePos(propertyHeight);
 
 				// ID can't be changed, so don't do anything else
@@ -73,7 +73,7 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Start of the Progression section
 			else if(_property.name == "m_progression") {
 				// Draw a separator first
-				propertyHeight = EditorUtils.Separator(m_pos, "Progression");
+				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Progression", 30f));
 				AdvancePos(propertyHeight);
 
 				// Default property drawing
@@ -85,7 +85,7 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Start of the Level-dependant Stats section
 			else if(_property.name == "m_healthRange") {
 				// Draw a separator first
-				propertyHeight = EditorUtils.Separator(m_pos, "Level-dependant Stats");
+				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Level-dependant Stats", 30f));
 				AdvancePos(propertyHeight);
 				
 				// Default property drawing
@@ -97,7 +97,7 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Start of the Constant Stats section
 			else if(_property.name == "m_healthDrainPerSecond") {
 				// Draw a separator first
-				propertyHeight = EditorUtils.Separator(m_pos, "Constant Stats");
+				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Constant Stats", 30f));
 				AdvancePos(propertyHeight);
 				
 				// Default property drawing
@@ -109,7 +109,7 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Skills
 			else if(_property.name == "m_skills") {
 				// Draw a separator first
-				propertyHeight = EditorUtils.Separator(m_pos, "Skills");
+				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Skills", 30f));
 				AdvancePos(propertyHeight);
 
 				// Skills is an array of fixed length (4), but we will display each skill as an individual property - since we don't want to allow changing its size or order
