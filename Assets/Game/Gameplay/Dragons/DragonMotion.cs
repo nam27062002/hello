@@ -52,7 +52,8 @@ public class DragonMotion : MonoBehaviour {
 	private float m_stunnedTimer;
 
 	private int m_groundMask;
-	private bool m_nearGround;
+	/** Distance from the nearest ground collision below the dragon. The maximum distance checked is 10. */
+	private float m_height;
 
 	struct Sensors {
 		public Transform top;
@@ -90,6 +91,8 @@ public class DragonMotion : MonoBehaviour {
 		m_sensor.bottom		= sensors.FindChild("BottomSensor").transform;
 
 		m_rbody = GetComponent<Rigidbody>();
+
+		m_height = 10f;
 	}
 
 	/// <summary>
@@ -212,7 +215,8 @@ public class DragonMotion : MonoBehaviour {
 				}
 				break;
 		}
-
+				
+		m_animator.SetFloat("height", m_height);
 	}
 
 	/// <summary>
@@ -220,6 +224,10 @@ public class DragonMotion : MonoBehaviour {
 	/// </summary>
 	void FixedUpdate() {
 		switch (m_state) {
+			case State.Idle:
+				FlyAwayFromGround();
+				break;
+
 			case State.Fly:
 			case State.Fly_Up:
 			case State.Fly_Down:
@@ -240,48 +248,15 @@ public class DragonMotion : MonoBehaviour {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	void UpdateMovement() {
+	private void UpdateMovement() {
 		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speed.value * m_speedMultiplier); 
 
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
-			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier(), 0.25f); //accelerate from stop to normal or boost velocity
+			float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
+			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier() * speedUp, 0.25f); //accelerate from stop to normal or boost velocity
 
-			// we keep the velocity value
-			float v = impulse.magnitude;
-																		
-			// check collision with ground, only down!!
-			RaycastHit sensorA;
-			RaycastHit sensorB;
-			float dot = 0;
-
-			CheckGround((impulse.y < 0)? Vector3.down : Vector3.up, out sensorA, out sensorB);
-
-			if (m_nearGround) {
-				// we are moving towards ground or away?
-				dot = Vector3.Dot(sensorA.normal, impulse.normalized);
-				m_nearGround = dot < 0;
-			}
-
-			if (m_nearGround) {
-				if (impulse.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
-				else 				m_direction = (sensorB.point - sensorA.point).normalized;
-
-				if ((sensorA.distance <= 0.75f || sensorB.distance <= 0.75f)) {
-					float f = 1 + ((dot - (-0.5f)) / (-1 - (-0.5f))) * (0 - 1);
-					m_impulse = m_direction * Mathf.Min(1f, Mathf.Max(0f, f));
-				} else {
-					// the direction will be parallel to ground, but we'll still moving down until the dragon is near enough
-					m_impulse = impulse.normalized;				
-				}			
-			} else {
-				// on air impulse formula, we don't fully change the velocity vector 
-				m_impulse = Vector3.Lerp(m_impulse, impulse, 0.5f);
-				m_impulse.Normalize();
-				m_direction = m_impulse;
-			}			
-
-			m_impulse *= v;
+			ComputeFinalImpulse(impulse);
 
 			m_orientation.SetDirection(m_direction);
 		} else {
@@ -291,23 +266,96 @@ public class DragonMotion : MonoBehaviour {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void CheckGround(Vector3 _direction, out RaycastHit _leftHit, out RaycastHit _rightHit) {
-		Vector3 distance = _direction * 2f;
+	private void FlyAwayFromGround() {
+		if (m_height < 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
+			Vector3 oldDirection = m_direction;
+			Vector3 impulse = Vector3.up * m_dragon.data.speed.value * 0.1f;			
+
+			ComputeFinalImpulse(impulse);	
+			m_direction = oldDirection;
+
+			m_orientation.SetDirection(m_direction);
+			
+			m_rbody.velocity = m_impulse;
+		} else {
+			m_rbody.velocity = Vector3.zero;
+		}
+	}
+
+	private void ComputeFinalImpulse(Vector3 _impulse) {
+		// we keep the velocity value
+		float v = _impulse.magnitude;
+		
+		// check collision with ground, only down!!
+		RaycastHit sensorA;
+		RaycastHit sensorB;
+		float dot = 0;
+		
+		bool nearGround = CheckGround(out sensorA, out sensorB);
+		if (_impulse.y > 0) {
+			nearGround = CheckCeiling(out sensorA, out sensorB);
+		}
+		
+		if (nearGround) {
+			// we are moving towards ground or away?
+			dot = Vector3.Dot(sensorA.normal, _impulse.normalized);
+			nearGround = dot < 0;
+		}
+		
+		if (nearGround) {
+			if (_impulse.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
+			else 					m_direction = (sensorB.point - sensorA.point).normalized;
+			
+			if ((sensorA.distance <= 0.75f || sensorB.distance <= 0.75f)) {
+				float f = 1 + ((dot - (-0.5f)) / (-1 - (-0.5f))) * (0 - 1);
+				m_impulse = m_direction * Mathf.Min(1f, Mathf.Max(0f, f));
+			} else {
+				// the direction will be parallel to ground, but we'll still moving down until the dragon is near enough
+				m_impulse = _impulse.normalized;				
+			}			
+		} else {
+			// on air impulse formula, we don't fully change the velocity vector 
+			m_impulse = Vector3.Lerp(m_impulse, _impulse, 0.5f);
+			m_impulse.Normalize();
+			m_direction = m_impulse;
+		}			
+		
+		m_impulse *= v;
+	}
+
+	private bool CheckGround(out RaycastHit _leftHit, out RaycastHit _rightHit) {
+		Vector3 distance = Vector3.down * 10f;
 		bool hit_L = false;
 		bool hit_R = false;
 
-		Vector3 leftSensor;
-		Vector3 rightSensor;
-
-		if (_direction.y < 0) 	leftSensor = m_sensor.bottom.position;
-		else 					leftSensor = m_sensor.top.position;
-
-		rightSensor = leftSensor + Vector3.right * 2f;
+		Vector3 leftSensor  = m_sensor.bottom.position;
+		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
 
 		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
 		hit_R = Physics.Linecast(rightSensor, rightSensor + distance, out _rightHit, m_groundMask);
 
-		m_nearGround = hit_L && hit_R;
+		if (hit_L && hit_R) {
+			float d = Mathf.Min(_leftHit.distance, _rightHit.distance);
+			m_height = d;
+			return (d <= 1f);
+		} else {
+			m_height = 10f;
+			return false;
+		}
+	}
+
+	private bool CheckCeiling(out RaycastHit _leftHit, out RaycastHit _rightHit) {
+		Vector3 distance = Vector3.up * 2f;
+		bool hit_L = false;
+		bool hit_R = false;
+		
+		Vector3 leftSensor 	= m_sensor.top.position;
+		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
+						
+		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
+		hit_R = Physics.Linecast(rightSensor, rightSensor + distance, out _rightHit, m_groundMask);
+		
+		return (hit_L && hit_R);
 	}
 		
 	//------------------------------------------------------------------//

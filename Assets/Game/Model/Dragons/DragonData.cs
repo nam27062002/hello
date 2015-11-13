@@ -56,6 +56,9 @@ public class DragonData {
 	[SerializeField] private string m_prefabPath = "";
 	public string prefabPath { get { return m_prefabPath; }}
 
+	[SerializeField] private float m_cameraZoomOffset = 0f;
+	public float cameraZoomOffset { get { return m_cameraZoomOffset; }}
+
 	// Progression
 	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}

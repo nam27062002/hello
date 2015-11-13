@@ -120,6 +120,8 @@ public class GameCameraController : MonoBehaviour {
 		m_zoomRangeStart = m_zoomRange;
 		m_nearStart = Camera.main.nearClipPlane;
 		m_farStart = Camera.main.farClipPlane;
+
+		ZoomRangeOffset(InstanceManager.player.data.cameraZoomOffset);
 	}
 	
 	/// <summary>
