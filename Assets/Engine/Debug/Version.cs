@@ -21,7 +21,6 @@ using System;
 /// Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 /// </summary>
 [Serializable]
-[SerializePrivateVariables]
 public class Version {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -36,19 +35,19 @@ public class Version {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private int m_major = 0;
+	[SerializeField] private int m_major = 0;
 	public int major {
 		get { return m_major; } 
 		set { m_major = value; }
 	}
 
-	private int m_minor = 0;
+	[SerializeField] private int m_minor = 0;
 	public int minor {
 		get { return m_minor; } 
 		set { m_minor = value; }
 	}
 
-	private int m_patch = 0;
+	[SerializeField] private int m_patch = 0;
 	public int patch {
 		get { return m_patch; } 
 		set { m_patch = value; }
@@ -64,7 +63,9 @@ public class Version {
 	/// <param name="_minor">Initial minor number.</param>
 	/// <param name="_patch">Initial patch number.</param>
 	public Version(int _major = 0, int _minor = 0, int _patch = 0) {
-
+		m_major = _major;
+		m_minor = _minor;
+		m_patch = _patch;
 	}
 
 	/// <summary>
