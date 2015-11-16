@@ -23,6 +23,7 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		private static readonly string RESOURCES_DIR = "Game/Entities";
+		private static readonly string ROOT_DIR = "Resources/Game/";
 		private static readonly string PREFIX = "SP_";
 		
 		//------------------------------------------------------------------//
@@ -38,28 +39,12 @@ namespace LevelEditor {
 		/// </summary>
 		public void Init() {
 			// Refresh grid data
-
 			// Get folder structure
 			string dirPath = Application.dataPath + "/Resources/" + RESOURCES_DIR;
 			DirectoryInfo rootDirInfo = new DirectoryInfo(dirPath);
-
-			// Let's do one group per directory for now
-			DirectoryInfo[] dirs = rootDirInfo.GetDirectories();
-			foreach(DirectoryInfo dirInfo in dirs) {
-				// Get/Create group linked to this directory
-				SelectionGrid.Group dirGroup = m_grid.GetGroup(dirInfo.Name, true);
-				if(dirGroup != null) {
-					// Basic properties
-					dirGroup.m_name = dirInfo.Name;
-					dirGroup.m_data = Resources.LoadAll<GameObject>(RESOURCES_DIR + "/" + dirInfo.Name);
-					dirGroup.m_contents = new GUIContent[dirGroup.m_data.Length];
-					
-					// Init contents
-					for(int i = 0; i < dirGroup.m_data.Length; i++) {
-						dirGroup.m_contents[i] = new GUIContent(dirGroup.m_data[i].name, AssetPreview.GetAssetPreview(dirGroup.m_data[i]));
-					}
-				}
-			}
+			
+			// Get/Create a group for this directory!
+			CreateGroup(rootDirInfo);
 		}
 		
 		/// <summary>
@@ -117,6 +102,55 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// INTERNAL METHODS													//
 		//------------------------------------------------------------------//
+		/// <summary>
+		/// Create a group in the selection grid for the given directory.
+		/// </summary>
+		/// <param name="_dirInfo">The directory to be loaded.</param>
+		private void CreateGroup(DirectoryInfo _dirInfo) {
+			// Create ID - dir path starting at root dir
+			string id = _dirInfo.FullName.Replace('\\', '/');	// [AOC] Windows uses backward slashes, which Unity doesn't recognize;
+			id = id.Substring(id.IndexOf(RESOURCES_DIR) + RESOURCES_DIR.Length);
+			
+			// Format dir path to something that Unity Resources API understands
+			string resourcePath = _dirInfo.FullName.Replace('\\', '/');	// [AOC] Windows uses backward slashes, which Unity doesn't recognize
+			resourcePath = resourcePath.Substring(resourcePath.IndexOf(RESOURCES_DIR));
+			
+			// Get all prefabs in the target directory, but don't include subdirectories
+			FileInfo[] files = _dirInfo.GetFiles("*.prefab");
+			
+			// Get/Create group linked to this directory
+			// Ignore if the directory has no valid prefabs
+			if(files.Length > 0) {
+				SelectionGrid.Group dirGroup = m_grid.GetGroup(id, true);
+				if(dirGroup != null) {
+					// Basic properties
+					dirGroup.m_name = id;
+					
+					// Load prefabs!
+					dirGroup.m_data = new Object[files.Length];
+					for(int i = 0; i < files.Length; i++) {
+						dirGroup.m_data[i] = Resources.Load<GameObject>(resourcePath + "/" + Path.GetFileNameWithoutExtension(files[i].Name));
+					}
+					
+					// Init contents
+					dirGroup.m_contents = new GUIContent[dirGroup.m_data.Length];
+					for(int i = 0; i < dirGroup.m_data.Length; i++) {
+						dirGroup.m_contents[i] = new GUIContent(dirGroup.m_data[i].name, AssetPreview.GetAssetPreview(dirGroup.m_data[i]));
+					}
+				}
+			}
+			
+			// Iterate subdirectories and create group for each of them as well!
+			DirectoryInfo[] subdirs = _dirInfo.GetDirectories();
+			for(int i = 0; i < subdirs.Length; i++) {
+				// Ignore "Assets" directories
+				if(subdirs[i].Name != "Assets") {
+					// Recursive call
+					CreateGroup(subdirs[i]);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Creates and adds a new spawner to the current group, using the selected parameters.
 		/// </summary>
