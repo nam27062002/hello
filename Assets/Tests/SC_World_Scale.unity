@@ -37,9 +37,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
---- !u!127 &3
-LevelGameManager:
-  m_ObjectHideFlags: 0
 --- !u!157 &4
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -68,6 +65,7 @@ LightmapSettings:
     m_TextureCompression: 1
     m_FinalGather: 0
     m_FinalGatherRayCount: 1024
+    m_ReflectionCompression: 2
   m_LightmapSnapshot: {fileID: 0}
   m_RuntimeCPUUsage: 25
 --- !u!196 &5
@@ -757,6 +755,33 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 123b9d990f0894364b4b66d8d407129d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+--- !u!1 &47100013
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 47100014}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &47100014
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 47100013}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 213.302032, y: 10.2694054, z: 88.1277161}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
 --- !u!1 &52170429
 GameObject:
   m_ObjectHideFlags: 0
@@ -1595,7 +1620,9 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
+    xp: 0
   m_maxHealth: 100
+  m_goldenChance: 1
 --- !u!1 &98224987
 GameObject:
   m_ObjectHideFlags: 0
@@ -5645,6 +5672,7 @@ GameObject:
   - 23: {fileID: 547989227}
   - 114: {fileID: 547989231}
   - 114: {fileID: 547989232}
+  - 120: {fileID: 547989233}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -5738,7 +5766,46 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
+    xp: 0
   m_maxHealth: 100
+  m_goldenChance: 1
+--- !u!120 &547989233
+LineRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 547989226}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    startWidth: 1
+    endWidth: 1
+    m_StartColor:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_EndColor:
+      serializedVersion: 2
+      rgba: 4294967295
+  m_UseWorldSpace: 1
 --- !u!1 &548956825
 GameObject:
   m_ObjectHideFlags: 0
@@ -8909,7 +8976,9 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
+    xp: 0
   m_maxHealth: 100
+  m_goldenChance: 1
 --- !u!1001 &871344413
 Prefab:
   m_ObjectHideFlags: 0
@@ -10853,7 +10922,9 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
+    xp: 0
   m_maxHealth: 100
+  m_goldenChance: 1
 --- !u!1001 &1007339104
 Prefab:
   m_ObjectHideFlags: 0
@@ -14040,7 +14111,9 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
+    xp: 0
   m_maxHealth: 100
+  m_goldenChance: 1
 --- !u!1001 &1324700291
 Prefab:
   m_ObjectHideFlags: 0
@@ -16626,7 +16699,7 @@ MonoBehaviour:
   m_Script: {fileID: 1997211142, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AllowActivationOnStandalone: 0
+  m_ForceModuleActive: 0
 --- !u!114 &1602931160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16644,7 +16717,7 @@ MonoBehaviour:
   m_CancelButton: Cancel
   m_InputActionsPerSecond: 10
   m_RepeatDelay: .5
-  m_AllowActivationOnMobileDevice: 0
+  m_ForceModuleActive: 0
 --- !u!114 &1602931161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19704,11 +19777,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22474272, guid: c6d6f88b0a7e44c19a4aa15a576c31bd, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 250
+      value: 143
       objectReference: {fileID: 0}
     - target: {fileID: 22474272, guid: c6d6f88b0a7e44c19a4aa15a576c31bd, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 22.6843109
+      value: 21.8579235
       objectReference: {fileID: 0}
     - target: {fileID: 22470780, guid: c6d6f88b0a7e44c19a4aa15a576c31bd, type: 2}
       propertyPath: m_AnchorMin.y
@@ -19720,15 +19793,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22470780, guid: c6d6f88b0a7e44c19a4aa15a576c31bd, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -22.6843109
+      value: -21.8579235
       objectReference: {fileID: 0}
     - target: {fileID: 22470780, guid: c6d6f88b0a7e44c19a4aa15a576c31bd, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 250
+      value: 143
       objectReference: {fileID: 0}
     - target: {fileID: 22470780, guid: c6d6f88b0a7e44c19a4aa15a576c31bd, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 33.2703209
+      value: 34.098362
       objectReference: {fileID: 0}
     - target: {fileID: 22448014, guid: c6d6f88b0a7e44c19a4aa15a576c31bd, type: 2}
       propertyPath: m_AnchorMin.y
@@ -20140,7 +20213,9 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
+    xp: 0
   m_maxHealth: 100
+  m_goldenChance: 1
 --- !u!1 &2038556762
 GameObject:
   m_ObjectHideFlags: 0

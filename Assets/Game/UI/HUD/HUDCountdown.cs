@@ -33,6 +33,7 @@ public class HUDCountdown : MonoBehaviour {
 
 	// Internal logic
 	private int m_lastValue = 0;
+	private bool m_animFinished = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -53,6 +54,7 @@ public class HUDCountdown : MonoBehaviour {
 
 		// Start hidden
 		m_text.enabled = false;
+		m_animFinished = true;
 	}
 	
 	/// <summary>
@@ -61,20 +63,22 @@ public class HUDCountdown : MonoBehaviour {
 	private void LateUpdate() {
 		// Only while countdown is active and an extra second afterwards
 		if(m_lastValue >= 0 || m_scene.state == GameSceneController.EStates.COUNTDOWN) {
-			// Has the value changed?
-			int value = Mathf.CeilToInt(m_scene.countdown);
-			if(value != m_lastValue) {
-				// Yes!! Update text and reset anim
-				// [AOC] Special case for 0 value
-				if(value == 0) {
-					m_text.text = "GO!";	// [AOC] HARDCODED!!
-					m_anim.SetBool("exit", true);
-				} else {
-					m_text.text = StringUtils.FormatNumber(value);
-					m_anim.SetBool("exit", false);
+			if(m_animFinished) {
+				// Has the value changed?
+				int value = Mathf.CeilToInt(m_scene.countdown);
+				if(value != m_lastValue) {
+					// Yes!! Update text and reset anim
+					// [AOC] Special case for 0 value
+					if(value == 0) {
+						m_text.text = "GO!";	// [AOC] HARDCODED!!
+					} else {
+						m_text.text = StringUtils.FormatNumber(value);
+					}
+
+					m_anim.SetTrigger("start");
+					m_animFinished = false;
+					m_lastValue = value;
 				}
-				m_anim.SetTrigger("start");
-				m_lastValue = value;
 			}
 		}
 	}
@@ -92,12 +96,13 @@ public class HUDCountdown : MonoBehaviour {
 	/// <summary>
 	/// The animation has finished.
 	/// </summary>
-	public void OnAnimationFinished() {
-		// Disable textfield - will be reenabled when launching the animation again
-		m_text.enabled = false;
+	public void OnAnimationFinished() {		
+		m_animFinished = true;
 
 		// If we've reached 0, stop counting
-		if(m_lastValue == 0) m_lastValue = -1;
+		if (m_lastValue == 0) {
+			gameObject.SetActive(false);
+		}
 	}
 }
 
