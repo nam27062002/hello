@@ -9,24 +9,35 @@ public class FollowPathBehaviour : Initializable {
 	public PathController path { set { m_path = value; } }
 
 	private PreyMotion m_motion;
+	private Animator m_animator;
 
 	private Vector3 m_target;
 
 	// Use this for initialization
 	void Awake () {		
 		m_motion = GetComponent<PreyMotion>();
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 
 	public override void Initialize() {			
 		if (m_path != null) {
 			m_target = m_path.GetNext();			
 		}
+		m_animator.SetBool("move", true);
 	}
 
 	void OnEnable() {
 		if (m_path != null) {
 			m_target = m_path.GetNearestTo(m_motion.position);
-		}
+		}				
+		m_animator.SetBool("move", true);
+	}
+
+	void OnDisable() {
+		if (m_path != null) {
+			m_target = m_path.GetNearestTo(m_motion.position);
+		}		
+		m_animator.SetBool("move", false);
 	}
 
 	public void SetPath(PathController _path) {
@@ -35,7 +46,7 @@ public class FollowPathBehaviour : Initializable {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate() {
 		if (m_path != null) {
 			if (Vector2.Distance(m_motion.position, m_target) <= m_path.radius) {
 				m_target = m_path.GetNext();

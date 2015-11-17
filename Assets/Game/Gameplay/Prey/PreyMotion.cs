@@ -127,15 +127,15 @@ public class PreyMotion : Initializable {
 
 	public void Pursuit(Vector2 _target, Vector2 _velocity, float _maxSpeed) {
 		float distance = (m_position - _target).magnitude;
-		float t = 2f * (distance / _maxSpeed); // amount of time in the future
+		float t = (distance / _maxSpeed); // amount of time in the future
 
 		Seek(_target + _velocity * t); // future position
 	}
 
 	public void Evade(Vector2 _target, Vector2 _velocity, float _maxSpeed) {		
 		float distance = (m_position - _target).magnitude;
-		float t = 2f * (distance / _maxSpeed); // amount of time in the future
-				
+		float t = (distance / _maxSpeed); // amount of time in the future
+
 		Flee(_target + _velocity * t); // future position
 	}
 
