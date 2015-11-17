@@ -8,7 +8,11 @@ public struct RectAreaBounds : AreaBounds {
 		m_bounds = new Bounds(_center, _size);
 	}
 
-	public Bounds bounds { get { return m_bounds; } }
+	public Bounds bounds { get { return m_bounds; } set { m_bounds = value; } }
+
+	public void SetMinMax(Vector3 _min, Vector3 _max) {
+		m_bounds.SetMinMax(_min, _max);
+	}
 
 	public Vector3 RandomInside() {
 		Vector3 offset = Vector3.zero;
