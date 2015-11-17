@@ -26,6 +26,9 @@ public class GunnerTactics : Initializable {
 		//start at random anim position
 		m_state = State.None;
 		m_nextState = State.Wander;
+		
+		GetComponent<WanderBehaviour>().enabled = false;
+		GetComponent<AttackBehaviour>().enabled = false;
 	}
 	
 	// Update is called once per frame

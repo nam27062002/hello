@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(SensePlayer))]
 public class AttackBehaviour : Initializable {
 
 	private enum State {

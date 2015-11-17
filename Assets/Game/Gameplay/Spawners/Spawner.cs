@@ -45,13 +45,7 @@ public class Spawner : MonoBehaviour {
 		PoolManager.CreatePool(m_entityPrefab);
 		m_entities = new GameObject[m_quantity.max];
 
-		Area area = GetComponent<Area>();
-		if (area != null) {
-			m_area = area.bounds;
-		} else {
-			// spawner for static objects with a fixed position
-			m_area = new CircleAreaBounds(transform.position, 0);
-		}
+		m_area = GetArea();
 	}
 
 	protected virtual void OnEnable() {
@@ -171,17 +165,17 @@ public class Spawner : MonoBehaviour {
 
 	protected virtual void ExtendedSpawn() {}
 
-
-
-	void OnDrawGizmos() {
+	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();
 		if (area != null) {
-			area.bounds.DrawGizmo();
+			return area.bounds;
 		} else {
-			Color color = Color.yellow;
-			color.a = 0.25f;
-			Gizmos.color = color;
-			Gizmos.DrawSphere(transform.position, 0.5f);
+			// spawner for static objects with a fixed position
+			return new CircleAreaBounds(transform.position, 0);
 		}
+	}
+
+	void OnDrawGizmos() {
+		GetArea().DrawGizmo();
 	}
 }
