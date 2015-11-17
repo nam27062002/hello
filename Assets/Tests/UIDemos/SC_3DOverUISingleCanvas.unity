@@ -422,6 +422,57 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
+--- !u!1 &347247146
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 347247147}
+  - 95: {fileID: 347247148}
+  m_Layer: 0
+  m_Name: Big Dragon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &347247147
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 347247146}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 120, y: 120, z: 120}
+  m_Children:
+  - {fileID: 1366137382}
+  m_Father: {fileID: 1204503123}
+  m_RootOrder: 2
+  m_AnchorMin: {x: .5, y: .5}
+  m_AnchorMax: {x: .5, y: .5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: .5, y: .5}
+--- !u!95 &347247148
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 347247146}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: afbf052dc67124c75aa57f2d38dca0a4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1001 &499449178
 Prefab:
   m_ObjectHideFlags: 0
@@ -916,10 +967,6 @@ Transform:
   - {fileID: 1319167508}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!1 &1130617252 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
-  m_PrefabInternal: {fileID: 1348363084}
 --- !u!4 &1130617253 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
@@ -948,11 +995,11 @@ RectTransform:
   m_GameObject: {fileID: 1204503122}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 120, y: 120, z: 120}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1130617253}
-  - {fileID: 1358684994}
-  - {fileID: 1366137382}
+  - {fileID: 1779198693}
+  - {fileID: 2099742839}
+  - {fileID: 347247147}
   m_Father: {fileID: 209785595}
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
@@ -972,17 +1019,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragons:
-  - {fileID: 1130617252}
-  - {fileID: 1358684993}
-  - {fileID: 1366137381}
+  - {fileID: 1779198692}
+  - {fileID: 2099742838}
+  - {fileID: 347247146}
   m_dragonNameText: {fileID: 1987228681}
+  m_initialSelectionIdx: 2
   m_selectedIdx: -1
+  m_useAnims: 1
 --- !u!1001 &1314980062
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1204503123}
+    m_TransformParent: {fileID: 347247147}
     m_Modifications:
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.x
@@ -990,15 +1039,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.y
-      value: .589999974
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -1.86264515e-09
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1014,11 +1063,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_Name
-      value: Big Dragon
+      value: model
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalScale.x
@@ -1102,7 +1151,7 @@ Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1204503123}
+    m_TransformParent: {fileID: 1779198693}
     m_Modifications:
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1110,7 +1159,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.41999996
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1118,7 +1167,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -1.86264515e-09
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1138,7 +1187,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_Name
-      value: Small Dragon
+      value: model
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_Controller
@@ -1150,23 +1199,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
   m_IsPrefabParent: 0
---- !u!1 &1358684993 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
-  m_PrefabInternal: {fileID: 1719264907}
 --- !u!4 &1358684994 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
   m_PrefabInternal: {fileID: 1719264907}
---- !u!1 &1366137381 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
-  m_PrefabInternal: {fileID: 1314980062}
 --- !u!4 &1366137382 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
@@ -1364,7 +1405,7 @@ Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1204503123}
+    m_TransformParent: {fileID: 2099742839}
     m_Modifications:
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1372,7 +1413,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.y
-      value: .889999986
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1380,7 +1421,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -1.86264515e-09
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1396,11 +1437,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_Name
-      value: Medium Dragon
+      value: model
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_LocalScale.x
@@ -1420,11 +1461,62 @@ Prefab:
       objectReference: {fileID: 9100000, guid: d7454b542f36548ee9d3dfb19310b4ec, type: 2}
     - target: {fileID: 100002, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1f149afe5f3554401ab8c8894deada24, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &1779198692
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 1779198693}
+  - 95: {fileID: 1779198694}
+  m_Layer: 0
+  m_Name: Small Dragon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1779198693
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1779198692}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 120, y: 120, z: 120}
+  m_Children:
+  - {fileID: 1130617253}
+  m_Father: {fileID: 1204503123}
+  m_RootOrder: 0
+  m_AnchorMin: {x: .5, y: .5}
+  m_AnchorMax: {x: .5, y: .5}
+  m_AnchoredPosition: {x: 3.81469727e-06, y: 234.059998}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: .5, y: .5}
+--- !u!95 &1779198694
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1779198692}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: afbf052dc67124c75aa57f2d38dca0a4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1001 &1898910019
 Prefab:
   m_ObjectHideFlags: 0
@@ -1566,3 +1658,54 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1987228679}
+--- !u!1 &2099742838
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 2099742839}
+  - 95: {fileID: 2099742840}
+  m_Layer: 0
+  m_Name: Medium Dragon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2099742839
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2099742838}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 120, y: 120, z: 120}
+  m_Children:
+  - {fileID: 1358684994}
+  m_Father: {fileID: 1204503123}
+  m_RootOrder: 1
+  m_AnchorMin: {x: .5, y: .5}
+  m_AnchorMax: {x: .5, y: .5}
+  m_AnchoredPosition: {x: 0, y: 59.0999985}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: .5, y: .5}
+--- !u!95 &2099742840
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2099742838}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: afbf052dc67124c75aa57f2d38dca0a4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
