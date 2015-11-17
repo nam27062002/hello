@@ -16,13 +16,14 @@ public class PreyStats : Initializable {
 	[SerializeField] private float m_maxHealth = 100f;
 	public float maxHealth { get { return m_maxHealth; } }
 
-	[SerializeField][Range(0,1)] private float m_goldenChance = 1f;
+	[SerializeField][Range(0,1)] private float m_goldenChance = 0f;
+	[SerializeField][Range(0,1)] private float m_pcChance = 0f;
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private bool m_isGolden;
-	public bool isGolden { get { return m_isGolden; } }
+	private bool m_isGolden = false;
+	private bool m_givePC = false;
 
 	private float m_health;
 	public float health { get { return m_health; } }
@@ -42,9 +43,11 @@ public class PreyStats : Initializable {
 	}
 
 	public override void Initialize() {
-
 		m_health = m_maxHealth;		
 		SetGolden((Random.Range(0f, 1f) <= m_goldenChance));
+
+		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
+		m_givePC = (Random.Range(0f, 1f) <= m_pcChance);
 	}
 
 	public void AddLife(float _offset) {
@@ -68,5 +71,27 @@ public class PreyStats : Initializable {
 		}
 
 		m_isGolden = _value;
+	}
+
+	/// <summary>
+	/// Get a Reward struct initialized with the reward to be given when killing this
+	/// prey, taking in account its golden/pc chances and status.
+	/// </summary>
+	/// <returns>The reward to be given to the player when killing this unit.</returns>
+	public Reward GetOnKillReward() {
+		// Create a copy of the base rewards and tune them
+		Reward newReward = m_reward;	// Since it's a struct, this creates a new copy rather than being a reference
+
+		// Give coins?
+		if(!m_isGolden) {
+			newReward.coins = 0;
+		}
+
+		// Give PC?
+		if(!m_givePC) {
+			newReward.pc = 0;
+		}
+
+		return newReward;
 	}
 }

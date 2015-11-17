@@ -64,11 +64,8 @@ public class InflammableBehaviour : Initializable {
 				// Let heirs do their magic
 				OnBurn();
 
-				// Create a copy of the base rewards and tune them
-				Reward reward = m_prey.reward;
-				if(!m_prey.isGolden) {
-					reward.coins = 0;
-				}
+				// Get the reward to be given from the prey stats
+				Reward reward = m_prey.GetOnKillReward();
 
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, this.transform, reward);

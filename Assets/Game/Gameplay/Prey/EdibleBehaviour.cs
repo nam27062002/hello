@@ -85,11 +85,8 @@ public class EdibleBehaviour : Initializable {
 	}
 	
 	public Reward OnSwallow(float _time) {
-		// Create a copy of the base rewards and tune them
-		Reward reward = m_prey.reward;
-		if(!m_prey.isGolden) {
-			reward.coins = 0;
-		}
+		// Get the reward to be given from the prey stats
+		Reward reward = m_prey.GetOnKillReward();
 
 		// Dispatch global event
 		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
