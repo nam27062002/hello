@@ -38,6 +38,17 @@ public class SelectionGrid {
 	//------------------------------------------------------------------//
 	// Data
 	public Dictionary<string, Group> m_groups = new Dictionary<string, Group>();
+	public Group[] groups {
+		get {
+			Group[] groupArray = new Group[m_groups.Count];
+			int i = 0;
+			foreach(KeyValuePair<string, Group> g in m_groups) {
+				groupArray[i] = g.Value;
+				i++;
+			}
+			return groupArray;
+		}
+	}
 
 	// Selection control
 	public string m_selectedGroupId = "";

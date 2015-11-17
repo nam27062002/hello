@@ -22,8 +22,8 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
-		private readonly string RESOURCES_DIR = "Game/";
-		private readonly string ROOT_DIR = "Resources/Game/";
+		private static readonly string RESOURCES_DIR = "Game/";
+		private static readonly string ROOT_DIR = "Resources/Game/";
 
 		//------------------------------------------------------------------//
 		// MEMBERS															//
