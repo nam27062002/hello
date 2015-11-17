@@ -52,7 +52,7 @@ public class QuadTreeNode {
 	/*************/
 	public bool IsLeaf() 					{ return m_child[0] == null; }
 	public bool Contains(Vector2 _point)	{ return m_bounds.Contains(_point); }
-	public bool Contains(Vector3 _point)	{ return m_bounds.Contains(_point); }
+	//public bool Contains(Vector3 _point)	{ return m_bounds.Contains(_point); }
 	public bool Intersects(Rect _rect) 		{ return _rect.Overlaps(_rect); }
 	/*************/
 
