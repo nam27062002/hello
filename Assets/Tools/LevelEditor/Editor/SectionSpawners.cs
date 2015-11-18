@@ -70,7 +70,7 @@ namespace LevelEditor {
 				GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
 				labelStyle.alignment = TextAnchor.MiddleCenter;
 				GUILayout.Label("Entity:", labelStyle);
-				
+
 				// Grid list!
 				m_grid.OnGUI();
 				
@@ -80,6 +80,7 @@ namespace LevelEditor {
 				// Do it button
 				EditorGUILayout.BeginHorizontal(); {
 					// Center button
+					GUILayout.Space(30);	// To compensate for the 'refresh' button
 					GUILayout.FlexibleSpace();
 					
 					// Button
@@ -89,9 +90,15 @@ namespace LevelEditor {
 						AddNewSpawner();
 					}
 					GUI.enabled = true;
-					
+
 					// Center button
 					GUILayout.FlexibleSpace();
+
+					// Refresh button
+					if(GUILayout.Button("↻", GUILayout.Width(30), GUILayout.Height(30))) {
+						m_grid.m_groups.Clear();
+						Init();
+					}
 				}EditorGUILayoutExt.EndHorizontalSafe();
 				
 				// Spacing

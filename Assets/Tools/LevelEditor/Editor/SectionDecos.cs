@@ -74,6 +74,7 @@ namespace LevelEditor {
 				// Do it button
 				EditorGUILayout.BeginHorizontal(); {
 					// Center button
+					GUILayout.Space(30);	// To compensate for the 'refresh' button
 					GUILayout.FlexibleSpace();
 					
 					// Button
@@ -86,6 +87,12 @@ namespace LevelEditor {
 					
 					// Center button
 					GUILayout.FlexibleSpace();
+
+					// Refresh button
+					if(GUILayout.Button("↻", GUILayout.Width(30), GUILayout.Height(30))) {
+						m_grid.m_groups.Clear();
+						Init();
+					}
 				}EditorGUILayoutExt.EndHorizontalSafe();
 				
 				// Spacing
