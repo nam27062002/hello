@@ -61,7 +61,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 			// Copied from default canvas usage, feel free to modify any of these parameters
 			CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
 			scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-			scaler.referenceResolution = new Vector2(800, 600);
+			scaler.referenceResolution = new Vector2(2048, 1536);
 			scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
 			scaler.matchWidthOrHeight = 0;
 			scaler.referencePixelsPerUnit = 100;
