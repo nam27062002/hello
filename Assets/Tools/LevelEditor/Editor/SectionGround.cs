@@ -21,7 +21,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
-		private static readonly string PREFIX = "GR_";
+		private static readonly string PREFIX = "COLL_";
 		
 		//------------------------------------------------------------------//
 		// MEMBERS															//

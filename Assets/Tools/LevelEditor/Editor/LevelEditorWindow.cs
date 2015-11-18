@@ -199,7 +199,7 @@ namespace LevelEditor {
 					GUILayout.Space(10f);
 					EditorGUILayout.BeginVertical(styles.boxStyle); {
 						// Tab selector
-						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, new string[] {"Ground", "Spawners", "Decorations", "Dummies" });
+						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, new string[] {"Collisions", "Spawners", "Decorations", "Dummies" });
 
 						// If tab has changed, Init new tab
 						if(newTab != LevelEditor.settings.selectedTab) {

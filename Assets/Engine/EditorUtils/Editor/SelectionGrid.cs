@@ -106,7 +106,7 @@ public class SelectionGrid {
 	/// <param name="_id">The id of the group.</param>
 	/// <param name="_createNewIfNotFound">If set to <c>true</c> create a new group and add it to the list if a group with the given id was not found.</param>
 	public Group GetGroup(string _id, bool _createNewIfNotFound) {
-		Group gr;
+		Group gr = null;
 		if(m_groups.TryGetValue(_id, out gr)) {
 			// Group found!
 			return gr;
@@ -114,6 +114,7 @@ public class SelectionGrid {
 			// Not found! Creating new one
 			gr = new SelectionGrid.Group();
 			m_groups.Add(_id, gr);
+			return gr;
 		}
 		return null;
 	}
