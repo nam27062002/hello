@@ -27,7 +27,8 @@ namespace LevelEditor {
 	/// </summary>
 	public enum SpawnerType {
 		STANDARD,
-		FLOCK
+		FLOCK,
+		PATH
 	};
 
 	/// <summary>

@@ -38,7 +38,7 @@ public class SensePlayer : MonoBehaviour {
 		m_motion = GetComponent<PreyMotion>();
 	}
 
-	void OnEnable() {
+	void Start() {
 		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
 
 		m_dragonRadiusSqr = 0;
@@ -49,11 +49,17 @@ public class SensePlayer : MonoBehaviour {
 			}
 		}
 		m_dragonRadiusSqr *= m_dragonRadiusSqr;
-
+		
 		m_alert = false;
 		m_isInsideMinArea = false;
 		m_isInsideMaxArea = false;
 		m_distanceSqr = 0;
+	}
+
+	void OnDisable() {		
+		m_alert = false;
+		m_isInsideMinArea = false;
+		m_isInsideMaxArea = false;
 	}
 
 	// Update is called once per frame

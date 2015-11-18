@@ -17,9 +17,11 @@ public class DroneTactics : Initializable {
 	private State m_nextState;
 	private SensePlayer m_sensor;
 
+	private float m_timer;
+
 	// Use this for initialization
 	void Start () {
-		m_sensor = GetComponent<SensePlayer>();
+
 	}
 
 	public override void Initialize() {
@@ -29,6 +31,11 @@ public class DroneTactics : Initializable {
 		
 		GetComponent<FollowPathBehaviour>().enabled = false;
 		GetComponent<AttackBehaviour>().enabled = false;
+
+		m_sensor = GetComponent<SensePlayer>();
+		m_sensor.enabled = true;
+
+		m_timer = 0;
 	}
 	
 	// Update is called once per frame
@@ -37,10 +44,31 @@ public class DroneTactics : Initializable {
 			ChangeState();
 		}
 
-		if (m_sensor.isInsideMaxArea) {
-			m_nextState = State.Attack;
-		} else {
-			m_nextState = State.FollowPath;
+		switch (m_state) {
+			case State.FollowPath:
+				if (m_timer > 0) {
+					m_timer -= Time.deltaTime;
+					if (m_timer <= 0) {
+						m_timer = 0;
+						m_sensor.enabled = true;
+					}
+				}
+				if (m_sensor.isInsideMaxArea) {
+					m_nextState = State.Attack;
+				}
+				break;
+
+			case State.Attack:
+				if (!m_area.Contains(transform.position)) {
+					m_sensor.enabled = false;
+					m_timer = 5f;
+					m_nextState = State.FollowPath;
+				}
+
+				if (!m_sensor.isInsideMaxArea) {
+					m_nextState = State.FollowPath;
+				}
+				break;
 		}
 	}
 

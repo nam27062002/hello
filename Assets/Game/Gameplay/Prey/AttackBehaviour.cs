@@ -4,11 +4,17 @@ using System.Collections;
 [RequireComponent(typeof(SensePlayer))]
 public class AttackBehaviour : Initializable {
 
+	// Delegates
+	delegate void StartFX();
+	StartFX m_startFX;
+
+	// Constants
 	private enum State {
 		None = 0,
 		Pursuit,
 		Attack
 	};
+
 
 	[SerializeField] private float m_damage;
 	[SerializeField] private float m_attackDelay;
@@ -30,6 +36,19 @@ public class AttackBehaviour : Initializable {
 		m_sensor = GetComponent<SensePlayer>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		
+		PreyAnimationEvents animEvents = transform.FindChild("view").GetComponent<PreyAnimationEvents>();
+		animEvents.onAttackDealDamage += new PreyAnimationEvents.Attack_DealDamage(OnAttack);
+	}
+
+	void OnDestroy() {
+		Transform view = transform.FindChild("view");
+		if (view != null) {
+			PreyAnimationEvents animEvents = view.GetComponent<PreyAnimationEvents>();
+			if (animEvents != null) {
+				animEvents.onAttackDealDamage -= new PreyAnimationEvents.Attack_DealDamage(OnAttack);
+			}
+		}
 	}
 
 	public override void Initialize() {
@@ -67,6 +86,9 @@ public class AttackBehaviour : Initializable {
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0) {
 						//do attack
+						if (m_startFX != null) {
+							m_startFX();
+						}
 						m_animator.SetTrigger("attack");
 						m_timer = m_attackDelay;
 					}
@@ -131,14 +153,6 @@ public class AttackBehaviour : Initializable {
 	public void OnAttack() {
 		// do stuff - this will be called from animation events "PreyAnimationEvents"
 		m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
-
-		/* Move this to the Tactics layer
-		Vector3 dir = m_gunShot.position - m_gun.position;
-		dir.Normalize();
-
-		GameObject spark = PoolManager.GetInstance("PF_Spark");
-		spark.transform.position = m_gunShot.position + (dir * 0.1f);
-		spark.transform.rotation = Quaternion.Euler(new Vector3(0, 0, Vector3.Angle(dir, Vector3.up)));
-		*/
+		Debug.Log("AttackBehaviour -> OnAttack");
 	}
 }

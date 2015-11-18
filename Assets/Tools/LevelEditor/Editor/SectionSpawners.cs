@@ -194,6 +194,11 @@ namespace LevelEditor {
 					sp = newSpawnerObj.AddComponent<FlockSpawner>();
 					spawnerName += "Flock";
 				} break;
+
+				case SpawnerType.PATH: {
+					sp = newSpawnerObj.AddComponent<PathSpawner>();
+					spawnerName += "Path";
+				} break;
 			}
 			
 			// Add a prefix of our own and generate unique name
