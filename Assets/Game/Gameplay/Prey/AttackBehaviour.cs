@@ -18,6 +18,7 @@ public class AttackBehaviour : Initializable {
 
 	[SerializeField] private float m_damage;
 	[SerializeField] private float m_attackDelay;
+	[SerializeField] private GameObject m_projectilePrefab;
 
 	private Animator m_animator;
 	private PreyMotion m_motion;
@@ -36,7 +37,12 @@ public class AttackBehaviour : Initializable {
 		m_sensor = GetComponent<SensePlayer>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		
+
+		if (m_projectilePrefab != null) {
+			// create a pool of projectiles
+			PoolManager.CreatePool(m_projectilePrefab, 2, true);
+		}
+
 		PreyAnimationEvents animEvents = transform.FindChild("view").GetComponent<PreyAnimationEvents>();
 		animEvents.onAttackDealDamage += new PreyAnimationEvents.Attack_DealDamage(OnAttack);
 	}
@@ -155,7 +161,12 @@ public class AttackBehaviour : Initializable {
 
 	public void OnAttack() {
 		// do stuff - this will be called from animation events "PreyAnimationEvents"
-		m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
+
+		if (m_projectilePrefab != null) {
+
+		} else {
+			m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
+		}
 		Debug.Log("AttackBehaviour -> OnAttack");
 	}
 }
