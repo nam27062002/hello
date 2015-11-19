@@ -56,6 +56,9 @@ public class DragonData {
 	[SerializeField] private string m_prefabPath = "";
 	public string prefabPath { get { return m_prefabPath; }}
 
+	[SerializeField] private string m_menuPrefabPath = "";
+	public string menuPrefabPath { get { return m_menuPrefabPath; }}
+
 	[SerializeField] private float m_cameraZoomOffset = 0f;
 	public float cameraZoomOffset { get { return m_cameraZoomOffset; }}
 
