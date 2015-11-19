@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_FontDefault
-  m_Shader: {fileID: 4800000, guid: c1ee107af7ec0444c9855b9a85b41232, type: 3}
+  m_Shader: {fileID: 4800000, guid: c19cb11a3d2064752bcb2b14c51fac9c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 3000
@@ -131,6 +131,30 @@ Material:
         first:
           name: _EmissionScaleUI
         second: 0
+      data:
+        first:
+          name: _Stencil
+        second: 0
+      data:
+        first:
+          name: _StencilComp
+        second: 8
+      data:
+        first:
+          name: _StencilOp
+        second: 0
+      data:
+        first:
+          name: _StencilReadMask
+        second: 255
+      data:
+        first:
+          name: _StencilWriteMask
+        second: 255
+      data:
+        first:
+          name: _ColorMask
+        second: 15
     m_Colors:
       data:
         first:
@@ -144,3 +168,7 @@ Material:
         first:
           name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Specular
+        second: {r: 0, g: 0, b: 0, a: 0}
