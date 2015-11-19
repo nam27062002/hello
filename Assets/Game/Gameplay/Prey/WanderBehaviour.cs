@@ -14,7 +14,7 @@ public class WanderBehaviour : Initializable {
 	[SerializeField] private float m_idleTime = 5f;
 	[SerializeField] private bool m_chaoticMovement = true;
 
-	[Header("Realistic Wander")]	
+	[Header("Realistic Wander")] // Experimental
 	[SerializeField] private float m_displacementDistance = 1f;
 	[SerializeField] private float m_displacementRadius = 1f;
 	[SerializeField] private float m_angleIncrement = 10f;

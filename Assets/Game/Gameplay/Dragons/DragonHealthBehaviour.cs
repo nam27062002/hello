@@ -32,7 +32,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	public void ReceiveDamage(float _value, Transform _source = null) {
 		if(enabled) {
-		//	m_animator.SetTrigger("damage"); receive damage?
+			m_animator.SetTrigger("damage");// receive damage?
 			m_dragon.AddLife(-_value);
 			Messenger.Broadcast<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _value, _source);
 		}
