@@ -12,6 +12,14 @@ public class WanderBehaviour : Initializable {
 	};
 
 	[SerializeField] private float m_idleTime = 5f;
+	[SerializeField] private bool m_chaoticMovement = true;
+
+	[Header("Realistic Wander")]	
+	[SerializeField] private float m_displacementDistance = 1f;
+	[SerializeField] private float m_displacementRadius = 1f;
+	[SerializeField] private float m_angleIncrement = 10f;
+
+	[SeparatorAttribute]
 	[SerializeField][Range(0f, 1f)] private float m_idleProbability = 1f;
 	
 	protected PreyMotion m_motion;
@@ -22,6 +30,8 @@ public class WanderBehaviour : Initializable {
 
 	protected State m_state;
 	protected State m_nextState;
+
+	private float m_displacementAngle;
 
 
 	// --------------------------------------------------------------------------- //
@@ -38,6 +48,7 @@ public class WanderBehaviour : Initializable {
 	void OnEnable() {
 		m_state = State.None;
 		m_nextState = State.Idle;
+		m_displacementAngle = 0;
 	}
 
 	void OnDisable() {		
@@ -65,12 +76,16 @@ public class WanderBehaviour : Initializable {
 			if (m_motion.HasFlockController()) {
 				ChooseTarget();
 			} else {
-				if ((m_target - m_motion.position).sqrMagnitude < 1f) {
-					if (Random.Range(0f, 1f) < m_idleProbability) {
-						m_nextState = State.Idle;
-					} else {
-						ChooseTarget();
+				if (m_chaoticMovement) {
+					if ((m_target - m_motion.position).sqrMagnitude < 1f) {
+						if (Random.Range(0f, 1f) < m_idleProbability) {
+							m_nextState = State.Idle;
+						} else {
+							ChooseTarget();
+						}
 					}
+				} else {
+					m_target = IncrementalMovement(); // Experimental!!!
 				}
 			}
 			
@@ -86,6 +101,12 @@ public class WanderBehaviour : Initializable {
 		} else {
 			m_timer = m_idleTime;
 			m_animator.SetBool("move", false);
+
+			if (m_motion.direction.x < 0) {
+				m_motion.direction = Vector3.left;
+			} else {
+				m_motion.direction = Vector3.right;
+			}
 		}
 
 		m_state = m_nextState;
@@ -101,6 +122,20 @@ public class WanderBehaviour : Initializable {
 		if (m_motion.HasGroundSensor()) {
 			m_target = m_motion.ProjectToGround(m_target);
 		}
+	}
+
+	private Vector2 IncrementalMovement() {
+		Vector2 displacementCenter = m_motion.velocity;
+		displacementCenter.Normalize();
+		displacementCenter *= m_displacementDistance;
+
+		Vector2 displacementForce = Vector2.right;
+		displacementForce.x = Mathf.Cos(m_displacementAngle) * m_displacementRadius;
+		displacementForce.y = Mathf.Sin(m_displacementAngle) * m_displacementRadius;
+
+		m_displacementAngle += Random.Range(-m_angleIncrement, m_angleIncrement);
+
+		return m_motion.position + displacementCenter + displacementForce;
 	}
 
 	void OnDrawGizmos() {

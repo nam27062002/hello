@@ -103,22 +103,25 @@ public class AttackBehaviour : Initializable {
 		switch (m_state) {
 			case State.Pursuit:
 				m_motion.Pursuit(m_dragon.transform.position, m_dragon.GetVelocity(), m_dragon.GetMaxSpeed());
+				m_motion.ApplySteering();
 				break;
 
 			case State.Attack:
 				m_motion.velocity = Vector2.zero;
+				m_motion.ApplySteering();
 
-				// should walk while shooting?
-				Vector3 player = m_dragon.transform.position;
-				if (player.x < m_motion.position.x) {
-					m_motion.direction = Vector2.left;
+				if (m_motion.faceDirection) {
+					m_motion.direction = m_dragon.transform.position - (Vector3)m_motion.position;
 				} else {
-					m_motion.direction = Vector2.right;
+					Vector3 player = m_dragon.transform.position;
+					if (player.x < m_motion.position.x) {
+						m_motion.direction = Vector2.left;
+					} else {
+						m_motion.direction = Vector2.right;
+					}
 				}
 				break;
 		}
-
-		m_motion.ApplySteering();
 	}
 
 	private void ChangeState() {

@@ -9,7 +9,7 @@ using System.Collections;
 public class PreyMotion : Initializable {
 
 	// Attributes	
-	[SerializeField] private bool m_faceDirection;	
+	[SerializeField] private bool m_faceDirection;
 	[SerializeField] private float m_steerForce;	
 	[SerializeField] private float m_maxSpeed;
 	[SerializeField] private float m_mass;
@@ -38,10 +38,11 @@ public class PreyMotion : Initializable {
 	//
 
 	// Properties
-	public Vector2 position 	{ get { return m_position; } }
-	public Vector2 direction 	{ get { return m_direction; } set { m_direction = value.normalized; } }
-	public Vector2 velocity		{ get { return m_velocity; } set { m_velocity = value; } }
-	public float   speed		{ get { return m_currentSpeed; } }
+	public bool    faceDirection 	{ get { return m_faceDirection; } }
+	public Vector2 position 		{ get { return m_position; } }
+	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; } }
+	public Vector2 velocity			{ get { return m_velocity; } set { m_velocity = value; } }
+	public float   speed			{ get { return m_currentSpeed; } }
 	//
 	// ----------------------------------------------------------------------------- //
 
@@ -233,10 +234,18 @@ public class PreyMotion : Initializable {
 		float rotationSpeed = 2f;	// [AOC] Deg/sec?
 		Quaternion targetDir;
 		
-		if (m_faceDirection && m_velocity.sqrMagnitude > 0.1f) {
+		if (m_faceDirection) {
 			// rotate the model so it can fully face the current direction
 			float angle = Mathf.Atan2(m_direction.y, m_direction.x) * Mathf.Rad2Deg;			
-			targetDir = Quaternion.AngleAxis(angle, Vector3.forward) * Quaternion.AngleAxis(-angle, Vector3.left);		
+			targetDir = Quaternion.AngleAxis(angle, Vector3.forward) * Quaternion.AngleAxis(-angle, Vector3.left);	
+			
+			Vector3 eulerRot = targetDir.eulerAngles;		
+			if (m_direction.y > 0) {
+				eulerRot.z = Mathf.Min(40f, eulerRot.z);
+			} else if (m_direction.y < 0) {
+				eulerRot.z = Mathf.Max(320f, eulerRot.z);
+			}
+			targetDir = Quaternion.Euler(eulerRot);	
 			
 		} else {
 			// Rotate so it faces the right direction (replaces 2D sprite flip)
