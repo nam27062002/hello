@@ -39,7 +39,7 @@ public class PreyMotion : Initializable {
 
 	// Properties
 	public bool    faceDirection 	{ get { return m_faceDirection; } }
-	public Vector2 position 		{ get { return m_position; } }
+	public Vector2 position 		{ get { return m_position; } set { m_position = value; } }
 	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; } }
 	public Vector2 velocity			{ get { return m_velocity; } set { m_velocity = value; } }
 	public float   speed			{ get { return m_currentSpeed; } }
@@ -226,7 +226,11 @@ public class PreyMotion : Initializable {
 	}
 	
 	private void ApplyPosition() {
-		transform.position = new Vector3(m_position.x, m_position.y, m_area.bounds.center.z + m_posZ);
+		float posZ = m_posZ;
+		if (m_area != null) {
+			posZ += m_area.bounds.center.z;
+		}
+		transform.position = new Vector3(m_position.x, m_position.y, posZ);
 	}
 	
 	private void UpdateOrientation() {
