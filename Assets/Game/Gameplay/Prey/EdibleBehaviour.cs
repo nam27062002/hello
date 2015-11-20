@@ -23,6 +23,7 @@ public class EdibleBehaviour : Initializable {
 	//-----------------------------------------------
 	private PreyStats m_prey;
 	private bool m_isBeingEaten;
+	public bool isBeingEaten { get { return m_isBeingEaten; } }
 
 	private float m_timer;
 	private float m_time;
@@ -33,6 +34,7 @@ public class EdibleBehaviour : Initializable {
 	private DragonEatBehaviour m_dragon;
 	private Transform m_dragonMouth;
 	private CircleArea2D m_Bounds;
+
 
 	//-----------------------------------------------
 	// Methods

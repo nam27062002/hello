@@ -158,12 +158,14 @@ public class AttackBehaviour : Initializable {
 		}
 	}
 
-
 	public void OnAttack() {
 		// do stuff - this will be called from animation events "PreyAnimationEvents"
 
 		if (m_projectilePrefab != null) {
-
+			ProjectileBehaviour projectile = PoolManager.GetInstance(m_projectilePrefab.name).GetComponent<ProjectileBehaviour>();
+			if (projectile != null) {
+				projectile.Shoot(transform, m_damage);
+			}
 		} else {
 			m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
 		}
