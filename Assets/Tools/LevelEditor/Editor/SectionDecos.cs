@@ -22,17 +22,14 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
-		private static readonly string RESOURCES_DIR = "Game/";
+		private static readonly string RESOURCES_DIR = "Game/Decorations";
 		private static readonly string ROOT_DIR = "Resources/Game/";
 
 		//------------------------------------------------------------------//
 		// MEMBERS															//
 		//------------------------------------------------------------------//
 		private SelectionGrid m_grid = new SelectionGrid();
-		private string[] m_resourcesDirs = new string[] {
-			"Background",
-			"Decorations",
-		};
+
 		
 		//------------------------------------------------------------------//
 		// INTERFACE IMPLEMENTATION											//
@@ -42,16 +39,12 @@ namespace LevelEditor {
 		/// </summary>
 		public void Init() {
 			// Refresh grid data
+			// Get folder structure
+			string dirPath = Application.dataPath + "/Resources/" + RESOURCES_DIR;
+			DirectoryInfo rootDirInfo = new DirectoryInfo(dirPath);
 			
-			// Iterate target directories
-			for(int i = 0; i < m_resourcesDirs.Length; i++) {
-				// Get folder structure
-				string dirPath = Application.dataPath + "/" + ROOT_DIR + m_resourcesDirs[i];
-				DirectoryInfo rootDirInfo = new DirectoryInfo(dirPath);
-
-				// Get/Create a group for this directory!
-				CreateGroup(rootDirInfo);
-			}
+			// Get/Create a group for this directory!
+			CreateGroup(rootDirInfo);
 		}
 
 		/// <summary>
