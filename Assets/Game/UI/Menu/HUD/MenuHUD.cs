@@ -1,7 +1,7 @@
-﻿// HUDTime.cs
+// MenuHUD.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 02/11/2015.
+// Created by Alger Ortín Castellví on 20/11/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -15,15 +15,13 @@ using System;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Simple controller for a time counter in the hud.
+/// Controller for the HUD in the main menu.
 /// </summary>
-[RequireComponent(typeof(Text))]
-public class HUDTime : MonoBehaviour {
+public class MenuHUD : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private Text m_valueTxt;
-	
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -31,33 +29,14 @@ public class HUDTime : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Get external references
-		m_valueTxt = GetComponent<Text>();
-		m_valueTxt.text = "00:00";
+		// Not much to do
 	}
 
 	/// <summary>
-	/// First update call.
+	/// Open the currency shop popup.
 	/// </summary>
-	private void Start() {
-		UpdateTime();
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-		UpdateTime();
-	}
-
-	//------------------------------------------------------------------//
-	// INTERNAL UTILS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Updates the displayed score.
-	/// </summary>
-	private void UpdateTime() {
-		// Do it!
-		m_valueTxt.text = TimeUtils.FormatTime(InstanceManager.GetSceneController<GameSceneController>().elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+	public void OpenCurrencyShopPopup() {
+		// Just do it
+		PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 	}
 }

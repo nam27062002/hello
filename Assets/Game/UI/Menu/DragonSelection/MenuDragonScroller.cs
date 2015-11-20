@@ -48,10 +48,10 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, OnSelectedDragonChanged);
+		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
 		
 		// Do a first refresh
-		OnSelectedDragonChanged();
+		OnSelectedDragonChanged(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 	}
 	
 	/// <summary>
@@ -59,7 +59,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, OnSelectedDragonChanged);
+		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -68,9 +68,10 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// <summary>
 	/// Selected dragon has changed
 	/// </summary>
-	private void OnSelectedDragonChanged() {
+	/// <param name="_id">The id of the selected dragon</param>
+	public void OnSelectedDragonChanged(DragonId _id) {
 		// Get dragon data from the dragon manager
-		DragonData newDragonData = DragonManager.currentDragonData;
+		DragonData newDragonData = DragonManager.GetDragonData(_id);
 
 		// Get cached dragon preview, if not found create it
 		GameObject dragonObj = null;

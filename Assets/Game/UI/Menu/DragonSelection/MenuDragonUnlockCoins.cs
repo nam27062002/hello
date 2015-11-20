@@ -1,7 +1,7 @@
-// MenuDragonXPBar.cs
+// MenuDragonUnlockCoins.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 18/11/2015.
+// Created by Alger Ortín Castellví on 20/11/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -15,13 +15,13 @@ using System;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Simple controller for a xp bar in the debug hud.
+/// Unlock the selected dragon using coins.
 /// </summary>
-public class MenuDragonXPBar : MonoBehaviour {
+public class MenuDragonUnlockCoins : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private Slider m_bar;
+	public Text m_priceText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -30,8 +30,8 @@ public class MenuDragonXPBar : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Get external references
-		m_bar = GetComponentInChildren<Slider>();
+		// Required fields
+		DebugUtils.Assert(m_priceText != null, "Required reference missing!");
 	}
 
 	/// <summary>
@@ -40,11 +40,11 @@ public class MenuDragonXPBar : MonoBehaviour {
 	private void Start() {
 		// Subscribe to external events
 		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
-
+		
 		// Do a first refresh
 		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 	}
-
+	
 	/// <summary>
 	/// Destructor
 	/// </summary>
@@ -54,20 +54,29 @@ public class MenuDragonXPBar : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Refresh with data from currently selected dragon
+	/// Refresh with data from currently selected dragon.
 	/// </summary>
 	/// <param name="_id">The id of the selected dragon</param>
 	public void Refresh(DragonId _id) {
-		// Bar value
+		// Get new dragon's data from the dragon manager
 		DragonData data = DragonManager.GetDragonData(_id);
-		Range xpRange = data.progression.xpRange;
-		m_bar.minValue = xpRange.min;
-		m_bar.maxValue = xpRange.max;
-		m_bar.value = data.progression.xp;
 
-		// Special case on last level
-		if(data.progression.level == data.progression.lastLevel) {
-			m_bar.minValue = xpRange.min - 1;
+		// Update price
+		m_priceText.text = StringUtils.FormatNumber(data.unlockPriceCoins);
+	}
+
+	/// <summary>
+	/// The unlock button has been pressed.
+	/// </summary>
+	public void OnUnlock() {
+		// Unlock dragon
+		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		if(UserProfile.coins >= data.unlockPriceCoins) {
+			UserProfile.AddCoins(-data.unlockPriceCoins);
+			data.Acquire();
+			PersistenceManager.Save();
+		} else {
+			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 		}
 	}
 }

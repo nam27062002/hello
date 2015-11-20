@@ -43,7 +43,7 @@ public class AddCoinsPerSecond : MonoBehaviour {
 	/// </summary>
 	void Start() {
 		// Get external references
-		m_scene = InstanceManager.sceneController as GameSceneController;
+		m_scene = InstanceManager.GetSceneController<GameSceneController>();
 		DebugUtils.Assert(m_scene != null, "Required component!");
 
 		// Initialize the timer

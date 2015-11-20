@@ -96,9 +96,6 @@ public class DragonSkill : SerializableClass {
 	public bool UnlockNextLevel() {
 		// Can the unlock be performed?
 		if(CanUnlockNextLevel()) {
-			// Subtract cost from user profile
-			UserProfile.AddCoins(-nextLevelUnlockPrice);
-
 			// Level up!
 			m_level++;
 
@@ -113,15 +110,13 @@ public class DragonSkill : SerializableClass {
 
 	/// <summary>
 	/// Check whether all the conditions are met to unlock the next level of this skill.
-	/// This includes not being the last level and have enough resources.
+	/// This includes not being the last level.
+	/// Doesn't check for resources.
 	/// </summary>
 	/// <returns>Whether the next level can be unlocked or not.</returns>
 	public bool CanUnlockNextLevel() {
 		// Last level?
 		if(level >= lastLevel) return false;
-
-		// Enough resources?
-		if(UserProfile.coins < nextLevelUnlockPrice) return false;
 
 		// Everything ok!
 		return true;

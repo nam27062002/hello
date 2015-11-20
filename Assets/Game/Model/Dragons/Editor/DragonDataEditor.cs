@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -21,6 +22,15 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Configure separators
+	// [AOC] Key is the name of the property before which the separator should be placed. Value is the text of the separator.
+	private static readonly Dictionary<string, string> m_separators = new Dictionary<string, string> {
+		{ "m_id", "General Data" },
+		{ "m_skills", "Skills" },
+		{ "m_unlockPriceCoins", "Progression" },
+		{ "m_healthRange", "Level-dependant Stats" },
+		{ "m_healthDrainPerSecond", "Constant Stats"} 
+	};
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -59,59 +69,26 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 		_property.NextVisible(true);	// Enter to the first level of depth
 		int targetDepth = _property.depth;
 		float propertyHeight = 0;
+		bool drawDefault = true;
 		while(_property.depth == targetDepth) {		// Only direct children, not brothers or grand-children (the latter will be drawn by default if using the default EditorGUI.PropertyField)
 			// Draw property as default except for the ones we want to customize
-			// ID and start of the General Data section
-			if(_property.name == "m_id") {
+			drawDefault = true;
+
+			// If the property is a section header, draw a separator first
+			if(m_separators.ContainsKey(_property.name)) {
 				// Draw a separator
-				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("General Data", 30f));
+				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute(m_separators[_property.name], 30f));
 				AdvancePos(propertyHeight);
-
-				// ID can't be changed, so don't do anything else
 			}
 
-			// Start of the Progression section
-			else if(_property.name == "m_progression") {
-				// Draw a separator first
-				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Progression", 30f));
-				AdvancePos(propertyHeight);
-
-				// Default property drawing
-				m_pos.height = EditorGUI.GetPropertyHeight(_property);
-				EditorGUI.PropertyField(m_pos, _property);
-				AdvancePos();
-			}
-
-			// Start of the Level-dependant Stats section
-			else if(_property.name == "m_healthRange") {
-				// Draw a separator first
-				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Level-dependant Stats", 30f));
-				AdvancePos(propertyHeight);
-				
-				// Default property drawing
-				m_pos.height = EditorGUI.GetPropertyHeight(_property);
-				EditorGUI.PropertyField(m_pos, _property);
-				AdvancePos();
-			}
-
-			// Start of the Constant Stats section
-			else if(_property.name == "m_healthDrainPerSecond") {
-				// Draw a separator first
-				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Constant Stats", 30f));
-				AdvancePos(propertyHeight);
-				
-				// Default property drawing
-				m_pos.height = EditorGUI.GetPropertyHeight(_property);
-				EditorGUI.PropertyField(m_pos, _property);
-				AdvancePos();
+			// Properties requiring special treatment
+			// ID can't be changed, so don't do anything else
+			if(_property.name == "m_id") {
+				drawDefault = false;
 			}
 
 			// Skills
 			else if(_property.name == "m_skills") {
-				// Draw a separator first
-				propertyHeight = EditorGUILayoutExt.Separator(m_pos, new SeparatorAttribute("Skills", 30f));
-				AdvancePos(propertyHeight);
-
 				// Skills is an array of fixed length (4), but we will display each skill as an individual property - since we don't want to allow changing its size or order
 				// Each skill must be foldable
 				// Skill type can't be change and will be used as label
@@ -120,16 +97,19 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 				for(int i = 0; i < _property.arraySize; i++) {
 					// Get skill property
 					skillProp = _property.GetArrayElementAtIndex(i);
-
+					
 					// Draw it using its own custom property drawer
 					m_pos.height = EditorGUI.GetPropertyHeight(skillProp);
 					EditorGUI.PropertyField(m_pos, skillProp, true);
 					AdvancePos();
 				}
+
+				drawDefault = false;
 			}
 
-			// Default
-			else {
+			// Properties without any special treatment
+			// Draw property using the default property drawer
+			if(drawDefault) {
 				m_pos.height = EditorGUI.GetPropertyHeight(_property);
 				EditorGUI.PropertyField(m_pos, _property, true);
 				AdvancePos();

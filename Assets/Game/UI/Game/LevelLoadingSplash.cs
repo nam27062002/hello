@@ -30,7 +30,6 @@ public class LevelLoadingSplash : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private GameSceneController sceneController { get { return InstanceManager.sceneController as GameSceneController; }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -57,7 +56,7 @@ public class LevelLoadingSplash : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update progress
-		m_progressBar.normalizedValue = sceneController.levelLoadingProgress;
+		m_progressBar.normalizedValue = InstanceManager.GetSceneController<GameSceneController>().levelLoadingProgress;
 	}
 
 	/// <summary>

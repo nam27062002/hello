@@ -20,7 +20,6 @@ public class MenuDragonSelector : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string EVENT_DRAGON_CHANGED = typeof(MenuDragonSelector).Name +  "_EVENT_DRAGON_CHANGED";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -63,14 +62,8 @@ public class MenuDragonSelector : MonoBehaviour {
 	/// </summary>
 	/// <param name="_id">The id of the dragon we want to be the current one.</param>
 	public void SetSelectedDragon(DragonId _id) {
-		// Update profile
-		UserProfile.currentDragon = _id;
-
-		// Save persistence
-		PersistenceManager.Save();
-		
 		// Notify game
-		Messenger.Broadcast(EVENT_DRAGON_CHANGED);
+		Messenger.Broadcast<DragonId>(GameEvents.MENU_DRAGON_SELECTED, _id);
 	}
 
 	//------------------------------------------------------------------//
@@ -81,7 +74,7 @@ public class MenuDragonSelector : MonoBehaviour {
 	/// </summary>
 	public void SelectNextDragon() {
 		// Figure out next dragon's id
-		DragonId newId = UserProfile.currentDragon + 1;
+		DragonId newId = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon + 1;
 		if(newId == DragonId.COUNT) newId = DragonId.NONE + 1;
 
 		// Change selection
@@ -93,7 +86,7 @@ public class MenuDragonSelector : MonoBehaviour {
 	/// </summary>
 	public void SelectPreviousDragon() {
 		// Figure out previous dragon's id
-		DragonId newId = UserProfile.currentDragon - 1;
+		DragonId newId = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon - 1;
 		if((int)newId < 0) newId = DragonId.COUNT - 1;
 
 		// Change selection

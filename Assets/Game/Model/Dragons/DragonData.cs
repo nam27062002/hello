@@ -35,6 +35,14 @@ public class DragonData {
 		public float xp = 0;
 		public int level = 0;
 		public int[] skillLevels = new int[(int)DragonSkill.EType.COUNT];
+		public bool owned = false;
+	}
+
+	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
+	public enum LockState {
+		LOCKED,		// Previous tier hasn't been completed
+		AVAILABLE,	// Previous tier has been completed but the dragon hasn't been purchased
+		OWNED		// Dragon has been purchased and can be used
 	}
 
 	//------------------------------------------------------------------//
@@ -63,6 +71,17 @@ public class DragonData {
 	public float cameraZoomOffset { get { return m_cameraZoomOffset; }}
 
 	// Progression
+	[SerializeField] private int m_unlockPriceCoins = 0;
+	public int unlockPriceCoins { get { return m_unlockPriceCoins; }}
+
+	[SerializeField] private int m_unlockPricePC = 0;
+	public int unlockPricePC { get { return m_unlockPricePC; }}
+
+	[SerializeField] private bool m_owned = false;
+	public LockState lockState { get { return GetLockState(); }}
+	public bool isLocked { get { return lockState == LockState.LOCKED; }}
+	public bool isOwned { get { return m_owned; }}
+
 	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}
 
@@ -169,6 +188,38 @@ public class DragonData {
 		m_scaleOffset += _scale;
 	}
 
+	/// <summary>
+	/// Gets the current lock state of this dragon.
+	/// </summary>
+	/// <returns>The lock state for this dragon.</returns>
+	public LockState GetLockState() {
+		// a) Is dragon owned?
+		if(m_owned) return LockState.OWNED;
+
+		// b) Is tier unlocked?
+		if(DragonManager.IsTierUnlocked(this.tier)) {
+			return LockState.AVAILABLE;
+		}
+
+		// c) Dragon locked
+		return LockState.LOCKED;
+	}
+
+	/// <summary>
+	/// Unlock this dragon (will be OWNED from now on). Doesn't do any currency transaction.
+	/// Triggers the DRAGON_ACQUIRED event.
+	/// </summary>
+	public void Acquire() {
+		// Skip if already owned
+		if(m_owned) return;
+
+		// Just change owned status
+		m_owned = true;
+
+		// Dispatch global event
+		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_ACQUIRED, this);
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
@@ -183,6 +234,7 @@ public class DragonData {
 		}
 
 		// Just read values from persistence object
+		m_owned = _data.owned;
 		progression.Load(_data.xp, _data.level);
 
 		for(int i = 0; i < _data.skillLevels.Length; i++) {
@@ -199,6 +251,7 @@ public class DragonData {
 		SaveData data = new SaveData();
 
 		data.id = id;
+		data.owned = m_owned;
 		data.xp = progression.xp;
 		data.level = progression.level;
 

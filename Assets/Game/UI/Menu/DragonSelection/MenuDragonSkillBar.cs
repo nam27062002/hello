@@ -1,4 +1,4 @@
-﻿// MenuDragonSkillBar.cs
+// MenuDragonSkillBar.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/09/2015.
@@ -45,10 +45,10 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
+		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
-		Refresh();
+		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 	}
 	
 	/// <summary>
@@ -56,15 +56,16 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
+		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 	}
 
 	/// <summary>
 	/// Refresh with data from currently selected dragon.
 	/// </summary>
-	public void Refresh() {
+	/// <param name="_id">The id of the selected dragon</param>
+	public void Refresh(DragonId _id) {
 		// Get skill data
-		DragonSkill skillData = DragonManager.currentDragonData.GetSkill(m_skillType);
+		DragonSkill skillData = DragonManager.GetDragonData(_id).GetSkill(m_skillType);
 
 		// Label
 		//m_labelTxt.text = Localization.Localize(skillData.tidName);
@@ -98,17 +99,29 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Level up the current skill.
+	/// </summary>
 	public void LevelUp() {
 		// Get skill data
 		DragonSkill skillData = DragonManager.currentDragonData.GetSkill(m_skillType);
 
-		// Just do it! ^_^
-		skillData.UnlockNextLevel();
+		// Enough resources?
+		if(UserProfile.coins < skillData.nextLevelUnlockPrice) {
+			// Show currency shop
+			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		} else {
+			// Perform transaction
+			UserProfile.AddCoins(-skillData.nextLevelUnlockPrice);
 
-		// Refresh data
-		Refresh();
+			// Do it! ^_^
+			skillData.UnlockNextLevel();
 
-		// Save persistence
-		PersistenceManager.Save();
+			// Refresh data
+			Refresh(DragonManager.currentDragonData.id);
+
+			// Save persistence
+			PersistenceManager.Save();
+		}
 	}
 }

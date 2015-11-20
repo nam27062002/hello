@@ -42,6 +42,7 @@ public class DragonProgression : SerializableClass {
 	public int level { get { return m_level; }}	// Should never be > lastLevel
 	public int nextLevel { get { return Mathf.Min(m_level + 1, lastLevel); }}
 	public int lastLevel { get { return m_levelsXp.Length - 1; }}
+	public bool isMaxLevel { get { return m_level == lastLevel; }}
 
 	// Progress [0..1]
 	public float progressByXp { get { return Mathf.InverseLerp(0f, m_levelsXp[lastLevel], m_xp); }}

@@ -56,5 +56,17 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 		// Call parent
 		base.OnDestroy();
 	}
+
+	//------------------------------------------------------------------//
+	// PUBLIC STATIC METHODS											//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Obtain the current scene controller casted to the desired type.
+	/// </summary>
+	/// <returns>The casted scene controller.</returns>
+	/// <typeparam name="T">The actual type of the current scene controller. Must inherit from SceneController.</typeparam>
+	public static T GetSceneController<T>() where T : SceneController {
+		return sceneController as T;
+	}
 }
 

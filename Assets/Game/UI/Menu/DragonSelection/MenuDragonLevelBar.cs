@@ -1,4 +1,4 @@
-﻿// MenuDragonLevelBar.cs
+// MenuDragonLevelBar.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 18/11/2015.
@@ -41,10 +41,10 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
+		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
-		Refresh();
+		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 	}
 
 	/// <summary>
@@ -52,17 +52,21 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
+		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 	}
 
 	/// <summary>
 	/// Refresh with data from currently selected dragon
 	/// </summary>
-	public void Refresh() {
+	/// <param name="_id">The id of the selected dragon</param>
+	public void Refresh(DragonId _id) {
+		// Get new dragon's data from the dragon manager
+		DragonData data = DragonManager.GetDragonData(_id);
+
 		// Bar value
 		m_levelBar.minValue = 0;
 		m_levelBar.maxValue = DragonData.NUM_LEVELS;
-		m_levelBar.value = DragonManager.currentDragonData.progression.level + 1;	// [1..N] bar should never be empty and should be filled when we're at level 9
+		m_levelBar.value = data.progression.level + 1;	// [1..N] bar should never be empty and should be filled when we're at level 9
 			
 		// Text
 		m_levelText.text = String.Format("Lvl {0}",

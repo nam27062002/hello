@@ -1,4 +1,4 @@
-﻿// MenuDragonOtherStats.cs
+// MenuDragonOtherStats.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/09/2015.
@@ -39,10 +39,10 @@ public class MenuDragonOtherStats : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
+		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
-		Refresh();
+		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 	}
 	
 	/// <summary>
@@ -50,17 +50,21 @@ public class MenuDragonOtherStats : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
+		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 	}
 
 	/// <summary>
 	/// Refresh with data from currently selected dragon.
 	/// </summary>
-	public void Refresh() {
+	/// <param name="_id">The id of the selected dragon</param>
+	public void Refresh(DragonId _id) {
+		// Get new dragon's data from the dragon manager
+		DragonData data = DragonManager.GetDragonData(_id);
+
 		// Health
-		m_healthText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.maxHealth, 0));
+		m_healthText.text = String.Format("{0}", StringUtils.FormatNumber(data.maxHealth, 0));
 
 		// Scale
-		m_scaleText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.scale, 2));
+		m_scaleText.text = String.Format("{0}", StringUtils.FormatNumber(data.scale, 2));
 	}
 }

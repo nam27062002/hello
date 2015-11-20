@@ -86,6 +86,30 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 		return list;
 	}
 
+	/// <summary>
+	/// Check whether a given tier is unlocked or not.
+	/// A tier is considered unlocked when the previous tier has been completed.
+	/// A tier is considered completed when all the dragons in it are max level.
+	/// </summary>
+	/// <returns><c>True</c> if all the dragons in the previous tier are max level. <c>False</c> otherwise.</returns>
+	/// <param name="_tier">The tier to be checked.</param>
+	public static bool IsTierUnlocked(DragonTier _tier) {
+		// Always true for first tier
+		if(_tier == DragonTier.TIER_0) return true;
+
+		// Check dragons in previous tier
+		List<DragonData> dragonsToCheck = GetDragonsByTier(_tier - 1);
+		for(int i = 0; i < dragonsToCheck.Count; i++) {
+			// If the dragon is not maxed out, tier is not completed thus requested tier is not unlocked, we can break the loop
+			if(!dragonsToCheck[i].progression.isMaxLevel) {
+				return false;
+			}
+		}
+
+		// All dragons on the previous tier are maxed out, tier is unlocked!
+		return true;
+	}
+
 	//------------------------------------------------------------------//
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
