@@ -169,6 +169,5 @@ public class AttackBehaviour : Initializable {
 		} else {
 			m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
 		}
-		Debug.Log("AttackBehaviour -> OnAttack");
 	}
 }
