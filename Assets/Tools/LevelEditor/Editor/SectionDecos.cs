@@ -31,9 +31,7 @@ namespace LevelEditor {
 		private SelectionGrid m_grid = new SelectionGrid();
 		private string[] m_resourcesDirs = new string[] {
 			"Background",
-			"Buildings",
 			"Decorations",
-			"Ground"
 		};
 		
 		//------------------------------------------------------------------//
