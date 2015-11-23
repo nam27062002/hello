@@ -14,10 +14,10 @@ using UnityEngine.UI;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Simple behaviour to show/hide the target game object depending on whether the 
-/// selected dragon is owned or not.
+/// Simple behaviour to show/hide the target game object depending on the 
+/// selected dragon and whether it's owned or not.
 /// </summary>
-public class MenuDragonShowIfOwned : MonoBehaviour {
+public class MenuDragonShowConditionally : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -26,6 +26,9 @@ public class MenuDragonShowIfOwned : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Config
+	public bool[,] m_showIf = new bool[(int)DragonId.COUNT, 3];	// For each dragon, show if locked, available, owned?
+
+	[Space(5)]
 	[SerializeField] private bool m_showIfLocked = false;
 	[SerializeField] private bool m_showIfAvailable = false;
 	[SerializeField] private bool m_showIfOwned = true;
