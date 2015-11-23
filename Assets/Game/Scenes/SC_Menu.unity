@@ -565,9 +565,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_showIfLocked: 0
+  m_showIfLocked: 1
   m_showIfAvailable: 0
-  m_showIfOwned: 1
+  m_showIfOwned: 0
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &229502820
 MonoBehaviour:
@@ -1143,11 +1144,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22416352, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 273.24939
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22416352, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 124
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22416352, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchorMin.x
@@ -1319,15 +1320,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22436012, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22436012, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22436012, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 161.249374
       objectReference: {fileID: 0}
     - target: {fileID: 22436012, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_SizeDelta.x
@@ -1339,27 +1340,27 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22483894, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22483894, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22483894, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 273.24939
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22483894, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22483894, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 92
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22483894, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 92
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f1ecc6d94991e4d3f8f5c71155a2af17, type: 2}
@@ -1931,6 +1932,7 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!1 &557095128
 GameObject:
@@ -2524,8 +2526,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
+  m_showIfAvailable: 1
+  m_showIfOwned: 0
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &667609901
 MonoBehaviour:
@@ -2827,6 +2830,7 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!1 &719869051
 GameObject:
@@ -3503,6 +3507,7 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &965525228
 MonoBehaviour:
@@ -3578,6 +3583,7 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &974583505
 MonoBehaviour:
@@ -4468,6 +4474,7 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &1238122773
 MonoBehaviour:
@@ -5442,9 +5449,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
+  m_showIfLocked: 1
+  m_showIfAvailable: 1
   m_showIfOwned: 1
+  m_hideForDragons: 1
   m_anim: {fileID: 0}
 --- !u!114 &1507816145
 MonoBehaviour:
@@ -7160,9 +7168,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
+  m_showIfLocked: 1
+  m_showIfAvailable: 1
   m_showIfOwned: 1
+  m_hideForDragons: 2
   m_anim: {fileID: 0}
 --- !u!114 &1913661499
 MonoBehaviour:

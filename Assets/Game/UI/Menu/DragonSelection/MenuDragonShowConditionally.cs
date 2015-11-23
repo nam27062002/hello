@@ -21,21 +21,28 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private enum HideForDragons {
+		NONE,
+		FIRST,
+		LAST,
+		FIRST_AND_LAST,
+		ALL
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Config
-	public bool[,] m_showIf = new bool[(int)DragonId.COUNT, 3];	// For each dragon, show if locked, available, owned?
-
-	[Space(5)]
+	[Comment("Ownership of the selected dragon", 5f)]
 	[SerializeField] private bool m_showIfLocked = false;
 	[SerializeField] private bool m_showIfAvailable = false;
 	[SerializeField] private bool m_showIfOwned = true;
 
+	[Comment("Will override ownership status for those dragons", 5f)]
+	[SerializeField] private HideForDragons m_hideForDragons;
+
 	// References
-	[Space(5)]
-	[Comment("Optional, must have triggers \"show\" and \"hide\"")]
+	[Comment("Optional, must have triggers \"show\" and \"hide\"", 5f)]
 	[SerializeField] private Animator m_anim = null;
 
 	//------------------------------------------------------------------//
@@ -96,10 +103,24 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	private void Apply(DragonId _id, bool _useAnims) {
 		// Check whether the object should be visible or not
 		bool toShow = false;
+
+		// Ownership status
 		switch(DragonManager.GetDragonData(_id).lockState) {
 			case DragonData.LockState.LOCKED:		toShow = m_showIfLocked;	break;
 			case DragonData.LockState.AVAILABLE:	toShow = m_showIfAvailable;	break;
 			case DragonData.LockState.OWNED:		toShow = m_showIfOwned;		break;
+		}
+
+		// Dragon ID (overrides ownership status)
+		switch(m_hideForDragons) {
+			case HideForDragons.NONE:	break;	// Nothing to change
+			case HideForDragons.FIRST:	toShow &= (_id != (DragonId)0);	break;
+			case HideForDragons.LAST:	toShow &= (_id != (DragonId.COUNT - 1));	break;
+			case HideForDragons.FIRST_AND_LAST:	{
+				toShow &= (_id != (DragonId)0);
+				toShow &= (_id != (DragonId.COUNT - 1));
+			} break;
+			case HideForDragons.ALL:	toShow = false;	break;	// Force hiding
 		}
 
 		// If animator is present and desired, launch animation

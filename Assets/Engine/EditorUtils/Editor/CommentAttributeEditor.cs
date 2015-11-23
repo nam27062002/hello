@@ -54,6 +54,10 @@ public class CommentAttributeEditor : DecoratorDrawer {
 	/// </summary>
 	/// <param name="_area">The area designated by the inspector to draw this decoration.</param>
 	public override void OnGUI(Rect _area) {
+		// Apply spacing
+		_area.y += comment.m_spaceAbove;
+
+		// Draw label
 		EditorGUI.LabelField(_area, m_content.text, m_labelStyle);
 	}
 
@@ -65,6 +69,12 @@ public class CommentAttributeEditor : DecoratorDrawer {
 		// [AOC] Compute required height to draw the text using our custom box style with the current inspector window width
 		m_content.text = comment.m_text;
 		float requiredHeight = m_labelStyle.CalcHeight(m_content, Screen.width - 35f);	// Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
+
+		// Add spacing, if positive
+		if(comment.m_spaceAbove > 0f) {
+			requiredHeight += comment.m_spaceAbove;
+		}
+
 		return requiredHeight;
 	}
 }
