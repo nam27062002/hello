@@ -31,7 +31,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Use our own canvas for practicity.
-	private Canvas m_canvas = null;
+	[SerializeField] private Canvas m_canvas = null;
 
 	// Queues
 	private Queue<ResourceRequest> m_loadingQueue = new Queue<ResourceRequest>();
@@ -44,33 +44,8 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	/// Initialization.
 	/// </summary>
 	protected void Awake() {
-		// Create and initialize canvas
-		if(m_canvas == null) {
-			// Create container object at the root of the scene
-			GameObject canvasObj = new GameObject("CanvasPopups");
-			canvasObj.layer = LayerMask.NameToLayer("UI");
-			GameObject.DontDestroyOnLoad(canvasObj);	// The popup manager is a singleton, persisting through scene changes, so should be the canvas
-
-			// Create and setup canvas
-			// Assume we want the popups to show on top of the rest of the UI, so we will setup the canvas accordingly
-			m_canvas = canvasObj.AddComponent<Canvas>();
-			m_canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-			m_canvas.sortingOrder = 100;	// Should be enough, default value is 0 and we don't usually have more than one canvas in the UI layer
-
-			// Create and setup canvas scaler
-			// Copied from default canvas usage, feel free to modify any of these parameters
-			CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
-			scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-			scaler.referenceResolution = new Vector2(2048, 1536);
-			scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-			scaler.matchWidthOrHeight = 0;
-			scaler.referencePixelsPerUnit = 100;
-
-			// Create and setup raycaster (required for the canvas to work properly)
-			// Copied from default canvas usage, feel free to modify any of these parameters
-			GraphicRaycaster raycaster = canvasObj.AddComponent<GraphicRaycaster>();
-			raycaster.ignoreReversedGraphics = true;
-		}
+		// Required fields
+		DebugUtils.Assert(m_canvas != null, "PopupManager requires a canvas to put the popups on!");
 	}
 
 	/// <summary>
@@ -112,14 +87,6 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	/// Destructor
 	/// </summary>
 	override protected void OnDestroy() {
-		// Destroy created canvas as well
-		if(m_canvas != null) {
-			Destroy(m_canvas.gameObject);
-		}
-
-		// Clear references
-		m_canvas = null;
-
 		// Call parent
 		base.OnDestroy();
 	}

@@ -51,6 +51,7 @@ public class MenuSceneController : SceneController {
 	void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelectionChanged);
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 	
 	/// <summary>
@@ -59,6 +60,7 @@ public class MenuSceneController : SceneController {
 	void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelectionChanged);
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------//
@@ -117,6 +119,15 @@ public class MenuSceneController : SceneController {
 			// Save persistence
 			PersistenceManager.Save();
 		}
+	}
+
+	/// <summary>
+	/// A dragon has been unlocked.
+	/// </summary>
+	/// <param name="_data">The dragon that has been unlocked.</param>
+	public void OnDragonAcquired(DragonData _data) {
+		// Just make it the current dragon
+		OnDragonSelectionChanged(_data.id);
 	}
 }
 
