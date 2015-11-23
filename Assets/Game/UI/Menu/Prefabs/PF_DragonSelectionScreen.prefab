@@ -47,6 +47,7 @@ GameObject:
   - 222: {fileID: 22228076}
   - 114: {fileID: 11491676}
   - 114: {fileID: 11497882}
+  - 114: {fileID: 11400182}
   m_Layer: 5
   m_Name: BtnArrowLeft
   m_TagString: Untagged
@@ -824,6 +825,7 @@ GameObject:
   - 222: {fileID: 22221500}
   - 114: {fileID: 11441150}
   - 114: {fileID: 11477882}
+  - 114: {fileID: 11449108}
   m_Layer: 5
   m_Name: BtnArrowRight
   m_TagString: Untagged
@@ -1488,6 +1490,22 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11400182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 104138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_showIfLocked: 1
+  m_showIfAvailable: 1
+  m_showIfOwned: 1
+  m_hideForDragons: 1
+  m_anim: {fileID: 0}
 --- !u!114 &11400194
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1686,12 +1704,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 191312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1561a5132c7524c328025c8997910325, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &11409390
 MonoBehaviour:
@@ -2865,12 +2884,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 150970}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1561a5132c7524c328025c8997910325, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 1
   m_showIfAvailable: 0
   m_showIfOwned: 0
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &11438008
 MonoBehaviour:
@@ -3200,12 +3220,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 146662}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1561a5132c7524c328025c8997910325, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &11446470
 MonoBehaviour:
@@ -3252,6 +3273,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11449108
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 151214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_showIfLocked: 1
+  m_showIfAvailable: 1
+  m_showIfOwned: 1
+  m_hideForDragons: 2
+  m_anim: {fileID: 0}
 --- !u!114 &11449524
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3893,12 +3930,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 188556}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1561a5132c7524c328025c8997910325, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 0
   m_showIfAvailable: 1
   m_showIfOwned: 0
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &11466582
 MonoBehaviour:
@@ -4069,12 +4107,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 111174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1561a5132c7524c328025c8997910325, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &11471386
 MonoBehaviour:
@@ -5014,12 +5053,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 143770}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1561a5132c7524c328025c8997910325, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &11496020
 MonoBehaviour:
@@ -5029,12 +5069,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 158038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1561a5132c7524c328025c8997910325, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
+  m_hideForDragons: 0
   m_anim: {fileID: 0}
 --- !u!114 &11496136
 MonoBehaviour:
