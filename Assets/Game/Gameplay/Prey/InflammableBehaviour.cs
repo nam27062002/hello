@@ -10,14 +10,15 @@ public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	[SerializeField] private bool m_destroyOnBurn = false;
 	[SerializeField] private float m_checkFireTime = 0.25f;
-
+	[SerializeField] private float m_maxHealth = 100f;
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
 	private PreyStats m_prey;
 	private DragonBreathBehaviour m_breath;
-
+	
+	private float m_health;
 	private float m_timer;
 	
 	//-----------------------------------------------
@@ -40,7 +41,7 @@ public class InflammableBehaviour : Initializable {
 	}
 	
 	public override void Initialize() {
-
+		m_health = m_maxHealth;
 	}
 
 	void Update() {
@@ -56,11 +57,11 @@ public class InflammableBehaviour : Initializable {
 
 	public void Burn(float _damage) {
 
-		if (m_prey.health > 0) {
+		if (m_health > 0) {
 
-			m_prey.AddLife(-_damage);
+			m_health -= _damage;
 
-			if (m_prey.health <= 0) {
+			if (m_health <= 0) {
 				// Let heirs do their magic
 				OnBurn();
 
@@ -72,7 +73,7 @@ public class InflammableBehaviour : Initializable {
 
 				// Particles
 				ParticleManager.Spawn("SmokePuff", transform.position);
-								
+
 				// deactivate
 				if (m_destroyOnBurn) {
 					DestroyObject(gameObject);

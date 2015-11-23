@@ -12,9 +12,6 @@ public class PreyStats : Initializable {
 
 	[SerializeField] private Reward m_reward;
 	public Reward reward { get { return m_reward; } }
-	
-	[SerializeField] private float m_maxHealth = 100f;
-	public float maxHealth { get { return m_maxHealth; } }
 
 	[SerializeField][Range(0,1)] private float m_goldenChance = 0f;
 	[SerializeField][Range(0,1)] private float m_pcChance = 0f;
@@ -24,9 +21,6 @@ public class PreyStats : Initializable {
 	//-----------------------------------------------
 	private bool m_isGolden = false;
 	private bool m_givePC = false;
-
-	private float m_health;
-	public float health { get { return m_health; } }
 
 	private Material[] m_materials;
 
@@ -43,16 +37,16 @@ public class PreyStats : Initializable {
 	}
 
 	public override void Initialize() {
-		m_health = m_maxHealth;		
+	//	m_health = m_maxHealth;		
 		SetGolden((Random.Range(0f, 1f) <= m_goldenChance));
 
 		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
 		m_givePC = (Random.Range(0f, 1f) <= m_pcChance);
 	}
 
-	public void AddLife(float _offset) {
+/*	public void AddLife(float _offset) {
 		m_health = Mathf.Min(m_maxHealth, Mathf.Max(0, m_health + _offset)); 
-	}
+	}*/
 
 	private void SetGolden(bool _value) {
 		SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();

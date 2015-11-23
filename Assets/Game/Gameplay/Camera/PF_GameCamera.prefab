@@ -13,6 +13,7 @@ GameObject:
   - 92: {fileID: 9212364}
   - 81: {fileID: 8136056}
   - 114: {fileID: 11460498}
+  - 114: {fileID: 11468290}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -48,8 +49,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
-  far clip plane: 60
+  near clip plane: 10
+  far clip plane: 250
   field of view: 25
   orthographic: 0
   orthographic size: 685.86615
@@ -60,6 +61,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -94,8 +96,8 @@ MonoBehaviour:
   m_forwardSmoothing: .949999988
   m_forwardOffset: 3
   m_limitX:
-    min: -500
-    max: 500
+    min: -1000
+    max: 1000
   m_defaultZoom: .5
   m_zoomRange:
     min: 10
@@ -103,6 +105,22 @@ MonoBehaviour:
   m_shakeDefaultAmount: {x: .5, y: .5, z: 0}
   m_shakeDefaultDuration: .150000006
   m_shakeDecayOverTime: 1
+--- !u!114 &11468290
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cea75d4686c64d6f9eb03d0b463f3ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_outsideColor: {r: .0450000018, g: .850000024, b: 1, a: 1}
+  m_caveColor: {r: .150000006, g: .150000006, b: .150000006, a: 1}
+  m_density: .0149999997
+  m_skyLine: 25
+  m_caveLine: -25
 --- !u!124 &12481626
 Behaviour:
   m_ObjectHideFlags: 1
