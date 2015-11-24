@@ -17,7 +17,21 @@ using System;
 /// <summary>
 /// Simple controller for a health bar in the debug hud.
 /// </summary>
-public class HUDHealthBar : MonoBehaviour {
+public class HUDStatBar : MonoBehaviour {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	public enum Type {
+		Health,
+		Energy,
+		Fury
+	}
+
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
+	[SerializeField] private Type m_type = Type.Health;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -33,7 +47,11 @@ public class HUDHealthBar : MonoBehaviour {
 	private void Awake() {
 		// Get external references
 		m_bar = GetComponentInChildren<Slider>();
-		m_valueTxt = gameObject.FindSubObject("TextValue").GetComponent<Text>();
+
+		GameObject go = gameObject.FindSubObject("TextValue"); 
+		if (go != null) {
+			m_valueTxt = go.GetComponent<Text>();
+		}
 	}
 
 	/// <summary>
@@ -41,16 +59,36 @@ public class HUDHealthBar : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Only if player is alive
-		if(InstanceManager.player != null) {
+		if (InstanceManager.player != null) {
 			// Bar value
 			m_bar.minValue = 0f;
-			m_bar.maxValue = InstanceManager.player.data.maxHealth;
-			m_bar.value = InstanceManager.player.health;
+			m_bar.maxValue = GetMaxValue();
+			m_bar.value = GetValue();
 
 			// Text
-			m_valueTxt.text = String.Format("{0}/{1}",
-			                                StringUtils.FormatNumber(m_bar.value, 0),
-			                                StringUtils.FormatNumber(m_bar.maxValue, 0));
+			if (m_valueTxt != null) {
+				m_valueTxt.text = String.Format("{0}/{1}",
+				                                StringUtils.FormatNumber(m_bar.value, 0),
+				                                StringUtils.FormatNumber(m_bar.maxValue, 0));
+			}
 		}
+	}
+
+	private float GetMaxValue() {
+		switch (m_type) {
+			case Type.Health: 	return InstanceManager.player.data.maxHealth;	break;
+			case Type.Energy: break;
+			case Type.Fury: break;
+		}
+		return 0;
+	}
+
+	private float GetValue() {
+		switch (m_type) {
+			case Type.Health: 	return InstanceManager.player.health;	break;
+			case Type.Energy: break;
+			case Type.Fury: break;
+		}		
+		return 0;
 	}
 }
