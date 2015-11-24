@@ -6,7 +6,9 @@ public class FogController : MonoBehaviour {
 	[SerializeField] private Color m_outsideColor 	= new Color(0.045f, 0.85f, 1f);
 	[SerializeField] private Color m_caveColor 		= new Color(0.15f, 0.15f, 0.15f);
 
-	[SerializeField] private float m_density 	= 0.015f;
+	[SerializeField] private float m_startDistance 		= 140f;
+	[SerializeField] private float m_endDistance 		= 300f;
+	[SerializeField] private float m_caveDistanceOffset	= 120f;	
 
 	[SerializeField] private float m_skyLine 	= 50f;
 	[SerializeField] private float m_caveLine 	= -50f;
@@ -19,11 +21,15 @@ public class FogController : MonoBehaviour {
 	 * 				 cave
 	 * */
 
+	private float m_distanceOffset = 0f; // cave fog will start near the camera
+
 	// Use this for initialization
 	void Start () {
 		RenderSettings.fog = true; // disable on slow devices?
 		RenderSettings.fogColor = m_outsideColor;
-		RenderSettings.fogDensity = m_density;
+		RenderSettings.fogMode = FogMode.Linear;
+		RenderSettings.fogStartDistance = m_startDistance;
+		RenderSettings.fogEndDistance = m_endDistance;
 	}
 	
 	// Update is called once per frame
@@ -40,14 +46,12 @@ public class FogController : MonoBehaviour {
 			if (y <= 0) {
 				t = Mathf.Abs(y / m_caveLine);
 			}
-			RenderSettings.fogColor = Color.Lerp(m_outsideColor, m_caveColor, t);
 
-			// fog density
-			t = 0f;
-			if (y > 0) {
-				 t = y / m_skyLine;
-			}
-			RenderSettings.fogDensity = Mathf.Lerp(m_density, 0, t);
+			m_distanceOffset = Mathf.Lerp(0, m_caveDistanceOffset, t);
+
+			RenderSettings.fogStartDistance = m_startDistance - m_distanceOffset;
+			RenderSettings.fogEndDistance = m_endDistance - m_distanceOffset;
+			RenderSettings.fogColor = Color.Lerp(m_outsideColor, m_caveColor, t);
 		}
 	}
 
