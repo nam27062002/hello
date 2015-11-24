@@ -202,7 +202,7 @@ public class GameSceneController : SceneController {
 		Messenger.Broadcast(GameEvents.GAME_ENDED);
 
 		// Open summary popup immediately - override timer after calling this method if you want some delay
-		m_timer = 0f;
+		m_timer = 0.0125f;
 	}
 
 	/// <summary>
