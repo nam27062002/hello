@@ -39,6 +39,7 @@ namespace LevelEditor {
 			// We don't want the dragon to die during the level testing
 			InstanceManager.player.invulnerable = true;
 
+			// Enable reward manager to see coins feedback
 			RewardManager.Reset();
 
 			// Call parent
