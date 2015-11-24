@@ -85,7 +85,7 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 
 		// Load the scene for the level with the given index
 		AsyncOperation loadingTask = Application.LoadLevelAdditiveAsync(data.sceneName);
-		DebugUtils.SoftAssert(loadingTask != null, "The prefab defined to level " + _levelIdx + " couldn't be found");
+		DebugUtils.SoftAssert(loadingTask != null, "The scene defined to level " + _levelIdx + " couldn't be found (probably mispelled or not added to build settings)");
 		return loadingTask;
 	}
 }
