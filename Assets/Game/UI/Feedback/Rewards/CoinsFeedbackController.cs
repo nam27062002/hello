@@ -83,7 +83,6 @@ public class CoinsFeedbackController : MonoBehaviour {
 		float fDelta = Mathf.InverseLerp(m_rewardRange.min, m_rewardRange.max, (float)_iAmount);
 		m_ps.maxParticles = (int)Mathf.Lerp((float)m_particleRange.min, (float)m_particleRange.max, fDelta);
 		m_ps.emissionRate = m_ps.maxParticles * m_maxParticlesToEmissionRateRatio;
-		Debug.Log("Reward " + _iAmount + "\nParticles: " + m_ps.maxParticles + ", EmissionRate: " + m_ps.emissionRate);
 
 		// Start particle system
 		m_ps.Play();

@@ -124,7 +124,6 @@ public class FireNode : MonoBehaviour {
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);*/
 
 			if (m_resistance <= 0) {
-				Debug.Log("GIVING REWARD " + m_goldReward);
 				m_state = State.Burning;
 				m_timer = m_burningTime;
 				
