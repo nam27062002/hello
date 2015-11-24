@@ -39,6 +39,8 @@ namespace LevelEditor {
 			// We don't want the dragon to die during the level testing
 			InstanceManager.player.invulnerable = true;
 
+			RewardManager.Reset();
+
 			// Call parent
 			base.Awake();
 		}
