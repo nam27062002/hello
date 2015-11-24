@@ -25,6 +25,7 @@ public class CoinsFeedbackController : MonoBehaviour {
 
 	// Internal
 	private ParticleSystem m_ps;
+	private float m_maxParticlesToEmissionRateRatio;		// We will adjust the emission rate to the number of particles to be spawned so the total duration of the effect is the same regardless of how many particles we're spawning
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -35,8 +36,10 @@ public class CoinsFeedbackController : MonoBehaviour {
 	private void Awake() {
 		// Get required components
 		m_ps = GetComponent<ParticleSystem>();
-
 		DebugUtils.Assert(m_ps != null, "Required component!");
+
+		// Store default max particles -> emission rate ratio
+		m_maxParticlesToEmissionRateRatio = m_ps.emissionRate/m_ps.maxParticles;
 	}
 	
 	/// <summary>
@@ -79,7 +82,8 @@ public class CoinsFeedbackController : MonoBehaviour {
 		// Edit particle system to adjust to the given amount
 		float fDelta = Mathf.InverseLerp(m_rewardRange.min, m_rewardRange.max, (float)_iAmount);
 		m_ps.maxParticles = (int)Mathf.Lerp((float)m_particleRange.min, (float)m_particleRange.max, fDelta);
-		m_ps.emissionRate = m_ps.maxParticles * 4f;	// [AOC] Magic numbers, the ratio maxParticles/emissionRate could be stored in the Awake() call :P
+		m_ps.emissionRate = m_ps.maxParticles * m_maxParticlesToEmissionRateRatio;
+		Debug.Log("Reward " + _iAmount + "\nParticles: " + m_ps.maxParticles + ", EmissionRate: " + m_ps.emissionRate);
 
 		// Start particle system
 		m_ps.Play();

@@ -42,7 +42,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_particleRange:
-    min: 4
+    min: 1
     max: 10
   m_rewardRange:
     min: 0
@@ -1105,6 +1105,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: looping
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_particleRange.min
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

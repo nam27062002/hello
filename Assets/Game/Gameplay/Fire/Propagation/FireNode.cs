@@ -107,7 +107,8 @@ public class FireNode : MonoBehaviour {
 						
 			Reward reward = new Reward();
 
-			if (m_resistance <= 0) {
+			// [AOC] TEMP!! Replace constant reward by one-time only (too many coins)
+			/*if (m_resistance <= 0) {
 				m_state = State.Burning;
 				m_timer = m_burningTime;
 
@@ -120,7 +121,19 @@ public class FireNode : MonoBehaviour {
 				m_goldReward -= gold;
 			}
 
-			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);
+			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);*/
+
+			if (m_resistance <= 0) {
+				Debug.Log("GIVING REWARD " + m_goldReward);
+				m_state = State.Burning;
+				m_timer = m_burningTime;
+				
+				reward.coins = m_goldReward;
+				
+				FirePropagationManager.Remove(transform);
+
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);
+			}
 		}
 	}
 
