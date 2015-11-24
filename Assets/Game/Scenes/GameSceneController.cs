@@ -200,6 +200,9 @@ public class GameSceneController : SceneController {
 
 		// Dispatch game event
 		Messenger.Broadcast(GameEvents.GAME_ENDED);
+
+		// Open summary popup immediately - override timer after calling this method if you want some delay
+		m_timer = 0f;
 	}
 
 	/// <summary>
@@ -309,7 +312,7 @@ public class GameSceneController : SceneController {
 		// End game
 		EndGame();
 
-		// Open summary popup after some delay
+		// Add some delay to the summary popup
 		m_timer = 0.5f;
 	}
 }

@@ -37,5 +37,5 @@ public class LevelData {
 
 	[SerializeField] private int m_dragonsToUnlock = 0;
 	public int dragonsToUnlock { get { return m_dragonsToUnlock; }}
-	public bool isUnlocked { get { return m_dragonsToUnlock >= DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count; }}
+	public bool isUnlocked { get { return m_dragonsToUnlock <= DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count; }}
 }
