@@ -87,6 +87,24 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	}
 
 	/// <summary>
+	/// Get all the dragons with a given lock state.
+	/// </summary>
+	/// <returns>The data of the dragons at the given lock state.</returns>
+	/// <param name="_lockState">The lock state to filter by.</param>
+	public static List<DragonData> GetDragonsByLockState(DragonData.LockState _lockState) {
+		// Iterate the dragons list looking for those belonging to the target tier
+		List<DragonData> list = new List<DragonData>();
+		for(int i = 0; i < instance.m_dragons.Length; i++) {
+			// Does this dragon match the required lockstate?
+			if(instance.m_dragons[i].lockState == _lockState) {
+				// Yes!! Add it to the list
+				list.Add(instance.m_dragons[i]);
+			}
+		}
+		return list;
+	}
+
+	/// <summary>
 	/// Check whether a given tier is unlocked or not.
 	/// A tier is considered unlocked when the previous tier has been completed.
 	/// A tier is considered completed when all the dragons in it are max level.

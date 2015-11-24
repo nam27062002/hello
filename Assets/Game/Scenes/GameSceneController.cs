@@ -262,7 +262,7 @@ public class GameSceneController : SceneController {
 		switch(_newState) {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
-				m_levelLoadingTask = LevelManager.LoadLevel(LevelManager.currentLevel);
+				m_levelLoadingTask = LevelManager.LoadLevel(UserProfile.currentLevel);
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;

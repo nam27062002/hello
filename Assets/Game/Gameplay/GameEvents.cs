@@ -44,4 +44,5 @@ public static class GameEvents {
 
 	// Menu events
 	public const string MENU_DRAGON_SELECTED = "MENU_DRAGON_SELECTED";	// params: DragonId _selectedDragon
+	public const string MENU_LEVEL_SELECTED = "MENU_LEVEL_SELECTED";	// params: int _selectedLevel
 }

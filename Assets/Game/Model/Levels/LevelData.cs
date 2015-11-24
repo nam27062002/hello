@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -33,4 +34,8 @@ public class LevelData {
 
 	[SerializeField] private string m_sceneName = "";
 	public string sceneName { get { return m_sceneName; }}
+
+	[SerializeField] private int m_dragonsToUnlock = 0;
+	public int dragonsToUnlock { get { return m_dragonsToUnlock; }}
+	public bool isUnlocked { get { return m_dragonsToUnlock >= DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count; }}
 }

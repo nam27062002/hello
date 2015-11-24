@@ -67,10 +67,10 @@ public class DebugMenuLevelSelector : MonoBehaviour {
 	/// <param name="_levelIdx">The index of the level we want to be the current one.</param>
 	public void SetSelectedLevel(int _idx) {
 		// Update manager
-		LevelManager.currentLevel = _idx;
+		UserProfile.currentLevel = _idx;
 		
 		// Update textfield
-		m_text.text = LevelManager.currentLevelData.tidName;
+		m_text.text = LevelManager.GetLevelData(_idx).tidName;
 	}
 
 	//------------------------------------------------------------------//
@@ -81,7 +81,7 @@ public class DebugMenuLevelSelector : MonoBehaviour {
 	/// </summary>
 	public void SelectNextLevel() {
 		// Figure out next level's index
-		int newIdx = LevelManager.currentLevel + 1;
+		int newIdx = UserProfile.currentLevel + 1;
 		if(newIdx == LevelManager.levels.Length) newIdx = 0;
 
 		// Change selection
@@ -93,7 +93,7 @@ public class DebugMenuLevelSelector : MonoBehaviour {
 	/// </summary>
 	public void SelectPreviousLevel() {
 		// Figure out previous level's index
-		int newIdx = LevelManager.currentLevel - 1;
+		int newIdx = UserProfile.currentLevel - 1;
 		if(newIdx < 0) newIdx = LevelManager.levels.Length - 1;
 		
 		// Change selection

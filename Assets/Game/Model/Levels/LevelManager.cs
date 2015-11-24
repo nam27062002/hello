@@ -31,10 +31,9 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	[SerializeField] private LevelData[] m_levels = null;
 	public static LevelData[] levels { get { return instance.m_levels; }}
 
-	// Currently selected level
-	public static int currentLevel { get; set; }
+	// Shortcut to get the data of the currently selected level
 	public static LevelData currentLevelData {
-		get { return GetLevelData(currentLevel); }
+		get { return GetLevelData(UserProfile.currentLevel); }
 	}
 
 	//------------------------------------------------------------------//
