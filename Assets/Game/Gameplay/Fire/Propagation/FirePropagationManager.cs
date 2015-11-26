@@ -54,6 +54,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 	// :3
 	void OnDrawGizmosSelected() {
-		m_fireNodes.DrawGizmos(Color.yellow);
+		if (m_fireNodes != null)
+			m_fireNodes.DrawGizmos(Color.yellow);
 	}
 }
