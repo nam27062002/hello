@@ -42,7 +42,7 @@ public class FireNode : MonoBehaviour {
 
 	void OnDisable() {
 		if (m_fireSpriteEditor != null) {
-			GameObject.DestroyImmediate(m_fireSpriteEditor);
+			GameObject.Destroy(m_fireSpriteEditor);
 			m_fireSpriteEditor = null;
 		}
 	
