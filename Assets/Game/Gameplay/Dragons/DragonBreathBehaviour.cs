@@ -55,7 +55,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	void Update() {
-		m_dragon.AddFury(500);
+		//m_dragon.AddFury(500);
 		if (m_isFuryOn) {
 
 			float dt = Time.deltaTime / m_dragon.data.furyDuration;
