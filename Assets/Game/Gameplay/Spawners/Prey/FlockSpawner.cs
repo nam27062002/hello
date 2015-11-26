@@ -17,11 +17,8 @@ public class FlockSpawner : Spawner {
 
 	override protected void ExtendedSpawn() {
 
-		Vector3 position = m_area.RandomInside();
 		for (int i = 0; i < m_entities.Length; i++) {
 			if (m_entities[i] != null) {
-				m_entities[i].transform.position = position;
-
 				PreyMotion motion = m_entities[i].GetComponent<PreyMotion>();
 				if (motion != null) {
 					motion.AttachFlock(m_flockController);

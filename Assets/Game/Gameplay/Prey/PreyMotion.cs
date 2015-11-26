@@ -56,7 +56,9 @@ public class PreyMotion : Initializable {
 
 	// Use this for initialization
 	public override void Initialize() {		
-		if (m_groundSensor) {
+		if (m_flock) {
+			m_lastPosition = m_position = m_flock.target;
+		} else if (m_groundSensor) {
 			m_lastPosition = m_position = m_groundSensor.transform.position;
 		} else {
 			m_lastPosition = m_position = transform.position;
