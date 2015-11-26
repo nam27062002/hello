@@ -9,7 +9,7 @@ public class Spawner : MonoBehaviour {
 	//-----------------------------------------------
 	[Header("Entity")]
 	[SerializeField] public GameObject m_entityPrefab;
-	[SerializeField] protected RangeInt m_quantity = new RangeInt(1, 1);
+	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
 
 	[Header("Activation")]
 	[SerializeField] private float m_enableTime;
