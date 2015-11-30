@@ -80,8 +80,8 @@ public class FlockController : MonoBehaviour {
 		m_timer += Time.deltaTime * m_guideSpeed;
 
 		if (m_guideFunction == GuideFunction.SMALL_FLOCK) {
-			m_target.x = m_area.bounds.center.x + Mathf.Sin(m_timer * 0.5f) * m_area.bounds.extents.x * 0.5f + Mathf.Cos(m_timer * 0.25f) * m_area.bounds.extents.x * 0.5f;
-			m_target.y = m_area.bounds.center.y + Mathf.Sin(m_timer * 0.35f) * m_area.bounds.extents.y * 0.5f + Mathf.Cos(m_timer * 0.65f) * m_area.bounds.extents.y * 0.5f;
+			m_target.x = m_area.bounds.center.x + (Mathf.Sin(m_timer * 0.75f) * 0.5f + Mathf.Cos(m_timer * 0.25f) * 0.5f) * m_area.bounds.extents.x;
+			m_target.y = m_area.bounds.center.y + (Mathf.Sin(m_timer * 0.35f) * 0.5f + Mathf.Cos(m_timer * 0.65f) * 0.5f) * m_area.bounds.extents.y;
 		} else if (m_guideFunction == GuideFunction.FAST_FLOCK) {
 			m_target.x = m_area.bounds.center.x + Mathf.Sin(m_timer) * m_area.bounds.extents.x;
 			m_target.y = m_area.bounds.center.y + Mathf.Cos(m_timer) * m_area.bounds.extents.y;
