@@ -26,6 +26,17 @@ public class WanderFleeBehaviour : WanderBehaviour {
 		base.FixedUpdate();
 	}
 
+	override protected void UpdateRandomTarget() {
+
+		float rSqr = m_sensor.sensorMinRadius * m_sensor.sensorMinRadius;
+
+		if ((m_target - (Vector2)m_dragonMouth.position).sqrMagnitude <= rSqr) {
+			ChooseTarget();
+		} else {
+			base.UpdateRandomTarget();
+		}
+	}
+
 	override protected void ChooseTarget() {
 		if (m_sensor.alert && m_motion.HasGroundSensor()) {
 			Vector3 direction = transform.position - m_dragonMouth.position;

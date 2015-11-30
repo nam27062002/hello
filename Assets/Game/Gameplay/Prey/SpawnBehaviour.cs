@@ -36,7 +36,6 @@ public class SpawnBehaviour : MonoBehaviour {
 		Initializable[] components = GetComponents<Initializable>();
 		
 		foreach (Initializable component in components) {
-			
 			component.SetAreaBounds(m_area);
 			component.Initialize();
 		}

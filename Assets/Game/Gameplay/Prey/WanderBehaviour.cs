@@ -77,13 +77,7 @@ public class WanderBehaviour : Initializable {
 				ChooseTarget();
 			} else {
 				if (m_chaoticMovement) {
-					if ((m_target - m_motion.position).sqrMagnitude < 1f) {
-						if (Random.Range(0f, 1f) < m_idleProbability) {
-							m_nextState = State.Idle;
-						} else {
-							ChooseTarget();
-						}
-					}
+					UpdateRandomTarget();
 				} else {
 					m_target = IncrementalMovement(); // Experimental!!!
 				}
@@ -93,6 +87,9 @@ public class WanderBehaviour : Initializable {
 			m_motion.ApplySteering();
 		}
 	}
+
+
+	//-----------------------------------------------------------
 
 	private void ChangeState() {
 		if (m_nextState == State.Move) {
@@ -110,6 +107,16 @@ public class WanderBehaviour : Initializable {
 		}
 
 		m_state = m_nextState;
+	}
+
+	virtual protected void UpdateRandomTarget() {
+		if ((m_target - m_motion.position).sqrMagnitude < 1f) {
+			if (Random.Range(0f, 1f) < m_idleProbability) {
+				m_nextState = State.Idle;
+			} else {
+				ChooseTarget();
+			}
+		}
 	}
 
 	virtual protected void ChooseTarget() {
