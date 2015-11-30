@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class FireNode : MonoBehaviour {
 
 	enum State {
@@ -32,14 +32,11 @@ public class FireNode : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (Application.isPlaying) {
-			FirePropagationManager.Insert(transform);
-
-			// get two closets neighbours
-			FindNeighbours();
-		}
+		FirePropagationManager.Insert(transform);
+		// get two closets neighbours
+		FindNeighbours();
 	}
-
+	/*
 	void OnDisable() {
 		if (m_fireSpriteEditor != null) {
 			GameObject.Destroy(m_fireSpriteEditor);
@@ -47,7 +44,7 @@ public class FireNode : MonoBehaviour {
 		}
 	
 		Resources.UnloadUnusedAssets();
-	}
+	}*/
 
 	public void Init(int _goldReward) {
 		m_goldReward = _goldReward;
@@ -94,12 +91,12 @@ public class FireNode : MonoBehaviour {
 		}
 		
 		#if UNITY_EDITOR
-		if (!Application.isPlaying) {
+		/*if (!Application.isPlaying) {
 			GameObject active = UnityEditor.Selection.activeGameObject;
 			if (active != gameObject && active != transform.parent.gameObject && active != transform.parent.parent.gameObject) {
 				OnDisable();
 			}
-		}
+		}*/
 		#endif
 
 	}
@@ -145,8 +142,7 @@ public class FireNode : MonoBehaviour {
 		}
 		m_fireSprite = null;
 	}
-
-#if UNITY_EDITOR
+	
 	/// <summary>
 	/// Raises the draw gizmos event.
 	/// </summary>
@@ -162,7 +158,7 @@ public class FireNode : MonoBehaviour {
 			Gizmos.color = Color.black;
 		}
 
-		Gizmos.DrawSphere(transform.position, 0.5f);
+		Gizmos.DrawSphere(transform.position, 0.5f * transform.localScale.x);
 
 		FindNeighbours();
 
@@ -178,19 +174,19 @@ public class FireNode : MonoBehaviour {
 		}
 
 		// Draw reference sprite (only on editor mode)
-		if (!Application.isPlaying)	{
+		/*if (!Application.isPlaying)	{
 			if (m_fireSpriteEditor == null) {	
 				GameObject prefab = (GameObject)Resources.Load("Particles/FireSprite");
 				m_fireSpriteEditor = GameObject.Instantiate(prefab);
-				m_fireSpriteEditor.hideFlags = HideFlags.DontSaveInBuild | HideFlags.DontSaveInEditor | HideFlags.NotEditable | HideFlags.HideInHierarchy;
+				m_fireSpriteEditor.hideFlags = HideFlags.NotEditable | HideFlags.DontSaveInBuild | HideFlags.DontSaveInEditor;// | HideFlags.HideInHierarchy;
+				m_fireSpriteEditor.layer = LayerMask.NameToLayer("FireNodeEditor");
 			}
 
 			m_fireSpriteEditor.transform.position = transform.position;
 			m_fireSpriteEditor.transform.localScale = transform.localScale;
 			m_fireSpriteEditor.transform.localRotation = transform.localRotation;
-		}
+		}*/
 	}
-#endif
 
 	private void FindNeighbours() {
 		m_neighbours = new List<FireNode>();
