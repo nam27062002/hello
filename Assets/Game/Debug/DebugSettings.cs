@@ -9,17 +9,39 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 
+//----------------------------------------------------------------------//
+// CLASSES																//
+//----------------------------------------------------------------------//
 /// <summary>
 /// Global setup of the game.
 /// </summary>
-public class DebugSettings : SingletonScriptableObject<DebugSettings> {
-	// Add here any global debug variable such as invincibility, infinite fire, debug profile...
+public static class DebugSettings {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	// Use the Prefs class to access their values
+	// Cheats
+	public static readonly string DRAGON_INVULNERABLE = "DRAGON_INVULNERABLE";
+	public static readonly string DRAGON_INFINITE_FIRE = "DRAGON_INFINITE_FIRE";
+	public static readonly string DRAGON_INFINITE_BOOST = "DRAGON_INFINITE_BOOST";
 
-	[Header("Gameplay")]
-	// Invulnerable
-	[SerializeField] private bool m_invulnerability = false;
-	public static bool invulnerability { get { return instance.m_invulnerability; }}
+	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
+	// Mainly shortcuts, all settings can be accessed using the Prefs class
+	// Gameplay
+	public static bool invulnerable { 
+		get { return Prefs.GetBool(DRAGON_INVULNERABLE, false); }
+		set { Prefs.SetBool(DRAGON_INVULNERABLE, value); }
+	}
 
-	[SerializeField] private bool m_inifinteFire = false;
-	public static bool infiniteFire { get { return instance.m_inifinteFire; }}
+	public static bool infiniteFire { 
+		get { return Prefs.GetBool(DRAGON_INFINITE_FIRE, false); }
+		set { Prefs.SetBool(DRAGON_INFINITE_FIRE, value); }
+	}
+
+	public static bool infiniteBoost {
+		get { return Prefs.GetBool(DRAGON_INFINITE_BOOST, false); }
+		set { Prefs.SetBool(DRAGON_INFINITE_BOOST, value); }
+	}
 }

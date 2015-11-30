@@ -1,47 +1,50 @@
-﻿// DebugSettingsEditorWindow.cs
+﻿// ControlPanel.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 23/09/2015.
+// Created by Alger Ortín Castellví on 26/11/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEditor;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Custom inspector window to define different persistence profiles.
+/// In-game control panel for cheats, debug settings and more.
 /// </summary>
-public class DebugSettingsEditorWindow : EditorWindow {
+public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 	//------------------------------------------------------------------//
-	// CONSTANTS														//
+	// MEMBERS															//
 	//------------------------------------------------------------------//
+	[SerializeField] private GameObject m_panel;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	protected void Awake() {
+		// Start disabled
+		m_panel.SetActive(false);
+	}
+	
 	//------------------------------------------------------------------//
-	// METHODS															//
+	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Update the inspector window.
+	/// Toggle the panel on and off.
 	/// </summary>
-	public void OnGUI() {
-		EditorGUILayout.BeginVertical(); {
-			// Some spacing at the start
-			GUILayout.Space(10f);
+	public void Toggle() {
+		// Toggle panel
+		m_panel.SetActive(!m_panel.activeSelf);
 
-			bool b = EditorGUILayout.Toggle("Test bool", PlayerPrefs.GetInt("test", 0) != 0);
-			PlayerPrefs.SetInt("test", b ? 1 : 0);
-
-			// Some spacing at the end
-			GUILayout.Space(10f);
-		} EditorGUILayout.EndVertical();
+		// Disable player control while control panel is up
+		if(InstanceManager.player != null) {
+			InstanceManager.player.playable = !m_panel.activeSelf;
+		}
 	}
 }

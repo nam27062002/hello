@@ -31,14 +31,7 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 	// Only during game scene, reference to the dragon
 	private DragonPlayer m_player = null;
 	public static DragonPlayer player {
-		get {
-			//[MSF] do we need this check?
-			if (instance.m_player == null) {
-				Debug.LogError("Attempting to retrieve the player, but no player has been created yet.");
-			}
-			//DebugUtils.SoftAssert(instance.m_player != null, "Attempting to retrieve the player, but no player has been created yet.");
-			return instance.m_player;
-		}
+		get { return instance.m_player; }
 		set { if(instance != null) instance.m_player = value; }
 	}
 

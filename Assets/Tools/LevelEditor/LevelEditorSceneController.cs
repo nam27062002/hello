@@ -25,6 +25,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS															//
 		//------------------------------------------------------------------//
+		private bool m_invulnerableBackup = false;
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
@@ -36,9 +37,6 @@ namespace LevelEditor {
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
 
-			// We don't want the dragon to die during the level testing
-			InstanceManager.player.invulnerable = true;
-
 			// Enable reward manager to see coins feedback
 			RewardManager.Reset();
 
@@ -47,25 +45,20 @@ namespace LevelEditor {
 		}
 
 		/// <summary>
-		/// First update.
+		/// Component enabled.
 		/// </summary>
-		void Start() {
-		
+		void OnEnable() {
+			// We don't want the dragon to die during the level testing
+			m_invulnerableBackup = DebugSettings.invulnerable;
+			DebugSettings.invulnerable = true;
 		}
 		
 		/// <summary>
-		/// Called every frame.
+		/// Component disabled.
 		/// </summary>
-		void Update() {
-
-		}
-
-		/// <summary>
-		/// Destructor.
-		/// </summary>
-		override protected void OnDestroy() {
-			// Call parent
-			base.OnDestroy();
+		void OnDisable() {
+			// Restore invlunerability cheat
+			DebugSettings.invulnerable = m_invulnerableBackup;
 		}
 	}
 }

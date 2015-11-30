@@ -25,9 +25,9 @@ public class NavigationScreenSystem : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Screen references to be set from the inspector
-	[SerializeField] private List<NavigationScreen> m_screens = new List<NavigationScreen>();
-	[SerializeField] private NavigationScreen m_initialScreen = null;
-	private int m_currentScreenIdx = SCREEN_NONE;
+	[SerializeField] public List<NavigationScreen> m_screens = new List<NavigationScreen>();
+	[SerializeField] public NavigationScreen m_initialScreen = null;
+	protected int m_currentScreenIdx = SCREEN_NONE;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -35,7 +35,7 @@ public class NavigationScreenSystem : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	virtual protected void Awake() {
 		// Initial screen is visible from the beginning
 		for(int i = 0; i < m_screens.Count; i++) {
 			if(m_screens[i] == m_initialScreen) {
@@ -54,7 +54,7 @@ public class NavigationScreenSystem : MonoBehaviour {
 	/// Navigate to the target screen. Use an int to be able to directly connect buttons to it.
 	/// </summary>
 	/// <param name="_newScreen">The index of the new screen to go to. Use -1 for NONE.</param>
-	public void GoToScreen(int _newScreen) {
+	virtual public void GoToScreen(int _newScreen) {
 		// Ignore if screen is already active
 		if(_newScreen == m_currentScreenIdx) return;
 		

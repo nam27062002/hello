@@ -89,21 +89,4 @@ public class HungryDragonEditorMenu {
 		// Show it
 		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
 	}
-
-	/// <summary>
-	/// Add menu item to be able to open the editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Debug Settings", false, 21)]
-	public static void ShowDebugSettingsWindow() {
-		// Show existing window instance. If one doesn't exist, make one.
-		DebugSettingsEditorWindow window = (DebugSettingsEditorWindow)EditorWindow.GetWindow(typeof(DebugSettingsEditorWindow));
-		
-		// Setup window
-		window.titleContent = new GUIContent("Debug Settings");
-		//window.minSize = new Vector2(300f, 300f);
-		//window.maxSize = new Vector2(window.minSize.x, window.minSize.y);
-		
-		// Show it
-		window.ShowTab();
-	}
 }

@@ -61,9 +61,6 @@ public class DragonPlayer : MonoBehaviour {
 	// Internal
 	private float m_speedMultiplier;
 
-	// Debug
-	[HideInInspector] public bool invulnerable = false;
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -217,7 +214,7 @@ public class DragonPlayer : MonoBehaviour {
 		if(m_breathBehaviour.IsFuryOn()) return true;
 		
 		// If cheat is enable
-		if(invulnerable) return true;
+		if(DebugSettings.invulnerable) return true;
 		
 		// All checks passed, we're not invulnerable
 		return false;

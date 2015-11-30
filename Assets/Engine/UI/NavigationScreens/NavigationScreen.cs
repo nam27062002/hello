@@ -35,7 +35,7 @@ public class NavigationScreen : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	virtual protected void Awake() {
 		// Get animator reference
 		m_anim = GetComponent<Animator>();
 	}

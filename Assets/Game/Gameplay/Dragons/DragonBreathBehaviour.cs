@@ -55,11 +55,19 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	void Update() {
-		//m_dragon.AddFury(500);
+		// Cheat for infinite fire
+		bool cheating = (Debug.isDebugBuild && DebugSettings.infiniteFire);
+		if(cheating) {
+			m_dragon.AddFury(m_dragon.data.maxFury - m_dragon.fury);	// Set to max fury
+		}
+
 		if (m_isFuryOn) {
 
-			float dt = Time.deltaTime / m_dragon.data.furyDuration;
-			m_dragon.AddFury(-(dt * m_dragon.data.maxFury));
+			// Don't decrease fury if cheating
+			if(!cheating) {
+				float dt = Time.deltaTime / m_dragon.data.furyDuration;
+				m_dragon.AddFury(-(dt * m_dragon.data.maxFury));
+			}
 
 			if (m_dragon.fury <= 0) {
 
