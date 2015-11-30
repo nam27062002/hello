@@ -7,14 +7,30 @@ using System.Collections;
 /// </summary>
 [DisallowMultipleComponent]
 public class PreyMotion : Initializable {
-
-	// Attributes	
+	
+	//---------------------------------------------------------------
+	// Attributes
+	//---------------------------------------------------------------
+[Header("Movement")]
 	[SerializeField] private bool m_faceDirection;
-	[SerializeField] private float m_steerForce;	
-	[SerializeField] private float m_maxSpeed;
-	[SerializeField] private float m_mass;
-	[SerializeField] private float m_slowingRadius;
+	[SerializeField] private Range m_zOffset = new Range(-1f, 1f);
 	[SerializeField] private Range m_flockAvoidRadiusRange;
+
+[Header("Force management")]
+		[CommentAttribute("Max magnitude of the steering force vector (velocity).")]
+	[SerializeField] private float m_steerForce;
+		[CommentAttribute("The steering vector is divided by mass.")]
+	[SerializeField] private float m_mass = 1f;
+	//	[CommentAttribute("When can decide if the flee force has more influence on the steering result vector.")]
+	//[SerializeField] private float m_fleeForceFactor = 1f;
+
+[Header("Speed variations")]
+	[SerializeField] private float m_maxSpeed;
+	[SerializeField] private float m_maxRunSpeed;
+	[SerializeField] private float m_slowingRadius;
+
+
+	//---------------------------------------------------------------
 
 	private FlockController m_flock; // turn into flock controller
 	private float m_flockAvoidRadius;
@@ -25,8 +41,9 @@ public class PreyMotion : Initializable {
 	private Vector2 m_velocity;
 	private Vector2 m_direction;
 	private Vector2 m_steering;
+	private float 	m_currentMaxSpeed;
 	private float   m_currentSpeed;
-	
+		
 	private int m_groundMask;	
 	private Transform m_groundSensor;
 
@@ -49,7 +66,7 @@ public class PreyMotion : Initializable {
 	// Methods
 	
 	void Awake() {
-		m_posZ = Random.Range(-1, 1);
+		m_posZ = m_zOffset.GetRandom();
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_groundSensor = transform.FindChild("ground_sensor");
 	}
@@ -68,6 +85,8 @@ public class PreyMotion : Initializable {
 		m_velocity = Vector3.zero;
 		m_direction = (Random.Range(0f, 1f) < 0.5f)? Vector3.right : Vector3.left;
 		m_currentSpeed = 0;
+
+		m_currentMaxSpeed = m_maxSpeed;
 	}
 
 	void OnEnable() {		
@@ -109,12 +128,12 @@ public class PreyMotion : Initializable {
 		
 		desiredVelocity.Normalize();
 				
-		desiredVelocity *= m_maxSpeed;
+		desiredVelocity *= m_currentMaxSpeed;
 		if (distanceSqr < slowingRadiusSqr) {
 			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
 		}
 		
-		desiredVelocity -= m_velocity;		
+		desiredVelocity -= m_velocity;
 		m_steering += desiredVelocity;
 		
 		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
@@ -122,8 +141,14 @@ public class PreyMotion : Initializable {
 	
 	public void Flee(Vector2 _from) {
 		Vector2 desiredVelocity = m_position - _from;
-		desiredVelocity = (desiredVelocity - m_velocity);		
-		m_steering += desiredVelocity;		
+
+		m_currentMaxSpeed = m_maxRunSpeed;
+
+		desiredVelocity.Normalize();
+		desiredVelocity *= m_currentMaxSpeed;
+
+		desiredVelocity -= m_velocity;
+		m_steering += desiredVelocity;
 		
 		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
 	}
@@ -131,6 +156,8 @@ public class PreyMotion : Initializable {
 	public void Pursuit(Vector2 _target, Vector2 _velocity, float _maxSpeed) {
 		float distance = (m_position - _target).magnitude;
 		float t = (distance / _maxSpeed); // amount of time in the future
+
+		m_currentMaxSpeed = m_maxRunSpeed;
 
 		Seek(_target + _velocity * t); // future position
 	}
@@ -158,6 +185,7 @@ public class PreyMotion : Initializable {
 		ApplyPosition();
 
 		m_steering = Vector2.zero;
+		m_currentMaxSpeed = m_maxSpeed;
 	}
 
 	public Vector2 ProjectToGround(Vector2 _point) {
@@ -210,7 +238,7 @@ public class PreyMotion : Initializable {
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
 		
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, m_maxSpeed);
+		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, m_currentMaxSpeed);
 		
 		if (m_velocity != Vector2.zero) {
 			m_direction = m_velocity.normalized;

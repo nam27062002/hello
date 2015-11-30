@@ -27,7 +27,7 @@ public class WanderFleeBehaviour : WanderBehaviour {
 	}
 
 	override protected void ChooseTarget() {
-		if (m_sensor.alert) {
+		if (m_sensor.alert && m_motion.HasGroundSensor()) {
 			Vector3 direction = transform.position - m_dragonMouth.position;
 			if (direction.x < 0) {
 				m_target = m_motion.ProjectToGround(m_area.bounds.min);
