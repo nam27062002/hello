@@ -24,6 +24,14 @@ public static class GameObjectExt {
 	// STATIC EXTENSION METHODS											//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// Toggles the local active state of this object.
+	/// </summary>
+	/// <param name="_obj">The object to be toggled.</param>
+	public static void ToggleActive(this GameObject _obj) {
+		_obj.SetActive(!_obj.activeSelf);
+	}
+
+	/// <summary>
 	/// Generate and apply a unique name for this object in its current parent (no siblings with the same name).
 	/// Costly method, avoid intensive usage (i.e. in the Update call).
 	/// </summary>

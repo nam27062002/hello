@@ -68,78 +68,9 @@ public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBe
 	private static T m_instance = null;
 	public static T instance {
 		get {
-			// Avoid re-creating the instance while the application is quitting
-			if(m_state == Singleton.EState.APPLICATION_QUITTING) {
-				Debug.LogWarning("[Singleton] Instance '" + typeof(T) + "' already destroyed on application quit. Won't create again - returning null.");
-				return null;
-			}
-			
-			// Make sure that only one thread is doing this!
-			lock(m_threadLock) {
-				// Is the static instance created?
-				if(m_instance == null) {
-					// If instance creation is locked, throw a warning
-					if(m_state == Singleton.EState.CREATING_INSTANCE) {
-						Debug.LogWarning("[Singleton] Instance for " + typeof(T) + " is currently being created. Avoid calling the instance getter during the Awake function of your singleton class.");
-						return null;
-					}
-					
-					// Lock instance creation
-					m_state = Singleton.EState.CREATING_INSTANCE;
-					
-					// If the singletons container has not been created, do it now
-					GameObject containerObj = GameObject.Find(Singleton.PARENT_OBJECT_NAME);
-					if(containerObj == null) {
-						containerObj = new GameObject(Singleton.PARENT_OBJECT_NAME);
-						GameObject.DontDestroyOnLoad(containerObj);	// Persist throughout scene changes
-					}
-					
-					// Is there a pre-made prefab for this class in the Resources folder?
-					GameObject singletonObj = null;
-					GameObject prefabObj = Resources.Load<GameObject>(Singleton.PARENT_OBJECT_NAME + "/PF_" + typeof(T).Name);
-					if(prefabObj != null) {
-						// Make sure the prefab contains a component of the required type
-						if(prefabObj.GetComponent<T>() == null) {
-							// Component wasn't found, throw a warning
-							Debug.LogWarning("[Singleton] Prefab for singleton " + typeof(T) + " doesn't contain a component of type " + typeof(T) + ".\nCreating singleton with default values instead.");
-							
-							// Destroy the object we just loaded
-							GameObject.DestroyImmediate(prefabObj);
-							prefabObj = null;
-						}
-						
-						// Everything's ok, use it as singleton object and get the instance from it
-						else {
-							// Instantiate the loaded prefab
-							singletonObj = GameObject.Instantiate(prefabObj);
-							singletonObj.name = prefabObj.name;		// Get rid of the "(Clone)" that Unity adds by default
-							
-							// Get the singleton's instance from it
-							m_instance = singletonObj.GetComponent<T>();
-						}
-					}
-					
-					// If there wasn't a valid prefab, create a new object to hold the instance
-					if(singletonObj == null) {
-						// Create the object and give it the name of the class
-						singletonObj = new GameObject(typeof(T).Name);
-						
-						// Create the instance by adding it as a component of the game object we just created
-						// Store its reference so this is only done once
-						m_instance = singletonObj.AddComponent<T>();
-					}
-					
-					// Attach the singleton object as child of the Singletons container to keep the hierarchy clean
-					singletonObj.transform.SetParent(containerObj.transform, false);
-					GameObject.DontDestroyOnLoad(singletonObj);	// [AOC] Shouldn't be needed since we will attach it as child of the singleton's container.
-					
-					// Instance has been created and stored, unlock instance creation
-					m_state = Singleton.EState.READY;
-				}
-				
-				// Instance is created! Return it
-				return m_instance;
-			}
+			// CreateInstance method does the hard work
+			CreateInstance();
+			return m_instance;
 		}
 	}
 	
@@ -165,6 +96,81 @@ public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBe
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Create the singleton instance if not created.
+	/// </summary>
+	public static void CreateInstance() {
+		// Avoid re-creating the instance while the application is quitting
+		if(m_state == Singleton.EState.APPLICATION_QUITTING) {
+			Debug.LogWarning("[Singleton] Instance '" + typeof(T) + "' already destroyed on application quit. Won't create again - returning null.");
+			return;
+		}
+		
+		// Make sure that only one thread is doing this!
+		lock(m_threadLock) {
+			// Is the static instance created?
+			if(m_instance == null) {
+				// If instance creation is locked, throw a warning
+				if(m_state == Singleton.EState.CREATING_INSTANCE) {
+					Debug.LogWarning("[Singleton] Instance for " + typeof(T) + " is currently being created. Avoid calling the instance getter during the Awake function of your singleton class.");
+					return;
+				}
+				
+				// Lock instance creation
+				m_state = Singleton.EState.CREATING_INSTANCE;
+				
+				// If the singletons container has not been created, do it now
+				GameObject containerObj = GameObject.Find(Singleton.PARENT_OBJECT_NAME);
+				if(containerObj == null) {
+					containerObj = new GameObject(Singleton.PARENT_OBJECT_NAME);
+					GameObject.DontDestroyOnLoad(containerObj);	// Persist throughout scene changes
+				}
+				
+				// Is there a pre-made prefab for this class in the Resources folder?
+				GameObject singletonObj = null;
+				GameObject prefabObj = Resources.Load<GameObject>(Singleton.PARENT_OBJECT_NAME + "/PF_" + typeof(T).Name);
+				if(prefabObj != null) {
+					// Make sure the prefab contains a component of the required type
+					if(prefabObj.GetComponent<T>() == null) {
+						// Component wasn't found, throw a warning
+						Debug.LogWarning("[Singleton] Prefab for singleton " + typeof(T) + " doesn't contain a component of type " + typeof(T) + ".\nCreating singleton with default values instead.");
+						
+						// Destroy the object we just loaded
+						GameObject.DestroyImmediate(prefabObj);
+						prefabObj = null;
+					}
+					
+					// Everything's ok, use it as singleton object and get the instance from it
+					else {
+						// Instantiate the loaded prefab
+						singletonObj = GameObject.Instantiate(prefabObj);
+						singletonObj.name = prefabObj.name;		// Get rid of the "(Clone)" that Unity adds by default
+						
+						// Get the singleton's instance from it
+						m_instance = singletonObj.GetComponent<T>();
+					}
+				}
+				
+				// If there wasn't a valid prefab, create a new object to hold the instance
+				if(singletonObj == null) {
+					// Create the object and give it the name of the class
+					singletonObj = new GameObject(typeof(T).Name);
+					
+					// Create the instance by adding it as a component of the game object we just created
+					// Store its reference so this is only done once
+					m_instance = singletonObj.AddComponent<T>();
+				}
+				
+				// Attach the singleton object as child of the Singletons container to keep the hierarchy clean
+				singletonObj.transform.SetParent(containerObj.transform, false);
+				GameObject.DontDestroyOnLoad(singletonObj);	// [AOC] Shouldn't be needed since we will attach it as child of the singleton's container.
+				
+				// Instance has been created and stored, unlock instance creation
+				m_state = Singleton.EState.READY;
+			}
+		}
+	}
+
 	/// <summary>
 	/// Delete the singleton instance of this type and the object containing it in the scene.
 	/// </summary>

@@ -56,9 +56,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		}
 
 		if (m_active) {
-			m_dragon.AddEnergy(-Time.deltaTime * m_dragon.data.energyDrainPerSecond);
-			if (m_dragon.energy <= 0f) {
-				StopBoost();
+			// Don't drain energy if cheat is enabled
+			if(!Debug.isDebugBuild || !DebugSettings.infiniteBoost) {
+				m_dragon.AddEnergy(-Time.deltaTime * m_dragon.data.energyDrainPerSecond);
+				if (m_dragon.energy <= 0f) {
+					StopBoost();
+				}
 			}
 		} else {
 			m_dragon.AddEnergy(Time.deltaTime * m_dragon.data.energyRefillPerSecond);

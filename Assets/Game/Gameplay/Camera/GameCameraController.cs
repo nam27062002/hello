@@ -65,6 +65,7 @@ public class GameCameraController : MonoBehaviour {
 	private float m_shakeDuration = 0f;
 	private float m_shakeTimer = 0f;
 
+	// Aux vars for in-game tuning
 	private Range m_zoomRangeStart;
 	private float m_nearStart;
 	private float m_farStart;
