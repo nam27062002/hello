@@ -286,8 +286,8 @@ GameObject:
   - 114: {fileID: 11438482}
   - 114: {fileID: 11449692}
   - 114: {fileID: 11405894}
-  - 114: {fileID: 11457498}
   - 114: {fileID: 11404694}
+  - 114: {fileID: 11457498}
   - 114: {fileID: 11478440}
   m_Layer: 8
   m_Name: PF_ALL_T0_S_Animal_Seagull_00
@@ -303,7 +303,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 196200}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 155.190002, y: 12.6899996, z: 0}
+  m_LocalPosition: {x: -218.800003, y: 49.2000008, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 402672}
@@ -585,12 +585,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074c80ccf21fd47af93cdab945e85fc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_idleTime: 5
+  m_idleTime: 0
   m_chaoticMovement: 1
   m_displacementDistance: 1
   m_displacementRadius: 1
-  m_angleIncrement: 10
-  m_idleProbability: 1
+  m_angleIncrement: 180
+  m_idleProbability: 0
 --- !u!114 &11405894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -618,6 +618,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: .00999999978
+  m_maxHealth: 100
 --- !u!114 &11449692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -656,14 +657,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 0
-  m_steerForce: .25
-  m_maxSpeed: 6
-  m_mass: .349999994
-  m_slowingRadius: 1
+  m_faceDirection: 1
+  m_zOffset:
+    min: -1
+    max: 1
   m_flockAvoidRadiusRange:
-    min: 5
-    max: 6
+    min: 2.5
+    max: 3.5
+  m_steerForce: .100000001
+  m_mass: .200000003
+  m_maxSpeed: 6
+  m_maxRunSpeed: 20
+  m_slowingRadius: 0
 --- !u!114 &11468634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -684,8 +689,7 @@ MonoBehaviour:
     energy: 0
     fury: 5
     xp: .600000024
-  m_maxHealth: 100
-  m_goldenChance: .300999999
+  m_goldenChance: .0199999996
   m_pcChance: 0
 --- !u!114 &11469120
 MonoBehaviour:
@@ -709,10 +713,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 8.43000031
-  m_sensorMaxRadius: 8.43000031
+  m_sensorMinRadius: 8
+  m_sensorMaxRadius: 15
   m_sensorAngle: 360
-  m_sensorAngleOffset: 0
+  m_sensorAngleOffset: 218
 --- !u!137 &13774860
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -731,7 +735,9 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -784,11 +790,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: .25
+      value: .100000001
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
-      value: .349999994
+      value: .200000003
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
@@ -796,7 +802,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadius
@@ -812,11 +818,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 8
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
@@ -896,11 +902,55 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_flockAvoidRadiusRange.max
-      value: 6
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_goldenChance
-      value: .300999999
+      value: .0199999996
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_displacementDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_chaoticMovement
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_displacementRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_angleIncrement
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleProbability
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_faceDirection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorAngleOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_flockAvoidRadiusRange.min
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_fleeForceFactor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxRunSpeed
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

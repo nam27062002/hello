@@ -43,9 +43,9 @@ GameObject:
   - 114: {fileID: 11489274}
   - 114: {fileID: 11405390}
   - 114: {fileID: 11487176}
-  - 114: {fileID: 11406306}
-  - 114: {fileID: 11403364}
   - 114: {fileID: 11437978}
+  - 114: {fileID: 11403364}
+  - 114: {fileID: 11406306}
   m_Layer: 8
   m_Name: PF_CS_T0_S_Animal_Falcon_00
   m_TagString: Untagged
@@ -472,7 +472,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 119150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 170, y: 2, z: 0}
+  m_LocalPosition: {x: -276.600006, y: 58.2999992, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 454310}
@@ -569,14 +569,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 0
-  m_steerForce: 1
-  m_maxSpeed: 8
-  m_mass: .5
-  m_slowingRadius: 1
+  m_faceDirection: 1
+  m_zOffset:
+    min: -1
+    max: 1
   m_flockAvoidRadiusRange:
     min: 0
     max: 1
+  m_steerForce: .400000006
+  m_mass: .5
+  m_maxSpeed: 8
+  m_maxRunSpeed: 28
+  m_slowingRadius: 0
 --- !u!114 &11405390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -590,6 +594,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: .00999999978
+  m_maxHealth: 100
 --- !u!114 &11406306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -601,10 +606,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 6
-  m_sensorMaxRadius: 6.5
-  m_sensorAngle: 145
-  m_sensorAngleOffset: 0
+  m_sensorMinRadius: 10
+  m_sensorMaxRadius: 20
+  m_sensorAngle: 360
+  m_sensorAngleOffset: 360
 --- !u!114 &11420202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -625,7 +630,6 @@ MonoBehaviour:
     energy: 0
     fury: 15
     xp: 1
-  m_maxHealth: 150
   m_goldenChance: .300999999
   m_pcChance: 0
 --- !u!114 &11437978
@@ -639,11 +643,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72d35768df91148ff85b132e7555cc35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_idleTime: 5
+  m_idleTime: 0
   m_chaoticMovement: 1
   m_displacementDistance: 1
   m_displacementRadius: 1
-  m_angleIncrement: 10
+  m_angleIncrement: 0
   m_idleProbability: 1
 --- !u!114 &11486564
 MonoBehaviour:
@@ -703,7 +707,9 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -760,7 +766,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: 1
+      value: .400000006
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
@@ -780,7 +786,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
@@ -808,7 +814,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 700
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_delay
@@ -820,7 +826,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 750
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorAngle
@@ -849,6 +855,22 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_goldenChance
       value: .300999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_chaoticMovement
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_angleIncrement
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxRunSpeed
+      value: 28
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
