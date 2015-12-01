@@ -122,55 +122,34 @@ public class PreyMotion : Initializable {
 	}
 
 	public void Seek(Vector2 _target) {
-		Vector2 desiredVelocity = _target - m_position;
-		float distanceSqr = desiredVelocity.sqrMagnitude;
-		float slowingRadiusSqr = m_slowingRadius * m_slowingRadius;
-		
-		desiredVelocity.Normalize();
-				
-		desiredVelocity *= m_currentMaxSpeed;
-		if (distanceSqr < slowingRadiusSqr) {
-			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
-		}
-		
-		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
+		m_currentMaxSpeed = m_maxSpeed;
+		DoSeek(_target);
 	}
 	
-	public void Flee(Vector2 _from) {
-		Vector2 desiredVelocity = m_position - _from;
-
+	public void Flee(Vector2 _target) {
 		m_currentMaxSpeed = m_maxRunSpeed;
-
-		desiredVelocity.Normalize();
-		desiredVelocity *= m_currentMaxSpeed;
-
-		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
+		DoFlee(_target);
 	}
-
+	
+	
 	public void Pursuit(Vector2 _target, Vector2 _velocity, float _maxSpeed) {
 		float distance = (m_position - _target).magnitude;
 		float t = (distance / _maxSpeed); // amount of time in the future
-
+		
 		m_currentMaxSpeed = m_maxRunSpeed;
-
-		Seek(_target + _velocity * t); // future position
+		
+		DoSeek(_target + _velocity * t); // future position
 	}
-
+	
 	public void Evade(Vector2 _target, Vector2 _velocity, float _maxSpeed) {		
 		float distance = (m_position - _target).magnitude;
 		float t = (distance / _maxSpeed); // amount of time in the future
-
-		Flee(_target + _velocity * t); // future position
+		
+		DoFlee(_target + _velocity * t); // future position
 	}
 
-	public void ApplySteering() {
 
+	public void ApplySteering() {
 		if (m_flock != null) {
 			FlockSeparation();
 		}
@@ -210,7 +189,37 @@ public class PreyMotion : Initializable {
 		ApplyPosition();
 	}
 
+
 	// ------------------------------------------------------------------------------------------------------------------------------ //
+	private void DoSeek(Vector2 _target) {
+		Vector2 desiredVelocity = _target - m_position;
+		float distanceSqr = desiredVelocity.sqrMagnitude;
+		float slowingRadiusSqr = m_slowingRadius * m_slowingRadius;
+		
+		desiredVelocity.Normalize();
+		
+		desiredVelocity *= m_currentMaxSpeed;
+		if (distanceSqr < slowingRadiusSqr) {
+			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
+		}
+		
+		desiredVelocity -= m_velocity;
+		m_steering += desiredVelocity;
+		
+		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
+	}
+	
+	private void DoFlee(Vector2 _from) {
+		Vector2 desiredVelocity = m_position - _from;
+		
+		desiredVelocity.Normalize();
+		desiredVelocity *= m_currentMaxSpeed;
+		
+		desiredVelocity -= m_velocity;
+		m_steering += desiredVelocity;
+		
+		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
+	}
 
 	private void FlockSeparation() {
 		Vector2 avoid = Vector2.zero;
