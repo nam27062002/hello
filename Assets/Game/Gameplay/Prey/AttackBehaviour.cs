@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(SensePlayer))]
@@ -44,7 +44,7 @@ public class AttackBehaviour : Initializable {
 		}
 
 		PreyAnimationEvents animEvents = transform.FindChild("view").GetComponent<PreyAnimationEvents>();
-		animEvents.onAttackDealDamage += new PreyAnimationEvents.Attack_DealDamage(OnAttack);
+		animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAttack);
 	}
 
 	void OnDestroy() {
@@ -52,7 +52,7 @@ public class AttackBehaviour : Initializable {
 		if (view != null) {
 			PreyAnimationEvents animEvents = view.GetComponent<PreyAnimationEvents>();
 			if (animEvents != null) {
-				animEvents.onAttackDealDamage -= new PreyAnimationEvents.Attack_DealDamage(OnAttack);
+				animEvents.onAttackDealDamage -= new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAttack);
 			}
 		}
 	}

@@ -70,9 +70,12 @@ public class PathControllerEditor : Editor {
 		// ------------------
 		SerializedProperty p = serializedObject.FindProperty("m_smoothRadius");
 		EditorGUILayout.PropertyField(p, true);
-		if (p.floatValue < 0) {
-			p.floatValue = 0;
+		if (p.floatValue < 0.5f) {
+			p.floatValue = 0.5f;
 		}
+
+		p = serializedObject.FindProperty("m_circular");
+		EditorGUILayout.PropertyField(p, true);
 
 		p = serializedObject.FindProperty("m_points");
 		if (p.arraySize < 2) {
@@ -123,7 +126,13 @@ public class PathControllerEditor : Editor {
 		SerializedProperty p = serializedObject.FindProperty("m_points");	
 
 		if (p.arraySize > 0) {
-			int segmentCount = (p.arraySize < 3)? 1 : p.arraySize;
+			int segmentCount = p.arraySize;
+
+			if (segmentCount < 3) {
+				segmentCount = 1;
+			} else if (!m_target.circular) {
+				segmentCount--;
+			}
 
 			Handles.color = Color.white;
 			for (int i = 0; i < segmentCount; i++) {
@@ -142,8 +151,14 @@ public class PathControllerEditor : Editor {
 		SerializedProperty p = serializedObject.FindProperty("m_points");
 
 		if (p.arraySize > 0) {
-			int segmentCount = (p.arraySize < 3)? 1 : p.arraySize;
 			Handles.color = Color.yellow;
+			int segmentCount = p.arraySize;
+			
+			if (segmentCount < 3) {
+				segmentCount = 1;
+			} else if (!m_target.circular) {
+				segmentCount--;
+			}
 
 			for (int i = 0; i < segmentCount; i++) {
 				Vector3 left = p.GetArrayElementAtIndex(i).vector3Value + m_target.transform.position;
