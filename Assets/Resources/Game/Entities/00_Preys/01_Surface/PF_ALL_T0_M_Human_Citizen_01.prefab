@@ -255,8 +255,8 @@ GameObject:
   - 114: {fileID: 11409122}
   - 114: {fileID: 11402296}
   - 114: {fileID: 11460448}
-  - 114: {fileID: 11427164}
   - 114: {fileID: 11409268}
+  - 114: {fileID: 11427164}
   - 114: {fileID: 11429368}
   - 114: {fileID: 11479218}
   - 114: {fileID: 11482982}
@@ -741,7 +741,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_randomMovement: 0
-  m_idleProbability: .81400001
+  m_idleProbability: 0
   m_moveTime:
     min: 6
     max: 12
@@ -805,8 +805,8 @@ MonoBehaviour:
     max: 1
   m_steerForce: 1
   m_mass: 1
-  m_maxSpeed: 6
-  m_maxRunSpeed: 10
+  m_maxSpeed: 3
+  m_maxRunSpeed: 7
   m_slowingRadius: .75
 --- !u!114 &11429368
 MonoBehaviour:
@@ -819,8 +819,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 7.01999998
-  m_sensorMaxRadius: 7.01999998
+  m_sensorMinRadius: 6
+  m_sensorMaxRadius: 12
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11460448
@@ -957,7 +957,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
@@ -985,11 +985,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 7.01999998
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 7.01999998
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_size
@@ -1081,7 +1081,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleProbability
-      value: .81400001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_goldenChance
@@ -1093,7 +1093,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 10
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_angleIncrement

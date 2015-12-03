@@ -47,7 +47,7 @@ public class GunnerTactics : Initializable {
 			ChangeState();
 		}
 
-		if (m_sensor.alert) {
+		if (m_sensor.isInsideMaxArea) {
 			m_nextState = State.Attack;
 		} else {
 			m_nextState = State.Wander;

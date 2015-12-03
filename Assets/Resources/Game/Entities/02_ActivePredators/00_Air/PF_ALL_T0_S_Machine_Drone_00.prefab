@@ -66,10 +66,10 @@ GameObject:
   - 114: {fileID: 11437320}
   - 114: {fileID: 11492276}
   - 114: {fileID: 11427842}
+  - 114: {fileID: 11441374}
   - 114: {fileID: 11417416}
   - 114: {fileID: 11443594}
   - 114: {fileID: 11481634}
-  - 114: {fileID: 11441374}
   - 114: {fileID: 11492522}
   m_Layer: 0
   m_Name: PF_ALL_T0_S_Machine_Drone_00
@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 0
+  m_faceDirection: 1
   m_zOffset:
     min: -1
     max: 1
@@ -314,11 +314,11 @@ MonoBehaviour:
   m_randomMovement: 0
   m_idleProbability: 1
   m_moveTime:
-    min: 6
-    max: 12
-  m_idleTime:
     min: 3
-    max: 6
+    max: 3
+  m_idleTime:
+    min: 5
+    max: 5
 --- !u!114 &11443594
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -455,7 +455,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_faceDirection
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
@@ -491,6 +491,22 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_moveTime.min
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_moveTime.max
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime.min
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime.max
       value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []

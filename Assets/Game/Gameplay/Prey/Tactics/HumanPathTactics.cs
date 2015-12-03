@@ -56,22 +56,22 @@ public class HumanPathTactics : Initializable {
 			// exit State
 			switch (m_state) {
 				case State.Wander:
-					GetComponent<FollowPathBehaviour>().enabled = false;
+					m_followPathBehaviour.enabled = false;
 					break;
 
 				case State.Flee:
-					GetComponent<FleeBehaviour>().enabled = false;
+					m_fleeBehaviour.enabled = false;
 					break;
 			}
 
 			// enter State
 			switch (_newSate) {
 				case State.Wander:
-					GetComponent<FollowPathBehaviour>().enabled = true;
+					m_followPathBehaviour.enabled = true;
 					break;
 
 				case State.Flee:
-					GetComponent<FleeBehaviour>().enabled = true;
+					m_fleeBehaviour.enabled = true;
 					break;
 			}
 
