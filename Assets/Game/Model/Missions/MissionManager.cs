@@ -37,7 +37,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	}
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Content
 	// [AOC] TEMP!! Eventually it will be replaced by procedural generation
@@ -47,6 +47,11 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	// Active missions
 	// [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
 	private Mission[] m_activeMissions = new Mission[NUM_MISSIONS];
+
+	// Delegates
+	// Delegate meant for objectives needing an update() call
+	public delegate void OnUpdateDelegate();
+	public static OnUpdateDelegate OnUpdate = delegate() { };	// Default initialization to avoid null reference when invoking. Add as many listeners as you want to this specific event by using the += syntax
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -55,19 +60,6 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// Scriptable object has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Equivalent to constructor, make sure missions array is initialized
-		Debug.Log("ENABLING MANAGER");
-		/*if(m_activeMissions == null) {
-			m_activeMissions = new Mission[NUM_MISSIONS];
-		}*/
-		for(int i = 0; i < NUM_MISSIONS; i++) {
-			if(m_activeMissions[i] == null) {
-				Debug.Log("\tMission " + i + " is null");
-			} else {
-				Debug.Log("\tMission " + i + " is " + m_activeMissions[i].def.sku);
-			}
-		}
-
 		// Subscribe to external events
 	}
 
@@ -79,10 +71,11 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	}
 
 	/// <summary>
-	/// Destructor.
+	/// Called every frame.
 	/// </summary>
-	private void OnDestroy() {
-
+	private void Update() {
+		// Propagate to registered listeners
+		OnUpdate();
 	}
 
 	//------------------------------------------------------------------//

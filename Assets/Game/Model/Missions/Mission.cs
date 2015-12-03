@@ -27,7 +27,7 @@ public class Mission {
 	[Serializable]
 	public class SaveData {
 		public string sku = "";		// Mission def's sku
-		public int currentValue = 0;	// Objective's current value - only relevant for long-term missions, but save it always anyway
+		public float currentValue = 0f;	// Objective's current value - only relevant for long-term missions, but save it always anyway
 	}
 
 	//------------------------------------------------------------------//

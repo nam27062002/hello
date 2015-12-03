@@ -21,13 +21,16 @@ MonoBehaviour:
     m_tidName: Mission 0
     m_tidDesc: Reach {0} points in a single run!
   - m_sku: mission_1
-    m_type: 0
-    m_targetValue: 1000
-    m_parameters: []
+    m_type: 2
+    m_targetValue: 5
+    m_parameters:
+    - Seagull
+    - Falcon
+    - Soldier
     m_singleRun: 1
-    m_rewardCoins: 1000
+    m_rewardCoins: 500
     m_tidName: Mission 1
-    m_tidDesc: Reach {0} points in a single run!
+    m_tidDesc: Kill {0} {1} in a single run!
   - m_sku: mission_2
     m_type: 0
     m_targetValue: 500000
@@ -35,20 +38,28 @@ MonoBehaviour:
     m_singleRun: 0
     m_rewardCoins: 50000
     m_tidName: Mission 2
-    m_tidDesc: Reach {0} points in multiple runs
+    m_tidDesc: "Earn a total of {0}\_points"
   - m_sku: mission_3
-    m_type: 0
-    m_targetValue: 5000
+    m_type: 1
+    m_targetValue: 30
     m_parameters: []
     m_singleRun: 1
-    m_rewardCoins: 10000
+    m_rewardCoins: 500
     m_tidName: Mission 3
-    m_tidDesc: Reach {0} points in a single run!
+    m_tidDesc: Survive during {0} in a single run!
   - m_sku: mission_4
-    m_type: 0
-    m_targetValue: 1000000
+    m_type: 2
+    m_targetValue: 100
     m_parameters: []
     m_singleRun: 0
-    m_rewardCoins: 1000000
+    m_rewardCoins: 10000
     m_tidName: Mission 4
-    m_tidDesc: Reach {0} points in multiple runs
+    m_tidDesc: Kill a total of {0} enemies
+  - m_sku: mission_5
+    m_type: 1
+    m_targetValue: 90
+    m_parameters: []
+    m_singleRun: 0
+    m_rewardCoins: 5000
+    m_tidName: Mission 5
+    m_tidDesc: Survive a total of {0}
