@@ -1,7 +1,7 @@
-// MenuHUD.cs
+﻿// GameHUD.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 20/11/2015.
+// Created by Alger Ortín Castellví on 02/12/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -15,9 +15,9 @@ using System;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Controller for the HUD in the main menu.
+/// Root controller for the in-game HUD prefab.
 /// </summary>
-public class MenuHUD : MonoBehaviour {
+public class GameHUD : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -29,22 +29,33 @@ public class MenuHUD : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Not much to do
+
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Callback for the pause button.
+	/// </summary>
+	public void OnPauseButton() {
+		// Instantly finish the game for now
+		InstanceManager.GetSceneController<GameSceneController>().EndGame();
+
+		/*
+		GameSceneController scene = InstanceManager.GetSceneController<GameSceneController>();
+		scene.PauseGame(!scene.paused);
+		*/
 	}
 
 	/// <summary>
-	/// Open the currency shop popup.
+	/// Callback for the missions button.
 	/// </summary>
-	public void OpenCurrencyShopPopup() {
-		// Just do it
-		PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-	}
+	public void OnMissionsButton() {
+		// Pause game
+		InstanceManager.GetSceneController<GameSceneController>().PauseGame(true);
 
-	/// <summary>
-	/// Opens the missions popup.
-	/// </summary>
-	public void OpenMissionsPopup() {
-		// Just do it
+		// Open missions popup
 		PopupManager.OpenPopupInstant(PopupMissions.PATH);
 	}
 }

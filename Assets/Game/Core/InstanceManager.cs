@@ -56,7 +56,7 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 	/// <summary>
 	/// Obtain the current scene controller casted to the desired type.
 	/// </summary>
-	/// <returns>The casted scene controller.</returns>
+	/// <returns>The casted scene controller. <c>null</c> if the current scene controller is not of the requested type.</returns>
 	/// <typeparam name="T">The actual type of the current scene controller. Must inherit from SceneController.</typeparam>
 	public static T GetSceneController<T>() where T : SceneController {
 		return sceneController as T;

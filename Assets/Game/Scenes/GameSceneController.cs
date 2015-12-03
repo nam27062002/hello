@@ -59,6 +59,7 @@ public class GameSceneController : SceneController {
 		get { return m_state; }
 	}
 
+	private float m_timeScaleBackup = 1f;	// When going to pause, store timescale to be restored later on
 	public bool paused {
 		get { return m_state == EStates.PAUSED; }
 	}
@@ -190,14 +191,6 @@ public class GameSceneController : SceneController {
 		// Change state
 		ChangeState(EStates.FINISHED);
 
-		// [AOC] TODO!! Update global stats
-
-		// Apply rewards to user profile
-		RewardManager.ApplyRewardsToProfile();
-
-		// Save persistence
-		PersistenceManager.Save();
-
 		// Dispatch game event
 		Messenger.Broadcast(GameEvents.GAME_ENDED);
 
@@ -248,6 +241,14 @@ public class GameSceneController : SceneController {
 				GameObject spawnPoint = level.GetDragonSpawnPoint(InstanceManager.player.data.id);
 				if(spawnPoint == null) spawnPoint = level.GetDragonSpawnPoint(DragonId.NONE);
 				InstanceManager.player.transform.position = spawnPoint.transform.position;
+
+				// Notify the game
+				Messenger.Broadcast(GameEvents.GAME_STARTED);
+			} break;
+
+			case EStates.COUNTDOWN: {
+				// Notify the game
+				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
 			} break;
 
 			case EStates.RUNNING: {
@@ -256,6 +257,9 @@ public class GameSceneController : SceneController {
 			} break;
 
 			case EStates.PAUSED: {
+				// Restore previous timescale
+				Time.timeScale = m_timeScaleBackup;
+
 				// Notify the game
 				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
 			} break;
@@ -285,16 +289,15 @@ public class GameSceneController : SceneController {
 
 				// Make dragon playable!
 				InstanceManager.player.playable = true;
-
-				// Notify the game
-				if(m_state == EStates.COUNTDOWN) {
-					Messenger.Broadcast(GameEvents.GAME_STARTED);
-				}
 			} break;
 				
 			case EStates.PAUSED: {
 				// Ignore if not running
 				if(m_state != EStates.RUNNING) return;
+
+				// Store current timescale and set it to 0
+				m_timeScaleBackup = Time.timeScale;
+				Time.timeScale = 0.0f;
 
 				// Notify the game
 				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
@@ -314,6 +317,25 @@ public class GameSceneController : SceneController {
 
 		// Add some delay to the summary popup
 		m_timer = 0.5f;
+	}
+
+	/// <summary>
+	/// The summary popup has been closed.
+	/// </summary>
+	public void OnSummaryPopupClosed() {
+		// [AOC] TODO!! Update global stats
+		
+		// Apply rewards to user profile
+		RewardManager.ApplyRewardsToProfile();
+		
+		// Process Missions: give rewards and generate new missions replacing those completed
+		MissionManager.ProcessMissions();
+
+		// Save persistence
+		PersistenceManager.Save();
+
+		// Go back to main menu
+		FlowManager.GoToMenu();
 	}
 }
 

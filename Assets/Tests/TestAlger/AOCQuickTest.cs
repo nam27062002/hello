@@ -26,14 +26,10 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	[Comment("This is a float añsldkfjañ añsld kasñlf kasñd kasñlfkas ñak ñalskfjasñlk fjasñk sñak sñl adfaf")]
-	public float m_myFloat = 5;
+	public Mission m_mission = null;
 
-	[Comment("This is a string")]
-	public string m_myString = "AOC";
-
-	[Comment("This is not a pipe")]
-	public int m_myInt = -5;
+	public delegate void MyDelegate(string _str);
+	public MyDelegate m_myDelegateInstance = delegate(string _str) { };
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -47,14 +43,21 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-
+		//m_myDelegateInstance += MyDelegate1;
+		//m_myDelegateInstance += MyDelegate2;
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	void Start() {
-		//Debug.Log("START!");
+		for(int i = 0; i < MissionManager.NUM_MISSIONS; i++) {
+			Mission mission = MissionManager.GetMission(i);
+			Debug.Log("Mission " + i + ": " + mission.def.sku);
+			if(i == 1) m_mission = mission;
+		}
+
+		m_myDelegateInstance("Invoking MyDelegate");
 	}
 	
 	/// <summary>
@@ -68,6 +71,15 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
+		m_myDelegateInstance -= MyDelegate1;
+		m_myDelegateInstance -= MyDelegate2;
+	}
 
+	public void MyDelegate1(string _str) {
+		Debug.Log(_str);
+	}
+
+	public void MyDelegate2(string _str) {
+		Debug.Log(_str + " 2!");
 	}
 }

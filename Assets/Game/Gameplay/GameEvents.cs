@@ -14,8 +14,9 @@ public static class GameEvents {
 	
 	// Game logic events
 	public const string GAME_LEVEL_LOADED = "GAME_LEVEL_LOADED";	// no params
-	public const string GAME_COUNTDOWN_STARTED = "GAME_COUNTDOWN_STARTED";		// no params
 	public const string GAME_STARTED = "GAME_STARTED";		// no params
+	public const string GAME_COUNTDOWN_STARTED = "GAME_COUNTDOWN_STARTED";		// no params
+	public const string GAME_COUNTDOWN_ENDED = "GAME_COUNTDOWN_ENDED";			// no params
 	public const string GAME_PAUSED = "GAME_PAUSED";		// params: bool _paused
 	public const string GAME_ENDED = "GAME_ENDED";			// no params
 	public const string REWARD_APPLIED = "REWARD_APPLIED";	// params: Reward _reward, Transform _entity
@@ -45,4 +46,7 @@ public static class GameEvents {
 	// Menu events
 	public const string MENU_DRAGON_SELECTED = "MENU_DRAGON_SELECTED";	// params: DragonId _selectedDragon
 	public const string MENU_LEVEL_SELECTED = "MENU_LEVEL_SELECTED";	// params: int _selectedLevel
+
+	// Mission events
+	public const string MISSION_COMPLETED = "MISSION_COMPLETED";						// params: Mission _mission
 }
