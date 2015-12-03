@@ -84,7 +84,7 @@ public class WanderBehaviour : Initializable {
 			}
 			
 			m_motion.Seek(m_target);
-			m_motion.ApplySteering();
+			//m_motion.ApplySteering();
 		}
 	}
 

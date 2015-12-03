@@ -109,12 +109,12 @@ public class AttackBehaviour : Initializable {
 		switch (m_state) {
 			case State.Pursuit:
 				m_motion.Pursuit(m_dragon.transform.position, m_dragon.GetVelocity(), m_dragon.GetMaxSpeed());
-				m_motion.ApplySteering();
+				//m_motion.ApplySteering();
 				break;
 
 			case State.Attack:
 				m_motion.velocity = Vector2.zero;
-				m_motion.ApplySteering();
+				//m_motion.ApplySteering();
 
 				if (m_motion.faceDirection) {
 					m_motion.direction = m_dragon.transform.position - (Vector3)m_motion.position;

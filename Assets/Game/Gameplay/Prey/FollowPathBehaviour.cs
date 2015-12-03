@@ -18,7 +18,6 @@ public class FollowPathBehaviour : Initializable {
 	[SerializeField] private Range m_moveTime = new Range(6f, 12f);
 	[SerializeField] private Range m_idleTime = new Range(3f, 6f);
 
-
 	private PathController m_path;
 	public PathController path { set { m_path = value; } }
 
@@ -91,6 +90,8 @@ public class FollowPathBehaviour : Initializable {
 					case State.Move:
 						if (Random.Range(0f, 1f) < m_idleProbability) {
 							m_nextState = State.Idle;
+						} else {
+							m_timer = m_moveTime.GetRandom();
 						}
 						break;
 				}
@@ -113,7 +114,7 @@ public class FollowPathBehaviour : Initializable {
 			}
 			m_motion.Seek(m_target);
 
-			m_motion.ApplySteering();
+		//	m_motion.ApplySteering();
 		}
 	}
 
@@ -130,6 +131,7 @@ public class FollowPathBehaviour : Initializable {
 			} else {
 				m_motion.direction = Vector3.right;
 			}
+			m_motion.velocity = Vector2.zero;
 		}
 		
 		m_state = m_nextState;

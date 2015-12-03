@@ -149,7 +149,7 @@ public class PreyMotion : Initializable {
 	}
 
 
-	public void ApplySteering() {
+	private void ApplySteering() {
 		if (m_flock != null) {
 			FlockSeparation();
 		}
@@ -187,6 +187,10 @@ public class PreyMotion : Initializable {
 		}
 		
 		ApplyPosition();
+	}
+
+	void FixedUpdate() {
+		ApplySteering();
 	}
 
 
