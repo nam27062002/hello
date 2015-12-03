@@ -55,19 +55,6 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// Scriptable object has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Equivalent to constructor, make sure missions array is initialized
-		Debug.Log("ENABLING MANAGER");
-		/*if(m_activeMissions == null) {
-			m_activeMissions = new Mission[NUM_MISSIONS];
-		}*/
-		for(int i = 0; i < NUM_MISSIONS; i++) {
-			if(m_activeMissions[i] == null) {
-				Debug.Log("\tMission " + i + " is null");
-			} else {
-				Debug.Log("\tMission " + i + " is " + m_activeMissions[i].def.sku);
-			}
-		}
-
 		// Subscribe to external events
 	}
 
