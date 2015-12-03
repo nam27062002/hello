@@ -681,6 +681,20 @@ public static class Util
 		return obj.transform.GetFirstComponentInChildren<T>();
 	}
 
+	/// <summary>
+	/// [AOC]
+	/// Returns the first component of type T found in any of the subobjects named _objName.
+	/// </summary>
+	public static T GetComponentInChildren<T>(this Component _comp, string _objName) where T : Component {
+		T[] componentsInChildren = _comp.GetComponentsInChildren<T>();
+		for(int i = 0; i < componentsInChildren.Length; i++) {
+			if(componentsInChildren[i].gameObject.name == _objName) {
+				return componentsInChildren[i];
+			}
+		}
+		return null;
+	}
+
 	/*[PAC]
 	// extension method Transform.GetRootPrefab()
 	// Works like Transform.root but returns the first Transform that is on an object with a PrefabInstance component.
