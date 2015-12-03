@@ -18,7 +18,7 @@ using UnityEditor;
 /// </summary>
 public class HungryDragonEditorMenu {
 	//------------------------------------------------------------------//
-	// STATIC MENU OPTIONS METHODS										//
+	// CONTENT															//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Show the dragon manager content editor.
@@ -42,6 +42,19 @@ public class HungryDragonEditorMenu {
 	}
 
 	/// <summary>
+	/// Show the missions definitions content editor.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Content/Mission Definitions", false, 2)]
+	public static void ShowMissionDefintions() {
+		// Find and select the scriptable object (by name)
+		Object targetObj = AssetDatabase.LoadMainAssetAtPath("Assets/Resources/Definitions/MissionDefinitions.asset");
+		EditorUtils.FocusObject(targetObj, true, false, true);
+	}
+
+	//------------------------------------------------------------------//
+	// TOOLS															//
+	//------------------------------------------------------------------//
+	/// <summary>
 	/// Regenerate the icon for all the spawners in the scene.
 	/// </summary>
 	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons", false, 2)]
@@ -49,6 +62,9 @@ public class HungryDragonEditorMenu {
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 	}
 
+	//------------------------------------------------------------------//
+	// OTHERS															//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Add menu item to be able to open the level editor.
 	/// </summary>

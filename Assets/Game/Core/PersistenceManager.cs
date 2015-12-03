@@ -35,6 +35,7 @@ public static class PersistenceManager {
 		public DateTime timestamp = DateTime.UtcNow;
 		public UserProfile.SaveData profile = new UserProfile.SaveData();
 		public DragonData.SaveData[] dragons = new DragonData.SaveData[(int)DragonId.COUNT];
+		public MissionManager.SaveData missions = new MissionManager.SaveData();
 	}
 
 	//------------------------------------------------------------------//
@@ -103,6 +104,9 @@ public static class PersistenceManager {
 		
 		// Dragons data
 		DragonManager.Load(_data.dragons);
+
+		// Missions
+		MissionManager.Load(_data.missions);
 	}
 
 	/// <summary>
@@ -156,6 +160,9 @@ public static class PersistenceManager {
 
 		// Dragons data
 		data.dragons = DragonManager.Save();
+
+		// Missions
+		data.missions = MissionManager.Save();
 		
 		// Save the object we just created
 		SaveFromObject(_profileName, data);
