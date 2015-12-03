@@ -18,6 +18,8 @@ public class AttackBehaviour : Initializable {
 
 	[SerializeField] private float m_damage;
 	[SerializeField] private float m_attackDelay;
+	[SerializeField] private int m_consecutiveAttacks;
+	[SerializeField] private float m_sensorShutdownTime;
 	[SerializeField] private GameObject m_projectilePrefab;
 
 	private Animator m_animator;
@@ -29,6 +31,7 @@ public class AttackBehaviour : Initializable {
 	private State m_nextState;
 
 	private float m_timer;
+	private int m_attackCount;
 
 
 	// Use this for initialization
@@ -44,7 +47,9 @@ public class AttackBehaviour : Initializable {
 		}
 
 		PreyAnimationEvents animEvents = transform.FindChild("view").GetComponent<PreyAnimationEvents>();
-		animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAttack);
+		if (animEvents != null) {
+			animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAttack);
+		}
 	}
 
 	void OnDestroy() {
@@ -60,6 +65,7 @@ public class AttackBehaviour : Initializable {
 	public override void Initialize() {
 		m_state = State.None;
 		m_nextState = State.Pursuit;
+		m_attackCount = 0;
 	}
 
 	void OnEnable() {
@@ -96,7 +102,15 @@ public class AttackBehaviour : Initializable {
 							m_startFX();
 						}
 						m_animator.SetTrigger("attack");
+
 						m_timer = m_attackDelay;
+ 
+						if (m_consecutiveAttacks > 0) {
+							m_attackCount++;
+							if (m_attackCount > m_consecutiveAttacks) {
+								m_sensor.Shutdown(m_sensorShutdownTime);
+							}
+						}
 					}
 				} else {
 					m_nextState = State.Pursuit;
@@ -146,6 +160,7 @@ public class AttackBehaviour : Initializable {
 				case State.Pursuit:
 					m_animator.SetBool("move", true);
 					m_animator.SetBool("fast", true);
+					m_attackCount = 0;
 					break;
 					
 				case State.Attack:

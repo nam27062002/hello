@@ -6,22 +6,25 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public delegate void OnAttackDealDamageDelegate();
 	public delegate void OnAttackEndDelegate();
 
-	public OnAttackStartDelegate 		onAttackStart		= delegate() { };
-	public OnAttackDealDamageDelegate 	onAttackDealDamage 	= delegate() { };
-	public OnAttackEndDelegate 			onAttackEnd 		= delegate() { };
+	public event OnAttackStartDelegate 		onAttackStart;
+	public event OnAttackDealDamageDelegate onAttackDealDamage;
+	public event OnAttackEndDelegate 		onAttackEnd;
 
 
 	// ------------------------------------------------------- //
 
 	public void AttackStart() {
-		onAttackStart();
+		if (onAttackStart != null)
+			onAttackStart();
 	}
 
 	public void AttackDealDamage() {
-		onAttackDealDamage();
+		if (onAttackDealDamage != null)
+			onAttackDealDamage();
 	}
 
 	public void AttackEnd() {
-		onAttackEnd();
+		if (onAttackEnd != null)
+			onAttackEnd();
 	}
 }

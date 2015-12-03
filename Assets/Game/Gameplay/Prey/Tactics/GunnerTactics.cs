@@ -17,6 +17,11 @@ public class GunnerTactics : Initializable {
 	private State m_nextState;
 	private SensePlayer m_sensor;
 
+	private WanderBehaviour m_wander;
+	private AttackBehaviour m_attack;
+	private EvadeBehaviour  m_evade; // optional!
+
+
 	// Use this for initialization
 	void Start () {
 		m_sensor = GetComponent<SensePlayer>();
@@ -27,8 +32,13 @@ public class GunnerTactics : Initializable {
 		m_state = State.None;
 		m_nextState = State.Wander;
 		
-		GetComponent<WanderBehaviour>().enabled = false;
-		GetComponent<AttackBehaviour>().enabled = false;
+		m_wander = GetComponent<WanderBehaviour>();
+		m_attack = GetComponent<AttackBehaviour>();
+		m_evade  = GetComponent<EvadeBehaviour>();
+
+		m_wander.enabled = false;
+		m_attack.enabled = false;
+		if (m_evade) m_evade.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -48,22 +58,24 @@ public class GunnerTactics : Initializable {
 		// exit State
 		switch (m_state) {
 			case State.Wander:
-				GetComponent<WanderBehaviour>().enabled = false;
+				m_wander.enabled = false;
+				if (m_evade) m_evade.enabled = false;
 				break;
 				
 			case State.Attack:
-				GetComponent<AttackBehaviour>().enabled = false;
+				m_attack.enabled = false;
 				break;
 		}
 		
 		// enter State
 		switch (m_nextState) {
 			case State.Wander:
-				GetComponent<WanderBehaviour>().enabled = true;
+				m_wander.enabled = true;
+				if (m_evade) m_evade.enabled = true;
 				break;
 				
 			case State.Attack:
-				GetComponent<AttackBehaviour>().enabled = true;
+				m_attack.enabled = true;
 				break;
 		}
 		

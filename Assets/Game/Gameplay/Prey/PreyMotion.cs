@@ -21,8 +21,8 @@ public class PreyMotion : Initializable {
 	[SerializeField] private float m_steerForce;
 		[CommentAttribute("The steering vector is divided by mass.")]
 	[SerializeField] private float m_mass = 1f;
-	//	[CommentAttribute("When can decide if the flee force has more influence on the steering result vector.")]
-	//[SerializeField] private float m_fleeForceFactor = 1f;
+		[CommentAttribute("Distance can reduce the effect of evasive behaviours.")]
+	[SerializeField] private float m_distanceAttenuation = 5f;
 
 [Header("Speed variations")]
 	[SerializeField] private float m_maxSpeed;
@@ -215,9 +215,14 @@ public class PreyMotion : Initializable {
 	
 	private void DoFlee(Vector2 _from) {
 		Vector2 desiredVelocity = m_position - _from;
-		
+		float distanceSqr = desiredVelocity.sqrMagnitude;
+
 		desiredVelocity.Normalize();
 		desiredVelocity *= m_currentMaxSpeed;
+
+		if (distanceSqr > 0) {
+			desiredVelocity *= m_distanceAttenuation / distanceSqr;
+		}
 		
 		desiredVelocity -= m_velocity;
 		m_steering += desiredVelocity;

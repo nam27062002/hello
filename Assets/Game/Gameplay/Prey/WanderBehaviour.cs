@@ -32,6 +32,7 @@ public class WanderBehaviour : Initializable {
 	protected State m_nextState;
 
 	private float m_displacementAngle;
+	private bool m_isEvasive;
 
 
 	// --------------------------------------------------------------------------- //
@@ -39,6 +40,7 @@ public class WanderBehaviour : Initializable {
 	virtual protected void Awake() {
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_isEvasive = (GetComponent("EvadeBehaviour") != null) || (GetComponent("FleeBehaviour") != null);
 	}
 		
 	public override void Initialize() {			
@@ -110,11 +112,15 @@ public class WanderBehaviour : Initializable {
 	}
 
 	virtual protected void UpdateRandomTarget() {
-		if ((m_target - m_motion.position).sqrMagnitude < 1f) {
-			if (Random.Range(0f, 1f) < m_idleProbability) {
-				m_nextState = State.Idle;
-			} else {
-				ChooseTarget();
+		if (m_isEvasive && m_motion.speed < 0.25f) {
+			ChooseTarget();
+		} else {
+			if ((m_target - m_motion.position).sqrMagnitude < 1f) {
+				if (Random.Range(0f, 1f) < m_idleProbability) {
+					m_nextState = State.Idle;
+				} else {
+					ChooseTarget();
+				}
 			}
 		}
 	}
