@@ -24,7 +24,9 @@ public class MissionObjective {
 	// Type of implemented objectives, mainly used to fill missions content
 	// Add here any new objective implementation
 	public enum Type {
-		SCORE
+		SCORE,
+		SURVIVE_TIME,
+		KILL
 	}
 
 	//------------------------------------------------------------------//
@@ -36,11 +38,14 @@ public class MissionObjective {
 	public Mission parentMission { get { return m_parentMission; }}
 
 	// Objective tracking
-	[SerializeField] protected int m_currentValue = 0;
-	public int currentValue {
+	// Use float to have more precision while tracking (i.e. time), although target value is int
+	[SerializeField] protected float m_currentValue = 0;
+	public float currentValue {
 		get { return m_currentValue; }
 		set { SetValue(value); }	// Use internal method, which will check for objective completion
 	}
+
+	public int targetValue { get { return parentMission.def.targetValue; }}	// Shortcut
 
 	// Delegates
 	public delegate void OnObjectiveCompleteDelegate();
@@ -50,8 +55,8 @@ public class MissionObjective {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Progress tracking
-	public bool isCompleted { get { return currentValue == parentMission.def.targetValue; }}
-	public float progress { get { return (float)currentValue/(float)parentMission.def.targetValue; }}
+	public bool isCompleted { get { return currentValue == (float)targetValue; }}
+	public float progress { get { return currentValue/(float)targetValue; }}
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -89,12 +94,12 @@ public class MissionObjective {
 	/// Will be ignored if objective is already completed.
 	/// </summary>
 	/// <param name="_newValue">The new value to be set.</param>
-	private void SetValue(int _newValue) {
+	private void SetValue(float _newValue) {
 		// Skip if already completed
 		if(isCompleted) return;
 
 		// Store new value
-		m_currentValue = Mathf.Min(_newValue, parentMission.def.targetValue);
+		m_currentValue = Mathf.Min(_newValue, (float)targetValue);
 
 		// Check completion
 		if(isCompleted) {
@@ -107,12 +112,31 @@ public class MissionObjective {
 	// OVERRIDE CANDIDATES												//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Gets the description of this objective.
-	/// Override to customize text in specific objectives.
+	/// Gets the description of this objective properly formatted.
+	/// Override to customize text in specific objective types.
 	/// </summary>
+	/// <returns>The description properly formatted.</returns>
 	public virtual string GetDescription() {
 		// Default
 		return Localization.Localize(parentMission.def.tidDesc);
+	}
+
+	/// <summary>
+	/// Gets the current value of this objective properly formatted.
+	/// Override to customize text in specific objective types.
+	/// </summary>
+	/// <returns>The current value properly formatted.</returns>
+	public virtual string GetCurrentValueFormatted() {
+		return StringUtils.FormatNumber(currentValue, 2);
+	}
+
+	/// <summary>
+	/// Gets the target value of this objective properly formatted.
+	/// Override to customize text in specific objective types.
+	/// </summary>
+	/// <returns>The target value properly formatted.</returns>
+	public virtual string GetTargetValueFormatted() {
+		return StringUtils.FormatNumber(targetValue);
 	}
 
 	//------------------------------------------------------------------//
@@ -153,7 +177,9 @@ public class MissionObjective {
 	public static MissionObjective Create(Mission _parentMission) {
 		// Create a new objective based on mission type
 		switch(_parentMission.def.type) {
-			case Type.SCORE: return new MissionObjectiveScore(_parentMission); break;
+			case Type.SCORE:		return new MissionObjectiveScore(_parentMission);		break;
+			case Type.SURVIVE_TIME:	return new MissionObjectiveSurviveTime(_parentMission);	break;
+			case Type.KILL:			return new MissionObjectiveKill(_parentMission);		break;
 		}
 
 		// Unrecoginzed mission type, aborting

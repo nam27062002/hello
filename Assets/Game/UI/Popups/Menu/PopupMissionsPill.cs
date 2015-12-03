@@ -79,7 +79,7 @@ public class PopupMissionsPill : MonoBehaviour {
 		if(m_nameText != null) m_nameText.text = Localization.Localize(m_mission.def.tidName);
 		if(m_descText != null) m_descText.text = m_mission.objective.GetDescription();
 
-		m_progressText.text = System.String.Format("{0}/{1}", StringUtils.FormatNumber(m_mission.objective.currentValue), StringUtils.FormatNumber(m_mission.def.targetValue));
+		m_progressText.text = System.String.Format("{0}/{1}", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
 		m_progressBar.value = m_mission.objective.progress;
 
 		m_rewardText.text = StringUtils.FormatNumber(m_mission.rewardCoins);;
