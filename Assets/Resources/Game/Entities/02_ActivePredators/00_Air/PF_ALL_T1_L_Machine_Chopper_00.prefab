@@ -206,7 +206,9 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -230,7 +232,9 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -255,7 +259,9 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -321,7 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72d35768df91148ff85b132e7555cc35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_idleTime: 5
+  m_idleTime: 3
   m_chaoticMovement: 1
   m_displacementDistance: 1
   m_displacementRadius: 1
@@ -351,13 +357,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 1
-  m_steerForce: 1
-  m_maxSpeed: 4
-  m_mass: 1
-  m_slowingRadius: 2
+  m_zOffset:
+    min: -1
+    max: 1
   m_flockAvoidRadiusRange:
     min: 0
     max: 1
+  m_steerForce: 1
+  m_mass: 2
+  m_maxSpeed: 4
+  m_maxRunSpeed: 7
+  m_slowingRadius: 2
 --- !u!114 &11455516
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -423,6 +433,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: .25
+  m_maxHealth: 100
 --- !u!114 &11473134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -495,7 +506,6 @@ MonoBehaviour:
     energy: 0
     fury: 0
     xp: 0
-  m_maxHealth: 100
   m_goldenChance: 0
   m_pcChance: 0
 --- !u!1001 &100100000
@@ -521,6 +531,18 @@ Prefab:
       propertyPath: m_projectilePrefab
       value: 
       objectReference: {fileID: 173528, guid: 5bf1aa92d7a764207b2c49df71708fc0, type: 2}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_mass
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxRunSpeed
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 138554}
