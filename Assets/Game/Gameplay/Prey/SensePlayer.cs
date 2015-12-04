@@ -6,9 +6,11 @@ public class SensePlayer : MonoBehaviour {
 	
 	[SerializeField] private float m_sensorMinRadius;
 	public float sensorMinRadius { get { return m_sensorMinRadius; } set { m_sensorMinRadius = value; } }
+	public float sensorMinRadiusSqr { get { return m_sensorMinRadius * m_sensorMinRadius; } }
 
 	[SerializeField] private float m_sensorMaxRadius;
 	public float sensorMaxRadius { get { return m_sensorMaxRadius; } set { m_sensorMaxRadius = value; } }
+	public float sensorMaxRadiusSqr { get { return m_sensorMaxRadius * m_sensorMaxRadius; } }
 
 	[SerializeField][Range(45,360)] private float m_sensorAngle;
 	public float sensorAngle { get { return m_sensorAngle; } }

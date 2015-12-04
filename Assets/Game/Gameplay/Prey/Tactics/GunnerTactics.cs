@@ -19,7 +19,6 @@ public class GunnerTactics : Initializable {
 
 	private WanderBehaviour m_wander;
 	private AttackBehaviour m_attack;
-	private EvadeBehaviour  m_evade; // optional!
 
 
 	// Use this for initialization
@@ -34,11 +33,9 @@ public class GunnerTactics : Initializable {
 		
 		m_wander = GetComponent<WanderBehaviour>();
 		m_attack = GetComponent<AttackBehaviour>();
-		m_evade  = GetComponent<EvadeBehaviour>();
 
 		m_wander.enabled = false;
 		m_attack.enabled = false;
-		if (m_evade) m_evade.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -59,7 +56,6 @@ public class GunnerTactics : Initializable {
 		switch (m_state) {
 			case State.Wander:
 				m_wander.enabled = false;
-				if (m_evade) m_evade.enabled = false;
 				break;
 				
 			case State.Attack:
@@ -71,7 +67,6 @@ public class GunnerTactics : Initializable {
 		switch (m_nextState) {
 			case State.Wander:
 				m_wander.enabled = true;
-				if (m_evade) m_evade.enabled = true;
 				break;
 				
 			case State.Attack:

@@ -87,6 +87,8 @@ public class PreyMotion : Initializable {
 		m_currentSpeed = 0;
 
 		m_currentMaxSpeed = m_maxSpeed;
+
+		m_maxRunSpeed = m_maxSpeed;
 	}
 
 	void OnEnable() {		
@@ -144,7 +146,7 @@ public class PreyMotion : Initializable {
 	public void Evade(Vector2 _target, Vector2 _velocity, float _maxSpeed) {		
 		float distance = (m_position - _target).magnitude;
 		float t = (distance / _maxSpeed); // amount of time in the future
-		
+
 		DoFlee(_target + _velocity * t); // future position
 	}
 
@@ -207,10 +209,10 @@ public class PreyMotion : Initializable {
 			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
 		}
 		
+		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
+
 		desiredVelocity -= m_velocity;
 		m_steering += desiredVelocity;
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
 	}
 	
 	private void DoFlee(Vector2 _from) {
@@ -224,10 +226,10 @@ public class PreyMotion : Initializable {
 			desiredVelocity *= m_distanceAttenuation / distanceSqr;
 		}
 		
+		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
+
 		desiredVelocity -= m_velocity;
 		m_steering += desiredVelocity;
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
 	}
 
 	private void FlockSeparation() {
