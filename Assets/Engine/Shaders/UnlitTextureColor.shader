@@ -6,7 +6,8 @@
 Shader "Custom/Unlit/TextureColor" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
-	_Color ("Main Color", Color) = (1,1,1,1)
+	_ColorMultiply ("Color Multiply", Color) = (1,1,1,1)
+	_ColorAdd ("Color Add", Color) = (0,0,0,0)
 }
 
 SubShader {
@@ -34,6 +35,8 @@ SubShader {
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
+			float4 _ColorMultiply;
+			float4 _ColorAdd;
 			
 			v2f vert (appdata_t v)
 			{
@@ -46,13 +49,14 @@ SubShader {
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.texcoord);
+				fixed4 col = tex2D(_MainTex, i.texcoord) * _ColorMultiply + _ColorAdd;
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				UNITY_OPAQUE_ALPHA(col.a);
 				return col;
 			}
 		ENDCG
 	}
+	
 }
 
 }
