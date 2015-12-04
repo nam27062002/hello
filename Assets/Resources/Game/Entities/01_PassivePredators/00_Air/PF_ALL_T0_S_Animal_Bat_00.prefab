@@ -83,16 +83,18 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 405168}
-  - 114: {fileID: 11453876}
-  - 114: {fileID: 11471252}
-  - 114: {fileID: 11425644}
   - 114: {fileID: 11402130}
+  - 114: {fileID: 11471252}
   - 114: {fileID: 11495124}
   - 114: {fileID: 11459194}
+  - 114: {fileID: 11453876}
+  - 114: {fileID: 11425644}
+  - 114: {fileID: 11478934}
   - 114: {fileID: 11421898}
   - 114: {fileID: 11448254}
-  - 114: {fileID: 11471796}
-  - 114: {fileID: 11430840}
+  - 114: {fileID: 11462906}
+  - 114: {fileID: 11431970}
+  - 114: {fileID: 11410540}
   m_Layer: 8
   m_Name: PF_ALL_T0_S_Animal_Bat_00
   m_TagString: Untagged
@@ -488,6 +490,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11410540
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11421898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -508,10 +521,10 @@ MonoBehaviour:
     max: .75
   m_steerForce: .5
   m_mass: .25
-  m_distanceAttenuation: 5
-  m_maxSpeed: 5
-  m_maxRunSpeed: 15
-  m_slowingRadius: .5
+  m_distanceAttenuation: 0
+  m_maxSpeed: 8
+  m_maxRunSpeed: 10
+  m_slowingRadius: 0
 --- !u!114 &11425644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -539,7 +552,7 @@ MonoBehaviour:
     - Batman!
     - Instant Combustion
   - data: []
---- !u!114 &11430840
+--- !u!114 &11431970
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -547,10 +560,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 132400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_canBeAfraid: 0
 --- !u!114 &11448254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -562,8 +574,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 6
-  m_sensorMaxRadius: 10
+  m_sensorMinRadius: 2
+  m_sensorMaxRadius: 3
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11453876
@@ -594,6 +606,22 @@ MonoBehaviour:
   m_destroyOnBurn: 0
   m_checkFireTime: .00999999978
   m_maxHealth: 100
+--- !u!114 &11462906
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 5
+  m_attackDelay: 1
+  m_consecutiveAttacks: 1
+  m_sensorShutdownTime: 0
+  m_projectilePrefab: {fileID: 0}
 --- !u!114 &11471252
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -616,7 +644,7 @@ MonoBehaviour:
     xp: .400000006
   m_goldenChance: .0500000007
   m_pcChance: 0
---- !u!114 &11471796
+--- !u!114 &11478934
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -769,7 +797,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: .5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fleeForce
@@ -777,11 +805,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 6
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 10
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorAngle
@@ -809,7 +837,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
@@ -909,7 +937,23 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 15
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_distanceAttenuation
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_attackDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_consecutiveAttacks
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorShutdownTime
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -255,10 +255,11 @@ GameObject:
   - 114: {fileID: 11409122}
   - 114: {fileID: 11402296}
   - 114: {fileID: 11460448}
+  - 114: {fileID: 11409268}
   - 114: {fileID: 11427164}
-  - 114: {fileID: 11421280}
-  - 114: {fileID: 11478512}
-  - 114: {fileID: 11495808}
+  - 114: {fileID: 11429368}
+  - 114: {fileID: 11479218}
+  - 114: {fileID: 11482982}
   m_Layer: 8
   m_Name: PF_ALL_T0_M_Human_Citizen_00
   m_TagString: Untagged
@@ -404,7 +405,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 167244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -54.0130005, y: 15.9919996, z: 0}
+  m_LocalPosition: {x: -53.9949989, y: 16.0060005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 426152}
@@ -443,7 +444,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118296}
   m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106709}
-  m_LocalPosition: {x: 0, y: .0130000003, z: -0}
+  m_LocalPosition: {x: 0, y: .00400000019, z: -0}
   m_LocalScale: {x: .25, y: .25, z: .25}
   m_Children:
   - {fileID: 474536}
@@ -582,7 +583,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129600}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .023, y: .148000002, z: 0}
+  m_LocalPosition: {x: .023, y: .123000003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 409376}
@@ -711,7 +712,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: .101503909, y: 1.40929687}
+  offset: {x: .0766015649, y: 1.36779106}
   radius: .610000014
   color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11409122
@@ -728,6 +729,25 @@ MonoBehaviour:
   m_destroyOnBurn: 0
   m_checkFireTime: .00999999978
   m_maxHealth: 100
+--- !u!114 &11409268
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_randomMovement: 0
+  m_idleProbability: 0
+  m_moveTime:
+    min: 6
+    max: 12
+  m_idleTime:
+    min: 3
+    max: 6
 --- !u!114 &11412942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -750,23 +770,6 @@ MonoBehaviour:
     xp: .800000012
   m_goldenChance: .300999999
   m_pcChance: 0
---- !u!114 &11421280
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 074c80ccf21fd47af93cdab945e85fc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_idleTime: 3
-  m_chaoticMovement: 0
-  m_displacementDistance: 5
-  m_displacementRadius: 1
-  m_angleIncrement: 0
-  m_idleProbability: 1
 --- !u!114 &11426808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -802,9 +805,25 @@ MonoBehaviour:
     max: 1
   m_steerForce: 1
   m_mass: 1
-  m_maxSpeed: 6
-  m_maxRunSpeed: 10
+  m_distanceAttenuation: 5
+  m_maxSpeed: 3
+  m_maxRunSpeed: 7
   m_slowingRadius: .75
+--- !u!114 &11429368
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sensorMinRadius: 6
+  m_sensorMaxRadius: 12
+  m_sensorAngle: 360
+  m_sensorAngleOffset: 0
 --- !u!114 &11460448
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -843,7 +862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11478512
+--- !u!114 &11479218
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -851,14 +870,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 167244}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
+  m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 8
-  m_sensorMaxRadius: 30
-  m_sensorAngle: 180
-  m_sensorAngleOffset: 90
---- !u!114 &11495808
+  m_canBeAfraid: 1
+--- !u!114 &11482982
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -866,7 +882,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 167244}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94c9c1648e77644bdb6e15fb72c10219, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ca34221fa3d04a9bb6023c830ed0f7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!137 &13703782
@@ -942,7 +958,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
@@ -970,11 +986,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 15
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_size
@@ -1066,7 +1082,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleProbability
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_goldenChance
@@ -1078,7 +1094,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 10
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_angleIncrement
@@ -1087,6 +1103,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_displacementDistance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_randomMovement
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_canBeAfraid
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
