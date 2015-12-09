@@ -18,9 +18,9 @@ public class PreyMotion : Initializable {
 
 [Header("Force management")]
 		[CommentAttribute("Max magnitude of the steering force vector (velocity).")]
-	[SerializeField] private float m_steerForce;
+	[SerializeField] protected float m_steerForce;
 		[CommentAttribute("The steering vector is divided by mass.")]
-	[SerializeField] private float m_mass = 1f;
+	[SerializeField] protected float m_mass = 1f;
 		[CommentAttribute("Distance can reduce the effect of evasive behaviours.")]
 	[SerializeField] private float m_distanceAttenuation = 5f;
 
@@ -36,22 +36,24 @@ public class PreyMotion : Initializable {
 	private float m_flockAvoidRadius;
 	
 	private float m_posZ;
-	private Vector2 m_position; // we move on 2D space
-	private Vector2 m_lastPosition;
-	private Vector2 m_velocity;
-	private Vector2 m_direction;
-	private Vector2 m_steering;
-	private float 	m_currentMaxSpeed;
-	private float   m_currentSpeed;
+	protected Vector2 m_position; // we move on 2D space
+	protected Vector2 m_lastPosition;
+
+	protected Vector2 m_velocity;
+	protected Vector2 m_direction;
+	protected Vector2 m_steering;
+
+	protected float m_currentMaxSpeed;
+	protected float m_currentSpeed;
 		
-	private int m_groundMask;	
-	private Transform m_groundSensor;
+	protected int m_groundMask;	
+	protected Transform m_groundSensor;
 
 	//Debug
-	Color m_seekColor 		= Color.green;
-	Color m_fleeColor 		= Color.red;
-	Color m_flockColor 		= Color.yellow;
-	Color m_velocityColor	= Color.white;
+	protected Color m_seekColor 	= Color.green;
+	protected Color m_fleeColor 	= Color.red;
+	protected Color m_flockColor 	= Color.yellow;
+	protected Color m_velocityColor	= Color.white;
 	//
 
 	// Properties
@@ -253,7 +255,7 @@ public class PreyMotion : Initializable {
 		m_steering += avoid;
 	}
 
-	private void UpdateVelocity() {
+	protected virtual void UpdateVelocity() {
 		
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
@@ -269,7 +271,7 @@ public class PreyMotion : Initializable {
 		Debug.DrawLine(m_position, m_position + m_velocity, m_velocityColor);
 	}
 
-	private void UpdatePosition() {
+	protected virtual void UpdatePosition() {
 		
 		m_lastPosition = m_position;
 		m_position = m_position + (m_velocity * Time.fixedDeltaTime);
@@ -315,8 +317,7 @@ public class PreyMotion : Initializable {
 		transform.localRotation = Quaternion.Slerp(transform.localRotation, targetDir, Time.deltaTime * rotationSpeed);
 	}
 	
-	private void UpdateCollisions() {
-		
+	private void UpdateCollisions() {		
 		// teleport to ground
 		RaycastHit ground;
 		Vector3 testPosition = m_lastPosition + Vector2.up * 5f;

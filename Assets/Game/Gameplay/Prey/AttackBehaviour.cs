@@ -3,11 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(SensePlayer))]
 public class AttackBehaviour : Initializable {
-
-	// Delegates
-	delegate void StartFX();
-	StartFX m_startFX;
-
+	
 	// Constants
 	private enum State {
 		None = 0,
@@ -102,6 +98,9 @@ public class AttackBehaviour : Initializable {
 				if (v.sqrMagnitude <= m_sensor.sensorMinRadius) {
 					m_nextState = State.Attack;
 				}
+				if (!m_area.Contains(transform.position)) {
+					m_sensor.Shutdown(5f);
+				}
 				break;
 				
 			case State.Attack:
@@ -109,9 +108,6 @@ public class AttackBehaviour : Initializable {
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0) {
 						//do attack
-						if (m_startFX != null) {
-							m_startFX();
-						}
 						m_animator.SetTrigger("attack");
 
 						m_timer = m_attackDelay;

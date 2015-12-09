@@ -50,7 +50,11 @@ public class FollowPathBehaviour : Initializable {
 		transform.position = m_target;
 
 		m_state = State.None;
-		m_nextState = State.Move;
+		if (m_idleProbability > 0f) {
+			m_nextState = State.Idle;
+		} else {
+			m_nextState = State.Move;
+		}
 	}
 
 	void OnEnable() {
@@ -59,19 +63,26 @@ public class FollowPathBehaviour : Initializable {
 		}				
 
 		m_state = State.None;
-		m_nextState = State.Move;
+		if (m_idleProbability > 0f) {
+			m_nextState = State.Idle;
+		} else {
+			m_nextState = State.Move;
+		}
 	}
 
 	void OnDisable() {
 		if (m_path != null) {
 			m_target = m_path.GetNearestTo(m_motion.position);
-		}		
+		}
+
 		m_animator.SetBool("move", false);
 	}
 
 	public void SetPath(PathController _path) {
 		m_path = _path;
-		m_target = m_path.GetNext();
+		if (m_path != null) {
+			m_target = m_path.GetNext();
+		}
 	}
 
 	void Update() {
@@ -84,7 +95,9 @@ public class FollowPathBehaviour : Initializable {
 			if (m_timer <= 0) {
 				switch (m_state) {
 					case State.Idle:
-						m_nextState = State.Move; 
+						if (m_path != null) {
+							m_nextState = State.Move; 
+						}
 						break;
 
 					case State.Move:

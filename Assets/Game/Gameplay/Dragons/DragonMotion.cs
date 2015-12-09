@@ -131,7 +131,7 @@ public class DragonMotion : MonoBehaviour {
 		m_speedMultiplier = 0.5f;
 	}
 	
-	private void ChangeState(State _nextState) {	
+	private void ChangeState(State _nextState) {
 		if (m_state != _nextState) {
 			// we are leaving old state
 			switch (m_state) {
@@ -187,7 +187,7 @@ public class DragonMotion : MonoBehaviour {
 			}
 
 			m_state = _nextState;
-		}		
+		}	
 	}
 			
 	/// <summary>
