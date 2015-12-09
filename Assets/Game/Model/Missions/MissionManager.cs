@@ -15,6 +15,7 @@ using System;
 //----------------------------------------------------------------------//
 /// <summary>
 /// Global singleton manager for missions.
+/// There will always be one mission of every difficulty active.
 /// Has its own asset in the Resources/Singletons folder, all content must be
 /// initialized there.
 /// </summary>
@@ -23,17 +24,14 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	// Number of active missions, should be fixed number
-	public static readonly int NUM_MISSIONS = 3;
-
 	/// <summary>
 	/// Auxiliar serializable class to save/load to persistence.
 	/// </summary>
 	[Serializable]
 	public class SaveData {
 		// Only dynamic data is relevant
-		public Mission.SaveData[] activeMissions = new Mission.SaveData[NUM_MISSIONS];
-		public int generationIdx = 0;
+		public Mission.SaveData[] activeMissions = new Mission.SaveData[(int)Mission.Difficulty.COUNT];
+		public int[] generationIdx = new int[(int)Mission.Difficulty.COUNT];
 	}
 
 	//------------------------------------------------------------------//
@@ -42,11 +40,11 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	// Content
 	// [AOC] TEMP!! Eventually it will be replaced by procedural generation
 	[SerializeField] private MissionDefinitions m_missionDefs;
-	private int m_generationIdx = 0;	// Pointing to the definition to be generated next
+	private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT];	// Pointing to the definition to be generated next
 
 	// Active missions
 	// [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
-	private Mission[] m_activeMissions = new Mission[NUM_MISSIONS];
+	private Mission[] m_activeMissions = new Mission[(int)Mission.Difficulty.COUNT];
 
 	// Delegates
 	// Delegate meant for objectives needing an update() call
@@ -91,62 +89,81 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	}
 
 	/// <summary>
-	/// Get a reference to the mission with the given index.
-	/// If there is no mission at the requested index, a new one will be generated.
+	/// Get a reference to the active mission with the given difficulty.
+	/// If there is no mission at the requested difficulty, a new one will be generated.
 	/// </summary>
-	/// <returns>The mission with the given index. <c>null</c> if index not valid.</returns>
-	/// <param name="_idx">_idx.</param>
-	public static Mission GetMission(int _idx) {
-		// Check index
-		if(!DebugUtils.Assert(_idx >= 0 && _idx < NUM_MISSIONS, "Index not valid")) return null;
-
-		// If there is no mission at the given index, create one
-		if(instance.m_activeMissions[_idx] == null) {
-			GenerateNewMission(_idx);
+	/// <returns>The mission with the given difficulty.</returns>
+	/// <param name="_difficulty">The difficulty of the mission to be returned.</param>
+	public static Mission GetMission(Mission.Difficulty _difficulty) {
+		// If there is no mission at the given difficulty, create one
+		if(instance.m_activeMissions[(int)_difficulty] == null) {
+			GenerateNewMission(_difficulty);
 		}
 
 		// Done!
-		return instance.m_activeMissions[_idx];
+		return instance.m_activeMissions[(int)_difficulty];
 	}
 
 	/// <summary>
-	/// Create a new mission at the given index. Mission generation is completely
+	/// Create a new mission with the given difficulty. Mission generation is completely
 	/// automated.
-	/// If a mission already exists at the given index, it will be immediately terminated.
+	/// If a mission already exists at the given difficulty slot, it will be immediately terminated.
 	/// </summary>
 	/// <returns>The newly created mission.</returns>
-	/// <param name="_idx">The slot where to create the new mission. <c>null</c> if index not valid.</param>
-	public static Mission GenerateNewMission(int _idx) {
-		// Check index
-		if(!DebugUtils.Assert(_idx >= 0 && _idx < NUM_MISSIONS, "Index not valid")) return null;
-
+	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
+	public static Mission GenerateNewMission(Mission.Difficulty _difficulty) {
 		// Terminate any mission at the requested slot
-		ClearMission(_idx);
+		ClearMission(_difficulty);
 
 		// Generate new mission
 		// [AOC] TODO!! Automated generation
-		// 		 For now let's pick a new mission from the content list
+		// 		 For now let's pick a new mission definition from the content list matching the requested difficulty
+		int idx = instance.m_generationIdx[(int)_difficulty];
+		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
+		MissionDef def = null;
+		for( ; ; idx++) {
+			// If reached the last definition but still haven't looped, do it now
+			// Otherwise it means there are no definitions for the requested difficulty, throw an exception
+			if(idx == instance.m_missionDefs.Length) {
+				if(loopAllowed) {
+					idx = 0;
+					loopAllowed = false;
+				} else {
+					DebugUtils.Assert(false, "There are no mission definitions for the requested difficulty " + _difficulty);
+					return null;
+				}
+			}
+
+			// Is this mission def of the requested difficulty?
+			def = instance.m_missionDefs.GetDef<MissionDef>(idx);
+			if(def != null && def.difficulty == _difficulty) {
+				// Found! Break the loop
+				break;
+			}
+		}
+
+		// Create the new mission!
 		Mission newMission = new Mission();
-		newMission.InitFromDefinition(instance.m_missionDefs.GetDef<MissionDef>(instance.m_generationIdx));
-		instance.m_activeMissions[_idx] = newMission;
+		newMission.InitFromDefinition(def);
+		instance.m_activeMissions[(int)_difficulty] = newMission;
 
 		// Increase generation index - loop if last mission is reached
-		instance.m_generationIdx = (instance.m_generationIdx + 1) % instance.m_missionDefs.Length;
+		instance.m_generationIdx[(int)_difficulty] = (idx + 1) % instance.m_missionDefs.Length;
 
 		// Return new mission
-		return instance.m_activeMissions[_idx];
+		return instance.m_activeMissions[(int)_difficulty];
 	}
 
 	/// <summary>
-	/// Properly delete the mission at the given index.
+	/// Properly delete the mission at the given difficulty slot.
 	/// The mission slot will be left empty, be careful with that!
 	/// </summary>
-	/// <param name="_idx">_idx.</param>
-	public static void ClearMission(int _idx) {
+	/// <param name="_difficulty">The difficulty slot to be cleared.</param>
+	public static void ClearMission(Mission.Difficulty _difficulty) {
 		// If there is already a mission at the requested slot, terminate it
-		if(instance.m_activeMissions[_idx] != null) {
-			instance.m_activeMissions[_idx].Clear();
-			instance.m_activeMissions[_idx] = null;	// GC will take care of it
+		if(instance.m_activeMissions[(int)_difficulty] != null) {
+			instance.m_activeMissions[(int)_difficulty].Clear();
+			instance.m_activeMissions[(int)_difficulty] = null;	// GC will take care of it
 		}
 	}
 
@@ -156,15 +173,15 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	public static void ProcessMissions() {
 		// Check all missions
-		for(int i = 0; i < NUM_MISSIONS; i++) {
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// Is mission completed?
-			Mission m = GetMission(i);
+			Mission m = GetMission((Mission.Difficulty)i);
 			if(m.objective.isCompleted) {
 				// Give reward
 				UserProfile.AddCoins(m.rewardCoins);
 
 				// Generate new mission
-				m = GenerateNewMission(i);
+				m = GenerateNewMission((Mission.Difficulty)i);
 
 				// [AOC] TODO!! Put it on cooldown
 				//m.unlockTimestamp = ;
@@ -184,10 +201,10 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		instance.m_generationIdx = _data.generationIdx;
 
 		// Load missions
-		for(int i = 0; i < NUM_MISSIONS; i++) {
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// If there is no data for this mission, generate a new one
 			if(i >= _data.activeMissions.Length || _data.activeMissions[i] == null || _data.activeMissions[i].sku == "") {
-				GenerateNewMission(i);
+				GenerateNewMission((Mission.Difficulty)i);
 			} else {
 				// If the mission was not created, create an empty one now and load its data from persistence
 				if(instance.m_activeMissions[i] == null) {
@@ -209,8 +226,8 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		SaveData data = new SaveData();
 		
 		// Missions
-		for(int i = 0; i < NUM_MISSIONS; i++) {
-			data.activeMissions[i] = GetMission(i).Save();
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+			data.activeMissions[i] = GetMission((Mission.Difficulty)i).Save();
 		}
 		
 		// Generation Index

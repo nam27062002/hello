@@ -27,8 +27,8 @@ public class PopupMissionsPill : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Setup
 	[Separator]
-	[Range(0, 2)]
-	[SerializeField] private int m_missionIndex = 0;
+	[HideEnumValues(false, true)]
+	[SerializeField] private Mission.Difficulty m_missionDifficulty = Mission.Difficulty.EASY;
 	
 	// References
 	[Separator]
@@ -72,7 +72,7 @@ public class PopupMissionsPill : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Get mission
-		m_mission = MissionManager.GetMission(m_missionIndex);
+		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		if(m_mission == null) return;
 
 		// Update visuals
