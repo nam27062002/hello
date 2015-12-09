@@ -27,8 +27,8 @@ public class PopupSummaryMissionPill : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Setup
 	[Separator]
-	[Range(0, 2)]
-	[SerializeField] private int m_missionIndex = 0;
+	[HideEnumValues(false, true)] 
+	[SerializeField] private Mission.Difficulty m_missionDifficulty = Mission.Difficulty.EASY;
 	
 	// References
 	[SerializeField] private Text m_descText = null;
@@ -54,7 +54,7 @@ public class PopupSummaryMissionPill : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get mission
-		m_mission = MissionManager.GetMission(m_missionIndex);
+		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		if(m_mission == null) return;
 
 		// If mission is not completed, hide pill and return

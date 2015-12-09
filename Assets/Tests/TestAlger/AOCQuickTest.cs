@@ -51,8 +51,8 @@ public class AOCQuickTest : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	void Start() {
-		for(int i = 0; i < MissionManager.NUM_MISSIONS; i++) {
-			Mission mission = MissionManager.GetMission(i);
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+			Mission mission = MissionManager.GetMission((Mission.Difficulty)i);
 			Debug.Log("Mission " + i + ": " + mission.def.sku);
 			if(i == 1) m_mission = mission;
 		}

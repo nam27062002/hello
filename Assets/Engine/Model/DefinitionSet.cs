@@ -38,7 +38,7 @@ public class DefinitionSet<T> : ScriptableObject where T : Definition {
 	/// <returns>The definition with the given sku. <c>null</c> if not found.</returns>
 	/// <param name="_sku">The sku of the wanted definition.</param>
 	/// <typeparam name="T">Specialization of the definition.</typeparam>
-	public T GetDef<T>(string _sku) where T : Definition {
+	public virtual T GetDef<T>(string _sku) where T : Definition {
 		// [AOC] Ideally we should have definitions indexed by sku in a dictionary, but the fact that Unity doesn't support dictionary serialization makes it hard
 		for(int i = 0; i < m_defs.Length; i++) {
 			if(m_defs[i].sku == _sku) {
@@ -56,7 +56,7 @@ public class DefinitionSet<T> : ScriptableObject where T : Definition {
 	/// <returns>The definition at the given index. <c>null</c> if not found or given index not valid.</returns>
 	/// <param name="_idx">The index of the wanted definition.</param>
 	/// <typeparam name="T">Specialization of the definition.</typeparam>
-	public T GetDef<T>(int _idx) where T : Definition {
+	public virtual T GetDef<T>(int _idx) where T : Definition {
 		// Check index
 		if(_idx < 0 || _idx >= m_defs.Length) return null;
 

@@ -30,6 +30,17 @@ public class Mission {
 		public float currentValue = 0f;	// Objective's current value - only relevant for long-term missions, but save it always anyway
 	}
 
+	/// <summary>
+	/// Missions shall be grouped by difficulty.
+	/// </summary>
+	public enum Difficulty {
+		EASY,
+		MEDIUM,
+		HARD,
+
+		COUNT
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//

@@ -14,6 +14,7 @@ using UnityEngine;
 //----------------------------------------------------------------------//
 /// <summary>
 /// Definition of a mission.
+/// Temporary stuff until missions are procedurally generated.
 /// </summary>
 [System.Serializable]
 public class MissionDef : Definition {
@@ -21,6 +22,10 @@ public class MissionDef : Definition {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	[Header("Setup")]
+	[SerializeField] [HideEnumValues(false, true)] private Mission.Difficulty m_difficulty;
+	public Mission.Difficulty difficulty { get { return m_difficulty; }}
+
+	[Header("Objective")]
 	[SerializeField] private MissionObjective.Type m_type;
 	public MissionObjective.Type type { get { return m_type; }}
 
