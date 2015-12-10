@@ -31,17 +31,20 @@ public class PopupController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// DELEGATES														//
 	//------------------------------------------------------------------//
+	// Default initialization to avoid null reference when invoking. 
+	// Add as many listeners as you want to this specific event by using the += syntax
+
 	public delegate void OnOpenPreAnimationDelegate();
-	public OnOpenPreAnimationDelegate onOpenPreAnimationDelegate;
+	public OnOpenPreAnimationDelegate OnOpenPreAnimation = delegate() { };
 
 	public delegate void OnOpenPostAnimationDelegate();
-	public OnOpenPostAnimationDelegate onOpenPostAnimationDelegate;
+	public OnOpenPostAnimationDelegate OnOpenPostAnimation = delegate() { };
 
 	public delegate void OnClosePreAnimationDelegate();
-	public OnClosePreAnimationDelegate onClosePreAnimationDelegate;
+	public OnClosePreAnimationDelegate OnClosePreAnimation = delegate() { };
 
 	public delegate void OnClosePostAnimationDelegate();
-	public OnClosePostAnimationDelegate onClosePostAnimationDelegate;
+	public OnClosePostAnimationDelegate OnClosePostAnimation = delegate() { };
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -66,10 +69,10 @@ public class PopupController : MonoBehaviour {
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_DESTROYED, this);
 
 		// Loose references to delegates
-		onOpenPreAnimationDelegate = null;
-		onOpenPostAnimationDelegate = null;
-		onClosePreAnimationDelegate = null;
-		onClosePostAnimationDelegate = null;
+		OnOpenPreAnimation = null;
+		OnOpenPostAnimation = null;
+		OnClosePreAnimation = null;
+		OnClosePostAnimation = null;
 	}
 
 	//------------------------------------------------------------------//
@@ -83,9 +86,7 @@ public class PopupController : MonoBehaviour {
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_OPENED, this);
 
 		// Invoke delegate
-		if(onOpenPreAnimationDelegate != null) {
-			onOpenPreAnimationDelegate();
-		}
+		OnOpenPreAnimation();
 
 		// Launch anim
 		m_anim.SetTrigger("open");
@@ -100,9 +101,7 @@ public class PopupController : MonoBehaviour {
 		m_destroyAfterClose = _bDestroy;
 
 		// Invoke delegate
-		if(onClosePreAnimationDelegate != null) {
-			onClosePreAnimationDelegate();
-		}
+		OnClosePreAnimation();
 
 		// Launch anim
 		m_anim.SetTrigger("close");
@@ -116,9 +115,7 @@ public class PopupController : MonoBehaviour {
 	/// </summary>
 	private void OnOpenAnimFinished() {
 		// Invoke delegate
-		if(onOpenPostAnimationDelegate != null) {
-			onOpenPostAnimationDelegate();
-		}
+		OnOpenPostAnimation();
 	}
 
 	/// <summary>
@@ -127,9 +124,7 @@ public class PopupController : MonoBehaviour {
 	/// <param name="_iLevel">The index of the level that was just loaded.</param>
 	private void OnCloseAnimationFinished() {
 		// Invoke delegate
-		if(onClosePostAnimationDelegate != null) {
-			onClosePostAnimationDelegate();
-		}
+		OnClosePostAnimation();
 
 		// Dispatch message
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CLOSED, this);

@@ -32,6 +32,7 @@ public class WanderBehaviour : Initializable {
 	protected State m_nextState;
 
 	private float m_displacementAngle;
+	private bool m_isEvasive;
 
 
 	// --------------------------------------------------------------------------- //
@@ -39,6 +40,7 @@ public class WanderBehaviour : Initializable {
 	virtual protected void Awake() {
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_isEvasive = (GetComponent("EvadeBehaviour") != null) || (GetComponent("FleeBehaviour") != null);
 	}
 		
 	public override void Initialize() {			
@@ -51,7 +53,7 @@ public class WanderBehaviour : Initializable {
 		m_displacementAngle = 0;
 	}
 
-	void OnDisable() {		
+	void OnDisable() {
 		if (m_animator && m_animator.isInitialized) {
 			m_animator.SetBool("move", false);
 		}
@@ -84,7 +86,7 @@ public class WanderBehaviour : Initializable {
 			}
 			
 			m_motion.Seek(m_target);
-			m_motion.ApplySteering();
+			//m_motion.ApplySteering();
 		}
 	}
 
@@ -110,11 +112,15 @@ public class WanderBehaviour : Initializable {
 	}
 
 	virtual protected void UpdateRandomTarget() {
-		if ((m_target - m_motion.position).sqrMagnitude < 1f) {
-			if (Random.Range(0f, 1f) < m_idleProbability) {
-				m_nextState = State.Idle;
-			} else {
-				ChooseTarget();
+		if (m_isEvasive && m_motion.speed < 0.25f) {
+			ChooseTarget();
+		} else {
+			if ((m_target - m_motion.position).sqrMagnitude < 1f) {
+				if (Random.Range(0f, 1f) < m_idleProbability) {
+					m_nextState = State.Idle;
+				} else {
+					ChooseTarget();
+				}
 			}
 		}
 	}
@@ -137,12 +143,23 @@ public class WanderBehaviour : Initializable {
 		displacementCenter *= m_displacementDistance;
 
 		Vector2 displacementForce = Vector2.right;
-		displacementForce.x = Mathf.Cos(m_displacementAngle) * m_displacementRadius;
-		displacementForce.y = Mathf.Sin(m_displacementAngle) * m_displacementRadius;
+		displacementForce.x = Mathf.Cos(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
+		displacementForce.y = Mathf.Sin(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
+
+		Vector2 target = m_motion.position + displacementCenter + displacementForce;
+		if (!m_area.Contains(target)) { //move backwards?
+			target = m_motion.position - (displacementCenter + displacementForce);
+
+			Vector2 dir = m_motion.direction;
+			if (dir.x < 0 && dir.y > 0 || dir.x > 0 && dir.y < 0)
+				m_displacementAngle += Random.Range(60f, 120f) / m_displacementDistance;
+			else
+				m_displacementAngle -= Random.Range(60f, 120f) / m_displacementDistance;
+		}
 
 		m_displacementAngle += Random.Range(-m_angleIncrement, m_angleIncrement);
 
-		return m_motion.position + displacementCenter + displacementForce;
+		return target;
 	}
 
 	void OnDrawGizmos() {

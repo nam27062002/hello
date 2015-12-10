@@ -66,10 +66,10 @@ GameObject:
   - 114: {fileID: 11437320}
   - 114: {fileID: 11492276}
   - 114: {fileID: 11427842}
+  - 114: {fileID: 11441374}
   - 114: {fileID: 11417416}
   - 114: {fileID: 11443594}
   - 114: {fileID: 11481634}
-  - 114: {fileID: 11441374}
   - 114: {fileID: 11492522}
   m_Layer: 0
   m_Name: PF_ALL_T0_S_Machine_Drone_00
@@ -147,7 +147,9 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -171,7 +173,9 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -243,7 +247,6 @@ MonoBehaviour:
     energy: 0
     fury: 0
     xp: 0
-  m_maxHealth: 100
   m_goldenChance: 0
   m_pcChance: 0
 --- !u!114 &11417416
@@ -257,14 +260,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 0
-  m_steerForce: 1
-  m_maxSpeed: 5
-  m_mass: 1
-  m_slowingRadius: 1
+  m_faceDirection: 1
+  m_zOffset:
+    min: -1
+    max: 1
   m_flockAvoidRadiusRange:
     min: 0
     max: 1
+  m_steerForce: .200000003
+  m_mass: 1
+  m_maxSpeed: 5
+  m_maxRunSpeed: 5
+  m_slowingRadius: 1
 --- !u!114 &11427842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -292,6 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: .25
+  m_maxHealth: 100
 --- !u!114 &11441374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -303,6 +311,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_randomMovement: 0
+  m_idleProbability: 1
+  m_moveTime:
+    min: 3
+    max: 3
+  m_idleTime:
+    min: 5
+    max: 5
 --- !u!114 &11443594
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -314,8 +330,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 10
-  m_sensorMaxRadius: 20
+  m_sensorMinRadius: 0
+  m_sensorMaxRadius: 0
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11457574
@@ -342,6 +358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damage: 2.5
   m_attackDelay: 1
+  m_projectilePrefab: {fileID: 0}
 --- !u!114 &11485794
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -438,11 +455,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_faceDirection
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: 1
+      value: .200000003
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
@@ -454,11 +471,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 20
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
@@ -471,6 +488,26 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_sensorAngle
       value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxRunSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_moveTime.min
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_moveTime.max
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime.min
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime.max
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

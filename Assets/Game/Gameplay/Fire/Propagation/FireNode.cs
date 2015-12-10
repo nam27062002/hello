@@ -146,7 +146,7 @@ public class FireNode : MonoBehaviour {
 	/// <summary>
 	/// Raises the draw gizmos event.
 	/// </summary>
-	void OnDrawGizmosSelected() {
+	void OnDrawGizmos() {
 
 		Gizmos.color = new Color(0.69f, 0.09f, 0.12f, 0.5f);
 
@@ -170,7 +170,7 @@ public class FireNode : MonoBehaviour {
 				Gizmos.color = color;
 			}
 
-			Gizmos.DrawLine(transform.position, m_neighbours[i].transform.position	);
+			Gizmos.DrawLine(transform.position, m_neighbours[i].transform.position);
 		}
 
 		// Draw reference sprite (only on editor mode)

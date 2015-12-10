@@ -47,9 +47,9 @@ public class PopupSummary : MonoBehaviour {
 		// Define popup controller delegates
 		PopupController controller = GetComponent<PopupController>();
 		DebugUtils.Assert(controller != null, "Required component!");
-		controller.onOpenPreAnimationDelegate = OnOpenPreAnimation;
-		controller.onOpenPostAnimationDelegate = OnOpenPostAnimation;
-		controller.onClosePostAnimationDelegate = OnClosePostAnimation;
+		controller.OnOpenPreAnimation = OnOpenPreAnimation;
+		controller.OnOpenPostAnimation = OnOpenPostAnimation;
+		controller.OnClosePostAnimation = OnClosePostAnimation;
 	}
 	
 	/// <summary>
@@ -91,8 +91,8 @@ public class PopupSummary : MonoBehaviour {
 	/// Actions to perform right after the popup is closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
-		// Go back to main menu
-		FlowManager.GoToMenu();
+		// Let game scene controller manage it
+		InstanceManager.GetSceneController<GameSceneController>().OnSummaryPopupClosed();
 	}
 
 	//------------------------------------------------------------------//

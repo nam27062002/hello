@@ -21,9 +21,10 @@ public static class DebugSettings {
 	//------------------------------------------------------------------//
 	// Use the Prefs class to access their values
 	// Cheats
-	public static readonly string DRAGON_INVULNERABLE = "DRAGON_INVULNERABLE";
-	public static readonly string DRAGON_INFINITE_FIRE = "DRAGON_INFINITE_FIRE";
-	public static readonly string DRAGON_INFINITE_BOOST = "DRAGON_INFINITE_BOOST";
+	public static readonly string DRAGON_INVULNERABLE 	 = "DRAGON_INVULNERABLE";
+	public static readonly string DRAGON_INFINITE_FIRE 	 = "DRAGON_INFINITE_FIRE";
+	public static readonly string DRAGON_INFINITE_BOOST  = "DRAGON_INFINITE_BOOST";
+	public static readonly string DRAGON_EAT			 = "DRAGON_EAT";
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -43,5 +44,10 @@ public static class DebugSettings {
 	public static bool infiniteBoost {
 		get { return Prefs.GetBool(DRAGON_INFINITE_BOOST, false); }
 		set { Prefs.SetBool(DRAGON_INFINITE_BOOST, value); }
+	}
+
+	public static bool eat {
+		get { return Prefs.GetBool(DRAGON_EAT, false); }
+		set { Prefs.SetBool(DRAGON_EAT, value); }
 	}
 }
