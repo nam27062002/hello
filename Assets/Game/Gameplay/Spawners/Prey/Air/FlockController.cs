@@ -46,7 +46,7 @@ public class FlockController : MonoBehaviour {
 		m_area = GetComponent<Area>().bounds;
 
 		m_target = m_area.bounds.center;		
-		m_timer = 0;
+		m_timer = Random.Range(0f, Mathf.PI * 2f);
 	}
 
 	public void Add(GameObject _entity) {
