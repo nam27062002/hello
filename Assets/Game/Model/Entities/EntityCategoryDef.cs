@@ -1,27 +1,25 @@
-﻿// Def.cs
+﻿// EntityCategoryDef.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 03/12/2015.
+// Created by Alger Ortín Castellví on 14/12/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Generic base class for a definition.
-/// To be inherited adding as many fields as needed.
+/// Definition of an entity category.
+/// Mostly used internally for content setup.
 /// </summary>
-[Serializable]
-public class Definition {
+[System.Serializable]
+public class EntityCategoryDef : Definition {
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	[SerializeField] private string m_sku = "";
-	public string sku { get { return m_sku; }}
+	// No extra data for now
 }

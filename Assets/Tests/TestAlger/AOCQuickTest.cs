@@ -31,6 +31,12 @@ public class AOCQuickTest : MonoBehaviour {
 	public delegate void MyDelegate(string _str);
 	public MyDelegate m_myDelegateInstance = delegate(string _str) { };
 
+	[SkuList(typeof(EntityCategoryDef))]
+	public string m_sku1 = "alkjasfñlkj";
+
+	[SkuList(typeof(EntityDef))]
+	public string m_sku2;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -51,13 +57,16 @@ public class AOCQuickTest : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	void Start() {
-		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+		/*for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			Mission mission = MissionManager.GetMission((Mission.Difficulty)i);
 			Debug.Log("Mission " + i + ": " + mission.def.sku);
 			if(i == 1) m_mission = mission;
-		}
+		}*/
 
-		m_myDelegateInstance("Invoking MyDelegate");
+		//m_myDelegateInstance("Invoking MyDelegate");
+
+		Debug.Log(m_sku1);
+		Debug.Log(m_sku2);
 	}
 	
 	/// <summary>

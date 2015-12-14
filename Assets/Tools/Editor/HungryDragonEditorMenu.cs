@@ -20,10 +20,23 @@ public class HungryDragonEditorMenu {
 	//------------------------------------------------------------------//
 	// CONTENT															//
 	//------------------------------------------------------------------//
+	//-------------------------------------------------- DEFINITIONS -------------------------------------------------//
+	/// <summary>
+	/// Show the definitions manager to edit the content.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Content/Definitions Manager", false, 0)]
+	public static void ShowDefintionsManager() {
+		// Find and select the scriptable object (by name)
+		//Object targetObj = AssetDatabase.LoadMainAssetAtPath("Assets/Resources/Singletons/MissionDefinitions.asset");
+		//EditorUtils.FocusObject(targetObj, true, false, true);
+		EditorUtils.FocusObject(DefinitionsManager.instance, true, false, true);
+	}
+
+	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
 	/// <summary>
 	/// Show the dragon manager content editor.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Content/Dragon Manager", false, 0)]
+	[MenuItem("Hungry Dragon/Content/Dragon Manager", false, 50)]
 	public static void ShowDragonManagerWindow() {
 		// Serialize manager to be able to show private members
 		DragonManagerEditorWindow window = (DragonManagerEditorWindow)EditorWindow.GetWindow(typeof(DragonManagerEditorWindow));
@@ -35,20 +48,10 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Show the level manager content editor.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Content/Level Manager", false, 1)]
+	[MenuItem("Hungry Dragon/Content/Level Manager", false, 51)]
 	public static void ShowLevelManagerWindow() {
 		// Just select the object
 		EditorUtils.FocusObject(LevelManager.instance, true, false, true);
-	}
-
-	/// <summary>
-	/// Show the missions definitions content editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Content/Mission Definitions", false, 2)]
-	public static void ShowMissionDefintions() {
-		// Find and select the scriptable object (by name)
-		Object targetObj = AssetDatabase.LoadMainAssetAtPath("Assets/Resources/Definitions/MissionDefinitions.asset");
-		EditorUtils.FocusObject(targetObj, true, false, true);
 	}
 
 	//------------------------------------------------------------------//
