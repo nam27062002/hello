@@ -9,24 +9,25 @@ public class GroundPreyMotion : PreyMotion {
 
 	private Vector2 m_velocityProject;
 
-	//zvzvfvf
-
 	protected override void UpdateVelocity() {
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
-		
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, m_currentMaxSpeed);
+
+		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.25f));
 
 		RaycastHit sensorA;
 		RaycastHit sensorB;
 		CheckGround(out sensorA, out sensorB);
-		if (m_velocity.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
-		else 					m_direction = (sensorB.point - sensorA.point).normalized;
+		if (m_velocity.x < 0) 	SetDirection(sensorA.point - sensorB.point);
+		else 					SetDirection(sensorB.point - sensorA.point);
 
 		m_velocityProject = Vector3.Project(m_velocity, m_direction);
 
 		m_currentSpeed = m_velocityProject.magnitude;
+
 		
+		Debug.Log("Prey: " + m_currentSpeed);
+
 		Debug.DrawLine(m_position, m_position + m_velocityProject, m_velocityColor);
 	}
 

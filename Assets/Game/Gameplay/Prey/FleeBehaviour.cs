@@ -6,6 +6,7 @@ public class FleeBehaviour : Initializable {
 
 	private enum State {
 		None = 0,
+		Idle,
 		Move,
 		Afraid
 	};
@@ -34,11 +35,12 @@ public class FleeBehaviour : Initializable {
 	
 	public override void Initialize() {
 		m_state = State.None;
-		m_nextState = State.Move;
+		m_nextState = State.Idle;
 	}
 
 	void OnEnable() {
-		m_nextState = State.Move;
+		m_state = State.None;
+		m_nextState = State.Idle;
 	}
 
 	void OnDisable() {
@@ -51,9 +53,23 @@ public class FleeBehaviour : Initializable {
 			ChangeState();
 		}
 
-		if (m_canBeAfraid) {
-			if (m_state == State.Move && !m_area.Contains(m_motion.position)) {
-				m_nextState = State.Afraid;
+		if (m_state == State.Move) {
+			if (!m_area.Contains(m_motion.position)) {
+				if (m_canBeAfraid) {
+					m_nextState = State.Afraid;
+				} else {
+					m_nextState = State.Idle;
+				}
+			}
+		}
+
+		if (m_state == State.Idle) {			
+			if (m_sensor.alert && m_area.Contains(m_motion.position)) {
+				m_nextState = State.Move;
+			}
+		} else {
+			if (!m_sensor.alert) {
+				m_nextState = State.Idle;
 			}
 		}
 	}
@@ -64,7 +80,6 @@ public class FleeBehaviour : Initializable {
 			case State.Move:
 				if (m_sensor.alert) {
 					m_motion.Flee(m_dragonMouth.position);
-			//		m_motion.ApplySteering();
 				}
 				break;
 
@@ -99,6 +114,10 @@ public class FleeBehaviour : Initializable {
 				
 			case State.Afraid:
 				m_animator.SetBool("scared", true);
+				m_motion.velocity = Vector2.zero;
+				break;
+
+			case State.Idle:
 				m_motion.velocity = Vector2.zero;
 				break;
 		}

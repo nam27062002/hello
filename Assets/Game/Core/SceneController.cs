@@ -48,7 +48,8 @@ public class SceneController : MonoBehaviour {
 		InstanceManager.sceneController = this;
 
 		// No matter which scene is, instantiate control panel if not already done
-		if(Debug.isDebugBuild) {
+		//if(Debug.isDebugBuild) 
+		{
 			ControlPanel.CreateInstance();
 		}
 	}
