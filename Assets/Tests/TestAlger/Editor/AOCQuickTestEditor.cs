@@ -33,5 +33,14 @@ public class AOCQuickTestEditor : Editor {
 	public override void OnInspectorGUI() {
 		// Default
 		DrawDefaultInspector();
+
+		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
+			EntityDef def = EntityDefinitions.GetDef("def1");
+			Debug.Log(def.tidName);
+
+			def = EntityDefinitions.GetDef("def2");
+			//def = DefinitionsManager.entityDefinitions.GetDef("def2");
+			Debug.Log(def.tidName);
+		}
 	}
 }

@@ -85,7 +85,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <returns>The definition of a mission with the given sku. <c>null</c> if not found.</returns>
 	/// <param name="_sku">The sku of the wanted definition.</param>
 	public static MissionDef GetDef(string _sku) {
-		return instance.m_missionDefs.GetDef<MissionDef>(_sku);
+		return instance.m_missionDefs.GetDef(_sku);
 	}
 
 	/// <summary>
@@ -135,7 +135,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 			}
 
 			// Is this mission def of the requested difficulty?
-			def = instance.m_missionDefs.GetDef<MissionDef>(idx);
+			def = instance.m_missionDefs.GetDef(idx);
 			if(def != null && def.difficulty == _difficulty) {
 				// Found! Break the loop
 				break;
