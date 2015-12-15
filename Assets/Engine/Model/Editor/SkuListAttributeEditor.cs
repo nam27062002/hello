@@ -72,7 +72,7 @@ public class SkuListAttributeEditor : ExtendedPropertyDrawer {
 		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, selectedIdx, skus.ToArray());
 
 		// Store new value - "NONE" will be stored as "" when allowed
-		if(attr.m_allowNullValue && selectedIdx == 0) {
+		if(attr.m_allowNullValue && newSelectedIdx == 0) {
 			_property.stringValue = "";
 		} else {
 			_property.stringValue = skus[newSelectedIdx];	// Options array match the definition skus, so no need to do anything else :)

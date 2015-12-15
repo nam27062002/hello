@@ -32,6 +32,7 @@ public class MissionDef : Definition {
 	[SerializeField] private int m_targetValue = 1;
 	public int targetValue { get { return m_targetValue; }}
 
+	[EntitySkuListAttribute]
 	[SerializeField] private string[] m_parameters;
 	public string[] parameters { get { return m_parameters; }}
 

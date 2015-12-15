@@ -1,49 +1,39 @@
-﻿// AOCQuickTestEditor.cs
-// Hungry Dragon
+﻿// EntitySkuListAttribute.cs
 // 
-// Created by Alger Ortín Castellví on 02/10/2015.
+// Created by Alger Ortín Castellví on 15/12/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEditor;
 using System;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Custom attribute to select a definition from a list containing all the definitions of the target type.
+/// Simplified version of the SkuListAttribute since we know exactly the type of definition
+/// we're dealing with (EntityDef).
+/// Usage: [EntitySkuListAttribute]
+/// Usage: [EntitySkuListAttribute(true)]
 /// </summary>
-[CustomEditor(typeof(AOCQuickTest))]
-public class AOCQuickTestEditor : Editor {
+public class EntitySkuListAttribute : PropertyAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	public bool m_allowNullValue = false;
 
 	//------------------------------------------------------------------//
-	// METHODS															//
+	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// 
+	/// Parametrized constructor.
 	/// </summary>
-	public override void OnInspectorGUI() {
-		// Default
-		DrawDefaultInspector();
-
-		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
-			//string[] options = DefinitionsManager.entities.skus.ToArray();
-			string[] options = {
-				"1", "2", "3", "4", "5"
-			};
-			SelectionPopupWindow.Show(options, null);
-		}
-	}
-
-	private void OnSelectionChanged(int _selectedIdx) {
-		Debug.Log(_selectedIdx);
+	/// <param name="_allowNullValue">If set to <c>true</c>, the "NONE" option will be available.</param>
+	public EntitySkuListAttribute(bool _allowNullValue = false) {
+		m_allowNullValue = _allowNullValue;
 	}
 }
+

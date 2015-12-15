@@ -26,16 +26,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public Mission m_mission = null;
-
-	public delegate void MyDelegate(string _str);
-	public MyDelegate m_myDelegateInstance = delegate(string _str) { };
-
-	[SkuList(typeof(EntityCategoryDef))]
-	public string m_sku1 = "alkjasfñlkj";
-
-	[SkuList(typeof(EntityDef))]
-	public string m_sku2;
+	[EntitySkuListAttribute]
+	public string m_entitySku;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -49,24 +41,14 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		//m_myDelegateInstance += MyDelegate1;
-		//m_myDelegateInstance += MyDelegate2;
+		
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	void Start() {
-		/*for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
-			Mission mission = MissionManager.GetMission((Mission.Difficulty)i);
-			Debug.Log("Mission " + i + ": " + mission.def.sku);
-			if(i == 1) m_mission = mission;
-		}*/
-
-		//m_myDelegateInstance("Invoking MyDelegate");
-
-		Debug.Log(m_sku1);
-		Debug.Log(m_sku2);
+		
 	}
 	
 	/// <summary>
@@ -80,15 +62,6 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
-		m_myDelegateInstance -= MyDelegate1;
-		m_myDelegateInstance -= MyDelegate2;
-	}
-
-	public void MyDelegate1(string _str) {
-		Debug.Log(_str);
-	}
-
-	public void MyDelegate2(string _str) {
-		Debug.Log(_str + " 2!");
+		
 	}
 }
