@@ -764,7 +764,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: 
+  m_typeID: citizen_male
   m_reward:
     score: 50
     coins: 25
@@ -1111,6 +1111,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_canBeAfraid
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: citizen_male
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

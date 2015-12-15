@@ -199,7 +199,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 154254}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .469999999, y: 8.31000042, z: 0}
+  m_LocalPosition: {x: 0.47, y: 8.31, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -211,7 +211,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.8499999, y: 5.71999979, z: 0}
+  m_LocalPosition: {x: -2.85, y: 5.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -223,7 +223,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175336}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.98000002, y: 6.42999983, z: 0}
+  m_LocalPosition: {x: 1.98, y: 6.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -255,7 +255,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 161828}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.14999998, y: 2.8900001, z: 0}
+  m_LocalPosition: {x: 1.15, y: 2.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -267,7 +267,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 185960}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.0100002, y: 4.03999996, z: 0}
+  m_LocalPosition: {x: 15.01, y: 4.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 463994}
@@ -294,7 +294,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 187202}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.50999999, y: .469999999, z: 0}
+  m_LocalPosition: {x: -0.51, y: 0.47, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -306,7 +306,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 147670}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.66000009, y: 3.68000007, z: 0}
+  m_LocalPosition: {x: -3.66, y: 3.68, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -318,7 +318,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129446}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.68000007, y: 4.78999996, z: 0}
+  m_LocalPosition: {x: 3.68, y: 4.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -342,7 +342,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 196120}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.870000005, y: 5.11000013, z: 0}
+  m_LocalPosition: {x: -0.87, y: 5.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433254}
@@ -358,7 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: Tree
+  m_typeID: tree_02
   m_reward:
     score: 15
     coins: 50
@@ -366,7 +366,7 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
-    xp: .100000001
+    xp: 0.1
   m_goldenChance: 0
   m_pcChance: 0
 --- !u!114 &11419090
@@ -382,11 +382,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11420496
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -400,11 +397,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11434350
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -430,11 +424,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11447466
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -448,11 +439,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11478920
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -466,11 +454,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11485780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -484,11 +469,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11486996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -502,11 +484,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11493038
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -520,11 +499,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!212 &21279338
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -543,14 +519,18 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a07065332067349179aea7641df3075d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!212 &21293070
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -569,14 +549,18 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 1f40dcfe3d8a841ecb57772cade1776d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -595,6 +579,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Color.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: tree_02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

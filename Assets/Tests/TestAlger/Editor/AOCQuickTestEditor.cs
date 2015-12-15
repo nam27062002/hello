@@ -33,5 +33,17 @@ public class AOCQuickTestEditor : Editor {
 	public override void OnInspectorGUI() {
 		// Default
 		DrawDefaultInspector();
+
+		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
+			//string[] options = DefinitionsManager.entities.skus.ToArray();
+			string[] options = {
+				"1", "2", "3", "4", "5"
+			};
+			SelectionPopupWindow.Show(options, null);
+		}
+	}
+
+	private void OnSelectionChanged(int _selectedIdx) {
+		Debug.Log(_selectedIdx);
 	}
 }

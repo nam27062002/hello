@@ -7,8 +7,17 @@ public class PreyStats : Initializable {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
+	[EntitySkuList]
 	[SerializeField] private string m_typeID;
 	public string typeID { get { return m_typeID; } }
+
+	private EntityDef m_def = null;
+	public EntityDef def { 
+		get { 
+			if(m_def == null) DefinitionsManager.entities.GetDef(typeID); 
+			return m_def;
+		}
+	}
 
 	[SerializeField] private Reward m_reward;
 	public Reward reward { get { return m_reward; } }
