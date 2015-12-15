@@ -37,6 +37,9 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Exposed Setup
+	[SerializeField] private int[] m_maxRewardPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
+
 	// Content
 	// [AOC] TEMP!! Eventually it will be replaced by procedural generation
 	private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT];	// Pointing to the definition to be generated next
@@ -76,7 +79,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	}
 
 	//------------------------------------------------------------------//
-	// SINGLETON STATIC METHODS											//
+	// SINGLETON STATIC GETTERS											//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Get a definition of a mission.
@@ -103,6 +106,25 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		return instance.m_activeMissions[(int)_difficulty];
 	}
 
+	/// <summary>
+	/// Compute the reward to be given by a mission of the given difficulty.
+	/// Reward is computed dynamically based on maxRewardPerDifficulty and a formula
+	/// depending on amount of unlocked dragons, etc.
+	/// Reward doesn't depend on the type of mission, just its difficulty.
+	/// </summary>
+	/// <returns>The reward to be obtained by a mission of the given difficulty.</returns>
+	/// <param name="_difficulty">The difficulty of the target mission.</param>
+	public static int ComputeReward(Mission.Difficulty _difficulty) {
+		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		int totalDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY).Count;
+		float multiplier = (1f/(float)totalDragons) * (float)ownedDragons;
+		return (int)((float)instance.m_maxRewardPerDifficulty[(int)_difficulty] * multiplier);
+	}
+
+	//------------------------------------------------------------------//
+	// OTHER SINGLETON STATIC METHODS									//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Create a new mission with the given difficulty. Mission generation is completely
 	/// automated.

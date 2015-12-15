@@ -91,9 +91,8 @@ public class Mission {
 	/// </summary>
 	/// <returns>The amount of coins to be given upon completing the mission.</returns>
 	private int ComputeRewardCoins() {
-		// [AOC] TODO!! Use some formula by Hadrian
-		//		 For now let's get it from the defs
-		return def.rewardCoins;
+		// Mission manager takes care of it
+		return MissionManager.ComputeReward(def.difficulty);
 	}
 
 	//------------------------------------------------------------------//
