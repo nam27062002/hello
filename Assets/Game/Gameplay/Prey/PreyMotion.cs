@@ -48,6 +48,8 @@ public class PreyMotion : Initializable {
 		
 	protected int m_groundMask;	
 	protected Transform m_groundSensor;
+	
+	protected Animator m_animator;
 
 	//Debug
 	protected Color m_seekColor 	= Color.green;
@@ -71,6 +73,8 @@ public class PreyMotion : Initializable {
 		m_posZ = m_zOffset.GetRandom();
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_groundSensor = transform.FindChild("ground_sensor");
+
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 
 	// Use this for initialization
@@ -83,14 +87,16 @@ public class PreyMotion : Initializable {
 			m_lastPosition = m_position = transform.position;
 		}
 		
-		m_steering = Vector3.zero;
-		m_velocity = Vector3.zero;
-		m_direction = (Random.Range(0f, 1f) < 0.5f)? Vector3.right : Vector3.left;
+		m_steering = Vector2.zero;
+		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
-
 		m_currentMaxSpeed = m_maxSpeed;
 
-		m_maxRunSpeed = m_maxSpeed;
+		if (Random.Range(0f, 1f) < 0.5f) {
+			SetDirection(Vector2.right);
+		} else {
+			SetDirection(Vector2.left);
+		}
 	}
 
 	void OnEnable() {		
@@ -123,6 +129,18 @@ public class PreyMotion : Initializable {
 	
 	public Vector2 GetFlockTarget() {		
 		return m_flock.target;
+	}
+
+	public void SetDirection(Vector2 _direction) {
+
+		Vector3 dir = _direction.normalized;
+
+		if (m_direction.x >= 0f && dir.x < 0f
+		||  m_direction.x < 0f && dir.x >= 0f) {
+			m_animator.SetTrigger("turn");
+		}
+
+		m_direction = dir;
 	}
 
 	public void Seek(Vector2 _target) {
@@ -225,7 +243,7 @@ public class PreyMotion : Initializable {
 		desiredVelocity *= m_currentMaxSpeed;
 
 		if (distanceSqr > 0) {
-			desiredVelocity *= m_distanceAttenuation / distanceSqr;
+			desiredVelocity *= (m_distanceAttenuation * m_distanceAttenuation) / distanceSqr;
 		}
 		
 		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
@@ -260,7 +278,7 @@ public class PreyMotion : Initializable {
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
 		
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, m_currentMaxSpeed);
+		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
 		
 		if (m_velocity != Vector2.zero) {
 			m_direction = m_velocity.normalized;
@@ -320,9 +338,9 @@ public class PreyMotion : Initializable {
 	private void UpdateCollisions() {		
 		// teleport to ground
 		RaycastHit ground;
-		Vector3 testPosition = m_lastPosition + Vector2.up * 5f;
+		Vector3 testPosition = m_groundSensor.position;
 
-		if (Physics.Linecast(testPosition, testPosition + Vector3.down * 15f, out ground, m_groundMask)) {
+		if (Physics.Linecast(testPosition, testPosition + Vector3.down * (m_area.bounds.size.y + 5f), out ground, m_groundMask)) {
 			m_position.y = ground.point.y;
 			m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 			m_velocity.y = 0;

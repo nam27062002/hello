@@ -306,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 196200}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -218.8, y: 49.2, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 402672}
   m_Father: {fileID: 0}
@@ -587,8 +587,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.27256957, y: 0.26508617}
-  radius: 0.9307709
+  offset: {x: 0.14483824, y: 0.14799404}
+  radius: 0.40917206
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11438482
 MonoBehaviour:
@@ -675,8 +675,8 @@ MonoBehaviour:
     min: -1
     max: 1
   m_flockAvoidRadiusRange:
-    min: 1.8
-    max: 2.5
+    min: 6
+    max: 7
   m_steerForce: 0.1
   m_mass: 0.2
   m_distanceAttenuation: 12
@@ -928,7 +928,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_flockAvoidRadiusRange.max
-      value: 2.5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_goldenChance
@@ -968,7 +968,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_flockAvoidRadiusRange.min
-      value: 1.79999995
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fleeForceFactor
