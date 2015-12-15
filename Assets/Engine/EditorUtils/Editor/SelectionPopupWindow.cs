@@ -36,7 +36,7 @@ public class SelectionPopupWindow : EditorWindow {
 	private GUIStyle m_sectionStyle = null;
 
 	// Control
-	private Vector2 m_scrollPos = Vector2.zero;
+	private static Vector2 m_scrollPos = Vector2.zero;
 
 	// Internal
 	private bool m_moveToCursorPending = false;
