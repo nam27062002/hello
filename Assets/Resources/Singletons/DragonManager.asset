@@ -18,7 +18,7 @@ MonoBehaviour:
     m_tidDescription: TID_DRAGON_SMALL_DESC
     m_prefabPath: Game/Dragons/PF_DragonSmall
     m_menuPrefabPath: UI/Menu/Dragons/PF_DragonSmallMenu
-    m_cameraZoomOffset: 0
+    m_cameraZoomOffset: 20
     m_unlockPriceCoins: 0
     m_unlockPricePC: 0
     m_owned: 1
@@ -35,38 +35,38 @@ MonoBehaviour:
       - 320
       - 500
     m_healthRange:
-      min: 50
-      max: 100
+      min: 25
+      max: 75
     m_scaleRange:
-      min: .680000007
-      max: .879999995
-    m_healthDrainPerSecond: 1
-    m_maxEnergy: 40
-    m_energyDrainPerSecond: 10
-    m_energyRefillPerSecond: 5
-    m_maxFury: 130
+      min: 0.68
+      max: 0.88
+    m_healthDrainPerSecond: 1.5
+    m_maxEnergy: 70
+    m_energyDrainPerSecond: 15
+    m_energyRefillPerSecond: 8
+    m_maxFury: 140
     m_furyDuration: 10
     m_skills:
     - m_type: 0
       m_tidName: TID_SKILL_BITE_NAME
       m_tidDescription: TID_SKILL_BITE_DESC
       m_valueRange:
-        min: .25
-        max: .0250000004
+        min: 0.25
+        max: 0.025
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
     - m_type: 1
       m_tidName: TID_SKILL_SPEED_NAME
       m_tidDescription: TID_SKILL_SPEED_DESC
       m_valueRange:
-        min: 8.60000038
-        max: 9.60000038
+        min: 8.6
+        max: 9.6
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
     - m_type: 2
       m_tidName: TID_SKILL_BOOST_NAME
       m_tidDescription: TID_SKILL_BOOST_DESC
       m_valueRange:
-        min: 1.79999995
-        max: 2.29999995
+        min: 1.9
+        max: 2.4
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
     - m_type: 3
       m_tidName: TID_SKILL_FIRE_NAME
@@ -98,11 +98,11 @@ MonoBehaviour:
       - 558
       - 1000
     m_healthRange:
-      min: 100
-      max: 150
+      min: 75
+      max: 125
     m_scaleRange:
-      min: 1.45000005
-      max: 1.79999995
+      min: 1.45
+      max: 1.8
     m_healthDrainPerSecond: 10
     m_maxEnergy: 160
     m_energyDrainPerSecond: 10
@@ -114,15 +114,15 @@ MonoBehaviour:
       m_tidName: TID_SKILL_BITE_NAME
       m_tidDescription: TID_SKILL_BITE_DESC
       m_valueRange:
-        min: .125
-        max: .0125000002
+        min: 0.125
+        max: 0.0125
       m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
     - m_type: 1
       m_tidName: TID_SKILL_SPEED_NAME
       m_tidDescription: TID_SKILL_SPEED_DESC
       m_valueRange:
-        min: 12.3000002
-        max: 15.3999996
+        min: 12.3
+        max: 15.4
       m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
     - m_type: 2
       m_tidName: TID_SKILL_BOOST_NAME
@@ -144,7 +144,7 @@ MonoBehaviour:
     m_tidDescription: TID_DRAGON_BIG_DESC
     m_prefabPath: Game/Dragons/PF_DragonBig
     m_menuPrefabPath: UI/Menu/Dragons/PF_DragonBigMenu
-    m_cameraZoomOffset: 13
+    m_cameraZoomOffset: 30
     m_unlockPriceCoins: 2500
     m_unlockPricePC: 250
     m_owned: 0
@@ -161,11 +161,11 @@ MonoBehaviour:
       - 2809
       - 5000
     m_healthRange:
-      min: 150
+      min: 125
       max: 200
     m_scaleRange:
-      min: 2.49000001
-      max: 2.69000006
+      min: 2.49
+      max: 2.69
     m_healthDrainPerSecond: 2
     m_maxEnergy: 200
     m_energyDrainPerSecond: 50
@@ -177,15 +177,15 @@ MonoBehaviour:
       m_tidName: TID_SKILL_BITE_NAME
       m_tidDescription: TID_SKILL_BITE_DESC
       m_valueRange:
-        min: .0500000007
-        max: .00499999989
+        min: 0.05
+        max: 0.005
       m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
     - m_type: 1
       m_tidName: TID_SKILL_SPEED_NAME
       m_tidDescription: TID_SKILL_SPEED_DESC
       m_valueRange:
-        min: 16.6000004
-        max: 17.6000004
+        min: 16.6
+        max: 17.6
       m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
     - m_type: 2
       m_tidName: TID_SKILL_BOOST_NAME

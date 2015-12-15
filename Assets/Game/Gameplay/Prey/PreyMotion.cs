@@ -18,11 +18,11 @@ public class PreyMotion : Initializable {
 
 [Header("Force management")]
 		[CommentAttribute("Max magnitude of the steering force vector (velocity).")]
-	[SerializeField] private float m_steerForce;
+	[SerializeField] protected float m_steerForce;
 		[CommentAttribute("The steering vector is divided by mass.")]
-	[SerializeField] private float m_mass = 1f;
-	//	[CommentAttribute("When can decide if the flee force has more influence on the steering result vector.")]
-	//[SerializeField] private float m_fleeForceFactor = 1f;
+	[SerializeField] protected float m_mass = 1f;
+		[CommentAttribute("Distance can reduce the effect of evasive behaviours.")]
+	[SerializeField] private float m_distanceAttenuation = 5f;
 
 [Header("Speed variations")]
 	[SerializeField] private float m_maxSpeed;
@@ -36,22 +36,26 @@ public class PreyMotion : Initializable {
 	private float m_flockAvoidRadius;
 	
 	private float m_posZ;
-	private Vector2 m_position; // we move on 2D space
-	private Vector2 m_lastPosition;
-	private Vector2 m_velocity;
-	private Vector2 m_direction;
-	private Vector2 m_steering;
-	private float 	m_currentMaxSpeed;
-	private float   m_currentSpeed;
+	protected Vector2 m_position; // we move on 2D space
+	protected Vector2 m_lastPosition;
+
+	protected Vector2 m_velocity;
+	protected Vector2 m_direction;
+	protected Vector2 m_steering;
+
+	protected float m_currentMaxSpeed;
+	protected float m_currentSpeed;
 		
-	private int m_groundMask;	
-	private Transform m_groundSensor;
+	protected int m_groundMask;	
+	protected Transform m_groundSensor;
+	
+	protected Animator m_animator;
 
 	//Debug
-	Color m_seekColor 		= Color.green;
-	Color m_fleeColor 		= Color.red;
-	Color m_flockColor 		= Color.yellow;
-	Color m_velocityColor	= Color.white;
+	protected Color m_seekColor 	= Color.green;
+	protected Color m_fleeColor 	= Color.red;
+	protected Color m_flockColor 	= Color.yellow;
+	protected Color m_velocityColor	= Color.white;
 	//
 
 	// Properties
@@ -69,6 +73,8 @@ public class PreyMotion : Initializable {
 		m_posZ = m_zOffset.GetRandom();
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_groundSensor = transform.FindChild("ground_sensor");
+
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 
 	// Use this for initialization
@@ -81,12 +87,16 @@ public class PreyMotion : Initializable {
 			m_lastPosition = m_position = transform.position;
 		}
 		
-		m_steering = Vector3.zero;
-		m_velocity = Vector3.zero;
-		m_direction = (Random.Range(0f, 1f) < 0.5f)? Vector3.right : Vector3.left;
+		m_steering = Vector2.zero;
+		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
-
 		m_currentMaxSpeed = m_maxSpeed;
+
+		if (Random.Range(0f, 1f) < 0.5f) {
+			SetDirection(Vector2.right);
+		} else {
+			SetDirection(Vector2.left);
+		}
 	}
 
 	void OnEnable() {		
@@ -121,56 +131,47 @@ public class PreyMotion : Initializable {
 		return m_flock.target;
 	}
 
-	public void Seek(Vector2 _target) {
-		Vector2 desiredVelocity = _target - m_position;
-		float distanceSqr = desiredVelocity.sqrMagnitude;
-		float slowingRadiusSqr = m_slowingRadius * m_slowingRadius;
-		
-		desiredVelocity.Normalize();
-				
-		desiredVelocity *= m_currentMaxSpeed;
-		if (distanceSqr < slowingRadiusSqr) {
-			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
+	public void SetDirection(Vector2 _direction) {
+
+		Vector3 dir = _direction.normalized;
+
+		if (m_direction.x >= 0f && dir.x < 0f
+		||  m_direction.x < 0f && dir.x >= 0f) {
+			m_animator.SetTrigger("turn");
 		}
-		
-		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
+
+		m_direction = dir;
+	}
+
+	public void Seek(Vector2 _target) {
+		m_currentMaxSpeed = m_maxSpeed;
+		DoSeek(_target);
 	}
 	
-	public void Flee(Vector2 _from) {
-		Vector2 desiredVelocity = m_position - _from;
-
+	public void Flee(Vector2 _target) {
 		m_currentMaxSpeed = m_maxRunSpeed;
-
-		desiredVelocity.Normalize();
-		desiredVelocity *= m_currentMaxSpeed;
-
-		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
+		DoFlee(_target);
 	}
-
+	
+	
 	public void Pursuit(Vector2 _target, Vector2 _velocity, float _maxSpeed) {
 		float distance = (m_position - _target).magnitude;
 		float t = (distance / _maxSpeed); // amount of time in the future
-
+		
 		m_currentMaxSpeed = m_maxRunSpeed;
-
-		Seek(_target + _velocity * t); // future position
+		
+		DoSeek(_target + _velocity * t); // future position
 	}
-
+	
 	public void Evade(Vector2 _target, Vector2 _velocity, float _maxSpeed) {		
 		float distance = (m_position - _target).magnitude;
 		float t = (distance / _maxSpeed); // amount of time in the future
 
-		Flee(_target + _velocity * t); // future position
+		DoFlee(_target + _velocity * t); // future position
 	}
 
-	public void ApplySteering() {
 
+	private void ApplySteering() {
 		if (m_flock != null) {
 			FlockSeparation();
 		}
@@ -210,7 +211,46 @@ public class PreyMotion : Initializable {
 		ApplyPosition();
 	}
 
+	void FixedUpdate() {
+		ApplySteering();
+	}
+
+
 	// ------------------------------------------------------------------------------------------------------------------------------ //
+	private void DoSeek(Vector2 _target) {
+		Vector2 desiredVelocity = _target - m_position;
+		float distanceSqr = desiredVelocity.sqrMagnitude;
+		float slowingRadiusSqr = m_slowingRadius * m_slowingRadius;
+		
+		desiredVelocity.Normalize();
+		
+		desiredVelocity *= m_currentMaxSpeed;
+		if (distanceSqr < slowingRadiusSqr) {
+			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
+		}
+		
+		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
+
+		desiredVelocity -= m_velocity;
+		m_steering += desiredVelocity;
+	}
+	
+	private void DoFlee(Vector2 _from) {
+		Vector2 desiredVelocity = m_position - _from;
+		float distanceSqr = desiredVelocity.sqrMagnitude;
+
+		desiredVelocity.Normalize();
+		desiredVelocity *= m_currentMaxSpeed;
+
+		if (distanceSqr > 0) {
+			desiredVelocity *= (m_distanceAttenuation * m_distanceAttenuation) / distanceSqr;
+		}
+		
+		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
+
+		desiredVelocity -= m_velocity;
+		m_steering += desiredVelocity;
+	}
 
 	private void FlockSeparation() {
 		Vector2 avoid = Vector2.zero;
@@ -233,12 +273,12 @@ public class PreyMotion : Initializable {
 		m_steering += avoid;
 	}
 
-	private void UpdateVelocity() {
+	protected virtual void UpdateVelocity() {
 		
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
 		
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, m_currentMaxSpeed);
+		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
 		
 		if (m_velocity != Vector2.zero) {
 			m_direction = m_velocity.normalized;
@@ -249,7 +289,7 @@ public class PreyMotion : Initializable {
 		Debug.DrawLine(m_position, m_position + m_velocity, m_velocityColor);
 	}
 
-	private void UpdatePosition() {
+	protected virtual void UpdatePosition() {
 		
 		m_lastPosition = m_position;
 		m_position = m_position + (m_velocity * Time.fixedDeltaTime);
@@ -295,13 +335,12 @@ public class PreyMotion : Initializable {
 		transform.localRotation = Quaternion.Slerp(transform.localRotation, targetDir, Time.deltaTime * rotationSpeed);
 	}
 	
-	private void UpdateCollisions() {
-		
+	private void UpdateCollisions() {		
 		// teleport to ground
 		RaycastHit ground;
-		Vector3 testPosition = m_lastPosition + Vector2.up * 5f;
+		Vector3 testPosition = m_groundSensor.position;
 
-		if (Physics.Linecast(testPosition, testPosition + Vector3.down * 15f, out ground, m_groundMask)) {
+		if (Physics.Linecast(testPosition, testPosition + Vector3.down * (m_area.bounds.size.y + 5f), out ground, m_groundMask)) {
 			m_position.y = ground.point.y;
 			m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 			m_velocity.y = 0;

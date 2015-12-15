@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -19,7 +20,6 @@ using System;
 /// Has its own asset in the Resources/Singletons folder, all content must be
 /// initialized there.
 /// </summary>
-[CreateAssetMenu]
 public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -39,7 +39,6 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// Content
 	// [AOC] TEMP!! Eventually it will be replaced by procedural generation
-	[SerializeField] private MissionDefinitions m_missionDefs;
 	private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT];	// Pointing to the definition to be generated next
 
 	// Active missions
@@ -85,7 +84,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <returns>The definition of a mission with the given sku. <c>null</c> if not found.</returns>
 	/// <param name="_sku">The sku of the wanted definition.</param>
 	public static MissionDef GetDef(string _sku) {
-		return instance.m_missionDefs.GetDef<MissionDef>(_sku);
+		return DefinitionsManager.missions.GetDef(_sku);
 	}
 
 	/// <summary>
@@ -121,10 +120,11 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		int idx = instance.m_generationIdx[(int)_difficulty];
 		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
 		MissionDef def = null;
+		List<MissionDef> defsList = DefinitionsManager.missions.defsList;	// [AOC] Order is not trustable, but we don't care since this is temporal
 		for( ; ; idx++) {
 			// If reached the last definition but still haven't looped, do it now
 			// Otherwise it means there are no definitions for the requested difficulty, throw an exception
-			if(idx == instance.m_missionDefs.Length) {
+			if(idx == defsList.Count) {
 				if(loopAllowed) {
 					idx = 0;
 					loopAllowed = false;
@@ -135,7 +135,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 			}
 
 			// Is this mission def of the requested difficulty?
-			def = instance.m_missionDefs.GetDef<MissionDef>(idx);
+			def = defsList[idx];
 			if(def != null && def.difficulty == _difficulty) {
 				// Found! Break the loop
 				break;
@@ -148,7 +148,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		instance.m_activeMissions[(int)_difficulty] = newMission;
 
 		// Increase generation index - loop if last mission is reached
-		instance.m_generationIdx[(int)_difficulty] = (idx + 1) % instance.m_missionDefs.Length;
+		instance.m_generationIdx[(int)_difficulty] = (idx + 1) % DefinitionsManager.missions.Count;
 
 		// Return new mission
 		return instance.m_activeMissions[(int)_difficulty];

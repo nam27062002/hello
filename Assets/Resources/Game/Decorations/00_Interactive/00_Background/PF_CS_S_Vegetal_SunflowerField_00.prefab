@@ -103,7 +103,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 155080}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.0100002, y: 3.53999996, z: 0}
+  m_LocalPosition: {x: 15.01, y: 3.54, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 451586}
@@ -118,7 +118,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 198096}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.819999993, y: .5, z: 0}
+  m_LocalPosition: {x: -0.82, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 471072}
@@ -156,7 +156,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 116814}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .879999995, y: .839999974, z: 0}
+  m_LocalPosition: {x: 0.88, y: 0.84, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 471072}
@@ -186,11 +186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11454846
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -202,7 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: Tree
+  m_typeID: sunflower_field_s_00
   m_reward:
     score: 15
     coins: 50
@@ -210,7 +207,7 @@ MonoBehaviour:
     health: 0
     energy: 0
     fury: 0
-    xp: .100000001
+    xp: 0.1
   m_goldenChance: 0
   m_pcChance: 0
 --- !u!114 &11465580
@@ -238,11 +235,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!212 &21246510
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -261,14 +255,18 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 506120b0393e84b6e8d70c1a8f6b619a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!212 &21286454
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -287,14 +285,18 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 677b9b88815684bff89fbc093af2b60c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -318,6 +320,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Color.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: sunflower_field_s_00
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

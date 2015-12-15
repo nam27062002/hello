@@ -60,7 +60,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 	void FixedUpdate () {
 		if (!m_edible.isBeingEaten) {
 			m_motion.Seek(m_target.bounds.center);
-			m_motion.ApplySteering();
+		//	m_motion.ApplySteering();
 
 			// force direction
 			m_motion.direction = m_target.bounds.center - m_from.position;

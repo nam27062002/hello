@@ -3,6 +3,13 @@
 public struct RectAreaBounds : AreaBounds {
 	private Bounds m_bounds;
 
+	public RectAreaBounds(Vector3 _center, Vector2 _size) {
+
+		Vector3 size = (Vector3)_size;
+		size.z = 1f;
+		m_bounds = new Bounds(_center, size);
+	}
+
 	public RectAreaBounds(Vector3 _center, Vector3 _size) {
 		
 		m_bounds = new Bounds(_center, _size);

@@ -3,12 +3,16 @@ using System.Collections.Generic;
 
 public class PathController : MonoBehaviour {
 
-	[SerializeField] private List<Vector3> m_points = new List<Vector3>();
-	public List<Vector3> points { get { return m_points; } set { m_points = value; } }
-	
+	[SerializeField] private bool m_circular = true;
+	public bool circular { get { return m_circular; } }
+
 	[SerializeField] private float m_smoothRadius = 0f;
 	public float radius { get { return m_smoothRadius; } }
-	
+
+	[SerializeField] private List<Vector3> m_points = new List<Vector3>();
+	public List<Vector3> points { get { return m_points; } set { m_points = value; } }
+	public int count { get { return m_points.Count; } }
+
 	private int m_index;
 	private int m_direction;
 	
@@ -44,8 +48,11 @@ public class PathController : MonoBehaviour {
 		m_bounds.SetMinMax(min + transform.position - Vector3.one * radius, max + transform.position + Vector3.one * radius);
 	}
 	
-	public Vector3 GetRandom() {
-		m_index = Random.Range(0, m_points.Count);
+	public Vector3 GetRandom() {		
+		int current = m_index;
+		do {
+			m_index = Random.Range(0, m_points.Count);
+		} while (current != m_index);
 		return GetNext();
 	}
 
@@ -66,7 +73,20 @@ public class PathController : MonoBehaviour {
 
 	public Vector3 GetNext() {
 		int current = m_index;
-		m_index = (m_index + m_direction) % m_points.Count;
+		if (m_circular) {
+			if (m_direction > 0) {
+				m_index = (m_index + m_direction) % m_points.Count;
+			} else {
+				m_index = (m_index + m_direction + m_points.Count) % m_points.Count;
+			}
+		} else {
+			if ((m_index == 0 && m_direction < 0)
+			||  (m_index == m_points.Count - 1 && m_direction > 0)) {
+				ChangeDirection();
+			}
+
+			m_index = (m_index + m_direction);
+		}
 		return m_points[current] + transform.position;
 	}
 

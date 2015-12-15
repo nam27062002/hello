@@ -8,7 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -61,6 +61,8 @@ public class DragonMotion : MonoBehaviour {
 	};
 	private Sensors m_sensor;
 
+	private List<Transform> m_hitTargets;
+
 	private State m_state;
 
 	//------------------------------------------------------------------//
@@ -90,6 +92,21 @@ public class DragonMotion : MonoBehaviour {
 		m_sensor.top 		= sensors.FindChild("TopSensor").transform;
 		m_sensor.bottom		= sensors.FindChild("BottomSensor").transform;
 
+		int n = 0;
+		Transform t = null;
+		Transform points = transform.FindChild("points");
+		m_hitTargets = new List<Transform>();
+
+		while (true) {
+			t = points.FindChild("attack_" + n);
+			if (t != null) {
+				m_hitTargets.Add(t);
+				n++;
+			} else {
+				break;
+			}
+		}
+
 		m_rbody = GetComponent<Rigidbody>();
 
 		m_height = 10f;
@@ -114,7 +131,7 @@ public class DragonMotion : MonoBehaviour {
 		m_speedMultiplier = 0.5f;
 	}
 	
-	private void ChangeState(State _nextState) {	
+	private void ChangeState(State _nextState) {
 		if (m_state != _nextState) {
 			// we are leaving old state
 			switch (m_state) {
@@ -170,7 +187,7 @@ public class DragonMotion : MonoBehaviour {
 			}
 
 			m_state = _nextState;
-		}		
+		}	
 	}
 			
 	/// <summary>
@@ -371,6 +388,22 @@ public class DragonMotion : MonoBehaviour {
 	public void AddForce(Vector3 _force) {
 
 		ChangeState(State.Stunned);
+	}
+
+	public Transform GetAttackPointNear(Vector3 _point) {
+		Transform target = transform;
+		float minDistSqr = 999999f;
+
+		for (int i = 0; i < m_hitTargets.Count; i++) {
+			Vector2 v = (_point - m_hitTargets[i].position);
+			float distSqr = v.sqrMagnitude;
+			if (distSqr <= minDistSqr) {
+				target = m_hitTargets[i];
+				minDistSqr = distSqr;
+			}
+		}
+
+		return target;
 	}
 	
 	//------------------------------------------------------------------//
