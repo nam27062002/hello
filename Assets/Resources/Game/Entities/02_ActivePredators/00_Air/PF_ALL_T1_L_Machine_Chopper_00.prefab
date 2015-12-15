@@ -117,9 +117,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112354}
-  m_LocalRotation: {x: -.707106829, y: 0, z: -0, w: .707106709}
-  m_LocalPosition: {x: 0, y: 1.74300003, z: -0}
-  m_LocalScale: {x: 100, y: 100.000008, z: 100.000008}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: 0, y: 1.743, z: -0}
+  m_LocalScale: {x: 100, y: 100.00001, z: 100.00001}
   m_Children: []
   m_Father: {fileID: 444500}
   m_RootOrder: 1
@@ -129,7 +129,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159582}
-  m_LocalRotation: {x: .707106709, y: -2.30404638e-07, z: -2.30404652e-07, w: -.707106829}
+  m_LocalRotation: {x: 0.7071067, y: -0.00000023040464, z: -0.00000023040465, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 100, y: 100.000015, z: 100.000015}
   m_Children: []
@@ -156,9 +156,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 189724}
-  m_LocalRotation: {x: 1.15202326e-07, y: .707106709, z: .707106829, w: -1.15202312e-07}
+  m_LocalRotation: {x: 0.000000115202326, y: 0.7071067, z: 0.7071068, w: -0.00000011520231}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100.000008, z: 100.000008}
+  m_LocalScale: {x: 100, y: 100.00001, z: 100.00001}
   m_Children: []
   m_Father: {fileID: 444500}
   m_RootOrder: 0
@@ -169,7 +169,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 171386}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.61999989, y: -.0860000029, z: -0}
+  m_LocalPosition: {x: -5.62, y: -0.086, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429360}
@@ -182,7 +182,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138554}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.2700005, y: 17.2900009, z: 6.13217163}
+  m_LocalPosition: {x: 12.27, y: 17.29, z: 6.1321716}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 444500}
@@ -209,7 +209,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -235,7 +235,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -262,7 +262,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -365,6 +365,7 @@ MonoBehaviour:
     max: 1
   m_steerForce: 1
   m_mass: 2
+  m_distanceAttenuation: 5
   m_maxSpeed: 4
   m_maxRunSpeed: 7
   m_slowingRadius: 2
@@ -402,9 +403,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -.371551514, y: -.051404953}
-  radius: 3.71480942
-  color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
+  offset: {x: -0.3715515, y: -0.051404953}
+  radius: 3.7148094
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11472364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -432,7 +433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
-  m_checkFireTime: .25
+  m_checkFireTime: 0.25
   m_maxHealth: 100
 --- !u!114 &11473134
 MonoBehaviour:
@@ -447,6 +448,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damage: 20
   m_attackDelay: 10
+  m_consecutiveAttacks: 0
+  m_sensorShutdownTime: 0
   m_projectilePrefab: {fileID: 173528, guid: 5bf1aa92d7a764207b2c49df71708fc0, type: 2}
 --- !u!114 &11475476
 MonoBehaviour:
@@ -497,7 +500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: Chopper
+  m_typeID: chopper
   m_reward:
     score: 0
     coins: 0
@@ -546,6 +549,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_idleProbability
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: chopper
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

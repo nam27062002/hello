@@ -131,7 +131,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 167446}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .129999995, y: 1.77999997, z: 0}
+  m_LocalPosition: {x: 0.13, y: 1.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 474382}
@@ -155,7 +155,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 142622}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 32.5400009, y: 4.23000002, z: 0}
+  m_LocalPosition: {x: 32.54, y: 4.23, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 425312}
@@ -170,7 +170,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 126244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.19000006, y: .699999988, z: 0}
+  m_LocalPosition: {x: -2.19, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 474382}
@@ -197,7 +197,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138220}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.16000009, y: .0599999987, z: 0}
+  m_LocalPosition: {x: 2.16, y: 0.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 474382}
@@ -227,11 +227,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11455974
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -245,11 +242,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!114 &11470600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -261,7 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: Bush
+  m_typeID: bush_05
   m_reward:
     score: 1
     coins: 5
@@ -285,11 +279,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: .75
+  m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
-  m_fireScale:
-    min: 2.25
-    max: 2.75
 --- !u!212 &21226390
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -308,14 +299,18 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 9163a96f4d13e4231a991a9388201cdd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!212 &21262076
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -334,14 +329,18 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 45d4ac757332448a0bd72cd2ef60e96b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -351,7 +350,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_typeID
-      value: Bush
+      value: bush_05
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.score
