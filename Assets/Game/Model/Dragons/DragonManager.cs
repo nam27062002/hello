@@ -96,7 +96,7 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 		List<DragonData> list = new List<DragonData>();
 		for(int i = 0; i < instance.m_dragons.Length; i++) {
 			// Does this dragon match the required lockstate?
-			if(instance.m_dragons[i].lockState == _lockState) {
+			if(instance.m_dragons[i].lockState == _lockState || _lockState == DragonData.LockState.ANY) {
 				// Yes!! Add it to the list
 				list.Add(instance.m_dragons[i]);
 			}
