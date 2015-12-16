@@ -97,7 +97,7 @@ public class AttackBehaviour : Initializable {
 		Vector2 v = transform.position - m_target.position;
 		switch (m_state) {
 			case State.Pursuit:				
-				if (v.sqrMagnitude <= m_sensor.sensorMinRadius) {
+				if (v.sqrMagnitude <= m_sensor.sensorMinRadius * m_sensor.sensorMinRadius) {
 					m_nextState = State.Attack;
 				}
 				if (!m_area.Contains(transform.position)) {
