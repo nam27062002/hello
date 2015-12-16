@@ -6,13 +6,13 @@ using System.Collections;
 /// Prey motion. Movement and animation control layer.
 /// </summary>
 [DisallowMultipleComponent]
+[RequireComponent(typeof(PreyOrientation))]
 public class PreyMotion : Initializable {
 	
 	//---------------------------------------------------------------
 	// Attributes
 	//---------------------------------------------------------------
 [Header("Movement")]
-	[SerializeField] private bool m_faceDirection;
 	[SerializeField] private Range m_zOffset = new Range(-1f, 1f);
 	[SerializeField] private Range m_flockAvoidRadiusRange;
 
@@ -48,7 +48,8 @@ public class PreyMotion : Initializable {
 		
 	protected int m_groundMask;	
 	protected Transform m_groundSensor;
-	
+
+	protected PreyOrientation m_orientation;
 	protected Animator m_animator;
 
 	//Debug
@@ -59,9 +60,8 @@ public class PreyMotion : Initializable {
 	//
 
 	// Properties
-	public bool    faceDirection 	{ get { return m_faceDirection; } }
 	public Vector2 position 		{ get { return m_position; } set { m_position = value; } }
-	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; } }
+	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; m_orientation.SetDirection(m_direction); } }
 	public Vector2 velocity			{ get { return m_velocity; } set { m_velocity = value; } }
 	public float   speed			{ get { return m_currentSpeed; } }
 	//
@@ -74,6 +74,7 @@ public class PreyMotion : Initializable {
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_groundSensor = transform.FindChild("ground_sensor");
 
+		m_orientation = GetComponent<PreyOrientation>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 
@@ -93,10 +94,11 @@ public class PreyMotion : Initializable {
 		m_currentMaxSpeed = m_maxSpeed;
 
 		if (Random.Range(0f, 1f) < 0.5f) {
-			SetDirection(Vector2.right);
+			m_direction = Vector2.right;
 		} else {
-			SetDirection(Vector2.left);
+			m_direction = Vector2.left;
 		}
+		m_orientation.SetDirection(m_direction);
 	}
 
 	void OnEnable() {		
@@ -129,18 +131,6 @@ public class PreyMotion : Initializable {
 	
 	public Vector2 GetFlockTarget() {		
 		return m_flock.target;
-	}
-
-	public void SetDirection(Vector2 _direction) {
-
-		Vector3 dir = _direction.normalized;
-
-		if (m_direction.x >= 0f && dir.x < 0f
-		||  m_direction.x < 0f && dir.x >= 0f) {
-			m_animator.SetTrigger("turn");
-		}
-
-		m_direction = dir;
 	}
 
 	public void Seek(Vector2 _target) {
@@ -201,9 +191,7 @@ public class PreyMotion : Initializable {
 		return _point;
 	}
 
-	void Update() {		
-		UpdateOrientation();
-
+	void Update() {
 		if (m_groundSensor != null) {
 			UpdateCollisions();
 		}
@@ -282,6 +270,7 @@ public class PreyMotion : Initializable {
 		
 		if (m_velocity != Vector2.zero) {
 			m_direction = m_velocity.normalized;
+			m_orientation.SetDirection(m_direction);
 		}
 
 		m_currentSpeed = m_velocity.magnitude;
@@ -301,38 +290,6 @@ public class PreyMotion : Initializable {
 			posZ += m_area.bounds.center.z;
 		}
 		transform.position = new Vector3(m_position.x, m_position.y, posZ);
-	}
-	
-	private void UpdateOrientation() {
-		
-		float rotationSpeed = 2f;	// [AOC] Deg/sec?
-		Quaternion targetDir;
-		
-		if (m_faceDirection) {
-			// rotate the model so it can fully face the current direction
-			float angle = Mathf.Atan2(m_direction.y, m_direction.x) * Mathf.Rad2Deg;			
-			targetDir = Quaternion.AngleAxis(angle, Vector3.forward) * Quaternion.AngleAxis(-angle, Vector3.left);	
-			
-			Vector3 eulerRot = targetDir.eulerAngles;		
-			if (m_direction.y > 0) {
-				eulerRot.z = Mathf.Min(40f, eulerRot.z);
-			} else if (m_direction.y < 0) {
-				eulerRot.z = Mathf.Max(320f, eulerRot.z);
-			}
-			targetDir = Quaternion.Euler(eulerRot);	
-			
-		} else {
-			// Rotate so it faces the right direction (replaces 2D sprite flip)
-			float angleY = 0f;
-			
-			if (m_direction.x < 0f) {
-				angleY = 180f;
-			}
-			
-			targetDir = Quaternion.Euler(0, angleY, 0);
-		}
-		
-		transform.localRotation = Quaternion.Slerp(transform.localRotation, targetDir, Time.deltaTime * rotationSpeed);
 	}
 	
 	private void UpdateCollisions() {		

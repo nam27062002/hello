@@ -48,5 +48,7 @@ public static class GameEvents {
 	public const string MENU_LEVEL_SELECTED = "MENU_LEVEL_SELECTED";	// params: int _selectedLevel
 
 	// Mission events
-	public const string MISSION_COMPLETED = "MISSION_COMPLETED";						// params: Mission _mission
+	public const string MISSION_COMPLETED = "MISSION_COMPLETED";				// params: Mission _mission
+	public const string MISSION_REMOVED = "MISSION_REMOVED";					// params: Mission _newMission
+	public const string MISSION_SKIPPED = "MISSION_SKIPPED";					// params: Mission _mission
 }

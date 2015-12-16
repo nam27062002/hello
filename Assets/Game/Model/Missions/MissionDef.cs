@@ -39,10 +39,6 @@ public class MissionDef : Definition {
 	[SerializeField] private bool m_singleRun = true;
 	public bool singleRun { get { return m_singleRun; }}
 
-	// [AOC] TEMP!! This will be replaced by a formula by Hadrian
-	[SerializeField] private int m_rewardCoins = 1;
-	public int rewardCoins { get { return m_rewardCoins; }}
-
 	[Header("Info")]
 	[SerializeField] private string m_tidName = "";
 	public string tidName { get { return m_tidName; }}

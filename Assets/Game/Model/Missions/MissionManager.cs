@@ -37,6 +37,18 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Exposed Setup
+	[Comment("Mission Reward Formula")]
+	[SerializeField] private int[] m_maxRewardPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
+	public static int[] maxRewardPerDifficulty { get { return instance.m_maxRewardPerDifficulty; }}
+
+	[Comment("Remove Mission PC Cost Formula")]
+	[SerializeField] private float m_removeMissionPCCoefA = 0.5f;
+	public static float removeMissionPCCoefA { get { return instance.m_removeMissionPCCoefA; }}
+
+	[SerializeField] private float m_removeMissionPCCoefB = 1f;
+	public static float removeMissionPCCoefB { get { return instance.m_removeMissionPCCoefB; }}
+
 	// Content
 	// [AOC] TEMP!! Eventually it will be replaced by procedural generation
 	private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT];	// Pointing to the definition to be generated next
@@ -76,7 +88,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	}
 
 	//------------------------------------------------------------------//
-	// SINGLETON STATIC METHODS											//
+	// SINGLETON STATIC GETTERS											//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Get a definition of a mission.
@@ -96,13 +108,56 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	public static Mission GetMission(Mission.Difficulty _difficulty) {
 		// If there is no mission at the given difficulty, create one
 		if(instance.m_activeMissions[(int)_difficulty] == null) {
-			GenerateNewMission(_difficulty);
+			instance.GenerateNewMission(_difficulty);
 		}
 
 		// Done!
 		return instance.m_activeMissions[(int)_difficulty];
 	}
 
+	//------------------------------------------------------------------//
+	// PUBLIC SINGLETON METHODS											//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Process active missions:
+	/// Give rewards for those completed and replace them by newly generated missions.
+	/// </summary>
+	public static void ProcessMissions() {
+		// Check all missions
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+			// Is mission completed?
+			Mission m = GetMission((Mission.Difficulty)i);
+			if(m.objective.isCompleted) {
+				// Give reward
+				UserProfile.AddCoins(m.rewardCoins);
+
+				// Generate new mission
+				m = instance.GenerateNewMission((Mission.Difficulty)i);
+
+				// [AOC] TODO!! Put it on cooldown
+				//m.unlockTimestamp = ;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Removes the mission at the given difficulty slot and replaces it by a new
+	/// one of equivalent difficulty.
+	/// Doesn't perform any currency transaction, they must be done prior to calling
+	/// this method using the Mission.removeCostPC property.
+	/// </summary>
+	/// <param name="_difficulty">The difficulty of the mission to be removed.</param>
+	public static void RemoveMission(Mission.Difficulty _difficulty) {
+		// Generate new mission does exactly this :D
+		instance.GenerateNewMission(_difficulty);
+
+		// Dispatch global event
+		Messenger.Broadcast<Mission>(GameEvents.MISSION_REMOVED, GetMission(_difficulty));
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Create a new mission with the given difficulty. Mission generation is completely
 	/// automated.
@@ -110,14 +165,14 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	/// <returns>The newly created mission.</returns>
 	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
-	public static Mission GenerateNewMission(Mission.Difficulty _difficulty) {
+	private Mission GenerateNewMission(Mission.Difficulty _difficulty) {
 		// Terminate any mission at the requested slot
 		ClearMission(_difficulty);
 
 		// Generate new mission
 		// [AOC] TODO!! Automated generation
 		// 		 For now let's pick a new mission definition from the content list matching the requested difficulty
-		int idx = instance.m_generationIdx[(int)_difficulty];
+		int idx = m_generationIdx[(int)_difficulty];
 		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
 		MissionDef def = null;
 		List<MissionDef> defsList = DefinitionsManager.missions.defsList;	// [AOC] Order is not trustable, but we don't care since this is temporal
@@ -145,13 +200,13 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		// Create the new mission!
 		Mission newMission = new Mission();
 		newMission.InitFromDefinition(def);
-		instance.m_activeMissions[(int)_difficulty] = newMission;
+		m_activeMissions[(int)_difficulty] = newMission;
 
 		// Increase generation index - loop if last mission is reached
-		instance.m_generationIdx[(int)_difficulty] = (idx + 1) % DefinitionsManager.missions.Count;
+		m_generationIdx[(int)_difficulty] = (idx + 1) % DefinitionsManager.missions.Count;
 
 		// Return new mission
-		return instance.m_activeMissions[(int)_difficulty];
+		return m_activeMissions[(int)_difficulty];
 	}
 
 	/// <summary>
@@ -159,33 +214,11 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// The mission slot will be left empty, be careful with that!
 	/// </summary>
 	/// <param name="_difficulty">The difficulty slot to be cleared.</param>
-	public static void ClearMission(Mission.Difficulty _difficulty) {
+	private void ClearMission(Mission.Difficulty _difficulty) {
 		// If there is already a mission at the requested slot, terminate it
-		if(instance.m_activeMissions[(int)_difficulty] != null) {
-			instance.m_activeMissions[(int)_difficulty].Clear();
-			instance.m_activeMissions[(int)_difficulty] = null;	// GC will take care of it
-		}
-	}
-
-	/// <summary>
-	/// Process active missions:
-	/// Give rewards for those completed and replace them by newly generated missions.
-	/// </summary>
-	public static void ProcessMissions() {
-		// Check all missions
-		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
-			// Is mission completed?
-			Mission m = GetMission((Mission.Difficulty)i);
-			if(m.objective.isCompleted) {
-				// Give reward
-				UserProfile.AddCoins(m.rewardCoins);
-
-				// Generate new mission
-				m = GenerateNewMission((Mission.Difficulty)i);
-
-				// [AOC] TODO!! Put it on cooldown
-				//m.unlockTimestamp = ;
-			}
+		if(m_activeMissions[(int)_difficulty] != null) {
+			m_activeMissions[(int)_difficulty].Clear();
+			m_activeMissions[(int)_difficulty] = null;	// GC will take care of it
 		}
 	}
 
@@ -204,7 +237,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// If there is no data for this mission, generate a new one
 			if(i >= _data.activeMissions.Length || _data.activeMissions[i] == null || _data.activeMissions[i].sku == "") {
-				GenerateNewMission((Mission.Difficulty)i);
+				instance.GenerateNewMission((Mission.Difficulty)i);
 			} else {
 				// If the mission was not created, create an empty one now and load its data from persistence
 				if(instance.m_activeMissions[i] == null) {
