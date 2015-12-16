@@ -20,6 +20,7 @@ public class AttackBehaviour : Initializable {
 
 	private Animator m_animator;
 	private PreyMotion m_motion;
+	private PreyOrientation m_orientation;
 	private SensePlayer m_sensor;
 	private EvadeBehaviour m_evade;
 	private DragonMotion m_dragon;
@@ -35,6 +36,7 @@ public class AttackBehaviour : Initializable {
 	// Use this for initialization
 	void Start () {
 		m_motion = GetComponent<PreyMotion>();
+		m_orientation = GetComponent<PreyOrientation>();
 		m_sensor = GetComponent<SensePlayer>();
 		m_evade  = GetComponent<EvadeBehaviour>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
@@ -138,7 +140,7 @@ public class AttackBehaviour : Initializable {
 				m_motion.velocity = Vector2.zero;
 				//m_motion.ApplySteering();
 
-				if (m_motion.faceDirection) {
+				if (m_orientation.faceDirection) {
 					m_motion.direction = m_target.position - (Vector3)m_motion.position;
 				} else {
 					Vector3 player = m_target.position;
