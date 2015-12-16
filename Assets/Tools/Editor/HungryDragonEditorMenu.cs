@@ -18,26 +18,30 @@ using UnityEditor;
 /// </summary>
 public class HungryDragonEditorMenu {
 	//------------------------------------------------------------------//
-	// CONTENT															//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	private static readonly string DEFINITIONS_FOLDER = "Assets/Resources/Definitions/";
+	private static readonly string SINGLETONS_FOLDER = "Assets/Resources/Singletons/";
+
+	//------------------------------------------------------------------//
+	// MENU SETUP														//
 	//------------------------------------------------------------------//
 	//-------------------------------------------------- DEFINITIONS -------------------------------------------------//
-	/// <summary>
-	/// Show the definitions manager to edit the content.
-	/// </summary>
 	[MenuItem("Hungry Dragon/Content/Definitions Manager", false, 0)]
-	public static void ShowDefintionsManager() {
-		// Find and select the scriptable object (by name)
-		//Object targetObj = AssetDatabase.LoadMainAssetAtPath("Assets/Resources/Singletons/MissionDefinitions.asset");
-		//EditorUtils.FocusObject(targetObj, true, false, true);
-		EditorUtils.FocusObject(DefinitionsManager.instance, true, false, true);
-	}
+	public static void ShowDefintionsManager() { OpenFile("DefinitionsManager.asset", SINGLETONS_FOLDER); }
+
+	[MenuItem("Hungry Dragon/Content/EntityDefinitions", false, 50)]
+	public static void ShowDefintions1() { OpenFile("EntityDefinitions.asset", DEFINITIONS_FOLDER); }
+
+	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 51)]
+	public static void ShowDefintions2() { OpenFile("EntityCategoryDefinitions.asset", DEFINITIONS_FOLDER); }
+
+	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 52)]
+	public static void ShowDefintions3() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
 
 	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
-	/// <summary>
-	/// Show the dragon manager content editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Content/Dragon Manager", false, 50)]
-	public static void ShowDragonManagerWindow() {
+	[MenuItem("Hungry Dragon/Content/Dragon Manager", false, 100)]
+	public static void ShowDragonManager() {
 		// Serialize manager to be able to show private members
 		DragonManagerEditorWindow window = (DragonManagerEditorWindow)EditorWindow.GetWindow(typeof(DragonManagerEditorWindow));
 		window.m_target = new SerializedObject(DragonManager.instance);
@@ -45,18 +49,20 @@ public class HungryDragonEditorMenu {
 		window.ShowUtility();	// To avoid window getting automatically closed when losing focus
 	}
 
-	/// <summary>
-	/// Show the level manager content editor.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Content/Level Manager", false, 51)]
-	public static void ShowLevelManagerWindow() {
-		// Just select the object
-		EditorUtils.FocusObject(LevelManager.instance, true, false, true);
-	}
+	[MenuItem("Hungry Dragon/Content/Level Manager", false, 101)]
+	public static void ShowManager1() { OpenFile("LevelManager.asset", SINGLETONS_FOLDER); }
 
-	//------------------------------------------------------------------//
-	// TOOLS															//
-	//------------------------------------------------------------------//
+	[MenuItem("Hungry Dragon/Content/Missions Manager", false, 102)]
+	public static void ShowManager2() { OpenFile("PF_MissionManager.prefab", SINGLETONS_FOLDER); }
+
+	[MenuItem("Hungry Dragon/Content/Rewards Manager", false, 103)]
+	public static void ShowManager3() { OpenFile("PF_RewardManager.prefab", SINGLETONS_FOLDER); }
+
+	//--------------------------------------------------- SETTINGS ---------------------------------------------------//
+	[MenuItem("Hungry Dragon/Content/Game Settings", false, 150)]
+	public static void ShowSettings1() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
+
+	//---------------------------------------------------- TOOLS -----------------------------------------------------//
 	/// <summary>
 	/// Regenerate the icon for all the spawners in the scene.
 	/// </summary>
@@ -65,9 +71,7 @@ public class HungryDragonEditorMenu {
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 	}
 
-	//------------------------------------------------------------------//
-	// OTHERS															//
-	//------------------------------------------------------------------//
+	//--------------------------------------------------- OTHERS -----------------------------------------------------//
 	/// <summary>
 	/// Add menu item to be able to open the level editor.
 	/// </summary>
@@ -107,5 +111,19 @@ public class HungryDragonEditorMenu {
 		
 		// Show it
 		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL UTILS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Open and select a file (scriptable object, prefab).
+	/// </summary>
+	/// <param name="_fileName">The name of the file, including extension.</param>
+	/// <param name="_folderPath">The path of folder containing such file, optional. From project's root and ending with a '/' (i.e. "Assets/Resources/MyFolder/").</param>
+	private static void OpenFile(string _fileName, string _folderPath) {
+		// Just find and select the scriptable object
+		Object targetObj = AssetDatabase.LoadMainAssetAtPath(_folderPath + _fileName);
+		EditorUtils.FocusObject(targetObj, true, false, true);
 	}
 }

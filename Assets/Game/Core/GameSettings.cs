@@ -27,6 +27,10 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private float m_energyRequiredToBoost = 25f;
 	public static float energyRequiredToBoost { get { return instance.m_energyRequiredToBoost; }}
 
+	[Separator("Economy")]
+	[SerializeField] private float m_pcPerSecond = 1f;
+	public static float pcPerSecond { get { return instance.m_pcPerSecond; }}
+
 	[Separator("Versioning")]
 	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
 	public static Version internalVersion { get { return instance.m_internalVersion; }}
