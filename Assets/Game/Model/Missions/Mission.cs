@@ -51,6 +51,8 @@ public class Mission {
 	public MissionObjective objective { get { return m_objective; }}
 
 	public int rewardCoins { get { return ComputeRewardCoins(); }}
+	public int removeCostPC { get { return ComputeRemoveCostPC(); }}
+	public int skipCostPC { get { return ComputeSkipCostPC(); }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -88,11 +90,41 @@ public class Mission {
 
 	/// <summary>
 	/// Compute the coins rewarded by completing the mission at the current game state.
+	/// Reward is computed dynamically based on MissionManager.maxRewardPerDifficulty and a formula
+	/// depending on amount of unlocked dragons, etc.
+	/// Reward doesn't depend on the type of mission, just its difficulty.
 	/// </summary>
 	/// <returns>The amount of coins to be given upon completing the mission.</returns>
 	private int ComputeRewardCoins() {
-		// Mission manager takes care of it
-		return MissionManager.ComputeReward(def.difficulty);
+		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		int totalDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY).Count;
+		float multiplier = (1f/(float)totalDragons) * (float)ownedDragons;
+		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)def.difficulty] * multiplier);
+	}
+
+	/// <summary>
+	/// Compute the PC cost of removing this mission (skipping it).
+	/// Cost is computed dynamically based on MissionManager coeficients and a formula
+	/// depending on amount of unlocked dragons, etc.
+	/// </summary>
+	/// <returns>The cost of skipping this mission.</returns>
+	private int ComputeRemoveCostPC() {
+		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		float costPC = (float)ownedDragons * MissionManager.removeMissionPCCoefA + MissionManager.removeMissionPCCoefB;
+		return (int)System.Math.Round(costPC, MidpointRounding.AwayFromZero);	// [AOC] Unity's Mathf round methods round to the even number when .5, we want to round to the upper number instead -_-
+	}
+
+	/// <summary>
+	/// Compute the PC cost of skipping this mission's cooldown timer.
+	/// Cost is computed dynamically based purely on remaining time and global
+	/// time cost formula.
+	/// </summary>
+	/// <returns>The cost of skipping this mission.</returns>
+	private int ComputeSkipCostPC() {
+		// [AOC] TODO!!
+		return 0;
 	}
 
 	//------------------------------------------------------------------//
