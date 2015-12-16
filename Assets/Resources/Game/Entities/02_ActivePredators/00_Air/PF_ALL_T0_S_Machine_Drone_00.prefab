@@ -98,9 +98,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101286}
-  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5000001, w: 0.49999994}
+  m_LocalRotation: {x: -.5, y: .5, z: .500000119, w: .49999994}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100.00001, z: 100.00001}
+  m_LocalScale: {x: 100, y: 100.000008, z: 100.000008}
   m_Children: []
   m_Father: {fileID: 403962}
   m_RootOrder: 1
@@ -110,9 +110,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 161816}
-  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5000001, w: 0.49999994}
+  m_LocalRotation: {x: -.5, y: .5, z: .500000119, w: .49999994}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100.00001, z: 100.00001}
+  m_LocalScale: {x: 100, y: 100.000008, z: 100.000008}
   m_Children: []
   m_Father: {fileID: 403962}
   m_RootOrder: 0
@@ -123,7 +123,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 199742}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.8, y: 14.3, z: 0}
+  m_LocalPosition: {x: -5.80000019, y: 14.3000002, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 403962}
@@ -150,7 +150,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -176,7 +176,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_edibleFromTier: 1
-  m_size: 2.98
+  m_size: 2.98000002
   m_isBig: 0
   m_destroyOnEat: 0
 --- !u!114 &11416070
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_flockAvoidRadiusRange:
     min: 0
     max: 1
-  m_steerForce: 0.2
+  m_steerForce: .200000003
   m_mass: 1
   m_distanceAttenuation: 5
   m_maxSpeed: 5
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
   radius: 2
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
 --- !u!114 &11437320
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -299,7 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
-  m_checkFireTime: 0.25
+  m_checkFireTime: .25
   m_maxHealth: 100
 --- !u!114 &11441374
 MonoBehaviour:
@@ -318,8 +318,8 @@ MonoBehaviour:
     min: 3
     max: 3
   m_idleTime:
-    min: 5
-    max: 5
+    min: 0
+    max: 0
 --- !u!114 &11443594
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -331,8 +331,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 0
-  m_sensorMaxRadius: 0
+  m_sensorMinRadius: 4
+  m_sensorMaxRadius: 8
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11457574
@@ -474,11 +474,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
@@ -506,11 +506,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleTime.min
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleTime.max
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
