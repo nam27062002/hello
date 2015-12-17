@@ -58,6 +58,9 @@ public class MissionObjective {
 	public bool isCompleted { get { return currentValue == (float)targetValue; }}
 	public float progress { get { return currentValue/(float)targetValue; }}
 
+	// State
+	public bool enabled { get; set; }
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
@@ -95,6 +98,9 @@ public class MissionObjective {
 	/// </summary>
 	/// <param name="_newValue">The new value to be set.</param>
 	private void SetValue(float _newValue) {
+		// Skip if not enabled
+		if(!enabled) return;
+
 		// Skip if already completed
 		if(isCompleted) return;
 

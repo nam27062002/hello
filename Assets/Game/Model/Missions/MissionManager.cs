@@ -38,6 +38,14 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed Setup
+	[Comment("Mission Required Dragons To Unlock")]
+	[SerializeField] private int[] m_dragonsToUnlock = new int[(int)Mission.Difficulty.COUNT];
+	public static int[] dragonsToUnlock { get { return instance.m_dragonsToUnlock; }}
+
+	[Comment("Mission Cooldowns (minutes)")]
+	[SerializeField] private int[] m_cooldownPerDifficulty = new int[(int)Mission.Difficulty.COUNT];	// minutes
+	public static int[] cooldownPerDifficulty { get { return instance.m_cooldownPerDifficulty; }}	// minutes
+
 	[Comment("Mission Reward Formula")]
 	[SerializeField] private int[] m_maxRewardPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
 	public static int[] maxRewardPerDifficulty { get { return instance.m_maxRewardPerDifficulty; }}
@@ -55,7 +63,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 
 	// Active missions
 	// [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
-	private Mission[] m_activeMissions = new Mission[(int)Mission.Difficulty.COUNT];
+	private Mission[] m_missions = new Mission[(int)Mission.Difficulty.COUNT];
 
 	// Delegates
 	// Delegate meant for objectives needing an update() call
@@ -70,6 +78,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -77,12 +86,30 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+		// Check missions in cooldown to be unlocked
+		for(int i = 0; i < m_missions.Length; i++) {
+			if(m_missions[i].state == Mission.State.COOLDOWN) {
+				// Has enough time passed for this mission's difficulty?
+				if((DateTime.UtcNow - m_missions[i].cooldownStartTimestamp).TotalMinutes >= m_cooldownPerDifficulty[i]) {
+					// Yes!
+					// Missions can't be activated during a game, mark them as pending
+					// Are we in-game?
+					if(InstanceManager.GetSceneController<GameSceneController>() != null) {
+						m_missions[i].ChangeState(Mission.State.ACTIVATION_PENDING);
+					} else {
+						m_missions[i].ChangeState(Mission.State.ACTIVE);
+					}
+				}
+			}
+		}
+
 		// Propagate to registered listeners
 		OnUpdate();
 	}
@@ -107,12 +134,12 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <param name="_difficulty">The difficulty of the mission to be returned.</param>
 	public static Mission GetMission(Mission.Difficulty _difficulty) {
 		// If there is no mission at the given difficulty, create one
-		if(instance.m_activeMissions[(int)_difficulty] == null) {
+		if(instance.m_missions[(int)_difficulty] == null) {
 			instance.GenerateNewMission(_difficulty);
 		}
 
 		// Done!
-		return instance.m_activeMissions[(int)_difficulty];
+		return instance.m_missions[(int)_difficulty];
 	}
 
 	//------------------------------------------------------------------//
@@ -127,15 +154,21 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// Is mission completed?
 			Mission m = GetMission((Mission.Difficulty)i);
-			if(m.objective.isCompleted) {
+			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				// Give reward
 				UserProfile.AddCoins(m.rewardCoins);
 
 				// Generate new mission
 				m = instance.GenerateNewMission((Mission.Difficulty)i);
 
-				// [AOC] TODO!! Put it on cooldown
-				//m.unlockTimestamp = ;
+				// Put it on cooldown
+				m.ChangeState(Mission.State.COOLDOWN);
+			}
+
+			// Is mission pending activation?
+			else if(m.state == Mission.State.ACTIVATION_PENDING) {
+				// Activate mission
+				m.ChangeState(Mission.State.ACTIVE);
 			}
 		}
 	}
@@ -153,6 +186,26 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 
 		// Dispatch global event
 		Messenger.Broadcast<Mission>(GameEvents.MISSION_REMOVED, GetMission(_difficulty));
+	}
+
+	/// <summary>
+	/// Skip the cooldown of the mission at the given difficulty slot.
+	/// The mission will immediately be set to Active state.
+	/// Doesn't perform any currency transaction, they must be done prior to calling
+	/// this method using the Mission.skipCostPC property.
+	/// Nothing will happen if the mission is not on Cooldown state.
+	/// </summary>
+	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
+	public static void SkipMission(Mission.Difficulty _difficulty) {
+		// Get mission and check that is in cooldown state
+		Mission m = GetMission(_difficulty);
+		if(m == null || m.state != Mission.State.COOLDOWN) return;
+
+		// Change mission to Active state
+		m.ChangeState(Mission.State.ACTIVE);
+
+		// Dispatch global event
+		Messenger.Broadcast<Mission>(GameEvents.MISSION_SKIPPED, GetMission(_difficulty));
 	}
 
 	//------------------------------------------------------------------//
@@ -184,7 +237,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 					idx = 0;
 					loopAllowed = false;
 				} else {
-					DebugUtils.Assert(false, "There are no mission definitions for the requested difficulty " + _difficulty);
+					Debug.Assert(false, "There are no mission definitions for the requested difficulty " + _difficulty);
 					return null;
 				}
 			}
@@ -200,13 +253,21 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		// Create the new mission!
 		Mission newMission = new Mission();
 		newMission.InitFromDefinition(def);
-		m_activeMissions[(int)_difficulty] = newMission;
+		m_missions[(int)_difficulty] = newMission;
+
+		// Check whether the new mission should be locked or not
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		if(ownedDragons < m_dragonsToUnlock[(int)_difficulty]) {
+			newMission.ChangeState(Mission.State.LOCKED);
+		} else {
+			newMission.ChangeState(Mission.State.ACTIVE);	// [AOC] Start active by default, cooldown will be afterwards added if required
+		}
 
 		// Increase generation index - loop if last mission is reached
 		m_generationIdx[(int)_difficulty] = (idx + 1) % DefinitionsManager.missions.Count;
 
 		// Return new mission
-		return m_activeMissions[(int)_difficulty];
+		return m_missions[(int)_difficulty];
 	}
 
 	/// <summary>
@@ -216,9 +277,9 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <param name="_difficulty">The difficulty slot to be cleared.</param>
 	private void ClearMission(Mission.Difficulty _difficulty) {
 		// If there is already a mission at the requested slot, terminate it
-		if(m_activeMissions[(int)_difficulty] != null) {
-			m_activeMissions[(int)_difficulty].Clear();
-			m_activeMissions[(int)_difficulty] = null;	// GC will take care of it
+		if(m_missions[(int)_difficulty] != null) {
+			m_missions[(int)_difficulty].Clear();
+			m_missions[(int)_difficulty] = null;	// GC will take care of it
 		}
 	}
 
@@ -240,12 +301,12 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 				instance.GenerateNewMission((Mission.Difficulty)i);
 			} else {
 				// If the mission was not created, create an empty one now and load its data from persistence
-				if(instance.m_activeMissions[i] == null) {
-					instance.m_activeMissions[i] = new Mission();
+				if(instance.m_missions[i] == null) {
+					instance.m_missions[i] = new Mission();
 				}
 				
 				// Load data into the target mission
-				instance.m_activeMissions[i].Load(_data.activeMissions[i]);
+				instance.m_missions[i].Load(_data.activeMissions[i]);
 			}
 		}
 	}
@@ -272,4 +333,21 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// A new dragon has been acquired.
+	/// </summary>
+	/// <param name="_dragon">The dragon that has just been acquired.</param>
+	private void OnDragonAcquired(DragonData _dragon) {
+		// Check whether any of the missions must be unlocked
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		for(int i = 0; i < m_missions.Length; i++) {
+			// Is the mission locked?
+			if(m_missions[i].state == Mission.State.LOCKED) {
+				// Do we have enough dragons?
+				if(ownedDragons >= m_dragonsToUnlock[i]) {
+					m_missions[i].ChangeState(Mission.State.ACTIVE);
+				}
+			}
+		}
+	}
 }
