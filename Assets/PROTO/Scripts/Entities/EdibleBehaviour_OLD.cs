@@ -55,8 +55,8 @@ public class EdibleBehaviour_OLD : MonoBehaviour {
 	void Start () {
 
 		entity = gameObject.GetComponent<GameEntity>();
-		playerMouth = InstanceManager.player.FindSubObjectTransform("eat");
-		playerHead = InstanceManager.player.FindSubObjectTransform("head");
+		playerMouth = InstanceManager.player.FindTransformRecursive("eat");
+		playerHead = InstanceManager.player.FindTransformRecursive("head");
 	
 		animator = GetComponent<Animator>();
 

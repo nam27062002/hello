@@ -47,11 +47,7 @@ public class HUDStatBar : MonoBehaviour {
 	private void Awake() {
 		// Get external references
 		m_bar = GetComponentInChildren<Slider>();
-
-		GameObject go = gameObject.FindSubObject("TextValue"); 
-		if (go != null) {
-			m_valueTxt = go.GetComponent<Text>();
-		}
+		m_valueTxt = gameObject.FindComponentRecursive<Text>("TextValue");
 	}
 
 	/// <summary>

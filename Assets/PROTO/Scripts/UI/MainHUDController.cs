@@ -175,7 +175,7 @@ public class MainHUDController : MonoBehaviour {
 
 		// Let's add some fun
 		if(_bActivated) {
-			Text furyRushTxt = furyRushAnimator.gameObject.FindSubObject("Fury Rush Label").GetComponent<Text>();
+			Text furyRushTxt = furyRushAnimator.gameObject.FindTransformRecursive("Fury Rush Label").GetComponent<Text>();
 			string[] funnyStrings = {
 				"UNLEASHED!",
 				"ON FIRE!",

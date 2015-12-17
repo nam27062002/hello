@@ -108,8 +108,8 @@ public class FireLightning : DragonBreathBehaviour {
 		particleEnd.transform.localPosition = Vector3.zero;
 		particleEnd.gameObject.SetActive(true);
 
-		mouthPosition = transform.FindSubObjectTransform("eat");
-		headPosition = transform.FindSubObjectTransform("head");
+		mouthPosition = transform.FindTransformRecursive("eat");
+		headPosition = transform.FindTransformRecursive("head");
 
 		fireMask = 1 << LayerMask.NameToLayer("Edible") | 1 << LayerMask.NameToLayer("Burnable");
 		groundMask = 1 << LayerMask.NameToLayer("Ground");

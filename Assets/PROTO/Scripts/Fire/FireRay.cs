@@ -31,8 +31,8 @@ public class FireRay : DragonBreathBehaviour {
 
 		timer = 0f;
 		
-		mouthPosition = transform.FindSubObjectTransform("eat");
-		headPosition = transform.FindSubObjectTransform("head");
+		mouthPosition = transform.FindTransformRecursive("eat");
+		headPosition = transform.FindTransformRecursive("head");
 	
 		rayRender = gameObject.AddComponent<LineRenderer>();
 		rayRender.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
