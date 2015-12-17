@@ -260,6 +260,7 @@ GameObject:
   - 114: {fileID: 11422614}
   - 114: {fileID: 11496704}
   - 114: {fileID: 11456662}
+  - 114: {fileID: 11454566}
   m_Layer: 8
   m_Name: PF_ALL_T0_M_Human_Citizen_00
   m_TagString: Untagged
@@ -726,18 +727,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20d6719d9cb2543b096d365f9f530a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 0
   m_zOffset:
     min: -1
     max: 1
   m_flockAvoidRadiusRange:
-    min: 0
-    max: 1
+    min: 2
+    max: 3
   m_steerForce: 1
   m_mass: 1
   m_distanceAttenuation: 5
-  m_maxSpeed: 3
-  m_maxRunSpeed: 7
+  m_maxSpeed: 4
+  m_maxRunSpeed: 10
   m_slowingRadius: .75
 --- !u!114 &11409122
 MonoBehaviour:
@@ -824,6 +824,18 @@ MonoBehaviour:
   m_idleTime:
     min: 3
     max: 6
+--- !u!114 &11454566
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_faceDirection: 0
 --- !u!114 &11456662
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -903,7 +915,9 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -956,7 +970,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
@@ -1092,7 +1106,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_angleIncrement
@@ -1113,6 +1127,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_typeID
       value: citizen_male
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_flockAvoidRadiusRange.min
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_flockAvoidRadiusRange.max
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
