@@ -56,7 +56,7 @@ public class FogController : MonoBehaviour {
 	}
 
 	void OnDrawGizmosSelected() {
-		Gizmos.color = Color.yellow;
+		Gizmos.color = Color.grey;
 
 		Vector3 skyLine = new Vector3(0, m_skyLine, 0);
 		Gizmos.DrawLine(skyLine + Vector3.left * 500f, skyLine + Vector3.right * 500f);
