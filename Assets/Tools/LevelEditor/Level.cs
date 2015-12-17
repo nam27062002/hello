@@ -78,11 +78,11 @@ namespace LevelEditor {
 			if(_id != DragonId.NONE && _id != DragonId.COUNT) name += _id.ToString();
 
 			// Does the level have a spawn point for this dragon?
-			GameObject spawnPointObj = gameObject.FindSubObject(name);
+			GameObject spawnPointObj = gameObject.FindObjectRecursive(name);
 			if(spawnPointObj == null && _createItIfNotFound) {
 				// No! Create one!
 				// Get the spawners container object (or create it if not found)
-				GameObject spawnContainerObj = gameObject.FindSubObject(DRAGON_SPAWN_POINTS_CONTAINER_NAME);
+				GameObject spawnContainerObj = gameObject.FindObjectRecursive(DRAGON_SPAWN_POINTS_CONTAINER_NAME);
 				if(spawnContainerObj == null) {
 					spawnContainerObj = new GameObject(DRAGON_SPAWN_POINTS_CONTAINER_NAME);
 					spawnContainerObj.transform.SetParent(this.gameObject.transform, true);

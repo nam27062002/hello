@@ -31,32 +31,16 @@ public class PopupMissionsPill : MonoBehaviour {
 	[SerializeField] private Mission.Difficulty m_missionDifficulty = Mission.Difficulty.EASY;
 	[SerializeField] private bool m_showProgressForSingleRunMissions = false;	// It doesn't make sense to show progress for single-run missions in the menu
 	
-	// References
+	// References - keep references to objects that are often accessed
 	[Separator]
 	[SerializeField] private GameObject m_lockedObj = null;
 	[SerializeField] private GameObject m_cooldownObj = null;
 	[SerializeField] private GameObject m_activeObj = null;
 
 	// Cooldown group
-	[Separator]
-	[SerializeField] private Text m_cooldownText = null;
-	[SerializeField] private Slider m_cooldownBar = null;
-
-	[Space(5)]
-	[SerializeField] private Text m_skipCostText = null;	// Optional
-
-	// Active group
-	[Separator]
-	[SerializeField] private Text m_descText = null;
-
-	[Space(5)]
-	[SerializeField] private GameObject m_progressGroup = null;
-	[SerializeField] private Text m_progressText = null;
-	[SerializeField] private Slider m_progressBar = null;
-
-	[Space(5)]
-	[SerializeField] private Text m_rewardText = null;
-	[SerializeField] private Text m_removeCostText = null;	// Optional
+	private Text m_cooldownText = null;
+	private Slider m_cooldownBar = null;
+	private Text m_skipCostText = null;	// Optional
 
 	// Data
 	private Mission m_mission = null;
@@ -73,8 +57,15 @@ public class PopupMissionsPill : MonoBehaviour {
 		Debug.Assert(m_cooldownObj != null, "Required reference!");
 		Debug.Assert(m_activeObj != null, "Required reference!");
 
+		// Find other references
+		// [AOC] Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
+		m_cooldownText = m_cooldownObj.FindComponentRecursive<Text>("CooldownTimeText");
+		m_cooldownBar = m_cooldownObj.FindComponentRecursive<Slider>("CooldownBar");
+		m_skipCostText = m_cooldownObj.FindComponentRecursive<Text>("TextCost");
+
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.AddListener<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, OnMissionCooldownFinished);
 	}
 
 	/// <summary>
@@ -83,6 +74,7 @@ public class PopupMissionsPill : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.RemoveListener<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, OnMissionCooldownFinished);
 	}
 
 	/// <summary>
@@ -98,7 +90,9 @@ public class PopupMissionsPill : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update time-dependant fields
-		RefreshCooldown();
+		if(m_mission.state == Mission.State.COOLDOWN) {
+			RefreshCooldown();
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -109,48 +103,95 @@ public class PopupMissionsPill : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Get mission
-		m_mission = MissionManager.GetMission(m_missionDifficulty);
-		if(m_mission == null) return;
+		if(m_mission == null) {
+			m_mission = MissionManager.GetMission(m_missionDifficulty);
+			if(m_mission == null) return;
+		}
 
 		// Select which object should be visible
-		// [AOC] TODO!! We still don't have the locked and cooldown implemented
-		m_lockedObj.SetActive(false);
-		m_cooldownObj.SetActive(false);
-		m_activeObj.SetActive(true);
+		m_lockedObj.SetActive(m_mission.state == Mission.State.LOCKED);
+		m_cooldownObj.SetActive(m_mission.state == Mission.State.COOLDOWN || m_mission.state == Mission.State.ACTIVATION_PENDING);
+		m_activeObj.SetActive(m_mission.state == Mission.State.ACTIVE);
 
 		// Update visuals
-		RefreshActive();
-		RefreshCooldown();
+		switch(m_mission.state) {
+			case Mission.State.LOCKED: 				RefreshLocked(); 			break;
+			case Mission.State.COOLDOWN: 			RefreshCooldown(); 			break;
+			case Mission.State.ACTIVATION_PENDING: 	RefreshActivationPending(); break;
+			case Mission.State.ACTIVE: 				RefreshActive(); 			break;
+		}
 	}
 
 	/// <summary>
 	/// Refresh active state object.
 	/// </summary>
 	private void RefreshActive() {
-		if(m_activeObj.activeSelf) {
-			m_descText.text = m_mission.objective.GetDescription();
+		// Mission description
+		m_activeObj.FindComponentRecursive<Text>("MissionText").text = m_mission.objective.GetDescription();
 
-			// Optionally hide progress for singlerun missions
-			bool show = !m_mission.def.singleRun || m_showProgressForSingleRunMissions;
-			m_progressGroup.SetActive(show);
-			if(show) {
-				m_progressText.text = System.String.Format("{0}/{1}", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
-				m_progressBar.value = m_mission.objective.progress;
-			}
-
-			m_rewardText.text = StringUtils.FormatNumber(m_mission.rewardCoins);
-
-			if(m_removeCostText != null) m_removeCostText.text = StringUtils.FormatNumber(m_mission.removeCostPC);
+		// Progress
+		// Optionally hide progress for singlerun missions
+		bool show = !m_mission.def.singleRun || m_showProgressForSingleRunMissions;
+		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
+		if(show) {
+			m_activeObj.FindComponentRecursive<Text>("ProgressText").text = System.String.Format("{0}/{1}", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
+			m_activeObj.FindComponentRecursive<Slider>("ProgressBar").value = m_mission.objective.progress;
 		}
+
+		// Reward
+		m_activeObj.FindComponentRecursive<Text>("RewardText").text = StringUtils.FormatNumber(m_mission.rewardCoins);
+
+		// Remove cost
+		// [AOC] The pill might not have it (e.g. in-game pill)
+		Text removeCostText = m_activeObj.FindComponentRecursive<Text>("TextCost");
+		if(removeCostText != null) removeCostText.text = StringUtils.FormatNumber(m_mission.removeCostPC);
 	}
 
 	/// <summary>
 	/// Refresh the cooldown state object.
 	/// </summary>
 	private void RefreshCooldown() {
-		if(m_cooldownObj.activeSelf) {
-			// [AOC] TODO!! Update cooldown time text, bar and cost to skip
-			if(m_skipCostText != null) m_skipCostText.text = StringUtils.FormatNumber(m_mission.skipCostPC);
+		// Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
+		// Cooldown remaining time
+		m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+
+		// Cooldown bar
+		m_cooldownBar.normalizedValue = 1f - m_mission.cooldownProgress;	// [AOC] Reverse bar
+
+		// Skip cost
+		// [AOC] The pill might not have it (e.g. in-game pill)
+		if(m_skipCostText != null) m_skipCostText.text = StringUtils.FormatNumber(m_mission.skipCostPC);
+	}
+
+	/// <summary>
+	/// Refresh the activation pending state object.
+	/// </summary>
+	private void RefreshActivationPending() {
+		// Info text
+		m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = Localization.Localize("Mission will be available for next game!");	// [AOC] HARDCODED!!
+
+		// Cooldown remaining time
+		m_cooldownText.text = "";
+
+		// Cooldown bar
+		m_cooldownBar.normalizedValue = 0f;	// [AOC] Reverse bar
+
+		// Skip cost - shouldn't exist in ACTIVATION_PENDING state, but just in case
+		// [AOC] The pill might not have it (e.g. in-game pill)
+		if(m_skipCostText != null) m_skipCostText.text = "";
+	}
+
+	/// <summary>
+	/// Refresh the locked state object.
+	/// </summary>
+	private void RefreshLocked() {
+		// Text
+		int dragonsOwned = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		int remainingDragonsToUnlock = MissionManager.dragonsToUnlock[(int)m_missionDifficulty] - dragonsOwned;
+		if(remainingDragonsToUnlock == 1) {
+			m_lockedObj.FindComponentRecursive<Text>("LockedText").text = Localization.Localize("LOCKED!\nOwn 1 more dragon to unlock this mission");	// [AOC] HARDCODED!!
+		} else {
+			m_lockedObj.FindComponentRecursive<Text>("LockedText").text = Localization.Localize("LOCKED!\nOwn {0} more dragons to unlock this mission", StringUtils.FormatNumber(remainingDragonsToUnlock));	// [AOC] HARDCODED!!
 		}
 	}
 
@@ -184,7 +225,17 @@ public class PopupMissionsPill : MonoBehaviour {
 		// Ignore if mission not initialized
 		if(m_mission == null) return;
 
-		// [AOC] TODO!!
+		// Make sure we have enough PC to remove the mission
+		int costPC = m_mission.skipCostPC;
+		if(UserProfile.pc >= costPC) {
+			// Do it!
+			UserProfile.AddPC(-costPC);
+			MissionManager.SkipMission(m_missionDifficulty);
+			PersistenceManager.Save();
+		} else {
+			// Open shop popup
+			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		}
 	}
 
 	/// <summary>
@@ -195,6 +246,17 @@ public class PopupMissionsPill : MonoBehaviour {
 	private void OnMissionRemoved(Mission _newMission) {
 		if(_newMission.def.difficulty == m_missionDifficulty) {
 			m_mission = _newMission;
+			Refresh();
+		}
+	}
+
+	/// <summary>
+	/// A mission cooldown has finished. If it matches the difficulty of this pill,
+	/// refresh visuals. Works both for skipped missions and real cooldown timer endings.
+	/// </summary>
+	/// <param name="_mission">The mission that has finished its cooldown.</param>
+	private void OnMissionCooldownFinished(Mission _mission) {
+		if(_mission.def.difficulty == m_missionDifficulty) {
 			Refresh();
 		}
 	}

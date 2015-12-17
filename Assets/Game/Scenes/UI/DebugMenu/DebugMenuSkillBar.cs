@@ -92,7 +92,7 @@ public class DebugMenuSkillBar : MonoBehaviour {
 
 		// Level up button
 		m_levelUpButton.interactable = skillData.CanUnlockNextLevel();
-		Text m_text = m_levelUpButton.FindSubObject("Text").GetComponent<Text>();
+		Text m_text = m_levelUpButton.FindTransformRecursive("Text").GetComponent<Text>();
 		if(skillData.level == skillData.lastLevel) {
 			m_text.text = "Max";	// [AOC] HARDCODED!!
 		} else {
