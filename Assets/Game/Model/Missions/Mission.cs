@@ -212,8 +212,11 @@ public class Mission {
 		// Restore state
 		m_state = _data.state;
 
-		// Restore progress
-		if(m_objective != null) m_objective.currentValue = _data.currentValue;
+		// Restore objective
+		if(m_objective != null) {
+			m_objective.currentValue = _data.currentValue;
+			m_objective.enabled = (m_state == State.ACTIVE);
+		}
 
 		// Restore cooldown timestamp
 		m_cooldownStartTimestamp = _data.cooldownStartTimestamp;
