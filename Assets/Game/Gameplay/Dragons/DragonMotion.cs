@@ -71,8 +71,8 @@ public class DragonMotion : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 
-	public Transform tongue { get { return transform.FindSubObjectTransform("Fire_Dummy"); } }
-	public Transform head { get { return transform.FindSubObjectTransform("Dragon_Head"); } }
+	public Transform tongue { get { return transform.FindTransformRecursive("Fire_Dummy"); } }
+	public Transform head { get { return transform.FindTransformRecursive("Dragon_Head"); } }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

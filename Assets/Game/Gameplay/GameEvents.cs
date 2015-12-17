@@ -48,7 +48,10 @@ public static class GameEvents {
 	public const string MENU_LEVEL_SELECTED = "MENU_LEVEL_SELECTED";	// params: int _selectedLevel
 
 	// Mission events
-	public const string MISSION_COMPLETED = "MISSION_COMPLETED";				// params: Mission _mission
-	public const string MISSION_REMOVED = "MISSION_REMOVED";					// params: Mission _newMission
-	public const string MISSION_SKIPPED = "MISSION_SKIPPED";					// params: Mission _mission
+	public const string MISSION_COMPLETED = "MISSION_COMPLETED";					// params: Mission _mission
+	public const string MISSION_REMOVED = "MISSION_REMOVED";						// params: Mission _newMission
+	public const string MISSION_SKIPPED = "MISSION_SKIPPED";						// params: Mission _mission
+	public const string MISSION_UNLOCKED = "MISSION_UNLOCKED";						// params: Mission _mission
+	public const string MISSION_COOLDOWN_FINISHED = "MISSION_COOLDOWN_FINISHED";	// params: Mission _mission
+	public const string MISSION_STATE_CHANGED = "MISSION_STATE_CHANGED";			// params: Mission _mission, Mission.State _oldState, Mission.State _newState
 }

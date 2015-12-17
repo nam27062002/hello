@@ -29,7 +29,7 @@ public class SoldierGunBehaviour : MonoBehaviour {
 	void Start () {
 
 		player = GameObject.Find ("Player");
-		cannon = transform.FindSubObjectTransform("gun_0");
+		cannon = transform.FindTransformRecursive("gun_0");
 
 		damageDealer = GetComponent<DamageDealer_OLD>();
 	}

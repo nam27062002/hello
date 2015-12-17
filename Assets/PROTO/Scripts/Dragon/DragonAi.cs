@@ -70,7 +70,7 @@ public class DragonAi : MonoBehaviour {
 		animator = transform.FindChild("view").GetComponent<Animator>();
 		orientation = GetComponent<DragonOrientation>();
 		edible = GetComponent<EdibleBehaviour_OLD>();
-		mouth = transform.FindSubObjectTransform("eat");
+		mouth = transform.FindTransformRecursive("eat");
 		pos = transform.position;
 		impulseMulti = 4f;
 		

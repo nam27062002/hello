@@ -39,6 +39,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4c367149594f443aa540db1ff6cea8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_dragonsToUnlock: 000000000200000004000000
+  m_cooldownPerDifficulty: 0f0000003c000000f0000000
   m_maxRewardPerDifficulty: e8030000d0070000b80b0000
   m_removeMissionPCCoefA: 0.5
   m_removeMissionPCCoefB: 1
@@ -60,6 +62,26 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_maxRewardPerDifficulty.Array.data[2]
       value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragonsToUnlock.Array.data[1]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dragonsToUnlock.Array.data[2]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_cooldownPerDifficulty.Array.data[0]
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_cooldownPerDifficulty.Array.data[1]
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_cooldownPerDifficulty.Array.data[2]
+      value: 240
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

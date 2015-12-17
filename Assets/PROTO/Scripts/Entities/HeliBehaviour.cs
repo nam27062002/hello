@@ -47,8 +47,8 @@ public class HeliBehaviour : MonoBehaviour {
 		actionRadius = 600*600;
 
 		// Rotors
-		mMainRotor = this.gameObject.FindSubObject ("helicopter-rotor");
-		mTailRotor = this.gameObject.FindSubObject ("helicopter-tail-rotor");
+		mMainRotor = this.gameObject.FindObjectRecursive ("helicopter-rotor");
+		mTailRotor = this.gameObject.FindObjectRecursive ("helicopter-tail-rotor");
 	}
 	
 	void Update () {
@@ -217,7 +217,7 @@ public class HeliBehaviour : MonoBehaviour {
 			explosion.Explode();
 			
 			// Hide mesh and destroy object after all explosions have been triggered
-			GameObject heliObj = this.gameObject.FindSubObject("helicopter");
+			GameObject heliObj = this.gameObject.FindObjectRecursive("helicopter");
 			heliObj.SetActive(false);
 			StartCoroutine(DelayedDestruction(explosion.delayRange.max));
 		} else {

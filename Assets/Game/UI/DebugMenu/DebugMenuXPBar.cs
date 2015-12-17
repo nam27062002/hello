@@ -33,7 +33,7 @@ public class DebugMenuXPBar : MonoBehaviour {
 	private void Awake() {
 		// Get external references
 		m_bar = GetComponentInChildren<Slider>();
-		m_valueText = gameObject.FindSubObject("TextValue").GetComponent<Text>();
+		m_valueText = gameObject.FindTransformRecursive("TextValue").GetComponent<Text>();
 	}
 
 	/// <summary>

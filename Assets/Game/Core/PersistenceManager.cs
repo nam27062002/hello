@@ -96,6 +96,7 @@ public static class PersistenceManager {
 		if(_data == null) return;
 
 		// Restore loaded values
+		// Order is relevant!
 		// Last save timestamp
 		m_saveTimestamp = _data.timestamp;
 		
