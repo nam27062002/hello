@@ -15,6 +15,8 @@ public class DragonOrientation : MonoBehaviour {
 	bool m_turningRight;
 	bool m_turningLeft;
 
+	float m_turningSpeed;
+
 	enum State{
 
 		PLAYING,
@@ -32,6 +34,9 @@ public class DragonOrientation : MonoBehaviour {
 		m_targetRotation = transform.rotation;
 		m_rotation = transform.rotation;
 		m_direction = Vector3.right;
+
+		// TODO (miguel): This should come from dragon setup
+		m_turningSpeed = 8.0f; 
 	}
 	
 	// Update is called once per frame
@@ -39,7 +44,7 @@ public class DragonOrientation : MonoBehaviour {
 	
 		if (state == State.PLAYING) {
 
-			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, 0.12f);
+			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * m_turningSpeed);
 
 			float angle = Quaternion.Angle(m_rotation, m_targetRotation);
 			if (m_turningRight) {
