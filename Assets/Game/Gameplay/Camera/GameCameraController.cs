@@ -203,6 +203,18 @@ public class GameCameraController : MonoBehaviour {
 
 	}
 
+	//------------------------------------------------------------------//
+	// Bounds															//
+	//------------------------------------------------------------------//
+
+	public bool IsInsideActivationArea(Vector3 _point) {
+		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
+	}
+
+	public bool IsInsideDeactivationArea(Vector3 _point) {
+		return !m_deactivation.Contains(_point);
+	}
+
 	// update camera bounds for Z = 0, this can change with dinamic zoom in/out animations
 	private void UpdateFrustumBounds() {
 		float frustumHeight = 2.0f * Mathf.Abs(transform.position.z) * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);

@@ -36,6 +36,7 @@ public class Spawner : MonoBehaviour {
 	private float m_respawnTimer;
 	private uint m_respawnCount;
 
+	private GameCameraController m_camera;
 	
 	//-----------------------------------------------
 	// Methods
@@ -44,6 +45,8 @@ public class Spawner : MonoBehaviour {
 	protected virtual void Start () {		
 		PoolManager.CreatePool(m_entityPrefab);
 		m_entities = new GameObject[m_quantity.max];
+
+		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
 		m_area = GetArea();
 	}
@@ -98,10 +101,7 @@ public class Spawner : MonoBehaviour {
 						m_respawnTimer = 0;
 					}
 				} else {
-
-					bool canRespawn = true; // ask camera
-
-					if (canRespawn) {
+					if (m_camera.IsInsideActivationArea(transform.position)) {
 						Spawn();
 						m_respawnTimer = m_spawnTime.GetRandom();
 					}
