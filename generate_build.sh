@@ -4,7 +4,7 @@
 BRANCH="feature/builder_script"
 BUILD_ANDROID=false
 BUILD_IOS=true
-INCREASE_VERSION_NUMBER=true
+INCREASE_VERSION_NUMBER=false
 CREATE_TAG=false
 GAME_NAME="Dragon"
 
@@ -104,7 +104,7 @@ if $BUILD_IOS; then
     xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 
     xcodebuild archive -project $PROJECT_NAME -configuration Release -scheme "Unity-iPhone" -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
     rm "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"    # just in case
-    xcodebuild -exportArchive -exportFormat IPA -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" -exportPath "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"  -exportProvisioningProfile "${PROVISIONING_PROFILE}" #-exportSigningIdentity "${SIGNING_ID}"
+    xcodebuild -exportArchive -exportFormat IPA -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" -exportPath "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"  -exportProvisioningProfile "${PROVISIONING_PROFILE}" -exportOptionsPlist "${SCRIPT_PATH}/xcode/Info.plist"
 
 fi
 
