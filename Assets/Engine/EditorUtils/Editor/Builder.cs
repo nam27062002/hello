@@ -83,11 +83,15 @@ public class Builder : MonoBehaviour
 		GameSettings.internalVersion.patch++;
 		GameSettings.iOSVersion.patch++;
 		GameSettings.androidVersion.patch++;
+		EditorUtility.SetDirty( GameSettings.instance);
+		AssetDatabase.SaveAssets();
 	}
 	
 	[MenuItem ("Build/Increase Android Version Code")]
 	private static void IncreaseAndroidVersionCode()
 	{
 		GameSettings.androidVersionCode++;
+		EditorUtility.SetDirty( GameSettings.instance);
+		AssetDatabase.SaveAssets();
 	}
 }
