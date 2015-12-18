@@ -110,11 +110,9 @@ fi
 
 # commit project changes
 echo "Committing changes"
-#git add "${SCRIPT_PATH}/Assets/Resources/AndroidVersionCode.txt"
-#git add "${SCRIPT_PATH}/Assets/Resources/version.txt"
-#git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
-#git commit -m "Version Changed To ${BUNDLE_ID} and Android Version Code Increased"
-#git push origin ${BRANCH}
+git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettigns.asset"
+git commit -m "Version Changed and Android Version Code Increased"
+git push origin ${BRANCH}
 
 if $CREATE_TAG; then
     # GENERATE TAG
