@@ -4,8 +4,8 @@
 BRANCH="feature/builder_script"
 BUILD_ANDROID=false
 BUILD_IOS=true
-INCREASE_VERSION_NUMBER=false
-CREATE_TAG=false
+INCREASE_VERSION_NUMBER=true
+CREATE_TAG=true
 GAME_NAME="hd"
 
 # iOS Code Sign
