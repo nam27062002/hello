@@ -134,7 +134,7 @@ if $BUILD_IOS; then
     cp "${SCRIPT_PATH}/ipas/${PROD_IPA_FILE}" "server/"
 fi
 if $BUILD_ANDROID; then
-    cp "${SCRIPT_PATH}/ss*.apk" "server/"
+    cp "${SCRIPT_PATH}/*.apk" "server/"
 fi
 umount server
 rmdir server
