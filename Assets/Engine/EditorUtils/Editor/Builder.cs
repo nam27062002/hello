@@ -21,7 +21,7 @@ public class Builder : MonoBehaviour
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon";
 	const string m_iOSSymbols = "";
 
-	const string m_apkName = "Dragon";
+	const string m_apkName = "hd_";
 	const string m_AndroidSymbols = "";
 
 	[MenuItem ("Build/IOs")]
@@ -36,7 +36,7 @@ public class Builder : MonoBehaviour
 		// Generate project		
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, m_iOSSymbols);
-		PlayerSettings.bundleVersion = GameSettings.iOSVersion.ToString();
+		// PlayerSettings.bundleVersion = GameSettings.iOSVersion.ToString();
 		PlayerSettings.iOS.buildNumber = GameSettings.internalVersion.ToString();
 
 		// Build
@@ -47,7 +47,7 @@ public class Builder : MonoBehaviour
 		// Restore 
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, oldSymbols);
-		PlayerSettings.bundleVersion = oldVersion;
+		// PlayerSettings.bundleVersion = oldVersion;
 		PlayerSettings.iOS.buildNumber = oldBuildNumber;
 	}
 	
@@ -63,26 +63,24 @@ public class Builder : MonoBehaviour
 		// Build
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, m_AndroidSymbols);
-		PlayerSettings.bundleVersion = GameSettings.androidVersion.ToString();
+		// PlayerSettings.bundleVersion = GameSettings.androidVersion.ToString();
 		PlayerSettings.Android.bundleVersionCode = GameSettings.androidVersionCode;
 
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
-		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.androidVersion.ToString() + "_" + GameSettings.androidVersionCode.ToString() + ".apk");
+		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion.ToString() + ":" + GameSettings.androidVersionCode.ToString() + "aaaammdd" + ".apk");
 		BuildPipeline.BuildPlayer(m_scenes, stagePath, BuildTarget.Android, BuildOptions.None);
 
 		// Restore Player Settings
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, oldSymbols);
-		PlayerSettings.bundleVersion = oldVersion;
+		// PlayerSettings.bundleVersion = oldVersion;
 		PlayerSettings.Android.bundleVersionCode = oldVersionCode;
 	}
 
-	[MenuItem ("Build/Increase Patch Version Number")]
-	private static void IncreasePatchVersionNumber()
+	[MenuItem ("Build/Increase Internal Version Number")]
+	private static void IncreaseInternalVersionNumber()
 	{
 		GameSettings.internalVersion.patch++;
-		GameSettings.iOSVersion.patch++;
-		GameSettings.androidVersion.patch++;
 		EditorUtility.SetDirty( GameSettings.instance);
 		AssetDatabase.SaveAssets();
 	}
@@ -93,5 +91,13 @@ public class Builder : MonoBehaviour
 		GameSettings.androidVersionCode++;
 		EditorUtility.SetDirty( GameSettings.instance);
 		AssetDatabase.SaveAssets();
+	}
+
+	[MenuItem ("Build/Output Version")]
+	private static void OutputVersion()
+	{
+		StreamWriter sw = File.CreateText("outputVersion.txt");
+		sw.WriteLine( GameSettings.internalVersion.ToString() );
+		sw.Close();
 	}
 }

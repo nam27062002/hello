@@ -6,7 +6,7 @@ BUILD_ANDROID=false
 BUILD_IOS=true
 INCREASE_VERSION_NUMBER=false
 CREATE_TAG=false
-GAME_NAME="Dragon"
+GAME_NAME="hd"
 
 # iOS Code Sign
 PROVISIONING_PROFILE="iOS Team Provisioning Profile: *"
@@ -71,14 +71,17 @@ fi
 git pull origin $BRANCH
 
 if $INCREASE_VERSION_NUMBER; then
-echo "Increasing version numbers"
+echo "Increasing version number"
 #Increase Version Number
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreasePatchVersionNumber -projectPath $SCRIPT_PATH -quit -buildTarget ios
-#Increase Android Version Code
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseAndroidVersionCode -projectPath $SCRIPT_PATH -quit -buildTarget ios
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseInternalVersionNumber -projectPath $SCRIPT_PATH -quit -buildTarget ios
 fi
 
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
+
+
 if $BUILD_ANDROID; then
+#Increase Android Version Code
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseAndroidVersionCode -projectPath $SCRIPT_PATH -quit -buildTarget android
     #GENERATE APKS
     echo "Generating APKs"
     rm "${SCRIPT_PATH}/*.apk"    # just in case
@@ -98,7 +101,7 @@ if $BUILD_IOS; then
     echo "Archiving"
     BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${GAME_NAME}_${BUNDLE_ID}.xcarchive"
-    STAGE_IPA_FILE="${GAME_NAME}_${BUNDLE_ID}.ipa"
+    STAGE_IPA_FILE="${GAME_NAME}_${BUNDLE_ID}_aaaammdd.ipa"
     PROJECT_NAME="${SCRIPT_PATH}/xcode/Unity-iPhone.xcodeproj"
 
     xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 
@@ -108,17 +111,19 @@ if $BUILD_IOS; then
     mv "${SCRIPT_PATH}/ipas/Unity-iPhone.ipa" "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"
 fi
 
+VERSION_ID="$(cat outputVersion.txt)"
+
 # commit project changes
 echo "Committing changes"
 git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettigns.asset"
-git commit -m "Version Changed and Android Version Code Increased"
+git commit -m "Automatic Buid. Version ${VERSION_ID}"
 git push origin ${BRANCH}
 
 if $CREATE_TAG; then
     # GENERATE TAG
-    git tag $BUNDLE_ID
+    git tag ${VERSION_ID}
     # Share tag
-    git push origin $BUNDLE_ID
+    git push origin ${VERSION_ID}
 fi
 
 # SEND TO SAMBA SERVER
