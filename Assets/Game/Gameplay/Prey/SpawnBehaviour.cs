@@ -28,9 +28,11 @@ public class SpawnBehaviour : MonoBehaviour {
 
 	void LateUpdate() {
 		if (m_camera.IsInsideDeactivationArea(transform.position)) {
-			m_spawner.RemoveEntity(gameObject, false);
-			m_spawner = null;
-			gameObject.SetActive(false);
+			if (m_spawner) {
+				m_spawner.RemoveEntity(gameObject, false);
+				m_spawner = null;
+				gameObject.SetActive(false);
+			}
 		}
 	}
 
