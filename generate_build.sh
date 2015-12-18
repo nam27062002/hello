@@ -115,7 +115,7 @@ VERSION_ID="$(cat outputVersion.txt)"
 
 # commit project changes
 echo "Committing changes"
-git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettigns.asset"
+git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
 git commit -m "Automatic Buid. Version ${VERSION_ID}"
 git push origin ${BRANCH}
 
