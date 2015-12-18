@@ -161,9 +161,8 @@ public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBe
 					m_instance = singletonObj.AddComponent<T>();
 				}
 				
-				// Attach the singleton object as child of the Singletons container to keep the hierarchy clean
+				// Attach the singleton object as child of the Singletons container to make it have the DontDestroyOnLoad flag and to keep the hierarchy clean
 				singletonObj.transform.SetParent(containerObj.transform, false);
-				GameObject.DontDestroyOnLoad(singletonObj);	// [AOC] Shouldn't be needed since we will attach it as child of the singleton's container.
 				
 				// Instance has been created and stored, unlock instance creation
 				m_state = Singleton.EState.READY;
