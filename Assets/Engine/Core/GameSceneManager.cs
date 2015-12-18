@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class SceneManager : SingletonMonoBehaviour<SceneManager> {
+public class GameSceneManager : SingletonMonoBehaviour<GameSceneManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

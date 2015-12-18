@@ -40,7 +40,7 @@ public class SceneController : MonoBehaviour {
 	/// </summary>
 	protected virtual void Awake() {
 		// If it's the first scene being loaded and it can't run standalone, restart the game flow
-		if((SceneManager.prevScene == "") && !m_standaloneScene) {
+		if((GameSceneManager.prevScene == "") && !m_standaloneScene) {
 			FlowManager.Restart();
 		}
 

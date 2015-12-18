@@ -8,7 +8,9 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.IO;
 
 //----------------------------------------------------------------------//
@@ -24,6 +26,7 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		private static readonly string EDITOR_SCENE_PATH = "Assets/Tools/LevelEditor/SC_LevelEditor.unity";
+		private static readonly string EDITOR_SCENE_FILE = "SC_LevelEditor.unity";
 
 		public class Styles {
 			public GUIStyle groupListStyle = null;	// Option style for a SelectionGrid element
@@ -98,6 +101,9 @@ namespace LevelEditor {
 		/// The window has been disabled - similar to the destructor.
 		/// </summary>
 		public void OnDisable() {
+			// Remove editor scene
+			CloseLevelEditorScene();
+
 			// Unsubscribe from the event
 			EditorApplication.playmodeStateChanged -= OnPlayModeChanged;
 
@@ -121,6 +127,9 @@ namespace LevelEditor {
 		/// Called less times as if it was OnGUI/Update
 		/// </summary>
 		public void OnInspectorUpdate() {
+			// Make sure level editor scene is open
+			OpenLevelEditorScene();
+
 			// Force repainting while loading asset previews
 			if(AssetPreview.IsLoadingAssetPreviews()) {
 				Repaint();
@@ -147,25 +156,24 @@ namespace LevelEditor {
 		}
 
 		/// <summary>
-		/// Load all the stuff specific from the level editor. If already loaded, it will be reloaded.
+		/// Load the level editor scene additively, provided it's not already loaded.
 		/// </summary>
-		public void LoadLevelEditorStuff() {
-			// Make sure we don't have it twice
-			UnloadLevelEditorStuff();
-			
-			// Load it as an additive scene into the current one
-			EditorApplication.OpenSceneAdditive(EDITOR_SCENE_PATH);
+		public void OpenLevelEditorScene() {
+			// If editor scene was not loaded, do it
+			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
+			if(levelEditorScene == null || !levelEditorScene.isLoaded) {
+				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
+			}
 		}
 		
 		/// <summary>
 		/// Unloads the level editor specific stuff.
 		/// </summary>
-		public void UnloadLevelEditorStuff() {
-			// Just destroy all objects with the level editor tag
-			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
-			for(int i = 0; i < editorStuff.Length; i++) {
-				GameObject.DestroyImmediate(editorStuff[i]);
-				editorStuff[i] = null;
+		public void CloseLevelEditorScene() {
+			// Just do it
+			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
+			if(levelEditorScene != null) {
+				bool success = EditorSceneManager.CloseScene(levelEditorScene, true);
 			}
 		}
 
@@ -276,11 +284,7 @@ namespace LevelEditor {
 			Init();
 
 			// Make sure we have the level editor stuff loaded
-			// This could be quite hardcore on performance, maybe do it less frequently
-			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
-			if(editorStuff.Length == 0) {
-				LoadLevelEditorStuff();
-			}
+			OpenLevelEditorScene();
 
 			// Force a repaint
 			Repaint();
