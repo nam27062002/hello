@@ -9,8 +9,8 @@ CREATE_TAG=false
 GAME_NAME="Dragon"
 
 # iOS Code Sign
-PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.sandstormdev"
-PROVISIONING_PROFILE_UUID="8370fe09-5b48-4e0c-9d91-b32a1ff8b26e"
+PROVISIONING_PROFILE="iOS Team Provisioning Profile:*"
+PROVISIONING_PROFILE_UUID="ed92bf60-ed3c-463e-aaa0-91b4d854b238"
 SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
 
 # SMB Settings
