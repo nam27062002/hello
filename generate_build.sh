@@ -105,7 +105,7 @@ if $BUILD_IOS; then
     xcodebuild archive -project $PROJECT_NAME -configuration Release -scheme "Unity-iPhone" -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
     rm "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"    # just in case
     xcodebuild -exportArchive -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" -exportPath "${SCRIPT_PATH}/ipas/" -exportOptionsPlist "${SCRIPT_PATH}/xcode/Info.plist"
-    mv "${SCRIPT_PATH}/ipas/*.ipa" "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"
+    mv "${SCRIPT_PATH}/ipas/Unity-iPhone.ipa" "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"
 fi
 
 # commit project changes
