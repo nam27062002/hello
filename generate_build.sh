@@ -1,12 +1,22 @@
 #!/bin/Bash
 # This scripts generates xcode_stage and xcode_prod projects and generates the ipa files
 
-BRANCH="release/0.28"
+BRANCH="feature/builder_script"
 BUILD_ANDROID=false
 BUILD_IOS=true
 INCREASE_VERSION_NUMBER=true
-CREATE_TAG=true
+CREATE_TAG=false
 GAME_NAME="Dragon"
+
+# iOS Code Sign
+PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.sandstormdev"
+PROVISIONING_PROFILE_UUID="8370fe09-5b48-4e0c-9d91-b32a1ff8b26e"
+SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
+
+# SMB Settings
+SMB_USER="srv_acc_bcn_jenkins"
+SMB_PASS="Lm0%2956jkR%23Tg"
+SMB_FOLDER="BCNStudio/QA/HungryDragon"
 
 USAGE="usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false]"
 
@@ -81,9 +91,6 @@ if $BUILD_IOS; then
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
     # GENERATE ARCHIVES AND IPAS
-    PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.sandstormdev"
-    PROVISIONING_PROFILE_UUID="8370fe09-5b48-4e0c-9d91-b32a1ff8b26e"
-    SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
     mkdir "${SCRIPT_PATH}/archives/"
     mkdir "${SCRIPT_PATH}/ipas/"
 
@@ -103,11 +110,11 @@ fi
 
 # commit project changes
 echo "Committing changes"
-git add "${SCRIPT_PATH}/Assets/Resources/AndroidVersionCode.txt"
-git add "${SCRIPT_PATH}/Assets/Resources/version.txt"
-git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
-git commit -m "Version Changed To ${BUNDLE_ID} and Android Version Code Increased"
-git push origin ${BRANCH}
+#git add "${SCRIPT_PATH}/Assets/Resources/AndroidVersionCode.txt"
+#git add "${SCRIPT_PATH}/Assets/Resources/version.txt"
+#git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
+#git commit -m "Version Changed To ${BUNDLE_ID} and Android Version Code Increased"
+#git push origin ${BRANCH}
 
 if $CREATE_TAG; then
     # GENERATE TAG
@@ -117,12 +124,10 @@ if $CREATE_TAG; then
 fi
 
 # SEND TO SAMBA SERVER
-SMB_USER="srv_acc_bcn_jenkins"
-SMB_PASS="Lm0%2956jkR%23Tg"
 
 echo "Sending To Server"
 mkdir server
-mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/BCNStudio/QA/SS" server
+mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" server
 
 if $BUILD_IOS; then
     cp "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}" "server/"
