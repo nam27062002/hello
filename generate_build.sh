@@ -81,7 +81,7 @@ fi
 if $BUILD_ANDROID; then
     #GENERATE APKS
     echo "Generating APKs"
-    rm "${SCRIPT_PATH}/ss*.apk"    # just in case
+    rm "${SCRIPT_PATH}/*.apk"    # just in case
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android
 fi
 
