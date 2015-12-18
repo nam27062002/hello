@@ -10,9 +10,12 @@ public class Builder : MonoBehaviour
 
 	static string[] m_scenes  = 
 	{
-		"",
-		"",
-		""
+		"Assets/Game/Scenes/SC_Loading.unity",
+		"Assets/Game/Scenes/SC_Menu.unity",
+		"Assets/Game/Scenes/SC_Game.unity",
+		"Assets/Resources/Game/Levels/SC_Level_Test.unity",
+		"Assets/Resources/Game/Levels/SC_Level_Empty.unity",
+		"Assets/Resources/Game/Levels/SC_Level_HSEexp.unity"
 	};
 
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon";
