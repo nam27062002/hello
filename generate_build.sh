@@ -104,8 +104,8 @@ if $BUILD_IOS; then
     xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 
     xcodebuild archive -project $PROJECT_NAME -configuration Release -scheme "Unity-iPhone" -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
     rm "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"    # just in case
-    xcodebuild -exportArchive -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" -exportPath "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"  -exportOptionsPlist "${SCRIPT_PATH}/xcode/Info.plist"
-
+    xcodebuild -exportArchive -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" -exportPath "${SCRIPT_PATH}/ipas/" -exportOptionsPlist "${SCRIPT_PATH}/xcode/Info.plist"
+    mv "${SCRIPT_PATH}/ipas/*.ipa" "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"
 fi
 
 # commit project changes
@@ -131,7 +131,6 @@ mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" server
 
 if $BUILD_IOS; then
     cp "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}" "server/"
-    cp "${SCRIPT_PATH}/ipas/${PROD_IPA_FILE}" "server/"
 fi
 if $BUILD_ANDROID; then
     cp "${SCRIPT_PATH}/*.apk" "server/"
