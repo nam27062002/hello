@@ -48,6 +48,7 @@ public class DragonSkill : SerializableClass {
 
 	// Values
 	[SerializeField] private Range m_valueRange = new Range(0f, 1f);
+	private float m_valueOffset = 0;
 	public float value { get { return GetValueAtLevel(level); }}
 	public float nextLevelValue { get { return GetValueAtLevel(nextLevel); }}
 
@@ -80,6 +81,8 @@ public class DragonSkill : SerializableClass {
 	public DragonSkill(DragonData _owner, EType _type) {
 		m_owner = _owner;
 		m_type = _type;
+
+		m_valueOffset = 0;
 	}
 
 	//------------------------------------------------------------------//
@@ -93,9 +96,6 @@ public class DragonSkill : SerializableClass {
 	public bool UnlockNextLevel() {
 		// Can the unlock be performed?
 		if(CanUnlockNextLevel()) {
-			// Subtract cost from user profile
-			UserProfile.AddCoins(-nextLevelUnlockPrice);
-
 			// Level up!
 			m_level++;
 
@@ -110,15 +110,13 @@ public class DragonSkill : SerializableClass {
 
 	/// <summary>
 	/// Check whether all the conditions are met to unlock the next level of this skill.
-	/// This includes not being the last level and have enough resources.
+	/// This includes not being the last level.
+	/// Doesn't check for resources.
 	/// </summary>
 	/// <returns>Whether the next level can be unlocked or not.</returns>
 	public bool CanUnlockNextLevel() {
 		// Last level?
 		if(level >= lastLevel) return false;
-
-		// Enough resources?
-		if(UserProfile.coins < nextLevelUnlockPrice) return false;
 
 		// Everything ok!
 		return true;
@@ -131,7 +129,14 @@ public class DragonSkill : SerializableClass {
 	/// <param name="_level">The level at which we want to know the skill's value.</param>
 	public float GetValueAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, lastLevel, _level);
-		return m_valueRange.Lerp(levelDelta);
+		return m_valueRange.Lerp(levelDelta) + m_valueOffset;
+	}
+
+	/// <summary>
+	/// Offsets the skill value. Used for Debug purposes on Preproduction fase.
+	/// </summary>
+	public void OffsetValue(float _value) {
+		m_valueOffset += _value;
 	}
 
 	//------------------------------------------------------------------//

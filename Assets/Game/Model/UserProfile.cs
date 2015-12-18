@@ -32,6 +32,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		public long coins = 0;
 		public long pc = 0;
 		[HideEnumValues(true, true)] public DragonId currentDragon = DragonId.SMALL;
+		public int currentLevel = 0;
 	}
 
 	//------------------------------------------------------------------//
@@ -54,11 +55,17 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		get { return instance.m_pc; }
 	}
 
-	[Separator("Progression")]
+	[Separator("Game Settings")]
 	[SerializeField] private DragonId m_currentDragon = DragonId.SMALL;	// [AOC] TODO!! Proper default initialization
 	public static DragonId currentDragon {
 		get { return instance.m_currentDragon; }
 		set { instance.m_currentDragon = value; }
+	}
+
+	[SerializeField] private int m_currentLevel = 0;
+	public static int currentLevel {
+		get { return instance.m_currentLevel; }
+		set { instance.m_currentLevel = value; }
 	}
 
 	//------------------------------------------------------------------//
@@ -102,6 +109,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		instance.m_coins = _data.coins;
 		instance.m_pc = _data.pc;
 		instance.m_currentDragon = _data.currentDragon;
+		instance.m_currentLevel = _data.currentLevel;
 	}
 
 	/// <summary>
@@ -116,6 +124,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		data.coins = instance.m_coins;
 		data.pc = instance.m_pc;
 		data.currentDragon = instance.m_currentDragon;
+		data.currentLevel = instance.m_currentLevel;
 
 		// Return it
 		return data;

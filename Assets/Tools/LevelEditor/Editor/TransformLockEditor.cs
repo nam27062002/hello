@@ -144,7 +144,7 @@ namespace LevelEditor {
 					EditorGUILayout.LabelField("X", centeredLabelStyle, GUILayout.Width(columnWidth));
 					EditorGUILayout.LabelField("Y", centeredLabelStyle, GUILayout.Width(columnWidth));
 					EditorGUILayout.LabelField("Z", centeredLabelStyle, GUILayout.Width(columnWidth));
-				} EditorUtils.EndHorizontalSafe();
+				} EditorGUILayoutExt.EndHorizontalSafe();
 
 				// Position
 				EditorGUILayout.BeginHorizontal(); {
@@ -153,7 +153,7 @@ namespace LevelEditor {
 					for(int i = 0; i < 3; i++) {
 						targetLock.m_positionLock[i] = EditorGUILayout.Toggle(targetLock.m_positionLock[i], centeredToggleStyle, GUILayout.Width(columnWidth));
 					}
-				} EditorUtils.EndHorizontalSafe();
+				} EditorGUILayoutExt.EndHorizontalSafe();
 
 				// Rotation
 				EditorGUILayout.BeginHorizontal(); {
@@ -162,7 +162,7 @@ namespace LevelEditor {
 					for(int i = 0; i < 3; i++) {
 						targetLock.m_rotationLock[i] = EditorGUILayout.Toggle(targetLock.m_rotationLock[i], GUILayout.Width(columnWidth));
 					}
-				} EditorUtils.EndHorizontalSafe();
+				} EditorGUILayoutExt.EndHorizontalSafe();
 
 				// Scale
 				EditorGUILayout.BeginHorizontal(); {
@@ -171,8 +171,8 @@ namespace LevelEditor {
 					for(int i = 0; i < 3; i++) {
 						targetLock.m_scaleLock[i] = EditorGUILayout.Toggle(targetLock.m_scaleLock[i], GUILayout.Width(columnWidth));
 					}
-				} EditorUtils.EndHorizontalSafe();
-			} EditorUtils.EndVerticalSafe();
+				} EditorGUILayoutExt.EndHorizontalSafe();
+			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 	}
 }

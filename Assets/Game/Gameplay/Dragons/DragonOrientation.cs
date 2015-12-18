@@ -15,6 +15,8 @@ public class DragonOrientation : MonoBehaviour {
 	bool m_turningRight;
 	bool m_turningLeft;
 
+	float m_turningSpeed;
+
 	enum State{
 
 		PLAYING,
@@ -32,6 +34,9 @@ public class DragonOrientation : MonoBehaviour {
 		m_targetRotation = transform.rotation;
 		m_rotation = transform.rotation;
 		m_direction = Vector3.right;
+
+		// TODO (miguel): This should come from dragon setup
+		m_turningSpeed = 8.0f; 
 	}
 	
 	// Update is called once per frame
@@ -39,7 +44,7 @@ public class DragonOrientation : MonoBehaviour {
 	
 		if (state == State.PLAYING) {
 
-			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, 0.12f);
+			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * m_turningSpeed);
 
 			float angle = Quaternion.Angle(m_rotation, m_targetRotation);
 			if (m_turningRight) {
@@ -50,8 +55,8 @@ public class DragonOrientation : MonoBehaviour {
 				m_turningLeft = angle > 60f;
 			}
 			
-			m_animator.SetBool("turn_right", m_turningRight);
-			m_animator.SetBool("turn_left", m_turningLeft);
+			m_animator.SetBool("turn right", m_turningRight);
+			m_animator.SetBool("turn left", m_turningLeft);
 
 		} else if (state == State.DYING) {
 
@@ -74,13 +79,20 @@ public class DragonOrientation : MonoBehaviour {
 	
 		Vector3 dir = direction.normalized;
 		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-	
-		m_targetRotation = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
 
-		if (m_direction.x >= 0f && dir.x < 0) {
+		m_targetRotation = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
+		Vector3 eulerRot = m_targetRotation.eulerAngles;		
+		if (dir.y > 0) {
+			eulerRot.z = Mathf.Min(40f, eulerRot.z);
+		} else if (dir.y < 0) {
+			eulerRot.z = Mathf.Max(300f, eulerRot.z);
+		}
+		m_targetRotation = Quaternion.Euler(eulerRot);		
+
+		if (m_direction.x >= 0f && dir.x < 0f) {
 			m_turningRight = true;
 			m_turningLeft = false;
-		} else if (m_direction.x < 0f && dir.x >= 0) {
+		} else if (m_direction.x < 0f && dir.x >= 0f) {
 			m_turningLeft = true;
 			m_turningRight = false;
 		}

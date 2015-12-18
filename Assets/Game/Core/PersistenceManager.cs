@@ -33,8 +33,9 @@ public static class PersistenceManager {
 	public class SaveData {
 		// Add here any required data
 		public DateTime timestamp = DateTime.UtcNow;
-		public UserProfile.SaveData profile;
+		public UserProfile.SaveData profile = new UserProfile.SaveData();
 		public DragonData.SaveData[] dragons = new DragonData.SaveData[(int)DragonId.COUNT];
+		public MissionManager.SaveData missions = new MissionManager.SaveData();
 	}
 
 	//------------------------------------------------------------------//
@@ -95,6 +96,7 @@ public static class PersistenceManager {
 		if(_data == null) return;
 
 		// Restore loaded values
+		// Order is relevant!
 		// Last save timestamp
 		m_saveTimestamp = _data.timestamp;
 		
@@ -103,6 +105,9 @@ public static class PersistenceManager {
 		
 		// Dragons data
 		DragonManager.Load(_data.dragons);
+
+		// Missions
+		MissionManager.Load(_data.missions);
 	}
 
 	/// <summary>
@@ -129,7 +134,15 @@ public static class PersistenceManager {
 				File.Delete(path);
 			}
 		} else {
-			Debug.Log("No saved games were found, starting from 0");
+			// No saved games found for the given profile, try to load the profile data
+			CheckProfileName(ref _profileName);
+			Debug.Log("No saved games were found, loading profile " + _profileName);
+
+			// Load profile and use it as initial data
+			data = GetDefaultDataFromProfile(_profileName);
+			if(data == null) {
+				Debug.Log("Profile " + _profileName + " couldn't be found, starting from 0");
+			}
 		}
 
 		return data;
@@ -148,6 +161,9 @@ public static class PersistenceManager {
 
 		// Dragons data
 		data.dragons = DragonManager.Save();
+
+		// Missions
+		data.missions = MissionManager.Save();
 		
 		// Save the object we just created
 		SaveFromObject(_profileName, data);
@@ -179,9 +195,12 @@ public static class PersistenceManager {
 	/// </summary>
 	/// <param name="_profileName">The name of the profile to be cleared.</param>
 	public static void Clear(string _profileName = "") {
-		// Just delete persistence file
+		// Delete persistence file
 		string path = GetPersistenceFilePath(_profileName);
 		File.Delete(path);
+
+		// Create a new save file with the default data from the profile
+		SaveFromObject(_profileName, GetDefaultDataFromProfile(_profileName));
 	}
 
 	//------------------------------------------------------------------//
@@ -193,10 +212,7 @@ public static class PersistenceManager {
 	/// <param name="_profileName">The name of the profile whose path we want.</param>
 	public static string GetPersistenceFilePath(string _profileName = "") {
 		// If not defined, return active profile
-		if(_profileName == "") {
-			_profileName = activeProfile;
-		}
-
+		CheckProfileName(ref _profileName);
 		return saveDir + "/" + _profileName + ".dat";
 	}
 
@@ -225,6 +241,36 @@ public static class PersistenceManager {
 	/// <param name="_profileName">The name of the profile we want to check.</param>
 	public static bool HasSavedGame(string _profileName) {
 		return File.Exists(GetPersistenceFilePath(_profileName));
+	}
+
+
+	/// <summary>
+	/// Get the default data stored in the given profile prefab.
+	/// </summary>
+	/// <returns>The data from profile.</returns>
+	/// <param name="_profileName">The name of the profile to be loaded.</param>
+	public static PersistenceManager.SaveData GetDefaultDataFromProfile(string _profileName = "") {
+		// Load data from prefab
+		CheckProfileName(ref _profileName);
+		GameObject profilePrefab = Resources.Load<GameObject>(PersistenceProfile.RESOURCES_FOLDER + _profileName);
+		if(profilePrefab != null) {
+			return profilePrefab.GetComponent<PersistenceProfile>().data;
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL UTILS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// If the given profile name is empty, replace it by the current active profile name.
+	/// </summary>
+	/// <param name="_profileName">The profile name to be checked.</param>
+	private static void CheckProfileName(ref string _profileName) {
+		if(_profileName == "") {
+			_profileName = activeProfile;
+		}
 	}
 }
 

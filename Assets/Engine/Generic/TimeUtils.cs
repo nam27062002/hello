@@ -124,6 +124,7 @@ public class TimeUtils {
 		if(bIsNegative) writer.Write("-");
 
 		// Do the rest
+		int iAddedFields = 0;
 		for(int i = iFirstIdx; i < iLastIdx; i++) {
 			// Get value
 			iVal = precisionValues[i];
@@ -134,7 +135,12 @@ public class TimeUtils {
 				case EFormat.ABBREVIATIONS:
 				case EFormat.ABBREVIATIONS_WITHOUT_0_VALUES: {
 					// Special case if not including 0 values
-					if(_eFormat == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES && iVal == 0) continue;	// Skip if value is 0
+					if(_eFormat == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES && iVal == 0) {
+						// Skip if value is 0, unless it's the only field standing
+						if(!(i == iLastIdx - 1 && iAddedFields == 0)) {
+							continue;
+						}
+					}
 					
 					// Insert space if not the first field
 					if(i != iFirstIdx) {
@@ -143,6 +149,9 @@ public class TimeUtils {
 					
 					// Insert field value, properly formatted
 					writer.Write(StringUtils.FormatNumber(iVal));
+
+					// Increase counter
+					iAddedFields++;
 					
 					// Insert field name, abbreviation, singular or plural
 					if(_eFormat == EFormat.ABBREVIATIONS || _eFormat == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES) {
@@ -164,6 +173,9 @@ public class TimeUtils {
 					} else {
 						writer.Write(StringUtils.FormatNumber(iVal, 2, false));
 					}
+
+					// Increase counter
+					iAddedFields++;
 					
 					// Put separator where needed
 					// No separator for the last field

@@ -27,11 +27,11 @@ public class SkySpawner : MonoBehaviour {
 		player = GameObject.Find ("Player").GetComponent<DragonMotion>();
 		groundMask = 1 << LayerMask.NameToLayer("Ground");
 
-		Messenger.AddListener<GameObject>("SpawnOutOfRange",OnSpawnOutOfRange);
+		// [AOC] OLD MESSENGER! Messenger.AddListener<GameObject>("SpawnOutOfRange",OnSpawnOutOfRange);
 	}
 
 	void OnDestroy(){
-		Messenger.RemoveListener<GameObject>("SpawnOutOfRange",OnSpawnOutOfRange);
+		// [AOC] OLD MESSENGER! Messenger.RemoveListener<GameObject>("SpawnOutOfRange",OnSpawnOutOfRange);
 	}
 	
 	// Update is called once per frame

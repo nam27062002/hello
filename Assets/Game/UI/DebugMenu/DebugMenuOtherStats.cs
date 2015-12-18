@@ -39,8 +39,8 @@ public class DebugMenuOtherStats : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener(DebugMenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
-		Messenger.AddListener(DebugMenuSimulate.EVENT_SIMULATION_FINISHED, Refresh);
+		Messenger.AddListener(GameEvents.DEBUG_MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener(GameEvents.DEBUG_SIMULATION_FINISHED, Refresh);
 		
 		// Do a first refresh
 		Refresh();
@@ -51,8 +51,8 @@ public class DebugMenuOtherStats : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(DebugMenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
-		Messenger.RemoveListener(DebugMenuSimulate.EVENT_SIMULATION_FINISHED, Refresh);
+		Messenger.RemoveListener(GameEvents.DEBUG_MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener(GameEvents.DEBUG_SIMULATION_FINISHED, Refresh);
 	}
 
 	/// <summary>
@@ -63,6 +63,6 @@ public class DebugMenuOtherStats : MonoBehaviour {
 		m_healthText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.maxHealth, 0));
 
 		// Scale
-		m_scaleText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.scale, 0));
+		m_scaleText.text = String.Format("{0}", StringUtils.FormatNumber(DragonManager.currentDragonData.scale, 2));
 	}
 }

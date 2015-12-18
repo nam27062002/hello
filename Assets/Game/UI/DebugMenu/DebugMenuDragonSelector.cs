@@ -18,11 +18,6 @@ using UnityEngine.UI;
 /// </summary>
 public class DebugMenuDragonSelector : MonoBehaviour {
 	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string EVENT_DRAGON_CHANGED = typeof(DebugMenuDragonSelector).Name +  "_EVENT_DRAGON_CHANGED";
-
-	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
@@ -78,7 +73,7 @@ public class DebugMenuDragonSelector : MonoBehaviour {
 		m_text.text = DragonManager.currentDragonData.id.ToString();
 		
 		// Notify game
-		Messenger.Broadcast(EVENT_DRAGON_CHANGED);
+		Messenger.Broadcast(GameEvents.DEBUG_MENU_DRAGON_SELECTED);
 	}
 
 	//------------------------------------------------------------------//

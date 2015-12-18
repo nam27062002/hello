@@ -40,14 +40,26 @@ public class DragonPlayer : MonoBehaviour {
 	private bool m_furyActive = false;
 	public float fury { get { return m_fury[0]; } }
 
-	// Internal
-	private float m_speedMultiplier;
+	// Interaction
+	public bool playable {
+		set {
+			// Enable/disable all the components that make the dragon playable
+			// Add as many as needed
+			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
+			GetComponent<DragonEatBehaviour>().enabled = value;		// Eat stuff
+			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
+			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
+		}
+	}
 
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
 	// References
 	private DragonBreathBehaviour m_breathBehaviour = null;
 
-	// Debug
-	[HideInInspector] public bool invulnerable = false;
+	// Internal
+	private float m_speedMultiplier;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -76,6 +88,25 @@ public class DragonPlayer : MonoBehaviour {
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 	}
 
+	/// <summary>
+	/// The component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+
+		// Make sure the dragon has the scale according to its level
+		gameObject.transform.localScale = Vector3.one * data.scale;
+	}
+
+	/// <summary>
+	/// The component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+	}
+
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
@@ -84,7 +115,20 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of health to be added/removed.</param>
 	public void AddLife(float _offset) {
+		// If invulnerable and taking damage, don't apply
+		if(IsInvulnerable() && _offset < 0) return;
+
+		// Update health
 		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset));
+
+		// Check for death!
+		if(m_health <= 0f) {
+			// Send global even
+			Messenger.Broadcast(GameEvents.PLAYER_DIED);
+
+			// Make dragon unplayable (xD)
+			playable = false;
+		}
 	}
 
 	/// <summary>
@@ -170,10 +214,22 @@ public class DragonPlayer : MonoBehaviour {
 		if(m_breathBehaviour.IsFuryOn()) return true;
 		
 		// If cheat is enable
-		if(invulnerable) return true;
+		if(DebugSettings.invulnerable) return true;
 		
 		// All checks passed, we're not invulnerable
 		return false;
 	}
-	
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// The dragon has leveled up.
+	/// </summary>
+	/// <param name="_data">The data of the dragon that just leveled up.</param>
+	private void OnLevelUp(DragonData _data) {
+		// Assume it's this dragon
+		// Make sure the dragon has the scale according to its level
+		gameObject.transform.localScale = Vector3.one * data.scale;
+	}
 }

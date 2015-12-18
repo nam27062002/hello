@@ -35,6 +35,15 @@ public class DragonData {
 		public float xp = 0;
 		public int level = 0;
 		public int[] skillLevels = new int[(int)DragonSkill.EType.COUNT];
+		public bool owned = false;
+	}
+
+	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
+	public enum LockState {
+		ANY = -1,	// Any of the below states
+		LOCKED,		// Previous tier hasn't been completed
+		AVAILABLE,	// Previous tier has been completed but the dragon hasn't been purchased
+		OWNED		// Dragon has been purchased and can be used
 	}
 
 	//------------------------------------------------------------------//
@@ -44,7 +53,7 @@ public class DragonData {
 	[SerializeField] [HideEnumValues(true, true)] private DragonId m_id = DragonId.NONE;
 	public DragonId id { get { return m_id; }}
 	
-	[SerializeField] [HideEnumValues(false, true)] private DragonTier m_tier = 0;
+	[SerializeField] [HideEnumValues(false, true)] private DragonTier m_tier = DragonTier.TIER_0;
 	public DragonTier tier { get { return m_tier; }}
 
 	[SerializeField] private string m_tidName = "";
@@ -56,7 +65,24 @@ public class DragonData {
 	[SerializeField] private string m_prefabPath = "";
 	public string prefabPath { get { return m_prefabPath; }}
 
+	[SerializeField] private string m_menuPrefabPath = "";
+	public string menuPrefabPath { get { return m_menuPrefabPath; }}
+
+	[SerializeField] private float m_cameraZoomOffset = 0f;
+	public float cameraZoomOffset { get { return m_cameraZoomOffset; }}
+
 	// Progression
+	[SerializeField] private int m_unlockPriceCoins = 0;
+	public int unlockPriceCoins { get { return m_unlockPriceCoins; }}
+
+	[SerializeField] private int m_unlockPricePC = 0;
+	public int unlockPricePC { get { return m_unlockPricePC; }}
+
+	[SerializeField] private bool m_owned = false;
+	public LockState lockState { get { return GetLockState(); }}
+	public bool isLocked { get { return lockState == LockState.LOCKED; }}
+	public bool isOwned { get { return m_owned; }}
+
 	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}
 
@@ -65,6 +91,7 @@ public class DragonData {
 	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
 
 	[SerializeField] private Range m_scaleRange = new Range(0.5f, 1.5f);
+	private float m_scaleOffset = 0;
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
 	// Constant stats
@@ -105,13 +132,15 @@ public class DragonData {
 	/// </summary>
 	public DragonData() {
 		// Progression
-		m_progression = new DragonProgression(this, 500f);
+		m_progression = new DragonProgression(this);
 		
 		// Skills
 		m_skills = new DragonSkill[(int)DragonSkill.EType.COUNT];
 		for(int i = 0; i < m_skills.Length; i++) {
 			m_skills[i] = new DragonSkill(this, (DragonSkill.EType)i);
 		}
+
+		m_scaleOffset = 0;
 	}
 
 	//------------------------------------------------------------------//
@@ -143,7 +172,53 @@ public class DragonData {
 	/// <param name="_level">The level at which we want to know the scale value.</param>
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
-		return m_scaleRange.Lerp(levelDelta);
+		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
+	}
+
+	/// <summary>
+	/// Offsets speed value. Used for Debug purposes on Preproduction fase.
+	/// </summary>
+	public void OffsetSpeedValue(float _speed) {
+ 		GetSkill(DragonSkill.EType.SPEED).OffsetValue(_speed);
+	}
+
+	/// <summary>
+	/// Offsets the scale value.
+	/// </summary>
+	public void OffsetScaleValue(float _scale) {
+		m_scaleOffset += _scale;
+	}
+
+	/// <summary>
+	/// Gets the current lock state of this dragon.
+	/// </summary>
+	/// <returns>The lock state for this dragon.</returns>
+	public LockState GetLockState() {
+		// a) Is dragon owned?
+		if(m_owned) return LockState.OWNED;
+
+		// b) Is tier unlocked?
+		if(DragonManager.IsTierUnlocked(this.tier)) {
+			return LockState.AVAILABLE;
+		}
+
+		// c) Dragon locked
+		return LockState.LOCKED;
+	}
+
+	/// <summary>
+	/// Unlock this dragon (will be OWNED from now on). Doesn't do any currency transaction.
+	/// Triggers the DRAGON_ACQUIRED event.
+	/// </summary>
+	public void Acquire() {
+		// Skip if already owned
+		if(m_owned) return;
+
+		// Just change owned status
+		m_owned = true;
+
+		// Dispatch global event
+		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_ACQUIRED, this);
 	}
 
 	//------------------------------------------------------------------//
@@ -160,6 +235,7 @@ public class DragonData {
 		}
 
 		// Just read values from persistence object
+		m_owned = _data.owned;
 		progression.Load(_data.xp, _data.level);
 
 		for(int i = 0; i < _data.skillLevels.Length; i++) {
@@ -176,6 +252,7 @@ public class DragonData {
 		SaveData data = new SaveData();
 
 		data.id = id;
+		data.owned = m_owned;
 		data.xp = progression.xp;
 		data.level = progression.level;
 

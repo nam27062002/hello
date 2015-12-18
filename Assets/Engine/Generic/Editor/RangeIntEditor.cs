@@ -43,6 +43,7 @@ public class RangeIntEditor : PropertyDrawer {
 		float padding = 5f;
 		GUIContent content = new GUIContent();
 		GUIStyle style = GUI.skin.label;	// Default label style, useful to compute text widths
+		GUIStyle styleTF = new GUIStyle(EditorStyles.textField);
 
 		// Group all
 		_label = EditorGUI.BeginProperty(_position, _label, _property);
@@ -82,14 +83,20 @@ public class RangeIntEditor : PropertyDrawer {
 
 		cursor.width = contentRect.width/2 - padding/2;
 		content.text = "min";
+
 		EditorGUIUtility.labelWidth = style.CalcSize(content).x + padding;	// Adjust label to "min" word
-		minValue = EditorGUI.IntField(cursor, content, minValue);
+		if(minValue > max.intValue) {
+			styleTF.normal.textColor = Color.red;
+			styleTF.focused.textColor = Color.red;
+		}
+		minValue = EditorGUI.IntField(cursor, content, minValue, styleTF);
 
 		if(EditorGUI.EndChangeCheck()) {
 			// Check new value validity, cap if invalid
-			if(minValue > max.intValue) {
+			// [AOC] Remove, we may want a range whose max is lesser that its min
+			/*if(minValue > max.intValue) {
 				minValue = max.intValue;
-			}
+			}*/
 			min.intValue = minValue;
 
 			// Update limits
@@ -104,13 +111,14 @@ public class RangeIntEditor : PropertyDrawer {
 		cursor.width = contentRect.width/2 - padding/2;
 		content.text = "max";
 		EditorGUIUtility.labelWidth = style.CalcSize(content).x + padding;	// Adjust label to "max" word
-		maxValue = EditorGUI.IntField(cursor, content, maxValue);
+		maxValue = EditorGUI.IntField(cursor, content, maxValue, styleTF);
 
 		if(EditorGUI.EndChangeCheck()) {
 			// Check new value validity, cap if invalid
-			if(maxValue < min.intValue) {
+			// [AOC] Remove, we may want a range whose max is lesser that its min
+			/*if(maxValue < min.intValue) {
 				maxValue = min.intValue;
-			}
+			}*/
 			max.intValue = maxValue;
 
 			// Update limits

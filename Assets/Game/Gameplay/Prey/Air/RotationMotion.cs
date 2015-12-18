@@ -8,15 +8,15 @@ public class RotationMotion : Initializable {
 	private Vector3 m_rotation;
 
 	void Start() {
-		m_rotation = transform.rotation.eulerAngles;
+		m_rotation = transform.localRotation.eulerAngles;
 	}
 	
 	public override void Initialize() {		
-		m_rotation = transform.rotation.eulerAngles;
+		m_rotation = transform.localRotation.eulerAngles;
 	}
 
 	void Update() {
 		m_rotation += m_rotationSpeed * Time.deltaTime;
-		transform.rotation = Quaternion.Euler(m_rotation);
+		transform.localRotation = Quaternion.Euler(m_rotation);
 	}
 }

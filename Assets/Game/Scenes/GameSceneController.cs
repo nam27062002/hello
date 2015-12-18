@@ -15,8 +15,6 @@ using UnityEngine.UI;
 //----------------------------------------------------------------------//
 /// <summary>
 /// Main controller for the game scene.
-/// [AOC] TODO!! Split score management into a different component
-/// [AOC] TODO!! Score multipliers
 /// </summary>
 public class GameSceneController : SceneController {
 	//------------------------------------------------------------------//
@@ -24,9 +22,11 @@ public class GameSceneController : SceneController {
 	//------------------------------------------------------------------//
 	public static readonly string NAME = "SC_Game";
 	public static readonly float COUNTDOWN = 3f;	// Seconds
+	public static readonly float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
 
 	public enum EStates {
 		INIT,
+		LOADING_LEVEL,
 		COUNTDOWN,
 		RUNNING,
 		PAUSED,
@@ -37,12 +37,6 @@ public class GameSceneController : SceneController {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
-	// Score
-	private long m_score;
-	public long score { 
-		get { return m_score; }
-	}
-	
 	// Time
 	private float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
@@ -65,8 +59,25 @@ public class GameSceneController : SceneController {
 		get { return m_state; }
 	}
 
+	private float m_timeScaleBackup = 1f;	// When going to pause, store timescale to be restored later on
 	public bool paused {
 		get { return m_state == EStates.PAUSED; }
+	}
+
+	// Level loading
+	private AsyncOperation m_levelLoadingTask = null;
+	//private ResourceRequest m_levelLoadingTask = null;
+	public float levelLoadingProgress {
+		get {
+			if(state == EStates.LOADING_LEVEL) {
+				float progress = (m_levelLoadingTask != null) ? m_levelLoadingTask.progress : 1f;	// Shouldn't be null at this state
+				return Mathf.Min(progress, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
+			} else if(state > EStates.LOADING_LEVEL) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -103,6 +114,14 @@ public class GameSceneController : SceneController {
 	void Update() {
 		// Different actions based on current state
 		switch(m_state) {
+			// During loading, wait until level is loaded
+			case EStates.LOADING_LEVEL: {
+				m_timer -= Time.deltaTime;
+				if(levelLoadingProgress >= 1) {
+					ChangeState(EStates.COUNTDOWN);
+				}
+			} break;
+
 			// During countdown, let's just wait
 			case EStates.COUNTDOWN: {
 				if(m_timer > 0) {
@@ -124,7 +143,7 @@ public class GameSceneController : SceneController {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
 						// Open popup!
-						PopupManager.OpenPopup(PopupSummary.PATH);
+						PopupManager.OpenPopupAsync(PopupSummary.PATH);
 					}
 				}
 			} break;
@@ -135,6 +154,10 @@ public class GameSceneController : SceneController {
 	/// Destructor.
 	/// </summary>
 	override protected void OnDestroy() {
+		// Clear pools
+		FirePropagationManager.DestroyInstance();
+		PoolManager.Clear(true);
+
 		// Call parent
 		base.OnDestroy();
 	}
@@ -148,14 +171,17 @@ public class GameSceneController : SceneController {
 	public void StartGame() {
 		// Reset timer
 		m_elapsedSeconds = 0;
-		
-		// Reset score
-		m_score = 0;
+
+		// Disable dragon until the game actually starts so its HP doesn't go down
+		InstanceManager.player.gameObject.SetActive(false);
+
+		// Reset rewards
+		RewardManager.Reset();
 		
 		// [AOC] TODO!! Reset game stats
 		
 		// Change state
-		ChangeState(EStates.COUNTDOWN);
+		ChangeState(EStates.LOADING_LEVEL);
 	}
 	
 	/// <summary>
@@ -164,14 +190,12 @@ public class GameSceneController : SceneController {
 	public void EndGame() {
 		// Change state
 		ChangeState(EStates.FINISHED);
-		
-		// [AOC] TODO!! Update global stats
-
-		// Save persistence
-		PersistenceManager.Save();
 
 		// Dispatch game event
 		Messenger.Broadcast(GameEvents.GAME_ENDED);
+
+		// Open summary popup immediately - override timer after calling this method if you want some delay
+		m_timer = 0.0125f;
 	}
 
 	/// <summary>
@@ -202,14 +226,40 @@ public class GameSceneController : SceneController {
 		
 		// Actions to perform when leaving the current state
 		switch(m_state) {
+			case EStates.LOADING_LEVEL: {
+				// Delete loading task and get level object
+				LevelEditor.Level level = GameObject.FindObjectOfType<LevelEditor.Level>();
+				m_levelLoadingTask = null;
+
+				// Dispatch game event
+				Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+
+				// Enable dragon back and put it in the spawn point
+				// Don't make it playable until the countdown ends
+				InstanceManager.player.playable = false;
+				InstanceManager.player.gameObject.SetActive(true);
+				GameObject spawnPoint = level.GetDragonSpawnPoint(InstanceManager.player.data.id);
+				if(spawnPoint == null) spawnPoint = level.GetDragonSpawnPoint(DragonId.NONE);
+				InstanceManager.player.transform.position = spawnPoint.transform.position;
+
+				// Notify the game
+				Messenger.Broadcast(GameEvents.GAME_STARTED);
+			} break;
+
+			case EStates.COUNTDOWN: {
+				// Notify the game
+				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+			} break;
+
 			case EStates.RUNNING: {
 				// Unsubscribe from external events
-				Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-				Messenger.RemoveListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 				Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 			} break;
 
 			case EStates.PAUSED: {
+				// Restore previous timescale
+				Time.timeScale = m_timeScaleBackup;
+
 				// Notify the game
 				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
 			} break;
@@ -217,35 +267,37 @@ public class GameSceneController : SceneController {
 		
 		// Actions to perform when entering the new state
 		switch(_newState) {
+			case EStates.LOADING_LEVEL: {
+				// Start loading current level
+				m_levelLoadingTask = LevelManager.LoadLevel(UserProfile.currentLevel);
+
+				// Initialize minimum loading time as well
+				m_timer = MIN_LOADING_TIME;
+			} break;
+
 			case EStates.COUNTDOWN: {
 				// Start countdown timer
 				m_timer = COUNTDOWN;
-
-				// Disable dragon so its HP doesn't go down
-				InstanceManager.player.gameObject.SetActive(false);
 
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_STARTED);
 			} break;
 				
 			case EStates.RUNNING: {
-				// Enable dragon back!
-				InstanceManager.player.gameObject.SetActive(true);
-
 				// Subscribe to external events
-				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-				Messenger.AddListener<GameEntity>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 				Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 
-				// Notify the game
-				if(m_state == EStates.COUNTDOWN) {
-					Messenger.Broadcast(GameEvents.GAME_STARTED);
-				}
+				// Make dragon playable!
+				InstanceManager.player.playable = true;
 			} break;
 				
 			case EStates.PAUSED: {
 				// Ignore if not running
 				if(m_state != EStates.RUNNING) return;
+
+				// Store current timescale and set it to 0
+				m_timeScaleBackup = Time.timeScale;
+				Time.timeScale = 0.0f;
 
 				// Notify the game
 				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
@@ -257,72 +309,33 @@ public class GameSceneController : SceneController {
 	}
 
 	/// <summary>
-	/// Add coins.
-	/// </summary>
-	/// <param name="_iAmount">Amount to add. Negative to subtract.</param>
-	/// <param name="_entity">Optionally define the entity that triggered this score. Leave <c>null</c> if none.</param> 
-	private void AddScore(long _iAmount, GameEntity _entity = null) {
-		// Skip checks for now
-		// Compute new value and dispatch event
-		m_score += _iAmount;
-		Messenger.Broadcast<long, long>(GameEvents.SCORE_CHANGED, m_score - _iAmount, m_score);
-		Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_SCORE, _iAmount, _entity);
-	}
-
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// An entity has been eaten, give appropriate rewards.
-	/// </summary>
-	/// <param name="_entity">The entity that has been eaten.</param>
-	private void OnEntityEaten(GameEntity _entity) {
-		// Update game stats
-		App.Instance.gameStats.OnEntityEaten(_entity);
-		
-		// Give score reward
-		AddScore(_entity.GetScoreReward(), _entity);
-		
-		// Give coins reward
-		long iRewardCoins = _entity.GetCoinsReward();
-		if(iRewardCoins > 0) {
-			UserProfile.AddCoins(iRewardCoins);
-			Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_COINS, iRewardCoins, _entity);
-		}
-	}
-	
-	/// <summary>
-	/// An entity has been eaten, give appropriate rewards.
-	/// </summary>
-	/// <param name="_entity">The entity that has been eaten.</param>
-	private void OnEntityBurned(GameEntity _entity) {
-		// Update game stats
-		App.Instance.gameStats.OnEntityBurned(_entity);
-		
-		// Give rewards if required
-		FlamableBehaviour flamable = _entity.GetComponent<FlamableBehaviour>();	// Should always have one
-		if(flamable.giveRewardsOnBurn) {
-			// Score
-			AddScore(_entity.GetScoreReward(), _entity);
-			
-			// Coins
-			long iRewardCoins = _entity.GetCoinsReward();
-			if(iRewardCoins > 0) {
-				UserProfile.AddCoins(iRewardCoins);
-				Messenger.Broadcast<long, GameEntity>(GameEvents.REWARD_COINS, iRewardCoins, _entity);
-			}
-		}
-	}
-
-	/// <summary>
 	/// The player has died.
 	/// </summary>
 	private void OnPlayerDied() {
 		// End game
 		EndGame();
 
-		// Open summary popup after some delay
-		m_timer = 1f;
+		// Add some delay to the summary popup
+		m_timer = 0.5f;
+	}
+
+	/// <summary>
+	/// The summary popup has been closed.
+	/// </summary>
+	public void OnSummaryPopupClosed() {
+		// [AOC] TODO!! Update global stats
+		
+		// Apply rewards to user profile
+		RewardManager.ApplyRewardsToProfile();
+		
+		// Process Missions: give rewards and generate new missions replacing those completed
+		MissionManager.ProcessMissions();
+
+		// Save persistence
+		PersistenceManager.Save();
+
+		// Go back to main menu
+		FlowManager.GoToMenu();
 	}
 }
 

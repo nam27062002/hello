@@ -1,9 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(PreyStats))]
 public class EdibleBehaviour : Initializable {
-
-	
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -24,6 +23,7 @@ public class EdibleBehaviour : Initializable {
 	//-----------------------------------------------
 	private PreyStats m_prey;
 	private bool m_isBeingEaten;
+	public bool isBeingEaten { get { return m_isBeingEaten; } }
 
 	private float m_timer;
 	private float m_time;
@@ -34,6 +34,7 @@ public class EdibleBehaviour : Initializable {
 	private DragonEatBehaviour m_dragon;
 	private Transform m_dragonMouth;
 	private CircleArea2D m_Bounds;
+
 
 	//-----------------------------------------------
 	// Methods
@@ -51,7 +52,7 @@ public class EdibleBehaviour : Initializable {
 
 		m_prey = GetComponent<PreyStats>();
 		m_dragon = InstanceManager.player.GetComponent<DragonEatBehaviour>();
-		m_dragonMouth = m_dragon.transform.FindSubObjectTransform("fire");
+		m_dragonMouth = m_dragon.GetComponent<DragonMotion>().tongue;
 	}
 
 	public override void Initialize() {
@@ -86,14 +87,11 @@ public class EdibleBehaviour : Initializable {
 	}
 	
 	public Reward OnSwallow(float _time) {
+		// Get the reward to be given from the prey stats
+		Reward reward = m_prey.GetOnKillReward();
 
-		Reward reward = m_prey.reward;
-
-		if (!m_prey.isGolden) {
-			reward.coins = 0;
-
-			//TODO: Drop money event?
-		}
+		// Dispatch global event
+		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
 
 		// start go to mouth animation
 		m_timer = m_time = _time; // amount of time the dragon needs to eat this entity

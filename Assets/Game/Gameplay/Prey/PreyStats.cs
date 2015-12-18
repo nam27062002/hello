@@ -7,29 +7,31 @@ public class PreyStats : Initializable {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
+	[EntitySkuList]
 	[SerializeField] private string m_typeID;
 	public string typeID { get { return m_typeID; } }
 
+	private EntityDef m_def = null;
+	public EntityDef def { 
+		get { 
+			if(m_def == null) DefinitionsManager.entities.GetDef(typeID); 
+			return m_def;
+		}
+	}
+
 	[SerializeField] private Reward m_reward;
 	public Reward reward { get { return m_reward; } }
-	
-	[SerializeField] private float m_maxHealth = 100f;
-	public float maxHealth { get { return m_maxHealth; } }
 
-
+	[SerializeField][Range(0,1)] private float m_goldenChance = 0f;
+	[SerializeField][Range(0,1)] private float m_pcChance = 0f;
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private bool m_isGolden;
-	public bool isGolden { get { return m_isGolden; } }
-
-	private float m_health;
-	public float health { get { return m_health; } }
+	private bool m_isGolden = false;
+	private bool m_givePC = false;
 
 	private Material[] m_materials;
-
-
 
 	//-----------------------------------------------
 	// Methods
@@ -44,14 +46,16 @@ public class PreyStats : Initializable {
 	}
 
 	public override void Initialize() {
+	//	m_health = m_maxHealth;		
+		SetGolden((Random.Range(0f, 1f) <= m_goldenChance));
 
-		m_health = m_maxHealth;		
-		SetGolden((Random.Range(0, 1000) < 200));
+		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
+		m_givePC = (Random.Range(0f, 1f) <= m_pcChance);
 	}
 
-	public void AddLife(float _offset) {
+/*	public void AddLife(float _offset) {
 		m_health = Mathf.Min(m_maxHealth, Mathf.Max(0, m_health + _offset)); 
-	}
+	}*/
 
 	private void SetGolden(bool _value) {
 		SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();
@@ -70,5 +74,27 @@ public class PreyStats : Initializable {
 		}
 
 		m_isGolden = _value;
+	}
+
+	/// <summary>
+	/// Get a Reward struct initialized with the reward to be given when killing this
+	/// prey, taking in account its golden/pc chances and status.
+	/// </summary>
+	/// <returns>The reward to be given to the player when killing this unit.</returns>
+	public Reward GetOnKillReward() {
+		// Create a copy of the base rewards and tune them
+		Reward newReward = m_reward;	// Since it's a struct, this creates a new copy rather than being a reference
+
+		// Give coins?
+		if(!m_isGolden) {
+			newReward.coins = 0;
+		}
+
+		// Give PC?
+		if(!m_givePC) {
+			newReward.pc = 0;
+		}
+
+		return newReward;
 	}
 }

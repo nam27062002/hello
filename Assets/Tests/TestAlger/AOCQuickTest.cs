@@ -26,6 +26,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	[EntitySkuListAttribute]
+	public string m_entitySku;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -39,14 +41,14 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-
+		
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	void Start() {
-		//Debug.Log("START!");
+		
 	}
 	
 	/// <summary>
@@ -60,6 +62,6 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
-
+		
 	}
 }

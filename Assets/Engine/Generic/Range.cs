@@ -102,4 +102,23 @@ public class Range {
 	public float InverseLerp(float _value) {
 		return Mathf.InverseLerp(min, max, _value);
 	}
+	
+	//------------------------------------------------------------------//
+	// OPERATORS														//
+	//------------------------------------------------------------------//
+	public static Range operator + (Range _left, float _right) {
+		return new Range(_left.min + _right, _left.max + _right);
+	}
+
+	public static Range operator + (Range _left, int _right) {
+		return new Range(_left.min + _right, _left.max + _right);
+	}
+
+	public static Range operator * (Range _left, float _right) {
+		return new Range(_left.min * _right, _left.max * _right);
+	}
+
+	public static Range operator * (Range _left, int _right) {
+		return new Range(_left.min * _right, _left.max * _right);
+	}
 }

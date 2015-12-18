@@ -31,10 +31,7 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 	// Only during game scene, reference to the dragon
 	private DragonPlayer m_player = null;
 	public static DragonPlayer player {
-		get {
-			DebugUtils.SoftAssert(instance.m_player != null, "Attempting to retrieve the player, but no player has been created yet.");
-			return instance.m_player;
-		}
+		get { return instance.m_player; }
 		set { if(instance != null) instance.m_player = value; }
 	}
 
@@ -51,6 +48,18 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 
 		// Call parent
 		base.OnDestroy();
+	}
+
+	//------------------------------------------------------------------//
+	// PUBLIC STATIC METHODS											//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Obtain the current scene controller casted to the desired type.
+	/// </summary>
+	/// <returns>The casted scene controller. <c>null</c> if the current scene controller is not of the requested type.</returns>
+	/// <typeparam name="T">The actual type of the current scene controller. Must inherit from SceneController.</typeparam>
+	public static T GetSceneController<T>() where T : SceneController {
+		return sceneController as T;
 	}
 }
 

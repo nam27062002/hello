@@ -33,7 +33,7 @@ public class DebugMenuXPBar : MonoBehaviour {
 	private void Awake() {
 		// Get external references
 		m_bar = GetComponentInChildren<Slider>();
-		m_valueText = gameObject.FindSubObject("TextValue").GetComponent<Text>();
+		m_valueText = gameObject.FindTransformRecursive("TextValue").GetComponent<Text>();
 	}
 
 	/// <summary>
@@ -41,8 +41,8 @@ public class DebugMenuXPBar : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener(DebugMenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
-		Messenger.AddListener(DebugMenuSimulate.EVENT_SIMULATION_FINISHED, Refresh);
+		Messenger.AddListener(GameEvents.DEBUG_MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener(GameEvents.DEBUG_SIMULATION_FINISHED, Refresh);
 
 		// Do a first refresh
 		Refresh();
@@ -53,8 +53,8 @@ public class DebugMenuXPBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(DebugMenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
-		Messenger.RemoveListener(DebugMenuSimulate.EVENT_SIMULATION_FINISHED, Refresh);
+		Messenger.RemoveListener(GameEvents.DEBUG_MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener(GameEvents.DEBUG_SIMULATION_FINISHED, Refresh);
 	}
 
 	/// <summary>
@@ -70,8 +70,8 @@ public class DebugMenuXPBar : MonoBehaviour {
 
 		// Text
 		m_valueText.text = String.Format("{0}/{1}xp ({2}%)",
-		                                StringUtils.FormatNumber(m_bar.value - m_bar.minValue, 0),
-		                                StringUtils.FormatNumber(xpRange.distance, 0),
+		                                StringUtils.FormatNumber(m_bar.value - m_bar.minValue, 2),
+		                                StringUtils.FormatNumber(Mathf.Ceil(xpRange.distance), 2),
 		                                StringUtils.FormatNumber(data.progression.progressCurrentLevel * 100f, 0));
 
 		// Special case on last level
@@ -80,8 +80,8 @@ public class DebugMenuXPBar : MonoBehaviour {
 
 			Range previousLevelRange = data.progression.GetXpRangeForLevel(data.progression.level - 1);
 			m_valueText.text = String.Format("{0}/{1}xp ({2}%)",
-			                                 StringUtils.FormatNumber(previousLevelRange.distance, 0),
-			                                 StringUtils.FormatNumber(previousLevelRange.distance, 0),
+			                                 StringUtils.FormatNumber(Mathf.Ceil(previousLevelRange.distance), 2),
+			                         		 StringUtils.FormatNumber(Mathf.Ceil(previousLevelRange.distance), 2),
 			                                 StringUtils.FormatNumber(data.progression.progressCurrentLevel * 100f, 0));
 		}
 	}

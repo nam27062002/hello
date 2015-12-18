@@ -8,7 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -21,13 +21,18 @@ public class DragonMotion : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 
+	enum State {
+		Idle = 0,
+		Fly,
+		Fly_Up,
+		Fly_Down,
+		Stunned
+	};
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed members
-	public float speedDirectionMultiplier = 2f;
-	public Range movementLimitX = new Range(-10000, 50000);
-
 	[SerializeField] private float m_stunnedTime;
 
 	// Public members
@@ -41,18 +46,33 @@ public class DragonMotion : MonoBehaviour {
 
 	// Movement control
 	private Vector3 m_impulse;
-	private Vector3 m_externalImpulse;
 	private Vector3 m_direction;
 	private float m_speedMultiplier;
+
 	private float m_stunnedTimer;
-	private float m_glideTimer;
-	
+
 	private int m_groundMask;
-	private bool m_nearGround;
+	/** Distance from the nearest ground collision below the dragon. The maximum distance checked is 10. */
+	private float m_height;
+
+	struct Sensors {
+		public Transform top;
+		public Transform bottom;
+	};
+	private Sensors m_sensor;
+
+	private List<Transform> m_hitTargets;
+
+	private State m_state;
+
+	private float m_impulseTransformationSpeed;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
+
+	public Transform tongue { get { return transform.FindTransformRecursive("Fire_Dummy"); } }
+	public Transform head { get { return transform.FindTransformRecursive("Dragon_Head"); } }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -69,8 +89,32 @@ public class DragonMotion : MonoBehaviour {
 		m_dragon			= GetComponent<DragonPlayer>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_orientation	 	= GetComponent<DragonOrientation>();
-		
+
+		Transform sensors	= transform.FindChild("sensors").transform; 
+		m_sensor.top 		= sensors.FindChild("TopSensor").transform;
+		m_sensor.bottom		= sensors.FindChild("BottomSensor").transform;
+
+		int n = 0;
+		Transform t = null;
+		Transform points = transform.FindChild("points");
+		m_hitTargets = new List<Transform>();
+
+		while (true) {
+			t = points.FindChild("attack_" + n);
+			if (t != null) {
+				m_hitTargets.Add(t);
+				n++;
+			} else {
+				break;
+			}
+		}
+
 		m_rbody = GetComponent<Rigidbody>();
+
+		m_height = 10f;
+
+		// TODO (miguel): This should come from dragon settings
+		m_impulseTransformationSpeed = 25.0f;
 	}
 
 	/// <summary>
@@ -81,59 +125,143 @@ public class DragonMotion : MonoBehaviour {
 		m_speedMultiplier = 0.5f;
 
 		m_stunnedTimer = 0;
-		m_glideTimer = 6f;
 
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
+		
+		ChangeState(State.Idle);
 	}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	void OnDestroy(){
-
+	void OnEnable() {
+		m_speedMultiplier = 0.5f;
 	}
 	
+	private void ChangeState(State _nextState) {
+		if (m_state != _nextState) {
+			// we are leaving old state
+			switch (m_state) {
+				case State.Fly:
+					break;
+
+				case State.Fly_Up:
+					m_animator.SetBool("fly up", false);
+					break;
+
+				case State.Fly_Down:
+					m_animator.SetBool("fly down", false);
+					break;
+
+				case State.Stunned:
+					m_stunnedTimer = 0;
+					break;
+			}
+
+			// entering new state
+			switch (_nextState) {
+				case State.Idle:
+					m_animator.SetBool("fly", false);
+
+					m_impulse = Vector3.zero;
+					m_rbody.velocity = m_impulse;
+					if (m_direction.x < 0)	m_direction = Vector3.left;
+					else 					m_direction = Vector3.right;
+					m_orientation.SetDirection(m_direction);
+					break;
+
+				case State.Fly:
+					m_animator.SetBool("fly", true);
+					break;
+
+				case State.Fly_Up:
+					m_animator.SetBool("fly", true);
+					m_animator.SetBool("fly up", true);
+					break;
+
+				case State.Fly_Down:
+					m_animator.SetBool("fly", true);
+					m_animator.SetBool("fly down", true);
+					break;
+
+				case State.Stunned:
+					m_impulse = Vector3.zero;
+					m_rbody.velocity = m_impulse;
+					m_stunnedTimer = m_stunnedTime;
+					m_speedMultiplier = 0.5f;
+					m_animator.SetTrigger("damage");
+					break;
+			}
+
+			m_state = _nextState;
+		}	
+	}
+			
 	/// <summary>
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
+		switch (m_state) {
+			case State.Idle:
+				m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, 0.5f, 0.025f); //don't reduce multipliers too fast 
 
-		if (m_stunnedTimer > 0) {
-			m_stunnedTimer -= Time.deltaTime;
-			if (m_stunnedTimer <= 0) {
-				m_stunnedTimer = 0;
-			}
-		}
+				if (m_controls.moving) {
+					ChangeState(State.Fly);
+				}
+				break;
 
-		if (m_glideTimer > 0 && !m_nearGround) {
-			m_glideTimer -= Time.deltaTime;
-			if (m_glideTimer <= 0) {
-				m_glideTimer = 0;
-			}
+			case State.Fly:
+				if (m_direction.y < -0.65f) {
+					ChangeState(State.Fly_Down);
+				} else if (m_direction.y > 0.65f) {
+					ChangeState(State.Fly_Up);				
+				}
+				break;
+
+			case State.Fly_Up:
+				if (m_speedMultiplier > 1.5f) {
+					ChangeState(State.Fly_Down);
+				} else if (m_direction.y < 0.65f) {
+					ChangeState(State.Fly);			
+				}
+				break;
+
+			case State.Fly_Down:
+				if (m_speedMultiplier < 1.5f && m_direction.y > -0.65f) {
+					ChangeState(State.Fly);
+				}
+				break;
+
+			case State.Stunned:
+				m_stunnedTimer -= Time.deltaTime;
+				if (m_stunnedTimer <= 0) {
+					ChangeState(State.Idle);
+				}
+				break;
 		}
+				
+		m_animator.SetFloat("height", m_height);
 	}
 
 	/// <summary>
 	/// Called once per frame at regular intervals.
 	/// </summary>
-	void FixedUpdate(){
+	void FixedUpdate() {
+		switch (m_state) {
+			case State.Idle:
+				FlyAwayFromGround();
+				break;
 
-		UpdateMovement();
-
-		// limit movement
-		Vector3 pos = transform.position;
-
-		if (pos.x < movementLimitX.min) {
-			pos.x = movementLimitX.min;
-		} else if (pos.x > movementLimitX.max) {
-			pos.x = movementLimitX.max;
-		} else if (pos.y > 15000f) {
-			pos.y = 15000f;
+			case State.Fly:
+			case State.Fly_Up:
+			case State.Fly_Down:
+				UpdateMovement();
+				break;
 		}
-		pos.z = 0;
+		
+		m_rbody.angularVelocity = Vector3.zero;
 
-		transform.position = pos;
+		Vector3 position = transform.position;
+		position.z = 0f;
+		transform.position = position;
 	}
 	
 	//------------------------------------------------------------------//
@@ -142,104 +270,116 @@ public class DragonMotion : MonoBehaviour {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	void UpdateMovement() {
-
-		Vector3 oldDirection = m_direction;
+	private void UpdateMovement() {
 		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speed.value * m_speedMultiplier); 
 
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
-			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier(), 0.25f); //accelerate from stop to normal or boost velocity
+			float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
+			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier() * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
-			// we keep the velocity value
-			float v = impulse.magnitude;
-																		
-			// check collision with ground, only down!!
-			RaycastHit sensorA;
-			RaycastHit sensorB;
-			Vector3 sourceSensorA = transform.position + Vector3.up * 0.5f;
-			Vector3 sourceSensorB = transform.position + Vector3.up * 0.5f + Vector3.right * 2f;
-			Vector3 distance = Vector3.down * 2f;
-			bool hit_A = Physics.Linecast(sourceSensorA, sourceSensorA + distance, out sensorA, m_groundMask);
-			bool hit_B = Physics.Linecast(sourceSensorB, sourceSensorB + distance, out sensorB, m_groundMask);
-
-			float dot = 0;
-
-			m_nearGround = hit_A && hit_B;
-
-			if (m_nearGround) {
-				// we are moving towards ground or away?
-				dot = Vector3.Dot(sensorA.normal, impulse.normalized);
-				m_nearGround = dot < 0;
-			}
-
-			if (m_nearGround) {
-				if (impulse.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
-				else 				m_direction = (sensorB.point - sensorA.point).normalized;
-
-				if ((sensorA.distance <= 0.75f || sensorB.distance <= 0.75f)) {
-					float f = 1 + ((dot - (-0.5f)) / (-1 - (-0.5f))) * (0 - 1);
-					m_impulse = m_direction * Mathf.Min(1f, Mathf.Max(0f, f));
-				} else {
-					// the direction will be parallel to ground, but we'll still moving down until the dragon is near enough
-					m_impulse = impulse.normalized;				
-				}			
-			} else {
-				// on air impulse formula, we don't fully change the velocity vector 
-				m_impulse = Vector3.Lerp(m_impulse, impulse, 0.5f);
-				m_impulse.Normalize();
-				m_direction = m_impulse;
-			}			
-
-			m_impulse *= v;
+			ComputeFinalImpulse(impulse);
 
 			m_orientation.SetDirection(m_direction);
 		} else {
-			// idle
-			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, 0.5f, 0.025f); //don't reduce multipliers too fast 
+			ChangeState(State.Idle);
+		}
 
-			m_impulse = Vector3.zero;
-			if (oldDirection.x < 0)	m_direction = Vector3.left;
-			else 					m_direction = Vector3.right;
+		m_rbody.velocity = m_impulse;
+	}
+
+	private void FlyAwayFromGround() {
+		if (m_height < 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
+			Vector3 oldDirection = m_direction;
+			Vector3 impulse = Vector3.up * m_dragon.data.speed.value * 0.1f;			
+
+			ComputeFinalImpulse(impulse);	
+			m_direction = oldDirection;
+
 			m_orientation.SetDirection(m_direction);
-
-			m_glideTimer = Random.Range(3f, 5f);
-		}
-
-		if (m_stunnedTimer <= 0) {
-			m_rbody.velocity = m_impulse + (m_externalImpulse * m_speedMultiplier);
+			
+			m_rbody.velocity = m_impulse;
 		} else {
-			m_rbody.velocity = (m_externalImpulse * m_speedMultiplier);
-		}
-				
-		m_rbody.angularVelocity = Vector3.zero;
-		
-		m_externalImpulse = Vector3.Lerp(m_externalImpulse, Vector3.zero, 0.05f * m_speedMultiplier);
-
-		// Animator state
-		if (impulse != Vector3.zero) {	
-			bool plummet = m_speedMultiplier > 1.5f || m_direction.y < -0.65f;
-			bool flyUp = m_direction.y > 0.65f;
-
-			m_animator.SetBool("fly", true);
-			m_animator.SetBool("plummet", plummet);
-			m_animator.SetBool("flight_up", flyUp);
-
-			if (!plummet && !flyUp && !m_nearGround && !m_animator.GetBool("bite") && !m_animator.GetBool("fire")) {
-				if (m_glideTimer <= 0) {
-					m_animator.SetTrigger("glide");
-					m_glideTimer = Random.Range(3f, 5f);
-				}
-			} else {
-				m_glideTimer = Random.Range(3f, 5f);
-			}
-		} else {
-			m_animator.SetBool("fly", false);
-			m_animator.SetBool("plummet", false);
-			m_animator.SetBool("flight_up", false);
+			m_rbody.velocity = Vector3.zero;
 		}
 	}
 
+	private void ComputeFinalImpulse(Vector3 _impulse) {
+		// we keep the velocity value
+		float v = _impulse.magnitude;
+		
+		// check collision with ground, only down!!
+		RaycastHit sensorA;
+		RaycastHit sensorB;
+		float dot = 0;
+		
+		bool nearGround = CheckGround(out sensorA, out sensorB);
+		if (_impulse.y > 0) {
+			nearGround = CheckCeiling(out sensorA, out sensorB);
+		}
+		
+		if (nearGround) {
+			// we are moving towards ground or away?
+			dot = Vector3.Dot(sensorA.normal, _impulse.normalized);
+			nearGround = dot < 0;
+		}
+		
+		if (nearGround) {
+			if (_impulse.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
+			else 					m_direction = (sensorB.point - sensorA.point).normalized;
+			
+			if ((sensorA.distance <= 0.75f || sensorB.distance <= 0.75f)) {
+				float f = 1 + ((dot - (-0.5f)) / (-1 - (-0.5f))) * (0 - 1);
+				m_impulse = m_direction * Mathf.Min(1f, Mathf.Max(0f, f));
+			} else {
+				// the direction will be parallel to ground, but we'll still moving down until the dragon is near enough
+				m_impulse = _impulse.normalized;				
+			}			
+		} else {
+			// on air impulse formula, we don't fully change the velocity vector 
+			m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
+			m_impulse.Normalize();
+			m_direction = m_impulse;
+		}			
+		
+		m_impulse *= v;
+	}
+
+	private bool CheckGround(out RaycastHit _leftHit, out RaycastHit _rightHit) {
+		Vector3 distance = Vector3.down * 10f;
+		bool hit_L = false;
+		bool hit_R = false;
+
+		Vector3 leftSensor  = m_sensor.bottom.position;
+		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
+
+		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
+		hit_R = Physics.Linecast(rightSensor, rightSensor + distance, out _rightHit, m_groundMask);
+
+		if (hit_L && hit_R) {
+			float d = Mathf.Min(_leftHit.distance, _rightHit.distance);
+			m_height = d;
+			return (d <= 1f);
+		} else {
+			m_height = 10f;
+			return false;
+		}
+	}
+
+	private bool CheckCeiling(out RaycastHit _leftHit, out RaycastHit _rightHit) {
+		Vector3 distance = Vector3.up * 2f;
+		bool hit_L = false;
+		bool hit_R = false;
+		
+		Vector3 leftSensor 	= m_sensor.top.position;
+		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
+						
+		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
+		hit_R = Physics.Linecast(rightSensor, rightSensor + distance, out _rightHit, m_groundMask);
+		
+		return (hit_L && hit_R);
+	}
+		
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
@@ -252,9 +392,23 @@ public class DragonMotion : MonoBehaviour {
 
 	public void AddForce(Vector3 _force) {
 
-		m_externalImpulse += _force;
-		m_stunnedTimer = m_stunnedTimer;
-		m_animator.SetTrigger("damage");
+		ChangeState(State.Stunned);
+	}
+
+	public Transform GetAttackPointNear(Vector3 _point) {
+		Transform target = transform;
+		float minDistSqr = 999999f;
+
+		for (int i = 0; i < m_hitTargets.Count; i++) {
+			Vector2 v = (_point - m_hitTargets[i].position);
+			float distSqr = v.sqrMagnitude;
+			if (distSqr <= minDistSqr) {
+				target = m_hitTargets[i];
+				minDistSqr = distSqr;
+			}
+		}
+
+		return target;
 	}
 	
 	//------------------------------------------------------------------//
@@ -280,13 +434,13 @@ public class DragonMotion : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	void OnTriggerEnter(Collider other) {}
-	void OnTriggerExit(Collider other) {}
-	void OnTriggerStay(Collider other) {}
-	void OnCollisionEnter(Collision collision) {}
-	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer _source) {
+
+
+	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer_OLD _source) {
 		
 		m_dragon.AddLife(-_damage);
-	}	
+	}
+
+
 }
 

@@ -47,9 +47,9 @@ public class PopupSummary : MonoBehaviour {
 		// Define popup controller delegates
 		PopupController controller = GetComponent<PopupController>();
 		DebugUtils.Assert(controller != null, "Required component!");
-		controller.onOpenPreAnimationDelegate = OnOpenPreAnimation;
-		controller.onOpenPostAnimationDelegate = OnOpenPostAnimation;
-		controller.onClosePostAnimationDelegate = OnClosePostAnimation;
+		controller.OnOpenPreAnimation = OnOpenPreAnimation;
+		controller.OnOpenPostAnimation = OnOpenPostAnimation;
+		controller.OnClosePostAnimation = OnClosePostAnimation;
 	}
 	
 	/// <summary>
@@ -71,7 +71,7 @@ public class PopupSummary : MonoBehaviour {
 		scoreAnimator.SetValue(0, 0);
 		
 		// Set time - format to MM:SS
-		GameSceneController game = InstanceManager.sceneController as GameSceneController;
+		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();
 		timeLabel.text = TimeUtils.FormatTime(game.elapsedSeconds, TimeUtils.EFormat.ABBREVIATIONS, 2, TimeUtils.EPrecision.MINUTES);
 		
 		// Set initial coins
@@ -83,16 +83,16 @@ public class PopupSummary : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPostAnimation() {
 		// Launch number animators
-		scoreAnimator.SetValue(0, (int)App.Instance.gameLogic.score);
-		coinsAnimator.SetValue(0, (int)UserProfile.coins);
+		scoreAnimator.SetValue(0, (int)RewardManager.score);
+		coinsAnimator.SetValue(0, (int)RewardManager.coins);
 	}
 
 	/// <summary>
 	/// Actions to perform right after the popup is closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
-		// Go back to main menu
-		FlowManager.GoToMenu();
+		// Let game scene controller manage it
+		InstanceManager.GetSceneController<GameSceneController>().OnSummaryPopupClosed();
 	}
 
 	//------------------------------------------------------------------//

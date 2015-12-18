@@ -23,6 +23,12 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
+		// Auxiliar struct to track changes
+		struct Change {
+			public Vector3 oldValue;
+			public Vector3 newValue;
+			public bool changed { get { return oldValue != newValue; }}
+		};
 
 		//------------------------------------------------------------------//
 		// PROPERTIES														//
@@ -32,8 +38,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS															//
 		//------------------------------------------------------------------//
-		private Vector3 m_leftSide = Vector3.zero;
-		private Vector3 m_rightSide = Vector3.zero;
+		private Vector3[] m_sides = new Vector3[4];
 		private Mesh m_mesh = null;
 		
 		//------------------------------------------------------------------//
@@ -46,8 +51,13 @@ namespace LevelEditor {
 			// Initial edges
 			m_mesh = targetPiece.GetComponent<MeshFilter>().sharedMesh;
 			if(m_mesh != null) {
-				m_leftSide = new Vector3(m_mesh.bounds.min.x, 0f, 0f);		// 0,0,0 is the center
-				m_rightSide = new Vector3(m_mesh.bounds.max.x, 0f, 0f);		// 0,0,0 is the center
+				// 0,0,0 is the center
+				m_sides = new Vector3[4] {
+					new Vector3(m_mesh.bounds.min.x, 0f, 0f),	// left
+					new Vector3(m_mesh.bounds.max.x, 0f, 0f),	// right
+					new Vector3(0f, m_mesh.bounds.min.y, 0f),	// bottom
+					new Vector3(0f, m_mesh.bounds.max.y, 0f)	// top
+				};
 			}
 		}		
 
@@ -63,50 +73,89 @@ namespace LevelEditor {
 		/// </summary>
 		public void OnSceneGUI() {
 			// We're using an scaled cube, so we know exactly where the edges of the ground piece are
-			// We're only interested in modifying left and right edges for now
 			if(m_mesh == null) return;
 
-			// Store current values
-			Vector3 oldLeftPos = targetPiece.transform.TransformPoint(m_leftSide);
-			Vector3 oldRightPos = targetPiece.transform.TransformPoint(m_rightSide);
+			// Store rotation
 			Vector3 oldRotation = targetPiece.transform.eulerAngles;
 
-			// Draw handlers and store new values
-			Handles.color = Colors.coral;
-			Vector3 newLeftPos = Handles.FreeMoveHandle(oldLeftPos, Quaternion.identity, HandleUtility.GetHandleSize(oldLeftPos) * 0.25f, Vector3.zero, Handles.SphereCap);
+			// Check changes in all edges
+			int changedIdx = -1;
+			Change[] changes = new Change[m_sides.Length];
+			for(int i = 0; i < m_sides.Length; i++) {
+				// Store current value
+				changes[i].oldValue = targetPiece.transform.TransformPoint(m_sides[i]);
 
-			Handles.color = Colors.coral;
-			Vector3 newRightPos = Handles.FreeMoveHandle(oldRightPos, Quaternion.identity, HandleUtility.GetHandleSize(oldRightPos) * 0.25f, Vector3.zero, Handles.SphereCap);
+				// Draw handler and store new value
+				// Different color for horizontal and vertical handles
+				if(i < 2) {
+					Handles.color = Colors.coral;
+				} else {
+					Handles.color = Colors.orange;
+				}
+				//changes[i].newValue = Handles.FreeMoveHandle(changes[i].oldValue, Quaternion.identity, HandleUtility.GetHandleSize(changes[i].oldValue) * 0.25f, Vector3.zero, Handles.SphereCap);
+				changes[i].newValue = Handles.FreeMoveHandle(changes[i].oldValue, Quaternion.identity, LevelEditor.settings.handlersSize, Vector3.zero, Handles.SphereCap);
 
-			// Restrict to XY plane
-			newLeftPos.z = oldLeftPos.z;
-			newRightPos.z = oldRightPos.z;
+				// Restrict to XY plane
+				changes[i].newValue.z = changes[i].oldValue.z;
 
-			// Detect changes
-			bool leftChanged = (oldLeftPos != newLeftPos);
-			bool rightChanged = (oldRightPos != newRightPos);
-
-			// Snap to round values - only if value has changed
-			// Skip Z as well
-			for(int i = 0; i < 2; i++) {
-				if(leftChanged) newLeftPos[i] = MathUtils.Snap(newLeftPos[i], LevelEditor.settings.snapSize);
-				if(rightChanged) newRightPos[i] = MathUtils.Snap(newRightPos[i], LevelEditor.settings.snapSize);
+				// Snap to round values, skip Z - only if value has changed
+				if(changes[i].newValue != changes[i].oldValue) {
+					changedIdx = i;
+					changes[i].newValue.x = MathUtils.Snap(changes[i].newValue.x, LevelEditor.settings.snapSize);
+					changes[i].newValue.y = MathUtils.Snap(changes[i].newValue.y, LevelEditor.settings.snapSize);
+				}
 			}
 
-			// Compute new transformations
-			Vector3 oldAxis = (oldRightPos - oldLeftPos);
-			Vector3 newAxis = (newRightPos - newLeftPos);
+			// Compute and apply new transformations
+			// Only if actually there are changes
+			if(changedIdx >= 0) {
+				// Different for horizontal and vertical axis
+				Vector3 oldAxis;
+				Vector3 newAxis;
+				Vector3 newScale = targetPiece.transform.localScale;
+				Vector3 newPos = targetPiece.transform.position;
+				float newRotationZ = oldRotation.z;
+				if(changedIdx < 2) {
+					// Allow undoing
+					Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
 
-			float newScaleX = newAxis.magnitude;
-			Vector3 newPos = newLeftPos + newAxis/2f;
-			float newRotationZ = Vector3.right.Angle360(newAxis, Vector3.forward);
+					// Horizontal axis
+					oldAxis = changes[1].oldValue - changes[0].oldValue;
+					newAxis = changes[1].newValue - changes[0].newValue;
+					
+					// Position
+					newPos = changes[0].newValue + newAxis/2f;
+					targetPiece.transform.position = newPos;
 
-			// Apply transformations (only if there were actually changes)
-			if(leftChanged || rightChanged) {
-				Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
-				targetPiece.transform.position = newPos;
-				targetPiece.transform.localScale = new Vector3(newScaleX, targetPiece.transform.localScale.y, targetPiece.transform.localScale.z);
-				targetPiece.transform.eulerAngles = new Vector3(oldRotation.x, oldRotation.y, newRotationZ);
+					// Scale
+					newScale.x = newAxis.magnitude;
+					targetPiece.transform.localScale = newScale;
+
+					// Rotation
+					newRotationZ = Vector3.right.Angle360(newAxis, Vector3.forward);
+					targetPiece.transform.eulerAngles = new Vector3(oldRotation.x, oldRotation.y, newRotationZ);
+				} else {
+					// Allow undoing
+					Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
+
+					// Vertical axis
+					// [AOC] As requested by design, vertical handlers only affect scale, and only in the dragged edge
+					oldAxis = changes[3].oldValue - changes[2].oldValue;
+					newAxis = changes[3].newValue - changes[2].newValue;
+
+					// Scale
+					newScale.y = newAxis.magnitude;
+					targetPiece.transform.localScale = newScale;
+
+					// We must reposition anyway, but only in the dragging direction
+					// To do so, compute new position of the edges after the scaling has been applied, and apply de difference to the piece's position
+					Vector3[] verticalEdges = new Vector3[2] {
+						targetPiece.transform.TransformPoint(m_sides[2]),
+						targetPiece.transform.TransformPoint(m_sides[3])
+					};
+					Vector3 offset = verticalEdges[changedIdx-2] - changes[changedIdx].oldValue;
+					targetPiece.transform.position = newPos + offset;
+				}
 			}
 		}
 

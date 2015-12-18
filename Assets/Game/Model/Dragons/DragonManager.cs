@@ -86,6 +86,48 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 		return list;
 	}
 
+	/// <summary>
+	/// Get all the dragons with a given lock state.
+	/// </summary>
+	/// <returns>The data of the dragons at the given lock state.</returns>
+	/// <param name="_lockState">The lock state to filter by.</param>
+	public static List<DragonData> GetDragonsByLockState(DragonData.LockState _lockState) {
+		// Iterate the dragons list looking for those belonging to the target tier
+		List<DragonData> list = new List<DragonData>();
+		for(int i = 0; i < instance.m_dragons.Length; i++) {
+			// Does this dragon match the required lockstate?
+			if(instance.m_dragons[i].lockState == _lockState || _lockState == DragonData.LockState.ANY) {
+				// Yes!! Add it to the list
+				list.Add(instance.m_dragons[i]);
+			}
+		}
+		return list;
+	}
+
+	/// <summary>
+	/// Check whether a given tier is unlocked or not.
+	/// A tier is considered unlocked when the previous tier has been completed.
+	/// A tier is considered completed when all the dragons in it are max level.
+	/// </summary>
+	/// <returns><c>True</c> if all the dragons in the previous tier are max level. <c>False</c> otherwise.</returns>
+	/// <param name="_tier">The tier to be checked.</param>
+	public static bool IsTierUnlocked(DragonTier _tier) {
+		// Always true for first tier
+		if(_tier == DragonTier.TIER_0) return true;
+
+		// Check dragons in previous tier
+		List<DragonData> dragonsToCheck = GetDragonsByTier(_tier - 1);
+		for(int i = 0; i < dragonsToCheck.Count; i++) {
+			// If the dragon is not maxed out, tier is not completed thus requested tier is not unlocked, we can break the loop
+			if(!dragonsToCheck[i].progression.isMaxLevel) {
+				return false;
+			}
+		}
+
+		// All dragons on the previous tier are maxed out, tier is unlocked!
+		return true;
+	}
+
 	//------------------------------------------------------------------//
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
@@ -136,6 +178,10 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	public static void Load(DragonData.SaveData[] _data) {
 		// We don't trust array order, so do it by id
 		for(int i = 0; i < _data.Length; i++) {
+			if(_data[i] == null) {
+				_data[i] = new DragonData.SaveData();
+				_data[i].id = (DragonId)i;
+			}
 			GetDragonData(_data[i].id).Load(_data[i]);
 		}
 	}

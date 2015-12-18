@@ -1,4 +1,4 @@
-﻿// DebugMenuSimulate.cs
+// DebugMenuSimulate.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/09/2015.
@@ -18,11 +18,6 @@ using System;
 /// Simulate a game in the debug menu.
 /// </summary>
 public class DebugMenuSimulate : MonoBehaviour {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string EVENT_SIMULATION_FINISHED = typeof(DebugMenuSimulate).Name +  "_EVENT_DRAGON_CHANGED";
-
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -100,10 +95,10 @@ public class DebugMenuSimulate : MonoBehaviour {
 		PersistenceManager.Save();
 
 		// Show summary popup
-		DebugSimulationSummaryPopup popup = PopupManager.OpenPopup(DebugSimulationSummaryPopup.PATH).GetComponent<DebugSimulationSummaryPopup>();
+		DebugSimulationSummaryPopup popup = PopupManager.OpenPopupInstant(DebugSimulationSummaryPopup.PATH).GetComponent<DebugSimulationSummaryPopup>();
 		popup.Init(duration, rewardXp, rewardCoins, rewardPc, levelUpCount, factor);
 
 		// Notify game
-		Messenger.Broadcast(EVENT_SIMULATION_FINISHED);
+		Messenger.Broadcast(GameEvents.DEBUG_SIMULATION_FINISHED);
 	}
 }

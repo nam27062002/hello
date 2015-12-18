@@ -8,6 +8,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------
 	private DragonPlayer m_dragon;
+	private Animator m_animator;
 
 	
 	//-----------------------------------------------
@@ -17,6 +18,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		m_dragon = GetComponent<DragonPlayer>();
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 		
 	// Update is called once per frame
@@ -28,9 +30,12 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		return m_dragon.IsAlive();
 	}
 
-	public void ReceiveDamage(float _value) {
-		if (enabled)
+	public void ReceiveDamage(float _value, Transform _source = null) {
+		if(enabled) {
+			m_animator.SetTrigger("damage");// receive damage?
 			m_dragon.AddLife(-_value);
+			Messenger.Broadcast<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _value, _source);
+		}
 	}
 
 }

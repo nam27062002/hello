@@ -59,7 +59,6 @@ public static class SerializationExt {
 			stream.Seek(0, SeekOrigin.Begin);
 			return (T)formatter.Deserialize(stream);
 		}
-		return default(T);
 	}
 }
 

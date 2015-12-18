@@ -25,6 +25,6 @@ public struct CircleAreaBounds : AreaBounds {
 		color.a = 0.25f;
 
 		Gizmos.color = color;
-		Gizmos.DrawSphere(m_bounds.center, m_bounds.extents.x);
+		Gizmos.DrawSphere(m_bounds.center, Mathf.Max(0.5f, m_bounds.extents.x));
 	}
 }

@@ -54,13 +54,14 @@ public class StringUtils {
 	/// <param name="_iDecimalPlaces">The maximum amount of digits to be displayed in the decimal part. Example: 12.3456, 2 -> "12.34".</param>
 	/// <param name="_iZeroPadding">The minimum amount of digits to be displayed in the integer part of the number. Missing digits will be filled with '0'. Example: 12.3456, 4 -> "0012.3456".</param>
 	/// <param name="_bUseThousandSeparators">Whether to use thousands separators or not.</param>
+	/// <param name="_bForceDecimals">If true, decimal part will be filled with 0s to match _iDecimalPlaces.</param>
 	public static string FormatNumber(ulong _num, int _iZeroPadding = 0, bool _bUseThousandSeparators = true) {
 		return FormatNumber((double)_num, 0, _iZeroPadding, _bUseThousandSeparators);
 	}
 	public static string FormatNumber(long _num, int _iZeroPadding = 0, bool _bUseThousandSeparators = true) {
 		return FormatNumber((double)_num, 0, _iZeroPadding, _bUseThousandSeparators);
 	}
-	public static string FormatNumber(double _num, int _iDecimalPlaces, int _iZeroPadding = 0, bool _bUseThousandSeparators = true) {
+	public static string FormatNumber(double _num, int _iDecimalPlaces, int _iZeroPadding = 0, bool _bUseThousandSeparators = true, bool _bForceDecimals = false) {
 		// C# makes it 'easy' for us!
 		// see https://msdn.microsoft.com/en-us/library/0c899ak8(v=vs.110).aspx
 		// 1. Create a formatting string based on input parameters
@@ -81,7 +82,12 @@ public class StringUtils {
 
 		// 1.4. Precision
 		for(int i = 0; i < _iDecimalPlaces; i++) {
-			format.Write("0");	// Will add trailing 0s if needed
+			// see https://msdn.microsoft.com/en-us/library/0c899ak8(v=vs.110).aspx
+			if(_bForceDecimals) {
+				format.Write("0");	// Will add trailing 0s if needed
+			} else {
+				format.Write("#");	// Will only add the number if it's a non-redundant 0
+			}
 		}
 
 		// 2. Transform the number using the computed format and the current locale

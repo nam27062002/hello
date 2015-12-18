@@ -26,9 +26,7 @@ public class DragonProgression : SerializableClass {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// To be set on the inspector only
-	[SerializeField] private float m_maxXp = 1000f; // Determine the XP required to reach the maximum value
-	[SerializeField] private AnimationCurve m_curve = AnimationCurve.Linear(0, 0, DragonData.NUM_LEVELS - 1, 1000f);	// Will be used by the inspector to easily setup the values for each level
-	[SerializeField] private float[] m_levelsXp = new float[DragonData.NUM_LEVELS];	// Will be interpolated using the max value and the curve
+	[SerializeField] private float[] m_levelsXp = new float[DragonData.NUM_LEVELS];
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -44,9 +42,10 @@ public class DragonProgression : SerializableClass {
 	public int level { get { return m_level; }}	// Should never be > lastLevel
 	public int nextLevel { get { return Mathf.Min(m_level + 1, lastLevel); }}
 	public int lastLevel { get { return m_levelsXp.Length - 1; }}
+	public bool isMaxLevel { get { return m_level == lastLevel; }}
 
 	// Progress [0..1]
-	public float progressByXp { get { return Mathf.InverseLerp(0f, m_maxXp, m_xp); }}
+	public float progressByXp { get { return Mathf.InverseLerp(0f, m_levelsXp[lastLevel], m_xp); }}
 	public float progressByLevel { get { return Mathf.InverseLerp(0, lastLevel, m_level); }}
 	public float progressCurrentLevel { 
 		get { 
@@ -68,11 +67,8 @@ public class DragonProgression : SerializableClass {
 	/// Parametrized constructor.
 	/// </summary>
 	/// <param name="_owner">The dragon data this progression belongs to.</param>
-	/// <param name="_maxXP">The initial XP value for the highest level.</param>
-	public DragonProgression(DragonData _owner, float _maxXP) {
+	public DragonProgression(DragonData _owner) {
 		m_owner = _owner;
-		m_maxXp = _maxXP;
-		m_curve = AnimationCurve.Linear(0, 0f, lastLevel, m_maxXp);
 	}
 
 	//------------------------------------------------------------------//
@@ -80,15 +76,21 @@ public class DragonProgression : SerializableClass {
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Add experience to this progression.
-	/// Doesn't check for level ups, must be manually done by calling the IsLevelUpReady() method.
+	/// Optionally check for level ups, otherwise can be manually done by calling the IsLevelUpReady() and LevelUp() methods.
 	/// </summary>
-	/// <param name="_xpToAdd">The amount of xp to be added..</param>
-	public void AddXp(float _xpToAdd) {
+	/// <param name="_xpToAdd">The amount of xp to be added.</param>
+	/// <param name="_checkLevelUp">Whether to check for level ups or not.</param>
+	public void AddXp(float _xpToAdd, bool _checkLevelUp = false) {
 		// Experience can't be subtracted
 		if(_xpToAdd <= 0) return;
 
 		// Just do it
 		m_xp += _xpToAdd;
+
+		// Check for level ups
+		if(_checkLevelUp) {
+			LevelUp();
+		}
 	}
 
 	/// <summary>

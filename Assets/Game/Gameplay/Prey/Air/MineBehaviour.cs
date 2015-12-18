@@ -9,7 +9,6 @@ public class MineBehaviour : Initializable {
 
 	[Header("Explosion")]
 	[SerializeField] private GameObject m_explosionPrefab = null;
-	[SerializeField] private int m_explosionsAmount = 8;
 	[SerializeField] private Range m_delayRange = new Range(0f, 0.25f);
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
@@ -70,7 +69,7 @@ public class MineBehaviour : Initializable {
 			Vector2 v = (m_dragon.transform.position - transform.position);
 			float distanceSqr = v.sqrMagnitude;
 			if (distanceSqr <= m_radius * m_radius) {
-				m_dragon.ReceiveDamage(m_damage);
+				m_dragon.ReceiveDamage(m_damage, this.transform);
 				DragonMotion motion = m_dragon.GetComponent<DragonMotion>();
 				motion.AddForce(v.normalized * m_forceStrength);
 				Explode();

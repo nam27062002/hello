@@ -29,7 +29,7 @@ public class SceneController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	[InfoBox("Mark it only if the scene doesn't have any dependence with previous scenes.")]
+	[Comment("Mark it only if the scene doesn't have any dependency with previous scenes.")]
 	[SerializeField] private bool m_standaloneScene = false;
 
 	//------------------------------------------------------------------//
@@ -46,6 +46,12 @@ public class SceneController : MonoBehaviour {
 
 		// Register ourselves to the instance manager
 		InstanceManager.sceneController = this;
+
+		// No matter which scene is, instantiate control panel if not already done
+		//if(Debug.isDebugBuild) 
+		{
+			ControlPanel.CreateInstance();
+		}
 	}
 
 	/// <summary>

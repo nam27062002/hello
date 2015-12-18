@@ -3,12 +3,23 @@
 public struct RectAreaBounds : AreaBounds {
 	private Bounds m_bounds;
 
+	public RectAreaBounds(Vector3 _center, Vector2 _size) {
+
+		Vector3 size = (Vector3)_size;
+		size.z = 1f;
+		m_bounds = new Bounds(_center, size);
+	}
+
 	public RectAreaBounds(Vector3 _center, Vector3 _size) {
 		
 		m_bounds = new Bounds(_center, _size);
 	}
 
-	public Bounds bounds { get { return m_bounds; } }
+	public Bounds bounds { get { return m_bounds; } set { m_bounds = value; } }
+
+	public void SetMinMax(Vector3 _min, Vector3 _max) {
+		m_bounds.SetMinMax(_min, _max);
+	}
 
 	public Vector3 RandomInside() {
 		Vector3 offset = Vector3.zero;

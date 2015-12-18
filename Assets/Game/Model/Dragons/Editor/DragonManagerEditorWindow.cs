@@ -42,18 +42,6 @@ public class DragonManagerEditorWindow : EditorWindow {
 	}
 
 	/// <summary>
-	/// Show the window from the menu.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Content/Dragon Manager")]
-	public static void ShowWindow() {
-		// Serialize manager to be able to show private members
-		DragonManagerEditorWindow window = (DragonManagerEditorWindow)EditorWindow.GetWindow(typeof(DragonManagerEditorWindow));
-		window.m_target = new SerializedObject(DragonManager.instance);
-		window.titleContent = new GUIContent("Dragon Manager Editor");
-		window.ShowUtility();	// To avoid window getting automatically closed when losing focus
-	}
-
-	/// <summary>
 	/// Update window's view.
 	/// </summary>
 	public void OnGUI() {

@@ -43,6 +43,7 @@ public class RangeEditor : PropertyDrawer {
 		float padding = 5f;
 		GUIContent content = new GUIContent();
 		GUIStyle style = new GUIStyle(EditorStyles.label);	// Default label style, useful to compute text widths
+		GUIStyle styleTF = new GUIStyle(EditorStyles.textField);
 
 		// Group all
 		_label = EditorGUI.BeginProperty(_position, _label, _property);
@@ -87,7 +88,11 @@ public class RangeEditor : PropertyDrawer {
 		cursor.width = contentRect.width/2;
 		content.text = "min";
 		EditorGUIUtility.labelWidth = style.CalcSize(content).x;	// Adjust label to "min" word
-		minValue = EditorGUI.FloatField(cursor, content, minValue);
+		if(minValue > max.floatValue) {
+			styleTF.normal.textColor = Color.red;
+			styleTF.focused.textColor = Color.red;
+		}
+		minValue = EditorGUI.FloatField(cursor, content, minValue, styleTF);
 
 		if(EditorGUI.EndChangeCheck()) {
 			// Check new value validity, cap if invalid
@@ -109,7 +114,7 @@ public class RangeEditor : PropertyDrawer {
 		cursor.width = contentRect.width/2 - padding/2;
 		content.text = "max";
 		EditorGUIUtility.labelWidth = style.CalcSize(content).x + padding;	// Adjust label to "max" word
-		maxValue = EditorGUI.FloatField(cursor, content, maxValue);
+		maxValue = EditorGUI.FloatField(cursor, content, maxValue, styleTF);
 
 		if(EditorGUI.EndChangeCheck()) {
 			// Check new value validity, cap if invalid

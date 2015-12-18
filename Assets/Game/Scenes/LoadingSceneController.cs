@@ -57,6 +57,7 @@ public class LoadingSceneController : SceneController {
 		timer = 0;
 
 		// Load persistence
+		PersistenceManager.Init();
 		PersistenceManager.Load();
 	}
 	
@@ -69,7 +70,7 @@ public class LoadingSceneController : SceneController {
 
 		// [AOC] TODO!! Fake timer for now
 		timer += Time.deltaTime;
-		float loadProgress = Mathf.Min(timer/2f, 1f);	// Divide by the amount of seconds to simulate
+		float loadProgress = Mathf.Min(timer/1f, 1f);	// Divide by the amount of seconds to simulate
 		m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
 		m_loadingBar.normalizedValue = loadProgress;
 

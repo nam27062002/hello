@@ -32,7 +32,7 @@ public class GrabableBehaviour : MonoBehaviour {
 
 		grabPoint = transform.FindChild("GrabPoint");
 		player = GameObject.Find ("Player").GetComponent<DragonGrabBehaviour>();
-		footPoint = player.transform.FindSubObjectRecursive("leg_fing_R_002");
+		footPoint = player.transform.FindTransformRecursive("leg_fing_R_002");
 		rotation = transform.rotation;
 	}
 	

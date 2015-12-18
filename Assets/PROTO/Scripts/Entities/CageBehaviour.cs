@@ -48,7 +48,7 @@ public class CageBehaviour : MonoBehaviour {
 		GetComponent<GrabableBehaviour>().grabDelegate = GrabDelegate;
 		GetComponent<GrabableBehaviour>().releaseDelegate = ReleaseDelegate;
 		weight = GetComponent<GrabableBehaviour>().weight;
-		GetComponent<HittableBehaviour>().hitDelegate = HitDelegate;
+	//	GetComponent<HittableBehaviour>().hitDelegate = HitDelegate;
 		maxHealth = entity.health;
 		GameObject.Find("Spawn").GetComponent<SpawnZonesController>().Add(this.gameObject);
 		

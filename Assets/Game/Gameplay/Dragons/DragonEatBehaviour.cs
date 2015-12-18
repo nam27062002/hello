@@ -39,12 +39,12 @@ public class DragonEatBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 	
 		m_eatingTimer = 0;
 
-		m_mouth = transform.FindSubObjectTransform("fire");
-		m_tongueDirection = transform.FindSubObjectTransform("tongue_02").position - transform.FindSubObjectTransform("tongue_01").position;
+		m_mouth = GetComponent<DragonMotion>().tongue;
+		m_tongueDirection = GetComponent<DragonMotion>().tongue.position - GetComponent<DragonMotion>().head.position;
 		m_tongueDirection.Normalize();
 
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
@@ -74,7 +74,9 @@ public class DragonEatBehaviour : MonoBehaviour {
 		
 		m_prey.Clear();
 
-		m_animator.SetBool("bite", false);
+		if (m_animator && m_animator.isInitialized) {
+			m_animator.SetBool("eat", false);
+		}
 	}
 
 	public bool IsEating() {
@@ -127,7 +129,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 					m_slowedDown = false;
 				}
 
-				m_animator.SetBool("bite", false);
+				m_animator.SetBool("eat", false);
 			}
 		}
 
@@ -172,10 +174,10 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 				m_prey.Add(preyData);
 					
-				m_animator.SetBool("bite", true);
+				m_animator.SetBool("eat", true);
 
 				if (m_eatingTime >= 0.5f || m_prey.Count > 2) {
-					m_animator.SetTrigger("crazy_eat");
+					m_animator.SetTrigger("eat crazy");
 				}
 
 				Vector3 bloodPos = m_mouth.position;

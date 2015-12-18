@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -48,6 +49,12 @@ public class GameCameraController : MonoBehaviour {
 	[SerializeField] private float m_shakeDefaultDuration = 0.15f;
 	[SerializeField] private bool m_shakeDecayOverTime = true;
 
+	[Separator("Entity management")]
+	[SerializeField] private float m_activationDistance = 10f;
+	[SerializeField] private float m_activationRange = 5f;
+	[SerializeField] private float m_deactivationDistance = 20f;
+
+
 	// References
 	private DragonMotion m_dragonMotion = null;
 	private Transform m_danger = null;
@@ -64,6 +71,19 @@ public class GameCameraController : MonoBehaviour {
 	private float m_shakeDuration = 0f;
 	private float m_shakeTimer = 0f;
 
+	// Aux vars for in-game tuning
+	private Range m_zoomRangeStart;
+	private float m_nearStart;
+	private float m_farStart;
+
+	// Camera bounds
+	private Bounds m_frustum = new Bounds();
+	private Bounds m_activationMin = new Bounds();
+	private Bounds m_activationMax = new Bounds();
+	private Bounds m_deactivation = new Bounds();
+
+
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -77,10 +97,18 @@ public class GameCameraController : MonoBehaviour {
 		get { return m_defaultZoom; }
 	}
 
+	public void ZoomRangeOffset(float _value) {
+		m_zoomRange = m_zoomRangeStart + _value;
+		Camera.main.nearClipPlane = Mathf.Max(1, m_nearStart + _value);
+		Camera.main.farClipPlane = Mathf.Max(60, m_farStart + _value);
+	}
+
 	// Internal
 	private Vector3 playerPos {
 		get { return InstanceManager.player.transform.position + Vector3.up * 2f; }
 	}
+
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -105,6 +133,12 @@ public class GameCameraController : MonoBehaviour {
 
 		// Initialize zoom interpolator
 		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
+
+		m_zoomRangeStart = m_zoomRange;
+		m_nearStart = Camera.main.nearClipPlane;
+		m_farStart = Camera.main.farClipPlane;
+
+		ZoomRangeOffset(InstanceManager.player.data.cameraZoomOffset);
 	}
 	
 	/// <summary>
@@ -158,6 +192,8 @@ public class GameCameraController : MonoBehaviour {
 
 		// DONE! Apply new position
 		transform.position = newPos;
+
+		UpdateFrustumBounds();
 	}
 
 	/// <summary>
@@ -166,6 +202,40 @@ public class GameCameraController : MonoBehaviour {
 	private void OnDestroy() {
 
 	}
+
+	//------------------------------------------------------------------//
+	// Bounds															//
+	//------------------------------------------------------------------//
+
+	public bool IsInsideActivationArea(Vector3 _point) {
+		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
+	}
+
+	public bool IsInsideDeactivationArea(Vector3 _point) {
+		return !m_deactivation.Contains(_point);
+	}
+
+	// update camera bounds for Z = 0, this can change with dinamic zoom in/out animations
+	private void UpdateFrustumBounds() {
+		float frustumHeight = 2.0f * Mathf.Abs(transform.position.z) * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
+		float frustumWidth = frustumHeight * Camera.main.aspect;
+
+		Vector3 center = transform.position;
+		center.z = 0;
+
+		m_frustum.center = center;
+		m_frustum.size = new Vector3(frustumWidth, frustumHeight, 4f);
+
+		m_activationMin.center = center;
+		m_activationMin.size = new Vector3(frustumWidth + m_activationDistance * 2f, frustumHeight + m_activationDistance * 2f, 4f);
+
+		m_activationMax.center = center;
+		m_activationMax.size = new Vector3(frustumWidth + (m_activationDistance + m_activationRange) * 2f, frustumHeight + (m_activationDistance + m_activationRange) * 2f, 4f);
+
+		m_deactivation.center =center;
+		m_deactivation.size = new Vector3(frustumWidth + m_deactivationDistance * 2f, frustumHeight + m_deactivationDistance * 2f, 4f);
+	}
+
 
 	//------------------------------------------------------------------//
 	// ZOOM																//
@@ -196,6 +266,8 @@ public class GameCameraController : MonoBehaviour {
 		Zoom(_zoomLevel, duration);
 	}
 
+
+
 	//------------------------------------------------------------------//
 	// SHAKING															//
 	//------------------------------------------------------------------//
@@ -221,6 +293,8 @@ public class GameCameraController : MonoBehaviour {
 		m_shakeTimer = m_shakeDuration;
 	}
 
+
+
 	//------------------------------------------------------------------//
 	// DANGER															//
 	//------------------------------------------------------------------//
@@ -236,6 +310,27 @@ public class GameCameraController : MonoBehaviour {
 		} else {
 			Zoom(1f, 0.5f);	// Danger!! Zoom out
 		}
+	}
+
+
+
+	//------------------------------------------------------------------//
+	// DANGER															//
+	//------------------------------------------------------------------//
+	void OnDrawGizmos() {
+		if (!Application.isPlaying) {
+			UpdateFrustumBounds();
+		}
+			
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawWireCube(m_frustum.center, m_frustum.size);
+
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawWireCube(m_activationMin.center, m_activationMin.size);
+		Gizmos.DrawWireCube(m_activationMax.center, m_activationMax.size);
+
+		Gizmos.color = Color.magenta;
+		Gizmos.DrawWireCube(m_deactivation.center, m_deactivation.size);
 	}
 }
 

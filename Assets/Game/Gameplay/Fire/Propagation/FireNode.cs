@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+//[ExecuteInEditMode]
 public class FireNode : MonoBehaviour {
 
 	enum State {
@@ -10,45 +11,49 @@ public class FireNode : MonoBehaviour {
 		Burned
 	};
 
-	[SerializeField] private float m_resistance = 50f;
+	[SerializeField] private float m_resistanceMax = 50f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerTick = 0.75f;
 	[SerializeField] private float m_maxDistanceLinkNode = 5f;
-	[SerializeField] private Range m_fireScale = new Range(2.25f, 2.75f);
 
 
 	private List<FireNode> m_neighbours;
 	private State m_state;
-	
+
+	private int m_goldReward;
+	private float m_goldPerResistancePoint;
+	private float m_resistance;
 	private float m_timer;
 
 	private GameObject m_fireSprite;
-	private float m_spriteScale;
+
+	private GameObject m_fireSpriteEditor;
 
 
 	// Use this for initialization
 	void Start () {
-	
 		FirePropagationManager.Insert(transform);
-
 		// get two closets neighbours
-		m_neighbours = new List<FireNode>();
-		FireNode[] nodes = transform.parent.GetComponentsInChildren<FireNode>();
-
-		for (int i = 0; i < nodes.Length; i++) {
-			if (nodes[i] != null && nodes[i] != this) {
-				float d = (nodes[i].transform.position - transform.position).sqrMagnitude;
-
-				if (d <= m_maxDistanceLinkNode * m_maxDistanceLinkNode) {
-					m_neighbours.Add(nodes[i]);
-				}
-			}
+		FindNeighbours();
+	}
+	/*
+	void OnDisable() {
+		if (m_fireSpriteEditor != null) {
+			GameObject.Destroy(m_fireSpriteEditor);
+			m_fireSpriteEditor = null;
 		}
+	
+		Resources.UnloadUnusedAssets();
+	}*/
 
+	public void Init(int _goldReward) {
+		m_goldReward = _goldReward;
+		m_goldPerResistancePoint = m_goldReward / m_resistanceMax;
+		
+		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
+		
 		m_fireSprite = null;
-
-		m_spriteScale = m_fireScale.GetRandom();
 	}
 
 	void Update() {
@@ -63,7 +68,7 @@ public class FireNode : MonoBehaviour {
 			else 	 			StopFire();
 
 			if (m_fireSprite != null) {
-				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.one * m_spriteScale, Time.smoothDeltaTime * 1.5f);
+				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, transform.localScale, Time.smoothDeltaTime * 1.5f);
 			}
 
 			//burn near nodes and fuel them
@@ -84,6 +89,16 @@ public class FireNode : MonoBehaviour {
 				}
 			}
 		}
+		
+		#if UNITY_EDITOR
+		/*if (!Application.isPlaying) {
+			GameObject active = UnityEditor.Selection.activeGameObject;
+			if (active != gameObject && active != transform.parent.gameObject && active != transform.parent.parent.gameObject) {
+				OnDisable();
+			}
+		}*/
+		#endif
+
 	}
 
 	public bool IsBurned() {
@@ -100,7 +115,12 @@ public class FireNode : MonoBehaviour {
 				m_state = State.Burning;
 				m_timer = m_burningTime;
 
+				Reward reward = new Reward();
+				reward.coins = m_goldReward;
+				
 				FirePropagationManager.Remove(transform);
+
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);
 			}
 		}
 	}
@@ -111,6 +131,8 @@ public class FireNode : MonoBehaviour {
 			m_fireSprite = PoolManager.GetInstance("FireSprite");
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = Vector3.zero;
+			m_fireSprite.transform.localRotation = transform.localRotation;
+			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(0f, 1f));
 		}
 	}
 
@@ -120,13 +142,13 @@ public class FireNode : MonoBehaviour {
 		}
 		m_fireSprite = null;
 	}
-
+	
 	/// <summary>
 	/// Raises the draw gizmos event.
 	/// </summary>
 	void OnDrawGizmos() {
 
-		Gizmos.color = new Color(0.69f, 0.09f, 0.12f);
+		Gizmos.color = new Color(0.69f, 0.09f, 0.12f, 0.5f);
 
 		if (m_state == State.Damaged) {
 			Gizmos.color = Color.yellow;
@@ -136,17 +158,47 @@ public class FireNode : MonoBehaviour {
 			Gizmos.color = Color.black;
 		}
 
-		Gizmos.DrawSphere(transform.position, 0.5f);
+		Gizmos.DrawSphere(transform.position, 0.5f * transform.localScale.x);
 
-		if (m_neighbours != null) {
-			for (int i = 0; i < m_neighbours.Count; i++) {
-				if (m_state != State.Burning) {
-					Color color = Gizmos.color;
-					color.a = 0.2f;
-					Gizmos.color = color;
+		FindNeighbours();
+
+		Gizmos.color = Color.white;
+		for (int i = 0; i < m_neighbours.Count; i++) {
+			if (m_state != State.Burning) {
+				Color color = Gizmos.color;
+				color.a = 0.2f;
+				Gizmos.color = color;
+			}
+
+			Gizmos.DrawLine(transform.position, m_neighbours[i].transform.position);
+		}
+
+		// Draw reference sprite (only on editor mode)
+		/*if (!Application.isPlaying)	{
+			if (m_fireSpriteEditor == null) {	
+				GameObject prefab = (GameObject)Resources.Load("Particles/FireSprite");
+				m_fireSpriteEditor = GameObject.Instantiate(prefab);
+				m_fireSpriteEditor.hideFlags = HideFlags.NotEditable | HideFlags.DontSaveInBuild | HideFlags.DontSaveInEditor;// | HideFlags.HideInHierarchy;
+				m_fireSpriteEditor.layer = LayerMask.NameToLayer("FireNodeEditor");
+			}
+
+			m_fireSpriteEditor.transform.position = transform.position;
+			m_fireSpriteEditor.transform.localScale = transform.localScale;
+			m_fireSpriteEditor.transform.localRotation = transform.localRotation;
+		}*/
+	}
+
+	private void FindNeighbours() {
+		m_neighbours = new List<FireNode>();
+		FireNode[] nodes = transform.parent.GetComponentsInChildren<FireNode>();
+		
+		for (int i = 0; i < nodes.Length; i++) {
+			if (nodes[i] != null && nodes[i] != this) {
+				float d = (nodes[i].transform.position - transform.position).sqrMagnitude;
+				
+				if (d <= m_maxDistanceLinkNode * m_maxDistanceLinkNode) {
+					m_neighbours.Add(nodes[i]);
 				}
-
-				Gizmos.DrawLine(transform.position, m_neighbours[i].transform.position);
 			}
 		}
 	}

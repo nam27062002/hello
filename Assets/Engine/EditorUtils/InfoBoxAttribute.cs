@@ -13,10 +13,7 @@ using UnityEngine;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Simple custom attribute to draw a separator line between different sections 
-/// of your script.
-/// Usage 1: [Separator]
-/// Usage 2: [Separator("title")]
+/// Simple custom attribute to draw a text box before a property.
 /// </summary>
 public class InfoBoxAttribute : PropertyAttribute {
 	//------------------------------------------------------------------//

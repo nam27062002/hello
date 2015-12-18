@@ -14,7 +14,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 
 	void Awake() {
-		m_fireNodes = new QuadTree(-100f, -100f, 400f, 200f);
+		m_fireNodes = new QuadTree(-600f, -100f, 600f, 600f);
 	}
 
 	void Start() {
@@ -54,6 +54,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 	// :3
 	void OnDrawGizmosSelected() {
-		m_fireNodes.DrawGizmos(Color.yellow);
+		if (m_fireNodes != null)
+			m_fireNodes.DrawGizmos(Color.yellow);
 	}
 }

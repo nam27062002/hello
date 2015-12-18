@@ -70,7 +70,7 @@ public class DragonAi : MonoBehaviour {
 		animator = transform.FindChild("view").GetComponent<Animator>();
 		orientation = GetComponent<DragonOrientation>();
 		edible = GetComponent<EdibleBehaviour_OLD>();
-		mouth = transform.FindSubObjectTransform("eat");
+		mouth = transform.FindTransformRecursive("eat");
 		pos = transform.position;
 		impulseMulti = 4f;
 		
@@ -216,7 +216,7 @@ public class DragonAi : MonoBehaviour {
 		impulse = controls.GetImpulse(dragonSpeed*_fSpeedMultiplier); 
 		
 		bool plummeting = (dir.y < -0.75f && rbody.velocity.y < -dragonSpeed*0.85f) || (_fSpeedMultiplier == boostMultiplier  && rbody.velocity.magnitude > dragonSpeed*0.85f);
-		plummeting = plummeting;
+		//plummeting = plummeting;
 		
 		bool flyUp = !plummeting && dir.y > 0.75f &&  _fSpeedMultiplier == 1f;
 		
@@ -346,7 +346,7 @@ public class DragonAi : MonoBehaviour {
 	#region CALLBACKS ----------------------------------------------------------
 
 	
-	public void OnImpact(Vector3 origin, float damage, float intensity, DamageDealer _source){
+	public void OnImpact(Vector3 origin, float damage, float intensity, DamageDealer_OLD _source){
 
 		// Ignore if dragon is not alive
 		if(!IsAlive()) return;

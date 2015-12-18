@@ -9,18 +9,45 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 
+//----------------------------------------------------------------------//
+// CLASSES																//
+//----------------------------------------------------------------------//
 /// <summary>
 /// Global setup of the game.
 /// </summary>
 public static class DebugSettings {
-	// Add here any global debug variable such as invincibility, infinite fire, debug profile...
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	// Use the Prefs class to access their values
+	// Cheats
+	public static readonly string DRAGON_INVULNERABLE 	 = "DRAGON_INVULNERABLE";
+	public static readonly string DRAGON_INFINITE_FIRE 	 = "DRAGON_INFINITE_FIRE";
+	public static readonly string DRAGON_INFINITE_BOOST  = "DRAGON_INFINITE_BOOST";
+	public static readonly string DRAGON_EAT			 = "DRAGON_EAT";
 
-	/*[Header("Gameplay")]
-	// Invulnerable
-	[SerializeField] private static bool m_invulnerability = false;
-	public static float healthWarningThreshold { get { return instance.m_healthWarningThreshold; }}
+	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
+	// Mainly shortcuts, all settings can be accessed using the Prefs class
+	// Gameplay
+	public static bool invulnerable { 
+		get { return Prefs.GetBool(DRAGON_INVULNERABLE, false); }
+		set { Prefs.SetBool(DRAGON_INVULNERABLE, value); }
+	}
 
-	// Minimum amount of energy required to boost
-	[SerializeField] private float m_energyRequiredToBoost = 25f;
-	public static float energyRequiredToBoost { get { return instance.m_energyRequiredToBoost; }}*/
+	public static bool infiniteFire { 
+		get { return Prefs.GetBool(DRAGON_INFINITE_FIRE, false); }
+		set { Prefs.SetBool(DRAGON_INFINITE_FIRE, value); }
+	}
+
+	public static bool infiniteBoost {
+		get { return Prefs.GetBool(DRAGON_INFINITE_BOOST, false); }
+		set { Prefs.SetBool(DRAGON_INFINITE_BOOST, value); }
+	}
+
+	public static bool eat {
+		get { return Prefs.GetBool(DRAGON_EAT, false); }
+		set { Prefs.SetBool(DRAGON_EAT, value); }
+	}
 }

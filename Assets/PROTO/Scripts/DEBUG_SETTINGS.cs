@@ -53,9 +53,9 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 		if(InstanceManager.player == null) return;
 
 		// Invulnerable
-		if(InstanceManager.player.invulnerable != invulnerable) {
+		/*if(InstanceManager.player.invulnerable != invulnerable) {
 			InstanceManager.player.invulnerable = invulnerable;
-		}
+		}*/
 
 		// Infinite Dash
 		if(m_infiniteDash != infiniteDash) {

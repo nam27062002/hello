@@ -13,6 +13,21 @@ public class DragonControlPlayer : DragonControl {
 			touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
 	}
+
+	void OnEnable() {
+		if(touchControls != null) {
+			touchControls.enabled = true;
+		}
+	}
+
+	void OnDisable() {
+		if(touchControls != null) {
+			touchControls.SetTouchObjRendering(false);
+			touchControls.enabled = false;
+			moving = false;
+			action = false;
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -21,14 +36,14 @@ public class DragonControlPlayer : DragonControl {
 		if(touchControls != null) {
 			touchControls.UpdateTouchControls();
 
-			moving = touchControls.CurrentTouchState != TouchState.none ;
+			moving = touchControls.CurrentTouchState != TouchState.none;
 			action = touchControls.touchAction;
 		}
 	}
 
 	override public Vector3 GetImpulse(float desiredVelocity){
 
-		if (touchControls != null){
+		if (touchControls != null && moving){
 
 			touchControls.CalcSharkDesiredVelocity(desiredVelocity, false);
 			return new Vector3(touchControls.SharkDesiredVel.x, touchControls.SharkDesiredVel.y, 0f);

@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// Aux class to represent the score multipliers.
 /// </summary>
 [Serializable]
-public class ScoreMultiplier {
+public class ScoreMultiplier_OLD {
 	public float multiplier = 1;
 	public int requiredKillStreak = 1;	// Both eat and burn count - TODO!! Solve the burn+eat counting twice
 	public List<UIFeedbackMessage> feedbackMessages = new List<UIFeedbackMessage>();
@@ -42,7 +42,7 @@ public class GameLogic : MonoBehaviour {
 		get { return _SCORE_MULTIPLIER_DURATION; }
 	}
 
-	[SerializeField] private ScoreMultiplier[] SCORE_MULTIPLIERS;
+	[SerializeField] private ScoreMultiplier_OLD[] SCORE_MULTIPLIERS;
 	#endregion
 
 	#region PROPERTIES -------------------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ public class GameLogic : MonoBehaviour {
 				// Unsubscribe from external events
 				Messenger.RemoveListener<GameEntity>(GameEvents_OLD.ENTITY_EATEN, OnEntityEaten);
 				Messenger.RemoveListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
-				Messenger.RemoveListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
+				Messenger.RemoveListener<float, DamageDealer_OLD>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 			} break;
 		}
 
@@ -260,7 +260,7 @@ public class GameLogic : MonoBehaviour {
 				// Subscribe to external events
 				Messenger.AddListener<GameEntity>(GameEvents_OLD.ENTITY_EATEN, OnEntityEaten);
 				Messenger.AddListener<GameEntity>(GameEvents_OLD.ENTITY_BURNED, OnEntityBurned);
-				Messenger.AddListener<float, DamageDealer>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
+				Messenger.AddListener<float, DamageDealer_OLD>(GameEvents_OLD.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
 			} break;
 
 			case EStates.PAUSED: {
@@ -308,7 +308,7 @@ public class GameLogic : MonoBehaviour {
 
 		// Dispatch game event (only if actually changing)
 		if(_iMultiplierIdx != mScoreMultiplierIdx) {
-			Messenger.Broadcast<ScoreMultiplier, ScoreMultiplier>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, SCORE_MULTIPLIERS[mScoreMultiplierIdx], SCORE_MULTIPLIERS[_iMultiplierIdx]);
+			Messenger.Broadcast<ScoreMultiplier_OLD, ScoreMultiplier_OLD>(GameEvents_OLD.SCORE_MULTIPLIER_CHANGED, SCORE_MULTIPLIERS[mScoreMultiplierIdx], SCORE_MULTIPLIERS[_iMultiplierIdx]);
 		}
 
 		// Store new multiplier value
@@ -388,7 +388,7 @@ public class GameLogic : MonoBehaviour {
 	/// </summary>
 	/// <param name="_fDamage">The amaount of damage dealt.</param>
 	/// <param name="_source">The object that dealt the damage.</param>
-	void OnPlayerDamage(float _fDamage, DamageDealer _source) {
+	void OnPlayerDamage(float _fDamage, DamageDealer_OLD _source) {
 		// End any active streak
 		SetScoreMultiplier(0);
 	}
