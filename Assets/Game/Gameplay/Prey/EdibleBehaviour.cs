@@ -78,8 +78,9 @@ public class EdibleBehaviour : Initializable {
 			}
 		} else if (m_dragon.enabled) {
 			// check distance to dragon mouth
-			Vector2 v = (m_Bounds.bounds.bounds.center - m_dragonMouth.transform.position);
-			float distanceSqr = v.sqrMagnitude - (m_Bounds.radius * m_Bounds.radius);
+			// Vector2 v = (m_Bounds.bounds.bounds.center - m_dragonMouth.transform.position);
+			// float distanceSqr = v.sqrMagnitude - (m_Bounds.radius * m_Bounds.radius);
+			float distanceSqr = m_Bounds.DistanceSqr( m_dragonMouth.transform.position );
 			if (distanceSqr <= m_dragon.eatDistanceSqr) {
 				m_isBeingEaten = m_dragon.Eat(this);
 			}
