@@ -74,6 +74,11 @@ public class FireBreath : DragonBreathBehaviour {
 		return false; 
 	}
 
+	override public bool Overlaps( CircleArea2D _circle)
+	{
+		return _circle.Overlaps( m_bounds2D );
+	}
+
 	override protected void Fire(){
 		m_direction = m_mouthTransform.position - m_headTransform.position;
 		m_direction.Normalize();
