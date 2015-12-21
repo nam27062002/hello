@@ -208,11 +208,27 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 
 	public bool IsInsideActivationArea(Vector3 _point) {
+		_point.z = 0;
 		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
 	}
 
+	public bool IsInsideActivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
+	}
+
 	public bool IsInsideDeactivationArea(Vector3 _point) {
+		_point.z = 0;
 		return !m_deactivation.Contains(_point);
+	}
+
+	public bool IsInsideDeactivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_deactivation.Intersects(_bounds);
 	}
 
 	// update camera bounds for Z = 0, this can change with dinamic zoom in/out animations
