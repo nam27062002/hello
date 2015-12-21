@@ -63,11 +63,7 @@ public class FireBreath : DragonBreathBehaviour {
 	
 		if (m_isFuryOn) {
 			if (m_bounds2D.Contains(_point)) {
-				float sign = m_area < 0 ? -1 : 1;
-				float s = (m_triP0.y * m_triP2.x - m_triP0.x * m_triP2.y + (m_triP2.y - m_triP0.y) * _point.x + (m_triP0.x - m_triP2.x) * _point.y) * sign;
-				float t = (m_triP0.x * m_triP1.y - m_triP0.y * m_triP1.x + (m_triP0.y - m_triP1.y) * _point.x + (m_triP1.x - m_triP0.x) * _point.y) * sign;
-				
-				return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
+				return IsInsideTriangle( _point );
 			}
 		}
 
@@ -76,7 +72,27 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override public bool Overlaps( CircleArea2D _circle)
 	{
-		return _circle.Overlaps( m_bounds2D );
+		if (m_isFuryOn) 
+		{
+			if (_circle.Overlaps( m_bounds2D )) 
+			{
+				if (IsInsideTriangle( _circle.center ))
+				{
+					return true;
+				}
+				return ( _circle.OverlapsSegment( m_triP0, m_triP1 ) || _circle.OverlapsSegment( m_triP1, m_triP2 ) || _circle.OverlapsSegment( m_triP2, m_triP0 ) );
+			}
+		}
+		return false;
+	}
+
+	private bool IsInsideTriangle( Vector2 _point )
+	{
+		float sign = m_area < 0 ? -1 : 1;
+		float s = (m_triP0.y * m_triP2.x - m_triP0.x * m_triP2.y + (m_triP2.y - m_triP0.y) * _point.x + (m_triP0.x - m_triP2.x) * _point.y) * sign;
+		float t = (m_triP0.x * m_triP1.y - m_triP0.y * m_triP1.x + (m_triP0.y - m_triP1.y) * _point.x + (m_triP1.x - m_triP0.x) * _point.y) * sign;
+		
+		return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
 	}
 
 	override protected void Fire(){
