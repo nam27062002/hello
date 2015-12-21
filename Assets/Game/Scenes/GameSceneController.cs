@@ -228,7 +228,7 @@ public class GameSceneController : SceneController {
 		switch(m_state) {
 			case EStates.LOADING_LEVEL: {
 				// Delete loading task and get level object
-				LevelEditor.Level level = GameObject.FindObjectOfType<LevelEditor.Level>();
+				LevelEditor.LevelTypeSpawners level = GameObject.FindObjectOfType<LevelEditor.LevelTypeSpawners>();
 				m_levelLoadingTask = null;
 
 				// Dispatch game event

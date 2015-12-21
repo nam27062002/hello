@@ -1,7 +1,7 @@
-// Level.cs
+// LevelTypeArt.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 01/10/2015.
+// Created by Alger Ortín Castellví on 21/12/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -14,16 +14,12 @@ using UnityEngine;
 //----------------------------------------------------------------------//
 namespace LevelEditor {
 	/// <summary>
-	/// Default behaviour to be added to any editable level.
+	/// Specialization of a level.
 	/// </summary>
 	[ExecuteInEditMode]
-	public class Level : MonoBehaviour {
+	public class LevelTypeArt : Level {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
-		//------------------------------------------------------------------//
-
-		//------------------------------------------------------------------//
-		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
 
 		//------------------------------------------------------------------//
@@ -32,30 +28,9 @@ namespace LevelEditor {
 		/// <summary>
 		/// Initialization.
 		/// </summary>
-		virtual protected void Awake() {
-			// Make ouselves static, we don't want to accidentally move the parent object
-			this.gameObject.isStatic = true;
-		}
-
-		/// <summary>
-		/// First update.
-		/// </summary>
-		protected void Start() {
-		
-		}
-		
-		/// <summary>
-		/// Called every frame.
-		/// </summary>
-		private void Update() {
-
-		}
-
-		/// <summary>
-		/// Destructor.
-		/// </summary>
-		private void OnDestroy() {
-
+		override protected void Awake() {
+			// Call parent
+			base.Awake();
 		}
 	}
 }

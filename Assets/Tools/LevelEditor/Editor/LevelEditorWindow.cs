@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -26,7 +27,6 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		private static readonly string EDITOR_SCENE_PATH = "Assets/Tools/LevelEditor/SC_LevelEditor.unity";
-		private static readonly string EDITOR_SCENE_FILE = "SC_LevelEditor.unity";
 
 		public class Styles {
 			public GUIStyle groupListStyle = null;	// Option style for a SelectionGrid element
@@ -46,6 +46,8 @@ namespace LevelEditor {
 			new SectionDecos(),
 			new SectionDummies()
 		};
+
+		private Dictionary<string, ILevelEditorSection> m_tabs = new Dictionary<string, ILevelEditorSection>();
 
 		// Styles
 		private Styles m_styles = null;	// Can't be initialized here
@@ -74,11 +76,6 @@ namespace LevelEditor {
 		public SectionSpawners sectionSpawners { get { return m_sections[3] as SectionSpawners; }}
 		public SectionDecos sectionDecos { get { return m_sections[4] as SectionDecos; }}
 		public SectionDummies sectionDummies { get { return m_sections[5] as SectionDummies; }}
-		private ILevelEditorSection[] tabbedSections {
-			get {
-				return new ILevelEditorSection[] { sectionGround, sectionSpawners, sectionDecos, sectionDummies };
-			}
-		}
 
 		// Styles shortcut
 		public Styles styles { get { return m_styles; }}
@@ -86,6 +83,14 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
 		//------------------------------------------------------------------//
+		public LevelEditorWindow() {
+			// Initialize tabs dictionary
+			m_tabs.Add("Spawners", sectionSpawners);
+			m_tabs.Add("Collisions", sectionGround);
+			m_tabs.Add("Decorations", sectionDecos);
+			m_tabs.Add("Dummies", sectionDummies);
+		}
+
 		/// <summary>
 		/// The window has been enabled - similar to the constructor.
 		/// </summary>
@@ -193,6 +198,15 @@ namespace LevelEditor {
 			EditorGUI.indentLevel = 0;
 
 			EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true)); {
+				// Mode selector
+				LevelEditorSettings.Mode newMode = (LevelEditorSettings.Mode)GUILayout.Toolbar((int)LevelEditor.settings.selectedMode, new string[] {"SPAWNERS", "COLLISION", "ART" }, GUILayout.Height(50));
+				if(newMode != LevelEditor.settings.selectedMode) {
+					// Mode changed! Do whatever needed
+					LevelEditor.settings.selectedMode = newMode;
+					LevelEditor.settings.selectedTab = 0;	// Reset selected tab
+					AssetDatabase.SaveAssets();	// Record settings
+				}
+
 				// Draw sections
 				// Level section - always drawn
 				sectionLevels.OnGUI();
@@ -206,18 +220,25 @@ namespace LevelEditor {
 					// Tabbed sections
 					GUILayout.Space(10f);
 					EditorGUILayout.BeginVertical(styles.boxStyle); {
-						// Tab selector
-						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, new string[] {"Collisions", "Spawners", "Decorations", "Dummies" });
+						// Tab selector - different options based on mode
+						List<string> tabNames = new List<string>();
+						switch(LevelEditor.settings.selectedMode) {
+							case LevelEditorSettings.Mode.SPAWNERS:		tabNames = new List<string>(new string[] { "Spawners", "Dummies" });	break;
+							case LevelEditorSettings.Mode.COLLISION:	tabNames = new List<string>(new string[] { "Collisions" });				break;
+							case LevelEditorSettings.Mode.ART:			tabNames = new List<string>(new string[] { "Decorations" });			break;
+						}
+						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, tabNames.ToArray());
 
 						// If tab has changed, Init new tab
 						if(newTab != LevelEditor.settings.selectedTab) {
-							tabbedSections[newTab].Init();
+							m_tabs[tabNames[newTab]].Init();
+							LevelEditor.settings.selectedTab = newTab;
+							AssetDatabase.SaveAssets();	// Record settings
 						}
-						LevelEditor.settings.selectedTab = newTab;
 
 						// Tab content
 						EditorGUILayout.BeginVertical(styles.boxStyle, GUILayout.ExpandHeight(true)); {
-							tabbedSections[newTab].OnGUI();
+							m_tabs[tabNames[newTab]].OnGUI();
 						} EditorGUILayoutExt.EndVerticalSafe();
 					} EditorGUILayoutExt.EndVerticalSafe();
 				}

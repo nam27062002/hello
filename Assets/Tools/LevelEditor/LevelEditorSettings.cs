@@ -39,6 +39,13 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
+		public enum Mode {
+			SPAWNERS,
+			COLLISION,
+			ART,
+
+			COUNT
+		}
 
 		//------------------------------------------------------------------//
 		// MEMBERS															//
@@ -47,9 +54,10 @@ namespace LevelEditor {
 		public float snapSize = 5f;	// Snap size for ground pieces
 		public float handlersSize = 1f;	// Size of the custom handlers (i.e. ground pieces)
 		public int selectedTab = 0;	// Selected section tab
+		[HideEnumValues(false, true)] public Mode selectedMode = Mode.SPAWNERS;	// Selected mode
 
 		[Separator("Level Settings", 20)]
-		[HideEnumValuesAttribute(true, true)]
+		[HideEnumValues(true, true)]
 		public DragonId testDragon = DragonId.SMALL;	// Dragon with which to test the level
 
 		[Separator("Ground Settings", 20)]
