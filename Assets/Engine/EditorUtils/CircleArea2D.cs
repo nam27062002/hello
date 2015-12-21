@@ -57,4 +57,50 @@ public class CircleArea2D : MonoBehaviour, Area {
     	return (cornerDistance_sq <= (radius*radius));
 		
 	}
+
+	public bool IsInside( Vector2 _point )
+	{
+		Vector3 c = center;
+
+		Vector2 v;
+		v.x = c.x;
+		v.y = c.y;
+
+		v = (v - _point);
+		float sqrMagnitude = v.sqrMagnitude;
+		return ( sqrMagnitude <= radius * radius );
+	}
+
+	public bool OverlapsSegment( Vector2 a, Vector2 b)
+	{
+		Vector2 aToCenter;
+		aToCenter.x = center.x - a.x;
+		aToCenter.y = center.y - a.y;
+
+		Vector2 aToB = b-a;
+
+		Vector2 closestPoint = Vector2.zero;
+
+		float k = Vector2.Dot( aToCenter, aToB);
+		if ( k < 0 )
+		{
+			closestPoint = a;
+		}
+		else
+		{
+			float magnitude = aToB.magnitude;
+			k = k / magnitude;
+			if ( k < magnitude )
+			{
+				closestPoint = a + aToB.normalized * k;
+			}
+			else
+			{
+				closestPoint = b;
+			}
+		}
+
+		return IsInside( closestPoint );
+
+	}
 }
