@@ -12624,19 +12624,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 419760, guid: c1113fef9882c481ca7dea4176225663, type: 2}
       propertyPath: m_LocalRotation.x
-      value: 0.16364442
+      value: 0.16364443
       objectReference: {fileID: 0}
     - target: {fileID: 419760, guid: c1113fef9882c481ca7dea4176225663, type: 2}
       propertyPath: m_LocalRotation.y
-      value: -0.4159637
+      value: -0.41596377
       objectReference: {fileID: 0}
     - target: {fileID: 419760, guid: c1113fef9882c481ca7dea4176225663, type: 2}
       propertyPath: m_LocalRotation.z
-      value: 0.8336121
+      value: 0.8336122
       objectReference: {fileID: 0}
     - target: {fileID: 419760, guid: c1113fef9882c481ca7dea4176225663, type: 2}
       propertyPath: m_LocalRotation.w
-      value: -0.32447723
+      value: -0.32447726
       objectReference: {fileID: 0}
     - target: {fileID: 419760, guid: c1113fef9882c481ca7dea4176225663, type: 2}
       propertyPath: m_RootOrder
@@ -16011,6 +16011,18 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 419600, guid: 7594681f3273744699c6bcf299c56eb0, type: 2}
   m_PrefabInternal: {fileID: 651313301}
+--- !u!4 &656232906
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 460262, guid: e8d4e67c26b4cac47b5b5358f076ee3d, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1200032152}
+  m_LocalRotation: {x: 0.99016416, y: -0.0071715964, z: -0.12615933, w: 0.06006213}
+  m_LocalPosition: {x: -363.92572, y: 60.153194, z: -37.700706}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2104675874}
+  m_RootOrder: 2
 --- !u!1001 &656517061
 Prefab:
   m_ObjectHideFlags: 0
@@ -23473,19 +23485,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 436200, guid: 204746ce210014be786d1b40e51c948d, type: 2}
       propertyPath: m_LocalRotation.x
-      value: 0.62715787
+      value: 0.6271578
       objectReference: {fileID: 0}
     - target: {fileID: 436200, guid: 204746ce210014be786d1b40e51c948d, type: 2}
       propertyPath: m_LocalRotation.y
-      value: 0.6604114
+      value: 0.66041136
       objectReference: {fileID: 0}
     - target: {fileID: 436200, guid: 204746ce210014be786d1b40e51c948d, type: 2}
       propertyPath: m_LocalRotation.z
-      value: -0.2843655
+      value: -0.28436548
       objectReference: {fileID: 0}
     - target: {fileID: 436200, guid: 204746ce210014be786d1b40e51c948d, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.29944313
+      value: 0.2994431
       objectReference: {fileID: 0}
     - target: {fileID: 436200, guid: 204746ce210014be786d1b40e51c948d, type: 2}
       propertyPath: m_RootOrder
@@ -31199,6 +31211,56 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 447016, guid: d216ddbfc3d594664a8adf917a7d7e6a, type: 2}
   m_PrefabInternal: {fileID: 1194839522}
+--- !u!1 &1200032152
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 152626, guid: e8d4e67c26b4cac47b5b5358f076ee3d, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 656232906}
+  - 108: {fileID: 1200032153}
+  m_Layer: 0
+  m_Name: Directional light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!108 &1200032153
+Light:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 10824574, guid: e8d4e67c26b4cac47b5b5358f076ee3d,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1200032152}
+  m_Enabled: 1
+  serializedVersion: 6
+  m_Type: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 0.63
+  m_Range: 10
+  m_SpotAngle: 30
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 12100000, guid: 54fbbf098d116effa00081aba8ad6659, type: 2}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 4
+  m_BounceIntensity: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_AreaSize: {x: 1, y: 1}
 --- !u!1001 &1200858184
 Prefab:
   m_ObjectHideFlags: 0
@@ -52151,6 +52213,7 @@ Transform:
   m_Children:
   - {fileID: 276312222}
   - {fileID: 1319034721}
+  - {fileID: 656232906}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!1001 &2105398181
