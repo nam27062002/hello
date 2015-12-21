@@ -21,43 +21,34 @@ public class FireNode : MonoBehaviour {
 	private State m_state;
 
 	private int m_goldReward;
-	private float m_goldPerResistancePoint;
 	private float m_resistance;
 	private float m_timer;
 
 	private GameObject m_fireSprite;
 
-	private GameObject m_fireSpriteEditor;
-
 
 	// Use this for initialization
 	void Start () {
-		FirePropagationManager.Insert(transform);
 		// get two closets neighbours
 		FindNeighbours();
 	}
-	/*
-	void OnDisable() {
-		if (m_fireSpriteEditor != null) {
-			GameObject.Destroy(m_fireSpriteEditor);
-			m_fireSpriteEditor = null;
-		}
-	
-		Resources.UnloadUnusedAssets();
-	}*/
 
 	public void Init(int _goldReward) {
 		m_goldReward = _goldReward;
-		m_goldPerResistancePoint = m_goldReward / m_resistanceMax;
 		
+		Reset();
+	}
+
+	public void Reset() {
+		StopFire();
+
+		FirePropagationManager.Insert(transform);
+
 		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
-		
-		m_fireSprite = null;
 	}
 
 	void Update() {
-
 		if (m_state == State.Burning) {	
 			//check if we have to render the particle
 			Vector2 pos = transform.position;
@@ -89,16 +80,6 @@ public class FireNode : MonoBehaviour {
 				}
 			}
 		}
-		
-		#if UNITY_EDITOR
-		/*if (!Application.isPlaying) {
-			GameObject active = UnityEditor.Selection.activeGameObject;
-			if (active != gameObject && active != transform.parent.gameObject && active != transform.parent.parent.gameObject) {
-				OnDisable();
-			}
-		}*/
-		#endif
-
 	}
 
 	public bool IsBurned() {
@@ -106,7 +87,6 @@ public class FireNode : MonoBehaviour {
 	}
 
 	public void Burn(float _damage) {
-
 		if (m_state == State.Idle || m_state == State.Damaged) {
 			m_resistance -= _damage;
 			m_state = State.Damaged;
@@ -172,20 +152,6 @@ public class FireNode : MonoBehaviour {
 
 			Gizmos.DrawLine(transform.position, m_neighbours[i].transform.position);
 		}
-
-		// Draw reference sprite (only on editor mode)
-		/*if (!Application.isPlaying)	{
-			if (m_fireSpriteEditor == null) {	
-				GameObject prefab = (GameObject)Resources.Load("Particles/FireSprite");
-				m_fireSpriteEditor = GameObject.Instantiate(prefab);
-				m_fireSpriteEditor.hideFlags = HideFlags.NotEditable | HideFlags.DontSaveInBuild | HideFlags.DontSaveInEditor;// | HideFlags.HideInHierarchy;
-				m_fireSpriteEditor.layer = LayerMask.NameToLayer("FireNodeEditor");
-			}
-
-			m_fireSpriteEditor.transform.position = transform.position;
-			m_fireSpriteEditor.transform.localScale = transform.localScale;
-			m_fireSpriteEditor.transform.localRotation = transform.localRotation;
-		}*/
 	}
 
 	private void FindNeighbours() {
