@@ -44,10 +44,10 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
 	/// </summary>
 	public static void GoToMenu() {
 		// Skip if next scene is already menu
-		if(SceneManager.nextScene == MenuSceneController.NAME) return;
+		if(GameSceneManager.nextScene == MenuSceneController.NAME) return;
 
 		// Change scene
-		SceneManager.SwitchScene(MenuSceneController.NAME);
+		GameSceneManager.SwitchScene(MenuSceneController.NAME);
 	}
 
 	/// <summary>
@@ -55,10 +55,10 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
 	/// </summary>
 	public static void GoToGame() {
 		// Skip if next scene is already game
-		if(SceneManager.nextScene == GameSceneController.NAME) return;
+		if(GameSceneManager.nextScene == GameSceneController.NAME) return;
 
 		// Change scene
-		SceneManager.SwitchScene(GameSceneController.NAME);
+		GameSceneManager.SwitchScene(GameSceneController.NAME);
 	}
 
 	/// <summary>
@@ -73,7 +73,7 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
 		ParticleManager.Clear();
 
 		// Change to the loading scene
-		SceneManager.SwitchScene(LoadingSceneController.NAME);
+		GameSceneManager.SwitchScene(LoadingSceneController.NAME);
 	}
 }
 

@@ -66,13 +66,13 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Starts loading the scene of the level with the given index.
+	/// Starts loading the scenes of the level with the given index.
 	/// Deletes any level in the current scene.
-	/// Loading is asynchronous, use the returned object to check when the level has finished loading.
+	/// Loading is asynchronous, use the returned objects to check when the level has finished loading.
 	/// </summary>
-	/// <returns>The loading request, where you can check the loading progress.</returns>
+	/// <returns>The loading requests, where you can check the loading progress.</returns>
 	/// <param name="_levelIdx">The index of the level we want to load.</param>
-	public static AsyncOperation LoadLevel(int _levelIdx) {
+	public static AsyncOperation[] LoadLevel(int _levelIdx) {
 		// Destroy any existing level in the game scene
 		LevelEditor.Level[] activeLevels = Component.FindObjectsOfType<LevelEditor.Level>();
 		for(int i = 0; i < activeLevels.Length; i++) {
@@ -83,9 +83,25 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 		LevelData data = LevelManager.GetLevelData(_levelIdx);
 		DebugUtils.SoftAssert(data != null, "Attempting to load level with index " + _levelIdx + ", but the manager has no data linked to this index");
 
-		// Load the scene for the level with the given index
-		AsyncOperation loadingTask = Application.LoadLevelAdditiveAsync(data.sceneName);
-		DebugUtils.SoftAssert(loadingTask != null, "The scene defined to level " + _levelIdx + " couldn't be found (probably mispelled or not added to build settings)");
-		return loadingTask;
+		// Load all the scenes for the level with the given index
+		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
+		AsyncOperation loadingTask = null;
+
+		loadingTask = Application.LoadLevelAdditiveAsync(data.spawnersScene);
+		if(DebugUtils.SoftAssert(loadingTasks != null, "The spawners scene defined to level " + _levelIdx + " couldn't be found (probably mispelled or not added to build settings)")) {
+			loadingTasks.Add(loadingTask);
+		}
+
+		loadingTask = Application.LoadLevelAdditiveAsync(data.collisionScene);
+		if(DebugUtils.SoftAssert(loadingTasks != null, "The collision scene defined to level " + _levelIdx + " couldn't be found (probably mispelled or not added to build settings)")) {
+			loadingTasks.Add(loadingTask);
+		}
+
+		loadingTask = Application.LoadLevelAdditiveAsync(data.artScene);
+		if(DebugUtils.SoftAssert(loadingTasks != null, "The art scene defined to level " + _levelIdx + " couldn't be found (probably mispelled or not added to build settings)")) {
+			loadingTasks.Add(loadingTask);
+		}
+
+		return loadingTasks.ToArray();
 	}
 }

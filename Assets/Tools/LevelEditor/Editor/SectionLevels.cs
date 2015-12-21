@@ -8,8 +8,11 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -24,17 +27,32 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		private static readonly string ASSETS_DIR = "Assets/Resources/Game/Levels";
 		private static readonly float AUTOSAVE_FREQUENCY = 60f;	// Seconds
-		
+
 		//------------------------------------------------------------------//
-		// MEMBERS															//
+		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
-		// Current level
-		private Level m_activeLevel = null;
-		public Level activeLevel { get { return m_activeLevel; }}
+		// Current level - one level for each tab
+		private Level[] m_activeLevel = new Level[(int)LevelEditorSettings.Mode.COUNT];
+		public Level activeLevel { 
+			get { return m_activeLevel[(int)LevelEditor.settings.selectedMode]; }
+			set { m_activeLevel[(int)LevelEditor.settings.selectedMode] = value; }
+		}	
 
 		// Internal
 		private FileInfo[] m_fileList = null;
 		private float m_autoSaveTimer = 0f;
+
+		// Every type of scene goes in a different sub-folder
+		private string assetDirForCurrentMode {
+			get { 
+				switch(LevelEditor.settings.selectedMode) {
+					case LevelEditorSettings.Mode.SPAWNERS:		return ASSETS_DIR + "/" + "Spawners";	break;
+					case LevelEditorSettings.Mode.COLLISION:	return ASSETS_DIR + "/" + "Collision";	break;
+					case LevelEditorSettings.Mode.ART:			return ASSETS_DIR + "/" + "Art";		break;
+				}
+				return ASSETS_DIR;
+			}
+		}
 		
 		//------------------------------------------------------------------//
 		// INTERFACE IMPLEMENTATION											//
@@ -43,76 +61,85 @@ namespace LevelEditor {
 		/// Initialize this section.
 		/// </summary>
 		public void Init() {
-			// Find all loaded levels in the current scene (shold only be one)
-			Level[] levelsInScene = GameObject.FindObjectsOfType<Level>();
-			
-			// Several cases:
-			// a) There are no levels, start without level
-			if(levelsInScene.Length == 0) {
-				m_activeLevel = null;
-			}
-			
-			// b) There is only one level, use it as current level
-			else if(levelsInScene.Length == 1) {
-				m_activeLevel = levelsInScene[0];
-			}
-			
-			// c) There are multiple levels in the scene
-			else {
-				// Iterate them and prompt user what to do with each of them
-				int newLevelIdx = -1;
-				for(int i = 0; i < levelsInScene.Length; i++) {
-					// Unity makes it easy for us ^_^
-					m_activeLevel = levelsInScene[i];
-					int whatToDo = EditorUtility.DisplayDialogComplex(
-						m_activeLevel.gameObject.name,
-						"There are multiple levels loaded into the current scene, but only one should be loaded at a time.\n" +
-						"What would you like to do with level " + m_activeLevel.gameObject.name + "?",
-						"Make Active", "Save and Unload", "Unload"
+			// Figure out active level for each mode
+			// This is called every time the editor is loaded or when switching to/from play mode
+			for(int mode = 0; mode < (int)LevelEditorSettings.Mode.COUNT; mode++) {
+				// Find all loaded levels of the target type in the current scene (should only be one)
+				List<Level> levelsInScene = new List<Level>();
+				switch((LevelEditorSettings.Mode)mode) {
+					case LevelEditorSettings.Mode.SPAWNERS:		levelsInScene.AddRange(GameObject.FindObjectsOfType<LevelTypeSpawners>());	break;
+					case LevelEditorSettings.Mode.COLLISION:	levelsInScene.AddRange(GameObject.FindObjectsOfType<LevelTypeCollision>());	break;
+					case LevelEditorSettings.Mode.ART:			levelsInScene.AddRange(GameObject.FindObjectsOfType<LevelTypeArt>());		break;
+				}
+
+				// Several cases:
+				// a) There are no levels, start without level
+				if(levelsInScene.Count == 0) {
+					m_activeLevel[mode] = null;
+				}
+
+				// b) There is only one level, use it as current level
+				else if(levelsInScene.Count == 1) {
+					m_activeLevel[mode] = levelsInScene[0];
+				}
+
+				// c) There are multiple levels in the scene
+				else {
+					// Iterate them and prompt user what to do with each of them
+					int newLevelIdx = -1;
+					for(int i = 0; i < levelsInScene.Count; i++) {
+						// Unity makes it easy for us ^_^
+						m_activeLevel[mode] = levelsInScene[i];
+						int whatToDo = EditorUtility.DisplayDialogComplex(
+							m_activeLevel[mode].gameObject.scene.name,
+							"There are multiple levels loaded into the current scene, but only one should be loaded at a time.\n" +
+							"What would you like to do with level " + activeLevel.gameObject.scene.name + "?",
+							"Make Active", "Save and Unload", "Unload"
 						);
-					
-					// a) Make it active
-					if(whatToDo == 0) {
-						// If there was already a selected level, unload it
-						if(newLevelIdx >= 0) {
-							m_activeLevel = levelsInScene[newLevelIdx];
-							
-							// Prompt user to save
-							if(EditorUtility.DisplayDialog(
-								"Changing Active Level",
-								"Level " + m_activeLevel.gameObject.name + " was already chosen as active one.\n" +
-								"What you want to do with it?",
-								"Save and Unload", "Unload"
+
+						// a) Make it active
+						if(whatToDo == 0) {
+							// If there was already a selected level, unload it
+							if(newLevelIdx >= 0) {
+								m_activeLevel[mode] = levelsInScene[newLevelIdx];
+
+								// Prompt user to save
+								if(EditorUtility.DisplayDialog(
+									"Changing Active Level",
+									"Level " + activeLevel.gameObject.scene.name + " was already chosen as active one.\n" +
+									"What you want to do with it?",
+									"Save and Unload", "Unload"
 								)) {
-								// Save level
-								SaveLevel();
+									// Save level
+									SaveLevel();
+								}
+
+								// Unload in any case
+								UnloadLevel(false);
 							}
-							
-							// Unload in any case
+
+							// Store new level index
+							newLevelIdx = i;
+						} 
+
+						// b) Save and unload
+						else if(whatToDo == 1) {
+							SaveLevel();
+							UnloadLevel(false);
+						} 
+
+						// c) Just unload
+						else {
 							UnloadLevel(false);
 						}
-						
-						// Store new level index
-						newLevelIdx = i;
-					} 
-					
-					// b) Save and unload
-					else if(whatToDo == 1) {
-						SaveLevel();
-						UnloadLevel(false);
-					} 
-					
-					// c) Just unload
-					else {
-						UnloadLevel(false);
 					}
-				}
-				
-				// Store new active level
-				if(newLevelIdx >= 0) {
-					m_activeLevel = levelsInScene[newLevelIdx];
-				} else {
-					m_activeLevel = null;
+
+					// Store new active level
+					if(newLevelIdx >= 0) {
+						m_activeLevel[mode] = levelsInScene[newLevelIdx];
+					} else {
+						m_activeLevel[mode] = null;
+					}
 				}
 			}
 			
@@ -125,7 +152,7 @@ namespace LevelEditor {
 		/// </summary>
 		public void OnGUI() {
 			// Aux vars
-			bool levelLoaded = (m_activeLevel != null);
+			bool levelLoaded = (activeLevel != null);
 			bool playing = EditorApplication.isPlaying;
 			DragonId oldDragon = LevelEditor.settings.testDragon;
 			DragonId newDragon = oldDragon;
@@ -137,9 +164,8 @@ namespace LevelEditor {
 			GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
 			titleStyle.fontSize = 20;
 			titleStyle.alignment = TextAnchor.MiddleCenter;
-			if(m_activeLevel != null) {
-				//GUILayout.Label(m_activeLevel.gameObject.name, titleStyle);
-				m_activeLevel.gameObject.name = GUILayout.TextField(m_activeLevel.gameObject.name, titleStyle);
+			if(activeLevel != null) {
+				GUILayout.Label(activeLevel.gameObject.scene.name, titleStyle);
 			} else {
 				EditorGUILayout.BeginHorizontal(); {
 					GUILayout.FlexibleSpace();
@@ -193,7 +219,7 @@ namespace LevelEditor {
 				} EditorGUILayoutExt.EndHorizontalSafe();
 				
 				// If level was deleted or closed, don't continue (avoid null references)
-				if(levelLoaded && m_activeLevel == null) return;
+				if(levelLoaded && activeLevel == null) return;
 				
 				// Separator
 				EditorGUILayoutExt.Separator(new SeparatorAttribute(5f));
@@ -215,35 +241,38 @@ namespace LevelEditor {
 				} EditorGUILayoutExt.EndHorizontalSafe();
 				GUI.enabled = true;
 				
-				// Dragon test tools
-				EditorGUILayout.BeginHorizontal(); {
-					// Show/Create spawn point
-					GameObject spawnPointObj = null;
-					if(levelLoaded) spawnPointObj = m_activeLevel.GetDragonSpawnPoint(newDragon, false);
-					if(spawnPointObj == null) {
-						GUI.enabled = levelLoaded && !playing;
-						if(GUILayout.Button("Create Spawn")) {
-							spawnPointObj = m_activeLevel.GetDragonSpawnPoint(newDragon, true);
-							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);
-							EditorUtils.FocusObject(spawnPointObj);
+				// Dragon spawners - only in spawner mode
+				if(activeLevel is LevelTypeSpawners) {
+					EditorGUILayout.BeginHorizontal(); {
+						// Show/Create spawn point
+						GameObject spawnPointObj = null;
+						LevelTypeSpawners spawnersLevel = levelLoaded ? activeLevel as LevelTypeSpawners : null;
+						if(levelLoaded) spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, false);
+						if(spawnPointObj == null) {
+							GUI.enabled = levelLoaded && !playing;
+							if(GUILayout.Button("Create Spawn")) {
+								spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, true);
+								EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);
+								EditorUtils.FocusObject(spawnPointObj);
+							}
+						} else {
+							GUI.enabled = true;
+							if(GUILayout.Button("Show Spawn")) {
+								EditorUtils.FocusObject(spawnPointObj);
+							}
 						}
-					} else {
+						
+						// Focus default spawn point
+						GUI.enabled = levelLoaded;
+						if(GUILayout.Button("Show Default Spawn")) {
+							spawnPointObj = spawnersLevel.GetDragonSpawnPoint(DragonId.NONE);
+							EditorUtils.FocusObject(spawnPointObj);
+							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
+						}
+						
 						GUI.enabled = true;
-						if(GUILayout.Button("Show Spawn")) {
-							EditorUtils.FocusObject(spawnPointObj);
-						}
-					}
-					
-					// Focus default spawn point
-					GUI.enabled = levelLoaded;
-					if(GUILayout.Button("Show Default Spawn")) {
-						spawnPointObj = m_activeLevel.GetDragonSpawnPoint(DragonId.NONE);
-						EditorUtils.FocusObject(spawnPointObj);
-						EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
-					}
-					
-					GUI.enabled = true;
-				} EditorGUILayoutExt.EndHorizontalSafe();
+					} EditorGUILayoutExt.EndHorizontalSafe();
+				}
 				GUI.enabled = true;
 				
 				// Separator
@@ -277,7 +306,7 @@ namespace LevelEditor {
 		/// </summary>
 		private void PromptSaveDialog() {
 			// Nothing to do if there is no loaded level
-			if(m_activeLevel == null) return;
+			if(activeLevel == null) return;
 			
 			// Only prompt if there are changes to actually be saved
 			if(CheckChanges()) {
@@ -290,20 +319,20 @@ namespace LevelEditor {
 		}
 		
 		/// <summary>
-		/// Applies changes to current loaded level's prefab.
+		/// Applies changes to current loaded level's scene.
 		/// </summary>
-		private void SaveLevel() {
+		/// <param name="_name">Optional name to be given to the file. If empty, the scene's current name will be used.</param>
+		private void SaveLevel(string _name = "") {
 			// Nothing to do if there is no loaded level
-			if(m_activeLevel == null) return;
+			if(activeLevel == null) return;
 
-			// Delete all editor stuff before saving the scene
-			LevelEditorWindow.instance.UnloadLevelEditorStuff();
+			// Figure out file name
+			if(string.IsNullOrEmpty(_name)) {
+				_name = activeLevel.gameObject.scene.name;
+			}
 
 			// Save scene to disk - will automatically overwrite any existing scene with the same name
-			EditorApplication.SaveScene(ASSETS_DIR + "/" + m_activeLevel.gameObject.name + ".unity");
-
-			// Reload editor stuff
-			LevelEditorWindow.instance.LoadLevelEditorStuff();
+			EditorSceneManager.SaveScene(activeLevel.gameObject.scene, assetDirForCurrentMode + "/" + _name + ".unity");
 
 			// Save assets to disk!!
 			AssetDatabase.SaveAssets();
@@ -315,16 +344,16 @@ namespace LevelEditor {
 		/// <param name="_promptSave">Optionally ask whether to save or not before unloading (and do it).</param>
 		private void UnloadLevel(bool _promptSave) {
 			// Nothing to do if there is no loaded level
-			if(m_activeLevel == null) return;
+			if(activeLevel == null) return;
 			
 			// Ask for save
 			if(_promptSave) PromptSaveDialog();
-			
-			// Just create a new empty scene
-			EditorApplication.NewEmptyScene();
+
+			// Close the scene containing the active level
+			EditorSceneManager.CloseScene(activeLevel.gameObject.scene, true);
 			
 			// Clear some references
-			m_activeLevel = null;
+			activeLevel = null;
 		}
 		
 		/// <summary>
@@ -333,46 +362,10 @@ namespace LevelEditor {
 		/// <returns><c>true</c>, if the instance was modified, <c>false</c> otherwise.</returns>
 		private bool CheckChanges() {
 			// Nothing to do if there is no loaded level
-			if(m_activeLevel == null) return false;
-			
-			/*
-			// Get prefab object
-			GameObject prefabObj = PrefabUtility.GetPrefabParent(m_activeLevel.gameObject) as GameObject;
-			if(prefabObj == null) return true;	// There is no prefab for this level, mark it as changed
+			if(activeLevel == null) return false;
 
-			// Get changes list
-			PropertyModification[] changes = PrefabUtility.GetPropertyModifications(m_activeLevel.gameObject);
-
-			// Unfortunately, some properties are always marked as changed, so we must check them manually (ty Unity -_-')
-			// Specifically it's always the root object's transform position and rotation, as well as the rootOrder property
-			// We will simplify the way of checking it, even if it's not that reliable as checking property by property
-			// Position XYZ + Rotation XYZW + RootOrder are 7 properties, if there are more modified properties, it means at least one legit change exists
-			if(changes.Length != 8) {
-				return true;
-			} else {
-				// Check position, rotation and root order compared to the prefab
-				if(m_activeLevel.gameObject.transform.localPosition != prefabObj.transform.localPosition) return true;
-				if(m_activeLevel.gameObject.transform.localRotation != prefabObj.transform.localRotation) return true;
-
-				// We don't care about root order - we don't have an easy way to check it
-			}
-
-			// No legit changes were detected
-			return false;
-			*/
-			
-			// [AOC] TODO!! Unfortunately not all changes are detected with this method (i.e. Adding object to the prefab's hierarchy), so let's just spam the save dialog
-			return true;
-		}
-		
-		/// <summary>
-		/// Refresh the list of stored levels in the resources folder. Will be stored in m_fileList.
-		/// </summary>
-		private void RefreshLevelsList() {
-			// C# makes it easy for us
-			string dirPath = Application.dataPath + ASSETS_DIR.Replace("Assets", "");	// dataPath already contains the "Assets" directory
-			DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-			m_fileList = dirInfo.GetFiles("*.unity");	// Levels are scenes
+			// Unity makes it easy for us
+			return activeLevel.gameObject.scene.isDirty;
 		}
 
 		//------------------------------------------------------------------//
@@ -384,23 +377,45 @@ namespace LevelEditor {
 		private void OnNewLevelButton() {
 			// Unload current level - will ask to save first
 			UnloadLevel(true);
+
+			// Find out suffix for the level based on current mode
+			string modeSuffix = "";
+			switch(LevelEditor.settings.selectedMode) {
+				case LevelEditorSettings.Mode.SPAWNERS:		modeSuffix = "_Spawners";	break;
+				case LevelEditorSettings.Mode.COLLISION:	modeSuffix = "_Collision";	break;
+				case LevelEditorSettings.Mode.ART:			modeSuffix = "_Art";		break;
+			}
 			
 			// Find out a suitable name for the new level
 			int i = 0;
 			string name = "";
-			string path = Application.dataPath + ASSETS_DIR.Replace("Assets", "") + "/";	// dataPath already includes the "Assets" directory
+			string path = Application.dataPath + assetDirForCurrentMode.Replace("Assets", "") + "/";	// dataPath already includes the "Assets" directory
 			do {
-				name = "SC_Level_" + i;
+				name = "SC_Level_" + i + modeSuffix;
 				i++;
 			} while(File.Exists(path + name + ".unity"));
-			
-			// Create a new game object and add to it the Level component
-			// It will automatically be initialized with the required hierarchy
-			GameObject newLevelObj = new GameObject(name, typeof(Level));
-			m_activeLevel = newLevelObj.GetComponent<Level>();
 
-			// Add all the editor stuff
-			LevelEditorWindow.instance.LoadLevelEditorStuff();
+			// Create a new scene with the target name and make it the main one
+			Scene newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+			EditorSceneManager.SetActiveScene(newScene);
+
+			// Create a new game object and add to it the Level component corresponding to the current edition mode
+			// It will automatically be initialized with the required hierarchy
+			// Since the new scene is the active one, it will be added to the root of it
+			GameObject newLevelObj = null;
+			switch(LevelEditor.settings.selectedMode) {
+				case LevelEditorSettings.Mode.SPAWNERS:		newLevelObj = new GameObject("Level", typeof(LevelTypeSpawners));	break;
+				case LevelEditorSettings.Mode.COLLISION:	newLevelObj = new GameObject("Level", typeof(LevelTypeCollision));	break;
+				case LevelEditorSettings.Mode.ART:			newLevelObj = new GameObject("Level", typeof(LevelTypeArt));		break;
+			}
+			activeLevel = newLevelObj.GetComponent<Level>();
+
+			// Save the new scene to the default dir with the name we figured out before
+			SaveLevel(name);
+
+			// Select the level and ping the scene file
+			Selection.activeObject = activeLevel.gameObject;
+			EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + name + ".unity"));
 		}
 		
 		/// <summary>
@@ -408,13 +423,17 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnOpenLevelButton() {
 			// Open a dialog showing all the levels stored in resources
+			// Refresh the list
+			string dirPath = Application.dataPath + assetDirForCurrentMode.Replace("Assets", "");	// dataPath already contains the "Assets" directory
+			DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+			m_fileList = dirInfo.GetFiles("*.unity");	// Levels are scenes
+
 			// Strip filename from full file path
-			RefreshLevelsList();
 			string[] fileNames = new string[m_fileList.Length];
 			for(int i = 0; i < fileNames.Length; i++) {
 				fileNames[i] = Path.GetFileNameWithoutExtension(m_fileList[i].Name);
 			}
-			
+
 			// Open a popup displaying all the files
 			if(fileNames.Length > 0) {
 				// Show selection popup
@@ -450,7 +469,7 @@ namespace LevelEditor {
 			// Show confirmation dialog
 			if(EditorUtility.DisplayDialog("Delete Level", "Are you sure?", "Yes", "No")) {
 				// Just do it
-				AssetDatabase.MoveAssetToTrash(ASSETS_DIR + "/" + m_activeLevel.gameObject.name + ".unity");
+				AssetDatabase.MoveAssetToTrash(assetDirForCurrentMode + "/" + activeLevel.gameObject.scene.name + ".unity");
 
 				// Unload level - don't prompt for saving, of course
 				UnloadLevel(false);
@@ -470,14 +489,16 @@ namespace LevelEditor {
 			UnloadLevel(true);
 
 			// Load the new level scene and store reference to the level object
-			EditorApplication.OpenScene(ASSETS_DIR + "/" + m_fileList[_selectedIdx].Name);
-			m_activeLevel = Object.FindObjectOfType<Level>();
+			EditorSceneManager.OpenScene(assetDirForCurrentMode + "/" + m_fileList[_selectedIdx].Name, OpenSceneMode.Additive);
+			switch(LevelEditor.settings.selectedMode) {
+				case LevelEditorSettings.Mode.SPAWNERS:		activeLevel = Object.FindObjectOfType<LevelTypeSpawners>();		break;
+				case LevelEditorSettings.Mode.COLLISION:	activeLevel = Object.FindObjectOfType<LevelTypeCollision>();	break;
+				case LevelEditorSettings.Mode.ART:			activeLevel = Object.FindObjectOfType<LevelTypeArt>();			break;
+			}
 			
-			// Focus the level object in the hierarchy
-			Selection.activeObject = m_activeLevel.gameObject;
-
-			// Add the level editor stuff
-			LevelEditorWindow.instance.LoadLevelEditorStuff();
+			// Focus the level object in the hierarchy and ping the opened scene in the project window
+			Selection.activeObject = activeLevel.gameObject;
+			EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + activeLevel.gameObject.scene.name + ".unity"));
 		}
 	}
 }
