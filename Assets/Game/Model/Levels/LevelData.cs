@@ -26,16 +26,24 @@ public class LevelData {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
+	[Separator("General")]
 	[SerializeField] private string m_tidName = "";
 	public string tidName { get { return m_tidName; }}
 
 	[SerializeField] private string m_tidDescription = "";
 	public string tidDescription { get { return m_tidDescription; }}
 
-	[SerializeField] private string m_sceneName = "";
-	public string sceneName { get { return m_sceneName; }}
-
 	[SerializeField] private int m_dragonsToUnlock = 0;
 	public int dragonsToUnlock { get { return m_dragonsToUnlock; }}
 	public bool isUnlocked { get { return m_dragonsToUnlock <= DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count; }}
+
+	[Separator("Scenes")]
+	[SerializeField] private string m_spawnersScene = "";
+	public string spawnersScene { get { return m_spawnersScene; }}
+
+	[SerializeField] private string m_collisionScene = "";
+	public string collisionScene { get { return m_collisionScene; }}
+
+	[SerializeField] private string m_artScene = "";
+	public string artScene { get { return m_artScene; }}
 }

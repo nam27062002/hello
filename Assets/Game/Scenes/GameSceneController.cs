@@ -65,13 +65,14 @@ public class GameSceneController : SceneController {
 	}
 
 	// Level loading
-	private AsyncOperation m_levelLoadingTask = null;
-	//private ResourceRequest m_levelLoadingTask = null;
+	private AsyncOperation[] m_levelLoadingTask = null;
 	public float levelLoadingProgress {
 		get {
 			if(state == EStates.LOADING_LEVEL) {
-				float progress = (m_levelLoadingTask != null) ? m_levelLoadingTask.progress : 1f;	// Shouldn't be null at this state
-				return Mathf.Min(progress, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
+				if(m_levelLoadingTask == null) return 1f;	// Shouldn't be null at this state
+				float progress = 0f;
+				for(int i = 0; i < m_levelLoadingTask.Length; i++) progress += m_levelLoadingTask[i].progress;
+				return Mathf.Min(progress/m_levelLoadingTask.Length, 1f - Mathf.Max(m_timer/MIN_LOADING_TIME, 0f));	// Either progress or fake timer
 			} else if(state > EStates.LOADING_LEVEL) {
 				return 1;
 			} else {
