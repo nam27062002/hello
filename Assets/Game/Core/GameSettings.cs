@@ -52,6 +52,18 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private Version m_androidVersion = new Version(1, 0, 0);
 	public static Version androidVersion { get { return instance.m_androidVersion; }}
 
+	[SerializeField] private int m_androidVersionCode = 0;
+	public static int androidVersionCode 
+	{ 
+		get 
+		{ 
+			return instance.m_androidVersionCode; 
+		}
+		set
+		{
+			instance.m_androidVersionCode = value;
+		}
+	}
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
