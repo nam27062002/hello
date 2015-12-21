@@ -297,9 +297,11 @@ public class PreyMotion : Initializable {
 		RaycastHit ground;
 		Vector3 testPosition = m_groundSensor.position;
 
+		Debug.DrawLine(testPosition, testPosition + Vector3.down * (m_area.bounds.size.y + 5f), Color.black);
+
 		if (Physics.Linecast(testPosition, testPosition + Vector3.down * (m_area.bounds.size.y + 5f), out ground, m_groundMask)) {
 			m_position.y = ground.point.y;
-			m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
+			//m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 			m_velocity.y = 0;
 			m_currentSpeed = Mathf.Abs(m_velocity.x);
 		}
