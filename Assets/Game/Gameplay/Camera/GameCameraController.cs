@@ -82,7 +82,9 @@ public class GameCameraController : MonoBehaviour {
 	private Bounds m_activationMax = new Bounds();
 	private Bounds m_deactivation = new Bounds();
 
-
+	private Transform m_transform;
+	private bool m_update = false;
+	private float m_accumulatedTime = 0;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -117,7 +119,7 @@ public class GameCameraController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		m_transform = transform;
 	}
 
 	/// <summary>
@@ -144,36 +146,57 @@ public class GameCameraController : MonoBehaviour {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
-		// Compute new target position
-		// Is there a danger nearby?
-		if(m_danger != null) {
-			// Yes!! Look between the danger and the dragon
-			// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
-			m_targetPos = Vector3.Lerp(playerPos, m_danger.position, 0.5f);
-		} else {
-			// No!! Just look towards the dragon
-			m_targetPos = playerPos;
+	private void LateUpdate() 
+	{
+		m_accumulatedTime += Time.deltaTime;
+		Vector3 newPos = m_transform.position;
+
+		// it depends on previous fixed updates
+		if ( m_update )
+		{
+			// Compute new target position
+			// Is there a danger nearby?
+			if(m_danger != null) {
+				// Yes!! Look between the danger and the dragon
+				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
+				m_targetPos = Vector3.Lerp(playerPos, m_danger.position, 0.5f);
+			} else {
+				// No!! Just look towards the dragon
+				m_targetPos = playerPos;
+			}
+
+			// Update forward direction and apply forward offset too look a bit ahead in the direction the dragon is moving
+			m_forward = Vector3.Lerp(m_dragonMotion.GetDirection(), m_forward, m_forwardSmoothing);
+			m_targetPos = m_targetPos + m_forward * m_forwardOffset;
+
+			// Clamp X to defined limits
+			m_targetPos.x = Mathf.Clamp(m_targetPos.x, m_limitX.min, m_limitX.max);
+
+			// Compute Z, defined by the zoom factor
+			m_targetPos.z = -m_zoomRange.Lerp(m_zInterpolator.GetExponential());	// Reverse-signed
+
+			// Apply movement smoothing
+			newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
+			newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
+
+			m_update = false;
+			m_accumulatedTime = 0;
 		}
 
-		// Update forward direction and apply forward offset too look a bit ahead in the direction the dragon is moving
-		m_forward = Vector3.Lerp(m_dragonMotion.GetDirection(), m_forward, m_forwardSmoothing);
-		m_targetPos = m_targetPos + m_forward * m_forwardOffset;
+		newPos = UpdateByShake( newPos, Time.deltaTime );
 
-		// Clamp X to defined limits
-		m_targetPos.x = Mathf.Clamp(m_targetPos.x, m_limitX.min, m_limitX.max);
+		// DONE! Apply new position
+		transform.position = newPos;
 
-		// Compute Z, defined by the zoom factor
-		m_targetPos.z = -m_zoomRange.Lerp(m_zInterpolator.GetExponential());	// Reverse-signed
+		UpdateFrustumBounds();
+	}
 
-		// Apply movement smoothing
-		Vector3 newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
-		newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
-
+	private Vector3 UpdateByShake( Vector3 position, float deltaTime)
+	{
 		// Apply shaking - after smoothing, we don't want shaking to be affected by it
 		if(m_shakeTimer > 0f){
 			// Update timer
-			m_shakeTimer -= Time.deltaTime;
+			m_shakeTimer -= m_accumulatedTime;
 			
 			// Compute a random shaking optionally decaying over time
 			if(m_shakeTimer > 0) {
@@ -184,16 +207,18 @@ public class GameCameraController : MonoBehaviour {
 					decayedShakeAmt.z *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
 				}
 				
-				newPos.x += Random.Range(-decayedShakeAmt.x, decayedShakeAmt.x);
-				newPos.y += Random.Range(-decayedShakeAmt.y, decayedShakeAmt.y);
-				newPos.z += Random.Range(-decayedShakeAmt.z, decayedShakeAmt.z);
+				position.x += Random.Range(-decayedShakeAmt.x, decayedShakeAmt.x);
+				position.y += Random.Range(-decayedShakeAmt.y, decayedShakeAmt.y);
+				position.z += Random.Range(-decayedShakeAmt.z, decayedShakeAmt.z);
 			}
 		}
 
-		// DONE! Apply new position
-		transform.position = newPos;
+		return position;
+	}
 
-		UpdateFrustumBounds();
+	private void FixedUpdate()
+	{
+		m_update = true;
 	}
 
 	/// <summary>
