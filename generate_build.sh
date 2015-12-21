@@ -18,6 +18,8 @@ SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
 SMB_FOLDER="BCNStudio/QA/HungryDragon"
 
+DATE="$(date +%Y-%m-%d)"
+
 USAGE="usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false]"
 
 for ((i=1;i<=$#;i++)); 
@@ -101,7 +103,7 @@ if $BUILD_IOS; then
     echo "Archiving"
     BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${GAME_NAME}_${BUNDLE_ID}.xcarchive"
-    STAGE_IPA_FILE="${GAME_NAME}_${BUNDLE_ID}_aaaammdd.ipa"
+    STAGE_IPA_FILE="${GAME_NAME}_${BUNDLE_ID}_${DATE}.ipa"
     PROJECT_NAME="${SCRIPT_PATH}/xcode/Unity-iPhone.xcodeproj"
 
     xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 

@@ -67,7 +67,8 @@ public class Builder : MonoBehaviour
 		PlayerSettings.Android.bundleVersionCode = GameSettings.androidVersionCode;
 
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
-		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion.ToString() + ":" + GameSettings.androidVersionCode.ToString() + "aaaammdd" + ".apk");
+		string date = System.DateTime.Now.ToString("yyyy-M-d");
+		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion.ToString() + ":" + GameSettings.androidVersionCode.ToString() + "_" + date + ".apk");
 		BuildPipeline.BuildPlayer(m_scenes, stagePath, BuildTarget.Android, BuildOptions.None);
 
 		// Restore Player Settings
