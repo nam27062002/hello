@@ -91,6 +91,7 @@ GameObject:
   - 4: {fileID: 466538}
   - 114: {fileID: 11423762}
   - 114: {fileID: 11437750}
+  - 114: {fileID: 11485598}
   m_Layer: 0
   m_Name: PF_CS_S_Decoration_Fence_01B
   m_TagString: Untagged
@@ -305,6 +306,18 @@ MonoBehaviour:
   m_burningTime: 10
   m_damagePerTick: 0.75
   m_maxDistanceLinkNode: 5
+--- !u!114 &11485598
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 199478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 30
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -315,6 +328,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_typeID
       value: fence_01b
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_spawnTime
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -74,6 +74,7 @@ GameObject:
   - 4: {fileID: 415726}
   - 114: {fileID: 11466600}
   - 114: {fileID: 11452336}
+  - 114: {fileID: 11455974}
   m_Layer: 0
   m_Name: PF_ALL_L_Machine_UrbanCar_00
   m_TagString: Untagged
@@ -425,6 +426,18 @@ MonoBehaviour:
     xp: 0
   m_goldenChance: 0
   m_pcChance: 0
+--- !u!114 &11455974
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 134950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 35
 --- !u!114 &11466600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -508,6 +521,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_spawnTime
+      value: 35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

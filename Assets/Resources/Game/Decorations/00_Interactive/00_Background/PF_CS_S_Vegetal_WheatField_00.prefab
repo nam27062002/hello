@@ -73,6 +73,7 @@ GameObject:
   - 4: {fileID: 427118}
   - 114: {fileID: 11411674}
   - 114: {fileID: 11439712}
+  - 114: {fileID: 11413262}
   m_Layer: 0
   m_Name: PF_CS_S_Vegetal_WheatField_00
   m_TagString: Untagged
@@ -156,6 +157,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_explosionPrefab: {fileID: 0}
+--- !u!114 &11413262
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 193664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 30
 --- !u!114 &11439712
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -280,6 +293,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_typeID
       value: wheat_field
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_spawnTime
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

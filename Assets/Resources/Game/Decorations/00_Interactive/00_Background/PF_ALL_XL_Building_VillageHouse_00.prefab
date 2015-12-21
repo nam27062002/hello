@@ -155,6 +155,7 @@ GameObject:
   - 4: {fileID: 473972}
   - 114: {fileID: 11401682}
   - 114: {fileID: 11440220}
+  - 114: {fileID: 11401014}
   m_Layer: 0
   m_Name: PF_ALL_XL_Building_VillageHouse_00
   m_TagString: Untagged
@@ -619,6 +620,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 182958}
   m_Mesh: {fileID: 4300000, guid: 3cd3ed4d48a0c4a589b3b935e20d9fd0, type: 3}
+--- !u!114 &11401014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 30
 --- !u!114 &11401682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -920,6 +933,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_typeID
       value: village_house
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_spawnTime
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
