@@ -32,7 +32,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		public long coins = 0;
 		public long pc = 0;
 		[HideEnumValues(true, true)] public DragonId currentDragon = DragonId.SMALL;
-		public int currentLevel = 0;
+		[SkuList(typeof(LevelDef), false)] public string currentLevel = "";	// sku
 	}
 
 	//------------------------------------------------------------------//
@@ -62,8 +62,8 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		set { instance.m_currentDragon = value; }
 	}
 
-	[SerializeField] private int m_currentLevel = 0;
-	public static int currentLevel {
+	[SerializeField] private string m_currentLevel = "";
+	public static string currentLevel {
 		get { return instance.m_currentLevel; }
 		set { instance.m_currentLevel = value; }
 	}
