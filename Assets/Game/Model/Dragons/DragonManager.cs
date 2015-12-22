@@ -153,19 +153,9 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 		GameObject prefabObj = Resources.Load<GameObject>(data.prefabPath);
 		DebugUtils.SoftAssert(data != null, "The prefab defined to dragon " + _id + " couldn't be found");
 
-		// Create a new instance
+		// Create a new instance - will automatically be added to the InstanceManager.player property
 		playerObj = Instantiate<GameObject>(prefabObj);
 		playerObj.name = GameSettings.playerName;
-		
-		// Look for a default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + _id);
-		if(spawnPointObj == null) {
-			// We couldn't find a spawn point for this specific type, try to find a generic one
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
-		}
-		if(spawnPointObj != null) {
-			playerObj.transform.position = spawnPointObj.transform.position;
-		}
 	}
 
 	//------------------------------------------------------------------//

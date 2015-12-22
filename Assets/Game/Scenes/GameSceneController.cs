@@ -234,15 +234,13 @@ public class GameSceneController : SceneController {
 
 				// Dispatch game event
 				Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
-
+				
 				// Enable dragon back and put it in the spawn point
 				// Don't make it playable until the countdown ends
 				InstanceManager.player.playable = false;
 				InstanceManager.player.gameObject.SetActive(true);
-				GameObject spawnPoint = level.GetDragonSpawnPoint(InstanceManager.player.data.id);
-				if(spawnPoint == null) spawnPoint = level.GetDragonSpawnPoint(DragonId.NONE);
-				InstanceManager.player.transform.position = spawnPoint.transform.position;
-
+				InstanceManager.player.MoveToSpawnPoint();
+				
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_STARTED);
 			} break;

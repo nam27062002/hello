@@ -186,6 +186,26 @@ public class DragonPlayer : MonoBehaviour {
 		return m_speedMultiplier;
 	}
 
+	/// <summary>
+	/// Moves this dragon to its default spawn point in the current level.
+	/// If there is no specific spawn point for this dragon's id, move it to the
+	/// default spawn point for all dragons.
+	/// If there is no level loaded or no spawn points could be found, dragon stays
+	/// at its current position.
+	/// Uses GameObject.Find, so don't abuse it!
+	/// </summary>
+	public void MoveToSpawnPoint() {
+		// Look for a default spawn point for this dragon type in the scene and move the dragon there
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + data.id);
+		if(spawnPointObj == null) {
+			// We couldn't find a spawn point for this specific type, try to find a generic one
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
+		}
+		if(spawnPointObj != null) {
+			transform.position = spawnPointObj.transform.position;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GETTERS															//
 	//------------------------------------------------------------------//
