@@ -1,4 +1,4 @@
-﻿// EntitySkuListAttributeEditor.cs
+﻿// FileListAttributeEditor.cs
 // 
 // Created by Alger Ortín Castellví on 14/12/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
@@ -9,25 +9,22 @@
 using UnityEngine;
 using UnityEditor;
 using System;
-using System.Linq;
-using System.Reflection;
+using System.IO;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Drawer for the EntitySkuList custom attribute.
-/// Simpler version of the SkuListAttributeEditor since we know exactly the type of definition we're editing so we don't 
-/// have to deal with generics and reflection black magic.
+/// Drawer for the FileList custom attribute.
 /// </summary>
-[CustomPropertyDrawer(typeof(EntitySkuListAttribute))]
-public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
+[CustomPropertyDrawer(typeof(FileListAttribute))]
+public class FileListAttributeEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Data that mus be kept between opening the sku list popup and capturing its result
-	private List<string> m_skus = null;
+	private List<FileInfo> m_files = null;
 	private SerializedProperty m_targetProperty = null;
 
 	//------------------------------------------------------------------//
@@ -43,50 +40,46 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 		// Check field type
 		if(_property.propertyType != SerializedPropertyType.String) {
 			m_pos.height = EditorStyles.largeLabel.lineHeight;
-			EditorGUI.LabelField(m_pos, _label.text, "ERROR! EntitySkuList attribute can only be applied to string properties!");
+			EditorGUI.LabelField(m_pos, _label.text, "ERROR! FileList attribute can only be applied to string properties!");
 			AdvancePos();
 			return;
 		}
 
 		// Obtain the attribute
-		EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
-
-		// Get the definitions
-		Dictionary<string, List<EntityDef>> defsByCategory = DefinitionsManager.entities.defsByCategory;
+		FileListAttribute attr = attribute as FileListAttribute;
 
 		// Create the skus list
-		m_skus = new List<string>();
+		m_files = new List<FileInfo>();
 
 		// Insert "NONE" option at the beginning
-		if(attr.m_allowNullValue) {
-			m_skus.Add("---- NONE");
+		if(attr.m_allowEmptyValue) {
+			m_files.Add(null);	// "NONE" value is ""
 		}
 
-		// Iterate defs and add them to the skus list
-		foreach(KeyValuePair<string, List<EntityDef>> kvp in defsByCategory) {
-			// Add a separator for each category
-			m_skus.Add(SelectionPopupWindow.SECTION + kvp.Key);
+		// Get the file list
+		string dirPath = Application.dataPath + "/" + attr.m_folderPath;
+		DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+		m_files.AddRange(dirInfo.GetFiles(attr.m_filter));	// Use file filter
 
-			// Add each individual entity sku
-			for(int i = 0; i < kvp.Value.Count; i++) {
-				m_skus.Add(kvp.Value[i].sku);
+		// Clean up displayed names
+		// Strip filename from full file path
+		string[] options = new string[m_files.Count];
+		for(int i = 0; i < options.Length; i++) {
+			if(i == 0 && attr.m_allowEmptyValue) {
+				options[i] = "---- NONE";
+			} else {
+				options[i] = Path.GetFileNameWithoutExtension(m_files[i].Name);
 			}
 		}
 
 		// Find out current selected value
-		// If current value was not found, force it to first value if "NONE" allowed or first non-category value if not allowed
-		int selectedIdx = m_skus.FindIndex(_sku => _property.stringValue.Equals(_sku, StringComparison.Ordinal));
-		if(selectedIdx < 0) {
-			if(attr.m_allowNullValue) {
-				// First option should be "NONE", we're good
-				selectedIdx = 0;
-			} else {
-				// Find out first non-section option
-				for(int i = 0; i < m_skus.Count; i++) {
-					if(!m_skus[i].Contains(SelectionPopupWindow.SECTION)) {
-						selectedIdx = i;
-						break;
-					}
+		// If current value was not found, force it to first value (which will be "NONE" if allowed)
+		int selectedIdx = 0;
+		if(!String.IsNullOrEmpty(_property.stringValue)) {
+			for(int i = 0; i < m_files.Count; i++) {
+				if(m_files[i] != null && m_files[i].FullName.Contains(_property.stringValue)) {
+					selectedIdx = i;
+					break;
 				}
 			}
 		}
@@ -95,9 +88,9 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 		// Show button using the popup style with the current value
 		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
 		Rect contentPos = EditorGUI.PrefixLabel(m_pos, _label);
-		if(GUI.Button(contentPos, m_skus[selectedIdx], EditorStyles.popup)) {
+		if(GUI.Button(contentPos, options[selectedIdx], EditorStyles.popup)) {
 			m_targetProperty = _property;
-			SelectionPopupWindow.Show(m_skus.ToArray(), OnSkuSelected);
+			SelectionPopupWindow.Show(options, OnFileSelected);
 		}
 
 		// Leave room for next property drawer
@@ -105,16 +98,18 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 	}
 
 	/// <summary>
-	/// A sku has been selected in the selection popup.
+	/// A file has been selected in the selection popup.
 	/// </summary>
 	/// <param name="_selectedIdx">The index of the newly selected option.</param>
-	private void OnSkuSelected(int _selectedIdx) {
+	private void OnFileSelected(int _selectedIdx) {
 		// Store new value - "NONE" will be stored as "" when allowed
-		EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
-		if(attr.m_allowNullValue && _selectedIdx == 0) {
-			m_targetProperty.stringValue = "";
+		FileListAttribute attr = attribute as FileListAttribute;
+		if(attr.m_allowEmptyValue && _selectedIdx == 0) {
+			// "NONE" option selected
+			m_targetProperty.stringValue = String.Empty;
 		} else {
-			m_targetProperty.stringValue = m_skus[_selectedIdx];	// Options array match the definition skus, so no need to do anything else :)
+			// File selected: Store in the selected format
+			m_targetProperty.stringValue = StringUtils.FormatPath(m_files[_selectedIdx].FullName, attr.m_format);	// Options array match the file list, so no need to do anything else :)
 		}
 		m_targetProperty.serializedObject.ApplyModifiedProperties();
 	}

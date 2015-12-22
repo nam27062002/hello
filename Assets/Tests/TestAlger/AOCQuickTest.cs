@@ -26,7 +26,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	[EntitySkuListAttribute]
+	//[EntitySkuListAttribute]
+	[FileListAttribute("Resources/Game/Levels/Collision", StringUtils.PathFormat.FILENAME_WITHOUT_EXTENSION, "*.unity")]
 	public string m_entitySku;
 
 	//------------------------------------------------------------------//

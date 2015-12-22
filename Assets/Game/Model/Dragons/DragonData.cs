@@ -62,9 +62,11 @@ public class DragonData {
 	[SerializeField] private string m_tidDescription = "";
 	public string tidDescription { get { return m_tidDescription; }}
 
+	[FileList("Resources/Game/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_prefabPath = "";
 	public string prefabPath { get { return m_prefabPath; }}
 
+	[FileList("Resources/UI/Menu/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_menuPrefabPath = "";
 	public string menuPrefabPath { get { return m_menuPrefabPath; }}
 
