@@ -50,7 +50,7 @@ public enum GameEvents {
 
 	// Menu events
 	MENU_DRAGON_SELECTED,	// params: DragonId _selectedDragon
-	MENU_LEVEL_SELECTED,	// params: int _selectedLevel
+	MENU_LEVEL_SELECTED,	// params: string _selectedLevelSku
 
 	// Mission events
 	MISSION_COMPLETED,			// params: Mission _mission

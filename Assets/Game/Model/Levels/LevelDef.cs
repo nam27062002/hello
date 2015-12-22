@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// Definition of a game level.
 /// </summary>
 [Serializable]
-public class LevelData {
+public class LevelDef : Definition {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -35,7 +35,6 @@ public class LevelData {
 
 	[SerializeField] private int m_dragonsToUnlock = 0;
 	public int dragonsToUnlock { get { return m_dragonsToUnlock; }}
-	public bool isUnlocked { get { return m_dragonsToUnlock <= DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count; }}
 
 	[Separator("Scenes")]
 	[FileList("Resources/Game/Levels/Spawners", StringUtils.PathFormat.FILENAME_WITHOUT_EXTENSION, "*.unity")]

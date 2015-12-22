@@ -26,8 +26,9 @@ public class MenuLevelButton : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Setup
-	[Comment("Index of the level in the LevelManager")]
-	[SerializeField] private int m_levelIndex = -1;
+	[Comment("Sku of the level in the LevelDefinitions")]
+	[SkuList(typeof(LevelDef), false)]
+	[SerializeField] private string m_levelSku = "";
 
 	// References
 	[Comment("References")]
@@ -38,7 +39,7 @@ public class MenuLevelButton : MonoBehaviour {
 	[SerializeField] private GameObject m_playerPointer = null;
 
 	// Data
-	LevelData m_levelData = null;
+	LevelDef m_levelDef = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -59,21 +60,21 @@ public class MenuLevelButton : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get level def
-		m_levelData = LevelManager.GetLevelData(m_levelIndex);
+		m_levelDef = DefinitionsManager.levels.GetDef(m_levelSku);
 
 		// Set name and description
-		m_titleText.text = m_levelData.tidName;
-		m_titleDesc.text = m_levelData.tidDescription;
+		m_titleText.text = m_levelDef.tidName;
+		m_titleDesc.text = m_levelDef.tidDescription;
 
 		// Unfold if current level
-		bool isCurrentLevel = (m_levelIndex == UserProfile.currentLevel);
+		bool isCurrentLevel = (m_levelSku == UserProfile.currentLevel);
 		ShowInfo(isCurrentLevel);
 
 		// Show player pointer if current level
 		m_playerPointer.SetActive(isCurrentLevel);
 
 		// Subscribe to external events
-		Messenger.AddListener<int>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
+		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	/// <summary>
@@ -81,7 +82,7 @@ public class MenuLevelButton : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsusbscribe from external events
-		Messenger.RemoveListener<int>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
+		Messenger.RemoveListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	//------------------------------------------------------------------//
@@ -101,15 +102,15 @@ public class MenuLevelButton : MonoBehaviour {
 	//------------------------------------------------------------------//
 	public void OnButtonClick() {
 		// Try to select the level assigned to this level button
-		Messenger.Broadcast<int>(GameEvents.MENU_LEVEL_SELECTED, m_levelIndex);
+		Messenger.Broadcast<string>(GameEvents.MENU_LEVEL_SELECTED, m_levelSku);
 	}
 
 	/// <summary>
 	/// A new level has been selected.
 	/// </summary>
-	/// <param name="_levelIdx">The index of the selected level.</param>
-	public void OnLevelSelected(int _levelIdx) {
-		ShowInfo(_levelIdx == m_levelIndex);
+	/// <param name="_levelSku">The sku of the selected level.</param>
+	public void OnLevelSelected(string _levelSku) {
+		ShowInfo(_levelSku == m_levelSku);
 	}
 }
 

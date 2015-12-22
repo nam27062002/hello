@@ -8,25 +8,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddda4d0ce8ccc4a8f91a91f17e5c4d80, type: 3}
-  m_Name: LevelManager
+  m_Script: {fileID: 11500000, guid: d90debffaef7c4b32a5959850f1efbcb, type: 3}
+  m_Name: LevelDefinitions
   m_EditorClassIdentifier: 
-  m_levels:
-  - m_tidName: HSEexp
+  m_defsList:
+  - m_sku: level_0
+    m_tidName: HSEexp
     m_tidDescription: Hungry Shark Evolution experience
     m_dragonsToUnlock: 0
     m_spawnersScene: SC_Level_HSExp_Spawners
     m_collisionScene: SC_Level_HSExp_Collision
     m_artScene: SC_Level_HSExp_Art
-  - m_tidName: T&M Level
-    m_tidDescription: Toni and Marian's level
-    m_dragonsToUnlock: 0
-    m_spawnersScene: 
-    m_collisionScene: 
-    m_artScene: 
-  - m_tidName: Empty Level
-    m_tidDescription: Simple empty level to fill the level selection screen
+  - m_sku: level_1
+    m_tidName: Hadrian's Level
+    m_tidDescription: Le terrain du jeu d'Hadrian
     m_dragonsToUnlock: 0
     m_spawnersScene: SC_Level_HSExp_Spawners
     m_collisionScene: SC_Level_HSExp_Collision_HADRIEN
     m_artScene: SC_Level_HSExp_Art
+  - m_sku: level_2
+    m_tidName: Empty Level
+    m_tidDescription: Simple empty level to fill the level selection screen
+    m_dragonsToUnlock: 2
+    m_spawnersScene: 
+    m_collisionScene: 
+    m_artScene: 
