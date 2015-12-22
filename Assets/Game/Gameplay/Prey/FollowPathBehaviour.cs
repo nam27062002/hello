@@ -123,8 +123,8 @@ public class FollowPathBehaviour : Initializable {
 				m_target = m_path.GetNext();
 			}
 			m_motion.Seek(m_target);
-
-		//	m_motion.ApplySteering();
+		} else {
+			m_motion.velocity = Vector2.zero;
 		}
 	}
 
