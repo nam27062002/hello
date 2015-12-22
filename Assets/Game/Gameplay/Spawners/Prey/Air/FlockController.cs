@@ -43,9 +43,14 @@ public class FlockController : MonoBehaviour {
 	public void Init(int _maxEntities) {
 		m_entities = new GameObject[_maxEntities];
 		
-		m_area = GetComponent<Area>().bounds;
-
-		m_target = m_area.bounds.center;		
+		Area area = GetComponent<Area>();
+		if (area != null) {
+			m_area = area.bounds; 
+			m_target = m_area.bounds.center;
+		} else {
+			m_target = transform.position;
+		}
+	
 		m_timer = Random.Range(0f, Mathf.PI * 2f);
 	}
 
@@ -72,11 +77,13 @@ public class FlockController : MonoBehaviour {
 	void Update () {	
 		// Control flocking
 		// Move target for follow behaviour
-		m_timer += Time.deltaTime * m_guideSpeed;
+		if (m_area != null) {
+			m_timer += Time.deltaTime * m_guideSpeed;
 
-		if (m_guideFunction == GuideFunction.SMALL_FLOCK) {
-			m_target.x = m_area.bounds.center.x + (Mathf.Sin(m_timer * 0.75f) * 0.5f + Mathf.Cos(m_timer * 0.25f) * 0.5f) * m_area.bounds.extents.x;
-			m_target.y = m_area.bounds.center.y + (Mathf.Sin(m_timer * 0.35f) * 0.5f + Mathf.Cos(m_timer * 0.65f) * 0.5f) * m_area.bounds.extents.y;
+			if (m_guideFunction == GuideFunction.SMALL_FLOCK) {
+				m_target.x = m_area.bounds.center.x + (Mathf.Sin(m_timer * 0.75f) * 0.5f + Mathf.Cos(m_timer * 0.25f) * 0.5f) * m_area.bounds.extents.x;
+				m_target.y = m_area.bounds.center.y + (Mathf.Sin(m_timer * 0.35f) * 0.5f + Mathf.Cos(m_timer * 0.65f) * 0.5f) * m_area.bounds.extents.y;
+			}
 		}
 	}
 
