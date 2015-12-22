@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DragonBoostBehaviour : MonoBehaviour {
 	
@@ -14,6 +15,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private bool m_active;
 	private bool m_ready;
 
+	public List<GameObject> m_trails;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -25,6 +28,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 		m_active = false;
 		m_ready = true;
+
+		DeactivateTrails();
 	}
 
 	void OnEnable() {
@@ -69,21 +74,41 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	}
 
 
-	private void StartBoost() {
+	private void StartBoost() 
+	{
 		m_active = true;
 		m_dragon.SetSpeedMultiplier(m_dragon.data.boost.value);
+		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
 			m_animator.SetBool("boost", true);
 	}
 
-	public void StopBoost() {
+	public void StopBoost() 
+	{
 		m_active = false;
 		m_dragon.SetSpeedMultiplier(1f);
+		// DeactivateTrails();
 		if (m_animator && m_animator.isInitialized)
 			m_animator.SetBool("boost", false);
 	}
 
 	public void ResumeBoost() {
 		m_ready = true;
+	}
+
+	public void ActivateTrails()
+	{
+		for( int i = 0; i<m_trails.Count; i++ )
+		{
+			m_trails[i].SetActive(true);
+		}
+	}
+
+	public void DeactivateTrails()
+	{
+		for( int i = 0; i<m_trails.Count; i++ )
+		{
+			m_trails[i].SetActive(false);
+		}
 	}
 }
