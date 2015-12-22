@@ -9,16 +9,16 @@ public class EvadeBehaviour : Initializable {
 			
 	private PreyMotion m_motion;
 	private Animator m_animator;
-	private SensePlayer m_sensor;
 
 
 	// Use this for initialization
 	void Awake () {
+		m_motion = GetComponent<PreyMotion>();
+	}
+
+	void Start() {
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_dragonMouth = m_dragon.tongue;
-
-		m_motion = GetComponent<PreyMotion>();
-		m_sensor = GetComponent<SensePlayer>();
 	}
 
 	public override void Initialize() {

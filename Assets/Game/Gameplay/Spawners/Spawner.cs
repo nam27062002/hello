@@ -26,6 +26,8 @@ public class Spawner : MonoBehaviour {
 	//-----------------------------------------------
 	protected AreaBounds m_area;
 
+	protected FlockController m_flockController;
+
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
 	private uint m_entitiesKilled; // we'll use this to give rewards if the dragon destroys a full flock
@@ -49,6 +51,13 @@ public class Spawner : MonoBehaviour {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
 		m_area = GetArea();
+
+
+		m_flockController = GetComponent<FlockController>();
+		if (m_flockController) {
+			// this spawner has a flock controller! let's setup it
+			m_flockController.Init(m_quantity.max);
+		}
 	}
 
 	protected virtual void OnEnable() {
@@ -76,7 +85,7 @@ public class Spawner : MonoBehaviour {
 		}
 
 		// all the entities are 
-		if (m_entityAlive == 0) {
+		if (m_entityAlive == 0 && m_entitiesKilled >= 3) {
 			// check if player has destroyed all the flock
 			if (m_entitiesKilled == m_entitySpawned) {
 				// TODO: give flock reward! rise event
@@ -127,6 +136,17 @@ public class Spawner : MonoBehaviour {
 		m_entitiesKilled = 0;
 
 		ExtendedSpawn();
+
+		if (m_flockController) {
+			for (int i = 0; i < m_entities.Length; i++) {
+				if (m_entities[i] != null) {
+					PreyMotion motion = m_entities[i].GetComponent<PreyMotion>();
+					if (motion != null) {
+						motion.AttachFlock(m_flockController);
+					}
+				}
+			}
+		}
 
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
