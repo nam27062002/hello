@@ -16,6 +16,7 @@ public class AttackBehaviour : Initializable {
 	[SerializeField] private float m_attackDelay;
 	[SerializeField] private int m_consecutiveAttacks;
 	[SerializeField] private float m_sensorShutdownTime;
+	[SerializeField] private bool m_hasAnimation = true;
 	[SerializeField] private GameObject m_projectilePrefab;
 
 	private Animator m_animator;
@@ -106,11 +107,15 @@ public class AttackBehaviour : Initializable {
 				break;
 				
 			case State.Attack:
-				if (v.sqrMagnitude <= m_sensor.sensorMinRadius) {
+				if (v.sqrMagnitude <= m_sensor.sensorMinRadius * m_sensor.sensorMinRadius) {
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0) {
 						//do attack
-						m_animator.SetTrigger("attack");
+						if (m_hasAnimation) {
+							m_animator.SetTrigger("attack");
+						} else {
+							OnAttack();
+						}
 
 						m_timer = m_attackDelay;
  

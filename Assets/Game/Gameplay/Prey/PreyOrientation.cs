@@ -56,10 +56,12 @@ public class PreyOrientation : MonoBehaviour {
 			m_targetRotation = Quaternion.Euler(0, angleY, 0);
 		}
 
-		if (m_direction.x >= 0f && _direction.x < 0f) {
-			m_animator.SetTrigger("turn right");
-		} else if (m_direction.x < 0f && _direction.x >= 0f) {
-			m_animator.SetTrigger("turn left");
+		if (m_animator) {
+			if (m_direction.x >= 0f && _direction.x < 0f) {
+				m_animator.SetTrigger("turn right");
+			} else if (m_direction.x < 0f && _direction.x >= 0f) {
+				m_animator.SetTrigger("turn left");
+			}
 		}
 
 		m_direction = _direction;
