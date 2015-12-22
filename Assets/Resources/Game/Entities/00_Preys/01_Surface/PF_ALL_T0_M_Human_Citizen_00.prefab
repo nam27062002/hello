@@ -733,11 +733,11 @@ MonoBehaviour:
   m_flockAvoidRadiusRange:
     min: 2
     max: 3
-  m_steerForce: 25
+  m_steerForce: 0.5
   m_mass: 1
   m_distanceAttenuation: 18
   m_maxSpeed: 4
-  m_maxRunSpeed: 10
+  m_maxRunSpeed: 8.1
   m_slowingRadius: 0
 --- !u!114 &11409122
 MonoBehaviour:
@@ -974,7 +974,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: 25
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
@@ -1106,7 +1106,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 10
+      value: 8.1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_angleIncrement

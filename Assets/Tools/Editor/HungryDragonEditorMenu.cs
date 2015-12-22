@@ -36,8 +36,11 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 51)]
 	public static void ShowDefintions2() { OpenFile("EntityCategoryDefinitions.asset", DEFINITIONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 52)]
-	public static void ShowDefintions3() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
+	[MenuItem("Hungry Dragon/Content/LevelDefinitions", false, 52)]
+	public static void ShowDefintions3() { OpenFile("LevelDefinitions.asset", DEFINITIONS_FOLDER); }
+
+	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 53)]
+	public static void ShowDefintions4() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
 
 	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
 	[MenuItem("Hungry Dragon/Content/Dragon Manager", false, 100)]
@@ -48,9 +51,6 @@ public class HungryDragonEditorMenu {
 		window.titleContent = new GUIContent("Dragon Manager Editor");
 		window.ShowUtility();	// To avoid window getting automatically closed when losing focus
 	}
-
-	[MenuItem("Hungry Dragon/Content/Level Manager", false, 101)]
-	public static void ShowManager1() { OpenFile("LevelManager.asset", SINGLETONS_FOLDER); }
 
 	[MenuItem("Hungry Dragon/Content/Missions Manager", false, 102)]
 	public static void ShowManager2() { OpenFile("PF_MissionManager.prefab", SINGLETONS_FOLDER); }

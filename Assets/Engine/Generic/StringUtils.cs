@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.IO;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -42,6 +43,16 @@ public class StringUtils {
 		new SSuffix(1000000d, "M"),
 		new SSuffix(1000d, "K")
 	};
+
+	public enum PathFormat {
+		FULL_PATH,							// /Users/myUser/Documents/UnityProject/Assets/Resources/Game/Levels/Collision/SC_Level_0_Collision.unity <---- for C# IO library
+		PROJECT_ROOT,						// Assets/Resources/Game/Levels/Collision/SC_Level_0_Collision.unity <---- for AssetsDatabase.Load
+		ASSETS_ROOT,						// Resources/Game/Levels/Collision/SC_Level_0_Collision.unity
+		RESOURCES_ROOT,						// Game/Levels/Collision/SC_Level_0_Collision.unity
+		RESOURCES_ROOT_WITHOUT_EXTENSION,	// Game/Levels/Collision/SC_Level_0_Collision <---- for Resources.Load
+		FILENAME_WITH_EXTENSION,			// SC_Level_0_Collision.unity
+		FILENAME_WITHOUT_EXTENSION			// SC_Level_0_Collision <---- for Application.LoadLevel, SceneManager.LoadScene, etc.
+	}
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -143,5 +154,49 @@ public class StringUtils {
 			}
 		}
 		return sResult;
+	}
+
+	/// <summary>
+	/// Format a given full path into one of the known formats.
+	/// </summary>
+	/// <returns>The formatted value.</returns>
+	/// <param name="_fullPath">The path to be formatted. Full path from system's root, including file extension, as it would be in C# FileInfo.FullName (e.g. /Users/myUser/Documents/UnityProject/Assets/Resources/Game/Levels/Collision/SC_Level_0_Collision.unity).</param>
+	/// <param name="_format">The format to be used.</param>
+	public static string FormatPath(string _fullPath, PathFormat _format) {
+		// [AOC] Windows uses backward slashes, which Unity doesn't recognize;
+		_fullPath = _fullPath.Replace('\\', '/');
+
+		// Select target format and do the required transformations
+		switch(_format) {
+			case PathFormat.FULL_PATH: {
+				return _fullPath;
+			} break;
+
+			case PathFormat.PROJECT_ROOT: {
+				return _fullPath.Replace(Application.dataPath, "Assets");
+			}
+
+			case PathFormat.ASSETS_ROOT: {
+				return _fullPath.Replace(Path.Combine(Application.dataPath, "/"), "");
+			}
+
+			case PathFormat.RESOURCES_ROOT: {
+				return _fullPath.Replace(Path.Combine(Application.dataPath, "Resources/"), "");
+			}
+
+			case PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION: {
+				_fullPath = _fullPath.Replace(Path.Combine(Application.dataPath, "Resources/"), "");
+				return Path.Combine(Path.GetDirectoryName(_fullPath), Path.GetFileNameWithoutExtension(_fullPath));
+			}
+
+			case PathFormat.FILENAME_WITH_EXTENSION: {
+				return Path.GetFileName(_fullPath);
+			}
+
+			case PathFormat.FILENAME_WITHOUT_EXTENSION: {
+				return Path.GetFileNameWithoutExtension(_fullPath);
+			}
+		}
+		return _fullPath;
 	}
 }

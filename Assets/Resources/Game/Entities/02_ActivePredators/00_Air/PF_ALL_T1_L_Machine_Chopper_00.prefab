@@ -403,7 +403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 0
+  m_faceDirection: 1
 --- !u!114 &11461950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -475,8 +475,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 15
-  m_sensorMaxRadius: 20
+  m_sensorMinRadius: 20
+  m_sensorMaxRadius: 25
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11482166
@@ -533,11 +533,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 15
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_faceDirection

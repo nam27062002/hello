@@ -44,7 +44,7 @@ MonoBehaviour:
       coins: 100
       pc: 10
       currentDragon: 0
-      currentLevel: 0
+      currentLevel: level_0
     dragons:
     - id: 0
       xp: 0
@@ -111,6 +111,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_data.missions.activeMissions.Array.data[2].state
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.profile.currentLevel
+      value: level_0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
