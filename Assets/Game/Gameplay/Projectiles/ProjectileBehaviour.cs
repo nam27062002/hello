@@ -43,12 +43,15 @@ public class ProjectileBehaviour : MonoBehaviour {
 			float distanceSqr = ((Vector2)m_target.bounds.center - m_motion.position).sqrMagnitude;
 			if (distanceSqr <= m_target.bounds.extents.x * m_target.bounds.extents.x) {
 				GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);			
-				// Random position within range
-				explosion.transform.position = transform.position;			
-				// Random scale within range
-				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
-				// Random rotation within range
-				explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+
+				if (explosion) {
+					// Random position within range
+					explosion.transform.position = transform.position;			
+					// Random scale within range
+					explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
+					// Random rotation within range
+					explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+				}
 
 				m_target.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage);
 				gameObject.SetActive(false);
@@ -63,7 +66,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 		//	m_motion.ApplySteering();
 
 			// force direction
-			m_motion.direction = m_target.bounds.center - m_from.position;
+			//m_motion.direction = m_target.bounds.center - m_from.position;
 		}
 	}
 }

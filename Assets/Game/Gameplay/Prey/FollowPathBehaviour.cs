@@ -45,10 +45,7 @@ public class FollowPathBehaviour : Initializable {
 		if (m_path != null) {
 			m_target = m_path.GetNext();			
 		}
-
-		m_motion.position = m_target;
-		transform.position = m_target;
-
+	
 		m_state = State.None;
 		if (m_idleProbability > 0f) {
 			m_nextState = State.Idle;

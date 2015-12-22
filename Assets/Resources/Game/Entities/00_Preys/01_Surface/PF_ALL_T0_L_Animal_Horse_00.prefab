@@ -885,11 +885,11 @@ MonoBehaviour:
   m_flockAvoidRadiusRange:
     min: 0
     max: 1
-  m_steerForce: 15
-  m_mass: 1
-  m_distanceAttenuation: 5
+  m_steerForce: 0.5
+  m_mass: 3
+  m_distanceAttenuation: 28
   m_maxSpeed: 8
-  m_maxRunSpeed: 24
+  m_maxRunSpeed: 10
   m_slowingRadius: 0
 --- !u!114 &11404376
 MonoBehaviour:
@@ -967,7 +967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sensorMinRadius: 10
-  m_sensorMaxRadius: 15
+  m_sensorMaxRadius: 30
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11451608
@@ -1104,7 +1104,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 24
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
@@ -1116,7 +1116,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_distanceAttenuation
-      value: 0
+      value: 28
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_faceDirection
@@ -1132,11 +1132,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 15
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: 15
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_mass
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
