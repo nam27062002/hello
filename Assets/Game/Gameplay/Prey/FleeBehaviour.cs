@@ -90,6 +90,11 @@ public class FleeBehaviour : Initializable {
 				} else {
 					m_motion.direction = Vector2.right;
 				}
+				m_motion.velocity = Vector2.zero;
+				break;
+
+			case State.Idle:
+				m_motion.velocity = Vector2.zero;
 				break;
 		}
 	}

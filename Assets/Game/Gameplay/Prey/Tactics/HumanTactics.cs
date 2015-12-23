@@ -3,7 +3,6 @@ using System.Collections;
 
 [DisallowMultipleComponent]
 [AddComponentMenu("Behaviour/Prey/Human Tactics")]
-[RequireComponent(typeof(WanderFleeBehaviour))]
 public class HumanTactics : Initializable {
 
 	private enum State {
