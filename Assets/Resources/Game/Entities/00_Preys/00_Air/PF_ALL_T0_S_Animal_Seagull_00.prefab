@@ -679,10 +679,10 @@ MonoBehaviour:
     max: 6
   m_steerForce: 0.1
   m_mass: 0.2
-  m_distanceAttenuation: 12
+  m_distanceAttenuation: 8
   m_maxSpeed: 4.5
   m_maxRunSpeed: 8
-  m_slowingRadius: 0
+  m_slowingRadius: 3
 --- !u!114 &11463106
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -840,7 +840,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadius
@@ -1000,7 +1000,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_distanceAttenuation
-      value: 12
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
