@@ -60,7 +60,7 @@ public class FleeBehaviour : Initializable {
 
 		if (m_state == State.RunAway) {
 			if (m_canBeAfraid || m_canPanic) {
-				if (!m_area.Contains(m_motion.position)) {
+				if (m_sensor.alert && !m_area.Contains(m_motion.position)) {
 					if (m_canBeAfraid) {
 						m_nextState = State.Afraid;
 					} else {
@@ -69,7 +69,7 @@ public class FleeBehaviour : Initializable {
 				}
 			}
 		} else if (m_state == State.Panic) {			
-			if (m_motion.lastSeekDistanceSqr < m_motion.slowingRadius * m_motion.slowingRadius) {
+			if (!m_sensor.alert || m_motion.lastSeekDistanceSqr < m_motion.slowingRadius * m_motion.slowingRadius) {
 				m_nextState = State.RunAway;
 			}
 		}
@@ -79,7 +79,9 @@ public class FleeBehaviour : Initializable {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.RunAway:
-				m_motion.Flee(m_dragonMouth.position);
+				if (m_sensor.alert) {
+					m_motion.Flee(m_dragonMouth.position);
+				}
 				break;
 
 			case State.Afraid:
