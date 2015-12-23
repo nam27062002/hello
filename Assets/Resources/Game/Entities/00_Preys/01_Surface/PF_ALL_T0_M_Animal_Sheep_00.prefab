@@ -778,7 +778,7 @@ MonoBehaviour:
     energy: 0
     fury: 20
     xp: 0.8
-  m_goldenChance: 0.301
+  m_goldenChance: 0.25
   m_pcChance: 0
 --- !u!114 &11424680
 MonoBehaviour:
@@ -815,7 +815,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
-  m_maxHealth: 100
+  m_maxHealth: 50
 --- !u!114 &11447996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1076,6 +1076,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_idleTime.max
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_goldenChance
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxHealth
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
