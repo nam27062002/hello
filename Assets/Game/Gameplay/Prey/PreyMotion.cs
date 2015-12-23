@@ -45,6 +45,8 @@ public class PreyMotion : Initializable {
 
 	protected float m_currentMaxSpeed;
 	protected float m_currentSpeed;
+
+	protected float m_lastSeekDistanceSqr;
 		
 	protected int m_groundMask;	
 	protected Transform m_groundSensor;
@@ -64,6 +66,8 @@ public class PreyMotion : Initializable {
 	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; m_orientation.SetDirection(m_direction); } }
 	public Vector2 velocity			{ get { return m_velocity; } set { m_velocity = value; } }
 	public float   speed			{ get { return m_currentSpeed; } }
+	public float   slowingRadius	{ get { return m_slowingRadius; } }
+	public float   lastSeekDistanceSqr { get { return m_lastSeekDistanceSqr; } }
 	//
 	// ----------------------------------------------------------------------------- //
 
@@ -135,6 +139,11 @@ public class PreyMotion : Initializable {
 
 	public void Seek(Vector2 _target) {
 		m_currentMaxSpeed = m_maxSpeed;
+		DoSeek(_target);
+	}
+
+	public void RunTo(Vector2 _target) {
+		m_currentMaxSpeed = m_maxRunSpeed;
 		DoSeek(_target);
 	}
 	
@@ -216,6 +225,9 @@ public class PreyMotion : Initializable {
 		if (distanceSqr < slowingRadiusSqr) {
 			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
 		}
+
+		// we'll keep the distance to our target for external components
+		m_lastSeekDistanceSqr = distanceSqr;
 		
 		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
 

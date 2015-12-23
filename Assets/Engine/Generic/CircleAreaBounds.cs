@@ -10,6 +10,10 @@ public struct CircleAreaBounds : AreaBounds {
 
 	public Bounds bounds { get { return m_bounds; } }
 
+	public Vector3 Center() {
+		return m_bounds.center;
+	}
+
 	public Vector3 RandomInside() {
 		Vector2 offset = Random.insideUnitCircle * m_bounds.extents.x;
 		return m_bounds.center + (Vector3)offset;

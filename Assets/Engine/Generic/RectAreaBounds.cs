@@ -17,6 +17,10 @@ public struct RectAreaBounds : AreaBounds {
 
 	public Bounds bounds { get { return m_bounds; } set { m_bounds = value; } }
 
+	public Vector3 Center() {
+		return m_bounds.center;
+	}
+
 	public void SetMinMax(Vector3 _min, Vector3 _max) {
 		m_bounds.SetMinMax(_min, _max);
 	}
