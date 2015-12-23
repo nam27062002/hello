@@ -89,12 +89,12 @@ GameObject:
   - 114: {fileID: 11442732}
   - 114: {fileID: 11431430}
   - 114: {fileID: 11476692}
-  - 114: {fileID: 11485266}
-  - 114: {fileID: 11489392}
   - 114: {fileID: 11404860}
-  - 114: {fileID: 11438460}
   - 114: {fileID: 11427146}
   - 114: {fileID: 11415360}
+  - 114: {fileID: 11461924}
+  - 114: {fileID: 11467088}
+  - 114: {fileID: 11440580}
   m_Layer: 8
   m_Name: PF_ALL_T0_M_Human_Rifleman_00
   m_TagString: Untagged
@@ -841,7 +841,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156732}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.023, y: 0.529, z: 0}
+  m_LocalPosition: {x: 0.023, y: 0.515, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 452162}
@@ -1013,8 +1013,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 113872}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 5.14, y: 0.01, z: 0}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 492558}
   - {fileID: 438538}
@@ -1242,7 +1242,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156262}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: -0.008, z: 0}
+  m_LocalPosition: {x: 0, y: -0.013, z: 0}
   m_LocalScale: {x: 0.09823224, y: 0.098232225, z: 0.09823223}
   m_Children:
   - {fileID: 426764}
@@ -1393,7 +1393,7 @@ MonoBehaviour:
     score: 100
     coins: 70
     pc: 0
-    health: 30
+    health: 4
     energy: 0
     fury: 20
     xp: 1
@@ -1440,7 +1440,7 @@ MonoBehaviour:
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
   m_maxHealth: 100
---- !u!114 &11438460
+--- !u!114 &11440580
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1448,7 +1448,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 113872}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
+  m_Script: {fileID: 11500000, guid: f836e7209e5c8497794d18c84b14c55b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11442732
@@ -1492,6 +1492,48 @@ MonoBehaviour:
   m_sensorMaxRadius: 10
   m_sensorAngle: 120
   m_sensorAngleOffset: 90
+--- !u!114 &11461924
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 113872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20d6719d9cb2543b096d365f9f530a3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zOffset:
+    min: -1
+    max: 1
+  m_flockAvoidRadiusRange:
+    min: 0
+    max: 1
+  m_steerForce: 0.5
+  m_mass: 1
+  m_distanceAttenuation: 5
+  m_maxSpeed: 5
+  m_maxRunSpeed: 10
+  m_slowingRadius: 0
+--- !u!114 &11467088
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 113872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_randomMovement: 0
+  m_idleProbability: 0
+  m_moveTime:
+    min: 6
+    max: 12
+  m_idleTime:
+    min: 3
+    max: 6
 --- !u!114 &11476692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1503,49 +1545,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.03950596, y: 1.2556454}
-  radius: 0.61
+  offset: {x: -0.032571256, y: 2.1079938}
+  radius: 0.86714184
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11485266
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_zOffset:
-    min: -1
-    max: 1
-  m_flockAvoidRadiusRange:
-    min: 1
-    max: 1.25
-  m_steerForce: 1
-  m_mass: 1
-  m_distanceAttenuation: 5
-  m_maxSpeed: 3
-  m_maxRunSpeed: 0
-  m_slowingRadius: 0.75
---- !u!114 &11489392
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72d35768df91148ff85b132e7555cc35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_idleTime: 5
-  m_chaoticMovement: 1
-  m_displacementDistance: 1
-  m_displacementRadius: 1
-  m_angleIncrement: 10
-  m_idleProbability: 1
 --- !u!114 &11494946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1724,11 +1726,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
@@ -1805,6 +1807,38 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_typeID
       value: rifleman_male
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_slowingRadius
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_distanceAttenuation
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxRunSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleProbability
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.health
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
