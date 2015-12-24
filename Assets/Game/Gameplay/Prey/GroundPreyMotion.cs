@@ -39,7 +39,7 @@ public class GroundPreyMotion : PreyMotion {
 		bool hit_L = false;
 		bool hit_R = false;
 
-		Vector3 leftSensor  = m_lastPosition + Vector2.up * 5f;
+		Vector3 leftSensor  = m_groundSensor.position;
 		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
 
 		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
