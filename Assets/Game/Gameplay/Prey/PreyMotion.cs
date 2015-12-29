@@ -8,7 +8,18 @@ using System.Collections;
 [DisallowMultipleComponent]
 [RequireComponent(typeof(PreyOrientation))]
 public class PreyMotion : Initializable {
-	
+	//---------------------------------------------------------------
+	// Constants
+	//---------------------------------------------------------------
+	protected struct Forces {
+		public const int Seek = 0;
+		public const int Flee = 1;
+		public const int Flock = 2;
+		public const int Collision = 3;
+
+		public const int Count = 4;
+	};
+
 	//---------------------------------------------------------------
 	// Attributes
 	//---------------------------------------------------------------
@@ -41,7 +52,9 @@ public class PreyMotion : Initializable {
 
 	protected Vector2 m_velocity;
 	protected Vector2 m_direction;
-	protected Vector2 m_steering;
+
+	protected Vector2[] m_steeringForces;
+	protected Vector2   m_steering;
 
 	protected float m_currentMaxSpeed;
 	protected float m_currentSpeed;
@@ -56,10 +69,7 @@ public class PreyMotion : Initializable {
 	protected Animator m_animator;
 
 	//Debug
-	protected Color m_seekColor 	= Color.green;
-	protected Color m_fleeColor 	= Color.red;
-	protected Color m_flockColor 	= Color.yellow;
-	protected Color m_velocityColor	= Color.white;
+	protected Color[] m_steeringColors;
 	//
 
 	// Properties
@@ -81,6 +91,21 @@ public class PreyMotion : Initializable {
 
 		m_orientation = GetComponent<PreyOrientation>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
+
+		m_steeringForces = new Vector2[Forces.Count];
+
+		m_steeringColors = new Color[Forces.Count];
+		m_steeringColors[Forces.Seek] = Color.green;
+		m_steeringColors[Forces.Flee] = Color.red;
+		m_steeringColors[Forces.Flock] = Color.blue;
+		m_steeringColors[Forces.Collision] = Color.magenta;
+	}
+
+	private void ResetForces() {
+		for (int i = 0; i < Forces.Count; i++) {
+			m_steeringForces[i] = Vector2.zero;	
+		}
+		m_currentMaxSpeed = m_maxSpeed;
 	}
 
 	// Use this for initialization
@@ -92,12 +117,11 @@ public class PreyMotion : Initializable {
 		} else {
 			m_lastPosition = m_position = transform.position;
 		}
-		
-		m_steering = Vector2.zero;
+
+		ResetForces();
+
 		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
-		m_currentMaxSpeed = m_maxSpeed;
-
 		m_collisionAvoidFactor = 0;
 
 		if (Random.Range(0f, 1f) < 0.5f) {
@@ -172,14 +196,15 @@ public class PreyMotion : Initializable {
 		DoFlee(_target + _velocity * t); // future position
 	}
 
-
 	private void ApplySteering() {
+		
 		if (m_flock != null) {
 			FlockSeparation();
 		}
 
 		AvoidCollisions();
 
+		UpdateSteering();
 		UpdateVelocity();
 		UpdatePosition();
 
@@ -189,8 +214,7 @@ public class PreyMotion : Initializable {
 
 		ApplyPosition();
 
-		m_steering = Vector2.zero;
-		m_currentMaxSpeed = m_maxSpeed;
+		ResetForces();
 	}
 
 	public Vector2 ProjectToGround(Vector2 _point) {
@@ -233,11 +257,9 @@ public class PreyMotion : Initializable {
 
 		// we'll keep the distance to our target for external components
 		m_lastSeekDistanceSqr = distanceSqr;
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
 
 		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
+		m_steeringForces[Forces.Seek] += desiredVelocity;
 	}
 	
 	private void DoFlee(Vector2 _from) {
@@ -250,11 +272,9 @@ public class PreyMotion : Initializable {
 		if (distanceSqr > 0) {
 			desiredVelocity *= (m_distanceAttenuation * m_distanceAttenuation) / distanceSqr;
 		}
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
 
 		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
+		m_steeringForces[Forces.Flee] += desiredVelocity;
 	}
 
 	private void FlockSeparation() {
@@ -273,9 +293,7 @@ public class PreyMotion : Initializable {
 			}
 		}
 		
-		Debug.DrawLine(m_position, m_position + avoid, m_flockColor);
-		
-		m_steering += avoid;
+		m_steeringForces[Forces.Flock] += avoid;
 	}
 
 	protected virtual void AvoidCollisions() {
@@ -283,7 +301,7 @@ public class PreyMotion : Initializable {
 		// 1- ray cast in the same direction where we are flying
 		RaycastHit ground;
 
-		float distanceCheck = 20f;
+		float distanceCheck = 5f;
 		Vector3 dir = (Vector3)m_direction;
 		Debug.DrawLine(transform.position, transform.position + (Vector3)dir * distanceCheck, Color.gray);
 
@@ -291,14 +309,21 @@ public class PreyMotion : Initializable {
 			// 2- calc a big force to move away from the ground	
 			m_collisionAvoidFactor = (distanceCheck / ground.distance) * 100f;
 		} else {
-			m_collisionAvoidFactor /= 2f;
+			m_collisionAvoidFactor *= 0.75f;
 		}
 
 		if (m_collisionAvoidFactor > 1f) {
-			m_steering /= m_collisionAvoidFactor;
-			m_steering += (Vector2)(ground.normal * m_collisionAvoidFactor);
+			for (int i = 0; i < Forces.Count; i++) {
+				m_steeringForces[i] /= m_collisionAvoidFactor;
+			}
+			m_steeringForces[Forces.Collision] += (Vector2)(ground.normal * m_collisionAvoidFactor);
+		}
+	}
 
-			Debug.DrawLine(m_position, m_position + (Vector2)(ground.normal * m_collisionAvoidFactor), Color.yellow);
+	private void UpdateSteering() {
+		for (int i = 0; i < Forces.Count; i++) {
+			m_steering += m_steeringForces[i];
+			Debug.DrawLine(m_position, m_position + m_steeringForces[i], m_steeringColors[i]);
 		}
 	}
 
@@ -316,7 +341,7 @@ public class PreyMotion : Initializable {
 
 		m_currentSpeed = m_velocity.magnitude;
 				
-		Debug.DrawLine(m_position, m_position + m_velocity, m_velocityColor);
+		Debug.DrawLine(m_position, m_position + m_velocity, Color.white);
 	}
 
 	protected virtual void UpdatePosition() {

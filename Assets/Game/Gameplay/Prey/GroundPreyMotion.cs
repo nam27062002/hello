@@ -28,7 +28,7 @@ public class GroundPreyMotion : PreyMotion {
 		m_velocityProject = Vector3.Project(m_velocity, m_direction);
 		m_velocityProject = m_velocityProject.normalized * m_currentSpeed;
 
-		Debug.DrawLine(m_position, m_position + m_velocityProject, m_velocityColor);
+		Debug.DrawLine(m_position, m_position + m_velocityProject, Color.white);
 	}
 
 	protected override void UpdatePosition() {
