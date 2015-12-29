@@ -50,6 +50,7 @@ public class PreyMotion : Initializable {
 		
 	protected int m_groundMask;	
 	protected Transform m_groundSensor;
+	protected float m_collisionAvoidFactor;
 
 	protected PreyOrientation m_orientation;
 	protected Animator m_animator;
@@ -96,6 +97,8 @@ public class PreyMotion : Initializable {
 		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
 		m_currentMaxSpeed = m_maxSpeed;
+
+		m_collisionAvoidFactor = 0;
 
 		if (Random.Range(0f, 1f) < 0.5f) {
 			m_direction = Vector2.right;
@@ -174,6 +177,8 @@ public class PreyMotion : Initializable {
 		if (m_flock != null) {
 			FlockSeparation();
 		}
+
+		AvoidCollisions();
 
 		UpdateVelocity();
 		UpdatePosition();
@@ -271,6 +276,30 @@ public class PreyMotion : Initializable {
 		Debug.DrawLine(m_position, m_position + avoid, m_flockColor);
 		
 		m_steering += avoid;
+	}
+
+	protected virtual void AvoidCollisions() {
+
+		// 1- ray cast in the same direction where we are flying
+		RaycastHit ground;
+
+		float distanceCheck = 20f;
+		Vector3 dir = (Vector3)m_direction;
+		Debug.DrawLine(transform.position, transform.position + (Vector3)dir * distanceCheck, Color.gray);
+
+		if (Physics.Linecast(transform.position, transform.position + (Vector3)dir * distanceCheck, out ground, m_groundMask)) {
+			// 2- calc a big force to move away from the ground	
+			m_collisionAvoidFactor = (distanceCheck / ground.distance) * 100f;
+		} else {
+			m_collisionAvoidFactor /= 2f;
+		}
+
+		if (m_collisionAvoidFactor > 1f) {
+			m_steering /= m_collisionAvoidFactor;
+			m_steering += (Vector2)(ground.normal * m_collisionAvoidFactor);
+
+			Debug.DrawLine(m_position, m_position + (Vector2)(ground.normal * m_collisionAvoidFactor), Color.yellow);
+		}
 	}
 
 	protected virtual void UpdateVelocity() {

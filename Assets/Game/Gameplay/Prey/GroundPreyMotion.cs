@@ -9,6 +9,8 @@ public class GroundPreyMotion : PreyMotion {
 
 	private Vector2 m_velocityProject;
 
+	protected override void AvoidCollisions() {}
+
 	protected override void UpdateVelocity() {
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
