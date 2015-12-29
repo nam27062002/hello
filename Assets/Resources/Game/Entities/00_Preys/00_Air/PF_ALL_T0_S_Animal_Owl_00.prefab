@@ -441,8 +441,8 @@ MonoBehaviour:
     max: 1.4
   m_steerForce: 0.1
   m_mass: 0.2
-  m_distanceAttenuation: 13
-  m_maxSpeed: 5
+  m_distanceAttenuation: 8
+  m_maxSpeed: 5.5
   m_maxRunSpeed: 10
   m_slowingRadius: 2
 --- !u!114 &11408712
@@ -492,7 +492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
-  m_size: 1
+  m_size: 1.5
   m_isBig: 0
   m_destroyOnEat: 0
 --- !u!114 &11433180
@@ -534,7 +534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 5
+  m_sensorMinRadius: 6
   m_sensorMaxRadius: 14
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
@@ -681,7 +681,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 5
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_size
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_distanceAttenuation
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxSpeed
+      value: 5.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
