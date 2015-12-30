@@ -22,6 +22,7 @@ public class EdibleBehaviour : Initializable {
 	// Attributes
 	//-----------------------------------------------
 	private PreyStats m_prey;
+	private Animator m_animator;
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
 
@@ -50,6 +51,7 @@ public class EdibleBehaviour : Initializable {
 
 		m_Bounds = GetComponent<CircleArea2D>();
 
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_prey = GetComponent<PreyStats>();
 		m_dragon = InstanceManager.player.GetComponent<DragonEatBehaviour>();
 		m_dragonMouth = m_dragon.GetComponent<DragonMotion>().tongue;
@@ -83,6 +85,9 @@ public class EdibleBehaviour : Initializable {
 			float distanceSqr = m_Bounds.DistanceSqr( m_dragonMouth.transform.position );
 			if (distanceSqr <= m_dragon.eatDistanceSqr) {
 				m_isBeingEaten = m_dragon.Eat(this);
+				if (m_isBeingEaten) {
+					m_animator.SetTrigger("being eaten");
+				}
 			}
 		}
 	}
