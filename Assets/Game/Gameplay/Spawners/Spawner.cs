@@ -11,6 +11,7 @@ public class Spawner : MonoBehaviour {
 	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
 	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
+	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
 
 	[Header("Activation")]
 	[SerializeField] private float m_enableTime;
@@ -151,6 +152,7 @@ public class Spawner : MonoBehaviour {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
 			spawn.Spawn(this, transform.position, m_area);
+			spawn.transform.localScale = Vector3.one * m_scale.GetRandom();
 		}
 
 		// Disable this spawner after a number of spawns
