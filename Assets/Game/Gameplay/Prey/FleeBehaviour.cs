@@ -31,11 +31,13 @@ public class FleeBehaviour : Initializable {
 
 	// Use this for initialization
 	void Awake () {
-		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
-
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_sensor = GetComponent<SensePlayer>();
+	}
+
+	void Start() {
+		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
 	}
 	
 	public override void Initialize() {
@@ -91,7 +93,7 @@ public class FleeBehaviour : Initializable {
 				} else {
 					m_motion.direction = Vector2.right;
 				}
-				m_motion.velocity = Vector2.zero;
+				m_motion.Stop();
 				break;
 
 			case State.Panic:
@@ -124,14 +126,14 @@ public class FleeBehaviour : Initializable {
 				
 			case State.Afraid:
 				m_animator.SetBool("scared", true);
-				m_motion.velocity = Vector2.zero;
+				m_motion.Stop();
 				break;
 
 			case State.Panic:
 				m_animator.SetBool("move", true);
-				m_motion.velocity = Vector2.zero;
+				m_motion.Stop();
 
-				m_panicTarget = m_motion.ProjectToGround(m_area.Center());
+				m_panicTarget = m_motion.ProjectToGround(m_area.center);
 				break;
 		}
 		

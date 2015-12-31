@@ -40,7 +40,7 @@ public class QuietScaredTactics : Initializable {
 				if (m_sensor.alert) {
 					m_nextState = State.Scared;
 				}
-				m_motion.velocity = Vector2.zero;
+				m_motion.Stop();
 				break;
 
 			case State.Scared:

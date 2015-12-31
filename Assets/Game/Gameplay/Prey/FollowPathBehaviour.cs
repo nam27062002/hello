@@ -124,7 +124,7 @@ public class FollowPathBehaviour : Initializable {
 			}
 			m_motion.Seek(m_target);
 		} else {
-			m_motion.velocity = Vector2.zero;
+			m_motion.Stop();
 		}
 	}
 
@@ -135,13 +135,8 @@ public class FollowPathBehaviour : Initializable {
 		} else {
 			m_timer = m_idleTime.GetRandom();
 			m_animator.SetBool("move", false);
-			
-			if (m_motion.direction.x < 0) {
-				m_motion.direction = Vector3.left;
-			} else {
-				m_motion.direction = Vector3.right;
-			}
-			m_motion.velocity = Vector2.zero;
+
+			m_motion.Stop();
 		}
 		
 		m_state = m_nextState;

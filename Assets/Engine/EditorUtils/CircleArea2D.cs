@@ -8,20 +8,19 @@ public class CircleArea2D : MonoBehaviour, Area {
 	
 	public Color color = new Color(0.76f, 0.23f, 0.13f, 0.2f);
 
+	private CircleAreaBounds m_bounds;
+
 	public AreaBounds bounds {
 		get {
-			// Vector3 center = transform.position + (Vector3)offset;
-			return new CircleAreaBounds(center, radius);
+			if (m_bounds == null) {
+				m_bounds = new CircleAreaBounds(center, radius);
+			}
+
+			return m_bounds;
 		}
 	}
 
-	public Vector3 center
-	{
-		get
-		{
-			return transform.position + (Vector3)offset;
-		}
-	}
+	public Vector3 center { get { return transform.position + (Vector3)offset; } }
 
 	public float DistanceSqr( Vector3 position )
 	{

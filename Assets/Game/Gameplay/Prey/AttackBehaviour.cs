@@ -141,9 +141,7 @@ public class AttackBehaviour : Initializable {
 				break;
 
 			case State.Attack:
-				//m_motion.Seek(m_target.position);
-				m_motion.velocity = Vector2.zero;
-				//m_motion.ApplySteering();
+				m_motion.Stop();
 
 				if (m_orientation.faceDirection) {
 					m_motion.direction = m_target.position - (Vector3)m_motion.position;
@@ -183,7 +181,7 @@ public class AttackBehaviour : Initializable {
 					break;
 					
 				case State.Attack:
-					m_motion.velocity = Vector2.zero;
+					m_motion.Stop();
 					m_timer = 0;
 					break;
 			}

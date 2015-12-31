@@ -196,8 +196,19 @@ public class PreyMotion : Initializable {
 		DoFlee(_target + _velocity * t); // future position
 	}
 
+	public void Stop() {
+		if (direction.x < 0) {
+			direction = Vector3.left;
+		} else {
+			direction = Vector3.right;
+		}
+
+		m_velocity = Vector3.zero;
+	}
+
+	// ------------------------------------------------------------------------------------
+
 	private void ApplySteering() {
-		
 		if (m_flock != null) {
 			FlockSeparation();
 		}
@@ -227,14 +238,6 @@ public class PreyMotion : Initializable {
 		}
 
 		return _point;
-	}
-
-	void Update() {
-		if (m_groundSensor != null) {
-			UpdateCollisions();
-		}
-		
-		ApplyPosition();
 	}
 
 	void FixedUpdate() {

@@ -87,7 +87,7 @@ public class WanderBehaviour : Initializable {
 			
 			m_motion.Seek(m_target);
 		} else {
-			m_motion.velocity = Vector2.zero;
+			m_motion.Stop();
 		}
 	}
 
