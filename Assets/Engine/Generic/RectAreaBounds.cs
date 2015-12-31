@@ -53,7 +53,7 @@ public class RectAreaBounds : AreaBounds {
 	}
 
 	public void DrawGizmo() {		
-		Color color = Color.yellow;
+		Color color = Color.white;
 		color.a = 0.25f;
 
 		Gizmos.color = color;
