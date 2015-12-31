@@ -151,7 +151,7 @@ public class Spawner : MonoBehaviour {
 
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
-			spawn.Spawn(this, transform.position, m_area);
+			spawn.Spawn(this, i, transform.position, m_area);
 			spawn.transform.localScale = Vector3.one * m_scale.GetRandom();
 		}
 

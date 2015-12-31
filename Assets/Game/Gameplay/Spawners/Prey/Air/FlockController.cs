@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class FlockController : MonoBehaviour {
-
+	
 	//http://www.artbylogic.com/parametricart/spirograph/spirograph.htm
 	public enum GuideFunction{
 		Basic,
@@ -14,31 +14,32 @@ public class FlockController : MonoBehaviour {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
+	[SerializeField] private int m_targetTimeSlots = 5;
+	[SerializeField] private float m_amountSecsInPast = 0.25f;
 
-	[SerializeField] private float m_guideSpeed = 2f;
+	[SeparatorAttribute]
 	[SerializeField] private GuideFunction m_guideFunction = GuideFunction.Basic;
+	[SerializeField] private float m_guideSpeed = 2f;
 
 	[SerializeField] private float m_innerRadius = 10f; //r
 	[SerializeField] private float m_outterRadius = 20f; //R
 	[SerializeField] private float m_targetDistance = 5f; //d
 
+
+
+
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-
 	private AreaBounds m_area;
 
 	// Flock control
-	private Vector3 m_target;
-	public Vector3 target { get { return m_target; } }
-	
+	private Vector3[] m_target;	
 	private GameObject[] m_entities;
 	public GameObject[] entities { get { return m_entities; } }
 
-	private float m_timer;
-
-
 	private Vector3 m_movingCircleCenter;
+	private float m_timer;
 
 
 	//-----------------------------------------------
@@ -56,7 +57,12 @@ public class FlockController : MonoBehaviour {
 		if (area != null) {
 			m_area = area.bounds;
 		}
-		m_target = transform.position;	
+
+		m_target = new Vector3[m_targetTimeSlots];
+		for (int i = 0; i < m_targetTimeSlots; i++) {
+			m_target[i] = transform.position;	
+		}
+
 		m_timer = Random.Range(0f, Mathf.PI * 2f);
 	}
 
@@ -78,6 +84,9 @@ public class FlockController : MonoBehaviour {
 		}
 	}
 
+	public Vector2 GetTarget(int _index) {
+		return m_target[_index % m_targetTimeSlots];
+	}
 
 	// Update is called once per frame
 	void Update () {	
@@ -86,26 +95,33 @@ public class FlockController : MonoBehaviour {
 		if (m_area != null) {
 			m_timer += Time.smoothDeltaTime * m_guideSpeed;
 
-			switch (m_guideFunction) {
-				case GuideFunction.Basic:
-					m_target = m_area.center;
-					m_target.x += (Mathf.Sin(m_timer * 0.75f) * 0.5f + Mathf.Cos(m_timer * 0.25f) * 0.5f) * m_area.extentsX;
-					m_target.y += (Mathf.Sin(m_timer * 0.35f) * 0.5f + Mathf.Cos(m_timer * 0.65f) * 0.5f) * m_area.extentsY;
-					m_target.z +=  Mathf.Sin(m_timer) * m_area.bounds.extents.z;
-				 	break;
+			for (int i = 0; i < m_targetTimeSlots; i++) {
+				float time = m_timer - i * m_amountSecsInPast; // go back to the past :3
+				switch (m_guideFunction) {
+					case GuideFunction.Basic:
+						UpdateBasic(time, i);
+					 	break;
 
-				case GuideFunction.Hypotrochoid:
-					UpdateHypotrochoid(m_timer);
-					break;
+					case GuideFunction.Hypotrochoid:
+						UpdateHypotrochoid(time, i);
+						break;
 
-				case GuideFunction.Epitrochoid:
-					UpdateEpitrochoid(m_timer);
-					break;
+					case GuideFunction.Epitrochoid:
+						UpdateEpitrochoid(time, i);
+						break;
+				}
 			}
 		}
 	}
 
-	void UpdateHypotrochoid(float _a) {
+	void UpdateBasic(float _a, int _index) {
+		m_target[_index] = m_area.center;
+		m_target[_index].x += (Mathf.Sin(_a * 0.75f) * 0.5f + Mathf.Cos(_a * 0.25f) * 0.5f) * m_area.extentsX;
+		m_target[_index].y += (Mathf.Sin(_a * 0.35f) * 0.5f + Mathf.Cos(_a * 0.65f) * 0.5f) * m_area.extentsY;
+		m_target[_index].z +=  Mathf.Sin(_a) * m_area.bounds.extents.z;
+	}
+
+	void UpdateHypotrochoid(float _a, int _index) {
 		float rDiff = (m_outterRadius - m_innerRadius);
 		float tAngle = (rDiff / m_innerRadius) * _a;
 
@@ -113,12 +129,12 @@ public class FlockController : MonoBehaviour {
 		m_movingCircleCenter.x += rDiff * Mathf.Cos(_a);
 		m_movingCircleCenter.y += rDiff * Mathf.Sin(_a);
 
-		m_target = m_movingCircleCenter;
-		m_target.x += m_targetDistance * Mathf.Cos(tAngle);
-		m_target.y -= m_targetDistance * Mathf.Sin(tAngle);
+		m_target[_index] = m_movingCircleCenter;
+		m_target[_index].x += m_targetDistance * Mathf.Cos(tAngle);
+		m_target[_index].y -= m_targetDistance * Mathf.Sin(tAngle);
 	}
 
-	void UpdateEpitrochoid(float _a) {
+	void UpdateEpitrochoid(float _a, int _index) {
 		float rSum = (m_outterRadius + m_innerRadius);
 		float tAngle = (rSum / m_innerRadius) * _a;
 
@@ -126,15 +142,17 @@ public class FlockController : MonoBehaviour {
 		m_movingCircleCenter.x += rSum * Mathf.Cos(_a);
 		m_movingCircleCenter.y += rSum * Mathf.Sin(_a);
 
-		m_target = m_movingCircleCenter;
-		m_target.x -= m_targetDistance * Mathf.Cos(tAngle);
-		m_target.y -= m_targetDistance * Mathf.Sin(tAngle);
+		m_target[_index] = m_movingCircleCenter;
+		m_target[_index].x -= m_targetDistance * Mathf.Cos(tAngle);
+		m_target[_index].y -= m_targetDistance * Mathf.Sin(tAngle);
 	}
 
 	void OnDrawGizmos() {
 		if (Application.isPlaying) {
 			Gizmos.color = Color.red;
-			Gizmos.DrawSphere(m_target, 0.5f);
+			for (int i = 0; i < m_targetTimeSlots; i++) {
+				Gizmos.DrawSphere(m_target[i], 0.5f - i * 0.05f);
+			}
 		}
 	}
 
@@ -147,16 +165,23 @@ public class FlockController : MonoBehaviour {
 				}
 			}
 
+			if (m_target == null || m_target.Length != m_targetTimeSlots) {
+				m_target = new Vector3[m_targetTimeSlots];
+			}
+
 			if (!Application.isPlaying) {
 				m_timer += 0.25f;
-				switch (m_guideFunction) {
-					case GuideFunction.Hypotrochoid:
-						UpdateHypotrochoid(m_timer);
-						break;
+				for (int i = 0; i < m_targetTimeSlots; i++) {
+					float time = m_timer - i * m_amountSecsInPast; // go back to the past :3
+					switch (m_guideFunction) {
+						case GuideFunction.Hypotrochoid:
+							UpdateHypotrochoid(time, i);
+							break;
 
-					case GuideFunction.Epitrochoid:
-						UpdateEpitrochoid(m_timer);
-						break;
+						case GuideFunction.Epitrochoid:
+							UpdateEpitrochoid(time, i);
+							break;
+					}
 				}
 			}
 
@@ -168,8 +193,10 @@ public class FlockController : MonoBehaviour {
 			Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
 
 			Gizmos.color = Color.red;
-			Gizmos.DrawLine(m_movingCircleCenter, m_target);
-			Gizmos.DrawSphere(m_target, 0.5f);
+			Gizmos.DrawLine(m_movingCircleCenter, m_target[0]);
+			for (int i = 0; i < m_targetTimeSlots; i++) {
+				Gizmos.DrawSphere(m_target[i], 0.5f - i * 0.05f);
+			}
 		}
 	}
 }

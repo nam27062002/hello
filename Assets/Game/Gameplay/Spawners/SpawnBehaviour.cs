@@ -9,6 +9,8 @@ public class SpawnBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	private AreaBounds m_area;
 	private Spawner m_spawner;
+	private int m_index;
+	public int index { get { return m_index; } }
 
 	private GameCameraController m_camera;
 	
@@ -36,8 +38,9 @@ public class SpawnBehaviour : MonoBehaviour {
 		}
 	}
 
-	public void Spawn(Spawner _spawner, Vector3 _position, AreaBounds _bounds) {		
+	public void Spawn(Spawner _spawner, int _index, Vector3 _position, AreaBounds _bounds) {		
 		m_spawner = _spawner;
+		m_index = _index;
 		m_area = _bounds;
 		
 		transform.position = _position;

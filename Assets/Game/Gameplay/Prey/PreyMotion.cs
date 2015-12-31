@@ -66,6 +66,7 @@ public class PreyMotion : Initializable {
 	protected float m_collisionAvoidFactor;
 
 	protected PreyOrientation m_orientation;
+	protected SpawnBehaviour m_spawn;
 	protected Animator m_animator;
 
 	//Debug
@@ -90,6 +91,7 @@ public class PreyMotion : Initializable {
 		m_groundSensor = transform.FindChild("ground_sensor");
 
 		m_orientation = GetComponent<PreyOrientation>();
+		m_spawn = GetComponent<SpawnBehaviour>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
 		m_steeringForces = new Vector2[Forces.Count];
@@ -111,7 +113,7 @@ public class PreyMotion : Initializable {
 	// Use this for initialization
 	public override void Initialize() {		
 		if (m_flock) {
-			m_lastPosition = m_position = m_flock.target;
+			m_lastPosition = m_position = m_flock.GetTarget(m_spawn.index);
 		} else if (m_groundSensor) {
 			m_lastPosition = m_position = m_groundSensor.transform.position;
 		} else {
@@ -161,7 +163,7 @@ public class PreyMotion : Initializable {
 	}
 	
 	public Vector2 GetFlockTarget() {		
-		return m_flock.target;
+		return m_flock.GetTarget(m_spawn.index);
 	}
 
 	public void Seek(Vector2 _target) {
