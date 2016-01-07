@@ -107,6 +107,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 					
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.absorbPosition, m_mouth.position, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, Vector3.one * 0.75f, t);
 					prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, m_tongueDirection), 0.25f);
 										
 					// remaining time eating
@@ -193,7 +194,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 	private void Swallow(EdibleBehaviour _prey) {
 
-		Reward reward = _prey.OnSwallow(m_eatingTime);
+		Reward reward = _prey.OnSwallow();
 		m_dragon.AddLife(reward.health);
 		m_dragon.AddFury(reward.fury);
 	}

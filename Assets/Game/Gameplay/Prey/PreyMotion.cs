@@ -20,6 +20,8 @@ public class PreyMotion : Initializable {
 		public const int Count = 4;
 	};
 
+	private const int CollisionCheckPools = 4;
+
 	//---------------------------------------------------------------
 	// Attributes
 	//---------------------------------------------------------------
@@ -41,7 +43,7 @@ public class PreyMotion : Initializable {
 	[SerializeField] private float m_slowingRadius;
 
 
-	//---------------------------------------------------------------
+	// --------------------------------------------------------------- //
 
 	private FlockController m_flock; // turn into flock controller
 	private float m_flockAvoidRadius;
@@ -64,10 +66,13 @@ public class PreyMotion : Initializable {
 	protected int m_groundMask;	
 	protected Transform m_groundSensor;
 	protected float m_collisionAvoidFactor;
+	protected Vector2 m_collisionNormal;
 
 	protected PreyOrientation m_orientation;
 	protected SpawnBehaviour m_spawn;
 	protected Animator m_animator;
+
+	private int m_collisionCheckPool; // each prey will detect collisions at different frames
 
 	//Debug
 	protected Color[] m_steeringColors;
@@ -125,6 +130,7 @@ public class PreyMotion : Initializable {
 		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
 		m_collisionAvoidFactor = 0;
+		m_collisionNormal = Vector2.up;
 
 		if (Random.Range(0f, 1f) < 0.5f) {
 			m_direction = Vector2.right;
@@ -132,6 +138,12 @@ public class PreyMotion : Initializable {
 			m_direction = Vector2.left;
 		}
 		m_orientation.SetDirection(m_direction);
+
+		if (m_spawn != null) {
+			m_collisionCheckPool = m_spawn.index % CollisionCheckPools;
+		} else {
+			m_collisionCheckPool = 0;
+		}
 	}
 
 	void OnEnable() {		
@@ -162,8 +174,12 @@ public class PreyMotion : Initializable {
 		return m_flock != null;
 	}
 	
-	public Vector2 GetFlockTarget() {		
-		return m_flock.GetTarget(m_spawn.index);
+	public Vector2 GetFlockTarget() {
+		if (m_spawn != null) {
+			return m_flock.GetTarget(m_spawn.index);
+		} else {
+			return m_flock.GetTarget(0);
+		}
 	}
 
 	public void Seek(Vector2 _target) {
@@ -208,8 +224,7 @@ public class PreyMotion : Initializable {
 		m_velocity = Vector3.zero;
 	}
 
-	// ------------------------------------------------------------------------------------
-
+	// ------------------------------------------------------------------------------------ //
 	private void ApplySteering() {
 		if (m_flock != null) {
 			FlockSeparation();
@@ -302,26 +317,28 @@ public class PreyMotion : Initializable {
 	}
 
 	protected virtual void AvoidCollisions() {
-
 		// 1- ray cast in the same direction where we are flying
-		RaycastHit ground;
+		if (m_collisionCheckPool == Time.frameCount % CollisionCheckPools) {
+			RaycastHit ground;
 
-		float distanceCheck = 5f;
-		Vector3 dir = (Vector3)m_direction;
-		Debug.DrawLine(transform.position, transform.position + (Vector3)dir * distanceCheck, Color.gray);
+			float distanceCheck = 5f;
+			Vector3 dir = (Vector3)m_direction;
+			Debug.DrawLine(transform.position, transform.position + (dir * distanceCheck), Color.gray);
 
-		if (Physics.Linecast(transform.position, transform.position + (Vector3)dir * distanceCheck, out ground, m_groundMask)) {
-			// 2- calc a big force to move away from the ground	
-			m_collisionAvoidFactor = (distanceCheck / ground.distance) * 100f;
-		} else {
-			m_collisionAvoidFactor *= 0.75f;
+			if (Physics.Linecast(transform.position, transform.position + (dir * distanceCheck), out ground, m_groundMask)) {
+				// 2- calc a big force to move away from the ground	
+				m_collisionAvoidFactor = (distanceCheck / ground.distance) * 100f;
+				m_collisionNormal = ground.normal;
+			} else {
+				m_collisionAvoidFactor *= 0.75f;
+			}
 		}
 
 		if (m_collisionAvoidFactor > 1f) {
 			for (int i = 0; i < Forces.Count; i++) {
 				m_steeringForces[i] /= m_collisionAvoidFactor;
 			}
-			m_steeringForces[Forces.Collision] += (Vector2)(ground.normal * m_collisionAvoidFactor);
+			m_steeringForces[Forces.Collision] += (m_collisionNormal * m_collisionAvoidFactor);
 		}
 	}
 
@@ -332,8 +349,7 @@ public class PreyMotion : Initializable {
 		}
 	}
 
-	protected virtual void UpdateVelocity() {
-		
+	protected virtual void UpdateVelocity() {		
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
 		
@@ -349,8 +365,7 @@ public class PreyMotion : Initializable {
 		Debug.DrawLine(m_position, m_position + m_velocity, Color.white);
 	}
 
-	protected virtual void UpdatePosition() {
-		
+	protected virtual void UpdatePosition() {		
 		m_lastPosition = m_position;
 		m_position = m_position + (m_velocity * Time.fixedDeltaTime);
 	}
@@ -370,7 +385,6 @@ public class PreyMotion : Initializable {
 
 		if (Physics.Linecast(testPosition, testPosition + Vector3.down * (m_area.bounds.size.y + 5f), out ground, m_groundMask)) {
 			m_position.y = ground.point.y;
-			//m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 			m_velocity.y = 0;
 			m_currentSpeed = Mathf.Abs(m_velocity.x);
 		}
