@@ -86,6 +86,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
+
+		gameObject.AddComponent<WindTrailManagement>();
 	}
 
 	/// <summary>
