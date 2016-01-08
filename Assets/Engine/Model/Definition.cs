@@ -22,7 +22,6 @@ public class Definition {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	[Header("Core Data")]
 	[SerializeField] private string m_sku = "";
 	public string sku { get { return m_sku; }}
 }

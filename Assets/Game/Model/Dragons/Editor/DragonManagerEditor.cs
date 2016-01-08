@@ -42,7 +42,7 @@ public class DragonManagerEditor : Editor {
 		EditorGUILayout.BeginVertical();
 		GUILayout.Space(10);
 		if(GUILayout.Button("Edit Content", GUILayout.Height(50))) {
-			HungryDragonEditorMenu.ShowDragonManagerWindow();
+			HungryDragonEditorMenu.ShowDragonManager();
 		}
 		GUILayout.Space(10);
 		EditorGUILayout.EndVertical();

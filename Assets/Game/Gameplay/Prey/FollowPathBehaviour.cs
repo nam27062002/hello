@@ -45,10 +45,7 @@ public class FollowPathBehaviour : Initializable {
 		if (m_path != null) {
 			m_target = m_path.GetNext();			
 		}
-
-		m_motion.position = m_target;
-		transform.position = m_target;
-
+	
 		m_state = State.None;
 		if (m_idleProbability > 0f) {
 			m_nextState = State.Idle;
@@ -126,8 +123,8 @@ public class FollowPathBehaviour : Initializable {
 				m_target = m_path.GetNext();
 			}
 			m_motion.Seek(m_target);
-
-		//	m_motion.ApplySteering();
+		} else {
+			m_motion.Stop();
 		}
 	}
 
@@ -138,13 +135,8 @@ public class FollowPathBehaviour : Initializable {
 		} else {
 			m_timer = m_idleTime.GetRandom();
 			m_animator.SetBool("move", false);
-			
-			if (m_motion.direction.x < 0) {
-				m_motion.direction = Vector3.left;
-			} else {
-				m_motion.direction = Vector3.right;
-			}
-			m_motion.velocity = Vector2.zero;
+
+			m_motion.Stop();
 		}
 		
 		m_state = m_nextState;

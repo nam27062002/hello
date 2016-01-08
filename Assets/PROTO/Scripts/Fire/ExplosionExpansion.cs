@@ -15,14 +15,14 @@ public class ExplosionExpansion : MonoBehaviour {
 	
 
 		float d = radius*radius;
-		Messenger.Broadcast<Vector3,float>("OnExplosion",center,d);
+		// [AOC] OLD MESSENGER! Messenger.Broadcast<Vector3,float>("OnExplosion",center,d);
 
 		radius = Mathf.MoveTowards(radius,finalRadius,expansionSpeed*Time.deltaTime);
 
 		if (radius >= finalRadius){
 
 			d = radius*radius;
-			Messenger.Broadcast<Vector3,float>("OnExplosion",center,d);
+			// [AOC] OLD MESSENGER! Messenger.Broadcast<Vector3,float>("OnExplosion",center,d);
 
 			DestroyObject (this.gameObject);
 		}

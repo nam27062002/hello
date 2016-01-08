@@ -3,7 +3,6 @@ using System.Collections;
 
 [DisallowMultipleComponent]
 [AddComponentMenu("Behaviour/Prey/Human Tactics")]
-[RequireComponent(typeof(WanderFleeBehaviour))]
 public class HumanTactics : Initializable {
 
 	private enum State {
@@ -91,7 +90,7 @@ public class HumanTactics : Initializable {
 
 				case State.Afraid:
 					m_animator.SetBool("scared", true);
-					m_motion.velocity = Vector2.zero;
+					m_motion.Stop();
 					m_timer = 5f; // 5 sconds before wandering around
 					break;
 			}

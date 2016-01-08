@@ -40,6 +40,7 @@ public class DragonData {
 
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
 	public enum LockState {
+		ANY = -1,	// Any of the below states
 		LOCKED,		// Previous tier hasn't been completed
 		AVAILABLE,	// Previous tier has been completed but the dragon hasn't been purchased
 		OWNED		// Dragon has been purchased and can be used
@@ -52,7 +53,7 @@ public class DragonData {
 	[SerializeField] [HideEnumValues(true, true)] private DragonId m_id = DragonId.NONE;
 	public DragonId id { get { return m_id; }}
 	
-	[SerializeField] [HideEnumValues(false, true)] private DragonTier m_tier = 0;
+	[SerializeField] [HideEnumValues(false, true)] private DragonTier m_tier = DragonTier.TIER_0;
 	public DragonTier tier { get { return m_tier; }}
 
 	[SerializeField] private string m_tidName = "";
@@ -61,9 +62,11 @@ public class DragonData {
 	[SerializeField] private string m_tidDescription = "";
 	public string tidDescription { get { return m_tidDescription; }}
 
+	[FileList("Resources/Game/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_prefabPath = "";
 	public string prefabPath { get { return m_prefabPath; }}
 
+	[FileList("Resources/UI/Menu/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_menuPrefabPath = "";
 	public string menuPrefabPath { get { return m_menuPrefabPath; }}
 

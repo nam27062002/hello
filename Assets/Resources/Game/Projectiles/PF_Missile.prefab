@@ -30,6 +30,7 @@ GameObject:
   - 114: {fileID: 11401698}
   - 114: {fileID: 11497412}
   - 114: {fileID: 11498378}
+  - 114: {fileID: 11416456}
   m_Layer: 0
   m_Name: PF_Missile
   m_TagString: Untagged
@@ -56,9 +57,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 102996}
-  m_LocalRotation: {x: 0, y: 0, z: -.707106829, w: .707106709}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -.0360929295, y: -.0360929295, z: -.0360929295}
+  m_LocalScale: {x: -0.03609293, y: -0.03609293, z: -0.03609293}
   m_Children: []
   m_Father: {fileID: 408412}
   m_RootOrder: 0
@@ -80,8 +81,10 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -104,17 +107,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f6c024143a7a42ee9b9ee5cd452c92b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_explodeDistance: 1.5
   m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
   m_delayRange:
     min: 0
-    max: .100000001
+    max: 0.1
   m_scaleRange:
     min: 1
     max: 1.5
   m_rotationRange:
     min: 0
     max: 360
+--- !u!114 &11416456
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_faceDirection: 1
 --- !u!114 &11463780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -126,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: Missile
+  m_typeID: missile
   m_reward:
     score: 0
     coins: 0
@@ -135,7 +149,6 @@ MonoBehaviour:
     energy: 0
     fury: 0
     xp: 0
-  m_maxHealth: 0
   m_goldenChance: 0
   m_pcChance: 0
 --- !u!114 &11494864
@@ -150,7 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_edibleFromTier: 2
-  m_size: 3.27999997
+  m_size: 3.28
   m_isBig: 0
   m_destroyOnEat: 0
 --- !u!114 &11497412
@@ -164,14 +177,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 1
-  m_steerForce: 1
-  m_maxSpeed: 25
-  m_mass: 1
-  m_slowingRadius: 0
+  m_zOffset:
+    min: -1
+    max: 1
   m_flockAvoidRadiusRange:
     min: 0
     max: 1
+  m_steerForce: 1
+  m_mass: 1
+  m_distanceAttenuation: 5
+  m_maxSpeed: 25
+  m_maxRunSpeed: 25
+  m_slowingRadius: 1
 --- !u!114 &11498378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -183,9 +200,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: .570352852, y: 0}
-  radius: .696430206
-  color: {r: .75999999, g: .230000004, b: .129999995, a: .200000003}
+  offset: {x: 0.57035285, y: 0}
+  radius: 0.6964302
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -196,6 +213,22 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: missile
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_faceDirection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxRunSpeed
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_slowingRadius
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -3,17 +3,24 @@
 // 
 // Created by Alger Ortín Castellví on 30/04/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
+
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
 
+//----------------------------------------------------------------------//
+// CLASSES																//
+//----------------------------------------------------------------------//
 /// <summary>
 /// Global setup of the game.
 /// </summary>
 public class GameSettings : SingletonScriptableObject<GameSettings> {
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
 	// Add here any global setup variable such as quality, server ip, debug enabled, ...
-
 	[Separator("Gameplay")]
 	[Comment("Name of the dragon instance on the scene")]
 	[SerializeField] private string m_playerName = "Player";
@@ -27,6 +34,14 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private float m_energyRequiredToBoost = 25f;
 	public static float energyRequiredToBoost { get { return instance.m_energyRequiredToBoost; }}
 
+	[Separator("Economy")]
+	[Comment("Equivalence Time/PC: PC = CoefA * time(min) + CoefB")]
+	[SerializeField] private float m_timePcCoefA = 0.2f;
+	public static float timePcCoefA { get { return instance.m_timePcCoefA; }}
+
+	[SerializeField] private float m_timePcCoefB = 4.5f;
+	public static float timePcCoefB { get { return instance.m_timePcCoefB; }}
+
 	[Separator("Versioning")]
 	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
 	public static Version internalVersion { get { return instance.m_internalVersion; }}
@@ -36,4 +51,31 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	[SerializeField] private Version m_androidVersion = new Version(1, 0, 0);
 	public static Version androidVersion { get { return instance.m_androidVersion; }}
+
+	[SerializeField] private int m_androidVersionCode = 0;
+	public static int androidVersionCode 
+	{ 
+		get 
+		{ 
+			return instance.m_androidVersionCode; 
+		}
+		set
+		{
+			instance.m_androidVersionCode = value;
+		}
+	}
+	//------------------------------------------------------------------//
+	// SINGLETON STATIC METHODS											//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Compute the PC equivalent of a given amount of time.
+	/// </summary>
+	/// <returns>The amount of PC worth for <paramref name="_time"/> amount of time.</returns>
+	/// <param name="_time">Amount of time to be evaluated.</param>
+	public static int ComputePCForTime(TimeSpan _time) {
+		// Just apply Hadrian's formula
+		double pc = timePcCoefA * _time.TotalMinutes + timePcCoefB;
+		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
+		return Mathf.Max(1, (int)pc);	// At least 1
+	}
 }

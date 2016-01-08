@@ -188,7 +188,7 @@ namespace LevelEditor {
 			
 			// Create an instance of the dragon model - just the model, no logic whatsoever
 			// We're only interested in the view subobject, get it and create an instance
-			GameObject viewPrefabObj = dragonPrefab.FindSubObject("view");	// Naming convention
+			GameObject viewPrefabObj = dragonPrefab.FindObjectRecursive("view");	// Naming convention
 			GameObject previewObj = GameObject.Instantiate<GameObject>(viewPrefabObj);
 			previewObj.SetLayerRecursively("LevelEditor");
 			previewObj.name = dragonPrefab.name + "Dummy";

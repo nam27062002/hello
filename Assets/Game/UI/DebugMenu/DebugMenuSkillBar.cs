@@ -45,8 +45,8 @@ public class DebugMenuSkillBar : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener(DebugMenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
-		Messenger.AddListener(DebugMenuSimulate.EVENT_SIMULATION_FINISHED, Refresh);
+		Messenger.AddListener(GameEvents.DEBUG_MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener(GameEvents.DEBUG_SIMULATION_FINISHED, Refresh);
 		
 		// Do a first refresh
 		Refresh();
@@ -57,8 +57,8 @@ public class DebugMenuSkillBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(DebugMenuDragonSelector.EVENT_DRAGON_CHANGED, Refresh);
-		Messenger.RemoveListener(DebugMenuSimulate.EVENT_SIMULATION_FINISHED, Refresh);
+		Messenger.RemoveListener(GameEvents.DEBUG_MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener(GameEvents.DEBUG_SIMULATION_FINISHED, Refresh);
 	}
 
 	/// <summary>
@@ -92,7 +92,7 @@ public class DebugMenuSkillBar : MonoBehaviour {
 
 		// Level up button
 		m_levelUpButton.interactable = skillData.CanUnlockNextLevel();
-		Text m_text = m_levelUpButton.FindSubObject("Text").GetComponent<Text>();
+		Text m_text = m_levelUpButton.FindTransformRecursive("Text").GetComponent<Text>();
 		if(skillData.level == skillData.lastLevel) {
 			m_text.text = "Max";	// [AOC] HARDCODED!!
 		} else {

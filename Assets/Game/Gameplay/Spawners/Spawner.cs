@@ -8,72 +8,94 @@ public class Spawner : MonoBehaviour {
 	// Properties
 	//-----------------------------------------------
 	[Header("Entity")]
+	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
 	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
+	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
 
 	[Header("Activation")]
 	[SerializeField] private float m_enableTime;
 	[SerializeField] private float m_disableTime;
-	[SerializeField] private float m_playerDistance = 15f;
 
 	[Header("Respawn")]
-	[SerializeField] private Range m_spawnTime;
-	[SerializeField] private float m_TimeInc;
-	[SerializeField] private float m_TimeIncTime;
+	[SerializeField] private Range m_spawnTime = new Range(60f, 120f);
 	[SerializeField] private int m_maxSpawns;
 	
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	protected GameObject[] m_entities;
 	protected AreaBounds m_area;
+
+	protected FlockController m_flockController;
+
+	private uint m_entityAlive;
+	private uint m_entitySpawned;
+	private uint m_entitiesKilled; // we'll use this to give rewards if the dragon destroys a full flock
+	protected GameObject[] m_entities; // list of alive entities
 
 	private float m_enableTimer;
 	private float m_disableTimer;
-	private float m_spawnTimer;
-	private uint m_spawnCount;
-	private uint m_entityAlive;
+	private float m_respawnTimer;
+	private uint m_respawnCount;
 
+	private GameCameraController m_camera;
 	
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	protected virtual void Start () {
-		
+	protected virtual void Start () {		
 		PoolManager.CreatePool(m_entityPrefab);
 		m_entities = new GameObject[m_quantity.max];
 
+		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+
 		m_area = GetArea();
+
+
+		m_flockController = GetComponent<FlockController>();
+		if (m_flockController) {
+			// this spawner has a flock controller! let's setup it
+			m_flockController.Init(m_quantity.max);
+		}
 	}
 
 	protected virtual void OnEnable() {
-
 		m_enableTimer = m_enableTime;
 		m_disableTimer = m_disableTime;
 
-		m_spawnTimer = 0;
-		m_spawnCount = 0;
+		m_respawnTimer = 0;
+		m_respawnCount = 0;
+
 		m_entityAlive = 0;
+		m_entitySpawned = 0;
+		m_entitiesKilled = 0;
 	}
 
-	// entities can remove themselves when are destroyed or auto-disabled
-	public void RemoveEntity(GameObject _entity) {
-
-		for (int i = 0; i < m_entities.Length; i++) {			
+	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
+	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] == _entity) {
 				m_entities[i] = null;
+				if (_killedByPlayer) {
+					m_entitiesKilled++;
+				}
 				m_entityAlive--;
+			}
+		}
+
+		// all the entities are 
+		if (m_entityAlive == 0 && m_entitiesKilled >= 3) {
+			// check if player has destroyed all the flock
+			if (m_entitiesKilled == m_entitySpawned) {
+				// TODO: give flock reward! rise event
 			}
 		}
 	}
 
 	// Update is called once per frame
-	void Update () {
-		
-		bool playerNear = IsPlayerNear();
-
+	void Update () {		
 		// A spawner can have a delay time before it can spawn things
 		if (m_enableTimer > 0) {
 			m_enableTimer -= Time.deltaTime;
@@ -81,20 +103,17 @@ public class Spawner : MonoBehaviour {
 				m_enableTimer = 0;
 			}
 		} else {
-			// Modify spawn time over time
-			// TODO: spawners can have more or less respawn time while we keep playing
-
-			// Spawn logic
+			// re-spawn logic
 			if (m_entityAlive == 0) {
-				if (m_spawnTimer > 0) {
-					m_spawnTimer -= Time.deltaTime;
-					if (m_spawnTimer <= 0) {
-						m_spawnTimer = 0;
+				if (m_respawnTimer > 0) {
+					m_respawnTimer -= Time.deltaTime;
+					if (m_respawnTimer <= 0) {
+						m_respawnTimer = 0;
 					}
 				} else {
-					if (playerNear && !IsPlayerInsideArea()) {
+					if (m_camera.IsInsideActivationArea(transform.position)) {
 						Spawn();
-						m_spawnTimer = m_spawnTime.GetRandom();
+						m_respawnTimer = m_spawnTime.GetRandom();
 					}
 				}
 			}
@@ -109,55 +128,37 @@ public class Spawner : MonoBehaviour {
 		}
 	}
 
-	bool IsPlayerNear() {
-		Vector2 playerPos = InstanceManager.player.transform.position;
-		float distX = m_area.bounds.extents.x + m_playerDistance;
-		float distY = m_area.bounds.extents.y + m_playerDistance;
-
-		if (playerPos.x < m_area.bounds.center.x - distX ||  playerPos.x > m_area.bounds.center.x + distX
-		||  playerPos.y < m_area.bounds.center.y - distY ||  playerPos.y > m_area.bounds.center.y + distY) {
-
-			// disable all alive entities
-			if (m_entityAlive > 0) {
-				for (int i = 0; i < m_entities.Length; i++) {				
-					if (m_entities[i] != null) {
-						m_entities[i].SetActive(false);
-						m_entities[i] = null;
-					}
-				}
-				m_spawnTimer = 0; // this spawner will be restarted when player is near again
-				m_entityAlive = 0;
-			}
-
-			return false;
-		}
-
-		return true;
-	}
-
-	bool IsPlayerInsideArea() {
-		DragonPlayer player = InstanceManager.player;
-		return m_area.Contains(player.transform.position);
-	}
-
 	void Spawn() {
-		int count = m_quantity.GetRandom();
-		for (int i = 0; i < count; i++) {			
+		m_entitySpawned = (uint)m_quantity.GetRandom();
+		for (int i = 0; i < m_entitySpawned; i++) {			
 			m_entities[i] = PoolManager.GetInstance(m_entityPrefab.name);
 			m_entityAlive++;
 		}
+		m_entitiesKilled = 0;
 
 		ExtendedSpawn();
 
-		for (int i = 0; i < count; i++) {			
+		if (m_flockController) {
+			for (int i = 0; i < m_entities.Length; i++) {
+				if (m_entities[i] != null) {
+					PreyMotion motion = m_entities[i].GetComponent<PreyMotion>();
+					if (motion != null) {
+						motion.AttachFlock(m_flockController);
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < m_entitySpawned; i++) {			
 			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
-			spawn.Spawn(this, m_area);
+			spawn.Spawn(this, i, transform.position, m_area);
+			spawn.transform.localScale = Vector3.one * m_scale.GetRandom();
 		}
 
 		// Disable this spawner after a number of spawns
 		if (m_maxSpawns > 0) {
-			m_spawnCount++;			
-			if (m_spawnCount == m_maxSpawns) {
+			m_respawnCount++;			
+			if (m_respawnCount == m_maxSpawns) {
 				gameObject.SetActive(false);
 			}
 		}

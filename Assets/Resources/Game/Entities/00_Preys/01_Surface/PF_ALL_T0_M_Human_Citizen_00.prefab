@@ -256,10 +256,11 @@ GameObject:
   - 114: {fileID: 11402296}
   - 114: {fileID: 11460448}
   - 114: {fileID: 11408242}
-  - 114: {fileID: 11450940}
   - 114: {fileID: 11422614}
   - 114: {fileID: 11496704}
-  - 114: {fileID: 11456662}
+  - 114: {fileID: 11454566}
+  - 114: {fileID: 11477874}
+  - 114: {fileID: 11473332}
   m_Layer: 8
   m_Name: PF_ALL_T0_M_Human_Citizen_00
   m_TagString: Untagged
@@ -405,8 +406,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 167244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -53.995, y: 16.006, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -82.86, y: -0.54, z: 0}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 426152}
   - {fileID: 471516}
@@ -583,7 +584,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129600}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.023, y: 0.123, z: 0}
+  m_LocalPosition: {x: 0.023, y: 0.464, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 409376}
@@ -712,8 +713,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.076601565, y: 1.367791}
-  radius: 0.61
+  offset: {x: 0.04762131, y: 1.9763117}
+  radius: 0.84181726
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11408242
 MonoBehaviour:
@@ -726,19 +727,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20d6719d9cb2543b096d365f9f530a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 0
   m_zOffset:
     min: -1
     max: 1
   m_flockAvoidRadiusRange:
-    min: 0
-    max: 1
-  m_steerForce: 1
+    min: 2
+    max: 3
+  m_steerForce: 0.5
   m_mass: 1
-  m_distanceAttenuation: 5
-  m_maxSpeed: 3
-  m_maxRunSpeed: 7
-  m_slowingRadius: 0.75
+  m_distanceAttenuation: 18
+  m_maxSpeed: 4
+  m_maxRunSpeed: 8.1
+  m_slowingRadius: 0
 --- !u!114 &11409122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -764,16 +764,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: 
+  m_typeID: citizen_male
   m_reward:
     score: 50
     coins: 25
     pc: 0
-    health: 30
+    health: 5
     energy: 0
-    fury: 20
+    fury: 15
     xp: 0.8
-  m_goldenChance: 0.301
+  m_goldenChance: 0.25
   m_pcChance: 0
 --- !u!114 &11422614
 MonoBehaviour:
@@ -786,8 +786,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 6
-  m_sensorMaxRadius: 12
+  m_sensorMinRadius: 10
+  m_sensorMaxRadius: 20
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
 --- !u!114 &11426808
@@ -802,10 +802,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
-  m_size: 2
+  m_size: 1.2
   m_isBig: 1
   m_destroyOnEat: 0
---- !u!114 &11450940
+--- !u!114 &11454566
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -813,28 +813,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 167244}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
+  m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_randomMovement: 0
-  m_idleProbability: 0
-  m_moveTime:
-    min: 6
-    max: 12
-  m_idleTime:
-    min: 3
-    max: 6
---- !u!114 &11456662
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ca34221fa3d04a9bb6023c830ed0f7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_faceDirection: 0
 --- !u!114 &11460448
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -862,6 +844,36 @@ MonoBehaviour:
     - Barbecue!
     - Rostisserie
   - data: []
+--- !u!114 &11473332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca34221fa3d04a9bb6023c830ed0f7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11477874
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 167244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_randomMovement: 0
+  m_idleProbability: 0.5
+  m_moveTime:
+    min: 0
+    max: 4
+  m_idleTime:
+    min: 0
+    max: 4
 --- !u!114 &11477934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -885,6 +897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canBeAfraid: 1
+  m_canPanic: 0
 --- !u!137 &13703782
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -958,11 +971,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_changeTargetTime
@@ -970,7 +983,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 0.75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_lockAxis.x
@@ -986,19 +999,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 12
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_size
-      value: 2
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxHealth
@@ -1010,7 +1023,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.health
-      value: 30
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_isBig
@@ -1082,11 +1095,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleProbability
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_goldenChance
-      value: .300999999
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_chaoticMovement
@@ -1094,7 +1107,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 7
+      value: 8.1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_angleIncrement
@@ -1106,11 +1119,51 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_randomMovement
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_canBeAfraid
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: citizen_male
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_flockAvoidRadiusRange.min
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_flockAvoidRadiusRange.max
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_distanceAttenuation
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_faceDirection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime.min
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_idleTime.max
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_moveTime.max
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_moveTime.min
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -16,10 +16,12 @@ public class AttackBehaviour : Initializable {
 	[SerializeField] private float m_attackDelay;
 	[SerializeField] private int m_consecutiveAttacks;
 	[SerializeField] private float m_sensorShutdownTime;
+	[SerializeField] private bool m_hasAnimation = true;
 	[SerializeField] private GameObject m_projectilePrefab;
 
 	private Animator m_animator;
 	private PreyMotion m_motion;
+	private PreyOrientation m_orientation;
 	private SensePlayer m_sensor;
 	private EvadeBehaviour m_evade;
 	private DragonMotion m_dragon;
@@ -35,6 +37,7 @@ public class AttackBehaviour : Initializable {
 	// Use this for initialization
 	void Start () {
 		m_motion = GetComponent<PreyMotion>();
+		m_orientation = GetComponent<PreyOrientation>();
 		m_sensor = GetComponent<SensePlayer>();
 		m_evade  = GetComponent<EvadeBehaviour>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
@@ -95,7 +98,7 @@ public class AttackBehaviour : Initializable {
 		Vector2 v = transform.position - m_target.position;
 		switch (m_state) {
 			case State.Pursuit:				
-				if (v.sqrMagnitude <= m_sensor.sensorMinRadius) {
+				if (v.sqrMagnitude <= m_sensor.sensorMinRadius * m_sensor.sensorMinRadius) {
 					m_nextState = State.Attack;
 				}
 				if (!m_area.Contains(transform.position)) {
@@ -104,11 +107,15 @@ public class AttackBehaviour : Initializable {
 				break;
 				
 			case State.Attack:
-				if (v.sqrMagnitude <= m_sensor.sensorMinRadius) {
+				if (v.sqrMagnitude <= m_sensor.sensorMinRadius * m_sensor.sensorMinRadius) {
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0) {
 						//do attack
-						m_animator.SetTrigger("attack");
+						if (m_hasAnimation) {
+							m_animator.SetTrigger("attack");
+						} else {
+							OnAttack();
+						}
 
 						m_timer = m_attackDelay;
  
@@ -134,11 +141,9 @@ public class AttackBehaviour : Initializable {
 				break;
 
 			case State.Attack:
-				//m_motion.Seek(m_target.position);
-				m_motion.velocity = Vector2.zero;
-				//m_motion.ApplySteering();
+				m_motion.Stop();
 
-				if (m_motion.faceDirection) {
+				if (m_orientation.faceDirection) {
 					m_motion.direction = m_target.position - (Vector3)m_motion.position;
 				} else {
 					Vector3 player = m_target.position;
@@ -176,7 +181,7 @@ public class AttackBehaviour : Initializable {
 					break;
 					
 				case State.Attack:
-					m_motion.velocity = Vector2.zero;
+					m_motion.Stop();
 					m_timer = 0;
 					break;
 			}

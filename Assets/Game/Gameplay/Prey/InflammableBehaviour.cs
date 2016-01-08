@@ -20,7 +20,8 @@ public class InflammableBehaviour : Initializable {
 	
 	private float m_health;
 	private float m_timer;
-	
+	private CircleArea2D m_circleArea;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -30,6 +31,8 @@ public class InflammableBehaviour : Initializable {
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 
 		m_timer = m_checkFireTime;
+
+		m_circleArea = GetComponent<CircleArea2D>();
 	}
 
 	void OnEnable() {
@@ -47,8 +50,14 @@ public class InflammableBehaviour : Initializable {
 	void Update() {
 
 		m_timer -= Time.deltaTime;
-		if (m_timer <= 0) {
-			if (m_breath.IsInsideArea(transform.position)) {
+		if (m_timer <= 0) 
+		{
+			if ( m_circleArea != null )
+			{
+				if ( m_breath.Overlaps( m_circleArea ) )
+					Burn(m_breath.damage);
+			}
+			else if (m_breath.IsInsideArea(transform.position)) {
 				Burn(m_breath.damage);
 			}
 			m_timer = m_checkFireTime;

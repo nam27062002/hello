@@ -27,7 +27,9 @@ public class Mission {
 	[Serializable]
 	public class SaveData {
 		public string sku = "";		// Mission def's sku
+		public State state = State.ACTIVE;
 		public float currentValue = 0f;	// Objective's current value - only relevant for long-term missions, but save it always anyway
+		public DateTime cooldownStartTimestamp = new DateTime();
 	}
 
 	/// <summary>
@@ -41,16 +43,45 @@ public class Mission {
 		COUNT
 	}
 
+	/// <summary>
+	/// Current state of the mission.
+	/// </summary>
+	public enum State {
+		LOCKED,
+		COOLDOWN,
+		ACTIVATION_PENDING,	// Special state for when a cooldown is finished in the middle of a game
+		ACTIVE,
+
+		COUNT
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Definition
 	[SerializeField] private MissionDef m_def = null;
 	public MissionDef def { get { return m_def; }}
 
+	// Objective
 	private MissionObjective m_objective = null;
 	public MissionObjective objective { get { return m_objective; }}
 
+	// Economy
 	public int rewardCoins { get { return ComputeRewardCoins(); }}
+	public int removeCostPC { get { return ComputeRemoveCostPC(); }}
+	public int skipCostPC { get { return ComputeSkipCostPC(); }}
+
+	// State
+	private State m_state = State.ACTIVE;
+	public State state { get { return m_state; }}
+
+	// Cooldown
+	private DateTime m_cooldownStartTimestamp = new DateTime();
+	public DateTime cooldownStartTimestamp { get { return m_cooldownStartTimestamp; }}
+	public TimeSpan cooldownDuration { get { return new TimeSpan(0, MissionManager.cooldownPerDifficulty[(int)m_def.difficulty], 0); }}
+	public TimeSpan cooldownElapsed { get { return DateTime.UtcNow - m_cooldownStartTimestamp; }}
+	public TimeSpan cooldownRemaining { get { return cooldownDuration - cooldownElapsed; }}
+	public float cooldownProgress { get { return Mathf.InverseLerp(0f, (float)cooldownDuration.TotalSeconds, (float)cooldownElapsed.TotalSeconds); }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -87,13 +118,84 @@ public class Mission {
 	}
 
 	/// <summary>
+	/// Sets the state of the mission. Use carefully - ideally only from MissionManager.
+	/// The new state wont be checked (we can go to the same state as we are, all actions will be performed).
+	/// </summary>
+	/// <param name="_newState">The state to change to.</param>
+	public void ChangeState(State _newState) {
+		// Actions to perform when leaving a specific state
+		switch(m_state) {
+			case State.ACTIVE: {
+				// Disable objective
+				m_objective.enabled = false;
+			} break;
+		}
+
+		// Actions to perform when entering a specific state
+		switch(_newState) {
+			case State.COOLDOWN: {
+				// Store timestamp
+				m_cooldownStartTimestamp = DateTime.UtcNow;
+			} break;
+
+			case State.ACTIVE: {
+				// Start objective
+				m_objective.enabled = true;
+			} break;
+		}
+
+		// Change state
+		State oldState = m_state;
+		m_state = _newState;
+
+		// Broadcast messages
+		switch(oldState) {
+			case State.LOCKED: Messenger.Broadcast<Mission>(GameEvents.MISSION_UNLOCKED, this);	break;
+			case State.COOLDOWN: Messenger.Broadcast<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, this);	break;
+		}
+		Messenger.Broadcast<Mission, State, State>(GameEvents.MISSION_STATE_CHANGED, this, oldState, _newState);
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
 	/// Compute the coins rewarded by completing the mission at the current game state.
+	/// Reward is computed dynamically based on MissionManager.maxRewardPerDifficulty and a formula
+	/// depending on amount of unlocked dragons, etc.
+	/// Reward doesn't depend on the type of mission, just its difficulty.
 	/// </summary>
 	/// <returns>The amount of coins to be given upon completing the mission.</returns>
 	private int ComputeRewardCoins() {
-		// [AOC] TODO!! Use some formula by Hadrian
-		//		 For now let's get it from the defs
-		return def.rewardCoins;
+		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		int totalDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY).Count;
+		float multiplier = (1f/(float)totalDragons) * (float)ownedDragons;
+		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)def.difficulty] * multiplier);
+	}
+
+	/// <summary>
+	/// Compute the PC cost of removing this mission (skipping it).
+	/// Cost is computed dynamically based on MissionManager coeficients and a formula
+	/// depending on amount of unlocked dragons, etc.
+	/// </summary>
+	/// <returns>The cost of skipping this mission.</returns>
+	private int ComputeRemoveCostPC() {
+		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		float costPC = (float)ownedDragons * MissionManager.removeMissionPCCoefA + MissionManager.removeMissionPCCoefB;
+		return (int)System.Math.Round(costPC, MidpointRounding.AwayFromZero);	// [AOC] Unity's Mathf round methods round to the even number when .5, we want to round to the upper number instead -_-
+	}
+
+	/// <summary>
+	/// Compute the PC cost of skipping this mission's cooldown timer.
+	/// Cost is computed dynamically based purely on remaining time and global
+	/// time cost formula.
+	/// </summary>
+	/// <returns>The cost of skipping this mission.</returns>
+	private int ComputeSkipCostPC() {
+		// [AOC] Standard time/PC equivalence
+		return GameSettings.ComputePCForTime(cooldownRemaining);
 	}
 
 	//------------------------------------------------------------------//
@@ -107,8 +209,17 @@ public class Mission {
 		// Read values from persistence object
 		InitFromDefinition(MissionManager.GetDef(_data.sku));
 
-		// Restore progress
-		if(m_objective != null) m_objective.currentValue = _data.currentValue;
+		// Restore state
+		m_state = _data.state;
+
+		// Restore objective
+		if(m_objective != null) {
+			m_objective.currentValue = _data.currentValue;
+			m_objective.enabled = (m_state == State.ACTIVE);
+		}
+
+		// Restore cooldown timestamp
+		m_cooldownStartTimestamp = _data.cooldownStartTimestamp;
 	}
 	
 	/// <summary>
@@ -122,8 +233,14 @@ public class Mission {
 		// Mission sku
 		if(m_def != null) data.sku = m_def.sku;
 
+		// State
+		data.state = m_state;
+
 		// Objective progress
 		if(m_objective != null) data.currentValue = m_objective.currentValue;
+
+		// Cooldown timestamp
+		data.cooldownStartTimestamp = m_cooldownStartTimestamp;
 		
 		return data;
 	}

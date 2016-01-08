@@ -100,6 +100,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	virtual public bool IsInsideArea(Vector2 _point) { return false; }
+	virtual public bool Overlaps( CircleArea2D _circle) { return false; }
 	virtual protected void ExtendedStart() {}
 	virtual protected void ExtendedUpdate() {}
 	virtual protected void Fire() {}

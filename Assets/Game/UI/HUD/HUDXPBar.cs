@@ -33,7 +33,7 @@ public class HUDXPBar : MonoBehaviour {
 	private void Awake() {
 		// Get external references
 		m_bar = GetComponentInChildren<Slider>();
-		m_valueTxt = gameObject.FindSubObject("TextValue").GetComponent<Text>();
+		m_valueTxt = gameObject.FindTransformRecursive("TextValue").GetComponent<Text>();
 	}
 
 	/// <summary>

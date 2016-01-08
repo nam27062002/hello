@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -19,7 +20,6 @@ using System;
 /// Has its own asset in the Resources/Singletons folder, all content must be
 /// initialized there.
 /// </summary>
-[CreateAssetMenu]
 public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -37,14 +37,33 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Exposed Setup
+	[Comment("Mission Required Dragons To Unlock")]
+	[SerializeField] private int[] m_dragonsToUnlock = new int[(int)Mission.Difficulty.COUNT];
+	public static int[] dragonsToUnlock { get { return instance.m_dragonsToUnlock; }}
+
+	[Comment("Mission Cooldowns (minutes)")]
+	[SerializeField] private int[] m_cooldownPerDifficulty = new int[(int)Mission.Difficulty.COUNT];	// minutes
+	public static int[] cooldownPerDifficulty { get { return instance.m_cooldownPerDifficulty; }}	// minutes
+
+	[Comment("Mission Reward Formula")]
+	[SerializeField] private int[] m_maxRewardPerDifficulty = new int[(int)Mission.Difficulty.COUNT];
+	public static int[] maxRewardPerDifficulty { get { return instance.m_maxRewardPerDifficulty; }}
+
+	[Comment("Remove Mission PC Cost Formula")]
+	[SerializeField] private float m_removeMissionPCCoefA = 0.5f;
+	public static float removeMissionPCCoefA { get { return instance.m_removeMissionPCCoefA; }}
+
+	[SerializeField] private float m_removeMissionPCCoefB = 1f;
+	public static float removeMissionPCCoefB { get { return instance.m_removeMissionPCCoefB; }}
+
 	// Content
 	// [AOC] TEMP!! Eventually it will be replaced by procedural generation
-	[SerializeField] private MissionDefinitions m_missionDefs;
 	private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT];	// Pointing to the definition to be generated next
 
 	// Active missions
 	// [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
-	private Mission[] m_activeMissions = new Mission[(int)Mission.Difficulty.COUNT];
+	private Mission[] m_missions = new Mission[(int)Mission.Difficulty.COUNT];
 
 	// Delegates
 	// Delegate meant for objectives needing an update() call
@@ -59,6 +78,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -66,18 +86,36 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+		// Check missions in cooldown to be unlocked
+		for(int i = 0; i < m_missions.Length; i++) {
+			if(m_missions[i].state == Mission.State.COOLDOWN) {
+				// Has enough time passed for this mission's difficulty?
+				if((DateTime.UtcNow - m_missions[i].cooldownStartTimestamp).TotalMinutes >= m_cooldownPerDifficulty[i]) {
+					// Yes!
+					// Missions can't be activated during a game, mark them as pending
+					// Are we in-game?
+					if(InstanceManager.GetSceneController<GameSceneController>() != null) {
+						m_missions[i].ChangeState(Mission.State.ACTIVATION_PENDING);
+					} else {
+						m_missions[i].ChangeState(Mission.State.ACTIVE);
+					}
+				}
+			}
+		}
+
 		// Propagate to registered listeners
 		OnUpdate();
 	}
 
 	//------------------------------------------------------------------//
-	// SINGLETON STATIC METHODS											//
+	// SINGLETON STATIC GETTERS											//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Get a definition of a mission.
@@ -85,7 +123,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <returns>The definition of a mission with the given sku. <c>null</c> if not found.</returns>
 	/// <param name="_sku">The sku of the wanted definition.</param>
 	public static MissionDef GetDef(string _sku) {
-		return instance.m_missionDefs.GetDef<MissionDef>(_sku);
+		return DefinitionsManager.missions.GetDef(_sku);
 	}
 
 	/// <summary>
@@ -96,77 +134,17 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <param name="_difficulty">The difficulty of the mission to be returned.</param>
 	public static Mission GetMission(Mission.Difficulty _difficulty) {
 		// If there is no mission at the given difficulty, create one
-		if(instance.m_activeMissions[(int)_difficulty] == null) {
-			GenerateNewMission(_difficulty);
+		if(instance.m_missions[(int)_difficulty] == null) {
+			instance.GenerateNewMission(_difficulty);
 		}
 
 		// Done!
-		return instance.m_activeMissions[(int)_difficulty];
+		return instance.m_missions[(int)_difficulty];
 	}
 
-	/// <summary>
-	/// Create a new mission with the given difficulty. Mission generation is completely
-	/// automated.
-	/// If a mission already exists at the given difficulty slot, it will be immediately terminated.
-	/// </summary>
-	/// <returns>The newly created mission.</returns>
-	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
-	public static Mission GenerateNewMission(Mission.Difficulty _difficulty) {
-		// Terminate any mission at the requested slot
-		ClearMission(_difficulty);
-
-		// Generate new mission
-		// [AOC] TODO!! Automated generation
-		// 		 For now let's pick a new mission definition from the content list matching the requested difficulty
-		int idx = instance.m_generationIdx[(int)_difficulty];
-		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
-		MissionDef def = null;
-		for( ; ; idx++) {
-			// If reached the last definition but still haven't looped, do it now
-			// Otherwise it means there are no definitions for the requested difficulty, throw an exception
-			if(idx == instance.m_missionDefs.Length) {
-				if(loopAllowed) {
-					idx = 0;
-					loopAllowed = false;
-				} else {
-					DebugUtils.Assert(false, "There are no mission definitions for the requested difficulty " + _difficulty);
-					return null;
-				}
-			}
-
-			// Is this mission def of the requested difficulty?
-			def = instance.m_missionDefs.GetDef<MissionDef>(idx);
-			if(def != null && def.difficulty == _difficulty) {
-				// Found! Break the loop
-				break;
-			}
-		}
-
-		// Create the new mission!
-		Mission newMission = new Mission();
-		newMission.InitFromDefinition(def);
-		instance.m_activeMissions[(int)_difficulty] = newMission;
-
-		// Increase generation index - loop if last mission is reached
-		instance.m_generationIdx[(int)_difficulty] = (idx + 1) % instance.m_missionDefs.Length;
-
-		// Return new mission
-		return instance.m_activeMissions[(int)_difficulty];
-	}
-
-	/// <summary>
-	/// Properly delete the mission at the given difficulty slot.
-	/// The mission slot will be left empty, be careful with that!
-	/// </summary>
-	/// <param name="_difficulty">The difficulty slot to be cleared.</param>
-	public static void ClearMission(Mission.Difficulty _difficulty) {
-		// If there is already a mission at the requested slot, terminate it
-		if(instance.m_activeMissions[(int)_difficulty] != null) {
-			instance.m_activeMissions[(int)_difficulty].Clear();
-			instance.m_activeMissions[(int)_difficulty] = null;	// GC will take care of it
-		}
-	}
-
+	//------------------------------------------------------------------//
+	// PUBLIC SINGLETON METHODS											//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Process active missions:
 	/// Give rewards for those completed and replace them by newly generated missions.
@@ -176,16 +154,132 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// Is mission completed?
 			Mission m = GetMission((Mission.Difficulty)i);
-			if(m.objective.isCompleted) {
+			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				// Give reward
 				UserProfile.AddCoins(m.rewardCoins);
 
 				// Generate new mission
-				m = GenerateNewMission((Mission.Difficulty)i);
+				m = instance.GenerateNewMission((Mission.Difficulty)i);
 
-				// [AOC] TODO!! Put it on cooldown
-				//m.unlockTimestamp = ;
+				// Put it on cooldown
+				m.ChangeState(Mission.State.COOLDOWN);
 			}
+
+			// Is mission pending activation?
+			else if(m.state == Mission.State.ACTIVATION_PENDING) {
+				// Activate mission
+				m.ChangeState(Mission.State.ACTIVE);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Removes the mission at the given difficulty slot and replaces it by a new
+	/// one of equivalent difficulty.
+	/// Doesn't perform any currency transaction, they must be done prior to calling
+	/// this method using the Mission.removeCostPC property.
+	/// </summary>
+	/// <param name="_difficulty">The difficulty of the mission to be removed.</param>
+	public static void RemoveMission(Mission.Difficulty _difficulty) {
+		// Generate new mission does exactly this :D
+		instance.GenerateNewMission(_difficulty);
+
+		// Dispatch global event
+		Messenger.Broadcast<Mission>(GameEvents.MISSION_REMOVED, GetMission(_difficulty));
+	}
+
+	/// <summary>
+	/// Skip the cooldown of the mission at the given difficulty slot.
+	/// The mission will immediately be set to Active state.
+	/// Doesn't perform any currency transaction, they must be done prior to calling
+	/// this method using the Mission.skipCostPC property.
+	/// Nothing will happen if the mission is not on Cooldown state.
+	/// </summary>
+	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
+	public static void SkipMission(Mission.Difficulty _difficulty) {
+		// Get mission and check that is in cooldown state
+		Mission m = GetMission(_difficulty);
+		if(m == null || m.state != Mission.State.COOLDOWN) return;
+
+		// Change mission to Active state
+		m.ChangeState(Mission.State.ACTIVE);
+
+		// Dispatch global event
+		Messenger.Broadcast<Mission>(GameEvents.MISSION_SKIPPED, GetMission(_difficulty));
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Create a new mission with the given difficulty. Mission generation is completely
+	/// automated.
+	/// If a mission already exists at the given difficulty slot, it will be immediately terminated.
+	/// </summary>
+	/// <returns>The newly created mission.</returns>
+	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
+	private Mission GenerateNewMission(Mission.Difficulty _difficulty) {
+		// Terminate any mission at the requested slot
+		ClearMission(_difficulty);
+
+		// Generate new mission
+		// [AOC] TODO!! Automated generation
+		// 		 For now let's pick a new mission definition from the content list matching the requested difficulty
+		int idx = m_generationIdx[(int)_difficulty];
+		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
+		MissionDef def = null;
+		List<MissionDef> defsList = DefinitionsManager.missions.defsList;	// [AOC] Order is not trustable, but we don't care since this is temporal
+		for( ; ; idx++) {
+			// If reached the last definition but still haven't looped, do it now
+			// Otherwise it means there are no definitions for the requested difficulty, throw an exception
+			if(idx == defsList.Count) {
+				if(loopAllowed) {
+					idx = 0;
+					loopAllowed = false;
+				} else {
+					Debug.Assert(false, "There are no mission definitions for the requested difficulty " + _difficulty);
+					return null;
+				}
+			}
+
+			// Is this mission def of the requested difficulty?
+			def = defsList[idx];
+			if(def != null && def.difficulty == _difficulty) {
+				// Found! Break the loop
+				break;
+			}
+		}
+
+		// Create the new mission!
+		Mission newMission = new Mission();
+		newMission.InitFromDefinition(def);
+		m_missions[(int)_difficulty] = newMission;
+
+		// Check whether the new mission should be locked or not
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		if(ownedDragons < m_dragonsToUnlock[(int)_difficulty]) {
+			newMission.ChangeState(Mission.State.LOCKED);
+		} else {
+			newMission.ChangeState(Mission.State.ACTIVE);	// [AOC] Start active by default, cooldown will be afterwards added if required
+		}
+
+		// Increase generation index - loop if last mission is reached
+		m_generationIdx[(int)_difficulty] = (idx + 1) % DefinitionsManager.missions.Count;
+
+		// Return new mission
+		return m_missions[(int)_difficulty];
+	}
+
+	/// <summary>
+	/// Properly delete the mission at the given difficulty slot.
+	/// The mission slot will be left empty, be careful with that!
+	/// </summary>
+	/// <param name="_difficulty">The difficulty slot to be cleared.</param>
+	private void ClearMission(Mission.Difficulty _difficulty) {
+		// If there is already a mission at the requested slot, terminate it
+		if(m_missions[(int)_difficulty] != null) {
+			m_missions[(int)_difficulty].Clear();
+			m_missions[(int)_difficulty] = null;	// GC will take care of it
 		}
 	}
 
@@ -204,15 +298,15 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// If there is no data for this mission, generate a new one
 			if(i >= _data.activeMissions.Length || _data.activeMissions[i] == null || _data.activeMissions[i].sku == "") {
-				GenerateNewMission((Mission.Difficulty)i);
+				instance.GenerateNewMission((Mission.Difficulty)i);
 			} else {
 				// If the mission was not created, create an empty one now and load its data from persistence
-				if(instance.m_activeMissions[i] == null) {
-					instance.m_activeMissions[i] = new Mission();
+				if(instance.m_missions[i] == null) {
+					instance.m_missions[i] = new Mission();
 				}
 				
 				// Load data into the target mission
-				instance.m_activeMissions[i].Load(_data.activeMissions[i]);
+				instance.m_missions[i].Load(_data.activeMissions[i]);
 			}
 		}
 	}
@@ -239,4 +333,21 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// A new dragon has been acquired.
+	/// </summary>
+	/// <param name="_dragon">The dragon that has just been acquired.</param>
+	private void OnDragonAcquired(DragonData _dragon) {
+		// Check whether any of the missions must be unlocked
+		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		for(int i = 0; i < m_missions.Length; i++) {
+			// Is the mission locked?
+			if(m_missions[i].state == Mission.State.LOCKED) {
+				// Do we have enough dragons?
+				if(ownedDragons >= m_dragonsToUnlock[i]) {
+					m_missions[i].ChangeState(Mission.State.ACTIVE);
+				}
+			}
+		}
+	}
 }

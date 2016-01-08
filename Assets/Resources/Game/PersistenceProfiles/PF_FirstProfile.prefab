@@ -44,6 +44,7 @@ MonoBehaviour:
       coins: 1000
       pc: 20
       currentDragon: 0
+      currentLevel: level_0
     dragons:
     - id: 0
       xp: 0
@@ -60,6 +61,18 @@ MonoBehaviour:
       level: 0
       skillLevels: 00000000000000000000000000000000
       owned: 0
+    missions:
+      activeMissions:
+      - sku: 
+        state: 3
+        currentValue: 0
+      - sku: 
+        state: 3
+        currentValue: 0
+      - sku: 
+        state: 3
+        currentValue: 0
+      generationIdx: 000000000000000000000000
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -110,6 +123,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[1].owned
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.profile.currentLevel
+      value: level_0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

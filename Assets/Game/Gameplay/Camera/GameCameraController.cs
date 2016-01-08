@@ -49,6 +49,12 @@ public class GameCameraController : MonoBehaviour {
 	[SerializeField] private float m_shakeDefaultDuration = 0.15f;
 	[SerializeField] private bool m_shakeDecayOverTime = true;
 
+	[Separator("Entity management")]
+	[SerializeField] private float m_activationDistance = 10f;
+	[SerializeField] private float m_activationRange = 5f;
+	[SerializeField] private float m_deactivationDistance = 20f;
+
+
 	// References
 	private DragonMotion m_dragonMotion = null;
 	private Transform m_danger = null;
@@ -69,6 +75,16 @@ public class GameCameraController : MonoBehaviour {
 	private Range m_zoomRangeStart;
 	private float m_nearStart;
 	private float m_farStart;
+
+	// Camera bounds
+	private Bounds m_frustum = new Bounds();
+	private Bounds m_activationMin = new Bounds();
+	private Bounds m_activationMax = new Bounds();
+	private Bounds m_deactivation = new Bounds();
+
+	private Transform m_transform;
+	private bool m_update = false;
+	private float m_accumulatedTime = 0;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -94,6 +110,8 @@ public class GameCameraController : MonoBehaviour {
 		get { return InstanceManager.player.transform.position + Vector3.up * 2f; }
 	}
 
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -101,7 +119,7 @@ public class GameCameraController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		m_transform = transform;
 	}
 
 	/// <summary>
@@ -128,36 +146,57 @@ public class GameCameraController : MonoBehaviour {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
-		// Compute new target position
-		// Is there a danger nearby?
-		if(m_danger != null) {
-			// Yes!! Look between the danger and the dragon
-			// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
-			m_targetPos = Vector3.Lerp(playerPos, m_danger.position, 0.5f);
-		} else {
-			// No!! Just look towards the dragon
-			m_targetPos = playerPos;
+	private void LateUpdate() 
+	{
+		m_accumulatedTime += Time.deltaTime;
+		Vector3 newPos = m_transform.position;
+
+		// it depends on previous fixed updates
+		if ( m_update )
+		{
+			// Compute new target position
+			// Is there a danger nearby?
+			if(m_danger != null) {
+				// Yes!! Look between the danger and the dragon
+				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
+				m_targetPos = Vector3.Lerp(playerPos, m_danger.position, 0.5f);
+			} else {
+				// No!! Just look towards the dragon
+				m_targetPos = playerPos;
+			}
+
+			// Update forward direction and apply forward offset too look a bit ahead in the direction the dragon is moving
+			m_forward = Vector3.Lerp(m_dragonMotion.GetDirection(), m_forward, m_forwardSmoothing);
+			m_targetPos = m_targetPos + m_forward * m_forwardOffset;
+
+			// Clamp X to defined limits
+			m_targetPos.x = Mathf.Clamp(m_targetPos.x, m_limitX.min, m_limitX.max);
+
+			// Compute Z, defined by the zoom factor
+			m_targetPos.z = -m_zoomRange.Lerp(m_zInterpolator.GetExponential());	// Reverse-signed
+
+			// Apply movement smoothing
+			newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
+			newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
+
+			m_update = false;
+			m_accumulatedTime = 0;
 		}
 
-		// Update forward direction and apply forward offset too look a bit ahead in the direction the dragon is moving
-		m_forward = Vector3.Lerp(m_dragonMotion.GetDirection(), m_forward, m_forwardSmoothing);
-		m_targetPos = m_targetPos + m_forward * m_forwardOffset;
+		newPos = UpdateByShake( newPos, Time.deltaTime );
 
-		// Clamp X to defined limits
-		m_targetPos.x = Mathf.Clamp(m_targetPos.x, m_limitX.min, m_limitX.max);
+		// DONE! Apply new position
+		transform.position = newPos;
 
-		// Compute Z, defined by the zoom factor
-		m_targetPos.z = -m_zoomRange.Lerp(m_zInterpolator.GetExponential());	// Reverse-signed
+		UpdateFrustumBounds();
+	}
 
-		// Apply movement smoothing
-		Vector3 newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
-		newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
-
+	private Vector3 UpdateByShake( Vector3 position, float deltaTime)
+	{
 		// Apply shaking - after smoothing, we don't want shaking to be affected by it
 		if(m_shakeTimer > 0f){
 			// Update timer
-			m_shakeTimer -= Time.deltaTime;
+			m_shakeTimer -= m_accumulatedTime;
 			
 			// Compute a random shaking optionally decaying over time
 			if(m_shakeTimer > 0) {
@@ -168,14 +207,18 @@ public class GameCameraController : MonoBehaviour {
 					decayedShakeAmt.z *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
 				}
 				
-				newPos.x += Random.Range(-decayedShakeAmt.x, decayedShakeAmt.x);
-				newPos.y += Random.Range(-decayedShakeAmt.y, decayedShakeAmt.y);
-				newPos.z += Random.Range(-decayedShakeAmt.z, decayedShakeAmt.z);
+				position.x += Random.Range(-decayedShakeAmt.x, decayedShakeAmt.x);
+				position.y += Random.Range(-decayedShakeAmt.y, decayedShakeAmt.y);
+				position.z += Random.Range(-decayedShakeAmt.z, decayedShakeAmt.z);
 			}
 		}
 
-		// DONE! Apply new position
-		transform.position = newPos;
+		return position;
+	}
+
+	private void FixedUpdate()
+	{
+		m_update = true;
 	}
 
 	/// <summary>
@@ -184,6 +227,56 @@ public class GameCameraController : MonoBehaviour {
 	private void OnDestroy() {
 
 	}
+
+	//------------------------------------------------------------------//
+	// Bounds															//
+	//------------------------------------------------------------------//
+
+	public bool IsInsideActivationArea(Vector3 _point) {
+		_point.z = 0;
+		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
+	}
+
+	public bool IsInsideActivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
+	}
+
+	public bool IsInsideDeactivationArea(Vector3 _point) {
+		_point.z = 0;
+		return !m_deactivation.Contains(_point);
+	}
+
+	public bool IsInsideDeactivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_deactivation.Intersects(_bounds);
+	}
+
+	// update camera bounds for Z = 0, this can change with dinamic zoom in/out animations
+	private void UpdateFrustumBounds() {
+		float frustumHeight = 2.0f * Mathf.Abs(transform.position.z) * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
+		float frustumWidth = frustumHeight * Camera.main.aspect;
+
+		Vector3 center = transform.position;
+		center.z = 0;
+
+		m_frustum.center = center;
+		m_frustum.size = new Vector3(frustumWidth, frustumHeight, 4f);
+
+		m_activationMin.center = center;
+		m_activationMin.size = new Vector3(frustumWidth + m_activationDistance * 2f, frustumHeight + m_activationDistance * 2f, 4f);
+
+		m_activationMax.center = center;
+		m_activationMax.size = new Vector3(frustumWidth + (m_activationDistance + m_activationRange) * 2f, frustumHeight + (m_activationDistance + m_activationRange) * 2f, 4f);
+
+		m_deactivation.center =center;
+		m_deactivation.size = new Vector3(frustumWidth + m_deactivationDistance * 2f, frustumHeight + m_deactivationDistance * 2f, 4f);
+	}
+
 
 	//------------------------------------------------------------------//
 	// ZOOM																//
@@ -214,6 +307,8 @@ public class GameCameraController : MonoBehaviour {
 		Zoom(_zoomLevel, duration);
 	}
 
+
+
 	//------------------------------------------------------------------//
 	// SHAKING															//
 	//------------------------------------------------------------------//
@@ -239,6 +334,8 @@ public class GameCameraController : MonoBehaviour {
 		m_shakeTimer = m_shakeDuration;
 	}
 
+
+
 	//------------------------------------------------------------------//
 	// DANGER															//
 	//------------------------------------------------------------------//
@@ -254,6 +351,27 @@ public class GameCameraController : MonoBehaviour {
 		} else {
 			Zoom(1f, 0.5f);	// Danger!! Zoom out
 		}
+	}
+
+
+
+	//------------------------------------------------------------------//
+	// DANGER															//
+	//------------------------------------------------------------------//
+	void OnDrawGizmos() {
+		if (!Application.isPlaying) {
+			UpdateFrustumBounds();
+		}
+			
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawWireCube(m_frustum.center, m_frustum.size);
+
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawWireCube(m_activationMin.center, m_activationMin.size);
+		Gizmos.DrawWireCube(m_activationMax.center, m_activationMax.size);
+
+		Gizmos.color = Color.magenta;
+		Gizmos.DrawWireCube(m_deactivation.center, m_deactivation.size);
 	}
 }
 

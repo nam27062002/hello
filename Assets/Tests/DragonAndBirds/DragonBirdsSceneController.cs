@@ -72,7 +72,7 @@ public class DragonBirdsSceneController : SceneController {
 	/// </summary>
 	override protected void Awake() {
 		// [AOC] HACK!! Fool the SceneManager into thinking we're playing the game
-		SceneManager.SetCurrentScene(GameSceneController.NAME);
+		GameSceneManager.SetCurrentScene(GameSceneController.NAME);
 
 		// Load the dragon
 		DragonManager.LoadDragon(UserProfile.currentDragon);

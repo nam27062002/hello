@@ -6,13 +6,26 @@ using System.Collections;
 /// Prey motion. Movement and animation control layer.
 /// </summary>
 [DisallowMultipleComponent]
+[RequireComponent(typeof(PreyOrientation))]
 public class PreyMotion : Initializable {
-	
+	//---------------------------------------------------------------
+	// Constants
+	//---------------------------------------------------------------
+	protected struct Forces {
+		public const int Seek = 0;
+		public const int Flee = 1;
+		public const int Flock = 2;
+		public const int Collision = 3;
+
+		public const int Count = 4;
+	};
+
+	private const int CollisionCheckPools = 4;
+
 	//---------------------------------------------------------------
 	// Attributes
 	//---------------------------------------------------------------
 [Header("Movement")]
-	[SerializeField] private bool m_faceDirection;
 	[SerializeField] private Range m_zOffset = new Range(-1f, 1f);
 	[SerializeField] private Range m_flockAvoidRadiusRange;
 
@@ -30,7 +43,7 @@ public class PreyMotion : Initializable {
 	[SerializeField] private float m_slowingRadius;
 
 
-	//---------------------------------------------------------------
+	// --------------------------------------------------------------- //
 
 	private FlockController m_flock; // turn into flock controller
 	private float m_flockAvoidRadius;
@@ -41,27 +54,37 @@ public class PreyMotion : Initializable {
 
 	protected Vector2 m_velocity;
 	protected Vector2 m_direction;
-	protected Vector2 m_steering;
+
+	protected Vector2[] m_steeringForces;
+	protected Vector2   m_steering;
 
 	protected float m_currentMaxSpeed;
 	protected float m_currentSpeed;
+
+	protected float m_lastSeekDistanceSqr;
 		
 	protected int m_groundMask;	
 	protected Transform m_groundSensor;
+	protected float m_collisionAvoidFactor;
+	protected Vector2 m_collisionNormal;
+
+	protected PreyOrientation m_orientation;
+	protected SpawnBehaviour m_spawn;
+	protected Animator m_animator;
+
+	private int m_collisionCheckPool; // each prey will detect collisions at different frames
 
 	//Debug
-	protected Color m_seekColor 	= Color.green;
-	protected Color m_fleeColor 	= Color.red;
-	protected Color m_flockColor 	= Color.yellow;
-	protected Color m_velocityColor	= Color.white;
+	protected Color[] m_steeringColors;
 	//
 
 	// Properties
-	public bool    faceDirection 	{ get { return m_faceDirection; } }
 	public Vector2 position 		{ get { return m_position; } set { m_position = value; } }
-	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; } }
+	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; m_orientation.SetDirection(m_direction); } }
 	public Vector2 velocity			{ get { return m_velocity; } set { m_velocity = value; } }
 	public float   speed			{ get { return m_currentSpeed; } }
+	public float   slowingRadius	{ get { return m_slowingRadius; } }
+	public float   lastSeekDistanceSqr { get { return m_lastSeekDistanceSqr; } }
 	//
 	// ----------------------------------------------------------------------------- //
 
@@ -71,26 +94,56 @@ public class PreyMotion : Initializable {
 		m_posZ = m_zOffset.GetRandom();
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_groundSensor = transform.FindChild("ground_sensor");
+
+		m_orientation = GetComponent<PreyOrientation>();
+		m_spawn = GetComponent<SpawnBehaviour>();
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
+
+		m_steeringForces = new Vector2[Forces.Count];
+
+		m_steeringColors = new Color[Forces.Count];
+		m_steeringColors[Forces.Seek] = Color.green;
+		m_steeringColors[Forces.Flee] = Color.red;
+		m_steeringColors[Forces.Flock] = Color.blue;
+		m_steeringColors[Forces.Collision] = Color.magenta;
+	}
+
+	private void ResetForces() {
+		for (int i = 0; i < Forces.Count; i++) {
+			m_steeringForces[i] = Vector2.zero;	
+		}
+		m_currentMaxSpeed = m_maxSpeed;
 	}
 
 	// Use this for initialization
 	public override void Initialize() {		
 		if (m_flock) {
-			m_lastPosition = m_position = m_flock.target;
+			m_lastPosition = m_position = m_flock.GetTarget(m_spawn.index);
 		} else if (m_groundSensor) {
 			m_lastPosition = m_position = m_groundSensor.transform.position;
 		} else {
 			m_lastPosition = m_position = transform.position;
 		}
-		
-		m_steering = Vector3.zero;
-		m_velocity = Vector3.zero;
-		m_direction = (Random.Range(0f, 1f) < 0.5f)? Vector3.right : Vector3.left;
+
+		ResetForces();
+
+		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
+		m_collisionAvoidFactor = 0;
+		m_collisionNormal = Vector2.up;
 
-		m_currentMaxSpeed = m_maxSpeed;
+		if (Random.Range(0f, 1f) < 0.5f) {
+			m_direction = Vector2.right;
+		} else {
+			m_direction = Vector2.left;
+		}
+		m_orientation.SetDirection(m_direction);
 
-		m_maxRunSpeed = m_maxSpeed;
+		if (m_spawn != null) {
+			m_collisionCheckPool = m_spawn.index % CollisionCheckPools;
+		} else {
+			m_collisionCheckPool = 0;
+		}
 	}
 
 	void OnEnable() {		
@@ -121,12 +174,21 @@ public class PreyMotion : Initializable {
 		return m_flock != null;
 	}
 	
-	public Vector2 GetFlockTarget() {		
-		return m_flock.target;
+	public Vector2 GetFlockTarget() {
+		if (m_spawn != null) {
+			return m_flock.GetTarget(m_spawn.index);
+		} else {
+			return m_flock.GetTarget(0);
+		}
 	}
 
 	public void Seek(Vector2 _target) {
 		m_currentMaxSpeed = m_maxSpeed;
+		DoSeek(_target);
+	}
+
+	public void RunTo(Vector2 _target) {
+		m_currentMaxSpeed = m_maxRunSpeed;
 		DoSeek(_target);
 	}
 	
@@ -152,12 +214,25 @@ public class PreyMotion : Initializable {
 		DoFlee(_target + _velocity * t); // future position
 	}
 
+	public void Stop() {
+		if (direction.x < 0) {
+			direction = Vector3.left;
+		} else {
+			direction = Vector3.right;
+		}
 
+		m_velocity = Vector3.zero;
+	}
+
+	// ------------------------------------------------------------------------------------ //
 	private void ApplySteering() {
 		if (m_flock != null) {
 			FlockSeparation();
 		}
 
+		AvoidCollisions();
+
+		UpdateSteering();
 		UpdateVelocity();
 		UpdatePosition();
 
@@ -167,8 +242,7 @@ public class PreyMotion : Initializable {
 
 		ApplyPosition();
 
-		m_steering = Vector2.zero;
-		m_currentMaxSpeed = m_maxSpeed;
+		ResetForces();
 	}
 
 	public Vector2 ProjectToGround(Vector2 _point) {
@@ -181,16 +255,6 @@ public class PreyMotion : Initializable {
 		}
 
 		return _point;
-	}
-
-	void Update() {		
-		UpdateOrientation();
-
-		if (m_groundSensor != null) {
-			UpdateCollisions();
-		}
-		
-		ApplyPosition();
 	}
 
 	void FixedUpdate() {
@@ -210,11 +274,12 @@ public class PreyMotion : Initializable {
 		if (distanceSqr < slowingRadiusSqr) {
 			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
 		}
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_seekColor);
+
+		// we'll keep the distance to our target for external components
+		m_lastSeekDistanceSqr = distanceSqr;
 
 		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
+		m_steeringForces[Forces.Seek] += desiredVelocity;
 	}
 	
 	private void DoFlee(Vector2 _from) {
@@ -225,13 +290,11 @@ public class PreyMotion : Initializable {
 		desiredVelocity *= m_currentMaxSpeed;
 
 		if (distanceSqr > 0) {
-			desiredVelocity *= m_distanceAttenuation / distanceSqr;
+			desiredVelocity *= (m_distanceAttenuation * m_distanceAttenuation) / distanceSqr;
 		}
-		
-		Debug.DrawLine(m_position, m_position + desiredVelocity, m_fleeColor);
 
 		desiredVelocity -= m_velocity;
-		m_steering += desiredVelocity;
+		m_steeringForces[Forces.Flee] += desiredVelocity;
 	}
 
 	private void FlockSeparation() {
@@ -250,29 +313,59 @@ public class PreyMotion : Initializable {
 			}
 		}
 		
-		Debug.DrawLine(m_position, m_position + avoid, m_flockColor);
-		
-		m_steering += avoid;
+		m_steeringForces[Forces.Flock] += avoid;
 	}
 
-	protected virtual void UpdateVelocity() {
-		
+	protected virtual void AvoidCollisions() {
+		// 1- ray cast in the same direction where we are flying
+		if (m_collisionCheckPool == Time.frameCount % CollisionCheckPools) {
+			RaycastHit ground;
+
+			float distanceCheck = 5f;
+			Vector3 dir = (Vector3)m_direction;
+			Debug.DrawLine(transform.position, transform.position + (dir * distanceCheck), Color.gray);
+
+			if (Physics.Linecast(transform.position, transform.position + (dir * distanceCheck), out ground, m_groundMask)) {
+				// 2- calc a big force to move away from the ground	
+				m_collisionAvoidFactor = (distanceCheck / ground.distance) * 100f;
+				m_collisionNormal = ground.normal;
+			} else {
+				m_collisionAvoidFactor *= 0.75f;
+			}
+		}
+
+		if (m_collisionAvoidFactor > 1f) {
+			for (int i = 0; i < Forces.Count; i++) {
+				m_steeringForces[i] /= m_collisionAvoidFactor;
+			}
+			m_steeringForces[Forces.Collision] += (m_collisionNormal * m_collisionAvoidFactor);
+		}
+	}
+
+	private void UpdateSteering() {
+		for (int i = 0; i < Forces.Count; i++) {
+			m_steering += m_steeringForces[i];
+			Debug.DrawLine(m_position, m_position + m_steeringForces[i], m_steeringColors[i]);
+		}
+	}
+
+	protected virtual void UpdateVelocity() {		
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
 		
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, m_currentMaxSpeed);
+		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
 		
 		if (m_velocity != Vector2.zero) {
 			m_direction = m_velocity.normalized;
+			m_orientation.SetDirection(m_direction);
 		}
 
 		m_currentSpeed = m_velocity.magnitude;
 				
-		Debug.DrawLine(m_position, m_position + m_velocity, m_velocityColor);
+		Debug.DrawLine(m_position, m_position + m_velocity, Color.white);
 	}
 
-	protected virtual void UpdatePosition() {
-		
+	protected virtual void UpdatePosition() {		
 		m_lastPosition = m_position;
 		m_position = m_position + (m_velocity * Time.fixedDeltaTime);
 	}
@@ -285,46 +378,13 @@ public class PreyMotion : Initializable {
 		transform.position = new Vector3(m_position.x, m_position.y, posZ);
 	}
 	
-	private void UpdateOrientation() {
-		
-		float rotationSpeed = 2f;	// [AOC] Deg/sec?
-		Quaternion targetDir;
-		
-		if (m_faceDirection) {
-			// rotate the model so it can fully face the current direction
-			float angle = Mathf.Atan2(m_direction.y, m_direction.x) * Mathf.Rad2Deg;			
-			targetDir = Quaternion.AngleAxis(angle, Vector3.forward) * Quaternion.AngleAxis(-angle, Vector3.left);	
-			
-			Vector3 eulerRot = targetDir.eulerAngles;		
-			if (m_direction.y > 0) {
-				eulerRot.z = Mathf.Min(40f, eulerRot.z);
-			} else if (m_direction.y < 0) {
-				eulerRot.z = Mathf.Max(320f, eulerRot.z);
-			}
-			targetDir = Quaternion.Euler(eulerRot);	
-			
-		} else {
-			// Rotate so it faces the right direction (replaces 2D sprite flip)
-			float angleY = 0f;
-			
-			if (m_direction.x < 0f) {
-				angleY = 180f;
-			}
-			
-			targetDir = Quaternion.Euler(0, angleY, 0);
-		}
-		
-		transform.localRotation = Quaternion.Slerp(transform.localRotation, targetDir, Time.deltaTime * rotationSpeed);
-	}
-	
 	private void UpdateCollisions() {		
 		// teleport to ground
 		RaycastHit ground;
-		Vector3 testPosition = m_lastPosition + Vector2.up * 5f;
+		Vector3 testPosition = m_groundSensor.position;
 
-		if (Physics.Linecast(testPosition, testPosition + Vector3.down * 15f, out ground, m_groundMask)) {
+		if (Physics.Linecast(testPosition, testPosition + Vector3.down * (m_area.bounds.size.y + 5f), out ground, m_groundMask)) {
 			m_position.y = ground.point.y;
-			m_position.y += (transform.position.y - m_groundSensor.transform.position.y);
 			m_velocity.y = 0;
 			m_currentSpeed = Mathf.Abs(m_velocity.x);
 		}

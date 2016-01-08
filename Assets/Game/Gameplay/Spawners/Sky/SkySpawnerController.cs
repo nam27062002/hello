@@ -42,12 +42,6 @@ public class SkySpawnerController : MonoBehaviour {
 		m_timer = 0;
 
 		m_area = GetComponent<RectArea2D>().bounds;
-
-		Messenger.AddListener<GameObject>("SpawnOutOfRange", OnSpawnOutOfRange);
-	}
-
-	void OnDestroy(){
-		Messenger.RemoveListener<GameObject>("SpawnOutOfRange", OnSpawnOutOfRange);
 	}
 	
 	// Update is called once per frame
@@ -102,16 +96,5 @@ public class SkySpawnerController : MonoBehaviour {
 
 		sgroup.group = spawnable;
 		m_spawnedList.Add(sgroup);
-	}
-
-	public void OnSpawnOutOfRange(GameObject obj) {
-
-		for (int i = 0; i < m_spawnedList.Count; i++){
-			if (m_spawnedList[i].group == obj) {
-				m_spawnedList.Remove(m_spawnedList[i]);
-				DestroyObject(obj);
-				break;
-			}
-		}
 	}
 }

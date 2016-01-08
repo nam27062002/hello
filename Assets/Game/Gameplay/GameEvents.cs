@@ -6,47 +6,57 @@
 
 /// <summary>
 /// Collection of events related to the game.
+/// Please keep the params documented!
 /// </summary>
-public static class GameEvents {
+public enum GameEvents {
+	// Debug events
+	DEBUG_MENU_DRAGON_SELECTED = EngineEvents.END,
+	DEBUG_SIMULATION_FINISHED,
+
 	// Profile events
-	public const string PROFILE_COINS_CHANGED = "PROFILE_COINS_CHANGED";	// params: long _oldAmount, long _newAmount
-	public const string PROFILE_PC_CHANGED = "PROFILE_PC_CHANGED";			// params: long _oldAmount, long _newAmount
+	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
+	PROFILE_PC_CHANGED,			// params: long _oldAmount, long _newAmount
 	
 	// Game logic events
-	public const string GAME_LEVEL_LOADED = "GAME_LEVEL_LOADED";	// no params
-	public const string GAME_STARTED = "GAME_STARTED";		// no params
-	public const string GAME_COUNTDOWN_STARTED = "GAME_COUNTDOWN_STARTED";		// no params
-	public const string GAME_COUNTDOWN_ENDED = "GAME_COUNTDOWN_ENDED";			// no params
-	public const string GAME_PAUSED = "GAME_PAUSED";		// params: bool _paused
-	public const string GAME_ENDED = "GAME_ENDED";			// no params
-	public const string REWARD_APPLIED = "REWARD_APPLIED";	// params: Reward _reward, Transform _entity
-	public const string SCORE_MULTIPLIER_CHANGED = "SCORE_MULTIPLIER_CHANGED";	// params: ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier
-	public const string FURY_RUSH_TOGGLED = "FURY_RUSH_TOGGLED";	// params: bool _activated
-	public const string HUNT_EVENT_TOGGLED = "HUNT_EVENT_TOGGLED";	// params: Transform _entityLocation, bool _activated
+	GAME_LEVEL_LOADED,			// no params
+	GAME_STARTED,				// no params
+	GAME_COUNTDOWN_STARTED,		// no params
+	GAME_COUNTDOWN_ENDED,		// no params
+	GAME_PAUSED,				// params: bool _paused
+	GAME_ENDED,					// no params
+	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
+	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier
+	FURY_RUSH_TOGGLED,			// params: bool _activated
+	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 
 	// Entity events
-	public const string ENTITY_EATEN = "ENTITY_EATEN";			// params: Transform _entity, Reward _reward
-	public const string ENTITY_BURNED = "ENTITY_BURNED";		// params: Transform _entity, Reward _reward
-	public const string ENTITY_DESTROYED = "ENTITY_DESTROYED";	// params: Transform _entity, Reward _reward
+	ENTITY_EATEN,		// params: Transform _entity, Reward _reward
+	ENTITY_BURNED,		// params: Transform _entity, Reward _reward
+	ENTITY_DESTROYED,	// params: Transform _entity, Reward _reward
 
 	// Player events
-	public const string PLAYER_DAMAGE_RECEIVED = "PLAYER_DAMAGE_RECEIVED";		// params: float _damage, Transform _source
-	public const string PLAYER_STARVING_TOGGLED = "PLAYER_STARVING_TOGGLED";	// params: bool _isStarving
-	public const string PLAYER_STATE_CHANGED = "PLAYER_STATE_CHANGED";			// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
-	public const string PLAYER_DIED = "PLAYER_DIED";							// no params
+	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, Transform _source
+	PLAYER_STARVING_TOGGLED,	// params: bool _isStarving
+	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
+	PLAYER_DIED,				// no params
 
 	// Collectible events
-	public const string COLLECTIBLE_COLLECTED = "COLLECTIBLE_COLLECTED";		// params: Collectible _collectible
+	COLLECTIBLE_COLLECTED,		// params: Collectible _collectible
 
 	// Dragon collection events
-	public const string DRAGON_ACQUIRED = "DRAGON_ACQUIRED";					// params: DragonData _data
-	public const string DRAGON_LEVEL_UP = "DRAGON_LEVEL_UP";					// params: DragonData _data
-	public const string DRAGON_SKILL_UPGRADED = "DRAGON_SKILL_UPGRADED";		// params: DragonSkill _skill	// [AOC] TODO!! We might want to know whose dragon this skill belongs to - figure out how
+	DRAGON_ACQUIRED,			// params: DragonData _data
+	DRAGON_LEVEL_UP,			// params: DragonData _data
+	DRAGON_SKILL_UPGRADED,		// params: DragonSkill _skill	// [AOC] TODO!! We might want to know whose dragon this skill belongs to - figure out how
 
 	// Menu events
-	public const string MENU_DRAGON_SELECTED = "MENU_DRAGON_SELECTED";	// params: DragonId _selectedDragon
-	public const string MENU_LEVEL_SELECTED = "MENU_LEVEL_SELECTED";	// params: int _selectedLevel
+	MENU_DRAGON_SELECTED,	// params: DragonId _selectedDragon
+	MENU_LEVEL_SELECTED,	// params: string _selectedLevelSku
 
 	// Mission events
-	public const string MISSION_COMPLETED = "MISSION_COMPLETED";						// params: Mission _mission
+	MISSION_COMPLETED,			// params: Mission _mission
+	MISSION_REMOVED,			// params: Mission _newMission
+	MISSION_SKIPPED,			// params: Mission _mission
+	MISSION_UNLOCKED,			// params: Mission _mission
+	MISSION_COOLDOWN_FINISHED,	// params: Mission _mission
+	MISSION_STATE_CHANGED		// params: Mission _mission, Mission.State _oldState, Mission.State _newState
 }

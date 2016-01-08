@@ -9,25 +9,26 @@ public class GroundPreyMotion : PreyMotion {
 
 	private Vector2 m_velocityProject;
 
-	//zvzvfvf
+	protected override void AvoidCollisions() {}
 
 	protected override void UpdateVelocity() {
 		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 		m_steering = m_steering / m_mass;
-		
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, m_currentMaxSpeed);
+
+		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
 
 		RaycastHit sensorA;
 		RaycastHit sensorB;
 		CheckGround(out sensorA, out sensorB);
 		if (m_velocity.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
 		else 					m_direction = (sensorB.point - sensorA.point).normalized;
+		m_orientation.SetDirection(m_direction);
 
+		m_currentSpeed = m_velocity.magnitude;
 		m_velocityProject = Vector3.Project(m_velocity, m_direction);
+		m_velocityProject = m_velocityProject.normalized * m_currentSpeed;
 
-		m_currentSpeed = m_velocityProject.magnitude;
-		
-		Debug.DrawLine(m_position, m_position + m_velocityProject, m_velocityColor);
+		Debug.DrawLine(m_position, m_position + m_velocityProject, Color.white);
 	}
 
 	protected override void UpdatePosition() {
@@ -40,7 +41,7 @@ public class GroundPreyMotion : PreyMotion {
 		bool hit_L = false;
 		bool hit_R = false;
 
-		Vector3 leftSensor  = m_lastPosition + Vector2.up * 5f;
+		Vector3 leftSensor  = m_groundSensor.position;
 		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
 
 		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);

@@ -31,35 +31,8 @@ public class PopupMissions : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Component has been enabled
-	/// </summary>
-	private void OnEnable() {
-		// Add delegates
-		PopupController popup = GetComponent<PopupController>();
-		popup.OnClosePostAnimation += OnClosePostAnimation;
-	}
-
-	/// <summary>
-	/// Component has been disabled
-	/// </summary>
-	private void OnDisable() {
-		// Add delegates
-		PopupController popup = GetComponent<PopupController>();
-		popup.OnClosePostAnimation -= OnClosePostAnimation;
-	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Close animation finished.
-	/// </summary>
-	private void OnClosePostAnimation() {
-		// Keep playing - only if we're in the game scene
-		GameSceneController gameScene = InstanceManager.GetSceneController<GameSceneController>();
-		if(gameScene != null) {
-			gameScene.PauseGame(false);
-		}
-	}
 }

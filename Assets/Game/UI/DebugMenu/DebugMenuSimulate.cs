@@ -19,11 +19,6 @@ using System;
 /// </summary>
 public class DebugMenuSimulate : MonoBehaviour {
 	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string EVENT_SIMULATION_FINISHED = typeof(DebugMenuSimulate).Name +  "_EVENT_DRAGON_CHANGED";
-
-	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Simulation parameters
@@ -104,6 +99,6 @@ public class DebugMenuSimulate : MonoBehaviour {
 		popup.Init(duration, rewardXp, rewardCoins, rewardPc, levelUpCount, factor);
 
 		// Notify game
-		Messenger.Broadcast(EVENT_SIMULATION_FINISHED);
+		Messenger.Broadcast(GameEvents.DEBUG_SIMULATION_FINISHED);
 	}
 }

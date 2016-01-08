@@ -34,6 +34,7 @@ public class CircleArea2DEditor : Editor {
 			isTargetDirty = isTargetDirty || UpdateVerticalHandles();
 
 			if (isTargetDirty) {
+				UpdateBounds();
 				EditorUtility.SetDirty(m_target);
 			}
 		}
@@ -50,6 +51,7 @@ public class CircleArea2DEditor : Editor {
 			m_target.color = EditorGUILayout.ColorField("Color", m_target.color);
 
 			if (GUI.changed) {
+				UpdateBounds();
 				EditorUtility.SetDirty(m_target);
 			}
 		}
@@ -144,5 +146,10 @@ public class CircleArea2DEditor : Editor {
 		Handles.color = new Color(0.76f, 0.23f, 0.13f, 1f);
 		float size = HandleUtility.GetHandleSize(Vector3.zero) * 0.05f;
 		return Handles.FreeMoveHandle(_pos, Quaternion.identity, size, Vector3.zero, Handles.DotCap);
+	}
+
+	private void UpdateBounds() {
+		Vector3 size = Vector3.one * m_target.radius * 2f;
+		m_target.bounds.UpdateBounds(m_target.center, size);
 	}
 }

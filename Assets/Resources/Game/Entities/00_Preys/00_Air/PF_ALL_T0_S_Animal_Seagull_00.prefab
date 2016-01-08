@@ -291,6 +291,7 @@ GameObject:
   - 114: {fileID: 11457498}
   - 114: {fileID: 11478440}
   - 114: {fileID: 11463106}
+  - 114: {fileID: 11482712}
   m_Layer: 8
   m_Name: PF_ALL_T0_S_Animal_Seagull_00
   m_TagString: Untagged
@@ -306,7 +307,7 @@ Transform:
   m_GameObject: {fileID: 196200}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -218.8, y: 49.2, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 402672}
   m_Father: {fileID: 0}
@@ -587,8 +588,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.27256957, y: 0.26508617}
-  radius: 0.9307709
+  offset: {x: 0.14483824, y: 0.14799404}
+  radius: 0.40917206
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11438482
 MonoBehaviour:
@@ -670,19 +671,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 1
   m_zOffset:
     min: -1
     max: 1
   m_flockAvoidRadiusRange:
-    min: 6
-    max: 7
+    min: 5
+    max: 6
   m_steerForce: 0.1
   m_mass: 0.2
-  m_distanceAttenuation: 12
-  m_maxSpeed: 4.5
+  m_distanceAttenuation: 8
+  m_maxSpeed: 6
   m_maxRunSpeed: 8
-  m_slowingRadius: 0
+  m_slowingRadius: 3
 --- !u!114 &11463106
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -695,6 +695,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canBeAfraid: 0
+  m_canPanic: 0
 --- !u!114 &11468634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -711,9 +712,9 @@ MonoBehaviour:
     score: 11
     coins: 5
     pc: 0
-    health: 15
+    health: 3
     energy: 0
-    fury: 5
+    fury: 3
     xp: 0.6
   m_goldenChance: 0.02
   m_pcChance: 0
@@ -739,10 +740,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 4
+  m_sensorMinRadius: 5
   m_sensorMaxRadius: 10
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
+--- !u!114 &11482712
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 196200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_faceDirection: 0
 --- !u!137 &13774860
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -816,7 +829,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_steerForce
-      value: .100000001
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
@@ -828,7 +841,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadius
@@ -844,7 +857,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
@@ -852,7 +865,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_avoidRadiusRange.min
@@ -872,7 +885,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 4.5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
@@ -928,7 +941,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_flockAvoidRadiusRange.max
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_goldenChance
@@ -968,7 +981,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_flockAvoidRadiusRange.min
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fleeForceFactor
@@ -988,7 +1001,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_distanceAttenuation
-      value: 12
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.health
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

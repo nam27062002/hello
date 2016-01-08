@@ -8,8 +8,11 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -44,6 +47,8 @@ namespace LevelEditor {
 			new SectionDummies()
 		};
 
+		private Dictionary<string, ILevelEditorSection> m_tabs = new Dictionary<string, ILevelEditorSection>();
+
 		// Styles
 		private Styles m_styles = null;	// Can't be initialized here
 
@@ -71,11 +76,6 @@ namespace LevelEditor {
 		public SectionSpawners sectionSpawners { get { return m_sections[3] as SectionSpawners; }}
 		public SectionDecos sectionDecos { get { return m_sections[4] as SectionDecos; }}
 		public SectionDummies sectionDummies { get { return m_sections[5] as SectionDummies; }}
-		private ILevelEditorSection[] tabbedSections {
-			get {
-				return new ILevelEditorSection[] { sectionGround, sectionSpawners, sectionDecos, sectionDummies };
-			}
-		}
 
 		// Styles shortcut
 		public Styles styles { get { return m_styles; }}
@@ -83,6 +83,14 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
 		//------------------------------------------------------------------//
+		public LevelEditorWindow() {
+			// Initialize tabs dictionary
+			m_tabs.Add("Spawners", sectionSpawners);
+			m_tabs.Add("Collisions", sectionGround);
+			m_tabs.Add("Decorations", sectionDecos);
+			m_tabs.Add("Dummies", sectionDummies);
+		}
+
 		/// <summary>
 		/// The window has been enabled - similar to the constructor.
 		/// </summary>
@@ -98,6 +106,9 @@ namespace LevelEditor {
 		/// The window has been disabled - similar to the destructor.
 		/// </summary>
 		public void OnDisable() {
+			// Remove editor scene
+			CloseLevelEditorScene();
+
 			// Unsubscribe from the event
 			EditorApplication.playmodeStateChanged -= OnPlayModeChanged;
 
@@ -121,6 +132,9 @@ namespace LevelEditor {
 		/// Called less times as if it was OnGUI/Update
 		/// </summary>
 		public void OnInspectorUpdate() {
+			// Make sure level editor scene is open
+			OpenLevelEditorScene();
+
 			// Force repainting while loading asset previews
 			if(AssetPreview.IsLoadingAssetPreviews()) {
 				Repaint();
@@ -147,25 +161,24 @@ namespace LevelEditor {
 		}
 
 		/// <summary>
-		/// Load all the stuff specific from the level editor. If already loaded, it will be reloaded.
+		/// Load the level editor scene additively, provided it's not already loaded.
 		/// </summary>
-		public void LoadLevelEditorStuff() {
-			// Make sure we don't have it twice
-			UnloadLevelEditorStuff();
-			
-			// Load it as an additive scene into the current one
-			EditorApplication.OpenSceneAdditive(EDITOR_SCENE_PATH);
+		public void OpenLevelEditorScene() {
+			// If editor scene was not loaded, do it
+			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
+			if(levelEditorScene == null || !levelEditorScene.isLoaded) {
+				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
+			}
 		}
 		
 		/// <summary>
 		/// Unloads the level editor specific stuff.
 		/// </summary>
-		public void UnloadLevelEditorStuff() {
-			// Just destroy all objects with the level editor tag
-			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
-			for(int i = 0; i < editorStuff.Length; i++) {
-				GameObject.DestroyImmediate(editorStuff[i]);
-				editorStuff[i] = null;
+		public void CloseLevelEditorScene() {
+			// Just do it
+			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
+			if(levelEditorScene != null) {
+				bool success = EditorSceneManager.CloseScene(levelEditorScene, true);
 			}
 		}
 
@@ -185,6 +198,15 @@ namespace LevelEditor {
 			EditorGUI.indentLevel = 0;
 
 			EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true)); {
+				// Mode selector
+				LevelEditorSettings.Mode newMode = (LevelEditorSettings.Mode)GUILayout.Toolbar((int)LevelEditor.settings.selectedMode, new string[] {"SPAWNERS", "COLLISION", "ART" }, GUILayout.Height(50));
+				if(newMode != LevelEditor.settings.selectedMode) {
+					// Mode changed! Do whatever needed
+					LevelEditor.settings.selectedMode = newMode;
+					LevelEditor.settings.selectedTab = 0;	// Reset selected tab
+					AssetDatabase.SaveAssets();	// Record settings
+				}
+
 				// Draw sections
 				// Level section - always drawn
 				sectionLevels.OnGUI();
@@ -198,18 +220,25 @@ namespace LevelEditor {
 					// Tabbed sections
 					GUILayout.Space(10f);
 					EditorGUILayout.BeginVertical(styles.boxStyle); {
-						// Tab selector
-						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, new string[] {"Collisions", "Spawners", "Decorations", "Dummies" });
+						// Tab selector - different options based on mode
+						List<string> tabNames = new List<string>();
+						switch(LevelEditor.settings.selectedMode) {
+							case LevelEditorSettings.Mode.SPAWNERS:		tabNames = new List<string>(new string[] { "Spawners", "Dummies" });	break;
+							case LevelEditorSettings.Mode.COLLISION:	tabNames = new List<string>(new string[] { "Collisions" });				break;
+							case LevelEditorSettings.Mode.ART:			tabNames = new List<string>(new string[] { "Decorations" });			break;
+						}
+						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, tabNames.ToArray());
 
 						// If tab has changed, Init new tab
 						if(newTab != LevelEditor.settings.selectedTab) {
-							tabbedSections[newTab].Init();
+							m_tabs[tabNames[newTab]].Init();
+							LevelEditor.settings.selectedTab = newTab;
+							AssetDatabase.SaveAssets();	// Record settings
 						}
-						LevelEditor.settings.selectedTab = newTab;
 
 						// Tab content
 						EditorGUILayout.BeginVertical(styles.boxStyle, GUILayout.ExpandHeight(true)); {
-							tabbedSections[newTab].OnGUI();
+							m_tabs[tabNames[newTab]].OnGUI();
 						} EditorGUILayoutExt.EndVerticalSafe();
 					} EditorGUILayoutExt.EndVerticalSafe();
 				}
@@ -276,11 +305,7 @@ namespace LevelEditor {
 			Init();
 
 			// Make sure we have the level editor stuff loaded
-			// This could be quite hardcore on performance, maybe do it less frequently
-			GameObject[] editorStuff = GameObject.FindGameObjectsWithTag(LevelEditor.TAG);
-			if(editorStuff.Length == 0) {
-				LoadLevelEditorStuff();
-			}
+			OpenLevelEditorScene();
 
 			// Force a repaint
 			Repaint();

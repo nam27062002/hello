@@ -17,12 +17,12 @@ public class FlamableBehaviour : MonoBehaviour {
 	void Awake() {
 		entity = GetComponent<GameEntity>();
 		hasBurned = false;
-		Messenger.AddListener<Vector3,float>("OnExplosion",OnExplosion);
+		// [AOC] OLD MESSENGER! Messenger.AddListener<Vector3,float>("OnExplosion",OnExplosion);
 		Initialize();
 	}
 
 	void OnDestroy(){
-		Messenger.RemoveListener<Vector3,float>("OnExplosion",OnExplosion);
+		// [AOC] OLD MESSENGER! Messenger.RemoveListener<Vector3,float>("OnExplosion",OnExplosion);
 	}
 
 	public void Burn(Vector3 pos, float power = 10f) {

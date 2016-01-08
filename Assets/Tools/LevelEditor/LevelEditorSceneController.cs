@@ -45,6 +45,13 @@ namespace LevelEditor {
 		}
 
 		/// <summary>
+		/// First update.
+		/// </summary>
+		private void Start() {
+			InstanceManager.player.MoveToSpawnPoint();
+		}
+
+		/// <summary>
 		/// Component enabled.
 		/// </summary>
 		void OnEnable() {

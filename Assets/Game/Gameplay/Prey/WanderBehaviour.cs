@@ -86,7 +86,8 @@ public class WanderBehaviour : Initializable {
 			}
 			
 			m_motion.Seek(m_target);
-			//m_motion.ApplySteering();
+		} else {
+			m_motion.Stop();
 		}
 	}
 
@@ -138,26 +139,32 @@ public class WanderBehaviour : Initializable {
 	}
 
 	private Vector2 IncrementalMovement() {
-		Vector2 displacementCenter = m_motion.velocity;
-		displacementCenter.Normalize();
-		displacementCenter *= m_displacementDistance;
+		Vector2 target;
 
-		Vector2 displacementForce = Vector2.right;
-		displacementForce.x = Mathf.Cos(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
-		displacementForce.y = Mathf.Sin(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
+		if (m_area.Contains(transform.position)) {
+			Vector2 displacementCenter = m_motion.velocity;
+			displacementCenter.Normalize();
+			displacementCenter *= m_displacementDistance;
 
-		Vector2 target = m_motion.position + displacementCenter + displacementForce;
-		if (!m_area.Contains(target)) { //move backwards?
-			target = m_motion.position - (displacementCenter + displacementForce);
+			Vector2 displacementForce = Vector2.right;
+			displacementForce.x = Mathf.Cos(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
+			displacementForce.y = Mathf.Sin(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
 
-			Vector2 dir = m_motion.direction;
-			if (dir.x < 0 && dir.y > 0 || dir.x > 0 && dir.y < 0)
-				m_displacementAngle += Random.Range(60f, 120f) / m_displacementDistance;
-			else
-				m_displacementAngle -= Random.Range(60f, 120f) / m_displacementDistance;
+			target = m_motion.position + displacementCenter + displacementForce;
+			if (!m_area.Contains(target)) { //move backwards?
+				target = m_motion.position - (displacementCenter + displacementForce);
+
+				Vector2 dir = m_motion.direction;
+				if (dir.x < 0 && dir.y > 0 || dir.x > 0 && dir.y < 0)
+					m_displacementAngle += Random.Range(60f, 120f) / m_displacementDistance;
+				else
+					m_displacementAngle -= Random.Range(60f, 120f) / m_displacementDistance;
+			}
+
+			m_displacementAngle += Random.Range(-m_angleIncrement, m_angleIncrement);
+		} else {
+			target = m_area.RandomInside();
 		}
-
-		m_displacementAngle += Random.Range(-m_angleIncrement, m_angleIncrement);
 
 		return target;
 	}

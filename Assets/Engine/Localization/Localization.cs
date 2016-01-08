@@ -18,11 +18,6 @@ using System.Globalization;
 /// </summary>
 public static class Localization {
 	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string EVENT_LANGUAGE_CHANGED = "EVENT_LANGUAGE_CHANGED";
-
-	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Current localization code as defined by the C# standards
@@ -55,7 +50,7 @@ public static class Localization {
 		System.Threading.Thread.CurrentThread.CurrentCulture = _culture;
 
 		// Notify the rest of the game
-		Messenger.Broadcast(EVENT_LANGUAGE_CHANGED);
+		Messenger.Broadcast(EngineEvents.EVENT_LANGUAGE_CHANGED);
 	}
 
 	/// <summary>

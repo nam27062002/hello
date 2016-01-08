@@ -65,12 +65,14 @@ public class DragonMotion : MonoBehaviour {
 
 	private State m_state;
 
+	private float m_impulseTransformationSpeed;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 
-	public Transform tongue { get { return transform.FindSubObjectTransform("Fire_Dummy"); } }
-	public Transform head { get { return transform.FindSubObjectTransform("Dragon_Head"); } }
+	public Transform tongue { get { return transform.FindTransformRecursive("Fire_Dummy"); } }
+	public Transform head { get { return transform.FindTransformRecursive("Dragon_Head"); } }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -110,6 +112,9 @@ public class DragonMotion : MonoBehaviour {
 		m_rbody = GetComponent<Rigidbody>();
 
 		m_height = 10f;
+
+		// TODO (miguel): This should come from dragon settings
+		m_impulseTransformationSpeed = 25.0f;
 	}
 
 	/// <summary>
@@ -271,7 +276,7 @@ public class DragonMotion : MonoBehaviour {
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
 			float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
-			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier() * speedUp, 0.25f); //accelerate from stop to normal or boost velocity
+			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier() * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
 			ComputeFinalImpulse(impulse);
 
@@ -332,7 +337,7 @@ public class DragonMotion : MonoBehaviour {
 			}			
 		} else {
 			// on air impulse formula, we don't fully change the velocity vector 
-			m_impulse = Vector3.Lerp(m_impulse, _impulse, 0.5f);
+			m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
 			m_impulse.Normalize();
 			m_direction = m_impulse;
 		}			
