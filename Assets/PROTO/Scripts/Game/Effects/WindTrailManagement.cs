@@ -13,7 +13,7 @@ public class WindTrailManagement : MonoBehaviour
 	void Start () 
 	{
 		m_trailPrefab = Resources.Load("Proto/WeatherEffects/WindTrail") as GameObject;
-		m_trailPool = new Pool(m_trailPrefab, transform, 10, true, true);	// [AOC] Create new container if given container is the Pool Manager.
+		m_trailPool = new Pool(m_trailPrefab, null, 10, true, true);	// [AOC] Create new container if given container is the Pool Manager.
 		m_canSpawnTrails = true;
 		m_spawnSize = new Vector2( 10, 10);
 		timeToSpawn = Random.Range( 1.0f, 10.0f);
@@ -36,7 +36,7 @@ public class WindTrailManagement : MonoBehaviour
 	void SpawnTrail()
 	{
 		GameObject newTrail = m_trailPool.Get();
-		newTrail.transform.parent = null;
+		// newTrail.transform.parent = null;
 		newTrail.transform.position = transform.position + new Vector3( Random.Range( -m_spawnSize.x, m_spawnSize.x), Random.Range(-m_spawnSize.y, m_spawnSize.y), 0 );
 
 	}

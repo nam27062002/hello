@@ -23,6 +23,7 @@ public class WindTrail : MonoBehaviour {
 	void CustomStart () 
 	{
 		m_trailRenderer = GetComponent<TrailRenderer>();
+		m_trailRenderer.sortingLayerName = "player";
 		m_trailRenderer.Clear();
 		m_position = transform.position;
 		m_initialY = m_position.y;
