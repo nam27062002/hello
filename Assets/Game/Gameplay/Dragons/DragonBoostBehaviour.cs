@@ -29,6 +29,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_active = false;
 		m_ready = true;
 
+		for( int i = 0; i<m_trails.Count; i++ )
+		{
+			TrailRenderer tr = m_trails[i].GetComponent<TrailRenderer>();
+			tr.sortingLayerName = "player";
+		}
+
 		DeactivateTrails();
 	}
 
