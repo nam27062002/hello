@@ -1,0 +1,185 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fedba3eb169c48acb5c34e39b3761ea, type: 3}
+  m_Name: DragonDefinitions
+  m_EditorClassIdentifier: 
+  m_defsList:
+  - m_sku: dragon_small
+    m_tier: 0
+    m_menuOrder: 0
+    m_tidName: TID_DRAGON_SMALL_NAME
+    m_tidDescription: TID_DRAGON_SMALL_DESC
+    m_prefabPath: Game/Dragons/PF_DragonSmall
+    m_menuPrefabPath: UI/Menu/Dragons/PF_DragonSmallMenu
+    m_cameraZoomOffset: 20
+    m_unlockPriceCoins: 0
+    m_unlockPricePC: 0
+    m_levelsXp:
+    - 0
+    - 10
+    - 25
+    - 50
+    - 80
+    - 115
+    - 165
+    - 225
+    - 320
+    - 500
+    m_healthRange:
+      min: 25
+      max: 75
+    m_scaleRange:
+      min: 0.68
+      max: 0.88
+    m_healthDrainPerSecond: 1.5
+    m_maxEnergy: 70
+    m_energyDrainPerSecond: 15
+    m_energyRefillPerSecond: 8
+    m_maxFury: 140
+    m_furyDuration: 10
+    m_biteSkill:
+      m_sku: skill_bite
+      m_valueRange:
+        min: 0.25
+        max: 0.025
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+    m_speedSkill:
+      m_sku: skill_speed
+      m_valueRange:
+        min: 8.6
+        max: 9.6
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+    m_boostSkill:
+      m_sku: skill_boost
+      m_valueRange:
+        min: 1.9
+        max: 2.4
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+    m_fireSkill:
+      m_sku: skill_fire
+      m_valueRange:
+        min: 1
+        max: 2
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
+  - m_sku: dragon_medium
+    m_tier: 2
+    m_menuOrder: 1
+    m_tidName: TID_DRAGON_MEDIUM_NAME
+    m_tidDescription: TID_DRAGON_MEDIUM_DESC
+    m_prefabPath: Game/Dragons/PF_DragonMedium
+    m_menuPrefabPath: UI/Menu/Dragons/PF_DragonMediumMenu
+    m_cameraZoomOffset: 5.5
+    m_unlockPriceCoins: 1000
+    m_unlockPricePC: 20
+    m_levelsXp:
+    - 0
+    - 8
+    - 22
+    - 45
+    - 84
+    - 143
+    - 228
+    - 345
+    - 558
+    - 1000
+    m_healthRange:
+      min: 75
+      max: 125
+    m_scaleRange:
+      min: 1.45
+      max: 1.8
+    m_healthDrainPerSecond: 10
+    m_maxEnergy: 160
+    m_energyDrainPerSecond: 10
+    m_energyRefillPerSecond: 25
+    m_maxFury: 140
+    m_furyDuration: 15
+    m_biteSkill:
+      m_sku: skill_bite
+      m_valueRange:
+        min: 0.125
+        max: 0.0125
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+    m_speedSkill:
+      m_sku: skill_speed
+      m_valueRange:
+        min: 12.3
+        max: 15.4
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+    m_boostSkill:
+      m_sku: skill_boost
+      m_valueRange:
+        min: 2.5
+        max: 4.5
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+    m_fireSkill:
+      m_sku: skill_fire
+      m_valueRange:
+        min: 1
+        max: 2
+      m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
+  - m_sku: dragon_big
+    m_tier: 2
+    m_menuOrder: 2
+    m_tidName: TID_DRAGON_BIG_NAME
+    m_tidDescription: TID_DRAGON_BIG_DESC
+    m_prefabPath: Game/Dragons/PF_DragonBig
+    m_menuPrefabPath: UI/Menu/Dragons/PF_DragonBigMenu
+    m_cameraZoomOffset: 30
+    m_unlockPriceCoins: 6500
+    m_unlockPricePC: 150
+    m_levelsXp:
+    - 0
+    - 15
+    - 67
+    - 172
+    - 366
+    - 675
+    - 1120
+    - 1735
+    - 2809
+    - 5000
+    m_healthRange:
+      min: 125
+      max: 200
+    m_scaleRange:
+      min: 2.49
+      max: 2.69
+    m_healthDrainPerSecond: 2
+    m_maxEnergy: 200
+    m_energyDrainPerSecond: 50
+    m_energyRefillPerSecond: 40
+    m_maxFury: 150
+    m_furyDuration: 10
+    m_biteSkill:
+      m_sku: skill_bite
+      m_valueRange:
+        min: 0.05
+        max: 0.005
+      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
+    m_speedSkill:
+      m_sku: skill_speed
+      m_valueRange:
+        min: 16.6
+        max: 17.6
+      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
+    m_boostSkill:
+      m_sku: skill_boost
+      m_valueRange:
+        min: 2
+        max: 2.5
+      m_unlockPrices: 00000000000000006400000000000000c8000000000000002c010000000000009001000000000000f401000000000000
+    m_fireSkill:
+      m_sku: skill_fire
+      m_valueRange:
+        min: 1
+        max: 2
+      m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000

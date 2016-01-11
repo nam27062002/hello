@@ -70,11 +70,11 @@ namespace LevelEditor {
 				Colors.pink
 			};
 			
-			float d1 = 0.5f;
-			float d2 = 0.66f;
+			//float d1 = 0.5f;
+			//float d2 = 0.66f;
 			List<Color> colorIt1 = new List<Color>();
 			for(int i = 0; i < baseColors.Length; i++) {
-				int j = (i+1)%baseColors.Length;	// 0 for last color
+				//int j = (i+1)%baseColors.Length;	// 0 for last color
 				
 				colorIt1.Add(baseColors[i]);
 				//colorIt1.Add(Color.Lerp(baseColors[i], baseColors[j], d1));

@@ -33,7 +33,7 @@ public class MineBehaviour : Initializable {
 		
 		EdibleBehaviour edible = GetComponent<EdibleBehaviour>();
 		if (edible != null) {
-			if (edible.edibleFromTier <= InstanceManager.player.data.tier) {
+			if (edible.edibleFromTier <= InstanceManager.player.data.def.tier) {
 				enabled = false;
 			}
 		}

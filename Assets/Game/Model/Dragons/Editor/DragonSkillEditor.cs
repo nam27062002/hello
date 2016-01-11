@@ -19,7 +19,7 @@ using UnityEditor;
 /// Skill type can't be change and will be used as label.
 /// Unlock prices is an array of fixed length (6) with custom labels for each level, but we want to allow folding it.
 /// </summary>
-[CustomPropertyDrawer(typeof(DragonSkill))]
+//[CustomPropertyDrawer(typeof(DragonSkill))]
 public class DragonSkillEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//

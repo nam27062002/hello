@@ -23,6 +23,7 @@ public class DragonData {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	// All dragons have the same amount of levels
+	[System.Obsolete]
 	public static readonly int NUM_LEVELS = 10;
 
 	/// <summary>
@@ -31,10 +32,13 @@ public class DragonData {
 	[Serializable]
 	public class SaveData {
 		// Only dynamic data is relevant
-		[HideEnumValues(true, true)] public DragonId id;	// We don't trust the array order however, so keep the unique dragon ID with each data pack
+		[SkuList(typeof(DragonDef), false)] public string sku;
 		public float xp = 0;
 		public int level = 0;
-		public int[] skillLevels = new int[(int)DragonSkill.EType.COUNT];
+		public int biteSkillLevel = 0;
+		public int speedSkillLevel = 0;
+		public int boostSkillLevel = 0;
+		public int fireSkillLevel = 0;
 		public bool owned = false;
 	}
 
@@ -49,37 +53,11 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// General Data
-	[SerializeField] [HideEnumValues(true, true)] private DragonId m_id = DragonId.NONE;
-	public DragonId id { get { return m_id; }}
-	
-	[SerializeField] [HideEnumValues(false, true)] private DragonTier m_tier = DragonTier.TIER_0;
-	public DragonTier tier { get { return m_tier; }}
-
-	[SerializeField] private string m_tidName = "";
-	public string tidName { get { return m_tidName; }}
-
-	[SerializeField] private string m_tidDescription = "";
-	public string tidDescription { get { return m_tidDescription; }}
-
-	[FileList("Resources/Game/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
-	[SerializeField] private string m_prefabPath = "";
-	public string prefabPath { get { return m_prefabPath; }}
-
-	[FileList("Resources/UI/Menu/Dragons", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
-	[SerializeField] private string m_menuPrefabPath = "";
-	public string menuPrefabPath { get { return m_menuPrefabPath; }}
-
-	[SerializeField] private float m_cameraZoomOffset = 0f;
-	public float cameraZoomOffset { get { return m_cameraZoomOffset; }}
+	// Definition
+	[SerializeField] private DragonDef m_def = null;
+	public DragonDef def { get { return m_def; }}
 
 	// Progression
-	[SerializeField] private int m_unlockPriceCoins = 0;
-	public int unlockPriceCoins { get { return m_unlockPriceCoins; }}
-
-	[SerializeField] private int m_unlockPricePC = 0;
-	public int unlockPricePC { get { return m_unlockPricePC; }}
-
 	[SerializeField] private bool m_owned = false;
 	public LockState lockState { get { return GetLockState(); }}
 	public bool isLocked { get { return lockState == LockState.LOCKED; }}
@@ -89,59 +67,49 @@ public class DragonData {
 	public DragonProgression progression { get { return m_progression; }}
 
 	// Level-dependant stats
-	[SerializeField] private Range m_healthRange = new Range(1, 100);
 	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
-
-	[SerializeField] private Range m_scaleRange = new Range(0.5f, 1.5f);
-	private float m_scaleOffset = 0;
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
-	// Constant stats
-	[SerializeField] private float m_healthDrainPerSecond = 10f;
-	public float healthDrainPerSecond { get { return m_healthDrainPerSecond; }}
-
-	[SerializeField] private float m_maxEnergy = 160f;
-	public float maxEnergy { get { return m_maxEnergy; }}
-
-	[SerializeField] private float m_energyDrainPerSecond = 10f;
-	public float energyDrainPerSecond { get { return m_energyDrainPerSecond; }}
-	
-	[SerializeField] private float m_energyRefillPerSecond = 25f;
-	public float energyRefillPerSecond { get { return m_energyRefillPerSecond; }}
-
-	[SerializeField] private float m_maxFury = 160f;
-	public float maxFury { get { return m_maxFury; }}
-	
-	[SerializeField] private float m_furyDuration = 15f; //seconds
-	public float furyDuration { get { return m_furyDuration; }}
-
 	// Skills
-	[SerializeField] private DragonSkill[] m_skills;
-	public DragonSkill[] skills { get { return m_skills; }}
-	public DragonSkill bite { get { return GetSkill(DragonSkill.EType.BITE); }}
-	public DragonSkill speed { get { return GetSkill(DragonSkill.EType.SPEED); }}
-	public DragonSkill boost { get { return GetSkill(DragonSkill.EType.BOOST); }}
-	public DragonSkill fire { get { return GetSkill(DragonSkill.EType.FIRE); }}
+	[SerializeField] private DragonSkill m_biteSkill = null;
+	public DragonSkill biteSkill { get { return m_biteSkill; }}
+
+	[SerializeField] private DragonSkill m_speedSkill = null;
+	public DragonSkill speedSkill { get { return m_speedSkill; }}
+
+	[SerializeField] private DragonSkill m_boostSkill = null;
+	public DragonSkill boostSkill { get { return m_boostSkill; }}
+
+	[SerializeField] private DragonSkill m_fireSkill = null;
+	public DragonSkill fireSkill { get { return m_fireSkill; }}
 
 	// Items
 	// [AOC] TODO!!
+
+	// Debug
+	private float m_scaleOffset = 0;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Default constructor
+	/// Initialization using a definition. Should be called immediately after the constructor.
 	/// </summary>
-	public DragonData() {
+	/// <param name="_def">The definition of this dragon.</param>
+	public void Init(DragonDef _def) {
+		// Store definition
+		m_def = _def;
+
 		// Progression
 		m_progression = new DragonProgression(this);
 		
 		// Skills
-		m_skills = new DragonSkill[(int)DragonSkill.EType.COUNT];
-		for(int i = 0; i < m_skills.Length; i++) {
-			m_skills[i] = new DragonSkill(this, (DragonSkill.EType)i);
-		}
+		m_biteSkill = new DragonSkill(this, _def.biteSkill);
+		m_speedSkill = new DragonSkill(this, _def.speedSkill);
+		m_boostSkill = new DragonSkill(this, _def.boostSkill);
+		m_fireSkill = new DragonSkill(this, _def.fireSkill);
 
+		// Other values
 		m_scaleOffset = 0;
 	}
 
@@ -152,9 +120,19 @@ public class DragonData {
 	/// Gets the skill.
 	/// </summary>
 	/// <returns>The skill.</returns>
-	/// <param name="_type">_type.</param>
-	public DragonSkill GetSkill(DragonSkill.EType _type) {
-		return m_skills[(int)_type];
+	/// <param name="_sku">The sku of the wanted skill.</param>
+	public DragonSkill GetSkill(string _sku) {
+		// [AOC] Quick'n'dirty
+		if(m_biteSkill.def.sku == _sku) {
+			return m_biteSkill;
+		} else if(m_speedSkill.def.sku == _sku) {
+			return m_speedSkill;
+		} else if(m_boostSkill.def.sku == _sku) {
+			return m_boostSkill;
+		} else if(m_fireSkill.def.sku == _sku) {
+			return m_fireSkill;
+		}
+		return null;
 	}
 
 	/// <summary>
@@ -164,7 +142,7 @@ public class DragonData {
 	/// <param name="_level">The level at which we want to know the max health value.</param>
 	public float GetMaxHealthAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
-		return m_healthRange.Lerp(levelDelta);
+		return def.healthRange.Lerp(levelDelta);
 	}
 
 	/// <summary>
@@ -174,14 +152,14 @@ public class DragonData {
 	/// <param name="_level">The level at which we want to know the scale value.</param>
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
-		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
+		return def.scaleRange.Lerp(levelDelta) + m_scaleOffset;
 	}
 
 	/// <summary>
 	/// Offsets speed value. Used for Debug purposes on Preproduction fase.
 	/// </summary>
 	public void OffsetSpeedValue(float _speed) {
- 		GetSkill(DragonSkill.EType.SPEED).OffsetValue(_speed);
+		m_speedSkill.OffsetValue(_speed);
 	}
 
 	/// <summary>
@@ -200,7 +178,7 @@ public class DragonData {
 		if(m_owned) return LockState.OWNED;
 
 		// b) Is tier unlocked?
-		if(DragonManager.IsTierUnlocked(this.tier)) {
+		if(DragonManager.IsTierUnlocked(this.def.tier)) {
 			return LockState.AVAILABLE;
 		}
 
@@ -232,7 +210,7 @@ public class DragonData {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SaveData _data) {
 		// Make sure the persistence object corresponds to this dragon
-		if(!DebugUtils.Assert(_data.id == id, "Attempting to load persistence data corresponding to a different dragon ID, aborting")) {
+		if(!DebugUtils.Assert(_data.sku == def.sku, "Attempting to load persistence data corresponding to a different dragon ID, aborting")) {
 			return;
 		}
 
@@ -240,9 +218,11 @@ public class DragonData {
 		m_owned = _data.owned;
 		progression.Load(_data.xp, _data.level);
 
-		for(int i = 0; i < _data.skillLevels.Length; i++) {
-			m_skills[i].Load(_data.skillLevels[i]);
-		}
+		// Skills
+		m_biteSkill.Load(_data.biteSkillLevel);
+		m_speedSkill.Load(_data.speedSkillLevel);
+		m_boostSkill.Load(_data.boostSkillLevel);
+		m_fireSkill.Load(_data.fireSkillLevel);
 	}
 	
 	/// <summary>
@@ -253,15 +233,15 @@ public class DragonData {
 		// Create new object, initialize and return it
 		SaveData data = new SaveData();
 
-		data.id = id;
+		data.sku = def.sku;
 		data.owned = m_owned;
 		data.xp = progression.xp;
 		data.level = progression.level;
 
-		data.skillLevels = new int[m_skills.Length];
-		for(int i = 0; i < m_skills.Length; i++) {
-			data.skillLevels[i] = m_skills[i].level;
-		}
+		data.biteSkillLevel = m_biteSkill.level;
+		data.speedSkillLevel = m_speedSkill.level;
+		data.boostSkillLevel = m_boostSkill.level;
+		data.fireSkillLevel = m_fireSkill.level;
 
 		return data;
 	}

@@ -110,7 +110,7 @@ namespace LevelEditor {
 			// Only if actually there are changes
 			if(changedIdx >= 0) {
 				// Different for horizontal and vertical axis
-				Vector3 oldAxis;
+				//Vector3 oldAxis;
 				Vector3 newAxis;
 				Vector3 newScale = targetPiece.transform.localScale;
 				Vector3 newPos = targetPiece.transform.position;
@@ -120,7 +120,7 @@ namespace LevelEditor {
 					Undo.RecordObject(targetPiece.transform, "GroundPiece Editing");
 
 					// Horizontal axis
-					oldAxis = changes[1].oldValue - changes[0].oldValue;
+					//oldAxis = changes[1].oldValue - changes[0].oldValue;
 					newAxis = changes[1].newValue - changes[0].newValue;
 					
 					// Position
@@ -140,7 +140,7 @@ namespace LevelEditor {
 
 					// Vertical axis
 					// [AOC] As requested by design, vertical handlers only affect scale, and only in the dragged edge
-					oldAxis = changes[3].oldValue - changes[2].oldValue;
+					//oldAxis = changes[3].oldValue - changes[2].oldValue;
 					newAxis = changes[3].newValue - changes[2].newValue;
 
 					// Scale

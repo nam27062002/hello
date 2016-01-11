@@ -97,6 +97,9 @@ public static class EditorGUILayoutExt {
 				_pos.y += _pos.height;
 				totalHeight += _pos.height;
 			}
+
+			// Indent back out
+			EditorGUI.indentLevel--;
 		}
 		
 		return totalHeight;

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -43,14 +44,14 @@ namespace LevelEditor {
 			if(dragonGroup != null) {
 				// Basic properties
 				dragonGroup.m_name = "Dragon Previews";
-				dragonGroup.m_data = new Object[(int)DragonId.COUNT];
-				dragonGroup.m_contents = new GUIContent[(int)DragonId.COUNT];
+				dragonGroup.m_data = new Object[DefinitionsManager.dragons.Count];
+				dragonGroup.m_contents = new GUIContent[DefinitionsManager.dragons.Count];
 
 				// Init contents
-				for(int i = 0; i < (int)DragonId.COUNT; i++) {
+				List<DragonDef> dragonDefs = DefinitionsManager.dragons.defsList;
+				for(int i = 0; i < dragonDefs.Count; i++) {
 					// Load the prefab for the dragon with the given ID
-					DragonData data = DragonManager.GetDragonData((DragonId)i);
-					GameObject prefabObj = Resources.Load<GameObject>(data.prefabPath);
+					GameObject prefabObj = Resources.Load<GameObject>(dragonDefs[i].prefabPath);
 					dragonGroup.m_data[i] = prefabObj;
 					dragonGroup.m_contents[i] = new GUIContent(prefabObj.name, AssetPreview.GetAssetPreview(prefabObj));
 				}

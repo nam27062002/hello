@@ -50,7 +50,6 @@ namespace LevelEditor {
 		/// </summary>
 		public override void OnInspectorGUI() {
 			// Init
-			EditorGUIUtility.LookLikeInspector();
 			EditorGUI.BeginChangeCheck();
 
 			// Draw default properties
@@ -70,7 +69,6 @@ namespace LevelEditor {
 			if(EditorGUI.EndChangeCheck()) {
 				serializedObject.ApplyModifiedProperties();
 			}
-			EditorGUIUtility.LookLikeControls();
 		}
 	}
 }

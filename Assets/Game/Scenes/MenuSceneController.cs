@@ -28,8 +28,8 @@ public class MenuSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private DragonId m_selectedDragon = DragonId.NONE;
-	public DragonId selectedDragon { get { return m_selectedDragon; }}
+	private string m_selectedDragon = "";
+	public string selectedDragon { get { return m_selectedDragon; }}
 
 	private string m_selectedLevel = "";
 	public string selectedLevel { get { return m_selectedLevel; }}
@@ -56,7 +56,7 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
@@ -66,7 +66,7 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.RemoveListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
@@ -117,21 +117,21 @@ public class MenuSceneController : SceneController {
 		PersistenceManager.Save();
 
 		// Simulate a dragon selected event so everything is refreshed
-		Messenger.Broadcast<DragonId>(GameEvents.MENU_DRAGON_SELECTED, selectedDragon);
+		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragon);
 	}
 
 	/// <summary>
 	/// The selected dragon has changed.
 	/// </summary>
 	/// <param name="_id">The id of the selected dragon.</param>
-	public void OnDragonSelected(DragonId _id) {
+	public void OnDragonSelected(string _sku) {
 		// Update menu selected dragon
-		m_selectedDragon = _id;
+		m_selectedDragon = _sku;
 
 		// If owned and different from profile's current dragon, update profile
-		if(_id != UserProfile.currentDragon && DragonManager.GetDragonData(_id).isOwned) {
+		if(_sku != UserProfile.currentDragon && DragonManager.GetDragonData(_sku).isOwned) {
 			// Update profile
-			UserProfile.currentDragon = _id;
+			UserProfile.currentDragon = _sku;
 		
 			// Save persistence
 			PersistenceManager.Save();
@@ -144,7 +144,7 @@ public class MenuSceneController : SceneController {
 	/// <param name="_data">The dragon that has been unlocked.</param>
 	public void OnDragonAcquired(DragonData _data) {
 		// Just make it the current dragon
-		OnDragonSelected(_data.id);
+		OnDragonSelected(_data.def.sku);
 	}
 
 	/// <summary>
