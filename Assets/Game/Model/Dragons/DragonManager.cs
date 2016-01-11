@@ -95,7 +95,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		List<DragonData> list = new List<DragonData>();
 		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
 			// Does this dragon match the required lockstate?
-			if(kvp.Value.lockState == _lockState) {
+			if(kvp.Value.lockState == _lockState || _lockState == DragonData.LockState.ANY) {
 				// Yes!! Add it to the list
 				list.Add(kvp.Value);
 			}
