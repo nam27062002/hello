@@ -61,14 +61,14 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 		if(m_infiniteDash != infiniteDash) {
 			m_infiniteDash = infiniteDash;
 		} else if(m_infiniteDash) {
-			InstanceManager.player.AddEnergy(InstanceManager.player.data.maxEnergy);
+			InstanceManager.player.AddEnergy(InstanceManager.player.data.def.maxEnergy);
 		}
 
 		// Infinite fire
 		if(m_infiniteFire != infiniteFire) {
 			m_infiniteFire = infiniteFire;
 		} else if(m_infiniteFire) {	// Prevent fire to turn off
-			InstanceManager.player.AddFury(InstanceManager.player.data.maxFury);
+			InstanceManager.player.AddFury(InstanceManager.player.data.def.maxFury);
 		}
 	}
 

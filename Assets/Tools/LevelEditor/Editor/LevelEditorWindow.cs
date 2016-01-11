@@ -121,8 +121,8 @@ namespace LevelEditor {
 		/// </summary>
 		public void Update() {
 			// If loaded scene has changed, check it.
-			if(EditorApplication.currentScene != m_sceneName) {
-				m_sceneName = EditorApplication.currentScene;
+			if(EditorSceneManager.GetActiveScene().name != m_sceneName) {
+				m_sceneName = EditorSceneManager.GetActiveScene().name;
 				Init();
 			}
 		}
@@ -152,7 +152,7 @@ namespace LevelEditor {
 			AssetPreview.SetPreviewTextureCacheSize(500);	// Increase if problems happen
 
 			// Store scene name
-			m_sceneName = EditorApplication.currentScene;
+			m_sceneName = EditorSceneManager.GetActiveScene().name;
 
 			// Init sections
 			for(int i = 0; i < m_sections.Length; i++) {
@@ -166,7 +166,7 @@ namespace LevelEditor {
 		public void OpenLevelEditorScene() {
 			// If editor scene was not loaded, do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
-			if(levelEditorScene == null || !levelEditorScene.isLoaded) {
+			if(!levelEditorScene.isLoaded) {
 				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
 			}
 		}
@@ -177,9 +177,7 @@ namespace LevelEditor {
 		public void CloseLevelEditorScene() {
 			// Just do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
-			if(levelEditorScene != null) {
-				bool success = EditorSceneManager.CloseScene(levelEditorScene, true);
-			}
+			EditorSceneManager.CloseScene(levelEditorScene, true);
 		}
 
 		//------------------------------------------------------------------//

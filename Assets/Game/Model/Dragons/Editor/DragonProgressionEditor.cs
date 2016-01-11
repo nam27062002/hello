@@ -16,7 +16,7 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the DragonLevelProgression class.
 /// </summary>
-[CustomPropertyDrawer(typeof(DragonProgression))]
+//[CustomPropertyDrawer(typeof(DragonProgression))]
 public class DragonProgressionEditor : PropertyDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -34,7 +34,6 @@ public class DragonProgressionEditor : PropertyDrawer {
 	// Useful to compute text widths and line heights
 	private GUIStyle m_labelStyle = new GUIStyle(EditorStyles.label);
 	private GUIStyle m_textAreaStyle = new GUIStyle(EditorStyles.textArea);
-	private GUIStyle m_numberFieldStyle = new GUIStyle(EditorStyles.numberField);
 	private float m_padding = 5f;	// Spacing between elements
 
 	//------------------------------------------------------------------//
@@ -53,9 +52,6 @@ public class DragonProgressionEditor : PropertyDrawer {
 	public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label) {
 		// [AOC] Unfortunately, custom Property Drawers do not support using EditorGUILayout, so we must keep 
 		//		 manual track of positions and heights.
-
-		// Aux vars
-		GUIContent content = new GUIContent();
 
 		// Define an area for the content
 		// [AOC] This is usually done when drawing the label via the EditorGUI.PrefixLabel method, but since we won't use a label for this property, do it manually

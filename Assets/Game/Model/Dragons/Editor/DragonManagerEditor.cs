@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Custom editor for the DragonLevelProgression class.
 /// </summary>
-[CustomEditor(typeof(DragonManager))]
+//[CustomEditor(typeof(DragonManager))]
 public class DragonManagerEditor : Editor {
 	//------------------------------------------------------------------//
 	// MEMBERS															//

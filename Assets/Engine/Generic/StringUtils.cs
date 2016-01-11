@@ -170,7 +170,7 @@ public class StringUtils {
 		switch(_format) {
 			case PathFormat.FULL_PATH: {
 				return _fullPath;
-			} break;
+			}
 
 			case PathFormat.PROJECT_ROOT: {
 				return _fullPath.Replace(Application.dataPath, "Assets");

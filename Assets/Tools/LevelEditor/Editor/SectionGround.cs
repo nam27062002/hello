@@ -149,7 +149,7 @@ namespace LevelEditor {
 			newLock.SetScaleLock(false, false, true);
 			
 			// Add a Ground Piece component as well to facilitate edition
-			GroundPiece groundComp = groundPieceObj.AddComponent<GroundPiece>();
+			groundPieceObj.AddComponent<GroundPiece>();
 			
 			// Make operation undoable
 			Undo.RegisterCreatedObjectUndo(groundPieceObj, "LevelEditor AddGroundPiece");

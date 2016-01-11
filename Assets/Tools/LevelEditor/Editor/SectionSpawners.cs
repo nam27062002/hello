@@ -23,7 +23,6 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		private static readonly string RESOURCES_DIR = "Game/Entities";
-		private static readonly string ROOT_DIR = "Resources/Game/";
 		private static readonly string PREFIX = "SP_";
 		
 		//------------------------------------------------------------------//

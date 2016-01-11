@@ -53,7 +53,7 @@ public class SkuListAttributeEditor : ExtendedPropertyDrawer {
 
 		// Figure out the list of options to be displayed
 		Type setType = typeof(DefinitionSet<>).MakeGenericType(new Type[] { attr.m_defType });	// Get the type of the definition set with our custom definition type
-		List<string> skus = (List<string>)setType.GetProperty("skus").GetValue(defSet, null);	// Use reflection once again to access the "defs" property, which we know for sure the DefinitionSet will have regardless of its definition type
+		List<string> skus = (List<string>)setType.GetProperty("skus").GetValue(defSet, null);	// Use reflection once again to access the "skus" property, which we know for sure the DefinitionSet will have regardless of its definition type
 
 		// Insert "NONE" option
 		if(attr.m_allowNullValue) {

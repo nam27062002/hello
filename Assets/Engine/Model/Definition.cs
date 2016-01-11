@@ -48,6 +48,17 @@ public class Definition : IEquatable<Definition>, IComparable<Definition> {
 	}
 
 	/// <summary>
+	/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="System.Object"/>.
+	/// Override this to avoid warning CS0660.
+	/// </summary>
+	/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="System.Object"/>.</param>
+	/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current <see cref="System.Object"/>; otherwise, <c>false</c>.</returns>
+	public override bool Equals(object obj) {
+		// Pass obj or null for non-Definition types to our Equals(Definition) override
+		return Equals(obj as Definition);
+	}
+
+	/// <summary>
 	/// Serves as a hash function for a <see cref="Definition"/> object.
 	/// </summary>
 	/// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a hash table.</returns>

@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -34,8 +35,21 @@ public static class PersistenceManager {
 		// Add here any required data
 		public DateTime timestamp = DateTime.UtcNow;
 		public UserProfile.SaveData profile = new UserProfile.SaveData();
-		public DragonData.SaveData[] dragons = new DragonData.SaveData[(int)DragonId.COUNT];
+		public DragonData.SaveData[] dragons = null;
 		public MissionManager.SaveData missions = new MissionManager.SaveData();
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public SaveData() {
+			// Dragons persistence requires a special initialization
+			List<string> dragonSkus = DefinitionsManager.dragons.skus;
+			dragons = new DragonData.SaveData[dragonSkus.Count];
+			for(int i = 0; i < dragonSkus.Count; i++) {
+				dragons[i] = new DragonData.SaveData();
+				dragons[i].sku = dragonSkus[i];
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//

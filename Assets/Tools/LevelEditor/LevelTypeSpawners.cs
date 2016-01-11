@@ -35,7 +35,7 @@ namespace LevelEditor {
 			base.Awake();
 
 			// Create default point if not already done
-			GetDragonSpawnPoint(DragonId.NONE, true);
+			GetDragonSpawnPoint("", true);
 		}
 
 		//------------------------------------------------------------------//
@@ -45,12 +45,12 @@ namespace LevelEditor {
 		/// Finds and returns the spawn point linked to a specific dragon in this level.
 		/// </summary>
 		/// <returns>The dragon spawn point.</returns>
-		/// <param name="_id">_id.</param>
+		/// <param name="_sku">Sku of the dragon whose spawn point we're looking for.</param>
 		/// <param name="_createItIfNotFound">If set to <c>true</c> _create it if not found.</param>
-		public GameObject GetDragonSpawnPoint(DragonId _id = DragonId.NONE, bool _createItIfNotFound = false) {
+		public GameObject GetDragonSpawnPoint(string _sku = "", bool _createItIfNotFound = false) {
 			// Generate game object name for this dragon
 			string name = DRAGON_SPAWN_POINT_NAME;
-			if(_id != DragonId.NONE && _id != DragonId.COUNT) name += _id.ToString();
+			if(!string.IsNullOrEmpty(_sku)) name += "_" + _sku.ToString();
 
 			// Does the level have a spawn point for this dragon?
 			GameObject spawnPointObj = gameObject.FindObjectRecursive(name);

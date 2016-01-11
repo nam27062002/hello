@@ -228,8 +228,7 @@ public class GameSceneController : SceneController {
 		// Actions to perform when leaving the current state
 		switch(m_state) {
 			case EStates.LOADING_LEVEL: {
-				// Delete loading task and get level object
-				LevelEditor.LevelTypeSpawners level = GameObject.FindObjectOfType<LevelEditor.LevelTypeSpawners>();
+				// Delete loading task
 				m_levelLoadingTask = null;
 
 				// Dispatch game event
