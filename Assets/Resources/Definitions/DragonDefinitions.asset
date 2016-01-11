@@ -39,17 +39,17 @@ MonoBehaviour:
     m_scaleRange:
       min: 0.68
       max: 0.88
-    m_healthDrainPerSecond: 1.5
+    m_healthDrainPerSecond: 1.2
     m_maxEnergy: 70
-    m_energyDrainPerSecond: 15
-    m_energyRefillPerSecond: 8
+    m_energyDrainPerSecond: 20
+    m_energyRefillPerSecond: 6
     m_maxFury: 140
     m_furyDuration: 10
     m_biteSkill:
       m_sku: skill_bite
       m_valueRange:
         min: 0.25
-        max: 0.025
+        max: 0.5
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
     m_speedSkill:
       m_sku: skill_speed
@@ -66,11 +66,11 @@ MonoBehaviour:
     m_fireSkill:
       m_sku: skill_fire
       m_valueRange:
-        min: 1
-        max: 2
+        min: 3
+        max: 4
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
   - m_sku: dragon_medium
-    m_tier: 2
+    m_tier: 1
     m_menuOrder: 1
     m_tidName: TID_DRAGON_MEDIUM_NAME
     m_tidDescription: TID_DRAGON_MEDIUM_DESC
@@ -96,7 +96,7 @@ MonoBehaviour:
     m_scaleRange:
       min: 1.45
       max: 1.8
-    m_healthDrainPerSecond: 10
+    m_healthDrainPerSecond: 1.5
     m_maxEnergy: 160
     m_energyDrainPerSecond: 10
     m_energyRefillPerSecond: 25
@@ -123,8 +123,8 @@ MonoBehaviour:
     m_fireSkill:
       m_sku: skill_fire
       m_valueRange:
-        min: 1
-        max: 2
+        min: 4
+        max: 5
       m_unlockPrices: 0000000000000000320000000000000064000000000000009600000000000000c800000000000000fa00000000000000
   - m_sku: dragon_big
     m_tier: 2
@@ -153,10 +153,10 @@ MonoBehaviour:
     m_scaleRange:
       min: 2.49
       max: 2.69
-    m_healthDrainPerSecond: 2
+    m_healthDrainPerSecond: 3
     m_maxEnergy: 200
-    m_energyDrainPerSecond: 50
-    m_energyRefillPerSecond: 40
+    m_energyDrainPerSecond: 65
+    m_energyRefillPerSecond: 30
     m_maxFury: 150
     m_furyDuration: 10
     m_biteSkill:
@@ -180,6 +180,6 @@ MonoBehaviour:
     m_fireSkill:
       m_sku: skill_fire
       m_valueRange:
-        min: 1
-        max: 2
+        min: 5
+        max: 6
       m_unlockPrices: 0000000000000000190000000000000032000000000000004b0000000000000064000000000000007d00000000000000
