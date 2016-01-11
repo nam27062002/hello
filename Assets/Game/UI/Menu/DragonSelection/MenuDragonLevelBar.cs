@@ -41,7 +41,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
 		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
@@ -52,20 +52,20 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 	}
 
 	/// <summary>
 	/// Refresh with data from currently selected dragon
 	/// </summary>
-	/// <param name="_id">The id of the selected dragon</param>
-	public void Refresh(DragonId _id) {
+	/// <param name="_sku">The sku of the selected dragon</param>
+	public void Refresh(string _sku) {
 		// Get new dragon's data from the dragon manager
-		DragonData data = DragonManager.GetDragonData(_id);
+		DragonData data = DragonManager.GetDragonData(_sku);
 
 		// Bar value
 		m_levelBar.minValue = 0;
-		m_levelBar.maxValue = DragonData.NUM_LEVELS;
+		m_levelBar.maxValue = data.progression.numLevels;
 		m_levelBar.value = data.progression.level + 1;	// [1..N] bar should never be empty and should be filled when we're at level 9
 			
 		// Text

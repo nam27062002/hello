@@ -104,7 +104,7 @@ public class PersistenceManagerSaveDataEditor : ExtendedPropertyDrawer {
 			// Dragons save data: fixed length with custom labels for each level, allow folding it
 			if(_property.name == "dragons") {
 				// Draw array without allowing resize
-				float height = EditorGUILayoutExt.FixedLengthArray(m_pos, _property, DrawDragonSaveData, (int)DragonId.COUNT);
+				float height = EditorGUILayoutExt.FixedLengthArray(m_pos, _property, DrawDragonSaveData, DefinitionsManager.dragons.Count);
 				AdvancePos(height);
 			}
 			
@@ -131,8 +131,9 @@ public class PersistenceManagerSaveDataEditor : ExtendedPropertyDrawer {
 		// Make sure each dragon has the right ID assigned
 		// [AOC] Tricky: The serialized property expects the real index of the enum entry [0..N-1], we can't use 
 		//		 the DragonId vaule directly since it's [-1..N]. Luckily, C# gives us the tools to do so via the enum name.
-		SerializedProperty idProp = _property.FindPropertyRelative("id");
-		idProp.enumValueIndex = Array.IndexOf(idProp.enumNames, ((DragonId)_idx).ToString());
+		// [AOC] Remove from now, DragonId exists no more
+		//SerializedProperty idProp = _property.FindPropertyRelative("id");
+		//idProp.enumValueIndex = Array.IndexOf(idProp.enumNames, ((DragonId)_idx).ToString());
 
 		// Default property drawer
 		_pos.height = EditorGUI.GetPropertyHeight(_property);
@@ -158,9 +159,10 @@ public class DragonDataSaveDataEditor : ExtendedPropertyDrawer {
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
 		// Draw property label + foldout widget
+		// Use dragon sku as foldout label
 		m_pos.height = EditorStyles.largeLabel.lineHeight;	// Advance pointer just the size of the label
-		SerializedProperty idProp = _property.FindPropertyRelative("id");
-		_property.isExpanded = EditorGUI.Foldout(m_pos, _property.isExpanded, idProp.enumDisplayNames[idProp.enumValueIndex]);
+		SerializedProperty idProp = _property.FindPropertyRelative("sku");
+		_property.isExpanded = EditorGUI.Foldout(m_pos, _property.isExpanded, idProp.stringValue);
 		AdvancePos();
 		
 		// If unfolded, draw children
@@ -174,16 +176,9 @@ public class DragonDataSaveDataEditor : ExtendedPropertyDrawer {
 			while(_property.depth == targetDepth) {		// Only direct children, not brothers or grand-children (the latter will be drawn by default if using the default EditorGUI.PropertyField)
 				// Draw property as default except for the ones we want to customize
 
-				// Dragon ID: Don't show
-				if(_property.name == "id") {
+				//Debug.Log(_property.name);
+				if(_property.name == "putHereThePropertyYouDontWantToShow") {
 					// Do ntohing
-				}
-
-				// Skills save data: fixed length with custom labels for each level, allow folding it
-				else if(_property.name == "skillLevels") {
-					// Draw array without allowing resize
-					float height = EditorGUILayoutExt.FixedLengthArray(m_pos, _property, DrawSkillLevel, (int)DragonSkill.EType.COUNT);
-					AdvancePos(height);
 				}
 				
 				// Default
@@ -196,22 +191,9 @@ public class DragonDataSaveDataEditor : ExtendedPropertyDrawer {
 				// Move to next property
 				_property.NextVisible(false);
 			}
+
+			// Indent back out
+			EditorGUI.indentLevel--;
 		}
-	}
-
-	/// <summary>
-	/// Auxiliar method to add some customization to the way we render skill array elements.
-	/// </summary>
-	/// <returns>The height taken to render the skill property.</returns>
-	/// <param name="_pos">Where to draw the property.</param>
-	/// <param name="_property">The skill level property to be rendered.</param>
-	/// <param name="_idx">The index of the skill level property within the array.</param>
-	private float DrawSkillLevel(Rect _pos, SerializedProperty _property, int _idx) {
-		// Default property drawer using skill ID as label
-		GUIContent label = new GUIContent(((DragonSkill.EType)_idx).ToString());
-		_pos.height = EditorGUI.GetPropertyHeight(_property);
-		EditorGUI.PropertyField(_pos, _property, label);
-
-		return _pos.height;
 	}
 }

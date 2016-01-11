@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -24,7 +25,8 @@ public class MenuDragonSelector : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// References
+	private int m_selectedIdx = 0;
+	private List<DragonDef> m_sortedDefs = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -33,14 +35,24 @@ public class MenuDragonSelector : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Check required references
+		
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
+		// Store a reference to all dragon defs sorted
+		m_sortedDefs = DefinitionsManager.dragons.defsListByMenuOrder;
 
+		// Figure out initial index
+		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		for(int i = 0; i < m_sortedDefs.Count; i++) {
+			if(selectedSku == m_sortedDefs[i].sku) {
+				m_selectedIdx = i;
+				break;
+			}
+		}
 	}
 	
 	/// <summary>
@@ -60,10 +72,10 @@ public class MenuDragonSelector : MonoBehaviour {
 	/// <summary>
 	/// Changes dragon selected to the given one.
 	/// </summary>
-	/// <param name="_id">The id of the dragon we want to be the current one.</param>
-	public void SetSelectedDragon(DragonId _id) {
+	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
+	public void SetSelectedDragon(string _sku) {
 		// Notify game
-		Messenger.Broadcast<DragonId>(GameEvents.MENU_DRAGON_SELECTED, _id);
+		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _sku);
 	}
 
 	//------------------------------------------------------------------//
@@ -73,24 +85,24 @@ public class MenuDragonSelector : MonoBehaviour {
 	/// Select next dragon. To be linked with the "next" button.
 	/// </summary>
 	public void SelectNextDragon() {
-		// Figure out next dragon's id
-		DragonId newId = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon + 1;
-		if(newId == DragonId.COUNT) newId = DragonId.NONE + 1;
+		// Figure out next dragon's sku
+		m_selectedIdx++;
+		if(m_selectedIdx == m_sortedDefs.Count) m_selectedIdx = 0;
 
 		// Change selection
-		SetSelectedDragon(newId);
+		SetSelectedDragon(m_sortedDefs[m_selectedIdx].sku);
 	}
 
 	/// <summary>
 	/// Select previous dragon. To be linked with the "previous" button.
 	/// </summary>
 	public void SelectPreviousDragon() {
-		// Figure out previous dragon's id
-		DragonId newId = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon - 1;
-		if((int)newId < 0) newId = DragonId.COUNT - 1;
+		// Figure out previous dragon's sku
+		m_selectedIdx--;
+		if(m_selectedIdx < 0) m_selectedIdx = m_sortedDefs.Count - 1;
 
 		// Change selection
-		SetSelectedDragon(newId);
+		SetSelectedDragon(m_sortedDefs[m_selectedIdx].sku);
 	}
 }
 

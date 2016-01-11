@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Custom definition set to be able to create the asset.
 /// </summary>
-[CreateAssetMenu]
+//[CreateAssetMenu]
 public class MissionDefinitions : DefinitionSet<MissionDef> {
 	// Nothing to do, just a wrapper
 }

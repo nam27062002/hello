@@ -23,8 +23,7 @@ public class DragonPlayer : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[Header("Type and general data")]
-	[SerializeField] private DragonId m_id = 0; 
-	public DragonId id { get { return m_id; } }
+	[SerializeField] [SkuList(typeof(DragonDef))] private string m_sku = "";
 
 	private DragonData m_data = null;
 	public DragonData data { get { return m_data; }}
@@ -69,7 +68,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	void Awake () {
 		// Get data from dragon manager
-		m_data = DragonManager.GetDragonData(id);
+		m_data = DragonManager.GetDragonData(m_sku);
 		DebugUtils.Assert(m_data != null, "Attempting to instantiate a dragon player with an ID not defined in the manager.");
 
 		// Store reference into Instance Manager for immediate global access
@@ -77,7 +76,7 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Initialize stats
 		m_health = data.maxHealth;
-		m_energy = data.maxEnergy;
+		m_energy = data.def.maxEnergy;
 		m_fury[0] = 0;
 		m_fury[1] = 0;
 		m_furyActive = false;
@@ -138,7 +137,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of energy to be added/removed.</param>
 	public void AddEnergy(float _offset) {
-		m_energy = Mathf.Min(m_data.maxEnergy, Mathf.Max(0, m_energy + _offset));
+		m_energy = Mathf.Min(m_data.def.maxEnergy, Mathf.Max(0, m_energy + _offset));
 	}
 		
 	/// <summary>
@@ -147,9 +146,9 @@ public class DragonPlayer : MonoBehaviour {
 	/// <param name="_offset">The amount of fury to be added/removed.</param>
 	public void AddFury(float _offset) {
 		if (m_furyActive && _offset >= 0) {
-			m_fury[1] = Mathf.Min(m_data.maxFury, Mathf.Max(0, m_fury[1] + _offset)); 
+			m_fury[1] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[1] + _offset)); 
 		} else {
-			m_fury[0] = Mathf.Min(m_data.maxFury, Mathf.Max(0, m_fury[0] + _offset)); 
+			m_fury[0] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[0] + _offset)); 
 		}
 	}
 
@@ -198,7 +197,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	public void MoveToSpawnPoint() {
 		// Look for a default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + data.id);
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + data.def.sku);
 		if(spawnPointObj == null) {
 			// We couldn't find a spawn point for this specific type, try to find a generic one
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);

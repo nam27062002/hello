@@ -29,7 +29,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	[SerializeField] private Camera m_camera = null;
 
 	// Internal
-	private Dictionary<DragonId, GameObject> m_dragons = new Dictionary<DragonId, GameObject>();
+	private Dictionary<string, GameObject> m_dragons = new Dictionary<string, GameObject>();
 	private GameObject m_currentDragon = null;
 
 	//------------------------------------------------------------------//
@@ -48,18 +48,18 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
 		
 		// Do a first refresh
 		OnSelectedDragonChanged(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 	}
-	
+
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -68,22 +68,22 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// <summary>
 	/// Selected dragon has changed
 	/// </summary>
-	/// <param name="_id">The id of the selected dragon</param>
-	public void OnSelectedDragonChanged(DragonId _id) {
+	/// <param name="_sku">The sku of the selected dragon</param>
+	public void OnSelectedDragonChanged(string _sku) {
 		// Get dragon data from the dragon manager
-		DragonData newDragonData = DragonManager.GetDragonData(_id);
+		DragonData newDragonData = DragonManager.GetDragonData(_sku);
 
 		// Get cached dragon preview, if not found create it
 		GameObject dragonObj = null;
-		if(!m_dragons.TryGetValue(newDragonData.id, out dragonObj)) {
+		if(!m_dragons.TryGetValue(newDragonData.def.sku, out dragonObj)) {
 			// Load it from resources
-			GameObject prefab = Resources.Load<GameObject>(newDragonData.menuPrefabPath);
-			DebugUtils.Assert(prefab != null, "Menu prefab for dragon of type " + newDragonData.id + " wasn't found (" + newDragonData.menuPrefabPath + ")");
+			GameObject prefab = Resources.Load<GameObject>(newDragonData.def.menuPrefabPath);
+			DebugUtils.Assert(prefab != null, "Menu prefab for dragon of type " + newDragonData.def.sku + " wasn't found (" + newDragonData.def.menuPrefabPath + ")");
 			dragonObj = GameObject.Instantiate<GameObject>(prefab);
 			dragonObj.transform.SetParent(this.transform, false);
 
 			// Store it in local cache
-			m_dragons.Add(newDragonData.id, dragonObj);
+			m_dragons.Add(newDragonData.def.sku, dragonObj);
 		}
 
 		// If we have an active dragon, make it disappear

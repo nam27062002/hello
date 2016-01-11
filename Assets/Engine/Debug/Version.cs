@@ -85,11 +85,11 @@ public class Version {
 		switch(_format) {
 			case Format.FULL: {
 				return String.Format("{0}.{1}.{2}", major, minor, patch);
-			} break;
+			}
 
 			case Format.NO_PATCH: {
 				return String.Format("{0}.{1}", major, minor);
-			} break;
+			}
 
 			case Format.NO_PATCH_IF_0: {
 				if(patch == 0) {
@@ -97,11 +97,11 @@ public class Version {
 				} else {
 					return ToString(Format.FULL);
 				}
-			} break;
+			}
 
 			case Format.TEXT: {
 				return String.Format("major: {0}, minor: {1}, patch: {2}", major, minor, patch);
-			} break;
+			}
 		}
 
 		return "";

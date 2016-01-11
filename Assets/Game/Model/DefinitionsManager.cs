@@ -16,19 +16,31 @@ using System;
 /// <summary>
 /// Singleton scriptable object referencing all the definition sets in the game.
 /// </summary>
-[CreateAssetMenu]
+//[CreateAssetMenu]
 public class DefinitionsManager : SingletonScriptableObject<DefinitionsManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Add here as much definition sets as needed
 	// References must be initialized from inspector
+	[Separator("Dragons")]
+	[SerializeField] private DragonDefinitions m_dragons = null;
+	public static DragonDefinitions dragons { get { return instance.m_dragons; }}
+
+	[SerializeField] private DragonTierDefinitions m_dragonTiers = null;
+	public static DragonTierDefinitions dragonTiers { get { return instance.m_dragonTiers; }}
+
+	[SerializeField] private DragonSkillDefinitions m_dragonSkills = null;
+	public static DragonSkillDefinitions dragonSkills { get { return instance.m_dragonSkills; }}
+
+	[Separator("Entities")]
 	[SerializeField] private EntityDefinitions m_entities = null;
 	public static EntityDefinitions entities { get { return instance.m_entities; }}
 
 	[SerializeField] private EntityCategoryDefinitions m_entityCategories = null;
 	public static EntityCategoryDefinitions entityCategories { get { return instance.m_entityCategories; }}
 
+	[Separator("Meta-game")]
 	[SerializeField] private LevelDefinitions m_levels = null;
 	public static LevelDefinitions levels { get { return instance.m_levels; }}
 
@@ -68,17 +80,32 @@ public class DefinitionsManager : SingletonScriptableObject<DefinitionsManager> 
 		// [AOC] There might be a better way to do this, no time to research
 		// Compact code
 		Type defType = typeof(T);
-		if(defType == typeof(EntityDef)) {
+
+		// Dragons
+		if(defType == typeof(DragonDef)) {
+			return dragons as DefinitionSet<T>;
+		} else if(defType == typeof(DragonTierDef)) {
+			return dragonTiers as DefinitionSet<T>;
+		} else if(defType == typeof(DragonSkillDef)) {
+			return dragonSkills as DefinitionSet<T>;
+		}
+
+		// Entities
+		else if(defType == typeof(EntityDef)) {
 			return entities as DefinitionSet<T>;
 		} else if(defType == typeof(EntityCategoryDef)) {
 			return entityCategories as DefinitionSet<T>;
-		} else if(defType == typeof(LevelDef)) {
+		}
+
+		// Meta-game
+		else if(defType == typeof(LevelDef)) {
 			return levels as DefinitionSet<T>;
 		} else if(defType == typeof(MissionDef)) {
 			return missions as DefinitionSet<T>;
 		}
 
 		// Definition type not identified
+		Debug.Log("Definitions Set for type " + defType.Name + " not found");
 		return null;
 	}
 }

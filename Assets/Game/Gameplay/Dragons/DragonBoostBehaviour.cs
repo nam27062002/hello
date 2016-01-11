@@ -69,13 +69,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if (m_active) {
 			// Don't drain energy if cheat is enabled
 			if(!Debug.isDebugBuild || !DebugSettings.infiniteBoost) {
-				m_dragon.AddEnergy(-Time.deltaTime * m_dragon.data.energyDrainPerSecond);
+				m_dragon.AddEnergy(-Time.deltaTime * m_dragon.data.def.energyDrainPerSecond);
 				if (m_dragon.energy <= 0f) {
 					StopBoost();
 				}
 			}
 		} else {
-			m_dragon.AddEnergy(Time.deltaTime * m_dragon.data.energyRefillPerSecond);
+			m_dragon.AddEnergy(Time.deltaTime * m_dragon.data.def.energyRefillPerSecond);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private void StartBoost() 
 	{
 		m_active = true;
-		m_dragon.SetSpeedMultiplier(m_dragon.data.boost.value);
+		m_dragon.SetSpeedMultiplier(m_dragon.data.boostSkill.value);
 		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
 			m_animator.SetBool("boost", true);

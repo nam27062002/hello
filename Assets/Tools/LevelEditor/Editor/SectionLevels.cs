@@ -14,6 +14,8 @@ using UnityEditor.SceneManagement;
 using System.IO;
 using System.Collections.Generic;
 
+#pragma warning disable 0414
+
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
@@ -46,9 +48,9 @@ namespace LevelEditor {
 		private string assetDirForCurrentMode {
 			get { 
 				switch(LevelEditor.settings.selectedMode) {
-					case LevelEditorSettings.Mode.SPAWNERS:		return ASSETS_DIR + "/" + "Spawners";	break;
-					case LevelEditorSettings.Mode.COLLISION:	return ASSETS_DIR + "/" + "Collision";	break;
-					case LevelEditorSettings.Mode.ART:			return ASSETS_DIR + "/" + "Art";		break;
+					case LevelEditorSettings.Mode.SPAWNERS:		return ASSETS_DIR + "/" + "Spawners";
+					case LevelEditorSettings.Mode.COLLISION:	return ASSETS_DIR + "/" + "Collision";
+					case LevelEditorSettings.Mode.ART:			return ASSETS_DIR + "/" + "Art";
 				}
 				return ASSETS_DIR;
 			}
@@ -154,8 +156,8 @@ namespace LevelEditor {
 			// Aux vars
 			bool levelLoaded = (activeLevel != null);
 			bool playing = EditorApplication.isPlaying;
-			DragonId oldDragon = LevelEditor.settings.testDragon;
-			DragonId newDragon = oldDragon;
+			string oldDragon = LevelEditor.settings.testDragon;
+			string newDragon = oldDragon;
 
 			// Some spacing
 			GUILayout.Space(5f);
@@ -231,13 +233,13 @@ namespace LevelEditor {
 					GUILayout.Label("Test Dragon:");
 					
 					// Dragon selector
-					string[] enumNames = System.Enum.GetNames(typeof(DragonId));
-					string[] options = new string[(int)DragonId.COUNT];
-					for(int i = 0; i < options.Length; i++) {
-						options[i] = enumNames[i];
+					string[] options = DefinitionsManager.dragons.skus.ToArray();
+					int oldIdx = ArrayUtility.IndexOf<string>(options, oldDragon);
+					int newIdx = EditorGUILayout.Popup(oldIdx, options);
+					if(oldIdx != newIdx) {
+						newDragon = options[newIdx];
+						LevelEditor.settings.testDragon = newDragon;
 					}
-					newDragon = (DragonId)EditorGUILayout.Popup((int)oldDragon, options);
-					if(oldDragon != newDragon) LevelEditor.settings.testDragon = newDragon;
 				} EditorGUILayoutExt.EndHorizontalSafe();
 				GUI.enabled = true;
 				
@@ -265,7 +267,7 @@ namespace LevelEditor {
 						// Focus default spawn point
 						GUI.enabled = levelLoaded;
 						if(GUILayout.Button("Show Default Spawn")) {
-							spawnPointObj = spawnersLevel.GetDragonSpawnPoint(DragonId.NONE);
+							spawnPointObj = spawnersLevel.GetDragonSpawnPoint("");
 							EditorUtils.FocusObject(spawnPointObj);
 							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
 						}

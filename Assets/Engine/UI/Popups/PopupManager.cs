@@ -75,7 +75,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 			ResourceRequest task = m_loadingQueue.Peek();
 			if(task.isDone && m_openedPopups.Count == 0) {
 				// Instantiate and open popup
-				PopupController popup = InstantiateAndOpenPopup((GameObject)task.asset);
+				InstantiateAndOpenPopup((GameObject)task.asset);
 
 				// Dequeue loading task
 				m_loadingQueue.Dequeue();

@@ -39,30 +39,30 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
 		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 	}
-	
+
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 	}
 
 	/// <summary>
 	/// Refresh with data from currently selected dragon.
 	/// </summary>
-	/// <param name="_id">The id of the selected dragon</param>
-	public void Refresh(DragonId _id) {
+	/// <param name="_sku">The sku of the selected dragon</param>
+	public void Refresh(string _sku) {
 		// Get new dragon's data from the dragon manager
-		DragonData data = DragonManager.GetDragonData(_id);
+		DragonData data = DragonManager.GetDragonData(_sku);
 
 		// Update price
-		m_priceText.text = StringUtils.FormatNumber(data.unlockPriceCoins);
+		m_priceText.text = StringUtils.FormatNumber(data.def.unlockPriceCoins);
 	}
 
 	/// <summary>
@@ -71,8 +71,8 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	public void OnUnlock() {
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
-		if(UserProfile.coins >= data.unlockPriceCoins) {
-			UserProfile.AddCoins(-data.unlockPriceCoins);
+		if(UserProfile.coins >= data.def.unlockPriceCoins) {
+			UserProfile.AddCoins(-data.def.unlockPriceCoins);
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {
