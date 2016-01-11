@@ -7,6 +7,7 @@
 #region INCLUDES AND PREPROCESSOR --------------------------------------------------------------------------------------
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
 #endregion
@@ -57,7 +58,7 @@ public class FlowManager_OLD : MonoBehaviour {
 		switch(_eNewScene) {
 			case EScenes.MAIN_MENU: {
 				// Load menu scene
-				Application.LoadLevel(GetSceneName(_eNewScene));
+				SceneManager.LoadScene(GetSceneName(_eNewScene));
 			} break;
 
 			case EScenes.GAME: {
@@ -65,7 +66,7 @@ public class FlowManager_OLD : MonoBehaviour {
 				App.Instance.gameStats.Reset();
 
 				// Load game scene
-				Application.LoadLevel(GetSceneName(_eNewScene));
+				SceneManager.LoadScene(GetSceneName(_eNewScene));
 			} break;
 		}
 	}
@@ -76,7 +77,7 @@ public class FlowManager_OLD : MonoBehaviour {
 	/// <param name="_iLevelIdx">The index of the level that was loaded. Use the menu item File->Build Settings... to see what scene the index refers to. See Also: Application.LoadLevel..</param>
 	void OnLevelWasLoaded(int _iLevelIdx) {
 		// [AOC] We don't trust the order on the build settings, so use scene name instead
-		if(Application.loadedLevelName == GetSceneName(EScenes.GAME)) {
+		if(SceneManager.GetActiveScene().name == GetSceneName(EScenes.GAME)) {
 
 			// Start logic
 			App.Instance.gameLogic.StartGame();
