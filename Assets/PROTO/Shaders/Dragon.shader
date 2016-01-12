@@ -36,7 +36,7 @@ SubShader {
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
-				float4 normal : NORMAL;
+				float3 normal : NORMAL;
 				float3 halfDir : VECTOR;
 			};
 
@@ -61,7 +61,7 @@ SubShader {
 
 				// Normal
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
-				o.normal = normalize( mul( v.normal, _World2Object ) );
+				o.normal = normalize(mul(v.normal, _World2Object).xyz); 
 
 				// Half View - See: Blinn-Phong
 				if (0.0 == _WorldSpaceLightPos0.w) // directional light?
@@ -83,8 +83,7 @@ SubShader {
 				// Specular
 				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecExponent) * detail.g;
 				col = col + specularLight;	
-
-				UNITY_OPAQUE_ALPHA(col.a);
+				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
 			}

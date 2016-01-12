@@ -12,6 +12,7 @@ AnimationClip:
   m_UseHighQualityCurve: 1
   m_RotationCurves: []
   m_CompressedRotationCurves: []
+  m_EulerCurves: []
   m_PositionCurves: []
   m_ScaleCurves: []
   m_FloatCurves:
@@ -24,7 +25,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .956862748
+        value: 0.95686275
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -35,6 +36,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.r
     path: dragon_mesh
     classID: 137
@@ -48,7 +50,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .709803939
+        value: 0.70980394
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -59,6 +61,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.g
     path: dragon_mesh
     classID: 137
@@ -72,7 +75,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .109803922
+        value: 0.10980392
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -83,6 +86,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.b
     path: dragon_mesh
     classID: 137
@@ -107,6 +111,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.a
     path: dragon_mesh
     classID: 137
@@ -120,7 +125,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .29411763
+        value: 0.29411763
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -131,6 +136,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.r
     path: dragon_mesh
     classID: 137
@@ -144,7 +150,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .259329736
+        value: 0.25932974
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -155,6 +161,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.g
     path: dragon_mesh
     classID: 137
@@ -168,7 +175,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .127595142
+        value: 0.12759514
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -179,6 +186,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.b
     path: dragon_mesh
     classID: 137
@@ -203,8 +211,34 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.a
     path: dragon_mesh
+    classID: 137
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0
+        inSlope: 7
+        outSlope: 7
+        tangentMode: 10
+      - time: 1
+        value: 7
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      - time: 2
+        value: 0
+        inSlope: -7
+        outSlope: -7
+        tangentMode: 10
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: material._InnerLightAdd
+    path: Dragon_Mesh
     classID: 137
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -251,6 +285,12 @@ AnimationClip:
       classID: 137
       customType: 22
       isPPtrCurve: 0
+    - path: 4224119337
+      attribute: 2189606276
+      script: {fileID: 0}
+      classID: 137
+      customType: 22
+      isPPtrCurve: 0
     - path: 3714634432
       attribute: 1932534933
       script: {fileID: 0}
@@ -266,11 +306,14 @@ AnimationClip:
     pptrCurveMapping: []
   m_AnimationClipSettings:
     serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
     m_StopTime: 2
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
     m_LoopTime: 1
     m_LoopBlend: 0
     m_LoopBlendOrientation: 0
@@ -291,7 +334,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .956862748
+        value: 0.95686275
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -302,6 +345,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.r
     path: dragon_mesh
     classID: 137
@@ -315,7 +359,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .709803939
+        value: 0.70980394
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -326,6 +370,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.g
     path: dragon_mesh
     classID: 137
@@ -339,7 +384,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .109803922
+        value: 0.10980392
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -350,6 +395,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.b
     path: dragon_mesh
     classID: 137
@@ -374,6 +420,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorMultiply.a
     path: dragon_mesh
     classID: 137
@@ -387,7 +434,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .29411763
+        value: 0.29411763
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -398,6 +445,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.r
     path: dragon_mesh
     classID: 137
@@ -411,7 +459,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .259329736
+        value: 0.25932974
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -422,6 +470,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.g
     path: dragon_mesh
     classID: 137
@@ -435,7 +484,7 @@ AnimationClip:
         outSlope: 0
         tangentMode: 0
       - time: 1
-        value: .127595142
+        value: 0.12759514
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -446,6 +495,7 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.b
     path: dragon_mesh
     classID: 137
@@ -470,8 +520,34 @@ AnimationClip:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: material._ColorAdd.a
     path: dragon_mesh
+    classID: 137
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0
+        inSlope: 7
+        outSlope: 7
+        tangentMode: 10
+      - time: 1
+        value: 7
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      - time: 2
+        value: 0
+        inSlope: -7
+        outSlope: -7
+        tangentMode: 10
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: material._InnerLightAdd
+    path: Dragon_Mesh
     classID: 137
     script: {fileID: 0}
   m_EulerEditorCurves: []
