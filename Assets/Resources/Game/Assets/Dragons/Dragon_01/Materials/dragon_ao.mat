@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_ao
-  m_Shader: {fileID: 4800000, guid: 2f8c595491dd543a8868ae13d5e98890, type: 3}
+  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -78,6 +78,13 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 682d74382eb76d04d91fb9054286fa0e, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -90,11 +97,11 @@ Material:
       data:
         first:
           name: _Cutoff
-        second: .5
+        second: 0.5
       data:
         first:
           name: _Parallax
-        second: .0199999996
+        second: 0.02
       data:
         first:
           name: _ZWrite
@@ -102,7 +109,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: .5
+        second: 0.5
       data:
         first:
           name: _BumpScale
@@ -131,6 +138,14 @@ Material:
         first:
           name: _EmissionScaleUI
         second: 0
+      data:
+        first:
+          name: _InnerLightAdd
+        second: 0
+      data:
+        first:
+          name: _SpecExponent
+        second: 0.1
     m_Colors:
       data:
         first:
@@ -152,3 +167,11 @@ Material:
         first:
           name: _ColorAdd
         second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _InnerLightColor
+        second: {r: 0.9558824, g: 0.75811356, b: 0.2389706, a: 1}
+      data:
+        first:
+          name: _SpecLightVector
+        second: {r: 0, g: 1, b: 0, a: 1.08}
