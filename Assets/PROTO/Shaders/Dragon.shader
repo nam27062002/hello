@@ -17,7 +17,7 @@ Properties {
 }
 
 SubShader {
-	Tags { "RenderType"="Opaque" }
+	Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase" }
 	LOD 100
 	
 	Pass {  
@@ -25,7 +25,6 @@ SubShader {
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fog
-			
 			#include "UnityCG.cginc"
 
 			struct appdata_t {
@@ -78,7 +77,7 @@ SubShader {
 				fixed4 col = ( main * (1 + detail.r * _InnerLightAdd * _InnerLightColor)) 	* _ColorMultiply + _ColorAdd;
 
 				// Specular
-				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecLightVector.w) * detail.r;
+				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecLightVector.w) * detail.g;
 				col = col + specularLight;	
 
 				UNITY_OPAQUE_ALPHA(col.a);
