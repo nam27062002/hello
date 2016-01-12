@@ -34,6 +34,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 			
 	private List<GameObject> m_bloodEmitter;
 
+	bool m_almostEat = false;
 	
 	//-----------------------------------------------
 	// Methods
@@ -152,6 +153,15 @@ public class DragonEatBehaviour : MonoBehaviour {
 				m_bloodEmitter.Clear();
 			}
 		}
+
+		m_animator.SetBool("almostEat", m_almostEat);
+		m_almostEat = false;
+
+	}
+
+	public void AlmostEat(EdibleBehaviour _prey)
+	{
+		m_almostEat = true;
 	}
 
 	public bool Eat(EdibleBehaviour _prey) {
