@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reflection;
+using UnityEditor.SceneManagement;
 
 using UnityObject = UnityEngine.Object;
 
@@ -242,7 +243,8 @@ This component's properties are shown below to help you determine which script i
 
 				// Save the scene in case Unity crashes
 				EditorUtility.SetDirty( this.target );
-				EditorApplication.SaveScene();
+				//EditorApplication.SaveScene();	// [AOC] Deprecated, replaced by the following line
+				EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
 				EditorApplication.SaveAssets();
 
 				// Check for more objects with missing scripts

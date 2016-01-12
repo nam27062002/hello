@@ -25,8 +25,6 @@ public class DragonProgression : SerializableClass {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// To be set on the inspector only
-	[SerializeField] private float[] m_levelsXp = new float[DragonData.NUM_LEVELS];
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -34,24 +32,26 @@ public class DragonProgression : SerializableClass {
 	// XP
 	private float m_xp = 0;
 	public float xp { get { return m_xp; }}
-	public float xpToNextLevel { get { return m_levelsXp[nextLevel] - m_levelsXp[level]; }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
+	public float[] levelsXP { get { return owner.def.levelsXP; }}
+	public float xpToNextLevel { get { return levelsXP[nextLevel] - levelsXP[level]; }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
 	public Range xpRange { get { return GetXpRangeForLevel(level); }}
 		
 	// Level
 	private int m_level = 0;
 	public int level { get { return m_level; }}	// Should never be > lastLevel
 	public int nextLevel { get { return Mathf.Min(m_level + 1, lastLevel); }}
-	public int lastLevel { get { return m_levelsXp.Length - 1; }}
+	public int lastLevel { get { return numLevels - 1; }}
+	public int numLevels { get { return owner.def.numLevels; }}
 	public bool isMaxLevel { get { return m_level == lastLevel; }}
 
 	// Progress [0..1]
-	public float progressByXp { get { return Mathf.InverseLerp(0f, m_levelsXp[lastLevel], m_xp); }}
+	public float progressByXp { get { return Mathf.InverseLerp(0f, levelsXP[lastLevel], m_xp); }}
 	public float progressByLevel { get { return Mathf.InverseLerp(0, lastLevel, m_level); }}
 	public float progressCurrentLevel { 
 		get { 
 			// If we've already reached last level, progress is always 1
 			if(level >= lastLevel) return 1f;
-			return Mathf.InverseLerp(m_levelsXp[m_level], m_levelsXp[nextLevel], m_xp);
+			return Mathf.InverseLerp(levelsXP[m_level], levelsXP[nextLevel], m_xp);
 		}
 	}
 
@@ -99,8 +99,8 @@ public class DragonProgression : SerializableClass {
 	/// <returns>The first level matching the given XP value.</returns>
 	/// <param name="_xp">The XP value to be checked.</param>
 	public int GetLevelFromXp(float _xp) {
-		for(int i = 1; i < m_levelsXp.Length; i++) {
-			if(_xp < m_levelsXp[i]) {
+		for(int i = 1; i < levelsXP.Length; i++) {
+			if(_xp < levelsXP[i]) {
 				return i - 1;
 			}
 		}
@@ -118,7 +118,7 @@ public class DragonProgression : SerializableClass {
 
 		// Special case for laast level
 		int nextLevel = Mathf.Min(_level + 1, lastLevel);
-		return new Range(m_levelsXp[_level], m_levelsXp[nextLevel]);
+		return new Range(levelsXP[_level], levelsXP[nextLevel]);
 	}
 
 	/// <summary>
@@ -130,7 +130,7 @@ public class DragonProgression : SerializableClass {
 		if(m_level >= lastLevel) return false;
 
 		// Check next level
-		if(m_xp >= m_levelsXp[m_level + 1]) {
+		if(m_xp >= levelsXP[m_level + 1]) {
 			return true;
 		}
 

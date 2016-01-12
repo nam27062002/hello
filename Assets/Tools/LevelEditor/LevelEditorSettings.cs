@@ -57,8 +57,8 @@ namespace LevelEditor {
 		[HideEnumValues(false, true)] public Mode selectedMode = Mode.SPAWNERS;	// Selected mode
 
 		[Separator("Level Settings", 20)]
-		[HideEnumValues(true, true)]
-		public DragonId testDragon = DragonId.SMALL;	// Dragon with which to test the level
+		[SkuList(typeof(DragonDef), false)]
+		public string testDragon = "";	// Dragon with which to test the level
 
 		[Separator("Ground Settings", 20)]
 		public Vector3 groundPieceSize = new Vector3(50f, 1f, 15f);	// Ground pieces default size

@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Custom definition set to be able to create the asset.
 /// </summary>
-[CreateAssetMenu]
+//[CreateAssetMenu]
 public class EntityDefinitions : DefinitionSet<EntityDef> {
 	//------------------------------------------------------------------//
 	// EXTRA PROPERTIES													//

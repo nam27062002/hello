@@ -14,27 +14,22 @@ using System.Collections.Generic;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Global manager of dragons. Contains the definitions from all the dragons in
-/// the game, as well as storing their current state (level, stats, upgrades, etc).
-/// Has its own asset in the Resources/Singletons folder, all content must be
-/// initialized there.
+/// Global manager of dragons. Stores current state of all dragons in the game
+/// (level, stats, upgrades, etc).
 /// </summary>
-public class DragonManager : SingletonScriptableObject<DragonManager> {
+public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// PROPERTIES														//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// The data
-	// The array allows us to easily setup values from inspector, while the dictionary helps us with faster searches during gameplay
-	// Both contain exactly the same data, unless the array length is modified during gameplay (which shouldn't happen)
-	[SerializeField] private DragonData[] m_dragons = new DragonData[(int)DragonId.COUNT];
-	private Dictionary<DragonId, DragonData> m_dragonsById = null;
+	// The data - indexed by sku
+	private Dictionary<string, DragonData> m_dragonsBySku = null;
 
 	// Shortcut to get the data of the currently selected dragon
-	public static DragonData currentDragonData {
+	public static DragonData currentDragon {
 		get { return GetDragonData(UserProfile.currentDragon); }
 	}
 
@@ -44,11 +39,15 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	protected void OnEnable() {
-		// Keep the dragons indexed by id as well for faster searches
-		m_dragonsById = new Dictionary<DragonId, DragonData>();
-		for(int i = 0; i < m_dragons.Length; i++) {
-			m_dragonsById[m_dragons[i].id] = m_dragons[i];
+	protected void Awake() {
+		// Create a dragon data object for every known dragon definition
+		m_dragonsBySku = new Dictionary<string, DragonData>();
+		DragonData newDragonData = null;
+		List<DragonDef> defs = DefinitionsManager.dragons.defsList;
+		for(int i = 0; i < defs.Count; i++) {
+			newDragonData = new DragonData();
+			newDragonData.Init(defs[i]);
+			m_dragonsBySku[defs[i].sku] = newDragonData;
 		}
 	}
 
@@ -56,13 +55,13 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	// DRAGON DATA GETTERS												//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Given a dragon ID, get its current data.
+	/// Given a dragon sku, get its current data.
 	/// </summary>
-	/// <returns>The data corresponding to the dragon with the given ID. Null if not found.</returns>
-	/// <param name="_id">The ID of the dragon whose data we want.</param>
-	public static DragonData GetDragonData(DragonId _id) {
+	/// <returns>The data corresponding to the dragon with the given sku. Null if not found.</returns>
+	/// <param name="_sku">The sku of the dragon whose data we want.</param>
+	public static DragonData GetDragonData(string _sku) {
 		DragonData data = null;
-		if(instance.m_dragonsById.TryGetValue(_id, out data)) {
+		if(instance.m_dragonsBySku.TryGetValue(_sku, out data)) {
 			return data;
 		}
 		return null;
@@ -76,11 +75,11 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	public static List<DragonData> GetDragonsByTier(DragonTier _tier) {
 		// Iterate the dragons list looking for those belonging to the target tier
 		List<DragonData> list = new List<DragonData>();
-		for(int i = 0; i < instance.m_dragons.Length; i++) {
+		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
 			// Does this dragon belong to the target tier?
-			if(instance.m_dragons[i].tier == _tier) {
+			if(kvp.Value.def.tier == _tier) {
 				// Yes!! Add it to the list
-				list.Add(instance.m_dragons[i]);
+				list.Add(kvp.Value);
 			}
 		}
 		return list;
@@ -94,11 +93,11 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	public static List<DragonData> GetDragonsByLockState(DragonData.LockState _lockState) {
 		// Iterate the dragons list looking for those belonging to the target tier
 		List<DragonData> list = new List<DragonData>();
-		for(int i = 0; i < instance.m_dragons.Length; i++) {
+		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
 			// Does this dragon match the required lockstate?
-			if(instance.m_dragons[i].lockState == _lockState || _lockState == DragonData.LockState.ANY) {
+			if(kvp.Value.lockState == _lockState || _lockState == DragonData.LockState.ANY) {
 				// Yes!! Add it to the list
-				list.Add(instance.m_dragons[i]);
+				list.Add(kvp.Value);
 			}
 		}
 		return list;
@@ -136,8 +135,8 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	/// player in the scene.
 	/// The newly created instance can be accessed through the InstanceManager.player property.
 	/// </summary>
-	/// <param name="_id">The ID of the dragon we want to instantiate on the scene.</param>
-	public static void LoadDragon(DragonId _id) {
+	/// <param name="_sku">The sku of the dragon we want to instantiate on the scene.</param>
+	public static void LoadDragon(string _sku) {
 		// Destroy any previously created player
 		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {
@@ -146,12 +145,12 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 		}
 
 		// Get the data for the new dragon
-		DragonData data = DragonManager.GetDragonData(_id);
-		DebugUtils.SoftAssert(data != null, "Attempting to load dragon with id " + _id + ", but the manager has no data linked to this id");
+		DragonData data = DragonManager.GetDragonData(_sku);
+		DebugUtils.SoftAssert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
 
 		// Load the prefab for the dragon with the given ID
-		GameObject prefabObj = Resources.Load<GameObject>(data.prefabPath);
-		DebugUtils.SoftAssert(data != null, "The prefab defined to dragon " + _id + " couldn't be found");
+		GameObject prefabObj = Resources.Load<GameObject>(data.def.prefabPath);
+		DebugUtils.SoftAssert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property
 		playerObj = Instantiate<GameObject>(prefabObj);
@@ -166,13 +165,14 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public static void Load(DragonData.SaveData[] _data) {
-		// We don't trust array order, so do it by id
+		// We don't trust array order, so do it by sku
 		for(int i = 0; i < _data.Length; i++) {
+			// If not initialized, initialize with default values
 			if(_data[i] == null) {
 				_data[i] = new DragonData.SaveData();
-				_data[i].id = (DragonId)i;
+				_data[i].sku = DefinitionsManager.dragons.skus[i];	// This is risky - shouldn't happen though
 			}
-			GetDragonData(_data[i].id).Load(_data[i]);
+			GetDragonData(_data[i].sku).Load(_data[i]);
 		}
 	}
 	
@@ -182,10 +182,10 @@ public class DragonManager : SingletonScriptableObject<DragonManager> {
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public static DragonData.SaveData[] Save() {
 		// Create new object, initialize and return it
-		DragonData.SaveData[] data = new DragonData.SaveData[instance.m_dragons.Length];
-		for(int i = 0; i < instance.m_dragons.Length; i++) {
-			data[i] = instance.m_dragons[i].Save();
+		List<DragonData.SaveData> data = new List<DragonData.SaveData>();
+		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
+			data.Add(kvp.Value.Save());
 		}
-		return data;
+		return data.ToArray();
 	}
 }

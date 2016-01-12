@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -75,21 +76,21 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 		LevelDef def = DefinitionsManager.levels.GetDef(_sku);
 		DebugUtils.SoftAssert(def != null, "Attempting to load level with sku " + _sku + ", but the manager has no data linked to this index");
 
-		// Load all the scenes for the level with the given index
+		// Load additively all the scenes for the level with the given index
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
 		AsyncOperation loadingTask = null;
 
-		loadingTask = Application.LoadLevelAdditiveAsync(def.spawnersScene);
+		loadingTask = SceneManager.LoadSceneAsync(def.spawnersScene, LoadSceneMode.Additive);
 		if(DebugUtils.SoftAssert(loadingTasks != null, "The spawners scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
 			loadingTasks.Add(loadingTask);
 		}
 
-		loadingTask = Application.LoadLevelAdditiveAsync(def.collisionScene);
+		loadingTask = SceneManager.LoadSceneAsync(def.collisionScene, LoadSceneMode.Additive);
 		if(DebugUtils.SoftAssert(loadingTasks != null, "The collision scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
 			loadingTasks.Add(loadingTask);
 		}
 
-		loadingTask = Application.LoadLevelAdditiveAsync(def.artScene);
+		loadingTask = SceneManager.LoadSceneAsync(def.artScene, LoadSceneMode.Additive);
 		if(DebugUtils.SoftAssert(loadingTasks != null, "The art scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
 			loadingTasks.Add(loadingTask);
 		}

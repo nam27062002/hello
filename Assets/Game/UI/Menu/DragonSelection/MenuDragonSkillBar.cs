@@ -22,7 +22,8 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[Header("Data")]
-	public DragonSkill.EType m_skillType;
+	[SkuList(typeof(DragonSkillDef), false)]
+	public string m_skillSku;
 
 	[Header("References")]
 	public Slider m_bar;
@@ -45,7 +46,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
 		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
@@ -56,20 +57,19 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
 	}
 
 	/// <summary>
 	/// Refresh with data from currently selected dragon.
 	/// </summary>
-	/// <param name="_id">The id of the selected dragon</param>
-	public void Refresh(DragonId _id) {
+	/// <param name="_sku">The _sku of the selected dragon</param>
+	public void Refresh(string _sku) {
 		// Get skill data
-		DragonSkill skillData = DragonManager.GetDragonData(_id).GetSkill(m_skillType);
+		DragonSkill skillData = DragonManager.GetDragonData(_sku).GetSkill(m_skillSku);
 
 		// Label
-		//m_labelTxt.text = Localization.Localize(skillData.tidName);
-		m_labelText.text = skillData.type.ToString();
+		m_labelText.text = Localization.Localize(skillData.def.tidName);
 
 		// Bar value
 		m_bar.minValue = 0;
@@ -78,14 +78,12 @@ public class MenuDragonSkillBar : MonoBehaviour {
 			
 		// Text
 		// [AOC] TODO!! Depends on skill type
-		switch(skillData.type) {
-			case DragonSkill.EType.BITE:
-			case DragonSkill.EType.BOOST:
-			case DragonSkill.EType.FIRE:
-				m_valueText.text = String.Format("{0}", StringUtils.FormatNumber(skillData.value, 2));
-				break;
-			case DragonSkill.EType.SPEED:
+		switch(skillData.def.sku) {
+			case "skill_speed":
 				m_valueText.text = String.Format("{0}", StringUtils.FormatNumber(skillData.value, 0));
+				break;
+			default:
+				m_valueText.text = String.Format("{0}", StringUtils.FormatNumber(skillData.value, 2));
 				break;
 		}
 
@@ -104,7 +102,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	/// </summary>
 	public void LevelUp() {
 		// Get skill data
-		DragonSkill skillData = DragonManager.currentDragonData.GetSkill(m_skillType);
+		DragonSkill skillData = DragonManager.currentDragon.GetSkill(m_skillSku);
 
 		// Enough resources?
 		if(UserProfile.coins < skillData.nextLevelUnlockPrice) {
@@ -118,7 +116,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 			skillData.UnlockNextLevel();
 
 			// Refresh data
-			Refresh(DragonManager.currentDragonData.id);
+			Refresh(DragonManager.currentDragon.def.sku);
 
 			// Save persistence
 			PersistenceManager.Save();

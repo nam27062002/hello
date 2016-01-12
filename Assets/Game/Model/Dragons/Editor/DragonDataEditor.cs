@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Custom editor for the DragonData class.
 /// </summary>
-[CustomPropertyDrawer(typeof(DragonData))]
+//[CustomPropertyDrawer(typeof(DragonData))]
 public class DragonDataEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//

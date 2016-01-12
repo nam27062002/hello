@@ -23,32 +23,17 @@ public class DragonSkill : SerializableClass {
 	//------------------------------------------------------------------//
 	public static readonly int NUM_LEVELS = 6;
 
-	// Skill types
-	public enum EType {
-		BITE,
-		SPEED,
-		BOOST,
-		FIRE,
-		COUNT
-	};
-
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// To be set on the inspector only
-	// Generic
-	[SerializeField] private EType m_type = EType.BITE;
-	public EType type { get { return m_type; }}
+	// Def
+	private DragonSkillDef m_def = null;
+	public DragonSkillDef def { get { return m_def; }}
 
-	[SerializeField] private string m_tidName = "";
-	public string tidName { get { return m_tidName; }}
-	
-	[SerializeField] private string m_tidDescription = "";
-	public string tidDescription { get { return m_tidDescription; }}
+	private DragonDef.SkillData m_data = null;
+	public DragonDef.SkillData skillData { get { return m_data; }}
 
 	// Values
-	[SerializeField] private Range m_valueRange = new Range(0f, 1f);
-	private float m_valueOffset = 0;
 	public float value { get { return GetValueAtLevel(level); }}
 	public float nextLevelValue { get { return GetValueAtLevel(nextLevel); }}
 
@@ -59,8 +44,7 @@ public class DragonSkill : SerializableClass {
 	public int lastLevel { get { return NUM_LEVELS - 1; }}
 
 	// Level unlock prices
-	[SerializeField] private long[] m_unlockPrices = new long[NUM_LEVELS];
-	public long nextLevelUnlockPrice { get { return m_unlockPrices[nextLevel]; }}
+	public long nextLevelUnlockPrice { get { return skillData.m_unlockPrices[nextLevel]; }}
 
 	// Progress
 	public float progress { get { return Mathf.InverseLerp(0, lastLevel, level); }}
@@ -70,17 +54,21 @@ public class DragonSkill : SerializableClass {
 	[NonSerialized] private DragonData m_owner = null;	// [AOC] Avoid recursive serialization!!
 	public DragonData owner { get { return m_owner; }}
 
+	// Debug
+	private float m_valueOffset = 0;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Parametrized constructor.
 	/// </summary>
-	/// <param name="_owner">The dragon data this progression belongs to.</param>
-	/// <param name="_type">The type of this skill.</param>
-	public DragonSkill(DragonData _owner, EType _type) {
+	/// <param name="_owner">The dragon data this skill belongs to.</param>
+	/// <param name="_data">The initialization data of this skill.</param>
+	public DragonSkill(DragonData _owner, DragonDef.SkillData _data) {
 		m_owner = _owner;
-		m_type = _type;
+		m_data = _data;
+		m_def = DefinitionsManager.dragonSkills.GetDef(_data.m_sku);
 
 		m_valueOffset = 0;
 	}
@@ -129,7 +117,7 @@ public class DragonSkill : SerializableClass {
 	/// <param name="_level">The level at which we want to know the skill's value.</param>
 	public float GetValueAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, lastLevel, _level);
-		return m_valueRange.Lerp(levelDelta) + m_valueOffset;
+		return m_data.m_valueRange.Lerp(levelDelta) + m_valueOffset;
 	}
 
 	/// <summary>

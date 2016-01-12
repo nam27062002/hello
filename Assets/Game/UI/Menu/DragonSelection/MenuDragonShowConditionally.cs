@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -45,6 +46,9 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	[Comment("Optional, must have triggers \"show\" and \"hide\"", 5f)]
 	[SerializeField] private Animator m_anim = null;
 
+	// Internal
+	List<DragonDef> m_sortedDefs = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -59,8 +63,11 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// First update.
 	/// </summary>
 	private void Start() {
+		// Get sorted defs
+		m_sortedDefs = DefinitionsManager.dragons.defsListByMenuOrder;
+
 		// Subscribe to external events
-		Messenger.AddListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 
 		// Apply for the first time with currently selected dragon and without animation
@@ -79,17 +86,17 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonId>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
 	/// Changes dragon selected to the given one.
 	/// </summary>
-	/// <param name="_id">The id of the dragon we want to be the current one.</param>
-	public void SetSelectedDragon(DragonId _id) {
+	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
+	public void SetSelectedDragon(string _sku) {
 		// Notify game
-		Messenger.Broadcast<DragonId>(GameEvents.MENU_DRAGON_SELECTED, _id);
+		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _sku);
 	}
 
 	//------------------------------------------------------------------//
@@ -98,14 +105,15 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// <summary>
 	/// Apply visibility based on given parameters.
 	/// </summary>
-	/// <param name="_id">The id of the dragon to be considered.</param>
+	/// <param name="_sku">The sku of the dragon to be considered.</param>
 	/// <param name="_useAnims">Whether to animate or not.</param>
-	private void Apply(DragonId _id, bool _useAnims) {
+	private void Apply(string _sku, bool _useAnims) {
 		// Check whether the object should be visible or not
 		bool toShow = false;
+		DragonData dragon = DragonManager.GetDragonData(_sku);
 
 		// Ownership status
-		switch(DragonManager.GetDragonData(_id).lockState) {
+		switch(dragon.lockState) {
 			case DragonData.LockState.LOCKED:		toShow = m_showIfLocked;	break;
 			case DragonData.LockState.AVAILABLE:	toShow = m_showIfAvailable;	break;
 			case DragonData.LockState.OWNED:		toShow = m_showIfOwned;		break;
@@ -114,11 +122,11 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 		// Dragon ID (overrides ownership status)
 		switch(m_hideForDragons) {
 			case HideForDragons.NONE:	break;	// Nothing to change
-			case HideForDragons.FIRST:	toShow &= (_id != (DragonId)0);	break;
-			case HideForDragons.LAST:	toShow &= (_id != (DragonId.COUNT - 1));	break;
+			case HideForDragons.FIRST:	toShow &= (dragon.def.menuOrder != 0);	break;
+			case HideForDragons.LAST:	toShow &= (dragon.def.menuOrder != (m_sortedDefs.Count - 1));	break;
 			case HideForDragons.FIRST_AND_LAST:	{
-				toShow &= (_id != (DragonId)0);
-				toShow &= (_id != (DragonId.COUNT - 1));
+				toShow &= (dragon.def.menuOrder != 0);
+				toShow &= (dragon.def.menuOrder != (m_sortedDefs.Count - 1));
 			} break;
 			case HideForDragons.ALL:	toShow = false;	break;	// Force hiding
 		}
@@ -144,10 +152,10 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// <summary>
 	/// The selected dragon on the menu has changed.
 	/// </summary>
-	/// <param name="_id">The id of the newly selected dragon.</param>
-	public void OnDragonSelected(DragonId _id) {
+	/// <param name="_sku">The sku of the newly selected dragon.</param>
+	public void OnDragonSelected(string _sku) {
 		// Just update visibility
-		Apply(_id, true);
+		Apply(_sku, true);
 	}
 
 	/// <summary>
@@ -156,12 +164,12 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// <param name="_data">The data of the acquired dragon.</param>
 	public void OnDragonAcquired(DragonData _data) {
 		// It should be the selected dragon, but check anyway
-		if(_data.id != InstanceManager.GetSceneController<MenuSceneController>().selectedDragon) {
+		if(_data.def.sku != InstanceManager.GetSceneController<MenuSceneController>().selectedDragon) {
 			return;
 		}
 
 		// Update visibility
-		Apply(_data.id, true);
+		Apply(_data.def.sku, true);
 	}
 }
 

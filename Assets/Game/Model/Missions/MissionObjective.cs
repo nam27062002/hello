@@ -183,9 +183,9 @@ public class MissionObjective {
 	public static MissionObjective Create(Mission _parentMission) {
 		// Create a new objective based on mission type
 		switch(_parentMission.def.type) {
-			case Type.SCORE:		return new MissionObjectiveScore(_parentMission);		break;
-			case Type.SURVIVE_TIME:	return new MissionObjectiveSurviveTime(_parentMission);	break;
-			case Type.KILL:			return new MissionObjectiveKill(_parentMission);		break;
+			case Type.SCORE:		return new MissionObjectiveScore(_parentMission);
+			case Type.SURVIVE_TIME:	return new MissionObjectiveSurviveTime(_parentMission);
+			case Type.KILL:			return new MissionObjectiveKill(_parentMission);
 		}
 
 		// Unrecoginzed mission type, aborting

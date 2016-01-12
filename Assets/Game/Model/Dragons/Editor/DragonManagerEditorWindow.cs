@@ -58,7 +58,7 @@ public class DragonManagerEditorWindow : EditorWindow {
 				// Display current dragons
 				// Force exactly 1 dragon per DragonId
 				SerializedProperty dragonsArrayProp = m_target.FindProperty("m_dragons");
-				dragonsArrayProp.arraySize = (int)DragonId.COUNT;	// This will delete any unnecessary entries or add any missing entries
+				dragonsArrayProp.arraySize = DefinitionsManager.dragons.Count;	// This will delete any unnecessary entries or add any missing entries
 				for(int i = 0; i < dragonsArrayProp.arraySize; i++) {
 					// Vertical layout to group everything on this column
 					EditorGUILayout.BeginVertical(GUILayout.Width(COLUMN_WIDTH)); {	// A fixed width is more suitable in this case
@@ -71,8 +71,9 @@ public class DragonManagerEditorWindow : EditorWindow {
 						// Make sure it has the right ID assigned
 						// [AOC] Tricky: The serialized property expects the real index of the enum entry [0..N-1], we can't use 
 						//		 the DragonId vaule directly since it's [-1..N]. Luckily, C# gives us the tools to do so via the enum name.
-						SerializedProperty idProp = dragonProp.FindPropertyRelative("m_id");
-						idProp.enumValueIndex = Array.IndexOf(idProp.enumNames, ((DragonId)i).ToString());
+						// [AOC] Remove for now, DragonId exists no more
+						//SerializedProperty idProp = dragonProp.FindPropertyRelative("m_id");
+						//idProp.enumValueIndex = Array.IndexOf(idProp.enumNames, ((DragonId)i).ToString());
 
 						// Default dragon drawer
 						EditorGUILayout.PropertyField(dragonProp, GUIContent.none, true);

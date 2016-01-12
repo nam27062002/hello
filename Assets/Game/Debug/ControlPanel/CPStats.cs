@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -41,7 +42,7 @@ public class CPStats : MonoBehaviour {
 		m_DeviceModel.text = "Model: " + SystemInfo.deviceModel;
 		m_FpsLabel.text = "FPS: ";
 		m_ScreenSize.text = "Screen Size: " + Screen.width + "x"+ Screen.height;
-		m_LevelName.text = "Scene Name: "+ Application.loadedLevelName;
+		m_LevelName.text = "Scene Name: "+ SceneManager.GetActiveScene().name;
 
 		// FPS Initialization
 		m_DeltaTimes = new float[ m_NumDeltaTimes ];

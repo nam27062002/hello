@@ -7,6 +7,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -87,7 +88,7 @@ public class GameSceneManager : SingletonMonoBehaviour<GameSceneManager> {
 	/// </summary>
 	protected void Awake () {
 		// [AOC] Pick current scene as initial scene and put it to run state
-		SetCurrentSceneInternal(Application.loadedLevelName);
+		SetCurrentSceneInternal(SceneManager.GetActiveScene().name);
 	}
 	
 	/// <summary>
@@ -163,26 +164,25 @@ public class GameSceneManager : SingletonMonoBehaviour<GameSceneManager> {
 
 			// Loading the intermediate loading screen
 			case ESceneState.LOADING_LOADING_SCENE: {
-				// Trigger the load of the loading scene
-				m_loadTask = Application.LoadLevelAsync(loadingScene);
+				// Trigger the load of the loading scene - this will unload all active scenes
+				m_loadTask = SceneManager.LoadSceneAsync(loadingScene);
 			} break;
 
 			// Unload unused resources from the scene we're leaving.
 			case ESceneState.UNLOADING: {
-				// Trigger the unload of the current scene
+				// Trigger the unload of the assets belonging to previous scenes
 				m_unloadTask = Resources.UnloadUnusedAssets();
 			} break;
 
-
 			// Stay here until the loading is done.
 			case ESceneState.LOADING: {
-				// Trigger the load of the new scene
-				m_loadTask = Application.LoadLevelAsync(nextScene);
+				// Trigger the load of the new scene - this will unload all active scenes (including loading scene if any)
+				m_loadTask = SceneManager.LoadSceneAsync(nextScene);
 			} break;
 
 			// Unload the intermediate loading screen
 			case ESceneState.UNLOADING_LOADING_SCENE: {
-				// Trigger the unload of the loading scene
+				// Trigger the unload of assets belonging to previous scenes (including loading scene if any)
 				m_unloadTask = Resources.UnloadUnusedAssets();
 			} break;
 

@@ -271,7 +271,7 @@ public class DragonMotion : MonoBehaviour {
 	/// Updates the movement.
 	/// </summary>
 	private void UpdateMovement() {
-		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speed.value * m_speedMultiplier); 
+		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speedSkill.value * m_speedMultiplier); 
 
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
@@ -291,7 +291,7 @@ public class DragonMotion : MonoBehaviour {
 	private void FlyAwayFromGround() {
 		if (m_height < 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
 			Vector3 oldDirection = m_direction;
-			Vector3 impulse = Vector3.up * m_dragon.data.speed.value * 0.1f;			
+			Vector3 impulse = Vector3.up * m_dragon.data.speedSkill.value * 0.1f;			
 
 			ComputeFinalImpulse(impulse);	
 			m_direction = oldDirection;
@@ -428,7 +428,7 @@ public class DragonMotion : MonoBehaviour {
 	
 	// max speed without boost
 	public float GetMaxSpeed() {
-		return m_dragon.data.speed.value * m_speedMultiplier;
+		return m_dragon.data.speedSkill.value * m_speedMultiplier;
 	}
 
 	//------------------------------------------------------------------//
