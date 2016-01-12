@@ -13,7 +13,7 @@ Properties {
 	_InnerLightAdd ("Inner Light Add", float) = 0
 	_InnerLightColor ("Inner Light Color", Color) = (1,1,1,1)
 
-	_SpecLightVector ("Spec Light Vector", Vector) = (1,1,1,4)
+	_SpecExponent ("Specular Exponent", float) = 1
 }
 
 SubShader {
@@ -51,7 +51,7 @@ SubShader {
 			uniform float _InnerLightAdd;
 			uniform float4 _InnerLightColor;
 
-			uniform float4 _SpecLightVector;
+			uniform float _SpecExponent;
 
 			v2f vert (appdata_t v)
 			{
@@ -64,7 +64,11 @@ SubShader {
 				o.normal = normalize( mul( v.normal, _World2Object ) );
 
 				// Half View - See: Blinn-Phong
-    			o.halfDir = normalize(_SpecLightVector.xyz + viewDirection);
+				if (0.0 == _WorldSpaceLightPos0.w) // directional light?
+	            {
+	               float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+	               o.halfDir = normalize(lightDirection + viewDirection);
+	            }
 
 				return o;
 			}
@@ -77,7 +81,7 @@ SubShader {
 				fixed4 col = ( main * (1 + detail.r * _InnerLightAdd * _InnerLightColor)) 	* _ColorMultiply + _ColorAdd;
 
 				// Specular
-				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecLightVector.w) * detail.g;
+				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecExponent) * detail.g;
 				col = col + specularLight;	
 
 				UNITY_OPAQUE_ALPHA(col.a);
