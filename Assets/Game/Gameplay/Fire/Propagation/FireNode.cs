@@ -46,6 +46,13 @@ public class FireNode : MonoBehaviour {
 
 		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
+
+		float rnd = Random.Range(0f, 2f) + 2f;
+		Vector3 scale = new Vector3(rnd, rnd, 0f);
+		if (Random.Range(0f, 1f) < 0.5f) {
+			scale.x *= -1;
+		}
+		transform.localScale = scale;
 	}
 
 	void Update() {

@@ -78,6 +78,20 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ToonShade
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _CausticTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -90,11 +104,11 @@ Material:
       data:
         first:
           name: _Cutoff
-        second: .5
+        second: 0.5
       data:
         first:
           name: _Parallax
-        second: .0199999996
+        second: 0.02
       data:
         first:
           name: _ZWrite
@@ -102,7 +116,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: .5
+        second: 0.5
       data:
         first:
           name: _BumpScale
@@ -131,6 +145,34 @@ Material:
         first:
           name: _EmissionScaleUI
         second: 0
+      data:
+        first:
+          name: _Rimsize
+        second: 1
+      data:
+        first:
+          name: _RimIntensity
+        second: 0.448
+      data:
+        first:
+          name: _CausticSpeed
+        second: 0
+      data:
+        first:
+          name: _CausticScaleX
+        second: 0
+      data:
+        first:
+          name: _CausticScaleY
+        second: 0
+      data:
+        first:
+          name: _TintIntensity
+        second: 0
+      data:
+        first:
+          name: _Outline
+        second: 0.005
     m_Colors:
       data:
         first:
@@ -151,4 +193,20 @@ Material:
       data:
         first:
           name: _ColorAdd
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _RimColour
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _CausticColour
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Tint
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _OutlineColor
         second: {r: 0, g: 0, b: 0, a: 1}
