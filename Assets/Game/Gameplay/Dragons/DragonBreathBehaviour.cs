@@ -72,6 +72,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			if (m_dragon.fury <= 0) {
 
 				m_isFuryOn = false;
+				EndBreath();
 				m_dragon.StopFury();
 				m_animator.SetBool("breath", false);
 				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
@@ -80,14 +81,15 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
 			} else {
 				
-				Fire();
+				Breath();
 				m_animator.SetBool("breath", true);
 			}
 		} else {
 
 			if (m_dragon.fury >= m_dragon.data.def.maxFury) {
 
-				m_isFuryOn = true;				
+				m_isFuryOn = true;
+				BeginBreath();
 				m_dragon.StartFury();
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 				if (m_eatBehaviour) m_eatBehaviour.enabled = false;
@@ -103,5 +105,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	virtual public bool Overlaps( CircleArea2D _circle) { return false; }
 	virtual protected void ExtendedStart() {}
 	virtual protected void ExtendedUpdate() {}
-	virtual protected void Fire() {}
+
+	virtual protected void BeginBreath() {}
+	virtual protected void Breath() {}
+	virtual protected void EndBreath() {}
 }
