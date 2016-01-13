@@ -20,6 +20,11 @@ public class AmbientNode : MonoBehaviour
 	[Range (0,8)]
 	public float m_exposure;
 
+	public Color m_fogColor = Color.white;
+
+	public float m_fogStart = 140;
+	public float m_fogEnd = 750;
+
 	void OnDrawGizmos() 
 	{
 		Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
