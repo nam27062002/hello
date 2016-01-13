@@ -7,6 +7,9 @@ public class AmbientManager : MonoBehaviour
 	const int NODES_TO_TAKE_INTO_ACCOUNT = 3;
 
 	public Transform m_followTransform;
+	public float m_updateDistance;
+	private Vector3 m_lastFollowPosition;
+
 	public AmbientNode[] m_ambientNodes;
 
 	struct AmbientNodeResults
@@ -81,20 +84,24 @@ public class AmbientManager : MonoBehaviour
 			m_fogEnd = m_targetFogEnd;
 			ApplyCurrentValues();
 		}
-
+		m_lastFollowPosition = Vector3.one * float.MaxValue;
 	}
 
 	void Update()
 	{
 		if (m_followTransform != null)
 		{
-			if ( Application.isEditor && !Application.isPlaying)
+			if ( (m_followTransform.position - m_lastFollowPosition).magnitude >= m_updateDistance )
 			{
-				m_ambientNodes = FindObjectsOfType(typeof(AmbientNode)) as AmbientNode[];	
-			}
+				if ( Application.isEditor && !Application.isPlaying)
+				{
+					m_ambientNodes = FindObjectsOfType(typeof(AmbientNode)) as AmbientNode[];	
+				}
 
-			RefreshCloserNodes();
-			RefreshTargetValues();
+				RefreshCloserNodes();
+				RefreshTargetValues();
+				m_lastFollowPosition = m_followTransform.position;
+			}
 
 			float lerpValue = 0.9f;
 			// Lerp current values
@@ -114,6 +121,8 @@ public class AmbientManager : MonoBehaviour
 
 			// Apply current Values
 			ApplyCurrentValues();
+
+
 		}
 	}
 
