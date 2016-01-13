@@ -34,7 +34,7 @@ public class EdibleBehaviour : Initializable {
 	private Transform m_dragonMouth;
 	private CircleArea2D m_Bounds;
 
-
+	private float m_lastEatingDistance = float.MaxValue;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -73,12 +73,38 @@ public class EdibleBehaviour : Initializable {
 			// check distance to dragon mouth
 			if (dot > 0) {
 				float distanceSqr = m_Bounds.DistanceSqr( m_dragonMouth.transform.position );
-				if (distanceSqr <= m_dragonEat.eatDistanceSqr) {
+				if (distanceSqr <= m_dragonEat.eatDistanceSqr) 
+				{
 					m_isBeingEaten = m_dragonEat.Eat(this);
 					if (m_isBeingEaten) {
 						m_animator.SetTrigger("being eaten");
 					}
+					m_lastEatingDistance = float.MaxValue;
 				}
+				else
+				{
+					if ( distanceSqr < m_dragonEat.eatDistanceSqr * 5 )
+					{
+						if ( distanceSqr > m_lastEatingDistance )
+						{
+							// I'm Escaping!!!!
+							m_dragonEat.AlmostEat(this);
+							m_lastEatingDistance = float.MaxValue;
+						}
+						else
+						{
+							m_lastEatingDistance = distanceSqr;
+						}
+					}
+					else
+					{
+						m_lastEatingDistance = float.MaxValue;
+					}
+				}
+			}
+			else
+			{
+				m_lastEatingDistance = float.MaxValue;
 			}
 		}
 	}
