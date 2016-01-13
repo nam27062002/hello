@@ -91,7 +91,7 @@ public class AmbientManager : MonoBehaviour
 	{
 		if (m_followTransform != null)
 		{
-			if ( (m_followTransform.position - m_lastFollowPosition).magnitude >= m_updateDistance )
+			if ( (m_followTransform.position - m_lastFollowPosition).magnitude >= m_updateDistance || (Application.isEditor && !Application.isPlaying))
 			{
 				if ( Application.isEditor && !Application.isPlaying)
 				{
