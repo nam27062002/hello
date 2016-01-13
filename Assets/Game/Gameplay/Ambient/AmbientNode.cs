@@ -25,10 +25,16 @@ public class AmbientNode : MonoBehaviour
 	public float m_fogStart = 140;
 	public float m_fogEnd = 750;
 
+	[Range (0,2)]
+	public float m_flaresIntensity = 1;
+
 	void OnDrawGizmos() 
 	{
 		Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
 		Gizmos.DrawSphere(transform.position, 0.5f * transform.localScale.x);
+
+		Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
+		Gizmos.DrawRay( transform.position, transform.forward);
 	}
 
 }
