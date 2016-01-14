@@ -17,5 +17,5 @@ Shader "Custom/Transparent2Faces" {
 		}
 		
 	} 
-	
+	Fallback "Mobile/VertexLit"
 }

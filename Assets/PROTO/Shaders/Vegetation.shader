@@ -11,6 +11,8 @@ Properties
 	_WindDiplacement ("WindDisplacement", float) = 0
 	_WavingDiplacement ("WavingDisplacement", float) = 0
 	_WavingSpeed ("WavingSpeed", float) = 0
+
+	_Height( "Height", float ) = 1
 	_MovementYStart( "Movement Y Start", Range (0, 1)) = 0.3
 
 }
@@ -47,6 +49,7 @@ SubShader {
 			uniform float _WindDiplacement;
 			uniform float _WavingDiplacement;
 			uniform float _WavingSpeed;
+			uniform float _Height;
 			uniform float _MovementYStart;
 
 
@@ -56,9 +59,9 @@ SubShader {
 
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 
-				if ( v.texcoord.y > _MovementYStart )
+				if ( v.vertex.y > _MovementYStart )
 				{ 
-					float d = (v.texcoord.y - _MovementYStart) / (1.0 - _MovementYStart);
+					float d = (v.vertex.y - _MovementYStart) / (_Height - _MovementYStart);
 					d = sin( d * 3.14 / 2.0 );
 					o.vertex.x += d * _WindDiplacement;
 					o.vertex.x += sin( _Time.y * _WavingSpeed) * _WavingDiplacement * d;
@@ -78,5 +81,5 @@ SubShader {
 		ENDCG
 	}
 }
-
+	Fallback "Mobile/VertexLit"
 }

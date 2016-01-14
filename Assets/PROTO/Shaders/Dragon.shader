@@ -18,7 +18,9 @@ Properties {
 
 SubShader {
 	Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase" }
+	ZWrite On
 	LOD 100
+
 	
 	Pass {  
 		CGPROGRAM
@@ -91,5 +93,5 @@ SubShader {
 	}
 	
 }
-
+Fallback "Mobile/VertexLit"
 }
