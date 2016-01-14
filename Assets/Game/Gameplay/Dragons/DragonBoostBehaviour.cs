@@ -98,6 +98,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 			m_animator.SetBool("boost", false);
 	}
 
+	public bool IsBoostActive()
+	{
+		return m_active;
+	}
+
 	public void ResumeBoost() {
 		m_ready = true;
 	}
