@@ -32,7 +32,6 @@ public class FireBreath : DragonBreathBehaviour {
 
 	private Vector2 m_sphCenter;
 	private float m_sphRadius;
-	private float m_sphRadiusSqr;
 
 	private float m_area;
 
@@ -55,7 +54,6 @@ public class FireBreath : DragonBreathBehaviour {
 
 		m_sphCenter = m_mouthTransform.position;
 		m_sphRadius = 0;
-		m_sphRadiusSqr = 0;
 
 		m_frame = 0;
 
@@ -101,6 +99,7 @@ public class FireBreath : DragonBreathBehaviour {
 	override protected void BeginBreath() {
 		m_light = PoolManager.GetInstance("PF_FireLight");
 		m_light.transform.position = m_mouthTransform.position;
+		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);
 	}
 
 	override protected void EndBreath() {
@@ -137,7 +136,6 @@ public class FireBreath : DragonBreathBehaviour {
 			m_sphCenter.x = c - m_sphCenter.y * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
 
 			m_sphRadius = (m_sphCenter - m_triP1).magnitude;
-			m_sphRadiusSqr = m_sphRadius * m_sphRadius;
 
 			m_bounds2D.Set(m_sphCenter.x - m_sphRadius, m_sphCenter.y - m_sphRadius, m_sphRadius * 2f, m_sphRadius * 2f);
 		}
@@ -161,7 +159,6 @@ public class FireBreath : DragonBreathBehaviour {
 
 		//Vector3 pos = new Vector3(m_triP0.x, m_triP0.y, -8f);
 		m_light.transform.position = m_triP0; //Vector3.Lerp(m_light.transform.position, pos, 1f);
-		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);
 
 		float angle = Vector3.Angle(Vector3.right, m_direction);
 		if (m_direction.y > 0) angle *= -1;
