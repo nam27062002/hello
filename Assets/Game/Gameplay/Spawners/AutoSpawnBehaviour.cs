@@ -31,7 +31,12 @@ public class AutoSpawnBehaviour : MonoBehaviour {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
 		GameObject viewBurned = transform.FindChild("view_burned").gameObject;
-		m_bounds = viewBurned.GetComponent<Renderer>().bounds;
+		Collider collider = GetComponent<Collider>();
+		if (collider != null) {
+			m_bounds = collider.bounds;
+		} else {
+			m_bounds = viewBurned.GetComponent<Renderer>().bounds;
+		}
 	}
 
 	void Update() {
