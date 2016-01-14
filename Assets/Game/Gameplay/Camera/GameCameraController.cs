@@ -232,6 +232,30 @@ public class GameCameraController : MonoBehaviour {
 	// Bounds															//
 	//------------------------------------------------------------------//
 
+	public bool IsInsideActivationMinArea(Vector3 _point) {
+		_point.z = 0;
+		return m_activationMin.Contains(_point);
+	}
+
+	public bool IsInsideActivationMinArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return m_activationMin.Intersects(_bounds);
+	}
+
+	public bool IsInsideActivationMaxArea(Vector3 _point) {
+		_point.z = 0;
+		return m_activationMax.Contains(_point);
+	}
+
+	public bool IsInsideActivationMaxArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return m_activationMax.Intersects(_bounds);
+	}
+
 	public bool IsInsideActivationArea(Vector3 _point) {
 		_point.z = 0;
 		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);

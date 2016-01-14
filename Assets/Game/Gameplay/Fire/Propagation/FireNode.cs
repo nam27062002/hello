@@ -13,7 +13,7 @@ public class FireNode : MonoBehaviour {
 
 	[SerializeField] private float m_resistanceMax = 50f;
 	[SerializeField] private float m_burningTime = 10f;
-	[SerializeField] private float m_damagePerTick = 0.75f;
+	[SerializeField] private float m_damagePerSecond = 6f;
 	[SerializeField] private float m_maxDistanceLinkNode = 5f;
 
 
@@ -24,11 +24,16 @@ public class FireNode : MonoBehaviour {
 	private float m_resistance;
 	private float m_timer;
 
+	private Vector3 m_fireSpriteScale;
+
 	private GameObject m_fireSprite;
+	private GameCameraController m_camera;
 
 
 	// Use this for initialization
 	void Start () {
+		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+
 		// get two closets neighbours
 		FindNeighbours();
 	}
@@ -53,27 +58,29 @@ public class FireNode : MonoBehaviour {
 			scale.x *= -1;
 		}
 		transform.localScale = scale;
+
+		m_fireSpriteScale = Vector3.zero;
 	}
 
 	void Update() {
 		if (m_state == State.Burning) {	
 			//check if we have to render the particle
-			Vector2 pos = transform.position;
-			Vector2 cameraPos = Camera.main.transform.position;
-			float d = (pos - cameraPos).sqrMagnitude;
-
-			if (d < 20f * 20f) 	StartFire();
-			else 	 			StopFire();
-
 			if (m_fireSprite != null) {
-				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, transform.localScale, Time.smoothDeltaTime * 1.5f);
+				m_fireSprite.transform.localScale = m_fireSpriteScale;
+				if (!m_camera.IsInsideActivationMaxArea(transform.position)) {
+					StopFire();
+				}
+			} else if (m_camera.IsInsideActivationMaxArea(transform.position)) {
+				StartFire();		
 			}
 
+			m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, transform.localScale, Time.smoothDeltaTime * 1.5f);
+
 			//burn near nodes and fuel them
-			m_timer -= Time.deltaTime;
 			if (m_timer > 0) {
+				m_timer -= Time.deltaTime;
 				for (int i = 0; i < m_neighbours.Count; i++) {
-					m_neighbours[i].Burn(m_damagePerTick); // what amount of damage should
+					m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime); // what amount of damage should
 				}
 			} else {
 				m_state = State.Burned;
@@ -117,7 +124,7 @@ public class FireNode : MonoBehaviour {
 		if (m_fireSprite == null) {
 			m_fireSprite = PoolManager.GetInstance("FireSprite");
 			m_fireSprite.transform.position = transform.position;
-			m_fireSprite.transform.localScale = Vector3.zero;
+			m_fireSprite.transform.localScale = m_fireSpriteScale;
 			m_fireSprite.transform.localRotation = transform.localRotation;
 			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(0f, 1f));
 		}
