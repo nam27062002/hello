@@ -3,7 +3,7 @@
 // - no per-material color
 // - can receive shadows
 
-Shader "Custom/Unlit/TextureShadow" {
+Shader "Custom/Unlit/TextureShadow (Receive Shadows)" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 }

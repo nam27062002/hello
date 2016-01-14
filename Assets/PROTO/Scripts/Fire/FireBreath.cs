@@ -32,18 +32,18 @@ public class FireBreath : DragonBreathBehaviour {
 
 	private Vector2 m_sphCenter;
 	private float m_sphRadius;
-	private float m_sphRadiusSqr;
 
 	private float m_area;
 
 	private int m_frame;
 
+	private GameObject m_light;
 
 
 	override protected void ExtendedStart() {
 
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/Flame"), m_maxParticles, false);
-
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireLight"), 1, false);
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
@@ -54,9 +54,10 @@ public class FireBreath : DragonBreathBehaviour {
 
 		m_sphCenter = m_mouthTransform.position;
 		m_sphRadius = 0;
-		m_sphRadiusSqr = 0;
 
 		m_frame = 0;
+
+		m_light = null;
 	}
 
 	override public bool IsInsideArea(Vector2 _point) { 
@@ -95,7 +96,18 @@ public class FireBreath : DragonBreathBehaviour {
 		return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
 	}
 
-	override protected void Fire(){
+	override protected void BeginBreath() {
+		m_light = PoolManager.GetInstance("PF_FireLight");
+		m_light.transform.position = m_mouthTransform.position;
+		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);
+	}
+
+	override protected void EndBreath() {
+		m_light.SetActive(false);
+		m_light = null;
+	}
+
+	override protected void Breath(){
 		m_direction = m_mouthTransform.position - m_headTransform.position;
 		m_direction.Normalize();
 		m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
@@ -108,7 +120,8 @@ public class FireBreath : DragonBreathBehaviour {
 			} else {
 				m_actualLength = m_length;
 			}
-					
+		}
+		{
 			// Pre-Calculate Triangle: wider bounding triangle to make burning easier
 			m_triP0 = m_mouthTransform.position;
 			m_triP1 = m_triP0 + m_direction * m_actualLength - m_directionP * m_sizeCurve.Evaluate(1) * 0.5f;
@@ -123,7 +136,6 @@ public class FireBreath : DragonBreathBehaviour {
 			m_sphCenter.x = c - m_sphCenter.y * ((m_triP0.y - m_triP1.y) / (m_triP0.x - m_triP1.x));
 
 			m_sphRadius = (m_sphCenter - m_triP1).magnitude;
-			m_sphRadiusSqr = m_sphRadius * m_sphRadius;
 
 			m_bounds2D.Set(m_sphCenter.x - m_sphRadius, m_sphCenter.y - m_sphRadius, m_sphRadius * 2f, m_sphRadius * 2f);
 		}
@@ -142,6 +154,15 @@ public class FireBreath : DragonBreathBehaviour {
 				particle.Activate(m_mouthTransform, m_direction * m_actualLength, Random.Range(0.75f, 1.25f), m_sizeCurve);
 			}
 		}
+
+		float lerpT = 0.15f;
+
+		//Vector3 pos = new Vector3(m_triP0.x, m_triP0.y, -8f);
+		m_light.transform.position = m_triP0; //Vector3.Lerp(m_light.transform.position, pos, 1f);
+
+		float angle = Vector3.Angle(Vector3.right, m_direction);
+		if (m_direction.y > 0) angle *= -1;
+		m_light.transform.localRotation = Quaternion.Lerp(m_light.transform.localRotation, Quaternion.AngleAxis(angle, Vector3.back), lerpT);
 
 		m_frame = (m_frame + 1) % 4;
 	}

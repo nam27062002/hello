@@ -3,7 +3,7 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Custom/Unlit/TextureColor" {
+Shader "Custom/Unlit/TextureColorShadow (Cast Shadows)" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_ColorMultiply ("Color Multiply", Color) = (1,1,1,1)

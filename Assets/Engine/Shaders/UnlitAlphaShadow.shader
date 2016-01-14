@@ -3,7 +3,7 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Custom/Unlit/TransparentShadow" {
+Shader "Custom/Unlit/TransparentShadow (Cast Shadows)" {
 Properties {
 	_MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
 }

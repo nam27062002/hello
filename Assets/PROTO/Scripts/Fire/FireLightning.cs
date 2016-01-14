@@ -191,7 +191,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 	}
 
-	override protected void Fire(){
+	override protected void Breath(){
 		
 		if (!firing){
 			
