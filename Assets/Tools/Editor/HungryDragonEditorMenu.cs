@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -52,14 +53,8 @@ public class HungryDragonEditorMenu {
 	public static void ShowDefintions7() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
 
 	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Dragon Manager", false, 200)]
-	public static void ShowDragonManager() {
-		// Serialize manager to be able to show private members
-		DragonManagerEditorWindow window = (DragonManagerEditorWindow)EditorWindow.GetWindow(typeof(DragonManagerEditorWindow));
-		window.m_target = new SerializedObject(DragonManager.instance);
-		window.titleContent = new GUIContent("Dragon Manager Editor");
-		window.ShowUtility();	// To avoid window getting automatically closed when losing focus
-	}
+	[MenuItem("Hungry Dragon/Content/Chest Manager", false, 200)]
+	public static void ShowManager1() { OpenFile("ChestManager.asset", SINGLETONS_FOLDER); }
 
 	[MenuItem("Hungry Dragon/Content/Missions Manager", false, 201)]
 	public static void ShowManager2() { OpenFile("PF_MissionManager.prefab", SINGLETONS_FOLDER); }
@@ -122,6 +117,19 @@ public class HungryDragonEditorMenu {
 		window.Show();	// In this case we actually want the window to be closed when losing focus so the temp object created to display savegames is properly destroyed
 	}
 
+	//----------------------------------------------- SCENE SHORTCUTS -------------------------------------------------//
+	[MenuItem("Hungry Dragon/Scenes/SC_Loading", false, 50)]
+	public static void OpenScene1() { OpenScene("Assets/Game/Scenes/SC_Loading.unity"); }
+
+	[MenuItem("Hungry Dragon/Scenes/SC_Menu", false, 51)]
+	public static void OpenScene2() { OpenScene("Assets/Game/Scenes/SC_Menu.unity"); }
+
+	[MenuItem("Hungry Dragon/Scenes/SC_Game", false, 52)]
+	public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity"); }
+
+	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 101)]
+	public static void OpenScene4() { OpenScene("Assets/Tests/SC_Popups.unity"); }
+
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
@@ -134,5 +142,14 @@ public class HungryDragonEditorMenu {
 		// Just find and select the scriptable object
 		Object targetObj = AssetDatabase.LoadMainAssetAtPath(_folderPath + _fileName);
 		EditorUtils.FocusObject(targetObj, true, false, true);
+	}
+
+	/// <summary>
+	/// Open the scene with the given name.
+	/// </summary>
+	/// <param name="_sceneName">The path of the scene starting at project root and with extension (e.g. "Assets/MyScenesFolder/MyScene.unity").</param>
+	private static void OpenScene(string _scenePath) {
+		// Just do it
+		EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);	// Will close all open scenes
 	}
 }

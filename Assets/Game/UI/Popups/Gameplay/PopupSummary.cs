@@ -49,7 +49,6 @@ public class PopupSummary : MonoBehaviour {
 		DebugUtils.Assert(controller != null, "Required component!");
 		controller.OnOpenPreAnimation = OnOpenPreAnimation;
 		controller.OnOpenPostAnimation = OnOpenPostAnimation;
-		controller.OnClosePostAnimation = OnClosePostAnimation;
 	}
 	
 	/// <summary>
@@ -85,24 +84,5 @@ public class PopupSummary : MonoBehaviour {
 		// Launch number animators
 		scoreAnimator.SetValue(0, (int)RewardManager.score);
 		coinsAnimator.SetValue(0, (int)RewardManager.coins);
-	}
-
-	/// <summary>
-	/// Actions to perform right after the popup is closed.
-	/// </summary>
-	public void OnClosePostAnimation() {
-		// Let game scene controller manage it
-		InstanceManager.GetSceneController<GameSceneController>().OnSummaryPopupClosed();
-	}
-
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary
-	/// The accept button has been clicked.
-	/// </summary>
-	public void OnAcceptClick() {
-		// Trigger the close animation
-		GetComponent<PopupController>().Close(true);
 	}
 }

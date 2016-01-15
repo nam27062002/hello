@@ -57,6 +57,7 @@ public static class Colors {
 	public static readonly Color fuchsia = new Color(1f, 0f, 1f);
 	public static readonly Color pink = new Color(1f, 0.6f, 0.8f);
 	public static readonly Color orange = new Color(1f, 0.5f, 0f);
+	public static readonly Color gold = new Color(1f, 0.8f, 0f);
 
 	// Special
 	public static readonly Color transparentBlack = new Color(0f, 0f, 0f, 0f);
