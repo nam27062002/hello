@@ -256,7 +256,7 @@ GameObject:
   - 114: {fileID: 11435250}
   - 114: {fileID: 11473008}
   m_Layer: 0
-  m_Name: PF_CS_XL_Building_Windmill_00
+  m_Name: wind_mill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -614,7 +614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11413822
 MonoBehaviour:
@@ -641,7 +641,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11422712
 MonoBehaviour:
@@ -656,7 +656,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11435250
 MonoBehaviour:
@@ -669,7 +669,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: windmill
+  m_typeID: wind_mill
   m_reward:
     score: 0
     coins: 0
@@ -693,7 +693,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11441506
 MonoBehaviour:
@@ -708,7 +708,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11441934
 MonoBehaviour:
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11448030
 MonoBehaviour:
@@ -750,7 +750,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11473008
 MonoBehaviour:
@@ -789,7 +789,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!114 &11487146
 MonoBehaviour:
@@ -804,7 +804,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_resistanceMax: 50
   m_burningTime: 10
-  m_damagePerTick: 0.75
+  m_damagePerSecond: 6
   m_maxDistanceLinkNode: 5
 --- !u!1001 &100100000
 Prefab:
@@ -831,7 +831,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_typeID
-      value: windmill
+      value: wind_mill
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_spawnTime
