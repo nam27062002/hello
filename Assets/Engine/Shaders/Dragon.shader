@@ -22,7 +22,7 @@ SubShader {
 	LOD 100
 
 	
-	Pass {  
+	Pass {
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -63,7 +63,7 @@ SubShader {
 
 				// Normal
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
-				o.normal = normalize(mul(v.normal, _World2Object).xyz); 
+				o.normal = normalize(mul(v.normal, _World2Object).xyz);
 
 				// Half View - See: Blinn-Phong
 				if (0.0 == _WorldSpaceLightPos0.w) // directional light?
@@ -80,7 +80,7 @@ SubShader {
 				fixed4 main = tex2D(_MainTex, i.texcoord);
 				fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
-				fixed4 col = ( main * (1 + detail.r * _InnerLightAdd * _InnerLightColor)) 	* _ColorMultiply + _ColorAdd;
+				fixed4 col = ( main * (1 + detail.r * _InnerLightAdd * _InnerLightColor)) * _ColorMultiply + _ColorAdd;
 
 				// Specular
 				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecExponent) * detail.g;
