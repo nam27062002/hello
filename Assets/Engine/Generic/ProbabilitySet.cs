@@ -23,6 +23,7 @@ public class ProbabilitySet {
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Auxiliar class representing an element of the probability set.
+	/// For now only designed to be setup from the inspector.
 	/// </summary>
 	[Serializable]
 	public class Element {
@@ -52,6 +53,8 @@ public class ProbabilitySet {
 	//------------------------------------------------------------------------//
 	[SerializeField] private Element[] m_elements = new Element[0];
 
+	public int numElements { get { return m_elements.Length; }}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -71,11 +74,29 @@ public class ProbabilitySet {
 	/// <param name="_elements">Elements.</param>
 	public ProbabilitySet(Element[] _elements) {
 		// Store elements
-		m_elements = _elements;
+		if(_elements != null) m_elements = _elements;
 
 		// Distribute probability uniformly at start
 		for(int i = 0; i < m_elements.Length; i++) {
 			m_elements[i].value = 1f/(float)(m_elements.Length);
 		}
+	}
+
+	/// <summary>
+	/// Gets the index of a random element weighted following the probability value assigned to it.
+	/// </summary>
+	/// <returns>The index of the selected element.</returns>
+	public int GetWeightedRandomElement() {
+		// Select a random value [0..1]
+		// Since the weights of all elements sum exactly 1, iterate through elements until the selected value is reached
+		// This should match weighted probability distribution
+		float targetValue = UnityEngine.Random.Range(0f, 1f);
+		for(int i = 0; i < m_elements.Length; i++) {
+			targetValue -= m_elements[i].value;
+			if(targetValue <= 0f) return i;
+		}
+
+		// Should never reach this point unless there are no elements on the set
+		return -1;
 	}
 }
