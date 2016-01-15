@@ -75,6 +75,9 @@ public class HungryDragonEditorMenu {
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 	}
 
+	/// <summary>
+	/// Saves all assets to disk. Useful to make sure changes in scriptable object instances are stored.
+	/// </summary>
 	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 3)]
 	public static void SaveAssets() {
 		AssetDatabase.SaveAssets();
