@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -52,14 +53,8 @@ public class HungryDragonEditorMenu {
 	public static void ShowDefintions7() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
 
 	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Dragon Manager", false, 200)]
-	public static void ShowDragonManager() {
-		// Serialize manager to be able to show private members
-		DragonManagerEditorWindow window = (DragonManagerEditorWindow)EditorWindow.GetWindow(typeof(DragonManagerEditorWindow));
-		window.m_target = new SerializedObject(DragonManager.instance);
-		window.titleContent = new GUIContent("Dragon Manager Editor");
-		window.ShowUtility();	// To avoid window getting automatically closed when losing focus
-	}
+	[MenuItem("Hungry Dragon/Content/Chest Manager", false, 200)]
+	public static void ShowManager1() { OpenFile("ChestManager.asset", SINGLETONS_FOLDER); }
 
 	[MenuItem("Hungry Dragon/Content/Missions Manager", false, 201)]
 	public static void ShowManager2() { OpenFile("PF_MissionManager.prefab", SINGLETONS_FOLDER); }
