@@ -75,6 +75,11 @@ public class HungryDragonEditorMenu {
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 	}
 
+	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 3)]
+	public static void SaveAssets() {
+		AssetDatabase.SaveAssets();
+	}
+
 	//--------------------------------------------------- OTHERS -----------------------------------------------------//
 	/// <summary>
 	/// Add menu item to be able to open the level editor.
