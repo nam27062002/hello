@@ -239,6 +239,7 @@ namespace LevelEditor {
 					if(oldIdx != newIdx) {
 						newDragon = options[newIdx];
 						LevelEditor.settings.testDragon = newDragon;
+						AssetDatabase.SaveAssets();
 					}
 				} EditorGUILayoutExt.EndHorizontalSafe();
 				GUI.enabled = true;
