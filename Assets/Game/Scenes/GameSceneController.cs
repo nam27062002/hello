@@ -102,6 +102,22 @@ public class GameSceneController : SceneController {
 	}
 
 	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+	}
+
+	/// <summary>
 	/// First update.
 	/// </summary>
 	void Start() {
@@ -214,6 +230,28 @@ public class GameSceneController : SceneController {
 		}
 	}
 
+	/// <summary>
+	/// Go back to the main menu, finalizing all the required stuff in the game scene.
+	/// </summary>
+	public void GoToMenu() {
+		// [AOC] TODO!! Update global stats
+
+		// Apply rewards to user profile
+		RewardManager.ApplyRewardsToProfile();
+
+		// Process Missions: give rewards and generate new missions replacing those completed
+		MissionManager.ProcessMissions();
+
+		// Clear chest manager
+		ChestManager.ClearSelectedChest();
+
+		// Save persistence
+		PersistenceManager.Save();
+
+		// Go back to main menu
+		FlowManager.GoToMenu();
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
@@ -239,6 +277,9 @@ public class GameSceneController : SceneController {
 				InstanceManager.player.playable = false;
 				InstanceManager.player.gameObject.SetActive(true);
 				InstanceManager.player.MoveToSpawnPoint();
+
+				// Spawn chest
+				ChestManager.SelectChest();
 				
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_STARTED);
@@ -306,6 +347,9 @@ public class GameSceneController : SceneController {
 		m_state = _newState;
 	}
 
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// The player has died.
 	/// </summary>
@@ -318,22 +362,25 @@ public class GameSceneController : SceneController {
 	}
 
 	/// <summary>
-	/// The summary popup has been closed.
+	/// A popup has been closed.
 	/// </summary>
-	public void OnSummaryPopupClosed() {
-		// [AOC] TODO!! Update global stats
-		
-		// Apply rewards to user profile
-		RewardManager.ApplyRewardsToProfile();
-		
-		// Process Missions: give rewards and generate new missions replacing those completed
-		MissionManager.ProcessMissions();
+	/// <param name="_popup">The popup that has been closed</param>
+	public void OnPopupClosed(PopupController _popup) {
+		// Figure out which popup eas closed
+		// a) Summary popup?
+		if(_popup.GetComponent<PopupSummary>() != null) {
+			// If a chest was collected, show chest popup, otherwise finish the game
+			if(ChestManager.selectedChest.collected) {
+				PopupManager.OpenPopupAsync(PopupChestReward.PATH);
+			} else {
+				GoToMenu();
+			}
+		}
 
-		// Save persistence
-		PersistenceManager.Save();
-
-		// Go back to main menu
-		FlowManager.GoToMenu();
+		// b) Chest reward popup?
+		else if(_popup.GetComponent<PopupChestReward>() != null) {
+			// Go back to menu
+			GoToMenu();
+		}
 	}
 }
-

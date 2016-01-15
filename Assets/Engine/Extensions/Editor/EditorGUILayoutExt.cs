@@ -27,7 +27,8 @@ public static class EditorGUILayoutExt {
 	/// <param name="_separator">The separator to be drawn.</param>
 	/// <param name="_orientation">Orientation of the separator. Use horizontal separators for vertical layouts and viceversa.</param>
 	/// <param name="_thickness">Size of the separator line, in pixels. Will override separator's size property if bigger.</param>
-	public static void Separator(SeparatorAttribute _separator, SeparatorAttribute.Orientation _orientation = SeparatorAttribute.Orientation.HORIZONTAL, float _thickness = 1f) {
+	public static void Separator(SeparatorAttribute _separator = null, SeparatorAttribute.Orientation _orientation = SeparatorAttribute.Orientation.HORIZONTAL, float _thickness = 1f) {
+		if(_separator == null) _separator = new SeparatorAttribute();
 		SeparatorAttributeEditor.DrawSeparator(_separator, _orientation, _thickness);
 	}
 

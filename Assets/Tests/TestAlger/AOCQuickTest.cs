@@ -26,7 +26,14 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	[SkuList(typeof(DragonDef), false)] public string m_sampleDragonSku = "";	// sku
+	public ProbabilitySet m_myProbSet = new ProbabilitySet(
+		new ProbabilitySet.Element[] {
+			new ProbabilitySet.Element("Element0"),
+			new ProbabilitySet.Element("Element1"),
+			new ProbabilitySet.Element("Element2"),
+			new ProbabilitySet.Element("Element3")
+		}
+	);
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//

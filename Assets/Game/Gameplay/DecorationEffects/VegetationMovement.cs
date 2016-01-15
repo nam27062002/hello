@@ -17,7 +17,7 @@ public class VegetationMovement : MonoBehaviour
 
 	[Range(0,1000)]
 	public float m_distanceCheck = 1;
-
+	private float m_distanceSq;
 
 	// Use this for initialization
 	void Start () 
@@ -40,6 +40,8 @@ public class VegetationMovement : MonoBehaviour
 		m_player = InstanceManager.player;
 		m_boost = m_player.GetComponent<DragonBoostBehaviour>();
 		m_playerMotion = m_player.GetComponent<DragonMotion>();
+
+		m_distanceSq = m_distanceCheck * m_distanceCheck;
 	}
 	
 	// Update is called once per frame
@@ -53,7 +55,7 @@ public class VegetationMovement : MonoBehaviour
 			{
 				if ( transform.position.x < m_player.transform.position.x )
 				{
-					if ( (transform.position - m_player.transform.position).sqrMagnitude < m_distanceCheck )
+					if ( (transform.position - m_player.transform.position).sqrMagnitude < m_distanceSq )
 					{
 						noDisplacement = false;
 						m_currentDisplacement += Time.deltaTime * 10;
@@ -64,7 +66,7 @@ public class VegetationMovement : MonoBehaviour
 			{
 				if ( transform.position.x > m_player.transform.position.x )
 				{
-					if ( (transform.position - m_player.transform.position).sqrMagnitude < m_distanceCheck )
+					if ( (transform.position - m_player.transform.position).sqrMagnitude < m_distanceSq )
 					{
 						noDisplacement = false;
 						m_currentDisplacement -= Time.deltaTime * 10;

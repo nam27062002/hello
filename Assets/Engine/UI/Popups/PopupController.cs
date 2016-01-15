@@ -23,8 +23,13 @@ public class PopupController : MonoBehaviour {
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Properties
+	private bool m_isOpen = false;
+	public bool isOpen { get { return m_isOpen; }}
+
+	// Internal
 	private Animator m_anim = null;
 	private bool m_destroyAfterClose = true;
 
@@ -57,6 +62,9 @@ public class PopupController : MonoBehaviour {
 		m_anim = GetComponent<Animator>();
 		DebugUtils.Assert(m_anim != null, "Required Component!!");
 
+		// By default popups are closed
+		m_isOpen = false;
+
 		// Dispatch message
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CREATED, this);
 	}
@@ -82,6 +90,9 @@ public class PopupController : MonoBehaviour {
 	/// Launches the open animation.
 	/// </summary>
 	public void Open() {
+		// Change status
+		m_isOpen = true;
+
 		// Dispatch message
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_OPENED, this);
 
@@ -123,6 +134,9 @@ public class PopupController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_iLevel">The index of the level that was just loaded.</param>
 	private void OnCloseAnimationFinished() {
+		// Update state
+		m_isOpen = false;
+
 		// Invoke delegate
 		OnClosePostAnimation();
 

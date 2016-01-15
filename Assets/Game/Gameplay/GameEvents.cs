@@ -42,6 +42,7 @@ public enum GameEvents {
 
 	// Collectible events
 	COLLECTIBLE_COLLECTED,		// params: Collectible _collectible
+	CHEST_COLLECTED,			// params: Chest _chest
 
 	// Dragon collection events
 	DRAGON_ACQUIRED,			// params: DragonData _data
