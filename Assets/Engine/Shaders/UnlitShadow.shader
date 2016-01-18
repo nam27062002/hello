@@ -53,6 +53,7 @@ SubShader {
 			{
 				float attenuation = LIGHT_ATTENUATION(i);
 				fixed4 col = tex2D(_MainTex, i.texcoord) * attenuation;
+				col += UNITY_LIGHTMODEL_AMBIENT * (1.0 - attenuation);
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				UNITY_OPAQUE_ALPHA(col.a);
 				return col;
