@@ -577,6 +577,7 @@ MonoBehaviour:
   m_size: 1
   m_isBig: 0
   m_destroyOnEat: 0
+  onEatenParticle: Feathers
 --- !u!114 &11405894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1010,6 +1011,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_canPanic
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: onEatenParticle
+      value: Feathers
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
