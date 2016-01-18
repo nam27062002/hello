@@ -35,6 +35,8 @@ public class EdibleBehaviour : Initializable {
 	private CircleArea2D m_Bounds;
 
 	private float m_lastEatingDistance = float.MaxValue;
+
+	public string onEatenParticle = "";
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -115,6 +117,10 @@ public class EdibleBehaviour : Initializable {
 
 		// Dispatch global event
 		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
+
+		// Particles
+		if ( !string.IsNullOrEmpty(onEatenParticle) )
+			ParticleManager.Spawn(onEatenParticle, transform.position);
 
 		// deactivate
 		if (m_destroyOnEat) {
