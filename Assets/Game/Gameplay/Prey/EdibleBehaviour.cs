@@ -37,6 +37,8 @@ public class EdibleBehaviour : Initializable {
 	private float m_lastEatingDistance = float.MaxValue;
 
 	public string onEatenParticle = "";
+
+	private Transform m_startParent;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -54,6 +56,7 @@ public class EdibleBehaviour : Initializable {
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_dragonEat = m_dragon.GetComponent<DragonEatBehaviour>();
 		m_dragonMouth = m_dragon.tongue;
+		m_startParent = transform.parent;
 	}
 
 	public override void Initialize() {
@@ -67,7 +70,8 @@ public class EdibleBehaviour : Initializable {
 		// go to mouth
 		if (m_isBeingEaten) {
 			
-		} else if (m_dragonEat.enabled) {
+		} else if (m_dragonEat.enabled) 
+		{
 			// check if this prey is in front of the mouth
 			Vector3 heading = m_Bounds.center - m_dragonMouth.transform.position;
 			float dot = Vector3.Dot(heading.normalized, m_dragon.GetDirection());
@@ -75,10 +79,15 @@ public class EdibleBehaviour : Initializable {
 			// check distance to dragon mouth
 			if (dot > 0) {
 				float distanceSqr = m_Bounds.DistanceSqr( m_dragonMouth.transform.position );
+
 				if (distanceSqr <= m_dragonEat.eatDistanceSqr) 
 				{
 					m_isBeingEaten = m_dragonEat.Eat(this);
-					if (m_isBeingEaten) {
+
+					if (m_isBeingEaten) 
+					{
+						transform.parent = m_dragonEat.transform;
+						OnEatBehaviours( false );
 						m_animator.SetTrigger("being eaten");
 					}
 					m_lastEatingDistance = float.MaxValue;
@@ -122,13 +131,27 @@ public class EdibleBehaviour : Initializable {
 		if ( !string.IsNullOrEmpty(onEatenParticle) )
 			ParticleManager.Spawn(onEatenParticle, transform.position);
 
+		OnEatBehaviours(true);
 		// deactivate
 		if (m_destroyOnEat) {
 			Destroy(gameObject);
 		} else {
 			gameObject.SetActive(false);
 		}
-
+		transform.parent = m_startParent;
 		return reward;
 	}
+
+	void OnEatBehaviours( bool _enable)
+	{
+		PreyMotion pm = GetComponent<PreyMotion>();
+		if ( pm != null )
+			pm.enabled = _enable;
+
+		PreyOrientation po = GetComponent<PreyOrientation>();
+		if ( po != null )
+			po.enabled = _enable;
+	}
+
+
 }
