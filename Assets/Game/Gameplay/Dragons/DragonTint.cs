@@ -20,6 +20,9 @@ public class DragonTint : MonoBehaviour
 	float m_damageTimer = 0;
 	float m_damageTotalTime = 0.5f;
 
+	// Fury Timer
+	float m_furyTimer = 0;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -76,15 +79,14 @@ public class DragonTint : MonoBehaviour
 		if ( m_breath.IsFuryOn() )
 		{
 			// animate fury color and inner light
-			m_starvingTimer += Time.deltaTime;
+			m_furyTimer += Time.deltaTime;
 
-			innerValue = (Mathf.Sin( m_starvingTimer * 2 ) * 0.5f) + 0.5f;
+			innerValue = (Mathf.Sin( m_furyTimer * 2 ) * 0.5f) + 0.5f;
 			innerValue *= 4;
 		}
 		else
 		{
-			m_starvingTimer = 0;
-
+			m_furyTimer = 0;
 		}
 		m_dragonRenderer.material.SetFloat("_InnerLightAdd", innerValue );
 
