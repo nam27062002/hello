@@ -16,7 +16,7 @@ public class CaveEntrance : MonoBehaviour {
 
 	private Vector3 m_projection;
 
-	private SkinnedMeshRenderer m_dragonRenderer;
+	private DragonTint m_dragonTint;
 
 	// Use this for initialization
 	void Start () {
@@ -30,7 +30,7 @@ public class CaveEntrance : MonoBehaviour {
 		m_colorLerp = Color.white;
 
 		//
-		m_dragonRenderer = InstanceManager.player.FindTransformRecursive("Dragon_Mesh").GetComponent<SkinnedMeshRenderer>();
+		m_dragonTint = InstanceManager.player.GetComponent<DragonTint>();
 	}
 
 	void OnTriggerEnter(Collider _other) {
@@ -56,7 +56,7 @@ public class CaveEntrance : MonoBehaviour {
 		Debug.DrawLine(_other.transform.position, m_entryNode + m_projection, Color.cyan);
 
 		m_colorLerp = Color.Lerp(Color.white, m_ambientColor, m_projection.sqrMagnitude / entryExit.sqrMagnitude);
-		m_dragonRenderer.material.SetColor("_ColorMultiply", m_colorLerp);
+		m_dragonTint.SetCaveColor(m_colorLerp);
 	}
 
 	void OnTriggerExit(Collider _other) {
