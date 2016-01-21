@@ -6,12 +6,6 @@ public class FlameParticle : MonoBehaviour {
 	private float m_lifeTime = 5f;
 	public float lifeTime { set { m_lifeTime = value; } }
 
-	private float m_dyingTime = 0.25f;
-	public float dyingTime { set { m_dyingTime = value; } }
-
-	private float m_dyingSpeed = 3f;
-	public float dyingSpeed { set { m_dyingSpeed = value; } }
-
 	private Range m_finalScale = new Range(0.75f, 1.25f);
 	public Range finalScale { set { m_finalScale = value; } }
 
@@ -36,7 +30,7 @@ public class FlameParticle : MonoBehaviour {
 	State state = State.INACTIVE;
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		
 		if (state == State.ACTIVE){			
 			timer -= Time.deltaTime * speed;
@@ -44,14 +38,6 @@ public class FlameParticle : MonoBehaviour {
 				float t = (1 - (timer / m_lifeTime));
 				transform.position = mouthPosition.position +  dir * (distance * t);
 				transform.localScale = Vector3.one * m_scaleCurve.Evaluate(t) * tscale;				
-			} else {
-				state = State.DYING;
-				timer = m_dyingTime;
-			}
-		} else if (state == State.DYING){			
-			timer -= Time.deltaTime * m_dyingSpeed;
-			if (timer > 0) {
-				transform.localScale = Vector3.one * tscale * timer;
 			} else {
 				state = State.INACTIVE;
 				gameObject.SetActive(false);

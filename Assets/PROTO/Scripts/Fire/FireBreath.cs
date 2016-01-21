@@ -13,8 +13,6 @@ public class FireBreath : DragonBreathBehaviour {
 
 	[Header("Particle")]
 	[SerializeField]private float m_lifeTime = 5f;
-	[SerializeField]private float m_dyingTime = 0.25f;
-	[SerializeField]private float m_dyingSpeed = 3f;
 	[SerializeField]private Range m_finalScale = new Range(0.75f, 1.25f);
 
 	private int m_groundMask;
@@ -43,6 +41,7 @@ public class FireBreath : DragonBreathBehaviour {
 	override protected void ExtendedStart() {
 
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/Flame"), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FlameUp"), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireLight"), 1, false);
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
@@ -148,12 +147,31 @@ public class FireBreath : DragonBreathBehaviour {
 			if (obj != null) {
 				FlameParticle particle = obj.GetComponent<FlameParticle>();
 				particle.lifeTime = m_lifeTime;
-				particle.dyingTime = m_dyingTime;
-				particle.dyingSpeed = m_dyingSpeed;
 				particle.finalScale = m_finalScale;
 				particle.Activate(m_mouthTransform, m_direction * m_actualLength, Random.Range(0.75f, 1.25f), m_sizeCurve);
 			}
 		}
+
+		for (int i = 0; i < 1; i++) 
+		{
+			
+			GameObject obj = PoolManager.GetInstance("FlameUp");
+			
+			if (obj != null) {
+				FlameUp particle = obj.GetComponent<FlameUp>();
+				float pos = Random.Range( 0, m_length);
+				float delta = pos / m_length;
+				float scale = m_sizeCurve.Evaluate( pos / m_length );
+				float correctedPos = pos;
+				if ( pos > m_actualLength )
+				{
+					correctedPos = m_actualLength;
+				}
+
+				particle.Activate( scale, scale * 1.25f, (delta + 0.1f) * 0.5f, scale, m_mouthTransform.position + (Vector3)m_direction * correctedPos);
+			}
+		}
+
 
 		float lerpT = 0.15f;
 
