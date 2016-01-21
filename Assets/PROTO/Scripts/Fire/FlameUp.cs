@@ -34,7 +34,7 @@ public class FlameUp : MonoBehaviour
 		{
 			case State.ACTIVE:
 			{
-				m_timer -= Time.deltaTime;
+				m_timer -= Time.deltaTime;// * (1.0f + distance);
 				if ( m_timer <= 0 )
 				{
 					state = State.INACTIVE;
@@ -46,7 +46,8 @@ public class FlameUp : MonoBehaviour
 					float tt = (m_timer / m_duration);
 					float delta = 1.0f - tt;
 
-					transform.localScale = Vector3.up * Mathf.Lerp( m_startScale, m_endScale, delta) + Vector3.right * m_startScale * tt;
+					// transform.localScale = Vector3.up * Mathf.Lerp( m_startScale, m_endScale, delta) + Vector3.right * m_startScale * tt;
+					transform.localScale = Vector3.one * m_startScale * tt;
 
 					// Alpha
 					Color c = Color.white * tt;
@@ -75,6 +76,8 @@ public class FlameUp : MonoBehaviour
 		m_distance = distance;
 
 		m_startPosition = startPos;
+
+		transform.Rotate(0,0, Random.Range(0.0f,360.0f));
 
 		gameObject.SetActive(true);
 		state = State.ACTIVE;
