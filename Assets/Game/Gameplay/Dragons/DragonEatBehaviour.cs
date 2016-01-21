@@ -88,7 +88,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 			
-		if (enabled && m_prey.Count > 0) {
+		if (enabled && m_prey.Count > 0 ) {
 
 			m_eatingTimer -= Time.deltaTime;
 			if (m_eatingTimer <= 0) {
@@ -107,8 +107,8 @@ public class DragonEatBehaviour : MonoBehaviour {
 					float t = 1 - Mathf.Max(0, m_prey[i].absorbTimer / m_absorbTime);
 					
 					// swallow entity
-					prey.prey.transform.position = Vector3.Lerp(prey.absorbPosition, m_mouth.position, t);
-					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, Vector3.one * 0.75f, t);
+					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_mouth.position, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, Vector3.one * 0.5f, t);
 					prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, m_tongueDirection), 0.25f);
 										
 					// remaining time eating
@@ -164,9 +164,12 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_almostEat = true;
 	}
 
-	public bool Eat(EdibleBehaviour _prey) {
-		if (enabled && m_eatingTimer <= 0) {
-			if (_prey.edibleFromTier <= m_dragon.data.def.tier) {
+	public bool Eat(EdibleBehaviour _prey) 
+	{
+		if (enabled && m_eatingTimer <= 0) 
+		{
+			if (_prey.edibleFromTier <= m_dragon.data.def.tier) 
+			{
 				// Yes!! Eat it!!
 				m_eatingTimer = m_eatingTime = (m_dragon.data.biteSkill.value * _prey.size);
 
