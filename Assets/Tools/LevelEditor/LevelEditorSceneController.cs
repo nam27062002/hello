@@ -15,6 +15,7 @@ using UnityEngine;
 namespace LevelEditor {
 	/// <summary>
 	/// Scene controller for the level editor scene.
+	/// Simplified version of the game scene controller for 
 	/// </summary>
 	public class LevelEditorSceneController : SceneController {
 		//------------------------------------------------------------------//
@@ -23,9 +24,13 @@ namespace LevelEditor {
 		public static readonly string NAME = "SC_LevelEditor";
 
 		//------------------------------------------------------------------//
-		// MEMBERS															//
+		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
-		private bool m_invulnerableBackup = false;
+		// Time
+		private float m_elapsedSeconds = 0;
+		public float elapsedSeconds {
+			get { return m_elapsedSeconds; }
+		}
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
@@ -36,9 +41,7 @@ namespace LevelEditor {
 		override protected void Awake() {
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
-
-			// Enable reward manager to see coins feedback
-			RewardManager.Reset();
+			InstanceManager.player.playable = false;
 
 			// Call parent
 			base.Awake();
@@ -48,24 +51,118 @@ namespace LevelEditor {
 		/// First update.
 		/// </summary>
 		private void Start() {
-			InstanceManager.player.MoveToSpawnPoint();
+			StartGame();
 		}
 
 		/// <summary>
 		/// Component enabled.
 		/// </summary>
-		void OnEnable() {
-			// We don't want the dragon to die during the level testing
-			m_invulnerableBackup = DebugSettings.invulnerable;
-			DebugSettings.invulnerable = true;
+		private void OnEnable() {
+			// Subscribe to external events
+			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+			Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
 		}
 		
 		/// <summary>
 		/// Component disabled.
 		/// </summary>
-		void OnDisable() {
-			// Restore invlunerability cheat
-			DebugSettings.invulnerable = m_invulnerableBackup;
+		private void OnDisable() {
+			// Unsubscribe from external events
+			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+			Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+		}
+
+		/// <summary>
+		/// Called every frame.
+		/// </summary>
+		private void Update() {
+			// Update running time
+			m_elapsedSeconds += Time.deltaTime;
+		}
+
+		/// <summary>
+		/// Destructor.
+		/// </summary>
+		override protected void OnDestroy() {
+			// Clear pools
+			FirePropagationManager.DestroyInstance();
+			PoolManager.Clear(true);
+
+			// Call parent
+			base.OnDestroy();
+		}
+
+		//------------------------------------------------------------------//
+		// INTERNAL METHODS													//
+		//------------------------------------------------------------------//
+		/// <summary>
+		/// Do all the necessary stuff to start a game.
+		/// </summary>
+		private void StartGame() {
+			// Reset dragon stats
+			InstanceManager.player.ResetStats();
+
+			// Put player in position and make it playable
+			InstanceManager.player.MoveToSpawnPoint();
+			InstanceManager.player.playable = true;
+
+			// Enable reward manager to see coins/score feedback
+			RewardManager.Reset();
+
+			// Spawn chest
+			ChestManager.SelectChest();
+
+			// Reset timer
+			m_elapsedSeconds = 0;
+		}
+
+		/// <summary>
+		/// Do all the necessary stuff when ending a game.
+		/// </summary>
+		private void EndGame() {
+			// Just open summary popup for now
+			Time.timeScale = 0.0f;	// Pause game
+			PopupManager.OpenPopupInstant(PopupLevelEditorSummary.PATH);
+		}
+
+		//------------------------------------------------------------------//
+		// CALLBACKS														//
+		//------------------------------------------------------------------//
+		/// <summary>
+		/// The player has died.
+		/// </summary>
+		private void OnPlayerDied() {
+			// End game
+			EndGame();
+		}
+
+		/// <summary>
+		/// A popup has been closed.
+		/// </summary>
+		/// <param name="_popup">The popup that has been closed</param>
+		public void OnPopupClosed(PopupController _popup) {
+			// Figure out which popup has been closed
+			// a) Level editor summary popup
+			PopupLevelEditorSummary summaryPopup = _popup.GetComponent<PopupLevelEditorSummary>();
+			if(summaryPopup != null) {
+				switch(summaryPopup.result) {
+					case PopupLevelEditorSummary.Result.CONTINUE: {
+						// Reset dragon stats
+						InstanceManager.player.ResetStats();
+
+						// Unpause game
+						Time.timeScale = 1.0f;
+					} break;
+
+					case PopupLevelEditorSummary.Result.FINISH: {
+						#if UNITY_EDITOR
+						UnityEditor.EditorApplication.isPlaying = false;
+						#else
+						Application.Quit();
+						#endif
+					} break;
+				}
+			}
 		}
 	}
 }

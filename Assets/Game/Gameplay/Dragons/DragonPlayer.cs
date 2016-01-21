@@ -75,13 +75,12 @@ public class DragonPlayer : MonoBehaviour {
 		InstanceManager.player = this;
 
 		// Initialize stats
-		m_health = data.maxHealth;
-		m_energy = data.def.maxEnergy;
+		ResetStats();
+
+		// Initialize fury
 		m_fury[0] = 0;
 		m_fury[1] = 0;
 		m_furyActive = false;
-
-		m_speedMultiplier = 1f;
 
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
@@ -111,6 +110,16 @@ public class DragonPlayer : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Reset some variable stats for this dragon.
+	/// </summary>
+	public void ResetStats() {
+		m_health = data.maxHealth;
+		m_energy = data.def.maxEnergy;
+
+		m_speedMultiplier = 1f;
+	}
+
 	/// <summary>
 	/// Add/remove health to the dragon.
 	/// </summary>
