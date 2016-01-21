@@ -64,7 +64,7 @@ public class PreyStats : Initializable {
 
 		for (int i = 0; i < renderers.Length; i++) {
 			if (_value) {
-				Material goldMat = Resources.Load ("Game/Materials/Gold") as Material;
+				Material goldMat = Resources.Load ("Game/Assets/Materials/Gold") as Material;
 				Material[] materials = renderers[i].materials;
 				for (int m = 0; m < materials.Length; m++) {
 					materials[m] = goldMat;

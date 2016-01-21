@@ -33,7 +33,9 @@ public class GameCameraController : MonoBehaviour {
 	[SerializeField] [Range(0, 1)] [Tooltip("The delay when adapting the forward offset to the dragon's direction. [0..1] -> [DragonDir..CurrentDir]. -> [Hard..Smooth]")]
 	private float m_forwardSmoothing = 0.95f;
 	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon")] 
-	private float m_forwardOffset = 300f;
+	private float m_forwardOffsetNormal = 3f;
+	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon on Fury mode")] 
+	private float m_forwardOffsetFury = 5f;
 	[SerializeField] [Tooltip("Horizontal scroll limits in world coords")]
 	private Range m_limitX = new Range(-100, 100);
 
@@ -62,6 +64,7 @@ public class GameCameraController : MonoBehaviour {
 	// Positioning
 	private Vector3 m_targetPos = Vector3.zero;
 	private Vector3 m_forward = Vector3.right;
+	private float m_forwardOffset;
 
 	// Zoom
 	private Interpolator m_zInterpolator = new Interpolator();
@@ -132,6 +135,7 @@ public class GameCameraController : MonoBehaviour {
 		// Reset camera target
 		m_danger = null;
 		m_targetPos = playerPos;
+		m_forwardOffset = m_forwardOffsetNormal;
 
 		// Initialize zoom interpolator
 		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
@@ -141,6 +145,10 @@ public class GameCameraController : MonoBehaviour {
 		m_farStart = Camera.main.farClipPlane;
 
 		ZoomRangeOffset(InstanceManager.player.data.def.cameraZoomOffset);
+
+		// Register to Fury events
+		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
+		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 	}
 	
 	/// <summary>
@@ -154,6 +162,8 @@ public class GameCameraController : MonoBehaviour {
 		// it depends on previous fixed updates
 		if ( m_update )
 		{
+			Vector3 dragonDirection = m_dragonMotion.GetVelocity().normalized;
+
 			// Compute new target position
 			// Is there a danger nearby?
 			if(m_danger != null) {
@@ -162,11 +172,15 @@ public class GameCameraController : MonoBehaviour {
 				m_targetPos = Vector3.Lerp(playerPos, m_danger.position, 0.5f);
 			} else {
 				// No!! Just look towards the dragon
-				m_targetPos = playerPos;
+				if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
+					m_targetPos = m_dragonMotion.head.position;
+				} else {
+					m_targetPos = playerPos;
+				}
 			}
 
-			// Update forward direction and apply forward offset too look a bit ahead in the direction the dragon is moving
-			m_forward = Vector3.Lerp(m_dragonMotion.GetDirection(), m_forward, m_forwardSmoothing);
+			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
+			m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
 			m_targetPos = m_targetPos + m_forward * m_forwardOffset;
 
 			// Clamp X to defined limits
@@ -297,10 +311,22 @@ public class GameCameraController : MonoBehaviour {
 		m_activationMax.center = center;
 		m_activationMax.size = new Vector3(frustumWidth + (m_activationDistance + m_activationRange) * 2f, frustumHeight + (m_activationDistance + m_activationRange) * 2f, 4f);
 
-		m_deactivation.center =center;
+		m_deactivation.center = center;
 		m_deactivation.size = new Vector3(frustumWidth + m_deactivationDistance * 2f, frustumHeight + m_deactivationDistance * 2f, 4f);
 	}
 
+	//------------------------------------------------------------------//
+	// Callbacks														//
+	//------------------------------------------------------------------//
+	private void OnFury(bool _enabled) {
+		if (_enabled) {
+			m_forwardOffset = m_forwardOffsetFury;
+			m_zInterpolator.Start(zoom, 1f, 2f);
+		} else {
+			m_forwardOffset = m_forwardOffsetNormal;
+			m_zInterpolator.Start(zoom, m_defaultZoom, 2f);
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// ZOOM																//
