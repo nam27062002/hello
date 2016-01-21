@@ -3,7 +3,14 @@ using System.Collections;
 
 [RequireComponent(typeof(PreyStats))]
 public class InflammableBehaviour : Initializable {
-	
+	//-----------------------------------------------
+	// Constants
+	//-----------------------------------------------
+	enum State {
+		Idle = 0,
+		Burned,
+		Ashes
+	};
 	
 	//-----------------------------------------------
 	// Properties
@@ -11,6 +18,10 @@ public class InflammableBehaviour : Initializable {
 	[SerializeField] private bool m_destroyOnBurn = false;
 	[SerializeField] private float m_checkFireTime = 0.25f;
 	[SerializeField] private float m_maxHealth = 100f;
+
+	[SeparatorAttribute]
+	[SerializeField] private string m_ashesAsset;
+	[SerializeField] private float m_dissolveTime = 1.5f;
 
 	//-----------------------------------------------
 	// Attributes
@@ -21,6 +32,10 @@ public class InflammableBehaviour : Initializable {
 	private float m_health;
 	private float m_timer;
 	private CircleArea2D m_circleArea;
+
+	private Material m_ashMaterial;
+
+	private State m_state;
 
 	//-----------------------------------------------
 	// Methods
@@ -33,34 +48,57 @@ public class InflammableBehaviour : Initializable {
 		m_timer = m_checkFireTime;
 
 		m_circleArea = GetComponent<CircleArea2D>();
+
+
+		m_ashMaterial = new Material(Resources.Load ("Game/Materials/BurnToAshes") as Material);
+
+
+		m_state = State.Idle;
 	}
-
-	void OnEnable() {
-
-	}
-
-	void OnDisable() {
-
-	}
-	
+		
 	public override void Initialize() {
 		m_health = m_maxHealth;
+		m_state = State.Idle;
 	}
 
 	void Update() {
-
 		m_timer -= Time.deltaTime;
-		if (m_timer <= 0) 
-		{
-			if ( m_circleArea != null )
-			{
-				if ( m_breath.Overlaps( m_circleArea ) )
-					Burn(m_breath.damage);
+		if (m_timer <= 0) {
+			switch (m_state) {
+				case State.Idle:
+					m_timer = m_checkFireTime;
+					if ( m_circleArea != null ) {
+						if ( m_breath.Overlaps( m_circleArea ) )
+							Burn(m_breath.damage);
+					}
+					else if (m_breath.IsInsideArea(transform.position)) {
+						Burn(m_breath.damage);
+					}
+					break;
+
+				case State.Burned:
+					// Particles
+					if (m_ashesAsset.Length > 0) {
+						SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();	
+						GameObject particle = ParticleManager.Spawn("Ashes/" + m_ashesAsset, renderer.transform.position);
+						particle.transform.rotation = renderer.transform.rotation;
+						particle.transform.localScale = renderer.transform.localScale;
+					}
+
+					m_state = State.Ashes;
+					m_timer = m_dissolveTime;
+					break;
+
+				case State.Ashes:
+					if (m_destroyOnBurn) {
+						DestroyObject(gameObject);
+					} else {
+						gameObject.SetActive(false);
+					}
+					break;
 			}
-			else if (m_breath.IsInsideArea(transform.position)) {
-				Burn(m_breath.damage);
-			}
-			m_timer = m_checkFireTime;
+		} else if (m_state == State.Ashes) {
+			m_ashMaterial.SetFloat("_AshLevel", Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime))));
 		}
 	}
 
@@ -80,15 +118,31 @@ public class InflammableBehaviour : Initializable {
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, this.transform, reward);
 
-				// Particles
-				ParticleManager.Spawn("SmokePuff", transform.position);
-
-				// deactivate
-				if (m_destroyOnBurn) {
-					DestroyObject(gameObject);
-				} else {
-					gameObject.SetActive(false);
+				// Material
+				SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+				for (int i = 0; i < renderers.Length; i++) {
+					Material[] materials = renderers[i].materials;
+					for (int m = 0; m < materials.Length; m++) {
+						materials[m] = m_ashMaterial;
+					}
+					renderers[i].materials = materials;
 				}
+
+				// Deactivate edible
+				EdibleBehaviour edible = GetComponent<EdibleBehaviour>();
+				if (edible != null) {
+					edible.enabled = false;
+				}
+
+				PreyMotion motion = GetComponent<PreyMotion>();
+				if (motion != null) {
+					motion.enabled = false;
+				}
+
+				m_ashMaterial.SetFloat("_AshLevel", 0);
+
+				m_state = State.Burned;
+				m_timer = 0.5f; //secs
 			}
 		}
 	}
