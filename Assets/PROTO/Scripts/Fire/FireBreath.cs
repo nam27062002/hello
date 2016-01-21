@@ -36,14 +36,15 @@ public class FireBreath : DragonBreathBehaviour {
 	private int m_frame;
 
 	private GameObject m_light;
-
+	private GameObject m_fireTip;
 
 	override protected void ExtendedStart() {
 
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/Flame"), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FlameUp"), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireLight"), 1, false);
-
+		m_fireTip = Instantiate( Resources.Load("Particles/FireTip")) as GameObject;
+		m_fireTip.SetActive(false);
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
@@ -114,9 +115,15 @@ public class FireBreath : DragonBreathBehaviour {
 		if (m_frame == 0) {
 			// Raycast to ground
 			RaycastHit ground;				
-			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_groundMask)) {
+			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_groundMask)) 
+			{
 				m_actualLength = ground.distance;
-			} else {
+				m_fireTip.SetActive(true);
+				m_fireTip.transform.position = ground.point;
+			} 
+			else 
+			{
+				m_fireTip.SetActive(false);
 				m_actualLength = m_length;
 			}
 		}
@@ -152,7 +159,7 @@ public class FireBreath : DragonBreathBehaviour {
 			}
 		}
 
-		for (int i = 0; i < 1; i++) 
+		for (int i = 0; i < (m_particleSpawn/ 2); i++) 
 		{
 			
 			GameObject obj = PoolManager.GetInstance("FlameUp");
