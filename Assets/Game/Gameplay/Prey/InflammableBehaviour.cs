@@ -50,7 +50,7 @@ public class InflammableBehaviour : Initializable {
 		m_circleArea = GetComponent<CircleArea2D>();
 
 
-		m_ashMaterial = new Material(Resources.Load ("Game/Materials/BurnToAshes") as Material);
+		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
 
 
 		m_state = State.Idle;
