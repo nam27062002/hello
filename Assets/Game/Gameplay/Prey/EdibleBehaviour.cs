@@ -64,6 +64,8 @@ public class EdibleBehaviour : Initializable {
 
 		transform.rotation = m_originalRotation;
 		transform.localScale = m_originalScale;
+
+		enabled = true;
 	}
 
 	void Update() {	
