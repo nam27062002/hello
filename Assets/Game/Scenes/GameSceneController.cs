@@ -370,7 +370,7 @@ public class GameSceneController : SceneController {
 		// a) Summary popup?
 		if(_popup.GetComponent<PopupSummary>() != null) {
 			// If a chest was collected, show chest popup, otherwise finish the game
-			if(ChestManager.selectedChest.collected) {
+			if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
 				PopupManager.OpenPopupAsync(PopupChestReward.PATH);
 			} else {
 				GoToMenu();

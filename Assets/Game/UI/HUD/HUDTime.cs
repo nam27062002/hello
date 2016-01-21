@@ -58,6 +58,11 @@ public class HUDTime : MonoBehaviour {
 	/// </summary>
 	private void UpdateTime() {
 		// Do it!
-		m_valueTxt.text = TimeUtils.FormatTime(InstanceManager.GetSceneController<GameSceneController>().elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+		// Both for game and level editor
+		if(InstanceManager.sceneController is GameSceneController) {
+			m_valueTxt.text = TimeUtils.FormatTime(InstanceManager.GetSceneController<GameSceneController>().elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+		} else if(InstanceManager.sceneController is LevelEditor.LevelEditorSceneController) {
+			m_valueTxt.text = TimeUtils.FormatTime(InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>().elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+		}
 	}
 }

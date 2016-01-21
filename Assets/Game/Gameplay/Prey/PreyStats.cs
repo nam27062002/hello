@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class PreyStats : Initializable {
 
@@ -31,17 +31,19 @@ public class PreyStats : Initializable {
 	private bool m_isGolden = false;
 	private bool m_givePC = false;
 
-	private Material[] m_materials;
+	private Dictionary<int, Material[]> m_materials;
 
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
 	void Awake() {
+		m_materials = new Dictionary<int, Material[]>();
+
 		// keep the original materials, sometimes it will become Gold!
-		SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();		
-		if (renderer) {
-			m_materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
+		SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+		for (int i = 0; i < renderers.Length; i++) {
+			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
 		}
 	}
 
@@ -58,18 +60,18 @@ public class PreyStats : Initializable {
 	}*/
 
 	private void SetGolden(bool _value) {
-		SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+		SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
 
-		if (renderer) {
+		for (int i = 0; i < renderers.Length; i++) {
 			if (_value) {
-				Material goldMat = Resources.Load ("PROTO/Materials/Gold") as Material;
-				Material[] materials = GetComponentInChildren<SkinnedMeshRenderer>().materials;
-				for (int i = 0; i < materials.Length; i++) {
-					materials[i] = goldMat;
+				Material goldMat = Resources.Load ("Game/Materials/Gold") as Material;
+				Material[] materials = renderers[i].materials;
+				for (int m = 0; m < materials.Length; m++) {
+					materials[m] = goldMat;
 				}
-				GetComponentInChildren<SkinnedMeshRenderer>().materials = materials;
+				renderers[i].materials = materials;
 			} else {
-				GetComponentInChildren<SkinnedMeshRenderer>().materials = m_materials;
+				renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 			}
 		}
 

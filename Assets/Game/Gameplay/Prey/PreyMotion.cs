@@ -144,14 +144,19 @@ public class PreyMotion : Initializable {
 		} else {
 			m_collisionCheckPool = 0;
 		}
+
+		enabled = true;
+		if (m_animator) m_animator.enabled = true;
 	}
 
 	void OnEnable() {		
 		m_flockAvoidRadius = m_flockAvoidRadiusRange.GetRandom();
+		if (m_animator) m_animator.enabled = true;
 	}
 	
 	void OnDisable() {
 		AttachFlock(null);
+		if (m_animator) m_animator.enabled = false;
 	}
 	
 	public void AttachFlock(FlockController _flock) {		
