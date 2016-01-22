@@ -14,7 +14,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 
 	void Awake() {
-		m_fireNodes = new QuadTree(-600f, -100f, 600f, 600f);
+		m_fireNodes = new QuadTree(-600f, -100f, 1000f, 400f);
 	}
 
 	void Start() {

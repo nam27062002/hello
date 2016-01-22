@@ -11,10 +11,10 @@ public class FireNode : MonoBehaviour {
 		Burned
 	};
 
-	[SerializeField] private float m_resistanceMax = 50f;
+	[SerializeField] private float m_resistanceMax = 25f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerSecond = 6f;
-	[SerializeField] private float m_maxDistanceLinkNode = 5f;
+	[SerializeField] private float m_maxDistanceLinkNode = 10f;
 
 
 	private List<FireNode> m_neighbours;
@@ -140,7 +140,7 @@ public class FireNode : MonoBehaviour {
 	/// <summary>
 	/// Raises the draw gizmos event.
 	/// </summary>
-	void OnDrawGizmos() {
+	void OnDrawGizmosSelected() {
 
 		Gizmos.color = new Color(0.69f, 0.09f, 0.12f, 0.5f);
 
@@ -154,7 +154,9 @@ public class FireNode : MonoBehaviour {
 
 		Gizmos.DrawSphere(transform.position, 0.5f * transform.localScale.x);
 
-		FindNeighbours();
+		if (m_neighbours == null) {
+			FindNeighbours();
+		}
 
 		Gizmos.color = Color.white;
 		for (int i = 0; i < m_neighbours.Count; i++) {
