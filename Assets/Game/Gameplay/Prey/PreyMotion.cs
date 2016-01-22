@@ -117,9 +117,10 @@ public class PreyMotion : Initializable {
 
 	// Use this for initialization
 	public override void Initialize() {		
-		if (m_flock) {
+		/*if (m_flock) {
 			m_lastPosition = m_position = m_flock.GetTarget(m_spawn.index);
-		} else if (m_groundSensor) {
+		} else*/
+		if (m_groundSensor) {
 			m_lastPosition = m_position = m_groundSensor.transform.position;
 		} else {
 			m_lastPosition = m_position = transform.position;
