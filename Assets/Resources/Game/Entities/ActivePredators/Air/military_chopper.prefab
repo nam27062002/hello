@@ -55,7 +55,7 @@ GameObject:
   - 114: {fileID: 11456190}
   - 114: {fileID: 11461950}
   - 114: {fileID: 11460700}
-  - 114: {fileID: 11435114}
+  - 114: {fileID: 11484324}
   m_Layer: 0
   m_Name: military_chopper
   m_TagString: Untagged
@@ -347,18 +347,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_rotationSpeed: {x: 0, y: 0, z: 350}
---- !u!114 &11435114
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbaa5bb6468c54688bdb0eb759056cdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FocusDistance: 0
 --- !u!114 &11450584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -540,6 +528,18 @@ MonoBehaviour:
     xp: 0
   m_goldenChance: 0
   m_pcChance: 0
+--- !u!114 &11484324
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c00ae6ceee2f45eb8cd3b0319e06703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FocusDistance: 25
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -614,6 +614,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_damage
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_FocusDistance
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
