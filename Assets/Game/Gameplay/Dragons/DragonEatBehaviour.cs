@@ -7,7 +7,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 	struct PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
-		public Vector3 absorbPosition;
+		// public Vector3 absorbPosition;
 		public EdibleBehaviour prey;
 	};
 
@@ -108,7 +108,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 					
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_mouth.position, t);
-					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, Vector3.one * 0.5f, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, Vector3.one * 0.75f, t);
 					prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, m_tongueDirection), 0.25f);
 										
 					// remaining time eating
@@ -183,7 +183,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 				preyData.absorbTimer = m_absorbTime;
 				preyData.eatingAnimationTimer = Mathf.Max(m_minEatAnimTime, m_eatingTimer);
-				preyData.absorbPosition = _prey.transform.position;
+				// preyData.absorbPosition = _prey.transform.position;
 				preyData.prey = _prey;
 
 				m_prey.Add(preyData);
