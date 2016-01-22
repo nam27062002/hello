@@ -19,6 +19,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 	void Start() {
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FireSprite"), 25, true);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/BurnParticle"), 25, true);
 
 		// get player breath component
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();

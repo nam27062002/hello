@@ -85,6 +85,8 @@ public class InflammableBehaviour : Initializable {
 						particle.transform.localScale = renderer.transform.localScale;
 					}
 
+
+
 					m_state = State.Ashes;
 					m_timer = m_dissolveTime;
 					break;
@@ -143,6 +145,15 @@ public class InflammableBehaviour : Initializable {
 
 				m_state = State.Burned;
 				m_timer = 0.5f; //secs
+
+				// Add burned particle!
+				GameObject burnParticle = PoolManager.GetInstance("BurnParticle");
+				if (burnParticle != null)
+				{
+					burnParticle.transform.position = transform.position + Vector3.back * 2;
+					BurnParticle bp = burnParticle.GetComponent<BurnParticle>();
+					bp.Activate( 2, 1.0f);
+				}
 			}
 		}
 	}
