@@ -117,6 +117,7 @@ public class FireBreath : DragonBreathBehaviour {
 		m_direction.Normalize();
 		m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
 
+		Vector3 flamesUpDir = Vector3.up;
 		if (m_frame == 0) {
 			// Raycast to ground
 			RaycastHit ground;				
@@ -133,6 +134,9 @@ public class FireBreath : DragonBreathBehaviour {
 
 			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_noPlayerMask)) 
 			{
+				flamesUpDir = Vector3.Reflect( m_direction, ground.normal);
+				flamesUpDir.Normalize();
+				/*
 				m_fireTipParticle.Play();
 				m_fireTip.transform.position = ground.point;
 				// m_fireTip.transform.rotation = Quaternion.FromToRotation(Vector3.forward, ground.normal);
@@ -141,13 +145,13 @@ public class FireBreath : DragonBreathBehaviour {
 				// Check curve size
 				ParticleSystem ps = m_fireTip.GetComponent<ParticleSystem>();
 				ParticleSystem.ShapeModule shape = ps.shape;
-				shape.box = (Vector3.right + Vector3.up) * m_sizeCurve.Evaluate( ground.distance / m_length) * 1.5f;
+				shape.box = (Vector3.right + Vector3.up) * m_sizeCurve.Evaluate( ground.distance / m_length) * 0.5f + Vector3.forward;
 				// ps.shape = shape;
-
+				*/
 			}
 			else
 			{
-				m_fireTipParticle.Stop();
+				// m_fireTipParticle.Stop();
 			}
 
 
@@ -186,23 +190,25 @@ public class FireBreath : DragonBreathBehaviour {
 		}
 
 
-		for (int i = 0; i < (m_particleSpawn/ 2); i++) 
+		for (int i = 0; i < m_particleSpawn; i++) 
 		{
-			
 			GameObject obj = PoolManager.GetInstance("FlameUp");
 			
 			if (obj != null) {
 				FlameUp particle = obj.GetComponent<FlameUp>();
-				float pos = Random.Range( 0, m_length);
+				float pos = Random.Range( m_length / 5.0f, m_length);
 				float delta = pos / m_length;
 				float scale = m_sizeCurve.Evaluate( pos / m_length );
 				float correctedPos = pos;
+				float distanceMultiplier = 1.5f;
 				if ( pos > m_actualLength )
 				{
 					correctedPos = m_actualLength;
-				}
+					distanceMultiplier = 3;
 
-				particle.Activate( scale, scale * 1.25f, (delta + 0.1f) * 0.5f, scale, m_mouthTransform.position + (Vector3)m_direction * correctedPos);
+				}
+				particle.m_moveDir = flamesUpDir;
+				particle.Activate( scale, scale * 1.25f, (delta + 0.1f), scale * distanceMultiplier, m_mouthTransform.position + (Vector3)m_direction * correctedPos);
 			}
 		}
 

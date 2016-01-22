@@ -22,6 +22,7 @@ public class FlameUp : MonoBehaviour
 	float m_distance;
 
 	Vector3 m_startPosition;
+	public Vector3 m_moveDir = Vector3.up;
 
 	void Start()
 	{
@@ -58,7 +59,7 @@ public class FlameUp : MonoBehaviour
 					}
 
 					// Pos
-					transform.position = m_startPosition + Vector3.up * m_distance * delta;
+					transform.position = m_startPosition + m_moveDir * m_distance * delta;
 
 				}
 			}break;
