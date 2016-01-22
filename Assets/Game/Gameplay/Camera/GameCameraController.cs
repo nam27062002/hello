@@ -193,11 +193,11 @@ public class GameCameraController : MonoBehaviour {
 			newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
 			newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
 
+			newPos = UpdateByShake(newPos);
+
 			m_update = false;
 			m_accumulatedTime = 0;
 		}
-
-		newPos = UpdateByShake( newPos, Time.deltaTime );
 
 		// DONE! Apply new position
 		transform.position = newPos;
@@ -205,17 +205,17 @@ public class GameCameraController : MonoBehaviour {
 		UpdateFrustumBounds();
 	}
 
-	private Vector3 UpdateByShake( Vector3 position, float deltaTime)
+	private Vector3 UpdateByShake( Vector3 position)
 	{
 		// Apply shaking - after smoothing, we don't want shaking to be affected by it
-		if(m_shakeTimer > 0f){
+		if (m_shakeTimer > 0f){
 			// Update timer
 			m_shakeTimer -= m_accumulatedTime;
 			
 			// Compute a random shaking optionally decaying over time
-			if(m_shakeTimer > 0) {
+			if (m_shakeTimer > 0) {
 				Vector3 decayedShakeAmt = m_shakeAmount;
-				if(m_shakeDecayOverTime) {
+				if (m_shakeDecayOverTime) {
 					decayedShakeAmt.x *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
 					decayedShakeAmt.y *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
 					decayedShakeAmt.z *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
