@@ -59,7 +59,8 @@ public class GameCameraController : MonoBehaviour {
 
 	// References
 	private DragonMotion m_dragonMotion = null;
-	private Transform m_danger = null;
+	private Transform m_interest = null;
+	private bool m_furyOn;
 
 	// Positioning
 	private Vector3 m_targetPos = Vector3.zero;
@@ -133,9 +134,10 @@ public class GameCameraController : MonoBehaviour {
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 
 		// Reset camera target
-		m_danger = null;
+		m_interest = null;
 		m_targetPos = playerPos;
 		m_forwardOffset = m_forwardOffsetNormal;
+		m_furyOn = false;
 
 		// Initialize zoom interpolator
 		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
@@ -166,10 +168,10 @@ public class GameCameraController : MonoBehaviour {
 
 			// Compute new target position
 			// Is there a danger nearby?
-			if(m_danger != null) {
+			if(m_interest != null) {
 				// Yes!! Look between the danger and the dragon
 				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
-				m_targetPos = Vector3.Lerp(playerPos, m_danger.position, 0.5f);
+				m_targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.5f);
 			} else {
 				// No!! Just look towards the dragon
 				if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
@@ -319,12 +321,20 @@ public class GameCameraController : MonoBehaviour {
 	// Callbacks														//
 	//------------------------------------------------------------------//
 	private void OnFury(bool _enabled) {
-		if (_enabled) {
-			m_forwardOffset = m_forwardOffsetFury;
-			m_zInterpolator.Start(zoom, 1f, 2f);
+		m_furyOn = _enabled;
+
+		if (m_furyOn) {
+			if (m_interest == null) {
+				m_forwardOffset = m_forwardOffsetFury;
+				Zoom(0.8f, 2f);
+			}
 		} else {
-			m_forwardOffset = m_forwardOffsetNormal;
-			m_zInterpolator.Start(zoom, m_defaultZoom, 2f);
+			if (m_interest == null) {
+				m_forwardOffset = m_forwardOffsetNormal;
+				Zoom(m_defaultZoom, 2f);
+			} else {
+				SetEntityOfInterest(m_interest);
+			}
 		}
 	}
 
@@ -387,26 +397,30 @@ public class GameCameraController : MonoBehaviour {
 
 
 	//------------------------------------------------------------------//
-	// DANGER															//
+	// Entity of Interest												//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Define a given transform as a danger.
+	/// Define a given transform as a point of interest.
 	/// The camera will react in consequence.
 	/// </summary>
-	/// <param name="_danger">The dangerous object, set to null to clear it.</param>
-	public void SetDanger(Transform _danger) {
-		m_danger = _danger;
-		if(_danger == null) {
-			Zoom(defaultZoom, 0.25f);	// Danger cleared, go back to normal zoom level
+	/// <param name="_interest">The dangerous object, set to null to clear it.</param>
+	public void SetEntityOfInterest(Transform _interest) {
+		m_interest = _interest;
+		if (_interest == null) {
+			if (m_furyOn) {
+				OnFury(true);
+			} else {
+				Zoom(defaultZoom, 0.25f);	// Danger cleared, go back to normal zoom level
+			}
 		} else {
-			Zoom(1f, 0.5f);	// Danger!! Zoom out
+			Zoom(1f, 2f);	// Entity of Interest Zoom out
 		}
 	}
 
 
 
 	//------------------------------------------------------------------//
-	// DANGER															//
+	// Debug															//
 	//------------------------------------------------------------------//
 	void OnDrawGizmos() {
 		if (!Application.isPlaying) {
