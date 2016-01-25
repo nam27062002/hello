@@ -13,7 +13,9 @@ GameObject:
   - 92: {fileID: 9212364}
   - 81: {fileID: 8136056}
   - 114: {fileID: 11460498}
-  - 114: {fileID: 11468290}
+  - 114: {fileID: 11427856}
+  - 114: {fileID: 11457446}
+  - 114: {fileID: 11486938}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -28,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -466.32, y: 48, z: -23.92104}
+  m_LocalPosition: {x: -466.32, y: 48, z: -28.92104}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -57,7 +59,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294966783
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -81,6 +83,38 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
   m_Enabled: 1
+--- !u!114 &11427856
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8bac2e609b1841e6825ac01c45579a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_followTransform: {fileID: 0}
+  m_updateDistance: 0
+  m_sunLight: {fileID: 0}
+  m_ambientNodes: []
+--- !u!114 &11457446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc804efa107044990b6497f820f2be57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeScaleFactor: 0.25
+  duration: 1.5
+  zoomOffset: 750
+  zoomInDuration: 0.5
+  zoomOutDuration: 1
+  alwaysTrigger: 1
 --- !u!114 &11460498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -94,21 +128,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_movementSmoothing: 0.85
   m_forwardSmoothing: 0.95
-  m_forwardOffset: 3
+  m_forwardOffsetNormal: 3
+  m_forwardOffsetFury: 8
   m_limitX:
     min: -1000
     max: 1000
   m_defaultZoom: 0.5
   m_zoomRange:
     min: 10
-    max: 40
+    max: 50
   m_shakeDefaultAmount: {x: 0.5, y: 0.5, z: 0}
   m_shakeDefaultDuration: 0.15
   m_shakeDecayOverTime: 1
   m_activationDistance: 10
   m_activationRange: 5
   m_deactivationDistance: 60
---- !u!114 &11468290
+--- !u!114 &11486938
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -116,16 +151,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 101152}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cea75d4686c64d6f9eb03d0b463f3ae, type: 3}
+  m_Script: {fileID: 11500000, guid: 77e0c772f84704359baf1e78af46db60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_outsideColor: {r: 0.5921569, g: 0.9058824, b: 0.9490197, a: 1}
-  m_caveColor: {r: 0.15804516, g: 0.037629757, b: 0.6397059, a: 1}
-  m_startDistance: 140
-  m_endDistance: 750
-  m_caveDistanceOffset: 120
-  m_skyLine: 25
-  m_caveLine: -25
+  shader: {fileID: 4800000, guid: e9ba2083ad114a07d000fbfb8d76c639, type: 3}
+  blurAmount: 0.8
+  extraBlur: 0
 --- !u!124 &12481626
 Behaviour:
   m_ObjectHideFlags: 1
@@ -154,7 +185,35 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_CullingMask.m_Bits
-      value: 4294966783
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_forwardOffset
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_forwardOffsetFury
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: blurAmount
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: alwaysTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: shader
+      value: 
+      objectReference: {fileID: 4800000, guid: e9ba2083ad114a07d000fbfb8d76c639, type: 3}
+    - target: {fileID: 0}
+      propertyPath: extraBlur
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

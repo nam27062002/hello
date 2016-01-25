@@ -67,13 +67,16 @@ public class DragonMotion : MonoBehaviour {
 
 	private float m_impulseTransformationSpeed;
 
+	private Transform m_tongue;
+	private Transform m_head;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 
-	public Transform tongue { get { return transform.FindTransformRecursive("Fire_Dummy"); } }
-	public Transform head { get { return transform.FindTransformRecursive("Dragon_Head"); } }
-
+	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
+	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
+		 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -81,7 +84,6 @@ public class DragonMotion : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
 		// Get references

@@ -735,7 +735,7 @@ MonoBehaviour:
     max: 3
   m_steerForce: 0.5
   m_mass: 1
-  m_distanceAttenuation: 18
+  m_distanceAttenuation: 20
   m_maxSpeed: 4
   m_maxRunSpeed: 8.1
   m_slowingRadius: 0
@@ -753,6 +753,8 @@ MonoBehaviour:
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
   m_maxHealth: 100
+  m_ashesAsset: 
+  m_dissolveTime: 1.5
 --- !u!114 &11412942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -769,7 +771,7 @@ MonoBehaviour:
     score: 50
     coins: 25
     pc: 0
-    health: 5
+    health: 9
     energy: 0
     fury: 15
     xp: 0.8
@@ -802,7 +804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
-  m_size: 1.5
+  m_size: 2.3
   m_isBig: 1
   m_destroyOnEat: 0
   onEatenParticle: 
@@ -886,6 +888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_deactivate: 1
 --- !u!114 &11496704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1008,7 +1011,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_size
-      value: 1.5
+      value: 2.3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.fury
@@ -1024,7 +1027,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.health
-      value: 5
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_isBig
@@ -1140,7 +1143,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_distanceAttenuation
-      value: 18
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
@@ -1165,6 +1168,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_moveTime.min
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_mass
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

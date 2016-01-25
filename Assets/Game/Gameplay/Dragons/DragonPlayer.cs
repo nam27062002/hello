@@ -232,7 +232,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return (health > data.maxHealth * GameSettings.healthWarningThreshold);
+		return (health < data.maxHealth * GameSettings.healthWarningThreshold);
 	}
 	
 	/// <summary>

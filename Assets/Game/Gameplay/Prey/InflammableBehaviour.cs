@@ -23,6 +23,14 @@ public class InflammableBehaviour : Initializable {
 	[SerializeField] private string m_ashesAsset;
 	[SerializeField] private float m_dissolveTime = 1.5f;
 
+	[SeparatorAttribute]
+	[Header("Explosion")]
+	[SerializeField] private GameObject m_explosionPrefab = null;
+	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
+	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
+	[SerializeField] private bool m_shake = false;
+	[SerializeField] private bool m_slowMotion = false;
+
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
@@ -42,6 +50,10 @@ public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	// Use this for initialization
 	void Start() {
+		if (m_explosionPrefab != null) {
+			PoolManager.CreatePool(m_explosionPrefab, 5, false);
+		}
+
 		m_prey = GetComponent<PreyStats>();
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 
@@ -79,7 +91,7 @@ public class InflammableBehaviour : Initializable {
 				case State.Burned:
 					// Particles
 					if (m_ashesAsset.Length > 0) {
-						SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();	
+						Renderer renderer = GetComponentInChildren<Renderer>();	
 						GameObject particle = ParticleManager.Spawn("Ashes/" + m_ashesAsset, renderer.transform.position);
 						particle.transform.rotation = renderer.transform.rotation;
 						particle.transform.localScale = renderer.transform.localScale;
@@ -119,7 +131,7 @@ public class InflammableBehaviour : Initializable {
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, this.transform, reward);
 
 				// Material
-				SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+				Renderer[] renderers = GetComponentsInChildren<Renderer>();
 				for (int i = 0; i < renderers.Length; i++) {
 					Material[] materials = renderers[i].materials;
 					for (int m = 0; m < materials.Length; m++) {
@@ -143,6 +155,39 @@ public class InflammableBehaviour : Initializable {
 
 				m_state = State.Burned;
 				m_timer = 0.5f; //secs
+
+				// Add burned particle!
+				GameObject burnParticle = PoolManager.GetInstance("BurnParticle");
+				if (burnParticle != null) {
+					burnParticle.transform.position = transform.position + Vector3.back * 2;
+					BurnParticle bp = burnParticle.GetComponent<BurnParticle>();
+					bp.Activate( 2, 1.0f);
+				}
+
+				if (m_explosionPrefab != null) {
+					GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);
+					if (explosion != null) {
+						Vector3 pos = transform.position;
+						pos.z = -10;
+						explosion.transform.position = pos;
+
+						// Random scale within range
+						explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();
+
+						// Random rotation within range
+						explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+
+						if (m_shake) {							
+							GameCameraController camera = Camera.main.GetComponent<GameCameraController>();
+							camera.Shake();
+						}
+
+						if (m_slowMotion) {
+							SlowMotionController camera = Camera.main.GetComponent<SlowMotionController>();
+							camera.StartSlowMotion();
+						}
+					}
+				}
 			}
 		}
 	}

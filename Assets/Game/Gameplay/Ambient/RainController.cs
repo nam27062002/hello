@@ -7,12 +7,14 @@ public class RainController : MonoBehaviour
 	ParticleSystem m_rainParticle;
 	DragonMotion m_dragonMotion;
 	Transform m_transform;
-
+	int m_lastIntensity = 0;
 	// Use this for initialization
 	void Start () 
 	{
+		m_rainParticle = GetComponent<ParticleSystem>();
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 		m_transform = transform;
+		SetIntensity( m_lastIntensity );
 	}
 	
 	// Update is called once per frame
@@ -35,6 +37,22 @@ public class RainController : MonoBehaviour
 
 
 		m_transform.localPosition = local;
+	}
+
+	public void SetIntensity( float intensity )
+	{
+		if ( m_rainParticle != null )
+		{
+			ParticleSystem.EmissionModule emission = m_rainParticle.emission;
+			emission.enabled = intensity >= 1;
+
+			ParticleSystem.MinMaxCurve curve = emission.rate;
+			curve.constantMin = intensity;
+			curve.constantMax = intensity;
+			m_lastIntensity = (int)intensity;
+
+			emission.rate = curve;
+		}
 	}
 
 }

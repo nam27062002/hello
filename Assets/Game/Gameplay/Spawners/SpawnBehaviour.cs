@@ -7,6 +7,8 @@ public class SpawnBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
+	[SerializeField] private bool m_deactivate = true;
+
 	private AreaBounds m_area;
 	private Spawner m_spawner;
 	private int m_index;
@@ -29,7 +31,7 @@ public class SpawnBehaviour : MonoBehaviour {
 	}
 
 	void LateUpdate() {
-		if (m_camera.IsInsideDeactivationArea(transform.position)) {
+		if (m_deactivate && m_camera.IsInsideDeactivationArea(transform.position)) {
 			if (m_spawner) {
 				m_spawner.RemoveEntity(gameObject, false);
 				m_spawner = null;

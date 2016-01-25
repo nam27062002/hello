@@ -50,14 +50,18 @@ public class SlowMotionController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	public void Start() {
-		mMainCameraController = Camera.main.GetComponent<CameraController_OLD>();
+		// mMainCameraController = Camera.main.GetComponent<CameraController_OLD>();
 		mMotionBlur = Camera.main.GetComponent<MotionBlur>();
+		mMotionBlur.enabled = false;
 	}
 
 	/// <summary>
 	/// Logic update, called every frame.
 	/// </summary>
 	public void Update() {
+		if ( Input.GetKeyDown(KeyCode.A) )
+			StartSlowMotion();
+
 		// Timer control - if required
 		if(mIsActive) {
 			// [AOC] We want the timer to update in normal time scale, so ignore current timescale
@@ -114,7 +118,7 @@ public class SlowMotionController : MonoBehaviour {
 		mActiveController = this;
 
 		// Zoom in
-		mMainCameraController.Zoom(zoomOffset, zoomInDuration);
+		// mMainCameraController.Zoom(zoomOffset, zoomInDuration);
 
 		// Motion blur!
 		mMotionBlur.enabled = true;
@@ -136,7 +140,7 @@ public class SlowMotionController : MonoBehaviour {
 		mActiveController = null;	// There can only be one active controller and should be this one, so this is safe
 
 		// Zoom back to default
-		mMainCameraController.Zoom(0f, zoomOutDuration);
+		// mMainCameraController.Zoom(0f, zoomOutDuration);
 
 		// Motion blur!
 		mMotionBlur.enabled = false;

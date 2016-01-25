@@ -33,7 +33,9 @@ public class GameCameraController : MonoBehaviour {
 	[SerializeField] [Range(0, 1)] [Tooltip("The delay when adapting the forward offset to the dragon's direction. [0..1] -> [DragonDir..CurrentDir]. -> [Hard..Smooth]")]
 	private float m_forwardSmoothing = 0.95f;
 	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon")] 
-	private float m_forwardOffset = 300f;
+	private float m_forwardOffsetNormal = 3f;
+	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon on Fury mode")] 
+	private float m_forwardOffsetFury = 5f;
 	[SerializeField] [Tooltip("Horizontal scroll limits in world coords")]
 	private Range m_limitX = new Range(-100, 100);
 
@@ -57,11 +59,13 @@ public class GameCameraController : MonoBehaviour {
 
 	// References
 	private DragonMotion m_dragonMotion = null;
-	private Transform m_danger = null;
+	private Transform m_interest = null;
+	private bool m_furyOn;
 
 	// Positioning
 	private Vector3 m_targetPos = Vector3.zero;
 	private Vector3 m_forward = Vector3.right;
+	private float m_forwardOffset;
 
 	// Zoom
 	private Interpolator m_zInterpolator = new Interpolator();
@@ -130,8 +134,10 @@ public class GameCameraController : MonoBehaviour {
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 
 		// Reset camera target
-		m_danger = null;
+		m_interest = null;
 		m_targetPos = playerPos;
+		m_forwardOffset = m_forwardOffsetNormal;
+		m_furyOn = false;
 
 		// Initialize zoom interpolator
 		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
@@ -141,6 +147,10 @@ public class GameCameraController : MonoBehaviour {
 		m_farStart = Camera.main.farClipPlane;
 
 		ZoomRangeOffset(InstanceManager.player.data.def.cameraZoomOffset);
+
+		// Register to Fury events
+		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
+		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 	}
 	
 	/// <summary>
@@ -154,19 +164,25 @@ public class GameCameraController : MonoBehaviour {
 		// it depends on previous fixed updates
 		if ( m_update )
 		{
+			Vector3 dragonDirection = m_dragonMotion.GetVelocity().normalized;
+
 			// Compute new target position
 			// Is there a danger nearby?
-			if(m_danger != null) {
+			if(m_interest != null) {
 				// Yes!! Look between the danger and the dragon
 				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
-				m_targetPos = Vector3.Lerp(playerPos, m_danger.position, 0.5f);
+				m_targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.5f);
 			} else {
 				// No!! Just look towards the dragon
-				m_targetPos = playerPos;
+				if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
+					m_targetPos = m_dragonMotion.head.position;
+				} else {
+					m_targetPos = playerPos;
+				}
 			}
 
-			// Update forward direction and apply forward offset too look a bit ahead in the direction the dragon is moving
-			m_forward = Vector3.Lerp(m_dragonMotion.GetDirection(), m_forward, m_forwardSmoothing);
+			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
+			m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
 			m_targetPos = m_targetPos + m_forward * m_forwardOffset;
 
 			// Clamp X to defined limits
@@ -179,11 +195,11 @@ public class GameCameraController : MonoBehaviour {
 			newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
 			newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
 
+			newPos = UpdateByShake(newPos);
+
 			m_update = false;
 			m_accumulatedTime = 0;
 		}
-
-		newPos = UpdateByShake( newPos, Time.deltaTime );
 
 		// DONE! Apply new position
 		transform.position = newPos;
@@ -191,17 +207,17 @@ public class GameCameraController : MonoBehaviour {
 		UpdateFrustumBounds();
 	}
 
-	private Vector3 UpdateByShake( Vector3 position, float deltaTime)
+	private Vector3 UpdateByShake( Vector3 position)
 	{
 		// Apply shaking - after smoothing, we don't want shaking to be affected by it
-		if(m_shakeTimer > 0f){
+		if (m_shakeTimer > 0f){
 			// Update timer
 			m_shakeTimer -= m_accumulatedTime;
 			
 			// Compute a random shaking optionally decaying over time
-			if(m_shakeTimer > 0) {
+			if (m_shakeTimer > 0) {
 				Vector3 decayedShakeAmt = m_shakeAmount;
-				if(m_shakeDecayOverTime) {
+				if (m_shakeDecayOverTime) {
 					decayedShakeAmt.x *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
 					decayedShakeAmt.y *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
 					decayedShakeAmt.z *= Mathf.InverseLerp(0, m_shakeDuration, m_shakeTimer);
@@ -297,10 +313,30 @@ public class GameCameraController : MonoBehaviour {
 		m_activationMax.center = center;
 		m_activationMax.size = new Vector3(frustumWidth + (m_activationDistance + m_activationRange) * 2f, frustumHeight + (m_activationDistance + m_activationRange) * 2f, 4f);
 
-		m_deactivation.center =center;
+		m_deactivation.center = center;
 		m_deactivation.size = new Vector3(frustumWidth + m_deactivationDistance * 2f, frustumHeight + m_deactivationDistance * 2f, 4f);
 	}
 
+	//------------------------------------------------------------------//
+	// Callbacks														//
+	//------------------------------------------------------------------//
+	private void OnFury(bool _enabled) {
+		m_furyOn = _enabled;
+
+		if (m_furyOn) {
+			if (m_interest == null) {
+				m_forwardOffset = m_forwardOffsetFury;
+				Zoom(0.8f, 2f);
+			}
+		} else {
+			if (m_interest == null) {
+				m_forwardOffset = m_forwardOffsetNormal;
+				Zoom(m_defaultZoom, 2f);
+			} else {
+				SetEntityOfInterest(m_interest);
+			}
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// ZOOM																//
@@ -361,26 +397,30 @@ public class GameCameraController : MonoBehaviour {
 
 
 	//------------------------------------------------------------------//
-	// DANGER															//
+	// Entity of Interest												//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Define a given transform as a danger.
+	/// Define a given transform as a point of interest.
 	/// The camera will react in consequence.
 	/// </summary>
-	/// <param name="_danger">The dangerous object, set to null to clear it.</param>
-	public void SetDanger(Transform _danger) {
-		m_danger = _danger;
-		if(_danger == null) {
-			Zoom(defaultZoom, 0.25f);	// Danger cleared, go back to normal zoom level
+	/// <param name="_interest">The dangerous object, set to null to clear it.</param>
+	public void SetEntityOfInterest(Transform _interest) {
+		m_interest = _interest;
+		if (_interest == null) {
+			if (m_furyOn) {
+				OnFury(true);
+			} else {
+				Zoom(defaultZoom, 0.25f);	// Danger cleared, go back to normal zoom level
+			}
 		} else {
-			Zoom(1f, 0.5f);	// Danger!! Zoom out
+			Zoom(1f, 2f);	// Entity of Interest Zoom out
 		}
 	}
 
 
 
 	//------------------------------------------------------------------//
-	// DANGER															//
+	// Debug															//
 	//------------------------------------------------------------------//
 	void OnDrawGizmos() {
 		if (!Application.isPlaying) {

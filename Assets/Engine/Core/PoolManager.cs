@@ -41,12 +41,13 @@ public class PoolManager : SingletonMonoBehaviour<PoolManager> {
 	/// Additionally they can be deleted from the scene.
 	/// </summary>
 	public static void Clear(bool _delete) {
-		if(_delete) {
+		if(_delete && instance != null) {
 			foreach(KeyValuePair<string, Pool> p in instance.m_pools) {
 				p.Value.Clear();
 			}
 		}
-		instance.m_pools.Clear();
+		if ( instance != null )
+			instance.m_pools.Clear();
 	}
 
 	/// <summary>

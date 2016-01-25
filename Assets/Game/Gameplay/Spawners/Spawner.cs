@@ -14,6 +14,7 @@ public class Spawner : MonoBehaviour {
 	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
 
 	[Header("Activation")]
+	[SerializeField] private bool m_alwaysActive = false;
 	[SerializeField] private float m_enableTime;
 	[SerializeField] private float m_disableTime;
 
@@ -45,14 +46,13 @@ public class Spawner : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	protected virtual void Start () {		
+	protected virtual void Start() {		
 		PoolManager.CreatePool(m_entityPrefab);
 		m_entities = new GameObject[m_quantity.max];
 
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
 		m_area = GetArea();
-
 
 		m_flockController = GetComponent<FlockController>();
 		if (m_flockController) {
@@ -96,33 +96,39 @@ public class Spawner : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {		
-		// A spawner can have a delay time before it can spawn things
-		if (m_enableTimer > 0) {
-			m_enableTimer -= Time.deltaTime;
-			if (m_enableTimer <= 0) {
-				m_enableTimer = 0;
+		if (m_alwaysActive) {
+			if (m_entityAlive == 0) {
+				Spawn();
 			}
 		} else {
-			// re-spawn logic
-			if (m_entityAlive == 0) {
-				if (m_respawnTimer > 0) {
-					m_respawnTimer -= Time.deltaTime;
-					if (m_respawnTimer <= 0) {
-						m_respawnTimer = 0;
-					}
-				} else {
-					if (m_camera.IsInsideActivationArea(transform.position)) {
-						Spawn();
-						m_respawnTimer = m_spawnTime.GetRandom();
+			// A spawner can have a delay time before it can spawn things
+			if (m_enableTimer > 0) {
+				m_enableTimer -= Time.deltaTime;
+				if (m_enableTimer <= 0) {
+					m_enableTimer = 0;
+				}
+			} else {
+				// re-spawn logic
+				if (m_entityAlive == 0) {
+					if (m_respawnTimer > 0) {
+						m_respawnTimer -= Time.deltaTime;
+						if (m_respawnTimer <= 0) {
+							m_respawnTimer = 0;
+						}
+					} else {
+						if (m_camera.IsInsideActivationArea(transform.position)) {
+							Spawn();
+							m_respawnTimer = m_spawnTime.GetRandom();
+						}
 					}
 				}
-			}
-			
-			// Check if we have to disable this spawner after few seconds
-			if (m_disableTimer > 0) {
-				m_disableTimer -= Time.deltaTime;
-				if (m_disableTimer <= 0) {
-					enabled = false;
+				
+				// Check if we have to disable this spawner after few seconds
+				if (m_disableTimer > 0) {
+					m_disableTimer -= Time.deltaTime;
+					if (m_disableTimer <= 0) {
+						enabled = false;
+					}
 				}
 			}
 		}
@@ -151,7 +157,10 @@ public class Spawner : MonoBehaviour {
 
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
-			spawn.Spawn(this, i, transform.position, m_area);
+			Vector3 pos = transform.position;
+			if (i > 0) pos += Random.onUnitSphere * 2f; // don't let multiple entities spawn on the same point
+
+			spawn.Spawn(this, i, pos, m_area);
 			spawn.transform.localScale = Vector3.one * m_scale.GetRandom();
 		}
 

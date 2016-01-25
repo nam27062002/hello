@@ -14,11 +14,12 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 
 	void Awake() {
-		m_fireNodes = new QuadTree(-600f, -100f, 600f, 600f);
+		m_fireNodes = new QuadTree(-600f, -100f, 1000f, 400f);
 	}
 
 	void Start() {
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FireSprite"), 25, true);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/BurnParticle"), 25, true);
 
 		// get player breath component
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
