@@ -77,6 +77,11 @@ public class AmbientManager : MonoBehaviour
 
 			// Find all ambient nodes
 			m_ambientNodes = FindObjectsOfType(typeof(AmbientNode)) as AmbientNode[];
+			if (m_ambientNodes.Length < 2)
+			{
+				enabled = false;
+				return;
+			}
 
 			// Create Rain particle over player
 			GameObject go = Instantiate( Resources.Load("Particles/PF_RainParticle") ) as GameObject;
