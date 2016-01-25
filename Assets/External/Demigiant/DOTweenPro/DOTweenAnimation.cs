@@ -60,7 +60,10 @@ namespace DG.Tweening
         bool _tweenCreated; // TRUE after the tweens have been created
         int _playCount = -1; // Used when calling DOPlayNext
 
-        #region Unity Methods
+		// [AOC] Extras
+		public bool inspectorExpanded = true;
+
+		#region Unity Methods
 
         void Awake()
         {
@@ -164,7 +167,7 @@ namespace DG.Tweening
                 tween = transform.DOLocalRotate(endValueV3, duration, optionalRotationMode);
                 break;
             case DOTweenAnimationType.Scale:
-                tween = transform.DOScale(optionalBool0 ? new Vector3(endValueFloat, endValueFloat, endValueFloat) : endValueV3, duration);
+				tween = transform.DOScale(optionalBool0 ? new Vector3(endValueFloat, endValueFloat, endValueFloat) : endValueV3, duration);
                 break;
             case DOTweenAnimationType.UIWidthHeight:
                 tween = ((RectTransform)target).DOSizeDelta(optionalBool0 ? new Vector2(endValueFloat, endValueFloat) : endValueV2, duration);
