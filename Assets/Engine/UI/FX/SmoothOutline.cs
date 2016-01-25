@@ -32,6 +32,8 @@ public class SmoothOutline : BaseMeshEffect {
 		new Vector3( 0f, -1f,  0f) 	// Bottom
 	};
 
+	private static readonly Vector3 SHADOW_DIR = new Vector3(1f, -1f, 0f);	// Bottom-right
+
 	public enum Quality {
 		X4,
 		X8
@@ -50,6 +52,10 @@ public class SmoothOutline : BaseMeshEffect {
 	public Quality m_quality = Quality.X4;
 	public float m_size = 1f;
 	public Color m_color = Colors.black;
+
+	[Space(10)]
+	public float m_shadowSize = 0f;
+	public Color m_shadowColor = Colors.black;
 
 	// Internal
 	private List<UIVertex> m_vertexList;
@@ -77,20 +83,22 @@ public class SmoothOutline : BaseMeshEffect {
 		_vh.GetUIVertexStream(m_vertexList);
 
 		// Do the magic
-		// [AOC] The trick is to reply the mesh giving an offset in 4 directions: top-left, top-right, bottom-left, bottom-right
-		// [AOC] To give color to the outline, just set the vertex color of the 4 new meshes
+		// [AOC] The trick is to replicate the mesh giving an offset in 4/8 directions
+		// [AOC] To give color to the outline, just set the vertex color of the new meshes
 		// [AOC] Respect source color alpha though!
 		// Store each mesh in a separate list
-		List<UIVertex>[] newVertices = new List<UIVertex>[OFFSETS.Length + 1];
-		for(int i = 0; i < newVertices.Length; i++) {
-			newVertices[i] = new List<UIVertex>(m_vertexList.Capacity);
+		List<UIVertex> shadowVertices = new List<UIVertex>(m_vertexList.Capacity);
+		List<UIVertex>[] offsetVertices = new List<UIVertex>[OFFSETS.Length];
+		for(int i = 0; i < offsetVertices.Length; i++) {
+			offsetVertices[i] = new List<UIVertex>(m_vertexList.Capacity);
 		}
 
 		// Start treating each vertex
 		for(int i = 0; i < m_vertexList.Count; i++) {
-			// Store original vertex to the last mesh (so it's rendered on top)
-			newVertices[newVertices.Length - 1].Add(m_vertexList[i]);
+			// Compute new color for this vertex
 			Color sourceColor = m_vertexList[i].color.ToColor();
+			Color newColor = m_color;
+			newColor.a = newColor.a * Mathf.Pow(sourceColor.a, 4);	// Exponientally decay to correct overlapping of the several layers
 
 			// Duplicate each vertex for each of the outline offsets
 			for(int j = 0; j < OFFSETS.Length; j++) {
@@ -99,25 +107,36 @@ public class SmoothOutline : BaseMeshEffect {
 
 				// Create a copy of the vertex (structs, assign makes a copy)
 				UIVertex v = m_vertexList[i];
+				v.position += OFFSETS[j] * m_size;	// Apply offset
+				v.color = newColor.ToColor32();		// Apply color
+				offsetVertices[j].Add(v);			// Put new vertex into its corresponding list
+			}
 
-				// Apply offset
-				v.position += OFFSETS[j] * m_size;
-
-				// Apply color - respect source alpha
-				Color newColor = m_color;
-				newColor.a = newColor.a * Mathf.Pow(sourceColor.a, 4);	// Exponientally decay to correct overlapping of the several layers
-				v.color = newColor.ToColor32();
-
-				// Put new vertex into its corresponding list
-				newVertices[j].Add(v);
+			// If shadow is enabled, compute it now, otherwise skip it
+			if(m_shadowSize != 0f) {
+				// Create a copy of the vertex (structs, assign makes a copy)
+				UIVertex v = m_vertexList[i];
+				v.position += SHADOW_DIR * (m_size + m_shadowSize);	// Apply offset - take outline in account!
+				v.color = Colors.WithAlpha(m_shadowColor, m_shadowColor.a * newColor.a).ToColor32();		// Apply color - re-use alpha smoothing of the outline
+				shadowVertices.Add(v);				// Put new vertex into its corresponding list
 			}
 		}
 
-		// Join all lists into a single one
+		// Join all lists into a single one - order is relevant!
+		int capacity = m_vertexList.Capacity;
+		capacity += m_vertexList.Capacity * (highQuality ? 8 : 4);
 		List<UIVertex> newVertexList = new List<UIVertex>(m_vertexList.Capacity * OFFSETS.Length + 1);
-		for(int i = 0; i < newVertices.Length; i++) {
-			newVertexList.AddRange(newVertices[i]);
+
+		// 1) Shadow
+		newVertexList.AddRange(shadowVertices);
+
+		// 2) Outline offsets
+		for(int i = 0; i < offsetVertices.Length; i++) {
+			newVertexList.AddRange(offsetVertices[i]);
 		}
+
+		// 3) Text
+		newVertexList.AddRange(m_vertexList);
 
 		// Update helper with the processed vertices
 		_vh.Clear();
