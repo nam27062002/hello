@@ -29,6 +29,7 @@ public class InflammableBehaviour : Initializable {
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
 	[SerializeField] private bool m_shake = false;
+	[SerializeField] private bool m_slowMotion = false;
 
 	//-----------------------------------------------
 	// Attributes
@@ -176,9 +177,14 @@ public class InflammableBehaviour : Initializable {
 						// Random rotation within range
 						explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
 
-						if (m_shake) {
+						if (m_shake) {							
 							GameCameraController camera = Camera.main.GetComponent<GameCameraController>();
 							camera.Shake();
+						}
+
+						if (m_slowMotion) {
+							SlowMotionController camera = Camera.main.GetComponent<SlowMotionController>();
+							camera.StartSlowMotion();
 						}
 					}
 				}
