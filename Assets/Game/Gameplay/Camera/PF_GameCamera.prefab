@@ -14,6 +14,8 @@ GameObject:
   - 81: {fileID: 8136056}
   - 114: {fileID: 11460498}
   - 114: {fileID: 11427856}
+  - 114: {fileID: 11457446}
+  - 114: {fileID: 11486938}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -96,6 +98,23 @@ MonoBehaviour:
   m_updateDistance: 0
   m_sunLight: {fileID: 0}
   m_ambientNodes: []
+--- !u!114 &11457446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc804efa107044990b6497f820f2be57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeScaleFactor: 0.25
+  duration: 1.5
+  zoomOffset: 750
+  zoomInDuration: 0.5
+  zoomOutDuration: 1
+  alwaysTrigger: 1
 --- !u!114 &11460498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -124,6 +143,20 @@ MonoBehaviour:
   m_activationDistance: 10
   m_activationRange: 5
   m_deactivationDistance: 60
+--- !u!114 &11486938
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e0c772f84704359baf1e78af46db60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shader: {fileID: 4800000, guid: e9ba2083ad114a07d000fbfb8d76c639, type: 3}
+  blurAmount: 0.8
+  extraBlur: 0
 --- !u!124 &12481626
 Behaviour:
   m_ObjectHideFlags: 1
@@ -161,6 +194,26 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_forwardOffsetFury
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: blurAmount
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: alwaysTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: shader
+      value: 
+      objectReference: {fileID: 4800000, guid: e9ba2083ad114a07d000fbfb8d76c639, type: 3}
+    - target: {fileID: 0}
+      propertyPath: extraBlur
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
