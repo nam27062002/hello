@@ -28,6 +28,8 @@ public class AmbientNode : MonoBehaviour
 	[Range (0,2)]
 	public float m_flaresIntensity = 1;
 
+	public int m_rainIntensity;
+
 	void OnDrawGizmos() 
 	{
 		Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);

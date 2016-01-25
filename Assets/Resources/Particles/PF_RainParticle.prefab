@@ -41,6 +41,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479b13f048a1c4cd092a8ad217fc910a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_rainLocalMove: 2
 --- !u!198 &19824740
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -95,7 +96,7 @@ ParticleSystem:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 2
+      scalar: 1.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -409,7 +410,7 @@ ParticleSystem:
     radius: 1
     angle: 25
     length: 5
-    boxX: 60
+    boxX: 50
     boxY: 1
     boxZ: 10
     arc: 360
@@ -1587,7 +1588,15 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: ShapeModule.boxX
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 131372}

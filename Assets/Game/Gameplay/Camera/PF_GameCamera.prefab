@@ -13,7 +13,7 @@ GameObject:
   - 92: {fileID: 9212364}
   - 81: {fileID: 8136056}
   - 114: {fileID: 11460498}
-  - 114: {fileID: 11468290}
+  - 114: {fileID: 11427856}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -81,6 +81,21 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
   m_Enabled: 1
+--- !u!114 &11427856
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8bac2e609b1841e6825ac01c45579a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_followTransform: {fileID: 0}
+  m_updateDistance: 0
+  m_sunLight: {fileID: 0}
+  m_ambientNodes: []
 --- !u!114 &11460498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -109,24 +124,6 @@ MonoBehaviour:
   m_activationDistance: 10
   m_activationRange: 5
   m_deactivationDistance: 60
---- !u!114 &11468290
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cea75d4686c64d6f9eb03d0b463f3ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_outsideColor: {r: 0.5921569, g: 0.9058824, b: 0.9490197, a: 1}
-  m_caveColor: {r: 0.15804516, g: 0.037629757, b: 0.6397059, a: 1}
-  m_startDistance: 140
-  m_endDistance: 750
-  m_caveDistanceOffset: 120
-  m_skyLine: 25
-  m_caveLine: -25
 --- !u!124 &12481626
 Behaviour:
   m_ObjectHideFlags: 1
