@@ -137,8 +137,10 @@ public class InflammableBehaviour : Initializable {
 				}
 
 				PreyMotion motion = GetComponent<PreyMotion>();
-				if (motion != null) {
-					motion.enabled = false;
+				if (motion != null) 
+				{
+					motion.StartBurning();
+					// motion.enabled = false;
 				}
 
 				m_ashMaterial.SetFloat("_AshLevel", 0);
