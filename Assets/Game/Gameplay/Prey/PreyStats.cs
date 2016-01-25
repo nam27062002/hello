@@ -41,7 +41,7 @@ public class PreyStats : Initializable {
 		m_materials = new Dictionary<int, Material[]>();
 
 		// keep the original materials, sometimes it will become Gold!
-		SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
 			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
 		}
@@ -60,7 +60,7 @@ public class PreyStats : Initializable {
 	}*/
 
 	private void SetGolden(bool _value) {
-		SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 
 		for (int i = 0; i < renderers.Length; i++) {
 			if (_value) {
