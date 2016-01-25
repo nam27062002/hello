@@ -301,9 +301,9 @@ public class AmbientManager : MonoBehaviour
 			Quaternion rot = m_sunLight.transform.rotation;
 			rot.eulerAngles = m_lightAngles;
 			m_sunLight.transform.rotation = rot;
-			RenderSettings.flareStrength = m_flaresIntensity;
-		}
 
+		}
+		RenderSettings.flareStrength = m_flaresIntensity;
 		if (m_rainController != null)
 		{
 			m_rainController.SetIntensity( m_rainIntensity );
