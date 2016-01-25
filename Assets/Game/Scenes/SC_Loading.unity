@@ -95,6 +95,7 @@ GameObject:
   - 224: {fileID: 91138016}
   - 222: {fileID: 91138019}
   - 114: {fileID: 91138018}
+  - 114: {fileID: 91138020}
   - 114: {fileID: 91138017}
   m_Layer: 5
   m_Name: Text
@@ -118,7 +119,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 320, y: 200}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &91138017
 MonoBehaviour:
@@ -128,12 +129,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 91138015}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -900027084, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 2, y: -2}
-  m_UseGraphicAlpha: 1
+  m_quality: 0
+  m_size: 4
+  m_color: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowSize: 4
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &91138018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,11 +157,11 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9306b7762ae4b4544a6309d97f887fcb, type: 3}
+    m_Font: {fileID: 12800000, guid: 8362f4a87a56d432094b53e54713b1eb, type: 3}
     m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 100
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -173,6 +176,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 91138015}
+--- !u!114 &91138020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 91138015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
 --- !u!1 &432247175
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,35 +429,35 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMin.x
-      value: .5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMin.y
-      value: .5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMax.x
-      value: .5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMax.y
-      value: .5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_Pivot.x
-      value: .5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_Pivot.y
-      value: .5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22489242, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0.316
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22489242, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11435682, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_Value

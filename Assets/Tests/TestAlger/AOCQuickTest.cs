@@ -26,14 +26,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public ProbabilitySet m_myProbSet = new ProbabilitySet(
-		new ProbabilitySet.Element[] {
-			new ProbabilitySet.Element("Element0"),
-			new ProbabilitySet.Element("Element1"),
-			new ProbabilitySet.Element("Element2"),
-			new ProbabilitySet.Element("Element3")
-		}
-	);
+	private float m_multiplier = 1f;
+	private float m_timer = 0f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -61,13 +55,43 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-
+		if(m_timer > 0f) {
+			m_timer -= Time.deltaTime;
+			if(m_timer <= 0f) {
+				ChangeMultiplier(1f, false);
+			}
+		}
 	}
 
 	/// <summary>
-	/// Destructor.
+	/// Changes the multiplier.
 	/// </summary>
-	void OnDestroy() {
-		
+	/// <param name="_newMultiplier">New multiplier.</param>
+	/// <param name="_resetTimer">If set to <c>true</c> reset timer.</param>
+	public void ChangeMultiplier(float _newMultiplier, bool _resetTimer = true) {
+		// Check params
+		if(_newMultiplier == m_multiplier) return;
+
+		// Do it
+		ScoreMultiplier oldMultiplier = new ScoreMultiplier();
+		oldMultiplier.multiplier = m_multiplier;
+
+		m_multiplier = _newMultiplier;
+
+		ScoreMultiplier newMultiplier = new ScoreMultiplier();
+		newMultiplier.multiplier = m_multiplier;
+
+		// Reset timer
+		if(_resetTimer) {
+			m_timer = 5f;
+		}
+
+		// Simulate event
+		Messenger.Broadcast<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, oldMultiplier, newMultiplier);
+
+	}
+
+	public void OnClick() {
+		ChangeMultiplier(m_multiplier * 2f);
 	}
 }
