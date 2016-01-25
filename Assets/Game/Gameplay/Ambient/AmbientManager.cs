@@ -172,7 +172,7 @@ public class AmbientManager : MonoBehaviour
 		for( int i = 0; i<m_ambientNodes.Length; i++ )
 		{
 			float magnitude = (m_followTransform.position - m_ambientNodes[i].transform.position).sqrMagnitude;
-
+			m_ambientNodes[i].SetIsUsed(false);
 			// find empty or farthest
 			int selectedIndex = -1;
 			float farthestValue = 0;
@@ -204,6 +204,7 @@ public class AmbientManager : MonoBehaviour
 		{
 			if ( m_resultNodes[i].m_node != null )
 			{
+				m_resultNodes[i].m_node.SetIsUsed(true);
 				totalDistance += m_resultNodes[i].m_distance;
 			}
 		}
