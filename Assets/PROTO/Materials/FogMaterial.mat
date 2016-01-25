@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 5
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -11,6 +11,7 @@ Material:
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
+  stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -80,14 +81,6 @@ Material:
     m_Floats:
       data:
         first:
-          name: _Cutoff
-        second: .5
-      data:
-        first:
-          name: _Parallax
-        second: .0199999996
-      data:
-        first:
           name: _SrcBlend
         second: 1
       data:
@@ -96,12 +89,20 @@ Material:
         second: 0
       data:
         first:
+          name: _Cutoff
+        second: 0.5
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
+      data:
+        first:
           name: _ZWrite
         second: 1
       data:
         first:
           name: _Glossiness
-        second: .5
+        second: 0.5
       data:
         first:
           name: _BumpScale
@@ -120,15 +121,23 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
+          name: m_FogStart
+        second: 0
+      data:
+        first:
+          name: m_FogEnd
         second: 0
     m_Colors:
       data:
@@ -145,13 +154,13 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: m_FogColor
-        second: {r: .123702407, g: .39336589, b: .764705896, a: .97647059}
-      data:
-        first:
           name: m_FogStart
         second: {r: 30, g: 0, b: 0, a: 0}
       data:
         first:
           name: m_FogEnd
         second: {r: 400, g: 0, b: 2000, a: 0}
+      data:
+        first:
+          name: m_FogColor
+        second: {r: 0.12370241, g: 0.3933659, b: 0.7647059, a: 1}

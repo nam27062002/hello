@@ -128,6 +128,9 @@ public class DragonPlayer : MonoBehaviour {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
 
+		// Aux vars
+		bool wasStarving = IsStarving();
+
 		// Update health
 		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset));
 
@@ -138,6 +141,11 @@ public class DragonPlayer : MonoBehaviour {
 
 			// Make dragon unplayable (xD)
 			playable = false;
+		}
+
+		// Check for starvation
+		else if(wasStarving != IsStarving()) {
+			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, IsStarving());
 		}
 	}
 

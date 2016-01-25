@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -65,9 +66,11 @@ public class HUDMultiplier : MonoBehaviour {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+		/*
 		if(m_anim != null) {
 			m_anim.SetFloat("timer", RewardManager.scoreMultiplierTimer);
 		}
+		*/
 	}
 
 	//------------------------------------------------------------------//
@@ -97,13 +100,22 @@ public class HUDMultiplier : MonoBehaviour {
 		UpdateText(_newMultiplier);
 
 		// Launch anim
-		if(m_anim != null) {
+		/*if(m_anim != null) {
 			// If it's the default multiplier, fade out
 			if(_newMultiplier == RewardManager.defaultScoreMultiplier) {
 				m_anim.SetTrigger("out");
 			} else {
 				m_anim.SetTrigger("start");
 			}
+		}*/
+
+		// If it's the default multiplier, fade out
+		if(_newMultiplier == RewardManager.defaultScoreMultiplier) {
+			DOTween.Restart(gameObject, "out");
+		} else {
+			//DOTween.Rewind(gameObject);	// This should reset all animations - problem is it doesn't do it in order! Use DOTweenAnimation instead
+			GetComponent<DOTweenAnimation>().DORewind();
+			DOTween.Play(gameObject, "in");
 		}
 	}
 }

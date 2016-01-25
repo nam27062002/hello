@@ -31,9 +31,9 @@ public static class Colors {
 	public static readonly Color coral = new Color(1f, 0.5f, 0.5f);
 	public static readonly Color maroon = new Color(0.5f, 0f, 0f);
 
-	public static readonly Color lime = new Color(0f, 1f, 0f);
+	public static readonly Color green = new Color(0f, 1f, 0f);
 	public static readonly Color paleGreen = new Color(0.5f, 1f, 0.5f);
-	public static readonly Color green = new Color(0f, 0.5f, 0f);
+	public static readonly Color darkGreen = new Color(0f, 0.5f, 0f);
 
 	public static readonly Color blue = new Color(0f, 0f, 1f);
 	public static readonly Color slateBlue = new Color(0.5f, 0.5f, 1f);
@@ -53,6 +53,7 @@ public static class Colors {
 	public static readonly Color purple = new Color(0.5f, 0f, 0.5f);
 
 	// Alternative names and extra colors
+	public static readonly Color lime = new Color(0f, 1f, 0f);
 	public static readonly Color skyBlue = new Color(0.2f, 0.8f, 1f);
 	public static readonly Color fuchsia = new Color(1f, 0f, 1f);
 	public static readonly Color pink = new Color(1f, 0.6f, 0.8f);
@@ -82,5 +83,36 @@ public static class Colors {
 	/// <param name="_alpha">The alpha to be used.</param>
 	public static Color WithAlpha(Color _color, float _alpha) {
 		return new Color(_color.r, _color.g, _color.b, _alpha);
+	}
+
+	//------------------------------------------------------------------//
+	// EXTENSIONS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Convert this Color32 into a Color.
+	/// </summary>
+	/// <returns>The color.</returns>
+	/// <param name="_source">Source Color32.</param>
+	public static Color ToColor(this Color32 _source) {
+		return new Color(
+			_source.r/255f,
+			_source.g/255f,
+			_source.b/255f,
+			_source.a/255f
+		);
+	}
+
+	/// <summary>
+	/// Convert this Color into a Color32.
+	/// </summary>
+	/// <returns>The color 32.</returns>
+	/// <param name="_source">Source Color.</param>
+	public static Color32 ToColor32(this Color _source) {
+		return new Color32(
+			(byte)(_source.r * 255f),
+			(byte)(_source.g * 255f),
+			(byte)(_source.b * 255f),
+			(byte)(_source.a * 255f)
+		);
 	}
 }
