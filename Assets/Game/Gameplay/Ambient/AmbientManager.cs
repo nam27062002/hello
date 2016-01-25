@@ -134,7 +134,7 @@ public class AmbientManager : MonoBehaviour
 				m_lastFollowPosition = m_followTransform.position;
 			}
 
-			float lerpValue = 0.9f;
+			float lerpValue = 0.9f * Time.deltaTime;
 			// Lerp current values
 				// Ambient
 			m_ambientColor =  Color.Lerp( m_ambientColor, m_targetAmbientColor, lerpValue);
