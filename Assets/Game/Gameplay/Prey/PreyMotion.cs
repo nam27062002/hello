@@ -89,6 +89,7 @@ public class PreyMotion : Initializable {
 	// ----------------------------------------------------------------------------- //
 
 	// Methods
+	protected bool m_burning;
 	
 	void Awake() {
 		m_posZ = m_zOffset.GetRandom();
@@ -106,6 +107,8 @@ public class PreyMotion : Initializable {
 		m_steeringColors[Forces.Flee] = Color.red;
 		m_steeringColors[Forces.Flock] = Color.blue;
 		m_steeringColors[Forces.Collision] = Color.magenta;
+
+		m_burning = false;
 	}
 
 	private void ResetForces() {
@@ -145,6 +148,8 @@ public class PreyMotion : Initializable {
 		} else {
 			m_collisionCheckPool = 0;
 		}
+
+		m_burning = false;
 
 		enabled = true;
 		if (m_animator) m_animator.enabled = true;
@@ -356,17 +361,26 @@ public class PreyMotion : Initializable {
 	}
 
 	protected virtual void UpdateVelocity() {		
-		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
-		m_steering = m_steering / m_mass;
-		
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
-		
-		if (m_velocity != Vector2.zero) {
-			m_direction = m_velocity.normalized;
-			m_orientation.SetDirection(m_direction);
-		}
 
-		m_currentSpeed = m_velocity.magnitude;
+		if (!m_burning)
+		{
+			m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
+			m_steering = m_steering / m_mass;
+			
+			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
+			
+			if (m_velocity != Vector2.zero) {
+				m_direction = m_velocity.normalized;
+				m_orientation.SetDirection(m_direction);
+			}
+
+			m_currentSpeed = m_velocity.magnitude;
+		}
+		else
+		{
+			m_velocity.y += Time.deltaTime * Physics.gravity.y;
+			m_velocity.x = m_velocity.x * 0.9f;
+		}
 				
 		Debug.DrawLine(m_position, m_position + m_velocity, Color.white);
 	}
@@ -394,5 +408,11 @@ public class PreyMotion : Initializable {
 			m_velocity.y = 0;
 			m_currentSpeed = Mathf.Abs(m_velocity.x);
 		}
+	}
+
+	public void StartBurning()
+	{
+		m_burning = true;
+		m_animator.enabled = false;
 	}
 }

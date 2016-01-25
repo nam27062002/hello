@@ -12,21 +12,28 @@ public class GroundPreyMotion : PreyMotion {
 	protected override void AvoidCollisions() {}
 
 	protected override void UpdateVelocity() {
-		m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
-		m_steering = m_steering / m_mass;
+		if (!m_burning)
+		{
+			m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
+			m_steering = m_steering / m_mass;
 
-		m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
+			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
 
-		RaycastHit sensorA;
-		RaycastHit sensorB;
-		CheckGround(out sensorA, out sensorB);
-		if (m_velocity.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
-		else 					m_direction = (sensorB.point - sensorA.point).normalized;
-		m_orientation.SetDirection(m_direction);
+			RaycastHit sensorA;
+			RaycastHit sensorB;
+			CheckGround(out sensorA, out sensorB);
+			if (m_velocity.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
+			else 					m_direction = (sensorB.point - sensorA.point).normalized;
+			m_orientation.SetDirection(m_direction);
 
-		m_currentSpeed = m_velocity.magnitude;
-		m_velocityProject = Vector3.Project(m_velocity, m_direction);
-		m_velocityProject = m_velocityProject.normalized * m_currentSpeed;
+			m_currentSpeed = m_velocity.magnitude;
+			m_velocityProject = Vector3.Project(m_velocity, m_direction);
+			m_velocityProject = m_velocityProject.normalized * m_currentSpeed;
+		}
+		else
+		{
+			m_velocityProject = Vector2.zero;
+		}
 
 		Debug.DrawLine(m_position, m_position + m_velocityProject, Color.white);
 	}
