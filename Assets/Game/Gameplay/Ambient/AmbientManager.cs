@@ -26,6 +26,7 @@ public class AmbientManager : MonoBehaviour
 	};
 	AmbientNodeResults[] m_resultNodes = new AmbientNodeResults[NODES_TO_TAKE_INTO_ACCOUNT];
 
+	RainController m_rainController;
 
 	// CurrentValues
 		// Ambient
@@ -44,6 +45,8 @@ public class AmbientManager : MonoBehaviour
 		// Light
 	Vector3 m_lightAngles;
 	float m_flaresIntensity;
+		// Rain
+	float m_rainIntensity;
 
 	// Target values
 	Color emptyColor = new Color(0,0,0,0);
@@ -63,6 +66,8 @@ public class AmbientManager : MonoBehaviour
 		// Light
 	Vector3 m_targetLightAngles;
 	float m_targetFlaresIntensity;
+		// Rain
+	float m_targetRainIntensity;
 
 	void Start()
 	{
@@ -72,6 +77,21 @@ public class AmbientManager : MonoBehaviour
 
 			// Find all ambient nodes
 			m_ambientNodes = FindObjectsOfType(typeof(AmbientNode)) as AmbientNode[];
+			if (m_ambientNodes.Length < 2)
+			{
+				enabled = false;
+				return;
+			}
+
+			// Create Rain particle over player
+			GameObject go = Instantiate( Resources.Load("Particles/PF_RainParticle") ) as GameObject;
+			// go.transform.parent = InstanceManager.player.transform;
+			go.transform.parent = transform;
+			go.transform.localPosition = Vector3.up * 7 + Vector3.forward * 22;
+			m_rainController = go.GetComponent<RainController>();
+
+			RenderSettings.fogMode = FogMode.Linear;
+
 
 			// Get Closer and start from there
 			RefreshCloserNodes();
@@ -90,6 +110,7 @@ public class AmbientManager : MonoBehaviour
 			m_fogEnd = m_targetFogEnd;
 			m_lightAngles = m_targetLightAngles;
 			m_flaresIntensity = m_targetFlaresIntensity;
+			m_rainIntensity = m_targetRainIntensity;
 			ApplyCurrentValues();
 		}
 		m_lastFollowPosition = Vector3.one * float.MaxValue;
@@ -113,7 +134,7 @@ public class AmbientManager : MonoBehaviour
 				m_lastFollowPosition = m_followTransform.position;
 			}
 
-			float lerpValue = 0.9f;
+			float lerpValue = 0.9f * Time.deltaTime;
 			// Lerp current values
 				// Ambient
 			m_ambientColor =  Color.Lerp( m_ambientColor, m_targetAmbientColor, lerpValue);
@@ -131,7 +152,8 @@ public class AmbientManager : MonoBehaviour
 				// Light
 			m_lightAngles = Vector3.Lerp( m_lightAngles, m_targetLightAngles, lerpValue );
 			m_flaresIntensity = Mathf.Lerp( m_flaresIntensity, m_targetFlaresIntensity, lerpValue);
-			
+				// Rain
+			m_rainIntensity = Mathf.Lerp( m_rainIntensity, m_targetRainIntensity, lerpValue);
 			// Apply current Values
 			ApplyCurrentValues();
 
@@ -150,7 +172,7 @@ public class AmbientManager : MonoBehaviour
 		for( int i = 0; i<m_ambientNodes.Length; i++ )
 		{
 			float magnitude = (m_followTransform.position - m_ambientNodes[i].transform.position).sqrMagnitude;
-
+			m_ambientNodes[i].SetIsUsed(false);
 			// find empty or farthest
 			int selectedIndex = -1;
 			float farthestValue = 0;
@@ -182,6 +204,7 @@ public class AmbientManager : MonoBehaviour
 		{
 			if ( m_resultNodes[i].m_node != null )
 			{
+				m_resultNodes[i].m_node.SetIsUsed(true);
 				totalDistance += m_resultNodes[i].m_distance;
 			}
 		}
@@ -225,7 +248,8 @@ public class AmbientManager : MonoBehaviour
 		// Light
 		m_targetLightAngles = Vector3.zero;
 		m_targetFlaresIntensity = 0;
-
+		// Rain
+		m_targetRainIntensity = 0;
 
 		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
 		{
@@ -249,7 +273,8 @@ public class AmbientManager : MonoBehaviour
 					// Light
 				m_targetLightAngles += node.transform.rotation.eulerAngles * nodeResult.m_weight;
 				m_targetFlaresIntensity += node.m_flaresIntensity * nodeResult.m_weight;
-
+					// Rain
+				m_targetRainIntensity += node.m_rainIntensity * nodeResult.m_weight;
 			}
 		}
 	}
@@ -277,6 +302,11 @@ public class AmbientManager : MonoBehaviour
 			rot.eulerAngles = m_lightAngles;
 			m_sunLight.transform.rotation = rot;
 			RenderSettings.flareStrength = m_flaresIntensity;
+		}
+
+		if (m_rainController != null)
+		{
+			m_rainController.SetIntensity( m_rainIntensity );
 		}
 
 	}

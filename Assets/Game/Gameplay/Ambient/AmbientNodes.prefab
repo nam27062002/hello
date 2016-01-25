@@ -1,0 +1,248 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &109968
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 458350}
+  - 114: {fileID: 11402248}
+  m_Layer: 0
+  m_Name: ParkingEntrance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &117820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 424914}
+  - 114: {fileID: 11409806}
+  m_Layer: 0
+  m_Name: RightEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &142488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 437324}
+  m_Layer: 0
+  m_Name: AmbientNodes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &156196
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 414290}
+  - 114: {fileID: 11477780}
+  m_Layer: 0
+  m_Name: LeftEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &194210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 478164}
+  - 114: {fileID: 11440922}
+  m_Layer: 0
+  m_Name: Rain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &414290
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156196}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -540.1, y: 97.4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 437324}
+  m_RootOrder: 2
+--- !u!4 &424914
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117820}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 431.2, y: 48.55, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 437324}
+  m_RootOrder: 3
+--- !u!4 &437324
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 142488}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 458350}
+  - {fileID: 478164}
+  - {fileID: 414290}
+  - {fileID: 424914}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!4 &458350
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 109968}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -211.5, y: 51.8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 437324}
+  m_RootOrder: 0
+--- !u!4 &478164
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194210}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -365.5, y: 97.4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 437324}
+  m_RootOrder: 1
+--- !u!114 &11402248
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 109968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8451609bd8ed49cd8a5fd8e0491f597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ambientColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_ambientIntensity: 1
+  m_sunSize: 0.04
+  m_atmosphereThickness: 1
+  m_skyTint: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  m_ground: {r: 0.36862746, g: 0.34901962, b: 0.34117648, a: 1}
+  m_exposure: 1.3
+  m_fogColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fogStart: 140
+  m_fogEnd: 750
+  m_flaresIntensity: 1
+  m_rainIntensity: 0
+--- !u!114 &11409806
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8451609bd8ed49cd8a5fd8e0491f597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ambientColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_ambientIntensity: 1
+  m_sunSize: 0.04
+  m_atmosphereThickness: 1
+  m_skyTint: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  m_ground: {r: 0.36862746, g: 0.34901962, b: 0.34117648, a: 1}
+  m_exposure: 1.3
+  m_fogColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fogStart: 140
+  m_fogEnd: 750
+  m_flaresIntensity: 1
+  m_rainIntensity: 0
+--- !u!114 &11440922
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8451609bd8ed49cd8a5fd8e0491f597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ambientColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_ambientIntensity: 1
+  m_sunSize: 0.04
+  m_atmosphereThickness: 1
+  m_skyTint: {r: 0, g: 0, b: 0, a: 1}
+  m_ground: {r: 0, g: 0, b: 0, a: 1}
+  m_exposure: 1.3
+  m_fogColor: {r: 0.18490486, g: 0.18555664, b: 0.2794118, a: 1}
+  m_fogStart: 140
+  m_fogEnd: 750
+  m_flaresIntensity: 1
+  m_rainIntensity: 100
+--- !u!114 &11477780
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8451609bd8ed49cd8a5fd8e0491f597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ambientColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_ambientIntensity: 1
+  m_sunSize: 0.04
+  m_atmosphereThickness: 1
+  m_skyTint: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  m_ground: {r: 0.36862746, g: 0.34901962, b: 0.34117648, a: 1}
+  m_exposure: 1.3
+  m_fogColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fogStart: 140
+  m_fogEnd: 750
+  m_flaresIntensity: 1
+  m_rainIntensity: 100
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 142488}
+  m_IsPrefabParent: 1

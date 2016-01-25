@@ -28,13 +28,25 @@ public class AmbientNode : MonoBehaviour
 	[Range (0,2)]
 	public float m_flaresIntensity = 1;
 
+	public int m_rainIntensity;
+
+	private bool m_isUsed = false;
+
 	void OnDrawGizmos() 
 	{
-		Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
+		if ( !m_isUsed )
+			Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
+		else
+			Gizmos.color = new Color(1.0f, 0.69f, 0.12f, 0.5f);
 		Gizmos.DrawSphere(transform.position, 0.5f * transform.localScale.x);
 
 		Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
 		Gizmos.DrawRay( transform.position, transform.forward);
+	}
+
+	public void SetIsUsed(bool isUsed)
+	{
+		m_isUsed = isUsed;
 	}
 
 }
