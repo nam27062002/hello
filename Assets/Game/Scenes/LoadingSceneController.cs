@@ -56,12 +56,31 @@ public class LoadingSceneController : SceneController {
 		// [AOC] TEMP!! Simulate loading time with a timer for now
 		timer = 0;
 
-		// [AOC] TEMP!! Make sure some systems are initialized
-		DragonManager.CreateInstance();
+		// [AOC] This is a safe place to instantiate all the singletons
+		//		 Do it now so we have it under control
+		//		 Add all the new created singletons
+		// Content and persistence
+		UserProfile.CreateInstance();
 		DefinitionsManager.CreateInstance();
+
+		// Game
+		DragonManager.CreateInstance();
+		LevelManager.CreateInstance();
 		MissionManager.CreateInstance();
 		ChestManager.CreateInstance();
+		RewardManager.CreateInstance();
+
+		// Settings and setup
 		GameSettings.CreateInstance();
+
+		// Tech
+		GameSceneManager.CreateInstance();
+		FlowManager.CreateInstance();
+		PoolManager.CreateInstance();
+		ParticleManager.CreateInstance();
+		FirePropagationManager.CreateInstance();
+		PopupManager.CreateInstance();
+		InstanceManager.CreateInstance();
 
 		// Load persistence
 		PersistenceManager.Init();
