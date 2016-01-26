@@ -40,5 +40,10 @@ public class GameSceneControllerBase : SceneController {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+
+	public virtual bool IsLevelLoaded()
+	{
+		return true;
+	}
 }
 
