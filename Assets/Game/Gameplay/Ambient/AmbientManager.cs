@@ -74,8 +74,12 @@ public class AmbientManager : MonoBehaviour
 		RenderSettings.skybox = new Material( Resources.Load("Game/Materials/Skybox") as Material);
 	}
 
-	void Start()
+	IEnumerator Start()
 	{
+		while( InstanceManager.GetSceneController<GameSceneController>().state <= GameSceneController.EStates.LOADING_LEVEL )
+		{
+			yield return null;
+		}
 		if ( Application.isPlaying )
 		{
 			m_followTransform = InstanceManager.player.transform;
@@ -85,51 +89,52 @@ public class AmbientManager : MonoBehaviour
 			if (m_ambientNodes.Length < 2)
 			{
 				enabled = false;
-				return;
+				// return;
 			}
-
-
-			// Version 2 - WIP
-			/*
-			for( int i = 0; i<m_ambientNodes.Length; i++ )
-				m_ambientNodes[i].m_onEnter += SetTarget;
-			*/
-
-			GameObject sun = GameObject.Find("SunFlare");
-			if (sun != null)
+			else
 			{
-				m_sunLight = sun.GetComponent<Light>();
+				// Version 2 - WIP
+				/*
+				for( int i = 0; i<m_ambientNodes.Length; i++ )
+					m_ambientNodes[i].m_onEnter += SetTarget;
+				*/
+
+				GameObject sun = GameObject.Find("SunFlare");
+				if (sun != null)
+				{
+					m_sunLight = sun.GetComponent<Light>();
+				}
+
+				// Create Rain particle over player
+				GameObject go = Instantiate( Resources.Load("Particles/PF_RainParticle") ) as GameObject;
+				// go.transform.parent = InstanceManager.player.transform;
+				go.transform.parent = transform;
+				go.transform.localPosition = Vector3.up * 8 + Vector3.forward * 22;
+				m_rainController = go.GetComponent<RainController>();
+
+				RenderSettings.fogMode = FogMode.Linear;
+
+
+				// Get Closer and start from there
+				RefreshCloserNodes();
+				RefreshTargetValues();
+
+				// CurrentValues
+				m_ambientColor = m_targetAmbientColor;
+				m_ambientIntensity = m_targetAmbientIntensity;
+				m_sunSize = m_targetSunSize;
+				m_atmosphereThickness = m_targetAtmosphereThickness;
+				m_skyTint = m_targetSkyTint;
+				m_ground = m_targetGround;
+				m_exposure = m_targetExposure;
+				m_fogColor = m_targetFogColor;
+				m_fogStart = m_targetFogStart;
+				m_fogEnd = m_targetFogEnd;
+				m_lightAngles = m_targetLightAngles;
+				m_flaresIntensity = m_targetFlaresIntensity;
+				m_rainIntensity = m_targetRainIntensity;
+				ApplyCurrentValues();
 			}
-
-			// Create Rain particle over player
-			GameObject go = Instantiate( Resources.Load("Particles/PF_RainParticle") ) as GameObject;
-			// go.transform.parent = InstanceManager.player.transform;
-			go.transform.parent = transform;
-			go.transform.localPosition = Vector3.up * 8 + Vector3.forward * 22;
-			m_rainController = go.GetComponent<RainController>();
-
-			RenderSettings.fogMode = FogMode.Linear;
-
-
-			// Get Closer and start from there
-			RefreshCloserNodes();
-			RefreshTargetValues();
-
-			// CurrentValues
-			m_ambientColor = m_targetAmbientColor;
-			m_ambientIntensity = m_targetAmbientIntensity;
-			m_sunSize = m_targetSunSize;
-			m_atmosphereThickness = m_targetAtmosphereThickness;
-			m_skyTint = m_targetSkyTint;
-			m_ground = m_targetGround;
-			m_exposure = m_targetExposure;
-			m_fogColor = m_targetFogColor;
-			m_fogStart = m_targetFogStart;
-			m_fogEnd = m_targetFogEnd;
-			m_lightAngles = m_targetLightAngles;
-			m_flaresIntensity = m_targetFlaresIntensity;
-			m_rainIntensity = m_targetRainIntensity;
-			ApplyCurrentValues();
 		}
 		m_lastFollowPosition = Vector3.one * float.MaxValue;
 	}
