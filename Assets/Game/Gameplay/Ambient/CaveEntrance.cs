@@ -46,6 +46,7 @@ public class CaveEntrance : MonoBehaviour {
 			m_colorLerp = m_ambientColor;
 			m_projection = m_exitNode;
 		}
+		m_dragonTint.SetCaveColor(m_colorLerp);
 	}
 
 	void OnTriggerStay(Collider _other) {
@@ -70,6 +71,7 @@ public class CaveEntrance : MonoBehaviour {
 			// go out
 			m_colorLerp = m_ambientColor;
 		}
+		m_dragonTint.SetCaveColor(m_colorLerp);
 	}
 
 	void OnDrawGizmos() {
