@@ -82,7 +82,12 @@ namespace LevelEditor {
 					//Handles.SphereCap(0, left, Quaternion.identity, HandleUtility.GetHandleSize(edges[i]) * 0.25f);
 					Handles.SphereCap(0, edges[i], Quaternion.identity, LevelEditor.settings.handlersSize);
 				}
+
 			}
+				
+			Gizmos.color = Colors.WithAlpha(Color.cyan, 0.5f);
+			Gizmos.matrix = transform.localToWorldMatrix;
+			Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
 		}
 	#endif
 	}
