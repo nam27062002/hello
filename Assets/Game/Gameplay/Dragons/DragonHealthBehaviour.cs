@@ -37,13 +37,15 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		
 	// Update is called once per frame
 	void Update() {
-		float secondsDelta = m_gameController.elapsedSeconds - m_elapsedSecondsCheckPoint;
-		if (secondsDelta >= m_healthDrainIncForTime[m_nextIncrement].seconds) {
-			m_healthDrainPerSecond += m_healthDrainIncForTime[m_nextIncrement].drainIncrement;
+		if (m_healthDrainIncForTime.Count > 0) {
+			float secondsDelta = m_gameController.elapsedSeconds - m_elapsedSecondsCheckPoint;
+			if (secondsDelta >= m_healthDrainIncForTime[m_nextIncrement].seconds) {
+				m_healthDrainPerSecond += m_healthDrainIncForTime[m_nextIncrement].drainIncrement;
 
-			m_elapsedSecondsCheckPoint = m_gameController.elapsedSeconds;
-			if (m_nextIncrement < (m_healthDrainIncForTime.Count - 1)) {
-				m_nextIncrement++;
+				m_elapsedSecondsCheckPoint = m_gameController.elapsedSeconds;
+				if (m_nextIncrement < (m_healthDrainIncForTime.Count - 1)) {
+					m_nextIncrement++;
+				}
 			}
 		}
 		m_dragon.AddLife(-Time.deltaTime * m_healthDrainPerSecond);
