@@ -69,6 +69,11 @@ public class AmbientManager : MonoBehaviour
 		// Rain
 	float m_targetRainIntensity;
 
+	void Awake()
+	{
+		RenderSettings.skybox = new Material( Resources.Load("Game/Materials/Skybox") as Material);
+	}
+
 	void Start()
 	{
 		if ( Application.isPlaying )
@@ -341,6 +346,8 @@ public class AmbientManager : MonoBehaviour
 			Quaternion rot = m_sunLight.transform.rotation;
 			rot.eulerAngles = m_lightAngles;
 			m_sunLight.transform.rotation = rot;
+
+			m.SetVector("_SunPos", -m_sunLight.transform.forward);
 		}
 
 		RenderSettings.flareStrength = m_flaresIntensity;
