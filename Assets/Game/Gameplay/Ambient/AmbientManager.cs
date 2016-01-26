@@ -105,7 +105,7 @@ public class AmbientManager : MonoBehaviour
 			GameObject go = Instantiate( Resources.Load("Particles/PF_RainParticle") ) as GameObject;
 			// go.transform.parent = InstanceManager.player.transform;
 			go.transform.parent = transform;
-			go.transform.localPosition = Vector3.up * 7 + Vector3.forward * 22;
+			go.transform.localPosition = Vector3.up * 8 + Vector3.forward * 22;
 			m_rainController = go.GetComponent<RainController>();
 
 			RenderSettings.fogMode = FogMode.Linear;
