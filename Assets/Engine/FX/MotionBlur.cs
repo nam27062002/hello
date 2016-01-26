@@ -40,6 +40,7 @@ public class MotionBlur : ImageEffectBase
 		{
 			DestroyImmediate(accumTexture);
 			accumTexture = new RenderTexture(source.width, source.height, 0);
+			accumTexture.generateMips = false;
 			accumTexture.hideFlags = HideFlags.HideAndDontSave;
 			Graphics.Blit( source, accumTexture );
 		}
