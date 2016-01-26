@@ -1,8 +1,8 @@
-﻿// HUDLevelUp.cs
+﻿// HUDFireRush.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 04/11/2015.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 26/01/2015.
+// Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
@@ -16,9 +16,9 @@ using DG.Tweening;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Simple controller for a score counter in the hud.
+/// Simple controller for the fire rush feedback in the game HUD.
 /// </summary>
-public class HUDLevelUp : MonoBehaviour {
+public class HUDFireRush : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -38,7 +38,7 @@ public class HUDLevelUp : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
 	}
 	
 	/// <summary>
@@ -46,18 +46,20 @@ public class HUDLevelUp : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// A dragon has leveled up.
+	/// Fury rush has been toggled.
 	/// </summary>
-	/// <param name="_dragon">The dragon that has leveled up.</param>
-	private void OnLevelUp(DragonData _dragon) {
-		// Assume it's the dragon we're playing with, although we could check the _data param with InstanceManager.player.data
-		DOTween.Restart(this.gameObject, "levelUpIn");
+	/// <param name="_active">Whether the fury rush has been activated or not.</param>
+	private void OnFuryRushToggled(bool _active) {
+		// Just launch the text animation when activated
+		if(_active) {
+			DOTween.Restart("fireRushIn");
+		}
 	}
 }
