@@ -17,7 +17,7 @@ namespace LevelEditor {
 	/// Scene controller for the level editor scene.
 	/// Simplified version of the game scene controller for 
 	/// </summary>
-	public class LevelEditorSceneController : SceneController {
+	public class LevelEditorSceneController : GameSceneControllerBase {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
@@ -26,11 +26,6 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
-		// Time
-		private float m_elapsedSeconds = 0;
-		public float elapsedSeconds {
-			get { return m_elapsedSeconds; }
-		}
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//

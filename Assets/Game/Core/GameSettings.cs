@@ -9,6 +9,13 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
+
+[Serializable]
+public struct TimeDrain {
+	public float seconds;
+	public float drainIncrement;
+};
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -17,6 +24,7 @@ using System;
 /// Global setup of the game.
 /// </summary>
 public class GameSettings : SingletonScriptableObject<GameSettings> {
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -33,6 +41,10 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[Comment("Minimum amount of energy required to boost")]
 	[SerializeField] private float m_energyRequiredToBoost = 25f;
 	public static float energyRequiredToBoost { get { return instance.m_energyRequiredToBoost; }}
+
+	[CommentAttribute("")]
+	[SerializeField] private List<TimeDrain> m_healthDrainIncForTime;
+	public static List<TimeDrain> healthDrainIncForTime { get { return instance.m_healthDrainIncForTime; } }
 
 	[Separator("Economy")]
 	[Comment("Equivalence Time/PC: PC = CoefA * time(min) + CoefB")]
