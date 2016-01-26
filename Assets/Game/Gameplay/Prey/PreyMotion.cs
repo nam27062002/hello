@@ -89,6 +89,7 @@ public class PreyMotion : Initializable {
 	// ----------------------------------------------------------------------------- //
 
 	// Methods
+	public bool m_fallOnBurn = false;
 	protected bool m_burning;
 	
 	void Awake() {
@@ -378,8 +379,15 @@ public class PreyMotion : Initializable {
 		}
 		else
 		{
-			m_velocity.y += Time.deltaTime * Physics.gravity.y;
-			m_velocity.x = m_velocity.x * 0.9f;
+			if (m_fallOnBurn)
+			{
+				m_velocity.y += Time.deltaTime * Physics.gravity.y;
+				m_velocity.x = m_velocity.x * 0.9f;
+			}
+			else
+			{
+				m_velocity = Vector3.zero;
+			}
 		}
 				
 		Debug.DrawLine(m_position, m_position + m_velocity, Color.white);

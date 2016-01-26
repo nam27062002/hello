@@ -603,6 +603,7 @@ MonoBehaviour:
   m_maxSpeed: 13
   m_maxRunSpeed: 25
   m_slowingRadius: 0
+  m_fallOnBurn: 1
 --- !u!114 &11403936
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1003,6 +1004,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: onEatenParticle
       value: Feathers
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_fallOnBurn
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
