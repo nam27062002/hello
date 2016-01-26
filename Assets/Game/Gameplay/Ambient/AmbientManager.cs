@@ -76,12 +76,13 @@ public class AmbientManager : MonoBehaviour
 
 	IEnumerator Start()
 	{
-		while( InstanceManager.GetSceneController<GameSceneController>().state <= GameSceneController.EStates.LOADING_LEVEL )
-		{
-			yield return null;
-		}
 		if ( Application.isPlaying )
 		{
+			while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+			{
+				yield return null;
+			}
+
 			m_followTransform = InstanceManager.player.transform;
 
 			// Find all ambient nodes

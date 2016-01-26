@@ -377,4 +377,9 @@ public class GameSceneController : GameSceneControllerBase {
 			GoToMenu();
 		}
 	}
+
+	public override bool IsLevelLoaded()
+	{
+		return state > EStates.LOADING_LEVEL;
+	}
 }
