@@ -78,7 +78,6 @@ public class LoadingSceneController : SceneController {
 		FlowManager.CreateInstance();
 		PoolManager.CreateInstance();
 		ParticleManager.CreateInstance();
-		FirePropagationManager.CreateInstance();
 		PopupManager.CreateInstance();
 		InstanceManager.CreateInstance();
 
