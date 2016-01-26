@@ -32,6 +32,10 @@ public class AmbientNode : MonoBehaviour
 
 	private bool m_isUsed = false;
 
+	public delegate void OnEnter( AmbientNode node );
+	public OnEnter m_onEnter;
+
+
 	void OnDrawGizmos() 
 	{
 		if ( !m_isUsed )
@@ -48,5 +52,18 @@ public class AmbientNode : MonoBehaviour
 	{
 		m_isUsed = isUsed;
 	}
+
+	// Version 2 - WIP
+	/*
+	void OnTriggerEnter( Collider other)
+	{
+		if ( other.tag == "Player" )	
+		{
+			// Tell Ambient Manager to use this one
+			if (m_onEnter != null)
+				m_onEnter(this);
+		}
+	}
+	*/
 
 }
