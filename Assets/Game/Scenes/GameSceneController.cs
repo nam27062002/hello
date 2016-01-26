@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Main controller for the game scene.
 /// </summary>
-public class GameSceneController : SceneController {
+public class GameSceneController : GameSceneControllerBase {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -36,12 +36,6 @@ public class GameSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
-	// Time
-	private float m_elapsedSeconds = 0;
-	public float elapsedSeconds {
-		get { return m_elapsedSeconds; }
-	}
 
 	public float countdown {
 		get {

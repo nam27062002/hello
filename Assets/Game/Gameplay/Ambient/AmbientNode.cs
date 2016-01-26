@@ -32,12 +32,16 @@ public class AmbientNode : MonoBehaviour
 
 	private bool m_isUsed = false;
 
+	public delegate void OnEnter( AmbientNode node );
+	public OnEnter m_onEnter;
+
+
 	void OnDrawGizmos() 
 	{
 		if ( !m_isUsed )
-			Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
+			Gizmos.color = new Color(1.0f, 0, 1, 1);
 		else
-			Gizmos.color = new Color(1.0f, 0.69f, 0.12f, 0.5f);
+			Gizmos.color = new Color(1.0f, 1.0f, 0.12f, 1);
 		Gizmos.DrawSphere(transform.position, 0.5f * transform.localScale.x);
 
 		Gizmos.color = new Color(0.09f, 0.69f, 0.12f, 0.5f);
@@ -48,5 +52,18 @@ public class AmbientNode : MonoBehaviour
 	{
 		m_isUsed = isUsed;
 	}
+
+	// Version 2 - WIP
+	/*
+	void OnTriggerEnter( Collider other)
+	{
+		if ( other.tag == "Player" )	
+		{
+			// Tell Ambient Manager to use this one
+			if (m_onEnter != null)
+				m_onEnter(this);
+		}
+	}
+	*/
 
 }

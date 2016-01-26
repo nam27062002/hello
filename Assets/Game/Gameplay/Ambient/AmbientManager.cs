@@ -69,6 +69,11 @@ public class AmbientManager : MonoBehaviour
 		// Rain
 	float m_targetRainIntensity;
 
+	void Awake()
+	{
+		RenderSettings.skybox = new Material( Resources.Load("Game/Materials/Skybox") as Material);
+	}
+
 	void Start()
 	{
 		if ( Application.isPlaying )
@@ -83,6 +88,13 @@ public class AmbientManager : MonoBehaviour
 				return;
 			}
 
+
+			// Version 2 - WIP
+			/*
+			for( int i = 0; i<m_ambientNodes.Length; i++ )
+				m_ambientNodes[i].m_onEnter += SetTarget;
+			*/
+
 			GameObject sun = GameObject.Find("SunFlare");
 			if (sun != null)
 			{
@@ -93,7 +105,7 @@ public class AmbientManager : MonoBehaviour
 			GameObject go = Instantiate( Resources.Load("Particles/PF_RainParticle") ) as GameObject;
 			// go.transform.parent = InstanceManager.player.transform;
 			go.transform.parent = transform;
-			go.transform.localPosition = Vector3.up * 7 + Vector3.forward * 22;
+			go.transform.localPosition = Vector3.up * 8 + Vector3.forward * 22;
 			m_rainController = go.GetComponent<RainController>();
 
 			RenderSettings.fogMode = FogMode.Linear;
@@ -124,6 +136,7 @@ public class AmbientManager : MonoBehaviour
 
 	void Update()
 	{
+		// Version 1
 		if (m_followTransform != null)
 		{
 			if ( (m_followTransform.position - m_lastFollowPosition).magnitude >= m_updateDistance || (Application.isEditor && !Application.isPlaying))
@@ -162,9 +175,35 @@ public class AmbientManager : MonoBehaviour
 			m_rainIntensity = Mathf.Lerp( m_rainIntensity, m_targetRainIntensity, lerpValue);
 			// Apply current Values
 			ApplyCurrentValues();
-
-
 		}
+
+
+		// Version 2 - with box triggers WIP
+		/*
+		float lerpValue = 0.9f * Time.deltaTime;
+		// Lerp current values
+			// Ambient
+		m_ambientColor =  Color.Lerp( m_ambientColor, m_targetAmbientColor, lerpValue);
+		m_ambientIntensity = Mathf.Lerp( m_ambientIntensity , m_targetAmbientIntensity, lerpValue);
+			// Skybox
+		m_sunSize = Mathf.Lerp( m_sunSize, m_targetSunSize, lerpValue);
+		m_atmosphereThickness =  Mathf.Lerp( m_atmosphereThickness, m_targetAtmosphereThickness, lerpValue);
+		m_skyTint = Color.Lerp( m_skyTint, m_targetSkyTint, lerpValue);
+		m_ground = Color.Lerp( m_ground, m_targetGround, lerpValue);
+		m_exposure = Mathf.Lerp( m_exposure, m_targetExposure, lerpValue);
+			// Fog
+		m_fogColor = Color.Lerp( m_fogColor, m_targetFogColor, lerpValue);
+		m_fogStart = Mathf.Lerp( m_fogStart, m_targetFogStart, lerpValue);
+		m_fogEnd = Mathf.Lerp( m_fogEnd, m_targetFogEnd, lerpValue);
+			// Light
+		m_lightAngles = Vector3.Lerp( m_lightAngles, m_targetLightAngles, lerpValue );
+		m_flaresIntensity = Mathf.Lerp( m_flaresIntensity, m_targetFlaresIntensity, lerpValue);
+			// Rain
+		m_rainIntensity = Mathf.Lerp( m_rainIntensity, m_targetRainIntensity, lerpValue);
+		// Apply current Values
+		ApplyCurrentValues();
+		*/
+
 	}
 
 
@@ -307,6 +346,8 @@ public class AmbientManager : MonoBehaviour
 			Quaternion rot = m_sunLight.transform.rotation;
 			rot.eulerAngles = m_lightAngles;
 			m_sunLight.transform.rotation = rot;
+
+			m.SetVector("_SunPos", -m_sunLight.transform.forward);
 		}
 
 		RenderSettings.flareStrength = m_flaresIntensity;
@@ -314,7 +355,28 @@ public class AmbientManager : MonoBehaviour
 		{
 			m_rainController.SetIntensity( m_rainIntensity );
 		}
+	}
 
+	public void SetTarget( AmbientNode node )
+	{
+			// Ambient
+		m_targetAmbientColor = node.m_ambientColor;
+		m_targetAmbientIntensity = node.m_ambientIntensity;
+			// Skybox
+		m_targetSunSize = node.m_sunSize;
+		m_targetAtmosphereThickness = node.m_atmosphereThickness;
+		m_targetSkyTint = node.m_skyTint;
+		m_targetGround = node.m_ground;
+		m_targetExposure = node.m_exposure;
+			// Fog
+		m_targetFogColor = node.m_fogColor;
+		m_targetFogStart = node.m_fogStart;
+		m_targetFogEnd = node.m_fogEnd;
+			// Light
+		m_targetLightAngles = node.transform.rotation.eulerAngles;
+		m_targetFlaresIntensity = node.m_flaresIntensity;
+			// Rain
+		m_targetRainIntensity = node.m_rainIntensity;
 	}
 
 }
