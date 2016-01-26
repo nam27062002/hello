@@ -38,7 +38,6 @@ public class EdibleBehaviour : Initializable {
 
 	public string onEatenParticle = "";
 
-	private Transform m_startParent;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -56,7 +55,6 @@ public class EdibleBehaviour : Initializable {
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_dragonEat = m_dragon.GetComponent<DragonEatBehaviour>();
 		m_dragonMouth = m_dragon.tongue;
-		m_startParent = transform.parent;
 	}
 
 	public override void Initialize() {
@@ -88,7 +86,6 @@ public class EdibleBehaviour : Initializable {
 
 					if (m_isBeingEaten) 
 					{
-						transform.parent = m_dragonEat.transform;
 						OnEatBehaviours( false );
 						m_animator.SetTrigger("being eaten");
 					}
@@ -140,7 +137,6 @@ public class EdibleBehaviour : Initializable {
 		} else {
 			gameObject.SetActive(false);
 		}
-		transform.parent = m_startParent;
 		return reward;
 	}
 

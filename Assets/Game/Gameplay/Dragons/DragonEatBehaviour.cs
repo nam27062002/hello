@@ -7,7 +7,8 @@ public class DragonEatBehaviour : MonoBehaviour {
 	struct PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
-		// public Vector3 absorbPosition;
+		public Transform startParent;
+		public Vector3 startScale;
 		public EdibleBehaviour prey;
 	};
 
@@ -68,8 +69,13 @@ public class DragonEatBehaviour : MonoBehaviour {
 		}
 
 		for (int i = 0; i < m_prey.Count; i++) {			
-			if (m_prey[i].prey != null) {
+			if (m_prey[i].prey != null) 
+			{
+				PreyData prey = m_prey[i];
+				prey.prey.transform.parent = prey.startParent;
 				Swallow(m_prey[i].prey);
+				prey.prey = null;
+				prey.startParent = null;
 			}
 		}
 		
@@ -108,13 +114,16 @@ public class DragonEatBehaviour : MonoBehaviour {
 					
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_mouth.position, t);
-					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, Vector3.one * 0.75f, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
 					prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, m_tongueDirection), 0.25f);
 										
 					// remaining time eating
-					if (m_prey[i].eatingAnimationTimer < 0) {
+					if (m_prey[i].eatingAnimationTimer < 0) 
+					{
+						prey.prey.transform.parent = prey.startParent;
 						Swallow(prey.prey);
 						prey.prey = null;
+						prey.startParent = null;
 					}
 
 					m_prey[i] = prey;
@@ -181,9 +190,11 @@ public class DragonEatBehaviour : MonoBehaviour {
 
 				PreyData preyData = new PreyData();
 
+				preyData.startParent = _prey.transform.parent;
+				_prey.transform.parent = transform;
+				preyData.startScale = _prey.transform.localScale;
 				preyData.absorbTimer = m_absorbTime;
 				preyData.eatingAnimationTimer = Mathf.Max(m_minEatAnimTime, m_eatingTimer);
-				// preyData.absorbPosition = _prey.transform.position;
 				preyData.prey = _prey;
 
 				m_prey.Add(preyData);
@@ -205,8 +216,8 @@ public class DragonEatBehaviour : MonoBehaviour {
 		return false;
 	}
 
-	private void Swallow(EdibleBehaviour _prey) {
-
+	private void Swallow(EdibleBehaviour _prey) 
+	{
 		Reward reward = _prey.OnSwallow();
 		m_dragon.AddLife(reward.health);
 		m_dragon.AddFury(reward.fury);
