@@ -248,14 +248,14 @@ public class GameCameraController : MonoBehaviour {
 
 
 			// Apply movement smoothing
-			newPos = Vector3.Lerp(targetPos, transform.position, 0.5f);
+			newPos = Vector3.Lerp(targetPos, transform.position, m_movementSmoothing);
 			newPos.z = targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
 
 			newPos = UpdateByShake(newPos);
 
 			// Rotation
 			float maxSpeed = m_dragonMotion.GetMaxSpeed();
-			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -5f, dragonVelocity.x / maxSpeed * 10, 0);
+			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -3f, dragonVelocity.x / maxSpeed * 7.5f, 0);
 			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * Time.deltaTime);
 
 			m_update = false;
