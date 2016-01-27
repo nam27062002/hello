@@ -52,7 +52,7 @@ public class GameCameraControllerEditor : Editor {
 			EditorGUI.BeginChangeCheck();
 			float newZoom = EditorGUILayout.Slider("Current Zoom", targetCamera.zoom, 0f, 1f);
 			if(EditorGUI.EndChangeCheck()) {
-				targetCamera.Zoom(newZoom, 0f);
+				// targetCamera.Zoom(newZoom, 0f);
 			}
 
 			EditorGUILayout.LabelField("zoom range", targetCamera.m_zoomRange.min.ToString() + ", " + targetCamera.m_zoomRange.max.ToString());

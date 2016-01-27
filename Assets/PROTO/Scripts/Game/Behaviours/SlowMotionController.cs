@@ -41,7 +41,7 @@ public class SlowMotionController : MonoBehaviour {
 	#endregion
 
 	#region REFERENCES -------------------------------------------------------------------------------------------------
-	private CameraController_OLD mMainCameraController = null;
+	private GameCameraController mMainCameraController = null;
 	private MotionBlur mMotionBlur = null;
 	#endregion
 
@@ -50,7 +50,7 @@ public class SlowMotionController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	public void Start() {
-		// mMainCameraController = Camera.main.GetComponent<CameraController_OLD>();
+		mMainCameraController = Camera.main.GetComponent<GameCameraController>();
 		mMotionBlur = Camera.main.GetComponent<MotionBlur>();
 		mMotionBlur.enabled = false;
 	}
@@ -117,11 +117,10 @@ public class SlowMotionController : MonoBehaviour {
 		mLastMotionTimestamp = Time.time;
 		mActiveController = this;
 
-		// Zoom in
-		// mMainCameraController.Zoom(zoomOffset, zoomInDuration);
-
 		// Motion blur!
 		mMotionBlur.enabled = true;
+
+		Messenger.Broadcast<bool>(GameEvents.SLOW_MOTION_TOGGLED, true);
 	}
 
 	/// <summary>
@@ -139,11 +138,10 @@ public class SlowMotionController : MonoBehaviour {
 		mIsActive = false;
 		mActiveController = null;	// There can only be one active controller and should be this one, so this is safe
 
-		// Zoom back to default
-		// mMainCameraController.Zoom(0f, zoomOutDuration);
-
 		// Motion blur!
 		mMotionBlur.enabled = false;
+
+		Messenger.Broadcast<bool>(GameEvents.SLOW_MOTION_TOGGLED, false);
 	}
 	#endregion
 }

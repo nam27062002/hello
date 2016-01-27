@@ -33,6 +33,7 @@ public class Spawner : MonoBehaviour {
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
 	private uint m_entitiesKilled; // we'll use this to give rewards if the dragon destroys a full flock
+	private bool m_allEntitiesKilledByPlayer;
 	protected GameObject[] m_entities; // list of alive entities
 
 	private float m_enableTimer;
@@ -71,6 +72,8 @@ public class Spawner : MonoBehaviour {
 		m_entityAlive = 0;
 		m_entitySpawned = 0;
 		m_entitiesKilled = 0;
+
+		m_allEntitiesKilledByPlayer = false;
 	}
 
 	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
@@ -85,11 +88,17 @@ public class Spawner : MonoBehaviour {
 			}
 		}
 
-		// all the entities are 
-		if (m_entityAlive == 0 && m_entitiesKilled >= 3) {
-			// check if player has destroyed all the flock
-			if (m_entitiesKilled == m_entitySpawned) {
-				// TODO: give flock reward! rise event
+		// all the entities are dead
+		if (m_entityAlive == 0) {
+			m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
+
+			if (m_allEntitiesKilledByPlayer) {
+				// check if player has destroyed all the flock
+				if (m_entitiesKilled >= 3) {
+					// TODO: give flock reward! rise event
+				}
+			} else {
+				m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
 			}
 		}
 	}
@@ -165,12 +174,14 @@ public class Spawner : MonoBehaviour {
 		}
 
 		// Disable this spawner after a number of spawns
-		if (m_maxSpawns > 0) {
-			m_respawnCount++;			
+		if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0) {
+			m_respawnCount++;
 			if (m_respawnCount == m_maxSpawns) {
 				gameObject.SetActive(false);
 			}
 		}
+
+		m_allEntitiesKilledByPlayer = false;
 	}
 
 	protected virtual void ExtendedSpawn() {}
