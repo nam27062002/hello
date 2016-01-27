@@ -241,22 +241,22 @@ public class GameCameraController : MonoBehaviour {
 				{
 					targetZoom = 0.8f;
 				}
-				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime * 0.9f);
+				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime * 0.9f);
 			}
 
 			targetPos.z = -m_zoomRange.Lerp(m_currentZoom);
 
 
 			// Apply movement smoothing
-			newPos = Vector3.Lerp(targetPos, transform.position, 0.5f);
+			newPos = Vector3.Lerp(targetPos, transform.position, m_movementSmoothing);
 			newPos.z = targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
 
 			newPos = UpdateByShake(newPos);
 
 			// Rotation
 			float maxSpeed = m_dragonMotion.GetMaxSpeed();
-			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -5f, dragonVelocity.x / maxSpeed * 10, 0);
-			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * Time.deltaTime);
+			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -3f, dragonVelocity.x / maxSpeed * 7.5f, 0);
+			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * m_accumulatedTime);
 
 			m_update = false;
 			m_accumulatedTime = 0;
