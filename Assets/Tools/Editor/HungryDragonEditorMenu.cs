@@ -146,7 +146,7 @@ public class HungryDragonEditorMenu {
 	/// </summary>
 	/// <param name="_fileName">The name of the file, including extension.</param>
 	/// <param name="_folderPath">The path of folder containing such file, optional. From project's root and ending with a '/' (i.e. "Assets/Resources/MyFolder/").</param>
-	private static void OpenFile(string _fileName, string _folderPath) {
+	public static void OpenFile(string _fileName, string _folderPath) {
 		// Just find and select the scriptable object
 		Object targetObj = AssetDatabase.LoadMainAssetAtPath(_folderPath + _fileName);
 		EditorUtils.FocusObject(targetObj, true, false, true);
@@ -156,7 +156,7 @@ public class HungryDragonEditorMenu {
 	/// Open the scene with the given name.
 	/// </summary>
 	/// <param name="_sceneName">The path of the scene starting at project root and with extension (e.g. "Assets/MyScenesFolder/MyScene.unity").</param>
-	private static void OpenScene(string _scenePath) {
+	public static void OpenScene(string _scenePath) {
 		// Just do it
 		EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);	// Will close all open scenes
 	}

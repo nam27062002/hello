@@ -1,4 +1,4 @@
-﻿// GameCameraController.cs
+// GameCameraController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/08/2015.
@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -131,7 +132,12 @@ public class GameCameraController : MonoBehaviour {
 	/// <summary>
 	/// First update.
 	/// </summary>
-	private void Start() {
+	IEnumerator Start() {
+		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+		{
+			yield return null;
+		}
+
 		// Acquire external references
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 
@@ -155,6 +161,8 @@ public class GameCameraController : MonoBehaviour {
 		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+
+		transform.position = playerPos;
 
 	}
 	

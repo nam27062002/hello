@@ -694,6 +694,27 @@ public static class Util
 		t.position = v;
 		return z;
 	}
+	public static float SetLocalPosX(this Transform t, float x)
+	{
+		Vector3 v = t.localPosition;
+		v.x = x;
+		t.localPosition = v;
+		return x;	// return the value we set, for convenience
+	}
+	public static float SetLocalPosY(this Transform t, float y)
+	{
+		Vector3 v = t.localPosition;
+		v.y = y;
+		t.localPosition = v;
+		return y;
+	}
+	public static float SetLocalPosZ(this Transform t, float z)
+	{
+		Vector3 v = t.localPosition;
+		v.z = z;
+		t.localPosition = v;
+		return z;
+	}
 	public static float SetLocalScale(this Transform t, float s)
 	{
 		t.localScale = new Vector3(s, s, s);
