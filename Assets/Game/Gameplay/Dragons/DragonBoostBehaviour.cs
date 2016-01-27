@@ -87,6 +87,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
 			m_animator.SetBool("boost", true);
+		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, true);
 	}
 
 	public void StopBoost() 
@@ -96,6 +97,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// DeactivateTrails();
 		if (m_animator && m_animator.isInitialized)
 			m_animator.SetBool("boost", false);
+
+		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);
 	}
 
 	public bool IsBoostActive()
