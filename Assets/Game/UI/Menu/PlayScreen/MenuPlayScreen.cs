@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -23,7 +24,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	private GameObject m_HUDObj = null;
+	public CanvasGroup m_hud = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -33,7 +34,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Find and store reference to the HUD object
-		m_HUDObj = GameObject.Find("PF_MenuHUD");
+		m_hud = GameObject.Find("PF_MenuHUD").GetComponent<CanvasGroup>();
 	}
 
 	/// <summary>
@@ -41,7 +42,11 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Hide menu HUD
-		//m_HUDObj.SetActive(false);
+		// [AOC] For some fucking unknown reason, enabling/disabling the hud object at this point crashes Unity -______-
+		//		 Looks related to this being called from an animation event or something like that
+		//		 That's the reason we're using alpha instead
+		//		 http://answers.unity3d.com/questions/631084/setactivefalse-does-not-fire-ondisable-1.html
+		if(m_hud != null) m_hud.alpha = 0f;
 	}
 
 	/// <summary>
@@ -49,7 +54,13 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Show menu HUD
-		//m_HUDObj.SetActive(true);
+		// [AOC] For some fucking unknown reason, enabling/disabling the hud object at this point crashes Unity -______-
+		//		 Looks related to this being called from an animation event or something like that
+		//		 That's the reason we're using alpha instead
+		//		 http://answers.unity3d.com/questions/631084/setactivefalse-does-not-fire-ondisable-1.html
+		if(m_hud != null) {
+			m_hud.DOFade(1f, 0.15f);
+		}
 	}
 
 	//------------------------------------------------------------------//
