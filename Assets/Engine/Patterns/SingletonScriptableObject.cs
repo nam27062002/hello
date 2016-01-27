@@ -108,7 +108,9 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 				}
 				
 				// Make it persistent
-				ScriptableObject.DontDestroyOnLoad(m_instance);
+				// [AOC] Not needed since scriptable objects already persist through scenes (and doing this throws a warning in runtime)
+				//		 See http://answers.unity3d.com/questions/1115856/scriptableobject-vs-dontdestroyonload.html
+				//ScriptableObject.DontDestroyOnLoad(m_instance);
 				
 				// Instance has been created and stored, unlock instance creation
 				m_state = Singleton.EState.READY;

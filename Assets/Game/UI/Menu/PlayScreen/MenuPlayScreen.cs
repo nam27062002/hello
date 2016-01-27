@@ -41,7 +41,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Hide menu HUD
-		m_HUDObj.SetActive(false);
+		//m_HUDObj.SetActive(false);
 	}
 
 	/// <summary>
@@ -49,7 +49,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Show menu HUD
-		m_HUDObj.SetActive(true);
+		//m_HUDObj.SetActive(true);
 	}
 
 	//------------------------------------------------------------------//
