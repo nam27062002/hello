@@ -97,6 +97,8 @@ public class Spawner : MonoBehaviour {
 				if (m_entitiesKilled >= 3) {
 					// TODO: give flock reward! rise event
 				}
+			} else {
+				m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
 			}
 		}
 	}
