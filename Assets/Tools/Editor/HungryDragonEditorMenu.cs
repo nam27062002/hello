@@ -135,8 +135,11 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Scenes/SC_Game", false, 52)]
 	public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity"); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 101)]
-	public static void OpenScene4() { OpenScene("Assets/Tests/SC_Popups.unity"); }
+	[MenuItem("Hungry Dragon/Scenes/SC_LevelEditor", false, 101)]
+	public static void OpenScene4() { OpenScene("Assets/Tools/LevelEditor/SC_LevelEditor.unity"); }
+
+	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 151)]
+	public static void OpenScene5() { OpenScene("Assets/Tests/SC_Popups.unity"); }
 
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
