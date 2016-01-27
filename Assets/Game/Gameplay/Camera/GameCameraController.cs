@@ -241,7 +241,7 @@ public class GameCameraController : MonoBehaviour {
 				{
 					targetZoom = 0.8f;
 				}
-				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime * 0.9f);
+				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime * 0.9f);
 			}
 
 			targetPos.z = -m_zoomRange.Lerp(m_currentZoom);
@@ -256,7 +256,7 @@ public class GameCameraController : MonoBehaviour {
 			// Rotation
 			float maxSpeed = m_dragonMotion.GetMaxSpeed();
 			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -3f, dragonVelocity.x / maxSpeed * 7.5f, 0);
-			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * Time.deltaTime);
+			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * m_accumulatedTime);
 
 			m_update = false;
 			m_accumulatedTime = 0;
