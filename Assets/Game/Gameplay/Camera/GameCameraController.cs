@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -129,7 +130,12 @@ public class GameCameraController : MonoBehaviour {
 	/// <summary>
 	/// First update.
 	/// </summary>
-	private void Start() {
+	IEnumerator Start() {
+		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+		{
+			yield return null;
+		}
+
 		// Acquire external references
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 
@@ -138,6 +144,8 @@ public class GameCameraController : MonoBehaviour {
 		m_targetPos = playerPos;
 		m_forwardOffset = m_forwardOffsetNormal;
 		m_furyOn = false;
+
+		transform.position = playerPos;
 
 		// Initialize zoom interpolator
 		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
