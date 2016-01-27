@@ -33,9 +33,11 @@ public class GameCameraController : MonoBehaviour {
 	[SerializeField] [Range(0, 1)] [Tooltip("The delay when adapting the forward offset to the dragon's direction. [0..1] -> [DragonDir..CurrentDir]. -> [Hard..Smooth]")]
 	private float m_forwardSmoothing = 0.95f;
 	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon")] 
-	private float m_forwardOffsetNormal = 3f;
+	private float m_forwardOffsetNormal = 1f;
 	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon on Fury mode")] 
-	private float m_forwardOffsetFury = 5f;
+	private float m_forwardOffsetFury = 3f;
+	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon on Boost mode")] 
+	private float m_forwardOffsetBoost = 2f;
 	[SerializeField] [Tooltip("Horizontal scroll limits in world coords")]
 	private Range m_limitX = new Range(-100, 100);
 
@@ -45,6 +47,7 @@ public class GameCameraController : MonoBehaviour {
 	[Tooltip("Zoom factor, distance from Z-0 in world units. Change this based on dragon type.")]
 	public Range m_zoomRange = new Range(500f, 2000f);
 	[InfoBox("All zoom related values are in relative terms [0..1] to Zoom Range")]
+	private float m_currentZoom;
 
 	[Separator("Shaking")]
 	[SerializeField] private Vector3 m_shakeDefaultAmount = new Vector3(0.5f, 0.5f, 0f);
@@ -61,14 +64,13 @@ public class GameCameraController : MonoBehaviour {
 	private DragonMotion m_dragonMotion = null;
 	private Transform m_interest = null;
 	private bool m_furyOn;
+	private bool m_slowMotionOn;
+	private bool m_slowMoJustStarted;
+	private bool m_boostOn;
 
 	// Positioning
-	private Vector3 m_targetPos = Vector3.zero;
 	private Vector3 m_forward = Vector3.right;
-	private float m_forwardOffset;
 
-	// Zoom
-	private Interpolator m_zInterpolator = new Interpolator();
 
 	// Shake
 	private Vector3 m_shakeAmount = Vector3.one;
@@ -135,14 +137,13 @@ public class GameCameraController : MonoBehaviour {
 
 		// Reset camera target
 		m_interest = null;
-		m_targetPos = playerPos;
-		m_forwardOffset = m_forwardOffsetNormal;
 		m_furyOn = false;
-
-		// Initialize zoom interpolator
-		m_zInterpolator.Start(m_defaultZoom, m_defaultZoom, 0f);
+		m_slowMotionOn = false;
+		m_slowMoJustStarted = false;
+		m_boostOn = false;
 
 		m_zoomRangeStart = m_zoomRange;
+		m_currentZoom = m_defaultZoom;
 		m_nearStart = Camera.main.nearClipPlane;
 		m_farStart = Camera.main.farClipPlane;
 
@@ -150,7 +151,11 @@ public class GameCameraController : MonoBehaviour {
 
 		// Register to Fury events
 		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
+
 		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+
 	}
 	
 	/// <summary>
@@ -164,38 +169,86 @@ public class GameCameraController : MonoBehaviour {
 		// it depends on previous fixed updates
 		if ( m_update )
 		{
-			Vector3 dragonDirection = m_dragonMotion.GetVelocity().normalized;
+			Vector3 dragonVelocity = m_dragonMotion.GetVelocity();
+			Vector3 dragonDirection = dragonVelocity.normalized;
+			m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
 
+			Vector3 targetPos;
 			// Compute new target position
 			// Is there a danger nearby?
-			if(m_interest != null) {
+			if(m_interest != null) 
+			{
 				// Yes!! Look between the danger and the dragon
 				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
-				m_targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.5f);
-			} else {
+				targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.5f);
+			} 
+			else 
+			{
 				// No!! Just look towards the dragon
 				if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
-					m_targetPos = m_dragonMotion.head.position;
+					targetPos = m_dragonMotion.head.position;
 				} else {
-					m_targetPos = playerPos;
+					targetPos = playerPos;
 				}
 			}
 
 			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
-			m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
-			m_targetPos = m_targetPos + m_forward * m_forwardOffset;
+			if (m_furyOn)
+			{
+				targetPos = targetPos + m_forward * m_forwardOffsetFury;
+			}
+			else if ( m_boostOn )
+			{
+				targetPos = targetPos + m_forward * m_forwardOffsetBoost;
+			}
+			else
+			{
+				targetPos = targetPos + m_forward * m_forwardOffsetNormal;
+			}
+
 
 			// Clamp X to defined limits
-			m_targetPos.x = Mathf.Clamp(m_targetPos.x, m_limitX.min, m_limitX.max);
+			targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
+
 
 			// Compute Z, defined by the zoom factor
-			m_targetPos.z = -m_zoomRange.Lerp(m_zInterpolator.GetExponential());	// Reverse-signed
+			float targetZoom = 0.5f;
+			if ( m_slowMoJustStarted )
+			{
+				targetZoom = 0.9f;
+				m_currentZoom = targetZoom;
+				m_slowMoJustStarted = false;
+			}
+			else
+			{
+				if ( m_interest != null )
+				{
+					targetZoom = 1;
+				}
+				else if ( m_slowMotionOn )
+				{
+					targetZoom = 0.9f;
+				}
+				else if ( m_furyOn )
+				{
+					targetZoom = 0.8f;
+				}
+				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime * 0.9f);
+			}
+
+			targetPos.z = -m_zoomRange.Lerp(m_currentZoom);
+
 
 			// Apply movement smoothing
-			newPos = Vector3.Lerp(m_targetPos, transform.position, m_movementSmoothing);
-			newPos.z = m_targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
+			newPos = Vector3.Lerp(targetPos, transform.position, 0.5f);
+			newPos.z = targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
 
 			newPos = UpdateByShake(newPos);
+
+			// Rotation
+			float maxSpeed = m_dragonMotion.GetMaxSpeed();
+			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -5f, dragonVelocity.x / maxSpeed * 10, 0);
+			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * Time.deltaTime);
 
 			m_update = false;
 			m_accumulatedTime = 0;
@@ -322,21 +375,19 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private void OnFury(bool _enabled) {
 		m_furyOn = _enabled;
-
-		if (m_furyOn) {
-			if (m_interest == null) {
-				m_forwardOffset = m_forwardOffsetFury;
-				Zoom(0.8f, 2f);
-			}
-		} else {
-			if (m_interest == null) {
-				m_forwardOffset = m_forwardOffsetNormal;
-				Zoom(m_defaultZoom, 2f);
-			} else {
-				SetEntityOfInterest(m_interest);
-			}
-		}
 	}
+
+	private void OnSlowMotion( bool _enabled)
+	{
+		m_slowMotionOn = _enabled;
+		m_slowMoJustStarted = _enabled;
+	}
+
+	private void OnBoost( bool _enabled)
+	{
+		m_boostOn = _enabled;
+	}
+
 
 	//------------------------------------------------------------------//
 	// ZOOM																//
@@ -346,16 +397,20 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_zoomLevel">The level to zoom to [0..1].</param>
 	/// <param name="_duration">The duration in seconds of the zoom animation.</param>
-	public void Zoom(float _zoomLevel, float _duration) {
+	/*
+	public void Zoom(float _zoomLevel, float _duration) 
+	{
 		// Override any previous zoom anim
 		m_zInterpolator.Start(zoom, _zoomLevel, _duration);
 	}
+	*/
 	
 	/// <summary>
 	/// Zoom to a specific zoom level using speed rather than a fixed duration.
 	/// </summary>
 	/// <param name="_zoomLevel">The level to zoom to [0..1].</param>
 	/// <param name="_speed">The speed of the zoom animation in zoom units per second.</param>
+	/*
 	public void ZoomAtSpeed(float _zoomLevel, float _speed) {
 		// Compute the actual distance to go
 		float dist = _zoomLevel - zoom;
@@ -366,7 +421,7 @@ public class GameCameraController : MonoBehaviour {
 		// Launch the zoom animation
 		Zoom(_zoomLevel, duration);
 	}
-
+	*/
 
 
 	//------------------------------------------------------------------//
@@ -375,7 +430,8 @@ public class GameCameraController : MonoBehaviour {
 	/// <summary>
 	/// Trigger a shaking using the default values defined in the inspector.
 	/// </summary>
-	public void Shake() {
+	public void Shake() 
+	{
 		m_shakeDuration = m_shakeDefaultDuration;
 		m_shakeAmount = m_shakeDefaultAmount;
 
@@ -406,15 +462,6 @@ public class GameCameraController : MonoBehaviour {
 	/// <param name="_interest">The dangerous object, set to null to clear it.</param>
 	public void SetEntityOfInterest(Transform _interest) {
 		m_interest = _interest;
-		if (_interest == null) {
-			if (m_furyOn) {
-				OnFury(true);
-			} else {
-				Zoom(defaultZoom, 0.25f);	// Danger cleared, go back to normal zoom level
-			}
-		} else {
-			Zoom(1f, 2f);	// Entity of Interest Zoom out
-		}
 	}
 
 
