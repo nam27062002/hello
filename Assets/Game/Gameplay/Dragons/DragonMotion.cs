@@ -315,13 +315,11 @@ public class DragonMotion : MonoBehaviour {
 		float dot = 0;
 
 		float minDis = 2f;
-		bool nearGround = false;
+		bool nearGround = CheckGround(out sensorA);
 		if (_impulse.y > 0) {
 			minDis = 2f;
 			nearGround = CheckCeiling(out sensorA);
-		} else {
-			nearGround = CheckGround(out sensorA);
-		}		
+		} 
 
 		if (nearGround) {
 			// we are moving towards ground or away?
