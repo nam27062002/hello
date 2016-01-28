@@ -30,6 +30,8 @@ public class AmbientNode : MonoBehaviour
 
 	public int m_rainIntensity;
 
+	public bool m_useLightDir = false;
+
 	private bool m_isUsed = false;
 
 	public delegate void OnEnter( AmbientNode node );
