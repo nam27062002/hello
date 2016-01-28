@@ -34,12 +34,12 @@ public class TabSystem : NavigationScreenSystem {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	override protected void Awake() {
+	override protected void Start() {
 		// Make sure each screen has a button assigned
 		DebugUtils.Assert(m_tabButtons.Count == m_screens.Count, "The amount of buttons and screens doesn't match");
 
 		// Initialize parent so only initial tab is active
-		base.Awake();
+		base.Start();
 
 		// Initialize buttons according to screen status
 		for(int i = 0; i < m_screens.Count; i++) {
@@ -59,14 +59,15 @@ public class TabSystem : NavigationScreenSystem {
 	/// Navigate to the target screen. Use an int to be able to directly connect buttons to it.
 	/// </summary>
 	/// <param name="_newScreen">The index of the new screen to go to. Use -1 for NONE.</param>
-	override public void GoToScreen(int _newScreen) {
+	/// <param name="_animType">Optionally force the direction of the animation.</param>
+	override public void GoToScreen(int _newScreen, NavigationScreen.AnimType _animType) {
 		// Enable button for the current screen
 		if(m_currentScreenIdx != SCREEN_NONE) {
 			m_tabButtons[m_currentScreenIdx].interactable = true;
 		}
 
 		// Let parent do the magic
-		base.GoToScreen(_newScreen);
+		base.GoToScreen(_newScreen, _animType);
 
 		// Disable button for newly selected screen
 		if(m_currentScreenIdx != SCREEN_NONE) {
