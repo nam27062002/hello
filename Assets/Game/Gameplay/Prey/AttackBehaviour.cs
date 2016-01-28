@@ -121,7 +121,7 @@ public class AttackBehaviour : Initializable {
  
 						if (m_consecutiveAttacks > 0) {
 							m_attackCount++;
-							if (m_attackCount > m_consecutiveAttacks) {
+							if (m_attackCount >= m_consecutiveAttacks) {
 								m_sensor.Shutdown(m_sensorShutdownTime);
 							}
 						}

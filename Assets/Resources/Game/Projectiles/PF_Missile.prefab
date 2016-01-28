@@ -32,6 +32,7 @@ GameObject:
   - 114: {fileID: 11498378}
   - 114: {fileID: 11416456}
   - 114: {fileID: 11456010}
+  - 135: {fileID: 13505146}
   m_Layer: 0
   m_Name: PF_Missile
   m_TagString: Untagged
@@ -46,7 +47,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173528}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.834, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 467964}
@@ -108,7 +109,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f6c024143a7a42ee9b9ee5cd452c92b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damageAreaRadius: 3
   m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
   m_scaleRange:
     min: 1.5
@@ -229,6 +229,18 @@ MonoBehaviour:
   offset: {x: 0.57035285, y: 0}
   radius: 1
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!135 &13505146
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.68
+  m_Center: {x: 0.48, y: 0, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

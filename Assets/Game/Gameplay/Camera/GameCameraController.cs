@@ -188,7 +188,7 @@ public class GameCameraController : MonoBehaviour {
 			{
 				// Yes!! Look between the danger and the dragon
 				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
-				targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.5f);
+				targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.25f);
 			} 
 			else 
 			{
