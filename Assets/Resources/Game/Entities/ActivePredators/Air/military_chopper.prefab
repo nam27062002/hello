@@ -56,6 +56,7 @@ GameObject:
   - 114: {fileID: 11461950}
   - 114: {fileID: 11460700}
   - 114: {fileID: 11484324}
+  - 136: {fileID: 13684064}
   m_Layer: 0
   m_Name: military_chopper
   m_TagString: Untagged
@@ -370,6 +371,7 @@ MonoBehaviour:
   m_maxSpeed: 4
   m_maxRunSpeed: 7
   m_slowingRadius: 0
+  m_fallOnBurn: 0
 --- !u!114 &11455516
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -550,6 +552,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_FocusDistance: 25
+--- !u!136 &13684064
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138554}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.84
+  m_Height: 12.24
+  m_Direction: 0
+  m_Center: {x: -1.3, y: 0.3, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

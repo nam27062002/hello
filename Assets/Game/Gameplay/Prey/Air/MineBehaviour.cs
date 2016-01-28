@@ -5,7 +5,6 @@ public class MineBehaviour : Initializable {
 
 	[SerializeField] private float m_damage;
 	[SerializeField] private float m_forceStrength;
-	[SerializeField] private float m_radius;
 
 	[Header("Explosion")]
 	[SerializeField] private GameObject m_explosionPrefab = null;
@@ -31,14 +30,15 @@ public class MineBehaviour : Initializable {
 
 	}
 
-	public override void Initialize() {
-		
+	public override void Initialize() {		
 		EdibleBehaviour edible = GetComponent<EdibleBehaviour>();
 		if (edible != null) {
 			if (edible.edibleFromTier <= InstanceManager.player.data.def.tier) {
 				enabled = false;
 			}
 		}
+
+		GetComponent<Collider>().enabled = true;
 	}
 
 	void OnEnable() {
@@ -48,7 +48,6 @@ public class MineBehaviour : Initializable {
 	}
 
 	void Update() {
-
 		if (m_timer > 0) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0) {
@@ -67,13 +66,15 @@ public class MineBehaviour : Initializable {
 
 				gameObject.SetActive(false);
 			}
-		} else if (m_dragon.enabled) {
-			Vector2 v = (m_dragon.transform.position - transform.position);
-			float distanceSqr = v.sqrMagnitude;
-			if (distanceSqr <= m_radius * m_radius) {
+		}
+	}
+
+	void OnCollisionEnter(Collision _collision) {
+		if (m_dragon.enabled) {
+			DragonMotion motion = _collision.gameObject.GetComponent<DragonMotion>();
+			if (motion != null) { // the dragon Collided with the mine
 				m_dragon.ReceiveDamage(m_damage, this.transform);
-				DragonMotion motion = m_dragon.GetComponent<DragonMotion>();
-				motion.AddForce(v.normalized * m_forceStrength);
+				motion.AddForce(_collision.impulse.normalized * m_forceStrength);
 				Explode();
 			}
 		}
@@ -88,13 +89,7 @@ public class MineBehaviour : Initializable {
 		m_camera.Shake(0.75f, new Vector3(0.75f, 0.75f, 0));
 
 		m_timer = m_delayRange.GetRandom();
-	}
 
-	void OnDrawGizmos() {
-		Color color = Color.red;
-		color.a = 0.25f;
-
-		Gizmos.color = color;
-		Gizmos.DrawWireSphere(transform.position, m_radius);
+		GetComponent<Collider>().enabled = false;
 	}
 }

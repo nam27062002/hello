@@ -4,14 +4,17 @@ using System.Collections;
 [RequireComponent(typeof(PreyMotion))]
 public class ProjectileBehaviour : MonoBehaviour {
 
+	[SerializeField] private float m_damageAreaRadius = 1f;
 	[SerializeField] private GameObject m_explosionPrefab = null;
-	[SerializeField] private Range m_delayRange = new Range(0f, 0.25f);
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
 
 	private float m_damage;
-	private Transform m_from;
-	private Collider m_target;
+	private float m_damageAreaRadiusSqr;
+
+	private DragonHealthBehaviour m_dragon;
+	private Vector2 m_targetCenter;
+	private float m_targetRadiusSqr;
 	private PreyMotion m_motion;
 	private EdibleBehaviour m_edible;
 
@@ -21,12 +24,15 @@ public class ProjectileBehaviour : MonoBehaviour {
 	}
 
 	public void Shoot(Transform _from, float _damage) {
-		m_target = InstanceManager.player.GetComponent<SphereCollider>();
+		
+		SphereCollider collider = InstanceManager.player.GetComponent<SphereCollider>();
+		m_dragon = collider.GetComponent<DragonHealthBehaviour>();
+		m_targetCenter = collider.transform.position;
+		m_targetRadiusSqr = collider.radius * collider.radius;
 		
 		m_motion = GetComponent<PreyMotion>();
 		m_edible = GetComponent<EdibleBehaviour>();
 
-		m_from = _from;
 		transform.position = _from.position;
 				
 		Initializable[] components = GetComponents<Initializable>();		
@@ -35,13 +41,19 @@ public class ProjectileBehaviour : MonoBehaviour {
 		}
 
 		m_damage = _damage;
+		m_damageAreaRadiusSqr = m_damageAreaRadius * m_damageAreaRadius;
 	}
 
 	void Update() {
 		// The dragon may eat this projectile, so we disable the explosion if that happens 
 		if (!m_edible.isBeingEaten) {
-			float distanceSqr = ((Vector2)m_target.bounds.center - m_motion.position).sqrMagnitude;
-			if (distanceSqr <= m_target.bounds.extents.x * m_target.bounds.extents.x) {
+			float distanceToTargetSqr = (m_targetCenter - m_motion.position).sqrMagnitude;
+			float distanceToDragonSqr = ((Vector2)m_dragon.transform.position - m_motion.position).sqrMagnitude;
+
+			bool hitDragon = (distanceToDragonSqr <= (m_targetRadiusSqr + m_damageAreaRadiusSqr));
+			bool explode = hitDragon || (distanceToTargetSqr <= m_targetRadiusSqr);
+
+			if (explode) {
 				GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);			
 
 				if (explosion) {
@@ -53,7 +65,10 @@ public class ProjectileBehaviour : MonoBehaviour {
 					explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
 				}
 
-				m_target.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage);
+				if (hitDragon) {
+					m_dragon.ReceiveDamage(m_damage);
+				}
+
 				gameObject.SetActive(false);
 			}
 		}
@@ -62,11 +77,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (!m_edible.isBeingEaten) {
-			m_motion.Seek(m_target.bounds.center);
-		//	m_motion.ApplySteering();
-
-			// force direction
-			//m_motion.direction = m_target.bounds.center - m_from.position;
+			m_motion.Seek(m_targetCenter);
 		}
 	}
 }
