@@ -165,7 +165,7 @@ public class GameCameraController : MonoBehaviour {
 		transform.position = playerPos;
 
 	}
-	
+
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
@@ -175,7 +175,7 @@ public class GameCameraController : MonoBehaviour {
 		Vector3 newPos = m_transform.position;
 
 		// it depends on previous fixed updates
-		if ( m_update )
+		if ( m_update && m_dragonMotion != null)
 		{
 			Vector3 dragonVelocity = m_dragonMotion.GetVelocity();
 			Vector3 dragonDirection = dragonVelocity.normalized;
@@ -301,8 +301,11 @@ public class GameCameraController : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
-
+	private void OnDestroy() 
+	{
+		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 	}
 
 	//------------------------------------------------------------------//

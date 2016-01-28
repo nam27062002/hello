@@ -24,7 +24,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	public CanvasGroup m_hud = null;
+	private CanvasGroup m_hud = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -61,6 +61,9 @@ public class MenuPlayScreen : MonoBehaviour {
 		if(m_hud != null) {
 			m_hud.DOFade(1f, 0.15f);
 		}
+
+		// Save flag to not display this screen again
+		GameVars.playScreenShown = true;
 	}
 
 	//------------------------------------------------------------------//

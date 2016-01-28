@@ -25,8 +25,8 @@ public class NavigationScreenSystem : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Screen references to be set from the inspector
-	[SerializeField] public List<NavigationScreen> m_screens = new List<NavigationScreen>();
-	[SerializeField] public NavigationScreen m_initialScreen = null;
+	[SerializeField] protected List<NavigationScreen> m_screens = new List<NavigationScreen>();
+	[SerializeField] protected NavigationScreen m_initialScreen = null;
 	protected int m_currentScreenIdx = SCREEN_NONE;
 
 	//------------------------------------------------------------------//
@@ -35,68 +35,166 @@ public class NavigationScreenSystem : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	virtual protected void Awake() {
+	virtual protected void Start() {
 		// Initial screen is visible from the beginning
 		for(int i = 0; i < m_screens.Count; i++) {
 			if(m_screens[i] == m_initialScreen) {
 				m_currentScreenIdx = i;
-				m_screens[i].gameObject.SetActive(true);
+				m_screens[i].Show(NavigationScreen.AnimType.NONE);
 			} else {
-				m_screens[i].gameObject.SetActive(false);
+				m_screens[i].Hide(NavigationScreen.AnimType.NONE);
 			}
 		}
 	}
 
 	//------------------------------------------------------------------//
-	// PUBLIC METHODS													//
+	// SCREEN GETTER													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Obtain the screen at the given index.
+	/// </summary>
+	/// <param name="_screenIdx">Index of the desired screen.</param>
+	/// <returns>The screen with the given index. <c>null</c> if not found.</returns>
+	public NavigationScreen GetScreen(int _screenIdx) {
+		if(_screenIdx < 0 || _screenIdx >= m_screens.Count) return null;
+		return m_screens[_screenIdx];
+	}
+
+	/// <summary>
+	/// Obtain the screen with the given name.
+	/// </summary>
+	/// <param name="_screenName">Name of the desired screen.</param>
+	/// <returns>The screen with the given name. <c>null</c> if not found.</returns>
+	public NavigationScreen GetScreen(string _screenName) {
+		// [AOC] Use native C# find function with lambda expression to define the match algorithm
+		return m_screens.Find(_screen => _screen.name.Equals(_screenName));
+	}
+
+	/// <summary>
+	/// Find the index within the system of the given screen.
+	/// </summary>
+	/// <param name="_screen">The screen whose index we want.</param>
+	/// <returns>The index of the screen within the system. <c>-1</c> if the screen is not on the navigation system.</returns>
+	public int GetScreenIndex(NavigationScreen _screen) {
+		return m_screens.IndexOf(_screen);
+	}
+
+	//------------------------------------------------------------------//
+	// SCREEN NAVIGATION												//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Navigate to the target screen. Use an int to be able to directly connect buttons to it.
 	/// </summary>
-	/// <param name="_newScreen">The index of the new screen to go to. Use -1 for NONE.</param>
-	virtual public void GoToScreen(int _newScreen) {
+	/// <param name="_newScreenIdx">The index of the new screen to go to. Use -1 for NONE.</param>
+	/// <param name="_animType">Optionally force the direction of the animation.</param>
+	virtual public void GoToScreen(int _newScreenIdx) {
+		GoToScreen(_newScreenIdx, NavigationScreen.AnimType.AUTO);
+	}
+
+	/// <summary>
+	/// Navigate to the target screen. Use an int to be able to directly connect buttons to it.
+	/// </summary>
+	/// <param name="_newScreenIdx">The index of the new screen to go to. Use -1 for NONE.</param>
+	/// <param name="_animType">Optionally force the direction of the animation.</param>
+	virtual public void GoToScreen(int _newScreenIdx, NavigationScreen.AnimType _animType) {
 		// Ignore if screen is already active
-		if(_newScreen == m_currentScreenIdx) return;
+		if(_newScreenIdx == m_currentScreenIdx) return;
 		
 		// If out of bounds, go to none
-		if(_newScreen < 0 || _newScreen >= m_screens.Count) {
-			_newScreen = SCREEN_NONE;
+		if(_newScreenIdx < 0 || _newScreenIdx >= m_screens.Count) {
+			_newScreenIdx = SCREEN_NONE;
 		}
 		
 		// Figure out animation direction based on current and new screen indexes
-		NavigationScreen.AnimDir dir = NavigationScreen.AnimDir.NEUTRAL;
-		if(m_currentScreenIdx != SCREEN_NONE && _newScreen != SCREEN_NONE) {
-			if(m_currentScreenIdx > _newScreen) {
-				dir = NavigationScreen.AnimDir.BACK;
-			} else {
-				dir = NavigationScreen.AnimDir.FORWARD;
+		if(_animType == NavigationScreen.AnimType.AUTO) {
+			_animType = NavigationScreen.AnimType.NEUTRAL;
+			if(m_currentScreenIdx != SCREEN_NONE && _newScreenIdx != SCREEN_NONE) {
+				if(m_currentScreenIdx > _newScreenIdx) {
+					_animType = NavigationScreen.AnimType.BACK;
+				} else {
+					_animType = NavigationScreen.AnimType.FORWARD;
+				}
 			}
 		}
-		
+
 		// Hide current screen (if any)
 		if(m_currentScreenIdx != SCREEN_NONE) {
-			m_screens[m_currentScreenIdx].Hide(dir);
+			m_screens[m_currentScreenIdx].Hide(_animType);
 		}
 		
 		// Show new screen (if any)
-		if(_newScreen != SCREEN_NONE) {
-			m_screens[_newScreen].Show(dir);
+		if(_newScreenIdx != SCREEN_NONE) {
+			m_screens[_newScreenIdx].Show(_animType);
 		}
 		
 		// Update screen tracking
-		m_currentScreenIdx = _newScreen;
+		m_currentScreenIdx = _newScreenIdx;
 	}
-	
+
 	/// <summary>
 	/// Navigate to the target screen. Screen must be added to the screens array, otherwise nothing will happen.
 	/// </summary>
 	/// <param name="_screen">The screen to go to.</param>
+	/// <param name="_animType">Optionally force the direction of the animation.</param>
 	public void GoToScreen(NavigationScreen _screen) {
-		for(int i = 0; i < m_screens.Count; i++) {
-			if(m_screens[i] == _screen) {
-				GoToScreen(i);
-				return;
-			}
-		}
+		GoToScreen(_screen, NavigationScreen.AnimType.AUTO);
+	}
+
+	/// <summary>
+	/// Navigate to the target screen. Screen must be added to the screens array, otherwise nothing will happen.
+	/// </summary>
+	/// <param name="_screen">The screen to go to.</param>
+	/// <param name="_animType">Optionally force the direction of the animation.</param>
+	public void GoToScreen(NavigationScreen _screen, NavigationScreen.AnimType _animType) {
+		int idx = GetScreenIndex(_screen);
+		if(idx >= 0) GoToScreen(idx, _animType);
+	}
+
+	/// <summary>
+	/// Navigate to screen defined by the given name.
+	/// If no screen with the given name is found, nothing will happen.
+	/// </summary>
+	/// <param name="_screenName">The name of the screen we want to go to.</param>
+	public void GoToScreen(string _screenName) {
+		GoToScreen(_screenName, NavigationScreen.AnimType.AUTO);
+	}
+
+	/// <summary>
+	/// Navigate to screen defined by the given name.
+	/// If no screen with the given name is found, nothing will happen.
+	/// </summary>
+	/// <param name="_screenName">The name of the screen we want to go to.</param>
+	/// <param name="_animType">Optionally force the direction of the animation.</param>
+	public void GoToScreen(string _screenName, NavigationScreen.AnimType _animType) {
+		GoToScreen(GetScreen(_screenName), _animType);
+	}
+
+	//------------------------------------------------------------------//
+	// INITIAL SCREEN SETTER											//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Define initial screen. Should be called before the start method is invoked.
+	/// </summary>
+	/// <param name="_screen">New initial screen. Nothing will change if screen is not on the system. </param>
+	public void SetInitialScreen(NavigationScreen _screen) {
+		// Make sure given screen is in the system
+		if(GetScreenIndex(_screen) < 0) return;
+		m_initialScreen = _screen;
+	}
+
+	/// <summary>
+	/// Define initial screen. Should be called before the start method is invoked.
+	/// </summary>
+	/// <param name="_screenIdx">Index of the new initial screen. Nothing will change if not valid.</param>
+	public void SetInitialScreen(int _screenIdx) {
+		SetInitialScreen(GetScreen(_screenIdx));
+	}
+
+	/// <summary>
+	/// Define initial screen. Should be called before the start method is invoked.
+	/// </summary>
+	/// <param name="_screenName">Name of the new initial screen. Nothing will change if the screen is not on the system.</param>
+	public void SetInitialScreen(string _screenName) {
+		SetInitialScreen(GetScreen(_screenName));
 	}
 }

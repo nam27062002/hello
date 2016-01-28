@@ -57,6 +57,13 @@ public class DragonEatBehaviour : MonoBehaviour {
 		m_bloodEmitter = new List<GameObject>();
 
 		m_slowedDown = false;
+
+		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 	}
 
 	void OnDisable() {
@@ -219,6 +226,10 @@ public class DragonEatBehaviour : MonoBehaviour {
 	private void Swallow(EdibleBehaviour _prey) 
 	{
 		Reward reward = _prey.OnSwallow();
+	}
+
+	void OnEntityEaten( Transform t, Reward reward )
+	{
 		m_dragon.AddLife(reward.health);
 		m_dragon.AddFury(reward.fury);
 	}
