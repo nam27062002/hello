@@ -34,10 +34,10 @@ public class AmbientManager : MonoBehaviour
 	float m_ambientIntensity = 0;
 		// Skybox
 	float m_sunSize;
-	float m_atmosphereThickness;
-	Color m_skyTint = Color.white;
-	Color m_ground = Color.white;
-	float m_exposure;
+	Color m_skyColor = Color.white;
+	Color m_horizonColor = Color.white;
+	float m_horizonHeigth;
+	Color m_groundColor = Color.white;
 		// Fog
 	Color m_fogColor;
 	float m_fogStart;
@@ -55,10 +55,10 @@ public class AmbientManager : MonoBehaviour
 	float m_targetAmbientIntensity = 0;
 		// Skybox
 	float m_targetSunSize;
-	float m_targetAtmosphereThickness;
-	Color m_targetSkyTint = Color.white;
-	Color m_targetGround = Color.white;
-	float m_targetExposure;
+	Color m_targetSkyColor = Color.white;
+	Color m_targetHorizonColor = Color.white;
+	float m_targetHorizonHeight;
+	Color m_targetGroundColor = Color.white;
 		// Fog
 	Color m_targetFogColor;
 	float m_targetFogStart;
@@ -124,10 +124,8 @@ public class AmbientManager : MonoBehaviour
 				m_ambientColor = m_targetAmbientColor;
 				m_ambientIntensity = m_targetAmbientIntensity;
 				m_sunSize = m_targetSunSize;
-				m_atmosphereThickness = m_targetAtmosphereThickness;
-				m_skyTint = m_targetSkyTint;
-				m_ground = m_targetGround;
-				m_exposure = m_targetExposure;
+				m_skyColor = m_targetSkyColor;
+				m_groundColor = m_targetGroundColor;
 				m_fogColor = m_targetFogColor;
 				m_fogStart = m_targetFogStart;
 				m_fogEnd = m_targetFogEnd;
@@ -160,16 +158,18 @@ public class AmbientManager : MonoBehaviour
 			}
 
 			float lerpValue = 0.9f * Time.deltaTime;
+			if (!Application.isPlaying)
+				lerpValue = 1;
 			// Lerp current values
 				// Ambient
 			m_ambientColor =  Color.Lerp( m_ambientColor, m_targetAmbientColor, lerpValue);
 			m_ambientIntensity = Mathf.Lerp( m_ambientIntensity , m_targetAmbientIntensity, lerpValue);
 				// Skybox
 			m_sunSize = Mathf.Lerp( m_sunSize, m_targetSunSize, lerpValue);
-			m_atmosphereThickness =  Mathf.Lerp( m_atmosphereThickness, m_targetAtmosphereThickness, lerpValue);
-			m_skyTint = Color.Lerp( m_skyTint, m_targetSkyTint, lerpValue);
-			m_ground = Color.Lerp( m_ground, m_targetGround, lerpValue);
-			m_exposure = Mathf.Lerp( m_exposure, m_targetExposure, lerpValue);
+			m_skyColor = Color.Lerp( m_skyColor, m_targetSkyColor, lerpValue);
+			m_horizonColor = Color.Lerp( m_horizonColor, m_targetHorizonColor, lerpValue);
+			m_horizonHeigth = Mathf.Lerp( m_horizonHeigth, m_targetHorizonHeight, lerpValue );
+			m_groundColor = Color.Lerp( m_groundColor, m_targetGroundColor, lerpValue);
 				// Fog
 			m_fogColor = Color.Lerp( m_fogColor, m_targetFogColor, lerpValue);
 			m_fogStart = Mathf.Lerp( m_fogStart, m_targetFogStart, lerpValue);
@@ -193,10 +193,8 @@ public class AmbientManager : MonoBehaviour
 		m_ambientIntensity = Mathf.Lerp( m_ambientIntensity , m_targetAmbientIntensity, lerpValue);
 			// Skybox
 		m_sunSize = Mathf.Lerp( m_sunSize, m_targetSunSize, lerpValue);
-		m_atmosphereThickness =  Mathf.Lerp( m_atmosphereThickness, m_targetAtmosphereThickness, lerpValue);
 		m_skyTint = Color.Lerp( m_skyTint, m_targetSkyTint, lerpValue);
 		m_ground = Color.Lerp( m_ground, m_targetGround, lerpValue);
-		m_exposure = Mathf.Lerp( m_exposure, m_targetExposure, lerpValue);
 			// Fog
 		m_fogColor = Color.Lerp( m_fogColor, m_targetFogColor, lerpValue);
 		m_fogStart = Mathf.Lerp( m_fogStart, m_targetFogStart, lerpValue);
@@ -288,10 +286,10 @@ public class AmbientManager : MonoBehaviour
 		m_targetAmbientIntensity = 0;
 		// Skybox
 		m_targetSunSize = 0;
-		m_targetAtmosphereThickness = 0;
-		m_targetSkyTint = emptyColor;
-		m_targetGround = emptyColor;
-		m_targetExposure = 0;
+		m_targetSkyColor = emptyColor;
+		m_targetHorizonColor = emptyColor;
+		m_targetHorizonHeight = 0;
+		m_targetGroundColor = emptyColor;
 		// Fog
 		m_targetFogColor = emptyColor;
 		m_targetFogStart = 0;
@@ -313,10 +311,10 @@ public class AmbientManager : MonoBehaviour
 				m_targetAmbientIntensity += node.m_ambientIntensity * nodeResult.m_weight;
 					// Skybox
 				m_targetSunSize += node.m_sunSize * nodeResult.m_weight;
-				m_targetAtmosphereThickness += node.m_atmosphereThickness * nodeResult.m_weight;
-				m_targetSkyTint += node.m_skyTint * nodeResult.m_weight;
-				m_targetGround += node.m_ground * nodeResult.m_weight;
-				m_targetExposure += node.m_exposure * nodeResult.m_weight;
+				m_targetSkyColor += node.m_skyColor * nodeResult.m_weight;
+				m_targetHorizonColor += node.m_horizonColor * nodeResult.m_weight;
+				m_targetHorizonHeight += node.m_horizonHeight * nodeResult.m_weight;
+				m_targetGroundColor += node.m_groundColor * nodeResult.m_weight;
 					// Fog
 				m_targetFogColor += node.m_fogColor * nodeResult.m_weight;
 				m_targetFogStart += node.m_fogStart * nodeResult.m_weight;
@@ -337,10 +335,11 @@ public class AmbientManager : MonoBehaviour
 
 		Material m = RenderSettings.skybox;
 		m.SetFloat("_SunSize", m_sunSize);
-		m.SetFloat("_AtmosphereThickness", m_atmosphereThickness);
-		m.SetColor("_SkyTint", m_skyTint);
-		m.SetColor("_GroundColor", m_ground);
-		m.SetFloat("_Exposure", m_exposure);
+		m.SetColor("_SkyColor", m_skyColor);
+		m.SetColor("_HorizonColor", m_horizonColor);
+		m.SetFloat("_HorizonHeight", m_horizonHeigth);
+		m.SetColor("_GroundColor", m_groundColor);
+
 
 		RenderSettings.fog = true;
 		RenderSettings.fogColor = m_fogColor;
@@ -370,10 +369,11 @@ public class AmbientManager : MonoBehaviour
 		m_targetAmbientIntensity = node.m_ambientIntensity;
 			// Skybox
 		m_targetSunSize = node.m_sunSize;
-		m_targetAtmosphereThickness = node.m_atmosphereThickness;
-		m_targetSkyTint = node.m_skyTint;
-		m_targetGround = node.m_ground;
-		m_targetExposure = node.m_exposure;
+		m_targetSkyColor = node.m_skyColor;
+		m_targetHorizonColor = node.m_horizonColor;
+		m_targetHorizonHeight = node.m_horizonHeight;
+		m_targetGroundColor = node.m_groundColor;
+
 			// Fog
 		m_targetFogColor = node.m_fogColor;
 		m_targetFogStart = node.m_fogStart;
