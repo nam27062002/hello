@@ -38,45 +38,5 @@ public class MenuDragonPreview : MonoBehaviour {
 	private void Awake() {
 		
 	}
-
-	/// <summary>
-	/// Enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Make sure dragon has the right scale according to its level
-		OnDragonLevelUp(DragonManager.GetDragonData(sku));
-
-		// Subscribe to external events
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnDragonLevelUp);
-	}
-
-	/// <summary>
-	/// Disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnDragonLevelUp);
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// A dragon has leveled up.
-	/// </summary>
-	public void OnDragonLevelUp(DragonData _data) {
-		// We only care if it's ourselves
-		if(_data.def.sku == m_sku) {
-			// Make sure dragon has the right scale according to its level
-			transform.localScale = Vector3.one * _data.scale;
-		}
-	}
 }
 

@@ -16,7 +16,7 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the MenuDragonScroller class.
 /// </summary>
-[CustomEditor(typeof(MenuDragonScroller))]
+[CustomEditor(typeof(MenuDragonScroller3D))]
 [CanEditMultipleObjects]
 public class MenuDragonScrollerEditor : Editor {
 	//------------------------------------------------------------------//
@@ -26,7 +26,7 @@ public class MenuDragonScrollerEditor : Editor {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	MenuDragonScroller targetScroller { get { return target as MenuDragonScroller; }}
+	MenuDragonScroller3D targetScroller { get { return target as MenuDragonScroller3D; }}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
