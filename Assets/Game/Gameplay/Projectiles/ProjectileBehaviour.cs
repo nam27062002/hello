@@ -41,7 +41,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 		if (!m_edible.isBeingEaten) {
 			float distanceToTargetSqr = (m_targetCenter - m_motion.position).sqrMagnitude;
 
-			if (distanceToTargetSqr <= 4f) {
+			if (distanceToTargetSqr <= 0.5f) {
 				Explode(false);	
 			}
 		}

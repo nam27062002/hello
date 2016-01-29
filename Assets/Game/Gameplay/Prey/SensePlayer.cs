@@ -32,6 +32,7 @@ public class SensePlayer : MonoBehaviour {
 	public float distanceSqr { get { return m_distanceSqr; } }
 
 	private PreyMotion m_motion;
+	private DragonPlayer m_dragon;
 	private Transform m_dragonMouth; 
 
 	private float m_dragonRadiusSqr;
@@ -43,7 +44,8 @@ public class SensePlayer : MonoBehaviour {
 	}
 
 	void Start() {
-		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
+		m_dragon = InstanceManager.player;
+		m_dragonMouth = m_dragon.GetComponent<DragonMotion>().tongue;
 
 		m_dragonRadiusSqr = 0;
 		Collider[] colliders = InstanceManager.player.GetComponents<Collider>();
@@ -84,7 +86,7 @@ public class SensePlayer : MonoBehaviour {
 			if (m_shutdownTime <= 0) {
 				m_shutdownTime = 0;
 			}
-		} else {
+		} else if (m_dragon.IsAlive()) {
 			// we have too much erro if we only sense the dragon when it is inside the spawn area, it can be too small
 			Vector2 vectorToPlayer = (Vector2)m_dragonMouth.position - m_motion.position;
 			m_distanceSqr = vectorToPlayer.sqrMagnitude - m_dragonRadiusSqr;
@@ -131,6 +133,10 @@ public class SensePlayer : MonoBehaviour {
 				m_isInsideMinArea = false;
 				m_isInsideMaxArea = false;
 			}
+		} else {
+			m_alert = false;
+			m_isInsideMinArea = false;
+			m_isInsideMaxArea = false;
 		}
 	}
 }

@@ -24,6 +24,7 @@ public class DragonPlayer : MonoBehaviour {
 	//------------------------------------------------------------------//
 	[Header("Type and general data")]
 	[SerializeField] [SkuList(typeof(DragonDef))] private string m_sku = "";
+	[SerializeField] private float m_invulnerableTime = 5f;
 
 	private DragonData m_data = null;
 	public DragonData data { get { return m_data; }}
@@ -40,7 +41,7 @@ public class DragonPlayer : MonoBehaviour {
 	public float fury { get { return m_fury[0]; } }
 
 	// Interaction
-	public bool playable {
+	 public bool playable {
 		set {
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
@@ -60,6 +61,8 @@ public class DragonPlayer : MonoBehaviour {
 	// Internal
 	private float m_speedMultiplier;
 
+	private float m_invulnerableAfterReviveTimer;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -75,7 +78,7 @@ public class DragonPlayer : MonoBehaviour {
 		InstanceManager.player = this;
 
 		// Initialize stats
-		ResetStats();
+		ResetStats(false);
 
 		// Initialize fury
 		m_fury[0] = 0;
@@ -107,17 +110,34 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
+	private void Update() {
+		if (m_invulnerableAfterReviveTimer > 0) {
+			m_invulnerableAfterReviveTimer -= Time.deltaTime;
+			if (m_invulnerableAfterReviveTimer <= 0) {
+				m_invulnerableAfterReviveTimer = 0;
+			}
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Reset some variable stats for this dragon.
 	/// </summary>
-	public void ResetStats() {
+	public void ResetStats(bool _revive) {
 		m_health = data.maxHealth;
 		m_energy = data.def.maxEnergy;
 
+		playable = true;
+
 		m_speedMultiplier = 1f;
+
+		if (_revive) {
+			m_invulnerableAfterReviveTimer = m_invulnerableTime;
+		} else {
+			m_invulnerableAfterReviveTimer = 0;
+		}
 	}
 
 	/// <summary>
@@ -137,7 +157,8 @@ public class DragonPlayer : MonoBehaviour {
 		// Check for death!
 		if(m_health <= 0f) {
 			// Send global even
-			Messenger.Broadcast(GameEvents.PLAYER_DIED);
+			Messenger.Broadcast(GameEvents.PLAYER_KO);
+			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
 
 			// Make dragon unplayable (xD)
 			playable = false;
@@ -248,6 +269,9 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon currently is invulnerable; otherwise, <c>false</c>.</returns>
 	public bool IsInvulnerable() {
+		// After revive, we're invulnerable
+		if(m_invulnerableAfterReviveTimer > 0) return true;
+
 		// During fire, we're invulnerable
 		if(m_breathBehaviour.IsFuryOn()) return true;
 		
