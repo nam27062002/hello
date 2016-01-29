@@ -82,6 +82,21 @@ public class MenuDragonSelector : MonoBehaviour {
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// The selected object on the scroll list has changed.
+	/// </summary>
+	/// <param name="_newSelectedPoint">The new selected node object of the scrolllist.</param>
+	public void OnScrollSelectedDragonChanged(ScrollRectSnapPoint _newSelectedPoint) {
+		// Skip if null (shouldn't happen)
+		if(_newSelectedPoint == null) return;
+
+		// We know the new selected object must have a MenuDragonPreview component somewhere, use it to define the new selected dragon
+		MenuDragonPreview dragonPreview = _newSelectedPoint.GetComponentInChildren<MenuDragonPreview>();
+		if(dragonPreview != null) {
+			SetSelectedDragon(dragonPreview.sku);
+		}
+	}
+
+	/// <summary>
 	/// Select next dragon. To be linked with the "next" button.
 	/// </summary>
 	public void SelectNextDragon() {

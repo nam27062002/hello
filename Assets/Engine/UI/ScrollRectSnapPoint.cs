@@ -1,33 +1,28 @@
-// MenuDragonPreview.cs
-// Hungry Dragon
+﻿// ScrollRectSnapPoint.cs
 // 
-// Created by Alger Ortín Castellví on 26/01/2016.
+// Created by Alger Ortín Castellví on 29/01/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Preview of a dragon in the main menu.
+/// Auxiliar class to SnapScrollRect to define snap points.
+/// Should be added as direct children of the "Content" object of a SnapScrollRect object.
 /// </summary>
-public class MenuDragonPreview : MonoBehaviour {
+public class ScrollRectSnapPoint : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-
+	
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] [SkuList(typeof(DragonDef))] private string m_sku;
-	public string sku { get { return m_sku; }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -39,4 +34,3 @@ public class MenuDragonPreview : MonoBehaviour {
 		
 	}
 }
-

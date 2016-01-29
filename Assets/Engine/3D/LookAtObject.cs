@@ -1,42 +1,40 @@
-// MenuDragonPreview.cs
-// Hungry Dragon
+﻿// LookAtObject.cs
 // 
-// Created by Alger Ortín Castellví on 26/01/2016.
+// Created by Alger Ortín Castellví on 29/01/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Preview of a dragon in the main menu.
+/// Use a GameObject as a lookAt point for another GameObject (e.g. a camera).
+/// The target object will always look towards the defined object.
 /// </summary>
-public class MenuDragonPreview : MonoBehaviour {
+[ExecuteInEditMode]  
+public class LookAtObject : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] [SkuList(typeof(DragonDef))] private string m_sku;
-	public string sku { get { return m_sku; }}
-
+	public GameObject lookAtObject = null;
+	
 	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
+	// METHODS															//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// Logic update call.
 	/// </summary>
-	private void Awake() {
-		
+	void Update () {
+		if(isActiveAndEnabled && lookAtObject != null) {
+			transform.LookAt(lookAtObject.transform.position);
+		}
 	}
 }
-
