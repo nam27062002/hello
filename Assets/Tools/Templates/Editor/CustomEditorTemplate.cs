@@ -1,8 +1,8 @@
 ﻿// MonoBehaviourTemplateEditor.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 25/11/2015.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on DD/MM/2016.
+// Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
@@ -71,7 +71,7 @@ public class MonoBehaviourTemplateEditor : Editor {
 		// SerializedProperty system to edit them, since this automatically handles private fields, multi-object 
 		// editing, undo, and prefab overrides.
 
-		// Update the serializedProperty - always do this in the beginning of OnInspectorGUI.
+		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
 		// Show the custom GUI controls
@@ -85,7 +85,7 @@ public class MonoBehaviourTemplateEditor : Editor {
 			EditorGUILayout.Space();
 		}
 
-		// Apply changes to the serializedProperty - always do this in the end of OnInspectorGUI.
+		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
 	}
 
