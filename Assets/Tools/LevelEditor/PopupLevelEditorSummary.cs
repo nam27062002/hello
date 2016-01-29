@@ -28,7 +28,6 @@ namespace LevelEditor {
 
 		public enum Result {
 			NONE,
-			CONTINUE,
 			FINISH
 		}
 
@@ -90,14 +89,6 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CALLBACKS														//
 		//------------------------------------------------------------------//
-		/// <summary>
-		/// The continue button has been pressed.
-		/// </summary>
-		public void OnContinueButton() {
-			result = Result.CONTINUE;
-			GetComponent<PopupController>().Close(true);
-		}
-
 		/// <summary>
 		/// The finish button has been pressed.
 		/// </summary>

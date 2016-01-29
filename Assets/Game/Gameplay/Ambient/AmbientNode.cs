@@ -14,11 +14,11 @@ public class AmbientNode : MonoBehaviour
 	[Range (0,5)]
 	public float m_atmosphereThickness;
 
-	public Color m_skyTint = Color.white;
-	public Color m_ground = Color.white;
-
-	[Range (0,8)]
-	public float m_exposure;
+	public Color m_skyColor = Color.white;
+	public Color m_horizonColor = Color.white;
+	[Range(0,1)]
+	public float m_horizonHeight;
+	public Color m_groundColor = Color.white;
 
 	public Color m_fogColor = Color.white;
 
@@ -30,11 +30,12 @@ public class AmbientNode : MonoBehaviour
 
 	public int m_rainIntensity;
 
+	public bool m_useLightDir = false;
+
 	private bool m_isUsed = false;
 
 	public delegate void OnEnter( AmbientNode node );
 	public OnEnter m_onEnter;
-
 
 	void OnDrawGizmos() 
 	{

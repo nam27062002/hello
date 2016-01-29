@@ -82,12 +82,12 @@ public class DragonOrientation : MonoBehaviour {
 
 		m_targetRotation = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
 		Vector3 eulerRot = m_targetRotation.eulerAngles;		
-		if (dir.y > 0) {
+		if (dir.y > 0.25f) {
 			eulerRot.z = Mathf.Min(40f, eulerRot.z);
-		} else if (dir.y < 0) {
+		} else if (dir.y < -0.25f) {
 			eulerRot.z = Mathf.Max(300f, eulerRot.z);
 		}
-		m_targetRotation = Quaternion.Euler(eulerRot);		
+		m_targetRotation = Quaternion.Euler(eulerRot);
 
 		if (m_direction.x >= 0f && dir.x < 0f) {
 			m_turningRight = true;

@@ -95,7 +95,7 @@ namespace LevelEditor {
 		/// </summary>
 		private void StartGame() {
 			// Reset dragon stats
-			InstanceManager.player.ResetStats();
+			InstanceManager.player.ResetStats(false);
 
 			// Put player in position and make it playable
 			InstanceManager.player.MoveToSpawnPoint();
@@ -141,14 +141,6 @@ namespace LevelEditor {
 			PopupLevelEditorSummary summaryPopup = _popup.GetComponent<PopupLevelEditorSummary>();
 			if(summaryPopup != null) {
 				switch(summaryPopup.result) {
-					case PopupLevelEditorSummary.Result.CONTINUE: {
-						// Reset dragon stats
-						InstanceManager.player.ResetStats();
-
-						// Unpause game
-						Time.timeScale = 1.0f;
-					} break;
-
 					case PopupLevelEditorSummary.Result.FINISH: {
 						#if UNITY_EDITOR
 						UnityEditor.EditorApplication.isPlaying = false;

@@ -35,6 +35,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_bounds2D = new Rect();
 
 		ExtendedStart();
+
+		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 	}
 	
 	void OnDisable() {
@@ -99,6 +106,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 
 		ExtendedUpdate();
+	}
+
+
+	protected virtual void OnEntityBurned(Transform t, Reward reward)
+	{
+		m_dragon.AddLife( reward.health );
 	}
 
 	virtual public bool IsInsideArea(Vector2 _point) { return false; }

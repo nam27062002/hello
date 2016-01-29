@@ -421,6 +421,6 @@ public class PreyMotion : Initializable {
 	public void StartBurning()
 	{
 		m_burning = true;
-		m_animator.enabled = false;
+		if (m_animator) m_animator.enabled = false;
 	}
 }
