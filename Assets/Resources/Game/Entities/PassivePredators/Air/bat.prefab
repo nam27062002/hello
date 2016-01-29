@@ -491,6 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_deactivate: 1
 --- !u!114 &11410540
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -525,6 +526,7 @@ MonoBehaviour:
   m_maxSpeed: 8
   m_maxRunSpeed: 10
   m_slowingRadius: 0
+  m_fallOnBurn: 0
 --- !u!114 &11425644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -606,6 +608,17 @@ MonoBehaviour:
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
   m_maxHealth: 100
+  m_ashesAsset: 
+  m_dissolveTime: 1.5
+  m_explosionPrefab: {fileID: 0}
+  m_scaleRange:
+    min: 1
+    max: 5
+  m_rotationRange:
+    min: 0
+    max: 360
+  m_shake: 0
+  m_slowMotion: 0
 --- !u!114 &11462906
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -700,6 +713,7 @@ MonoBehaviour:
   m_size: 1
   m_isBig: 0
   m_destroyOnEat: 0
+  onEatenParticle: 
 --- !u!137 &13764670
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
