@@ -12,7 +12,9 @@ GameObject:
   - 23: {fileID: 2313012}
   - 114: {fileID: 11455516}
   - 114: {fileID: 11425832}
-  m_Layer: 11
+  - 65: {fileID: 6557602}
+  - 114: {fileID: 11436476}
+  m_Layer: 16
   m_Name: propeller_helicopter_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +58,6 @@ GameObject:
   - 114: {fileID: 11461950}
   - 114: {fileID: 11460700}
   - 114: {fileID: 11484324}
-  - 136: {fileID: 13684064}
   m_Layer: 11
   m_Name: military_chopper
   m_TagString: Untagged
@@ -107,6 +108,7 @@ GameObject:
   - 4: {fileID: 452504}
   - 33: {fileID: 3355550}
   - 23: {fileID: 2324644}
+  - 65: {fileID: 6522874}
   m_Layer: 11
   m_Name: army_helicopter_01
   m_TagString: Untagged
@@ -291,6 +293,30 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112354}
   m_Mesh: {fileID: 4300002, guid: b5ed0125cf1594c0a982980bc2357dcf, type: 3}
+--- !u!65 &6522874
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 189724}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.12189759, y: 0.046449732, z: 0.025}
+  m_Center: {x: 0.010825038, y: -0.0000020709547, z: 0.001}
+--- !u!65 &6557602
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112354}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.11192714, y: 0.10935921, z: 0.01}
+  m_Center: {x: -0.00083305873, y: 0.0000000018626456, z: -0.0000000011920925}
 --- !u!95 &9521774
 Animator:
   serializedVersion: 3
@@ -348,6 +374,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_rotationSpeed: {x: 0, y: 0, z: 350}
+--- !u!114 &11436476
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c60d4104d8d498e9b9f608eb0c3ec7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 5
+  m_attackDelay: 1
 --- !u!114 &11450584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -552,19 +591,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_FocusDistance: 25
---- !u!136 &13684064
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138554}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1.84
-  m_Height: 12.24
-  m_Direction: 0
-  m_Center: {x: -1.3, y: 0.3, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

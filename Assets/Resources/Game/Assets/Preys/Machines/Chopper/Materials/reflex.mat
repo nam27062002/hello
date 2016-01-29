@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: reflex
-  m_Shader: {fileID: 4800000, guid: cced887fc44d647e797080e5fba7f219, type: 3}
+  m_Shader: {fileID: 4800000, guid: 7e48b3d57ce4a43d480b2a7f4bdd2545, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2000
   stringTagMap:
     RenderType: Transparent
   m_SavedProperties:
@@ -88,6 +88,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _Cube
+        second:
+          m_Texture: {fileID: 8900000, guid: 66a7dec233ea846d48ec543ea8b24386, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _FrontTex
         second:
           m_Texture: {fileID: 0}
@@ -140,11 +147,15 @@ Material:
       data:
         first:
           name: _Cutoff
-        second: .5
+        second: 0.5
+      data:
+        first:
+          name: _Exposure
+        second: 1.2
       data:
         first:
           name: _Parallax
-        second: .0199999996
+        second: 0.02
       data:
         first:
           name: _ZWrite
@@ -183,10 +194,6 @@ Material:
         second: 0
       data:
         first:
-          name: _Exposure
-        second: 1.20000005
-      data:
-        first:
           name: _Rotation
         second: 0
     m_Colors:
@@ -197,7 +204,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .800000012, g: .800000012, b: .800000012, a: .309954762}
+        second: {r: 0, g: 0, b: 0, a: 0.30995476}
       data:
         first:
           name: _EmissionColorUI
@@ -205,4 +212,8 @@ Material:
       data:
         first:
           name: _Tint
-        second: {r: .463235319, g: .463235319, b: .463235319, a: .533999979}
+        second: {r: 0.46323532, g: 0.46323532, b: 0.46323532, a: 0.534}
+      data:
+        first:
+          name: _ReflectColor
+        second: {r: 1, g: 1, b: 1, a: 0.5}
