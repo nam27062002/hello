@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Facebook.Unity;
 
-public class ExternalLoginManager :  SingletonMonoBehaviour<InstanceManager> 
+public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager> 
 {
 	// CONSTANTE
 	private const bool DEBUG_ENABLED = true;
@@ -44,6 +44,10 @@ public class ExternalLoginManager :  SingletonMonoBehaviour<InstanceManager>
 		LOGGED_IN,
 	};
 	State m_LoginState = State.NOT_LOGGED;
+	public State loginState
+	{
+		get{ return m_LoginState; }
+	}
 
 	public enum Platform
 	{	
@@ -62,7 +66,13 @@ public class ExternalLoginManager :  SingletonMonoBehaviour<InstanceManager>
 	{
 		OnLogin += OnLoginDone;
 		SetPlatform( Platform.FACEBOOK);
+		m_LogAfterInit = false;
 		Init();
+	}
+
+	void OnDestroy()
+	{
+		OnLogin -= OnLoginDone;
 	}
 
 	void SetPlatform( Platform platform )
