@@ -19,9 +19,8 @@ public class ProjectileBehaviour : MonoBehaviour {
 		PoolManager.CreatePool(m_explosionPrefab, 5, false);
 	}
 
-	public void Shoot(Transform _from, float _damage) {		
-		SphereCollider collider = InstanceManager.player.GetComponent<SphereCollider>();
-		m_targetCenter = collider.transform.position;
+	public void Shoot(Transform _from, float _damage) {	
+		m_targetCenter = InstanceManager.player.transform.position;
 		
 		m_motion = GetComponent<PreyMotion>();
 		m_edible = GetComponent<EdibleBehaviour>();

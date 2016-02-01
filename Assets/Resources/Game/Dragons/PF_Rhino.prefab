@@ -189,8 +189,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 414586}
   - 54: {fileID: 5426352}
-  - 136: {fileID: 13658638}
-  - 135: {fileID: 13559434}
   - 114: {fileID: 11408926}
   - 114: {fileID: 11438592}
   - 114: {fileID: 11412152}
@@ -428,6 +426,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 461088}
   - 137: {fileID: 13705528}
+  - 136: {fileID: 13686100}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -1591,9 +1590,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195292}
-  m_LocalRotation: {x: -0.6224607, y: 0.008188824, z: 0.78254056, w: -0.010294667}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.70704556, y: 0.009301574, z: 0.7070456, w: -0.009301491}
+  m_LocalPosition: {x: 3.7964206e-14, y: 0.6914679, z: -0.0000001209373}
+  m_LocalScale: {x: 1.0000002, y: 1.0000001, z: 1.0000001}
   m_Children:
   - {fileID: 416204}
   - {fileID: 486002}
@@ -2025,6 +2024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_medium
+  m_invulnerableTime: 5
 --- !u!114 &11412152
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2182,31 +2182,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &13559434
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.07
-  m_Center: {x: -1.37, y: 0.79, z: 0}
---- !u!136 &13658638
+--- !u!136 &13686100
 CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Material: {fileID: 13400000, guid: 68803d9d7883048d7a6c72ce90a556d6, type: 2}
+  m_GameObject: {fileID: 142286}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.66
-  m_Height: 0
-  m_Direction: 0
-  m_Center: {x: 1.02, y: 0.55, z: 0}
+  m_Radius: 0.34
+  m_Height: 1.93
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.67, z: 0.51}
 --- !u!137 &13705528
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
