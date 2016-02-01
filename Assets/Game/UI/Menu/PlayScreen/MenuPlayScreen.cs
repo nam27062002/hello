@@ -25,6 +25,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	private CanvasGroup m_hud = null;
+	public GameObject m_connectButton;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -32,9 +33,29 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	private void Awake() 
+	{
 		// Find and store reference to the HUD object
 		m_hud = GameObject.Find("PF_MenuHUD").GetComponent<CanvasGroup>();
+
+		ExternalPlatformManager.instance.OnLogin += OnExternalLogin;
+		ExternalPlatformManager.instance.OnLoginError += OnExternalLoginError;
+
+		// Check if external connected to hide m_ConnectionButton;
+		if (ExternalPlatformManager.instance.loginState != ExternalPlatformManager.State.NOT_LOGGED)
+		{
+			// Hide connecting button
+			m_connectButton.SetActive(false);
+		}
+	}
+
+	void OnDestroy()
+	{
+		if (ExternalPlatformManager.instance != null)
+		{
+			ExternalPlatformManager.instance.OnLogin -= OnExternalLogin;
+			ExternalPlatformManager.instance.OnLoginError -= OnExternalLoginError;
+		}
 	}
 
 	/// <summary>
@@ -69,6 +90,23 @@ public class MenuPlayScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
+
+	public void OnConnectBtn()
+	{
+		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid 
+		ExternalPlatformManager.instance.Login();
+	}
+
+	public void OnExternalLogin()
+	{
+		// TODO(miguel): Hide animation
+		m_connectButton.SetActive(false);
+	}
+
+	public void OnExternalLoginError()
+	{
+		//TODO(miguel) : Enable connection button
+	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
