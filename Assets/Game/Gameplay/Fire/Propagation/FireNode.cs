@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-//[ExecuteInEditMode]
 public class FireNode : MonoBehaviour {
 
 	enum State {
@@ -14,7 +13,6 @@ public class FireNode : MonoBehaviour {
 	[SerializeField] private float m_resistanceMax = 25f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerSecond = 6f;
-	[SerializeField] private float m_maxDistanceLinkNode = 10f;
 
 
 	private List<FireNode> m_neighbours;
@@ -51,13 +49,6 @@ public class FireNode : MonoBehaviour {
 
 		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
-
-		float rnd = Random.Range(0f, 2f) + 2f;
-		Vector3 scale = new Vector3(rnd, rnd, 0f);
-		if (Random.Range(0f, 1f) < 0.5f) {
-			scale.x *= -1;
-		}
-		transform.localScale = scale;
 
 		m_fireSpriteScale = Vector3.zero;
 	}
@@ -119,7 +110,6 @@ public class FireNode : MonoBehaviour {
 		}
 	}
 
-
 	private void StartFire() {
 		if (m_fireSprite == null) {
 			m_fireSprite = PoolManager.GetInstance("FireSprite");
@@ -136,39 +126,6 @@ public class FireNode : MonoBehaviour {
 		}
 		m_fireSprite = null;
 	}
-	
-	/// <summary>
-	/// Raises the draw gizmos event.
-	/// </summary>
-	void OnDrawGizmosSelected() {
-
-		Gizmos.color = new Color(0.69f, 0.09f, 0.12f, 0.5f);
-
-		if (m_state == State.Damaged) {
-			Gizmos.color = Color.yellow;
-		} else if (m_state == State.Burning) {
-			Gizmos.color = Color.magenta;
-		} else if (m_state == State.Burned) {
-			Gizmos.color = Color.black;
-		}
-
-		Gizmos.DrawSphere(transform.position, 0.5f * transform.localScale.x);
-
-		if (m_neighbours == null) {
-			FindNeighbours();
-		}
-
-		Gizmos.color = Color.white;
-		for (int i = 0; i < m_neighbours.Count; i++) {
-			if (m_state != State.Burning) {
-				Color color = Gizmos.color;
-				color.a = 0.2f;
-				Gizmos.color = color;
-			}
-
-			Gizmos.DrawLine(transform.position, m_neighbours[i].transform.position);
-		}
-	}
 
 	private void FindNeighbours() {
 		m_neighbours = new List<FireNode>();
@@ -176,11 +133,7 @@ public class FireNode : MonoBehaviour {
 		
 		for (int i = 0; i < nodes.Length; i++) {
 			if (nodes[i] != null && nodes[i] != this) {
-				float d = (nodes[i].transform.position - transform.position).sqrMagnitude;
-				
-				if (d <= m_maxDistanceLinkNode * m_maxDistanceLinkNode) {
-					m_neighbours.Add(nodes[i]);
-				}
+				m_neighbours.Add(nodes[i]);
 			}
 		}
 	}
