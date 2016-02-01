@@ -81,6 +81,10 @@ public class LoadingSceneController : SceneController {
 		PopupManager.CreateInstance();
 		InstanceManager.CreateInstance();
 
+		// Social
+		ExternalPlatformManager.CreateInstance();
+		ExternalPlatformManager.instance.Init();
+
 		// Load persistence
 		PersistenceManager.Init();
 		PersistenceManager.Load();

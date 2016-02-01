@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Facebook.Unity;
 
-public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager> 
+public class ExternalPlatformManager :  SingletonMonoBehaviour<ExternalPlatformManager> 
 {
 	// CONSTANTE
 	private const bool DEBUG_ENABLED = true;
@@ -35,7 +35,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 	public LoadPictureCallback OnPicureCallback;
 
 	// ATTRIBUTES
-	bool m_Initialized = false;
+	bool m_initialized = false;
 	public enum State
 	{
 		NOT_LOGGED,
@@ -43,10 +43,10 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 		LOGGING,
 		LOGGED_IN,
 	};
-	State m_LoginState = State.NOT_LOGGED;
+	State m_loginState = State.NOT_LOGGED;
 	public State loginState
 	{
-		get{ return m_LoginState; }
+		get{ return m_loginState; }
 	}
 
 	public enum Platform
@@ -55,18 +55,18 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 		FACEBOOK,
 		WEIBO,
 	};
-	Platform m_Platform = Platform.FACEBOOK;
+	Platform m_platform = Platform.FACEBOOK;
 
-	bool m_LogAfterInit;
-	NewsFeed m_PendingFeed = null;
+	bool m_logAfterInit;
+	NewsFeed m_pendingFeed = null;
 
-	string m_ButtonPath = "";
+	string m_buttonPath = "";
 
 	void Start()
 	{
 		OnLogin += OnLoginDone;
 		SetPlatform( Platform.FACEBOOK);
-		m_LogAfterInit = false;
+		m_logAfterInit = false;
 		Init();
 	}
 
@@ -77,7 +77,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
 	void SetPlatform( Platform platform )
 	{
-		m_Platform = platform;
+		m_platform = platform;
 		switch( platform )
 		{
 			case Platform.FACEBOOK:
@@ -89,7 +89,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
 	public void Init()
 	{
-		switch( m_Platform )
+		switch( m_platform )
 		{
 			case Platform.OFFLINE:
 			{
@@ -116,7 +116,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
 	public void Login()
 	{
-		switch( m_Platform )	
+		switch( m_platform )	
 		{
 			case Platform.FACEBOOK:
 			{
@@ -127,22 +127,22 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
 	void OnLoginDone()
 	{
-		if (m_PendingFeed != null)
+		if (m_pendingFeed != null)
 		{
-			NewsFeed newsFeed = m_PendingFeed;
-			m_PendingFeed = null;
+			NewsFeed newsFeed = m_pendingFeed;
+			m_pendingFeed = null;
 			PostFeed(newsFeed);
 		}
 	}
 
 	public void Logout()
 	{
-		switch( m_Platform )
+		switch( m_platform )
 		{
 			case Platform.FACEBOOK:
 			{
 				FB.LogOut();
-				m_LoginState = State.NOT_LOGGED;
+				m_loginState = State.NOT_LOGGED;
 			}break;
 		}
 	}
@@ -160,7 +160,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
     public void PostFeed( NewsFeed feed )
     {
-    	switch( m_Platform )
+    	switch( m_platform )
     	{
     		case Platform.FACEBOOK:
     		{
@@ -171,7 +171,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
     public void ShowInviteFriends()
     {
-    	switch( m_Platform )
+    	switch( m_platform )
     	{
     		case Platform.FACEBOOK:
     		{
@@ -189,7 +189,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
     // Image url
 	public void GetImage( string userId, int width, int heigth, LoadPictureCallback _callback)
     {
-    	switch( m_Platform )
+    	switch( m_platform )
     	{
     		case Platform.FACEBOOK:
     		{
@@ -200,7 +200,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
     public string GetButtonImage()
     {
-		return m_ButtonPath;	
+		return m_buttonPath;	
     }
 
 	private void Log(string _msg)
@@ -218,14 +218,14 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 	{
 		if (DEBUG_ENABLED) Log("OnInitCallBack()");
 
-		m_Initialized = true;
+		m_initialized = true;
 
 		if (FB.IsLoggedIn)
 		{	
-			m_LoginState = State.LOGGING;	// ask for facebook user profile...
+			m_loginState = State.LOGGING;	// ask for facebook user profile...
 			FBRequestProfile();
 		}
-		else if (m_LogAfterInit)
+		else if (m_logAfterInit)
 		{
 			FBLogin();
 		}
@@ -234,27 +234,27 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
 	public void FBLogin()
 	{
-		switch( m_LoginState )
+		switch( m_loginState )
 		{
 			case State.NOT_LOGGED:
 			{	
-				if ( m_Initialized )
+				if ( m_initialized )
 				{
 					// Start Login
-					m_LoginState = State.LOGGING;
+					m_loginState = State.LOGGING;
 					FB.LogInWithReadPermissions(FACEBOOK_PERMISSIONS_READ, OnFBLoginCallback);
 				}
 				else
 				{
 					// Start initialization
-					m_LogAfterInit = true;
-					m_LoginState = State.INITIALIZING;
+					m_logAfterInit = true;
+					m_loginState = State.INITIALIZING;
 					Init();
 				}
 			}break;
 			case State.INITIALIZING:
 			{
-				m_LogAfterInit = true;
+				m_logAfterInit = true;
 			}break;
 			case State.LOGGING:
 			{
@@ -288,7 +288,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 
 		if (result.Error != null || !FB.IsLoggedIn)
 		{
-			m_LoginState = State.NOT_LOGGED;
+			m_loginState = State.NOT_LOGGED;
 			if ( OnLoginError != null )
 				OnLoginError();
 		}
@@ -328,7 +328,7 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 		if (result.Error != null)
 		{
 			// We make sure that loginState is NOT_LOGGED
-			m_LoginState = State.NOT_LOGGED;
+			m_loginState = State.NOT_LOGGED;
 
 			if (DEBUG_ENABLED) 
 				Log("ERROR: " + result.Error );
@@ -357,9 +357,9 @@ public class ExternalPlatformManager :  SingletonMonoBehaviour<InstanceManager>
 		}
 		*/
 		
-		if ( m_LoginState == State.LOGGING )
+		if ( m_loginState == State.LOGGING )
 		{
-			m_LoginState = State.LOGGED_IN;
+			m_loginState = State.LOGGED_IN;
 			if ( OnLogin != null )
 				OnLogin();
 		}
