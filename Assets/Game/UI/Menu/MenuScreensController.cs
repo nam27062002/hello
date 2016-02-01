@@ -22,6 +22,7 @@ public class MenuScreensController : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public enum Screens {
+		NONE = -1,
 		PLAY,
 		DRAGON_SELECTION,
 		LEVEL_SELECTION
