@@ -11,6 +11,8 @@ GameObject:
   - 33: {fileID: 3386478}
   - 23: {fileID: 2340154}
   - 114: {fileID: 11485794}
+  - 65: {fileID: 6502624}
+  - 114: {fileID: 11454336}
   m_Layer: 11
   m_Name: propeller_drone_01
   m_TagString: Untagged
@@ -28,6 +30,7 @@ GameObject:
   - 4: {fileID: 460406}
   - 33: {fileID: 3362976}
   - 23: {fileID: 2314900}
+  - 135: {fileID: 13579676}
   m_Layer: 11
   m_Name: drone_01
   m_TagString: Untagged
@@ -72,9 +75,8 @@ GameObject:
   - 114: {fileID: 11481634}
   - 114: {fileID: 11492522}
   - 114: {fileID: 11470908}
-  - 136: {fileID: 13680914}
   m_Layer: 11
-  m_Name: dron_small_01
+  m_Name: drone_small_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -197,6 +199,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101286}
   m_Mesh: {fileID: 4300000, guid: 934e5215aed624a1b9d32f212ef1870d, type: 3}
+--- !u!65 &6502624
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101286}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.048535693, y: 0.047422156, z: 0.005}
+  m_Center: {x: 4.6924115e-10, y: -4.692407e-10, z: 0.007872554}
 --- !u!95 &9514572
 Animator:
   serializedVersion: 3
@@ -349,6 +363,19 @@ MonoBehaviour:
   m_sensorMaxRadius: 14
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+--- !u!114 &11454336
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c60d4104d8d498e9b9f608eb0c3ec7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 2
+  m_attackDelay: 5
 --- !u!114 &11457574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -445,19 +472,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_deactivate: 1
---- !u!136 &13680914
-CapsuleCollider:
+--- !u!135 &13579676
+SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 199742}
+  m_GameObject: {fileID: 161816}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 1.01
-  m_Height: 3.52
-  m_Direction: 0
-  m_Center: {x: 0.08, y: -0.06, z: 0}
+  serializedVersion: 2
+  m_Radius: 0.01
+  m_Center: {x: -5.674798e-10, y: -0.0011060036, z: -0.00060222705}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
