@@ -11,6 +11,7 @@ using UnityEditor;
 using System;
 using System.Reflection;
 using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -237,5 +238,26 @@ public static class EditorUtils {
 			assets[i] = AssetDatabase.LoadAssetAtPath<T>(assetPath);
 		}
 		return assets;
+	}
+
+	/// <summary>
+	/// Find all prefabs containing a specific component (T).
+	/// </summary>
+	/// <param name="_path">Optionally select a single resources path to be explored.</param>
+	/// <typeparam name="T">The type of component</typeparam>
+	public static List<GameObject> LoadPrefabsContaining<T>(string _path = "") where T : UnityEngine.Component {
+		// Aux vars
+		List<GameObject> result = new List<GameObject>();
+
+		// Load all prefabs in the target path
+		GameObject[] allPrefabs = Resources.LoadAll<GameObject>(_path);
+
+		// Find those containing the required component
+		for(int i = 0; i < allPrefabs.Length; i++) {
+			if(allPrefabs[i].GetComponent<T>() != null) {
+				result.Add(allPrefabs[i]);
+			}
+		}
+		return result;
 	}
 }

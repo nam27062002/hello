@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(PreyStats))]
+[RequireComponent(typeof(Entity))]
 public class HittableBehaviour : MonoBehaviour {
 
 	[SerializeField] private float m_healthRegen = 0.05f;
-	private PreyStats m_prey;
+	private Entity m_prey;
 
 	// Use this for initialization
 	void Start() {
-		m_prey = GetComponent<PreyStats>();
+		m_prey = GetComponent<Entity>();
 	}
 
 	void FixedUpdate() {

@@ -1,7 +1,7 @@
-﻿// MonoBehaviourTemplateEditor.cs
+﻿// EntityDefEditor.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on DD/MM/2016.
+// Created by Alger Ortín Castellví on 02/02/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -14,10 +14,10 @@ using UnityEditor;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the MonoBehaviourTemplate class.
+/// Custom editor for the EntityDef class.
 /// </summary>
-[CustomPropertyDrawer(typeof(MonoBehaviourTemplate))]
-public class MonoBehaviourTemplatePropertyDrawer : ExtendedPropertyDrawer {
+[CustomPropertyDrawer(typeof(EntityDef))]
+public class EntityDefPropertyDrawer : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -28,7 +28,7 @@ public class MonoBehaviourTemplatePropertyDrawer : ExtendedPropertyDrawer {
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public MonoBehaviourTemplatePropertyDrawer() {
+	public EntityDefPropertyDrawer() {
 		// Nothing to do
 	}
 
@@ -50,6 +50,7 @@ public class MonoBehaviourTemplatePropertyDrawer : ExtendedPropertyDrawer {
 		// If unfolded, draw children
 		if(_property.isExpanded) {
 			// Aux vars
+			bool isEdible = true;
 			int baseDepth = _property.depth;
 			int rootIndent = EditorGUI.indentLevel;
 
@@ -60,11 +61,22 @@ public class MonoBehaviourTemplatePropertyDrawer : ExtendedPropertyDrawer {
 				EditorGUI.indentLevel = rootIndent + _property.depth;
 
 				// Properties requiring special treatment
-				if(_property.name == "name_of_the_property_requiring_special_treatment") {
-
+				// Store edible property
+				if(_property.name == "m_isEdible") {
+					// Store value to be used later
+					DrawAndAdvance(_property);
+					isEdible = _property.boolValue;
 				}
 
-				// Default
+				// Don't shouw edible sub-group if entity is not edible
+				else if(_property.name == "m_edibleFromTier" || _property.name == "m_biteResistance") {
+					// Only show if is edible
+					if(isEdible) {
+						DrawAndAdvance(_property);
+					}
+				}
+
+				// Default property drawing
 				else {
 					DrawAndAdvance(_property);
 				}

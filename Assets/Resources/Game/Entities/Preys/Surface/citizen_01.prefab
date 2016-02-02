@@ -254,7 +254,6 @@ GameObject:
   - 114: {fileID: 11426808}
   - 114: {fileID: 11409122}
   - 114: {fileID: 11402296}
-  - 114: {fileID: 11460448}
   - 114: {fileID: 11408242}
   - 114: {fileID: 11422614}
   - 114: {fileID: 11496704}
@@ -739,6 +738,7 @@ MonoBehaviour:
   m_maxSpeed: 4
   m_maxRunSpeed: 8.1
   m_slowingRadius: 0
+  m_fallOnBurn: 0
 --- !u!114 &11409122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -755,6 +755,15 @@ MonoBehaviour:
   m_maxHealth: 100
   m_ashesAsset: 
   m_dissolveTime: 1.5
+  m_explosionPrefab: {fileID: 0}
+  m_scaleRange:
+    min: 1
+    max: 5
+  m_rotationRange:
+    min: 0
+    max: 360
+  m_shake: 0
+  m_slowMotion: 0
 --- !u!114 &11412942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -805,8 +814,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
   m_size: 2.3
-  m_isBig: 1
-  m_destroyOnEat: 0
   onEatenParticle: 
 --- !u!114 &11454566
 MonoBehaviour:
@@ -820,33 +827,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
---- !u!114 &11460448
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0
-  - 0.25
-  - 0.25
-  - 0
-  m_feedbacks:
-  - data: []
-  - data:
-    - Tasty!
-    - Natural Selection
-    - Chubby!
-  - data:
-    - Medium-rare!
-    - Barbecue!
-    - Rostisserie
-  - data: []
 --- !u!114 &11473332
 MonoBehaviour:
   m_ObjectHideFlags: 1

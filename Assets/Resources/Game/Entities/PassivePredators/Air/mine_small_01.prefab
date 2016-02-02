@@ -15,7 +15,6 @@ GameObject:
   - 114: {fileID: 11463056}
   - 114: {fileID: 11488518}
   - 114: {fileID: 11455984}
-  - 114: {fileID: 11491110}
   - 114: {fileID: 11498944}
   - 135: {fileID: 13545632}
   m_Layer: 11
@@ -113,7 +112,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damage: 15
   m_forceStrength: 10
-  m_radius: 2
   m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
   m_delayRange:
     min: 0
@@ -151,8 +149,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_edibleFromTier: 2
   m_size: 2
-  m_isBig: 0
-  m_destroyOnEat: 0
   onEatenParticle: 
 --- !u!114 &11478026
 MonoBehaviour:
@@ -200,33 +196,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_deactivate: 1
---- !u!114 &11491110
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 170486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 1
-  - 0.25
-  - 0
-  - 0
-  m_feedbacks:
-  - data:
-    - Watch Out!
-    - Minefield!
-    - Boooom!
-  - data:
-    - Minesweeper!
-    - Iron Stomach!
-    - Tasty!
-  - data: []
-  - data: []
 --- !u!114 &11496622
 MonoBehaviour:
   m_ObjectHideFlags: 1

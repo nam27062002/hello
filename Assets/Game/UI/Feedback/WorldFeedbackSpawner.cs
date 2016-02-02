@@ -121,12 +121,12 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// Some checks first
 		if(_entity == null) return;
 
-		// Get the feedback data component from the source entity
-		FeedbackData data = _entity.GetComponent<FeedbackData>();
-		if(data == null) return;
+		// Get the feedback data from the source entity
+		Entity entity = _entity.GetComponent<Entity>();
+		if(entity == null) return;
 
 		// Check that there's actually some text to be spawned
-		string text = data.GetFeedback(_type);
+		string text = entity.def.feedbackData.GetFeedback(_type);
 		if(string.IsNullOrEmpty(text)) return;
 
 		// Get an instance from the pool and spawn it!

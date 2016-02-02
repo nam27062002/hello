@@ -184,10 +184,11 @@ public class DragonEatBehaviour : MonoBehaviour {
 	{
 		if (enabled && m_eatingTimer <= 0) 
 		{
-			if (_prey.edibleFromTier <= m_dragon.data.def.tier) 
+			Entity entity = _prey.GetComponent<Entity>();
+			if (entity.def.edibleFromTier <= m_dragon.data.def.tier) 
 			{
 				// Yes!! Eat it!!
-				m_eatingTimer = m_eatingTime = (m_dragon.data.biteSkill.value * _prey.size);
+				m_eatingTimer = m_eatingTime = (m_dragon.data.biteSkill.value * entity.def.biteResistance);
 
 				if (m_eatingTime >= 0.5f) {
 					m_dragonBoost.StopBoost();

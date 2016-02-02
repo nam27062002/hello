@@ -300,7 +300,6 @@ GameObject:
   - 114: {fileID: 11452028}
   - 114: {fileID: 11409924}
   - 114: {fileID: 11471570}
-  - 114: {fileID: 11413308}
   - 114: {fileID: 11403422}
   - 114: {fileID: 11430668}
   - 114: {fileID: 11451608}
@@ -892,6 +891,7 @@ MonoBehaviour:
   m_maxSpeed: 8
   m_maxRunSpeed: 10
   m_slowingRadius: 0
+  m_fallOnBurn: 0
 --- !u!114 &11404376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -903,6 +903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_deactivate: 1
 --- !u!114 &11409924
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -919,33 +920,15 @@ MonoBehaviour:
   m_maxHealth: 150
   m_ashesAsset: PF_Ash_Horse
   m_dissolveTime: 1.5
---- !u!114 &11413308
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 161436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0
-  - 0.25
-  - 0.25
-  - 0
-  m_feedbacks:
-  - data: []
-  - data:
-    - Tasty!
-    - Natural Selection
-    - Chubby!
-  - data:
-    - Medium-rare!
-    - Barbecue!
-    - Rostisserie
-  - data: []
+  m_explosionPrefab: {fileID: 0}
+  m_scaleRange:
+    min: 1
+    max: 5
+  m_rotationRange:
+    min: 0
+    max: 360
+  m_shake: 0
+  m_slowMotion: 0
 --- !u!114 &11430024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -999,8 +982,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
   m_size: 5
-  m_isBig: 1
-  m_destroyOnEat: 0
   onEatenParticle: 
 --- !u!114 &11452058
 MonoBehaviour:

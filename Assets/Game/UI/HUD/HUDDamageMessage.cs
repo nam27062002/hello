@@ -66,11 +66,11 @@ public class HUDDamageMessage : MonoBehaviour {
 		// Nothing to do if source is not known
 		if(_source == null) return;
 
-		// Check whether the source has a feedback component
-		FeedbackData feedback = _source.GetComponent<FeedbackData>();
-		if(feedback != null) {
+		// Get the feedback component from the source entity
+		Entity entity = _source.GetComponent<Entity>();
+		if(entity != null) {
 			// Yes!! Show a message?
-			string msg = feedback.GetFeedback(FeedbackData.Type.DAMAGE);
+			string msg = entity.def.feedbackData.GetFeedback(FeedbackData.Type.DAMAGE);
 			if(!String.IsNullOrEmpty(msg)) {
 				// Set text and launch anim
 				m_text.text = msg;

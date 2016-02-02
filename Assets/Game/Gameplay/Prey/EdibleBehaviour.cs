@@ -1,27 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(PreyStats))]
+[RequireComponent(typeof(Entity))]
 public class EdibleBehaviour : Initializable {
-	//-----------------------------------------------
-	// Properties
-	//-----------------------------------------------
-	[SerializeField] private DragonTier m_edibleFromTier = 0;
-	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
-	
-	[SerializeField][Range(1, 10)] private float m_size = 1f;
-	public float size { get { return m_size; } }
-
-	[SerializeField] private bool m_isBig = false;
-	public bool isBig { get { return m_isBig; } }
-	
-	[SerializeField] private bool m_destroyOnEat = false;
-
-
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private PreyStats m_prey;
+	private Entity m_prey;
 	private Animator m_animator;
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
@@ -51,7 +36,7 @@ public class EdibleBehaviour : Initializable {
 		m_Bounds = GetComponent<CircleArea2D>();
 
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_prey = GetComponent<PreyStats>();
+		m_prey = GetComponent<Entity>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_dragonEat = m_dragon.GetComponent<DragonEatBehaviour>();
 		m_dragonMouth = m_dragon.tongue;
@@ -131,12 +116,10 @@ public class EdibleBehaviour : Initializable {
 			ParticleManager.Spawn(onEatenParticle, transform.position);
 
 		OnEatBehaviours(true);
+
 		// deactivate
-		if (m_destroyOnEat) {
-			Destroy(gameObject);
-		} else {
-			gameObject.SetActive(false);
-		}
+		gameObject.SetActive(false);
+
 		return reward;
 	}
 
@@ -150,6 +133,4 @@ public class EdibleBehaviour : Initializable {
 		if ( po != null )
 			po.enabled = _enable;
 	}
-
-
 }

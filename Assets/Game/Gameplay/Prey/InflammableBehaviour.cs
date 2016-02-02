@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(PreyStats))]
+[RequireComponent(typeof(Entity))]
 public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	// Constants
@@ -34,7 +34,7 @@ public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private PreyStats m_prey;
+	private Entity m_prey;
 	private DragonBreathBehaviour m_breath;
 	
 	private float m_health;
@@ -54,7 +54,7 @@ public class InflammableBehaviour : Initializable {
 			PoolManager.CreatePool(m_explosionPrefab, 5, false);
 		}
 
-		m_prey = GetComponent<PreyStats>();
+		m_prey = GetComponent<Entity>();
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 
 		m_timer = m_checkFireTime;

@@ -285,7 +285,6 @@ GameObject:
   - 114: {fileID: 11468634}
   - 114: {fileID: 11403204}
   - 114: {fileID: 11438482}
-  - 114: {fileID: 11449692}
   - 114: {fileID: 11405894}
   - 114: {fileID: 11448720}
   - 114: {fileID: 11457498}
@@ -573,10 +572,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_edibleFromTier: 0
-  m_size: 1
-  m_isBig: 0
-  m_destroyOnEat: 0
   onEatenParticle: Feathers
 --- !u!114 &11405894
 MonoBehaviour:
@@ -634,33 +629,6 @@ MonoBehaviour:
   m_displacementRadius: 1
   m_angleIncrement: 10
   m_idleProbability: 1
---- !u!114 &11449692
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 196200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0
-  - 0.25
-  - 0.25
-  - 0
-  m_feedbacks:
-  - data: []
-  - data:
-    - Yummy!
-    - Protein!
-    - So Good!
-  - data:
-    - Barbecue!
-    - Roasted!
-    - Medium-rare!
-  - data: []
 --- !u!114 &11452122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -720,17 +688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: Seagull
-  m_reward:
-    score: 11
-    coins: 5
-    pc: 0
-    health: 3
-    energy: 0
-    fury: 3
-    xp: 0.6
-  m_goldenChance: 0.02
-  m_pcChance: 0
+  m_typeID: seagull
 --- !u!114 &11469120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1036,6 +994,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_fallOnBurn
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: seagull
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

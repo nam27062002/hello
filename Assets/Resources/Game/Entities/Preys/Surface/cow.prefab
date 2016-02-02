@@ -193,7 +193,6 @@ GameObject:
   - 114: {fileID: 11455090}
   - 114: {fileID: 11476706}
   - 114: {fileID: 11456412}
-  - 114: {fileID: 11463564}
   - 114: {fileID: 11490220}
   - 114: {fileID: 11441950}
   - 114: {fileID: 11459472}
@@ -561,7 +560,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131280}
-  m_LocalRotation: {x: 0.6985103, y: -0.69814473, z: -0.15504153, w: 0.025289876}
+  m_LocalRotation: {x: 0.6985102, y: -0.6981447, z: -0.15504152, w: 0.025289873}
   m_LocalPosition: {x: 0.16254486, y: 0.106924586, z: 0.27912664}
   m_LocalScale: {x: 1.0000013, y: 0.9999998, z: 0.99999887}
   m_Children:
@@ -937,8 +936,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
   m_size: 4.5
-  m_isBig: 1
-  m_destroyOnEat: 0
   onEatenParticle: 
 --- !u!114 &11456412
 MonoBehaviour:
@@ -967,33 +964,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_canBeAfraid: 0
   m_canPanic: 1
---- !u!114 &11463564
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 136114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0
-  - 0.25
-  - 0.25
-  - 0
-  m_feedbacks:
-  - data: []
-  - data:
-    - Tasty!
-    - Natural Selection
-    - Chubby!
-  - data:
-    - Medium-rare!
-    - Barbecue!
-    - Rostisserie
-  - data: []
 --- !u!114 &11464738
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1043,6 +1013,15 @@ MonoBehaviour:
   m_maxHealth: 125
   m_ashesAsset: 
   m_dissolveTime: 1.5
+  m_explosionPrefab: {fileID: 0}
+  m_scaleRange:
+    min: 1
+    max: 5
+  m_rotationRange:
+    min: 0
+    max: 360
+  m_shake: 0
+  m_slowMotion: 0
 --- !u!114 &11488454
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1078,6 +1057,7 @@ MonoBehaviour:
   m_maxSpeed: 5
   m_maxRunSpeed: 7
   m_slowingRadius: 0
+  m_fallOnBurn: 0
 --- !u!137 &13707070
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

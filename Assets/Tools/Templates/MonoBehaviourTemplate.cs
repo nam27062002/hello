@@ -1,8 +1,8 @@
 ﻿// MonoBehaviourTemplate.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on //2015.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on DD/MM/2016.
+// Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//

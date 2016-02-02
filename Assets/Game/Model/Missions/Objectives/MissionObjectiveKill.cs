@@ -104,10 +104,10 @@ public class MissionObjectiveKill : MissionObjective {
 			currentValue++;
 		} else {
 			// Is it one of the target types?
-			PreyStats prey = _entity.GetComponent<PreyStats>();
+			Entity prey = _entity.GetComponent<Entity>();
 			if(prey != null) {
 				for(int i = 0; i < parentMission.def.parameters.Length; i++) {
-					if(parentMission.def.parameters[i] == prey.typeID) {
+					if(parentMission.def.parameters[i] == prey.sku) {
 						// Found!
 						currentValue++;
 						break;

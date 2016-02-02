@@ -90,7 +90,6 @@ GameObject:
   - 114: {fileID: 11431430}
   - 114: {fileID: 11476692}
   - 114: {fileID: 11404860}
-  - 114: {fileID: 11427146}
   - 114: {fileID: 11415360}
   - 114: {fileID: 11461924}
   - 114: {fileID: 11467088}
@@ -1388,44 +1387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: soldier
-  m_reward:
-    score: 100
-    coins: 70
-    pc: 0
-    health: 10
-    energy: 0
-    fury: 20
-    xp: 1
-  m_goldenChance: 0.301
-  m_pcChance: 0
---- !u!114 &11427146
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0.745
-  - 0.25
-  - 0
-  - 0
-  m_feedbacks:
-  - data:
-    - Watch Out!
-    - Minefield!
-    - Gunned Down!
-  - data:
-    - Natural Selection
-    - Iron Stomach!
-    - Tasty!
-  - data: []
-  - data: []
+  m_sku: soldier
 --- !u!114 &11431430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1442,6 +1404,15 @@ MonoBehaviour:
   m_maxHealth: 100
   m_ashesAsset: 
   m_dissolveTime: 1.5
+  m_explosionPrefab: {fileID: 0}
+  m_scaleRange:
+    min: 1
+    max: 5
+  m_rotationRange:
+    min: 0
+    max: 360
+  m_shake: 0
+  m_slowMotion: 0
 --- !u!114 &11440580
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1464,10 +1435,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_edibleFromTier: 0
-  m_size: 2.3
-  m_isBig: 1
-  m_destroyOnEat: 0
   onEatenParticle: 
 --- !u!114 &11457312
 MonoBehaviour:
@@ -1519,6 +1486,7 @@ MonoBehaviour:
   m_maxSpeed: 5
   m_maxRunSpeed: 8
   m_slowingRadius: 0
+  m_fallOnBurn: 0
 --- !u!114 &11467088
 MonoBehaviour:
   m_ObjectHideFlags: 1

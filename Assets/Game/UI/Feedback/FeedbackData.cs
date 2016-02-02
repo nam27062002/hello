@@ -17,7 +17,8 @@ using System.Collections.Generic;
 /// <summary>
 /// Behaviour for any entity interacting with the dragon who should display some kind of feedback.
 /// </summary>
-public class FeedbackData : MonoBehaviour {
+[Serializable]
+public class FeedbackData {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -42,16 +43,6 @@ public class FeedbackData : MonoBehaviour {
 	//------------------------------------------------------------------//
 	[SerializeField] private float[] m_probabilities = new float[(int)Type.COUNT];
 	[SerializeField] private FeedbackList[] m_feedbacks = new FeedbackList[(int)Type.COUNT];
-
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// First update call
-	/// </summary>
-	private void Start() {
-
-	}
 
 	//------------------------------------------------------------------//
 	// GETTERS															//

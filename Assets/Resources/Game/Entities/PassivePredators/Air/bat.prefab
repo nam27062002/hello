@@ -88,7 +88,6 @@ GameObject:
   - 114: {fileID: 11495124}
   - 114: {fileID: 11459194}
   - 114: {fileID: 11453876}
-  - 114: {fileID: 11425644}
   - 114: {fileID: 11478934}
   - 114: {fileID: 11421898}
   - 114: {fileID: 11448254}
@@ -527,33 +526,6 @@ MonoBehaviour:
   m_maxRunSpeed: 10
   m_slowingRadius: 0
   m_fallOnBurn: 0
---- !u!114 &11425644
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0
-  - 0.25
-  - 0.25
-  - 0
-  m_feedbacks:
-  - data: []
-  - data:
-    - Batman!
-    - Hairy Stuff
-    - BlindTaste
-  - data:
-    - Barbecue!
-    - Batman!
-    - Instant Combustion
-  - data: []
 --- !u!114 &11431970
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -711,8 +683,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
   m_size: 1
-  m_isBig: 0
-  m_destroyOnEat: 0
   onEatenParticle: 
 --- !u!137 &13764670
 SkinnedMeshRenderer:

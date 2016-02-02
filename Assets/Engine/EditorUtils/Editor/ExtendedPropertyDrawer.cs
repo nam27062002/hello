@@ -68,7 +68,6 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 		EditorGUI.BeginProperty(_position, customLabel, _property);
 
 		// Let heir do the hard work :D
-		// Using a copy though! We must keep 
 		OnGUIImpl(_property, customLabel);
 		
 		// If total height doesn't match the height we were given to draw the property, we need to force a repaint to adjust to the new height
@@ -96,19 +95,32 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Advance position cursor a given amount of pixels. If given amount is 0,
-	/// position will be advanced using its current height value.
+	/// Advance position cursor a given amount of pixels, optionally adding some extra margin. 
+	/// If given amount is 0, position will be advanced using its current height value.
 	/// The total height of the drawer will also be updated.
 	/// Should be called after drawing each property so the next one is placed right below it.
 	/// </summary>
 	/// <param name="_amount">The amount of pixels to advance.</param>
-	protected void AdvancePos(float _amount = 0f) {
+	/// <param name="_margin">The extra margin to be added.</param>
+	protected void AdvancePos(float _amount = 0f, float _margin = 0f) {
 		// If default parameter, use current pos height instead
+		//Debug.Log(_amount);
 		if(_amount == 0f) _amount = m_pos.height;
 
 		// Increase both position cursor and total height addition
-		m_pos.y += _amount;
-		SetHeight(m_currentKey, GetHeight(m_currentKey) + _amount);
+		m_pos.y += _amount + _margin;
+		SetHeight(m_currentKey, GetHeight(m_currentKey) + _amount + _margin);
+	}
+
+	/// <summary>
+	/// Draw a property using its default inspector drawer and automatically 
+	/// advance position.
+	/// </summary>
+	/// <param name="_property">The property to be drawn.</param>
+	protected void DrawAndAdvance(SerializedProperty _property) {
+		m_pos.height = EditorGUI.GetPropertyHeight(_property);
+		EditorGUI.PropertyField(m_pos, _property, true);
+		AdvancePos();
 	}
 
 	/// <summary>

@@ -37,8 +37,11 @@ public class SeparatorAttributeEditor : DecoratorDrawer {
 	/// </summary>
 	/// <param name="_area">The area designated by the inspector to draw this decoration.</param>
 	public override void OnGUI(Rect _area) {
+		// Respect indentation!
+		Rect indentedArea = EditorGUI.IndentedRect(_area);
+
 		// Use static method
-		DrawSeparator(_area, separator);
+		DrawSeparator(indentedArea, separator);
 	}
 
 	/// <summary>a
