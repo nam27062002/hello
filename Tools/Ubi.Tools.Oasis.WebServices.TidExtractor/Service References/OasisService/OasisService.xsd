@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" elementFormDefault="qualified" targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd3" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" />
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd6" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="UpdateLineLocalizationPresetsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLineLocalizationPresetsResponse" nillable="true" type="tns:UpdateLineLocalizationPresetsResponse" />
+  <xs:complexType name="Response">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Success" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Response" nillable="true" type="tns:Response" />
+  <xs:complexType name="GetResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="EventId" nillable="true" type="xs:long">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetResponse" nillable="true" type="tns:GetResponse" />
+  <xs:complexType name="GetPropsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q1="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q1:ArrayOfProp" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetPropsResponse" nillable="true" type="tns:GetPropsResponse" />
+  <xs:complexType name="GetSectionsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q2="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q2:ArrayOfSection" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetSectionsResponse" nillable="true" type="tns:GetSectionsResponse" />
+  <xs:complexType name="GetShootsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q3="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q3:ArrayOfShoot" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShootsResponse" nillable="true" type="tns:GetShootsResponse" />
+  <xs:complexType name="GetShotsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q4="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q4:ArrayOfShot" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShotsResponse" nillable="true" type="tns:GetShotsResponse" />
+  <xs:complexType name="GetShotCharactersResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q5="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q5:ArrayOfShotCharacter" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShotCharactersResponse" nillable="true" type="tns:GetShotCharactersResponse" />
+  <xs:complexType name="GetShotPropsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q6="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q6:ArrayOfShotProp" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShotPropsResponse" nillable="true" type="tns:GetShotPropsResponse" />
+  <xs:complexType name="GetTeamsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q7="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q7:ArrayOfTeam" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetTeamsResponse" nillable="true" type="tns:GetTeamsResponse" />
+  <xs:complexType name="UpdateAIElementsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAIElementsResponse" nillable="true" type="tns:UpdateAIElementsResponse" />
+  <xs:complexType name="BatchInsertResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence>
+          <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="InsertedIds" nillable="true" type="q8:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BatchInsertResponse" nillable="true" type="tns:BatchInsertResponse" />
+  <xs:complexType name="UpdateAIElementSectionsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAIElementSectionsResponse" nillable="true" type="tns:UpdateAIElementSectionsResponse" />
+  <xs:complexType name="UpdateAIElementTypesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAIElementTypesResponse" nillable="true" type="tns:UpdateAIElementTypesResponse" />
+  <xs:complexType name="UpdateAudioFilesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAudioFilesResponse" nillable="true" type="tns:UpdateAudioFilesResponse" />
+  <xs:complexType name="UpdateCharactersResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCharactersResponse" nillable="true" type="tns:UpdateCharactersResponse" />
+  <xs:complexType name="UpdateCommentsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCommentsResponse" nillable="true" type="tns:UpdateCommentsResponse" />
+  <xs:complexType name="UpdateCustomDatasResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomDatasResponse" nillable="true" type="tns:UpdateCustomDatasResponse" />
+  <xs:complexType name="UpdateCustomPresetsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomPresetsResponse" nillable="true" type="tns:UpdateCustomPresetsResponse" />
+  <xs:complexType name="UpdateCustomPresetTypesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomPresetTypesResponse" nillable="true" type="tns:UpdateCustomPresetTypesResponse" />
+  <xs:complexType name="UpdateCustomPropertiesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomPropertiesResponse" nillable="true" type="tns:UpdateCustomPropertiesResponse" />
+  <xs:complexType name="UpdateCustomValuesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomValuesResponse" nillable="true" type="tns:UpdateCustomValuesResponse" />
+  <xs:complexType name="UpdateScenesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence>
+          <xs:element xmlns:q9="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="InsertedOrderIndexes" nillable="true" type="q9:ArrayOfint" />
+          <xs:element xmlns:q10="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="InsertedSequenceIndexes" nillable="true" type="q10:ArrayOfint" />
+          <xs:element xmlns:q11="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="InsertedTags" nillable="true" type="q11:ArrayOfstring" />
+          <xs:element xmlns:q12="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="UpdatedOrderIndexes" nillable="true" type="q12:ArrayOfint" />
+          <xs:element xmlns:q13="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="UpdatedSequenceIndexes" nillable="true" type="q13:ArrayOfint" />
+          <xs:element xmlns:q14="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="UpdatedTags" nillable="true" type="q14:ArrayOfstring" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateScenesResponse" nillable="true" type="tns:UpdateScenesResponse" />
+  <xs:complexType name="UpdateFoldersResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateFoldersResponse" nillable="true" type="tns:UpdateFoldersResponse" />
+  <xs:complexType name="UpdateLanguagesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLanguagesResponse" nillable="true" type="tns:UpdateLanguagesResponse" />
+  <xs:complexType name="UpdateLinesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLinesResponse" nillable="true" type="tns:UpdateLinesResponse" />
+  <xs:complexType name="UpdateLineCustomDataValuesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLineCustomDataValuesResponse" nillable="true" type="tns:UpdateLineCustomDataValuesResponse" />
+  <xs:complexType name="UpdateSceneCustomDataValuesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateSceneCustomDataValuesResponse" nillable="true" type="tns:UpdateSceneCustomDataValuesResponse" />
+  <xs:complexType name="UpdateLineTranslationsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLineTranslationsResponse" nillable="true" type="tns:UpdateLineTranslationsResponse" />
+  <xs:complexType name="UpdateMenuControlsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence>
+          <xs:element xmlns:q15="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="InsertedOrderIndexes" nillable="true" type="q15:ArrayOfint" />
+          <xs:element xmlns:q16="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="UpdatedOrderIndexes" nillable="true" type="q16:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateMenuControlsResponse" nillable="true" type="tns:UpdateMenuControlsResponse" />
+  <xs:complexType name="UpdateSectionsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence>
+          <xs:element xmlns:q17="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="InsertedOrderIndexes" nillable="true" type="q17:ArrayOfint" />
+          <xs:element xmlns:q18="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="UpdatedOrderIndexes" nillable="true" type="q18:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateSectionsResponse" nillable="true" type="tns:UpdateSectionsResponse" />
+  <xs:complexType name="UpdateShootsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateShootsResponse" nillable="true" type="tns:UpdateShootsResponse" />
+  <xs:complexType name="UpdateShotsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateShotsResponse" nillable="true" type="tns:UpdateShotsResponse" />
+  <xs:complexType name="UpdateTeamsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateTeamsResponse" nillable="true" type="tns:UpdateTeamsResponse" />
+  <xs:complexType name="UpdateLocalizationPresetsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BatchInsertResponse">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLocalizationPresetsResponse" nillable="true" type="tns:UpdateLocalizationPresetsResponse" />
+  <xs:complexType name="GetAudioFilenamesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q19="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="AudioFileNames" nillable="true" type="q19:ArrayOfKeyValueOfintstring" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAudioFilenamesResponse" nillable="true" type="tns:GetAudioFilenamesResponse" />
+  <xs:complexType name="IsRecordingRequiredResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q20="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="IsRecordingRequired" nillable="true" type="q20:ArrayOfKeyValueOfintboolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="IsRecordingRequiredResponse" nillable="true" type="tns:IsRecordingRequiredResponse" />
+  <xs:complexType name="IsTranslationRequiredResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q21="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="IsTranslationRequired" nillable="true" type="q21:ArrayOfKeyValueOfintboolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="IsTranslationRequiredResponse" nillable="true" type="tns:IsTranslationRequiredResponse" />
+  <xs:complexType name="GetRemoteFileStorageSettingsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence>
+          <xs:element xmlns:q22="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q22:RemoteFileStorageSettings" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetRemoteFileStorageSettingsResponse" nillable="true" type="tns:GetRemoteFileStorageSettingsResponse" />
+  <xs:complexType name="MoveScenesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence>
+          <xs:element xmlns:q23="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="OrderIndexes" nillable="true" type="q23:ArrayOfint" />
+          <xs:element xmlns:q24="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="SequenceIndexes" nillable="true" type="q24:ArrayOfint" />
+          <xs:element xmlns:q25="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Tags" nillable="true" type="q25:ArrayOfstring" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MoveScenesResponse" nillable="true" type="tns:MoveScenesResponse" />
+  <xs:complexType name="MoveSectionsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence>
+          <xs:element xmlns:q26="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="OrderIndexes" nillable="true" type="q26:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MoveSectionsResponse" nillable="true" type="tns:MoveSectionsResponse" />
+  <xs:complexType name="MoveMenuControlsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Response">
+        <xs:sequence>
+          <xs:element xmlns:q27="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="OrderIndexes" nillable="true" type="q27:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MoveMenuControlsResponse" nillable="true" type="tns:MoveMenuControlsResponse" />
+  <xs:complexType name="GetActorsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q28="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q28:ArrayOfActor" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetActorsResponse" nillable="true" type="tns:GetActorsResponse" />
+  <xs:complexType name="GetAIElementsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q29="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q29:ArrayOfAIElement" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAIElementsResponse" nillable="true" type="tns:GetAIElementsResponse" />
+  <xs:complexType name="GetAIElementSectionsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q30="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q30:ArrayOfAIElementSection" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAIElementSectionsResponse" nillable="true" type="tns:GetAIElementSectionsResponse" />
+  <xs:complexType name="GetAIElementTypesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q31="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q31:ArrayOfAIElementType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAIElementTypesResponse" nillable="true" type="tns:GetAIElementTypesResponse" />
+  <xs:complexType name="GetAudioFilesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q32="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q32:ArrayOfAudioFile" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAudioFilesResponse" nillable="true" type="tns:GetAudioFilesResponse" />
+  <xs:complexType name="GetAudioFilesLatestResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q33="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Result" nillable="true" type="q33:ArrayOfKeyValueOfLineLanguageKeyAudioFileFDGJEj3i" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAudioFilesLatestResponse" nillable="true" type="tns:GetAudioFilesLatestResponse" />
+  <xs:complexType name="GetCharactersResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q34="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q34:ArrayOfCharacter" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCharactersResponse" nillable="true" type="tns:GetCharactersResponse" />
+  <xs:complexType name="GetCommentsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q35="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q35:ArrayOfComment" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCommentsResponse" nillable="true" type="tns:GetCommentsResponse" />
+  <xs:complexType name="GetCustomDatasResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q36="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q36:ArrayOfCustomData" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomDatasResponse" nillable="true" type="tns:GetCustomDatasResponse" />
+  <xs:complexType name="GetCustomPresetsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q37="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q37:ArrayOfCustomPreset" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomPresetsResponse" nillable="true" type="tns:GetCustomPresetsResponse" />
+  <xs:complexType name="GetCustomPresetTypesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q38="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q38:ArrayOfCustomPresetType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomPresetTypesResponse" nillable="true" type="tns:GetCustomPresetTypesResponse" />
+  <xs:complexType name="GetCustomPropertiesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q39="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q39:ArrayOfCustomProperty" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomPropertiesResponse" nillable="true" type="tns:GetCustomPropertiesResponse" />
+  <xs:complexType name="GetCustomValuesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q40="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q40:ArrayOfCustomValue" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomValuesResponse" nillable="true" type="tns:GetCustomValuesResponse" />
+  <xs:complexType name="GetScenesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q41="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q41:ArrayOfScene" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetScenesResponse" nillable="true" type="tns:GetScenesResponse" />
+  <xs:complexType name="GetFoldersResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q42="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q42:ArrayOfFolder" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetFoldersResponse" nillable="true" type="tns:GetFoldersResponse" />
+  <xs:complexType name="GetLanguagesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q43="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q43:ArrayOfLanguage" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLanguagesResponse" nillable="true" type="tns:GetLanguagesResponse" />
+  <xs:complexType name="GetLinesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q44="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q44:ArrayOfLine" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLinesResponse" nillable="true" type="tns:GetLinesResponse" />
+  <xs:complexType name="GetLineCustomDataValuesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q45="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q45:ArrayOfLineCustomDataValue" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineCustomDataValuesResponse" nillable="true" type="tns:GetLineCustomDataValuesResponse" />
+  <xs:complexType name="GetSceneCustomDataValuesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q46="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q46:ArrayOfSceneCustomDataValue" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetSceneCustomDataValuesResponse" nillable="true" type="tns:GetSceneCustomDataValuesResponse" />
+  <xs:complexType name="GetLineLocalizationPresetsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q47="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q47:ArrayOfLineLocalizationPreset" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineLocalizationPresetsResponse" nillable="true" type="tns:GetLineLocalizationPresetsResponse" />
+  <xs:complexType name="GetLineSubtitlesResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q48="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q48:ArrayOfLineSubtitle" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineSubtitlesResponse" nillable="true" type="tns:GetLineSubtitlesResponse" />
+  <xs:complexType name="GetLineTranslationsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q49="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q49:ArrayOfLineTranslation" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineTranslationsResponse" nillable="true" type="tns:GetLineTranslationsResponse" />
+  <xs:complexType name="GetLocalizationPresetsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q50="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q50:ArrayOfLocalizationPreset" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLocalizationPresetsResponse" nillable="true" type="tns:GetLocalizationPresetsResponse" />
+  <xs:complexType name="GetMenuControlsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q51="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Result" nillable="true" type="q51:ArrayOfControl" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetMenuControlsResponse" nillable="true" type="tns:GetMenuControlsResponse" />
+</xs:schema>

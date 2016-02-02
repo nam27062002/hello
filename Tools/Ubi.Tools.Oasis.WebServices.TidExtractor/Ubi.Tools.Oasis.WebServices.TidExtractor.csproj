@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{92FFFEAF-C550-4CB7-94A3-43EC87442F87}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ubi.Tools.Oasis.WebServices.XmlExtractor</RootNamespace>
+    <AssemblyName>Ubi.Tools.Oasis.WebServices.XmlExtractor</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Ubi.Tools.Oasis.Shared, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Ubi.Tools.Oasis.Shared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataContext.cs" />
+    <Compile Include="Extractor\Extractor.cs" />
+    <Compile Include="Extractor\IExtractor.cs" />
+    <Compile Include="Extractor\TidExtractor.cs" />
+    <Compile Include="Extractor\XmlExtractor.cs" />
+    <Compile Include="Helpers\ExtractorToolCmdLineHelper.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service References\OasisService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EmbeddedResource Include="Resources\oasis_loc.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\oasis__global.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Service References\OasisService\OasisService.wsdl" />
+    <None Include="Service References\OasisService\OasisService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService1.wsdl" />
+    <None Include="Service References\OasisService\OasisService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\OasisService8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetActorsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetAIElementSectionsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetAIElementsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetAIElementTypesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetAudioFilenamesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetAudioFilesLatestResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetAudioFilesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetCharactersResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetCommentsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetCustomDatasResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetCustomPresetsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetCustomPresetTypesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetCustomPropertiesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetCustomValuesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetFoldersResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetLanguagesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetLineCustomDataValuesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetLineLocalizationPresetsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetLinesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetLineSubtitlesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetLineTranslationsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetLocalizationPresetsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetMenuControlsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetProjectSettingsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetPropsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetRemoteFileStorageSettingsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetSceneCustomDataValuesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetScenesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetSectionsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetShootsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetShotCharactersResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetShotPropsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetShotsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.GetTeamsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.IsRecordingRequiredResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.IsTranslationRequiredResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.MoveMenuControlsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.MoveScenesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.MoveSectionsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateAIElementSectionsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateAIElementsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateAIElementTypesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateAudioFilesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateCharactersResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateCommentsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateCustomDatasResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateCustomPresetsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateCustomPresetTypesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateCustomPropertiesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateCustomValuesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateFoldersResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateLanguagesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateLineCustomDataValuesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateLineLocalizationPresetsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateLinesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateLineTranslationsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateLocalizationPresetsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateMenuControlsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateSceneCustomDataValuesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateScenesResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateSectionsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateShootsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateShotsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OasisService\Ubi.Tools.Oasis.WebServices.XmlExtractor.OasisService.UpdateTeamsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\OasisService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OasisService\OasisService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OasisService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OasisService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\OasisService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://Ubi.Tools.Oasis.WebServices/2013/08" elementFormDefault="qualified" targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd2" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" />
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd4" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" />
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/System" />
+  <xs:element name="UpdateLineLocalizationPresets">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q1:UpdateLineLocalizationPresetsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLineLocalizationPresetsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateLineLocalizationPresetsResult" nillable="true" type="q2:UpdateLineLocalizationPresetsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProjectSettings">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q3:GetProjectSettingsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProjectSettingsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="GetProjectSettingsResult" nillable="true" type="q4:GetProjectSettingsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProps">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q5:GetPropsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPropsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetPropsResult" nillable="true" type="q6:GetPropsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSections">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q7:GetSectionsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSectionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetSectionsResult" nillable="true" type="q8:GetSectionsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShoots">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q9:GetShootsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShootsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetShootsResult" nillable="true" type="q10:GetShootsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShots">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q11:GetShotsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShotsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetShotsResult" nillable="true" type="q12:GetShotsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShotCharacters">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q13:GetShotCharactersRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShotCharactersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q14="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetShotCharactersResult" nillable="true" type="q14:GetShotCharactersResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShotProps">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q15="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q15:GetShotPropsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetShotPropsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q16="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetShotPropsResult" nillable="true" type="q16:GetShotPropsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTeams">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q17="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q17:GetTeamsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTeamsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q18="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetTeamsResult" nillable="true" type="q18:GetTeamsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAIElements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q19="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q19:UpdateAIElementsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAIElementsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q20="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateAIElementsResult" nillable="true" type="q20:UpdateAIElementsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAIElementSections">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q21="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q21:UpdateAIElementSectionsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAIElementSectionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q22="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateAIElementSectionsResult" nillable="true" type="q22:UpdateAIElementSectionsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAIElementTypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q23="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q23:UpdateAIElementTypesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAIElementTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q24="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateAIElementTypesResult" nillable="true" type="q24:UpdateAIElementTypesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAudioFiles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q25="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q25:UpdateAudioFilesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateAudioFilesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q26="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateAudioFilesResult" nillable="true" type="q26:UpdateAudioFilesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCharacters">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q27="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q27:UpdateCharactersRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCharactersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q28="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateCharactersResult" nillable="true" type="q28:UpdateCharactersResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateComments">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q29="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q29:UpdateCommentsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCommentsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q30="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateCommentsResult" nillable="true" type="q30:UpdateCommentsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomDatas">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q31="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q31:UpdateCustomDatasRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomDatasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q32="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateCustomDatasResult" nillable="true" type="q32:UpdateCustomDatasResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomPresets">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q33="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q33:UpdateCustomPresetsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomPresetsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q34="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateCustomPresetsResult" nillable="true" type="q34:UpdateCustomPresetsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomPresetTypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q35="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q35:UpdateCustomPresetTypesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomPresetTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q36="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateCustomPresetTypesResult" nillable="true" type="q36:UpdateCustomPresetTypesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomProperties">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q37="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q37:UpdateCustomPropertiesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomPropertiesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q38="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateCustomPropertiesResult" nillable="true" type="q38:UpdateCustomPropertiesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q39="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q39:UpdateCustomValuesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateCustomValuesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q40="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateCustomValuesResult" nillable="true" type="q40:UpdateCustomValuesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateScenes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q41="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q41:UpdateScenesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateScenesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q42="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateScenesResult" nillable="true" type="q42:UpdateScenesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateFolders">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q43="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q43:UpdateFoldersRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateFoldersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q44="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateFoldersResult" nillable="true" type="q44:UpdateFoldersResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLanguages">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q45="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q45:UpdateLanguagesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLanguagesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q46="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateLanguagesResult" nillable="true" type="q46:UpdateLanguagesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLines">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q47="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q47:UpdateLinesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLinesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q48="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateLinesResult" nillable="true" type="q48:UpdateLinesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLineCustomDataValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q49="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q49:UpdateLineCustomDataValuesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLineCustomDataValuesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q50="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateLineCustomDataValuesResult" nillable="true" type="q50:UpdateLineCustomDataValuesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateSceneCustomDataValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q51="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q51:UpdateSceneCustomDataValuesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateSceneCustomDataValuesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q52="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateSceneCustomDataValuesResult" nillable="true" type="q52:UpdateSceneCustomDataValuesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLineTranslations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q53="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q53:UpdateLineTranslationsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLineTranslationsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q54="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateLineTranslationsResult" nillable="true" type="q54:UpdateLineTranslationsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateMenuControls">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q55="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q55:UpdateMenuControlsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateMenuControlsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q56="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateMenuControlsResult" nillable="true" type="q56:UpdateMenuControlsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateSections">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q57="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q57:UpdateSectionsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateSectionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q58="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateSectionsResult" nillable="true" type="q58:UpdateSectionsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateShoots">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q59="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q59:UpdateShootsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateShootsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q60="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateShootsResult" nillable="true" type="q60:UpdateShootsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateShots">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q61="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q61:UpdateShotsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateShotsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q62="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateShotsResult" nillable="true" type="q62:UpdateShotsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateTeams">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q63="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q63:UpdateTeamsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateTeamsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q64="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateTeamsResult" nillable="true" type="q64:UpdateTeamsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLocalizationPresets">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q65="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q65:UpdateLocalizationPresetsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateLocalizationPresetsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q66="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="UpdateLocalizationPresetsResult" nillable="true" type="q66:UpdateLocalizationPresetsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAudioFilenames">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q67="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q67:GetAudioFilenamesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAudioFilenamesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q68="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetAudioFilenamesResult" nillable="true" type="q68:GetAudioFilenamesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsRecordingRequired">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q69="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q69:IsRecordingRequiredRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsRecordingRequiredResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q70="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="IsRecordingRequiredResult" nillable="true" type="q70:IsRecordingRequiredResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsTranslationRequired">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q71="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q71:IsTranslationRequiredRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsTranslationRequiredResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q72="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="IsTranslationRequiredResult" nillable="true" type="q72:IsTranslationRequiredResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDatabaseVersion">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDatabaseVersionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q73="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="GetDatabaseVersionResult" nillable="true" type="q73:Version" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRemoteFileStorageSettings">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRemoteFileStorageSettingsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q74="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetRemoteFileStorageSettingsResult" nillable="true" type="q74:GetRemoteFileStorageSettingsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MoveScenes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q75="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q75:MoveScenesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MoveScenesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q76="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="MoveScenesResult" nillable="true" type="q76:MoveScenesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MoveSections">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q77="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q77:MoveSectionsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MoveSectionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q78="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="MoveSectionsResult" nillable="true" type="q78:MoveSectionsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MoveMenuControls">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q79="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q79:MoveMenuControlsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MoveMenuControlsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q80="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="MoveMenuControlsResult" nillable="true" type="q80:MoveMenuControlsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetActors">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q81="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q81:GetActorsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetActorsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q82="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetActorsResult" nillable="true" type="q82:GetActorsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAIElements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q83="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q83:GetAIElementsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAIElementsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q84="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetAIElementsResult" nillable="true" type="q84:GetAIElementsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAIElementSections">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q85="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q85:GetAIElementSectionsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAIElementSectionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q86="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetAIElementSectionsResult" nillable="true" type="q86:GetAIElementSectionsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAIElementTypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q87="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q87:GetAIElementTypesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAIElementTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q88="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetAIElementTypesResult" nillable="true" type="q88:GetAIElementTypesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAudioFiles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q89="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q89:GetAudioFilesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAudioFilesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q90="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetAudioFilesResult" nillable="true" type="q90:GetAudioFilesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAudioFilesLatest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q91="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q91:GetAudioFilesLatestRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAudioFilesLatestResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q92="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetAudioFilesLatestResult" nillable="true" type="q92:GetAudioFilesLatestResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCharacters">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q93="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q93:GetCharactersRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCharactersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q94="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetCharactersResult" nillable="true" type="q94:GetCharactersResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetComments">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q95="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q95:GetCommentsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCommentsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q96="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetCommentsResult" nillable="true" type="q96:GetCommentsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomDatas">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q97="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q97:GetCustomDatasRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomDatasResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q98="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetCustomDatasResult" nillable="true" type="q98:GetCustomDatasResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomPresets">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q99="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q99:GetCustomPresetsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomPresetsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q100="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetCustomPresetsResult" nillable="true" type="q100:GetCustomPresetsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomPresetTypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q101="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q101:GetCustomPresetTypesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomPresetTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q102="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetCustomPresetTypesResult" nillable="true" type="q102:GetCustomPresetTypesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomProperties">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q103="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q103:GetCustomPropertiesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomPropertiesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q104="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetCustomPropertiesResult" nillable="true" type="q104:GetCustomPropertiesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q105="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q105:GetCustomValuesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCustomValuesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q106="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetCustomValuesResult" nillable="true" type="q106:GetCustomValuesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetScenes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q107="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q107:GetScenesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetScenesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q108="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetScenesResult" nillable="true" type="q108:GetScenesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFolders">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q109="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q109:GetFoldersRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFoldersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q110="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetFoldersResult" nillable="true" type="q110:GetFoldersResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLanguages">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q111="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q111:GetLanguagesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLanguagesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q112="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetLanguagesResult" nillable="true" type="q112:GetLanguagesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLines">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q113="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q113:GetLinesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLinesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q114="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetLinesResult" nillable="true" type="q114:GetLinesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineCustomDataValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q115="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q115:GetLineCustomDataValuesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineCustomDataValuesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q116="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetLineCustomDataValuesResult" nillable="true" type="q116:GetLineCustomDataValuesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSceneCustomDataValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q117="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q117:GetSceneCustomDataValuesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSceneCustomDataValuesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q118="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetSceneCustomDataValuesResult" nillable="true" type="q118:GetSceneCustomDataValuesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineLocalizationPresets">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q119="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q119:GetLineLocalizationPresetsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineLocalizationPresetsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q120="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetLineLocalizationPresetsResult" nillable="true" type="q120:GetLineLocalizationPresetsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineSubtitles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q121="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q121:GetLineSubtitlesRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineSubtitlesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q122="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetLineSubtitlesResult" nillable="true" type="q122:GetLineSubtitlesResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineTranslations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q123="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q123:GetLineTranslationsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLineTranslationsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q124="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetLineTranslationsResult" nillable="true" type="q124:GetLineTranslationsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLocalizationPresets">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q125="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q125:GetLocalizationPresetsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLocalizationPresetsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q126="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetLocalizationPresetsResult" nillable="true" type="q126:GetLocalizationPresetsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMenuControls">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q127="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" minOccurs="0" name="request" nillable="true" type="q127:GetMenuControlsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMenuControlsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q128="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" minOccurs="0" name="GetMenuControlsResult" nillable="true" type="q128:GetMenuControlsResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

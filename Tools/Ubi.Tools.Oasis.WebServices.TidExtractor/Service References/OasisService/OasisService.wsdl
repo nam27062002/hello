@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:i0="http://Ubi.Tools.Oasis.WebServices/2013/08" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OasisService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="BasicHttpBinding_IOasisService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <http:NtlmAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http" />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:import namespace="http://Ubi.Tools.Oasis.WebServices/2013/08" location="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?wsdl=wsdl0" />
+  <wsdl:types />
+  <wsdl:binding name="BasicHttpBinding_IOasisService" type="i0:IOasisService">
+    <wsp:PolicyReference URI="#BasicHttpBinding_IOasisService_policy" />
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UpdateLineLocalizationPresets">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLineLocalizationPresets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetProjectSettings">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetProjectSettings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetProps">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetProps" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetSections">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetSections" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetShoots">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShoots" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetShots">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShots" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetShotCharacters">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShotCharacters" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetShotProps">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShotProps" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetTeams">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetTeams" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAIElements">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAIElements" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAIElementSections">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAIElementSections" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAIElementTypes">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAIElementTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAudioFiles">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAduioFiles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCharacters">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCharacters" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateComments">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateComments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomDatas">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomDatas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomPresets">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomPresets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomPresetTypes">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomPresetTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomProperties">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomProperties" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomValues">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomValues" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateScenes">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateScenes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFolders">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateFolders" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLanguages">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLanguages" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLines">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLines" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLineCustomDataValues">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLineCustomDataValues" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSceneCustomDataValues">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateSceneCustomDataValues" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLineTranslations">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLineTranslations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMenuControls">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateMenuControls" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSections">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateSections" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateShoots">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateShoots" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateShots">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateShots" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateTeams">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateTeams" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLocalizationPresets">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLocalizationPresets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAudioFilenames">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GenerateAudioFileName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="IsRecordingRequired">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/IsRecordingRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="IsTranslationRequired">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/IsTranslationRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetDatabaseVersion">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetDatabaseVersion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetRemoteFileStorageSettings">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetRemoteFileStorageSettings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="MoveScenes">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/MoveScenes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="MoveSections">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/MoveSections" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="MoveMenuControls">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/MoveMenuControl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetActors">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetActors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAIElements">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAIElements" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAIElementSections">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAIElementSections" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAIElementTypes">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAIElementTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAudioFiles">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAudioFiles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAudioFilesLatest">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAudioFilesLatest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCharacters">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCharacters" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetComments">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetComments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomDatas">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomDatas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomPresets">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomPresets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomPresetTypes">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomPresetTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomProperties">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomProperties" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomValues">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomValues" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetScenes">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetScenes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFolders">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetFolders" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLanguages">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLanguages" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLines">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLines" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLineCustomDataValues">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineCustomDataValues" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetSceneCustomDataValues">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetSceneCustomDataValues" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLineLocalizationPresets">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineLocalizationPresets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLineSubtitles">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineSubtitles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLineTranslations">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineTranslations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLocalizationPresets">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLocalizationPresets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetMenuControls">
+      <soap:operation soapAction="http://Ubi.Tools.Oasis.WebServices/2013/08/GetMenuControls" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ScheduleFaultFault">
+        <soap:fault use="literal" name="ScheduleFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="ServiceFaultFault">
+        <soap:fault use="literal" name="ServiceFaultFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OasisService">
+    <wsdl:port name="BasicHttpBinding_IOasisService" binding="tns:BasicHttpBinding_IOasisService">
+      <soap:address location="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
