@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" elementFormDefault="qualified" targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd3" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" />
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd6" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd4" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" />
+  <xs:complexType name="UpdateLineLocalizationPresetsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Request">
+        <xs:sequence>
+          <xs:element xmlns:q1="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Deletes" nillable="true" type="q1:ArrayOfLineLocalizationPreset" />
+          <xs:element xmlns:q2="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Inserts" nillable="true" type="q2:ArrayOfLineLocalizationPreset" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLineLocalizationPresetsRequest" nillable="true" type="tns:UpdateLineLocalizationPresetsRequest" />
+  <xs:complexType name="Request">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="Request" nillable="true" type="tns:Request" />
+  <xs:complexType name="GetProjectSettingsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetProjectSettingsRequest" nillable="true" type="tns:GetProjectSettingsRequest" />
+  <xs:complexType name="GetRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Request">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DateTime" nillable="true" type="xs:dateTime">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="EventId" nillable="true" type="xs:long">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetRequest" nillable="true" type="tns:GetRequest" />
+  <xs:complexType name="GetProjectSettingsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q3="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" base="q3:GetResponse">
+        <xs:sequence>
+          <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ProjectSettings" nillable="true" type="q4:ArrayOfKeyValueOfstringstring" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetProjectSettingsResponse" nillable="true" type="tns:GetProjectSettingsResponse" />
+  <xs:complexType name="GetPropsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetPropsRequest" nillable="true" type="tns:GetPropsRequest" />
+  <xs:complexType name="GetByIdsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence>
+          <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ObjectIds" nillable="true" type="q5:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetByIdsRequest" nillable="true" type="tns:GetByIdsRequest" />
+  <xs:complexType name="GetSectionsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetSectionsRequest" nillable="true" type="tns:GetSectionsRequest" />
+  <xs:complexType name="GetShootsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShootsRequest" nillable="true" type="tns:GetShootsRequest" />
+  <xs:complexType name="GetShotsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence>
+          <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ShootIds" nillable="true" type="q6:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShotsRequest" nillable="true" type="tns:GetShotsRequest" />
+  <xs:complexType name="GetShotCharactersRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShotCharactersRequest" nillable="true" type="tns:GetShotCharactersRequest" />
+  <xs:complexType name="GetShotPropsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetShotPropsRequest" nillable="true" type="tns:GetShotPropsRequest" />
+  <xs:complexType name="GetTeamsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetTeamsRequest" nillable="true" type="tns:GetTeamsRequest" />
+  <xs:complexType name="UpdateAIElementsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAIElementsRequest" nillable="true" type="tns:UpdateAIElementsRequest" />
+  <xs:complexType name="UpdateRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateOnlyRequest">
+        <xs:sequence>
+          <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Deletes" nillable="true" type="q7:ArrayOfanyType" />
+          <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Inserts" nillable="true" type="q8:ArrayOfanyType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateRequest" nillable="true" type="tns:UpdateRequest" />
+  <xs:complexType name="UpdateOnlyRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Request">
+        <xs:sequence>
+          <xs:element xmlns:q9="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="Updates" nillable="true" type="q9:ArrayOfanyType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateOnlyRequest" nillable="true" type="tns:UpdateOnlyRequest" />
+  <xs:complexType name="UpdateAIElementSectionsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAIElementSectionsRequest" nillable="true" type="tns:UpdateAIElementSectionsRequest" />
+  <xs:complexType name="UpdateAIElementTypesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAIElementTypesRequest" nillable="true" type="tns:UpdateAIElementTypesRequest" />
+  <xs:complexType name="UpdateAudioFilesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateAudioFilesRequest" nillable="true" type="tns:UpdateAudioFilesRequest" />
+  <xs:complexType name="UpdateCharactersRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCharactersRequest" nillable="true" type="tns:UpdateCharactersRequest" />
+  <xs:complexType name="UpdateCommentsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCommentsRequest" nillable="true" type="tns:UpdateCommentsRequest" />
+  <xs:complexType name="UpdateCustomDatasRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomDatasRequest" nillable="true" type="tns:UpdateCustomDatasRequest" />
+  <xs:complexType name="UpdateCustomPresetsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomPresetsRequest" nillable="true" type="tns:UpdateCustomPresetsRequest" />
+  <xs:complexType name="UpdateCustomPresetTypesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomPresetTypesRequest" nillable="true" type="tns:UpdateCustomPresetTypesRequest" />
+  <xs:complexType name="UpdateCustomPropertiesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomPropertiesRequest" nillable="true" type="tns:UpdateCustomPropertiesRequest" />
+  <xs:complexType name="UpdateCustomValuesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateCustomValuesRequest" nillable="true" type="tns:UpdateCustomValuesRequest" />
+  <xs:complexType name="UpdateScenesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateScenesRequest" nillable="true" type="tns:UpdateScenesRequest" />
+  <xs:complexType name="UpdateFoldersRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateFoldersRequest" nillable="true" type="tns:UpdateFoldersRequest" />
+  <xs:complexType name="UpdateLanguagesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLanguagesRequest" nillable="true" type="tns:UpdateLanguagesRequest" />
+  <xs:complexType name="UpdateLinesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLinesRequest" nillable="true" type="tns:UpdateLinesRequest" />
+  <xs:complexType name="UpdateLineCustomDataValuesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLineCustomDataValuesRequest" nillable="true" type="tns:UpdateLineCustomDataValuesRequest" />
+  <xs:complexType name="UpdateSceneCustomDataValuesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateSceneCustomDataValuesRequest" nillable="true" type="tns:UpdateSceneCustomDataValuesRequest" />
+  <xs:complexType name="UpdateLineTranslationsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLineTranslationsRequest" nillable="true" type="tns:UpdateLineTranslationsRequest" />
+  <xs:complexType name="UpdateMenuControlsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateMenuControlsRequest" nillable="true" type="tns:UpdateMenuControlsRequest" />
+  <xs:complexType name="UpdateSectionsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateSectionsRequest" nillable="true" type="tns:UpdateSectionsRequest" />
+  <xs:complexType name="UpdateShootsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateOnlyRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateShootsRequest" nillable="true" type="tns:UpdateShootsRequest" />
+  <xs:complexType name="UpdateShotsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateOnlyRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateShotsRequest" nillable="true" type="tns:UpdateShotsRequest" />
+  <xs:complexType name="UpdateTeamsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateTeamsRequest" nillable="true" type="tns:UpdateTeamsRequest" />
+  <xs:complexType name="UpdateLocalizationPresetsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:UpdateRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="UpdateLocalizationPresetsRequest" nillable="true" type="tns:UpdateLocalizationPresetsRequest" />
+  <xs:complexType name="GetAudioFilenamesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence>
+          <xs:element xmlns:q10="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LineIds" nillable="true" type="q10:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAudioFilenamesRequest" nillable="true" type="tns:GetAudioFilenamesRequest" />
+  <xs:complexType name="IsRecordingRequiredRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="LanguageId" type="xs:int" />
+          <xs:element xmlns:q11="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LineIds" nillable="true" type="q11:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="IsRecordingRequiredRequest" nillable="true" type="tns:IsRecordingRequiredRequest" />
+  <xs:complexType name="IsTranslationRequiredRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="LanguageId" type="xs:int" />
+          <xs:element xmlns:q12="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LineIds" nillable="true" type="q12:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="IsTranslationRequiredRequest" nillable="true" type="tns:IsTranslationRequiredRequest" />
+  <xs:complexType name="MoveScenesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Request">
+        <xs:sequence>
+          <xs:element xmlns:q13="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Moves" nillable="true" type="q13:ArrayOfSceneMove" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MoveScenesRequest" nillable="true" type="tns:MoveScenesRequest" />
+  <xs:complexType name="MoveSectionsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Request">
+        <xs:sequence>
+          <xs:element xmlns:q14="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Moves" nillable="true" type="q14:ArrayOfSectionMove" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MoveSectionsRequest" nillable="true" type="tns:MoveSectionsRequest" />
+  <xs:complexType name="MoveMenuControlsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Request">
+        <xs:sequence>
+          <xs:element xmlns:q15="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="Moves" nillable="true" type="q15:ArrayOfControlMove" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MoveMenuControlsRequest" nillable="true" type="tns:MoveMenuControlsRequest" />
+  <xs:complexType name="GetActorsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetActorsRequest" nillable="true" type="tns:GetActorsRequest" />
+  <xs:complexType name="GetAIElementsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAIElementsRequest" nillable="true" type="tns:GetAIElementsRequest" />
+  <xs:complexType name="GetAIElementSectionsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAIElementSectionsRequest" nillable="true" type="tns:GetAIElementSectionsRequest" />
+  <xs:complexType name="GetAIElementTypesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAIElementTypesRequest" nillable="true" type="tns:GetAIElementTypesRequest" />
+  <xs:complexType name="GetAudioFilesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAudioFilesRequest" nillable="true" type="tns:GetAudioFilesRequest" />
+  <xs:complexType name="GetAudioFilesLatestRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence>
+          <xs:element xmlns:q16="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" minOccurs="0" name="LineLanguageKeys" nillable="true" type="q16:ArrayOfLineLanguageKey" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetAudioFilesLatestRequest" nillable="true" type="tns:GetAudioFilesLatestRequest" />
+  <xs:complexType name="GetCharactersRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCharactersRequest" nillable="true" type="tns:GetCharactersRequest" />
+  <xs:complexType name="GetCommentsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCommentsRequest" nillable="true" type="tns:GetCommentsRequest" />
+  <xs:complexType name="GetCustomDatasRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomDatasRequest" nillable="true" type="tns:GetCustomDatasRequest" />
+  <xs:complexType name="GetCustomPresetsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomPresetsRequest" nillable="true" type="tns:GetCustomPresetsRequest" />
+  <xs:complexType name="GetCustomPresetTypesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomPresetTypesRequest" nillable="true" type="tns:GetCustomPresetTypesRequest" />
+  <xs:complexType name="GetCustomPropertiesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomPropertiesRequest" nillable="true" type="tns:GetCustomPropertiesRequest" />
+  <xs:complexType name="GetCustomValuesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetCustomValuesRequest" nillable="true" type="tns:GetCustomValuesRequest" />
+  <xs:complexType name="GetScenesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetScenesRequest" nillable="true" type="tns:GetScenesRequest" />
+  <xs:complexType name="GetFoldersRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetFoldersRequest" nillable="true" type="tns:GetFoldersRequest" />
+  <xs:complexType name="GetLanguagesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLanguagesRequest" nillable="true" type="tns:GetLanguagesRequest" />
+  <xs:complexType name="GetLinesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLinesRequest" nillable="true" type="tns:GetLinesRequest" />
+  <xs:complexType name="GetLineCustomDataValuesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence>
+          <xs:element xmlns:q17="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="CustomDataIds" nillable="true" type="q17:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineCustomDataValuesRequest" nillable="true" type="tns:GetLineCustomDataValuesRequest" />
+  <xs:complexType name="GetSceneCustomDataValuesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence>
+          <xs:element xmlns:q18="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="CustomDataIds" nillable="true" type="q18:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetSceneCustomDataValuesRequest" nillable="true" type="tns:GetSceneCustomDataValuesRequest" />
+  <xs:complexType name="GetLineLocalizationPresetsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence>
+          <xs:element xmlns:q19="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LineIds" nillable="true" type="q19:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineLocalizationPresetsRequest" nillable="true" type="tns:GetLineLocalizationPresetsRequest" />
+  <xs:complexType name="GetLineSubtitlesRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineSubtitlesRequest" nillable="true" type="tns:GetLineSubtitlesRequest" />
+  <xs:complexType name="GetLineTranslationsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetRequest">
+        <xs:sequence>
+          <xs:element xmlns:q20="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LanguageIds" nillable="true" type="q20:ArrayOfint" />
+          <xs:element xmlns:q21="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LineIds" nillable="true" type="q21:ArrayOfint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLineTranslationsRequest" nillable="true" type="tns:GetLineTranslationsRequest" />
+  <xs:complexType name="GetLocalizationPresetsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetLocalizationPresetsRequest" nillable="true" type="tns:GetLocalizationPresetsRequest" />
+  <xs:complexType name="GetMenuControlsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GetByIdsRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GetMenuControlsRequest" nillable="true" type="tns:GetMenuControlsRequest" />
+</xs:schema>

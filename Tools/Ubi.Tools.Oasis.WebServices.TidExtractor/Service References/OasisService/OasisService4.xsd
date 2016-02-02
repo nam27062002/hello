@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" elementFormDefault="qualified" targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:simpleType name="FolderType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Character" />
+      <xs:enumeration value="AudioPreset">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">7</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="AFXPreset">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">8</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="LocalizationPreset">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">9</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Actor">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">10</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Team">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">11</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="CustomPresetType">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">15</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="CustomPreset">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">16</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="WorkOrder">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">17</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="AIElement">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">18</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Prop">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">19</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Set">
+        <xs:annotation>
+          <xs:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">20</EnumerationValue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="FolderType" nillable="true" type="tns:FolderType" />
+  <xs:simpleType name="SectionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Cinematic" />
+      <xs:enumeration value="Script" />
+      <xs:enumeration value="Menu" />
+      <xs:enumeration value="AI" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="SectionType" nillable="true" type="tns:SectionType" />
+  <xs:simpleType name="WorkOrderType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="RecordingSession" />
+      <xs:enumeration value="Localization" />
+      <xs:enumeration value="Global" />
+      <xs:enumeration value="Mocap" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="WorkOrderType" nillable="true" type="tns:WorkOrderType" />
+  <xs:simpleType name="ShotPhaseType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Unscheduled" />
+      <xs:enumeration value="Scheduled" />
+      <xs:enumeration value="NotCaptured" />
+      <xs:enumeration value="Captured" />
+      <xs:enumeration value="NotToCapture" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ShotPhaseType" nillable="true" type="tns:ShotPhaseType" />
+  <xs:simpleType name="VoiceRecordType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="No" />
+      <xs:enumeration value="Temp" />
+      <xs:enumeration value="Yes" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="VoiceRecordType" nillable="true" type="tns:VoiceRecordType" />
+  <xs:simpleType name="LineType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="General" />
+      <xs:enumeration value="SceneHeading" />
+      <xs:enumeration value="Action" />
+      <xs:enumeration value="Transition" />
+      <xs:enumeration value="Shot" />
+      <xs:enumeration value="Spoken" />
+      <xs:enumeration value="Menu" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="LineType" nillable="true" type="tns:LineType" />
+  <xs:simpleType name="CustomPropertyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Enum" />
+      <xs:enumeration value="Bool" />
+      <xs:enumeration value="Text" />
+      <xs:enumeration value="Numeric" />
+      <xs:enumeration value="Hyperlink" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CustomPropertyType" nillable="true" type="tns:CustomPropertyType" />
+  <xs:simpleType name="AIElementType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="AIElement" />
+      <xs:enumeration value="Character" />
+      <xs:enumeration value="Team" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="AIElementType" nillable="true" type="tns:AIElementType" />
+  <xs:simpleType name="CharacterType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Primary" />
+      <xs:enumeration value="Secondary" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CharacterType" nillable="true" type="tns:CharacterType" />
+  <xs:simpleType name="GenderType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Male" />
+      <xs:enumeration value="Female" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="GenderType" nillable="true" type="tns:GenderType" />
+  <xs:simpleType name="CustomDataType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Preset" />
+      <xs:enumeration value="Property" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CustomDataType" nillable="true" type="tns:CustomDataType" />
+  <xs:simpleType name="CustomOwnerType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Dialog" />
+      <xs:enumeration value="Line" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CustomOwnerType" nillable="true" type="tns:CustomOwnerType" />
+</xs:schema>
