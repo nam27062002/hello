@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -26,7 +27,9 @@ public class DragonMotion : MonoBehaviour {
 		Fly,
 		Fly_Up,
 		Fly_Down,
-		Stunned
+		Stunned,
+		InsideWater,
+		OutterSpace
 	};
 
 	//------------------------------------------------------------------//
@@ -69,6 +72,10 @@ public class DragonMotion : MonoBehaviour {
 
 	private Transform m_tongue;
 	private Transform m_head;
+
+	// Parabolic movement
+	private float m_parabolicMovementValue = 10;
+
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -156,6 +163,14 @@ public class DragonMotion : MonoBehaviour {
 				case State.Stunned:
 					m_stunnedTimer = 0;
 					break;
+				case State.InsideWater:
+				{
+					m_animator.SetBool("fly down", false);
+				}break;
+				case State.OutterSpace:
+				{
+					m_animator.SetBool("fly down", false);
+				}break;
 			}
 
 			// entering new state
@@ -191,6 +206,14 @@ public class DragonMotion : MonoBehaviour {
 					m_speedMultiplier = 0.5f;
 					m_animator.SetTrigger("damage");
 					break;
+				case State.InsideWater:
+				{
+					m_animator.SetBool("fly down", true);
+				}break;
+				case State.OutterSpace:
+				{
+					m_animator.SetBool("fly down", true);
+				}break;
 			}
 
 			m_state = _nextState;
@@ -257,6 +280,12 @@ public class DragonMotion : MonoBehaviour {
 			case State.Fly_Down:
 				UpdateMovement();
 				break;
+			case State.InsideWater:
+				UpdateParabolicMovement( m_parabolicMovementValue);
+				break;
+			case State.OutterSpace:
+				UpdateParabolicMovement( -m_parabolicMovementValue);
+				break;
 		}
 		
 		m_rbody.angularVelocity = Vector3.zero;
@@ -287,6 +316,33 @@ public class DragonMotion : MonoBehaviour {
 			ChangeState(State.Idle);
 		}
 
+		m_rbody.velocity = m_impulse;
+	}
+
+	private void UpdateParabolicMovement( float moveValue )
+	{
+		// check collision with ground, only down!!
+		m_impulse.y += moveValue * Time.deltaTime;
+		if ( m_impulse.y < 0 )
+		{
+			RaycastHit sensorA = new RaycastHit();
+			bool nearGround = CheckGround(out sensorA);
+			if ( nearGround )
+			{
+				m_impulse.y = 0;
+			}
+		}
+		else if ( m_impulse.y > 0 )
+		{
+			RaycastHit sensorA = new RaycastHit();
+			bool nearCeiling = CheckCeiling(out sensorA);
+			if ( nearCeiling )
+			{
+				m_impulse.y = 0;
+			}
+		}
+		m_direction = m_impulse.normalized;
+		m_orientation.SetDirection(m_direction);
 		m_rbody.velocity = m_impulse;
 	}
 
@@ -450,6 +506,68 @@ public class DragonMotion : MonoBehaviour {
 		m_dragon.AddLife(-_damage);
 	}
 
+	public void StartWaterMovement()
+	{
+		ChangeState(State.InsideWater);
+	}
 
+	public void EndWaterMovement()
+	{
+		// Wait a second 
+		StartCoroutine( EndWaterCoroutine() );
+	}
+
+	IEnumerator EndWaterCoroutine()
+	{
+		yield return new WaitForSeconds(0.1f);
+		ChangeState( State.Fly_Up);
+	} 
+
+	public void StartSpaceMovement()
+	{
+		ChangeState(State.OutterSpace);
+	}
+
+	public void EndSpaceMovement()
+	{
+		// Wait a second 
+		StartCoroutine( EndSpaceCoroutine() );
+	}
+
+	IEnumerator EndSpaceCoroutine()
+	{
+		yield return new WaitForSeconds(0.1f);
+		ChangeState( State.Fly_Down);
+	} 
+
+
+	/// <summary>
+	/// Raises the trigger enter event.
+	/// </summary>
+	/// <param name="_other">Other.</param>
+	void OnTriggerEnter(Collider _other)
+	{
+		if ( _other.tag == "Water" )
+		{
+			// if not in water => start water movement
+			StartWaterMovement();
+		}
+		else if ( _other.tag == "Space" )
+		{
+			StartSpaceMovement();
+		}
+	}
+
+	void OnTriggerExit( Collider _other )
+	{
+		if ( _other.tag == "Water" )
+		{
+			EndWaterMovement();
+		}
+		else if ( _other.tag == "Space" )
+		{
+			EndSpaceMovement();
+		}
+	}
 }
 
