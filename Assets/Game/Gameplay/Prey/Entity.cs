@@ -1,20 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
-public class PreyStats : Initializable {
+public class Entity : Initializable {
 
 
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
+	[FormerlySerializedAs("m_typeID")]
 	[EntitySkuList]
-	[SerializeField] private string m_typeID;
-	public string typeID { get { return m_typeID; } }
+	[SerializeField] private string m_sku;
+	public string sku { get { return m_sku; } }
 
 	private EntityDef m_def = null;
 	public EntityDef def { 
 		get { 
-			if(m_def == null) m_def = DefinitionsManager.entities.GetDef(typeID); 
+			if(m_def == null) m_def = DefinitionsManager.entities.GetDef(sku); 
 			return m_def;
 		}
 	}

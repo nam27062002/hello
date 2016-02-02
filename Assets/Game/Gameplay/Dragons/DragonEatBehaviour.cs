@@ -184,7 +184,7 @@ public class DragonEatBehaviour : MonoBehaviour {
 	{
 		if (enabled && m_eatingTimer <= 0) 
 		{
-			PreyStats entity = _prey.GetComponent<PreyStats>();
+			Entity entity = _prey.GetComponent<Entity>();
 			if (entity.def.edibleFromTier <= m_dragon.data.def.tier) 
 			{
 				// Yes!! Eat it!!

@@ -67,7 +67,7 @@ public class HUDDamageMessage : MonoBehaviour {
 		if(_source == null) return;
 
 		// Get the feedback component from the source entity
-		PreyStats entity = _source.GetComponent<PreyStats>();
+		Entity entity = _source.GetComponent<Entity>();
 		if(entity != null) {
 			// Yes!! Show a message?
 			string msg = entity.def.feedbackData.GetFeedback(FeedbackData.Type.DAMAGE);

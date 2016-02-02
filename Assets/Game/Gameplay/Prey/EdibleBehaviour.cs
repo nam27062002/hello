@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(PreyStats))]
+[RequireComponent(typeof(Entity))]
 public class EdibleBehaviour : Initializable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private PreyStats m_prey;
+	private Entity m_prey;
 	private Animator m_animator;
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
@@ -36,7 +36,7 @@ public class EdibleBehaviour : Initializable {
 		m_Bounds = GetComponent<CircleArea2D>();
 
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_prey = GetComponent<PreyStats>();
+		m_prey = GetComponent<Entity>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_dragonEat = m_dragon.GetComponent<DragonEatBehaviour>();
 		m_dragonMouth = m_dragon.tongue;
