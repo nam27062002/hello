@@ -24,7 +24,7 @@ public class TemplateEditorWindow : EditorWindow {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Windows instance
+	// Window instance
 	private static TemplateEditorWindow m_instance = null;
 	public static TemplateEditorWindow instance {
 		get {
@@ -38,6 +38,14 @@ public class TemplateEditorWindow : EditorWindow {
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Opens the window.
+	/// </summary>
+	//[MenuItem("Hungry Dragon/Tools/TemplateEditorWindow")]	// UNCOMMENT TO ADD MENU ENTRY!!!
+	public static void OpenWindow() {
+		instance.Show();
+	}
+
 	/// <summary>
 	/// The editor has been enabled - target object selected.
 	/// </summary>
