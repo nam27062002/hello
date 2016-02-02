@@ -28,7 +28,8 @@ public class NetworkManager : MonoBehaviour
 	public class HttpRequestCreator : IWebRequestCreate {
 		public WebRequest Create(Uri uri)
 		{
-			return new HttpWebRequest(uri);	
+			// return new HttpWebRequest(uri);	
+			return HttpWebRequest.Create(uri);
 		}
 	}
 	
