@@ -101,13 +101,17 @@ public class FireBreath : DragonBreathBehaviour {
 		return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
 	}
 
-	override protected void BeginBreath() {
+	override protected void BeginBreath() 
+	{
+		base.BeginBreath();
 		m_light = PoolManager.GetInstance("PF_FireLight");
 		m_light.transform.position = m_mouthTransform.position;
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);
 	}
 
-	override protected void EndBreath() {
+	override protected void EndBreath() 
+	{
+		base.EndBreath();
 		m_light.SetActive(false);
 		m_light = null;
 	}
