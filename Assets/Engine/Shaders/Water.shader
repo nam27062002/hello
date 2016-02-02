@@ -1,4 +1,4 @@
- Shader "Custom/WaterShaderFE" 
+ Shader "Custom/WaterShader"
  {
 	Properties 
 	{
@@ -9,8 +9,6 @@
 		_SpeedX1 ("X Speed Layer 1", Range (-10.0,10.0)) = 1.0
 		_SpeedX2 ("X Speed Layer 2", Range (-10.0,10.0)) = 1.0
 		_FixedTransp ("Fixed Transparency Value", Range(0,1.0)) = 0.0	
-		
-		[HideInInspector]
 		_WaveAmplitude ("Wave Amplitude", float) = 50.0		
 		[HideInInspector]
 		_Width ("Mesh Width", float) = 2000.0
