@@ -113,6 +113,17 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 	}
 
 	/// <summary>
+	/// Draw a property using its default inspector drawer and automatically 
+	/// advance position.
+	/// </summary>
+	/// <param name="_property">The property to be drawn.</param>
+	protected void DrawAndAdvance(SerializedProperty _property) {
+		m_pos.height = EditorGUI.GetPropertyHeight(_property);
+		EditorGUI.PropertyField(m_pos, _property, true);
+		AdvancePos();
+	}
+
+	/// <summary>
 	/// Get the stored height of a property in the dictionary.
 	/// If not found, a new entry is added with the default value.
 	/// </summary>
