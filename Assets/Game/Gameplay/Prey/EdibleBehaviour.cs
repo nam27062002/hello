@@ -4,16 +4,6 @@ using System.Collections;
 [RequireComponent(typeof(PreyStats))]
 public class EdibleBehaviour : Initializable {
 	//-----------------------------------------------
-	// Properties
-	//-----------------------------------------------
-	[SerializeField] private DragonTier m_edibleFromTier = 0;
-	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
-	
-	[SerializeField][Range(1, 10)] private float m_size = 1f;
-	public float size { get { return m_size; } }
-
-
-	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
 	private PreyStats m_prey;
@@ -143,6 +133,4 @@ public class EdibleBehaviour : Initializable {
 		if ( po != null )
 			po.enabled = _enable;
 	}
-
-
 }

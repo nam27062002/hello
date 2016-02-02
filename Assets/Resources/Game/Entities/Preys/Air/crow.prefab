@@ -27,7 +27,6 @@ GameObject:
   - 114: {fileID: 11418200}
   - 114: {fileID: 11418024}
   - 114: {fileID: 11472838}
-  - 114: {fileID: 11411850}
   - 114: {fileID: 11422932}
   - 114: {fileID: 11443852}
   - 114: {fileID: 11446750}
@@ -409,33 +408,6 @@ MonoBehaviour:
   m_sensorMaxRadius: 14
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
---- !u!114 &11411850
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 127370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0
-  - 0.25
-  - 0.25
-  - 0
-  m_feedbacks:
-  - data: []
-  - data:
-    - Yummy!
-    - Protein!
-    - So Good!
-  - data:
-    - Barbecue!
-    - Roasted!
-    - Medium-rare!
-  - data: []
 --- !u!114 &11418024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -449,8 +421,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
   m_size: 1
-  m_isBig: 0
-  m_destroyOnEat: 0
+  onEatenParticle: 
 --- !u!114 &11418200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -527,6 +498,7 @@ MonoBehaviour:
   m_maxSpeed: 6.5
   m_maxRunSpeed: 10
   m_slowingRadius: 2
+  m_fallOnBurn: 0
 --- !u!114 &11449248
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -566,6 +538,17 @@ MonoBehaviour:
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
   m_maxHealth: 100
+  m_ashesAsset: 
+  m_dissolveTime: 1.5
+  m_explosionPrefab: {fileID: 0}
+  m_scaleRange:
+    min: 1
+    max: 5
+  m_rotationRange:
+    min: 0
+    max: 360
+  m_shake: 0
+  m_slowMotion: 0
 --- !u!114 &11490092
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -577,6 +560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_deactivate: 1
 --- !u!137 &13700594
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

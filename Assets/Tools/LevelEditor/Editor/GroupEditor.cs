@@ -102,7 +102,7 @@ namespace LevelEditor {
 			// Find all items that contain a prey stats script
 			PreyStats[] decosStats = targetGroup.GetComponentsInChildren<PreyStats>();
 			for(int i = 0; i < decosStats.Length; i++) {
-				m_decosReward[0] = m_decosReward[0] + decosStats[i].reward;
+				m_decosReward[0] = m_decosReward[0] + decosStats[i].def.reward;
 			}
 
 			// Spawners
@@ -117,8 +117,8 @@ namespace LevelEditor {
 				if(entityStats == null) continue;
 
 				// Add to total reward taking in account spawning amounts
-				m_spawnersReward[0] = m_spawnersReward[0] + (entityStats.reward * spawners[i].m_quantity.min);
-				m_spawnersReward[1] = m_spawnersReward[1] + (entityStats.reward * spawners[i].m_quantity.max);
+				m_spawnersReward[0] = m_spawnersReward[0] + (entityStats.def.reward * spawners[i].m_quantity.min);
+				m_spawnersReward[1] = m_spawnersReward[1] + (entityStats.def.reward * spawners[i].m_quantity.max);
 				m_spawnersReward[2] = (m_spawnersReward[0] + m_spawnersReward[1]) * 0.5f;
 			}
 

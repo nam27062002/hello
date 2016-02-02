@@ -43,6 +43,9 @@ public class EntityDef : Definition {
 	public float pcChance { get { return m_pcChance; }}
 
 	[Header("Edible")]
+	[SerializeField] private bool m_isEdible = true;
+	public bool isEdible { get { return m_isEdible; }}
+
 	[SerializeField] private DragonTier m_edibleFromTier = 0;
 	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
 

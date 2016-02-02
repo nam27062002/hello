@@ -72,7 +72,6 @@ GameObject:
   - 114: {fileID: 11408712}
   - 114: {fileID: 11417704}
   - 114: {fileID: 11492792}
-  - 114: {fileID: 11491302}
   - 114: {fileID: 11475506}
   - 114: {fileID: 11439856}
   - 114: {fileID: 11402766}
@@ -494,8 +493,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_edibleFromTier: 0
   m_size: 1.5
-  m_isBig: 0
-  m_destroyOnEat: 0
   onEatenParticle: Feathers
 --- !u!114 &11433180
 MonoBehaviour:
@@ -567,33 +564,6 @@ MonoBehaviour:
   offset: {x: 0.1056079, y: 0.40699673}
   radius: 0.7401352
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11491302
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 123138}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf12315873f14cf6842cfd06cc1c42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_probabilities:
-  - 0
-  - 0.25
-  - 0.25
-  - 0
-  m_feedbacks:
-  - data: []
-  - data:
-    - Yummy!
-    - Protein!
-    - So Good!
-  - data:
-    - Barbecue!
-    - Roasted!
-    - Medium-rare!
-  - data: []
 --- !u!114 &11492792
 MonoBehaviour:
   m_ObjectHideFlags: 1

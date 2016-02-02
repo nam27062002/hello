@@ -17,44 +17,52 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 11
+      coins: 5
       pc: 0
-      health: 0
+      health: 3
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 3
+      xp: 0.6
+    m_goldenChance: 0.02
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Yummy!
+        - Protein!
+        - So Good!
+      - data:
+        - Barbecue!
+        - Roasted!
+        - Medium-rare!
       - data: []
   - m_sku: hawk
     m_category: animal
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 100
+      coins: 60
       pc: 0
-      health: 0
+      health: 5
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 8
+      xp: 1
+    m_goldenChance: 0.301
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_biteResistance: 1.7
     m_feedbackData:
       m_probabilities:
       - 0
@@ -71,69 +79,84 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 11
+      coins: 5
       pc: 0
-      health: 0
+      health: 2
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 2
+      xp: 0.6
+    m_goldenChance: 0.02
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Yummy!
+        - Protein!
+        - So Good!
+      - data:
+        - Barbecue!
+        - Roasted!
+        - Medium-rare!
       - data: []
   - m_sku: bat
     m_category: animal
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 10
+      coins: 6
       pc: 0
-      health: 0
+      health: 2
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 4
+      xp: 0.4
+    m_goldenChance: 0.05
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Batman!
+        - Hairy Stuff
+        - BlindTaste
+      - data:
+        - Barbecue!
+        - Batman!
+        - Instant Combustion
       - data: []
   - m_sku: clothes_line_01
     m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 15
+      coins: 50
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.1
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -152,15 +175,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 15
+      coins: 50
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.1
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -179,82 +203,101 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 50
+      coins: 25
       pc: 0
-      health: 0
+      health: 6
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 15
+      xp: 0.8
+    m_goldenChance: 0.25
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_biteResistance: 5
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Tasty!
+        - Natural Selection
+        - Chubby!
+      - data:
+        - Medium-rare!
+        - Barbecue!
+        - Rostisserie
       - data: []
   - m_sku: citizen_01
     m_category: human
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 50
+      coins: 25
       pc: 0
-      health: 0
+      health: 9
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 15
+      xp: 0.8
+    m_goldenChance: 0.25
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_biteResistance: 2.3
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Tasty!
+        - Natural Selection
+        - Chubby!
+      - data:
+        - Medium-rare!
+        - Barbecue!
+        - Rostisserie
       - data: []
   - m_sku: soldier
     m_category: human
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 100
+      coins: 70
       pc: 0
-      health: 0
+      health: 10
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 20
+      xp: 1
+    m_goldenChance: 0.301
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_biteResistance: 2.3
     m_feedbackData:
       m_probabilities:
-      - 0.55
-      - 0.434
+      - 0.745
+      - 0.25
       - 0
       - 0
       m_feedbacks:
       - data:
-        - sfdfsdfsdf
-        - sdddddd
-      - data: []
+        - Watch Out!
+        - Minefield!
+        - Gunned Down!
+      - data:
+        - Natural Selection
+        - Iron Stomach!
+        - Tasty!
       - data: []
       - data: []
   - m_sku: mine_small_01
@@ -262,7 +305,7 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
+      score: 10
       coins: 0
       pc: 0
       health: 0
@@ -271,17 +314,24 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
-    m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_isEdible: 1
+    m_edibleFromTier: 2
+    m_biteResistance: 2
     m_feedbackData:
       m_probabilities:
-      - 0
-      - 0
+      - 1
+      - 0.25
       - 0
       - 0
       m_feedbacks:
-      - data: []
-      - data: []
+      - data:
+        - Watch Out!
+        - Minefield!
+        - Boooom!
+      - data:
+        - Minesweeper!
+        - Iron Stomach!
+        - Tasty!
       - data: []
       - data: []
   - m_sku: dron_small_01
@@ -289,7 +339,7 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
+      score: 500
       coins: 0
       pc: 0
       health: 0
@@ -298,8 +348,9 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
-    m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_isEdible: 1
+    m_edibleFromTier: 1
+    m_biteResistance: 2.98
     m_feedbackData:
       m_probabilities:
       - 0
@@ -325,8 +376,9 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
-    m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_isEdible: 1
+    m_edibleFromTier: 2
+    m_biteResistance: 5
     m_feedbackData:
       m_probabilities:
       - 0
@@ -339,7 +391,7 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: urban_car
-    m_category: vehicle
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
@@ -352,6 +404,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -366,7 +419,7 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: truck
-    m_category: vehicle
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
@@ -379,6 +432,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -406,6 +460,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -424,15 +479,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 300
+      coins: 200
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.3
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -460,6 +516,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -487,6 +544,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -514,6 +572,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -528,19 +587,20 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: tree_01
-    m_category: bird
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 15
+      coins: 50
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.1
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -555,19 +615,20 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: tree_02
-    m_category: bird
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 15
+      coins: 50
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.1
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -582,12 +643,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: bush_01
-    m_category: tree
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -595,6 +656,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -609,12 +671,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: bush_02
-    m_category: tree
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -622,6 +684,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -636,12 +699,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: bush_03
-    m_category: tree
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -649,6 +712,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -663,12 +727,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: bush_04
-    m_category: tree
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -676,6 +740,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -690,12 +755,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: bush_05
-    m_category: tree
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -703,6 +768,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -717,12 +783,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: bush_06
-    m_category: tree
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -730,6 +796,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -744,12 +811,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: grass_01
-    m_category: bird
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -757,6 +824,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -771,12 +839,12 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: grass_02
-    m_category: bird
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -784,6 +852,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -802,15 +871,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 15
+      coins: 50
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.1
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -829,15 +899,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 20
+      coins: 20
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.15
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -856,15 +927,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 15
+      coins: 50
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.1
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -883,8 +955,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -892,6 +964,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -910,8 +983,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -919,6 +992,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -937,8 +1011,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -946,6 +1020,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -964,8 +1039,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -973,6 +1048,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -991,8 +1067,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -1000,6 +1076,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1018,15 +1095,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 15
+      coins: 50
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.1
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1054,6 +1132,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1081,6 +1160,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1099,15 +1179,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 20
+      coins: 20
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.15
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1126,15 +1207,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 20
+      coins: 20
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.15
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1153,15 +1235,16 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 20
+      coins: 20
       pc: 0
       health: 0
       energy: 0
       fury: 0
-      xp: 0
+      xp: 0.15
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1180,8 +1263,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -1189,6 +1272,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1207,8 +1291,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -1216,6 +1300,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1234,8 +1319,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -1243,6 +1328,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1261,8 +1347,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -1270,6 +1356,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1288,8 +1375,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -1297,6 +1384,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1315,8 +1403,8 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 1
+      coins: 5
       pc: 0
       health: 0
       energy: 0
@@ -1324,6 +1412,7 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
+    m_isEdible: 0
     m_edibleFromTier: 0
     m_biteResistance: 1
     m_feedbackData:
@@ -1338,7 +1427,7 @@ MonoBehaviour:
       - data: []
       - data: []
   - m_sku: missile
-    m_category: projectile
+    m_category: decoration
     m_tidName: 
     m_tidDesc: 
     m_reward:
@@ -1351,8 +1440,9 @@ MonoBehaviour:
       xp: 0
     m_goldenChance: 0
     m_pcChance: 0
-    m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_isEdible: 1
+    m_edibleFromTier: 2
+    m_biteResistance: 3.28
     m_feedbackData:
       m_probabilities:
       - 0
@@ -1369,79 +1459,100 @@ MonoBehaviour:
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 11
+      coins: 5
       pc: 0
-      health: 0
-      energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      health: 3
+      energy: 5
+      fury: 5
+      xp: 0.6
+    m_goldenChance: 0.02
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_biteResistance: 1.5
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Yummy!
+        - Protein!
+        - So Good!
+      - data:
+        - Barbecue!
+        - Roasted!
+        - Medium-rare!
       - data: []
   - m_sku: cow
     m_category: animal
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 50
+      coins: 25
       pc: 0
-      health: 0
+      health: 6
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 10
+      xp: 0.8
+    m_goldenChance: 0.25
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_biteResistance: 4.5
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Tasty!
+        - Natural Selection
+        - Chubby!
+      - data:
+        - Medium-rare!
+        - Barbecue!
+        - Rostisserie
       - data: []
   - m_sku: sheep
     m_category: animal
     m_tidName: 
     m_tidDesc: 
     m_reward:
-      score: 0
-      coins: 0
+      score: 50
+      coins: 25
       pc: 0
-      health: 0
+      health: 4
       energy: 0
-      fury: 0
-      xp: 0
-    m_goldenChance: 0
+      fury: 15
+      xp: 0.8
+    m_goldenChance: 0.25
     m_pcChance: 0
+    m_isEdible: 1
     m_edibleFromTier: 0
-    m_biteResistance: 1
+    m_biteResistance: 2.5
     m_feedbackData:
       m_probabilities:
       - 0
-      - 0
-      - 0
+      - 0.25
+      - 0.25
       - 0
       m_feedbacks:
       - data: []
-      - data: []
-      - data: []
+      - data:
+        - Tasty!
+        - Natural Selection
+        - Chubby!
+      - data:
+        - Medium-rare!
+        - Barbecue!
+        - Rostisserie
       - data: []

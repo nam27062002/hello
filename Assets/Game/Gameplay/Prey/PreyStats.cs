@@ -14,16 +14,10 @@ public class PreyStats : Initializable {
 	private EntityDef m_def = null;
 	public EntityDef def { 
 		get { 
-			if(m_def == null) DefinitionsManager.entities.GetDef(typeID); 
+			if(m_def == null) m_def = DefinitionsManager.entities.GetDef(typeID); 
 			return m_def;
 		}
 	}
-
-	[SerializeField] private Reward m_reward;
-	public Reward reward { get { return m_reward; } }
-
-	[SerializeField][Range(0,1)] private float m_goldenChance = 0f;
-	[SerializeField][Range(0,1)] private float m_pcChance = 0f;
 
 	//-----------------------------------------------
 	// Attributes
@@ -49,10 +43,10 @@ public class PreyStats : Initializable {
 
 	public override void Initialize() {
 	//	m_health = m_maxHealth;		
-		SetGolden((Random.Range(0f, 1f) <= m_goldenChance));
+		SetGolden((Random.Range(0f, 1f) <= def.goldenChance));
 
 		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
-		m_givePC = (Random.Range(0f, 1f) <= m_pcChance);
+		m_givePC = (Random.Range(0f, 1f) <= def.pcChance);
 	}
 
 /*	public void AddLife(float _offset) {
@@ -85,7 +79,7 @@ public class PreyStats : Initializable {
 	/// <returns>The reward to be given to the player when killing this unit.</returns>
 	public Reward GetOnKillReward() {
 		// Create a copy of the base rewards and tune them
-		Reward newReward = m_reward;	// Since it's a struct, this creates a new copy rather than being a reference
+		Reward newReward = def.reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
 		// Give coins?
 		if(!m_isGolden) {

@@ -117,16 +117,16 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// </summary>
 	/// <param name="_type">The type of feedback to be displayed.</param>
 	/// <param name="_entity">The source of the kill.</param>
-	private void SpawnKillFeedback(FeedbackData_OLD.Type _type, Transform _entity) {
+	private void SpawnKillFeedback(FeedbackData.Type _type, Transform _entity) {
 		// Some checks first
 		if(_entity == null) return;
 
-		// Get the feedback data component from the source entity
-		FeedbackData_OLD data = _entity.GetComponent<FeedbackData_OLD>();
-		if(data == null) return;
+		// Get the feedback data from the source entity
+		PreyStats entity = _entity.GetComponent<PreyStats>();
+		if(entity == null) return;
 
 		// Check that there's actually some text to be spawned
-		string text = data.GetFeedback(_type);
+		string text = entity.def.feedbackData.GetFeedback(_type);
 		if(string.IsNullOrEmpty(text)) return;
 
 		// Get an instance from the pool and spawn it!
@@ -184,7 +184,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_entity">The eaten entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
 	private void OnEaten(Transform _entity, Reward _reward) {
-		SpawnKillFeedback(FeedbackData_OLD.Type.EAT, _entity);
+		SpawnKillFeedback(FeedbackData.Type.EAT, _entity);
 	}
 
 	/// <summary>
@@ -193,7 +193,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_entity">The burned entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
 	private void OnBurned(Transform _entity, Reward _reward) {
-		SpawnKillFeedback(FeedbackData_OLD.Type.BURN, _entity);
+		SpawnKillFeedback(FeedbackData.Type.BURN, _entity);
 	}
 
 	/// <summary>
@@ -202,6 +202,6 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_entity">The destroyed entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
 	private void OnDestroyed(Transform _entity, Reward _reward) {
-		SpawnKillFeedback(FeedbackData_OLD.Type.DESTROY, _entity);
+		SpawnKillFeedback(FeedbackData.Type.DESTROY, _entity);
 	}
 }
