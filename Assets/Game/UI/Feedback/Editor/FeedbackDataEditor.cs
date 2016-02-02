@@ -13,76 +13,71 @@ using UnityEditor;
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
-namespace LevelEditor {
+/// <summary>
+/// Custom editor for the FeedbackData class.
+/// </summary>
+[CustomPropertyDrawer(typeof(FeedbackData))]
+public class FeedbackDataEditor : ExtendedPropertyDrawer {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	
+	//------------------------------------------------------------------//
+	// MEMBERS & PROPERTIES												//
+	//------------------------------------------------------------------//
+	private static GUIStyle s_centeredCommentLabelStyle = null;
+	private Rect m_areaRect = new Rect();
+	
+	//------------------------------------------------------------------//
+	// METHODS															//
+	//------------------------------------------------------------------//
 	/// <summary>
-	/// Custom editor for the FeedbackData class.
+	/// The editor has been enabled - target object selected.
 	/// </summary>
-	[CustomEditor(typeof(FeedbackData))]
-	public class FeedbackDataEditor : Editor {
-		//------------------------------------------------------------------//
-		// CONSTANTS														//
-		//------------------------------------------------------------------//
+	private void OnEnable() {
 		
-		//------------------------------------------------------------------//
-		// PROPERTIES														//
-		//------------------------------------------------------------------//
-		private FeedbackData targetData { get { return target as FeedbackData; }}
+	}		
+	
+	/// <summary>
+	/// The editor has been disabled - target object unselected.
+	/// </summary>
+	private void OnDisable() {
 		
-		//------------------------------------------------------------------//
-		// MEMBERS															//
-		//------------------------------------------------------------------//
-
-		/*public enum Type {
-			DAMAGE,
-			EAT,
-			BURN,
-			DESTROY,
-			
-			COUNT
-		};
-		
-		//------------------------------------------------------------------//
-		// MEMBERS															//
-		//------------------------------------------------------------------//
-		[SerializeField] private float[] m_probabilities = new float[(int)Type.COUNT];
-		[SerializeField] private List<string>[] m_feedbacks = new List<string>[(int)Type.COUNT];*/
-		
-		//------------------------------------------------------------------//
-		// METHODS															//
-		//------------------------------------------------------------------//
-		/// <summary>
-		/// The editor has been enabled - target object selected.
-		/// </summary>
-		private void OnEnable() {
-
-		}		
-		
-		/// <summary>
-		/// The editor has been disabled - target object unselected.
-		/// </summary>
-		private void OnDisable() {
-			
+	}
+	
+	/// <summary>
+	/// A change has occurred in the inspector, draw the property and store new values.
+	/// Use the m_pos member as position reference and update it using AdvancePos() method.
+	/// </summary>
+	/// <param name="_property">The property we're drawing.</param>
+	/// <param name="_label">The label of the property.</param>
+	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
+		// Initialize custom styles
+		if(s_centeredCommentLabelStyle == null) {
+			s_centeredCommentLabelStyle = new GUIStyle(EditorStyles.label);
+			s_centeredCommentLabelStyle.normal.textColor = Colors.gray;
+			s_centeredCommentLabelStyle.fontStyle = FontStyle.Italic;
+			s_centeredCommentLabelStyle.wordWrap = true;
+			s_centeredCommentLabelStyle.alignment = TextAnchor.MiddleCenter;
 		}
-		
-		/// <summary>
-		/// The scene is being refreshed.
-		/// </summary>
-		public void OnSceneGUI() {
 
-		}
-		
-		/// <summary>
-		/// Draw the inspector.
-		/// </summary>
-		public override void OnInspectorGUI() {
-			// Aux vars
-			int numTypes = (int)FeedbackData.Type.COUNT;
+		// Aux vars
+		int numTypes = (int)FeedbackData.Type.COUNT;
+		m_pos.height = EditorGUIUtility.singleLineHeight + 1f;
+		Rect contentRect = EditorGUI.PrefixLabel(m_pos, new GUIContent(" "));	// Remaining space for the content
+		Rect pos = new Rect();
+
+		// Group in a foldout
+		_property.isExpanded = EditorGUI.Foldout(m_pos, _property.isExpanded, _label);
+		AdvancePos(0f, 2f);
+		if(_property.isExpanded) {
+			// Indent in
+			EditorGUI.indentLevel++;
 
 			// Draw probability and strings for each type together
-			// Use serialized object to access private vars
-			SerializedProperty probabilitesProp = serializedObject.FindProperty("m_probabilities");
-			SerializedProperty feedbacksProp = serializedObject.FindProperty("m_feedbacks");
-		
+			SerializedProperty probabilitesProp = _property.FindPropertyRelative("m_probabilities");
+			SerializedProperty feedbacksProp = _property.FindPropertyRelative("m_feedbacks");
+
 			// Make sure both arrays have the size they must have
 			if(probabilitesProp.arraySize != numTypes) {
 				probabilitesProp.arraySize = numTypes;
@@ -93,25 +88,31 @@ namespace LevelEditor {
 			}
 
 			// Draw editor for each type
+			int indentLevel = EditorGUI.indentLevel;
 			for(int i = 0; i < numTypes; i++) {
+				// Restore indent level
+				EditorGUI.indentLevel = indentLevel;
+
 				// Make it foldable
 				// Reuse the isExpanded property of the Probability field to store the folded status
-				// Show probability slider next to property name
 				SerializedProperty probabilityProp = probabilitesProp.GetArrayElementAtIndex(i);
-				EditorGUILayout.BeginHorizontal(); {
-					// Foldable
-					probabilityProp.isExpanded = EditorGUILayout.Foldout(probabilityProp.isExpanded, ((FeedbackData.Type)i).ToString());
 
-					// Probability slider
-					EditorGUIUtility.labelWidth = EditorStyles.largeLabel.CalcSize(new GUIContent("Probability")).x;
-					EditorGUILayout.Slider(probabilityProp, 0f, 1f, "Probability");
-					EditorGUIUtility.labelWidth = 0;
-				} EditorGUILayoutExt.EndHorizontalSafe();
+				// Foldout
+				pos.Set(m_pos.x, m_pos.y, contentRect.x - m_pos.x, m_pos.height);
+				probabilityProp.isExpanded = EditorGUI.Foldout(pos, probabilityProp.isExpanded, ((FeedbackData.Type)i).ToString());
+
+				// Probability slider - same line as the foldout
+				// For some unknown reason, slider saves up some space for the label even if it's empty
+				// Correct it by some manual offset on the x position
+				float offset = 45f;
+				pos.Set(contentRect.x - offset, m_pos.y, contentRect.width + offset, m_pos.height);
+				probabilityProp.floatValue = EditorGUI.Slider(pos, probabilityProp.floatValue, 0f, 1f);
+				AdvancePos(0f, 2f);
 
 				// Foldable content
 				if(probabilityProp.isExpanded) {
-					// Indented
-					EditorGUI.indentLevel++;
+					// Reset indentation - we're already starting at the content rect
+					EditorGUI.indentLevel = 0;
 
 					// Feedback list
 					// Since multidimensional arrays are not serializable, we had to create a custom class FeedbackList
@@ -123,51 +124,52 @@ namespace LevelEditor {
 					// Special message if list is empty
 					if(actualListProp.arraySize == 0) {
 						// Comment-like label
-						GUIStyle style = new GUIStyle(EditorStyles.label);
-						style.normal.textColor = Colors.gray;
-						style.fontStyle = FontStyle.Italic;
-						style.wordWrap = true;
-						EditorGUILayout.LabelField("", "Feedbacks list for " + ((FeedbackData.Type)i).ToString() + " is empty. Add some with the \"+\" button.", style);
+						GUIContent labelContent = new GUIContent("Feedbacks list for " + ((FeedbackData.Type)i).ToString() + " is empty. Add some with the \"+\" button.");
+						pos.Set(contentRect.x, m_pos.y, contentRect.width, s_centeredCommentLabelStyle.CalcHeight(labelContent, contentRect.width));
+						GUI.Label(pos, labelContent, s_centeredCommentLabelStyle);
+						AdvancePos(pos.height, 2f);
 					} else {
 						// Current entries
 						for(int j = 0; j < actualListProp.arraySize; j++) {
 							// Single line
-							EditorGUILayout.BeginHorizontal(); {
-								// Feedback text
-								SerializedProperty feedbackStringProp = actualListProp.GetArrayElementAtIndex(j);
-								feedbackStringProp.stringValue = EditorGUILayout.TextField(feedbackStringProp.stringValue);
+							SerializedProperty feedbackStringProp = actualListProp.GetArrayElementAtIndex(j);
 
-								// Remove button
-								if(GUILayout.Button("-", GUILayout.Width(30))) {
-									// Delete entry
-									actualListProp.DeleteArrayElementAtIndex(j);
-									j--;	// We just deleted element j, so all remaining elements have moved up one position - keep up
-								}
-							} EditorGUILayoutExt.EndHorizontalSafe();
+							// String
+							pos.Set(contentRect.x, m_pos.y, contentRect.width - 30f, m_pos.height);
+							feedbackStringProp.stringValue = EditorGUI.TextField(pos, feedbackStringProp.stringValue);
+
+							// Remove button
+							pos.x += pos.width;
+							pos.width = 30f;
+							if(GUI.Button(pos, "-")) {
+								// Delete entry
+								actualListProp.DeleteArrayElementAtIndex(j);
+								j--;	// We just deleted element j, so all remaining elements have moved up one position - keep up
+							}
+							AdvancePos(0f, 2f);
 						}
 					}
 
 					// Add new entry button
 					// Centered
-					EditorGUILayout.BeginHorizontal(); {
-						GUILayout.FlexibleSpace();
-						if(GUILayout.Button("+", GUILayout.Width(100))) {
-							// Just add a new empty entry at the end of the list
-							actualListProp.arraySize++;
-						}
-						GUILayout.FlexibleSpace();
-					} EditorGUILayoutExt.EndHorizontalSafe();
+					pos.Set(contentRect.x + (contentRect.width - 100)/2f, m_pos.y, 100f, m_pos.height);
+					if(GUI.Button(pos, "+")) {
+						// Just add a new empty entry at the end of the list
+						actualListProp.arraySize++;
+					}
+					AdvancePos(0f, 2f);
 
 					// Some spacing to breath
-					GUILayout.Space(10);
-
-					// Restore indentation
-					EditorGUI.indentLevel--;
+					AdvancePos(10f);
 				}
 			}
 
-			// Make sure changed are stored!
-			serializedObject.ApplyModifiedProperties();
+			// Restore indentation
+			EditorGUI.indentLevel = indentLevel;
+			EditorGUI.indentLevel--;
 		}
+
+		// Make sure changed are stored!
+		_property.serializedObject.ApplyModifiedProperties();
 	}
 }

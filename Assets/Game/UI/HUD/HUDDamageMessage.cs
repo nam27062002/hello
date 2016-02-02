@@ -67,10 +67,10 @@ public class HUDDamageMessage : MonoBehaviour {
 		if(_source == null) return;
 
 		// Check whether the source has a feedback component
-		FeedbackData feedback = _source.GetComponent<FeedbackData>();
+		FeedbackData_OLD feedback = _source.GetComponent<FeedbackData_OLD>();
 		if(feedback != null) {
 			// Yes!! Show a message?
-			string msg = feedback.GetFeedback(FeedbackData.Type.DAMAGE);
+			string msg = feedback.GetFeedback(FeedbackData_OLD.Type.DAMAGE);
 			if(!String.IsNullOrEmpty(msg)) {
 				// Set text and launch anim
 				m_text.text = msg;

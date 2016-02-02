@@ -12,11 +12,6 @@ public class EdibleBehaviour : Initializable {
 	[SerializeField][Range(1, 10)] private float m_size = 1f;
 	public float size { get { return m_size; } }
 
-	[SerializeField] private bool m_isBig = false;
-	public bool isBig { get { return m_isBig; } }
-	
-	[SerializeField] private bool m_destroyOnEat = false;
-
 
 	//-----------------------------------------------
 	// Attributes
@@ -131,12 +126,10 @@ public class EdibleBehaviour : Initializable {
 			ParticleManager.Spawn(onEatenParticle, transform.position);
 
 		OnEatBehaviours(true);
+
 		// deactivate
-		if (m_destroyOnEat) {
-			Destroy(gameObject);
-		} else {
-			gameObject.SetActive(false);
-		}
+		gameObject.SetActive(false);
+
 		return reward;
 	}
 
