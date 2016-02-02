@@ -1,8 +1,8 @@
 ﻿// MonoBehaviourTemplateEditor.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on //2015.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on DD/MM/2016.
+// Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
@@ -49,13 +49,13 @@ public class MonoBehaviourTemplatePropertyDrawer : ExtendedPropertyDrawer {
 
 		// If unfolded, draw children
 		if(_property.isExpanded) {
-			// Indent in
+			// Aux vars
+			int baseDepth = _property.depth;
 			int rootIndent = EditorGUI.indentLevel;
 
 			// Iterate through all the children of the property
 			bool loop = _property.Next(true);	// Enter to the first level of depth
-			int targetDepth = _property.depth;
-			while(loop /*&& _property.depth == targetDepth*/) {		// Only direct children, not brothers or grand-children (the latter will be drawn by default if using the default EditorGUI.PropertyField)
+			while(loop) {
 				// Set indentation
 				EditorGUI.indentLevel = rootIndent + _property.depth;
 
@@ -66,13 +66,15 @@ public class MonoBehaviourTemplatePropertyDrawer : ExtendedPropertyDrawer {
 
 				// Default
 				else {
-					m_pos.height = EditorGUI.GetPropertyHeight(_property);
-					EditorGUI.PropertyField(m_pos, _property, true);
-					AdvancePos();
+					DrawAndAdvance(_property);
 				}
 
 				// Move to next property
-				loop = _property.Next(true);
+				// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
+				loop = _property.Next(false);
+
+				// If within an array, Next() will give the next element of the array, which will be already be drawn by itself afterwards, so we don't want it - check depth to prevent it
+				if(_property.depth <= baseDepth) loop = false;
 			}
 		}
 	}
