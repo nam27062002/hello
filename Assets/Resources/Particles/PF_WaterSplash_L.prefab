@@ -46,7 +46,7 @@ GameObject:
   - 199: {fileID: 19965948}
   - 114: {fileID: 11454432}
   m_Layer: 0
-  m_Name: PF_WaterSplash_M
+  m_Name: PF_WaterSplash_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1829,7 +1829,7 @@ ParticleSystem:
         rgba: 4294967295
       minMaxState: 0
     startSize:
-      scalar: 0.8
+      scalar: 3.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -3268,7 +3268,7 @@ ParticleSystem:
         rgba: 4294967295
       minMaxState: 0
     startSize:
-      scalar: 0.2
+      scalar: 0.8
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -4697,7 +4697,7 @@ ParticleSystem:
         rgba: 4294967295
       minMaxState: 0
     startSize:
-      scalar: 0.4
+      scalar: 1.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -6108,7 +6108,19 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: InitialModule.startSize.minCurve.m_Curve.Array.data[0].value
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: InitialModule.startSize.scalar
+      value: 3.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: InitialModule.startSize.maxCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 126966}
