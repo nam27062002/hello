@@ -39,6 +39,11 @@ public class TemplatesMenu {
 		CreateTemplate("Editor/ExtendedPropertyDrawerTemplate");
 	}
 
+	[MenuItem("Assets/Create/C# Script Templates/Editor Window")]
+	public static void CreateEditorWindow() {
+		CreateTemplate("Editor/EditorWindowTemplate");
+	}
+
 	[MenuItem("Assets/Create/C# Script Templates/MonoBehaviour")]
 	public static void CreateMonoBehaviour() {
 		CreateTemplate("MonoBehaviourTemplate");

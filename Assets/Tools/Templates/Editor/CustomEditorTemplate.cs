@@ -25,13 +25,11 @@ public class MonoBehaviourTemplateEditor : Editor {
 	private static GUIStyle s_customStyle = null;
 
 	//------------------------------------------------------------------//
-	// PROPERTIES														//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Casted target object
 	MonoBehaviourTemplate targetMonoBehaviourTemplate { get { return target as MonoBehaviourTemplate; }}
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
 	// Store a reference of interesting properties for faster access
 	SerializedProperty m_myValueProp = null;
 
