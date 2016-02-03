@@ -39,7 +39,7 @@ public class GrabBehaviour : MonoBehaviour
 		{
 			case State.READY:
 			{
-				if ( !m_dragonGrab.IsGrabbing() )
+				if (m_dragonGrab.CanGrab())
 				{
 					
 					float distanceSqr = 100000;

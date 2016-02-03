@@ -9,6 +9,7 @@ public class DragonGrab : MonoBehaviour
 	float m_grabbingTimer;
 
 	Transform m_claws = null;
+	DragonBreathBehaviour m_breath;
 
 	// Drop if hit, or too high, or to much time, or in water
 	// Once dropped whould we use phisics? does it has to explode always?
@@ -22,8 +23,19 @@ public class DragonGrab : MonoBehaviour
 	void Start () 
 	{
 		m_grabbed = null;
+		m_breath = GetComponent<DragonBreathBehaviour>();
 	}
-	
+
+	void OnEnable()
+	{
+		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+	}
+
+	void OnDisable()
+	{
+		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+	}
+
 	// Update is called once per frame
 	void Update () 
 	{
@@ -42,7 +54,7 @@ public class DragonGrab : MonoBehaviour
 				flyHeight =  transform.position.y - ground.point.y;
 			}
 
-			if ( m_grabbingTimer > 2 || flyHeight > 100 )	// or is x high
+			if ( /*m_grabbingTimer > 2 ||*/ flyHeight > 100 || m_breath.IsFuryOn() )	// or is x high
 			{
 				Drop();
 			}
@@ -70,6 +82,12 @@ public class DragonGrab : MonoBehaviour
 		return false;
 	}
 
+	void OnDamageReceived( float damage, Transform origin )
+	{
+		if ( IsGrabbing() )
+			Drop();
+	}
+
 	public void Drop()
 	{
 		m_grabbed.transform.parent = m_parentTransform;
@@ -84,5 +102,10 @@ public class DragonGrab : MonoBehaviour
 	public bool IsGrabbing()
 	{
 		return m_grabbed != null;
+	}
+
+	public bool CanGrab()
+	{
+		return !IsGrabbing() && !m_breath.IsFuryOn();
 	}
 }
