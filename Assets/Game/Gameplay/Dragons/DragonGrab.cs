@@ -36,7 +36,7 @@ public class DragonGrab : MonoBehaviour
 			m_grabbingTimer += Time.deltaTime;
 
 			RaycastHit ground;
-			float flyHeight = 1000;
+			float flyHeight = 0;
 			if (Physics.Linecast(transform.position, transform.position + Vector3.down * 10000f, out ground, 1 << LayerMask.NameToLayer("Ground"))) {
 
 				flyHeight =  transform.position.y - ground.point.y;
