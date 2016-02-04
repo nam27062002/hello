@@ -112,11 +112,21 @@ public class FireNode : MonoBehaviour {
 
 	private void StartFire() {
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("FireSprite");
+			// m_fireSprite = PoolManager.GetInstance("FireSprite");
+
+			if (Random.Range(0,100) > 50)
+			{
+				m_fireSprite = PoolManager.GetInstance("FireSprite_a");
+			}
+			else
+			{
+				m_fireSprite = PoolManager.GetInstance("FireSprite_b");
+			}
+
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = m_fireSpriteScale;
 			m_fireSprite.transform.localRotation = transform.localRotation;
-			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(0f, 1f));
+			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(1f, 2f));
 		}
 	}
 
