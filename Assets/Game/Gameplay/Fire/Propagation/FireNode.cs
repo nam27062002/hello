@@ -122,7 +122,9 @@ public class FireNode : MonoBehaviour {
 			{
 				m_fireSprite = PoolManager.GetInstance("FireSprite_b");
 			}
-
+			Color c = Color.white;
+			c.a = 0.75f;
+			m_fireSprite.GetComponent<SpriteRenderer>().color = c;
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = m_fireSpriteScale;
 			m_fireSprite.transform.localRotation = transform.localRotation;
