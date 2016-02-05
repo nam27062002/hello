@@ -8,8 +8,9 @@ using System.Collections.Generic;
 using SimpleJSON;
 using UnityEngine.SocialPlatforms;
 
-#if UNITY_ANDROID		
-using GooglePlayGames;
+#if UNITY_ANDROID
+// TODO (miguel) Import Google Play Games
+// using GooglePlayGames;
 #endif
 
 // https://developer.apple.com/library/ios/documentation/GameKit/Reference/GKLocalPlayer_Ref/index.html#//apple_ref/occ/instm/GKLocalPlayer/generateIdentityVerificationSignatureWithCompletionHandler
@@ -136,12 +137,15 @@ public sealed class LoginManager
 
 	public void DeinitializeExternalPlatform()
 	{
-#if UNITY_ANDROID
+#if UNITY_ANDROID 
+	// TODO (miguel) Import Google Play Games
+/*
 		((GooglePlayGames.PlayGamesPlatform)Social.Active).SignOut();
 		Log("Signout performed successfully. Sending SocialStatusUpdated event");
 		externalAuthenticated = false;
 
 		EventManager.Instance.DispatchEvent(EventManager.EventName.SocialStatusUpdated);
+		*/
 #endif
 	}
 
@@ -311,7 +315,9 @@ public sealed class LoginManager
 	private string getToken()
 	{
 #if UNITY_ANDROID
-		return PlayGamesPlatform.Instance.GetToken();
+		// TODO (miguel) : Import PlayGamesPlatform
+		// return PlayGamesPlatform.Instance.GetToken();
+		return "";
 #else
 		return "";
 #endif
