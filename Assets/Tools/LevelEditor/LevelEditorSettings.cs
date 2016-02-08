@@ -32,6 +32,15 @@ namespace LevelEditor {
 	};
 
 	/// <summary>
+	/// Possible shape options for the collision objects.
+	/// </summary>
+	public enum CollisionShape {
+		RECTANGLE,
+		CIRCLE,
+		TRIANGLE
+	};
+
+	/// <summary>
 	/// Data class to store preferences for the level editor. Best way to keep 
 	/// preferences between sessions and edit/play mode.
 	/// </summary>
@@ -63,6 +72,7 @@ namespace LevelEditor {
 		[Separator("Ground Settings", 20)]
 		public Vector3 groundPieceSize = new Vector3(50f, 1f, 15f);	// Ground pieces default size
 		public int groundPieceColorIdx = 0;	// Ground pieces default color
+		public CollisionShape groundPieceShape = CollisionShape.RECTANGLE;
 
 		[Separator("Spawners Settings", 20)]
 		public SpawnerShape spawnerShape = SpawnerShape.CIRCLE;	// Shape of the spawner

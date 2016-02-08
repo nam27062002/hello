@@ -44,7 +44,8 @@ namespace LevelEditor {
 			new SectionGround(),
 			new SectionSpawners(),
 			new SectionDecos(),
-			new SectionDummies()
+			new SectionDummies(),
+			new SectionColliders()
 		};
 
 		private Dictionary<string, ILevelEditorSection> m_tabs = new Dictionary<string, ILevelEditorSection>();
@@ -68,7 +69,7 @@ namespace LevelEditor {
 				return m_instance;
 			}
 		}
-
+		 
 		// Section shortcuts - don't change order in the array!!
 		public SectionLevels sectionLevels { get { return m_sections[0] as SectionLevels; }}
 		public SectionGroups sectionGroups { get { return m_sections[1] as SectionGroups; }}
@@ -76,6 +77,7 @@ namespace LevelEditor {
 		public SectionSpawners sectionSpawners { get { return m_sections[3] as SectionSpawners; }}
 		public SectionDecos sectionDecos { get { return m_sections[4] as SectionDecos; }}
 		public SectionDummies sectionDummies { get { return m_sections[5] as SectionDummies; }}
+		public SectionColliders sectionColliders { get { return m_sections[6] as SectionColliders; }}
 
 		// Styles shortcut
 		public Styles styles { get { return m_styles; }}
@@ -87,6 +89,7 @@ namespace LevelEditor {
 			// Initialize tabs dictionary
 			m_tabs.Add("Spawners", sectionSpawners);
 			m_tabs.Add("Collisions", sectionGround);
+			m_tabs.Add("Colliders", sectionColliders);
 			m_tabs.Add("Decorations", sectionDecos);
 			m_tabs.Add("Dummies", sectionDummies);
 		}
@@ -222,7 +225,7 @@ namespace LevelEditor {
 						List<string> tabNames = new List<string>();
 						switch(LevelEditor.settings.selectedMode) {
 							case LevelEditorSettings.Mode.SPAWNERS:		tabNames = new List<string>(new string[] { "Spawners", "Dummies" });	break;
-							case LevelEditorSettings.Mode.COLLISION:	tabNames = new List<string>(new string[] { "Collisions" });				break;
+							case LevelEditorSettings.Mode.COLLISION:	tabNames = new List<string>(new string[] { "Collisions", "Colliders" });break;
 							case LevelEditorSettings.Mode.ART:			tabNames = new List<string>(new string[] { "Decorations" });			break;
 						}
 						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, tabNames.ToArray());

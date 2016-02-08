@@ -27,6 +27,7 @@ namespace LevelEditor {
 		public static readonly string SPAWNERS = "Spawners";	// All game spawners
 		public static readonly string DECO = "Deco";			// Random art decorations
 		public static readonly string EDITOR = "Editor";		// Internal editor stuff, won't make it to the game
+		public static readonly string COLLIDER = "Collider";	// Colliders that go with collisions
 
 		//------------------------------------------------------------------//
 		// PROPERTIES														//
@@ -46,6 +47,9 @@ namespace LevelEditor {
 
 		private GameObject m_editorObj = null;
 		public GameObject editorObj { get { return CreateIfNull(ref m_editorObj, EDITOR); }}
+
+		private GameObject m_colliderObj = null;
+		public GameObject colliderObj { get { return CreateIfNull(ref m_colliderObj, COLLIDER); }}
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//

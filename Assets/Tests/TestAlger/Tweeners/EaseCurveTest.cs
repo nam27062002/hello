@@ -1,4 +1,4 @@
-﻿// AOCQuickTest.cs
+﻿// EaseCurveTest.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on DD/MM/2015.
@@ -14,10 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
@@ -25,14 +21,23 @@ using UnityEditor;
 /// 
 /// </summary>
 [ExecuteInEditMode]
-public class AOCQuickTest : MonoBehaviour {
+public class EaseCurveTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	[Serializable]
+	public class EaseCurve {
+		public Ease easeType;
+		public AnimationCurve curve = new AnimationCurve();
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	public List<EaseCurve> m_curves = new List<EaseCurve>();
+	public float m_overshoot = 1.7f;
+	public float m_amplitude = 1f;
+	public float m_period = 1f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -65,44 +70,30 @@ public class AOCQuickTest : MonoBehaviour {
 	/// <summary>
 	/// Multi-purpose callback.
 	/// </summary>
-	public void OnCustomCallback() {
-		Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
-		if(mesh) {
-			Debug.Log(gameObject.name + " --------------------------------------------");
-			Debug.Log(" v: " + mesh.vertices.Length);
-			Debug.Log(" t: " + mesh.triangles.Length);
-			Debug.Log(" n: " + mesh.normals.Length);
-			Debug.Log("uv: " + mesh.uv.Length);
-		}
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void OnDrawGizmos() {
-		Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
-		if(mesh) {
-			Gizmos.matrix = transform.localToWorldMatrix;
-			for(int i = 0; i < mesh.vertices.Length; i++) {
-				// v
-				Gizmos.color = Colors.red;
-				Gizmos.DrawSphere(mesh.vertices[i], 0.025f);
-
-				// n
-				if(i < mesh.normals.Length) {
-					Gizmos.color = Colors.magenta;
-					Gizmos.DrawLine(mesh.vertices[i], mesh.vertices[i] + mesh.normals[i]);
-				}
-
-				// uv
-				#if UNITY_EDITOR
-				if(i < mesh.uv.Length) {
-					Handles.matrix = transform.localToWorldMatrix;
-					Handles.color = Colors.silver;
-					Handles.Label(mesh.vertices[i], "uv[" + i + "] (" + mesh.uv[i].x + ", " + mesh.uv[i].y + ")");
-				}
-				#endif
+	public void OnClick() {
+		int samples = 100;
+		m_curves = new List<EaseCurve>();
+		int easeCount = Enum.GetNames(typeof(Ease)).Length;
+		for(int i = 0; i < easeCount; i++) {
+			EaseCurve curve;
+			if(i < m_curves.Count) {
+				curve = m_curves[i];
+				curve.curve.keys = new Keyframe[0];
+			} else {
+				curve = new EaseCurve();
+				curve.easeType = (Ease)i;
+				m_curves.Add(curve);
 			}
+
+			float value = 0f;
+			//Tweener t = DOTween.To(x => value = x, 0f, 1f, 1f).SetEase(curve.easeType, m_overshoot);
+			Tweener t = DOTween.To(x => value = x, 0f, 1f, 1f).SetEase(curve.easeType, m_amplitude, m_period);
+			for(int j = 0; j < samples; j++) {
+				float delta = (float)j/(float)samples;
+				t.Goto(delta);
+				curve.curve.AddKey(new Keyframe(delta, value));
+			}
+			DOTween.Kill(value);
 		}
 	}
 }

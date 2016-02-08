@@ -119,7 +119,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	virtual protected void ExtendedStart() {}
 	virtual protected void ExtendedUpdate() {}
 
-	virtual protected void BeginBreath() {}
+	virtual protected void BeginBreath() 
+	{
+		m_eatBehaviour.enabled = false;
+	}
 	virtual protected void Breath() {}
-	virtual protected void EndBreath() {}
+	virtual protected void EndBreath() 
+	{
+		m_eatBehaviour.enabled = true;
+	}
 }

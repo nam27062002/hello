@@ -163,7 +163,7 @@ public class InflammableBehaviour : Initializable {
 				if (burnParticle != null) {
 					burnParticle.transform.position = transform.position + Vector3.back * 2;
 					BurnParticle bp = burnParticle.GetComponent<BurnParticle>();
-					bp.Activate( 2, 1.0f);
+					bp.Activate( 4, 0.50f);
 				}
 
 				if (m_explosionPrefab != null) {

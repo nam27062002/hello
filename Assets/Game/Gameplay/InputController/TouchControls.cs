@@ -158,7 +158,7 @@ abstract public class TouchControls : MonoBehaviour {
 					
 					if(m_boostWithSecondTouch)
 					{
-						GameLogic.player.SetAction(false);
+						// GameLogic.player.SetAction(false);
 					}
 				}
 #endif
