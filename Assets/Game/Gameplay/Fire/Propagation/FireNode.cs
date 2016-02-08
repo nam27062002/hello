@@ -8,8 +8,7 @@ public class FireNode : MonoBehaviour {
 		Idle,
 		Damaged,
 		Burning,
-		Burned,
-		Smoking
+		Burned
 	};
 
 	[SerializeField] private float m_resistanceMax = 25f;
@@ -81,6 +80,7 @@ public class FireNode : MonoBehaviour {
 						m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime); // what amount of damage should
 					}
 				} else {
+					m_timer = 5;
 					m_state = State.Burned;
 					StartSmoke();
 				}
@@ -92,16 +92,17 @@ public class FireNode : MonoBehaviour {
 
 					if (m_fireSprite.transform.localScale.x < 0.1f) {
 						StopFire();
-						m_timer = 1;
-						m_state = State.Smoking;
 					}
 				}
-			}break;
-			case State.Smoking:
-			{
-				m_timer -= Time.deltaTime;
-				if ( m_timer < 0 )
-					StopSmoke();
+
+				if (m_smoke != null)
+				{
+					m_timer -= Time.deltaTime;
+					if ( m_timer < 0 )
+						StopSmoke();
+				}
+
+
 			}break;
 		}
 	}
