@@ -81,10 +81,10 @@ public class InflammableBehaviour : Initializable {
 					m_timer = m_checkFireTime;
 					if ( m_circleArea != null ) {
 						if ( m_breath.Overlaps( m_circleArea ) )
-							Burn(m_breath.damage);
+							Burn(m_breath.damage, m_breath.transform);
 					}
 					else if (m_breath.IsInsideArea(transform.position)) {
-						Burn(m_breath.damage);
+						Burn(m_breath.damage, m_breath.transform);
 					}
 					break;
 
@@ -114,7 +114,7 @@ public class InflammableBehaviour : Initializable {
 		}
 	}
 
-	public void Burn(float _damage) {
+	public void Burn(float _damage, Transform _from) {
 
 		if (m_health > 0) {
 
@@ -160,8 +160,15 @@ public class InflammableBehaviour : Initializable {
 
 				// Add burned particle!
 				GameObject burnParticle = PoolManager.GetInstance("BurnParticle");
-				if (burnParticle != null) {
+				if (burnParticle != null) 
+				{
 					burnParticle.transform.position = transform.position + Vector3.back * 2;
+					Vector3 dir =  burnParticle.transform.position - _from.position;
+
+					Quaternion q = burnParticle.transform.rotation;
+					q.SetLookRotation( Vector3.forward, dir );
+					burnParticle.transform.rotation = q;
+
 					BurnParticle bp = burnParticle.GetComponent<BurnParticle>();
 					bp.Activate( 4, 0.50f);
 				}
