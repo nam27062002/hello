@@ -136,7 +136,7 @@ public class AttackBehaviour : Initializable {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.Pursuit:
-				m_motion.Pursuit(m_target.position, m_dragon.GetVelocity(), m_dragon.GetMaxSpeed());
+				m_motion.Pursuit(m_target.position, m_dragon.velocity, m_dragon.maxSpeed);
 				//m_motion.ApplySteering();
 				break;
 

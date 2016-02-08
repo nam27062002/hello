@@ -56,7 +56,7 @@ public class SkySpawnerController : MonoBehaviour {
 			m_timer -= Time.deltaTime;
 
 			if (m_timer < 0f) {
-				Vector3 dir = m_player.GetDirection();
+				Vector3 dir = m_player.direction;
 				Vector3 spawnPos = playerPos + dir * m_spawnDistance;
 
 				if(CanCreateGroupAt(spawnPos)) {

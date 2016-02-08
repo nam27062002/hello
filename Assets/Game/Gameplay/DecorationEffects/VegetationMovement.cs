@@ -51,7 +51,7 @@ public class VegetationMovement : MonoBehaviour
 		// Check if player is doind a turbo
 		if ( m_boost.IsBoostActive() )
 		{
-			if ( m_playerMotion.GetDirection().x > 0 )
+			if ( m_playerMotion.direction.x > 0 )
 			{
 				if ( transform.position.x < m_player.transform.position.x )
 				{

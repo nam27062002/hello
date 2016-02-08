@@ -6,8 +6,8 @@ using System.Collections;
 /// Prey motion. Movement and animation control layer.
 /// </summary>
 [DisallowMultipleComponent]
-[RequireComponent(typeof(PreyOrientation))]
-public class PreyMotion : Initializable {
+[RequireComponent(typeof(Orientation))]
+public class PreyMotion : Initializable, MotionInterface {
 	//---------------------------------------------------------------
 	// Constants
 	//---------------------------------------------------------------
@@ -36,6 +36,7 @@ public class PreyMotion : Initializable {
 	[SerializeField] protected float m_mass = 1f;
 		[CommentAttribute("Distance can reduce the effect of evasive behaviours.")]
 	[SerializeField] private float m_distanceAttenuation = 5f;
+	[SerializeField] private bool m_checkCollisions = true;
 
 [Header("Speed variations")]
 	[SerializeField] private float m_maxSpeed;
@@ -68,7 +69,7 @@ public class PreyMotion : Initializable {
 	protected float m_collisionAvoidFactor;
 	protected Vector2 m_collisionNormal;
 
-	protected PreyOrientation m_orientation;
+	protected Orientation m_orientation;
 	protected SpawnBehaviour m_spawn;
 	protected Animator m_animator;
 
@@ -82,6 +83,7 @@ public class PreyMotion : Initializable {
 	public Vector2 position 		{ get { return m_position; } set { m_position = value; } }
 	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; m_orientation.SetDirection(m_direction); } }
 	public Vector2 velocity			{ get { return m_velocity; } set { m_velocity = value; } }
+	public float   maxSpeed			{ get { return m_currentMaxSpeed; } }
 	public float   speed			{ get { return m_currentSpeed; } }
 	public float   slowingRadius	{ get { return m_slowingRadius; } }
 	public float   lastSeekDistanceSqr { get { return m_lastSeekDistanceSqr; } }
@@ -97,7 +99,7 @@ public class PreyMotion : Initializable {
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_groundSensor = transform.FindChild("ground_sensor");
 
-		m_orientation = GetComponent<PreyOrientation>();
+		m_orientation = GetComponent<Orientation>();
 		m_spawn = GetComponent<SpawnBehaviour>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
@@ -232,7 +234,8 @@ public class PreyMotion : Initializable {
 		} else {
 			direction = Vector3.right;
 		}
-
+	
+		m_steering = Vector2.zero;
 		m_velocity = Vector3.zero;
 	}
 
@@ -242,7 +245,8 @@ public class PreyMotion : Initializable {
 			FlockSeparation();
 		}
 
-		AvoidCollisions();
+		if (m_checkCollisions)
+			AvoidCollisions();
 
 		UpdateSteering();
 		UpdateVelocity();

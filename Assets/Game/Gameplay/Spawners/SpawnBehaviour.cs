@@ -23,7 +23,13 @@ public class SpawnBehaviour : MonoBehaviour {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 	}
 
+	void OnEnable() {
+		EntityManager.instance.Register(GetComponent<Entity>());
+	}
+
 	void OnDisable() {
+		EntityManager.instance.Unregister(GetComponent<Entity>());
+
 		if (m_spawner) {
 			m_spawner.RemoveEntity(gameObject, true);
 			m_spawner = null;

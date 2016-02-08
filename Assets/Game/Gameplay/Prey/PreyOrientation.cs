@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent]
-public class PreyOrientation : MonoBehaviour {
+public class PreyOrientation : Orientation {
 
 	[SerializeField] private bool m_faceDirection;
 	public bool faceDirection { get { return m_faceDirection; } }
@@ -33,7 +33,7 @@ public class PreyOrientation : MonoBehaviour {
 		transform.rotation = m_rotation;
 	}
 
-	public void SetDirection(Vector3 _direction) {
+	public override void SetDirection(Vector3 _direction) {
 		if (m_faceDirection) {
 			float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
 

@@ -242,6 +242,10 @@ public class DragonPlayer : MonoBehaviour {
 		}
 		if(spawnPointObj != null) {
 			transform.position = spawnPointObj.transform.position;
+
+			if (InstanceManager.pet != null) {
+				InstanceManager.pet.transform.position = spawnPointObj.transform.position;
+			}
 		}
 	}
 

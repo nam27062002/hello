@@ -177,7 +177,7 @@ public class GameCameraController : MonoBehaviour {
 		// it depends on previous fixed updates
 		if ( m_update && m_dragonMotion != null)
 		{
-			Vector3 dragonVelocity = m_dragonMotion.GetVelocity();
+			Vector3 dragonVelocity = m_dragonMotion.velocity;
 			Vector3 dragonDirection = dragonVelocity.normalized;
 			m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
 
@@ -254,7 +254,7 @@ public class GameCameraController : MonoBehaviour {
 			newPos = UpdateByShake(newPos);
 
 			// Rotation
-			float maxSpeed = m_dragonMotion.GetMaxSpeed();
+			float maxSpeed = m_dragonMotion.maxSpeed;
 			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -3f, dragonVelocity.x / maxSpeed * 7.5f, 0);
 			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * m_accumulatedTime);
 

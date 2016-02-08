@@ -26,6 +26,6 @@ public class EvadeBehaviour : Initializable {
 
 	// Update is called once per frame
 	void FixedUpdate() {
-		m_motion.Evade(m_dragonMouth.position, m_dragon.GetVelocity(), m_dragon.GetMaxSpeed());
+		m_motion.Evade(m_dragonMouth.position, m_dragon.velocity, m_dragon.maxSpeed);
 	}
 }
