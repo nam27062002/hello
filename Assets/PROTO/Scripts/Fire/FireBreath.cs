@@ -194,7 +194,7 @@ public class FireBreath : DragonBreathBehaviour {
 		}
 
 
-		for (int i = 0; i < m_particleSpawn; i++) 
+		for (int i = 0; i < m_particleSpawn / 2; i++) 
 		{
 			GameObject obj = PoolManager.GetInstance("FlameUp");
 			
