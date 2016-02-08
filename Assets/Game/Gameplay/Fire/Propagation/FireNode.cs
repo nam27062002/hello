@@ -8,7 +8,8 @@ public class FireNode : MonoBehaviour {
 		Idle,
 		Damaged,
 		Burning,
-		Burned
+		Burned,
+		Smoking
 	};
 
 	[SerializeField] private float m_resistanceMax = 25f;
@@ -47,7 +48,7 @@ public class FireNode : MonoBehaviour {
 
 	public void Reset() {
 		StopFire();
-
+		StopSmoke();
 		FirePropagationManager.Insert(transform);
 
 		m_resistance = m_resistanceMax;
@@ -57,38 +58,51 @@ public class FireNode : MonoBehaviour {
 	}
 
 	void Update() {
-		if (m_state == State.Burning) {	
-			//check if we have to render the particle
-			if (m_fireSprite != null) {
-				m_fireSprite.transform.localScale = m_fireSpriteScale;
-				if (!m_camera.IsInsideActivationMaxArea(transform.position)) {
-					StopFire();
+		switch(m_state)
+		{
+			case State.Burning:
+			{
+				//check if we have to render the particle
+				if (m_fireSprite != null) {
+					m_fireSprite.transform.localScale = m_fireSpriteScale;
+					if (!m_camera.IsInsideActivationMaxArea(transform.position)) {
+						StopFire();
+					}
+				} else if (m_camera.IsInsideActivationMaxArea(transform.position)) {
+					StartFire();		
 				}
-			} else if (m_camera.IsInsideActivationMaxArea(transform.position)) {
-				StartFire();		
-			}
 
-			m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, transform.localScale, Time.smoothDeltaTime * 1.5f);
+				m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, transform.localScale, Time.smoothDeltaTime * 1.5f);
 
-			//burn near nodes and fuel them
-			if (m_timer > 0) {
+				//burn near nodes and fuel them
+				if (m_timer > 0) {
+					m_timer -= Time.deltaTime;
+					for (int i = 0; i < m_neighbours.Count; i++) {
+						m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime); // what amount of damage should
+					}
+				} else {
+					m_state = State.Burned;
+					StartSmoke();
+				}
+			}break;
+			case State.Burned:
+			{
+				if (m_fireSprite != null) {
+					m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.zero, Time.smoothDeltaTime);
+
+					if (m_fireSprite.transform.localScale.x < 0.1f) {
+						StopFire();
+						m_timer = 1;
+						m_state = State.Smoking;
+					}
+				}
+			}break;
+			case State.Smoking:
+			{
 				m_timer -= Time.deltaTime;
-				for (int i = 0; i < m_neighbours.Count; i++) {
-					m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime); // what amount of damage should
-				}
-			} else {
-				m_state = State.Burned;
-				StartSmoke();
-			}
-		} else if (m_state == State.Burned) {
-			if (m_fireSprite != null) {
-				m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.zero, Time.smoothDeltaTime);
-
-				if (m_fireSprite.transform.localScale.x < 0.1f) {
-					StopFire();
+				if ( m_timer < 0 )
 					StopSmoke();
-				}
-			}
+			}break;
 		}
 	}
 
