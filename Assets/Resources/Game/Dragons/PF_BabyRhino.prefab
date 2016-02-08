@@ -174,12 +174,12 @@ GameObject:
   m_Component:
   - 4: {fileID: 424588}
   - 114: {fileID: 11456568}
-  - 114: {fileID: 11464728}
   - 114: {fileID: 11455482}
   - 114: {fileID: 11478630}
   - 114: {fileID: 11441528}
   - 114: {fileID: 11481870}
   - 114: {fileID: 11412942}
+  - 114: {fileID: 11472454}
   m_Layer: 0
   m_Name: PF_BabyRhino
   m_TagString: Untagged
@@ -1820,7 +1820,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_absorbTime: 1
   m_minEatAnimTime: 1
-  m_eatDistance: 1
+  m_eatDistance: 2
   m_petTier: 0
   m_bite: 1
 --- !u!114 &11441528
@@ -1842,11 +1842,11 @@ MonoBehaviour:
     max: 0
   m_steerForce: 1
   m_mass: 1
-  m_distanceAttenuation: 1
+  m_distanceAttenuation: 5
   m_checkCollisions: 0
-  m_maxSpeed: 18
-  m_maxRunSpeed: 18
-  m_slowingRadius: 1
+  m_maxSpeed: 15
+  m_maxRunSpeed: 20
+  m_slowingRadius: 1.5
   m_fallOnBurn: 0
 --- !u!114 &11455482
 MonoBehaviour:
@@ -1875,7 +1875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a13edb36705242aa80d042c7e65340a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11464728
+--- !u!114 &11472454
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1883,7 +1883,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 112168}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e24a0cc1b54154f94baededf65dc51d8, type: 3}
+  m_Script: {fileID: 11500000, guid: d529aab36a07a42e4bfe793d43b85a9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_uptadeTargetTime: 0.5
@@ -1905,11 +1905,13 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae2789c30c6b3455d997ab551a4d6849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_sensePreyRadius: 10
+  m_sensePreyTime: 2
 --- !u!136 &13618286
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -2032,11 +2034,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 18
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 18
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_zOffset.min
@@ -2048,11 +2050,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_distanceAttenuation
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_turningSpeed
@@ -2068,7 +2070,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_eatDistance
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_checkCollisions
@@ -2076,7 +2078,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_absorbTime

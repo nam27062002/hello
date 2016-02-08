@@ -38,7 +38,7 @@ namespace LevelEditor {
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
 			InstanceManager.player.playable = false;
 
-			// TEMP SHIT
+			// [MSF] TEMP SHIT
 			GameObject prefabObj = Resources.Load<GameObject>("Game/Dragons/PF_BabyRhino");
 			GameObject babyDragon = Instantiate<GameObject>(prefabObj);
 			Initializable[] toInit = babyDragon.GetComponents<Initializable>();

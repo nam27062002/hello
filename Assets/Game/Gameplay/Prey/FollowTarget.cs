@@ -57,7 +57,8 @@ public class FollowTarget : Initializable {
 
 	void FixedUpdate() {
 		if (m_target != null) {
-			m_motion.Pursuit(m_targetPosition, m_targetVelocity, m_target.maxSpeed);
+			//m_motion.Pursuit(m_targetPosition, m_targetVelocity, m_target.maxSpeed);
+			m_motion.Seek(m_targetPosition);
 		}
 	}
 }

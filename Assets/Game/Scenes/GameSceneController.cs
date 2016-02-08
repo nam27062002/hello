@@ -93,6 +93,19 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Load the dragon
 		DragonManager.LoadDragon(UserProfile.currentDragon);
+
+		// [MSF] TEMP SHIT
+		GameObject prefabObj = Resources.Load<GameObject>("Game/Dragons/PF_BabyRhino");
+		GameObject babyDragon = Instantiate<GameObject>(prefabObj);
+		Initializable[] toInit = babyDragon.GetComponents<Initializable>();
+
+		babyDragon.transform.position = InstanceManager.player.transform.position;
+
+		for (int i = 0; i < toInit.Length; i++) {
+			toInit[i].Initialize();
+		}
+		//
+
 	}
 
 	/// <summary>

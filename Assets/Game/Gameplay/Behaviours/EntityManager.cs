@@ -21,9 +21,11 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 		List<Entity> entities = new List<Entity>();
 
 		for (int i = 0; i < m_entities.Count; i++) {
-			float distSqr = Vector2.SqrMagnitude((Vector2)m_entities[i].transform.position - _center);
-			if (distSqr <= _radius * _radius) {
-				entities.Add(m_entities[i]);
+			if (m_entities[i] != null) {
+				float distSqr = Vector2.SqrMagnitude((Vector2)m_entities[i].transform.position - _center);
+				if (distSqr <= _radius * _radius) {
+					entities.Add(m_entities[i]);
+				}
 			}
 		}
 
@@ -35,11 +37,13 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 		Entity nearestEntity = null;
 
 		for (int i = 0; i < m_entities.Count; i++) {
-			float distSqr = Vector2.SqrMagnitude((Vector2)m_entities[i].transform.position - _center);
-			if (distSqr <= _radius * _radius) {
-				if (distSqr <= minDistSqr) {
-					minDistSqr = distSqr;
-					nearestEntity = m_entities[i];
+			if (m_entities[i] != null) {
+				float distSqr = Vector2.SqrMagnitude((Vector2)m_entities[i].transform.position - _center);
+				if (distSqr <= _radius * _radius) {
+					if (distSqr <= minDistSqr) {
+						minDistSqr = distSqr;
+						nearestEntity = m_entities[i];
+					}
 				}
 			}
 		}
