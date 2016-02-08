@@ -2417,19 +2417,24 @@ MonoBehaviour:
   m_sizeCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 0.8514895
-      outSlope: 0.8514895
+    - time: -0.0017864751
+      value: 0.18814778
+      inSlope: 2.3691835
+      outSlope: 2.3691835
       tangentMode: 0
-    - time: 1.1070329
-      value: 5.3992686
-      inSlope: 2.6304433
-      outSlope: 2.6304433
+    - time: 0.6272868
+      value: 1.9588286
+      inSlope: 4.186264
+      outSlope: 4.186264
+      tangentMode: 0
+    - time: 1.0919297
+      value: 4.0119567
+      inSlope: -2.5896702
+      outSlope: -2.5896702
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   m_particleSpawn: 2
   m_maxParticles: 100
   m_lifeTime: 0.25
@@ -2592,6 +2597,10 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -2626,6 +2635,42 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_turningSpeed
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].time
+      value: -0.0017864751
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].value
+      value: 0.18814778
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].inSlope
+      value: 2.3691835
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[0].outSlope
+      value: 2.3691835
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].time
+      value: 0.6272868
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].value
+      value: 1.9588286
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].inSlope
+      value: 4.186264
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[1].outSlope
+      value: 4.186264
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_RotationOrder
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
