@@ -20,7 +20,7 @@ public class RainController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		Vector3 vel = m_dragonMotion.GetVelocity();
+		Vector3 vel = m_dragonMotion.velocity;
 		Vector3 local = m_transform.localPosition;
 		if ( vel.x  > 0 )
 		{

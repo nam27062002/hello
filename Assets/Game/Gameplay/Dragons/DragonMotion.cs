@@ -17,7 +17,7 @@ using System.Collections;
 /// <summary>
 /// Main control of the dragon movement.
 /// </summary>
-public class DragonMotion : MonoBehaviour {
+public class DragonMotion : MonoBehaviour, MotionInterface {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -45,7 +45,7 @@ public class DragonMotion : MonoBehaviour {
 	Animator  				m_animator;
 	DragonPlayer			m_dragon;
 	DragonControl			m_controls;
-	DragonOrientation   	m_orientation;
+	Orientation			   	m_orientation;
 
 	// Movement control
 	private Vector3 m_impulse;
@@ -97,7 +97,7 @@ public class DragonMotion : MonoBehaviour {
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
 		m_dragon			= GetComponent<DragonPlayer>();
 		m_controls 			= GetComponent<DragonControl>();
-		m_orientation	 	= GetComponent<DragonOrientation>();
+		m_orientation	 	= GetComponent<Orientation>();
 
 		Transform sensors	= transform.FindChild("sensors").transform; 
 		m_sensor.top 		= sensors.FindChild("TopSensor").transform;
@@ -479,21 +479,24 @@ public class DragonMotion : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GETTERS															//
 	//------------------------------------------------------------------//
+	public Vector2 position {
+		get { return transform.position; }
+	}
 	/// <summary>
 	/// Obtain the current direction of the dragon.
 	/// </summary>
 	/// <returns>The direction the dragon is currently moving towards.</returns>
-	public Vector3 GetDirection(){
-		return m_direction;
+	public Vector2 direction {
+		get { return m_direction; }
 	}
 		
-	public Vector3 GetVelocity() {
-		return m_rbody.velocity;
+	public Vector2 velocity {
+		get { return m_rbody.velocity; }
 	}
 	
 	// max speed without boost
-	public float GetMaxSpeed() {
-		return m_dragon.data.speedSkill.value * m_speedMultiplier;
+	public float maxSpeed {
+		get { return m_dragon.data.speedSkill.value * m_speedMultiplier; }
 	}
 
 	//------------------------------------------------------------------//

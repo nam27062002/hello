@@ -2349,6 +2349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_big
+  m_invulnerableTime: 5
 --- !u!114 &11463312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2360,6 +2361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20bece88168c34eaa8589c1a54ccefd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_turningSpeed: 8
 --- !u!114 &11469624
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2620,6 +2622,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_TagString
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_turningSpeed
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -3,7 +3,12 @@ using System.Collections;
 
 [AddComponentMenu("Behaviour/Prey/Sense Player")]
 public class SensePlayer : MonoBehaviour {
-	
+
+	enum Target {
+		Mouth = 0,
+		Pivot
+	};
+
 	[SerializeField] private float m_sensorMinRadius;
 	public float sensorMinRadius { get { return m_sensorMinRadius; } set { m_sensorMinRadius = value; } }
 	public float sensorMinRadiusSqr { get { return m_sensorMinRadius * m_sensorMinRadius; } }
@@ -17,6 +22,8 @@ public class SensePlayer : MonoBehaviour {
 
 	[SerializeField][Range(0,360)] private float m_sensorAngleOffset;
 	public float sensorAngleOffset { get { return m_sensorAngleOffset; } }
+
+	[SerializeField] private Target m_target = Target.Mouth;
 
 
 	private bool m_alert;
@@ -33,7 +40,7 @@ public class SensePlayer : MonoBehaviour {
 
 	private PreyMotion m_motion;
 	private DragonPlayer m_dragon;
-	private Transform m_dragonMouth; 
+	private Transform m_dragonTarget; 
 
 	private float m_dragonRadiusSqr;
 
@@ -45,7 +52,11 @@ public class SensePlayer : MonoBehaviour {
 
 	void Start() {
 		m_dragon = InstanceManager.player;
-		m_dragonMouth = m_dragon.GetComponent<DragonMotion>().tongue;
+
+		switch (m_target) {
+			case Target.Mouth: m_dragonTarget = m_dragon.GetComponent<DragonMotion>().tongue; break;
+			case Target.Pivot: m_dragonTarget = m_dragon.transform; break;
+		}
 
 		m_dragonRadiusSqr = 0;
 		Collider[] colliders = InstanceManager.player.GetComponents<Collider>();
@@ -88,7 +99,7 @@ public class SensePlayer : MonoBehaviour {
 			}
 		} else if (m_dragon.IsAlive()) {
 			// we have too much erro if we only sense the dragon when it is inside the spawn area, it can be too small
-			Vector2 vectorToPlayer = (Vector2)m_dragonMouth.position - m_motion.position;
+			Vector2 vectorToPlayer = (Vector2)m_dragonTarget.position - m_motion.position;
 			m_distanceSqr = vectorToPlayer.sqrMagnitude - m_dragonRadiusSqr;
 
 			if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {

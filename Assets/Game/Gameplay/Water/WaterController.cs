@@ -51,7 +51,7 @@ public class WaterController : MonoBehaviour {
 	}
 
 	void CreateSplash () {
-		float yVelocity = Mathf.Abs(m_player.GetVelocity().y);
+		float yVelocity = Mathf.Abs(m_player.velocity.y);
 		Debug.Log(yVelocity);
 		if (yVelocity > 1f) {
 			Vector3 pos = m_player.transform.position;

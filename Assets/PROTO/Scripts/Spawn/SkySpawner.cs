@@ -40,7 +40,7 @@ public class SkySpawner : MonoBehaviour {
 		timer -= Time.deltaTime;
 		if (timer < 0f){
 		
-			Vector3 dir = player.GetDirection();
+			Vector3 dir = player.direction;
 
 			Vector3 pos = player.transform.position+dir*spawnDistance;
 			if (!GroupExists(pos)){

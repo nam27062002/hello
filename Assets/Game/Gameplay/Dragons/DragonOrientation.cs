@@ -1,31 +1,28 @@
 using UnityEngine;
 using System.Collections;
 
-public class DragonOrientation : MonoBehaviour {
+public class DragonOrientation : Orientation {
 
-	Vector3 m_direction;
-	Animator m_animator;
-	Quaternion m_targetRotation;
-	Quaternion m_rotation;
-
-	float angle;
-	float timer;
-
-
-	bool m_turningRight;
-	bool m_turningLeft;
-
-	float m_turningSpeed;
-
-	enum State{
-
+	enum State {
 		PLAYING,
 		DYING,
 		DEAD
 	};
 
+	[SerializeField] private float m_turningSpeed = 8.0f;
 
-	State state = State.PLAYING;
+	private Vector3 m_direction;
+	private Animator m_animator;
+	private Quaternion m_targetRotation;
+	private Quaternion m_rotation;
+
+	private float angle;
+	private float timer;
+
+	private bool m_turningRight;
+	private bool m_turningLeft;
+
+	private State m_state;
 
 	// Use this for initialization
 	void Start () {
@@ -35,15 +32,13 @@ public class DragonOrientation : MonoBehaviour {
 		m_rotation = transform.rotation;
 		m_direction = Vector3.right;
 
-		// TODO (miguel): This should come from dragon setup
-		m_turningSpeed = 8.0f; 
+		m_state = State.PLAYING;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate() {
 	
-		if (state == State.PLAYING) {
-
+		if(m_state == State.PLAYING) {
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * m_turningSpeed);
 
 			float angle = Quaternion.Angle(m_rotation, m_targetRotation);
@@ -58,16 +53,14 @@ public class DragonOrientation : MonoBehaviour {
 			m_animator.SetBool("turn right", m_turningRight);
 			m_animator.SetBool("turn left", m_turningLeft);
 
-		} else if (state == State.DYING) {
-
+		} else if(m_state == State.DYING) {
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, 0.1f);
 			m_targetRotation *= Quaternion.AngleAxis(200f * Time.deltaTime, Vector3.down);
 
 			timer += Time.deltaTime;
 			if (timer > 3f)
-				state = State.DEAD;
+				m_state = State.DEAD;
 		} else {
-
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, 0.1f);
 		}
 
@@ -75,7 +68,7 @@ public class DragonOrientation : MonoBehaviour {
 	}
 
 
-	public void SetDirection(Vector3 direction) {
+	public override void SetDirection(Vector3 direction) {
 	
 		Vector3 dir = direction.normalized;
 		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -102,7 +95,7 @@ public class DragonOrientation : MonoBehaviour {
 
 	public void OnDeath() {
 		m_targetRotation = Quaternion.AngleAxis(0f, Vector3.forward)*Quaternion.AngleAxis(0f, Vector3.left);
-		state = State.DYING;
+		m_state = State.DYING;
 		timer = 0f;
 	}
 }
