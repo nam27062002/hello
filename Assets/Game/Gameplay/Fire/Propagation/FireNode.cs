@@ -170,7 +170,7 @@ public class FireNode : MonoBehaviour {
 		m_fireSprite = null;
 	}
 
-	private void StartSmoke()
+	public void StartSmoke()
 	{
 		if ( m_smoke == null )
 		{
