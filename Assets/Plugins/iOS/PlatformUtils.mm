@@ -72,9 +72,11 @@ extern "C"
     
     const char* IOsGetTrackingId()
     {
-        NSUUID *IDFA = [[ASIdentifierManager sharedManager] advertisingIdentifier];
-        NSString *idfaString = [IDFA UUIDString];
-        return (idfaString == nil) ? cStringCopy( "" ) : cStringCopy( idfaString.UTF8String );
+        // TODO (miguel)
+        // NSUUID *IDFA = [[ASIdentifierManager sharedManager] advertisingIdentifier];
+        // NSString *idfaString = [IDFA UUIDString];
+        // return (idfaString == nil) ? cStringCopy( "" ) : cStringCopy( idfaString.UTF8String );
+        return cStringCopy( "" );
     }
     
     const char* IOsFormatPrice( float price, const char* currencyLocale )

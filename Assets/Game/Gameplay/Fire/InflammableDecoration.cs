@@ -87,6 +87,13 @@ public class InflammableDecoration : Initializable {
 					}
 				}
 			}
+
+			if ( m_burned )
+			{
+				for (int i = 0; i < m_fireNodes.Length && m_burned; i++) {
+					m_fireNodes[i].StartSmoke();
+				}
+			}
 		}
 	}
 }
