@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class FireNode : MonoBehaviour {
@@ -26,6 +27,8 @@ public class FireNode : MonoBehaviour {
 
 	private GameObject m_fireSprite;
 	private GameCameraController m_camera;
+
+	private ParticleSystem m_smoke;
 
 
 	// Use this for initialization
@@ -75,6 +78,7 @@ public class FireNode : MonoBehaviour {
 				}
 			} else {
 				m_state = State.Burned;
+				StartSmoke();
 			}
 		} else if (m_state == State.Burned) {
 			if (m_fireSprite != null) {
@@ -82,6 +86,7 @@ public class FireNode : MonoBehaviour {
 
 				if (m_fireSprite.transform.localScale.x < 0.1f) {
 					StopFire();
+					StopSmoke();
 				}
 			}
 		}
@@ -148,6 +153,37 @@ public class FireNode : MonoBehaviour {
 			m_fireSprite.SetActive(false);
 		}
 		m_fireSprite = null;
+	}
+
+	private void StartSmoke()
+	{
+		if ( m_smoke == null )
+		{
+			GameObject smoke = PoolManager.GetInstance("SmokeParticle");
+			smoke.transform.position = transform.position;
+			m_smoke = smoke.GetComponent<ParticleSystem>();
+			m_smoke.Play();
+		}
+	}
+
+	private void StopSmoke()
+	{
+		if ( m_smoke != null )
+		{
+			m_smoke.Stop();
+			StartCoroutine( WaitEndSmokeToDeactivate( m_smoke ));
+		}
+		m_smoke = null;
+	}
+
+	IEnumerator WaitEndSmokeToDeactivate( ParticleSystem ps )
+	{
+		while( ps.particleCount > 0 )
+		{
+			yield return null;
+		}
+		ps.gameObject.SetActive(false);
+		yield return null;
 	}
 
 	private void FindNeighbours() {
