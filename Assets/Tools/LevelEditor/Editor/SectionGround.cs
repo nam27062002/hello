@@ -130,147 +130,28 @@ namespace LevelEditor {
 				} break;
 
 				case CollisionShape.CIRCLE: {
-					// Generate a diameter 1 vertical cylinder mesh
-					Mesh mesh = new Mesh();
-					mesh.name = "circle_mesh";
-					List<Vector3> vertices = new List<Vector3>();
-					List<int> triangles = new List<int>();
-
-					// Circle planes
-					// Vertices
-					float numRadius = 21;	// 5 triangles per quarter (as in Unity's default cylinder primitive)
-					for(int i = 0; i < numRadius; i++) {
-						// Compute position in the X-Y plane
-						float angle = (float)i/(float)numRadius * 360f;
-						Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-						Vector3 newVertex = q * (Vector3.right * 0.5f);
-
-						// Front face
-						newVertex.z = -0.5f;
-						vertices.Add(newVertex);
-
-						// Back face
-						newVertex.z = 0.5f;
-						vertices.Add(newVertex);
-					}
-
-					// Central points
-					vertices.Add(new Vector3(0, 0, -0.5f));
-					vertices.Add(new Vector3(0, 0,  0.5f));
-
-					mesh.vertices = vertices.ToArray();
-
-					// Triangles
-					int frontCentralVertex = vertices.Count - 2;
-					int backCentralVertex = vertices.Count - 1;
-					int numVertices = vertices.Count - 2;	// Skip the central vertices
-					for(int i = 0; i < numVertices; i++) {
-						// Do all triangles linked to that vertex
-						// even vertices -> front face, odd vertices -> back face
-						if(i % 2 == 0) {
-							// 1) Triangle to the central point
-							triangles.Add(i);
-							triangles.Add(frontCentralVertex);
-							triangles.Add((i + 2) % numVertices);
-
-							// 2) Lateral face
-							triangles.Add(i);
-							triangles.Add((i + 2) % numVertices);
-							triangles.Add((i + 1) % numVertices);
-						} else {
-							// 1) Triangle to the central point
-							triangles.Add(i);
-							triangles.Add((i + 2) % numVertices);
-							triangles.Add(backCentralVertex);
-
-							// 2) Lateral face
-							triangles.Add(i);
-							triangles.Add((i + 1) % numVertices);
-							triangles.Add((i + 2) % numVertices);
-						}
-					}
-					mesh.triangles = triangles.ToArray();
-
-					Vector3[] normals = new Vector3[vertices.Count];
-					for(int i = 0; i < vertices.Count; i++) {
-						normals[i] = vertices[i].normalized;
-					}
-					mesh.normals = normals;
-
-					Vector2[] uvs = new Vector2[mesh.vertices.Length];
-					for(int i = 0; i < mesh.vertices.Length; i++) {
-						uvs[i] = new Vector2(mesh.vertices[i].x, mesh.vertices[i].y);
-					}
-					mesh.uv = uvs;
-
 					// Create an empty game object and add to it the required components
 					GameObject newGO = new GameObject();
 					newGO.AddComponent<MeshRenderer>();
+					newGO.AddComponent<MeshFilter>();
+					newGO.AddComponent<MeshCollider>();
 
-					MeshFilter newMeshFilter = newGO.AddComponent<MeshFilter>();
-					newMeshFilter.sharedMesh = mesh;
-
-					MeshCollider collider = newGO.AddComponent<MeshCollider>();
-					collider.sharedMesh = mesh;
-					collider.convex = true;
+					ProceduralMeshGenerator meshGenerator = newGO.AddComponent<ProceduralMeshGenerator>();
+					meshGenerator.GenerateMesh(21, 360f);	// 5 triangles per quarter (as in Unity's default cylinder primitive)
 
 					// Done!
 					return newGO;
 				} break;
 
 				case CollisionShape.TRIANGLE: {
-					// Generate a height 1 isosceles triangle
-					Mesh mesh = new Mesh();
-					mesh.name = "triangle_mesh";
-
-					mesh.vertices = new Vector3[] {
-						// Front face
-						new Vector3(-0.5f, -0.5f, -0.5f), // bot-left
-						new Vector3( 0,     0.5f, -0.5f), // top
-						new Vector3( 0.5f, -0.5f, -0.5f), // bot-right
-
-						// Back face
-						new Vector3(-0.5f, -0.5f,  0.5f), // bot-left
-						new Vector3( 0,     0.5f,  0.5f), // top
-						new Vector3( 0.5f, -0.5f,  0.5f)  // bot-right
-					};
-
-					mesh.triangles = new int[] {
-						0, 1, 2,	// Front face
-						5, 4, 3,	// Back face
-
-						0, 3, 1,	// Left panel 1
-						1, 3, 4,	// Left panel 2
-
-						1, 4, 2,	// Right panel 1
-						2, 4, 5,	// Right panel 2
-
-						0, 5, 3,	// Bottom panel 1
-						0, 2, 5 	// Bottom panel 2
-					};
-
-					Vector3[] normals = new Vector3[mesh.vertices.Length];
-					for(int i = 0; i < mesh.vertices.Length; i++) {
-						normals[i] = mesh.vertices[i].normalized;
-					}
-					mesh.normals = normals;
-
-					Vector2[] uvs = new Vector2[mesh.vertices.Length];
-					for(int i = 0; i < mesh.vertices.Length; i++) {
-						uvs[i] = new Vector2(mesh.vertices[i].x, mesh.vertices[i].y);
-					}
-					mesh.uv = uvs;
-
 					// Create an empty game object and add to it the required components
 					GameObject newGO = new GameObject();
 					newGO.AddComponent<MeshRenderer>();
+					newGO.AddComponent<MeshFilter>();
+					newGO.AddComponent<MeshCollider>();
 
-					MeshFilter newMeshFilter = newGO.AddComponent<MeshFilter>();
-					newMeshFilter.sharedMesh = mesh;
-
-					MeshCollider collider = newGO.AddComponent<MeshCollider>();
-					collider.sharedMesh = mesh;
-					collider.convex = true;
+					ProceduralMeshGenerator meshGenerator = newGO.AddComponent<ProceduralMeshGenerator>();
+					meshGenerator.GenerateMesh(3, 360f);	// Generate a height 1 isosceles triangle
 
 					// Done!
 					return newGO;

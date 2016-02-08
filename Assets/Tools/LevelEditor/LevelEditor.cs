@@ -94,6 +94,7 @@ namespace LevelEditor {
 		private void OnDrawGizmos() {
 			// Draw axis at scene's origin
 			float axisLength = 100000f;
+			Handles.matrix = Matrix4x4.identity;
 
 			// X-axis
 			Handles.color = Handles.xAxisColor;
