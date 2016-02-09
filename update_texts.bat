@@ -2,7 +2,7 @@
 echo off
 echo Updating Texts...
 
-Tools\Ubi.Tools.Oasis.WebServices.TidExtractor\bin\Release\Ubi.Tools.Oasis.WebServices.XmlExtractor.exe -host http://oasis-pdc.ubisoft.org/sandstorm -directory Assets\Resources\Localization\
+Tools\Ubi.Tools.Oasis.WebServices.TidExtractor\bin\Release\Ubi.Tools.Oasis.WebServices.XmlExtractor.exe -host http://oasis-pdc2.ubisoft.org/HungryDragon -directory Assets\Resources\Localization\
 
 rename "Assets\Resources\Localization\simplified chinese.txt" "simplified_chinese.txt"
 
