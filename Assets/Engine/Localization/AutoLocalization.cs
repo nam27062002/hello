@@ -40,15 +40,15 @@ public class AutoLocalization : MonoBehaviour {
 		// Check required stuff
 		txt = GetComponent<Text>();
 		DebugUtils.Assert(txt != null, "Required member!");
+
+		// Store original tid
+		originalTid = txt.text;
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	public void Start() {
-		// Store original tid
-		originalTid = txt.text;
-
 		// Do the first translation
 		Localize();
 	}

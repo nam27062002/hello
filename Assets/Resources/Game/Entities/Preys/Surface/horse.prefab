@@ -930,6 +930,9 @@ MonoBehaviour:
     max: 360
   m_shake: 0
   m_slowMotion: 0
+  m_burnSize: 6
+  m_burnDuration: 0.75
+  m_orientedBurn: 0
 --- !u!114 &11430024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1156,6 +1159,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_ashesAsset
       value: PF_Ash_Horse
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_orientedBurn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_burnSize
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -31,6 +31,13 @@ public class InflammableBehaviour : Initializable {
 	[SerializeField] private bool m_shake = false;
 	[SerializeField] private bool m_slowMotion = false;
 
+	[SeparatorAttribute]
+	[Header("Burn Settings")]
+	[SerializeField] private float m_burnSize = 4;
+	[SerializeField] private float m_burnDuration = 0.75f;
+	[SerializeField] private bool m_orientedBurn = true;
+
+
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
@@ -163,14 +170,21 @@ public class InflammableBehaviour : Initializable {
 				if (burnParticle != null) 
 				{
 					burnParticle.transform.position = transform.position + Vector3.back * 2;
-					Vector3 dir =  burnParticle.transform.position - _from.position;
+					if ( m_orientedBurn )
+					{
+						Vector3 dir =  burnParticle.transform.position - _from.position;
 
-					Quaternion q = burnParticle.transform.rotation;
-					q.SetLookRotation( Vector3.forward, dir );
-					burnParticle.transform.rotation = q;
+						Quaternion q = burnParticle.transform.rotation;
+						q.SetLookRotation( Vector3.forward, dir );
+						burnParticle.transform.rotation = q;
+					}
+					else
+					{
+						burnParticle.transform.rotation = Quaternion.identity;
+					}
 
 					BurnParticle bp = burnParticle.GetComponent<BurnParticle>();
-					bp.Activate( 4, 0.50f);
+					bp.Activate( m_burnSize, m_burnDuration);
 				}
 
 				if (m_explosionPrefab != null) {

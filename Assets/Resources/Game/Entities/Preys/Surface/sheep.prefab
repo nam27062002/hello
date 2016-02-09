@@ -817,6 +817,9 @@ MonoBehaviour:
     max: 360
   m_shake: 0
   m_slowMotion: 0
+  m_burnSize: 4
+  m_burnDuration: 0.75
+  m_orientedBurn: 0
 --- !u!114 &11447996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1079,6 +1082,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_reward.fury
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_orientedBurn
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
