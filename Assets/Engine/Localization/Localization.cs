@@ -101,6 +101,7 @@ public static class Localization
 	{
 		Debug.Log("Load Language: " + languageCode);
 		/*
+		// DO NOT REMOVE!!
 		LocalizationDef localizationDef = Rules.GetLocalizationDef (languageSku);
 
 		if (localizationDef == null)
@@ -132,7 +133,9 @@ public static class Localization
 			}
 		}
 		*/
-		string languageTxtFilename = languageCode;
+		// TODO (miguel) check all the commented code and start using them
+		string languageTxtFilename = "english";
+		languageCode = "en";
 
 		// Try default file in RESOURCES folder of our ipa/apk file
 		TextAsset txt = Resources.Load("Localization/" + languageTxtFilename, typeof(TextAsset)) as TextAsset;
