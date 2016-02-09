@@ -212,7 +212,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 				}
 				particle.m_moveDir = flamesUpDir;
-				particle.Activate( scale, scale * 1.25f, (delta + 0.1f), scale * distanceMultiplier, m_mouthTransform.position + (Vector3)m_direction * correctedPos);
+				particle.Activate( scale, scale * 1.25f, (delta + 0.1f), scale * distanceMultiplier, m_mouthTransform.position + (Vector3)m_direction * correctedPos, m_mouthTransform);
 			}
 		}
 

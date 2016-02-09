@@ -14,6 +14,7 @@ public class FlameUp : MonoBehaviour
 	State state = State.INACTIVE;
 
 	float m_timer;
+	float m_posTimer;
 	float m_duration;
 
 	float m_startScale;
@@ -23,6 +24,9 @@ public class FlameUp : MonoBehaviour
 
 	Vector3 m_startPosition;
 	public Vector3 m_moveDir = Vector3.up;
+
+	Transform m_referenceTransform;
+	Vector3 m_referencePosition;
 
 	void Start()
 	{
@@ -35,7 +39,15 @@ public class FlameUp : MonoBehaviour
 		{
 			case State.ACTIVE:
 			{
-				m_timer -= Time.deltaTime;// * (1.0f + distance);
+				float speedMultiplier = 1;
+				float sqMagnitude = (m_referenceTransform.position - m_referencePosition).sqrMagnitude;
+				if (  sqMagnitude > 4 )
+				{
+					speedMultiplier = 1 + (sqMagnitude - 4.0f);
+				}
+
+				m_timer -= Time.deltaTime * speedMultiplier;
+				m_posTimer -= Time.deltaTime;
 				if ( m_timer <= 0 )
 				{
 					state = State.INACTIVE;
@@ -45,9 +57,8 @@ public class FlameUp : MonoBehaviour
 				{
 					// Scale
 					float tt = (m_timer / m_duration);
-					float delta = 1.0f - tt;
 
-					// transform.localScale = Vector3.up * Mathf.Lerp( m_startScale, m_endScale, delta) + Vector3.right * m_startScale * tt;
+
 					transform.localScale = Vector3.one * m_startScale * tt;
 
 					// Alpha
@@ -59,6 +70,7 @@ public class FlameUp : MonoBehaviour
 					}
 
 					// Pos
+					float delta = 1.0f - (m_posTimer / m_duration);
 					transform.position = m_startPosition + m_moveDir * m_distance * delta;
 
 				}
@@ -66,12 +78,14 @@ public class FlameUp : MonoBehaviour
 		}
 	}
 
-	public void Activate( float startScale, float endScale, float duration, float distance, Vector3 startPos)
+	public void Activate( float startScale, float endScale, float duration, float distance, Vector3 startPos, Transform referenceTransform)
 	{
 		m_startScale = startScale;
 		m_endScale = endScale;
 
 		m_timer = duration;
+		m_posTimer = duration;
+
 		m_duration = duration;
 
 		m_distance = distance;
@@ -82,6 +96,9 @@ public class FlameUp : MonoBehaviour
 
 		gameObject.SetActive(true);
 		state = State.ACTIVE;
+
+		m_referenceTransform = referenceTransform;
+		m_referencePosition = m_referenceTransform.position;
 	}
 	
 }
