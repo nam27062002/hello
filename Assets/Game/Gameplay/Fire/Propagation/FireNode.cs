@@ -24,6 +24,7 @@ public class FireNode : MonoBehaviour {
 	private float m_timer;
 
 	private Vector3 m_fireSpriteScale;
+	private Vector3 m_fireSpriteDestinationScale;
 
 	private GameObject m_fireSprite;
 	private GameCameraController m_camera;
@@ -71,7 +72,7 @@ public class FireNode : MonoBehaviour {
 					StartFire();		
 				}
 
-				m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, transform.localScale, Time.smoothDeltaTime * 1.5f);
+				m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, m_fireSpriteDestinationScale, Time.smoothDeltaTime * 1.5f);
 
 				//burn near nodes and fuel them
 				if (m_timer > 0) {
@@ -132,18 +133,11 @@ public class FireNode : MonoBehaviour {
 
 	private void StartFire() {
 		if (m_fireSprite == null) {
-			// m_fireSprite = PoolManager.GetInstance("FireSprite");
-			if (Random.Range(0,100) > 50)
-			{
-				m_fireSprite = PoolManager.GetInstance("FireSprite_a");
-			}
-			else
-			{
-				m_fireSprite = PoolManager.GetInstance("FireSprite_b");
-			}
+			m_fireSprite = PoolManager.GetInstance("FireSprite");
 
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = m_fireSpriteScale;
+			m_fireSpriteDestinationScale = transform.localScale * Random.Range( 0.55f, 1.45f);
 			m_fireSprite.transform.localRotation = transform.localRotation;
 
 			if ( Random.Range(0,100) > 50 )
