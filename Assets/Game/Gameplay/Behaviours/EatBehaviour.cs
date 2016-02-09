@@ -18,6 +18,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	[SerializeField]private float m_minEatAnimTime;
 	[SerializeField]private float m_eatDistance;
 	public float eatDistanceSqr { get { return m_eatDistance * m_eatDistance; } }
+	public DragonTier tier { get { return m_tier; } }
 
 	private List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
 

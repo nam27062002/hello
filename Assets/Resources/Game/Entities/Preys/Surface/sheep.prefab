@@ -551,7 +551,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 183558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.52, y: 3, z: -4.162}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 448684}
@@ -768,17 +768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: sheep
-  m_reward:
-    score: 50
-    coins: 25
-    pc: 0
-    health: 4
-    energy: 0
-    fury: 15
-    xp: 0.8
-  m_goldenChance: 0.25
-  m_pcChance: 0
+  m_sku: sheep
 --- !u!114 &11424680
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -847,6 +837,7 @@ MonoBehaviour:
   m_steerForce: 0.5
   m_mass: 1
   m_distanceAttenuation: 5
+  m_checkCollisions: 1
   m_maxSpeed: 4
   m_maxRunSpeed: 7
   m_slowingRadius: 0
@@ -887,8 +878,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.1846706, y: 0.84821355}
-  radius: 0.7966276
+  offset: {x: 0.13352966, y: 1.2061996}
+  radius: 0.8
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11475528
 MonoBehaviour:
@@ -901,8 +892,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_edibleFromTier: 0
-  m_size: 2.5
   onEatenParticle: 
 --- !u!114 &11482352
 MonoBehaviour:
@@ -919,6 +908,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 12
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+  m_target: 0
 --- !u!114 &11499178
 MonoBehaviour:
   m_ObjectHideFlags: 1

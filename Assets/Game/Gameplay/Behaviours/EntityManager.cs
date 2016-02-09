@@ -19,12 +19,15 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 
 	public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius) {
 		List<Entity> entities = new List<Entity>();
+		Rect r = new Rect();
+		r.center = _center;
+		r.size = Vector2.one * _radius * 2f;
 
 		for (int i = 0; i < m_entities.Count; i++) {
-			if (m_entities[i] != null) {
-				float distSqr = Vector2.SqrMagnitude((Vector2)m_entities[i].transform.position - _center);
-				if (distSqr <= _radius * _radius) {
-					entities.Add(m_entities[i]);
+			Entity e = m_entities[i];
+			if (e != null) {				
+				if (e.IntersectsWith(r)) {
+					entities.Add(e);
 				}
 			}
 		}
@@ -32,17 +35,18 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 		return entities.ToArray();
 	}
 
-	public Entity GetEntityInRangeNearest2D(Vector2 _center, float _radius) {
+	public Entity GetEntityInRangeNearest2D(Vector2 _center, float _radius, DragonTier _tier) {
 		float minDistSqr = _radius * _radius;
 		Entity nearestEntity = null;
 
 		for (int i = 0; i < m_entities.Count; i++) {
-			if (m_entities[i] != null) {
-				float distSqr = Vector2.SqrMagnitude((Vector2)m_entities[i].transform.position - _center);
-				if (distSqr <= _radius * _radius) {
+			Entity e = m_entities[i];
+			if (e != null) {
+				float distSqr = Vector2.SqrMagnitude((Vector2)e.transform.position - _center);
+				if (distSqr <= _radius * _radius && e.def.edibleFromTier <= _tier) {
 					if (distSqr <= minDistSqr) {
 						minDistSqr = distSqr;
-						nearestEntity = m_entities[i];
+						nearestEntity = e;
 					}
 				}
 			}

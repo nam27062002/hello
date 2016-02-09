@@ -17,5 +17,13 @@ public class DragonPetEatBehaviour : EatBehaviour {
 		m_biteSkill = m_bite;
 	}
 
-	protected override void SlowDown(bool _enable) {}
+	protected override void SlowDown(bool _enable) {
+		if (_enable) {
+			m_motion.SetSpeedMultiplier(0.25f);
+			m_slowedDown = true;
+		} else {
+			m_motion.SetSpeedMultiplier(1f);
+			m_slowedDown = false;
+		}
+	}
 }

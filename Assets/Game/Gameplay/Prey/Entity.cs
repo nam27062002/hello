@@ -27,6 +27,8 @@ public class Entity : Initializable {
 	private bool m_isGolden = false;
 	private bool m_givePC = false;
 
+	private CircleArea2D m_area;
+
 	private Dictionary<int, Material[]> m_materials;
 
 	//-----------------------------------------------
@@ -35,6 +37,8 @@ public class Entity : Initializable {
 	// Use this for initialization
 	void Awake() {
 		m_materials = new Dictionary<int, Material[]>();
+
+		m_area = GetComponent<CircleArea2D>();
 
 		// keep the original materials, sometimes it will become Gold!
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
@@ -94,5 +98,22 @@ public class Entity : Initializable {
 		}
 
 		return newReward;
+	}
+
+	public float DistanceSqr(Vector3 _point) {
+		if (m_area != null) {
+			return m_area.bounds.bounds.SqrDistance(_point);
+		} else {
+			return Vector2.SqrMagnitude(_point - transform.position);
+		}
+	}
+
+	//
+	public bool IntersectsWith(Rect _r) {
+		if (m_area != null) {
+			return m_area.Overlaps(_r);
+		} else {
+			return _r.Contains(transform.position);
+		}		
 	}
 }

@@ -412,11 +412,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private bool CheckGround(out RaycastHit _leftHit) {
 		Vector3 distance = Vector3.down * 10f;
 		bool hit_L = false;
-		bool hit_R = false;
 
 		Vector3 leftSensor  = m_sensor.bottom.position;
-		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
-
 		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
 
 		if (hit_L) {
@@ -432,11 +429,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private bool CheckCeiling(out RaycastHit _leftHit) {
 		Vector3 distance = Vector3.up * 10f;
 		bool hit_L = false;
-		bool hit_R = false;
 		
-		Vector3 leftSensor 	= m_sensor.top.position;
-		Vector3 rightSensor = leftSensor + Vector3.right * 2f;
-						
+		Vector3 leftSensor 	= m_sensor.top.position;						
 		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
 
 		if (hit_L) {
@@ -497,6 +491,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// max speed without boost
 	public float maxSpeed {
 		get { return m_dragon.data.speedSkill.value * m_speedMultiplier; }
+	}
+
+
+	public void SetSpeedMultiplier(float _value) {
+		m_dragon.SetSpeedMultiplier(_value);
 	}
 
 	//------------------------------------------------------------------//

@@ -180,6 +180,7 @@ GameObject:
   - 114: {fileID: 11481870}
   - 114: {fileID: 11412942}
   - 114: {fileID: 11472454}
+  - 114: {fileID: 11463568}
   m_Layer: 0
   m_Name: PF_BabyRhino
   m_TagString: Untagged
@@ -1835,8 +1836,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_zOffset:
-    min: -2
-    max: -2
+    min: -3
+    max: -3
   m_flockAvoidRadiusRange:
     min: 0
     max: 0
@@ -1873,6 +1874,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a13edb36705242aa80d042c7e65340a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11463568
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7e26ca9ba80e40849c0f1a3ee678ae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11472454
@@ -2042,11 +2054,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_zOffset.min
-      value: -2
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_zOffset.max
-      value: -2
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowingRadius
@@ -2091,6 +2103,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_bite
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorMaxRadius
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sensorMinRadius
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

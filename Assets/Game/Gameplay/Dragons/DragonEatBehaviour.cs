@@ -39,10 +39,10 @@ public class DragonEatBehaviour : EatBehaviour {
 	protected override void SlowDown(bool _enable) {
 		if (_enable) {
 			m_dragonBoost.StopBoost();
-			m_dragon.SetSpeedMultiplier(0.25f);
+			m_motion.SetSpeedMultiplier(0.25f);
 			m_slowedDown = true;
 		} else {
-			m_dragon.SetSpeedMultiplier(1f);
+			m_motion.SetSpeedMultiplier(1f);
 			m_dragonBoost.ResumeBoost();
 			m_slowedDown = false;
 		}

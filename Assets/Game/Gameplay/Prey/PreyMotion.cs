@@ -61,6 +61,7 @@ public class PreyMotion : Initializable, MotionInterface {
 
 	protected float m_currentMaxSpeed;
 	protected float m_currentSpeed;
+	protected float m_speedMultiplier;
 
 	protected float m_lastSeekDistanceSqr;
 		
@@ -87,6 +88,8 @@ public class PreyMotion : Initializable, MotionInterface {
 	public float   speed			{ get { return m_currentSpeed; } }
 	public float   slowingRadius	{ get { return m_slowingRadius; } }
 	public float   lastSeekDistanceSqr { get { return m_lastSeekDistanceSqr; } }
+
+	public void SetSpeedMultiplier(float _value) { m_speedMultiplier = _value; }
 	//
 	// ----------------------------------------------------------------------------- //
 
@@ -136,6 +139,8 @@ public class PreyMotion : Initializable, MotionInterface {
 
 		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
+		m_speedMultiplier = 1;
+
 		m_collisionAvoidFactor = 0;
 		m_collisionNormal = Vector2.up;
 
@@ -373,7 +378,8 @@ public class PreyMotion : Initializable, MotionInterface {
 			m_steering = m_steering / m_mass;
 			
 			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
-			
+			m_velocity *= m_speedMultiplier;
+
 			if (m_velocity != Vector2.zero) {
 				m_direction = m_velocity.normalized;
 				m_orientation.SetDirection(m_direction);

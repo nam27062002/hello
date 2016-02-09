@@ -5,7 +5,7 @@ public class DragonPetTactics : MonoBehaviour {
 
 	enum State {
 		None = 0,
-		Idle,
+		Wander,
 		Follow,
 		Hunt
 	};
@@ -16,6 +16,7 @@ public class DragonPetTactics : MonoBehaviour {
 	// Behaviours
 	private SensePlayer m_playerSensor;
 	private FollowTarget m_follow;
+	private DragonPetWander m_wander;
 	private DragonPetEatBehaviour m_eat;
 
 	private DragonMotion m_player;
@@ -33,12 +34,17 @@ public class DragonPetTactics : MonoBehaviour {
 		m_target = null;
 
 		m_playerSensor = GetComponent<SensePlayer>();
+
 		m_eat = GetComponent<DragonPetEatBehaviour>();
+
 		m_follow = GetComponent<FollowTarget>();
 		m_follow.enabled = false;
 
+		m_wander = GetComponent<DragonPetWander>();
+		m_wander.enabled = false;
+
 		m_state = State.None;
-		m_nextState = State.Idle;
+		m_nextState = State.Wander;
 	}
 		
 	// Update is called once per frame
@@ -57,13 +63,13 @@ public class DragonPetTactics : MonoBehaviour {
 				}
 			}
 		} else {
-			if (m_state == State.Idle) {
+			if (m_state == State.Wander) {
 				if (!m_playerSensor.isInsideMaxArea) {
 					m_nextState = State.Follow;
 				}
 			} else if (m_state == State.Follow) {
 				if (m_playerSensor.isInsideMinArea) {
-					m_nextState = State.Idle;
+					m_nextState = State.Wander;
 				}
 			}
 
@@ -81,7 +87,7 @@ public class DragonPetTactics : MonoBehaviour {
 	}
 
 	private void SearchTarget() {
-		Entity target = EntityManager.instance.GetEntityInRangeNearest2D(transform.position, m_sensePreyRadius);
+		Entity target = EntityManager.instance.GetEntityInRangeNearest2D(transform.position, m_sensePreyRadius, m_eat.tier);
 		if (target != null) {
 			m_target = target.GetComponent<PreyMotion>();
 		} else {
@@ -91,7 +97,8 @@ public class DragonPetTactics : MonoBehaviour {
 
 	private void ChangeState() {
 		switch (m_state) {
-			case State.Idle:
+			case State.Wander:
+				m_wander.enabled = false;
 				m_follow.enabled = true;
 				break;
 
@@ -103,7 +110,8 @@ public class DragonPetTactics : MonoBehaviour {
 		}
 
 		switch (m_nextState) {
-			case State.Idle:
+			case State.Wander:
+				m_wander.enabled = true;
 				m_follow.enabled = false;
 				break;
 
