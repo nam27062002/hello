@@ -97,34 +97,33 @@ public static class Localization
 	/// <summary>
 	/// Load the specified localization dictionary.
 	/// </summary>
-	static bool LoadDictionary (string languageCode)
+	static bool LoadDictionary (string languageSku)
 	{
-		Debug.Log("Load Language: " + languageCode);
-		/*
-		// DO NOT REMOVE!!
-		LocalizationDef localizationDef = Rules.GetLocalizationDef (languageSku);
+		Debug.Log("Load Language: " + languageSku);
+
+		DefinitionNode localizationDef = Definitions.instance.GetDefinitionFromCategory( Definitions.Category.LOCALIZATION, languageSku); 
 
 		if (localizationDef == null)
 		{
-			languageSku = "lang_english";
-			localizationDef = Rules.GetLocalizationDef (languageSku);
-
+			languageSku = "lang_english";	// Default Lanuguage
+			localizationDef = Definitions.instance.GetDefinitionFromCategory( Definitions.Category.LOCALIZATION, languageSku);
 			if (localizationDef == null)
 			{
 				return false;
 			}
 		}
 
-		string languageTxtFilename = localizationDef.txtName;
+		string languageTxtFilename = localizationDef.Get("txtName");
+		string isoCode = localizationDef.Get("isoCode");
 
 		// Try downloaded file from assetsLUT
-		string cachePath = Application.persistentDataPath + "/localization/" + languageTxtFilename + ".txt";
-		if ( File.Exists(cachePath) && InstanceManager.Config.getDefinitionsFromAssetsLUT())
+		string cachePath = Application.persistentDataPath + "/Localization/" + languageTxtFilename + ".txt";
+		if ( File.Exists(cachePath) /*&& InstanceManager.Config.getDefinitionsFromAssetsLUT()*/)
 		{
 			try
 			{
-				byte[] bytes = File.ReadAllBytes( cachePath );
-				SetLanguage( languageSku, new ByteReader(bytes).ReadDictionary());
+				string text = File.ReadAllText( cachePath );	// TODO (miguel) : This is new, I should check if it works after we have the cache working
+				SetLanguage( languageSku, isoCode, ReadDictionary(text));
 				return true;
 			}
 			catch ( Exception e )
@@ -132,16 +131,12 @@ public static class Localization
 				Debug.LogError("Exception " + e);
 			}
 		}
-		*/
-		// TODO (miguel) check all the commented code and start using them
-		string languageTxtFilename = "english";
-		languageCode = "en";
 
 		// Try default file in RESOURCES folder of our ipa/apk file
 		TextAsset txt = Resources.Load("Localization/" + languageTxtFilename, typeof(TextAsset)) as TextAsset;
 		if (txt != null)
 		{
-			SetLanguage(languageCode, ReadDictionary( txt.text ));
+			SetLanguage( languageSku , isoCode, ReadDictionary( txt.text ));
 			return true;
 		}
 		
@@ -170,11 +165,11 @@ public static class Localization
 	/// <summary>
 	/// Load the specified asset and activate the localization.
 	/// </summary>
-	static private void SetLanguage (string languageCode, Dictionary<string, string> dictionary)
+	static private void SetLanguage (string languageSku, string languageCode, Dictionary<string, string> dictionary)
 	{
-		m_language = languageCode;
+		m_language = languageSku;
 		// Create a new culture with the given code
-		_culture = CultureInfo.CreateSpecificCulture(m_language);
+		_culture = CultureInfo.CreateSpecificCulture(languageCode);
 		// Just in case there is any wild formatting out there, change default current culture as well
 		System.Threading.Thread.CurrentThread.CurrentCulture = _culture;
 
