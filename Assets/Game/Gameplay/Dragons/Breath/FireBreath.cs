@@ -227,6 +227,20 @@ public class FireBreath : DragonBreathBehaviour {
 		m_light.transform.localRotation = Quaternion.Lerp(m_light.transform.localRotation, Quaternion.AngleAxis(angle, Vector3.back), lerpT);
 
 		m_frame = (m_frame + 1) % 4;
+
+
+		//--------------------------------------------------------------------------------------------
+		// try to burn things!!!
+		// search for preys!
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
+		for (int i = 0; i < preys.Length; i++) {
+			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
+			if (entity != null) {
+				if (IsInsideArea(entity.transform.position)) {
+					entity.Burn(damage, transform);
+				}
+			}
+		}
 	}
 
 	void OnDrawGizmos() {
