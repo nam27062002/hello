@@ -81,43 +81,34 @@ public class InflammableBehaviour : Initializable {
 	}
 
 	void Update() {
-		m_timer -= Time.deltaTime;
-		if (m_timer <= 0) {
-			switch (m_state) {
-				case State.Idle:
-					m_timer = m_checkFireTime;
-					if ( m_circleArea != null ) {
-						if ( m_breath.Overlaps( m_circleArea ) )
-							Burn(m_breath.damage, m_breath.transform);
-					}
-					else if (m_breath.IsInsideArea(transform.position)) {
-						Burn(m_breath.damage, m_breath.transform);
-					}
-					break;
+		if (m_state != State.Idle) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0) {
+				switch (m_state) {
+					case State.Burned:
+						// Particles
+						if (m_ashesAsset.Length > 0) {
+							Renderer renderer = GetComponentInChildren<Renderer>();	
+							GameObject particle = ParticleManager.Spawn("Ashes/" + m_ashesAsset, renderer.transform.position);
+							particle.transform.rotation = renderer.transform.rotation;
+							particle.transform.localScale = renderer.transform.localScale;
+						}
 
-				case State.Burned:
-					// Particles
-					if (m_ashesAsset.Length > 0) {
-						Renderer renderer = GetComponentInChildren<Renderer>();	
-						GameObject particle = ParticleManager.Spawn("Ashes/" + m_ashesAsset, renderer.transform.position);
-						particle.transform.rotation = renderer.transform.rotation;
-						particle.transform.localScale = renderer.transform.localScale;
-					}
+						m_state = State.Ashes;
+						m_timer = m_dissolveTime;
+						break;
 
-					m_state = State.Ashes;
-					m_timer = m_dissolveTime;
-					break;
-
-				case State.Ashes:
-					if (m_destroyOnBurn) {
-						DestroyObject(gameObject);
-					} else {
-						gameObject.SetActive(false);
-					}
-					break;
+					case State.Ashes:
+						if (m_destroyOnBurn) {
+							DestroyObject(gameObject);
+						} else {
+							gameObject.SetActive(false);
+						}
+						break;
+				}
+			} else if (m_state == State.Ashes) {
+				m_ashMaterial.SetFloat("_AshLevel", Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime))));
 			}
-		} else if (m_state == State.Ashes) {
-			m_ashMaterial.SetFloat("_AshLevel", Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime))));
 		}
 	}
 
@@ -128,6 +119,8 @@ public class InflammableBehaviour : Initializable {
 			m_health -= _damage;
 
 			if (m_health <= 0) {
+				EntityManager.instance.Unregister(m_prey);
+				
 				// Let heirs do their magic
 				OnBurn();
 

@@ -86,8 +86,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
-			} else {
-				
+			} else {				
 				Breath();
 				m_animator.SetBool("breath", true);
 			}
@@ -110,7 +109,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 
 	protected virtual void OnEntityBurned(Transform t, Reward reward)
-	{
+	{	
 		m_dragon.AddLife( reward.health );
 	}
 

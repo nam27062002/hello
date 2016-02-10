@@ -879,6 +879,7 @@ GameObject:
   - 114: {fileID: 11445172}
   - 114: {fileID: 11424912}
   - 114: {fileID: 11489350}
+  - 114: {fileID: 11483026}
   m_Layer: 8
   m_Name: PF_EnemyRhino
   m_TagString: Untagged
@@ -1902,6 +1903,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11483026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 193142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c00ae6ceee2f45eb8cd3b0319e06703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FocusDistance: 25
 --- !u!114 &11483048
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1939,6 +1952,9 @@ MonoBehaviour:
     max: 360
   m_shake: 0
   m_slowMotion: 0
+  m_burnSize: 4
+  m_burnDuration: 0.75
+  m_orientedBurn: 1
 --- !u!114 &11485678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2119,6 +2135,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_sku
       value: enemyRhino
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_FocusDistance
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

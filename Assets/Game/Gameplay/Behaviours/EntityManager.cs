@@ -20,8 +20,8 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 	public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius) {
 		List<Entity> entities = new List<Entity>();
 		Rect r = new Rect();
-		r.center = _center;
 		r.size = Vector2.one * _radius * 2f;
+		r.center = _center;
 
 		for (int i = 0; i < m_entities.Count; i++) {
 			Entity e = m_entities[i];

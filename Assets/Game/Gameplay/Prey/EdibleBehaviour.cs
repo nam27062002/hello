@@ -58,58 +58,6 @@ public class EdibleBehaviour : Initializable {
 		enabled = true;
 	}
 
-	void Update() {	
-		// go to mouth
-		/*
-		if (m_isBeingEaten) {
-			
-		} else {
-			if (m_dragonPetEat != null) {
-				if (!m_petTarget) {
-					m_petTarget = m_dragonPetEat.RegisterTarget(this);
-				} else {
-					m_petTarget = m_dragonPetEat.UnRegisterTarget(this, false);
-				}
-			}
-
-			if (m_dragonEat.enabled) {
-				// check if this prey is in front of the mouth
-				Vector3 heading = m_Bounds.center - m_dragonMouth.transform.position;
-				float dot = Vector3.Dot(heading.normalized, m_dragon.GetDirection());
-
-				// check distance to dragon mouth
-				if (dot > 0) {
-					float distanceSqr = m_Bounds.DistanceSqr( m_dragonMouth.transform.position );
-
-					if (distanceSqr <= m_dragonEat.eatDistanceSqr) { 
-						m_isBeingEaten = m_dragonEat.Eat(this);
-
-						if (m_isBeingEaten)  {
-							m_dragonPetEat.UnRegisterTarget(this, true);
-							OnEatBehaviours(false);
-							m_animator.SetTrigger("being eaten");
-						}
-						m_lastEatingDistance = float.MaxValue;
-					} else {
-						if (distanceSqr < m_dragonEat.eatDistanceSqr * 5) {
-							if (distanceSqr > m_lastEatingDistance) {
-								// I'm Escaping!!!!
-								m_dragonEat.AlmostEat(this);
-								m_lastEatingDistance = float.MaxValue;
-							} else {
-								m_lastEatingDistance = distanceSqr;
-							}
-						} else {
-							m_lastEatingDistance = float.MaxValue;
-						}
-					}
-				} else {
-					m_lastEatingDistance = float.MaxValue;
-				}
-			}
-		}*/
-	}
-
 	public void OnEatByPet() {
 		m_isBeingEaten = true;
 		OnEatBehaviours(false);
