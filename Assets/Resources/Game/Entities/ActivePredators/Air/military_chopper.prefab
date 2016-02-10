@@ -407,6 +407,7 @@ MonoBehaviour:
   m_steerForce: 0.5
   m_mass: 4
   m_distanceAttenuation: 0
+  m_checkCollisions: 1
   m_maxSpeed: 4
   m_maxRunSpeed: 7
   m_slowingRadius: 0
@@ -471,10 +472,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_edibleFromTier: 2
-  m_size: 5
-  m_isBig: 0
-  m_destroyOnEat: 0
   onEatenParticle: 
 --- !u!114 &11472504
 MonoBehaviour:
@@ -501,6 +498,9 @@ MonoBehaviour:
     max: 360
   m_shake: 0
   m_slowMotion: 1
+  m_burnSize: 4
+  m_burnDuration: 0.75
+  m_orientedBurn: 1
 --- !u!114 &11473134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -533,6 +533,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 25
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+  m_target: 0
 --- !u!114 &11482166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -568,17 +569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: military_chopper
-  m_reward:
-    score: 0
-    coins: 0
-    pc: 0
-    health: 0
-    energy: 0
-    fury: 0
-    xp: 0
-  m_goldenChance: 0
-  m_pcChance: 0
+  m_sku: military_chopper
 --- !u!114 &11484324
 MonoBehaviour:
   m_ObjectHideFlags: 1
