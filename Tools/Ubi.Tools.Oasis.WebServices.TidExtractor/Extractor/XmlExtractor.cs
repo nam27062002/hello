@@ -30,7 +30,7 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             _settings = new XmlWriterSettings { Encoding = Encoding.Unicode, Indent = true, IndentChars = ("    ") };
         }
 
-        protected override void ExtractCore()
+        protected override bool ExtractCore()
         {
             if (_directory.Length > 0 && !Directory.Exists(_directory))
                 Directory.CreateDirectory(_directory);
@@ -52,6 +52,8 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             foreach (Language language in DataContext.Languages)
                 using (XmlWriter writer = XmlWriter.Create(Path.Combine(_directory, string.Format("oasis_{0}.xml", language.Name.ToLower())), _settings))
                     WriteTranslations(writer, language);
+
+            return true;
         }
 
         private void WriteGlobal(XmlWriter writer)

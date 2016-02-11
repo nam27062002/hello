@@ -21,6 +21,7 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
         private const string LOC_FILE_NAME = "oasis_loc";
         private readonly XmlWriterSettings _settings;
         private readonly string _directory;
+        private List<string> _extractedTids;
 
         public TidExtractor(OasisServiceClient client, string directory)
             : base(client)
@@ -28,9 +29,11 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             _directory = directory ?? string.Empty;
 
             _settings = new XmlWriterSettings { Encoding = Encoding.Unicode, Indent = true, IndentChars = ("    ") };
+
+            _extractedTids = new List<string>();
         }
 
-        protected override void ExtractCore()
+        protected override bool ExtractCore()
         {
             if (_directory.Length > 0 && !Directory.Exists(_directory))
                 Directory.CreateDirectory(_directory);
@@ -50,14 +53,26 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             // Create a TIDs file for each language
             foreach (Language language in DataContext.Languages)
             {
-                using (StreamWriter writer = new StreamWriter(Path.Combine(_directory, string.Format("{0}.txt", language.Name.ToLower()))))
+                _extractedTids.Clear();
+                bool ret = true;
+                string filePath = Path.Combine(_directory, string.Format("{0}.txt", language.Name.ToLower()));
+                using (StreamWriter writer = new StreamWriter(filePath))
                 {
                     if (!language.IsMaster)
-                        WriteTranslations(writer, language);
+                        ret = WriteTranslations(writer, language);
                     else
-                        WriteMasterLines(writer, language);
+                        ret = WriteMasterLines(writer, language);   
+                }
+                if (!ret)
+                {
+                    // Something went wrong. We dont have to publish texts to force correct the problem
+                    Console.WriteLine("Something went wrong with this language: " + language.Name);
+                    Console.WriteLine("Deleting File and aborting extraction");
+                    File.Delete(filePath);
+                    return false;
                 }
             }
+            return true;
         }
 
         private void WriteGlobal(XmlWriter writer)
@@ -305,7 +320,7 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             writer.WriteEndElement();
         }
 
-        private void WriteTranslations(StreamWriter writer, Language language)
+        private bool WriteTranslations(StreamWriter writer, Language language)
         {
             /*
             foreach (Line line in DataContext.Lines)
@@ -321,9 +336,20 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             {
                 if (DataContext.IsTranslationRequired(c.LineId, language.LanguageId))
                 {
-                    WriteTranslation(writer, c.LineId, language.LanguageId, c.Name);
+                    if ( _extractedTids.Contains( c.Name) )
+                    {
+                        // Print something to say what happened
+                        Console.WriteLine("Tid " + c.Name +" already exists");
+                        return false;
+                    }
+                    else
+                    {
+                        _extractedTids.Add( c.Name );
+                        WriteTranslation(writer, c.LineId, language.LanguageId, c.Name);
+                    }
                 }
             }
+            return true;
         }
 
         private void WriteTranslation(StreamWriter writer, int lineId, int languageId, string name)
@@ -341,7 +367,7 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
         }
 
 
-        private void WriteMasterLines(StreamWriter writer, Language language)
+        private bool WriteMasterLines(StreamWriter writer, Language language)
         {
             /*
             foreach (Line line in DataContext.Lines)
@@ -351,8 +377,18 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             */
             foreach (Control c in DataContext.MenuControls)
             {
-                writer.WriteLine(c.Name + "=" + c.Text);
+                if ( _extractedTids.Contains(c.Name) )
+                {
+                    Console.WriteLine("Tid " + c.Name + " already exists");
+                    return false;
+                }
+                else
+                {
+                    _extractedTids.Add(c.Name);
+                    writer.WriteLine(c.Name + "=" + c.Text);
+                }
             }
+            return true;
         }
 
         private string SearchLineCustomDataValue(int lineId, string customValueName)

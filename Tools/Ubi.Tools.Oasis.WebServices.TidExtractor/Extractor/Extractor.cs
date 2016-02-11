@@ -23,9 +23,7 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             {
                 using (new ImageDisablerScope())
                 {
-                    ExtractCore();
-
-                    return true;
+                    return ExtractCore();
                 }
             }
             catch (Exception ex)
@@ -38,8 +36,9 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
 
         #endregion
 
-        protected virtual void ExtractCore()
+        protected virtual bool ExtractCore()
         {
+            return true;
         }
     }
 }
