@@ -82,7 +82,7 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 	/// </summary>
 	public static void CreateInstance() {
 		// Avoid re-creating the instance while the application is quitting
-		if(m_state == ISingleton.EState.APPLICATION_QUITTING) {
+		if(m_state == ISingleton.EState.APPLICATION_QUITTING && Application.isPlaying) {
 			Debug.LogWarning("[SingletonScriptableObject] Instance '" + typeof(T) + "' already destroyed on application quit. Won't create again - returning null.");
 			return;
 		}
