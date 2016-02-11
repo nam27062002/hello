@@ -28,7 +28,7 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Logic state
-	private static Singleton.EState m_state = Singleton.EState.INIT;
+	private static ISingleton.EState m_state = ISingleton.EState.INIT;
 	
 	// Multithread lock - just in case instance getter is requested from two different threads at the same time
 	private static object m_threadLock = new object();
@@ -69,8 +69,8 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 		
 		// Avoid re-creating the instance while the application is quitting
 		// Unless manually destroying the instance
-		if(m_state != Singleton.EState.DESTROYING_INSTANCE) {
-			m_state = Singleton.EState.APPLICATION_QUITTING;
+		if(m_state != ISingleton.EState.DESTROYING_INSTANCE) {
+			m_state = ISingleton.EState.APPLICATION_QUITTING;
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 	/// </summary>
 	public static void CreateInstance() {
 		// Avoid re-creating the instance while the application is quitting
-		if(m_state == Singleton.EState.APPLICATION_QUITTING) {
+		if(m_state == ISingleton.EState.APPLICATION_QUITTING) {
 			Debug.LogWarning("[SingletonScriptableObject] Instance '" + typeof(T) + "' already destroyed on application quit. Won't create again - returning null.");
 			return;
 		}
@@ -92,16 +92,16 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 			// Is the static instance created?
 			if(m_instance == null) {
 				// If instance creation is locked, throw a warning
-				if(m_state == Singleton.EState.CREATING_INSTANCE) {
+				if(m_state == ISingleton.EState.CREATING_INSTANCE) {
 					Debug.LogWarning("[SingletonScriptableObject] Instance for " + typeof(T) + " is currently being created. Avoid calling the instance getter during the Awake function of your SingletonScriptableObject class.");
 					return;
 				}
 				
 				// Lock instance creation
-				m_state = Singleton.EState.CREATING_INSTANCE;
+				m_state = ISingleton.EState.CREATING_INSTANCE;
 				
 				// Check if there is a stored SO at the resources directory
-				m_instance = Resources.Load<T>(Singleton.RESOURCES_FOLDER + typeof(T).Name);
+				m_instance = Resources.Load<T>(ISingleton.RESOURCES_FOLDER + typeof(T).Name);
 				if(m_instance == null) {
 					// There is no stored object for this class, create a new SingletonScriptableObject instance
 					m_instance = ScriptableObject.CreateInstance<T>();
@@ -113,7 +113,7 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 				//ScriptableObject.DontDestroyOnLoad(m_instance);
 				
 				// Instance has been created and stored, unlock instance creation
-				m_state = Singleton.EState.READY;
+				m_state = ISingleton.EState.READY;
 			}
 		}
 	}
@@ -123,10 +123,10 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 	/// </summary>
 	public static void DestroyInstance() {
 		// Skip if already quitting application or instance hasn't been created
-		if(m_state == Singleton.EState.APPLICATION_QUITTING || m_instance == null) return;
+		if(m_state == ISingleton.EState.APPLICATION_QUITTING || m_instance == null) return;
 
 		// Remember that we're manually destroying the SingletonScriptableObject so recreation of the instance is not banned
-		m_state = Singleton.EState.DESTROYING_INSTANCE;
+		m_state = ISingleton.EState.DESTROYING_INSTANCE;
 		
 		// Immediately destroy game object holding the SingletonScriptableObject
 		ScriptableObject.DestroyImmediate(m_instance);
