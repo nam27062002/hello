@@ -600,6 +600,7 @@ MonoBehaviour:
   m_steerForce: 0.5
   m_mass: 0.5
   m_distanceAttenuation: 3.5
+  m_checkCollisions: 1
   m_maxSpeed: 13
   m_maxRunSpeed: 25
   m_slowingRadius: 0
@@ -640,6 +641,9 @@ MonoBehaviour:
     max: 360
   m_shake: 0
   m_slowMotion: 0
+  m_burnSize: 4
+  m_burnDuration: 0.75
+  m_orientedBurn: 1
 --- !u!114 &11406306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -655,6 +659,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 25
   m_sensorAngle: 360
   m_sensorAngleOffset: 360
+  m_target: 0
 --- !u!114 &11409000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -677,17 +682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: hawk
-  m_reward:
-    score: 100
-    coins: 60
-    pc: 0
-    health: 5
-    energy: 0
-    fury: 8
-    xp: 1
-  m_goldenChance: 0.301
-  m_pcChance: 0
+  m_sku: hawk
 --- !u!114 &11437978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -765,10 +760,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_edibleFromTier: 0
-  m_size: 1.7
-  m_isBig: 0
-  m_destroyOnEat: 0
   onEatenParticle: Feathers
 --- !u!137 &13756092
 SkinnedMeshRenderer:

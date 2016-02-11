@@ -140,13 +140,11 @@ public class FireNode : MonoBehaviour {
 			m_fireSpriteDestinationScale = transform.localScale * Random.Range( 0.55f, 1.45f);
 			m_fireSprite.transform.localRotation = transform.localRotation;
 
-			if ( Random.Range(0,100) > 50 )
-			{
+			if (Random.Range(0,100) > 50) {
 				m_fireSprite.transform.Rotate(Vector3.up, 180, Space.Self);
 				// Move child!!
-				Transform child_0 = m_fireSprite.transform.GetChild(0);
-				if ( child_0 )
-				{
+				if (m_fireSprite.transform.childCount > 0) {
+					Transform child_0 = m_fireSprite.transform.GetChild(0);
 					Vector3 p = transform.localPosition;
 					p.z = -p.z;
 					transform.localPosition = p;
