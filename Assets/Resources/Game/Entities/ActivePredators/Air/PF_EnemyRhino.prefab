@@ -2007,8 +2007,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_damage: 2
-  m_attackDelay: 0
-  m_consecutiveAttacks: 1
+  m_attackDelay: 0.5
+  m_consecutiveAttacks: 3
   m_sensorShutdownTime: 3.5
   m_hasAnimation: 0
   m_projectilePrefab: {fileID: 0}
@@ -2139,6 +2139,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_FocusDistance
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_attackDelay
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_consecutiveAttacks
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
