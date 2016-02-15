@@ -40,6 +40,7 @@ SubShader {
 				half2 texcoord : TEXCOORD0;
 				float3 normal : NORMAL;
 				float3 halfDir : VECTOR;
+				UNITY_FOG_COORDS(1)
 			};
 
 			sampler2D _MainTex;
@@ -71,7 +72,7 @@ SubShader {
 	               float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 	               o.halfDir = normalize(lightDirection + viewDirection);
 	            }
-
+	            UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
 			
@@ -85,6 +86,7 @@ SubShader {
 				// Specular
 				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecExponent) * detail.g;
 				col = col + specularLight;	
+				UNITY_APPLY_FOG(i.fogCoord, col);
 				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
