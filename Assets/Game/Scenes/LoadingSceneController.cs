@@ -88,6 +88,8 @@ public class LoadingSceneController : SceneController {
 		// Load persistence
 		PersistenceManager.Init();
 		PersistenceManager.Load();
+
+		Localization.SetSavedLanguage();
 	}
 	
 	/// <summary>

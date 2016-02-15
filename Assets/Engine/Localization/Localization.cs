@@ -19,6 +19,15 @@ using System.Globalization;
 
 public static class Localization
 {
+	//------------------------------------------------------------------//
+	// CONST     														//
+	//------------------------------------------------------------------//
+	private const string SETTINGS_LANGUAGE_DEFAULT = "lang_english";
+	private const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
+
+	//------------------------------------------------------------------//
+	// ATTRIBUTES														//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Whether the localization dictionary has been loaded.
 	/// </summary>
@@ -47,59 +56,97 @@ public static class Localization
 		get { return _culture; }
 	}
 
-
 	static private void CheckIfLanguageLoaded()
 	{
 		if (!localizationHasBeenSet)
 		{
-			language = PlayerPrefs.GetString("Language", "lang_english");
+			SetSavedLanguage();
 		}
 	}
 
-
-	// ** NOT USED **  it is here to avoid errors with NGUI engine
-	static public Dictionary<string, string[]> dictionary
+	public static void SetSavedLanguage()
 	{
-		get {return null;}
-	}
-
-	// ** NOT USED **  it is here to avoid errors with NGUI engine
-	static public string[] knownLanguages
-	{
-		get {return null;}
-	}
-
-
-	/// <summary>
-	/// Name of the currently active language.
-	/// </summary>
-	static public string language
-	{
-		get
+		string languageSku = PlayerPrefs.GetString(KEY_SETTINGS_LANGUAGE);
+		if ( string.IsNullOrEmpty(languageSku) || Definitions.instance.GetDefinitionFromCategory( Definitions.Category.LOCALIZATION, languageSku) == null)
 		{
-			return m_language;
+			languageSku = GetDefaultSystemLanguage();
 		}
-		set
+		SetLanguage( languageSku );
+	}
+
+	public static string GetDefaultSystemLanguage()
+	{
+		string languageSku = "lang_english";
+		// try to find the correct language
+		switch (Application.systemLanguage)
 		{
-			if (m_language == null || m_language != value)
-			{
-				m_language = value;
-				LoadDictionary(value);
-			}
+			case SystemLanguage.French:
+				languageSku = "lang_french";
+				break;
+				
+			case SystemLanguage.Spanish:
+				languageSku = "lang_spanish";
+				break;
+				
+			case SystemLanguage.Catalan:
+				languageSku = "lang_spanish";
+				break;
+
+			case SystemLanguage.Russian:
+				languageSku = "lang_russian";
+				break;
+
+			case SystemLanguage.Japanese:
+				languageSku = "lang_japanese";
+				break;
+
+			case SystemLanguage.Chinese:
+				languageSku = "lang_chinese";
+				break;
+
+			case SystemLanguage.Korean:
+				languageSku = "lang_korean";
+				break;
+
+			case SystemLanguage.Portuguese:
+				languageSku = "lang_brazilian";
+				break;
+
+			case SystemLanguage.German:
+				languageSku = "lang_german";
+				break;
+
+			case SystemLanguage.Italian:
+				languageSku = "lang_italian";
+				break;
+
+			default:
+				languageSku = SETTINGS_LANGUAGE_DEFAULT;
+				break;
 		}
+
+		// make sure, language found is available, if not use the default one
+		if ( Definitions.instance.GetDefinitionFromCategory( Definitions.Category.LOCALIZATION, languageSku) == null )	// If it doesn't exists get default
+		{
+			languageSku = SETTINGS_LANGUAGE_DEFAULT;
+		}
+		return languageSku;
 	}
 	
-	static public bool ReloadDictionary()
+	static public bool ReloadLanguage()
 	{
-		return LoadDictionary( m_language );
+		return SetLanguage( m_language );
 	}
 
 	/// <summary>
-	/// Load the specified localization dictionary.
+	/// Set Language from language Sku
 	/// </summary>
-	static bool LoadDictionary (string languageSku)
+	static bool SetLanguage (string languageSku, bool saveLanguage = false)
 	{
-		Debug.Log("Load Language: " + languageSku);
+		Debug.Log("Set Language: " + languageSku);
+
+		if ( languageSku == m_language )
+			return true;
 
 		DefinitionNode localizationDef = Definitions.instance.GetDefinitionFromCategory( Definitions.Category.LOCALIZATION, languageSku); 
 
@@ -124,6 +171,8 @@ public static class Localization
 			{
 				string text = File.ReadAllText( cachePath );	// TODO (miguel) : This is new, I should check if it works after we have the cache working
 				SetLanguage( languageSku, isoCode, ReadDictionary(text));
+				if ( saveLanguage )
+					PlayerPrefs.SetString(KEY_SETTINGS_LANGUAGE, languageSku);
 				return true;
 			}
 			catch ( Exception e )
@@ -137,6 +186,8 @@ public static class Localization
 		if (txt != null)
 		{
 			SetLanguage( languageSku , isoCode, ReadDictionary( txt.text ));
+			if ( saveLanguage )
+				PlayerPrefs.SetString(KEY_SETTINGS_LANGUAGE, languageSku);
 			return true;
 		}
 		
@@ -173,7 +224,6 @@ public static class Localization
 		// Just in case there is any wild formatting out there, change default current culture as well
 		System.Threading.Thread.CurrentThread.CurrentCulture = _culture;
 
-		PlayerPrefs.SetString("Language", m_language);
 		m_dictionary = dictionary;
 		localizationHasBeenSet = true;
 		Messenger.Broadcast(EngineEvents.EVENT_LANGUAGE_CHANGED);
