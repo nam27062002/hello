@@ -43,6 +43,9 @@ public class AmbientSoundManager : MonoBehaviour
 		m_starvingVolume = 0;
 		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
 
+#if UNITY_EDITOR
+		m_audioManager.MuteAll();
+#endif
 		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 
 
@@ -80,6 +83,7 @@ public class AmbientSoundManager : MonoBehaviour
 	void Update()
 	{
 		// Music Layers
+#if !UNITY_EDITOR
 		if ( m_player.IsFuryOn() )
 			m_furyVolume += Time.deltaTime;
 		else
@@ -93,7 +97,7 @@ public class AmbientSoundManager : MonoBehaviour
 			m_starvingVolume -= Time.deltaTime;
 		m_starvingVolume = Mathf.Clamp01( m_starvingVolume );
 		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
-
+#endif
 
 		// Ambient Sound
 		if ( m_audioSoure_1.clip != null && m_audioSoure_2.clip != null)
