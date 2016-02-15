@@ -54,6 +54,7 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 1
+      equip: []
     - sku: dragon_medium
       xp: 0
       level: 0
@@ -62,6 +63,8 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 0
+      equip:
+      - 1:Game/Dragons/PF_BabyRhino
     - sku: dragon_big
       xp: 0
       level: 0
@@ -70,6 +73,7 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 0
+      equip: []
     missions:
       activeMissions:
       - sku: 
@@ -89,6 +93,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.profile.coins
       value: 100
@@ -176,6 +184,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[2].fireSkillLevel
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[0]
+      value: 1:Game/Dragons/PF_BabyRhino
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

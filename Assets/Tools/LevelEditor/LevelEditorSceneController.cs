@@ -34,20 +34,11 @@ namespace LevelEditor {
 		/// Initialization.
 		/// </summary>
 		override protected void Awake() {
+			DefinitionsManager.CreateInstance();
+
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
 			InstanceManager.player.playable = false;
-
-			// [MSF] TEMP SHIT
-			GameObject prefabObj = Resources.Load<GameObject>("Game/Dragons/PF_BabyRhino");
-			GameObject babyDragon = Instantiate<GameObject>(prefabObj);
-			Initializable[] toInit = babyDragon.GetComponents<Initializable>();
-
-			for (int i = 0; i < toInit.Length; i++) {
-				toInit[i].Initialize();
-			}
-			//
-
 
 			// Call parent
 			base.Awake();

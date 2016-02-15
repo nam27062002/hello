@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -40,6 +41,7 @@ public class DragonData {
 		public int boostSkillLevel = 0;
 		public int fireSkillLevel = 0;
 		public bool owned = false;
+		public string[] equip;
 	}
 
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
@@ -84,7 +86,8 @@ public class DragonData {
 	public DragonSkill fireSkill { get { return m_fireSkill; }}
 
 	// Items
-	// [AOC] TODO!!
+	[SerializeField] private Dictionary<Equipable.AttachPoint, string> m_equip;
+	public Dictionary<Equipable.AttachPoint, string> equip { get { return m_equip; } }
 
 	// Debug
 	private float m_scaleOffset = 0;
@@ -108,6 +111,9 @@ public class DragonData {
 		m_speedSkill = new DragonSkill(this, _def.speedSkill);
 		m_boostSkill = new DragonSkill(this, _def.boostSkill);
 		m_fireSkill = new DragonSkill(this, _def.fireSkill);
+
+		// Items
+		m_equip = new Dictionary<Equipable.AttachPoint, string>();
 
 		// Other values
 		m_scaleOffset = 0;
@@ -153,6 +159,20 @@ public class DragonData {
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
 		return def.scaleRange.Lerp(levelDelta) + m_scaleOffset;
+	}
+
+	/// <summary>
+	/// Equip an item
+	/// </summary>
+	public void Equip(Equipable.AttachPoint _point, string _sku) {
+		m_equip.Add(_point, _sku);
+	}
+
+	/// <summary>
+	/// Unequip an item
+	/// </summary>
+	public void Unequip(Equipable.AttachPoint _point) {
+		m_equip.Remove(_point);
 	}
 
 	/// <summary>
@@ -223,6 +243,13 @@ public class DragonData {
 		m_speedSkill.Load(_data.speedSkillLevel);
 		m_boostSkill.Load(_data.boostSkillLevel);
 		m_fireSkill.Load(_data.fireSkillLevel);
+
+		// Equip
+		for (int i = 0; i < _data.equip.Length; i++) {
+			string[] tmp = _data.equip[i].Split(':');
+			int point = int.Parse(tmp[0]);
+			m_equip.Add((Equipable.AttachPoint)point, tmp[1]);
+		}
 	}
 	
 	/// <summary>
@@ -242,6 +269,14 @@ public class DragonData {
 		data.speedSkillLevel = m_speedSkill.level;
 		data.boostSkillLevel = m_boostSkill.level;
 		data.fireSkillLevel = m_fireSkill.level;
+
+		data.equip = new string[m_equip.Count];
+		int count = 0;
+		foreach (Equipable.AttachPoint key in m_equip.Keys) {
+			string tmp = key + ":" + m_equip[key];
+			data.equip[count] = tmp;
+			count++;
+		}
 
 		return data;
 	}
