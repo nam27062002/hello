@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class AudioManager :  SingletonMonoBehaviour<AudioManager> 
 {
-	private const float AUDIO_MUSIC_VOLUME_DEFAULT = 0.5f;
 	private const float AUDIO_SFX_VOLUME_DEFAULT = 1f;
 
 	// With AudioListener.volume we will control all sfx volume
@@ -13,33 +12,18 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 	// Mute -> AudioListener.volume = 0 and AudioSource for music volume = 0
 	// Music volume level -> set AudioSource for music volume
 	// Sfx volume -> AudioListener.volume = volume value
-	
-	// Music variables
-	AudioSource m_musicSource;
-	AudioClip m_nextMusic = null;
-	bool m_nextLoop = true;
-	float m_nextTime = 0;
-	
-	float m_targetMusicVolume = 0;
-	float m_currentMusicVolume = 0;
-	float m_startMusicVolume = 0;
-    bool m_pauseCurrent = false;
-	
-	float m_muteMusicVolume;
 
-    private Dictionary<string, float> m_pausedMusics;
-	
-	public enum EMusicState
+	public enum Channel
 	{
-		MUSIC_GOING_OUT,
-		MUSIC_GOUND_IN,
-		IDLE
+		DEFAULT,
+		LAYER_1,
+		LAYER_2,
+		ALL
 	}
-	public EMusicState m_currentState = EMusicState.IDLE;
-	
-	float m_transitionDuration = 0;
-	float m_currentTransitionTime = 0;
-	
+	Dictionary<Channel, MusicChannel> m_musicChannels;
+	Channel m_maxValidChannel = Channel.LAYER_2;	// We will use this to control different setups 
+
+
 	// Sfx variables
 	float m_sfxVolume = 0;
 	float m_muteSfxVolume;
@@ -47,21 +31,13 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 	
 	void Awake()
 	{
-		m_musicSource = gameObject.AddComponent<AudioSource>();
-		m_musicSource.ignoreListenerVolume = true;
-		
-		m_targetMusicVolume = AUDIO_MUSIC_VOLUME_DEFAULT;
-		m_currentMusicVolume = AUDIO_MUSIC_VOLUME_DEFAULT;
-		m_muteMusicVolume = AUDIO_MUSIC_VOLUME_DEFAULT;
-		
-		m_musicSource.volume = m_currentMusicVolume;
-		m_musicSource.loop = true;
-		
 		m_sfxVolume = AUDIO_SFX_VOLUME_DEFAULT;
 		m_muteSfxVolume = AUDIO_SFX_VOLUME_DEFAULT;
 
+		m_musicChannels = new Dictionary<Channel, MusicChannel>();
+
 		GameObject prefab = (GameObject)Resources.Load("audio/AudioSource");
-		m_audioSourcePool = new Pool(prefab, instance.transform, 5, true, false);
+		m_audioSourcePool = new Pool(prefab, transform, 5, true, false);
 	}
 	
 	// Use this for initialization
@@ -75,215 +51,122 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 			MuteSfx();
 		*/
 	}
+
+	void Update()
+	{
+		foreach( KeyValuePair<Channel, MusicChannel> pair in m_musicChannels)
+			pair.Value.Update( Time.deltaTime );
+	}
 	
 	public void MuteAll()
 	{
-		MuteMusic();
+		MuteMusic( Channel.ALL );
 		MuteSfx();
 	}
 	
 	public void UnMuteAll()
 	{
-		UnMuteMusic();
+		UnMuteMusic( Channel.ALL );
 		UnMuteSfx();
 	}
 	
 	// MUSIC FUNCTIONS
-	public void MuteMusic()
+	public void MuteMusic( Channel _channel = Channel.DEFAULT )
 	{
-		if (m_targetMusicVolume > 0) {
-			m_muteMusicVolume = m_targetMusicVolume;
-			SetMusicVolume( 0 );
-		}
-	}
-
-	public void UnMuteMusic()
-	{
-		SetMusicVolume( m_muteMusicVolume );
-	}
-	
-	public void SetMusicVolume( float vol, float transitionTime = 0)
-	{
-		m_targetMusicVolume = vol;
-		if (transitionTime == 0)
+		if ( _channel == Channel.ALL )
 		{
-			m_currentState = EMusicState.IDLE;
-			m_musicSource.volume = vol;
-			m_currentMusicVolume = vol;
+			foreach( KeyValuePair<Channel, MusicChannel> p in m_musicChannels )
+				p.Value.Mute();
 		}
 		else
 		{
-			m_startMusicVolume = m_currentMusicVolume;
-			m_currentState = EMusicState.MUSIC_GOUND_IN;
-			m_currentTransitionTime = 0;
-			m_transitionDuration = transitionTime;
+			if ( m_musicChannels.ContainsKey( _channel) )
+			{
+				m_musicChannels[ _channel ].Mute();
+			}
 		}
-		
-		
 	}
 
-	void PlayMusic( AudioClip music, bool loop, float time = 0 )
+	public void UnMuteMusic( Channel _channel = Channel.DEFAULT)
 	{
-        if (m_musicSource.isPlaying)
-        {
-            if (m_musicSource.clip.name == music.name)
-                return;
-
-            m_musicSource.Stop();
-        }
-					
-		m_musicSource.clip = music;
-		m_musicSource.loop = loop;
-		m_musicSource.time = time;
-		m_musicSource.Play();
+		if ( _channel == Channel.ALL )
+		{
+			foreach( KeyValuePair<Channel, MusicChannel> p in m_musicChannels )
+				p.Value.UnMute();
+		}
+		else
+		{
+			if ( m_musicChannels.ContainsKey( _channel) )
+			{
+				m_musicChannels[ _channel ].UnMute();
+			}
+		}
 	}
 
-    void PauseMusic()
-    {
-        if (m_musicSource.isPlaying)
-        {
-            if (m_pausedMusics == null)
-                m_pausedMusics = new Dictionary<string, float>();
-
-            if (!m_pausedMusics.ContainsKey(m_musicSource.clip.name))
-                m_pausedMusics.Add(m_musicSource.clip.name, m_musicSource.time);
-            else
-                m_pausedMusics[m_musicSource.clip.name] = m_musicSource.time;
-
-            m_musicSource.Stop();
-        }
-    }
-
-
-    public void UnpauseMusic(string musicName)
-    {
-        if (!string.IsNullOrEmpty(musicName))
-        {
-            AudioClip aClip = Resources.Load(musicName) as AudioClip;
-            if (aClip != null)
-                UnpauseMusic(aClip);
-            else
-                Debug.LogError("Missing music " + musicName);
-        }
-
-    }
-
-    public void UnpauseMusic(AudioClip clip)
-    {
-        if (!m_musicSource.isPlaying)
-        {
-            m_musicSource.clip = clip;
-
-            if (m_pausedMusics != null && m_pausedMusics.ContainsKey(clip.name))
-                m_musicSource.time = m_pausedMusics[clip.name];
-
-            m_musicSource.Play();
-        }
-    }
-	
-	public void MusicCrossFade( string fileName, float duration, bool loop = true, bool _pauseCurrent = false, float[] arr = null)
+	public void SetMusicVolume( Channel _channel = Channel.DEFAULT, float volume = 0, float transitionTime = 0)
 	{
+		if ( _channel == Channel.ALL )
+		{
+			foreach( KeyValuePair<Channel, MusicChannel> p in m_musicChannels )
+				p.Value.SetMusicVolume( volume, transitionTime );
+		}
+		else
+		{
+			if ( m_musicChannels.ContainsKey( _channel) )
+			{
+				m_musicChannels[ _channel ].SetMusicVolume( volume, transitionTime );
+			}
+		}
+	}
+
+	public void MusicCrossFade( Channel _channel,  string fileName, float transitionDuration, bool loop = true, bool _pauseCurrent = false, float _nextMusicStartTime = 0)
+	{
+		if ( _channel == Channel.ALL )
+		{
+			Debug.Log("Not a Valid Channel");
+			return;
+		}
+
 		if (!string.IsNullOrEmpty(fileName))
 		{
 			AudioClip aClip = Resources.Load(fileName) as AudioClip;
 			if ( aClip != null)
-				MusicCrossFade( aClip, duration, loop, _pauseCurrent, arr );
+				MusicCrossFade( _channel, aClip, transitionDuration, loop, _pauseCurrent, _nextMusicStartTime );
 			else
 				Debug.LogError( "Missing music " + fileName );
 		}
 	}
-	
-	public void MusicCrossFade( AudioClip music, float duration, bool loop = true, bool _pauseCurrent = false, float[] arr = null)
-	{
-		m_transitionDuration = duration / 2.0f;
-		if (m_musicSource.isPlaying)
-		{
-			if ( m_musicSource.clip != music )
-			{
-				m_currentTransitionTime = 0;
-				m_startMusicVolume = m_currentMusicVolume;
-				m_currentState = EMusicState.MUSIC_GOING_OUT;
-				m_nextMusic = music;
-				m_nextLoop = loop;
-				m_nextTime = 0;
-				if (arr != null)
-				{
-					m_nextTime = arr[Random.Range(0, arr.Length)];
-				}
-                m_pauseCurrent = _pauseCurrent;
-			}
-		}
-		else
-		{
-			m_nextTime = 0;
-			if (arr != null)
-			{
-				m_nextTime = arr[Random.Range(0, arr.Length)];
-			}
-			m_pauseCurrent = false;
-            m_currentMusicVolume = 0;
-			m_musicSource.volume = 0;
-			PlayMusic( music, loop, m_nextTime );
-			SetMusicVolume( m_targetMusicVolume, m_transitionDuration );
-		}
-	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		switch( m_currentState )
-		{
-			case EMusicState.MUSIC_GOING_OUT:
-			{
-				m_currentTransitionTime += Time.deltaTime;
-				float delta = m_currentTransitionTime / m_transitionDuration;
-				if (delta >= 1) 
-				{
-					delta = 1;
-					
-					m_currentMusicVolume = 0;
-					m_musicSource.volume = 0;
-				
-					if (m_nextMusic != null)	
-					{
-                        if (m_pauseCurrent)
-                            PauseMusic();
 
-                        PlayMusic( m_nextMusic, m_nextLoop, m_nextTime );
-						SetMusicVolume( m_targetMusicVolume, m_transitionDuration );
-					}
-					else
-					{
-						m_musicSource.Stop();
-						m_currentState = EMusicState.IDLE;
-					}
-				}
-				else
-				{
-					m_currentMusicVolume = Mathf.Lerp( m_startMusicVolume, 0, delta);
-					m_musicSource.volume = m_currentMusicVolume;
-				}
-				
-			}break;
-			case EMusicState.MUSIC_GOUND_IN:
-			{
-				m_currentTransitionTime += Time.deltaTime;
-				float delta = m_currentTransitionTime / m_transitionDuration;
-				if (delta >= 1) 
-				{
-					delta = 1;
-					SetMusicVolume( m_targetMusicVolume, 0 );
-					m_currentState = EMusicState.IDLE;
-				}
-				else
-				{
-					m_currentMusicVolume = Mathf.Lerp( m_startMusicVolume, m_targetMusicVolume, delta);
-					m_musicSource.volume = m_currentMusicVolume;
-				}
-			}break;
+	public void MusicCrossFade( Channel _channel, AudioClip audio, float transitionDuration, bool loop = true, bool _pauseCurrent = false, float _nextMusicStartTime = 0)
+	{
+		if ( _channel == Channel.ALL )
+		{
+			Debug.Log("Not a Valid Channel");
+			return;
 		}
+
+		if ( !m_musicChannels.ContainsKey( _channel ) )
+		{
+			// Create channel
+			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+			audioSource.loop = true;
+			MusicChannel mc = new MusicChannel( audioSource );
+			m_musicChannels.Add(_channel, mc);
+		}
+
+		m_musicChannels[ _channel ].MusicCrossFade(audio, transitionDuration, loop, _pauseCurrent, _nextMusicStartTime);
+		
 	}
-	
+
+	public bool IsMusicChannelPlaying( Channel _channel )
+	{
+		return false;
+	}
+
+	/// 
+	/// SFX SECTION
+	/// 
+
 	// SFX Functions
 	public void SetSfxVolume( float vol )
 	{
@@ -381,4 +264,8 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 	{		
 		m_audioSourcePool.Clear();
 	}
+
+	/// 
+	/// END SFX SECTION
+	/// 
 }

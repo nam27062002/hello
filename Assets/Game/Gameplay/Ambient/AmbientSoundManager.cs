@@ -4,7 +4,15 @@ using System.Collections.Generic;
 
 public class AmbientSoundManager : MonoBehaviour 
 {
+	DragonPlayer m_player;
+
 	// Music layers!
+	AudioManager m_audioManager;
+	private float m_furyVolume;
+	private float m_starvingVolume;
+
+	private bool m_slowMotionOn;
+	private bool m_slowMoJustStarted;
 
 	// Ambient Sound
 	public AudioSource m_audioSoure_1;
@@ -22,6 +30,25 @@ public class AmbientSoundManager : MonoBehaviour
 	{
 		sign = 1;
 		m_currentNodes = new List<AmbientSoundNode>();
+
+		m_audioManager = AudioManager.instance;
+
+		m_audioManager.MusicCrossFade( AudioManager.Channel.DEFAULT, "audio/music/Piano", 0.1f);
+
+		m_audioManager.MusicCrossFade( AudioManager.Channel.LAYER_1, "audio/music/Synth", 0.1f);
+		m_furyVolume = 0;
+		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_1, m_furyVolume);
+
+		m_audioManager.MusicCrossFade( AudioManager.Channel.LAYER_2, "audio/music/Sax", 0.1f);
+		m_starvingVolume = 0;
+		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
+
+#if UNITY_EDITOR
+		m_audioManager.MuteAll();
+#endif
+		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+
+
 	}
 
 	IEnumerator Start()
@@ -42,12 +69,35 @@ public class AmbientSoundManager : MonoBehaviour
 				_ambientNodes[i].m_onEnter += OnEnterSoundNode;
 				_ambientNodes[i].m_onExit += OnExitSoundNode;
 			}
+
+			m_player = InstanceManager.player;
 		}
+	}
+
+	private void OnDestroy() 
+	{
+		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+
 	}
 
 	void Update()
 	{
 		// Music Layers
+#if !UNITY_EDITOR
+		if ( m_player.IsFuryOn() )
+			m_furyVolume += Time.deltaTime;
+		else
+			m_furyVolume -= Time.deltaTime;
+		m_furyVolume = Mathf.Clamp01( m_furyVolume );
+		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_1, m_furyVolume);
+
+		if ( m_player.IsStarving() )
+			m_starvingVolume += Time.deltaTime;
+		else
+			m_starvingVolume -= Time.deltaTime;
+		m_starvingVolume = Mathf.Clamp01( m_starvingVolume );
+		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
+#endif
 
 		// Ambient Sound
 		if ( m_audioSoure_1.clip != null && m_audioSoure_2.clip != null)
@@ -157,4 +207,16 @@ public class AmbientSoundManager : MonoBehaviour
 			m_waitingAudioClip = clip;	
 		}
 	}
+
+
+	//------------------------------------------------------------------//
+	// Callbacks														//
+	//------------------------------------------------------------------//
+
+	private void OnSlowMotion( bool _enabled)
+	{
+		m_slowMotionOn = _enabled;
+		m_slowMoJustStarted = _enabled;
+	}
+
 }
