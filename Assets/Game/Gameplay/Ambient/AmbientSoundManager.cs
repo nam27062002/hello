@@ -33,6 +33,7 @@ public class AmbientSoundManager : MonoBehaviour
 
 		m_audioManager = AudioManager.instance;
 
+		/*
 		m_audioManager.MusicCrossFade( AudioManager.Channel.DEFAULT, "audio/music/Piano", 0.1f);
 
 		m_audioManager.MusicCrossFade( AudioManager.Channel.LAYER_1, "audio/music/Synth", 0.1f);
@@ -42,9 +43,9 @@ public class AmbientSoundManager : MonoBehaviour
 		m_audioManager.MusicCrossFade( AudioManager.Channel.LAYER_2, "audio/music/Sax", 0.1f);
 		m_starvingVolume = 0;
 		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
-
+		*/
 #if UNITY_EDITOR
-		m_audioManager.MuteAll();
+		// m_audioManager.MuteAll();
 #endif
 		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 
@@ -83,7 +84,7 @@ public class AmbientSoundManager : MonoBehaviour
 	void Update()
 	{
 		// Music Layers
-#if !UNITY_EDITOR
+// #if !UNITY_EDITOR
 		if ( m_player.IsFuryOn() )
 			m_furyVolume += Time.deltaTime;
 		else
@@ -97,7 +98,7 @@ public class AmbientSoundManager : MonoBehaviour
 			m_starvingVolume -= Time.deltaTime;
 		m_starvingVolume = Mathf.Clamp01( m_starvingVolume );
 		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
-#endif
+// #endif
 
 		// Ambient Sound
 		if ( m_audioSoure_1.clip != null && m_audioSoure_2.clip != null)
@@ -167,6 +168,8 @@ public class AmbientSoundManager : MonoBehaviour
 		if ( !m_currentNodes.Contains(node) )
 		{
 			m_currentNodes.Add( node );
+			if ( node.m_reverb )
+				m_audioManager.SfxReverb( 0.5f );
 			StartCoroutine( AudioClipLoad( node.m_ambientSound ) );
 		}
 	}
@@ -177,7 +180,10 @@ public class AmbientSoundManager : MonoBehaviour
 		{
 			m_currentNodes.Remove(node);
 			if ( m_currentNodes.Count <= 0 )
+			{
+				m_audioManager.SfxNormal( 0.5f);
 				StartCoroutine( AudioClipLoad( m_defaultSound ) );
+			}
 		}
 	}
 
