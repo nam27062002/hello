@@ -8,7 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.UI;
 using DG.Tweening;
 
 //----------------------------------------------------------------------//
@@ -27,16 +27,49 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
-	[SerializeField] private Camera m_camera = null;
-	[SerializeField] private List<MenuDragonPreview> m_dragons = new List<MenuDragonPreview>();
+	[SerializeField] private PathFollower m_cameraPath = null;
+	public PathFollower cameraPath { get { return m_cameraPath; }}
 
-	// Exposed setup
-	[SerializeField] private float m_radius = 5f;
-	[SerializeField] [Range(0f, 360f)] private float m_angleBetweenDragons = 10f;
-	[SerializeField] [Range(-180f, 180f)] private float m_dragonPreviewAngle = 0f;
+	[SerializeField] private PathFollower m_lookAtPath = null;
+	public PathFollower lookAtPath { get { return m_lookAtPath; }}
 
-	// Internal
-	private MenuDragonPreview m_currentDragon = null;
+	// Setup
+	[Space(10)]
+	[SerializeField] private float m_animDuration = 0.5f;
+	public float animDuration {
+		get { return m_animDuration; }
+		set { m_animDuration = value; }
+	}
+
+	[SerializeField] private Ease m_animEase = Ease.InOutCubic;
+	public Ease animEase {
+		get { return m_animEase; }
+		set { m_animEase = value; }
+	}
+
+	// Solo-properties
+	// Delta and snap point are stored in the camera path to avoid keeping control of multiple vars
+	public float delta {
+		get { 
+			if(m_cameraPath == null) return 0f;
+			return m_cameraPath.delta; 
+		}
+		set {
+			if(m_cameraPath != null) m_cameraPath.delta = value;
+			if(m_lookAtPath != null) m_lookAtPath.delta = value;
+		}
+	}
+
+	public int snapPoint {
+		get { 
+			if(m_cameraPath == null) return 0;
+			return m_cameraPath.snapPoint; 
+		}
+		set {
+			if(m_cameraPath != null) m_cameraPath.snapPoint = value;
+			if(m_lookAtPath != null) m_lookAtPath.snapPoint = value;
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -46,67 +79,94 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Check required fields
-		DebugUtils.Assert(m_camera != null, "Required field!");
+		Debug.Assert(m_cameraPath != null, "Required field");
+		Debug.Assert(m_lookAtPath != null, "Required field");
 	}
 
 	/// <summary>
-	/// First update
+	/// First update call
 	/// </summary>
 	private void Start() {
+		// Find game object linked to currently selected dragon
+		FocusDragon(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon, false);
+	}
+
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
-		
-		// Do a first refresh
-		OnSelectedDragonChanged(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>
-	/// Destructor
+	/// Component disabled.
 	/// </summary>
-	private void OnDestroy() {
+	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnSelectedDragonChanged);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
-	//------------------------------------------------------------------//
-	// TOOLS															//
-	//------------------------------------------------------------------//
 	/// <summary>
-	/// Sets dragons position and rotation according to given parameters.
+	/// Draw scene gizmos.
 	/// </summary>
-	public void RearrangeDragons() {
-		// Go dragon by dragon
-		for(int i = 0; i < m_dragons.Count; i++) {
-			// Set position, distributing around the radius but respecting Y (different dragons have different heights)
-			float angle = i * m_angleBetweenDragons;	// As simple as that, first dragon is at 0
-			Quaternion q = Quaternion.AngleAxis(angle, Vector3.up);
-			Vector3 targetPos = q * (Vector3.forward * m_radius);
-			targetPos.y = m_dragons[i].transform.position.y;
-			m_dragons[i].transform.position = targetPos;
+	private void OnDrawGizmos() {
+		if(m_cameraPath == null) return;
+		if(m_lookAtPath == null) return;
 
-			// Look towards center - but horizontally
-			Vector3 targetLookAt = this.transform.position;
-			targetLookAt.y = m_dragons[i].transform.position.y;
-			m_dragons[i].transform.LookAt(targetLookAt, Vector3.up);
+		// LookAt line
+		Gizmos.color = Colors.WithAlpha(Colors.cyan, 0.75f);
+		Gizmos.DrawLine(m_cameraPath.path.GetValue(m_cameraPath.delta), m_lookAtPath.path.GetValue(m_lookAtPath.delta));
 
-			// Apply rotation offset, subtract 90 degrees because dragon is facing towards its +X direction
-			m_dragons[i].transform.Rotate(Vector3.up, m_dragonPreviewAngle - 90f, Space.Self);
+		// Camera frustum
+		Camera targetCamera = m_cameraPath.target.gameObject.GetComponent<Camera>();
+		if(targetCamera != null) {
+			Gizmos.color = Colors.WithAlpha(Colors.white, 0.5f);
+			Gizmos.matrix = targetCamera.transform.localToWorldMatrix;
+			Gizmos.DrawFrustum(Vector3.zero, targetCamera.fieldOfView, targetCamera.farClipPlane, targetCamera.nearClipPlane, targetCamera.aspect);
+			Gizmos.matrix = Matrix4x4.identity;
 		}
+	}
 
-		// If we have a selected dragon, re-focus camera to it
-		LookAtSelectedDragon();
+	//------------------------------------------------------------------//
+	// OTHER METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Animate to a specific delta in the path.
+	/// </summary>
+	/// <param name="_delta">Target delta.</param>
+	public void GoTo(float _delta) {
+		// Just let the paths manage it
+		if(m_cameraPath != null) m_cameraPath.GoTo(_delta, m_animDuration, m_animEase);
+		if(m_lookAtPath != null) m_lookAtPath.GoTo(_delta, m_animDuration, m_animEase);
 	}
 
 	/// <summary>
-	/// Point camera towards the selected dragon (if any).
+	/// Animate to a specific point in the path.
 	/// </summary>
-	private void LookAtSelectedDragon() {
-		if(m_currentDragon != null) {
-			// Keep camera looking at the same height all the time
-			Vector3 targetPos = m_currentDragon.transform.position;
-			LookAtPoint lookAt = m_camera.GetComponent<LookAtPoint>();
-			if(lookAt != null) targetPos.y = lookAt.lookAtPoint.y;
-			m_camera.transform.DOLookAt(targetPos, 0.5f).SetEase(Ease.InOutQuad);
+	/// <param name="_snapPoint">Target control point.</param>
+	/// <returns>The delta corresponding to the target snap point</returns>
+	public float SnapTo(int _snapPoint) {
+		// Just let the paths manage it
+		float targetDelta = 0f;
+		if(m_cameraPath != null) targetDelta = m_cameraPath.SnapTo(_snapPoint, m_animDuration, m_animEase);
+		if(m_lookAtPath != null) m_lookAtPath.SnapTo(_snapPoint, m_animDuration, m_animEase);
+		return targetDelta;
+	}
+
+	/// <summary>
+	/// Focus a specific dragon.
+	/// </summary>
+	/// <param name="_sku">The dragon identifier.</param>
+	/// <param name="_animate">Whether to animate or do an instant camera swap.</param>
+	public void FocusDragon(string _sku, bool _animate) {
+		// Trust that snap points are placed based on dragons' menuOrder value
+		DragonDef def = DefinitionsManager.dragons.GetDef(_sku);
+		if(_animate) {
+			SnapTo(def.menuOrder);
+		} else {
+			if(m_cameraPath != null) m_cameraPath.snapPoint = def.menuOrder;
+			if(m_lookAtPath != null) m_lookAtPath.snapPoint = def.menuOrder;
 		}
 	}
 
@@ -114,65 +174,12 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Selected dragon has changed
+	/// The selected dragon has been changed.
 	/// </summary>
-	/// <param name="_sku">The sku of the selected dragon</param>
-	public void OnSelectedDragonChanged(string _sku) {
-		// Get dragon data from the dragon manager
-		DragonData newDragonData = DragonManager.GetDragonData(_sku);
-
-		// Get target dragon preview
-		string targetSku = newDragonData.def.sku;
-		MenuDragonPreview newDragon = null;
-		for(int i = 0; i < m_dragons.Count; i++) {
-			if(m_dragons[i].sku == targetSku) {
-				newDragon = m_dragons[i];
-			}
-		}
-
-		// Store new selected dragon
-		m_currentDragon = newDragon;
-
-		// Focus camera to the selected dragon
-		LookAtSelectedDragon();
-	}
-
-	/// <summary>
-	/// Draw gizmos.
-	/// </summary>
-	private void OnDrawGizmos() {
-		Gizmos.matrix = transform.localToWorldMatrix;
-
-		// Outer radius
-		Gizmos.color = Colors.WithAlpha(Colors.red, 0.5f);
-		Gizmos.DrawWireSphere(Vector3.zero, m_radius);
-
-		// Center
-		Gizmos.color = Colors.red;
-		Gizmos.DrawSphere(Vector3.zero, 1f);
-
-		// Z-plane
-		float numRadius = 16;
-		for(int i = 0; i < numRadius; i++) {
-			// First radius of a different color
-			if(i == 0) { 
-				Gizmos.color = Colors.WithAlpha(Colors.green, 0.5f);
-			} else {
-				Gizmos.color = Colors.WithAlpha(Colors.orange, 0.5f);
-			}
-
-			float angle = (float)i/(float)numRadius * 360f;
-			Quaternion q = Quaternion.AngleAxis(angle, Vector3.up);
-			Gizmos.DrawLine(Vector3.zero, q * (Vector3.forward * m_radius));
-		}
-
-		// Camera position axis - draw Y-axis instead if camera not set
-		Gizmos.color = Colors.WithAlpha(Colors.green, 0.5f);
-		if(m_camera != null) {
-			Gizmos.DrawLine(Vector3.zero, transform.worldToLocalMatrix * m_camera.transform.position);
-		} else {
-			Gizmos.DrawLine(Vector3.zero, Vector3.up * m_radius);
-		}
+	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
+	private void OnDragonSelected(string _sku) {
+		// Move camera to the newly selected dragon
+		FocusDragon(_sku, true);
 	}
 }
 

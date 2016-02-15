@@ -1,7 +1,7 @@
-﻿// MonoBehaviourTemplateEditor.cs
+﻿// MenuDragonScroller3DEditor.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on DD/MM/2016.
+// Created by Alger Ortín Castellví on 11/02/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -14,24 +14,20 @@ using UnityEditor;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the MonoBehaviourTemplate class.
+/// Custom editor for the MenuDragonScroller3D class.
 /// </summary>
-[CustomEditor(typeof(MonoBehaviourTemplate))]
+[CustomEditor(typeof(MenuDragonScroller3D))]
 [CanEditMultipleObjects]
-public class MonoBehaviourTemplateEditor : Editor {
+public class MenuDragonScroller3DEditor : Editor {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private static GUIStyle s_customStyle = null;
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Casted target object
-	MonoBehaviourTemplate targetMonoBehaviourTemplate { get { return target as MonoBehaviourTemplate; }}
-
-	// Store a reference of interesting properties for faster access
-	SerializedProperty m_myValueProp = null;
+	MenuDragonScroller3D targetMenuDragonScroller3D { get { return target as MenuDragonScroller3D; }}
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -40,15 +36,7 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// The editor has been enabled - target object selected.
 	/// </summary>
 	private void OnEnable() {
-		// Initialize custom styles if not done
-		if(s_customStyle == null) {
-			// Is style initialized?
-			s_customStyle = new GUIStyle(EditorStyles.textField);
-			s_customStyle.normal.textColor = Colors.darkGray;
-		}
-
-		// Store a reference of interesting properties for faster access
-		m_myValueProp = serializedObject.FindProperty("m_myValue");
+		
 	}
 
 	/// <summary>
@@ -62,9 +50,6 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// Draw the inspector.
 	/// </summary>
 	public override void OnInspectorGUI() {
-		// Default inspector
-		DrawDefaultInspector();
-
 		// Instead of modifying script variables directly, it's advantageous to use the SerializedObject and 
 		// SerializedProperty system to edit them, since this automatically handles private fields, multi-object 
 		// editing, undo, and prefab overrides.
@@ -72,24 +57,39 @@ public class MonoBehaviourTemplateEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
-		// Show the custom GUI controls
-		// Serialized property:
-		EditorGUILayout.PropertyField(m_myValueProp);	// Serialized fields automatically detect changes and store Undo actions
+		// Show GUI controls
+		// Use default inspector
+		DrawDefaultInspector();
 
-		// Other fields (proper way to do it, for each field)
-		EditorGUI.BeginChangeCheck();
-		string newName = EditorGUILayout.TextField("Name", target.name);
-		if(EditorGUI.EndChangeCheck()) {
-			Undo.RecordObject(target, "MonoBehaviourTemplate - name");
-			target.name = newName;
-		}
+		// Space
+		EditorGUILayout.Space();
 
-		// Show a progress bar only if all the objects have the same value:
-		if(!m_myValueProp.hasMultipleDifferentValues) {
-			// Get a rect for the progress bar using the same margins as a textfield:
-			Rect rect = GUILayoutUtility.GetRect(18, 18, "TextField");
-			EditorGUI.ProgressBar(rect, m_myValueProp.intValue / 100f, "MyValue");
-			EditorGUILayout.Space();
+		// Interactive controls - if required fields are set
+		if(targetMenuDragonScroller3D.cameraPath == null || targetMenuDragonScroller3D.lookAtPath == null) {
+			// Info box
+			EditorGUILayout.HelpBox("Required fields not set", MessageType.Error);
+		} else {
+			// Use properties rather than directly setting the values
+			// Delta
+			EditorGUI.BeginChangeCheck();
+			float newDelta = EditorGUILayout.Slider("Delta", targetMenuDragonScroller3D.delta, 0f, 1f);
+			if(EditorGUI.EndChangeCheck()) {
+				Undo.RecordObject(target, "MenuDragonScroller3D.delta");
+				targetMenuDragonScroller3D.delta = newDelta;
+			}
+
+			// Debug buttons - only when application is playing, otherwise tweens don't work
+			if(Application.isPlaying) {
+				EditorGUILayout.BeginHorizontal(); {
+					if(GUILayout.Button("<-")) {
+						targetMenuDragonScroller3D.SnapTo(targetMenuDragonScroller3D.cameraPath.snapPoint - 1);
+					}
+
+					if(GUILayout.Button("->")) {
+						targetMenuDragonScroller3D.SnapTo(targetMenuDragonScroller3D.cameraPath.snapPoint + 1);
+					}
+				} EditorGUILayoutExt.EndHorizontalSafe();
+			}
 		}
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.

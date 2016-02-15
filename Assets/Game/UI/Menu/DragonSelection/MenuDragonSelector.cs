@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -17,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Select the current dragon in the menu screen.
 /// </summary>
-public class MenuDragonSelector : MonoBehaviour {
+public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -99,25 +100,56 @@ public class MenuDragonSelector : MonoBehaviour {
 	/// <summary>
 	/// Select next dragon. To be linked with the "next" button.
 	/// </summary>
-	public void SelectNextDragon() {
+	/// <param name="_loop">Allow going from last to first dragon or not.</param>
+	public void SelectNextDragon(bool _loop) {
 		// Figure out next dragon's sku
-		m_selectedIdx++;
-		if(m_selectedIdx == m_sortedDefs.Count) m_selectedIdx = 0;
+		int newSelectedIdx = m_selectedIdx + 1;
+		if(newSelectedIdx >= m_sortedDefs.Count) {
+			if(!_loop) return;
+			newSelectedIdx = 0;
+		}
 
 		// Change selection
+		m_selectedIdx = newSelectedIdx;
 		SetSelectedDragon(m_sortedDefs[m_selectedIdx].sku);
 	}
 
 	/// <summary>
 	/// Select previous dragon. To be linked with the "previous" button.
 	/// </summary>
-	public void SelectPreviousDragon() {
+	/// <param name="_loop">Allow going from first to last dragon or not.</param>
+	public void SelectPreviousDragon(bool _loop) {
 		// Figure out previous dragon's sku
-		m_selectedIdx--;
-		if(m_selectedIdx < 0) m_selectedIdx = m_sortedDefs.Count - 1;
+		int newSelectedIdx = m_selectedIdx - 1;
+		if(newSelectedIdx < 0) {
+			if(!_loop) return;
+			newSelectedIdx = m_sortedDefs.Count - 1;
+		}
 
 		// Change selection
+		m_selectedIdx = newSelectedIdx;
 		SetSelectedDragon(m_sortedDefs[m_selectedIdx].sku);
+	}
+
+	/// <summary>
+	/// The input has started dragging over this element.
+	/// </summary>
+	/// <param name="_event">Data related to the event</param>
+	public void OnBeginDrag(PointerEventData _event) {
+		// Select next/previous dragon based on drag horizontal direction
+		if(_event.delta.x > 0) {
+			SelectPreviousDragon(false);
+		} else {
+			SelectNextDragon(false);
+		}
+	}
+
+	/// <summary>
+	/// The input is dragging over this element.
+	/// </summary>
+	/// <param name="_event">Data related to the event.</param>
+	public void OnDrag(PointerEventData _event) {
+		// Nothing to do, but the OnBeginDrag event doesn't work if we don't implement the IDragHandler interface -_-
 	}
 }
 

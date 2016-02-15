@@ -16,6 +16,7 @@ using UnityEditor;
 /// Custom editor for the lookAt object script.
 /// </summary>
 [CustomEditor(typeof(LookAtObject))]
+[CanEditMultipleObjects]
 public class LookAtObjectEditor : Editor {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -43,6 +44,9 @@ public class LookAtObjectEditor : Editor {
 	public override void OnInspectorGUI() {
 		// Default inspector works for us
 		DrawDefaultInspector();
+
+		// Allow changing target's position by numbers without having to select the target object
+		lookAtTarget.lookAtObject.transform.position = EditorGUILayout.Vector3Field(GUIContent.none, lookAtTarget.lookAtObject.transform.position);
 	}
 
 	/// <summary>

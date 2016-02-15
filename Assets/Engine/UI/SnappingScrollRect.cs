@@ -17,7 +17,7 @@ using DG.Tweening;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Specialization of the native ScrollRect snapping to defined points.
 /// </summary>
 public class SnappingScrollRect : ScrollRect {
 	//------------------------------------------------------------------//
@@ -34,8 +34,8 @@ public class SnappingScrollRect : ScrollRect {
 	//------------------------------------------------------------------//
 	[Separator("Snap Settings")]
 	[Comment("Normalized within the viewport")]
-	[SerializeField] private Vector2 m_snapPos = new Vector2(0.5f, 0.5f);
-	private Vector2 snapPosViewport {
+	[SerializeField] protected Vector2 m_snapPos = new Vector2(0.5f, 0.5f);
+	protected Vector2 snapPosViewport {
 		get {
 			// Compute actual position of the snap point in viewport coords
 			Vector2 viewportPos = m_snapPos;
@@ -50,26 +50,26 @@ public class SnappingScrollRect : ScrollRect {
 	}
 
 	[Comment("Seconds")]
-	[SerializeField] private float m_snapAnimDuration = 0.5f;
-	[SerializeField] private Ease m_snapEase = Ease.OutExpo;
+	[SerializeField] protected float m_snapAnimDuration = 0.5f;
+	[SerializeField] protected Ease m_snapEase = Ease.OutExpo;
 
 	[SerializeField]
-	private ScrollRectSnapPoint m_selectedPoint = null;
+	protected ScrollRectSnapPoint m_selectedPoint = null;
 	public ScrollRectSnapPoint selectedPoint {
 		get { return m_selectedPoint; }
 		set { SelectPoint(value); }
 	}
 
 	[SerializeField]
-	private SelectionChangedEvent m_onSelectionChanged = new SelectionChangedEvent();
+	protected SelectionChangedEvent m_onSelectionChanged = new SelectionChangedEvent();
 	public SelectionChangedEvent onSelectionChanged { 
 		get { return m_onSelectionChanged; } 
 		set { m_onSelectionChanged = value; }
 	}
 
 	// Internal
-	private Tweener m_tweener = null;
-	private bool m_dirty = false;
+	protected Tweener m_tweener = null;
+	protected bool m_dirty = false;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -87,7 +87,7 @@ public class SnappingScrollRect : ScrollRect {
 	/// </summary>
 	override protected void OnEnable() {
 		// Call parent
-		base.Start();
+		base.OnEnable();
 
 		// Make sure we start snapped
 		// [AOC] For some reason, setting the content position in Enable, Start or Awake doesn't work, so delay it until first update.
@@ -238,9 +238,26 @@ public class SnappingScrollRect : ScrollRect {
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
 	override public void OnBeginDrag(PointerEventData _eventData) {
-		// Call parent
+		// Call parent and custom implementation
 		base.OnBeginDrag(_eventData);
+		OnBeginDragImpl(_eventData);
+	}
 
+	/// <summary>
+	/// Dragging has ended.
+	/// </summary>
+	/// <param name="_eventData">Event data.</param>
+	override public void OnEndDrag(PointerEventData _eventData) {
+		// Call parent and custom implementation
+		base.OnEndDrag(_eventData);
+		OnEndDragImpl(_eventData);
+	}
+
+	/// <summary>
+	/// Custom implementation of the OnBeginDrag event.
+	/// </summary>
+	/// <param name="_eventData">Event data.</param>
+	protected virtual void OnBeginDragImpl(PointerEventData _eventData) {
 		// If tweener is active, stop it
 		if(m_tweener != null && m_tweener.IsPlaying()) {
 			m_tweener.Kill();
@@ -249,13 +266,10 @@ public class SnappingScrollRect : ScrollRect {
 	}
 
 	/// <summary>
-	/// Dragging has ended.
+	/// Custom implementation of the OnEndDrag event.
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
-	override public void OnEndDrag(PointerEventData _eventData) {
-		// Call parent
-		base.OnEndDrag(_eventData);
-
+	protected virtual void OnEndDragImpl(PointerEventData _eventData) {
 		// Snap to nearest child!
 		Snap();
 	}

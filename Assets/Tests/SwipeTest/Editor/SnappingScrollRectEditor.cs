@@ -17,7 +17,7 @@ using UnityEditor.UI;
 /// <summary>
 /// Custom editor for the SnapScrollRect class.
 /// </summary>
-[CustomEditor(typeof(SnappingScrollRect))]
+[CustomEditor(typeof(SnappingScrollRect), true)]
 [CanEditMultipleObjects]
 public class SnappingScrollRectEditor : ScrollRectEditor {
 	//------------------------------------------------------------------//
