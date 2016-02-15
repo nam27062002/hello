@@ -198,6 +198,16 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Determines whether this instance is fury on.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is fury on; otherwise, <c>false</c>.</returns>
+	public bool IsFuryOn() {
+		
+		return m_furyActive;
+	}
+
+
+	/// <summary>
 	/// End fury rush.
 	/// </summary>
 	public void StopFury() {
