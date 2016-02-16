@@ -52,6 +52,7 @@ public class FlameUp : MonoBehaviour
 				{
 					state = State.INACTIVE;
 					gameObject.SetActive(false);
+					PoolManager.ReturnInstance(gameObject);
 				}
 				else
 				{

@@ -158,6 +158,7 @@ public class FireNode : MonoBehaviour {
 	private void StopFire() {		
 		if (m_fireSprite != null) {
 			m_fireSprite.SetActive(false);
+			PoolManager.ReturnInstance( m_fireSprite );
 		}
 		m_fireSprite = null;
 	}
@@ -190,6 +191,7 @@ public class FireNode : MonoBehaviour {
 			yield return null;
 		}
 		ps.gameObject.SetActive(false);
+		PoolManager.ReturnInstance(ps.gameObject);
 		yield return null;
 	}
 

@@ -38,6 +38,8 @@ public class WindTrailManagement : MonoBehaviour
 		GameObject newTrail = m_trailPool.Get();
 		// newTrail.transform.parent = null;
 		newTrail.transform.position = transform.position + new Vector3( Random.Range( -m_spawnSize.x, m_spawnSize.x), Random.Range(-m_spawnSize.y, m_spawnSize.y), 0 );
-
+		WindTrail wt = newTrail.GetComponent<WindTrail>();
+		if ( wt != null )
+			wt.SetOriginPool( m_trailPool );
 	}
 }

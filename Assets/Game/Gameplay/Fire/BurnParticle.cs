@@ -20,6 +20,7 @@ public class BurnParticle : MonoBehaviour
 		if ( m_timer.Finished() )
 		{
 			gameObject.SetActive(false);
+			PoolManager.ReturnInstance( gameObject );
 		}
 		else
 		{

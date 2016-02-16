@@ -113,6 +113,7 @@ public class FireBreath : DragonBreathBehaviour {
 	{
 		base.EndBreath();
 		m_light.SetActive(false);
+		PoolManager.ReturnInstance( m_light );
 		m_light = null;
 	}
 

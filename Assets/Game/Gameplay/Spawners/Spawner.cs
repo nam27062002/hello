@@ -79,7 +79,9 @@ public class Spawner : MonoBehaviour {
 	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
 		for (int i = 0; i < m_entitySpawned; i++) {			
-			if (m_entities[i] == _entity) {
+			if (m_entities[i] == _entity) 
+			{
+				PoolManager.ReturnInstance( m_entities[i] );
 				m_entities[i] = null;
 				if (_killedByPlayer) {
 					m_entitiesKilled++;
@@ -125,7 +127,8 @@ public class Spawner : MonoBehaviour {
 							m_respawnTimer = 0;
 						}
 					} else {
-						if (m_camera.IsInsideActivationArea(transform.position)) {
+						if (m_camera.IsInsideActivationArea(transform.position)) 
+						{
 							Spawn();
 							m_respawnTimer = m_spawnTime.GetRandom();
 						}
