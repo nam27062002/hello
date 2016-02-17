@@ -28,8 +28,19 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	public static readonly float SPACING = 5f;
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Windows instance
+	private static PersistenceProfilesEditorWindow m_instance = null;
+	public static PersistenceProfilesEditorWindow instance {
+		get {
+			if(m_instance == null) {
+				m_instance = (PersistenceProfilesEditorWindow)EditorWindow.GetWindow(typeof(PersistenceProfilesEditorWindow));
+			}
+			return m_instance;
+		}
+	}
+
 	// Profiles management
 	public static string m_selectedProfile = "";	// Static to keep it between window openings
 	private Dictionary<string, GameObject> m_profilePrefabs = new Dictionary<string, GameObject>();
@@ -315,7 +326,12 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 		// Get the actual profile object
 		PersistenceProfile profile = m_profilePrefabs[m_selectedProfile].GetComponent<PersistenceProfile>();
-			
+
+		// Make active button
+		if(GUILayout.Button("Make Active")) {
+			PersistenceManager.activeProfile = m_selectedProfile;	// Savegames and profiles have the same name
+		}
+
 		// Delete button - only if allowed
 		GUI.enabled = profile.canBeDeleted;
 		bool delete = GUILayout.Button("Delete Profile");
@@ -350,8 +366,21 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		GUILayout.Label(m_selectedSavegame + " Saved Game", m_titleLabelStyle);
 		GUILayout.Space(10f);
 
+		// Make Active button
+		// If game is running, reloads the game as well
+		if(Application.isPlaying) {
+			if(GUILayout.Button("Make Active and Apply (reloads the game)")) {
+				PersistenceManager.activeProfile = m_selectedSavegame;	// Savegames and profiles have the same name
+				FlowManager.Restart();
+			}
+		} else {
+			if(GUILayout.Button("Make Active")) {
+				PersistenceManager.activeProfile = m_selectedSavegame;	// Savegames and profiles have the same name
+			}
+		}
+
 		// Clear button
-		if(GUILayout.Button("Reset")) {
+		if(GUILayout.Button("Reset to Profile")) {
 			PersistenceManager.Clear(m_selectedSavegame);
 		}
 

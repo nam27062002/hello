@@ -32,9 +32,12 @@ public class PersistenceProfile : MonoBehaviour {
 	public bool canBeDeleted { get { return m_canBeDeleted; }}
 
 	// The actual data
-	[SerializeField] private PersistenceManager.SaveData m_data = new PersistenceManager.SaveData();
+	[SerializeField] private PersistenceManager.SaveData m_data = null;
 	public PersistenceManager.SaveData data {
-		get { return m_data; }
+		get { 
+			if(m_data == null) m_data = new PersistenceManager.SaveData();
+			return m_data; 
+		}
 		set { m_data = value; }
 	}
 

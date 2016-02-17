@@ -111,7 +111,7 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Persistence Profiles", false, 11)]
 	public static void ShowPersistenceProfilesWindow() {
 		// Show existing window instance. If one doesn't exist, make one.
-		PersistenceProfilesEditorWindow window = (PersistenceProfilesEditorWindow)EditorWindow.GetWindow(typeof(PersistenceProfilesEditorWindow));
+		PersistenceProfilesEditorWindow window = PersistenceProfilesEditorWindow.instance;
 		
 		// Setup window
 		window.titleContent = new GUIContent("Persistence Profiles");
