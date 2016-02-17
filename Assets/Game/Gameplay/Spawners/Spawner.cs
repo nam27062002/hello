@@ -48,8 +48,9 @@ public class Spawner : MonoBehaviour {
 	//-----------------------------------------------
 	// Use this for initialization
 	protected virtual void Start() {		
-		PoolManager.CreatePool(m_entityPrefab);
 		m_entities = new GameObject[m_quantity.max];
+
+		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
 
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
