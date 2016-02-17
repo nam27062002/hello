@@ -20,7 +20,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		public const int Count = 4;
 	};
 
-	private const int CollisionCheckPools = 4;
+	private const int CollisionCheckPools = 16;
 
 	//---------------------------------------------------------------
 	// Attributes
