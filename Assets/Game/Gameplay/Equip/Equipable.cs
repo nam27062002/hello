@@ -25,6 +25,7 @@ public class Equipable : MonoBehaviour {
 		Pet_1,
 		Pet_2,
 		Pet_3,
+		Head_1
 	};
 
 	//---------------------------------------------------------------------//

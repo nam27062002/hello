@@ -247,8 +247,8 @@ public class DragonData {
 		// Equip
 		for (int i = 0; i < _data.equip.Length; i++) {
 			string[] tmp = _data.equip[i].Split(':');
-			int point = int.Parse(tmp[0]);
-			m_equip.Add((Equipable.AttachPoint)point, tmp[1]);
+			Equipable.AttachPoint point = (Equipable.AttachPoint)Enum.Parse(typeof(Equipable.AttachPoint), tmp[0]);
+			m_equip.Add(point, tmp[1]);
 		}
 	}
 	

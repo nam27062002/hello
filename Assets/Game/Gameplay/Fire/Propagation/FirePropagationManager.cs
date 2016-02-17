@@ -35,11 +35,12 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 		if (m_timer <= 0) {
 			m_timer = m_checkFireTime;
 
-			List<Transform> nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
+			Transform[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
 
-			for (int i = 0; i < nodes.Count; i++) {
-				if (m_breath.IsInsideArea(nodes[i].position)) {
-					nodes[i].GetComponent<FireNode>().Burn(m_breath.damage);
+			for (int i = 0; i < nodes.Length; i++) {
+				Transform node = nodes[i];
+				if (m_breath.IsInsideArea(node.position)) {
+					node.GetComponent<FireNode>().Burn(m_breath.damage);
 				}
 			}
 		}

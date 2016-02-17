@@ -55,7 +55,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 1
       equip: []
-    - sku: dragon_medium
+    - sku: rhino
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -64,7 +64,9 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip:
-      - 1:Game/Dragons/PF_BabyRhino
+      - Pet_1:Game/Equipable/Pets/PF_BabyRhino
+      - Head_1:Game/Equipable/Items/PF_CubicHat
+      - Skin:Kenshin
     - sku: dragon_big
       xp: 0
       level: 0
@@ -95,7 +97,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[1].equip.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.profile.coins
@@ -143,7 +145,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[1].sku
-      value: dragon_medium
+      value: rhino
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[2].sku
@@ -187,7 +189,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[1].equip.Array.data[0]
-      value: 1:Game/Dragons/PF_BabyRhino
+      value: Pet_1:Game/Equipable/Pets/PF_BabyRhino
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[1]
+      value: Head_1:Game/Equipable/Items/PF_CubicHat
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[2]
+      value: Skin:Kenshin
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

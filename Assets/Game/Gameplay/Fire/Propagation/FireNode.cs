@@ -19,7 +19,6 @@ public class FireNode : MonoBehaviour {
 	private List<FireNode> m_neighbours;
 	private State m_state;
 
-	private int m_goldReward;
 	private float m_resistance;
 	private float m_timer;
 
@@ -31,17 +30,20 @@ public class FireNode : MonoBehaviour {
 
 	private ParticleSystem m_smoke;
 
+	private Reward m_reward;
 
 	// Use this for initialization
 	void Start () {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+		m_reward = new Reward();
+		m_reward.coins = 0;
 
 		// get two closets neighbours
 		FindNeighbours();
 	}
 
 	public void Init(int _goldReward) {
-		m_goldReward = _goldReward;
+		m_reward.coins = _goldReward;
 		
 		Reset();
 	}
@@ -85,7 +87,7 @@ public class FireNode : MonoBehaviour {
 					m_state = State.Burned;
 					StartSmoke();
 				}
-			}break;
+			} break;
 			case State.Burned:
 			{
 				if (m_fireSprite != null) {
@@ -104,7 +106,7 @@ public class FireNode : MonoBehaviour {
 				}
 
 
-			}break;
+			} break;
 		}
 	}
 
@@ -120,13 +122,10 @@ public class FireNode : MonoBehaviour {
 			if (m_resistance <= 0) {
 				m_state = State.Burning;
 				m_timer = m_burningTime;
-
-				Reward reward = new Reward();
-				reward.coins = m_goldReward;
-				
+								
 				FirePropagationManager.Remove(transform);
 
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, reward);
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
 			}
 		}
 	}

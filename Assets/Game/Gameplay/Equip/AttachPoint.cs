@@ -14,10 +14,10 @@ public class AttachPoint : MonoBehaviour {
 
 		// check type of item
 		// use correct method to equip this item
-		if (m_item.type == Equipable.Type.Pet) {
-			EquipPet();
+		switch (m_item.type) { 
+			case Equipable.Type.Pet:		EquipPet(); 		break;
+			case Equipable.Type.Accessory:	EquipAccessory();	break;
 		}
-
 	}
 
 	public void Unequip() {
@@ -35,5 +35,10 @@ public class AttachPoint : MonoBehaviour {
 		for (int i = 0; i < toInit.Length; i++) {
 			toInit[i].Initialize();
 		}
+	}
+
+	private void EquipAccessory() {
+		m_item.transform.parent = transform;
+		m_item.transform.localPosition = Vector3.zero;
 	}
 }
