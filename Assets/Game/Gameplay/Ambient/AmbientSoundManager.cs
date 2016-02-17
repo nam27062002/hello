@@ -85,19 +85,22 @@ public class AmbientSoundManager : MonoBehaviour
 	{
 		// Music Layers
 // #if !UNITY_EDITOR
-		if ( m_player.IsFuryOn() )
-			m_furyVolume += Time.deltaTime;
-		else
-			m_furyVolume -= Time.deltaTime;
-		m_furyVolume = Mathf.Clamp01( m_furyVolume );
-		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_1, m_furyVolume);
+		if ( m_player != null )
+		{
+			if ( m_player.IsFuryOn() )
+				m_furyVolume += Time.deltaTime;
+			else
+				m_furyVolume -= Time.deltaTime;
+			m_furyVolume = Mathf.Clamp01( m_furyVolume );
+			m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_1, m_furyVolume);
 
-		if ( m_player.IsStarving() )
-			m_starvingVolume += Time.deltaTime;
-		else
-			m_starvingVolume -= Time.deltaTime;
-		m_starvingVolume = Mathf.Clamp01( m_starvingVolume );
-		m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
+			if ( m_player.IsStarving() )
+				m_starvingVolume += Time.deltaTime;
+			else
+				m_starvingVolume -= Time.deltaTime;
+			m_starvingVolume = Mathf.Clamp01( m_starvingVolume );
+			m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
+		}
 // #endif
 
 		// Ambient Sound

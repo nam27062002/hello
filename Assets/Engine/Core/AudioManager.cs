@@ -263,8 +263,10 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 
 		obj.GetComponent<AudioSource>().clip = null;
 		obj.GetComponent<FollowTransform>().m_follow = null;		
-		//audioSourcePool.ReturnToPool(obj);
 		obj.SetActive(false);
+		m_audioSourcePool.Return( obj );
+		//audioSourcePool.ReturnToPool(obj);
+
 	}
 
 	public void FreeMemory()

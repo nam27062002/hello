@@ -20,7 +20,7 @@ Material:
           name: _MainTex
         second:
           m_Texture: {fileID: 2800000, guid: 1bc30f1b8302e0e40a7a769705a0e764, type: 3}
-          m_Scale: {x: 1, y: 1}
+          m_Scale: {x: 3, y: 3}
           m_Offset: {x: 0, y: 0}
       data:
         first:
@@ -45,6 +45,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -53,13 +60,6 @@ Material:
       data:
         first:
           name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -135,15 +135,15 @@ Material:
         second: 0
       data:
         first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
-        second: 0
-      data:
-        first:
-          name: _EmissionScaleUI
         second: 0
       data:
         first:
@@ -188,6 +188,14 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
+          name: _ColorMultiply
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _ColorAdd
+        second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
           name: _Color2
         second: {r: 1, g: 0, b: 0, a: 1}
       data:
@@ -202,11 +210,3 @@ Material:
         first:
           name: _Tint
         second: {r: 1, g: 0.42745098, b: 0.22352941, a: 1}
-      data:
-        first:
-          name: _ColorMultiply
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _ColorAdd
-        second: {r: 1, g: 0, b: 0, a: 0}

@@ -41,6 +41,7 @@ public class FlameParticle : MonoBehaviour {
 			} else {
 				state = State.INACTIVE;
 				gameObject.SetActive(false);
+				PoolManager.ReturnInstance( gameObject );
 			}
 		}
 	}

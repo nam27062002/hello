@@ -14,6 +14,7 @@ public class WindTrail : MonoBehaviour {
 	float m_bumpsSize;
 	Color m_color;
 	bool m_needsRestart;
+	Pool m_trailPool;
 
 	void Awake()
 	{
@@ -38,7 +39,12 @@ public class WindTrail : MonoBehaviour {
 		m_color = Color.white;
 		UpdateAlpha(0);
 	}
-	
+
+	public void SetOriginPool( Pool p )
+	{
+		m_trailPool = p;
+	}
+
 	// Update is called once per frame
 	void Update () 
 	{
@@ -62,6 +68,8 @@ public class WindTrail : MonoBehaviour {
 		{
 			m_needsRestart = true;
 			gameObject.SetActive(false);
+			if ( m_trailPool != null )
+				m_trailPool.Return(gameObject);
 		}
 	}
 

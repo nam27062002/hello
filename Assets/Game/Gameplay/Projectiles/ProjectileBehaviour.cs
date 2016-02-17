@@ -76,5 +76,6 @@ public class ProjectileBehaviour : MonoBehaviour {
 		}
 
 		gameObject.SetActive(false);
+		PoolManager.ReturnInstance(gameObject);
 	}
 }
