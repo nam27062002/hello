@@ -38,9 +38,9 @@ public class GroundPreyMotion : PreyMotion {
 		Debug.DrawLine(m_position, m_position + m_velocityProject, Color.white);
 	}
 
-	protected override void UpdatePosition() {
+	protected override void UpdatePosition( float delta ) {
 		m_lastPosition = m_position;
-		m_position = m_position + (m_velocityProject * Time.fixedDeltaTime);
+		m_position = m_position + (m_velocityProject * delta);
 	}
 
 	private bool CheckGround(out RaycastHit _leftHit, out RaycastHit _rightHit) {
