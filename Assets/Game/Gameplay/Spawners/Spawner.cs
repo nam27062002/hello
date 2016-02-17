@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class Spawner : MonoBehaviour {
-	
-	
+public class Spawner : MonoBehaviour, ISpawner {
+
+
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -47,7 +47,9 @@ public class Spawner : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	protected virtual void Start() {		
+	protected virtual void Start() {
+		SpawnerManager.instance.Register(this);
+
 		m_entities = new GameObject[m_quantity.max];
 
 		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
@@ -128,8 +130,7 @@ public class Spawner : MonoBehaviour {
 							m_respawnTimer = 0;
 						}
 					} else {
-						if (m_camera.IsInsideActivationArea(transform.position)) 
-						{
+						if (m_camera.IsInsideActivationArea(transform.position)) {
 							Spawn();
 							m_respawnTimer = m_spawnTime.GetRandom();
 						}
@@ -140,7 +141,8 @@ public class Spawner : MonoBehaviour {
 				if (m_disableTimer > 0) {
 					m_disableTimer -= Time.deltaTime;
 					if (m_disableTimer <= 0) {
-						enabled = false;
+						gameObject.SetActive(false);
+						SpawnerManager.instance.Unregister(this);
 					}
 				}
 			}
@@ -182,6 +184,7 @@ public class Spawner : MonoBehaviour {
 			m_respawnCount++;
 			if (m_respawnCount == m_maxSpawns) {
 				gameObject.SetActive(false);
+				SpawnerManager.instance.Unregister(this);
 			}
 		}
 

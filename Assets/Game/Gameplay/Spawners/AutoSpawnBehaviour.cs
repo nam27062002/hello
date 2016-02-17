@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AutoSpawnBehaviour : MonoBehaviour {
+public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Constants
 	//-----------------------------------------------
@@ -27,6 +27,8 @@ public class AutoSpawnBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	void Start() {
+		SpawnerManager.instance.Register(this);
+
 		m_state = State.Idle;
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 

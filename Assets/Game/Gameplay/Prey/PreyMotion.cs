@@ -22,6 +22,8 @@ public class PreyMotion : Initializable, MotionInterface {
 
 	private const int CollisionCheckPools = 16;
 
+	private static uint NextCollisionCheckID = 0;
+
 	//---------------------------------------------------------------
 	// Attributes
 	//---------------------------------------------------------------
@@ -75,7 +77,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	protected SpawnBehaviour m_spawn;
 	protected Animator m_animator;
 
-	private int m_collisionCheckPool; // each prey will detect collisions at different frames
+	private uint m_collisionCheckPool; // each prey will detect collisions at different frames
 
 	//Debug
 	protected Color[] m_steeringColors;
@@ -116,6 +118,9 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_steeringColors[Forces.Collision] = Color.magenta;
 
 		m_burning = false;
+
+		m_collisionCheckPool = NextCollisionCheckID % CollisionCheckPools;
+		NextCollisionCheckID++;
 	}
 
 	private void ResetForces() {
@@ -151,12 +156,6 @@ public class PreyMotion : Initializable, MotionInterface {
 			m_direction = Vector2.left;
 		}
 		m_orientation.SetDirection(m_direction);
-
-		if (m_spawn != null) {
-			m_collisionCheckPool = m_spawn.index % CollisionCheckPools;
-		} else {
-			m_collisionCheckPool = 0;
-		}
 
 		m_burning = false;
 
