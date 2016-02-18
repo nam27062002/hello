@@ -31,12 +31,16 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
+	public ProbabilitySet m_probSet = new ProbabilitySet(
+		new ProbabilitySet.Element[] {
+			new ProbabilitySet.Element("el 1"),
+			new ProbabilitySet.Element("el 2"),
+			new ProbabilitySet.Element("el 3"),
+			new ProbabilitySet.Element("el 4")
+		}
+	);
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

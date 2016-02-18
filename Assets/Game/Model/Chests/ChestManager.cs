@@ -126,7 +126,7 @@ public class ChestManager : SingletonScriptableObject<ChestManager> {
 	/// </summary>
 	public static void GenerateReward() {
 		// First of all, select reward type
-		instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElement();
+		instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
 
 		// Now compute amount/sku based on reward type
 		switch(instance.m_rewardType) {

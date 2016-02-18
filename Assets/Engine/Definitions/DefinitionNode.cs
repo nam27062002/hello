@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
+using System.Text;
 
 public class DefinitionNode 
 {
@@ -12,6 +13,10 @@ public class DefinitionNode
     /// <c>keepOriginalValue</c> parameter. This is useful to implement some game modes that change the rules temporarily.
 	/// </summary>
 	private Dictionary<string, string> originalValues;
+
+	// Fast access to sku property, which all definitions should have
+	private string m_sku = "";
+	public string sku { get { return m_sku; }}
 	
 	public DefinitionNode()
 	{
@@ -23,6 +28,9 @@ public class DefinitionNode
 		XmlAttributeCollection list = xml.Attributes;
 		foreach( XmlAttribute attr in list)
 		{
+			// Store sku apart
+			if(attr.Name == "sku") m_sku = attr.Value;
+
 			properties.Add( attr.Name, attr.Value);
 		}
 		
@@ -145,13 +153,25 @@ public class DefinitionNode
 		}
 	}
 
-	public void Dump()
-	{
-		Debug.Log("===========================================");
-		foreach( KeyValuePair<string, string> p  in properties)
-		{
-			Debug.Log( p.Key +": "+p.Value );
+	/// <summary>
+	/// Returns a string representation of the current <see cref="DefinitionNode"/>.
+	/// </summary>
+	/// <returns>A string that represents the current <see cref="DefinitionNode"/>.</returns>
+	public override string ToString() {
+		// [AOC] One property per line, sku as header
+		StringBuilder sb = new StringBuilder();
+
+		// Header with sku
+		sb.Append("<").Append(sku).Append(">");
+
+		// Rest of the properties
+		foreach(KeyValuePair<string, string> p  in properties) {
+			// Skip if sku
+			if(p.Key == "sku") continue;
+			sb.Append("\n\t").Append(p.Key).Append(": ").Append(p.Value);
 		}
-		Debug.Log("===========================================");
+
+		// Done!
+		return sb.ToString();
 	}
 }
