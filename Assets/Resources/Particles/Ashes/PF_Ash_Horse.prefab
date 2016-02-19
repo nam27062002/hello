@@ -42,6 +42,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_activeTime: 3
+  m_returnTo: 1
 --- !u!198 &19810548
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -49,7 +50,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 133312}
   serializedVersion: 2
-  lengthInSec: 1.5
+  lengthInSec: 3
   startDelay:
     scalar: 0
     maxCurve:
@@ -121,7 +122,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     startSpeed:
-      scalar: 0.75
+      scalar: 3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -250,7 +251,7 @@ ParticleSystem:
         rgba: 3070230528
       minMaxState: 0
     startSize:
-      scalar: 0.15
+      scalar: 0.45
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -266,7 +267,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.3333333
+          value: 0.33333334
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -370,7 +371,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 3
     randomizeRotationDirection: 0
-    gravityModifier: 0
+    gravityModifier: 1
     maxNumParticles: 150
     rotation3D: 0
   ShapeModule:
@@ -1470,7 +1471,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1840215429
   m_SortingOrder: 0
   m_RenderMode: 0
   m_SortMode: 0
@@ -1504,11 +1505,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: lengthInSec
-      value: 1.5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 0.75
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: VelocityModule.y.maxCurve.m_Curve.Array.data[0].value
@@ -1544,14 +1545,26 @@ Prefab:
       objectReference: {fileID: 2100000, guid: 06c32049f2b76490bbdaeb51dcbb755e, type: 2}
     - target: {fileID: 0}
       propertyPath: InitialModule.startSize.minCurve.m_Curve.Array.data[0].value
-      value: 0.3333333
+      value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: InitialModule.startSize.scalar
-      value: 0.15
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: InitialModule.startSize.maxCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_returnTo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_SortingLayerID
+      value: 1840215429
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: InitialModule.gravityModifier
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

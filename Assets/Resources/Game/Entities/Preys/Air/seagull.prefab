@@ -601,8 +601,8 @@ MonoBehaviour:
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
   m_maxHealth: 100
-  m_ashesAsset: 
-  m_dissolveTime: 1.5
+  m_ashesAsset: PF_Ash_Seagull
+  m_dissolveTime: 1
   m_explosionPrefab: {fileID: 0}
   m_scaleRange:
     min: 1
@@ -611,7 +611,10 @@ MonoBehaviour:
     min: 0
     max: 360
   m_shake: 0
-  m_slowMotion: 1
+  m_slowMotion: 0
+  m_burnSize: 4
+  m_burnDuration: 0.75
+  m_orientedBurn: 1
 --- !u!114 &11448720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -660,10 +663,11 @@ MonoBehaviour:
   m_steerForce: 0.1
   m_mass: 0.2
   m_distanceAttenuation: 8
+  m_checkCollisions: 1
   m_maxSpeed: 6
   m_maxRunSpeed: 8
   m_slowingRadius: 3
-  m_fallOnBurn: 1
+  m_fallOnBurn: 0
 --- !u!114 &11463106
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -688,7 +692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: seagull
+  m_sku: seagull
 --- !u!114 &11469120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -716,6 +720,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 10
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
+  m_target: 0
 --- !u!114 &11482712
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -989,15 +994,23 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_slowMotion
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_fallOnBurn
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_typeID
       value: seagull
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dissolveTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_ashesAsset
+      value: PF_Ash_Seagull
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -27,7 +27,7 @@ public class Entity : Initializable {
 	private bool m_isGolden = false;
 	private bool m_givePC = false;
 
-	private CircleArea2D m_area;
+	private CircleArea2D m_bounds;
 
 	private Dictionary<int, Material[]> m_materials;
 
@@ -38,7 +38,7 @@ public class Entity : Initializable {
 	void Awake() {
 		m_materials = new Dictionary<int, Material[]>();
 
-		m_area = GetComponent<CircleArea2D>();
+		m_bounds = GetComponent<CircleArea2D>();
 
 		// keep the original materials, sometimes it will become Gold!
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
@@ -101,8 +101,8 @@ public class Entity : Initializable {
 	}
 
 	public float DistanceSqr(Vector3 _point) {
-		if (m_area != null) {
-			return m_area.bounds.bounds.SqrDistance(_point);
+		if (m_bounds != null) {
+			return m_bounds.bounds.bounds.SqrDistance(_point);
 		} else {
 			return Vector2.SqrMagnitude(_point - transform.position);
 		}
@@ -110,10 +110,14 @@ public class Entity : Initializable {
 
 	//
 	public bool IntersectsWith(Rect _r) {
-		if (m_area != null) {
-			return m_area.Overlaps(_r);
+		if (m_bounds != null) {
+			return m_bounds.Overlaps(_r);
 		} else {
 			return _r.Contains(transform.position);
 		}		
+	}
+
+	public Vector3 RandomInsideBounds() {
+		return m_bounds.bounds.RandomInside();
 	}
 }

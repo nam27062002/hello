@@ -2230,8 +2230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 25
-  m_length: 7
+  m_damage: 50
+  m_length: 8
   m_sizeCurve:
     serializedVersion: 2
     m_Curve:
@@ -2240,25 +2240,25 @@ MonoBehaviour:
       inSlope: 2.3691835
       outSlope: 2.3691835
       tangentMode: 0
-    - time: 0.6272868
-      value: 1.9588286
-      inSlope: 4.186264
-      outSlope: 4.186264
+    - time: 0.5441631
+      value: 2.4465053
+      inSlope: 5.4632263
+      outSlope: 5.4632263
       tangentMode: 0
-    - time: 1.0919297
-      value: 4.0119567
-      inSlope: -2.5896702
-      outSlope: -2.5896702
+    - time: 1.0133706
+      value: 6.2459273
+      inSlope: -7.6473036
+      outSlope: -7.6473036
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_particleSpawn: 2
+  m_particleSpawn: 3
   m_maxParticles: 100
   m_lifeTime: 0.5
   m_finalScale:
     min: 0.75
-    max: 1.25
+    max: 1.5
 --- !u!114 &11414988
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2612,19 +2612,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sizeCurve.m_Curve.Array.data[1].time
-      value: 0.6272868
+      value: 0.5441631
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sizeCurve.m_Curve.Array.data[1].value
-      value: 1.9588286
+      value: 2.4465053
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sizeCurve.m_Curve.Array.data[1].inSlope
-      value: 4.186264
+      value: 5.4632263
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sizeCurve.m_Curve.Array.data[1].outSlope
-      value: 4.186264
+      value: 5.4632263
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sizeCurve.m_RotationOrder
@@ -2637,6 +2637,38 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_sku
       value: rhino
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].time
+      value: 1.0133706
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].value
+      value: 6.2459273
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_particleSpawn
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_length
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_finalScale.max
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damage
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].inSlope
+      value: -7.6473036
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sizeCurve.m_Curve.Array.data[2].outSlope
+      value: -7.6473036
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

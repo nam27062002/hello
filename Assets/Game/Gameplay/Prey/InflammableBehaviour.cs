@@ -42,13 +42,12 @@ public class InflammableBehaviour : Initializable {
 	// Attributes
 	//-----------------------------------------------
 	private Entity m_prey;
-	private DragonBreathBehaviour m_breath;
 	
 	private float m_health;
 	private float m_timer;
-	private CircleArea2D m_circleArea;
 
 	private Material m_ashMaterial;
+
 
 	private State m_state;
 
@@ -62,15 +61,10 @@ public class InflammableBehaviour : Initializable {
 		}
 
 		m_prey = GetComponent<Entity>();
-		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 
 		m_timer = m_checkFireTime;
 
-		m_circleArea = GetComponent<CircleArea2D>();
-
-
 		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
-
 
 		m_state = State.Idle;
 	}
@@ -89,9 +83,11 @@ public class InflammableBehaviour : Initializable {
 						// Particles
 						if (m_ashesAsset.Length > 0) {
 							Renderer renderer = GetComponentInChildren<Renderer>();	
-							GameObject particle = ParticleManager.Spawn("Ashes/" + m_ashesAsset, renderer.transform.position);
-							particle.transform.rotation = renderer.transform.rotation;
-							particle.transform.localScale = renderer.transform.localScale;
+							GameObject particle = ParticleManager.Spawn(m_ashesAsset, renderer.transform.position, "Ashes/");
+							if (particle) {
+								particle.transform.rotation = renderer.transform.rotation;
+								particle.transform.localScale = renderer.transform.localScale;
+							}
 						}
 
 						m_state = State.Ashes;
@@ -114,7 +110,10 @@ public class InflammableBehaviour : Initializable {
 
 	public void Burn(float _damage, Transform _from) {
 
-		if (m_health > 0) {
+		if (m_state == State.Idle) {
+
+			//spawn fire hit particle!	
+			ParticleManager.Spawn("PF_FireHit", transform.position + Vector3.back * 2);
 
 			m_health -= _damage;
 

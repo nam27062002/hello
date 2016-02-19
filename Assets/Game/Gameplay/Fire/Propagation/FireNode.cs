@@ -11,6 +11,10 @@ public class FireNode : MonoBehaviour {
 		Burned
 	};
 
+
+	[SerializeField] private string m_breathHitParticle = "PF_FireHit";
+	[SerializeField] private bool m_hitParticleMatchDirection = false;
+	[SeparatorAttribute]
 	[SerializeField] private float m_resistanceMax = 25f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerSecond = 6f;
@@ -80,7 +84,7 @@ public class FireNode : MonoBehaviour {
 				if (m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					for (int i = 0; i < m_neighbours.Count; i++) {
-						m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime); // what amount of damage should
+							m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime, Vector2.zero, false); // what amount of damage should
 					}
 				} else {
 					m_timer = 5;
@@ -114,8 +118,23 @@ public class FireNode : MonoBehaviour {
 		return m_state > State.Damaged && m_timer < m_burningTime * 0.5f;
 	}
 
-	public void Burn(float _damage) {
+	public void Burn(float _damage, Vector2 _direction, bool _dragonBreath) {
+
+		if (_dragonBreath) {
+			GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position + Vector3.back * 2);				
+			if (hitParticle != null && m_hitParticleMatchDirection) {
+				Vector3 angle = new Vector3(0, 90, 0);
+
+				if (_direction.x < 0) {
+					angle.y *= -1;
+				}
+
+				hitParticle.transform.rotation = Quaternion.Euler(angle);
+			}
+		}
+
 		if (m_state == State.Idle || m_state == State.Damaged) {
+			
 			m_resistance -= _damage;
 			m_state = State.Damaged;
 
