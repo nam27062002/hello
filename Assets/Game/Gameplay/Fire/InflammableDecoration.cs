@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class InflammableDecoration : Initializable {
 
 	[CommentAttribute("Add an explosion effect when this object is burned out.")]
-	[SerializeField] private GameObject m_explosionPrefab = null;
+	[SerializeField] private string m_explosionParticle = "";
 
 	private GameObject m_view;
 	private GameObject m_viewBurned;
@@ -16,10 +16,6 @@ public class InflammableDecoration : Initializable {
 
 	// Use this for initialization
 	void Start () {
-		if (m_explosionPrefab != null) {
-			PoolManager.CreatePool(m_explosionPrefab, 5, false);
-		}
-
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
@@ -70,22 +66,8 @@ public class InflammableDecoration : Initializable {
 				m_burned = m_burned && m_fireNodes[i].IsBurned();
 			}
 
-			if (m_burned && m_explosionPrefab != null) {
-				GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);
-				if (explosion != null) {
-					Animator anim = explosion.GetComponent<Animator>();
-					anim.SetTrigger("explode");
-
-					Renderer renderer = m_view.GetComponent<Renderer>();
-
-					if (renderer != null) {
-						Vector3 pos = renderer.bounds.min;
-						pos.x = renderer.bounds.center.x;
-						explosion.transform.position = pos;
-					} else {
-						explosion.transform.position = transform.position;
-					}
-				}
+			if (m_burned && m_explosionParticle != "") {
+				ParticleManager.Spawn(m_explosionParticle, transform.position + Vector3.back * 3f);
 			}
 
 			if ( m_burned )

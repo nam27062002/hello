@@ -182,7 +182,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 134950}
   m_LocalRotation: {x: 0, y: 0.703692, z: 0, w: 0.7105052}
-  m_LocalPosition: {x: 420.8, y: -115.17, z: 5.6}
+  m_LocalPosition: {x: 526.42, y: -137.19, z: 14.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 478758}
@@ -370,10 +370,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistanceMax: 25
-  m_burningTime: 10
+  m_breathHitParticle: PF_FireHit
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 5
+  m_burningTime: 2
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!114 &11413772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -385,10 +386,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistanceMax: 25
-  m_burningTime: 10
+  m_breathHitParticle: PF_FireHit
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 5
+  m_burningTime: 2
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!114 &11439306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -400,10 +402,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistanceMax: 25
-  m_burningTime: 10
+  m_breathHitParticle: PF_FireHit
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 5
+  m_burningTime: 2
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!114 &11452336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -415,17 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: urban_car
-  m_reward:
-    score: 0
-    coins: 0
-    pc: 0
-    health: 0
-    energy: 0
-    fury: 0
-    xp: 0
-  m_goldenChance: 0
-  m_pcChance: 0
+  m_sku: urban_car
 --- !u!114 &11455974
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -449,7 +442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_explosionPrefab: {fileID: 0}
+  m_explosionParticle: PF_Explosion
 --- !u!114 &11466986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -461,10 +454,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistanceMax: 25
-  m_burningTime: 10
+  m_breathHitParticle: PF_FireHit
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 5
+  m_burningTime: 2
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!114 &11474022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -476,10 +470,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistanceMax: 25
-  m_burningTime: 10
+  m_breathHitParticle: PF_FireHit
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 5
+  m_burningTime: 2
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!114 &11479894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -491,10 +486,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resistanceMax: 25
-  m_burningTime: 10
+  m_breathHitParticle: PF_FireHit
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 5
+  m_burningTime: 2
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
