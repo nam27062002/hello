@@ -1,18 +1,26 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Audio;
 
 public class AudioManager :  SingletonMonoBehaviour<AudioManager> 
 {
-	private const float AUDIO_SFX_VOLUME_DEFAULT = 1f;
+	private const float AUDIO_MUSIC_VOLUME_DEFAULT = 0;
+	private const float AUDIO_SFX_VOLUME_DEFAULT = 0;
 
-	// With AudioListener.volume we will control all sfx volume
-	// Music AudioSource will have ignoreListenerVolume set to true and we will controll music volume manually
-	
-	// Mute -> AudioListener.volume = 0 and AudioSource for music volume = 0
-	// Music volume level -> set AudioSource for music volume
-	// Sfx volume -> AudioListener.volume = volume value
 
+	public AudioMixer m_masterMixer;
+	// With Music group we will control music volume
+	public AudioMixerGroup m_musicGroup;
+	// With sfx group we will control all sounds volume and other effects
+	public AudioMixerGroup m_sfxGroup;
+	public AudioMixerSnapshot m_sfxNormalSnapshot;
+	public AudioMixerSnapshot m_sfxReverbSnapshot;
+
+
+	// Music variables
+	private float m_masterMusicVolume;	// dB
+	private bool m_masterMusicMuted;
 	public enum Channel
 	{
 		DEFAULT,
@@ -23,16 +31,17 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 	Dictionary<Channel, MusicChannel> m_musicChannels;
 	Channel m_maxValidChannel = Channel.LAYER_2;	// We will use this to control different setups 
 
-
 	// Sfx variables
-	float m_sfxVolume = 0;
-	float m_muteSfxVolume;
+	float m_sfxVolume = 0;	// dB
+	bool m_sfxMuted;
 	Pool m_audioSourcePool;
 	
 	void Awake()
 	{
-		m_sfxVolume = AUDIO_SFX_VOLUME_DEFAULT;
-		m_muteSfxVolume = AUDIO_SFX_VOLUME_DEFAULT;
+		m_masterMusicMuted = false;
+		SetMasterMusicVolume( AUDIO_MUSIC_VOLUME_DEFAULT );
+		m_sfxMuted = false;
+		SetSfxVolume( AUDIO_SFX_VOLUME_DEFAULT );
 
 		m_musicChannels = new Dictionary<Channel, MusicChannel>();
 
@@ -60,47 +69,34 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 	
 	public void MuteAll()
 	{
-		MuteMusic( Channel.ALL );
+		MuteMusic();
 		MuteSfx();
 	}
 	
 	public void UnMuteAll()
 	{
-		UnMuteMusic( Channel.ALL );
+		UnMuteMusic();
 		UnMuteSfx();
 	}
 	
 	// MUSIC FUNCTIONS
-	public void MuteMusic( Channel _channel = Channel.DEFAULT )
+	public void MuteMusic()
 	{
-		if ( _channel == Channel.ALL )
-		{
-			foreach( KeyValuePair<Channel, MusicChannel> p in m_musicChannels )
-				p.Value.Mute();
-		}
-		else
-		{
-			if ( m_musicChannels.ContainsKey( _channel) )
-			{
-				m_musicChannels[ _channel ].Mute();
-			}
-		}
+		m_masterMusicMuted = true;
+		m_masterMixer.SetFloat("MusicVolume", -80);
 	}
 
-	public void UnMuteMusic( Channel _channel = Channel.DEFAULT)
+	public void UnMuteMusic( )
 	{
-		if ( _channel == Channel.ALL )
-		{
-			foreach( KeyValuePair<Channel, MusicChannel> p in m_musicChannels )
-				p.Value.UnMute();
-		}
-		else
-		{
-			if ( m_musicChannels.ContainsKey( _channel) )
-			{
-				m_musicChannels[ _channel ].UnMute();
-			}
-		}
+		m_masterMusicMuted = false;
+		SetMasterMusicVolume( m_masterMusicVolume);
+	}
+
+	public void SetMasterMusicVolume( float dB )
+	{
+		m_masterMusicVolume = dB;
+		if ( !m_masterMusicMuted )
+			m_masterMixer.SetFloat("MusicVolume", m_masterMusicVolume);	
 	}
 
 	public void SetMusicVolume( Channel _channel = Channel.DEFAULT, float volume = 0, float transitionTime = 0)
@@ -150,6 +146,7 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 			// Create channel
 			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
 			audioSource.loop = true;
+			audioSource.outputAudioMixerGroup = m_musicGroup;
 			MusicChannel mc = new MusicChannel( audioSource );
 			m_musicChannels.Add(_channel, mc);
 		}
@@ -168,27 +165,37 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 	/// 
 
 	// SFX Functions
-	public void SetSfxVolume( float vol )
-	{
-		m_sfxVolume = vol;
-		AudioListener.volume = vol;
-	}
-	
 	public void MuteSfx()
 	{
-		if (m_sfxVolume > 0)
-		{
-			m_muteSfxVolume = m_sfxVolume;
-			SetSfxVolume(0);
-		}
+		m_sfxMuted = true;
+		m_masterMixer.SetFloat("MusicVolume", -80);
 	}
 	
 	public void UnMuteSfx()
 	{
-		SetSfxVolume( m_muteSfxVolume );
+		m_sfxMuted = false;
+		SetSfxVolume( m_sfxVolume );
 	}
 
-	
+	public void SetSfxVolume( float dB )
+	{
+		m_sfxVolume = dB;
+		if ( !m_sfxMuted )
+		{
+			m_masterMixer.SetFloat("MusicVolume", m_sfxVolume);
+		}
+	}
+
+	public void SfxReverb( float transition )
+	{
+		m_sfxReverbSnapshot.TransitionTo( transition );
+	}
+
+	public void SfxNormal( float transition )
+	{
+		m_sfxNormalSnapshot.TransitionTo( transition );
+	}
+
 	public AudioSource PlayClipAtPoint(AudioClip clip, Vector3 pos, float pitch = 1.0f)
 	{
 		GameObject tempGO = m_audioSourcePool.Get();
@@ -256,8 +263,10 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 
 		obj.GetComponent<AudioSource>().clip = null;
 		obj.GetComponent<FollowTransform>().m_follow = null;		
-		//audioSourcePool.ReturnToPool(obj);
 		obj.SetActive(false);
+		m_audioSourcePool.Return( obj );
+		//audioSourcePool.ReturnToPool(obj);
+
 	}
 
 	public void FreeMemory()

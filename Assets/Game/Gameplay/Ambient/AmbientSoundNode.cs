@@ -5,6 +5,7 @@ public class AmbientSoundNode : MonoBehaviour
 {
 
 	public string m_ambientSound;
+	public bool m_reverb = false;
 	private bool m_isUsed = false;
 
 	public delegate void OnEvent( AmbientSoundNode node );

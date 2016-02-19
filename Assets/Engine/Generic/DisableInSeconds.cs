@@ -13,6 +13,7 @@ public class DisableInSeconds : MonoBehaviour {
 		m_activeTimer -= Time.deltaTime;
 		if (m_activeTimer < 0f) {
 			gameObject.SetActive(false);
+			PoolManager.ReturnInstance( gameObject );
 		}
 	}
 }

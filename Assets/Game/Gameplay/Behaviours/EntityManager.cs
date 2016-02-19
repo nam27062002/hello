@@ -4,9 +4,14 @@ using System.Collections.Generic;
 public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 
 	private List<Entity> m_entities;
+	private List<Entity> m_searchList;
+	private Rect m_area;
 
 	void Awake() {
 		m_entities = new List<Entity>();
+		m_searchList = new List<Entity>();
+
+		m_area = new Rect();
 	}
 
 	public void Register(Entity _entity) {
@@ -18,21 +23,21 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 	}
 
 	public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius) {
-		List<Entity> entities = new List<Entity>();
-		Rect r = new Rect();
-		r.size = Vector2.one * _radius * 2f;
-		r.center = _center;
+		m_searchList.Clear();
+
+		m_area.size = Vector2.one * _radius * 2f;
+		m_area.center = _center;
 
 		for (int i = 0; i < m_entities.Count; i++) {
 			Entity e = m_entities[i];
 			if (e != null) {				
-				if (e.IntersectsWith(r)) {
-					entities.Add(e);
+				if (e.IntersectsWith(m_area)) {
+					m_searchList.Add(e);
 				}
 			}
 		}
 
-		return entities.ToArray();
+		return m_searchList.ToArray();
 	}
 
 	public Entity GetEntityInRangeNearest2D(Vector2 _center, float _radius, DragonTier _tier) {

@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-class Pool {
+public class Pool {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
 	private GameObject m_containerObj = null;
 	private GameObject m_prefab = null;
+
+	private Queue<GameObject> m_freeObjects;
+	private HashSet<GameObject> m_notFreeObjects;
 	
-	private List<GameObject> m_instances;
-	
-	private int m_growth;
+	private bool m_canGrow;
 	private bool m_dontDestroyContainer;
 	
 	//-----------------------------------------------
@@ -28,16 +29,16 @@ class Pool {
 		} else {
 			m_containerObj = _parent.gameObject;
 		}
-		
-		m_instances = new List<GameObject>();
-		
-		Instantiate(_initSize);
-		
-		if (_canGrow) {
-			m_growth = _initSize;
-		} else {
-			m_growth = 0;
+
+		m_freeObjects = new Queue<GameObject>();
+		m_notFreeObjects = new HashSet<GameObject>();
+
+		for( int i = 0; i<_initSize; i++ )
+		{
+			GameObject go = Instantiate();
+			m_freeObjects.Enqueue( go );
 		}
+		m_canGrow = _canGrow;
 	}
 
 	/// <summary>
@@ -47,46 +48,67 @@ class Pool {
 	public void Clear() {
 		// Destroy all the created instances
 		// Destroying the container is enough, but we don't want to do that if the container wasn't created by us
-		if(m_dontDestroyContainer) {
-			for(int i = 0; i < m_instances.Count; i++) {
-				GameObject.Destroy(m_instances[i]);
+
+		if ( m_dontDestroyContainer )
+		{
+			while( m_freeObjects.Count > 0)
+			{
+				GameObject go = m_freeObjects.Dequeue();
+				GameObject.Destroy( go );
 			}
-		} else {
-			GameObject.Destroy(m_containerObj);
+			foreach( GameObject go in m_notFreeObjects)
+				GameObject.Destroy( go );
 		}
-		m_instances.Clear();
+		else
+		{
+			GameObject.Destroy( m_containerObj );
+		}
+
+		m_freeObjects.Clear();
+		m_notFreeObjects.Clear();
 		m_containerObj = null;
 	}
 	
-	public GameObject Get() {			
-		int i = 0; 
-		for (i = 0; i < m_instances.Count; i++) {
-			if (!m_instances[i].activeInHierarchy) {
-				m_instances[i].SetActive(true);
-				return m_instances[i];
-			}
+	public GameObject Get()
+	{			
+		if ( m_freeObjects.Count <= 0 && m_canGrow)
+		{
+			m_freeObjects.Enqueue( Instantiate() );
 		}
-		
-		if (m_growth > 0) {
-			Instantiate(m_growth);
-			m_growth = Mathf.Max(1, m_growth / 2);
-			
-			m_instances[i].SetActive(true);
-			return m_instances[i];
+
+		if ( m_freeObjects.Count > 0)
+		{
+			GameObject go = m_freeObjects.Dequeue();
+			go.SetActive( true );
+			m_notFreeObjects.Add( go );
+			return go;
 		}
-		
 		return null;
 	}
-	
-	private void Instantiate(int _count) {
-		
-		for (int i = 0; i < _count; i++) {
-			GameObject inst = GameObject.Instantiate(m_prefab);					
-			inst.name = m_prefab.name;
-			inst.transform.SetParent(m_containerObj.transform, false);
-			inst.SetActive(false);
-			
-			m_instances.Add(inst);
+
+	public void Return( GameObject go)
+	{
+		// In debug check!
+		if ( m_notFreeObjects.Contains(go) )
+		{
+			m_notFreeObjects.Remove( go );
+			go.SetActive( false );
+			m_freeObjects.Enqueue( go );
 		}
+		else
+		{
+			// Debug.LogError("Object " + go.name + "doesn't belong to pool " + m_containerObj.name);
+		}
+
+		
+	}
+
+	private GameObject Instantiate()
+	{
+		GameObject inst = GameObject.Instantiate(m_prefab);					
+		inst.name = m_prefab.name;
+		inst.transform.SetParent(m_containerObj.transform, false);
+		inst.SetActive(false);
+		return inst;
 	}
 };

@@ -20,7 +20,9 @@ public class PreyMotion : Initializable, MotionInterface {
 		public const int Count = 4;
 	};
 
-	private const int CollisionCheckPools = 4;
+	private const int CollisionCheckPools = 16;
+
+	private static uint NextCollisionCheckID = 0;
 
 	//---------------------------------------------------------------
 	// Attributes
@@ -28,6 +30,7 @@ public class PreyMotion : Initializable, MotionInterface {
 [Header("Movement")]
 	[SerializeField] private Range m_zOffset = new Range(-1f, 1f);
 	[SerializeField] private Range m_flockAvoidRadiusRange;
+	private float m_flockAvoidRadiusSqr;
 
 [Header("Force management")]
 		[CommentAttribute("Max magnitude of the steering force vector (velocity).")]
@@ -74,7 +77,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	protected SpawnBehaviour m_spawn;
 	protected Animator m_animator;
 
-	private int m_collisionCheckPool; // each prey will detect collisions at different frames
+	private uint m_collisionCheckPool; // each prey will detect collisions at different frames
 
 	//Debug
 	protected Color[] m_steeringColors;
@@ -115,6 +118,9 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_steeringColors[Forces.Collision] = Color.magenta;
 
 		m_burning = false;
+
+		m_collisionCheckPool = NextCollisionCheckID % CollisionCheckPools;
+		NextCollisionCheckID++;
 	}
 
 	private void ResetForces() {
@@ -151,12 +157,6 @@ public class PreyMotion : Initializable, MotionInterface {
 		}
 		m_orientation.SetDirection(m_direction);
 
-		if (m_spawn != null) {
-			m_collisionCheckPool = m_spawn.index % CollisionCheckPools;
-		} else {
-			m_collisionCheckPool = 0;
-		}
-
 		m_burning = false;
 
 		enabled = true;
@@ -165,6 +165,7 @@ public class PreyMotion : Initializable, MotionInterface {
 
 	void OnEnable() {		
 		m_flockAvoidRadius = m_flockAvoidRadiusRange.GetRandom();
+		m_flockAvoidRadiusSqr = m_flockAvoidRadius * m_flockAvoidRadius;
 		if (m_animator) m_animator.enabled = true;
 	}
 	
@@ -245,7 +246,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	}
 
 	// ------------------------------------------------------------------------------------ //
-	private void ApplySteering() {
+	private void ApplySteering(float delta) {
 		if (m_flock != null) {
 			FlockSeparation();
 		}
@@ -255,7 +256,7 @@ public class PreyMotion : Initializable, MotionInterface {
 
 		UpdateSteering();
 		UpdateVelocity();
-		UpdatePosition();
+		UpdatePosition(delta);
 
 		if (m_groundSensor != null) {
 			UpdateCollisions();
@@ -278,8 +279,8 @@ public class PreyMotion : Initializable, MotionInterface {
 		return _point;
 	}
 
-	void FixedUpdate() {
-		ApplySteering();
+	void Update() {
+		ApplySteering( Time.deltaTime );
 	}
 
 
@@ -326,9 +327,11 @@ public class PreyMotion : Initializable, MotionInterface {
 			
 			if (entity != null && entity != gameObject) {
 				direction = m_position - (Vector2)entity.transform.position;
-				float distance = direction.magnitude;
+				float distanceSqr = direction.sqrMagnitude;
 				
-				if (distance < m_flockAvoidRadius) {
+				if (distanceSqr < m_flockAvoidRadiusSqr) 
+				{
+					float distance = distanceSqr * m_flockAvoidRadius / m_flockAvoidRadiusSqr;
 					avoid += direction.normalized * (m_flockAvoidRadius - distance);
 				}
 			}
@@ -403,9 +406,9 @@ public class PreyMotion : Initializable, MotionInterface {
 		Debug.DrawLine(m_position, m_position + m_velocity, Color.white);
 	}
 
-	protected virtual void UpdatePosition() {		
+	protected virtual void UpdatePosition( float delta ) {		
 		m_lastPosition = m_position;
-		m_position = m_position + (m_velocity * Time.fixedDeltaTime);
+		m_position = m_position + (m_velocity * delta);
 	}
 	
 	private void ApplyPosition() {

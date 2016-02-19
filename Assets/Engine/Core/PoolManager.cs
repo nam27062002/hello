@@ -37,6 +37,15 @@ public class PoolManager : SingletonMonoBehaviour<PoolManager> {
 	}
 
 	/// <summary>
+	/// Return the instance to the pool
+	/// </summary>
+	public static void ReturnInstance( GameObject go )
+	{
+		if ( instance.m_pools.ContainsKey( go.name ) )
+			instance.m_pools[ go.name ].Return(go);
+	}
+
+	/// <summary>
 	/// Will destroy all the pools and loose reference to any created instances.
 	/// Additionally they can be deleted from the scene.
 	/// </summary>

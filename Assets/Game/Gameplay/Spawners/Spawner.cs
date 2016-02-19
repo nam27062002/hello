@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class Spawner : MonoBehaviour {
-	
-	
+public class Spawner : MonoBehaviour, ISpawner {
+
+
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -47,9 +47,12 @@ public class Spawner : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	protected virtual void Start() {		
-		PoolManager.CreatePool(m_entityPrefab);
+	protected virtual void Start() {
+		SpawnerManager.instance.Register(this);
+
 		m_entities = new GameObject[m_quantity.max];
+
+		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
 
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
@@ -79,7 +82,9 @@ public class Spawner : MonoBehaviour {
 	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
 		for (int i = 0; i < m_entitySpawned; i++) {			
-			if (m_entities[i] == _entity) {
+			if (m_entities[i] == _entity) 
+			{
+				PoolManager.ReturnInstance( m_entities[i] );
 				m_entities[i] = null;
 				if (_killedByPlayer) {
 					m_entitiesKilled++;
@@ -136,7 +141,8 @@ public class Spawner : MonoBehaviour {
 				if (m_disableTimer > 0) {
 					m_disableTimer -= Time.deltaTime;
 					if (m_disableTimer <= 0) {
-						enabled = false;
+						gameObject.SetActive(false);
+						SpawnerManager.instance.Unregister(this);
 					}
 				}
 			}
@@ -178,6 +184,7 @@ public class Spawner : MonoBehaviour {
 			m_respawnCount++;
 			if (m_respawnCount == m_maxSpawns) {
 				gameObject.SetActive(false);
+				SpawnerManager.instance.Unregister(this);
 			}
 		}
 

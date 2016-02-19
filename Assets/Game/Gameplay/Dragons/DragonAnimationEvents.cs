@@ -4,6 +4,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private DragonAttackBehaviour m_attackBehaviour;
 	private DragonBoostBehaviour m_bostBehaviour;
+	public AudioSource m_wingsSound;
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
@@ -22,5 +23,13 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public void TurboLoopEnd()
 	{
 		m_bostBehaviour.DeactivateTrails();
+	}
+
+	public void WingsSound()
+	{
+		if (m_wingsSound != null)
+		{
+			m_wingsSound.Play();
+		}
 	}
 }

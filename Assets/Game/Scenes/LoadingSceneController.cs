@@ -89,7 +89,11 @@ public class LoadingSceneController : SceneController {
 		PersistenceManager.Init();
 		PersistenceManager.Load();
 
+		// Initialize localization
 		Localization.SetSavedLanguage();
+
+		// [AOC] TODO!! Figure out the proper way/place to do this
+		PrecacheFonts();
 	}
 	
 	/// <summary>
@@ -114,6 +118,36 @@ public class LoadingSceneController : SceneController {
 	/// </summary>
 	override protected void OnDestroy() {
 		base.OnDestroy();
+	}
+
+	/// <summary>
+	/// Precache fonts to avoid in-game CPU spikes.
+	/// </summary>
+	private void PrecacheFonts() {
+		// Target fonts
+		string[] fontNames = new string[] {
+			"FNT_Default",
+			"FNT_Bold"
+		};
+
+		// Target sizes
+		int[] sizes = new int[] {
+			50, 72, 100
+		};
+
+		// Precache string
+		string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!\"·$%&/()=?¿*+-_{}<>|@#€\\";	// Almost every standard char (no language customs)
+
+		// Do it!
+		for(int i = 0; i < fontNames.Length; i++) {
+			// Load font
+			Font f = Resources.Load("UI/Fonts/" + fontNames[i]) as Font;
+
+			// Precache all sizes for that font
+			for(int j = 0; j < sizes.Length; j++) {
+				f.RequestCharactersInTexture(chars, sizes[j]);
+			}
+		}
 	}
 }
 

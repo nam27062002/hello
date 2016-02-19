@@ -54,6 +54,7 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 1
+      equip: []
     - sku: dragon_medium
       xp: 0
       level: 0
@@ -62,6 +63,7 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 0
+      equip: []
     - sku: dragon_big
       xp: 0
       level: 0
@@ -70,6 +72,7 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 0
+      equip: []
     missions:
       activeMissions:
       - sku: 
@@ -128,6 +131,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_data.profile.currentLevel
       value: level_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].sku
+      value: Rhino
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

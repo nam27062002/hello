@@ -60,6 +60,9 @@ public class FireBreath : DragonBreathBehaviour {
 		m_sphCenter = m_mouthTransform.position;
 		m_sphRadius = 0;
 
+		m_direction = Vector2.zero;
+		m_directionP = Vector2.zero;
+
 		m_frame = 0;
 
 		m_light = null;
@@ -113,13 +116,14 @@ public class FireBreath : DragonBreathBehaviour {
 	{
 		base.EndBreath();
 		m_light.SetActive(false);
+		PoolManager.ReturnInstance( m_light );
 		m_light = null;
 	}
 
 	override protected void Breath(){
 		m_direction = m_mouthTransform.position - m_headTransform.position;
 		m_direction.Normalize();
-		m_directionP = new Vector3(m_direction.y, -m_direction.x, 0);
+		m_directionP.Set(m_direction.y, -m_direction.x);
 
 		Vector3 flamesUpDir = Vector3.up;
 		if (m_frame == 0) {
@@ -128,11 +132,9 @@ public class FireBreath : DragonBreathBehaviour {
 			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_groundMask)) 
 			{
 				m_actualLength = ground.distance;
-
 			} 
 			else 
-			{
-				
+			{				
 				m_actualLength = m_length;
 			}
 

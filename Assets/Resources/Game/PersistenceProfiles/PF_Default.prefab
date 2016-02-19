@@ -54,7 +54,8 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 1
-    - sku: dragon_medium
+      equip: []
+    - sku: rhino
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -62,6 +63,10 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 0
+      equip:
+      - Pet_1:Game/Equipable/Pets/PF_BabyRhino
+      - Head_1:Game/Equipable/Items/PF_CubicHat
+      - Skin:Kenshin
     - sku: dragon_big
       xp: 0
       level: 0
@@ -70,6 +75,7 @@ MonoBehaviour:
       boostSkillLevel: 0
       fireSkillLevel: 0
       owned: 0
+      equip: []
     missions:
       activeMissions:
       - sku: 
@@ -89,6 +95,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.profile.coins
       value: 100
@@ -135,7 +145,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[1].sku
-      value: dragon_medium
+      value: rhino
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[2].sku
@@ -176,6 +186,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_data.dragons.Array.data[2].fireSkillLevel
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[0]
+      value: Pet_1:Game/Equipable/Pets/PF_BabyRhino
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[1]
+      value: Head_1:Game/Equipable/Items/PF_CubicHat
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[2]
+      value: Skin:Kenshin
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

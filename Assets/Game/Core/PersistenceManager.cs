@@ -214,7 +214,10 @@ public static class PersistenceManager {
 		File.Delete(path);
 
 		// Create a new save file with the default data from the profile
-		SaveFromObject(_profileName, GetDefaultDataFromProfile(_profileName));
+		PersistenceManager.SaveData data = GetDefaultDataFromProfile(_profileName);
+		if (data != null) {
+			SaveFromObject(_profileName, data);
+		}
 	}
 
 	//------------------------------------------------------------------//

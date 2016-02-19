@@ -11,18 +11,10 @@ public class EdibleBehaviour : Initializable {
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
 
-	private bool m_petTarget;
-
 	private Quaternion m_originalRotation;
 	private Vector3 m_originalScale;
 
 	private DragonMotion m_dragon;
-	private DragonEatBehaviour m_dragonEat;
-	private DragonPetEatBehaviour m_dragonPetEat;
-	private Transform m_dragonMouth;
-	private CircleArea2D m_Bounds;
-
-	private float m_lastEatingDistance = float.MaxValue;
 
 	public string onEatenParticle = "";
 
@@ -37,20 +29,14 @@ public class EdibleBehaviour : Initializable {
 	}
 
 	void Start() {
-		m_Bounds = GetComponent<CircleArea2D>();
-
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_prey = GetComponent<Entity>();
 
-		m_dragonPetEat = InstanceManager.pet.GetComponent<DragonPetEatBehaviour>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
-		m_dragonEat = m_dragon.GetComponent<DragonEatBehaviour>();
-		m_dragonMouth = m_dragon.tongue;
 	}
 
 	public override void Initialize() {
 		m_isBeingEaten = false;
-		m_petTarget = false;
 
 		transform.rotation = m_originalRotation;
 		transform.localScale = m_originalScale;
