@@ -114,6 +114,12 @@ public class AmbientManager : MonoBehaviour
 				go.transform.localPosition = Vector3.up * 8 + Vector3.forward * 22;
 				m_rainController = go.GetComponent<RainController>();
 
+				// Create Ember particle over player
+				go = Instantiate( Resources.Load("Particles/PF_FlyingEmber") ) as GameObject;
+				go.transform.parent = transform;
+				go.transform.localPosition = Vector3.forward * 50;
+
+
 				RenderSettings.fogMode = FogMode.Linear;
 
 
