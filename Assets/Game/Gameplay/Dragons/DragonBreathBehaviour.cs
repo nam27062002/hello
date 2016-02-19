@@ -12,6 +12,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected Rect m_bounds2D;
 	public Rect bounds2D { get { return m_bounds2D; } }
 
+	protected Vector2 m_direction;
+	public Vector2 direction { get { return m_direction; } }
+
 	private DragonPlayer m_dragon;
 	private DragonEatBehaviour 		m_eatBehaviour;
 	private DragonHealthBehaviour 	m_healthBehaviour;

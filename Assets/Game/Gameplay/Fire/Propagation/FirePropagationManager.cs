@@ -40,7 +40,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 			for (int i = 0; i < nodes.Length; i++) {
 				Transform node = nodes[i];
 				if (m_breath.IsInsideArea(node.position)) {
-					node.GetComponent<FireNode>().Burn(m_breath.damage);
+					node.GetComponent<FireNode>().Burn(m_breath.damage, m_breath.direction, true);
 				}
 			}
 		}

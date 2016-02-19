@@ -271,6 +271,7 @@ MonoBehaviour:
   m_steerForce: 0.2
   m_mass: 1
   m_distanceAttenuation: 5
+  m_checkCollisions: 1
   m_maxSpeed: 5
   m_maxRunSpeed: 5
   m_slowingRadius: 1
@@ -304,7 +305,7 @@ MonoBehaviour:
   m_checkFireTime: 0.25
   m_maxHealth: 100
   m_ashesAsset: 
-  m_dissolveTime: 1.5
+  m_dissolveTime: 0.75
   m_explosionPrefab: {fileID: 0}
   m_scaleRange:
     min: 1
@@ -314,6 +315,9 @@ MonoBehaviour:
     max: 360
   m_shake: 0
   m_slowMotion: 0
+  m_burnSize: 4
+  m_burnDuration: 0.75
+  m_orientedBurn: 1
 --- !u!114 &11441374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -348,6 +352,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 14
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+  m_target: 0
 --- !u!114 &11454336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -549,7 +554,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_dissolveTime
-      value: 1.5
+      value: 0.75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

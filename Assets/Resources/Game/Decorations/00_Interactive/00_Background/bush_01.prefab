@@ -146,7 +146,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 142622}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -81.5, y: -29.15, z: 7.81}
+  m_LocalPosition: {x: 265.84, y: -29.2, z: 8.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 499938}
@@ -294,10 +294,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_breathHitParticle: PF_LeavesHit
+  m_hitParticleMatchDirection: 1
   m_resistanceMax: 25
   m_burningTime: 10
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!114 &11453800
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -321,10 +322,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_breathHitParticle: PF_LeavesHit
+  m_hitParticleMatchDirection: 1
   m_resistanceMax: 25
   m_burningTime: 10
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!114 &11470600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -336,17 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: bush_01
-  m_reward:
-    score: 1
-    coins: 5
-    pc: 0
-    health: 0
-    energy: 0
-    fury: 0
-    xp: 0
-  m_goldenChance: 0
-  m_pcChance: 0
+  m_sku: bush_01
 --- !u!114 &11485816
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -358,10 +350,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_breathHitParticle: PF_LeavesHit
+  m_hitParticleMatchDirection: 1
   m_resistanceMax: 25
   m_burningTime: 10
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 10
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

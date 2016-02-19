@@ -2300,6 +2300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_wingsSound: {fileID: 0}
 --- !u!114 &11409410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2412,7 +2413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 50
+  m_damage: 75
   m_length: 10
   m_sizeCurve:
     serializedVersion: 2
@@ -2671,6 +2672,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_sizeCurve.m_RotationOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damage
+      value: 75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -21,7 +21,6 @@ public class FireBreath : DragonBreathBehaviour {
 	private Transform m_mouthTransform;
 	private Transform m_headTransform;
 
-	private Vector2 m_direction;
 	private Vector2 m_directionP;
 	private float m_actualLength;
 
