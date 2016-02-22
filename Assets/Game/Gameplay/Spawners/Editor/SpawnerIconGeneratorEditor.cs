@@ -49,8 +49,8 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// 
 	/// </summary>
 	public override void OnInspectorGUI() {
-		// Get the spawner
-		Spawner sp = typedTarget.GetComponent<Spawner>();
+        // Get the spawner
+        /*Spawner sp = typedTarget.GetComponent<Spawner>();
 		if(sp == null) {
 			EditorGUILayout.HelpBox("No spawner component could be found.", MessageType.Error);
 			m_entityPrefab = null;
@@ -88,7 +88,8 @@ public class SpawnerIconGeneratorEditor : Editor {
 
 		// Store latest values
 		m_entityPrefab = sp.m_entityPrefab;
-		typedTarget.m_backgroundColor = newColor;
+		typedTarget.m_backgroundColor = newColor;*/
+        GUILayout.Box("Disabled while finding a fix");
 	}
 	
 	/// <summary>
@@ -112,8 +113,9 @@ public class SpawnerIconGeneratorEditor : Editor {
 			if(generator == null) {
 				generator = spawners[i].gameObject.AddComponent<SpawnerIconGenerator>();
 			}
-			
-			// Generate icon for this spawner
+
+            // Generate icon for this spawner
+            Debug.Log("generating icon for spawner " + spawners[i].gameObject.name);
 			GenerateIcon(generator, spawners[i]);
 		}
 	}
@@ -125,7 +127,7 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// <param name="_gen">The generator to be used.</param>
 	/// <param name="_sp">The spawner to be changed.</param>
 	private static void GenerateIcon(SpawnerIconGenerator _gen, Spawner _sp) {
-		Texture2D tex = null;
+        /*Texture2D tex = null;
 		if(_sp.m_entityPrefab != null) {
 			// Generate a new texture
 			tex = AssetPreview.GetAssetPreview(_sp.m_entityPrefab);
@@ -166,6 +168,7 @@ public class SpawnerIconGeneratorEditor : Editor {
 		if(tex == null) {
 			// Use default icon
 			EditorUtils.SetObjectIcon(_sp.gameObject, EditorUtils.ObjectIcon.LABEL_RED);
-		}
-	}
+		}*/
+        EditorUtils.SetObjectIcon(_sp.gameObject, EditorUtils.ObjectIcon.LABEL_ORANGE);
+    }
 }
