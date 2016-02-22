@@ -6,7 +6,7 @@ public class EdibleBehaviour : Initializable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private Entity m_prey;
+	private Entity m_entity;
 	private Animator m_animator;
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
@@ -30,7 +30,7 @@ public class EdibleBehaviour : Initializable {
 
 	void Start() {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_prey = GetComponent<Entity>();
+		m_entity = GetComponent<Entity>();
 
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 	}
@@ -61,8 +61,8 @@ public class EdibleBehaviour : Initializable {
 	}
 	
 	public void OnSwallow() {
-		// Get the reward to be given from the prey stats
-		Reward reward = m_prey.GetOnKillReward();
+		// Get the reward to be given from the entity
+		Reward reward = m_entity.GetOnKillReward(false);
 
 		// Dispatch global event
 		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
