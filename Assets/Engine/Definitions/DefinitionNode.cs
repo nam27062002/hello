@@ -48,6 +48,10 @@ public class DefinitionNode
 		else
 			return "";
 	}
+
+	public string GetAsString(string _propertyId) {
+		return Get(_propertyId);
+	}
 	
 	public float GetAsFloat( string property, float defaultValue = 1.0f)
 	{
