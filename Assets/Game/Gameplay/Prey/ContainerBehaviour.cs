@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public class ContainerBehaviour : MonoBehaviour 
 {
+	private float m_waitTimer = 0;
 	[Serializable]
 	public class ContainerHit
 	{
@@ -31,7 +32,7 @@ public class ContainerBehaviour : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-	
+		m_waitTimer -= Time.deltaTime;
 	}
 
 
@@ -40,21 +41,33 @@ public class ContainerBehaviour : MonoBehaviour
 		
 		if ( collision.transform.tag == "Player" )
 		{
-			DragonPlayer player = collision.transform.gameObject.GetComponent<DragonPlayer>();
+			GameObject go = collision.transform.gameObject;
+			DragonPlayer player = go.GetComponent<DragonPlayer>();
 			// ContainerHit hit = m_hits[ player.data.def.tier ];
 			ContainerHit hit = m_hits.Get(player.data.def.tier);
 			if ( hit.m_breaksWithoutTurbo )
 			{
 				Break();
 			}
-			else
+			else if (m_waitTimer <= 0)
 			{
-				DragonBoostBehaviour boost = collision.transform.gameObject.GetComponent<DragonBoostBehaviour>();	
+				DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
 				if ( boost.IsBoostActive() )
 				{
-					hit.m_numHits--;
-					if ( hit.m_numHits <= 0 )
-						Break();
+					DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
+
+					Debug.Log( dragonMotion.m_lastSpeed );
+					Debug.Log( dragonMotion.absoluteMaxSpeed * 0.85f );
+
+					if (dragonMotion.m_lastSpeed >= (dragonMotion.absoluteMaxSpeed * 0.85f) )
+					{
+						m_waitTimer = 0.5f;
+						// Check Min Speed
+						Debug.Log("HIT!!!!");
+						hit.m_numHits--;
+						if ( hit.m_numHits <= 0 )
+							Break();
+					}
 				}
 			}
 		}

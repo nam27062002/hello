@@ -14,8 +14,6 @@ public class EdibleBehaviour : Initializable {
 	private Quaternion m_originalRotation;
 	private Vector3 m_originalScale;
 
-	private DragonMotion m_dragon;
-
 	public string onEatenParticle = "";
 
 
@@ -31,8 +29,6 @@ public class EdibleBehaviour : Initializable {
 	void Start() {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_entity = GetComponent<Entity>();
-
-		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 	}
 
 	public override void Initialize() {
