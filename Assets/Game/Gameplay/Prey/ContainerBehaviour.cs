@@ -6,7 +6,9 @@ using System.Collections.Generic;
 
 public class ContainerBehaviour : MonoBehaviour 
 {
-	private float m_waitTimer = 0;
+	//-----------------------------------------------
+	// Classes
+	//-----------------------------------------------
 	[Serializable]
 	public class ContainerHit
 	{
@@ -19,17 +21,49 @@ public class ContainerBehaviour : MonoBehaviour
 
 	}
 
+	//-----------------------------------------------
+	// Properties
+	//-----------------------------------------------
+	private float m_waitTimer = 0;
 	[SerializeField]
 	public SerializableInstance m_hits = new SerializableInstance();
-
 	public string m_onBreakParticle;
+	private ContainerHit m_currentHits;
+	private DragonTier m_tier;
 
+	//-----------------------------------------------
+	// Methods
+	//-----------------------------------------------
 	// Use this for initialization
-	void Start () 
+	IEnumerator Start () 
 	{
-		
+		if ( Application.isPlaying )
+		{
+			while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+			{
+				yield return null;
+			}
+			DragonPlayer player = InstanceManager.player.GetComponent<DragonPlayer>();
+			m_tier = player.data.def.tier;
+			m_currentHits = new ContainerHit();
+			ResetHits();
+		}
 	}
-	
+
+	public void Reset()
+	{
+		ResetHits();
+		m_waitTimer = 0;
+		gameObject.SetActive( true );
+	}
+
+	void ResetHits()
+	{
+		ContainerHit originalHits = m_hits.Get( m_tier );
+		m_currentHits.m_numHits = originalHits.m_numHits;
+		m_currentHits.m_breaksWithoutTurbo = originalHits.m_breaksWithoutTurbo;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		m_waitTimer -= Time.deltaTime;
@@ -38,34 +72,25 @@ public class ContainerBehaviour : MonoBehaviour
 
 	void OnCollisionEnter( Collision collision )
 	{
-		
 		if ( collision.transform.tag == "Player" )
 		{
-			GameObject go = collision.transform.gameObject;
-			DragonPlayer player = go.GetComponent<DragonPlayer>();
-			// ContainerHit hit = m_hits[ player.data.def.tier ];
-			ContainerHit hit = m_hits.Get(player.data.def.tier);
-			if ( hit.m_breaksWithoutTurbo )
+			if ( m_currentHits.m_breaksWithoutTurbo )
 			{
 				Break();
 			}
 			else if (m_waitTimer <= 0)
 			{
+				GameObject go = collision.transform.gameObject;
 				DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
 				if ( boost.IsBoostActive() )
 				{
 					DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
-
-					Debug.Log( dragonMotion.m_lastSpeed );
-					Debug.Log( dragonMotion.absoluteMaxSpeed * 0.85f );
-
 					if (dragonMotion.m_lastSpeed >= (dragonMotion.absoluteMaxSpeed * 0.85f) )
 					{
 						m_waitTimer = 0.5f;
 						// Check Min Speed
-						Debug.Log("HIT!!!!");
-						hit.m_numHits--;
-						if ( hit.m_numHits <= 0 )
+						m_currentHits.m_numHits--;
+						if ( m_currentHits.m_numHits <= 0 )
 							Break();
 					}
 				}
@@ -89,7 +114,6 @@ public class ContainerBehaviour : MonoBehaviour
 
 		// Destroy
 		gameObject.SetActive( false );
-		Destroy( gameObject );
 
 		// TODO: Tell inside edible entities thet they can be eaten
 	}
