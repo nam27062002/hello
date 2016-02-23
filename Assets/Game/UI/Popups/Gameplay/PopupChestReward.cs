@@ -25,7 +25,7 @@ public class PopupChestReward : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Gameplay/PF_PopupChestReward";
+	public static readonly string PATH = "UI/Popups/Chests/PF_PopupChestReward";
 	private static readonly int TAPS_TO_OPEN = 3;
 
 	//------------------------------------------------------------------//

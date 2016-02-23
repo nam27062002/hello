@@ -22,7 +22,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Menu/PF_PopupCurrencyShop";
+	public static readonly string PATH = "UI/Popups/Shop/PF_PopupCurrencyShop";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
