@@ -73,6 +73,7 @@ public class ContainerSpawner : MonoBehaviour
 		for( int i = 0; i<m_spawners.Length; i++ )
 		{
 			m_spawners[i].enabled = i == selected;
+			m_spawners[i].ResetSpawnTimer();
 		}
 	}
 
