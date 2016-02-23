@@ -83,12 +83,13 @@ public class Entity : Initializable {
 	/// prey, taking in account its golden/pc chances and status.
 	/// </summary>
 	/// <returns>The reward to be given to the player when killing this unit.</returns>
-	public Reward GetOnKillReward() {
+	/// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
+	public Reward GetOnKillReward(bool _burnt) {
 		// Create a copy of the base rewards and tune them
 		Reward newReward = def.reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
-		// Give coins?
-		if(!m_isGolden) {
+		// Give coins? True if the entity was golden or has been burnt
+		if(!m_isGolden && !_burnt) {
 			newReward.coins = 0;
 		}
 

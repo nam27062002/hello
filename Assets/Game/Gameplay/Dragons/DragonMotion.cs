@@ -47,6 +47,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonControl			m_controls;
 	Orientation			   	m_orientation;
 
+
 	// Movement control
 	private Vector3 m_impulse;
 	private Vector3 m_direction;
@@ -83,6 +84,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
 	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
+	public Vector3 	m_lastPosition;
+	public float m_lastSpeed;
+
 		 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -137,7 +141,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
-		
+		m_lastPosition = transform.position;
+		m_lastSpeed = 0;
 		ChangeState(State.Idle);
 	}
 
@@ -290,9 +295,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		
 		m_rbody.angularVelocity = Vector3.zero;
 
+		m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
+
 		Vector3 position = transform.position;
 		position.z = 0f;
 		transform.position = position;
+
+		m_lastPosition = transform.position;
 	}
 	
 	//------------------------------------------------------------------//
@@ -493,6 +502,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		get { return m_dragon.data.speedSkill.value * m_speedMultiplier; }
 	}
 
+	// max speed with boost
+	public float absoluteMaxSpeed
+	{
+		get { return m_dragon.data.speedSkill.value * m_dragon.data.boostSkill.value; }
+	}
 
 	public void SetSpeedMultiplier(float _value) {
 		m_dragon.SetSpeedMultiplier(_value);

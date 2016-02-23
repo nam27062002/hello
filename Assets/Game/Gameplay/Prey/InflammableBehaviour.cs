@@ -41,7 +41,7 @@ public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private Entity m_prey;
+	private Entity m_entity;
 	
 	private float m_health;
 	private float m_timer;
@@ -60,7 +60,7 @@ public class InflammableBehaviour : Initializable {
 			PoolManager.CreatePool(m_explosionPrefab, 5, false);
 		}
 
-		m_prey = GetComponent<Entity>();
+		m_entity = GetComponent<Entity>();
 
 		m_timer = m_checkFireTime;
 
@@ -118,13 +118,13 @@ public class InflammableBehaviour : Initializable {
 			m_health -= _damage;
 
 			if (m_health <= 0) {
-				EntityManager.instance.Unregister(m_prey);
+				EntityManager.instance.Unregister(m_entity);
 				
 				// Let heirs do their magic
 				OnBurn();
 
-				// Get the reward to be given from the prey stats
-				Reward reward = m_prey.GetOnKillReward();
+				// Get the reward to be given from the entity
+				Reward reward = m_entity.GetOnKillReward(true);
 
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, this.transform, reward);

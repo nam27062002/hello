@@ -106,6 +106,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	private void Eat(EdibleBehaviour _prey, float _biteResistance) {
+		if ( !_prey.enabled )
+			return;
+
 		_prey.OnEat();
 
 		// Yes!! Eat it!!
@@ -152,6 +155,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 				// check distance to dragon mouth
 				if (dot > 0) {
+					// TODO (miguel) : Check if no collision??
 					Eat(entity.GetComponent<EdibleBehaviour>(), entity.def.biteResistance);
 					return;
 
