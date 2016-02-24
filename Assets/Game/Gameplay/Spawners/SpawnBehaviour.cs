@@ -28,7 +28,8 @@ public class SpawnBehaviour : MonoBehaviour {
 	}
 
 	void OnDisable() {
-		EntityManager.instance.Unregister(GetComponent<Entity>());
+		if ( EntityManager.instance != null )
+			EntityManager.instance.Unregister(GetComponent<Entity>());
 
 		if (m_spawner) {
 			m_spawner.RemoveEntity(gameObject, true);

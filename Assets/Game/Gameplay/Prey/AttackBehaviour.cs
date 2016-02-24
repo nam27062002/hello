@@ -5,17 +5,19 @@ using System.Collections;
 public class AttackBehaviour : Initializable {
 	
 	// Constants
-	private enum State {
+	public enum State {
 		None = 0,
+		Idle,
 		Pursuit,
-		Attack
+		Attack,
+		AttackRetreat,
 	};
 
 
 	[SerializeField] private float m_damage;
 	[SerializeField] private float m_attackDelay;
 	[SerializeField] private int m_consecutiveAttacks;
-	[SerializeField] private float m_sensorShutdownTime;
+	[SerializeField] private float m_retreatingTime;
 	[SerializeField] private bool m_hasAnimation = true;
 	[SerializeField] private GameObject m_projectilePrefab;
 	[SerializeField] private Transform m_projectileSpawnPoint;
@@ -73,6 +75,14 @@ public class AttackBehaviour : Initializable {
 		m_attackCount = 0;
 	}
 
+	public State state
+	{
+		get
+		{
+			return m_state;
+		}
+	}
+
 	void OnEnable() {
 		m_state = State.None;
 		m_nextState = State.Pursuit;
@@ -98,12 +108,24 @@ public class AttackBehaviour : Initializable {
 
 		Vector2 v = transform.position - m_target.position;
 		switch (m_state) {
+			case State.Idle:
+			{
+				if ( m_timer > 0 )
+				{
+					m_timer -= Time.deltaTime;
+				}
+				else if (m_sensor.isInsideMaxArea) 
+				{
+					m_nextState = State.Pursuit;
+				}
+			}break;
 			case State.Pursuit:				
 				if (v.sqrMagnitude <= m_sensor.sensorMinRadius * m_sensor.sensorMinRadius) {
 					m_nextState = State.Attack;
 				}
-				if (!m_area.Contains(transform.position)) {
-					m_sensor.Shutdown(5f);
+				if (m_area != null && !m_area.Contains(transform.position)) {
+					m_timer = 5.0f;
+					m_nextState = State.Idle;
 				}
 				break;
 				
@@ -123,7 +145,8 @@ public class AttackBehaviour : Initializable {
 						if (m_consecutiveAttacks > 0) {
 							m_attackCount++;
 							if (m_attackCount >= m_consecutiveAttacks) {
-								m_sensor.Shutdown(m_sensorShutdownTime);
+								m_timer = m_retreatingTime;
+								m_nextState = State.AttackRetreat;	// While retreating normal movement should do its thing. Its set on tactics
 							}
 						}
 					}
@@ -131,6 +154,16 @@ public class AttackBehaviour : Initializable {
 					m_nextState = State.Pursuit;
 				}
 				break;
+			case State.AttackRetreat:
+			{
+				m_timer -= Time.deltaTime;
+				if ( m_timer <= 0 )
+				{
+					// Check Sensor
+					m_nextState = State.Idle;
+					m_timer = 5.0f;
+				}
+			}break;
 		}
 	}
 
