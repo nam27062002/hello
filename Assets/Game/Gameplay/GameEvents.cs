@@ -62,5 +62,9 @@ public enum GameEvents {
 	MISSION_SKIPPED,			// params: Mission _mission
 	MISSION_UNLOCKED,			// params: Mission _mission
 	MISSION_COOLDOWN_FINISHED,	// params: Mission _mission
-	MISSION_STATE_CHANGED		// params: Mission _mission, Mission.State _oldState, Mission.State _newState
+	MISSION_STATE_CHANGED,		// params: Mission _mission, Mission.State _oldState, Mission.State _newState
+
+	// Gacha events
+	EGG_INCUBATION_ENDED,		// No params
+	EGG_COLLECTED				// params: Egg _egg
 }

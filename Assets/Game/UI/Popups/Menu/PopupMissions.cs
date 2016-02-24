@@ -22,7 +22,7 @@ public class PopupMissions : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Menu/PF_PopupMissions";
+	public static readonly string PATH = "UI/Popups/Missions/PF_PopupMissions";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//

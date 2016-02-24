@@ -27,6 +27,10 @@ public class Definitions : Singleton<Definitions> {
 	public enum Category {
 		UNKNOWN,
 		LOCALIZATION,
+
+		// Egg manager
+		EGGS,
+		EGG_REWARDS
 	};
 
 	//------------------------------------------------------------------------//
@@ -63,6 +67,12 @@ public class Definitions : Singleton<Definitions> {
 
 		// Settings
 		LoadDefinitionsFile(Category.LOCALIZATION, "Rules/localizationDefinitions");
+
+		// Gacha
+		LoadDefinitionsFile(Category.EGGS, "Rules/eggDefinitions");
+		LoadDefinitionsFile(Category.EGG_REWARDS, "Rules/eggRewardDefinitions");
+
+		// ADD HERE ANY NEW DEFINITIONS FILE!
 
 		// Warn all other managers and definition consumers
 

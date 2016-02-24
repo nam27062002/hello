@@ -93,7 +93,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		if(skillData.level == skillData.lastLevel) {
 			m_text.text = "Max";	// [AOC] HARDCODED!!
 		} else {
-			m_text.text = String.Format("▲{0}", StringUtils.FormatNumber(skillData.nextLevelUnlockPrice));	// [AOC] HARDCODED!!
+			m_text.text = String.Format("{0}", StringUtils.FormatNumber(skillData.nextLevelUnlockPrice));	// [AOC] HARDCODED!!
 		}
 	}
 

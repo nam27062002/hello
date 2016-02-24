@@ -37,6 +37,7 @@ public static class PersistenceManager {
 		public UserProfile.SaveData profile = new UserProfile.SaveData();
 		public DragonData.SaveData[] dragons = null;
 		public MissionManager.SaveData missions = new MissionManager.SaveData();
+		public EggManager.SaveData eggs = new EggManager.SaveData();
 
 		/// <summary>
 		/// Default constructor.
@@ -122,6 +123,9 @@ public static class PersistenceManager {
 
 		// Missions
 		MissionManager.Load(_data.missions);
+
+		// Eggs
+		EggManager.Load(_data.eggs);
 	}
 
 	/// <summary>
@@ -178,6 +182,9 @@ public static class PersistenceManager {
 
 		// Missions
 		data.missions = MissionManager.Save();
+
+		// Eggs
+		data.eggs = EggManager.Save();
 		
 		// Save the object we just created
 		SaveFromObject(_profileName, data);

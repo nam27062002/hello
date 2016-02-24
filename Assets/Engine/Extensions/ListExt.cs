@@ -26,6 +26,25 @@ public static class ListExt {
 	// STATIC EXTENSION METHODS											//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// Searches for the specified object and returns the zero-based index of the first occurrence within the entire array.
+	/// </summary>
+	/// <returns>The zero-based index of the first occurrence of the target item within the array if found; otherwise, <c>–1</c>.</returns>
+	/// <param name="_array">The array to be searched.</param>
+	/// <param name="_target">The object to locate in the array. The value can be <c>null</c> for reference types.</param>
+	/// <remarks>
+	/// The array is searched forward starting at the first element and ending at the last element.
+	/// This method performs a linear search; therefore, this method is an O(n) operation, where n is array's Length.
+	/// </remarks>
+	public static int IndexOf(this Array _array, object _target) {
+		// Standard linear search
+		for(int i = 0; i < _array.Length; i++) {
+			if(_array.GetValue(i) == _target) return i;
+		}
+
+		return -1;
+	}
+
+	/// <summary>
 	/// Randomize the order within a list.
 	/// </summary>
 	/// <param name="_list">The list to be shuffled.</param>

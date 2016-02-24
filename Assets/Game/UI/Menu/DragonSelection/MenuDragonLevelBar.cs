@@ -23,6 +23,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	//------------------------------------------------------------------//
 	[SerializeField] private Slider m_levelBar;
 	[SerializeField] private Text m_levelText;
+	[SerializeField] private Text m_nameText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -34,6 +35,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 		// Get external references
 		DebugUtils.Assert(m_levelBar != null, "Required field!");
 		DebugUtils.Assert(m_levelText != null, "Required field!");
+		DebugUtils.Assert(m_nameText != null, "Required field!");
 	}
 
 	/// <summary>
@@ -71,5 +73,8 @@ public class MenuDragonLevelBar : MonoBehaviour {
 		// Text
 		m_levelText.text = String.Format("Lvl {0}",
 		                                StringUtils.FormatNumber(m_levelBar.value, 0));
+
+		// Dragon Name
+		m_nameText.text = Localization.Localize(data.def.tidName);
 	}
 }
