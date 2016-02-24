@@ -25,7 +25,8 @@ public class MenuScreensController : MonoBehaviour {
 		NONE = -1,
 		PLAY,
 		DRAGON_SELECTION,
-		LEVEL_SELECTION
+		LEVEL_SELECTION,
+		INCUBATOR
 	};
 	
 	//------------------------------------------------------------------//
