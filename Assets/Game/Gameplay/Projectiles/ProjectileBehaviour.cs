@@ -40,7 +40,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 			Vector3 pos = InstanceManager.player.transform.position;
 			float randomSize = 2.5f;
 			pos.x += Random.Range( -randomSize, randomSize );
-			pos.y += Random.Range( -randomSize, randomSize );
+			pos.y += Random.Range( 0, randomSize );
 			m_pMotion.Shoot( pos );
 		}
 
