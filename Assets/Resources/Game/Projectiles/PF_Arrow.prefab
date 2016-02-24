@@ -28,14 +28,14 @@ GameObject:
   - 114: {fileID: 11463780}
   - 114: {fileID: 11494864}
   - 114: {fileID: 11401698}
-  - 114: {fileID: 11497412}
   - 114: {fileID: 11498378}
   - 114: {fileID: 11416456}
   - 114: {fileID: 11456010}
   - 135: {fileID: 13505146}
-  - 54: {fileID: 5402638}
+  - 114: {fileID: 11404390}
+  - 54: {fileID: 5476966}
   m_Layer: 16
-  m_Name: PF_Missile
+  m_Name: PF_Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,7 +99,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 102996}
   m_Mesh: {fileID: 4300000, guid: b83dbe3f6ef6540518562e2d4dc310a2, type: 3}
---- !u!54 &5402638
+--- !u!54 &5476966
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -132,6 +132,18 @@ MonoBehaviour:
   m_rotationRange:
     min: 0
     max: 360
+--- !u!114 &11404390
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cb470657b1c542bfb885d23d4cd392a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_moveType: 0
 --- !u!114 &11416456
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -196,31 +208,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onEatenParticle: 
---- !u!114 &11497412
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_zOffset:
-    min: -1
-    max: 1
-  m_flockAvoidRadiusRange:
-    min: 0
-    max: 1
-  m_steerForce: 10
-  m_mass: 1
-  m_distanceAttenuation: 5
-  m_checkCollisions: 1
-  m_maxSpeed: 50
-  m_maxRunSpeed: 50
-  m_slowingRadius: 0
-  m_fallOnBurn: 0
 --- !u!114 &11498378
 MonoBehaviour:
   m_ObjectHideFlags: 1
