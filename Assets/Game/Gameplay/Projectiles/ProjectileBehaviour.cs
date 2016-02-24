@@ -28,6 +28,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 		m_edible = GetComponent<EdibleBehaviour>();
 
 		transform.position = _from.position;
+		transform.rotation = _from.rotation;
 				
 		Initializable[] components = GetComponents<Initializable>();		
 		foreach (Initializable component in components) {
