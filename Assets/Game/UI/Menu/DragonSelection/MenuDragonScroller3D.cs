@@ -71,6 +71,9 @@ public class MenuDragonScroller3D : MonoBehaviour {
 		}
 	}
 
+	// Internal references
+	private MenuScreensController m_menuScreensController = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -87,6 +90,9 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// First update call
 	/// </summary>
 	private void Start() {
+		// Store reference to menu screens controller for faster access
+		m_menuScreensController = InstanceManager.GetSceneController<MenuSceneController>().screensController;
+
 		// Find game object linked to currently selected dragon
 		FocusDragon(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon, false);
 	}
@@ -108,23 +114,23 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Draw scene gizmos.
+	/// Update loop.
 	/// </summary>
-	private void OnDrawGizmos() {
-		if(m_cameraPath == null) return;
-		if(m_lookAtPath == null) return;
+	private void Update() {
+		// If we're in the dragon selection screen, snap camera to curves
+		// [AOC] A bit dirty, but best way I can think of right now (and gacha is waiting)
+		if(m_menuScreensController.currentScreenIdx == (int)MenuScreensController.Screens.DRAGON_SELECTION) {
+			// Only if camera is not already moving!
+			if(!m_menuScreensController.tweening) {
+				// Move camera! ^_^
+				if(m_cameraPath != null) {
+					m_menuScreensController.camera.transform.position = m_cameraPath.position;
+				}
 
-		// LookAt line
-		Gizmos.color = Colors.WithAlpha(Colors.cyan, 0.75f);
-		Gizmos.DrawLine(m_cameraPath.path.GetValue(m_cameraPath.delta), m_lookAtPath.path.GetValue(m_lookAtPath.delta));
-
-		// Camera frustum
-		Camera targetCamera = m_cameraPath.target.gameObject.GetComponent<Camera>();
-		if(targetCamera != null) {
-			Gizmos.color = Colors.WithAlpha(Colors.white, 0.5f);
-			Gizmos.matrix = targetCamera.transform.localToWorldMatrix;
-			Gizmos.DrawFrustum(Vector3.zero, targetCamera.fieldOfView, targetCamera.farClipPlane, targetCamera.nearClipPlane, targetCamera.aspect);
-			Gizmos.matrix = Matrix4x4.identity;
+				if(m_lookAtPath != null) {
+					m_menuScreensController.camera.transform.LookAt(m_lookAtPath.position);
+				}
+			}
 		}
 	}
 
