@@ -120,7 +120,7 @@ public class BezierCurveEditor : Editor {
 		EditorGUILayout.Space();
 
 		// Points list, foldable but not directly editable
-		m_pointsProp.isExpanded = EditorGUILayout.Foldout(m_pointsProp.isExpanded, m_pointsProp.displayName);
+		m_pointsProp.isExpanded = EditorGUILayout.Foldout(m_pointsProp.isExpanded, m_pointsProp.displayName + " [" + targetCurve.pointCount + "]");
 		if(m_pointsProp.isExpanded) {
 			DrawPoints();
 		}
@@ -128,14 +128,11 @@ public class BezierCurveEditor : Editor {
 		// Add/Remove points buttons
 		EditorGUILayout.BeginHorizontal(); {
 			// Add
-			if(GUILayout.Button("Add CP")) 
-			{
-				if ( targetCurve.points.Count > 0 )
-				{
-					targetCurve.AddPoint( targetCurve.points[ targetCurve.points.Count - 1 ].globalPosition );
-				}
-				else
-				{
+			if(GUILayout.Button("Add CP"))  {
+				// Clone last point (if any)
+				if (targetCurve.points.Count > 0 ) {
+					targetCurve.AddPoint(targetCurve.points[ targetCurve.points.Count - 1 ].globalPosition);
+				} else {
 					targetCurve.AddPoint(Vector3.zero);
 				}
 			}
@@ -181,7 +178,9 @@ public class BezierCurveEditor : Editor {
 		// Draw position handles to move points and handlers
 		BezierPoint p;
 		for(int i = 0; i < targetCurve.pointCount; i++) {
+			// Skip if the point is locked!
 			p = targetCurve.GetPoint(i);
+			if(p.locked) continue;
 
 			// The point itself
 			Handles.color = Colors.white;
@@ -329,16 +328,89 @@ public class BezierCurveEditor : Editor {
 	/// Draw and edit the points list.
 	/// </summary>
 	private void DrawPoints() {
-		// Show all points in a list
+		// Aux vars
 		BezierPoint p;
+		bool wasEnabled;
+		int swapPoint1 = -1;
+		int swapPoint2 = -1;
+
+		// Indent in
+		EditorGUI.indentLevel++;
+
+		// Toggle All
+		int allLocked = 0;	// 0 -> false, 1 -> true, 2 -> mixed
+		for(int i = 0; i < targetCurve.pointCount; i++) {
+			// Get point
+			p = targetCurve.GetPoint(i);
+
+			// First point straight away
+			if(i == 0) {
+				allLocked = p.locked ? 1 : 0;
+			} else {
+				// Different from previous values?
+				if((allLocked == 0 && p.locked)
+				|| (allLocked == 1 && !p.locked)) {
+					// Yes! Set mixed value and break loop
+					allLocked = 2;
+					break;
+				}
+			}
+		}
+
+		// Little trick from http://forum.unity3d.com/threads/how-to-make-partially-selected-editorgui-toggle-solved.327805/
+		// (since EditorGUI.showMixedValue doesn't work with GUILayout.Toggle)
+		GUIStyle toggleStyle = (allLocked == 2) ? GUI.skin.GetStyle("ToggleMixed") : EditorStyles.toggle;
+
+		// We want to know if the toggle was changed, but we don't want to interfere with the outer BeginChangeCheck block, so backup current "changed" status
+		bool guiChangedBackup = GUI.changed;
+		GUI.changed = false;
+		bool lockAll = !GUILayout.Toggle((allLocked == 0), " Toggle all", toggleStyle);
+		if(GUI.changed) {
+			// Apply to all points
+			for(int i = 0; i < targetCurve.pointCount; i++) {
+				targetCurve.GetPoint(i).locked = lockAll;
+			}
+		}
+
+		// Revert temp stuff to avoid interfering with following controls
+		GUI.changed = guiChangedBackup || GUI.changed;	// Either it was already changed or it has changed now
+
+		EditorGUILayout.Space();
+
+		// Show all points in a list
 		for(int i = 0; i < targetCurve.pointCount; i++) {
 			// Get target point
 			p = targetCurve.GetPoint(i);
 
+			// Lock toggle, name, sort buttons
+			EditorGUILayout.BeginHorizontal(); {
+				p.locked = !GUILayout.Toggle(!p.locked, " " + i.ToString());
+
+				GUILayout.FlexibleSpace();
+
+				wasEnabled = GUI.enabled;
+				GUI.enabled = (i > 0);
+				if(GUILayout.Button("▲", GUILayout.Width(20f))) {
+					swapPoint1 = i;
+					swapPoint2 = i-1;
+				}
+
+				GUI.enabled = (i < targetCurve.pointCount - 1);
+				if(GUILayout.Button("▼", GUILayout.Width(20f))) {
+					swapPoint1 = i;
+					swapPoint2 = i+1;
+				}
+
+				GUI.enabled = wasEnabled;
+			} EditorGUILayoutExt.EndHorizontalSafe();
+
 			// Handle Type
+			EditorGUI.indentLevel++;
 			p.handleStyle = (BezierPoint.HandleStyle)EditorGUILayout.EnumPopup("Handle Style", p.handleStyle);
 
 			// Position
+			wasEnabled = GUI.enabled;
+			GUI.enabled = !p.locked;
 			p.position = EditorGUILayout.Vector3Field("Position", p.position);
 
 			// Handle 1
@@ -349,6 +421,18 @@ public class BezierCurveEditor : Editor {
 
 			// Spacing
 			EditorGUILayout.Space();
+
+			// End
+			EditorGUI.indentLevel--;
+			GUI.enabled = wasEnabled;
+		}
+
+		// End
+		EditorGUI.indentLevel--;
+
+		// Perform any required point swapping - after having drawn them all to avoid reordering issues
+		if(swapPoint1 >= 0 && swapPoint2 >= 0) {
+			m_pointsProp.MoveArrayElement(swapPoint1, swapPoint2);
 		}
 	}
 
