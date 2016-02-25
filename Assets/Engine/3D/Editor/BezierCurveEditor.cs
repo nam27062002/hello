@@ -128,8 +128,16 @@ public class BezierCurveEditor : Editor {
 		// Add/Remove points buttons
 		EditorGUILayout.BeginHorizontal(); {
 			// Add
-			if(GUILayout.Button("Add CP")) {
-				targetCurve.AddPoint(Vector3.zero);
+			if(GUILayout.Button("Add CP")) 
+			{
+				if ( targetCurve.points.Count > 0 )
+				{
+					targetCurve.AddPoint( targetCurve.points[ targetCurve.points.Count - 1 ].globalPosition );
+				}
+				else
+				{
+					targetCurve.AddPoint(Vector3.zero);
+				}
 			}
 
 			// Remove
