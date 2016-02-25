@@ -80,6 +80,7 @@ public class InflammableBehaviour : Initializable {
 			if (m_timer <= 0) {
 				switch (m_state) {
 					case State.Burned:
+					{
 						// Particles
 						if (m_ashesAsset.Length > 0) {
 							Renderer renderer = GetComponentInChildren<Renderer>();	
@@ -91,16 +92,23 @@ public class InflammableBehaviour : Initializable {
 						}
 
 						m_state = State.Ashes;
+						// Deactivate collider if needed
+						Collider c = GetComponent<Collider>();
+						if (c != null)
+							c.enabled = false;
 						m_timer = m_dissolveTime;
-						break;
-
+					}break;
 					case State.Ashes:
+					{
 						if (m_destroyOnBurn) {
 							DestroyObject(gameObject);
 						} else {
+							Collider c = GetComponent<Collider>();
+							if (c != null)
+								c.enabled = true;
 							gameObject.SetActive(false);
 						}
-						break;
+					}break;
 				}
 			} else if (m_state == State.Ashes) {
 				m_ashMaterial.SetFloat("_AshLevel", Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime))));

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(PreyMotion))]
+// [RequireComponent(typeof(PreyMotion))]
 public class ProjectileBehaviour : MonoBehaviour {
 
 	[SerializeField] private GameObject m_explosionPrefab = null;
@@ -12,6 +12,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 
 	private Vector2 m_targetCenter;
 	private PreyMotion m_motion;
+	private ProjectileMotion m_pMotion;
 	private EdibleBehaviour m_edible;
 
 	// Use this for initialization
@@ -23,13 +24,24 @@ public class ProjectileBehaviour : MonoBehaviour {
 		m_targetCenter = InstanceManager.player.transform.position;
 		
 		m_motion = GetComponent<PreyMotion>();
+		m_pMotion = GetComponent<ProjectileMotion>();
 		m_edible = GetComponent<EdibleBehaviour>();
 
 		transform.position = _from.position;
+		transform.rotation = _from.rotation;
 				
 		Initializable[] components = GetComponents<Initializable>();		
 		foreach (Initializable component in components) {
 			component.Initialize();
+		}
+
+		if ( m_pMotion != null )
+		{
+			Vector3 pos = InstanceManager.player.transform.position;
+			float randomSize = 2.5f;
+			pos.x += Random.Range( -randomSize, randomSize );
+			pos.y += Random.Range( 0, randomSize );
+			m_pMotion.Shoot( pos );
 		}
 
 		m_damage = _damage;
@@ -38,7 +50,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 	void Update() {
 		// The dragon may eat this projectile, so we disable the explosion if that happens 
 		if (!m_edible.isBeingEaten) {
-			float distanceToTargetSqr = (m_targetCenter - m_motion.position).sqrMagnitude;
+			float distanceToTargetSqr = (m_targetCenter - (Vector2)transform.position).sqrMagnitude;
 
 			if (distanceToTargetSqr <= 0.5f) {
 				Explode(false);	
@@ -48,14 +60,22 @@ public class ProjectileBehaviour : MonoBehaviour {
 		
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (!m_edible.isBeingEaten) {
-			m_motion.Seek(m_targetCenter);
+		if (!m_edible.isBeingEaten) 
+		{
+			if ( m_motion != null )
+				m_motion.Seek(m_targetCenter);
 		}
 	}
 
 	void OnTriggerEnter(Collider _other) {
-		if (!m_edible.isBeingEaten) {
+		Debug.Log(_other.tag);
+		if (!m_edible.isBeingEaten && _other.tag == "Player") 
+		{
 			Explode(true);
+		}
+		else if ( _other.gameObject.layer == LayerMask.NameToLayer( "Ground" ) )
+		{
+			Explode(false);
 		}
 	}
 

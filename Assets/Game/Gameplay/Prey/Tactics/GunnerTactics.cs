@@ -10,20 +10,23 @@ public class GunnerTactics : Initializable {
 	private enum State {
 		None = 0,
 		Wander,
-		Attack
+		Attack,
+		Retreate
 	};
 
 	private State m_state;
 	private State m_nextState;
-	private SensePlayer m_sensor;
+	// private SensePlayer m_sensor;
 
 	private WanderBehaviour m_wander;
 	private AttackBehaviour m_attack;
+	private EdibleBehaviour m_edible;
 
+	public bool m_canBeEatenWhileAttacking = true;
 
 	// Use this for initialization
 	void Start () {
-		m_sensor = GetComponent<SensePlayer>();
+		// m_sensor = GetComponent<SensePlayer>();
 	}
 
 	public override void Initialize() {
@@ -33,9 +36,8 @@ public class GunnerTactics : Initializable {
 		
 		m_wander = GetComponent<WanderBehaviour>();
 		m_attack = GetComponent<AttackBehaviour>();
-
+		m_edible = GetComponent<EdibleBehaviour>();
 		m_wander.enabled = false;
-		m_attack.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -44,11 +46,25 @@ public class GunnerTactics : Initializable {
 			ChangeState();
 		}
 
-		if (m_sensor.isInsideMaxArea) {
-			m_nextState = State.Attack;
-		} else {
-			m_nextState = State.Wander;
+		if (m_attack != null)
+		switch( m_attack.state )
+		{
+			case AttackBehaviour.State.Pursuit:
+			case AttackBehaviour.State.Attack:
+			{
+				m_nextState = State.Attack;
+			}break;
+			case AttackBehaviour.State.AttackRetreat:
+			{
+				m_nextState = State.Retreate;
+			}break;
+			case AttackBehaviour.State.Idle:
+			default:
+			{
+				m_nextState = State.Wander;
+			}break;
 		}
+	
 	}
 
 	private void ChangeState() {
@@ -57,21 +73,40 @@ public class GunnerTactics : Initializable {
 			case State.Wander:
 				m_wander.enabled = false;
 				break;
-				
+			case State.Retreate:
 			case State.Attack:
-				m_attack.enabled = false;
-				break;
+			{
+				if (m_edible && !m_canBeEatenWhileAttacking)
+				{
+					m_edible.enabled = true;
+				}
+			}break;
 		}
 		
 		// enter State
 		switch (m_nextState) {
 			case State.Wander:
+			{
 				m_wander.enabled = true;
-				break;
-				
+			}break;
 			case State.Attack:
-				m_attack.enabled = true;
-				break;
+			{
+				// Check invencible
+				m_wander.enabled = false;
+				if (m_edible && !m_canBeEatenWhileAttacking)
+				{
+					m_edible.enabled = false;
+				}
+			}break;
+			case State.Retreate:
+			{
+				// Check invencible
+				m_wander.enabled = true;
+				if (m_edible && !m_canBeEatenWhileAttacking)
+				{
+					m_edible.enabled = false;
+				}
+			}break;
 		}
 		
 		m_state = m_nextState;

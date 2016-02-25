@@ -130,7 +130,8 @@ public class WanderBehaviour : Initializable {
 		if (m_motion.HasFlockController()) {
 			m_target = m_motion.GetFlockTarget();
 		} else {
-			m_target = m_motion.area.RandomInside();
+			if (m_motion.area != null)
+				m_target = m_motion.area.RandomInside();
 		}
 
 		if (m_motion.HasGroundSensor()) {

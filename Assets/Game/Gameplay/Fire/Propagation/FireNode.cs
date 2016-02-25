@@ -64,6 +64,13 @@ public class FireNode : MonoBehaviour {
 	}
 
 	void Update() {
+
+		if (m_fireSprite != null)
+			m_fireSprite.transform.position = transform.position;
+
+		if (m_smoke != null)
+			m_smoke.transform.position = transform.position;
+
 		switch(m_state)
 		{
 			case State.Burning:
