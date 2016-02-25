@@ -17,6 +17,9 @@ public enum EngineEvents {
 	POPUP_CLOSED,			// params: PopupController _popup
 	POPUP_DESTROYED,		// params: PopupController _popup
 
+	// Screen Navigation System
+	NAVIGATION_SCREEN_CHANGED,	// params: NavigationScreen _fromScreen, NavigationScreen _toScreen, bool _animate
+
 	// Localization
 	EVENT_LANGUAGE_CHANGED,	// no params
 
