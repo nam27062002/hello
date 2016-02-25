@@ -57,11 +57,11 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// </summary>
 	private void Awake() {
 		// Just define initial screen on the navigation system before it actually starts
-		/*if(GameVars.playScreenShown) {
+		if(GameVars.playScreenShown) {
 			SetInitialScreen((int)Screens.DRAGON_SELECTION);
 		} else {
 			SetInitialScreen((int)Screens.PLAY);
-		}*/
+		}
 	}
 
 	/// <summary>
