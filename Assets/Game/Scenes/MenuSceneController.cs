@@ -15,6 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Main controller for the menu scene.
 /// </summary>
+[RequireComponent(typeof(MenuScreensController))]
 public class MenuSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -25,14 +26,24 @@ public class MenuSceneController : SceneController {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	private string m_selectedDragon = "";
-	public string selectedDragon { get { return m_selectedDragon; }}
+	public string selectedDragon {
+		get { return m_selectedDragon; }
+	}
 
 	private string m_selectedLevel = "";
-	public string selectedLevel { get { return m_selectedLevel; }}
+	public string selectedLevel {
+		get { return m_selectedLevel; }
+	}
+
+	private MenuScreensController m_screensController = null;
+	public MenuScreensController screensController {
+		get { return m_screensController; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -49,6 +60,9 @@ public class MenuSceneController : SceneController {
 
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UserProfile.currentLevel;		// UserProfile should be loaded and initialized by now
+
+		// Shortcut to screens controller
+		m_screensController = GetComponent<MenuScreensController>();
 	}
 
 	/// <summary>
@@ -135,6 +149,9 @@ public class MenuSceneController : SceneController {
 		
 			// Save persistence
 			PersistenceManager.Save();
+
+			// Broadcast message
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_CONFIRMED, _sku);
 		}
 	}
 

@@ -45,6 +45,13 @@ public class PathFollower : MonoBehaviour {
 		}
 	}
 
+	public Vector3 position {
+		get {
+			if(m_path == null) return Vector3.zero;
+			return m_path.GetValue(delta); 
+		}
+	}
+
 	public int snapPoint {
 		get { 
 			if(m_path == null) return 0;

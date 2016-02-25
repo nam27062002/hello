@@ -25,9 +25,17 @@ public class NavigationScreenSystem : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Screen references to be set from the inspector
-	[SerializeField] protected List<NavigationScreen> m_screens = new List<NavigationScreen>();
 	[SerializeField] protected NavigationScreen m_initialScreen = null;
+	[SerializeField] protected List<NavigationScreen> m_screens = new List<NavigationScreen>();
+
 	protected int m_currentScreenIdx = SCREEN_NONE;
+	public int currentScreenIdx {
+		get { return m_currentScreenIdx; }
+	}
+
+	public NavigationScreen currentScreen {
+		get { return GetScreen(m_currentScreenIdx); }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -118,17 +126,24 @@ public class NavigationScreenSystem : MonoBehaviour {
 		}
 
 		// Hide current screen (if any)
+		NavigationScreen currentScreen = null;
 		if(m_currentScreenIdx != SCREEN_NONE) {
-			m_screens[m_currentScreenIdx].Hide(_animType);
+			currentScreen = m_screens[m_currentScreenIdx];
+			currentScreen.Hide(_animType);
 		}
 		
 		// Show new screen (if any)
+		NavigationScreen newScreen = null;
 		if(_newScreenIdx != SCREEN_NONE) {
-			m_screens[_newScreenIdx].Show(_animType);
+			newScreen = m_screens[_newScreenIdx];
+			newScreen.Show(_animType);
 		}
-		
+
 		// Update screen tracking
 		m_currentScreenIdx = _newScreenIdx;
+
+		// Notify game!
+		Messenger.Broadcast<NavigationScreen, NavigationScreen, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED, currentScreen, newScreen, _animType != NavigationScreen.AnimType.NONE);
 	}
 
 	/// <summary>

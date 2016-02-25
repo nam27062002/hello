@@ -53,7 +53,8 @@ public enum GameEvents {
 	DRAGON_SKILL_UPGRADED,		// params: DragonSkill _skill	// [AOC] TODO!! We might want to know whose dragon this skill belongs to - figure out how
 
 	// Menu events
-	MENU_DRAGON_SELECTED,	// params: string _selectedDragonSku
+	MENU_DRAGON_SELECTED,	// params: string _selectedDragonSku	// [AOC] Triggered when the dragon hovered in the dragon selection screen changes
+	MENU_DRAGON_CONFIRMED,	// params: string _confirmedDragonSku	// [AOC] Triggered when the dragon hovered on the menu is valid to be used in gameplay (UserProfile.currentDragon updated)
 	MENU_LEVEL_SELECTED,	// params: string _selectedLevelSku
 
 	// Mission events
