@@ -135,7 +135,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 							m_respawnTimer = 0;
 						}
 					} else {
-						if (m_camera.IsInsideActivationArea(transform.position)) {
+						if (m_camera != null && m_camera.IsInsideActivationArea(transform.position)) {
 							Spawn();
 							m_respawnTimer = m_spawnTime.GetRandom();
 						}
