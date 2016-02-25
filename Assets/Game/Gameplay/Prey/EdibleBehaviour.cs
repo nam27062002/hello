@@ -51,7 +51,8 @@ public class EdibleBehaviour : Initializable {
 	public void OnEat() {
 		m_isBeingEaten = true;
 		OnEatBehaviours(false);
-		m_animator.SetTrigger("being eaten");
+		if ( m_animator != null )
+			m_animator.SetTrigger("being eaten");
 
 		EntityManager.instance.Unregister(GetComponent<Entity>());
 	}
