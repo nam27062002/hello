@@ -14,6 +14,7 @@ public enum DragonTier {
 	TIER_0 = 0,
 	TIER_1,
 	TIER_2,
+	TIER_3,
 
 	COUNT
 }
