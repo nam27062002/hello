@@ -58,6 +58,7 @@ GameObject:
   - 114: {fileID: 11461950}
   - 114: {fileID: 11460700}
   - 114: {fileID: 11484324}
+  - 65: {fileID: 6504958}
   m_Layer: 11
   m_Name: military_chopper
   m_TagString: Untagged
@@ -108,7 +109,6 @@ GameObject:
   - 4: {fileID: 452504}
   - 33: {fileID: 3355550}
   - 23: {fileID: 2324644}
-  - 65: {fileID: 6522874}
   m_Layer: 11
   m_Name: army_helicopter_01
   m_TagString: Untagged
@@ -187,7 +187,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138554}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.27, y: 17.29, z: 6.1321716}
+  m_LocalPosition: {x: -511.2271, y: 86.64241, z: -18.199505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 444500}
@@ -293,18 +293,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112354}
   m_Mesh: {fileID: 4300002, guid: b5ed0125cf1594c0a982980bc2357dcf, type: 3}
---- !u!65 &6522874
+--- !u!65 &6504958
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 189724}
+  m_GameObject: {fileID: 138554}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.12189759, y: 0.046449732, z: 0.025}
-  m_Center: {x: 0.010825038, y: -0.0000020709547, z: 0.001}
+  m_Size: {x: 12.17, y: 2.4, z: 4.58}
+  m_Center: {x: -1.02, y: 0.12, z: 0}
 --- !u!65 &6557602
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -435,6 +435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_canBeEatenWhileAttacking: 1
 --- !u!114 &11460700
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -515,9 +516,10 @@ MonoBehaviour:
   m_damage: 8
   m_attackDelay: 2
   m_consecutiveAttacks: 1
-  m_sensorShutdownTime: 5
+  m_retreatingTime: 0
   m_hasAnimation: 0
   m_projectilePrefab: {fileID: 173528, guid: 5bf1aa92d7a764207b2c49df71708fc0, type: 2}
+  m_projectileSpawnPoint: {fileID: 0}
 --- !u!114 &11475476
 MonoBehaviour:
   m_ObjectHideFlags: 1
