@@ -384,10 +384,12 @@ public class BezierCurveEditor : Editor {
 
 			// Lock toggle, name, sort buttons
 			EditorGUILayout.BeginHorizontal(); {
+				// Lock & point name
 				p.locked = !GUILayout.Toggle(!p.locked, " " + i.ToString());
 
 				GUILayout.FlexibleSpace();
 
+				// Move up
 				wasEnabled = GUI.enabled;
 				GUI.enabled = (i > 0);
 				if(GUILayout.Button("▲", GUILayout.Width(20f))) {
@@ -395,13 +397,19 @@ public class BezierCurveEditor : Editor {
 					swapPoint2 = i-1;
 				}
 
+				// Move down
 				GUI.enabled = (i < targetCurve.pointCount - 1);
 				if(GUILayout.Button("▼", GUILayout.Width(20f))) {
 					swapPoint1 = i;
 					swapPoint2 = i+1;
 				}
-
 				GUI.enabled = wasEnabled;
+
+				// Delete button
+				if(GUILayout.Button("X", GUILayout.Width(20f))) {
+					swapPoint1 = i;
+				}
+
 			} EditorGUILayoutExt.EndHorizontalSafe();
 
 			// Handle Type
@@ -430,9 +438,15 @@ public class BezierCurveEditor : Editor {
 		// End
 		EditorGUI.indentLevel--;
 
-		// Perform any required point swapping - after having drawn them all to avoid reordering issues
-		if(swapPoint1 >= 0 && swapPoint2 >= 0) {
-			m_pointsProp.MoveArrayElement(swapPoint1, swapPoint2);
+		// Perform any required point swapping/deleting - after having drawn them all to avoid reordering issues
+		if(swapPoint1 >= 0) {
+			if(swapPoint2 < 0) {
+				// Delete
+				m_pointsProp.DeleteArrayElementAtIndex(swapPoint1);
+			} else {
+				// Move
+				m_pointsProp.MoveArrayElement(swapPoint1, swapPoint2);
+			}
 		}
 	}
 

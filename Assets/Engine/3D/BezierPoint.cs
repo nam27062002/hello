@@ -57,7 +57,7 @@ public class BezierPoint {
 	}
 
 	// Is this point editable?
-	private bool m_locked = false;
+	[SerializeField] private bool m_locked = false;
 	public bool locked {
 		get { return m_locked; }
 		set { m_locked = value; }
