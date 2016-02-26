@@ -16,7 +16,7 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the MonoBehaviourTemplate class.
 /// </summary>
-[CustomEditor(typeof(MonoBehaviourTemplate))]
+[CustomEditor(typeof(MonoBehaviourTemplate), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
 public class MonoBehaviourTemplateEditor : Editor {
 	//------------------------------------------------------------------//
