@@ -28,7 +28,7 @@ public class MonoBehaviourTemplateEditor : Editor {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Casted target object
-	MonoBehaviourTemplate targetMonoBehaviourTemplate { get { return target as MonoBehaviourTemplate; }}
+	MonoBehaviourTemplate m_targetMonoBehaviourTemplate = null;
 
 	// Store a reference of interesting properties for faster access
 	SerializedProperty m_myValueProp = null;
@@ -40,6 +40,9 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// The editor has been enabled - target object selected.
 	/// </summary>
 	private void OnEnable() {
+		// Get target object
+		m_targetMonoBehaviourTemplate = target as MonoBehaviourTemplate;
+
 		// Initialize custom styles if not done
 		if(s_customStyle == null) {
 			// Is style initialized?
@@ -55,7 +58,8 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
-
+		// Clear target object
+		m_targetMonoBehaviourTemplate = null;
 	}
 
 	/// <summary>
