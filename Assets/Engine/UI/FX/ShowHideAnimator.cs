@@ -57,6 +57,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	[SerializeField] private float m_tweenDuration = 0.25f;
 	[SerializeField] private float m_tweenValue = 1f;					// Use it to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).
 	[SerializeField] private Ease m_tweenEase = Ease.OutBack;
+	[SerializeField] private float m_tweenDelay = 0f;
 
 	// Internal references
 	private CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
@@ -306,6 +307,9 @@ public class ShowHideAnimator : MonoBehaviour {
 				m_sequence.Join(m_rectTransform.DOScale(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 		}
+
+		// Insert delay at the beginning of the sequence
+		m_sequence.PrependInterval(m_tweenDelay);
 	}
 }
 
