@@ -18,9 +18,6 @@ using DG.Tweening;
 /// <summary>
 /// Simple behaviour to show/hide the target game object depending on the 
 /// selected dragon and whether it's owned or not.
-/// TODO!!
-/// 	- Different tween anims options
-/// 	- Tune anim basic params - duration, ease
 /// </summary>
 [RequireComponent(typeof(ShowHideAnimator))]
 public class MenuDragonShowConditionally : MonoBehaviour {

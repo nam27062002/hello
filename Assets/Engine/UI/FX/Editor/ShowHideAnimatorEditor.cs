@@ -16,7 +16,7 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the ShowHideAnimator class.
 /// </summary>
-[CustomEditor(typeof(ShowHideAnimator))]
+[CustomEditor(typeof(ShowHideAnimator), true)]
 [CanEditMultipleObjects]
 public class ShowHideAnimatorEditor : Editor {
 	//------------------------------------------------------------------//
@@ -25,6 +25,7 @@ public class ShowHideAnimatorEditor : Editor {
 	private static readonly string INFO = 
 		"- Tween type determines the \"show\" direction. \"hide\" will be the reversed tween.\n" +
 		"- To use CUSTOM, add as many DOTweenAnimation components as desired to the target object with the id's \"show\" and \"hide\".\n" +
+		"- Use IDLE to delay the instant show/hide of the object (for example when waiting for other animations to finish).\n" +
 		"- Use the \"value\" parameter to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).\n" +
 		"- All tween-related parameters will be ignored if an animator is defined.\n" +
 		"- Talk to the programming team if you wish to add a different tween type or extra parameters.\n";

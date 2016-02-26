@@ -167,8 +167,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 22491054}
   - 114: {fileID: 11471386}
-  - 95: {fileID: 9569702}
-  - 225: {fileID: 22541518}
+  - 114: {fileID: 11406406}
   m_Layer: 5
   m_Name: PF_DragonSelectionScreen
   m_TagString: Untagged
@@ -274,7 +273,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 22412892}
   - 114: {fileID: 11410340}
-  - 114: {fileID: 11456038}
+  - 114: {fileID: 11404042}
   m_Layer: 5
   m_Name: SizeGroup
   m_TagString: Untagged
@@ -757,7 +756,7 @@ GameObject:
   - 114: {fileID: 11466582}
   - 114: {fileID: 11413962}
   - 114: {fileID: 11446456}
-  - 114: {fileID: 11432720}
+  - 114: {fileID: 11443116}
   m_Layer: 5
   m_Name: ButtonAddXP
   m_TagString: Untagged
@@ -799,7 +798,7 @@ GameObject:
   - 114: {fileID: 11430868}
   - 114: {fileID: 11439532}
   - 114: {fileID: 11436902}
-  - 114: {fileID: 11453440}
+  - 114: {fileID: 11438214}
   m_Layer: 5
   m_Name: ButtonUnlockWithPC
   m_TagString: Untagged
@@ -887,7 +886,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 22437798}
   - 114: {fileID: 11481658}
-  - 114: {fileID: 11437158}
+  - 114: {fileID: 11446104}
   m_Layer: 5
   m_Name: BottomBar
   m_TagString: Untagged
@@ -1145,7 +1144,7 @@ GameObject:
   - 114: {fileID: 11450918}
   - 114: {fileID: 11420166}
   - 114: {fileID: 11466172}
-  - 114: {fileID: 11475388}
+  - 114: {fileID: 11451422}
   m_Layer: 5
   m_Name: ButtonUnlockWithCoins
   m_TagString: Untagged
@@ -1349,23 +1348,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &9569702
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 109086}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 23fc8a398dd8e4559b90b309000b821c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &11401452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1478,6 +1460,23 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 99000
+--- !u!114 &11404042
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 113862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 7
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 27
+  m_tweenDelay: 0
 --- !u!114 &11404276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1550,6 +1549,23 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11406406
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 109086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 1
+  m_tweenDuration: 0.3
+  m_tweenValue: 1
+  m_tweenEase: 1
+  m_tweenDelay: 0
 --- !u!114 &11407426
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2683,23 +2699,6 @@ MonoBehaviour:
   m_PreferredHeight: 70
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
---- !u!114 &11432720
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 146662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_animator: {fileID: 0}
-  m_tweenType: 6
-  m_tweenDuration: 0.25
-  m_tweenValue: 0
-  m_tweenEase: 27
-  m_tweenDelay: 0
 --- !u!114 &11433362
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2803,22 +2802,22 @@ MonoBehaviour:
   m_showIfAvailable: 0
   m_showIfOwned: 0
   m_hideForDragons: 0
---- !u!114 &11437158
+--- !u!114 &11438214
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 156500}
+  m_GameObject: {fileID: 150970}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_animator: {fileID: 0}
-  m_tweenType: 2
+  m_tweenType: 3
   m_tweenDuration: 0.15
   m_tweenValue: 300
-  m_tweenEase: 9
+  m_tweenEase: 27
   m_tweenDelay: 0.15
 --- !u!114 &11438264
 MonoBehaviour:
@@ -3066,6 +3065,23 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &11443116
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 146662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 7
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 27
+  m_tweenDelay: 0
 --- !u!114 &11443908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3263,6 +3279,23 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &11446104
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 3
+  m_tweenDuration: 0.15
+  m_tweenValue: 300
+  m_tweenEase: 9
+  m_tweenDelay: 0.15
 --- !u!114 &11446456
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3452,6 +3485,23 @@ MonoBehaviour:
   m_color: {r: 0, g: 0, b: 0, a: 1}
   m_shadowSize: 0
   m_shadowColor: {r: 0.31617647, g: 0.22550821, b: 0.22550821, a: 1}
+--- !u!114 &11451422
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 188556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 3
+  m_tweenDuration: 0.15
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0.15
 --- !u!114 &11452510
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3539,23 +3589,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &11453440
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 150970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_animator: {fileID: 0}
-  m_tweenType: 2
-  m_tweenDuration: 0.15
-  m_tweenValue: 300
-  m_tweenEase: 27
-  m_tweenDelay: 0.15
 --- !u!114 &11455170
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3685,23 +3718,6 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalString: 
   inspectorExpanded: 0
---- !u!114 &11456038
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_animator: {fileID: 0}
-  m_tweenType: 6
-  m_tweenDuration: 0.25
-  m_tweenValue: 0
-  m_tweenEase: 27
-  m_tweenDelay: 0
 --- !u!114 &11456182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4516,23 +4532,6 @@ MonoBehaviour:
   m_color: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
   m_shadowSize: 0
   m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
---- !u!114 &11475388
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 188556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_animator: {fileID: 0}
-  m_tweenType: 2
-  m_tweenDuration: 0.15
-  m_tweenValue: 300
-  m_tweenEase: 27
-  m_tweenDelay: 0.15
 --- !u!114 &11476284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7700,17 +7699,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 433, y: 377}
   m_Pivot: {x: 0, y: 0}
---- !u!225 &22541518
-CanvasGroup:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 109086}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

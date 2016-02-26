@@ -28,6 +28,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	public enum TweenType {
 		NONE,
 
+		IDLE,	// Special one used to delay the instant show/hide of the object (for example when waiting for other animations to finish)
+
 		FADE,
 
 		UP,
@@ -65,9 +67,10 @@ public class ShowHideAnimator : MonoBehaviour {
 
 	// Internal
 	private Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
-	private bool m_isVisible = false;
 	private bool m_isDirty = true;
+	private bool m_disableAfterHide = true;
 
+	private bool m_isVisible = false;
 	public bool visible {
 		get { return m_isVisible; }
 	}
@@ -133,8 +136,11 @@ public class ShowHideAnimator : MonoBehaviour {
 		// If dirty, re-create the tween (will be destroyed if not needed)
 		if(m_isDirty) RecreateTween();
 
-		// If not using animations, we're done!
-		if(!_animate) return;
+		// If not using animations, put sequence to the end point and return
+		if(!_animate) {
+			if(m_sequence != null) m_sequence.Goto(1f);
+			return;
+		}
 
 		// If using an animator, let it do all the work
 		if(m_animator != null) {
@@ -154,7 +160,6 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// Using tweens, play the sequence in the proper direction
 		if(m_sequence != null) {
-			m_sequence.OnComplete(null);	// Remove any OnComplete callback that might have been added by the Hide() method
 			m_sequence.PlayForward();		// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
 		}
 	}
@@ -163,12 +168,14 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Hide the object. Will be ignored if object is already hidden/hiding.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
-	public void Hide(bool _animate = true) {
+	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
+	public void Hide(bool _animate = true, bool _disableAfterAnimation = true) {
 		// If we're already in the target state, skip
 		if(!m_isVisible) return;
 
 		// Update state
 		m_isVisible = false;
+		m_disableAfterHide = _disableAfterAnimation;
 
 		// If dirty, re-create the tween (will be destroyed if not needed)
 		if(m_isDirty) {
@@ -178,9 +185,14 @@ public class ShowHideAnimator : MonoBehaviour {
 			if(m_sequence != null) m_sequence.Goto(1f);
 		}
 
-		// If not using animations, just disable the object
+		// If not using animations, put sequence to the start point and instantly disable the object
 		if(!_animate) {
-			gameObject.SetActive(false);
+			if(m_sequence != null) {
+				m_sequence.Goto(0f);
+				if(_disableAfterAnimation) gameObject.SetActive(false);
+			} else {
+				gameObject.SetActive(false);
+			}
 			return;
 		}
 
@@ -205,7 +217,6 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// Using tweens, play the sequence in the proper direction
 		if(m_sequence != null) {
-			m_sequence.OnComplete(() => { gameObject.SetActive(false); });	// Make sure the object is disabled once the animation is finished
 			m_sequence.PlayBackwards();	// The cool thing is that if the show animation is interrupted, the hide animation will start from the interruption point
 		}
 	}
@@ -251,7 +262,6 @@ public class ShowHideAnimator : MonoBehaviour {
 			m_sequence.Complete();	// Make sure sequence is at its end-state to restore object's default values so the new sequence can take them
 			m_sequence.Kill();
 			m_sequence = null;
-			Debug.Log("Killing existing sequence");
 		}
 
 		// Clear dirty flag
@@ -267,9 +277,9 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_canvasGroup == null) m_canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
 		// Create new sequence
-		Debug.Log("Creating new sequence of type " + m_tweenType);
 		m_sequence = DOTween.Sequence()
-			.SetAutoKill(false);
+			.SetAutoKill(false)
+			.OnStepComplete(() => { OnTweenCompleted(); });
 
 		// Shared parameters
 		TweenParams sharedParams = new TweenParams()
@@ -277,6 +287,10 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// Initialize based on current parameters
 		switch(m_tweenType) {
+			case TweenType.IDLE: {
+				m_sequence.PrependInterval(m_tweenDuration);	// Do nothing else than adding an idle interval
+			} break;
+
 			case TweenType.FADE: {
 				m_tweenValue = Mathf.Clamp01(m_tweenValue);
 				m_sequence.Join(m_canvasGroup.DOFade(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
@@ -310,6 +324,22 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// Insert delay at the beginning of the sequence
 		m_sequence.PrependInterval(m_tweenDelay);
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Either a show or a hide animation has finished.
+	/// Won't be called when animation is interrupted.
+	/// </summary>
+	protected virtual void OnTweenCompleted() {
+		// Optionally disable object after the hide animation has finished
+		if(!m_isVisible) {
+			if(m_disableAfterHide) {
+				gameObject.SetActive(false);
+			}
+		}
 	}
 }
 
