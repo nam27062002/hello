@@ -1361,7 +1361,7 @@ MonoBehaviour:
   m_damage: 5
   m_attackDelay: 0.5
   m_consecutiveAttacks: 5
-  m_sensorShutdownTime: 0
+  m_retreatingTime: 0
   m_hasAnimation: 1
   m_projectilePrefab: {fileID: 173528, guid: f82301bbfe6e542baa676cadd072d2e6, type: 2}
   m_projectileSpawnPoint: {fileID: 405490}
@@ -1428,6 +1428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f836e7209e5c8497794d18c84b14c55b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_canBeEatenWhileAttacking: 1
 --- !u!114 &11442732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1439,7 +1440,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEatenParticle: 
+  m_onEatenParticle: 
+  m_onEatenSounds:
+  - audio/sfx/human/HUMN DeathScreams HS01_35_7
+  - audio/sfx/human/HUMN DeathScreams HS01_35_9
 --- !u!114 &11457312
 MonoBehaviour:
   m_ObjectHideFlags: 1
