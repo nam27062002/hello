@@ -7,6 +7,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public AudioSource m_wingsSound;
 	public AudioSource m_eatSound;
 	public AudioSource m_eatBigSound;
+	public AudioSource m_wingsWindSound;
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
@@ -20,11 +21,19 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public void TurboLoopStart()
 	{
 		m_bostBehaviour.ActivateTrails();
+		if (m_wingsWindSound != null)
+		{
+			m_wingsWindSound.Play();
+		}
 	}
 
 	public void TurboLoopEnd()
 	{
 		m_bostBehaviour.DeactivateTrails();
+		if (m_wingsWindSound != null)
+		{
+			m_wingsWindSound.Pause();
+		}
 	}
 
 	public void WingsSound()
@@ -37,7 +46,6 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void EatEvent()
 	{
-		Debug.Log("EatEvent");
 		if ( m_eatSound != null )
 		{
 			m_eatSound.pitch = Random.Range( 0.75f, 1.25f);
@@ -47,7 +55,6 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void EatBigEvent()
 	{
-		Debug.Log("EatBigEvent");
 		if ( m_eatBigSound != null )
 		{
 			m_eatBigSound.pitch = Random.Range( 0.75f, 1.25f);
