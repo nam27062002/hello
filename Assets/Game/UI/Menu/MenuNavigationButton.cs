@@ -55,6 +55,13 @@ public class MenuNavigationButton : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Go to the previous screen, if any.
+	/// </summary>
+	public void OnBackButtonClick() {
+		m_navigationSystem.Back();
+	}
+
+	/// <summary>
 	/// Special callback for the final play button.
 	/// </summary>
 	public void OnStartGameClick() {

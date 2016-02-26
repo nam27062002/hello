@@ -101,6 +101,50 @@ public static class ListExt {
 	}
 
 	/// <summary>
+	/// Obtain the first element of the list.
+	/// </summary>
+	/// <param name="_list">The list to be searched.</param>
+	/// <returns>The first element of the list, <c>null</c> if the list is empty.</returns>
+	public static T First<T>(this IList<T> _list) {
+		// Check for empty lists
+		if(_list.Count == 0) return default(T);
+		return _list[0];
+	}
+
+	/// <summary>
+	/// Obtain the first element of the array.
+	/// </summary>
+	/// <param name="_list">The array to be searched.</param>
+	/// <returns>The first element of the array, <c>null</c> if the array is empty.</returns>
+	public static T First<T>(this Array _array) {
+		// Check for empty lists
+		if(_array.Length == 0) return default(T);
+		return (T)_array.GetValue(0);
+	}
+
+	/// <summary>
+	/// Obtain the last element of the list.
+	/// </summary>
+	/// <param name="_list">The list to be searched.</param>
+	/// <returns>The last element of the list, <c>null</c> if the list is empty.</returns>
+	public static T Last<T>(this IList<T> _list) {
+		// Check for empty lists
+		if(_list.Count == 0) return default(T);
+		return _list[_list.Count - 1];
+	}
+
+	/// <summary>
+	/// Obtain the last element of the array.
+	/// </summary>
+	/// <param name="_list">The array to be searched.</param>
+	/// <returns>The last element of the array, <c>null</c> if the list is empty.</returns>
+	public static T Last<T>(this Array _array) {
+		// Check for empty lists
+		if(_array.Length == 0) return default(T);
+		return (T)_array.GetValue(_array.Length - 1);
+	}
+
+	/// <summary>
 	/// Sorts a string list alphanumerically.
 	/// See http://www.dotnetperls.com/alphanumeric-sorting.
 	/// </summary>
