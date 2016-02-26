@@ -73,13 +73,12 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &102336
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
   - 224: {fileID: 22402464}
-  - 114: {fileID: 11492548}
   m_Layer: 5
   m_Name: LeftAction
   m_TagString: Untagged
@@ -275,6 +274,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 22412892}
   - 114: {fileID: 11410340}
+  - 114: {fileID: 11456038}
   m_Layer: 5
   m_Name: SizeGroup
   m_TagString: Untagged
@@ -284,7 +284,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &114712
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -292,7 +292,6 @@ GameObject:
   - 224: {fileID: 22464852}
   - 222: {fileID: 22216458}
   - 114: {fileID: 11453332}
-  - 114: {fileID: 11459362}
   m_Layer: 5
   m_Name: Bg_bottom
   m_TagString: Untagged
@@ -758,6 +757,7 @@ GameObject:
   - 114: {fileID: 11466582}
   - 114: {fileID: 11413962}
   - 114: {fileID: 11446456}
+  - 114: {fileID: 11432720}
   m_Layer: 5
   m_Name: ButtonAddXP
   m_TagString: Untagged
@@ -797,8 +797,9 @@ GameObject:
   - 222: {fileID: 22220384}
   - 114: {fileID: 11479954}
   - 114: {fileID: 11430868}
-  - 114: {fileID: 11436902}
   - 114: {fileID: 11439532}
+  - 114: {fileID: 11436902}
+  - 114: {fileID: 11453440}
   m_Layer: 5
   m_Name: ButtonUnlockWithPC
   m_TagString: Untagged
@@ -872,6 +873,23 @@ GameObject:
   - 114: {fileID: 11460430}
   m_Layer: 5
   m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &156500
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 22437798}
+  - 114: {fileID: 11481658}
+  - 114: {fileID: 11437158}
+  m_Layer: 5
+  m_Name: BottomBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1125,8 +1143,9 @@ GameObject:
   - 222: {fileID: 22229434}
   - 114: {fileID: 11448814}
   - 114: {fileID: 11450918}
-  - 114: {fileID: 11466172}
   - 114: {fileID: 11420166}
+  - 114: {fileID: 11466172}
+  - 114: {fileID: 11475388}
   m_Layer: 5
   m_Name: ButtonUnlockWithCoins
   m_TagString: Untagged
@@ -1168,13 +1187,12 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &191312
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
   - 224: {fileID: 22422756}
-  - 114: {fileID: 11409136}
   m_Layer: 5
   m_Name: Skills
   m_TagString: Untagged
@@ -1282,13 +1300,12 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &196068
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
   - 224: {fileID: 22484802}
-  - 114: {fileID: 11416534}
   m_Layer: 5
   m_Name: RightAction
   m_TagString: Untagged
@@ -1594,22 +1611,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0.5254902, g: 0.14509805, b: 0.003921569, a: 1}
   m_EffectDistance: {x: 2, y: -2}
   m_UseGraphicAlpha: 1
---- !u!114 &11409136
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 191312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
-  m_hideForDragons: 0
-  m_anim: {fileID: 0}
 --- !u!114 &11409510
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1700,7 +1701,6 @@ MonoBehaviour:
   m_showIfAvailable: 0
   m_showIfOwned: 1
   m_hideForDragons: 0
-  m_anim: {fileID: 0}
 --- !u!114 &11410364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2085,22 +2085,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: SPEED
---- !u!114 &11416534
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 196068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
-  m_hideForDragons: 0
-  m_anim: {fileID: 0}
 --- !u!114 &11417472
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2699,6 +2683,22 @@ MonoBehaviour:
   m_PreferredHeight: 70
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &11432720
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 146662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 6
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 27
 --- !u!114 &11433362
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2802,7 +2802,22 @@ MonoBehaviour:
   m_showIfAvailable: 0
   m_showIfOwned: 0
   m_hideForDragons: 0
-  m_anim: {fileID: 0}
+--- !u!114 &11437158
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 2
+  m_tweenDuration: 0.25
+  m_tweenValue: 300
+  m_tweenEase: 27
 --- !u!114 &11438264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3261,7 +3276,6 @@ MonoBehaviour:
   m_showIfAvailable: 0
   m_showIfOwned: 1
   m_hideForDragons: 0
-  m_anim: {fileID: 0}
 --- !u!114 &11447536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3523,6 +3537,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11453440
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 150970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 2
+  m_tweenDuration: 0.25
+  m_tweenValue: 300
+  m_tweenEase: 27
 --- !u!114 &11455170
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3652,6 +3682,22 @@ MonoBehaviour:
   optionalScrambleMode: 0
   optionalString: 
   inspectorExpanded: 0
+--- !u!114 &11456038
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 113862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 6
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 27
 --- !u!114 &11456182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3744,22 +3790,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0.066176474, g: 0.059607487, b: 0.053038497, a: 1}
   m_EffectDistance: {x: 1, y: 2}
   m_UseGraphicAlpha: 1
---- !u!114 &11459362
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 114712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
-  m_hideForDragons: 0
-  m_anim: {fileID: 0}
 --- !u!114 &11459886
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4192,7 +4222,6 @@ MonoBehaviour:
   m_showIfAvailable: 1
   m_showIfOwned: 0
   m_hideForDragons: 0
-  m_anim: {fileID: 0}
 --- !u!114 &11466582
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4483,6 +4512,22 @@ MonoBehaviour:
   m_color: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
   m_shadowSize: 0
   m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+--- !u!114 &11475388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 188556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 2
+  m_tweenDuration: 0.25
+  m_tweenValue: 300
+  m_tweenEase: 27
 --- !u!114 &11476284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4968,6 +5013,21 @@ MonoBehaviour:
   m_color: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
   m_shadowSize: 4
   m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+--- !u!114 &11481658
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_hideForDragons: 0
 --- !u!114 &11482380
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5493,22 +5553,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 99000
---- !u!114 &11492548
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 102336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
-  m_hideForDragons: 0
-  m_anim: {fileID: 0}
 --- !u!114 &11493552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6332,11 +6376,11 @@ RectTransform:
   m_Children:
   - {fileID: 22443702}
   - {fileID: 22409370}
-  m_Father: {fileID: 22491054}
-  m_RootOrder: 2
+  m_Father: {fileID: 22437798}
+  m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.005126953, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &22403502
@@ -6461,7 +6505,7 @@ RectTransform:
   - {fileID: 22422790}
   - {fileID: 22493326}
   m_Father: {fileID: 22446608}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -6549,11 +6593,11 @@ RectTransform:
   - {fileID: 22459246}
   - {fileID: 22486114}
   - {fileID: 22467226}
-  m_Father: {fileID: 22491054}
-  m_RootOrder: 5
+  m_Father: {fileID: 22437798}
+  m_RootOrder: 3
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -14, y: 14}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1116, y: 409}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &22422790
@@ -6587,7 +6631,7 @@ RectTransform:
   m_Children:
   - {fileID: 22414486}
   m_Father: {fileID: 22491054}
-  m_RootOrder: 8
+  m_RootOrder: 5
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -171.44983}
@@ -6718,6 +6762,27 @@ RectTransform:
   m_AnchoredPosition: {x: 0.0000009536743, y: 0}
   m_SizeDelta: {x: -60.000004, y: 150}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!224 &22437798
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156500}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 22464852}
+  - {fileID: 22402464}
+  - {fileID: 22484802}
+  - {fileID: 22422756}
+  m_Father: {fileID: 22491054}
+  m_RootOrder: 0
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 400}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &22438226
 RectTransform:
   m_ObjectHideFlags: 1
@@ -6833,10 +6898,10 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 22412892}
   - {fileID: 22457202}
+  - {fileID: 22412892}
   m_Father: {fileID: 22491054}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -10.2}
@@ -6854,7 +6919,7 @@ RectTransform:
   m_Children:
   - {fileID: 22403502}
   m_Father: {fileID: 22491054}
-  m_RootOrder: 7
+  m_RootOrder: 4
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 96.71}
@@ -6960,7 +7025,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 22446608}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -0.000030517578, y: 0}
@@ -7081,12 +7146,12 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 22491054}
+  m_Father: {fileID: 22437798}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -7, y: 0}
-  m_SizeDelta: {x: -676, y: 152}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -691, y: 152}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &22465690
 RectTransform:
@@ -7366,11 +7431,11 @@ RectTransform:
   m_Children:
   - {fileID: 22499838}
   - {fileID: 22475130}
-  m_Father: {fileID: 22491054}
-  m_RootOrder: 3
+  m_Father: {fileID: 22437798}
+  m_RootOrder: 2
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0.036621094, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 1, y: 0}
 --- !u!224 &22486114
@@ -7440,7 +7505,7 @@ RectTransform:
   m_Children:
   - {fileID: 22450712}
   m_Father: {fileID: 22491054}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 96.71}
@@ -7490,12 +7555,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 22464852}
+  - {fileID: 22437798}
   - {fileID: 22469010}
-  - {fileID: 22402464}
-  - {fileID: 22484802}
   - {fileID: 22446608}
-  - {fileID: 22422756}
   - {fileID: 22487212}
   - {fileID: 22447290}
   - {fileID: 22423420}

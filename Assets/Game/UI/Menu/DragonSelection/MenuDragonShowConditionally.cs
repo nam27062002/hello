@@ -22,6 +22,7 @@ using DG.Tweening;
 /// 	- Different tween anims options
 /// 	- Tune anim basic params - duration, ease
 /// </summary>
+[RequireComponent(typeof(ShowHideAnimator))]
 public class MenuDragonShowConditionally : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -46,16 +47,11 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	[Comment("Will override ownership status for those dragons", 5f)]
 	[SerializeField] private HideForDragons m_hideForDragons;
 
-	// References
-	[Comment("Optional, must have triggers \"show\" and \"hide\"", 5f)]
-	[SerializeField] private Animator m_anim = null;
-
 	// Internal references
-	private CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
+	private ShowHideAnimator m_animator = null;
 
 	// Internal
 	private List<DragonDef> m_sortedDefs = null;
-	private bool m_isActive = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -65,16 +61,13 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_canvasGroup = GetComponent<CanvasGroup>();
+		m_animator = GetComponent<ShowHideAnimator>();
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Initialize state
-		m_isActive = gameObject.activeSelf;
-
 		// Get sorted defs
 		m_sortedDefs = DefinitionsManager.dragons.defsListByMenuOrder;
 
@@ -143,44 +136,8 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 			case HideForDragons.ALL:	toShow = false;	break;	// Force hiding
 		}
 
-		// If we're already in the target state, skip
-		if(m_isActive == toShow) return;
-
-		// Optionally use animations
-		if(_useAnims) {
-			// If we're gonna show the object, make sure it's active first
-			if(toShow) gameObject.SetActive(true);
-
-			// Use animator or tweens?
-			if(m_anim != null) {
-				// Animator present, activate the right trigger
-				if(toShow) {
-					m_anim.SetTrigger("show");
-				} else {
-					m_anim.SetTrigger("hide");
-				}
-			} else {
-				// Use standard generic tweens instead
-				// If the object doesn't have a canvas group, add it to be able to fade it in/out
-				if(m_canvasGroup == null) m_canvasGroup = gameObject.AddComponent<CanvasGroup>();
-
-				// Kill any active tweens
-				DOTween.Kill(m_canvasGroup);
-
-				// Launch new tweens
-				if(toShow) {
-					m_canvasGroup.DOFade(1f, 0.2f).SetAutoKill(true);
-				} else {
-					m_canvasGroup.DOFade(0f, 0.2f).SetAutoKill(true).OnComplete(() => { gameObject.SetActive(false); });
-				}
-			}
-		} else {
-			// Animation not desired, directly enable/disable game object
-			gameObject.SetActive(toShow);
-		}
-
-		// Update state
-		m_isActive = toShow;
+		// Let animator do its magic
+		m_animator.Set(toShow, _useAnims);
 	}
 
 	//------------------------------------------------------------------//
