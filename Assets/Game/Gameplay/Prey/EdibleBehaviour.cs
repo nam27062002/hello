@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Entity))]
 public class EdibleBehaviour : Initializable {
@@ -14,8 +15,8 @@ public class EdibleBehaviour : Initializable {
 	private Quaternion m_originalRotation;
 	private Vector3 m_originalScale;
 
-	public string onEatenParticle = "";
-
+	public string m_onEatenParticle = "";
+	public List<string> m_onEatenSounds = new List<string>();
 
 	//-----------------------------------------------
 	// Methods
@@ -53,6 +54,15 @@ public class EdibleBehaviour : Initializable {
 		OnEatBehaviours(false);
 		if ( m_animator != null )
 			m_animator.SetTrigger("being eaten");
+		if ( m_onEatenSounds.Count > 0)
+		{
+			// Play sound!
+			string soundName = m_onEatenSounds[ Random.Range( 0, m_onEatenSounds.Count ) ];
+			if (!string.IsNullOrEmpty( soundName ))
+			{
+				AudioManager.instance.PlayClip( soundName );
+			}
+		}
 
 		EntityManager.instance.Unregister(GetComponent<Entity>());
 	}
@@ -65,8 +75,8 @@ public class EdibleBehaviour : Initializable {
 		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
 
 		// Particles
-		if ( !string.IsNullOrEmpty(onEatenParticle) )
-			ParticleManager.Spawn(onEatenParticle, transform.position);
+		if ( !string.IsNullOrEmpty(m_onEatenParticle) )
+			ParticleManager.Spawn(m_onEatenParticle, transform.position);
 
 		OnEatBehaviours(true);
 
