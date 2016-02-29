@@ -36,6 +36,9 @@ public class MenuScreensController : NavigationScreenSystem {
 	[Space()]
 	[Comment("There should always be one camera snap point per screen, value can be null")]
 	[SerializeField] private CameraSnapPoint[] m_screensCameraSnapPoints = new CameraSnapPoint[(int)Screens.COUNT];
+	public CameraSnapPoint[] screensCameraSnapPoints {
+		get { return m_screensCameraSnapPoints; }
+	}
 
 	[Space()]
 	[SerializeField] private Camera m_camera = null;

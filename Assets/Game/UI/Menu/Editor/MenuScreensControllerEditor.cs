@@ -16,142 +16,70 @@ using System.Collections.Generic;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the MenuScreensController class.
+/// Auxiliar class to show a toolbar to quickly select editing screen on the menu scene.
+/// From http://docs.unity3d.com/Manual/RunningEditorCodeOnLaunch.html
+/// and http://answers.unity3d.com/questions/19321/onscenegui-called-without-any-object-selected.html
 /// </summary>
-[CustomEditor(typeof(MenuScreensController))]
-public class MenuScreensControllerEditor : Editor {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	private static GUIStyle s_customStyle = null;
-
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
-	// Casted target object
-	MenuScreensController targetMenuScreensController { get { return target as MenuScreensController; }}
-
-	// Store a reference of interesting properties for faster access
-	SerializedProperty m_screensProp = null;
-	SerializedProperty m_cameraSnapPointsProp = null;
-
-	//------------------------------------------------------------------//
-	// METHODS															//
-	//------------------------------------------------------------------//
+[InitializeOnLoad]
+public class MenuScreensControllerToolbar {
 	/// <summary>
-	/// The editor has been enabled - target object selected.
+	/// Static constructor.
 	/// </summary>
-	private void OnEnable() {
-		// Initialize custom styles if not done
-		if(s_customStyle == null) {
-			// Is style initialized?
-			s_customStyle = new GUIStyle(EditorStyles.textField);
-			s_customStyle.normal.textColor = Colors.darkGray;
-		}
-
-		// Store a reference of interesting properties for faster access
-		m_screensProp = serializedObject.FindProperty("m_screens");
-		m_cameraSnapPointsProp = serializedObject.FindProperty("m_screensCameraSnapPoints");
+	static MenuScreensControllerToolbar() {
+		// Subscribe to external events
+		SceneView.onSceneGUIDelegate += OnSceneGUI;
 	}
 
 	/// <summary>
-	/// The editor has been disabled - target object unselected.
+	/// Draw gui on the scene.
 	/// </summary>
-	private void OnDisable() {
+	/// <param name="_sceneview">The target scene.</param>
+	private static void OnSceneGUI(SceneView _sceneview) {
+		// Ignore if there is no Screen controller in the scene
+		MenuScreensController target = GameObject.FindObjectOfType<MenuScreensController>();
+		if(target == null) return;
 
-	}
-
-	/// <summary>
-	/// Draw the inspector.
-	/// </summary>
-	public override void OnInspectorGUI() {
-		// Default inspector
-		DrawDefaultInspector();
-
-		// Instead of modifying script variables directly, it's advantageous to use the SerializedObject and 
-		// SerializedProperty system to edit them, since this automatically handles private fields, multi-object 
-		// editing, undo, and prefab overrides.
-
-		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
-		serializedObject.Update();
-
-		// Edition screen selector
-		EditorGUILayoutExt.Separator();
-		EditorGUI.BeginChangeCheck();
-		MenuScreensController.Screens screenToEdit = (MenuScreensController.Screens)EditorPrefs.GetInt("MenuEditScreen", 0);
-		screenToEdit = (MenuScreensController.Screens)EditorGUILayout.EnumPopup("Screen To Edit", screenToEdit);
-		if(EditorGUI.EndChangeCheck()) {
-			SetEditingScreen(screenToEdit);
-		}
-
-		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
-		serializedObject.ApplyModifiedProperties();
-	}
-
-	/// <summary>
-	/// The scene is being refreshed.
-	/// </summary>
-	public void OnSceneGUI() {
-		// Scene-related stuff
-		// Show the buttons on-screen
-		// http://blog.theknightsofunity.com/rendering-custom-gui-scene-view/
+		/// http://answers.unity3d.com/questions/19321/onscenegui-called-without-any-object-selected.html
+		int screenToEdit = -1;
 		Handles.BeginGUI(); {
-			// Start a layout area to be able to use layout methods
-			GUILayout.BeginArea(new Rect(20, 20, 500, 100)); {
-				// Group into a vertical layout
-				Rect rect = EditorGUILayout.BeginVertical(); {
-					// Background rectangle
-					GUI.color = Color.yellow;
-					GUI.Box(rect, GUIContent.none);
-					GUI.color = Color.white;
+			// In this particular case it's easier to just go with old school GUI calls
+			Rect rect = new Rect(5f, 5f, 130f, 20f);
 
-					if(GUILayout.Button("TEST BUTTON")) {
-						Debug.Log("TEST!");
-					}
+			// Do a button for each scene
+			MenuScreensController.Screens scr = MenuScreensController.Screens.NONE;
+			for(int i = 0; i < (int)MenuScreensController.Screens.COUNT; i++) {
+				scr = (MenuScreensController.Screens)i;
+				GUI.enabled = true;
+				if(GUI.Button(rect, scr.ToString())) {
+					// Save it as target screen!
+					screenToEdit = i;
+				}
 
-					// Select target scene as a toolbar
-					// Create options array
-					List<string> options = new List<string>();
-					for(int i = 0; i < (int)MenuScreensController.Screens.COUNT; i++) {
-						options.Add(((MenuScreensController.Screens)i).ToString());
-					}
-
-					// Do toolbar
-					int screenToEdit = EditorPrefs.GetInt("MenuEditScreen", 0);
-					EditorGUI.BeginChangeCheck();
-					screenToEdit = GUILayout.Toolbar(screenToEdit, options.ToArray());
-
-					// If a scene was selected, load it (even if it's the same one)
-					if(EditorGUI.EndChangeCheck()) {
-						SetEditingScreen((MenuScreensController.Screens)screenToEdit);
-					}
-				} EditorGUILayout.EndVertical();
-			} GUILayout.EndArea();
-		} Handles.EndGUI();
-	}
-
-	/// <summary>
-	/// Define the screen to edit.
-	/// </summary>
-	/// <param name="_screenToEdit">The screen to be edited.</param>
-	private void SetEditingScreen(MenuScreensController.Screens _screenToEdit) {
-		// Store in editor prefs
-		EditorPrefs.SetInt("MenuEditScreen", (int)_screenToEdit);
-
-		// Disable all screens except the target one
-		NavigationScreen scr = null;
-		for(int i = 0; i < m_screensProp.arraySize; i++) {
-			scr = m_screensProp.GetArrayElementAtIndex(i).objectReferenceValue as NavigationScreen;
-			if(scr != null) {
-				scr.gameObject.SetActive(i == (int)_screenToEdit);
+				// Advance position
+				rect.x += rect.width;
 			}
-		}
+		} Handles.EndGUI();
 
-		// Move main camera to screen's snap point (if any)
-		if(_screenToEdit != MenuScreensController.Screens.NONE && (int)_screenToEdit < m_cameraSnapPointsProp.arraySize) {
-			CameraSnapPoint snapPoint = m_cameraSnapPointsProp.GetArrayElementAtIndex((int)_screenToEdit).objectReferenceValue as CameraSnapPoint;
-			if(snapPoint != null) {
-				snapPoint.Apply(targetMenuScreensController.camera);
+		// If the user has selected a screen to edit, react to it!
+		if(screenToEdit >= 0) {
+			// Disable all screens except the target one and ping the target screen
+			NavigationScreen scr = null;
+			for(int i = 0; i < (int)MenuScreensController.Screens.COUNT; i++) {
+				scr = target.screens[i];
+				if(scr != null) {
+					if(i == screenToEdit) {
+						scr.gameObject.SetActive(true);
+						EditorUtils.FocusObject(scr.gameObject);
+					} else {
+						scr.gameObject.SetActive(false);
+					}
+				}
+			}
+
+			// Move main camera to screen's snap point (if any)
+			CameraSnapPoint targetSnapPoint = target.screensCameraSnapPoints[screenToEdit];
+			if(targetSnapPoint != null) {
+				targetSnapPoint.Apply(target.camera);
 			}
 		}
 	}

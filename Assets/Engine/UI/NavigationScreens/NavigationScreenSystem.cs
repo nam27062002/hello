@@ -26,7 +26,14 @@ public class NavigationScreenSystem : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Screen references to be set from the inspector
 	[SerializeField] protected NavigationScreen m_initialScreen = null;
+	public NavigationScreen initialScreen {
+		get { return m_initialScreen; }
+	}
+
 	[SerializeField] protected List<NavigationScreen> m_screens = new List<NavigationScreen>();
+	public List<NavigationScreen> screens {
+		get { return m_screens; }
+	}
 
 	protected int m_currentScreenIdx = SCREEN_NONE;
 	public int currentScreenIdx {
