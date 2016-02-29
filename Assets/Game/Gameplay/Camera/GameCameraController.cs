@@ -43,10 +43,10 @@ public class GameCameraController : MonoBehaviour {
 	private Range m_limitX = new Range(-100, 100);
 
 	[Separator("Zoom")]
-	[SerializeField] [Range(0, 1)] [Tooltip("Initial zoom value")]
-	private float m_defaultZoom = 0.5f;
-	[Tooltip("Zoom factor, distance from Z-0 in world units. Change this based on dragon type.")]
-	public Range m_zoomRange = new Range(500f, 2000f);
+	[SerializeField] [Tooltip("Default Zoom distance")]
+	private float m_defaultZoom = 30;
+	[SerializeField] [Tooltip("Far Zoom distance")]
+	private float m_farZoom = 50f;
 	[InfoBox("All zoom related values are in relative terms [0..1] to Zoom Range")]
 	private float m_currentZoom;
 
@@ -79,7 +79,6 @@ public class GameCameraController : MonoBehaviour {
 	private float m_shakeTimer = 0f;
 
 	// Aux vars for in-game tuning
-	private Range m_zoomRangeStart;
 	private float m_nearStart;
 	private float m_farStart;
 
@@ -97,19 +96,37 @@ public class GameCameraController : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Current zoom level [0..1]
-	public float zoom {
-		get { return m_zoomRange.InverseLerp(-transform.position.z); }
+	public float zoom 
+	{
+		get 
+		{ 
+			// return m_zoomRange.InverseLerp(-transform.position.z); 
+			return 0;
+		}
 	}
 
 	// Default zoom level
 	public float defaultZoom {
-		get { return m_defaultZoom; }
+		get 
+		{ 
+			return m_defaultZoom; 
+		}
+		set
+		{
+			m_defaultZoom = value;
+		}
 	}
 
-	public void ZoomRangeOffset(float _value) {
-		m_zoomRange = m_zoomRangeStart + _value;
-		Camera.main.nearClipPlane = Mathf.Max(1, m_nearStart + _value);
-		Camera.main.farClipPlane = Mathf.Max(60, m_farStart + _value);
+	// Far zoom
+	public float farZoom {
+		get 
+		{ 
+			return m_farZoom; 
+		}
+		set
+		{
+			m_farZoom = value;
+		}
 	}
 
 	// Internal
@@ -148,12 +165,12 @@ public class GameCameraController : MonoBehaviour {
 		m_slowMoJustStarted = false;
 		m_boostOn = false;
 
-		m_zoomRangeStart = m_zoomRange;
 		m_currentZoom = m_defaultZoom;
 		m_nearStart = Camera.main.nearClipPlane;
 		m_farStart = Camera.main.farClipPlane;
 
-		ZoomRangeOffset(InstanceManager.player.data.def.cameraZoomOffset);
+		defaultZoom = InstanceManager.player.data.def.cameraDefaultZoom;
+		farZoom = InstanceManager.player.data.def.cameraFarZoom;
 
 		// Register to Fury events
 		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
@@ -223,35 +240,21 @@ public class GameCameraController : MonoBehaviour {
 
 
 			// Compute Z, defined by the zoom factor
-			float targetZoom = 0.5f;
+			float targetZoom = m_defaultZoom;
 			if ( m_slowMoJustStarted )
 			{
-				targetZoom = 0.9f;
+				targetZoom = m_farZoom;
 				m_currentZoom = targetZoom;
 				m_slowMoJustStarted = false;
 			}
 			else
 			{
-				/*
-				if ( m_interest != null )
-				{
-					targetZoom = 1;
-				}
-				else if ( m_slowMotionOn )
-				{
-					targetZoom = 0.9f;
-				}
-				else if ( m_furyOn || m_boostOn)
-				{
-					targetZoom = 0.8f;
-				}
-				*/
 				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn )
-					targetZoom = 1;
+					targetZoom = m_farZoom;
 				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime );
 			}
 
-			targetPos.z = -m_zoomRange.Lerp(m_currentZoom);
+			targetPos.z = -m_currentZoom;
 
 
 			// Apply movement smoothing

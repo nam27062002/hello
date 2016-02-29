@@ -23,6 +23,12 @@ public class CPCameraZoom : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private GameCameraController m_camController = null;
 	private Slider m_slider = null;
+	public enum ZoomType
+	{
+		DEFAULT,
+		FAR
+	}
+	public ZoomType m_zoomType;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -47,8 +53,20 @@ public class CPCameraZoom : MonoBehaviour {
 	/// </summary>
 	/// <param name="_value">The new zoom offset of the camera.</param>
 	public void SetZoomOffset(float _value) {
-		if(m_camController != null) {
-			m_camController.ZoomRangeOffset(_value);
+		
+		if(m_camController != null) 
+		{
+			switch(m_zoomType)
+			{
+				case ZoomType.DEFAULT:
+				{
+					m_camController.defaultZoom = _value;
+				}break;
+				case ZoomType.FAR:
+				{
+					m_camController.farZoom = _value;
+				}break;
+			}
 		}
 	}
 
