@@ -95,15 +95,6 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// Current zoom level [0..1]
-	public float zoom 
-	{
-		get 
-		{ 
-			// return m_zoomRange.InverseLerp(-transform.position.z); 
-			return 0;
-		}
-	}
 
 	// Default zoom level
 	public float defaultZoom {
