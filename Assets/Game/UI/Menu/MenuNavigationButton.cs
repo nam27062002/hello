@@ -28,6 +28,9 @@ public class MenuNavigationButton : MonoBehaviour {
 	[Comment("Will only be used if the OnNavigationButtonClick listener is added to the button's OnClick event. Passing enum values as parameters for events is not possible in Unity, so we must do it this way.")]
 	[SerializeField] private MenuScreensController.Screens m_targetScreen = MenuScreensController.Screens.NONE;
 
+	// Internal References
+	private MenuScreensController m_navigationSystem = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -35,7 +38,9 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		
+		// Get a reference to the navigation system, which in this particular case should be a component in the menu scene controller
+		m_navigationSystem = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+		Debug.Assert(m_navigationSystem != null, "Required component missing!");
 	}
 
 	//------------------------------------------------------------------//
@@ -45,12 +50,8 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the target screen.
 	/// </summary>
 	public void OnNavigationButtonClick() {
-		// Find the menu screen navigation system - assume it's in a parent object for faster search
-		NavigationScreenSystem navigationSystem = GetComponentInParent<NavigationScreenSystem>();
-		if(navigationSystem == null) return;
-
 		// Just go to target screen
-		navigationSystem.GoToScreen((int)m_targetScreen);
+		m_navigationSystem.GoToScreen((int)m_targetScreen);
 	}
 
 	/// <summary>

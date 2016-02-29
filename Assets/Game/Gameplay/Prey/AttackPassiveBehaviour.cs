@@ -23,7 +23,7 @@ public class AttackPassiveBehaviour : MonoBehaviour {
 	}
 
 	void OnTriggerStay(Collider _other) {
-		if (m_timer <= 0) {
+		if (m_timer <= 0 && _other.tag == "Player") {
 			DragonHealthBehaviour dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 			if (dragon != null) {
 				dragon.ReceiveDamage(m_damage);

@@ -5,7 +5,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Constants
 	//-----------------------------------------------
-	private enum State {
+	public enum State {
 		Idle = 0,
 		Respawning
 	};
@@ -17,6 +17,14 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	[SerializeField] private float m_spawnTime;
 
 	private State m_state;
+	public State state
+	{
+		get
+		{
+			return m_state;
+		}
+	}
+
 	private float m_timer;
 
 	private Bounds m_bounds; // view bounds
