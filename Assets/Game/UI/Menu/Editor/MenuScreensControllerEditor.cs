@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -91,6 +93,41 @@ public class MenuScreensControllerEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+		// Show the buttons on-screen
+		// http://blog.theknightsofunity.com/rendering-custom-gui-scene-view/
+		Handles.BeginGUI(); {
+			// Start a layout area to be able to use layout methods
+			GUILayout.BeginArea(new Rect(20, 20, 500, 100)); {
+				// Group into a vertical layout
+				Rect rect = EditorGUILayout.BeginVertical(); {
+					// Background rectangle
+					GUI.color = Color.yellow;
+					GUI.Box(rect, GUIContent.none);
+					GUI.color = Color.white;
+
+					if(GUILayout.Button("TEST BUTTON")) {
+						Debug.Log("TEST!");
+					}
+
+					// Select target scene as a toolbar
+					// Create options array
+					List<string> options = new List<string>();
+					for(int i = 0; i < (int)MenuScreensController.Screens.COUNT; i++) {
+						options.Add(((MenuScreensController.Screens)i).ToString());
+					}
+
+					// Do toolbar
+					int screenToEdit = EditorPrefs.GetInt("MenuEditScreen", 0);
+					EditorGUI.BeginChangeCheck();
+					screenToEdit = GUILayout.Toolbar(screenToEdit, options.ToArray());
+
+					// If a scene was selected, load it (even if it's the same one)
+					if(EditorGUI.EndChangeCheck()) {
+						SetEditingScreen((MenuScreensController.Screens)screenToEdit);
+					}
+				} EditorGUILayout.EndVertical();
+			} GUILayout.EndArea();
+		} Handles.EndGUI();
 	}
 
 	/// <summary>

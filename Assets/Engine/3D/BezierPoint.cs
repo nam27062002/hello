@@ -38,7 +38,7 @@ public class BezierPoint {
 	}
 	
 	//------------------------------------------------------------------//
-	// MEMBERS 															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private HandleStyle m_handleStyle = HandleStyle.CONNECTED;
@@ -56,9 +56,13 @@ public class BezierPoint {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
+	// Is this point editable?
+	[SerializeField] private bool m_locked = false;
+	public bool locked {
+		get { return m_locked; }
+		set { m_locked = value; }
+	}
+
 	/// <summary>
 	/// Position of this point relative to its parent curve.
 	/// If the point doesn't belong to any curve, world coordinates will be assumed.
@@ -67,6 +71,9 @@ public class BezierPoint {
 	public Vector3 position {
 		get { return m_position; }
 		set {
+			// Ignore if locked
+			if(m_locked) return;
+
 			// Apply Z-lock
 			if(curve != null && curve.lockZ) value.z = m_position.z;
 
@@ -123,6 +130,9 @@ public class BezierPoint {
 	public Vector3 handle1 {
 		get { return m_handle1; }
 		set { 
+			// Ignore if locked
+			if(m_locked) return;
+
 			// Apply Z-lock
 			if(curve != null && curve.lockZ) value.z = m_position.z;
 
@@ -161,6 +171,9 @@ public class BezierPoint {
 	public Vector3 handle2 {
 		get { return m_handle2; }
 		set {
+			// Ignore if locked
+			if(m_locked) return;
+
 			// Apply Z-lock
 			if(curve != null && curve.lockZ) value.z = m_position.z;
 

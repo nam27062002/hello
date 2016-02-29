@@ -74,7 +74,7 @@ public class MenuSceneController : SceneController {
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
-	
+
 	/// <summary>
 	/// Component disabled.
 	/// </summary>

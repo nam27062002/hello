@@ -31,8 +31,8 @@ public class GameCameraController : MonoBehaviour {
 	[Separator("Movement")]
 	[SerializeField] [Range(0, 1)] [Tooltip("The delay towards the dragon position. [0..1] -> [DragonPos..CurrentPos] -> [Hard..Smooth].")] 
 	private float m_movementSmoothing = 0.85f;
-	[SerializeField] [Range(0, 1)] [Tooltip("The delay when adapting the forward offset to the dragon's direction. [0..1] -> [DragonDir..CurrentDir]. -> [Hard..Smooth]")]
-	private float m_forwardSmoothing = 0.95f;
+	// [SerializeField] [Range(0, 1)] [Tooltip("The delay when adapting the forward offset to the dragon's direction. [0..1] -> [DragonDir..CurrentDir]. -> [Hard..Smooth]")]
+	// private float m_forwardSmoothing = 0.95f;
 	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon")] 
 	private float m_forwardOffsetNormal = 1f;
 	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon on Fury mode")] 
@@ -179,7 +179,9 @@ public class GameCameraController : MonoBehaviour {
 		{
 			Vector3 dragonVelocity = m_dragonMotion.velocity;
 			Vector3 dragonDirection = dragonVelocity.normalized;
-			m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
+
+			// m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
+			m_forward = dragonDirection;
 
 			Vector3 targetPos;
 			// Compute new target position
@@ -194,7 +196,8 @@ public class GameCameraController : MonoBehaviour {
 			{
 				// No!! Just look towards the dragon
 				if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
-					targetPos = m_dragonMotion.head.position;
+					// targetPos = m_dragonMotion.head.position;
+					targetPos = m_dragonMotion.tongue.position;
 				} else {
 					targetPos = playerPos;
 				}
@@ -229,6 +232,7 @@ public class GameCameraController : MonoBehaviour {
 			}
 			else
 			{
+				/*
 				if ( m_interest != null )
 				{
 					targetZoom = 1;
@@ -237,11 +241,14 @@ public class GameCameraController : MonoBehaviour {
 				{
 					targetZoom = 0.9f;
 				}
-				else if ( m_furyOn )
+				else if ( m_furyOn || m_boostOn)
 				{
 					targetZoom = 0.8f;
 				}
-				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime * 0.9f);
+				*/
+				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn )
+					targetZoom = 1;
+				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime );
 			}
 
 			targetPos.z = -m_zoomRange.Lerp(m_currentZoom);
@@ -254,9 +261,11 @@ public class GameCameraController : MonoBehaviour {
 			newPos = UpdateByShake(newPos);
 
 			// Rotation
+			/*
 			float maxSpeed = m_dragonMotion.maxSpeed;
 			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -3f, dragonVelocity.x / maxSpeed * 7.5f, 0);
 			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * m_accumulatedTime);
+			*/
 
 			m_update = false;
 			m_accumulatedTime = 0;

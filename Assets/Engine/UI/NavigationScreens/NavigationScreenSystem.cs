@@ -37,6 +37,8 @@ public class NavigationScreenSystem : MonoBehaviour {
 		get { return GetScreen(m_currentScreenIdx); }
 	}
 
+	private List<int> m_screenHistory = new List<int>();	// Used to decide the AUTO animation direction as well as to implement the Back() functionality
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -94,7 +96,6 @@ public class NavigationScreenSystem : MonoBehaviour {
 	/// Navigate to the target screen. Use an int to be able to directly connect buttons to it.
 	/// </summary>
 	/// <param name="_newScreenIdx">The index of the new screen to go to. Use -1 for NONE.</param>
-	/// <param name="_animType">Optionally force the direction of the animation.</param>
 	virtual public void GoToScreen(int _newScreenIdx) {
 		GoToScreen(_newScreenIdx, NavigationScreen.AnimType.AUTO);
 	}
@@ -112,15 +113,24 @@ public class NavigationScreenSystem : MonoBehaviour {
 		if(_newScreenIdx < 0 || _newScreenIdx >= m_screens.Count) {
 			_newScreenIdx = SCREEN_NONE;
 		}
+
+		// Get last screen
+		int lastScreenIdx = SCREEN_NONE;
+		if(m_screenHistory.Count > 0) lastScreenIdx = m_screenHistory.Last();
 		
 		// Figure out animation direction based on current and new screen indexes
 		if(_animType == NavigationScreen.AnimType.AUTO) {
 			_animType = NavigationScreen.AnimType.NEUTRAL;
 			if(m_currentScreenIdx != SCREEN_NONE && _newScreenIdx != SCREEN_NONE) {
-				if(m_currentScreenIdx > _newScreenIdx) {
+				//if(m_currentScreenIdx > _newScreenIdx) {
+				if(lastScreenIdx == _newScreenIdx) {
+					// Going back to previous screen!
 					_animType = NavigationScreen.AnimType.BACK;
+					m_screenHistory.RemoveAt(m_screenHistory.Count - 1);
 				} else {
+					// Moving forward to a new screen!
 					_animType = NavigationScreen.AnimType.FORWARD;
+					m_screenHistory.Add(m_currentScreenIdx);
 				}
 			}
 		}
@@ -150,7 +160,6 @@ public class NavigationScreenSystem : MonoBehaviour {
 	/// Navigate to the target screen. Screen must be added to the screens array, otherwise nothing will happen.
 	/// </summary>
 	/// <param name="_screen">The screen to go to.</param>
-	/// <param name="_animType">Optionally force the direction of the animation.</param>
 	public void GoToScreen(NavigationScreen _screen) {
 		GoToScreen(_screen, NavigationScreen.AnimType.AUTO);
 	}
@@ -182,6 +191,15 @@ public class NavigationScreenSystem : MonoBehaviour {
 	/// <param name="_animType">Optionally force the direction of the animation.</param>
 	public void GoToScreen(string _screenName, NavigationScreen.AnimType _animType) {
 		GoToScreen(GetScreen(_screenName), _animType);
+	}
+
+	/// <summary>
+	/// Navigate to the previous screen (if any).
+	/// </summary>
+	/// <param name="_animType">Optionally force the direction of the animation.</param>
+	public void Back(NavigationScreen.AnimType _animType = NavigationScreen.AnimType.BACK) {
+		if(m_screenHistory.Count == 0) return;
+		GoToScreen(m_screenHistory.Last(), _animType);
 	}
 
 	//------------------------------------------------------------------//

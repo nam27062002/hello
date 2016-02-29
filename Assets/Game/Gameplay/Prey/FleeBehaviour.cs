@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(SensePlayer))]
 public class FleeBehaviour : Initializable {
@@ -27,7 +28,7 @@ public class FleeBehaviour : Initializable {
 	private State m_state;
 	private State m_nextState;
 
-
+	public List<string> m_afraidSounds = new List<string>();
 
 	// Use this for initialization
 	void Awake () {
@@ -125,9 +126,19 @@ public class FleeBehaviour : Initializable {
 				break;
 				
 			case State.Afraid:
+			{
 				m_animator.SetBool("scared", true);
+				if (m_afraidSounds.Count > 0)
+				{
+					// Play sound!
+					string soundName = m_afraidSounds[ Random.Range( 0, m_afraidSounds.Count ) ];
+					if (!string.IsNullOrEmpty( soundName ))
+					{
+						AudioManager.instance.PlayClip( soundName );
+					}
+				}
 				m_motion.Stop();
-				break;
+			}break;
 
 			case State.Panic:
 				m_animator.SetBool("move", true);
