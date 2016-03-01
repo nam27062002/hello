@@ -77,6 +77,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Parabolic movement
 	private float m_parabolicMovementValue = 10;
 
+	public ParticleSystem m_bubbles;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -84,8 +85,22 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
 	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
-	public Vector3 	m_lastPosition;
-	public float m_lastSpeed;
+	private Vector3 m_lastPosition;
+	private Vector3 lastPosition
+	{
+		get
+		{
+			return m_lastPosition;
+		}
+	}
+	private float m_lastSpeed;
+	public float lastSpeed
+	{
+		get
+		{
+			return m_lastSpeed;
+		}
+	}
 
 		 
 	//------------------------------------------------------------------//
@@ -526,12 +541,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartWaterMovement()
 	{
+		m_bubbles.Play();
 		ChangeState(State.InsideWater);
 	}
 
 	public void EndWaterMovement()
 	{
 		// Wait a second 
+		// Disable Bubbles
+		m_bubbles.Stop();
 		StartCoroutine( EndWaterCoroutine() );
 	}
 
@@ -567,7 +585,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( _other.tag == "Water" )
 		{
-			// if not in water => start water movement
+			// Enable Bubbles
 			StartWaterMovement();
 		}
 		else if ( _other.tag == "Space" )
@@ -580,6 +598,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( _other.tag == "Water" )
 		{
+			// Disable Bubbles
 			EndWaterMovement();
 		}
 		else if ( _other.tag == "Space" )

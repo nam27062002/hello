@@ -16,6 +16,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private bool m_ready;
 
 	public List<GameObject> m_trails;
+	private bool m_trailsActive = false;
+	private bool m_insideWater = false;
 
 	//-----------------------------------------------
 	// Methods
@@ -112,6 +114,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	public void ActivateTrails()
 	{
+		m_trailsActive = true;
+		if (!m_insideWater)
 		for( int i = 0; i<m_trails.Count; i++ )
 		{
 			m_trails[i].SetActive(true);
@@ -120,9 +124,39 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	public void DeactivateTrails()
 	{
+		m_trailsActive = false;
 		for( int i = 0; i<m_trails.Count; i++ )
 		{
 			m_trails[i].SetActive(false);
 		}
+	}
+
+	void OnTriggerEnter(Collider _other)
+	{
+		if ( _other.tag == "Water" )
+		{
+			m_insideWater = true;
+			// if trails active then activate bubles
+			if ( m_trailsActive )
+			{
+				DeactivateTrails();
+				m_trailsActive = true;
+			}
+		}
+
+	}
+
+	void OnTriggerExit( Collider _other )
+	{
+		if ( _other.tag == "Water" )
+		{
+			m_insideWater = false;
+			// if trails active
+			if ( m_trailsActive )
+			{
+				ActivateTrails();
+			}
+		}
+
 	}
 }
