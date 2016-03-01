@@ -54,6 +54,9 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	void Update () {
 		bool activate = Input.GetKey(KeyCode.X) || m_controls.action;
 
+		if (m_insideWater)
+			activate = false;
+
 		if (activate) {
 			if (m_ready) {
 				m_ready = false;
@@ -97,7 +100,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_active = false;
 		m_dragon.SetSpeedMultiplier(1f);
 		// DeactivateTrails();
-		if (m_animator && m_animator.isInitialized)
+		if (m_animator && m_animator.isInitialized && !m_insideWater)
 			m_animator.SetBool("boost", false);
 
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);
