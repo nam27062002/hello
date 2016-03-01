@@ -39,11 +39,11 @@ public class GameCameraControllerEditor : Editor {
 	public override void OnInspectorGUI() {
 		// Default inspector
 		DrawDefaultInspector();
-
+		/*
 		// If not running, modify camera's position based on zoom setup
 		// During execution the camera logic itself will do it
 		if(!Application.isPlaying) {
-			targetCamera.gameObject.transform.SetPosZ(-targetCamera.m_zoomRange.Lerp(targetCamera.defaultZoom));
+			
 		} else if(Application.isEditor) {
 			// Otherwise, add an extra slider to allow "hot" modification of the current zoom level together with some extra info related to the zoom
 			GUILayout.BeginVertical("Current Zoom Values", GUI.skin.box);
@@ -60,5 +60,6 @@ public class GameCameraControllerEditor : Editor {
 
 			GUILayout.EndVertical();
 		}
+		*/
 	}
 }

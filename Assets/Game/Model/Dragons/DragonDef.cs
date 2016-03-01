@@ -55,8 +55,10 @@ public class DragonDef : Definition {
 	public string menuPrefabPath { get { return m_menuPrefabPath; }}
 
 	[Separator("Technical")]
-	[SerializeField] private float m_cameraZoomOffset = 0f;
-	public float cameraZoomOffset { get { return m_cameraZoomOffset; }}
+	[SerializeField] private float m_cameraDefaultZoom = 10f;
+	public float cameraDefaultZoom { get { return m_cameraDefaultZoom; }}
+	[SerializeField] private float m_cameraFarZoom = 50f;
+	public float cameraFarZoom { get { return m_cameraFarZoom; }}
 
 	[Separator("Progression")]
 	[SerializeField] private int m_unlockPriceCoins = 0;
