@@ -11,7 +11,6 @@ public class ProjectileMotion : Initializable, MotionInterface
 	};
 
 	public Type m_moveType;
-	protected Orientation m_orientation;
 	Vector3 m_direction;
 	Vector3 m_forceVector;
 	Vector3 m_position;
@@ -19,7 +18,6 @@ public class ProjectileMotion : Initializable, MotionInterface
 	// Use this for initialization
 	void Start () 
 	{
-		m_orientation = GetComponent<Orientation>();
 	}
 	
 	// Update is called once per frame
@@ -31,7 +29,11 @@ public class ProjectileMotion : Initializable, MotionInterface
 			{
 				m_forceVector += Time.deltaTime * Physics.gravity;
 				m_position = m_position + m_forceVector * Time.deltaTime;
-				m_orientation.SetDirection( m_forceVector );
+
+				float angle = Mathf.Atan2(m_forceVector.y, m_forceVector.x) * Mathf.Rad2Deg;
+				Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
+				Vector3 eulerRot = targetRotation.eulerAngles;		
+				transform.rotation = Quaternion.Euler(eulerRot);
 
 			}break;
 		}

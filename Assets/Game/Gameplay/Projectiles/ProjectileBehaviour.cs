@@ -17,7 +17,8 @@ public class ProjectileBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {		
-		PoolManager.CreatePool(m_explosionPrefab, 5, false);
+		if (m_explosionPrefab != null)
+			PoolManager.CreatePool(m_explosionPrefab, 5, false);
 	}
 
 	public void Shoot(Transform _from, float _damage) {	
@@ -27,7 +28,9 @@ public class ProjectileBehaviour : MonoBehaviour {
 		m_pMotion = GetComponent<ProjectileMotion>();
 		m_edible = GetComponent<EdibleBehaviour>();
 
-		transform.position = _from.position;
+		Vector3 p = _from.position;
+		p.z = 0;
+		transform.position = p;
 		transform.rotation = _from.rotation;
 				
 		Initializable[] components = GetComponents<Initializable>();		
@@ -41,6 +44,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 			float randomSize = 2.5f;
 			pos.x += Random.Range( -randomSize, randomSize );
 			pos.y += Random.Range( 0, randomSize );
+			pos.z = 0;
 			m_pMotion.Shoot( pos );
 		}
 
@@ -80,15 +84,18 @@ public class ProjectileBehaviour : MonoBehaviour {
 	}
 
 	private void Explode(bool _hitDragon) {
-		GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);			
 
-		if (explosion) {
-			// Random position within range
-			explosion.transform.position = transform.position;			
-			// Random scale within range
-			explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
-			// Random rotation within range
-			explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+		if ( m_explosionPrefab != null )
+		{
+			GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);			
+			if (explosion) {
+				// Random position within range
+				explosion.transform.position = transform.position;			
+				// Random scale within range
+				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();			
+				// Random rotation within range
+				explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+			}
 		}
 
 		if (_hitDragon) {

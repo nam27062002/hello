@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -15,6 +16,7 @@ using UnityEngine;
 /// <summary>
 /// Simple custom attribute to draw a single text line before a property.
 /// </summary>
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 public class CommentAttribute : PropertyAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//

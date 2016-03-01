@@ -33,8 +33,11 @@ public class WaterController : MonoBehaviour {
 
 		if (activeTrail && m_waterTrail == null) {
 			m_waterTrail = ParticleManager.Spawn("PF_WaterTrail", pos);
-			m_waterTrail.GetComponent<ParticleSystem>().loop = true;
-			m_waterTrail.GetComponent<DisableInSeconds>().enabled = false;
+			if ( m_waterTrail != null )
+			{
+				m_waterTrail.GetComponent<ParticleSystem>().loop = true;
+				m_waterTrail.GetComponent<DisableInSeconds>().enabled = false;
+			}
 		} else if (!activeTrail && m_waterTrail != null) {
 			m_waterTrail.GetComponent<ParticleSystem>().Stop();
 			m_waterTrail.GetComponent<DisableInSeconds>().enabled = true;

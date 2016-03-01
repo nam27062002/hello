@@ -86,8 +86,6 @@ public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
 	/// Will interrupt any active animation.
 	/// </summary>
 	public void Open() {
-		Debug.Log("OPEN");
-
 		// Only if closed
 		if(!m_closed) return;
 		m_closed = false;
@@ -105,8 +103,6 @@ public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
 	/// Will interrupt any active animation.
 	/// </summary>
 	public void Close() {
-		Debug.Log("CLOSE");
-
 		// Only if not already closed
 		if(m_closed) return;
 		m_closed = true;
