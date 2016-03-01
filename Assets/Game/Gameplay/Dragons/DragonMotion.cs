@@ -550,6 +550,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		// Wait a second 
 		// Disable Bubbles
 		m_bubbles.Stop();
+		if (m_animator )
+			m_animator.SetBool("boost", false);
 		StartCoroutine( EndWaterCoroutine() );
 	}
 
