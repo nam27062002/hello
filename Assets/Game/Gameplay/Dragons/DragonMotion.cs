@@ -330,8 +330,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private void UpdateParabolicMovement( float moveValue )
 	{
-		// check collision with ground, only down!!
+		// check collision with ground, only down?
 		m_impulse.y += moveValue * Time.deltaTime;
+		/*
 		if ( m_impulse.y < 0 )
 		{
 			RaycastHit sensorA = new RaycastHit();
@@ -350,6 +351,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_impulse.y = 0;
 			}
 		}
+		*/
 		m_direction = m_impulse.normalized;
 		m_orientation.SetDirection(m_direction);
 		m_rbody.velocity = m_impulse;
@@ -584,6 +586,30 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			EndSpaceMovement();
 		}
+	}
+
+	void OnCollisionEnter(Collision collision) 
+	{
+		switch( m_state )
+		{
+			case State.InsideWater:
+			{
+				if ( m_impulse.y < 0 )
+				{
+					m_impulse.y = 0;		
+				}
+				m_impulse.x = -m_impulse.x;
+			}break;
+			case State.OutterSpace:
+			{
+				if ( m_impulse.y > 0 )
+				{
+					m_impulse.y = 0;		
+				}
+				m_impulse.x = -m_impulse.x;
+			}break;
+		}
+
 	}
 }
 
