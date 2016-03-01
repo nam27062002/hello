@@ -538,6 +538,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_canBeEatenWhileAttacking: 1
 --- !u!114 &11448254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -610,9 +611,10 @@ MonoBehaviour:
   m_damage: 0.5
   m_attackDelay: 1
   m_consecutiveAttacks: 1
-  m_sensorShutdownTime: 0
+  m_retreatingTime: 0
   m_hasAnimation: 0
   m_projectilePrefab: {fileID: 0}
+  m_projectileSpawnPoint: {fileID: 0}
 --- !u!114 &11467640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -676,7 +678,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEatenParticle: 
+  m_onEatenParticle: 
+  m_onEatenSounds: []
 --- !u!137 &13764670
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
