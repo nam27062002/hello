@@ -77,6 +77,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Parabolic movement
 	private float m_parabolicMovementValue = 10;
 
+	public ParticleSystem m_bubbles;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -84,8 +85,22 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
 	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
-	public Vector3 	m_lastPosition;
-	public float m_lastSpeed;
+	private Vector3 m_lastPosition;
+	private Vector3 lastPosition
+	{
+		get
+		{
+			return m_lastPosition;
+		}
+	}
+	private float m_lastSpeed;
+	public float lastSpeed
+	{
+		get
+		{
+			return m_lastSpeed;
+		}
+	}
 
 		 
 	//------------------------------------------------------------------//
@@ -330,8 +345,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private void UpdateParabolicMovement( float moveValue )
 	{
-		// check collision with ground, only down!!
+		// check collision with ground, only down?
 		m_impulse.y += moveValue * Time.deltaTime;
+		/*
 		if ( m_impulse.y < 0 )
 		{
 			RaycastHit sensorA = new RaycastHit();
@@ -350,6 +366,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_impulse.y = 0;
 			}
 		}
+		*/
 		m_direction = m_impulse.normalized;
 		m_orientation.SetDirection(m_direction);
 		m_rbody.velocity = m_impulse;
@@ -524,12 +541,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartWaterMovement()
 	{
+		m_bubbles.Play();
 		ChangeState(State.InsideWater);
 	}
 
 	public void EndWaterMovement()
 	{
 		// Wait a second 
+		// Disable Bubbles
+		m_bubbles.Stop();
+		if (m_animator )
+			m_animator.SetBool("boost", false);
 		StartCoroutine( EndWaterCoroutine() );
 	}
 
@@ -565,7 +587,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( _other.tag == "Water" )
 		{
-			// if not in water => start water movement
+			// Enable Bubbles
 			StartWaterMovement();
 		}
 		else if ( _other.tag == "Space" )
@@ -578,12 +600,37 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( _other.tag == "Water" )
 		{
+			// Disable Bubbles
 			EndWaterMovement();
 		}
 		else if ( _other.tag == "Space" )
 		{
 			EndSpaceMovement();
 		}
+	}
+
+	void OnCollisionEnter(Collision collision) 
+	{
+		switch( m_state )
+		{
+			case State.InsideWater:
+			{
+				if ( m_impulse.y < 0 )
+				{
+					m_impulse.y = 0;		
+				}
+				m_impulse.x = -m_impulse.x;
+			}break;
+			case State.OutterSpace:
+			{
+				if ( m_impulse.y > 0 )
+				{
+					m_impulse.y = 0;		
+				}
+				m_impulse.x = -m_impulse.x;
+			}break;
+		}
+
 	}
 }
 
