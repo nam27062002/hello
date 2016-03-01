@@ -31,9 +31,16 @@ public class FrameColoring : MonoBehaviour
 		{
 			m_value = Mathf.Lerp( m_value, 0, Time.deltaTime);
 		}
-    	m_material.SetColor("_Color", m_color);
-		m_material.SetFloat("_Intensity", m_value);
-		Graphics.Blit (source, destination, m_material);
+		if ( m_value <= 0.1f )
+		{
+			Graphics.Blit (source, destination);
+		}
+		else
+		{
+	    	m_material.SetColor("_Color", m_color);
+			m_material.SetFloat("_Intensity", m_value);
+			Graphics.Blit (source, destination, m_material);
+		}
     }
 
 	private void OnFury(bool _enabled) {
