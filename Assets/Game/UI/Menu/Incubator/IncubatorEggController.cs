@@ -36,6 +36,7 @@ public class IncubatorEggController : MonoBehaviour {
 	// External references
 	private Camera m_camera = null;
 	private IncubatorEggAnchor m_incubatorAnchor = null;
+	private IncubatorWarningMessage m_warningMessage = null;
 
 	// Backup some values while dragging
 	private Vector3 m_originalPos = Vector3.zero;
@@ -47,14 +48,24 @@ public class IncubatorEggController : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Start() {
+	private void Awake() {
 		// Search the anchor point of the incubator
 		m_incubatorAnchor = GameObject.FindObjectOfType<IncubatorEggAnchor>();
 		Debug.Assert(m_incubatorAnchor != null, "Eggs shouldn't be instantiated outside the incubator scene!");
 
+		// Search the UI warning message as well
+		m_warningMessage = GameObject.FindObjectOfType<IncubatorWarningMessage>();
+		Debug.Assert(m_warningMessage != null, "Eggs shouldn't be instantiated outside the incubator scene!");
+
 		// Get 3D canera
 		m_camera = GameObject.Find("Camera3D").GetComponent<Camera>();
+		Debug.Assert(m_camera != null, "Eggs shouldn't be instantiated outside the incubator scene!");
+	}
 
+	/// <summary>
+	/// First update.
+	/// </summary>
+	private void Start() {
 		// Subscribe to external events
 		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
 	}
@@ -73,14 +84,26 @@ public class IncubatorEggController : MonoBehaviour {
 	/// <summary>
 	/// Check whether the egg at its current position should be snapped to the anchor.
 	/// </summary>
+	/// <param name="_triggerWarning">Whether to show warning message if snapping is not possible.</param>
 	/// <returns><c>true</c> if the egg can be snapped to the anchor; otherwise, <c>false</c>.</returns>
-	private bool CanSnap() {
-		// Impossible if incubator is already busy
-		if(!EggManager.isIncubatorAvailable) return false;
-
+	private bool CanSnap(bool _triggerWarning) {
 		// Is it close enough to the anchor?
 		float dist = m_incubatorAnchor.transform.position.Distance(transform.position);
-		return (dist <= m_incubatorAnchor.snapDistance);
+		bool withinDistance = (dist <= m_incubatorAnchor.snapDistance);
+
+		// Impossible if incubator is already busy
+		if(!EggManager.isIncubatorAvailable) {
+			// Show message if we're in snapping range
+			if(_triggerWarning && withinDistance) m_warningMessage.Show(true);
+			return false;
+		}
+
+		// Hide message if we're outside snapping range
+		if(!withinDistance && _triggerWarning) {
+			m_warningMessage.Show(false);
+		}
+
+		return withinDistance;
 	}
 
 	/// <summary>
@@ -123,7 +146,7 @@ public class IncubatorEggController : MonoBehaviour {
 		transform.position = m_camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, anchorDistToCamera));
 
 		// Snap to anchor if possible
-		if(CanSnap()) {
+		if(CanSnap(true)) {
 			transform.position = m_incubatorAnchor.transform.position;
 		}
 	}
@@ -132,12 +155,15 @@ public class IncubatorEggController : MonoBehaviour {
 	/// Input started on this object has been released.
 	/// </summary>
 	public void OnMouseUp() {
+		// Hide warning message in any case
+		m_warningMessage.Show(false);
+
 		// Skip if dragging is not possible
 		if(!CanDrag()) return;
 
 		// Start incubating?
 		bool incubating = false;
-		if(CanSnap()) {
+		if(CanSnap(false)) {
 			// Dropped onto the incubator! Start incubating
 			// Double check in case the manager doesn't allow us to do it
 			incubating = EggManager.PutEggToIncubator(eggData);
