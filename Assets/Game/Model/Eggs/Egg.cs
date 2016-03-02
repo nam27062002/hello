@@ -188,7 +188,7 @@ public class Egg {
 	/// <returns>The newly created instance, <c>null</c> if the instance couldn't be created.</returns>
 	public GameObject CreateInstance() {
 		// Load the prefab for this egg as defined in the definition
-		GameObject prefabObj = Resources.Load<GameObject>(def.GetAsString("asset3d"));
+		GameObject prefabObj = Resources.Load<GameObject>(def.GetAsString("prefabPath"));
 		Debug.Assert(prefabObj != null, "The prefab defined to egg " + def.sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property

@@ -37,6 +37,18 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// First update.
+	/// </summary>
+	private void Start() {
+		// If there is an egg in the incubator, load it and anchor it
+		if(EggManager.incubatingEgg != null) {
+			GameObject newEggObj = EggManager.incubatingEgg.CreateInstance();
+			newEggObj.transform.SetParent(transform.parent, false);
+			newEggObj.transform.position = transform.position;
+		}
+	}
+
+	/// <summary>
 	/// Draw scene gizmos for this object.
 	/// </summary>
 	private void OnDrawGizmos() {

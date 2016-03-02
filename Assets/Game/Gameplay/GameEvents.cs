@@ -69,5 +69,6 @@ public enum GameEvents {
 	EGG_ADDED_TO_INVENTORY,		// params: Egg _egg, int _slotIdx
 	EGG_INCUBATION_STARTED,		// params: Egg _egg
 	EGG_INCUBATION_ENDED,		// params: Egg _egg
-	EGG_COLLECTED				// params: Egg _egg
+	EGG_COLLECTED,				// params: Egg _egg				// [AOC] Triggered when any egg is collected, whether it is the one in the incubator or one purchased from the shop
+	EGG_INCUBATOR_CLEARED		// no params					// [AOC] Triggered when the egg in the incubator is collected. Use this whenever possible rather than EGG_COLLECTED
 }

@@ -45,14 +45,26 @@ public class IncubatorEggController : MonoBehaviour {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// First update.
+	/// Initialization.
 	/// </summary>
 	private void Start() {
 		// Search the anchor point of the incubator
 		m_incubatorAnchor = GameObject.FindObjectOfType<IncubatorEggAnchor>();
 		Debug.Assert(m_incubatorAnchor != null, "Eggs shouldn't be instantiated outside the incubator scene!");
 
+		// Get 3D canera
 		m_camera = GameObject.Find("Camera3D").GetComponent<Camera>();
+
+		// Subscribe to external events
+		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
 	}
 
 	//------------------------------------------------------------------//
@@ -64,7 +76,7 @@ public class IncubatorEggController : MonoBehaviour {
 	/// <returns><c>true</c> if the egg can be snapped to the anchor; otherwise, <c>false</c>.</returns>
 	private bool CanSnap() {
 		// Impossible if incubator is already busy
-		if(EggManager.incubatingEgg != null) return false;
+		if(!EggManager.isIncubatorAvailable) return false;
 
 		// Is it close enough to the anchor?
 		float dist = m_incubatorAnchor.transform.position.Distance(transform.position);
@@ -129,6 +141,9 @@ public class IncubatorEggController : MonoBehaviour {
 			// Dropped onto the incubator! Start incubating
 			// Double check in case the manager doesn't allow us to do it
 			incubating = EggManager.PutEggToIncubator(eggData);
+
+			// If successful, save persistence
+			if(incubating) PersistenceManager.Save();
 		}
 
 		// Either snap to incubator anchor or go back to original position
@@ -139,6 +154,17 @@ public class IncubatorEggController : MonoBehaviour {
 			gameObject.SetLayerRecursively("3dOverUI");
 			transform.SetParent(m_originalParent, false);
 			transform.position = m_originalPos;
+		}
+	}
+
+	/// <summary>
+	/// An egg has been collected!
+	/// </summary>
+	/// <param name="_egg">The egg that has been collected.</param>
+	private void OnEggCollected(Egg _egg) {
+		// If it matches this egg, destroy ourselves
+		if(_egg == this.eggData) {
+			GameObject.Destroy(this.gameObject);
 		}
 	}
 }

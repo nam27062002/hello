@@ -85,15 +85,17 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Get external references
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_rectTransform = GetComponent<RectTransform>();
+
+		// Initialize state
+		m_isVisible = gameObject.activeSelf;
+		m_isDirty = true;
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Initialize state
-		m_isVisible = gameObject.activeSelf;
-		m_isDirty = true;
+		
 	}
 
 	/// <summary>

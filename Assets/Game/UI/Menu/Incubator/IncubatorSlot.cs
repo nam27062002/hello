@@ -41,12 +41,20 @@ public class IncubatorSlot : MonoBehaviour {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// First update call.
+	/// Initialization.
 	/// </summary>
-	private void Start() {
+	private void Awake() {
 		// Get scene references
 		m_3dView = this.FindObjectRecursive("View3D");
 		m_text = this.FindComponentRecursive<Text>("Text");
+	}
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		// Perform a first refresh
+		Refresh();
 	}
 
 	/// <summary>

@@ -46,6 +46,15 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		get { return instance.m_inventory; }
 	}
 
+	public static bool isInventoryEmpty {
+		get {
+			for(int i = 0; i < INVENTORY_SIZE; i++) {
+				if(inventory[i] != null) return false;
+			}
+			return true;
+		}
+	}
+
 	// Incubator
 	[SerializeField] private Egg m_incubatingEgg = null;
 	public static Egg incubatingEgg {
@@ -55,16 +64,20 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	[SerializeField] private DateTime m_incubationEndTimestamp;
 	public static DateTime incubationEndTimestamp { get { return instance.m_incubationEndTimestamp; }}
 	public static DateTime incubationStartTimestamp { get { return incubationEndTimestamp - incubationDuration; }}
-	public static TimeSpan incubationDuration { get { return new TimeSpan(0, isIncubating ? incubatingEgg.def.GetAsInt("incubationMinutes") : 0, 0); }}
+	public static TimeSpan incubationDuration { get { return new TimeSpan(0, 0, isIncubating ? (int)(incubatingEgg.def.GetAsFloat("incubationMinutes") * 60f) : 0); }}
 	public static TimeSpan incubationElapsed { get { return DateTime.UtcNow - incubationStartTimestamp; }}
 	public static TimeSpan incubationRemaining { get { return incubationEndTimestamp - DateTime.UtcNow; }}
 	public static float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
+
+	public static bool isIncubatorAvailable {
+		get { return incubatingEgg == null; }
+	}
 
 	public static bool isIncubating {
 		get { return incubatingEgg != null && incubatingEgg.state == Egg.State.INCUBATING; }
 	}
 
-	public static bool readyForCollection {
+	public static bool isReadyForCollection {
 		// True if we have an egg incubating and timer has finished
 		get { return incubatingEgg != null && incubatingEgg.state == Egg.State.READY; }
 	}
@@ -123,7 +136,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public void Update() {
 		// Check for incubator deadline
 		if(isIncubating) {
-			if(m_incubationEndTimestamp >= DateTime.UtcNow) {
+			if(DateTime.UtcNow >= m_incubationEndTimestamp) {
 				// Incubation done!
 				m_incubatingEgg.ChangeState(Egg.State.READY);
 
@@ -173,7 +186,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public static bool PutEggToIncubator(Egg _targetEgg) {
 		// Prechecks
 		if(_targetEgg == null) return false;
-		if(incubatingEgg != null) return false;
+		if(!isIncubatorAvailable) return false;
 		if(inventory.IndexOf(_targetEgg) < 0) return false;
 
 		// Move egg
@@ -188,8 +201,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 
 		// Reset incubation timer
 		float incubationMinutes = _targetEgg.def.GetAsFloat("incubationMinutes");
-		instance.m_incubationEndTimestamp = DateTime.UtcNow;
-		instance.m_incubationEndTimestamp.AddMinutes(incubationMinutes);
+		instance.m_incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
 
 		// Dispatch game event
 		Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, incubatingEgg);
@@ -203,7 +215,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	/// <returns>The cost in PC of skipping the incubation timer. 0 if no egg is incubating or incubation has finished.</returns>
 	public static int GetIncubationSkipCostPC() {
 		// If no egg is incubating or incubation has finished, return 0.
-		if(incubatingEgg == null || readyForCollection) return 0;
+		if(incubatingEgg == null || isReadyForCollection) return 0;
 
 		// Just use standard time/pc formula
 		return GameSettings.ComputePCForTime(incubationRemaining);
@@ -221,7 +233,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		instance.m_incubatingEgg.ChangeState(Egg.State.READY);
 
 		// Dispatch game event
-		Messenger.Broadcast(GameEvents.EGG_INCUBATION_ENDED);
+		Messenger.Broadcast(GameEvents.EGG_INCUBATION_ENDED, instance.m_incubatingEgg);
 
 		return true;
 	}
@@ -239,10 +251,18 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// An egg has been collected.
+	/// </summary>
+	/// <param name="_egg">Egg.</param>
 	private void OnEggCollected(Egg _egg) {
 		// If it's the one in the incubator, clear incubator
 		if(_egg == incubatingEgg) {
+			// Clear incubator
 			m_incubatingEgg = null;
+
+			// Notify game
+			Messenger.Broadcast(GameEvents.EGG_INCUBATOR_CLEARED);
 		}
 	}
 

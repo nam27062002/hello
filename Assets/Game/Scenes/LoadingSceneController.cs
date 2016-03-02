@@ -69,6 +69,8 @@ public class LoadingSceneController : SceneController {
 		MissionManager.CreateInstance();
 		ChestManager.CreateInstance();
 		RewardManager.CreateInstance();
+		EggManager.CreateInstance();
+		EggManager.InitFromDefinitions();
 
 		// Settings and setup
 		GameSettings.CreateInstance();

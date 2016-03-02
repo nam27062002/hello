@@ -46,7 +46,10 @@ public class IncubatorCheatButton : MonoBehaviour {
 		string newEggSku = Definitions.GetDefinitions(Definitions.Category.EGGS).GetRandomValue().sku;
 
 		// Add it to the inventory
-		EggManager.AddEggToInventory(Egg.CreateBySku(newEggSku));
+		int slotIdx = EggManager.AddEggToInventory(Egg.CreateBySku(newEggSku));
+
+		// If successful, save persistence
+		if(slotIdx >= 0) PersistenceManager.Save();
 	}
 }
 
