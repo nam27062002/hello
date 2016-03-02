@@ -79,6 +79,22 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public ParticleSystem m_bubbles;
 
+	private bool m_canMoveInsideWater = true;
+	public bool canDive
+	{
+		get
+		{
+			return m_canMoveInsideWater;
+		}
+
+		set
+		{
+			m_canMoveInsideWater = value;
+		}
+	}
+
+	private float m_waterMovementModifier = 0;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -153,7 +169,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_speedMultiplier = 0.5f;
 
 		m_stunnedTimer = 0;
-
+		canDive = DebugSettings.dive;
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
 		m_lastPosition = transform.position;
@@ -301,8 +317,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				UpdateMovement();
 				break;
 			case State.InsideWater:
-				UpdateParabolicMovement( m_parabolicMovementValue);
-				break;
+			{
+				if (m_canMoveInsideWater)
+				{
+					UpdateWaterMovement();
+				}
+				else
+				{
+					UpdateParabolicMovement( m_parabolicMovementValue);
+				}
+			}break;
 			case State.OutterSpace:
 				UpdateParabolicMovement( -m_parabolicMovementValue);
 				break;
@@ -332,6 +356,42 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// accelerate the dragon
 			float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
 			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier() * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
+
+			ComputeFinalImpulse(impulse);
+
+			m_orientation.SetDirection(m_direction);
+		} else {
+			ChangeState(State.Idle);
+		}
+
+		m_rbody.velocity = m_impulse;
+	}
+
+	private void UpdateWaterMovement()
+	{
+		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speedSkill.value * 0.5f * m_speedMultiplier);
+
+		if ( impulse.y > 0 )
+		{
+			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 1, Time.deltaTime);
+		}
+		else if (impulse.y == 0)
+		{
+			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 0.25f, Time.deltaTime);
+		}
+		else
+		{
+			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 0.25f, Time.deltaTime);
+		}
+
+		impulse.y += m_dragon.data.speedSkill.value * m_waterMovementModifier;
+	
+
+
+		if (impulse != Vector3.zero) 
+		{
+			// accelerate the dragon
+			m_speedMultiplier = Mathf.Lerp(m_speedMultiplier, m_dragon.GetSpeedMultiplier(), Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
 			ComputeFinalImpulse(impulse);
 
@@ -541,6 +601,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartWaterMovement()
 	{
+		m_waterMovementModifier = 0;
 		m_bubbles.Play();
 		ChangeState(State.InsideWater);
 	}

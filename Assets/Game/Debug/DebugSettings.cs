@@ -25,6 +25,7 @@ public static class DebugSettings {
 	public static readonly string DRAGON_INFINITE_FIRE 	 = "DRAGON_INFINITE_FIRE";
 	public static readonly string DRAGON_INFINITE_BOOST  = "DRAGON_INFINITE_BOOST";
 	public static readonly string DRAGON_EAT			 = "DRAGON_EAT";
+	public static readonly string DRAGON_DIVE			 = "DRAGON_DIVE";
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -49,5 +50,10 @@ public static class DebugSettings {
 	public static bool eat {
 		get { return Prefs.GetBool(DRAGON_EAT, false); }
 		set { Prefs.SetBool(DRAGON_EAT, value); }
+	}
+
+	public static bool dive {
+		get { return Prefs.GetBool(DRAGON_DIVE, false); }
+		set { Prefs.SetBool(DRAGON_DIVE, value); }
 	}
 }
