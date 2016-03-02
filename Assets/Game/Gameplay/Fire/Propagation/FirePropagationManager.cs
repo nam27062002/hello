@@ -7,14 +7,21 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	[SerializeField] private float m_checkFireTime = 0.25f;
 
 	private QuadTree m_fireNodes;
+	private AudioSource m_fireNodeAudio;
 	private DragonBreathBehaviour m_breath;
 	
 	private float m_timer;
 
+	public List<Transform> m_burningFireNodes = new List<Transform>();
 
 
 	void Awake() {
 		m_fireNodes = new QuadTree(-600f, -100f, 1000f, 400f);
+
+		m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
+		m_fireNodeAudio.playOnAwake = false;
+		m_fireNodeAudio.loop = false;
+		m_fireNodeAudio.clip = Resources.Load("audio/sfx/Fire/EnvTrch") as AudioClip;
 	}
 
 	void Start() {
@@ -54,6 +61,28 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	public static void Remove(Transform _fireNode) {
 
 		instance.m_fireNodes.Remove(_fireNode);
+	}
+
+	/// <summary>
+	/// Inserts the burning. Registers a burning fire node while on fire
+	/// </summary>
+	/// <param name="_fireNode">Fire node.</param>
+	public static void InsertBurning( Transform _fireNode )
+	{
+		instance.m_burningFireNodes.Add( _fireNode );
+		if(!instance.m_fireNodeAudio.isPlaying)
+			instance.m_fireNodeAudio.Play();
+	}
+
+	/// <summary>
+	/// Removes the burning fire node from the registered burning list
+	/// </summary>
+	/// <param name="_fireNode">Fire node.</param>
+	public static void RemoveBurning( Transform _fireNode)
+	{
+		instance.m_burningFireNodes.Remove( _fireNode );
+		if ( instance.m_burningFireNodes.Count <= 0 )
+			instance.m_fireNodeAudio.Stop();
 	}
 
 
