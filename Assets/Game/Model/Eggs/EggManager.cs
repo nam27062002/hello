@@ -128,7 +128,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 				m_incubatingEgg.ChangeState(Egg.State.READY);
 
 				// Dispatch game event
-				Messenger.Broadcast(GameEvents.EGG_INCUBATION_ENDED);
+				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, m_incubatingEgg);
 			}
 		}
 	}
@@ -149,6 +149,11 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 				// Yes!! Store egg
 				instance.m_inventory[i] = _newEgg;
 				_newEgg.ChangeState(Egg.State.STORED);
+
+				// Dispatch game event
+				Messenger.Broadcast<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, _newEgg, i);
+
+				// Return slot idnex
 				return i;
 			}
 		}
@@ -169,7 +174,6 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		// Prechecks
 		if(_targetEgg == null) return false;
 		if(incubatingEgg != null) return false;
-		if(incubatingEgg.state >= Egg.State.INCUBATING) return false;
 		if(inventory.IndexOf(_targetEgg) < 0) return false;
 
 		// Move egg
@@ -186,6 +190,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		float incubationMinutes = _targetEgg.def.GetAsFloat("incubationMinutes");
 		instance.m_incubationEndTimestamp = DateTime.UtcNow;
 		instance.m_incubationEndTimestamp.AddMinutes(incubationMinutes);
+
+		// Dispatch game event
+		Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, incubatingEgg);
 
 		return true;
 	}

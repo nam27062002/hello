@@ -66,6 +66,8 @@ public enum GameEvents {
 	MISSION_STATE_CHANGED,		// params: Mission _mission, Mission.State _oldState, Mission.State _newState
 
 	// Gacha events
-	EGG_INCUBATION_ENDED,		// No params
+	EGG_ADDED_TO_INVENTORY,		// params: Egg _egg, int _slotIdx
+	EGG_INCUBATION_STARTED,		// params: Egg _egg
+	EGG_INCUBATION_ENDED,		// params: Egg _egg
 	EGG_COLLECTED				// params: Egg _egg
 }
