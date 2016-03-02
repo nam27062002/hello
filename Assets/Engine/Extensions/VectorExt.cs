@@ -37,4 +37,14 @@ public static class VectorExt {
 		//float angle360 =  (signedAngle + 180) % 360;	// angle in [0,360] (not used but included here for completeness)
 		return signedAngle;
 	}
+
+	/// <summary>
+	/// Compute the distanece between this vector and another.
+	/// </summary>
+	/// <returns>The distance between this vector and <paramref name="_v2"/></returns>
+	/// <param name="_v1">This vector.</param>
+	/// <param name="_v2">The other vector.</param>
+	public static float Distance(this Vector3 _v1, Vector3 _v2) {
+		return Vector3.Distance(_v1, _v2);
+	}
 }
