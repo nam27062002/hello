@@ -1,7 +1,5 @@
-// Unlit shader. Simplest possible textured shader.
-// - no lighting
-// - no lightmap support
-// - no per-material color
+// Custom Dragon Shader.
+// - Detail Texture. R: Inner Light value. G: Spec value.
 
 Shader "Custom/Dragon" {
 Properties {
@@ -32,7 +30,7 @@ SubShader {
 			struct appdata_t {
 				float4 vertex : POSITION;
 				float2 texcoord : TEXCOORD0;
-				float4 normal : NORMAL;
+				float3 normal : NORMAL;
 			};
 
 			struct v2f {
@@ -41,6 +39,7 @@ SubShader {
 				float3 normal : NORMAL;
 				float3 halfDir : VECTOR;
 				UNITY_FOG_COORDS(1)
+				float3 vertexLighting : TEXCOORD2;
 			};
 
 			sampler2D _MainTex;
@@ -64,14 +63,27 @@ SubShader {
 
 				// Normal
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
-				o.normal = normalize(mul(v.normal, _World2Object).xyz);
+				// o.normal = normalize(mul(v.normal, _World2Object).xyz);
+				o.normal = UnityObjectToWorldNormal(v.normal);
 
 				// Half View - See: Blinn-Phong
-				if (0.0 == _WorldSpaceLightPos0.w) // directional light?
-	            {
-	               float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-	               o.halfDir = normalize(lightDirection + viewDirection);
+				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+				o.halfDir = normalize(lightDirection + viewDirection);
+
+
+				o.vertexLighting = float3(0,0,0);
+				float4 posWorld = mul( _Object2World, v.vertex );
+	            for (int index = 0; index <1; index++)
+	            {    
+		               float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
+		               float3 vertexToLightSource = lightPosition.xyz - posWorld.xyz;
+		               float3 lightDirection = normalize(vertexToLightSource);
+		               float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
+		               float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
+		               float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(o.normal, lightDirection));         
+		               o.vertexLighting = o.vertexLighting + diffuseReflection;
 	            }
+
 	            UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
@@ -89,7 +101,7 @@ SubShader {
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				UNITY_OPAQUE_ALPHA(col.a); 
 
-				return col; 
+				return col + fixed4(i.vertexLighting, 0) * main; 
 			}
 		ENDCG
 	}
