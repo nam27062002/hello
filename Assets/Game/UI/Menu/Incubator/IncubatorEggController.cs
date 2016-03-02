@@ -50,11 +50,11 @@ public class IncubatorEggController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Search the anchor point of the incubator
-		m_incubatorAnchor = GameObject.FindObjectOfType<IncubatorEggAnchor>();
+		m_incubatorAnchor = GameObjectExt.FindComponent<IncubatorEggAnchor>();
 		Debug.Assert(m_incubatorAnchor != null, "Eggs shouldn't be instantiated outside the incubator scene!");
 
 		// Search the UI warning message as well
-		m_warningMessage = GameObject.FindObjectOfType<IncubatorWarningMessage>();
+		m_warningMessage = GameObjectExt.FindComponent<IncubatorWarningMessage>();
 		Debug.Assert(m_warningMessage != null, "Eggs shouldn't be instantiated outside the incubator scene!");
 
 		// Get 3D canera
