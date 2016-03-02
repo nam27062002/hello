@@ -399,7 +399,7 @@ GameObject:
   - 224: {fileID: 22427152}
   - 222: {fileID: 22260542}
   - 114: {fileID: 11496906}
-  - 114: {fileID: 11424922}
+  - 114: {fileID: 11473726}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -689,7 +689,7 @@ GameObject:
   - 224: {fileID: 22499168}
   - 222: {fileID: 22290088}
   - 114: {fileID: 11499248}
-  - 114: {fileID: 11409866}
+  - 114: {fileID: 11430698}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -2423,10 +2423,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 1
-  m_size: 4
-  m_color: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
-  m_shadowSize: 4
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 1
+  m_outlineSize: 4
+  m_outlineColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 8
   m_shadowColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
 --- !u!114 &11406528
 MonoBehaviour:
@@ -2494,20 +2499,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0, b: 0, a: 0.559}
   m_RaycastTarget: 1
---- !u!114 &11409866
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 143114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -900027084, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 2, y: -2}
-  m_UseGraphicAlpha: 1
 --- !u!114 &11410050
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3441,9 +3432,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 1
-  m_size: 4
-  m_color: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 1
+  m_outlineSize: 4
+  m_outlineColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
+  m_shadow: 0
+  m_shadowAngle: 315
   m_shadowSize: 4
   m_shadowColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
 --- !u!114 &11424716
@@ -3494,20 +3490,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &11424922
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 127506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -900027084, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 2, y: -2}
-  m_UseGraphicAlpha: 1
 --- !u!114 &11425196
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4140,10 +4122,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0, g: 0, b: 0, a: 1}
-  m_shadowSize: 0
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 4
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 6
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!114 &11430698
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 143114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 2
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 4
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11430822
 MonoBehaviour:
@@ -4360,9 +4368,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 4
+  m_outlineColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+  m_shadow: 0
+  m_shadowAngle: 315
   m_shadowSize: 2
   m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
 --- !u!114 &11436534
@@ -4796,7 +4809,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9306b7762ae4b4544a6309d97f887fcb, type: 3}
+    m_Font: {fileID: 12800000, guid: 8362f4a87a56d432094b53e54713b1eb, type: 3}
     m_FontSize: 50
     m_FontStyle: 0
     m_BestFit: 0
@@ -5208,10 +5221,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 3
-  m_color: {r: 0, g: 0, b: 0, a: 1}
-  m_shadowSize: 0
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 3
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 5
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11456856
 MonoBehaviour:
@@ -5282,10 +5300,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 2
-  m_color: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
-  m_shadowSize: 4
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 2
+  m_outlineColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 6
   m_shadowColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
 --- !u!114 &11457908
 MonoBehaviour:
@@ -6153,9 +6176,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0, g: 0.30980393, b: 0.3921569, a: 1}
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 4
+  m_outlineColor: {r: 0, g: 0.30980393, b: 0.3921569, a: 1}
+  m_shadow: 0
+  m_shadowAngle: 315
   m_shadowSize: 2
   m_shadowColor: {r: 0, g: 0.30980393, b: 0.3921569, a: 1}
 --- !u!114 &11471742
@@ -6196,10 +6224,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 3
-  m_color: {r: 0, g: 0, b: 0, a: 1}
-  m_shadowSize: 0
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 3
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 5
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11472208
 MonoBehaviour:
@@ -6266,6 +6299,27 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11473726
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 2
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 4
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11474224
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6315,10 +6369,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 5
-  m_color: {r: 0, g: 0, b: 0, a: 1}
-  m_shadowSize: 0
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 5
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 7
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11477296
 MonoBehaviour:
@@ -6515,9 +6574,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 1
-  m_size: 4
-  m_color: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 1
+  m_outlineSize: 4
+  m_outlineColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
+  m_shadow: 0
+  m_shadowAngle: 315
   m_shadowSize: 4
   m_shadowColor: {r: 0.90588236, g: 0.49019608, b: 0.0627451, a: 1}
 --- !u!114 &11480786
@@ -7546,10 +7610,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 1
-  m_color: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
-  m_shadowSize: 4
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 3
+  m_outlineColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 5
   m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
 --- !u!114 &11499248
 MonoBehaviour:
