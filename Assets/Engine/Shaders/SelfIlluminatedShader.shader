@@ -27,61 +27,56 @@ SubShader
 	Lighting Off
 	ZWrite On
 	
-	CGINCLUDE
-	#include "UnityCG.cginc"
-	#pragma multi_compile_fwdbase
-	// #pragma exclude_path:prepass nolightmap NoLighting halfasview novertexlights noshadow
-	
-	sampler2D _MainTex;
-	float4 _MainTex_ST;
-		
-	half _Shininess;
-	half _SpecIntensity;
-	fixed4 _Color;
-	fixed4 _AmbientColor;
-	fixed4 _LightDir;
-	fixed4 _LightColor;
-	
-	struct v2f 
-	{
-		float4 pos : SV_POSITION;
-		float2 uv : TEXCOORD0;
-		float3 normal : NORMAL;
-		float3 halfDir : VECTOR;
-
-		UNITY_FOG_COORDS(1)
-	};
-	
-	
-	v2f vert (appdata_tan v)
-	{ 
-		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex); 
-		o.uv = v.texcoord.xy;
-
-		// Normal
-		o.normal = normalize(mul(v.normal, _World2Object).xyz);
-
-		// Half View - See: Blinn-Phong
-		float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
-        float3 lightDirection = normalize(_LightDir.rgb);
-        o.halfDir = normalize(lightDirection + viewDirection);
-        
-   		UNITY_TRANSFER_FOG(o, o.vertex);
-    	return o;
-		
-	}
-	ENDCG
-	
 	Pass
 	{
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
-		// #pragma fragmentoption ARB_precision_hint_fastest
-		// #pragma exclude_path:prepass nolightmap NoLighting novertexlights noshadow
-		#pragma fragmentoption ARB_precision_hint_fastest exclude_path:prepass nolightmap NoLighting halfasview novertexlights noshadow
-	
+		// #pragma fragmentoption ARB_precision_hint_fastest exclude_path:prepass nolightmap NoLighting halfasview novertexlights noshadow
+		#pragma multi_compile_fwdbase
+		#pragma multi_compile_fog
+		#include "UnityCG.cginc"
+
+		
+		sampler2D _MainTex;
+		float4 _MainTex_ST;
+			
+		half _Shininess;
+		half _SpecIntensity;
+		fixed4 _Color;
+		fixed4 _AmbientColor;
+		fixed4 _LightDir;
+		fixed4 _LightColor;
+		
+		struct v2f 
+		{
+			float4 vertex : SV_POSITION;
+			float2 uv : TEXCOORD0;
+			float3 normal : NORMAL;
+			float3 halfDir : VECTOR;
+			UNITY_FOG_COORDS(1)
+		};
+		
+		
+		v2f vert (appdata_base v)
+		{ 
+			v2f o;
+			o.vertex = mul(UNITY_MATRIX_MVP, v.vertex); 
+			o.uv = v.texcoord.xy;
+
+			// Normal
+			o.normal = normalize(mul(v.normal, (float3x3)_World2Object).xyz);
+
+			// Half View - See: Blinn-Phong
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
+	        float3 lightDirection = normalize(_LightDir.rgb);
+	        o.halfDir = normalize(lightDirection + viewDirection);
+	        
+	   		UNITY_TRANSFER_FOG(o, o.vertex);
+	    	return o;
+			
+		}
+
 		fixed4 frag (v2f i) : COLOR
 		{
 			fixed4 c = tex2D(_MainTex, i.uv) * _Color; 
@@ -113,5 +108,5 @@ SubShader
 	
 }
 
-	// FallBack "VertexLit"
+Fallback "VertexLit"
 }
