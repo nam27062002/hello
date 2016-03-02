@@ -3,7 +3,7 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Custom/Dragon" {
+Shader "Hungry Dragon/Dragon" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_DetailTex ("Detail (RGB)", 2D) = "white" {}
