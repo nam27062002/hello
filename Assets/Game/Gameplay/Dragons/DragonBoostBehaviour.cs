@@ -19,8 +19,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private bool m_trailsActive = false;
 	private bool m_insideWater = false;
 
-	public List<string> m_fartSounds = new List<string>();
-
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -94,11 +92,6 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
 			m_animator.SetBool("boost", true);
-		if (m_fartSounds.Count > 0 && Random.Range( 0,100) < 15)
-		{
-			string sound = m_fartSounds[ Random.Range(0, m_fartSounds.Count)];
-			AudioManager.instance.PlayClip(sound);
-		}
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, true);
 	}
 
