@@ -8,6 +8,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public AudioSource m_eatSound;
 	public AudioSource m_eatBigSound;
 	public AudioSource m_wingsWindSound;
+	public AudioSource m_wingsStrongFlap;
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
@@ -41,6 +42,14 @@ public class DragonAnimationEvents : MonoBehaviour {
 		if (m_wingsSound != null)
 		{
 			m_wingsSound.Play();
+		}
+	}
+
+	public void StrongFlap()
+	{
+		if (m_wingsStrongFlap != null)
+		{
+			m_wingsStrongFlap.Play();
 		}
 	}
 
