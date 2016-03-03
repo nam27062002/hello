@@ -71,6 +71,7 @@ public class GameCameraController : MonoBehaviour {
 
 	// Positioning
 	private Vector3 m_forward = Vector3.right;
+	private float m_forwardOffset = 0;
 
 
 	// Shake
@@ -171,7 +172,7 @@ public class GameCameraController : MonoBehaviour {
 		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 
 		transform.position = playerPos;
-
+		m_forwardOffset = m_forwardOffsetNormal;
 	}
 
 	/// <summary>
@@ -188,8 +189,10 @@ public class GameCameraController : MonoBehaviour {
 			Vector3 dragonVelocity = m_dragonMotion.velocity;
 			Vector3 dragonDirection = dragonVelocity.normalized;
 
-			// m_forward = Vector3.Lerp(dragonDirection, m_forward, m_forwardSmoothing);
-			m_forward = dragonDirection;
+			if ( dragonDirection != Vector3.zero )
+				m_forward = dragonDirection;
+			else
+				m_forward = Vector3.Lerp( m_forward, dragonDirection, m_accumulatedTime);
 
 			Vector3 targetPos;
 			// Compute new target position
@@ -203,28 +206,30 @@ public class GameCameraController : MonoBehaviour {
 			else 
 			{
 				// No!! Just look towards the dragon
-				if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
+				// if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
 					// targetPos = m_dragonMotion.head.position;
 					targetPos = m_dragonMotion.tongue.position;
-				} else {
+
+				/*} else {
 					targetPos = playerPos;
 				}
+				*/
 			}
 
 			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
 			if (m_furyOn)
 			{
-				targetPos = targetPos + m_forward * m_forwardOffsetFury;
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_forwardOffsetFury, m_accumulatedTime );
 			}
 			else if ( m_boostOn )
 			{
-				targetPos = targetPos + m_forward * m_forwardOffsetBoost;
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_forwardOffsetBoost, m_accumulatedTime );
 			}
 			else
 			{
-				targetPos = targetPos + m_forward * m_forwardOffsetNormal;
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_forwardOffsetNormal, m_accumulatedTime );
 			}
-
+			targetPos = targetPos + m_forward * m_forwardOffset;
 
 			// Clamp X to defined limits
 			targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
@@ -242,7 +247,7 @@ public class GameCameraController : MonoBehaviour {
 			{
 				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn )
 					targetZoom = m_farZoom;
-				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime );
+				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime);
 			}
 
 			targetPos.z = -m_currentZoom;
