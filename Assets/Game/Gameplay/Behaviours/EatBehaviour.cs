@@ -179,7 +179,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	private void FindSomethingToEat() {
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_mouth.position, m_eatDistance);
+
+		float eatDistance = m_eatDistance;
+		if ( DebugSettings.eatDistancePowerUp )
+		{
+			eatDistance = m_eatDistance * 2;
+		}
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_mouth.position, eatDistance);
 
 		for (int e = 0; e < preys.Length; e++) {
 			if (preys[e].def.edibleFromTier <= m_tier) {
