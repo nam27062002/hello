@@ -22,7 +22,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 
-	enum State {
+	public enum State {
 		Idle = 0,
 		Fly,
 		Fly_Up,
@@ -68,6 +68,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private List<Transform> m_hitTargets;
 
 	private State m_state;
+	public State state
+	{
+		get
+		{
+			return m_state;
+		}
+	}
+
 
 	private float m_impulseTransformationSpeed;
 
