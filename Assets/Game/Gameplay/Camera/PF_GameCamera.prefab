@@ -19,6 +19,7 @@ GameObject:
   - 114: {fileID: 11420254}
   - 82: {fileID: 8288288}
   - 82: {fileID: 8279618}
+  - 114: {fileID: 11447402}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -54,9 +55,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 10
+  near clip plane: 5
   far clip plane: 725
-  field of view: 25
+  field of view: 45
   orthographic: 0
   orthographic size: 685.86615
   m_Depth: 0
@@ -265,6 +266,19 @@ MonoBehaviour:
   m_updateDistance: 0
   m_sunLight: {fileID: 0}
   m_ambientNodes: []
+--- !u!114 &11447402
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f76425a5ea34e8ab1c599724f79c98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_color: {r: 0.7941176, g: 0.3912599, b: 0.08174734, a: 1}
+  m_material: {fileID: 2100000, guid: 61a60bd291fc348e398d551143f6b9ed, type: 2}
 --- !u!114 &11457446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -293,18 +307,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe148db22b4994b409b994efd1c19a8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_movementSmoothing: 0.85
-  m_forwardSmoothing: 0.95
+  m_movementSmoothing: 0.9
   m_forwardOffsetNormal: 3
   m_forwardOffsetFury: 8
   m_forwardOffsetBoost: 7
   m_limitX:
     min: -1000
     max: 1000
-  m_defaultZoom: 0.5
-  m_zoomRange:
-    min: 10
-    max: 50
+  m_defaultZoom: 30
+  m_farZoom: 50
   m_shakeDefaultAmount: {x: 0.5, y: 0.5, z: 0}
   m_shakeDefaultDuration: 0.15
   m_shakeDecayOverTime: 1
@@ -317,7 +328,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101152}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 77e0c772f84704359baf1e78af46db60, type: 3}
   m_Name: 

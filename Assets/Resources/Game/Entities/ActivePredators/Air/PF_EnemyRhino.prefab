@@ -877,7 +877,6 @@ GameObject:
   - 114: {fileID: 11487872}
   - 114: {fileID: 11493128}
   - 114: {fileID: 11445172}
-  - 114: {fileID: 11424912}
   - 114: {fileID: 11489350}
   - 114: {fileID: 11483026}
   m_Layer: 8
@@ -1841,17 +1840,6 @@ MonoBehaviour:
   offset: {x: -1.0218048, y: 0.8517227}
   radius: 2.5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11424912
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 193142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11427412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1893,6 +1881,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_wingsSound: {fileID: 0}
+  m_eatSound: {fileID: 0}
+  m_eatBigSound: {fileID: 0}
+  m_wingsWindSound: {fileID: 0}
 --- !u!114 &11445172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1904,6 +1895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_canBeEatenWhileAttacking: 0
 --- !u!114 &11483026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1967,7 +1959,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEatenParticle: Feathers
+  m_onEatenParticle: 
+  m_onEatenSounds: []
 --- !u!114 &11487872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2007,12 +2000,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 2
+  m_damage: 15
   m_attackDelay: 0.5
   m_consecutiveAttacks: 3
-  m_sensorShutdownTime: 3.5
+  m_retreatingTime: 5
   m_hasAnimation: 0
   m_projectilePrefab: {fileID: 0}
+  m_projectileSpawnPoint: {fileID: 0}
 --- !u!136 &13694184
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -2152,6 +2146,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_dissolveTime
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_canBeEatenWhileAttacking
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_retreatingTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damage
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

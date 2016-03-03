@@ -48,7 +48,6 @@ GameObject:
   - 114: {fileID: 11406306}
   - 114: {fileID: 11402686}
   - 114: {fileID: 11409000}
-  - 114: {fileID: 11403936}
   - 114: {fileID: 11462684}
   m_Layer: 8
   m_Name: hawk
@@ -478,7 +477,7 @@ Transform:
   m_GameObject: {fileID: 119150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -276.6, y: 58.3, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 454310}
   m_Father: {fileID: 0}
@@ -574,10 +573,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 2
+  m_damage: 11
   m_attackDelay: 0
   m_consecutiveAttacks: 1
-  m_retreatingTime: 2
+  m_retreatingTime: 5
   m_hasAnimation: 0
   m_projectilePrefab: {fileID: 0}
   m_projectileSpawnPoint: {fileID: 0}
@@ -606,17 +605,6 @@ MonoBehaviour:
   m_maxRunSpeed: 25
   m_slowingRadius: 0
   m_fallOnBurn: 0
---- !u!114 &11403936
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11405390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -656,7 +644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 1.7
+  m_sensorMinRadius: 2.7
   m_sensorMaxRadius: 25
   m_sensorAngle: 360
   m_sensorAngleOffset: 360
@@ -762,7 +750,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEatenParticle: Feathers
+  m_onEatenParticle: 
+  m_onEatenSounds: []
 --- !u!137 &13756092
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -872,7 +861,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
-      value: 2
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_attackTime
@@ -888,7 +877,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 1.7
+      value: 2.7
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_delay
@@ -948,11 +937,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_displacementDistance
@@ -984,7 +973,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalScale.z
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_reward.energy
@@ -1016,7 +1005,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_retreatingTime
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_target

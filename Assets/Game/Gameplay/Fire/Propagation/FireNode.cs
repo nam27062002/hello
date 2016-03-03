@@ -157,6 +157,7 @@ public class FireNode : MonoBehaviour {
 	}
 
 	private void StartFire() {
+		FirePropagationManager.InsertBurning( transform );
 		if (m_fireSprite == null) {
 			m_fireSprite = PoolManager.GetInstance("FireSprite");
 
@@ -180,7 +181,8 @@ public class FireNode : MonoBehaviour {
 		}
 	}
 
-	private void StopFire() {		
+	private void StopFire() {
+		FirePropagationManager.RemoveBurning( transform );		
 		if (m_fireSprite != null) {
 			m_fireSprite.SetActive(false);
 			PoolManager.ReturnInstance( m_fireSprite );
