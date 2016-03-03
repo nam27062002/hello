@@ -128,8 +128,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private void Burp()
 	{
-		string name = m_burpSounds[ Random.Range( 0, m_burpSounds.Count ) ];
-		AudioManager.instance.PlayClip(name);
+		if ( m_burpSounds.Count > 0 )
+		{
+			string name = m_burpSounds[ Random.Range( 0, m_burpSounds.Count ) ];
+			AudioManager.instance.PlayClip(name);
+		}
 	}
 
 	public void AlmostEat(EdibleBehaviour _prey) {
