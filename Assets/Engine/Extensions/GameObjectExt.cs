@@ -7,6 +7,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -175,10 +176,10 @@ public static class GameObjectExt {
 	/// <summary>
 	/// Returns the first component of type T found in any of the child objects named <paramref name="_objName"/>.
 	/// </summary>
-	/// <returns></returns>
-	/// <param name="_comp"></param>
-	/// <param name="_objName"></param>
-	/// <typeparam name="T"></typeparam>
+	/// <returns>The first component of type T found in any of the child objects named <paramref name="_objName"/>.</returns>
+	/// <param name="_t">The root transform to look wihtin.</param>
+	/// <param name="_objName">The name to look for</param>
+	/// <typeparam name="T">The type to look for.</typeparam>
 	public static T FindComponentRecursive<T>(this Transform _t, string _objName) where T : Component {
 		// Found!
 		T c = _t.GetComponent<T>();
@@ -191,14 +192,13 @@ public static class GameObjectExt {
 		}
 		return null;
 	}
-
 	/// <summary>
 	/// Returns the first component of type T found in any of the child objects named <paramref name="_objName"/>.
 	/// </summary>
-	/// <returns></returns>
-	/// <param name="_comp"></param>
-	/// <param name="_objName"></param>
-	/// <typeparam name="T"></typeparam>
+	/// <returns>The first component of type T found in any of the child objects named <paramref name="_objName"/>.</returns>
+	/// <param name="_obj">The root object to look wihtin.</param>
+	/// <param name="_objName">The name to look for</param>
+	/// <typeparam name="T">The type to look for.</typeparam>
 	public static T FindComponentRecursive<T>(this GameObject _obj, string _objName) where T : Component {
 		return _obj.transform.FindComponentRecursive<T>(_objName);
 	}
@@ -206,12 +206,51 @@ public static class GameObjectExt {
 	/// <summary>
 	/// Returns the first component of type T found in any of the child objects named <paramref name="_objName"/>.
 	/// </summary>
-	/// <returns></returns>
-	/// <param name="_comp"></param>
-	/// <param name="_objName"></param>
-	/// <typeparam name="T"></typeparam>
+	/// <returns>The first component of type T found in any of the child objects named <paramref name="_objName"/>.</returns>
+	/// <param name="_comp">The root component to look wihtin.</param>
+	/// <param name="_objName">The name to look for</param>
+	/// <typeparam name="T">The type to look for.</typeparam>
 	public static T FindComponentRecursive<T>(this Component _comp, string _objName) where T : Component {
 		return _comp.transform.FindComponentRecursive<T>(_objName);
+	}
+
+	/// <summary>
+	/// Returns the first component of type T found in any of the child objects.
+	/// </summary>
+	/// <returns>The first component of type T found in any of the children objects.</returns>
+	/// <param name="_t">The root transform to look wihtin.</param>
+	/// <typeparam name="T">The type to look for.</typeparam>
+	public static T FindComponentRecursive<T>(this Transform _t) where T : Component {
+		// Found!
+		T c = _t.GetComponent<T>();
+		if(c != null) return c;
+
+		// Not found, iterate children transforms
+		foreach(Transform t in _t) {
+			c = t.FindComponentRecursive<T>();
+			if(c != null) return c;
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Returns the first component of type T found in any of the child objects.
+	/// </summary>
+	/// <returns>The first component of type T found in any of the children objects.</returns>
+	/// <param name="_obj">The root object to look wihtin.</param>
+	/// <typeparam name="T">The type to look for.</typeparam>
+	public static T FindComponentRecursive<T>(this GameObject _obj) where T : Component {
+		return _obj.transform.FindComponentRecursive<T>();
+	}
+
+	/// <summary>
+	/// Returns the first component of type T found in any of the child objects.
+	/// </summary>
+	/// <returns>The first component of type T found in any of the children objects.</returns>
+	/// <param name="_comp">The root component to look wihtin.</param>
+	/// <typeparam name="T">The type to look for.</typeparam>
+	public static T FindComponentRecursive<T>(this Component _comp) where T : Component {
+		return _comp.transform.FindComponentRecursive<T>();
 	}
 
 	/// <summary>
@@ -359,5 +398,30 @@ public static class GameObjectExt {
 	/// <typeparam name="T"></typeparam>
 	public static T GetFirstComponentInChildren<T>(this GameObject _obj) where T : Component {
 		return _obj.transform.GetFirstComponentInChildren<T>();
+	}
+
+	//------------------------------------------------------------------//
+	// TRUE STATIC METHODS												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Find the first component of the given type within the whole hierarchy of
+	/// the current scene.
+	/// </summary>
+	/// <returns>The first object of type T found in the scene.</returns>
+	/// <param name="_includeInactive">Whether to include inactive objects in the search.</param>
+	/// <typeparam name="T">Type to search.</typeparam>
+	public static T FindComponent<T>(bool _includeInactive = true) where T : Component {
+		// Use Unity method if inactives not required
+		if(_includeInactive) {
+			// Traverse whole hierarchy
+			GameObject[] rootObjs = SceneManager.GetActiveScene().GetRootGameObjects();
+			for(int i = 0; i < rootObjs.Length; i++) {
+				T searchResult = rootObjs[i].FindComponentRecursive<T>();
+				if(searchResult != null) return searchResult;
+			}
+		} else {
+			return GameObject.FindObjectOfType<T>();
+		}
+		return null;
 	}
 }

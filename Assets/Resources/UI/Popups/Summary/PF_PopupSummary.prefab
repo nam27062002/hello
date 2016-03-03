@@ -80,7 +80,6 @@ GameObject:
   - 224: {fileID: 22454756}
   - 222: {fileID: 22285008}
   - 114: {fileID: 11440928}
-  - 114: {fileID: 11445698}
   - 114: {fileID: 11406888}
   m_Layer: 5
   m_Name: RewardText
@@ -411,7 +410,7 @@ GameObject:
   - 224: {fileID: 22412852}
   - 222: {fileID: 22222092}
   - 114: {fileID: 11484098}
-  - 114: {fileID: 11419186}
+  - 114: {fileID: 11433250}
   m_Layer: 5
   m_Name: DifficultyIcon
   m_TagString: Untagged
@@ -500,7 +499,7 @@ GameObject:
   - 224: {fileID: 22449402}
   - 222: {fileID: 22230104}
   - 114: {fileID: 11462494}
-  - 114: {fileID: 11402470}
+  - 114: {fileID: 11416108}
   m_Layer: 5
   m_Name: DifficultyIcon
   m_TagString: Untagged
@@ -535,7 +534,6 @@ GameObject:
   - 224: {fileID: 22449256}
   - 222: {fileID: 22292842}
   - 114: {fileID: 11414966}
-  - 114: {fileID: 11491242}
   - 114: {fileID: 11486122}
   m_Layer: 5
   m_Name: RewardText
@@ -639,7 +637,6 @@ GameObject:
   - 224: {fileID: 22437984}
   - 222: {fileID: 22275142}
   - 114: {fileID: 11404324}
-  - 114: {fileID: 11422632}
   m_Layer: 5
   m_Name: TextValue
   m_TagString: Untagged
@@ -657,7 +654,6 @@ GameObject:
   - 224: {fileID: 22468346}
   - 222: {fileID: 22225114}
   - 114: {fileID: 11478450}
-  - 114: {fileID: 11416766}
   - 114: {fileID: 11483960}
   m_Layer: 5
   m_Name: RewardText
@@ -792,7 +788,6 @@ GameObject:
   - 222: {fileID: 22297634}
   - 114: {fileID: 11465240}
   - 114: {fileID: 11450572}
-  - 114: {fileID: 11410162}
   m_Layer: 5
   m_Name: TextValue
   m_TagString: Untagged
@@ -862,7 +857,6 @@ GameObject:
   - 222: {fileID: 22295258}
   - 114: {fileID: 11443784}
   - 114: {fileID: 11428442}
-  - 114: {fileID: 11460372}
   m_Layer: 5
   m_Name: TextValue
   m_TagString: Untagged
@@ -916,7 +910,7 @@ GameObject:
   - 224: {fileID: 22445260}
   - 222: {fileID: 22268618}
   - 114: {fileID: 11469890}
-  - 114: {fileID: 11434998}
+  - 114: {fileID: 11458740}
   m_Layer: 5
   m_Name: DifficultyIcon
   m_TagString: Untagged
@@ -941,20 +935,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11402470
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 163976}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -900027084, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 2, y: -2}
-  m_UseGraphicAlpha: 1
 --- !u!114 &11403688
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -966,9 +946,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 1
-  m_color: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+  m_bold: 1
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 4
+  m_outlineColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+  m_shadow: 0
+  m_shadowAngle: 315
   m_shadowSize: 4
   m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
 --- !u!114 &11404324
@@ -1152,22 +1137,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &11410162
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 191114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.30147058, g: 0.26157007, b: 0.29376563, a: 1}
-  m_shadowSize: 0
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11414202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1248,51 +1217,26 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &11416766
+--- !u!114 &11416108
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 174764}
+  m_GameObject: {fileID: 163976}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.30147058, g: 0.26157007, b: 0.29376563, a: 1}
-  m_shadowSize: 0
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
---- !u!114 &11419186
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 151718}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -900027084, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 2, y: -2}
-  m_UseGraphicAlpha: 1
---- !u!114 &11422632
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 174518}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.30147058, g: 0.26157007, b: 0.29376563, a: 1}
-  m_shadowSize: 0
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 0
+  m_outlineQuality: 0
+  m_outlineSize: 2
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 340
+  m_shadowSize: 5
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11423984
 MonoBehaviour:
@@ -1488,6 +1432,27 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11433250
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 151718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 0
+  m_outlineQuality: 0
+  m_outlineSize: 2
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 340
+  m_shadowSize: 5
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11434538
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1533,20 +1498,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &11434998
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -900027084, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 2, y: -2}
-  m_UseGraphicAlpha: 1
 --- !u!114 &11435552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1770,22 +1721,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 999,999,999
---- !u!114 &11445698
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 111374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.30147058, g: 0.26157007, b: 0.29376563, a: 1}
-  m_shadowSize: 0
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11446368
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2076,6 +2011,27 @@ MonoBehaviour:
   m_Spacing: 20
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
+--- !u!114 &11458740
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 197716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 0
+  m_outlineQuality: 0
+  m_outlineSize: 2
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 340
+  m_shadowSize: 5
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11458760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2108,22 +2064,6 @@ MonoBehaviour:
   m_missionDifficulty: 0
   m_descText: {fileID: 11486468}
   m_rewardText: {fileID: 11414966}
---- !u!114 &11460372
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 193218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.30147058, g: 0.26157007, b: 0.29376563, a: 1}
-  m_shadowSize: 0
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11461928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2561,11 +2501,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
-  m_shadowSize: 0
-  m_shadowColor: {r: 0.8235294, g: 0.64327675, b: 0.58131486, a: 1}
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 2
+  m_outlineColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 315
+  m_shadowSize: 4
+  m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
 --- !u!114 &11490292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2586,22 +2531,6 @@ MonoBehaviour:
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
---- !u!114 &11491242
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 169060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 4
-  m_color: {r: 0.30147058, g: 0.26157007, b: 0.29376563, a: 1}
-  m_shadowSize: 0
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11492330
 MonoBehaviour:
   m_ObjectHideFlags: 1

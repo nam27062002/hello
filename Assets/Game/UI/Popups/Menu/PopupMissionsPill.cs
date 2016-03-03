@@ -156,7 +156,7 @@ public class PopupMissionsPill : MonoBehaviour {
 		m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
 
 		// Cooldown bar
-		m_cooldownBar.normalizedValue = 1f - m_mission.cooldownProgress;	// [AOC] Reverse bar
+		m_cooldownBar.normalizedValue = m_mission.cooldownProgress;	// [AOC] Reverse bar
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
@@ -174,7 +174,7 @@ public class PopupMissionsPill : MonoBehaviour {
 		m_cooldownText.text = "";
 
 		// Cooldown bar
-		m_cooldownBar.normalizedValue = 0f;	// [AOC] Reverse bar
+		m_cooldownBar.normalizedValue = 1f;	// [AOC] Reverse bar
 
 		// Skip cost - shouldn't exist in ACTIVATION_PENDING state, but just in case
 		// [AOC] The pill might not have it (e.g. in-game pill)

@@ -43,13 +43,6 @@ public class MonoBehaviourTemplateEditor : Editor {
 		// Get target object
 		m_targetMonoBehaviourTemplate = target as MonoBehaviourTemplate;
 
-		// Initialize custom styles if not done
-		if(s_customStyle == null) {
-			// Is style initialized?
-			s_customStyle = new GUIStyle(EditorStyles.textField);
-			s_customStyle.normal.textColor = Colors.darkGray;
-		}
-
 		// Store a reference of interesting properties for faster access
 		m_myValueProp = serializedObject.FindProperty("m_myValue");
 	}
@@ -66,6 +59,9 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// Draw the inspector.
 	/// </summary>
 	public override void OnInspectorGUI() {
+		// Initialize custom styles if not done
+		InitStyles();
+
 		// Default inspector
 		DrawDefaultInspector();
 
@@ -105,5 +101,17 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+	}
+
+	/// <summary>
+	/// Init custom styles if not done.
+	/// Should only be done during the OnGUI/OnSceneGUI calls.
+	/// </summary>
+	private void InitStyles() {
+		// Do it for every custom style
+		if(s_customStyle == null) {
+			s_customStyle = new GUIStyle(EditorStyles.textField);
+			s_customStyle.normal.textColor = Colors.darkGray;
+		}
 	}
 }

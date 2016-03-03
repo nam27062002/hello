@@ -16,6 +16,7 @@ using UnityEditor;
 /// Custom editor for the lookAt point script.
 /// </summary>
 [CustomEditor(typeof(LookAtPoint))]
+[CanEditMultipleObjects]
 public class LookAtPointEditor : Editor {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
