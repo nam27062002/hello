@@ -1,7 +1,6 @@
 // Definitions.cs
-// Hungry Dragon
 // 
-// Created by Miguel Angel Linares
+// Imported by Miguel Angel Linares
 // Refactored by Alger Ortín Castellví on 18/02/2016
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -9,10 +8,12 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
+using System.Text;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -31,6 +32,12 @@ public class Definitions : Singleton<Definitions> {
 		// Egg manager
 		EGGS,
 		EGG_REWARDS
+	};
+
+	public enum SortType {
+		NUMERIC,
+		ALPHABETIC,		// sku_1, sku_11, sku_15, sku_2, sku_21, sku_250, sku_3, sku_35, zz_sku...
+		ALPHANUMERIC	// sku_1, sku_2, sku_3, sku_11, sku_15, sku_21, sku_35, sku_250, zz_sku...
 	};
 
 	//------------------------------------------------------------------------//
@@ -321,6 +328,63 @@ public class Definitions : Singleton<Definitions> {
 			}
 		}
 		return Category.UNKNOWN;
+	}
+
+	/// <summary>
+	/// Prints a list of definitions.
+	/// </summary>
+	/// <param name="_defs">The list to be printed.</param>
+	public static void PrintDefs(ref List<DefinitionNode> _defs) {
+		// [AOC] One definition per line, sku first, property value afterwards
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < _defs.Count; i++) {
+			sb.AppendLine(_defs[i].ToString());
+		}
+		Debug.Log(sb.ToString());
+	}
+
+	/// <summary>
+	/// Prints the value of a property for a list of definitions.
+	/// </summary>
+	/// <param name="_defs">The list to be printed.</param>
+	/// <param name="_propertyID">Name of the property to be printed.</param>
+	public static void PrintDefs(ref List<DefinitionNode> _defs, string _propertyID) {
+		// [AOC] One definition per line, sku first, property value afterwards
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < _defs.Count; i++) {
+			sb.Append(_defs[i].sku).Append(": ").Append(_defs[i].GetAsString(_propertyID, "INVALID")).AppendLine();
+		}
+		Debug.Log(sb.ToString());
+	}
+
+	/// <summary>
+	/// Sorts the given definitions list by the value of one of its properties.
+	/// List will be sorted in ascendent order.
+	/// You can use <c>List.Reverse</c> method afterwards to get the reverse order.
+	/// </summary>
+	/// <param name="_defs">List of definitions to be sorted.</param>
+	/// <param name="_propertyID">The name of the property to be used for the sorting.</param>
+	/// <param name="_sortType">Type of sorting used.</param>
+	public static void SortByProperty(ref List<DefinitionNode> _defs, string _propertyID, SortType _sortType) {
+		// From http://stackoverflow.com/questions/188141/list-orderby-alphabetical-order
+		// Use different techniques depending on sort type
+		switch(_sortType) {
+			case SortType.NUMERIC: {
+				// Use double since it covers all numeric types
+				// Use MaxValue as default so definitions not containing the property (or property with invalid type) are put to the end of the list
+				_defs.Sort((x, y) => x.GetAsDouble(_propertyID, double.MaxValue).CompareTo(y.GetAsDouble(_propertyID, double.MaxValue)));
+			} break;
+
+			case SortType.ALPHABETIC: {
+				_defs.Sort((x, y) => string.Compare(x.GetAsString(_propertyID), y.GetAsString(_propertyID)));
+			} break;
+
+			case SortType.ALPHANUMERIC: {
+				// Alphanumeric sorting is quite complex, use auxiliar class to do it
+				AlphanumComparatorFast comparer = new AlphanumComparatorFast();
+				_defs.Sort((x, y) => comparer.Compare(x.GetAsString(_propertyID), y.GetAsString(_propertyID)));
+			} break;
+		}
 	}
 
 	//------------------------------------------------------------------------//
