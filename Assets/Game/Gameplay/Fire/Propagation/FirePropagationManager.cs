@@ -14,7 +14,6 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 	public List<Transform> m_burningFireNodes = new List<Transform>();
 
-
 	void Awake() {
 		m_fireNodes = new QuadTree(-600f, -100f, 1000f, 400f);
 
@@ -22,6 +21,9 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 		m_fireNodeAudio.playOnAwake = false;
 		m_fireNodeAudio.loop = false;
 		m_fireNodeAudio.clip = Resources.Load("audio/sfx/Fire/EnvTrch") as AudioClip;
+		// m_fireNodeAudio.outputAudioMixerGroup
+		// UnityEngine.Audio.AudioMixerGroup
+		m_fireNodeAudio.outputAudioMixerGroup = (Resources.Load("audio/SfxMixer") as UnityEngine.Audio.AudioMixer).FindMatchingGroups("Master")[0];
 	}
 
 	void Start() {
