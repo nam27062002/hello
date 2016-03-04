@@ -94,6 +94,14 @@ public class OpenEggScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events.
+		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+	}
+
+	/// <summary>
 	/// Called every frame
 	/// </summary>
 	private void Update() {
@@ -120,6 +128,9 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Restore HUD
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
+
+		// Unsubscribe to external events.
+		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
 	}
 
 	//------------------------------------------------------------------//
@@ -235,17 +246,12 @@ public class OpenEggScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Opens the egg and launches the animation!
+	/// Launches the open egg animation!
 	/// </summary>
 	private void LaunchOpenAnimation() {
 		// This option should only be available on the OPENING state and with a valid egg
 		if(m_state != State.OPENING) return;
 		if(m_egg == null) return;
-		if(m_egg.eggData.state != Egg.State.OPENING) return;
-
-		// Collect the egg! - this automatically empties the incubator
-		m_egg.eggData.Collect();
-		PersistenceManager.Save();
 
 		// [AOC] TODO!! Nice FX!
 		// Do a full-screen flash FX
@@ -297,7 +303,16 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnInstantOpenButton() {
 		// Open the egg!
-		LaunchOpenAnimation();
+		// This option should only be available on the OPENING state and with a valid egg
+		if(m_state != State.OPENING) return;
+		if(m_egg == null) return;
+		if(m_egg.eggData.state != Egg.State.OPENING) return;
+
+		// Collect the egg! - this automatically empties the incubator
+		m_egg.eggData.Collect();
+		PersistenceManager.Save();
+
+		// Animation will be triggered by the EGG_COLLECTED event
 	}
 
 	/// <summary>
@@ -337,5 +352,20 @@ public class OpenEggScreenController : MonoBehaviour {
 		Egg purchasedEgg = Egg.CreateBySku(Definitions.GetDefinitions(Definitions.Category.EGGS).GetRandomValue().sku);	// Pick a random egg from the definitions set
 		purchasedEgg.ChangeState(Egg.State.READY);
 		StartFlow(purchasedEgg);	// Restart flow!!
+	}
+
+	/// <summary>
+	/// An egg has been opened and its reward collected.
+	/// </summary>
+	/// <param name="_egg">The egg.</param>
+	private void OnEggCollected(Egg _egg) {
+		// Must have a valid egg
+		if(m_egg == null) return;
+
+		// If it matches our curent egg, launch its animation!
+		if(_egg == m_egg.eggData) {
+			// Launch animation!
+			LaunchOpenAnimation();
+		}
 	}
 }

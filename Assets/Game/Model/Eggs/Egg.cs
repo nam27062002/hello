@@ -159,7 +159,7 @@ public class Egg {
 
 	/// <summary>
 	/// Hatches the egg and gives the player a newly generated reward.
-	/// Only if the egg is in the READY state.
+	/// Only if the egg is in the OPENING state.
 	/// </summary>
 	public void Collect() {
 		// Generate the reward
