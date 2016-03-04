@@ -433,8 +433,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_zOffset:
-    min: -1
-    max: 1
+    min: 0
+    max: 0
   m_flockAvoidRadiusRange:
     min: 0.9
     max: 1.4
@@ -471,6 +471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_canBeAfraid: 0
   m_canPanic: 0
+  m_afraidSounds: []
 --- !u!114 &11417704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -482,7 +483,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEatenParticle: Feathers
+  m_onEatenParticle: 
+  m_onEatenSounds: []
 --- !u!114 &11433180
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -695,6 +697,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_maxHealth
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_zOffset.min
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_zOffset.max
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
