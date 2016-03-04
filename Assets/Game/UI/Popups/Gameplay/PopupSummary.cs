@@ -47,8 +47,8 @@ public class PopupSummary : MonoBehaviour {
 		// Define popup controller delegates
 		PopupController controller = GetComponent<PopupController>();
 		DebugUtils.Assert(controller != null, "Required component!");
-		controller.OnOpenPreAnimation = OnOpenPreAnimation;
-		controller.OnOpenPostAnimation = OnOpenPostAnimation;
+		controller.OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
+		controller.OnOpenPostAnimation.AddListener(OnOpenPostAnimation);
 	}
 	
 	/// <summary>

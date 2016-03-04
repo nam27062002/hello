@@ -37,16 +37,7 @@ public class PopupMissionsIngame : MonoBehaviour {
 	private void OnEnable() {
 		// Add delegates
 		PopupController popup = GetComponent<PopupController>();
-		popup.OnClosePostAnimation += OnClosePostAnimation;
-	}
-
-	/// <summary>
-	/// Component has been disabled
-	/// </summary>
-	private void OnDisable() {
-		// Add delegates
-		PopupController popup = GetComponent<PopupController>();
-		popup.OnClosePostAnimation -= OnClosePostAnimation;
+		popup.OnClosePostAnimation.AddListener(OnClosePostAnimation);
 	}
 
 	//------------------------------------------------------------------//

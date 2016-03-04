@@ -57,7 +57,7 @@ namespace LevelEditor {
 			// Define popup controller delegates
 			PopupController controller = GetComponent<PopupController>();
 			DebugUtils.Assert(controller != null, "Required component!");
-			controller.OnOpenPreAnimation = OnOpenPreAnimation;
+			controller.OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
 		}
 		
 		/// <summary>
