@@ -17,7 +17,7 @@ public class GroundPreyMotion : PreyMotion {
 			m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 			m_steering = m_steering / m_mass;
 
-			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
+			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, Time.deltaTime * 2));
 
 			RaycastHit sensorA;
 			RaycastHit sensorB;
