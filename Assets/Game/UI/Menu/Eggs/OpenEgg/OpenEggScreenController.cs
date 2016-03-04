@@ -37,6 +37,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Button m_callToActionButton = null;
 	[SerializeField] private Button m_shopButton = null;
 	[SerializeField] private Button m_backButton = null;
+	[SerializeField] private Text m_tapInfoText = null;
 
 	// References
 	private EggController m_egg = null;
@@ -70,6 +71,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		Debug.Assert(m_callToActionButton != null, "Required field!");
 		Debug.Assert(m_shopButton != null, "Required field!");
 		Debug.Assert(m_backButton != null, "Required field!");
+		Debug.Assert(m_tapInfoText != null, "Required field!");
 		Debug.Assert(m_rewardText != null, "Required field!");
 
 		// Prepare the flash FX image
@@ -160,6 +162,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Hide();
 		m_actionButtonsAnimator.Hide();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
+		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_backButton.GetComponent<ShowHideAnimator>().Hide(false);
 		m_backButton.gameObject.SetActive(false);	// This will instantly disable the back button so the NavigationShowHideAnimator doesn't trigger when opening the screen
 
@@ -274,6 +277,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		//InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();	// Keep HUD hidden
 		m_actionButtonsAnimator.Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
+		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_backButton.gameObject.SetActive(true);	// This will instantly disable the back button so the NavigationShowHideAnimator doesn't trigger when opening the screen
 		m_backButton.GetComponent<ShowHideAnimator>().Show();
 
@@ -291,8 +295,9 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Change egg state
 		m_egg.eggData.ChangeState(Egg.State.OPENING);
 
-		// Show instant open button
+		// Show instant open button and info text
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Show();
+		m_tapInfoText.GetComponent<ShowHideAnimator>().Show();
 
 		// Change logic state
 		m_state = State.OPENING;

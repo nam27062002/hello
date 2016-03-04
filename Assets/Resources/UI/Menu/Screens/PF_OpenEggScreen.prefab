@@ -36,6 +36,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &107126
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 22416610}
+  - 222: {fileID: 22218442}
+  - 114: {fileID: 11406366}
+  - 114: {fileID: 11495092}
+  m_Layer: 5
+  m_Name: TempRewardText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &137644
 GameObject:
   m_ObjectHideFlags: 1
@@ -101,8 +119,9 @@ GameObject:
   - 222: {fileID: 22287844}
   - 114: {fileID: 11431984}
   - 114: {fileID: 11404230}
+  - 114: {fileID: 11482410}
   m_Layer: 5
-  m_Name: TempRewardText
+  m_Name: TapToOpenText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -279,6 +298,39 @@ MonoBehaviour:
   m_shadowAngle: 246
   m_shadowSize: 12.5
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!114 &11406366
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 107126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 70291bb78f22f450cb4a60f9a632312f, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 9306b7762ae4b4544a6309d97f887fcb, type: 3}
+    m_FontSize: 100
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 100
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1
+  m_Text: You've got suit_rare for dragon dragon_small!
 --- !u!114 &11408420
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -418,7 +470,8 @@ MonoBehaviour:
   m_callToActionButton: {fileID: 11464556}
   m_shopButton: {fileID: 11431722}
   m_backButton: {fileID: 11440854}
-  m_rewardText: {fileID: 11431984}
+  m_tapInfoText: {fileID: 11431984}
+  m_rewardText: {fileID: 11406366}
 --- !u!114 &11428110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -542,7 +595,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: You've got suit_rare for dragon dragon_small!
+  m_Text: Tap on the egg to open it!
 --- !u!114 &11433316
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -987,6 +1040,23 @@ MonoBehaviour:
   m_Spacing: 100
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
+--- !u!114 &11482410
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 161190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 4
+  m_tweenDuration: 0.25
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0
 --- !u!114 &11482644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1065,6 +1135,27 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11495092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 107126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bold: 1
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 1
+  m_outlineSize: 5
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadow: 0
+  m_shadowAngle: 246
+  m_shadowSize: 12.5
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!222 &22200140
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -1083,6 +1174,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 153664}
+--- !u!222 &22218442
+CanvasRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 107126}
 --- !u!222 &22218524
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -1141,6 +1238,23 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!224 &22416610
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 107126}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 22437780}
+  m_RootOrder: 2
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0078125, y: 226}
+  m_SizeDelta: {x: 1006, y: 590}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22426142
 RectTransform:
@@ -1206,6 +1320,7 @@ RectTransform:
   m_Children:
   - {fileID: 22449776}
   - {fileID: 22480438}
+  - {fileID: 22416610}
   - {fileID: 22463572}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1261,11 +1376,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 22437780}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0078125, y: 226}
-  m_SizeDelta: {x: 1006, y: 590}
+  m_AnchoredPosition: {x: -0.0078125, y: 625}
+  m_SizeDelta: {x: 1006, y: 246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22472114
 RectTransform:
