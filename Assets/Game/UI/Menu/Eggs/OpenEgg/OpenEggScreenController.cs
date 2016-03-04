@@ -189,7 +189,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_scene == null) {
 			MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
-			m_scene = sceneController.screensController.GetScene((int)MenuScreensController.Screens.OPEN_EGG);
+			m_scene = sceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
 		}
 
 		// Egg view anchor in the 3d scene

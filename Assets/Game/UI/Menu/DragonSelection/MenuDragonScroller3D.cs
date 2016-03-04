@@ -119,7 +119,7 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	private void Update() {
 		// If we're in the dragon selection screen, snap camera to curves
 		// [AOC] A bit dirty, but best way I can think of right now (and gacha is waiting)
-		if(m_menuScreensController.currentScreenIdx == (int)MenuScreensController.Screens.DRAGON_SELECTION) {
+		if(m_menuScreensController.currentScreenIdx == (int)MenuScreens.DRAGON_SELECTION) {
 			// Only if camera is not already moving!
 			if(!m_menuScreensController.tweening) {
 				// Move camera! ^_^

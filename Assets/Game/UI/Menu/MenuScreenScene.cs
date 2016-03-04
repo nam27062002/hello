@@ -15,7 +15,7 @@ using UnityEngine.UI;
 //----------------------------------------------------------------------//
 /// <summary>
 /// Behaviour to be attached to the root of the 3D scene objects matching each
-/// screen in the menu (MenuScreensController.Screens).
+/// screen in the menu (MenuScreens).
 /// </summary>
 public class MenuScreenScene : MonoBehaviour {
 	//------------------------------------------------------------------//

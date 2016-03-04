@@ -48,8 +48,8 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 		}
 
 		// Get incubator screen and 3D scene
-		NavigationScreen incubatorScreen = sceneController.screensController.GetScreen((int)MenuScreensController.Screens.INCUBATOR);
-		MenuScreenScene incubatorScene = sceneController.screensController.GetScene((int)MenuScreensController.Screens.INCUBATOR);
+		NavigationScreen incubatorScreen = sceneController.screensController.GetScreen((int)MenuScreens.INCUBATOR);
+		MenuScreenScene incubatorScene = sceneController.screensController.GetScene((int)MenuScreens.INCUBATOR);
 
 		// Search the anchor point of the incubator
 		m_incubatorAnchor = incubatorScene.FindComponentRecursive<IncubatorEggAnchor>();

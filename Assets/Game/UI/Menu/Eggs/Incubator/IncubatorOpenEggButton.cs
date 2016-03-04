@@ -90,15 +90,15 @@ public class IncubatorOpenEggButton : MonoBehaviour {
 
 		// Try to reuse current egg view attached to the incubator
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		MenuScreenScene incubatorScene = screensController.GetScene((int)MenuScreensController.Screens.INCUBATOR);
+		MenuScreenScene incubatorScene = screensController.GetScene((int)MenuScreens.INCUBATOR);
 		IncubatorEggAnchor eggAnchor = incubatorScene.FindComponentRecursive<IncubatorEggAnchor>();
 		EggController eggView = eggAnchor.attachedEgg;
 		eggAnchor.DeattachEgg(false);	// Don't destroy it!
 
 		// Go to OPEN_EGG screen and start open flow
-		OpenEggScreenController openEggScreen = screensController.GetScreen((int)MenuScreensController.Screens.OPEN_EGG).GetComponent<OpenEggScreenController>();
+		OpenEggScreenController openEggScreen = screensController.GetScreen((int)MenuScreens.OPEN_EGG).GetComponent<OpenEggScreenController>();
 		openEggScreen.StartFlow(EggManager.incubatingEgg, eggView);
-		screensController.GoToScreen((int)MenuScreensController.Screens.OPEN_EGG);
+		screensController.GoToScreen((int)MenuScreens.OPEN_EGG);
 
 		// Hide! - we may need to confirm that egg was collected, but in theory the flow can't be interrupted
 		m_anim.Hide();

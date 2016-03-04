@@ -46,9 +46,9 @@ public class MenuScreensControllerToolbar {
 			Rect rect = new Rect(5f, 5f, 130f, 20f);
 
 			// Do a button for each scene
-			MenuScreensController.Screens scr = MenuScreensController.Screens.NONE;
-			for(int i = 0; i < (int)MenuScreensController.Screens.COUNT; i++) {
-				scr = (MenuScreensController.Screens)i;
+			MenuScreens scr = MenuScreens.NONE;
+			for(int i = 0; i < (int)MenuScreens.COUNT; i++) {
+				scr = (MenuScreens)i;
 				GUI.enabled = true;
 				if(GUI.Button(rect, scr.ToString())) {
 					// Save it as target screen!
@@ -64,7 +64,7 @@ public class MenuScreensControllerToolbar {
 		if(screenToEdit >= 0) {
 			// Disable all screens except the target one and ping the target screen
 			NavigationScreen scr = null;
-			for(int i = 0; i < (int)MenuScreensController.Screens.COUNT; i++) {
+			for(int i = 0; i < (int)MenuScreens.COUNT; i++) {
 				scr = target.screens[i];
 				if(scr != null) {
 					if(i == screenToEdit) {

@@ -14,29 +14,33 @@ using DG.Tweening;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
+/// Screens enumerator, make it global because it's used a lot and we want to keep a shorter notation.
+/// </summary>
+public enum MenuScreens {
+	NONE = -1,
+	PLAY,
+	DRAGON_SELECTION,
+	LEVEL_SELECTION,
+	INCUBATOR,
+	OPEN_EGG,
+
+	COUNT
+};
+
+/// <summary>
 /// Adds some specific behaviour to the main menu screen navigator.
 /// </summary>
 public class MenuScreensController : NavigationScreenSystem {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public enum Screens {
-		NONE = -1,
-		PLAY,
-		DRAGON_SELECTION,
-		LEVEL_SELECTION,
-		INCUBATOR,
-		OPEN_EGG,
-
-		COUNT
-	};
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	[Space()]
 	[Comment("There should always be one scene entry per screen, value can be null")]
-	[SerializeField] private MenuScreenScene[] m_scenes = new MenuScreenScene[(int)Screens.COUNT];
+	[SerializeField] private MenuScreenScene[] m_scenes = new MenuScreenScene[(int)MenuScreens.COUNT];
 	public MenuScreenScene[] scenes {
 		get { return m_scenes; }
 	}
@@ -62,9 +66,9 @@ public class MenuScreensController : NavigationScreenSystem {
 	private void Awake() {
 		// Just define initial screen on the navigation system before it actually starts
 		if(GameVars.playScreenShown) {
-			SetInitialScreen((int)Screens.DRAGON_SELECTION);
+			SetInitialScreen((int)MenuScreens.DRAGON_SELECTION);
 		} else {
-			SetInitialScreen((int)Screens.PLAY);
+			SetInitialScreen((int)MenuScreens.PLAY);
 		}
 	}
 
@@ -93,7 +97,7 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// <returns>The 3D scene object linked to the screen with index <paramref name="_screenIdx"/>.<c>null</c> if not defined or provided index not valid.</returns>
 	/// <param name="_screenIdx">The index of the screen whose linked 3D scene we want.</param>
 	public MenuScreenScene GetScene(int _screenIdx) {
-		if(_screenIdx < 0 || _screenIdx >= (int)Screens.COUNT) return null;
+		if(_screenIdx < 0 || _screenIdx >= (int)MenuScreens.COUNT) return null;
 		return m_scenes[_screenIdx];
 	}
 
