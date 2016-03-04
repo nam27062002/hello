@@ -91,11 +91,10 @@ GameObject:
   - 114: {fileID: 11476692}
   - 114: {fileID: 11404860}
   - 114: {fileID: 11415360}
-  - 114: {fileID: 11461924}
-  - 114: {fileID: 11467088}
-  - 114: {fileID: 11440580}
+  - 114: {fileID: 11452832}
+  - 114: {fileID: 11444168}
   m_Layer: 8
-  m_Name: soldier_melee
+  m_Name: soldier_static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1358,13 +1357,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 10
+  m_damage: 5
   m_attackDelay: 1
   m_consecutiveAttacks: 5
-  m_retreatingTime: 5
+  m_retreatingTime: 0
   m_hasAnimation: 1
-  m_projectilePrefab: {fileID: 0}
-  m_projectileSpawnPoint: {fileID: 0}
+  m_projectilePrefab: {fileID: 173528, guid: f82301bbfe6e542baa676cadd072d2e6, type: 2}
+  m_projectileSpawnPoint: {fileID: 405490}
 --- !u!114 &11415360
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1376,7 +1375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_faceDirection: 1
+  m_faceDirection: 0
 --- !u!114 &11416204
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1388,7 +1387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: soldier_melee
+  m_sku: soldier
 --- !u!114 &11431430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1417,18 +1416,6 @@ MonoBehaviour:
   m_burnSize: 6
   m_burnDuration: 0.75
   m_orientedBurn: 0
---- !u!114 &11440580
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f836e7209e5c8497794d18c84b14c55b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_canBeEatenWhileAttacking: 0
 --- !u!114 &11442732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1444,6 +1431,48 @@ MonoBehaviour:
   m_onEatenSounds:
   - audio/sfx/human/HUMN DeathScreams HS01_35_7
   - audio/sfx/human/HUMN DeathScreams HS01_35_9
+--- !u!114 &11444168
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 113872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d35768df91148ff85b132e7555cc35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_idleTime: 5
+  m_chaoticMovement: 0
+  m_displacementDistance: 0
+  m_displacementRadius: 0
+  m_angleIncrement: 0
+  m_idleProbability: 1
+--- !u!114 &11452832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 113872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be113280884d84d0da6c7c426957d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zOffset:
+    min: -1
+    max: 1
+  m_flockAvoidRadiusRange:
+    min: 0
+    max: 1
+  m_steerForce: 0
+  m_mass: 1
+  m_distanceAttenuation: 5
+  m_checkCollisions: 1
+  m_maxSpeed: 0
+  m_maxRunSpeed: 0
+  m_slowingRadius: 0
+  m_fallOnBurn: 0
 --- !u!114 &11457312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1467,55 +1496,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 4.5
+  m_sensorMinRadius: 12
   m_sensorMaxRadius: 20
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
   m_target: 0
---- !u!114 &11461924
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20d6719d9cb2543b096d365f9f530a3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_zOffset:
-    min: 0
-    max: 0
-  m_flockAvoidRadiusRange:
-    min: 0
-    max: 1
-  m_steerForce: 0.5
-  m_mass: 1
-  m_distanceAttenuation: 8
-  m_checkCollisions: 1
-  m_maxSpeed: 8
-  m_maxRunSpeed: 12
-  m_slowingRadius: 0
-  m_fallOnBurn: 0
---- !u!114 &11467088
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_randomMovement: 0
-  m_idleProbability: 0
-  m_moveTime:
-    min: 6
-    max: 12
-  m_idleTime:
-    min: 3
-    max: 6
 --- !u!114 &11476692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1630,7 +1615,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: 19301098192415144a2921cc1c1cf5ee, type: 2}
+  - {fileID: 2100000, guid: d6c701dba06034ed7a7db9c68852f6c4, type: 2}
   - {fileID: 2100000, guid: d6c701dba06034ed7a7db9c68852f6c4, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
@@ -1712,7 +1697,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxSpeed
-      value: 8
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_mass
@@ -1728,7 +1713,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 4.5
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
@@ -1756,7 +1741,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_attackDelay
@@ -1800,7 +1785,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_maxRunSpeed
-      value: 12
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_idleProbability
@@ -1872,26 +1857,22 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_retreatingTime
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: m_sku
-      value: soldier_melee
+      propertyPath: m_chaoticMovement
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: m_projectilePrefab
-      value: 
+      propertyPath: m_displacementDistance
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: m_projectileSpawnPoint
-      value: 
+      propertyPath: m_displacementRadius
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: m_faceDirection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_canBeEatenWhileAttacking
+      propertyPath: m_angleIncrement
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
