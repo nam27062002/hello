@@ -78,6 +78,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	protected Animator m_animator;
 
 	private uint m_collisionCheckPool; // each prey will detect collisions at different frames
+	private bool m_slowPowerUp;			// if affected by slow power up
 
 	//Debug
 	protected Color[] m_steeringColors;
@@ -161,6 +162,8 @@ public class PreyMotion : Initializable, MotionInterface {
 
 		enabled = true;
 		if (m_animator) m_animator.enabled = true;
+
+		SetAffectedBySlowDown(false);
 	}
 
 	void OnEnable() {		
@@ -255,7 +258,7 @@ public class PreyMotion : Initializable, MotionInterface {
 			AvoidCollisions();
 
 		UpdateSteering();
-		UpdateVelocity();
+		UpdateVelocity( m_slowPowerUp );
 		UpdatePosition(delta);
 
 		if (m_groundSensor != null) {
@@ -373,14 +376,17 @@ public class PreyMotion : Initializable, MotionInterface {
 		}
 	}
 
-	protected virtual void UpdateVelocity() {		
+	protected virtual void UpdateVelocity( bool insidePowerUp ) {		
 
 		if (!m_burning)
 		{
 			m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 			m_steering = m_steering / m_mass;
 
-			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, Time.deltaTime * 2));
+			float targetSpeed = m_currentMaxSpeed;
+			if ( insidePowerUp )
+				targetSpeed = m_currentMaxSpeed * 0.5f;
+			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, targetSpeed, Time.deltaTime * 2));
 			m_velocity *= m_speedMultiplier;
 
 			if (m_velocity != Vector2.zero) {
@@ -435,5 +441,20 @@ public class PreyMotion : Initializable, MotionInterface {
 	{
 		m_burning = true;
 		if (m_animator) m_animator.enabled = false;
+	}
+
+	public void SetAffectedBySlowDown( bool _isAffected )
+	{
+		m_slowPowerUp = _isAffected;
+		if ( _isAffected )
+		{
+			if ( m_animator != null )
+				m_animator.speed = 3;
+		}
+		else
+		{
+			if ( m_animator != null )
+				m_animator.speed = 1;
+		}
 	}
 }
