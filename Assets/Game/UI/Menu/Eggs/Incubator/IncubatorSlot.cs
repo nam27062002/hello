@@ -35,7 +35,7 @@ public class IncubatorSlot : MonoBehaviour {
 	// Scene references
 	private GameObject m_3dView = null;
 	private Text m_text = null;
-	private IncubatorEggController m_eggView = null;
+	private EggController m_eggView = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -110,10 +110,9 @@ public class IncubatorSlot : MonoBehaviour {
 
 		// Load new view if any
 		if(_newEgg != null) {
-			GameObject newEggObj = _newEgg.CreateInstance();
-			newEggObj.transform.SetParent(m_3dView.transform, false);
-			newEggObj.SetLayerRecursively("3dOverUI");
-			m_eggView = newEggObj.GetComponent<IncubatorEggController>();
+			m_eggView = _newEgg.CreateInstance();
+			m_eggView.transform.SetParent(m_3dView.transform, false);
+			m_eggView.gameObject.SetLayerRecursively("3dOverUI");
 		}
 	}
 

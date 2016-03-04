@@ -77,9 +77,9 @@ public class MenuScreensControllerToolbar {
 			}
 
 			// Move main camera to screen's snap point (if any)
-			CameraSnapPoint targetSnapPoint = target.screensCameraSnapPoints[screenToEdit];
-			if(targetSnapPoint != null) {
-				targetSnapPoint.Apply(target.camera);
+			MenuScreenScene targetScene = target.GetScene(screenToEdit);
+			if(targetScene != null && targetScene.cameraSnapPoint != null) {
+				targetScene.cameraSnapPoint.Apply(target.camera);
 			}
 		}
 	}

@@ -191,7 +191,6 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 
 		// Move egg
 		instance.m_incubatingEgg = _targetEgg;
-		_targetEgg.ChangeState(Egg.State.INCUBATING);
 
 		// If required, empty inventory slot
 		int slotIdx = inventory.IndexOf(_targetEgg);
@@ -202,6 +201,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		// Reset incubation timer
 		float incubationMinutes = _targetEgg.def.GetAsFloat("incubationMinutes");
 		instance.m_incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
+
+		// Change egg logic state
+		_targetEgg.ChangeState(Egg.State.INCUBATING);
 
 		// Dispatch game event
 		Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, incubatingEgg);

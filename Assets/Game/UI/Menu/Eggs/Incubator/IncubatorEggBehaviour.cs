@@ -1,4 +1,4 @@
-// IncubatorEggController.cs
+// IncubatorEggBehaviour.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 29/02/2016.
@@ -9,8 +9,6 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -18,7 +16,8 @@ using System.Collections.Generic;
 /// <summary>
 /// Controls a single egg on the incubator menu.
 /// </summary>
-public class IncubatorEggController : MonoBehaviour {
+[RequireComponent(typeof(EggController))]
+public class IncubatorEggBehaviour : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -26,15 +25,7 @@ public class IncubatorEggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Data
-	private Egg m_eggData = null;
-	public Egg eggData {
-		get { return m_eggData; }
-		set { m_eggData = value; }
-	}
-
 	// External references
-	private Camera m_camera = null;
 	private IncubatorEggAnchor m_incubatorAnchor = null;
 	private IncubatorWarningMessage m_warningMessage = null;
 
@@ -46,36 +37,25 @@ public class IncubatorEggController : MonoBehaviour {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		// Search the anchor point of the incubator
-		m_incubatorAnchor = GameObjectExt.FindComponent<IncubatorEggAnchor>();
-		Debug.Assert(m_incubatorAnchor != null, "Eggs shouldn't be instantiated outside the incubator scene!");
-
-		// Search the UI warning message as well
-		m_warningMessage = GameObjectExt.FindComponent<IncubatorWarningMessage>();
-		Debug.Assert(m_warningMessage != null, "Eggs shouldn't be instantiated outside the incubator scene!");
-
-		// Get 3D canera
-		m_camera = GameObject.Find("Camera3D").GetComponent<Camera>();
-		Debug.Assert(m_camera != null, "Eggs shouldn't be instantiated outside the incubator scene!");
-	}
-
-	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Subscribe to external events
-		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
-	}
+		// If we are not at the menu scene, disable this component
+		MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
+		if(sceneController == null) {
+			this.enabled = false;
+			return;
+		}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		// Get incubator screen and 3D scene
+		NavigationScreen incubatorScreen = sceneController.screensController.GetScreen((int)MenuScreensController.Screens.INCUBATOR);
+		MenuScreenScene incubatorScene = sceneController.screensController.GetScene((int)MenuScreensController.Screens.INCUBATOR);
+
+		// Search the anchor point of the incubator
+		m_incubatorAnchor = incubatorScene.FindComponentRecursive<IncubatorEggAnchor>();
+
+		// Search the UI warning message as well
+		m_warningMessage = incubatorScreen.FindComponentRecursive<IncubatorWarningMessage>();
 	}
 
 	//------------------------------------------------------------------//
@@ -107,12 +87,12 @@ public class IncubatorEggController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Check whether this egg can be dragged or not.
+	/// Move the egg around following cursor's position (touch in mobile devices).
 	/// </summary>
-	/// <returns><c>true</c> if this egg can be dragged; otherwise, <c>false</c>.</returns>
-	private bool CanDrag() {
-		// Can only be dragged while in inventory
-		return eggData.state == Egg.State.STORED;
+	private void FollowCursor() {
+		// Object follows the cursor at anchor's depth
+		float anchorDistToCamera = Camera.main.transform.position.Distance(m_incubatorAnchor.transform.position);
+		transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, anchorDistToCamera));
 	}
 
 	//------------------------------------------------------------------//
@@ -122,8 +102,8 @@ public class IncubatorEggController : MonoBehaviour {
 	/// Input has started on this object.
 	/// </summary>
 	public void OnMouseDown() {
-		// Skip if dragging is not possible
-		if(!CanDrag()) return;
+		// Ignore if component is disabled
+		if(!enabled) return;
 
 		// Store some values
 		m_originalPos = transform.position;
@@ -131,19 +111,21 @@ public class IncubatorEggController : MonoBehaviour {
 
 		// Move egg to the world (layer and parent)
 		gameObject.SetLayerRecursively("Default");
-		transform.SetParent(m_incubatorAnchor.transform.parent, false);
+		transform.SetParent(m_incubatorAnchor.transform, false);
+
+		// Move to initial position
+		FollowCursor();
 	}
 
 	/// <summary>
 	/// A drag movement started on this object is moving.
 	/// </summary>
 	public void OnMouseDrag() {
-		// Skip if dragging is not possible
-		if(!CanDrag()) return;
+		// Ignore if component is disabled
+		if(!enabled) return;
 
-		// Object follows the cursor at anchor's depth
-		float anchorDistToCamera = m_camera.transform.position.Distance(m_incubatorAnchor.transform.position);
-		transform.position = m_camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, anchorDistToCamera));
+		// Drag around the screen!
+		FollowCursor();
 
 		// Snap to anchor if possible
 		if(CanSnap(true)) {
@@ -155,18 +137,18 @@ public class IncubatorEggController : MonoBehaviour {
 	/// Input started on this object has been released.
 	/// </summary>
 	public void OnMouseUp() {
+		// Ignore if component is disabled
+		if(!enabled) return;
+
 		// Hide warning message in any case
 		m_warningMessage.Show(false);
-
-		// Skip if dragging is not possible
-		if(!CanDrag()) return;
 
 		// Start incubating?
 		bool incubating = false;
 		if(CanSnap(false)) {
 			// Dropped onto the incubator! Start incubating
 			// Double check in case the manager doesn't allow us to do it
-			incubating = EggManager.PutEggToIncubator(eggData);
+			incubating = EggManager.PutEggToIncubator(GetComponent<EggController>().eggData);
 
 			// If successful, save persistence
 			if(incubating) PersistenceManager.Save();
@@ -174,23 +156,12 @@ public class IncubatorEggController : MonoBehaviour {
 
 		// Either snap to incubator anchor or go back to original position
 		if(incubating) {
-			transform.position = m_incubatorAnchor.transform.position;
+			m_incubatorAnchor.AttachEgg(GetComponent<EggController>());
 		} else {
 			// Move back to original position, parent and layer
 			gameObject.SetLayerRecursively("3dOverUI");
 			transform.SetParent(m_originalParent, false);
 			transform.position = m_originalPos;
-		}
-	}
-
-	/// <summary>
-	/// An egg has been collected!
-	/// </summary>
-	/// <param name="_egg">The egg that has been collected.</param>
-	private void OnEggCollected(Egg _egg) {
-		// If it matches this egg, destroy ourselves
-		if(_egg == this.eggData) {
-			GameObject.Destroy(this.gameObject);
 		}
 	}
 }
