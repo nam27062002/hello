@@ -166,10 +166,12 @@ public class NavigationScreenSystem : MonoBehaviour {
 		}
 
 		// Update screen tracking
+		int oldScreenIdx = m_currentScreenIdx;
 		m_currentScreenIdx = _newScreenIdx;
 
 		// Notify game!
 		Messenger.Broadcast<NavigationScreen, NavigationScreen, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED, currentScreen, newScreen, _animType != NavigationScreen.AnimType.NONE);
+		Messenger.Broadcast<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, oldScreenIdx, _newScreenIdx, _animType != NavigationScreen.AnimType.NONE);
 	}
 
 	/// <summary>

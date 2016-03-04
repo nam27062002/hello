@@ -76,6 +76,7 @@ public class OpenEggBehaviour : MonoBehaviour {
 	private void OnMouseUpAsButton() {
 		// Ignore if component is not enabled
 		if(!this.enabled) return;
+		if(m_tapCount >= TAPS_TO_OPEN) return;
 
 		// Increase tap count!
 		m_tapCount++;

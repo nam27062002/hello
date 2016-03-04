@@ -37,6 +37,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Button m_callToActionButton = null;
 	[SerializeField] private Button m_shopButton = null;
 	[SerializeField] private Button m_backButton = null;
+	[SerializeField] private Text m_tapInfoText = null;
 
 	// References
 	private EggController m_egg = null;
@@ -70,6 +71,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		Debug.Assert(m_callToActionButton != null, "Required field!");
 		Debug.Assert(m_shopButton != null, "Required field!");
 		Debug.Assert(m_backButton != null, "Required field!");
+		Debug.Assert(m_tapInfoText != null, "Required field!");
 		Debug.Assert(m_rewardText != null, "Required field!");
 
 		// Prepare the flash FX image
@@ -99,6 +101,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events.
 		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.AddListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnNavigationScreenChanged);
 	}
 
 	/// <summary>
@@ -126,11 +129,9 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_egg = null;
 		}
 
-		// Restore HUD
-		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
-
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.RemoveListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnNavigationScreenChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -160,8 +161,8 @@ public class OpenEggScreenController : MonoBehaviour {
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Hide();
 		m_actionButtonsAnimator.Hide();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
-		m_backButton.GetComponent<ShowHideAnimator>().Hide(false);
-		m_backButton.gameObject.SetActive(false);	// This will instantly disable the back button so the NavigationShowHideAnimator doesn't trigger when opening the screen
+		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
+		m_backButton.GetComponent<ShowHideAnimator>().Hide();
 
 		// Hide Flash FX and temp reward text
 		m_flashFX.SetActive(false);
@@ -274,7 +275,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		//InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();	// Keep HUD hidden
 		m_actionButtonsAnimator.Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
-		m_backButton.gameObject.SetActive(true);	// This will instantly disable the back button so the NavigationShowHideAnimator doesn't trigger when opening the screen
+		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_backButton.GetComponent<ShowHideAnimator>().Show();
 
 		// Change logic state
@@ -291,8 +292,9 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Change egg state
 		m_egg.eggData.ChangeState(Egg.State.OPENING);
 
-		// Show instant open button
+		// Show instant open button and info text
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Show();
+		m_tapInfoText.GetComponent<ShowHideAnimator>().Show();
 
 		// Change logic state
 		m_state = State.OPENING;
@@ -366,6 +368,29 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(_egg == m_egg.eggData) {
 			// Launch animation!
 			LaunchOpenAnimation();
+		}
+	}
+
+	/// <summary>
+	/// Navigation screen has changed (animation starts now).
+	/// </summary>
+	/// <param name="_fromScreen">From screen.</param>
+	/// <param name="_toScreen">To screen.</param>
+	/// <param name="_animate">Animated?</param>
+	private void OnNavigationScreenChanged(int _fromScreen, int _toScreen, bool _animate) {
+		// If leaving this screen, launch all the hide animations that are not automated
+		if(_fromScreen == (int)MenuScreens.OPEN_EGG) {
+			m_rewardText.DOFade(0f, 0.25f);
+
+			// Restore HUD
+			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
+		}
+
+		// If entering this screen, force some show/hide animations that conflict with automated ones
+		if(_toScreen == (int)MenuScreens.OPEN_EGG) {
+			// At this point automated ones have already been launched, so we override them
+			m_backButton.GetComponent<ShowHideAnimator>().Hide(false);
+			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);
 		}
 	}
 }

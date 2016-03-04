@@ -7,6 +7,9 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 	{
 	}
 
+	public void StrongFlap()
+	{
+	}
 
 	public void EatEvent()
 	{

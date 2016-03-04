@@ -106,6 +106,7 @@ public class FireBreath : DragonBreathBehaviour {
 	override protected void BeginBreath() 
 	{
 		base.BeginBreath();
+		AudioManager.instance.PlayClip("audio/sfx/Dragon/Menu_Scratch_13");
 		m_light = PoolManager.GetInstance("PF_FireLight");
 		m_light.transform.position = m_mouthTransform.position;
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);

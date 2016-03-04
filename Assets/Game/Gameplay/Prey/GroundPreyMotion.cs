@@ -11,13 +11,17 @@ public class GroundPreyMotion : PreyMotion {
 
 	protected override void AvoidCollisions() {}
 
-	protected override void UpdateVelocity() {
+	protected override void UpdateVelocity(bool insidePowerUp) {
 		if (!m_burning)
 		{
 			m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
 			m_steering = m_steering / m_mass;
 
-			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, m_currentMaxSpeed, 0.05f));
+			float targetSpeed = m_currentMaxSpeed;
+			if ( insidePowerUp )
+				targetSpeed = m_currentMaxSpeed * 0.5f;
+
+			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, targetSpeed, Time.deltaTime * 2));
 
 			RaycastHit sensorA;
 			RaycastHit sensorB;

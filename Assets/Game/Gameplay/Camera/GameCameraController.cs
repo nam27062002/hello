@@ -245,7 +245,7 @@ public class GameCameraController : MonoBehaviour {
 			}
 			else
 			{
-				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn )
+				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
 					targetZoom = m_farZoom;
 				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime);
 			}

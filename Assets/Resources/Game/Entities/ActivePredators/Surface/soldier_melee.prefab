@@ -1358,7 +1358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 15
+  m_damage: 10
   m_attackDelay: 1
   m_consecutiveAttacks: 5
   m_retreatingTime: 5
@@ -1467,8 +1467,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 4.5
-  m_sensorMaxRadius: 20
+  m_sensorMinRadius: 5
+  m_sensorMaxRadius: 21
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
   m_target: 0
@@ -1488,7 +1488,7 @@ MonoBehaviour:
     max: 0
   m_flockAvoidRadiusRange:
     min: 0
-    max: 1
+    max: 0.5
   m_steerForce: 0.5
   m_mass: 1
   m_distanceAttenuation: 8
@@ -1728,11 +1728,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 4.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 20
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_range
@@ -1756,7 +1756,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_damage
-      value: 15
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_attackDelay
@@ -1768,7 +1768,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_flockAvoidRadiusRange.max
-      value: 1.25
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_goldenChance

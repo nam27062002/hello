@@ -41,10 +41,6 @@ public class ProjectileBehaviour : MonoBehaviour {
 		if ( m_pMotion != null )
 		{
 			Vector3 pos = InstanceManager.player.transform.position;
-			float randomSize = 2.5f;
-			pos.x += Random.Range( -randomSize, randomSize );
-			pos.y += Random.Range( 0, randomSize );
-			pos.z = 0;
 			m_pMotion.Shoot( pos );
 		}
 
@@ -53,10 +49,11 @@ public class ProjectileBehaviour : MonoBehaviour {
 
 	void Update() {
 		// The dragon may eat this projectile, so we disable the explosion if that happens 
-		if (!m_edible.isBeingEaten) {
+		if (!m_edible.isBeingEaten && m_motion != null) 
+		{
 			float distanceToTargetSqr = (m_targetCenter - (Vector2)transform.position).sqrMagnitude;
-
-			if (distanceToTargetSqr <= 0.5f) {
+			if (distanceToTargetSqr <= 0.5f) 
+			{
 				Explode(false);	
 			}
 		}
@@ -83,7 +80,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 		}
 	}
 
-	private void Explode(bool _hitDragon) {
+	public void Explode(bool _hitDragon) {
 
 		if ( m_explosionPrefab != null )
 		{

@@ -28,6 +28,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_eatingTimer;
 	private float m_eatingTime;
 	protected bool m_slowedDown;
+	private float m_burpTime;
 
 	protected Transform m_mouth;
 	protected Vector3 m_tongueDirection;
@@ -39,12 +40,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	bool m_almostEat = false;
 
+	public List<string> m_burpSounds = new List<string>();
+	// public AudioSource m_burpAudio;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
 	void Awake () {
 		m_eatingTimer = 0;
+		m_burpTime = 0;
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
 		m_prey = new List<PreyData>();
@@ -82,12 +87,32 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {			
-		if (m_eatingTimer <= 0) {
+		if (m_eatingTimer <= 0) 
+		{
 			FindSomethingToEat();
+			if ( m_burpTime > 0 )
+			{
+				m_burpTime -= Time.deltaTime;
+				if ( m_burpTime <= 0 )
+				{
+					if ( Random.Range(0,100) < 60 )
+					{
+						Burp();
+					}
+				}
+			}
 		} else {
+			/*
+			if (m_burpAudio != null && m_burpAudio.isPlaying)
+			{
+				m_burpAudio.Stop();
+			}
+			*/
 			m_eatingTimer -= Time.deltaTime;
-			if (m_eatingTimer <= 0) {
+			if (m_eatingTimer <= 0) 
+			{
 				m_eatingTimer = 0;
+				m_burpTime = 2;
 			}
 		}
 
@@ -99,6 +124,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		m_animator.SetBool("almostEat", m_almostEat);
 		m_almostEat = false;
+	}
+
+	private void Burp()
+	{
+		if ( m_burpSounds.Count > 0 )
+		{
+			string name = m_burpSounds[ Random.Range( 0, m_burpSounds.Count ) ];
+			AudioManager.instance.PlayClip(name);
+		}
 	}
 
 	public void AlmostEat(EdibleBehaviour _prey) {
@@ -145,7 +179,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	private void FindSomethingToEat() {
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_mouth.position, m_eatDistance);
+
+		float eatDistance = m_eatDistance;
+		if ( DebugSettings.eatDistancePowerUp )
+		{
+			eatDistance = m_eatDistance * 2;
+		}
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_mouth.position, eatDistance);
 
 		for (int e = 0; e < preys.Length; e++) {
 			if (preys[e].def.edibleFromTier <= m_tier) {

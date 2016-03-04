@@ -144,6 +144,21 @@ public class SensePlayer : MonoBehaviour {
 				m_isInsideMinArea = false;
 				m_isInsideMaxArea = false;
 			}
+
+			// if Slow Power up and affects this type of prey
+			if( DebugSettings.slowPowerUp )
+			{
+				if ( m_isInsideMinArea )
+				{
+					// if is of type X
+					m_motion.SetAffectedBySlowDown( true );
+				}
+				else
+				{
+					m_motion.SetAffectedBySlowDown( false );
+				}
+			}
+
 		} else {
 			m_alert = false;
 			m_isInsideMinArea = false;
