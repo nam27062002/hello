@@ -26,6 +26,7 @@ public class Egg {
 		STORED,		// Egg is in storage, waiting for incubation
 		INCUBATING,	// Egg is in the incubator
 		READY,		// Egg has finished incubation period and is ready to be collected
+		OPENING,	// Egg is being opened
 		COLLECTED	// Egg has been collected
 	};
 
@@ -149,12 +150,16 @@ public class Egg {
 	public void ChangeState(State _newState) {
 		// [AOC] TODO!! Perform specific actions when changing state?
 		//				Check state changes restrictions.
+		State oldState = m_state;
 		m_state = _newState;
+
+		// Broadcast game event
+		Messenger.Broadcast<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, this, oldState, _newState);
 	}
 
 	/// <summary>
 	/// Hatches the egg and gives the player a newly generated reward.
-	/// Only if the egg is in the READY state.
+	/// Only if the egg is in the OPENING state.
 	/// </summary>
 	public void Collect() {
 		// Generate the reward
@@ -186,7 +191,7 @@ public class Egg {
 	/// Create an instance of this egg's prefab.
 	/// </summary>
 	/// <returns>The newly created instance, <c>null</c> if the instance couldn't be created.</returns>
-	public GameObject CreateInstance() {
+	public EggController CreateInstance() {
 		// Load the prefab for this egg as defined in the definition
 		GameObject prefabObj = Resources.Load<GameObject>(def.GetAsString("prefabPath"));
 		Debug.Assert(prefabObj != null, "The prefab defined to egg " + def.sku + " couldn't be found");
@@ -195,10 +200,11 @@ public class Egg {
 		GameObject newInstance = GameObject.Instantiate<GameObject>(prefabObj);
 
 		// Access to the EggController component and initialize it with this data
-		newInstance.GetComponent<IncubatorEggController>().eggData = this;
+		EggController newEgg = newInstance.GetComponent<EggController>();
+		newEgg.eggData = this;
 
 		// Return the newly created instance
-		return newInstance;
+		return newEgg;
 	}
 
 	//------------------------------------------------------------------//

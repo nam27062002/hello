@@ -133,12 +133,21 @@ public class NavigationScreenSystem : MonoBehaviour {
 				if(lastScreenIdx == _newScreenIdx) {
 					// Going back to previous screen!
 					_animType = NavigationScreen.AnimType.BACK;
-					m_screenHistory.RemoveAt(m_screenHistory.Count - 1);
 				} else {
 					// Moving forward to a new screen!
 					_animType = NavigationScreen.AnimType.FORWARD;
-					m_screenHistory.Add(m_currentScreenIdx);
 				}
+			}
+		}
+
+		// Update screen history
+		if(m_currentScreenIdx != SCREEN_NONE && _newScreenIdx != SCREEN_NONE) {
+			if(lastScreenIdx == _newScreenIdx) {
+				// Going back to previous screen!
+				m_screenHistory.RemoveAt(m_screenHistory.Count - 1);
+			} else {
+				// Moving forward to a new screen!
+				m_screenHistory.Add(m_currentScreenIdx);
 			}
 		}
 

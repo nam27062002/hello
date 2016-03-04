@@ -33,6 +33,11 @@ public class IncubatorEggAnchor : MonoBehaviour {
 		set { m_snapDistance = Mathf.Max(0f, value); }
 	}
 
+	private EggController m_attachedEgg = null;
+	public EggController attachedEgg {
+		get { return m_attachedEgg; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -42,10 +47,21 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	private void Start() {
 		// If there is an egg in the incubator, load it and anchor it
 		if(EggManager.incubatingEgg != null) {
-			GameObject newEggObj = EggManager.incubatingEgg.CreateInstance();
-			newEggObj.transform.SetParent(transform.parent, false);
-			newEggObj.transform.position = transform.position;
+			EggController newEgg = EggManager.incubatingEgg.CreateInstance();
+			newEgg.transform.SetParent(transform, false);
+			AttachEgg(newEgg);
 		}
+
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
+	}
+
+	/// <summary>
+	/// Destructor,
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
 	}
 
 	/// <summary>
@@ -64,7 +80,56 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------//
+	// OTHER METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Attachs the given egg view to this anchor.
+	/// If another egg view was already attached, it will be destroyed.
+	/// Nothing will happen if the given egg is <c>null</c>.
+	/// </summary>
+	/// <param name="_egg">The egg to be attached to this anchor.</param>
+	public void AttachEgg(EggController _egg) {
+		// Check params
+		if(_egg == null) return;
+
+		// If there is an egg already attached, destroy it
+		DeattachEgg(true);
+
+		// Put egg into position
+		_egg.transform.position = this.transform.position;
+
+		// Store reference
+		m_attachedEgg = _egg;
+	}
+
+	/// <summary>
+	/// Deattachs the current attached egg from the anchor.
+	/// Optionally destroy it as well.
+	/// Nothing will happen if there is no egg attached.
+	/// </summary>
+	/// <param name="_destroy">Whether to destroy the attached egg or not.</param>
+	public void DeattachEgg(bool _destroy) {
+		if(m_attachedEgg == null) return;
+
+		// Destroy?
+		if(_destroy) {
+			GameObject.Destroy(m_attachedEgg.gameObject);
+		}
+
+		// Clear reference
+		m_attachedEgg = null;
+	}
+
+	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// The incubator has been cleared, destroy ourselves.
+	/// We should only receive this event if we're actually the incubating egg.
+	/// </summary>
+	private void OnIncubatorCleared() {
+		// Destroy attached egg (if any)
+		DeattachEgg(true);
+	}
 }
 

@@ -85,13 +85,20 @@ public class IncubatorOpenEggButton : MonoBehaviour {
 	/// The button has been pressed.
 	/// </summary>
 	public void OnOpenButton() {
-		// [AOC] TODO!! Go to menu "open egg" screen
-		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		//screensController.GoToScreen(MenuScreensController.Screens.OPEN_EGG);
+		// Just in case, shouldn't happen anything if there is no egg incubating or it is not ready
+		if(!EggManager.isReadyForCollection) return;
 
-		// Directly collect the egg for now
-		EggManager.incubatingEgg.Collect();
-		PersistenceManager.Save();
+		// Try to reuse current egg view attached to the incubator
+		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+		MenuScreenScene incubatorScene = screensController.GetScene((int)MenuScreens.INCUBATOR);
+		IncubatorEggAnchor eggAnchor = incubatorScene.FindComponentRecursive<IncubatorEggAnchor>();
+		EggController eggView = eggAnchor.attachedEgg;
+		eggAnchor.DeattachEgg(false);	// Don't destroy it!
+
+		// Go to OPEN_EGG screen and start open flow
+		OpenEggScreenController openEggScreen = screensController.GetScreen((int)MenuScreens.OPEN_EGG).GetComponent<OpenEggScreenController>();
+		openEggScreen.StartFlow(EggManager.incubatingEgg, eggView);
+		screensController.GoToScreen((int)MenuScreens.OPEN_EGG);
 
 		// Hide! - we may need to confirm that egg was collected, but in theory the flow can't be interrupted
 		m_anim.Hide();

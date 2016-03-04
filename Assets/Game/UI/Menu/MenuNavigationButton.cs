@@ -26,7 +26,7 @@ public class MenuNavigationButton : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Exposed
 	[Comment("Will only be used if the OnNavigationButtonClick listener is added to the button's OnClick event. Passing enum values as parameters for events is not possible in Unity, so we must do it this way.")]
-	[SerializeField] private MenuScreensController.Screens m_targetScreen = MenuScreensController.Screens.NONE;
+	[SerializeField] private MenuScreens m_targetScreen = MenuScreens.NONE;
 
 	// Internal References
 	private MenuScreensController m_navigationSystem = null;

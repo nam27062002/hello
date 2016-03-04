@@ -45,6 +45,12 @@ public class MenuSceneController : SceneController {
 		get { return m_screensController; }
 	}
 
+	[Separator()]
+	[SerializeField] private MenuHUD m_hud = null;
+	public MenuHUD hud {
+		get { return m_hud; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

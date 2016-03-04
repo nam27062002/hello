@@ -14,30 +14,35 @@ using DG.Tweening;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
+/// Screens enumerator, make it global because it's used a lot and we want to keep a shorter notation.
+/// </summary>
+public enum MenuScreens {
+	NONE = -1,
+	PLAY,
+	DRAGON_SELECTION,
+	LEVEL_SELECTION,
+	INCUBATOR,
+	OPEN_EGG,
+
+	COUNT
+};
+
+/// <summary>
 /// Adds some specific behaviour to the main menu screen navigator.
 /// </summary>
 public class MenuScreensController : NavigationScreenSystem {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public enum Screens {
-		NONE = -1,
-		PLAY,
-		DRAGON_SELECTION,
-		LEVEL_SELECTION,
-		INCUBATOR,
-
-		COUNT
-	};
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	[Space()]
-	[Comment("There should always be one camera snap point per screen, value can be null")]
-	[SerializeField] private CameraSnapPoint[] m_screensCameraSnapPoints = new CameraSnapPoint[(int)Screens.COUNT];
-	public CameraSnapPoint[] screensCameraSnapPoints {
-		get { return m_screensCameraSnapPoints; }
+	[Comment("There should always be one scene entry per screen, value can be null")]
+	[SerializeField] private MenuScreenScene[] m_scenes = new MenuScreenScene[(int)MenuScreens.COUNT];
+	public MenuScreenScene[] scenes {
+		get { return m_scenes; }
 	}
 
 	[Space()]
@@ -61,9 +66,9 @@ public class MenuScreensController : NavigationScreenSystem {
 	private void Awake() {
 		// Just define initial screen on the navigation system before it actually starts
 		if(GameVars.playScreenShown) {
-			SetInitialScreen((int)Screens.DRAGON_SELECTION);
+			SetInitialScreen((int)MenuScreens.DRAGON_SELECTION);
 		} else {
-			SetInitialScreen((int)Screens.PLAY);
+			SetInitialScreen((int)MenuScreens.PLAY);
 		}
 	}
 
@@ -75,11 +80,25 @@ public class MenuScreensController : NavigationScreenSystem {
 		base.Start();
 
 		// Instantly move camera to initial screen snap point
-		if(m_camera != null
-		&& m_currentScreenIdx != SCREEN_NONE
-		&& m_screensCameraSnapPoints[m_currentScreenIdx] != null) {
-			m_screensCameraSnapPoints[m_currentScreenIdx].Apply(m_camera);
+		MenuScreenScene targetScene = GetScene(m_currentScreenIdx);
+		if(targetScene != null
+		&& targetScene.cameraSnapPoint != null
+		&& m_camera != null) {
+			targetScene.cameraSnapPoint.Apply(m_camera);
 		}
+	}
+
+	//------------------------------------------------------------------//
+	// PUBLIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Get the 3D scene linked to a given screen index.
+	/// </summary>
+	/// <returns>The 3D scene object linked to the screen with index <paramref name="_screenIdx"/>.<c>null</c> if not defined or provided index not valid.</returns>
+	/// <param name="_screenIdx">The index of the screen whose linked 3D scene we want.</param>
+	public MenuScreenScene GetScene(int _screenIdx) {
+		if(_screenIdx < 0 || _screenIdx >= (int)MenuScreens.COUNT) return null;
+		return m_scenes[_screenIdx];
 	}
 
 	//------------------------------------------------------------------//
@@ -98,14 +117,15 @@ public class MenuScreensController : NavigationScreenSystem {
 		base.GoToScreen(_newScreenIdx, _animType);
 
 		// Perform camera transition (if snap point defined)
-		if(m_camera != null
-		&& m_currentScreenIdx != SCREEN_NONE
-		&& m_screensCameraSnapPoints[m_currentScreenIdx] != null) {
+		MenuScreenScene targetScene = GetScene(_newScreenIdx);
+		if(targetScene != null
+		&& targetScene.cameraSnapPoint != null
+		&& m_camera != null) {
 			// Perform camera transition!
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCirc);
 			tweenParams.OnComplete(OnCameraTweenCompleted);
-			m_screensCameraSnapPoints[m_currentScreenIdx].TweenTo(m_camera, 0.5f, tweenParams); 
+			targetScene.cameraSnapPoint.TweenTo(m_camera, 0.5f, tweenParams); 
 			m_tweening = true;
 		}
 	}
