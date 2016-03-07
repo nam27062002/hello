@@ -24,7 +24,8 @@ public class HUDStatBar : MonoBehaviour {
 	public enum Type {
 		Health,
 		Energy,
-		Fury
+		Fury,
+		SuperFury
 	}
 
 	//------------------------------------------------------------------//
@@ -75,6 +76,7 @@ public class HUDStatBar : MonoBehaviour {
 			case Type.Health: 	return InstanceManager.player.data.maxHealth;
 			case Type.Energy:	return InstanceManager.player.data.def.maxEnergy;
 			case Type.Fury:		return InstanceManager.player.data.def.maxFury;
+			case Type.SuperFury:return InstanceManager.player.data.def.maxFury;
 		}
 		return 0;
 	}
@@ -84,6 +86,7 @@ public class HUDStatBar : MonoBehaviour {
 			case Type.Health: 	return InstanceManager.player.health;
 			case Type.Energy:	return InstanceManager.player.energy;
 			case Type.Fury:		return InstanceManager.player.fury;
+			case Type.SuperFury:return InstanceManager.player.superFury;
 		}		
 		return 0;
 	}
