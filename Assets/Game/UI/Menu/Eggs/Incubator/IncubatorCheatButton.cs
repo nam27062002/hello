@@ -42,11 +42,8 @@ public class IncubatorCheatButton : MonoBehaviour {
 	/// Add egg to inventory cheat.
 	/// </summary>
 	public void OnAddEgg() {
-		// Pick a random egg from the definitions set
-		string newEggSku = Definitions.GetDefinitions(Definitions.Category.EGGS).GetRandomValue().sku;
-
 		// Add it to the inventory
-		int slotIdx = EggManager.AddEggToInventory(Egg.CreateBySku(newEggSku));
+		int slotIdx = EggManager.AddEggToInventory(Egg.CreateRandom(false));
 
 		// If successful, save persistence
 		if(slotIdx >= 0) PersistenceManager.Save();

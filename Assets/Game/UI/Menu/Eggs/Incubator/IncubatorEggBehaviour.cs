@@ -56,6 +56,14 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 
 		// Search the UI warning message as well
 		m_warningMessage = incubatorScreen.FindComponentRecursive<IncubatorWarningMessage>();
+
+		// Subscribe to mouse events on the collider
+		MouseEventsPropagator mouseEvents = GetComponentInChildren<MouseEventsPropagator>(true);
+		if(mouseEvents != null) {
+			mouseEvents.onMouseDown.AddListener(OnEggMouseDown);
+			mouseEvents.onMouseDrag.AddListener(OnEggMouseDrag);
+			mouseEvents.onMouseUp.AddListener(OnEggMouseUp);
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -101,7 +109,7 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 	/// <summary>
 	/// Input has started on this object.
 	/// </summary>
-	public void OnMouseDown() {
+	public void OnEggMouseDown() {
 		// Ignore if component is disabled
 		if(!enabled) return;
 
@@ -120,7 +128,7 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 	/// <summary>
 	/// A drag movement started on this object is moving.
 	/// </summary>
-	public void OnMouseDrag() {
+	public void OnEggMouseDrag() {
 		// Ignore if component is disabled
 		if(!enabled) return;
 
@@ -136,7 +144,7 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 	/// <summary>
 	/// Input started on this object has been released.
 	/// </summary>
-	public void OnMouseUp() {
+	public void OnEggMouseUp() {
 		// Ignore if component is disabled
 		if(!enabled) return;
 

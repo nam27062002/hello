@@ -64,6 +64,7 @@ GameObject:
   - 222: {fileID: 22224800}
   - 114: {fileID: 11424882}
   - 114: {fileID: 11403318}
+  - 114: {fileID: 11411366}
   m_Layer: 5
   m_Name: PF_BoxEgg
   m_TagString: Untagged
@@ -160,6 +161,17 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11411366
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caea5160d53324fa4bf6696586f1dca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11420140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -225,9 +237,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_quality: 0
-  m_size: 3
-  m_color: {r: 0.33333334, g: 0.27450982, b: 0.26666668, a: 1}
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 0
+  m_outlineQuality: 0
+  m_outlineSize: 3
+  m_outlineColor: {r: 0.33333334, g: 0.27450982, b: 0.26666668, a: 1}
+  m_shadow: 0
+  m_shadowAngle: 315
   m_shadowSize: 0
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &11444546
@@ -357,10 +374,10 @@ RectTransform:
   - {fileID: 22408924}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 415, y: 555}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22455128
 RectTransform:

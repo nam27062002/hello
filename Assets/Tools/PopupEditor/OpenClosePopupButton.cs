@@ -36,14 +36,15 @@ namespace PopupEditor {
 		/// </summary>
 		private void Awake() {
 			GetComponent<Button>().onClick.AddListener(OnClick);
-			m_popup = null;
 		}
 
 		/// <summary>
 		/// First update call.
 		/// </summary>
 		private void Start() {
-
+			if(m_popup != null) {
+				GameObject.Destroy(m_popup.gameObject);
+			}
 		}
 
 		/// <summary>
@@ -85,16 +86,8 @@ namespace PopupEditor {
 		/// The linked button has been clicked.
 		/// </summary>
 		private void OnClick() {
-			/*if(m_popup != null) {
-				if(m_popup.isOpen) {
-					m_popup.Close(false);
-				} else {
-					m_popup.Open();
-				}
-			}*/
-
 			if(m_popup == null) {
-				m_popup = PopupManager.OpenPopupInstant(PopupChestReward.PATH);
+				m_popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
 			} else {
 				m_popup.Close(true);
 				m_popup = null;

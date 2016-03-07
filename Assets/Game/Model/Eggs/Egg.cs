@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -27,7 +28,8 @@ public class Egg {
 		INCUBATING,	// Egg is in the incubator
 		READY,		// Egg has finished incubation period and is ready to be collected
 		OPENING,	// Egg is being opened
-		COLLECTED	// Egg has been collected
+		COLLECTED,	// Egg has been collected
+		SHOP		// Egg for display only, state is not relevant
 	};
 
 	/// <summary>
@@ -129,6 +131,33 @@ public class Egg {
 		Egg newEgg = new Egg();
 		newEgg.m_def = _def;
 		return newEgg;
+	}
+
+	/// <summary>
+	/// Create an egg using a random definition picked from the EGGS category.
+	/// </summary>
+	/// <returns>The newly created egg. Null if no definition could be picked.</returns>
+	/// <param name="_onlyOwnedDragons">Whether to restrict the random selection to eggs related to owned dragons only.</param>
+	public static Egg CreateRandom(bool _onlyOwnedDragons = true) {
+		// Get all egg definitions
+		List<DefinitionNode> eggDefs = Definitions.GetDefinitions(Definitions.Category.EGGS);
+
+		// Filter those whose linked dragon is not valid
+		// If required, select only those whose dragon is owned
+		List<DefinitionNode> selectedDefs = new List<DefinitionNode>(eggDefs.Capacity);
+		DragonData dragonData = null;
+		for(int i = 0; i < eggDefs.Count; i++) {
+			dragonData = DragonManager.GetDragonData(eggDefs[i].Get("dragonSku"));
+			if(dragonData == null) continue;
+			if(_onlyOwnedDragons && !dragonData.isOwned) continue;
+			selectedDefs.Add(eggDefs[i]);
+		}
+
+		// Pick a random egg from the definitions set
+		if(selectedDefs.Count > 0) {
+			return CreateByDef(selectedDefs.GetRandomValue());
+		}
+		return null;
 	}
 
 	//------------------------------------------------------------------//

@@ -33,9 +33,6 @@ public class OpenEggBehaviour : MonoBehaviour {
 		get { return m_tapCount; }
 	}
 
-	// References
-	private Sequence m_shakeAnim = null;
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -43,27 +40,18 @@ public class OpenEggBehaviour : MonoBehaviour {
 	/// First update.
 	/// </summary>
 	private void Start() {
+		// Subscribe to mouse events on the collider
+		MouseEventsPropagator mouseEvents = GetComponentInChildren<MouseEventsPropagator>(true);
+		if(mouseEvents != null) {
+			mouseEvents.onMouseUpAsButton.AddListener(OnEggMouseUpAsButton);
+		}
+
 		// If we are not at the menu scene, disable this component
 		MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
 		if(sceneController == null) {
 			this.enabled = false;
 			return;
 		}
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Start shake animation
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Stop shake animation
-		//m_shakeAnim.DOComplete();
 	}
 
 	//------------------------------------------------------------------//
@@ -73,7 +61,7 @@ public class OpenEggBehaviour : MonoBehaviour {
 	/// OnMouseUpAsButton is only called when the mouse is released over the same 
 	/// GUIElement or Collider as it was pressed.
 	/// </summary>
-	private void OnMouseUpAsButton() {
+	private void OnEggMouseUpAsButton() {
 		// Ignore if component is not enabled
 		if(!this.enabled) return;
 		if(m_tapCount >= TAPS_TO_OPEN) return;
@@ -87,9 +75,6 @@ public class OpenEggBehaviour : MonoBehaviour {
 			// Open FX are managed externally
 			GetComponent<EggController>().eggData.Collect();
 			PersistenceManager.Save();
-
-			// Stop shake animation
-			//m_shakeAnim.Pause();
 		}
 
 		// Otherwise show some FX
@@ -99,7 +84,6 @@ public class OpenEggBehaviour : MonoBehaviour {
 
 			// Scale down a bit every time xD
 			// Use relative scaling
-			float delta = m_tapCount/(float)(TAPS_TO_OPEN - 1);
 			Vector3 targetScale = new Vector3(transform.localScale.x * 1.1f, transform.localScale.y * 0.9f, transform.localScale.z * 1.1f);
 			transform.DOScale(targetScale, 0.5f).SetEase(Ease.OutElastic).SetId("eggTap");
 		}
