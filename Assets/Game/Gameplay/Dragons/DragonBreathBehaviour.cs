@@ -22,6 +22,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private Animator m_animator;
 
 	protected bool m_isFuryOn;
+	protected bool m_isSuperFuryOn;
 
 	//-----------------------------------------------
 	// Methods
@@ -34,7 +35,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();		
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_isFuryOn = false;
-
+		m_isSuperFuryOn = false;
 		m_bounds2D = new Rect();
 
 		ExtendedStart();
@@ -49,7 +50,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	
 	void OnDisable() {
 
-		if (m_isFuryOn) {
+		if (m_isFuryOn || m_isSuperFuryOn) {
 			m_isFuryOn = false;
 			m_animator.SetBool("breath", false);// Stop fury rush (if active)
 			if (m_healthBehaviour) m_healthBehaviour.enabled = true;
@@ -61,29 +62,41 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	public bool IsFuryOn() {
 		
-		return m_isFuryOn;
+		return m_isFuryOn || m_isSuperFuryOn;
 	}
 
 	void Update() {
 		// Cheat for infinite fire
-		bool cheating = (Debug.isDebugBuild && DebugSettings.infiniteFire);
+		bool cheating = (Debug.isDebugBuild && (DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 		if(cheating) {
-			m_dragon.AddFury(m_dragon.data.def.maxFury - m_dragon.fury);	// Set to max fury
+			if ( DebugSettings.infiniteFire )
+				m_dragon.AddFury(m_dragon.data.def.maxFury - m_dragon.fury);	// Set to max fury
+			else if ( DebugSettings.infiniteSuperFire )
+				m_dragon.AddSuperFury(m_dragon.data.def.maxFury - m_dragon.superFury);
 		}
 
-		if (m_isFuryOn) {
+		if (m_isFuryOn || m_isSuperFuryOn) 
+		{
 
 			// Don't decrease fury if cheating
 			if(!cheating) {
 				float dt = Time.deltaTime / m_dragon.data.def.furyDuration;
-				m_dragon.AddFury(-(dt * m_dragon.data.def.maxFury));
+				if ( m_isFuryOn )
+					m_dragon.AddFury(-(dt * m_dragon.data.def.maxFury));
+				else
+					m_dragon.AddSuperFury(-(dt * m_dragon.data.def.maxFury));
 			}
 
-			if (m_dragon.fury <= 0) {
-
-				m_isFuryOn = false;
+			if ((m_isFuryOn && m_dragon.fury <= 0) || (m_isSuperFuryOn && m_dragon.superFury <= 0)) 
+			{
 				EndBreath();
-				m_dragon.StopFury();
+				if ( m_isFuryOn )
+				{
+					m_dragon.StopFury();
+					m_dragon.AddSuperFury(m_dragon.data.def.maxFury);
+				}
+				m_isFuryOn = false;
+				m_isSuperFuryOn = false;
 				m_animator.SetBool("breath", false);
 				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 				if (m_eatBehaviour) m_eatBehaviour.enabled = true;
@@ -95,8 +108,18 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}
 		} else {
 
-			if (m_dragon.fury >= m_dragon.data.def.maxFury) {
-
+			if ( m_dragon.superFury >= m_dragon.data.def.maxFury )
+			{
+				m_isSuperFuryOn = true;
+				BeginBreath();
+				m_dragon.StartSuperFury();
+				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
+				if (m_eatBehaviour) m_eatBehaviour.enabled = false;
+				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
+				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
+			}
+			else if (m_dragon.fury >= m_dragon.data.def.maxFury) 
+			{
 				m_isFuryOn = true;
 				BeginBreath();
 				m_dragon.StartFury();

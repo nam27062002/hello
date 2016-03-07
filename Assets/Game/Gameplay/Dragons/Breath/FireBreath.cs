@@ -69,7 +69,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override public bool IsInsideArea(Vector2 _point) { 
 	
-		if (m_isFuryOn) {
+		if (m_isFuryOn || m_isSuperFuryOn) {
 			if (m_bounds2D.Contains(_point)) {
 				return IsInsideTriangle( _point );
 			}
@@ -80,7 +80,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override public bool Overlaps( CircleArea2D _circle)
 	{
-		if (m_isFuryOn) 
+		if (m_isFuryOn || m_isSuperFuryOn) 
 		{
 			if (_circle.Overlaps( m_bounds2D )) 
 			{
@@ -125,20 +125,24 @@ public class FireBreath : DragonBreathBehaviour {
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
 
+		float length = m_length;
+			if ( m_isSuperFuryOn )
+				length = m_length * 2;
+
 		Vector3 flamesUpDir = Vector3.up;
 		if (m_frame == 0) {
 			// Raycast to ground
 			RaycastHit ground;				
-			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_groundMask)) 
+			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) 
 			{
 				m_actualLength = ground.distance;
 			} 
 			else 
 			{				
-				m_actualLength = m_length;
+				m_actualLength = length;
 			}
 
-			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length, out ground, m_noPlayerMask)) 
+			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_noPlayerMask)) 
 			{
 				flamesUpDir = Vector3.Reflect( m_direction, ground.normal);
 				flamesUpDir.Normalize();
@@ -202,16 +206,15 @@ public class FireBreath : DragonBreathBehaviour {
 			
 			if (obj != null) {
 				FlameUp particle = obj.GetComponent<FlameUp>();
-				float pos = Random.Range( m_length / 5.0f, m_length);
+				float pos = Random.Range( length / 5.0f, length);
 				float delta = pos / m_length;
-				float scale = m_sizeCurve.Evaluate( pos / m_length );
+				float scale = m_sizeCurve.Evaluate( pos / length );
 				float correctedPos = pos;
 				float distanceMultiplier = 1.5f;
 				if ( pos > m_actualLength )
 				{
 					correctedPos = m_actualLength;
 					distanceMultiplier = 3;
-
 				}
 				particle.m_moveDir = flamesUpDir;
 				particle.Activate( scale, scale * 1.25f, (delta + 0.1f), scale * distanceMultiplier, m_mouthTransform.position + (Vector3)m_direction * correctedPos, m_mouthTransform);
@@ -246,7 +249,7 @@ public class FireBreath : DragonBreathBehaviour {
 	}
 
 	void OnDrawGizmos() {
-		if (m_isFuryOn) {
+		if (m_isFuryOn || m_isSuperFuryOn) {
 			Gizmos.color = Color.magenta;
 
 			Gizmos.DrawLine(m_triP0, m_triP1);
@@ -256,7 +259,14 @@ public class FireBreath : DragonBreathBehaviour {
 			Gizmos.DrawWireSphere(m_sphCenter, m_sphRadius);
 
 			Gizmos.color = Color.green;
-			Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
+			if ( m_isSuperFuryOn )
+			{
+				Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
+			}
+			else
+			{
+				Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
+			}
 		}
 	}
 }
