@@ -103,6 +103,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					m_dragon.StopFury();
 					m_dragon.AddSuperFury(m_dragon.data.def.maxFury);
 				}
+				else
+				{
+					m_dragon.StopSuperFury();
+				}
 				m_isFuryOn = false;
 				m_isSuperFuryOn = false;
 				m_animator.SetBool("breath", false);

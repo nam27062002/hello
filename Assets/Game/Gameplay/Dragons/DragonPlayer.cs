@@ -241,7 +241,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// Start super fury rush.
 	/// </summary>
 	public void StartSuperFury() {
-		m_furyActive = true;
+		m_superFuryActive = true;
 	}
 
 	/// <summary>
