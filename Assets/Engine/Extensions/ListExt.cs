@@ -150,9 +150,8 @@ public static class ListExt {
 	/// </summary>
 	/// <param name="_list">The list to be sorted.</param>
 	public static void SortAlphanumeric(this List<string> _list) {
-		string[] array = _list.ToArray();
-		array.SortAlphanumeric();
-		_list = new List<string>(array);
+		AlphanumComparatorFast comparer = new AlphanumComparatorFast();
+		_list.Sort((x, y) => comparer.Compare(x, y));
 	}
 
 	/// <summary>

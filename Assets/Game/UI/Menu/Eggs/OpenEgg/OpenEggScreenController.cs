@@ -261,15 +261,24 @@ public class OpenEggScreenController : MonoBehaviour {
 		//m_flashFX.GetComponent<Image>().DOFade(0f, 1f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
 
 		// [AOC] TEMP!! Some dummy effect on the egg xD
-		m_egg.GetComponent<DOTweenAnimation>().DOKill();
-		m_egg.transform.DOScale(new Vector3(15f, 5f, 15f), 1.0f).SetDelay(0.10f).SetEase(Ease.OutElastic);
+		m_egg.transform.DOScale(new Vector3(1.5f, 0.4f, 1.5f), 1.0f).SetDelay(0.10f).SetEase(Ease.OutElastic);
 
 		// [AOC] TODO!! Replace egg view by the reward prefab
 		m_rewardText.gameObject.SetActive(true);
 		//m_rewardText.transform.DOScale(0f, 0.5f).SetDelay(0.5f).From().SetEase(Ease.OutElastic).SetRecyclable(true);
 		m_rewardText.transform.DOBlendableLocalMoveBy(Vector3.up * 500f, 0.30f).From().SetEase(Ease.OutBounce).SetRecyclable(true);
 		m_rewardText.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
-		m_rewardText.text = "You've got " + m_egg.eggData.rewardDef.sku + " for dragon " + m_egg.eggData.def.GetAsString("dragonSku") + "!";
+		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
+			case "suit": {
+				m_rewardText.text = "You've got " + m_egg.eggData.rewardDef.sku + " for dragon " + m_egg.eggData.def.GetAsString("dragonSku") + "!";
+			} break;
+
+			case "pet":
+			case "dragon": {
+					m_rewardText.text = "You've got " + m_egg.eggData.rewardDef.sku + "!";
+			} break;
+		}
+		
 
 		// Show/Hide buttons and HUD
 		//InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();	// Keep HUD hidden
@@ -351,7 +360,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// [AOC] TODO!! Show shop
 		// Simulate a new egg's instant purchase
-		Egg purchasedEgg = Egg.CreateBySku(Definitions.GetDefinitions(Definitions.Category.EGGS).GetRandomValue().sku);	// Pick a random egg from the definitions set
+		Egg purchasedEgg = Egg.CreateRandom(false);	// Pick a random egg from the definitions set
 		purchasedEgg.ChangeState(Egg.State.READY);
 		StartFlow(purchasedEgg);	// Restart flow!!
 	}

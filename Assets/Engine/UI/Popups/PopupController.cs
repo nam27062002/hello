@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -34,22 +35,14 @@ public class PopupController : MonoBehaviour {
 	private bool m_destroyAfterClose = true;
 
 	//------------------------------------------------------------------//
-	// DELEGATES														//
+	// EVENTS															//
 	//------------------------------------------------------------------//
-	// Default initialization to avoid null reference when invoking. 
-	// Add as many listeners as you want to this specific event by using the += syntax
-
-	public delegate void OnOpenPreAnimationDelegate();
-	public OnOpenPreAnimationDelegate OnOpenPreAnimation = delegate() { };
-
-	public delegate void OnOpenPostAnimationDelegate();
-	public OnOpenPostAnimationDelegate OnOpenPostAnimation = delegate() { };
-
-	public delegate void OnClosePreAnimationDelegate();
-	public OnClosePreAnimationDelegate OnClosePreAnimation = delegate() { };
-
-	public delegate void OnClosePostAnimationDelegate();
-	public OnClosePostAnimationDelegate OnClosePostAnimation = delegate() { };
+	// Add as many listeners as you want to this specific event by using the .AddListener() method
+	// No need to remove them, events will be cleared upon popup's destruction
+	public UnityEvent OnOpenPreAnimation = new UnityEvent();
+	public UnityEvent OnOpenPostAnimation = new UnityEvent();
+	public UnityEvent OnClosePreAnimation = new UnityEvent();
+	public UnityEvent OnClosePostAnimation = new UnityEvent();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -76,11 +69,11 @@ public class PopupController : MonoBehaviour {
 		// Dispatch message - it could be problematic using "this" at this point
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_DESTROYED, this);
 
-		// Loose references to delegates
-		OnOpenPreAnimation = null;
-		OnOpenPostAnimation = null;
-		OnClosePreAnimation = null;
-		OnClosePostAnimation = null;
+		// Clear all events
+		OnOpenPreAnimation.RemoveAllListeners();
+		OnOpenPostAnimation.RemoveAllListeners();
+		OnClosePreAnimation.RemoveAllListeners();
+		OnClosePostAnimation.RemoveAllListeners();
 	}
 
 	//------------------------------------------------------------------//
@@ -96,8 +89,8 @@ public class PopupController : MonoBehaviour {
 		// Dispatch message
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_OPENED, this);
 
-		// Invoke delegate
-		OnOpenPreAnimation();
+		// Invoke event
+		OnOpenPreAnimation.Invoke();
 
 		// Launch anim
 		m_anim.SetTrigger("open");
@@ -111,8 +104,8 @@ public class PopupController : MonoBehaviour {
 		// Store flag
 		m_destroyAfterClose = _bDestroy;
 
-		// Invoke delegate
-		OnClosePreAnimation();
+		// Invoke event
+		OnClosePreAnimation.Invoke();
 
 		// Launch anim
 		m_anim.SetTrigger("close");
@@ -125,8 +118,8 @@ public class PopupController : MonoBehaviour {
 	/// The open animation has finished. To be called via animation trigger.
 	/// </summary>
 	private void OnOpenAnimFinished() {
-		// Invoke delegate
-		OnOpenPostAnimation();
+		// Invoke event
+		OnOpenPostAnimation.Invoke();
 	}
 
 	/// <summary>
@@ -137,8 +130,8 @@ public class PopupController : MonoBehaviour {
 		// Update state
 		m_isOpen = false;
 
-		// Invoke delegate
-		OnClosePostAnimation();
+		// Invoke event
+		OnClosePostAnimation.Invoke();
 
 		// Dispatch message
 		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CLOSED, this);

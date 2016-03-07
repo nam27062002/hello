@@ -44,6 +44,9 @@ public class EggController : MonoBehaviour {
 		get { return m_openBehaviour; }
 	}
 
+	// Internal references
+	private Animator m_animator = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -54,6 +57,7 @@ public class EggController : MonoBehaviour {
 		// Get external references
 		m_incubatorBehaviour = GetComponent<IncubatorEggBehaviour>();
 		m_openBehaviour = GetComponent<OpenEggBehaviour>();
+		m_animator = GetComponentInChildren<Animator>();
 	}
 
 	/// <summary>
@@ -63,7 +67,15 @@ public class EggController : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 
-		// Perform a first refresh
+		// Make sure we're updated
+		Refresh();
+	}
+
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Make sure we're updated
 		Refresh();
 	}
 
@@ -88,6 +100,10 @@ public class EggController : MonoBehaviour {
 		// Enable/disable behaviours based on current egg's state
 		m_incubatorBehaviour.enabled = (m_eggData.state == Egg.State.STORED);
 		m_openBehaviour.enabled = (m_eggData.state == Egg.State.OPENING);
+
+		// Update animator! - Luckily animator is self-managed
+		m_animator.SetInteger("egg_state", (int)m_eggData.state);
+		m_animator.SetTrigger("egg_state_changed");
 	}
 
 	//------------------------------------------------------------------//
