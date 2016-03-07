@@ -40,6 +40,10 @@ public class DragonPlayer : MonoBehaviour {
 	private bool m_furyActive = false;
 	public float fury { get { return m_fury[0]; } }
 
+	private float m_superFury;
+	private bool m_superFuryActive = false;
+	public float superFury{ get { return m_superFury; } }
+
 	// Interaction
 	 public bool playable {
 		set {
@@ -84,6 +88,10 @@ public class DragonPlayer : MonoBehaviour {
 		m_fury[0] = 0;
 		m_fury[1] = 0;
 		m_furyActive = false;
+
+		// Initiate super fury
+		m_superFury = 0;
+		m_superFuryActive = false;
 
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
@@ -183,10 +191,13 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of fury to be added/removed.</param>
 	public void AddFury(float _offset) {
-		if (m_furyActive && _offset >= 0) {
-			m_fury[1] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[1] + _offset)); 
-		} else {
-			m_fury[0] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[0] + _offset)); 
+		if ( !m_superFuryActive )
+		{
+			if (m_furyActive && _offset >= 0) {
+				m_fury[1] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[1] + _offset)); 
+			} else {
+				m_fury[0] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[0] + _offset)); 
+			}
 		}
 	}
 
@@ -216,6 +227,42 @@ public class DragonPlayer : MonoBehaviour {
 		m_fury[0] = m_fury[1];
 		m_fury[1] = 0;
 	}
+
+
+	/// <summary>
+	/// Add/remove super fury to the dragon.
+	/// </summary>
+	/// <param name="_offset">The amount of super fury to be added/removed.</param>
+	public void AddSuperFury(float _offset) {
+		m_superFury = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_superFury + _offset)); 
+	}
+
+	/// <summary>
+	/// Start super fury rush.
+	/// </summary>
+	public void StartSuperFury() {
+		m_superFuryActive = true;
+	}
+
+	/// <summary>
+	/// Determines whether this instance is super fury on.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
+	public bool IsSuperFuryOn() {
+		
+		return m_superFuryActive;
+	}
+
+
+	/// <summary>
+	/// End super fury rush.
+	/// </summary>
+	public void StopSuperFury() {
+		//when player used all the super fury, we swap all the super fury we got while throwing super fire
+		m_superFuryActive = false;
+		m_superFury = 0;
+	}
+
 
 	/// <summary>
 	/// Sets the speed multiplier.
