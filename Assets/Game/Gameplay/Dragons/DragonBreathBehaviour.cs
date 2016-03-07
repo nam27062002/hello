@@ -7,7 +7,15 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------
 	[SerializeField]private float m_damage = 25f;
-	public float damage { get { return m_damage; } }
+	public float damage { 
+		get 
+		{ 
+			if ( m_isSuperFuryOn )
+				return m_damage * 2;
+			else
+				return m_damage; 
+		} 
+	}
 	
 	protected Rect m_bounds2D;
 	public Rect bounds2D { get { return m_bounds2D; } }
