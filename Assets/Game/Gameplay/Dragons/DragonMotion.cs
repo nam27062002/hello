@@ -52,6 +52,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector3 m_impulse;
 	private Vector3 m_direction;
 	private float m_speedMultiplier;
+	public float speedMultiplier
+	{
+		get
+		{
+			return m_speedMultiplier;
+		}
+	}
 
 	private float m_stunnedTimer;
 
@@ -81,6 +88,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private Transform m_tongue;
 	private Transform m_head;
+	private Transform m_cameraLookAt;
 
 	// Parabolic movement
 	private float m_parabolicMovementValue = 10;
@@ -109,6 +117,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
 	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
+	public Transform cameraLookAt   { get { if (m_cameraLookAt == null)   { m_cameraLookAt = transform.FindTransformRecursive("camera");  } return m_cameraLookAt;   } }
 	private Vector3 m_lastPosition;
 	private Vector3 lastPosition
 	{

@@ -617,6 +617,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &141164
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 461864}
+  m_Layer: 12
+  m_Name: camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &145538
 GameObject:
   m_ObjectHideFlags: 1
@@ -1930,6 +1945,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 415992}
   m_RootOrder: 0
+--- !u!4 &461864
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 141164}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.182, y: 0.664, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 491788}
+  m_RootOrder: 3
 --- !u!4 &462798
 Transform:
   m_ObjectHideFlags: 1
@@ -2260,6 +2287,7 @@ Transform:
   - {fileID: 463508}
   - {fileID: 471792}
   - {fileID: 409876}
+  - {fileID: 461864}
   m_Father: {fileID: 467264}
   m_RootOrder: 2
 --- !u!4 &493056
@@ -2504,6 +2532,8 @@ MonoBehaviour:
   m_wingsSound: {fileID: 8251468}
   m_eatSound: {fileID: 0}
   m_eatBigSound: {fileID: 0}
+  m_wingsWindSound: {fileID: 0}
+  m_wingsStrongFlap: {fileID: 0}
 --- !u!114 &11403382
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2556,8 +2586,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_stunnedTime: 0.5
   m_rbody: {fileID: 0}
-  m_lastPosition: {x: 0, y: 0, z: 0}
-  m_lastSpeed: 0
+  m_bubbles: {fileID: 0}
 --- !u!114 &11425292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2583,6 +2612,7 @@ MonoBehaviour:
   m_absorbTime: 0.5
   m_minEatAnimTime: 0.65
   m_eatDistance: 2
+  m_burpSounds: []
 --- !u!114 &11444574
 MonoBehaviour:
   m_ObjectHideFlags: 1

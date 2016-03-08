@@ -29,16 +29,6 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Exposed members
 	[Separator("Movement")]
-	[SerializeField] [Range(0, 1)] [Tooltip("The delay towards the dragon position. [0..1] -> [DragonPos..CurrentPos] -> [Hard..Smooth].")] 
-	private float m_movementSmoothing = 0.85f;
-	// [SerializeField] [Range(0, 1)] [Tooltip("The delay when adapting the forward offset to the dragon's direction. [0..1] -> [DragonDir..CurrentDir]. -> [Hard..Smooth]")]
-	// private float m_forwardSmoothing = 0.95f;
-	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon")] 
-	private float m_forwardOffsetNormal = 1f;
-	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon on Fury mode")] 
-	private float m_forwardOffsetFury = 3f;
-	[SerializeField] [Tooltip("Extra distance to look ahead in front of the dragon on Boost mode")] 
-	private float m_forwardOffsetBoost = 2f;
 	[SerializeField] [Tooltip("Horizontal scroll limits in world coords")]
 	private Range m_limitX = new Range(-100, 100);
 
@@ -63,6 +53,7 @@ public class GameCameraController : MonoBehaviour {
 
 	// References
 	private DragonMotion m_dragonMotion = null;
+	private DragonBreathBehaviour m_dragonBreath = null;
 	private Transform m_interest = null;
 	private bool m_furyOn;
 	private bool m_slowMotionOn;
@@ -90,8 +81,6 @@ public class GameCameraController : MonoBehaviour {
 	private Bounds m_deactivation = new Bounds();
 
 	private Transform m_transform;
-	private bool m_update = false;
-	private float m_accumulatedTime = 0;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -149,6 +138,7 @@ public class GameCameraController : MonoBehaviour {
 
 		// Acquire external references
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+		m_dragonBreath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 
 		// Reset camera target
 		m_interest = null;
@@ -172,7 +162,6 @@ public class GameCameraController : MonoBehaviour {
 		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 
 		transform.position = playerPos;
-		m_forwardOffset = m_forwardOffsetNormal;
 	}
 
 	/// <summary>
@@ -180,54 +169,46 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	private void LateUpdate() 
 	{
-		m_accumulatedTime += Time.deltaTime;
+		
 		Vector3 newPos = m_transform.position;
 
 		// it depends on previous fixed updates
-		if ( m_update && m_dragonMotion != null)
+		if ( m_dragonMotion != null)
 		{
-			Vector3 dragonVelocity = m_dragonMotion.velocity;
-			Vector3 dragonDirection = dragonVelocity.normalized;
-
-			if ( dragonDirection != Vector3.zero )
-				m_forward = dragonDirection;
-			else
-				m_forward = Vector3.Lerp( m_forward, dragonDirection, m_accumulatedTime);
 
 			Vector3 targetPos;
 			// Compute new target position
 			// Is there a danger nearby?
-			if(m_interest != null) 
+			/*if(m_interest != null) 
 			{
 				// Yes!! Look between the danger and the dragon
 				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
 				targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.25f);
 			} 
 			else 
+			*/
 			{
-				// No!! Just look towards the dragon
-				// if (dragonDirection.sqrMagnitude > 0.1f * 0.1f) {
-					// targetPos = m_dragonMotion.head.position;
-					targetPos = m_dragonMotion.tongue.position;
-
-				/*} else {
-					targetPos = playerPos;
-				}
-				*/
+				targetPos = m_dragonMotion.cameraLookAt.position;
 			}
 
+
+			Vector3 dragonVelocity = m_dragonMotion.velocity;
+			Vector3 dragonDirection = dragonVelocity.normalized;
+
+			m_forward = Vector3.Lerp( m_forward, dragonDirection, Time.deltaTime);
+			
 			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
 			if (m_furyOn)
 			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_forwardOffsetFury, m_accumulatedTime );
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_dragonBreath.actualLength * 0.5f, Time.deltaTime );
 			}
 			else if ( m_boostOn )
 			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_forwardOffsetBoost, m_accumulatedTime );
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, 1, Time.deltaTime );
 			}
 			else
 			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_forwardOffsetNormal, m_accumulatedTime );
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, 0, Time.deltaTime );
 			}
 			targetPos = targetPos + m_forward * m_forwardOffset;
 
@@ -247,27 +228,19 @@ public class GameCameraController : MonoBehaviour {
 			{
 				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
 					targetZoom = m_farZoom;
-				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, m_accumulatedTime);
+				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime);
 			}
-
 			targetPos.z = -m_currentZoom;
 
 
 			// Apply movement smoothing
-			newPos = Vector3.Lerp(targetPos, transform.position, m_movementSmoothing);
+			// float lerpValue = 2.0f + m_dragonMotion.lastSpeed / 10.0f;
+			// lerpValue = Mathf.Max( lerpValue, 2.5f);
+
+			newPos = Vector3.Lerp(transform.position, targetPos, 0.95f);
 			newPos.z = targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
 
 			newPos = UpdateByShake(newPos);
-
-			// Rotation
-			/*
-			float maxSpeed = m_dragonMotion.maxSpeed;
-			Quaternion q = Quaternion.Euler( dragonVelocity.y / maxSpeed * -3f, dragonVelocity.x / maxSpeed * 7.5f, 0);
-			transform.rotation = Quaternion.Lerp( transform.rotation, q, 0.9f * m_accumulatedTime);
-			*/
-
-			m_update = false;
-			m_accumulatedTime = 0;
 		}
 
 		// DONE! Apply new position
@@ -281,7 +254,7 @@ public class GameCameraController : MonoBehaviour {
 		// Apply shaking - after smoothing, we don't want shaking to be affected by it
 		if (m_shakeTimer > 0f){
 			// Update timer
-			m_shakeTimer -= m_accumulatedTime;
+			m_shakeTimer -= Time.deltaTime;
 			
 			// Compute a random shaking optionally decaying over time
 			if (m_shakeTimer > 0) {
@@ -299,11 +272,6 @@ public class GameCameraController : MonoBehaviour {
 		}
 
 		return position;
-	}
-
-	private void FixedUpdate()
-	{
-		m_update = true;
 	}
 
 	/// <summary>
