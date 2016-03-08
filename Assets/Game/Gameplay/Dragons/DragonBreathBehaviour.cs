@@ -31,6 +31,14 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	protected bool m_isFuryOn;
 	protected bool m_isSuperFuryOn;
+	protected float m_actualLength;	// Set breath length. Used by the camera
+	public float actualLength
+	{
+		get
+		{
+			return m_actualLength;
+		}
+	}
 
 	//-----------------------------------------------
 	// Methods

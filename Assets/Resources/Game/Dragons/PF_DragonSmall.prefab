@@ -955,6 +955,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &171432
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 447242}
+  m_Layer: 12
+  m_Name: camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &173978
 GameObject:
   m_ObjectHideFlags: 1
@@ -1787,6 +1802,18 @@ Transform:
   - {fileID: 439230}
   m_Father: {fileID: 400512}
   m_RootOrder: 4
+--- !u!4 &447242
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 171432}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.1330032, y: 0.70300007, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 491788}
+  m_RootOrder: 3
 --- !u!4 &453212
 Transform:
   m_ObjectHideFlags: 1
@@ -2294,6 +2321,7 @@ Transform:
   - {fileID: 463508}
   - {fileID: 471792}
   - {fileID: 409876}
+  - {fileID: 447242}
   m_Father: {fileID: 467264}
   m_RootOrder: 2
 --- !u!4 &493056
