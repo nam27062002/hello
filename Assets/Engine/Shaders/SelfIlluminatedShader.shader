@@ -94,7 +94,7 @@ SubShader
 			// Blinn-Phong Specular
 			float spec = pow(max(dot( i.normal, i.halfDir), 0), _Shininess * 128);
 			float3 specLightning = _LightColor.rgb * spec * _SpecIntensity;
-			fixed4 col = fixed4(ambientLightning + diffuseLightning + specLightning, 0);
+			fixed4 col = fixed4(ambientLightning + diffuseLightning + specLightning, 1);
 
 			// Apply Fog
 			UNITY_APPLY_FOG(i.fogCoord, col);
