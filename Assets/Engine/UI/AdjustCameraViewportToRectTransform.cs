@@ -98,4 +98,29 @@ public class AdjustCameraViewportToRectTransform : MonoBehaviour {
 		// Apply to camera viewport!
 		m_cam.pixelRect = new Rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y);
 	}
+
+	private void OnDrawGizmos() {
+		if(m_rectTransform == null) return;
+		Vector3[] corners = new Vector3[4];	// left-bot, left-top, right-top, right-bot
+		m_rectTransform.GetWorldCorners(corners);
+
+		Vector3 min = corners[0];
+		Vector3 max = corners[0];
+		for(int i = 1; i < 4; i++) {
+			min.x = Mathf.Min(min.x, corners[i].x);
+			min.y = Mathf.Min(min.y, corners[i].y);
+			min.z = Mathf.Min(min.z, corners[i].z);
+
+			max.x = Mathf.Max(max.x, corners[i].x);
+			max.y = Mathf.Max(max.y, corners[i].y);
+			max.z = Mathf.Max(max.z, corners[i].z);
+		}
+
+		// This only works with non-rotated rect transforms
+		// It's ok, since a viewport should always be aligned to the UI
+		Vector3 size = max - min;
+		Vector3 center = min + (size * 0.5f);
+		Gizmos.color = Colors.WithAlpha(Colors.purple, 0.5f);
+		Gizmos.DrawCube(center, size);
+	}
 }
