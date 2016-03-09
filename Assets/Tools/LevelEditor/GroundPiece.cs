@@ -31,12 +31,6 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
 		//------------------------------------------------------------------//
-		/// <summary>
-		/// First update.
-		/// </summary>
-		protected void Start() {
-			// Must be included if we want to be able to enable/disable the component
-		}
 
 		/// <summary>
 		/// The object has been selected.
@@ -52,12 +46,6 @@ namespace LevelEditor {
 			m_mesh = null;
 		}
 
-		/// <summary>
-		/// Called every frame.
-		/// </summary>
-		void Update() {
-
-		}
 
 	#if UNITY_EDITOR
 		/// <summary>

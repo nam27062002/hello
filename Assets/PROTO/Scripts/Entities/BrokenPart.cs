@@ -30,14 +30,7 @@ public class BrokenPart : MonoBehaviour {
 			GetComponent<BoxCollider>().enabled = false;
 			initialized = true;
 		}
-		
-		void  FixedUpdate()
-		{
-			if (breaking){
-				
-		
-			}
-		}
+	
 		
 		
 		public void Break(Vector3 objectCenter){
