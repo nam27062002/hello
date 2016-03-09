@@ -170,6 +170,19 @@ public class DefinitionNode {
 		return _defaultValue;
 	}
 
+	/// <summary>
+	/// Get and localize a property using the current localization language.
+	/// </summary>
+	/// <returns>The value of the requested property in this definition, localized. Empty string if property not found.</returns>
+	/// <param name="_property">The id of the property to be obtained.</param>
+	/// <param name="_replacements">Replacement parameters, as they would be used in the Localization.Localize() method.</param>
+	public string GetLocalized(string _property, params string[] _replacements) {
+		if(m_properties.ContainsKey(_property)) {
+			return Localization.Localize(m_properties[_property], _replacements);
+		}
+		return "";
+	}
+
 	//------------------------------------------------------------------------//
 	// CUSTOMIZER METHODS													  //
 	//------------------------------------------------------------------------//

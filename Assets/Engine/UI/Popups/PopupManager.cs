@@ -36,6 +36,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	// Queues
 	private Queue<ResourceRequest> m_loadingQueue = new Queue<ResourceRequest>();
 	private List<PopupController> m_openedPopups = new List<PopupController>();
+	private List<PopupController> m_closedPopups = new List<PopupController>();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -55,6 +56,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.AddListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
 	}
 
 	/// <summary>
@@ -64,6 +66,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
 	}
 
 	/// <summary>
@@ -100,13 +103,29 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	/// <returns>The new instance of the popup's game object.</returns>
 	/// <param name="_prefab">The prefab of the popup.</param>
 	private PopupController InstantiateAndOpenPopup(GameObject _prefab) {
-		// Instantiate it to the canvas
-		GameObject popupObj = Instantiate(_prefab);
-		popupObj.transform.SetParent(instance.m_canvas.transform, false);
-		
-		// Open the popup - all popups managed by the manager must have a PopupController
-		PopupController controller = popupObj.GetComponent<PopupController>();
-		DebugUtils.Assert(controller != null, "Couldn't find the PopupController component in the popup " + popupObj.name + ".\nAll popups managed by the manager must have a PopupController.");
+		// If we already have an instance on the closed popups list, reuse it
+		PopupController controller = null;
+		for(int i = 0; i < m_closedPopups.Count; i++) {
+			// [AOC] TODO!! Find a better way to check if it's actually the same type of popup
+			if(m_closedPopups[i].name == _prefab.name) {
+				controller = m_closedPopups[i];
+				break;
+			}
+		}
+
+		// Otherwise create a new instance into the canvas
+		if(controller == null) {
+			// Create a new instance!
+			GameObject popupObj = Instantiate(_prefab);
+			popupObj.transform.SetParent(instance.m_canvas.transform, false);
+			popupObj.name = _prefab.name;	// To be able to identify it later on
+			
+			// Open the popup - all popups managed by the manager must have a PopupController
+			controller = popupObj.GetComponent<PopupController>();
+			DebugUtils.Assert(controller != null, "Couldn't find the PopupController component in the popup " + popupObj.name + ".\nAll popups managed by the manager must have a PopupController.");
+		}
+
+		// Open the popup!
 		controller.Open();
 		
 		// Return the newly created object
@@ -154,6 +173,9 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	private void OnPopupOpened(PopupController _popup) {
 		// Add it to the opened popups list
 		m_openedPopups.Add(_popup);
+
+		// Make sure it's not on other lists
+		m_closedPopups.Remove(_popup);
 	}
 
 	/// <summary>
@@ -163,5 +185,18 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	private void OnPopupClosed(PopupController _popup) {
 		// Remove it from the opened popups list
 		m_openedPopups.Remove(_popup);
+
+		// Add it to the closed popups list
+		m_closedPopups.Add(_popup);
+	}
+
+	/// <summary>
+	/// A popup has been destroyed.
+	/// </summary>
+	/// <param name="_popup">The target popup.</param>
+	private void OnPopupDestroyed(PopupController _popup) {
+		// Remove it from all the lists
+		m_openedPopups.Remove(_popup);
+		m_closedPopups.Remove(_popup);
 	}
 }

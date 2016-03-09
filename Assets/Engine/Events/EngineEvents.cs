@@ -8,8 +8,10 @@
 /// Start your custom game events with the last value of this enum.
 /// </summary>
 public enum EngineEvents {
-	// Scene Controller
+	// Game Scene Manager
 	SCENE_STATE_CHANGED,	// params: SceneManager.ESceneState _oldState, SceneManager.ESceneState _newState
+	SCENE_UNLOADED,			// params: string _sceneName
+	SCENE_LOADED,			// params: string _sceneName
 
 	// Popups Management
 	POPUP_CREATED,			// params: PopupController _popup

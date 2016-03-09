@@ -26,6 +26,7 @@ namespace PopupEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
+		public string m_popupPath = "";
 		public PopupController m_popup = null;
 
 		//------------------------------------------------------------------//
@@ -87,7 +88,7 @@ namespace PopupEditor {
 		/// </summary>
 		private void OnClick() {
 			if(m_popup == null) {
-				m_popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
+				m_popup = PopupManager.OpenPopupInstant(m_popupPath);
 			} else {
 				m_popup.Close(true);
 				m_popup = null;
