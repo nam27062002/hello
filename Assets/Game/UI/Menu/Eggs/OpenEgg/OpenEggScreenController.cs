@@ -159,7 +159,8 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Hide HUD and buttons
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Hide();
-		m_actionButtonsAnimator.Hide();
+		m_shopButton.GetComponent<ShowHideAnimator>().Hide();
+		m_callToActionButton.GetComponent<ShowHideAnimator>().Hide();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_backButton.GetComponent<ShowHideAnimator>().Hide();
@@ -284,7 +285,8 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Show/Hide buttons and HUD
 		//InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();	// Keep HUD hidden
-		m_actionButtonsAnimator.Show();
+		m_shopButton.GetComponent<ShowHideAnimator>().Show();
+		m_callToActionButton.GetComponent<ShowHideAnimator>().Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_backButton.GetComponent<ShowHideAnimator>().Show();

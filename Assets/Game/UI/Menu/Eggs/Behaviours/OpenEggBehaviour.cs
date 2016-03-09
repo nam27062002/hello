@@ -40,17 +40,18 @@ public class OpenEggBehaviour : MonoBehaviour {
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Subscribe to mouse events on the collider
-		MouseEventsPropagator mouseEvents = GetComponentInChildren<MouseEventsPropagator>(true);
-		if(mouseEvents != null) {
-			mouseEvents.onMouseUpAsButton.AddListener(OnEggMouseUpAsButton);
-		}
-
 		// If we are not at the menu scene, disable this component
 		MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
 		if(sceneController == null) {
 			this.enabled = false;
 			return;
+		}
+
+
+		// Subscribe to mouse events on the collider
+		MouseEventsPropagator mouseEvents = GetComponentInChildren<MouseEventsPropagator>(true);
+		if(mouseEvents != null) {
+			mouseEvents.onMouseUpAsButton.AddListener(OnEggMouseUpAsButton);
 		}
 	}
 

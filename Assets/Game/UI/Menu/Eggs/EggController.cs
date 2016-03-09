@@ -18,6 +18,7 @@ using UnityEngine.UI;
 /// </summary>
 [RequireComponent(typeof(IncubatorEggBehaviour))]
 [RequireComponent(typeof(OpenEggBehaviour))]
+[RequireComponent(typeof(ReadyEggBehaviour))]
 public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -44,6 +45,11 @@ public class EggController : MonoBehaviour {
 		get { return m_openBehaviour; }
 	}
 
+	private ReadyEggBehaviour m_readyBehaviour = null;
+	public ReadyEggBehaviour readyBehaviour {
+		get { return m_readyBehaviour; }
+	}
+
 	// Internal references
 	private Animator m_animator = null;
 
@@ -57,6 +63,7 @@ public class EggController : MonoBehaviour {
 		// Get external references
 		m_incubatorBehaviour = GetComponent<IncubatorEggBehaviour>();
 		m_openBehaviour = GetComponent<OpenEggBehaviour>();
+		m_readyBehaviour = GetComponent<ReadyEggBehaviour>();
 		m_animator = GetComponentInChildren<Animator>();
 	}
 
@@ -100,6 +107,7 @@ public class EggController : MonoBehaviour {
 		// Enable/disable behaviours based on current egg's state
 		m_incubatorBehaviour.enabled = (m_eggData.state == Egg.State.STORED);
 		m_openBehaviour.enabled = (m_eggData.state == Egg.State.OPENING);
+		m_readyBehaviour.enabled = (m_eggData.state == Egg.State.READY);
 
 		// Update animator! - Luckily animator is self-managed
 		m_animator.SetInteger("egg_state", (int)m_eggData.state);

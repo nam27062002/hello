@@ -12,6 +12,7 @@ GameObject:
   - 114: {fileID: 11460290}
   - 114: {fileID: 11464556}
   - 114: {fileID: 11485210}
+  - 114: {fileID: 11464138}
   m_Layer: 0
   m_Name: CallToActionButton
   m_TagString: Untagged
@@ -211,6 +212,7 @@ GameObject:
   - 114: {fileID: 11479846}
   - 114: {fileID: 11431722}
   - 114: {fileID: 11449850}
+  - 114: {fileID: 11495388}
   m_Layer: 0
   m_Name: BuyEggsButton
   m_TagString: Untagged
@@ -824,6 +826,23 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11464138
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 3
+  m_tweenDuration: 0.25
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0
 --- !u!114 &11464556
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1156,6 +1175,23 @@ MonoBehaviour:
   m_shadowAngle: 246
   m_shadowSize: 12.5
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!114 &11495388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 3
+  m_tweenDuration: 0.25
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0
 --- !u!222 &22200140
 CanvasRenderer:
   m_ObjectHideFlags: 1
