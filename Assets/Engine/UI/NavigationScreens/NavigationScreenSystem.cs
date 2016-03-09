@@ -45,6 +45,9 @@ public class NavigationScreenSystem : MonoBehaviour {
 	}
 
 	private List<int> m_screenHistory = new List<int>();	// Used to decide the AUTO animation direction as well as to implement the Back() functionality
+	public List<int> screenHistory {
+		get { return m_screenHistory; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
