@@ -50,8 +50,8 @@ GameObject:
   - 114: {fileID: 11441374}
   - 114: {fileID: 11417416}
   - 114: {fileID: 11470908}
-  - 114: {fileID: 11478250}
   - 65: {fileID: 6589280}
+  - 114: {fileID: 11498222}
   m_Layer: 8
   m_Name: ghost_test
   m_TagString: Untagged
@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
---- !u!114 &11478250
+--- !u!114 &11498222
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -301,10 +301,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 199742}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0333658b86534ec194b46cbda6766d0, type: 3}
+  m_Script: {fileID: 11500000, guid: b2c60d4104d8d498e9b9f608eb0c3ec7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_damage: 10
+  m_attackDelay: 5
 --- !u!114 &11498930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -386,7 +387,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_attackDelay
-      value: 0.4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorAngle

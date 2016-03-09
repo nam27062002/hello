@@ -13,12 +13,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_dragon = GetComponent<DragonPlayer>();
 		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
 
-		DragonMotion dragonMotion = GetComponent<DragonMotion>();
-		m_mouth = dragonMotion.tongue;
-		m_tongueDirection = dragonMotion.tongue.position - dragonMotion.head.position;
-		m_tongueDirection.Normalize();
-
-		m_motion = dragonMotion;
+		m_motion = GetComponent<DragonMotion>();
 
 		m_tier = m_dragon.data.def.tier;
 		m_biteSkill = m_dragon.data.biteSkill.value;

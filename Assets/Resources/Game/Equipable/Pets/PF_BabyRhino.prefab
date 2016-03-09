@@ -150,6 +150,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &107074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 453738}
+  m_Layer: 12
+  m_Name: points
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &107554
 GameObject:
   m_ObjectHideFlags: 1
@@ -499,6 +514,22 @@ GameObject:
   - 4: {fileID: 448218}
   m_Layer: 0
   m_Name: Dragon_Chest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &139586
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400426}
+  - 114: {fileID: 11472626}
+  m_Layer: 12
+  m_Name: mouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -973,6 +1004,18 @@ Transform:
   - {fileID: 457040}
   - {fileID: 439844}
   m_Father: {fileID: 424588}
+  m_RootOrder: 1
+--- !u!4 &400426
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139586}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.598, y: 0.504, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 453738}
   m_RootOrder: 0
 --- !u!4 &400668
 Transform:
@@ -1165,6 +1208,7 @@ Transform:
   m_LocalPosition: {x: -0.11, y: 0.17, z: -2.193}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 453738}
   - {fileID: 400376}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1505,6 +1549,19 @@ Transform:
   m_Children:
   - {fileID: 417934}
   m_Father: {fileID: 415580}
+  m_RootOrder: 0
+--- !u!4 &453738
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 107074}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 400426}
+  m_Father: {fileID: 424588}
   m_RootOrder: 0
 --- !u!4 &457040
 Transform:
@@ -1965,6 +2022,7 @@ MonoBehaviour:
   m_eatSound: {fileID: 8247860}
   m_eatBigSound: {fileID: 8247860}
   m_wingsWindSound: {fileID: 0}
+  m_wingsStrongFlap: {fileID: 0}
 --- !u!114 &11412942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1978,7 +2036,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_absorbTime: 1
   m_minEatAnimTime: 1
-  m_eatDistance: 2
+  m_eatDistance: 0.5
+  m_burpSounds: []
   m_petTier: 0
   m_bite: 1
 --- !u!114 &11441528
@@ -2068,6 +2127,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_uptadeTargetTime: 0.5
+--- !u!114 &11472626
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Fire_Dummy
 --- !u!114 &11478630
 MonoBehaviour:
   m_ObjectHideFlags: 1

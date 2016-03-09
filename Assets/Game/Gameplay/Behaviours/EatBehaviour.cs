@@ -17,7 +17,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	[SerializeField]private float m_absorbTime;
 	[SerializeField]private float m_minEatAnimTime;
 	[SerializeField]private float m_eatDistance;
-	public float eatDistanceSqr { get { return m_eatDistance * m_eatDistance; } }
+	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 	public DragonTier tier { get { return m_tier; } }
 
 	private List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
@@ -30,8 +30,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_slowedDown;
 	private float m_burpTime;
 
-	protected Transform m_mouth;
-	protected Vector3 m_tongueDirection;
+	private Transform m_suction;
+	private Transform m_mouth;
+	private Transform m_head;
 	protected Animator m_animator;
 
 	protected MotionInterface m_motion;
@@ -56,6 +57,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_bloodEmitter = new List<GameObject>();
 
 		m_slowedDown = false;
+
+		GetMouth();
 	}
 
 	void OnDisable() {
@@ -140,9 +143,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	private void Eat(EdibleBehaviour _prey, float _biteResistance) {
-		if ( !_prey.enabled )
-			return;
-
+		
 		_prey.OnEat();
 
 		// Yes!! Eat it!!
@@ -179,32 +180,20 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	private void FindSomethingToEat() {
-
-		float eatDistance = m_eatDistance;
-		if ( DebugSettings.eatDistancePowerUp )
-		{
-			eatDistance = m_eatDistance * 2;
+		float eatDistance = m_eatDistance * transform.localScale.x;
+		if (DebugSettings.eatDistancePowerUp) {
+			eatDistance *= 2;
 		}
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_mouth.position, eatDistance);
 
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
 		for (int e = 0; e < preys.Length; e++) {
-			if (preys[e].def.edibleFromTier <= m_tier) {
-				Entity entity = preys[e];
-				Vector3 heading = entity.transform.position - m_mouth.position;
-				float dot = Vector3.Dot(heading.normalized, m_motion.direction);
+			Entity entity = preys[e];
+			if (entity.def.edibleFromTier <= m_tier) {
+				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
 
-				// check distance to dragon mouth
-				if (dot > 0) {
-					// TODO (miguel) : Check if no collision??
-					Eat(entity.GetComponent<EdibleBehaviour>(), entity.def.biteResistance);
-					return;
-
-					/*
-					float distanceSqr = m_Bounds.DistanceSqr( m_dragonMouth.transform.position );
-					if (distanceSqr <= m_dragonEat.eatDistanceSqr) { 
-						Eat(entity, entity.def.biteResistance);
-					}
-					*/
+				if (edible.enabled) {
+					Eat(edible, entity.def.biteResistance);
+					break;
 				}
 			}
 		}
@@ -220,11 +209,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 				prey.eatingAnimationTimer -= Time.deltaTime;
 
 				float t = 1 - Mathf.Max(0, m_prey[i].absorbTimer / m_absorbTime);
+				Vector3 tongueDir = (m_mouth.position - m_head.position).normalized;
 
 				// swallow entity
 				prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_mouth.position, t);
 				prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
-				prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, m_tongueDirection), 0.25f);
+				prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, tongueDir), 0.25f);
 
 				// remaining time eating
 				if (m_prey[i].eatingAnimationTimer <= 0) 
@@ -273,4 +263,24 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	protected abstract void SlowDown(bool _enable);
+
+
+	// find mouth transform 
+	private void GetMouth() {
+		m_mouth = transform.FindTransformRecursive("Fire_Dummy");
+		m_head = transform.FindTransformRecursive("Dragon_Head");
+
+		m_suction = transform.FindTransformRecursive("mouth");
+		if (m_suction == null) {
+			m_suction = m_mouth;
+		}
+	}
+
+	void OnDrawGizmos() {
+		if (m_suction == null) {
+			GetMouth();
+		}
+
+		Gizmos.DrawWireSphere(m_suction.position, m_eatDistance * transform.localScale.x);
+	}
 }

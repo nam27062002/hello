@@ -566,8 +566,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 482386}
+  - 114: {fileID: 11456354}
   m_Layer: 12
-  m_Name: camera
+  m_Name: mouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -826,6 +827,21 @@ GameObject:
   m_Name: TopSensor
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &166814
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 478610}
+  m_Layer: 12
+  m_Name: camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1315,7 +1331,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -258.03174, y: 793, z: 699.5}
+  m_LocalPosition: {x: -256.998, y: 792.346, z: 699.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -1881,6 +1897,7 @@ Transform:
   - {fileID: 411284}
   - {fileID: 495242}
   - {fileID: 420968}
+  - {fileID: 478610}
   - {fileID: 482386}
   m_Father: {fileID: 414586}
   m_RootOrder: 1
@@ -1932,6 +1949,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 470162}
   m_RootOrder: 0
+--- !u!4 &478610
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 166814}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.579, y: 0.882, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 470162}
+  m_RootOrder: 7
 --- !u!4 &480182
 Transform:
   m_ObjectHideFlags: 1
@@ -1969,11 +1998,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 148474}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.579, y: 0.882, z: 0}
+  m_LocalPosition: {x: 1.267, y: 0.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 470162}
-  m_RootOrder: 7
+  m_RootOrder: 8
 --- !u!4 &484318
 Transform:
   m_ObjectHideFlags: 1
@@ -2423,7 +2452,7 @@ AudioSource:
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -2645,7 +2674,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_absorbTime: 0.5
   m_minEatAnimTime: 0.65
-  m_eatDistance: 2
+  m_eatDistance: 1
   m_burpSounds:
   - audio/sfx/Dragon/HUMN LargeBurp 6032_04_5
   - audio/sfx/Dragon/HUMN MediumBurp 6032_04_3
@@ -2759,6 +2788,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090ee74b4c8f446638d451fe04e3c3c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11456354
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 148474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Fire_Dummy
 --- !u!114 &11459072
 MonoBehaviour:
   m_ObjectHideFlags: 1
