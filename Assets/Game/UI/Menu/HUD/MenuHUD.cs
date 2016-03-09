@@ -37,6 +37,9 @@ public class MenuHUD : MonoBehaviour {
 	/// </summary>
 	public void OpenCurrencyShopPopup() {
 		// Just do it
-		PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		PopupController popup = PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+
+		// In this particular case we want to allow several purchases in a row, so don't auto-close popup
+		popup.GetComponent<PopupCurrencyShop>().closeAfterPurchase = false;
 	}
 }

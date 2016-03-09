@@ -36,7 +36,6 @@ public class MenuPlayButton : MenuNavigationButton {
 	/// </summary>
 	public void OnPlayButton() {
 		// Depends on the tutorial status
-		Debug.Log(UserProfile.tutorialStep);
 		if(UserProfile.tutorialStep < TutorialStep.FIRST_PLAY_SCREEN) {
 			// Advance tutorial step
 			UserProfile.tutorialStep = TutorialStep.FIRST_PLAY_SCREEN;

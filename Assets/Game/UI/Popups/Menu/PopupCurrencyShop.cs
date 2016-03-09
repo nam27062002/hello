@@ -27,15 +27,22 @@ public class PopupCurrencyShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Setup
+	// Exposed Setup
 	[Separator]
 	[SerializeField] private int m_coinsAmount = 1000;
 	[SerializeField] private int m_pcAmount = 1000;
 
-	// References
+	// Exposed References
 	[Separator]
 	[SerializeField] private Text m_coinsAmountText = null;
 	[SerializeField] private Text m_pcAmountText = null;
+
+	// Other setup parameters
+	private bool m_closeAfterPurchase = true;
+	public bool closeAfterPurchase {
+		get { return m_closeAfterPurchase; }
+		set { m_closeAfterPurchase = value; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -68,6 +75,9 @@ public class PopupCurrencyShop : MonoBehaviour {
 		// Just do it
 		UserProfile.AddCoins(m_coinsAmount);
 		PersistenceManager.Save();
+
+		// Close popup?
+		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
 	}
 
 	/// <summary
@@ -77,5 +87,8 @@ public class PopupCurrencyShop : MonoBehaviour {
 		// Just do it
 		UserProfile.AddPC(m_pcAmount);
 		PersistenceManager.Save();
+
+		// Close popup?
+		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
 	}
 }
