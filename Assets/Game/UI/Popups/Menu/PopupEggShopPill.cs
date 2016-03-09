@@ -29,7 +29,6 @@ public class PopupEggShopPill : MonoBehaviour {
 	[SerializeField] private string m_eggSku = "";
 
 	// Exposed References
-	[SerializeField] private GameObject m_preview3DPrefab = null;
 	[SerializeField] private RawImage m_previewArea = null;
 	[SerializeField] private Text m_nameText = null;
 
@@ -46,8 +45,7 @@ public class PopupEggShopPill : MonoBehaviour {
 	}
 
 	// Egg preview 3D scene
-	private UIScene3D m_eggPreviewScene = null;	// Container holding the preview scene (camera, egg, decos, etc.)
-	private EggController m_eggPreview = null;		// Actual egg 3D object
+	private EggUIScene3D m_eggPreviewScene = null;	// Container holding the preview scene (camera, egg, decos, etc.)
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -57,7 +55,6 @@ public class PopupEggShopPill : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Check required fields
-		Debug.Assert(m_preview3DPrefab != null, "Required Field!");
 		Debug.Assert(m_previewArea != null, "Required Field!");
 		Debug.Assert(m_nameText != null, "Required Field!");
 
@@ -69,14 +66,9 @@ public class PopupEggShopPill : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		// Instantiate the 3D scene
-		GameObject sceneObj = GameObject.Instantiate<GameObject>(m_preview3DPrefab);
-		m_eggPreviewScene = sceneObj.GetComponent<UIScene3D>();
-		UIScene3DManager.Add(m_eggPreviewScene);
-
-		// Initialize the raw image
-		m_previewArea.texture = m_eggPreviewScene.renderTexture;
-		m_previewArea.color = Colors.white;
+		// Create the 3D preview scene and initialize the raw image
+		m_eggPreviewScene = EggUIScene3D.CreateEmpty();
+		m_eggPreviewScene.InitRawImage(ref m_previewArea);
 
 		// Initialize from the given egg sku
 		InitFromDef(Definitions.GetDefinition(Definitions.Category.EGGS, m_eggSku));
@@ -125,26 +117,8 @@ public class PopupEggShopPill : MonoBehaviour {
 		// Store definition
 		m_eggDef = _eggDef;
 
-		// Add some offset to avoid all eggs being rendered at the same place!
-		if(m_eggPreviewScene != null) {
-			m_eggPreviewScene.transform.Translate(_eggDef.GetAsFloat("shopOrder") * 100f, 0f, 0f);
-		}
-
-		// If we already have an egg loaded, destroy it
-		if(m_eggPreview != null) {
-			GameObject.Destroy(m_eggPreview.gameObject);
-			m_eggPreview = null;
-		}
-
-		// Create a new dummy egg with the given definition
-		Egg newEgg = Egg.CreateFromDef(_eggDef);
-		newEgg.ChangeState(Egg.State.SHOP);
-
-		// Load preview
-		m_eggPreview = newEgg.CreateView();
-		m_eggPreview.transform.SetParent(m_eggPreviewScene.transform, false);
-		m_eggPreview.transform.localPosition = Vector3.zero;
-		m_eggPreview.gameObject.SetLayerRecursively(UIScene3DManager.LAYER_NAME);
+		// The scene will take care of everything
+		m_eggPreviewScene.SetEgg(Egg.CreateFromDef(_eggDef));
 
 		// Init name
 		//m_nameText.text = _eggDef.GetLocalized("tidName");
