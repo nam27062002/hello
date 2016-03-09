@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -31,8 +32,14 @@ public class PopupEggShop : MonoBehaviour {
 	[SerializeField] private GameObject m_pillPrefab = null;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
 
+	[Space]
+	[SerializeField] private Text m_rewardsText = null;
+	[SerializeField] private Text m_priceText = null;
+
 	// Internal
 	private List<PopupEggShopPill> m_pills = new List<PopupEggShopPill>();
+	private int m_selectedPill = -1;
+	private bool m_showIntroScroll = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -45,8 +52,23 @@ public class PopupEggShop : MonoBehaviour {
 		Debug.Assert(m_pillPrefab != null, "Required field!");
 		Debug.Assert(m_scrollList != null, "Required field!");
 
+		Debug.Assert(m_rewardsText != null, "Required field!");
+		Debug.Assert(m_priceText != null, "Required field!");
+
 		// Subscribe to events
 		GetComponent<PopupController>().OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
+		GetComponent<PopupController>().OnOpenPostAnimation.AddListener(OnOpenPostAnimation);
+
+		// Subscribe to external events
+		Messenger.AddListener<string>(EngineEvents.SCENE_UNLOADED, OnSceneUnloaded);
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe to external events
+		Messenger.RemoveListener<string>(EngineEvents.SCENE_UNLOADED, OnSceneUnloaded);
 	}
 
 	//------------------------------------------------------------------//
@@ -56,6 +78,8 @@ public class PopupEggShop : MonoBehaviour {
 	/// Popup is going to be opened.
 	/// </summary>
 	private void OnOpenPreAnimation() {
+		// [AOC] TODO!! Dynamically instantiating the pills cause Unity editor to hang. Figure out how to fix it :(
+		/*
 		// Populate eggs list
 		// [AOC] TODO!! Do it async? Not 100% required in this case, but may be necessary for longer lists
 		List<DefinitionNode> eggDefs = Definitions.GetDefinitions(Definitions.Category.EGGS);
@@ -78,9 +102,113 @@ public class PopupEggShop : MonoBehaviour {
 			// Add pill to local list for further access
 			m_pills.Add(newPill);
 		}
+		*/
+
+		// For now just grab all the instantiated pills
+		m_pills.Clear();
+		m_pills.AddRange(GetComponentsInChildren<PopupEggShopPill>(true));
 
 		// Force a scroll animation by setting the scroll instantly to last pill then scrolling to the first one
-		m_scrollList.SelectPoint(m_pills.Last().snapPoint, false);
-		m_scrollList.SelectPoint(m_pills.First().snapPoint, true);
+		// Only the first time
+		if(m_showIntroScroll) {
+			m_scrollList.SelectPoint(m_pills.Last().snapPoint, false);
+		}
+	}
+
+	/// <summary>
+	/// Popup has been opened.
+	/// </summary>
+	private void OnOpenPostAnimation() {
+		// Scroll animation pt 2
+		// Only the first time
+		if(m_showIntroScroll) {
+			m_scrollList.SelectPoint(m_pills.First().snapPoint, true);
+			m_showIntroScroll = false;
+		}
+	}
+
+	/// <summary>
+	/// Selected pill has changed.
+	/// </summary>
+	/// <param name="_selectedPoint">The newly selected point.</param>
+	public void OnSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
+		// Find selected pill
+		for(int i = 0; i < m_pills.Count; i++) {
+			// Is it the selected pill?
+			if(m_pills[i].snapPoint == _selectedPoint) {
+				// Yes!! Update index and break loop
+				m_selectedPill = i;
+				break;
+			}
+		}
+
+		// Skip if new selection is not valid
+		if(m_selectedPill < 0 || m_selectedPill >= m_pills.Count) return;
+
+		// Refresh info with the pill data
+		DefinitionNode eggDef = m_pills[m_selectedPill].eggDef;
+		if(eggDef == null) return;	// Could happen if pills haven't already been initialized
+		//DefinitionNode dragonDef = Definitions.GetDefinition(Definitions.Category.DRAGONS, eggDef.GetAsString("dragonSku"));
+		DragonDef dragonDef = DefinitionsManager.dragons.GetDef(eggDef.GetAsString("dragonSku"));
+		if(dragonDef == null) return;
+
+		// Rewards text
+		StringBuilder sb = new StringBuilder();
+		sb.AppendLine(Localization.Localize("- A disguise for dragon %U0", dragonDef.sku));
+		sb.AppendLine(Localization.Localize("- A pet to help you catch preys"));
+		sb.AppendLine(Localization.Localize("- An exclusive dragon!"));
+		m_rewardsText.text = sb.ToString();
+
+		// Price
+		m_priceText.text = StringUtils.FormatNumber(eggDef.GetAsInt("pricePC"));
+	}
+
+	/// <summary>
+	/// The purchase button has been pressed.
+	/// </summary>
+	public void OnPurchaseButton() {
+		// Check that current selection is valid
+		if(m_selectedPill < 0 || m_selectedPill >= m_pills.Count) return;
+
+		// Get price and start purchase flow
+		long pricePC = m_pills[m_selectedPill].eggDef.GetAsLong("pricePC");
+		if(UserProfile.pc >= pricePC) {
+			// Perform transaction
+			UserProfile.AddPC(-pricePC);
+			PersistenceManager.Save();
+
+			// Create a new egg instance
+			Egg purchasedEgg = Egg.CreateFromDef(m_pills[m_selectedPill].eggDef);
+			purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
+
+			// Go to OPEN_EGG screen and start flow
+			MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+			OpenEggScreenController openEggScreen = screensController.GetScreen((int)MenuScreens.OPEN_EGG).GetComponent<OpenEggScreenController>();
+			screensController.GoToScreen((int)MenuScreens.OPEN_EGG);
+			openEggScreen.StartFlow(purchasedEgg);
+
+			// Close this popup!
+			// Don't destroy it since it's very possible we reuse it
+			GetComponent<PopupController>().Close(false);
+		} else {
+			// Open PC shop popup
+			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		}
+	}
+
+	/// <summary>
+	/// Show extra info.
+	/// </summary>
+	public void OnInfoButton() {
+		// [AOC] TODO!!
+	}
+
+	/// <summary>
+	/// A scene has been unloaded.
+	/// </summary>
+	/// <param name="_sceneName">The name of the scen that has been unloaded.</param>
+	private void OnSceneUnloaded(string _sceneName) {
+		// Since this popup is reused (not destroyed when closing), destroy it upon changing scene
+		GameObject.Destroy(this.gameObject);	// We don't care at all about animations at this point
 	}
 }

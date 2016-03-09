@@ -70,7 +70,7 @@ public class Egg {
 	/// </summary>
 	/// <returns>The new egg. Null if the egg couldn't be created.</returns>
 	/// <param name="_eggSku">The sku of the egg in the EGGS definitions category.</param>
-	public static Egg CreateBySku(string _eggSku) {
+	public static Egg CreateFromSku(string _eggSku) {
 		// Egg can't be created if definitions are not loaded
 		Debug.Assert(Definitions.ready, "Definitions not yet loaded!");
 
@@ -78,7 +78,7 @@ public class Egg {
 		DefinitionNode eggDef = Definitions.GetDefinition(Definitions.Category.EGGS, _eggSku);
 
 		// Create and return new egg
-		return CreateByDef(eggDef);
+		return CreateFromDef(eggDef);
 	}
 
 	/// <summary>
@@ -96,7 +96,7 @@ public class Egg {
 		DefinitionNode eggDef = Definitions.GetDefinitionByVariable(Definitions.Category.EGGS, "dragonSku", _dragonSku);
 
 		// Create and return new egg
-		return CreateByDef(eggDef);
+		return CreateFromDef(eggDef);
 	}
 
 	/// <summary>
@@ -109,7 +109,7 @@ public class Egg {
 		if(_data == null) return null;
 
 		// Create a new egg using the persistence data sku
-		Egg newEgg = CreateBySku(_data.sku);
+		Egg newEgg = CreateFromSku(_data.sku);
 
 		// Load persistence object into the new egg and return it
 		if(newEgg != null) {
@@ -123,7 +123,7 @@ public class Egg {
 	/// </summary>
 	/// <returns>The newly created egg. Null if definition was not valid.</returns>
 	/// <param name="_def">The definition to be used.</param>
-	private static Egg CreateByDef(DefinitionNode _def) {
+	public static Egg CreateFromDef(DefinitionNode _def) {
 		// Check params
 		if(_def == null) return null;
 
@@ -155,7 +155,7 @@ public class Egg {
 
 		// Pick a random egg from the definitions set
 		if(selectedDefs.Count > 0) {
-			return CreateByDef(selectedDefs.GetRandomValue());
+			return CreateFromDef(selectedDefs.GetRandomValue());
 		}
 		return null;
 	}
@@ -220,7 +220,7 @@ public class Egg {
 	/// Create an instance of this egg's prefab.
 	/// </summary>
 	/// <returns>The newly created instance, <c>null</c> if the instance couldn't be created.</returns>
-	public EggController CreateInstance() {
+	public EggController CreateView() {
 		// Load the prefab for this egg as defined in the definition
 		GameObject prefabObj = Resources.Load<GameObject>(def.GetAsString("prefabPath"));
 		Debug.Assert(prefabObj != null, "The prefab defined to egg " + def.sku + " couldn't be found");

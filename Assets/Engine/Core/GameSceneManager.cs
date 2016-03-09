@@ -191,6 +191,10 @@ public class GameSceneManager : SingletonMonoBehaviour<GameSceneManager> {
 				// Update scene tracking
 				m_currentScene = nextScene;
 				m_loadingScene = "";
+
+				// Dispatch event
+				if(m_prevScene != "") Messenger.Broadcast<string>(EngineEvents.SCENE_UNLOADED, m_prevScene);
+				if(m_currentScene != "") Messenger.Broadcast<string>(EngineEvents.SCENE_LOADED, m_currentScene);
 			} break;
 
 			// Just before running, force one last memory cleanup. Run here any process required before running the scene, e.g. activate user input, open welcome popups, etc. 1-Frame state.
