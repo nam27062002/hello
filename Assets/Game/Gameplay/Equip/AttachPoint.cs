@@ -35,6 +35,8 @@ public class AttachPoint : MonoBehaviour {
 		for (int i = 0; i < toInit.Length; i++) {
 			toInit[i].Initialize();
 		}
+
+		m_item.transform.localScale = transform.lossyScale; //??
 	}
 
 	private void EquipAccessory() {
