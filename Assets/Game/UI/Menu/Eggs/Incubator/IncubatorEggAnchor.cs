@@ -47,7 +47,7 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	private void Start() {
 		// If there is an egg in the incubator, load it and anchor it
 		if(EggManager.incubatingEgg != null) {
-			EggController newEgg = EggManager.incubatingEgg.CreateInstance();
+			EggController newEgg = EggManager.incubatingEgg.CreateView();
 			newEgg.transform.SetParent(transform, false);
 			AttachEgg(newEgg);
 		}

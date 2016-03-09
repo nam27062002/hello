@@ -171,7 +171,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Reuse an existing egg view or create a new one?
 		if(_eggView == null) {
 			// Create a new instance of the egg prefab
-			m_egg = _egg.CreateInstance();
+			m_egg = _egg.CreateView();
 
 			// Attach it to the 3d scene's anchor point
 			m_egg.transform.SetParent(m_eggAnchor, false);
@@ -358,11 +358,8 @@ public class OpenEggScreenController : MonoBehaviour {
 		// This option should only be available on the IDLE state
 		if(m_state != State.IDLE) return;
 
-		// [AOC] TODO!! Show shop
-		// Simulate a new egg's instant purchase
-		Egg purchasedEgg = Egg.CreateRandom(false);	// Pick a random egg from the definitions set
-		purchasedEgg.ChangeState(Egg.State.READY);
-		StartFlow(purchasedEgg);	// Restart flow!!
+		// Show shop popup!
+		PopupManager.OpenPopupInstant(PopupEggShop.PATH);
 	}
 
 	/// <summary>

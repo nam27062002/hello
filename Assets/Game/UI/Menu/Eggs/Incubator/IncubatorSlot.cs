@@ -110,7 +110,7 @@ public class IncubatorSlot : MonoBehaviour {
 
 		// Load new view if any
 		if(_newEgg != null) {
-			m_eggView = _newEgg.CreateInstance();
+			m_eggView = _newEgg.CreateView();
 			m_eggView.transform.SetParent(m_3dView.transform, false);
 			m_eggView.gameObject.SetLayerRecursively("3dOverUI");
 		}
