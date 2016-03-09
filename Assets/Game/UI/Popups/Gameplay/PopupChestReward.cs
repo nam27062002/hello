@@ -32,11 +32,16 @@ public class PopupChestReward : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// References
-	[SerializeField] private GameObject m_chest = null;
+	[SerializeField] private GameObject m_chestButton = null;
+	[SerializeField] private GameObject m_chest3DScenePrefab = null;
 
 	// Internal logic
 	private int m_chestTapCount = 0;
 	private bool m_chestOpened = false;
+
+	// Internal references
+	private UIScene3D m_chestScene3D = null;
+	private UIScene3D m_eggRewardScene3D = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -45,14 +50,33 @@ public class PopupChestReward : MonoBehaviour {
 	/// Initialization
 	/// </summary>
 	private void Awake() {
-		Debug.Assert(m_chest != null, "Required field");
+		Debug.Assert(m_chestButton != null, "Required field");
+		Debug.Assert(m_chest3DScenePrefab != null, "Required field");
+
+		// Instantiate the 3D scene and initialize the raw image
+		m_chestScene3D = UIScene3DManager.CreateFromPrefab(m_chest3DScenePrefab);
+		RawImage chestRawImage = m_chestButton.GetComponentInChildren<RawImage>();
+		if(chestRawImage != null) {
+			chestRawImage.texture = m_chestScene3D.renderTexture;
+			chestRawImage.color = Colors.white;
+		}
 	}
 	
 	/// <summary>
-	/// Called every frame
+	/// Default destructor.
 	/// </summary>
-	private void Update() {
-		
+	private void OnDestroy() {
+		// Destroy chest 3D scene
+		if(m_chestScene3D != null) {
+			UIScene3DManager.Remove(m_chestScene3D);
+			m_chestScene3D = null;
+		}
+
+		// Destroy egg reward 3D scene
+		if(m_eggRewardScene3D != null) {
+			UIScene3DManager.Remove(m_eggRewardScene3D);
+			m_eggRewardScene3D = null;
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -94,17 +118,36 @@ public class PopupChestReward : MonoBehaviour {
 			case ChestManager.RewardType.EGG: {
 				GameObject rewardObj = this.FindObjectRecursive("RewardEgg");
 				rewardObj.SetActive(true);
-				rewardObj.FindComponentRecursive<Text>("Text").text = Localization.Localize("You got an egg!");	// [AOC] HARDCODED!!
+				rewardObj.FindComponentRecursive<Text>("Text").text = Localization.Localize("You got an %U0!", ChestManager.rewardSku);	// [AOC] HARDCODED!!
 				rewardObj.GetComponent<DOTweenAnimation>().DOPlay();
+
+				// Instantiate the 3D scene and initialize the raw image
+				m_eggRewardScene3D = UIScene3DManager.CreateFromResources("UI/Popups/Shop/PF_EggShop3DView");	// [AOC] HARDCODED!!
+				RawImage eggRawImage = rewardObj.GetComponentInChildren<RawImage>();
+				if(eggRawImage != null) {
+					eggRawImage.texture = m_eggRewardScene3D.renderTexture;
+					eggRawImage.color = Colors.white;
+				}
+
+				// Create a new dummy egg with the rewarded sku
+				Egg newEgg = Egg.CreateFromSku(ChestManager.rewardSku);
+				newEgg.ChangeState(Egg.State.SHOP);
+
+				// Load preview
+				EggController eggPreview = newEgg.CreateView();
+				eggPreview.transform.SetParent(m_eggRewardScene3D.transform, false);
+				eggPreview.transform.localPosition = Vector3.zero;
+				eggPreview.gameObject.SetLayerRecursively(UIScene3DManager.LAYER_NAME);
 			} break;
 		}
 
 		// Launch chest effect
-		m_chest.GetComponent<Animator>().SetTrigger("open");
+		m_chestButton.GetComponent<Animator>().SetTrigger("open");
 
 		// [AOC] CHECK!! Do it here?
-		// Give the reward right now
+		// Give the reward right now and save persistence
 		ChestManager.ApplyReward();
+		PersistenceManager.Save();
 	}
 
 	//------------------------------------------------------------------//
@@ -125,7 +168,7 @@ public class PopupChestReward : MonoBehaviour {
 		if(m_chestTapCount >= TAPS_TO_OPEN) {
 			OpenChest();
 		} else {
-			m_chest.GetComponent<Animator>().SetTrigger("tap");
+			m_chestButton.GetComponent<Animator>().SetTrigger("tap");
 		}
 	}
 }

@@ -39,12 +39,4 @@ public class MenuHUD : MonoBehaviour {
 		// Just do it
 		PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 	}
-
-	/// <summary>
-	/// Opens the missions popup.
-	/// </summary>
-	public void OpenMissionsPopup() {
-		// Just do it
-		PopupManager.OpenPopupInstant(PopupMissions.PATH);
-	}
 }

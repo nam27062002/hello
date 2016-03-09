@@ -40,6 +40,7 @@ public class Egg {
 		public string sku = "";
 		public State state = State.INIT;
 		public string rewardSku = "";	// [AOC] CHECK!! Probably no need to persist the reward, since it's instantly consumed
+		public bool isNew = true;
 	}
 
 	//------------------------------------------------------------------//
@@ -60,6 +61,13 @@ public class Egg {
 	private State m_state = State.INIT;
 	public State state { 
 		get { return m_state; }
+	}
+
+	// Notification purposes
+	private bool m_isNew = true;
+	public bool isNew {
+		get { return m_isNew; }
+		set { m_isNew = value; }
 	}
 
 	//------------------------------------------------------------------//
@@ -139,6 +147,16 @@ public class Egg {
 	/// <returns>The newly created egg. Null if no definition could be picked.</returns>
 	/// <param name="_onlyOwnedDragons">Whether to restrict the random selection to eggs related to owned dragons only.</param>
 	public static Egg CreateRandom(bool _onlyOwnedDragons = true) {
+		// Use random def getter
+		return CreateFromDef(GetRandomDef(_onlyOwnedDragons));
+	}
+
+	/// <summary>
+	/// Get a random definition picked from the EGGS category.
+	/// </summary>
+	/// <returns>The randomly selected definition. Null if no definition could be picked.</returns>
+	/// <param name="_onlyOwnedDragons">Whether to restrict the random selection to eggs related to owned dragons only.</param>
+	public static DefinitionNode GetRandomDef(bool _onlyOwnedDragons = true) {
 		// Get all egg definitions
 		List<DefinitionNode> eggDefs = Definitions.GetDefinitions(Definitions.Category.EGGS);
 
@@ -155,7 +173,7 @@ public class Egg {
 
 		// Pick a random egg from the definitions set
 		if(selectedDefs.Count > 0) {
-			return CreateFromDef(selectedDefs.GetRandomValue());
+			return selectedDefs.GetRandomValue();
 		}
 		return null;
 	}
@@ -252,6 +270,7 @@ public class Egg {
 
 		// State
 		m_state = _data.state;
+		m_isNew = _data.isNew;
 
 		// Reward
 		m_rewardDef = Definitions.GetDefinition(Definitions.Category.EGG_REWARDS, _data.rewardSku);
@@ -270,6 +289,7 @@ public class Egg {
 
 		// State
 		data.state = m_state;
+		data.isNew = m_isNew;
 
 		// Reward
 		if(m_rewardDef != null) {

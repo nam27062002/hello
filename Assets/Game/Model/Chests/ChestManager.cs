@@ -155,13 +155,14 @@ public class ChestManager : SingletonScriptableObject<ChestManager> {
 
 			case RewardType.EGG: {
 				instance.m_rewardAmount = 1;
-				instance.m_rewardSku = "TODO!!";
+				instance.m_rewardSku = Egg.GetRandomDef(false).sku;	// [AOC] TODO!! Use true, false only for demo purposes.
 			} break;
 		}
 	}
 
 	/// <summary>
 	/// Applies the previously generated reward to the player's profile.
+	/// Persistence should be saved afterwards.
 	/// </summary>
 	public static void ApplyReward() {
 		// [AOC] TODO!! Make sure a reward has been generated
@@ -182,7 +183,9 @@ public class ChestManager : SingletonScriptableObject<ChestManager> {
 			} break;
 
 			case RewardType.EGG: {
-				// [AOC] TODO!!
+				// Just add egg to inventory
+				Egg newEgg = Egg.CreateFromSku(instance.m_rewardSku);
+				EggManager.AddEggToInventory(newEgg);
 			} break;
 		}
 	}
