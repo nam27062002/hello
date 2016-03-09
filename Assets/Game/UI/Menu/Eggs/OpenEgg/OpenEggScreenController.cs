@@ -76,7 +76,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Prepare the flash FX image
 		m_flashFX = new GameObject("FlashFX");
-		if(m_flashFX) {
+		if(m_flashFX != null) {
 			// Transform - full screen rect transform
 			RectTransform rectTransform = m_flashFX.AddComponent<RectTransform>();
 			rectTransform.SetParent(this.transform, false);
@@ -165,7 +165,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_backButton.GetComponent<ShowHideAnimator>().Hide();
 
 		// Hide Flash FX and temp reward text
-		m_flashFX.SetActive(false);
+		if(m_flashFX != null) m_flashFX.SetActive(false);
 		m_rewardText.gameObject.SetActive(false);
 
 		// Reuse an existing egg view or create a new one?
@@ -256,16 +256,18 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// [AOC] TODO!! Nice FX!
 		// Do a full-screen flash FX
-		//m_flashFX.SetActive(true);
-		//m_flashFX.GetComponent<Image>().color = Colors.white;
-		//m_flashFX.GetComponent<Image>().DOFade(0f, 1f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
+		/*if(m_flashFX != null) {
+			m_flashFX.SetActive(true);
+			m_flashFX.GetComponent<Image>().color = Colors.white;
+			m_flashFX.GetComponent<Image>().DOFade(0f, 1f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
+		}*/
 
 		// [AOC] TEMP!! Some dummy effect on the egg xD
 		m_egg.transform.DOScale(new Vector3(1.5f, 0.4f, 1.5f), 1.0f).SetDelay(0.10f).SetEase(Ease.OutElastic);
 
 		// [AOC] TODO!! Replace egg view by the reward prefab
 		m_rewardText.gameObject.SetActive(true);
-		//m_rewardText.transform.DOScale(0f, 0.5f).SetDelay(0.5f).From().SetEase(Ease.OutElastic).SetRecyclable(true);
+		m_rewardText.color = Colors.WithAlpha(m_rewardText.color, 1f);
 		m_rewardText.transform.DOBlendableLocalMoveBy(Vector3.up * 500f, 0.30f).From().SetEase(Ease.OutBounce).SetRecyclable(true);
 		m_rewardText.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
 		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
