@@ -53,6 +53,9 @@ public class MenuLevelButton : MonoBehaviour {
 		DebugUtils.Assert(m_titleText != null, "Required reference!");
 		DebugUtils.Assert(m_titleDesc != null, "Required reference!");
 		DebugUtils.Assert(m_playerPointer != null, "Required reference!");
+
+		// Subscribe to external events
+		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	/// <summary>
@@ -72,9 +75,6 @@ public class MenuLevelButton : MonoBehaviour {
 
 		// Show player pointer if current level
 		m_playerPointer.SetActive(isCurrentLevel);
-
-		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	/// <summary>

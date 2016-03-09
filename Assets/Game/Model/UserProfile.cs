@@ -33,6 +33,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		public long pc = 0;
 		[SkuList(typeof(DragonDef), false)] public string currentDragon = "";	// sku
 		[SkuList(typeof(LevelDef), false)] public string currentLevel = "";	// sku
+		public TutorialStep tutorialStep = TutorialStep.INIT;
 	}
 
 	//------------------------------------------------------------------//
@@ -66,6 +67,12 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	public static string currentLevel {
 		get { return instance.m_currentLevel; }
 		set { instance.m_currentLevel = value; }
+	}
+
+	[SerializeField] private TutorialStep m_tutorialStep;
+	public static TutorialStep tutorialStep { 
+		get { return instance.m_tutorialStep; }
+		set { instance.m_tutorialStep = value; }
 	}
 
 	//------------------------------------------------------------------//
@@ -110,6 +117,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		instance.m_pc = _data.pc;
 		instance.m_currentDragon = _data.currentDragon;
 		instance.m_currentLevel = _data.currentLevel;
+		instance.m_tutorialStep = _data.tutorialStep;
 	}
 
 	/// <summary>
@@ -125,6 +133,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		data.pc = instance.m_pc;
 		data.currentDragon = instance.m_currentDragon;
 		data.currentLevel = instance.m_currentLevel;
+		data.tutorialStep = instance.m_tutorialStep;
 
 		// Return it
 		return data;

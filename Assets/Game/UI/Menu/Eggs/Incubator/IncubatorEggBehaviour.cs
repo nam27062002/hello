@@ -113,6 +113,9 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 		// Ignore if component is disabled
 		if(!enabled) return;
 
+		// Egg is no longer new
+		GetComponent<EggController>().eggData.isNew = false;
+
 		// Store some values
 		m_originalPos = transform.position;
 		m_originalParent = transform.parent;
