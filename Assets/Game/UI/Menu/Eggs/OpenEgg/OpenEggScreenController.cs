@@ -267,7 +267,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// [AOC] TODO!! Replace egg view by the reward prefab
 		m_rewardText.gameObject.SetActive(true);
-		//m_rewardText.transform.DOScale(0f, 0.5f).SetDelay(0.5f).From().SetEase(Ease.OutElastic).SetRecyclable(true);
+		m_rewardText.color = Colors.WithAlpha(m_rewardText.color, 1f);
 		m_rewardText.transform.DOBlendableLocalMoveBy(Vector3.up * 500f, 0.30f).From().SetEase(Ease.OutBounce).SetRecyclable(true);
 		m_rewardText.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
 		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
