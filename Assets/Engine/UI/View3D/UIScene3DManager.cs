@@ -73,10 +73,10 @@ public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
 	/// Additionally, attach a given GameObject to it if desired.
 	/// </summary>
 	/// <param name="_obj">An object to be attached to the new scene, optional.</param>
-	public static UIScene3D Create(GameObject _obj = null) {
+	public static T Create<T>(GameObject _obj = null) where T : UIScene3D {
 		// Create a new game object with the UIScene3D component
-		GameObject sceneObj = new GameObject("UIScene3D");
-		UIScene3D newScene = sceneObj.AddComponent<UIScene3D>();
+		GameObject sceneObj = new GameObject(typeof(T).Name);
+		T newScene = sceneObj.AddComponent<T>();
 
 		// If an object is given, add it to the new object's root
 		if(_obj != null) {
@@ -93,7 +93,7 @@ public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
 	/// Create, initialize and add to the manager a UIScene3D loaded from a prefab.
 	/// </summary>
 	/// <param name="_prefab">The prefab to be instantiated.</param>
-	public static UIScene3D CreateFromPrefab(GameObject _prefab) {
+	public static T CreateFromPrefab<T>(GameObject _prefab) where T : UIScene3D {
 		// Check params
 		if(_prefab == null) return null;
 
@@ -101,9 +101,9 @@ public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
 		GameObject sceneObj = GameObject.Instantiate<GameObject>(_prefab);
 
 		// If it doesn't have a UIScene3D component attached, add it now
-		UIScene3D newScene = sceneObj.GetComponent<UIScene3D>();
+		T newScene = sceneObj.GetComponent<T>();
 		if(newScene == null) {
-			newScene = sceneObj.AddComponent<UIScene3D>();
+			newScene = sceneObj.AddComponent<T>();
 		}
 
 		// Add the scene to the manager
@@ -115,12 +115,12 @@ public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
 	/// Create, initialize and add to the manager a UIScene3D loaded from a prefab loaded from the Resources folder.
 	/// </summary>
 	/// <param name="_resourcesPath">The path of prefab to be instantiated.</param>
-	public static UIScene3D CreateFromResources(string _resourcesPath) {
+	public static T CreateFromResources<T>(string _resourcesPath) where T : UIScene3D {
 		// Load prefab from resources
 		GameObject prefab = Resources.Load<GameObject>(_resourcesPath);
 
 		// Use prefab creator
-		return CreateFromPrefab(prefab);
+		return CreateFromPrefab<T>(prefab);
 	}
 
 	/// <summary>

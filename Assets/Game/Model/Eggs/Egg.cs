@@ -29,7 +29,7 @@ public class Egg {
 		READY,		// Egg has finished incubation period and is ready to be collected
 		OPENING,	// Egg is being opened
 		COLLECTED,	// Egg has been collected
-		SHOP		// Egg for display only, state is not relevant
+		SHOWROOM	// Egg for display only, state is not relevant
 	};
 
 	/// <summary>

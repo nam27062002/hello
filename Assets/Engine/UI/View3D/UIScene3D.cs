@@ -7,6 +7,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -32,18 +33,18 @@ public class UIScene3D : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// References
-	private Camera m_camera = null;
+	protected Camera m_camera = null;
 	public Camera camera {
 		get { return m_camera; }
 	}
 
-	private RenderTexture m_renderTexture = null;
+	protected RenderTexture m_renderTexture = null;
 	public RenderTexture renderTexture {
 		get { return m_renderTexture; }
 	}
 
 	// Persist through scenes
-	[SerializeField] private bool m_persistent = false;
+	[SerializeField] protected bool m_persistent = false;
 	public bool persistent {
 		get { return m_persistent; }
 		set { m_persistent = value; }
@@ -98,6 +99,47 @@ public class UIScene3D : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Create a new game object setup to render this scene.
+	/// Specifically, it will contain a RectTransform, a RawImage and an AspectRatioFitter components.
+	/// As many as desired can be created, just be sure to manage their destruction as well.
+	/// </summary>
+	/// <param name="_name">Name to add to the new game object.</param>
+	/// <returns>The newly created object.</returns>
+	public GameObject CreateRawImage(string _name) {
+		// Create a new game object
+		GameObject newObj = new GameObject(_name);
+
+		// Add rect transform with default settings
+		RectTransform tr = newObj.AddComponent<RectTransform>();
+		tr.pivot = new Vector2(0.5f, 0.5f);
+		tr.localPosition = Vector2.zero;
+
+		// Add RawImage component
+		RawImage rw = newObj.AddComponent<RawImage>();
+		InitRawImage(ref rw);
+
+		// Add apect ratio fitter - since the render texture is squared, usually we want to keep proportions
+		AspectRatioFitter ar = newObj.AddComponent<AspectRatioFitter>();
+		ar.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
+		ar.aspectRatio = 1f;
+
+		// Done!
+		return newObj;
+	}
+
+	/// <summary>
+	/// Initialize a given RawImage component to render this scene.
+	/// </summary>
+	/// <param name="_target">The raw image to be used.</param>
+	public void InitRawImage(ref RawImage _target) {
+		// Check params
+		if(_target == null) return;
+
+		// Do it!
+		_target.texture = this.renderTexture;
+		_target.color = Color.white;
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
