@@ -65,15 +65,15 @@ public class EggController : MonoBehaviour {
 		m_openBehaviour = GetComponent<OpenEggBehaviour>();
 		m_readyBehaviour = GetComponent<ReadyEggBehaviour>();
 		m_animator = GetComponentInChildren<Animator>();
+
+		// Subscribe to external events
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Subscribe to external events
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
-
 		// Make sure we're updated
 		Refresh();
 	}

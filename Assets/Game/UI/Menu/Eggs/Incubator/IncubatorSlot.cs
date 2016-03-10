@@ -34,8 +34,10 @@ public class IncubatorSlot : MonoBehaviour {
 
 	// Scene references
 	private GameObject m_3dView = null;
+	private GameObject m_emptySlotImage = null;
 	private Text m_text = null;
 	private EggController m_eggView = null;
+	private UINotification m_newNotification = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -46,7 +48,10 @@ public class IncubatorSlot : MonoBehaviour {
 	private void Awake() {
 		// Get scene references
 		m_3dView = this.FindObjectRecursive("View3D");
+		m_emptySlotImage = this.FindObjectRecursive("EmptySlot");
 		m_text = this.FindComponentRecursive<Text>("Text");
+		m_newNotification = this.FindComponentRecursive<UINotification>();
+		m_newNotification.Hide(false);
 	}
 
 	/// <summary>
@@ -64,6 +69,8 @@ public class IncubatorSlot : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, OnEggAddedToInventory);
 		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
+		Messenger.AddListener<EggController>(GameEvents.EGG_DRAG_STARTED, OnEggDragStarted);
+		Messenger.AddListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
 	}
 
 	/// <summary>
@@ -73,6 +80,8 @@ public class IncubatorSlot : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, OnEggAddedToInventory);
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
+		Messenger.RemoveListener<EggController>(GameEvents.EGG_DRAG_STARTED, OnEggDragStarted);
+		Messenger.RemoveListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
 	}
 
 	/// <summary>
@@ -82,8 +91,14 @@ public class IncubatorSlot : MonoBehaviour {
 		// Aux vars
 		Egg targetEgg = EggManager.inventory[slotIdx];
 
+		// Background
+		m_emptySlotImage.SetActive(targetEgg == null);
+
 		// Text
 		m_text.gameObject.SetActive(targetEgg == null);
+
+		// New notification
+		m_newNotification.Set(targetEgg != null && targetEgg.isNew);
 
 		// Egg preview
 		LoadEggPreview(targetEgg);
@@ -141,6 +156,36 @@ public class IncubatorSlot : MonoBehaviour {
 
 			// Refresh view
 			Refresh();
+		}
+	}
+
+	/// <summary>
+	/// An egg view is being dragged.
+	/// </summary>
+	/// <param name="_egg">The target egg view.</param>
+	private void OnEggDragStarted(EggController _egg) {
+		// Does it match our egg?
+		if(m_eggView == _egg) {
+			// Refresh
+			Refresh();
+
+			// Show empty slot placeholder
+			m_emptySlotImage.SetActive(true);
+		}
+	}
+
+	/// <summary>
+	/// An egg view has stop being dragged.
+	/// </summary>
+	/// <param name="_egg">The target egg view.</param>
+	private void OnEggDragEnded(EggController _egg) {
+		// Does it match our egg?
+		if(m_eggView == _egg) {
+			// Refresh
+			Refresh();
+
+			// Hide empty slot placeholder
+			m_emptySlotImage.SetActive(false);
 		}
 	}
 }

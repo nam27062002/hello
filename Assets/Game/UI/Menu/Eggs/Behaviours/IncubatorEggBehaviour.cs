@@ -126,6 +126,9 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 
 		// Move to initial position
 		FollowCursor();
+
+		// Dispatch event
+		Messenger.Broadcast<EggController>(GameEvents.EGG_DRAG_STARTED, GetComponent<EggController>());
 	}
 
 	/// <summary>
@@ -174,6 +177,9 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 			transform.SetParent(m_originalParent, false);
 			transform.position = m_originalPos;
 		}
+
+		// Dispatch event
+		Messenger.Broadcast<EggController>(GameEvents.EGG_DRAG_ENDED, GetComponent<EggController>());
 	}
 }
 

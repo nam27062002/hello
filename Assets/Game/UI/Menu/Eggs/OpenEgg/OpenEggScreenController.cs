@@ -158,12 +158,13 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 
 		// Hide HUD and buttons
-		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Hide();
-		m_shopButton.GetComponent<ShowHideAnimator>().Hide();
-		m_callToActionButton.GetComponent<ShowHideAnimator>().Hide();
-		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
-		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
-		m_backButton.GetComponent<ShowHideAnimator>().Hide();
+		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
+		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		m_shopButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		m_callToActionButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		m_instantOpenButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		m_backButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
 
 		// Hide Flash FX and temp reward text
 		if(m_flashFX != null) m_flashFX.SetActive(false);
