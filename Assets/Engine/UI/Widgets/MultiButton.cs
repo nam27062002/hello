@@ -1,5 +1,4 @@
-﻿// MultiOptionButton.cs
-// Hungry Dragon
+﻿// MultiButton.cs
 // 
 // Created by Alger Ortín Castellví on 23/02/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
@@ -9,9 +8,10 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -24,7 +24,7 @@ using System.Collections.Generic;
 /// - Drag interaction?
 /// </summary>
 [RequireComponent(typeof(Button))]
-public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
+public class MultiButton : MonoBehaviour, IDeselectHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -34,12 +34,25 @@ public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Button[] m_subButtons;
+	public Button[] subButtons {
+		get { return m_subButtons; }
+	}
 
 	// Other refs
 	private Button m_rootButton;
+	public Button rootButton {
+		get { return m_rootButton; }
+	}
 
 	// Internal logic
-	private bool m_closed = true;
+	private bool m_folded = true;
+	public bool folded {
+		get { return m_folded; }
+	}
+
+	// Events
+	public UnityEvent OnFold = new UnityEvent();
+	public UnityEvent OnUnfold = new UnityEvent();
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -57,7 +70,7 @@ public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
 	/// </summary>
 	private void Start() {
 		// Start closed
-		m_closed = true;
+		m_folded = true;
 
 		// Link main button to Open method
 		m_rootButton.onClick.AddListener(Toggle);
@@ -87,8 +100,8 @@ public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
 	/// </summary>
 	public void Open() {
 		// Only if closed
-		if(!m_closed) return;
-		m_closed = false;
+		if(!m_folded) return;
+		m_folded = false;
 
 		// Activate all buttons and launch their open animation
 		for(int i = 0; i < m_subButtons.Length; i++) {
@@ -96,6 +109,9 @@ public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
 			DOTween.Pause(m_subButtons[i].gameObject);
 			DOTween.Restart(m_subButtons[i].gameObject, "open");
 		}
+
+		// Event
+		OnUnfold.Invoke();
 	}
 
 	/// <summary>
@@ -104,21 +120,24 @@ public class MultiOptionButton : MonoBehaviour, IDeselectHandler {
 	/// </summary>
 	public void Close() {
 		// Only if not already closed
-		if(m_closed) return;
-		m_closed = true;
+		if(m_folded) return;
+		m_folded = true;
 
 		// Activate all buttons and launch their open animation
 		for(int i = 0; i < m_subButtons.Length; i++) {
 			DOTween.Pause(m_subButtons[i].gameObject);
 			DOTween.Restart(m_subButtons[i].gameObject, "close");
 		}
+
+		// Event
+		OnFold.Invoke();
 	}
 
 	/// <summary>
 	/// Toggles between opened and closed states.
 	/// </summary>
 	public void Toggle() {
-		if(m_closed) {
+		if(m_folded) {
 			Open();
 		} else {
 			Close();
