@@ -39,13 +39,11 @@ public class GameHUD : MonoBehaviour {
 	/// Callback for the pause button.
 	/// </summary>
 	public void OnPauseButton() {
-		// Instantly finish the game for now
-		InstanceManager.GetSceneController<GameSceneController>().EndGame();
+		// Pause game
+		InstanceManager.GetSceneController<GameSceneController>().PauseGame(true);
 
-		/*
-		GameSceneController scene = InstanceManager.GetSceneController<GameSceneController>();
-		scene.PauseGame(!scene.paused);
-		*/
+		// Open pause popup
+		PopupManager.OpenPopupInstant(PopupPause.PATH);
 	}
 
 	/// <summary>
