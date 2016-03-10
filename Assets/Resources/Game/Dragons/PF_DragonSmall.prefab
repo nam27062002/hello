@@ -1030,6 +1030,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &179584
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 470356}
+  - 114: {fileID: 11419598}
+  m_Layer: 12
+  m_Name: mouth
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &180328
 GameObject:
   m_ObjectHideFlags: 1
@@ -2131,6 +2147,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 426350}
   m_RootOrder: 0
+--- !u!4 &470356
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 179584}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0.45, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 491788}
+  m_RootOrder: 4
 --- !u!4 &470426
 Transform:
   m_ObjectHideFlags: 1
@@ -2322,6 +2350,7 @@ Transform:
   - {fileID: 471792}
   - {fileID: 409876}
   - {fileID: 447242}
+  - {fileID: 470356}
   m_Father: {fileID: 467264}
   m_RootOrder: 2
 --- !u!4 &493056
@@ -2921,6 +2950,18 @@ MonoBehaviour:
   m_stunnedTime: 0.5
   m_rbody: {fileID: 0}
   m_bubbles: {fileID: 19857322}
+--- !u!114 &11419598
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 179584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Fire_Dummy
 --- !u!114 &11425292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2945,7 +2986,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_absorbTime: 0.5
   m_minEatAnimTime: 0.65
-  m_eatDistance: 2
+  m_eatDistance: 1.5
   m_burpSounds:
   - audio/sfx/Dragon/HUMN LargeBurp 6032_04_5
   - audio/sfx/Dragon/HUMN MediumBurp 6032_04_3
