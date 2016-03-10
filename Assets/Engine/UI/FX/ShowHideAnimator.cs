@@ -42,6 +42,12 @@ public class ShowHideAnimator : MonoBehaviour {
 		CUSTOM
 	}
 
+	protected enum State {
+		INIT,
+		VISIBLE,
+		HIDDEN
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -49,30 +55,41 @@ public class ShowHideAnimator : MonoBehaviour {
 	// References
 	[Comment("Optional, must have triggers \"show\" and \"hide\"")]
 	[Separator("Animator", 20f)]
-	[SerializeField] private Animator m_animator = null;
+	[SerializeField] protected Animator m_animator = null;
 
 	// Tween params
 	// All tween-related parameters will be ignored if an animator is defined.
 	// Feel free to add new tween types or extra parameters
 	[Separator("Tween Setup", 20f)]
-	[SerializeField] private TweenType m_tweenType = TweenType.NONE;	// Define the "show" direction. "hide" will be the reversed tween. To use CUSTOM, add as many DOTweenAnimation components as desired to the target object with the id's "show" and "hide".
-	[SerializeField] private float m_tweenDuration = 0.25f;
-	[SerializeField] private float m_tweenValue = 1f;					// Use it to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).
-	[SerializeField] private Ease m_tweenEase = Ease.OutBack;
-	[SerializeField] private float m_tweenDelay = 0f;
+	[SerializeField] protected TweenType m_tweenType = TweenType.NONE;	// Define the "show" direction. "hide" will be the reversed tween. To use CUSTOM, add as many DOTweenAnimation components as desired to the target object with the id's "show" and "hide".
+	[SerializeField] protected float m_tweenDuration = 0.25f;
+	[SerializeField] protected float m_tweenValue = 1f;					// Use it to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).
+	[SerializeField] protected Ease m_tweenEase = Ease.OutBack;
+	[SerializeField] protected float m_tweenDelay = 0f;
 
 	// Internal references
-	private CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
-	private RectTransform m_rectTransform = null;
+	protected CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
+	protected RectTransform m_rectTransform = null;
 
 	// Internal
-	private Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
-	private bool m_isDirty = true;
-	private bool m_disableAfterHide = true;
+	protected Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
+	protected bool m_isDirty = true;
+	protected bool m_disableAfterHide = true;
 
-	private bool m_isVisible = false;
+	// Since visibility is linked to object's being active, we cannot trust in initializing it properly on the Awake call (since Awake is not called for disabled objects)
+	// Forced to do this workaround
+	protected State m_state = State.INIT;
 	public bool visible {
-		get { return m_isVisible; }
+		get { 
+			if(m_state == State.INIT) {
+				if(gameObject.activeSelf) {
+					m_state = State.VISIBLE;
+				} else {
+					m_state = State.HIDDEN;
+				}
+			}
+			return m_state == State.VISIBLE; 
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -81,20 +98,16 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected virtual void Awake() {
 		// Get external references
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_rectTransform = GetComponent<RectTransform>();
-
-		// Initialize state
-		m_isVisible = gameObject.activeSelf;
-		m_isDirty = true;
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
-	private void Start() {
+	protected void Start() {
 		
 	}
 
@@ -102,7 +115,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// A change has been made on the inspector.
 	/// http://docs.unity3d.com/ScriptReference/MonoBehaviour.OnValidate.html
 	/// </summary>
-	private void OnValidate() {
+	protected void OnValidate() {
 		// Mark the object as dirty so that the next time an animation is required the sequence is re-created
 		m_isDirty = true;
 	}
@@ -110,7 +123,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	protected virtual void OnDestroy() {
 		// Just in case
 		if(m_sequence != null) {
 			m_sequence.Kill();
@@ -125,12 +138,12 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Show the object. Will be ignored if object is already visible/showing.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
-	public void Show(bool _animate = true) {
-		// If we're already in the target state, skip
-		if(m_isVisible) return;
+	public virtual void Show(bool _animate = true) {
+		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
+		if(visible && !m_isDirty) return;
 
 		// Update state
-		m_isVisible = true;
+		m_state = State.VISIBLE;
 
 		// In any case, make sure the object is active
 		gameObject.SetActive(true);
@@ -167,16 +180,26 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Same as show but overriding current state.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	public void ForceShow(bool _animate = true) {
+		// Force state to make sure Hide() call is not skipped
+		m_state = State.HIDDEN;
+		Hide(_animate);
+	}
+
+	/// <summary>
 	/// Hide the object. Will be ignored if object is already hidden/hiding.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
-	public void Hide(bool _animate = true, bool _disableAfterAnimation = true) {
-		// If we're already in the target state, skip
-		if(!m_isVisible) return;
+	public virtual void Hide(bool _animate = true, bool _disableAfterAnimation = true) {
+		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
+		if(!visible && !m_isDirty) return;
 
 		// Update state
-		m_isVisible = false;
+		m_state = State.HIDDEN;
 		m_disableAfterHide = _disableAfterAnimation;
 
 		// If dirty, re-create the tween (will be destroyed if not needed)
@@ -224,12 +247,23 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Same as hide but overriding current state.
+	/// </summary>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
+	public void ForceHide(bool _animate = true, bool _disableAfterAnimation = true) {
+		// Force state to make sure Hide() call is not skipped
+		m_state = State.VISIBLE;
+		Hide(_animate, _disableAfterAnimation);
+	}
+
+	/// <summary>
 	/// Toggle visibility state.
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	public void Toggle(bool _animate = true) {
 		// Easy
-		if(m_isVisible) {
+		if(visible) {
 			Hide(_animate);
 		} else {
 			Show(_animate);
@@ -258,12 +292,17 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Create the tween sequence according to current setup.
 	/// If a sequence already exists, it will be killed.
 	/// </summary>
-	private void RecreateTween() {
+	protected void RecreateTween() {
 		// If the sequence is already created, kill it
 		if(m_sequence != null) {
 			m_sequence.Complete();	// Make sure sequence is at its end-state to restore object's default values so the new sequence can take them
 			m_sequence.Kill();
 			m_sequence = null;
+		}
+
+		// Make sure we have required components
+		if(m_rectTransform == null) {
+			m_rectTransform = GetComponent<RectTransform>();
 		}
 
 		// Clear dirty flag
@@ -337,7 +376,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnTweenCompleted() {
 		// Optionally disable object after the hide animation has finished
-		if(!m_isVisible) {
+		if(!visible) {
 			if(m_disableAfterHide) {
 				gameObject.SetActive(false);
 			}
