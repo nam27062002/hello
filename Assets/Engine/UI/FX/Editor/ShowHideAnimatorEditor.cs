@@ -63,6 +63,13 @@ public class ShowHideAnimatorEditor : Editor {
 		bool wasEnabled = GUI.enabled;
 		GUI.enabled = Application.isPlaying;
 		EditorGUILayout.BeginHorizontal(); {
+			// Current state
+			if((target as ShowHideAnimator).visible) {
+				GUILayout.Label("STATE VISIBLE");
+			} else {
+				GUILayout.Label("STATE HIDDEN");
+			}
+
 			// Show
 			if(GUILayout.Button("Show")) {
 				for(int i = 0; i < targets.Length; i++) {

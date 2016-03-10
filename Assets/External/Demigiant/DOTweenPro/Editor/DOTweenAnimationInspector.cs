@@ -1,8 +1,6 @@
 ﻿// Author: Daniele Giardini - http://www.demigiant.com
 // Created: 2015/03/12 16:03
 
-#define AOC_CUSTOMIZATION
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -100,7 +98,7 @@ namespace DG.DOTweenEditor
 
         void OnEnable()
         {
-			_src = target as DOTweenAnimation;
+            _src = target as DOTweenAnimation;
 
             onStartProperty = base.serializedObject.FindProperty("onStart");
             onPlayProperty = base.serializedObject.FindProperty("onPlay");
@@ -119,7 +117,7 @@ namespace DG.DOTweenEditor
             }
         }
 
-		override public void OnInspectorGUI()
+        override public void OnInspectorGUI()
         {
         	base.OnInspectorGUI();
 
@@ -129,27 +127,14 @@ namespace DG.DOTweenEditor
             bool playMode = Application.isPlaying;
             _runtimeEditMode = _runtimeEditMode && playMode;
 
-			GUILayout.BeginHorizontal(); {
-			#if AOC_CUSTOMIZATION
-				// [AOC] Remove logo - so annoying
-				// [AOC] Make it foldable for an overview when having multiple anims in a single object
-				string title = _src.animationType.ToString() + (string.IsNullOrEmpty(_src.id) ? "" : " [" + _src.id + "]");
-				_src.inspectorExpanded = EditorGUILayout.Foldout(_src.inspectorExpanded, title);
-			#else
-				EditorGUIUtils.InspectorLogo();
-				GUILayout.Label(_src.animationType.ToString() + (string.IsNullOrEmpty(_src.id) ? "" : " [" + _src.id + "]"), EditorGUIUtils.sideLogoIconBoldLabelStyle);
-			#endif
-
-	            // Up-down buttons
-	            GUILayout.FlexibleSpace();
-	            if (GUILayout.Button("▲", DeGUI.styles.button.toolIco)) UnityEditorInternal.ComponentUtility.MoveComponentUp(_src);
-	            if (GUILayout.Button("▼", DeGUI.styles.button.toolIco)) UnityEditorInternal.ComponentUtility.MoveComponentDown(_src);
-			} GUILayout.EndHorizontal();
-
-			#if AOC_CUSTOMIZATION
-			// [ACO] If not expanded, nothing else to do
-			if(!_src.inspectorExpanded) return;
-			#endif
+            GUILayout.BeginHorizontal();
+            EditorGUIUtils.InspectorLogo();
+            GUILayout.Label(_src.animationType.ToString() + (string.IsNullOrEmpty(_src.id) ? "" : " [" + _src.id + "]"), EditorGUIUtils.sideLogoIconBoldLabelStyle);
+            // Up-down buttons
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("▲", DeGUI.styles.button.toolIco)) UnityEditorInternal.ComponentUtility.MoveComponentUp(_src);
+            if (GUILayout.Button("▼", DeGUI.styles.button.toolIco)) UnityEditorInternal.ComponentUtility.MoveComponentDown(_src);
+            GUILayout.EndHorizontal();
 
             if (playMode) {
                 if (_runtimeEditMode) {
@@ -207,7 +192,7 @@ namespace DG.DOTweenEditor
             GUILayout.BeginHorizontal();
                 DOTweenAnimationType prevAnimType = _src.animationType;
 //                _src.animationType = (DOTweenAnimationType)EditorGUILayout.EnumPopup(_src.animationType, EditorGUIUtils.popupButton);
-				_src.isActive = EditorGUILayout.Toggle(new GUIContent("", "If unchecked, this animation will not be created"), _src.isActive, GUILayout.Width(16));
+                _src.isActive = EditorGUILayout.Toggle(new GUIContent("", "If unchecked, this animation will not be created"), _src.isActive, GUILayout.Width(16));
                 GUI.enabled = _src.isActive;
                 _src.animationType = AnimationToDOTweenAnimationType(_AnimationType[EditorGUILayout.Popup(DOTweenAnimationTypeToPopupId(_src.animationType), _AnimationType)]);
                 _src.autoPlay = DeGUILayout.ToggleButton(_src.autoPlay, new GUIContent("AutoPlay", "If selected, the tween will play automatically"));
