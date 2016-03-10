@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class TouchControlsDPad : TouchControls {
@@ -22,10 +23,18 @@ public class TouchControlsDPad : TouchControls {
 	private Vector3 m_dpadPos = Vector3.zero;
 	private Vector3 m_dpadDotPos = Vector3.zero;
 
+	// [AOC] Quick'n'dirty fix!
+	private RectTransform m_dPadRectTransform = null;
+	private RectTransform m_dPadDotRectTransform = null;
+
 	
 	// Use this for initialization
 	override public void Start () 
 	{
+		// [AOC] Quick'n'dirty fix!
+		m_dPadRectTransform = m_dpadObj.transform as RectTransform;
+		m_dPadDotRectTransform = m_dpadDotObj.transform as RectTransform;
+
 		base.Start();
 		
 		m_type = TouchControlsType.dpad;
@@ -34,8 +43,12 @@ public class TouchControlsDPad : TouchControls {
 		RectTransform rt = m_dpadObj.GetComponent<RectTransform>();
 
 		if (rt != null) {
-			m_radiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 0.45f;
-			m_boostRadiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 1.65f;
+			//m_radiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 0.45f;
+			//m_boostRadiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 1.65f;
+
+			// [AOC] Quick'n'dirty fix!
+			m_radiusToCheck = m_dPadRectTransform.rect.width * 0.45f;
+			m_boostRadiusToCheck = m_dPadRectTransform.rect.width * 1.65f;
 		} else {
 			m_radiusToCheck = Screen.height * 0.09f;
 			m_boostRadiusToCheck = Screen.height * 0.15f;
@@ -65,8 +78,8 @@ public class TouchControlsDPad : TouchControls {
 				m_dpadPos.x = m_initialTouchPos.x;
 				m_dpadPos.y = m_initialTouchPos.y;
 				m_dpadPos.z = 0;
-				m_dpadObj.transform.position = m_dpadPos;
-				
+				//m_dpadObj.transform.position = m_dpadPos;
+
 				// project current touch pos on circle
 				Vector3 diffUnit = (m_currentTouchPos - m_initialTouchPos);
 				if(diffUnit.magnitude > m_radiusToCheck)
@@ -78,15 +91,30 @@ public class TouchControlsDPad : TouchControls {
 					m_dpadDotPos.x = diffUnit.x;
 					m_dpadDotPos.y = diffUnit.y;
 					m_dpadDotPos.z = 0;
-					m_dpadDotObj.transform.position = m_dpadDotPos;
+					//m_dpadDotObj.transform.position = m_dpadDotPos;
 				}
 				else
 				{
 					m_dpadDotPos.x = m_currentTouchPos.x;
 					m_dpadDotPos.y = m_currentTouchPos.y;
 					m_dpadDotPos.z = 0;
-					m_dpadDotObj.transform.position = m_dpadDotPos;
+					//m_dpadDotObj.transform.position = m_dpadDotPos;
 				}
+
+				// [AOC] Quick'n'dirty fix!
+				Vector2 correctedDPadPos = new Vector2(
+					(m_dpadPos.x / Screen.width),
+					(m_dpadPos.y / Screen.height)
+				);
+				m_dPadRectTransform.anchorMin = correctedDPadPos;
+				m_dPadRectTransform.anchorMax = correctedDPadPos;
+
+				Vector2 correctedDPadDotPos = new Vector2(
+					(m_dpadDotPos.x / Screen.width),
+					(m_dpadDotPos.y / Screen.height)
+				);
+				m_dPadDotRectTransform.anchorMin = correctedDPadDotPos;
+				m_dPadDotRectTransform.anchorMax = correctedDPadDotPos;
 			}
 		}
 	}
