@@ -40,7 +40,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 
 		if ( m_pMotion != null )
 		{
-			Vector3 pos = InstanceManager.player.transform.position;
+			Vector3 pos = InstanceManager.player.GetComponent<DragonMotion>().head.position;
 			m_pMotion.Shoot( pos );
 		}
 
