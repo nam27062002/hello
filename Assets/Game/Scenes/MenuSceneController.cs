@@ -113,14 +113,6 @@ public class MenuSceneController : SceneController {
 	}
 
 	/// <summary>
-	/// Reset persistence button. Debug purposes only.
-	/// </summary>
-	public void OnResetButton() {
-		PersistenceManager.Clear();
-		FlowManager.Restart();
-	}
-
-	/// <summary>
 	/// Add xp to the currently selected dragon (if owned). Debug purposes only.
 	/// Will add 1/3 of the current level.
 	/// </summary>

@@ -47,6 +47,8 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	private MenuScreenScene m_scene = null;		// Reference to the 3d scene
 	private Transform m_eggAnchor = null;
+	private Transform m_rewardAnchor = null;
+	private GameObject m_rewardView = null;
 
 	// Internal
 	private State m_state = State.IDLE;
@@ -129,6 +131,11 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_egg = null;
 		}
 
+		if(m_rewardView != null) {
+			GameObject.Destroy(m_rewardView);
+			m_rewardView = null;
+		}
+
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
 		Messenger.RemoveListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnNavigationScreenChanged);
@@ -157,11 +164,17 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_egg = null;
 		}
 
+		if(m_rewardView != null) {
+			GameObject.Destroy(m_rewardView);
+			m_rewardView = null;
+		}
+
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
-		m_shopButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
-		m_callToActionButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		//m_shopButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		//m_callToActionButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		m_actionButtonsAnimator.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_backButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
@@ -213,6 +226,14 @@ public class OpenEggScreenController : MonoBehaviour {
 				Debug.Assert(m_eggAnchor != null, "Required \"OpenEggAnchor\" transform not found!");
 			}
 		}
+
+		// Reward anchor in the 3d scene
+		if(m_rewardAnchor == null) {
+			if(m_scene != null) {
+				m_rewardAnchor = m_scene.FindTransformRecursive("RewardAnchor");
+				Debug.Assert(m_rewardAnchor != null, "Required \"RewardAnchor\" transform not found!");
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -258,16 +279,17 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// [AOC] TODO!! Nice FX!
 		// Do a full-screen flash FX
-		/*if(m_flashFX != null) {
+		if(m_flashFX != null) {
 			m_flashFX.SetActive(true);
 			m_flashFX.GetComponent<Image>().color = Colors.white;
 			m_flashFX.GetComponent<Image>().DOFade(0f, 1f).SetEase(Ease.OutExpo).SetRecyclable(true).OnComplete(() => { m_flashFX.SetActive(false); });
-		}*/
+		}
 
 		// [AOC] TEMP!! Some dummy effect on the egg xD
-		m_egg.transform.DOScale(new Vector3(1.5f, 0.4f, 1.5f), 1.0f).SetDelay(0.10f).SetEase(Ease.OutElastic);
+		//m_egg.transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack).OnComplete(() => { m_egg.gameObject.SetActive(false); });
+		m_egg.gameObject.SetActive(false);
 
-		// [AOC] TODO!! Replace egg view by the reward prefab
+		// Show reward text
 		m_rewardText.gameObject.SetActive(true);
 		m_rewardText.color = Colors.WithAlpha(m_rewardText.color, 1f);
 		m_rewardText.transform.DOBlendableLocalMoveBy(Vector3.up * 500f, 0.30f).From().SetEase(Ease.OutBounce).SetRecyclable(true);
@@ -282,12 +304,43 @@ public class OpenEggScreenController : MonoBehaviour {
 					m_rewardText.text = "You've got " + m_egg.eggData.rewardDef.sku + "!";
 			} break;
 		}
-		
+
+		// [AOC] TODO!! Replace egg view by the reward prefab
+		// Create a fake reward view
+		DragonDef dragonDef = DefinitionsManager.dragons.GetDef(m_egg.eggData.def.GetAsString("dragonSku"));
+		if(dragonDef != null) {
+			// Create instance
+			GameObject prefab = Resources.Load<GameObject>(dragonDef.menuPrefabPath);
+			m_rewardView = GameObject.Instantiate<GameObject>(prefab);
+
+			// Attach it to the anchor and reset transformation
+			// The anchor is setup to display all dragons at scale 1
+			// [AOC] TODO!! Add some scale factor more or less proportional to content scale factor
+			m_rewardView.transform.SetParent(m_rewardAnchor);
+			m_rewardView.transform.localPosition = Vector3.zero;
+			m_rewardView.transform.localRotation = Quaternion.identity;
+			m_rewardView.transform.localScale = Vector3.one;
+
+			// [AOC] TEMP!! Apply some crazy tint to make it clear it's not a standard dragon!
+			SkinnedMeshRenderer rewardRenderer = m_rewardView.GetComponentInChildren<SkinnedMeshRenderer>();
+			if(rewardRenderer != null) {
+				Color[] colors = new Color[] { Colors.red, Colors.green, Colors.blue, Colors.cyan, Colors.magenta, Colors.yellow };
+				for(int i = 0; i < rewardRenderer.materials.Length; i++) {
+					//rewardRenderer.materials[i].color = colors.GetRandomValue();
+					rewardRenderer.materials[i].SetColor("_ColorMultiply", colors.GetRandomValue());
+				}
+			}
+
+			// Animate reward
+			DOTween.Kill(m_rewardAnchor, true);
+			m_rewardAnchor.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
+		}
 
 		// Show/Hide buttons and HUD
 		//InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();	// Keep HUD hidden
-		m_shopButton.GetComponent<ShowHideAnimator>().Show();
-		m_callToActionButton.GetComponent<ShowHideAnimator>().Show();
+		//m_shopButton.GetComponent<ShowHideAnimator>().Show();
+		//m_callToActionButton.GetComponent<ShowHideAnimator>().Show();
+		m_actionButtonsAnimator.GetComponent<ShowHideAnimator>().Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
 		m_backButton.GetComponent<ShowHideAnimator>().Show();
