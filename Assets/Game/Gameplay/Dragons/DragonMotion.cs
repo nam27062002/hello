@@ -110,8 +110,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	private float m_waterMovementModifier = 0;
+
 	private Vector3 m_forbiddenDirection;
 	private float m_forbiddenValue;
+
+	private List<Vector3> m_normalContacts = new List<Vector3>();
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -495,6 +498,19 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
 			m_impulse.Normalize();
 
+
+			if (m_normalContacts.Count > 0)
+			{
+				m_forbiddenDirection = Vector3.zero;
+				for( int i = 0; i < m_normalContacts.Count; i++ )
+				{
+					m_forbiddenDirection += m_normalContacts[i];
+				}
+				m_forbiddenDirection.Normalize();
+				m_forbiddenValue = 1;
+				m_normalContacts.Clear();
+			}
+
 			if ( m_forbiddenValue > 0)
 			{
 				float forbiddenDot = Vector3.Dot( m_impulse, m_forbiddenDirection);	
@@ -503,6 +519,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_forbiddenValue -= Time.deltaTime * 2;
 					float outPush = Mathf.Sin( m_forbiddenValue * Mathf.PI * 0.5f);	
 					m_impulse = m_impulse + (m_forbiddenDirection * -forbiddenDot * outPush);
+					m_impulse.Normalize();
+					if ( forbiddenDot < -0.8 )
+						_impulse = _impulse * 1.1f;
+
+					
 					
 				}
 				else
@@ -715,8 +736,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			default:
 			{
-				m_forbiddenDirection = collision.contacts[0].normal;;
-				m_forbiddenValue = 1;
+				for( int i = 0; i<collision.contacts.Length; i++ )
+				{
+					m_normalContacts.Add( collision.contacts[i].normal);
+				}
 			}break;
 		}
 
@@ -724,8 +747,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	void OnCollisionStay(Collision collision)
 	{
-		m_forbiddenDirection = collision.contacts[0].normal;;
-		m_forbiddenValue = 1;
+		for( int i = 0; i<collision.contacts.Length; i++ )
+		{
+			m_normalContacts.Add( collision.contacts[i].normal);
+		}
 	}
 
 }
