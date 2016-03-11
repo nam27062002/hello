@@ -110,6 +110,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	private float m_waterMovementModifier = 0;
+	private Vector3 m_forbiddenDirection;
+	private float m_forbiddenValue;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -192,6 +194,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_lastPosition = transform.position;
 		m_lastSpeed = 0;
 		ChangeState(State.Idle);
+
+		m_forbiddenDirection = Vector3.zero;
+		m_forbiddenValue = 0;
 	}
 
 	void OnEnable() {
@@ -424,26 +429,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		// check collision with ground, only down?
 		m_impulse.y += moveValue * Time.deltaTime;
-		/*
-		if ( m_impulse.y < 0 )
-		{
-			RaycastHit sensorA = new RaycastHit();
-			bool nearGround = CheckGround(out sensorA);
-			if ( nearGround )
-			{
-				m_impulse.y = 0;
-			}
-		}
-		else if ( m_impulse.y > 0 )
-		{
-			RaycastHit sensorA = new RaycastHit();
-			bool nearCeiling = CheckCeiling(out sensorA);
-			if ( nearCeiling )
-			{
-				m_impulse.y = 0;
-			}
-		}
-		*/
 		m_direction = m_impulse.normalized;
 		m_orientation.SetDirection(m_direction);
 		m_rbody.velocity = m_impulse;
@@ -468,7 +453,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private void ComputeFinalImpulse(Vector3 _impulse) {
 		// we keep the velocity value
 		float v = _impulse.magnitude;
-		
+		/*
 		// check collision with ground, only down!!
 		RaycastHit sensorA = new RaycastHit();
 		float dot = 0;
@@ -486,7 +471,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			nearGround = dot < 0;
 		}
 
-		if (nearGround) {
+		if (nearGround && false) {
 			//m_direction = Vector3.right;
 			if ((sensorA.normal.y < 0 && _impulse.x < 0) || (sensorA.normal.y > 0 && _impulse.x > 0)) {
 				m_direction = new Vector3(sensorA.normal.y, -sensorA.normal.x, sensorA.normal.z);
@@ -502,10 +487,31 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				// the direction will be parallel to ground, but we'll still moving down until the dragon is near enough
 				m_impulse = _impulse.normalized;				
 			}	
-		} else {
+		} else 
+		*/
+
+		{
 			// on air impulse formula, we don't fully change the velocity vector 
 			m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
 			m_impulse.Normalize();
+
+			if ( m_forbiddenValue > 0)
+			{
+				float forbiddenDot = Vector3.Dot( m_impulse, m_forbiddenDirection);	
+				if ( forbiddenDot < 0 )
+				{
+					m_forbiddenValue -= Time.deltaTime * 2;
+					float outPush = Mathf.Sin( m_forbiddenValue * Mathf.PI * 0.5f);	
+					m_impulse = m_impulse + (m_forbiddenDirection * -forbiddenDot * outPush);
+					
+				}
+				else
+				{
+					m_forbiddenValue = 0;
+					m_forbiddenDirection = Vector3.zero;
+				}
+			}
+
 			m_direction = m_impulse;
 		}			
 		
@@ -707,8 +713,20 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}
 				m_impulse.x = -m_impulse.x;
 			}break;
+			default:
+			{
+				m_forbiddenDirection = collision.contacts[0].normal;;
+				m_forbiddenValue = 1;
+			}break;
 		}
 
 	}
+
+	void OnCollisionStay(Collision collision)
+	{
+		m_forbiddenDirection = collision.contacts[0].normal;;
+		m_forbiddenValue = 1;
+	}
+
 }
 
