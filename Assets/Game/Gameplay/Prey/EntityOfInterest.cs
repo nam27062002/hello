@@ -29,10 +29,11 @@ public class EntityOfInterest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (m_dragon.IsAlive()) {
-			float distance = (transform.position - m_dragonHead.position).sqrMagnitude;
-
-			if (distance < m_FocusDistanceSQR) {
+		if (m_dragon.IsAlive()) 
+		{
+			// if ( m_camera.IsInsideFrustrum( transform.position ) )
+			if ( m_camera.IsInsideActivationMinArea( transform.position ) )
+			{
 				if (!m_InRange) {
 					m_camera.SetEntityOfInterest(transform);
 					m_InRange = true;

@@ -55,6 +55,8 @@ public class GameCameraController : MonoBehaviour {
 	private DragonMotion m_dragonMotion = null;
 	private DragonBreathBehaviour m_dragonBreath = null;
 	private Transform m_interest = null;
+	private float m_interestLerp = 0;
+	private Vector3 m_interestPosition = Vector3.zero;
 	private bool m_furyOn;
 	private bool m_slowMotionOn;
 	private bool m_slowMoJustStarted;
@@ -179,17 +181,19 @@ public class GameCameraController : MonoBehaviour {
 			Vector3 targetPos;
 			// Compute new target position
 			// Is there a danger nearby?
-			/*if(m_interest != null) 
+			if(m_interest != null) 
 			{
-				// Yes!! Look between the danger and the dragon
-				// [AOC] TODO!! Smooth factor might need to be adapted in this particular case
-				targetPos = Vector3.Lerp(playerPos, m_interest.position, 0.25f);
+				m_interestLerp += Time.deltaTime * 0.5f;
+				m_interestLerp = Mathf.Min( m_interestLerp, 0.25f);
+				m_interestPosition = m_interest.position - m_dragonMotion.cameraLookAt.position;
 			} 
 			else 
-			*/
 			{
-				targetPos = m_dragonMotion.cameraLookAt.position;
+				m_interestLerp -= Time.deltaTime * 0.5f;
+				m_interestLerp = Mathf.Max( m_interestLerp, 0);
 			}
+
+			targetPos = Vector3.Lerp(m_dragonMotion.cameraLookAt.position, m_dragonMotion.cameraLookAt.position + m_interestPosition, m_interestLerp);
 
 
 			Vector3 dragonVelocity = m_dragonMotion.velocity;
@@ -334,6 +338,20 @@ public class GameCameraController : MonoBehaviour {
 		center.z = 0;
 		_bounds.center = center;
 		return !m_deactivation.Intersects(_bounds);
+	}
+
+	public bool IsInsideFrustrum( Vector3 _point)
+	{
+		_point.z = 0;
+		return m_frustum.Contains(_point);
+	}
+
+	public bool IsInsideFrustrum( Bounds _bounds)
+	{
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return m_frustum.Intersects(_bounds);
 	}
 
 	// update camera bounds for Z = 0, this can change with dinamic zoom in/out animations
