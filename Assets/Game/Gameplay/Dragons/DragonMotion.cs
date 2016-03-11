@@ -511,6 +511,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_normalContacts.Clear();
 			}
 
+
 			if ( m_forbiddenValue > 0)
 			{
 				float forbiddenDot = Vector3.Dot( m_impulse, m_forbiddenDirection);	
@@ -520,11 +521,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					float outPush = Mathf.Sin( m_forbiddenValue * Mathf.PI * 0.5f);	
 					m_impulse = m_impulse + (m_forbiddenDirection * -forbiddenDot * outPush);
 					m_impulse.Normalize();
-					if ( forbiddenDot < -0.8 )
-						_impulse = _impulse * 1.1f;
-
-					
-					
 				}
 				else
 				{
