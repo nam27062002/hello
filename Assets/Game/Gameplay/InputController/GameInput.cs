@@ -63,6 +63,7 @@ public class GameInput : MonoBehaviour
 	
 	// making this static so we can test in WIP levels
 	private static Vector2[]		m_touchPosition = new Vector2[m_maxTouches];
+	private static float[] 			m_touchPressure = new float[ m_maxTouches ];
 	private static int				m_touchID;
 	
 	public bool				isTiltAvailable				{get{return m_isTiltAvailable;}}
@@ -76,6 +77,7 @@ public class GameInput : MonoBehaviour
 	
 	// making this static so we can test in WIP levels
 	public static Vector2[]		touchPosition				{get{return m_touchPosition;}} 
+	public static float[]		touchPressure				{get{return m_touchPressure;}} 
 	public static int			touchID						{get{return m_touchID;}}
 	public TouchControlsType	touchControlsType { get; set; }
 	
@@ -253,6 +255,9 @@ public class GameInput : MonoBehaviour
 		m_tiltCalibrated = Matrix4x4.identity;
 		m_tiltInverseCalibrated = Matrix4x4.identity;
 		m_tiltCorrected = Matrix4x4.identity;
+
+		for( int i = 0; i<m_maxTouches; i++ )
+			m_touchPressure[ i ] = 0;
 		
 	}
 	
@@ -305,6 +310,9 @@ public class GameInput : MonoBehaviour
 				}
 
 				m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				if (Input.touchPressureSupported)
+					m_touchPressure[id] = touch.pressure / touch.maximumPossiblePressure;
+
 				m_touchID = effectiveFingerId;
 				
 				//Debug.Log("Returning Touch " + id + " pressed!");
@@ -313,14 +321,18 @@ public class GameInput : MonoBehaviour
 			else if(((touch.phase == UnityEngine.TouchPhase.Moved) || (touch.phase == TouchPhase.Stationary)) && (effectiveFingerId == id))
 			{
 				m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				if (Input.touchPressureSupported)
+					m_touchPressure[id] = touch.pressure / touch.maximumPossiblePressure;
 				m_touchID = effectiveFingerId;
-				
+
 				//Debug.Log("Returning Touch " + id + " held!");
 				return TouchState.held;
 			}
 			else if((touch.phase == UnityEngine.TouchPhase.Ended) && (effectiveFingerId == id))
 			{
 				m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				if (Input.touchPressureSupported)
+					m_touchPressure[id] = 0;
 				m_touchID = effectiveFingerId;
 				
 				//Debug.Log("Returning Touch " + id + " released!");
