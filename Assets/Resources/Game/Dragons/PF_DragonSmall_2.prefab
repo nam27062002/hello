@@ -780,7 +780,6 @@ GameObject:
   - 135: {fileID: 13519264}
   - 114: {fileID: 11473758}
   - 114: {fileID: 11416400}
-  - 114: {fileID: 11491186}
   - 114: {fileID: 11444574}
   - 114: {fileID: 11408036}
   - 114: {fileID: 11437562}
@@ -789,6 +788,7 @@ GameObject:
   - 114: {fileID: 11425292}
   - 114: {fileID: 11455292}
   - 114: {fileID: 11408306}
+  - 114: {fileID: 11406156}
   m_Layer: 12
   m_Name: PF_DragonSmall_2
   m_TagString: Player
@@ -2548,6 +2548,20 @@ MonoBehaviour:
   m_trails:
   - {fileID: 180582}
   - {fileID: 112008}
+--- !u!114 &11406156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfdff7c0ca724eac918dbab82ee87d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 25
+  m_fireBallPrefab: {fileID: 107994, guid: da447faeac9384d1387a7629de42640c, type: 2}
+  m_timeBetweenFires: 1
 --- !u!114 &11408036
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2663,46 +2677,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: dragon_small_2
   m_invulnerableTime: 5
---- !u!114 &11491186
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 159196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 25
-  m_length: 4.86
-  m_sizeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: -0.0017864751
-      value: 0.18814778
-      inSlope: 2.3691835
-      outSlope: 2.3691835
-      tangentMode: 0
-    - time: 0.6272868
-      value: 1.9588286
-      inSlope: 4.186264
-      outSlope: 4.186264
-      tangentMode: 0
-    - time: 1.0919297
-      value: 4.0119567
-      inSlope: -2.5896702
-      outSlope: -2.5896702
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_particleSpawn: 2
-  m_maxParticles: 100
-  m_lifeTime: 0.5
-  m_finalScale:
-    min: 0.75
-    max: 1.25
 --- !u!135 &13519264
 SphereCollider:
   m_ObjectHideFlags: 1

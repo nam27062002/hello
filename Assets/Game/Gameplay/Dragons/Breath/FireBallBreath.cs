@@ -1,0 +1,57 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class FireBallBreath : DragonBreathBehaviour {
+
+	public GameObject m_fireBallPrefab;
+	public float m_timeBetweenFires = 1.0f;
+	private float m_timer;
+
+	private Transform m_mouthTransform;
+	private DragonMotion m_dragonMotion;
+
+	// Use this for initialization
+	override protected void ExtendedStart() {
+
+		PoolManager.CreatePool( m_fireBallPrefab);
+
+		m_dragonMotion = GetComponent<DragonMotion>();
+		m_mouthTransform = m_dragonMotion.tongue;
+		m_direction = Vector2.zero;
+	}
+
+
+	override protected void BeginBreath() 
+	{
+		base.BeginBreath();
+		m_timer = m_timeBetweenFires;
+	}
+
+	override protected void Breath()
+	{
+		m_direction = m_dragonMotion.direction;
+
+		m_timer -= Time.deltaTime;
+		if ( m_timer <= 0 )
+		{
+			m_timer += m_timeBetweenFires;
+			// Throw fire ball!!!
+			GameObject go = PoolManager.GetInstance(m_fireBallPrefab.name);
+			if ( go != null )
+			{
+				go.transform.position = m_mouthTransform.position;
+				FireBall fb = go.GetComponent<FireBall>();
+				if ( fb != null )
+				{
+					fb.Shoot( m_direction, damage);
+					fb.m_speed = m_dragonMotion.lastSpeed + 10;
+				}
+			}
+		}
+	}
+
+	override protected void EndBreath() 
+	{
+		base.EndBreath();
+	}
+}
