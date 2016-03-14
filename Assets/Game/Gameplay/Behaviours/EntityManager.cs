@@ -10,8 +10,6 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 	void Awake() {
 		m_entities = new List<Entity>();
 		m_searchList = new List<Entity>();
-
-		m_area = new Rect();
 	}
 
 	public void Register(Entity _entity) {
@@ -25,13 +23,10 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 	public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius) {
 		m_searchList.Clear();
 
-		m_area.size = Vector2.one * _radius * 2f;
-		m_area.center = _center;
-
 		for (int i = 0; i < m_entities.Count; i++) {
 			Entity e = m_entities[i];
 			if (e != null) {				
-				if (e.IntersectsWith(m_area)) {
+				if (e.IntersectsWith(_center, _radius)) {
 					m_searchList.Add(e);
 				}
 			}
