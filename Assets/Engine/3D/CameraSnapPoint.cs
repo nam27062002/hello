@@ -15,7 +15,7 @@ using DG.Tweening;
 /// <summary>
 /// Define a camera setup.
 /// </summary>
-[ExecuteInEditMode]
+[RequireComponent(typeof(LookAtPoint))]
 public class CameraSnapPoint : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -26,32 +26,12 @@ public class CameraSnapPoint : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed parameters
-	// Required Parameters
-	// If lookAtObject is defined, lookAtPoint will be linked to the position of the object
-	[SerializeField] private Vector3 m_lookAtPoint = Vector3.forward;
-	public Vector3 lookAtPoint {
-		get { return m_lookAtPoint; }
-		set { 
-			m_lookAtPoint = value; 
-			if(m_lookAtObject != null) m_lookAtObject.position = value;
-		}
-	}
-	
-	[SerializeField] private Transform m_lookAtObject = null;
-	public Transform lookAtObject {
-		get { return m_lookAtObject; }
-		set { 
-			m_lookAtObject = value; 
-			if(m_lookAtObject != null) m_lookAtPoint = m_lookAtObject.position;
-		}
-	}
-
 	// Optional Parameters
 	public bool changeFov = true;
-	public float fov = 1;
+	public float fov = 60;
 
 	public bool changeNear = true;
-	public float near = 0.001f;
+	public float near = 0.1f;
 
 	public bool changeFar = true;
 	public float far = 1000f;
@@ -69,37 +49,35 @@ public class CameraSnapPoint : MonoBehaviour {
 	// Editor Settings
 	public bool livePreview = true;
 	public Color gizmoColor = new Color(0f, 1f, 1f, 0.25f);
+
+	// Internal references
+	private LookAtPoint m_lookAtPoint = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Logic update call.
+	/// Get references.
 	/// </summary>
-	void Update () {
-		if(isActiveAndEnabled) {
-			// Make sure lookAtPoint is linked to the object (if any)
-			if(m_lookAtObject != null) {
-				m_lookAtPoint = m_lookAtObject.position;
-			}
-
-			// Modify our own rotation
-			transform.LookAt(m_lookAtPoint);
-		}
+	void Awake() {
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
 	}
 
 	/// <summary>
 	/// Draw scene gizmos.
 	/// </summary>
 	private void OnDrawGizmos() {
+		// Make sure lookAtPoint reference is valid
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
+
 		// LookAt line
 		Gizmos.color = Colors.WithAlpha(Colors.cyan, 0.75f);
-		Gizmos.DrawLine(transform.position, m_lookAtPoint);
+		Gizmos.DrawLine(m_lookAtPoint.transform.position, m_lookAtPoint.lookAtPointGlobal);
 
 		// Position and lookAt points
 		Gizmos.color = Colors.WithAlpha(Colors.red, 0.75f);
-		Gizmos.DrawSphere(transform.position, 1f);
-		Gizmos.DrawSphere(m_lookAtPoint, 1f);
+		Gizmos.DrawSphere(m_lookAtPoint.transform.position, 1f);
+		Gizmos.DrawSphere(m_lookAtPoint.lookAtPointGlobal, 1f);
 
 		// Camera frustum
 		// If not defined, use main camera values in a different color
@@ -140,10 +118,11 @@ public class CameraSnapPoint : MonoBehaviour {
 	public void Apply(Camera _cam) {
 		// Check params
 		if(_cam == null) return;
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
 
 		// Camera position
-		_cam.transform.position = transform.position;
-		_cam.transform.LookAt(lookAtPoint);
+		_cam.transform.position = m_lookAtPoint.transform.position;
+		_cam.transform.LookAt(m_lookAtPoint.lookAtPointGlobal);
 
 		// Camera params
 		if(changeFov) _cam.fieldOfView = fov;
@@ -168,6 +147,7 @@ public class CameraSnapPoint : MonoBehaviour {
 		// Check params
 		if(_cam == null) return;
 		if(_params == null) return;
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
 
 		// [AOC] Make sure tweens are autokilled and recyclable, so we do a "pooling" of this tween type, avoiding creating memory garbage
 		string tweenId = GetTweenId(_cam);
@@ -180,8 +160,8 @@ public class CameraSnapPoint : MonoBehaviour {
 		DOTween.Kill(tweenId);
 
 		// Camera position
-		_cam.transform.DOMove(transform.position, _duration).SetAs(_params);
-		_cam.transform.DORotateQuaternion(transform.rotation, _duration).SetAs(_params);
+		_cam.transform.DOMove(m_lookAtPoint.transform.position, _duration).SetAs(_params);
+		_cam.transform.DORotateQuaternion(m_lookAtPoint.transform.rotation, _duration).SetAs(_params);
 
 		// Camera params
 		if(changeFov) {

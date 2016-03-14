@@ -91,12 +91,6 @@ public class CameraSnapPointEditor : Editor {
 		m_targetSnapPoint.livePreview = EditorGUILayout.Toggle("Live Preview", m_targetSnapPoint.livePreview);
 		EditorGUILayout.Space();
 
-		// LookAt is mandatory
-		EditorGUILayout.LabelField("Required Parameters", m_commentLabelStyle);
-		EditorGUILayout.LabelField("If lookAtObject is defined, lookAtPoint will be linked to the position of the object", m_commentLabelStyle);
-		m_targetSnapPoint.lookAtPoint = EditorGUILayout.Vector3Field("Look At Point", m_targetSnapPoint.lookAtPoint);
-		m_targetSnapPoint.lookAtObject = (Transform)EditorGUILayout.ObjectField("Look At Object", m_targetSnapPoint.lookAtObject, typeof(Transform), true);
-
 		// Optional values - single line
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Optional Parameters", m_commentLabelStyle);
@@ -178,17 +172,6 @@ public class CameraSnapPointEditor : Editor {
 	/// Updates stuff on the scene.
 	/// </summary>
 	public void OnSceneGUI() {
-		if(m_targetSnapPoint) {
-			// Draw and get positioning handles for the lookAt point
-			if(Tools.pivotRotation == PivotRotation.Global) {
-				m_targetSnapPoint.lookAtPoint = Handles.PositionHandle(m_targetSnapPoint.lookAtPoint, Quaternion.identity);
-			} else {
-				m_targetSnapPoint.lookAtPoint = Handles.PositionHandle(m_targetSnapPoint.lookAtPoint, m_targetSnapPoint.transform.rotation);	// [AOC] Use object's rotation
-			}
-
-			if(GUI.changed) {
-				EditorUtility.SetDirty(m_targetSnapPoint);
-			}
-		}
+		
 	}
 }
