@@ -118,6 +118,17 @@ public class Entity : Initializable {
 		}		
 	}
 
+	public bool IntersectsWith( Vector2 _center, float _radius)
+	{
+		if (m_bounds != null) {
+			return m_bounds.Overlaps(_center, _radius);
+		} else {
+			// return _r.Contains(transform.position);
+			float sqrMagnitude = (_center - (Vector2)transform.position).sqrMagnitude;
+			return ( sqrMagnitude <= _radius * _radius );
+		}		
+	}
+
 	public Vector3 RandomInsideBounds() {
 		return m_bounds.bounds.RandomInside();
 	}
