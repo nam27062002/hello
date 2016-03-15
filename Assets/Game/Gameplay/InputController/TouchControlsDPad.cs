@@ -203,8 +203,6 @@ public class TouchControlsDPad : TouchControls {
 			float radiusCovered = m_diffVec.magnitude;
 			if(radiusCovered >= m_boostRadiusToCheck)
 				touchAction = true;
-			else
-				touchAction = false;
 		}
 
 		return true;

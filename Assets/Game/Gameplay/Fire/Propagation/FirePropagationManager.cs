@@ -42,14 +42,14 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 		//check if this intersecs with dragon breath
 		m_timer -= Time.deltaTime;
 		if (m_timer <= 0) {
-			m_timer = m_checkFireTime;
+			m_timer += m_checkFireTime;
 
 			Transform[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
 
 			for (int i = 0; i < nodes.Length; i++) {
 				Transform node = nodes[i];
 				if (m_breath.IsInsideArea(node.position)) {
-					node.GetComponent<FireNode>().Burn(m_breath.damage, m_breath.direction, true);
+					node.GetComponent<FireNode>().Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
 				}
 			}
 		}

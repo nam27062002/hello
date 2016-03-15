@@ -59,6 +59,16 @@ public class CircleArea2D : MonoBehaviour, Area {
 		
 	}
 
+	public bool Overlaps( Vector2 _center, float _radius)
+	{
+		float sqrMagnitude = ((Vector2)this.center - _center).sqrMagnitude;
+		if ( sqrMagnitude <= (_radius + this.radius) * ( _radius * this.radius ) )
+		{
+			return true;
+		}
+		return false;
+	}
+
 	public bool IsInside( Vector2 _point )
 	{
 		Vector3 c = center;

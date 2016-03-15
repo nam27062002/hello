@@ -642,7 +642,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void StartWaterMovement()
 	{
 		m_waterMovementModifier = 0;
-		m_bubbles.Play();
+		if ( m_bubbles != null )
+			m_bubbles.Play();
 		ChangeState(State.InsideWater);
 	}
 
@@ -650,7 +651,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		// Wait a second 
 		// Disable Bubbles
-		m_bubbles.Stop();
+		if ( m_bubbles != null )
+			m_bubbles.Stop();
 		if (m_animator )
 			m_animator.SetBool("boost", false);
 		StartCoroutine( EndWaterCoroutine() );

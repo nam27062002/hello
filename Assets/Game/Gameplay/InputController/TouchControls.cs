@@ -6,7 +6,8 @@ abstract public class TouchControls : MonoBehaviour {
 	// INSPECTOR VARIABLES
 	public bool m_boostWithRadiusCheck = false;
 	public bool m_boostWithSecondTouch = true;
-	
+	public bool m_boostWithHardPush = true;
+
 	// PROTECTED MEMBERS
 	protected TouchControlsType m_type;
 	
@@ -106,6 +107,7 @@ abstract public class TouchControls : MonoBehaviour {
 	{
 		if(GameInput.m_controlMethod == ControlMethod.touch)
 		{
+			touchAction = false;
 			//Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 0..!!!");
 			TouchState touchState = GameInput.CheckTouchState(0);
 			//Debug.Log("Got touchState 0 = " + touchState.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
@@ -130,6 +132,15 @@ abstract public class TouchControls : MonoBehaviour {
 						m_currentTouchState = TouchState.held;
 						m_decelerate = false;
 						SetTouchObjRendering(true);
+					}
+				}
+
+				if (m_currentTouchState == TouchState.held)
+				{
+					if (m_boostWithHardPush)
+					{
+						if ( GameInput.touchPressure[0] > 0.5f )
+							touchAction = true;
 					}
 				}
 			}
@@ -179,8 +190,9 @@ abstract public class TouchControls : MonoBehaviour {
 					if(m_currentTouchState2 == TouchState.none)
 					{
 						m_currentTouchState2 = TouchState.pressed;
-						touchAction = true;
 					}
+					if ( m_currentTouchState2 == TouchState.pressed )
+						touchAction = true;
 				}
 				else if(touchState2 == TouchState.held)
 				{
@@ -195,15 +207,14 @@ abstract public class TouchControls : MonoBehaviour {
 					if((m_currentTouchState2 == TouchState.pressed) || (m_currentTouchState2 == TouchState.held))
 					{
 						m_currentTouchState2 = TouchState.released;
-						touchAction = false;
 					}
 				}
 				else if(touchState2 == TouchState.none)
 				{
 					m_currentTouchState2 = TouchState.none;
-					touchAction = false;
 				}
 			}
+
 		}
 	}
 	

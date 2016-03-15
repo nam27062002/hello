@@ -241,7 +241,7 @@ public class FireBreath : DragonBreathBehaviour {
 			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
 			if (entity != null) {
 				if (IsInsideArea(entity.transform.position)) {
-					entity.Burn(damage, transform);
+					entity.Burn(damage * Time.deltaTime, transform);
 				}
 			}
 		}

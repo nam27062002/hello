@@ -113,6 +113,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 448754}
   - 114: {fileID: 11483032}
+  - 114: {fileID: 11425990}
   m_Layer: 0
   m_Name: CameraSnapPoint
   m_TagString: Untagged
@@ -258,7 +259,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 144716}
-  m_LocalRotation: {x: 0.067407705, y: 0.0062154816, z: -0.00041993463, w: 0.9977061}
+  m_LocalRotation: {x: 0.058764108, y: 0.0062187323, z: -0.00036607796, w: 0.9982525}
   m_LocalPosition: {x: -0.58, y: 3.8, z: 13.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -605,6 +606,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_lifeTime: 0
+--- !u!114 &11425990
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 144716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04c7f5b64c315416295b46ac2da9e7ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lookAtPointLocal: {x: 0, y: -1.699997, z: 60}
+  m_lookAtObject: {fileID: 0}
+  m_editMode: 0
 --- !u!114 &11432018
 MonoBehaviour:
   m_ObjectHideFlags: 1
