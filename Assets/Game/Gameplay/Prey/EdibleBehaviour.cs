@@ -4,10 +4,20 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(Entity))]
 public class EdibleBehaviour : Initializable {
+
+	public enum EatenFrom {
+		All = 0,
+		Front,
+		Back
+	};
+
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
+	[SerializeField] private EatenFrom m_vulnerable = EatenFrom.All;
+
 	private Entity m_entity;
+	private MotionInterface m_motion;
 	private Animator m_animator;
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
@@ -30,6 +40,7 @@ public class EdibleBehaviour : Initializable {
 	void Start() {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_entity = GetComponent<Entity>();
+		m_motion = GetComponent<MotionInterface>();
 	}
 
 	public override void Initialize() {
@@ -39,6 +50,19 @@ public class EdibleBehaviour : Initializable {
 		transform.localScale = m_originalScale;
 
 		enabled = true;
+	}
+
+	public bool CanBeEaten(Vector3 _eaterDirection) {
+		if (enabled) {
+			if (m_motion == null || m_vulnerable == EatenFrom.All) {
+				return true;
+			} else {
+				float dot = Vector2.Dot(m_motion.direction, _eaterDirection);
+				return (m_vulnerable == EatenFrom.Front && dot < -0.25f) || (m_vulnerable == EatenFrom.Back && dot > 0.25f);
+			}
+		}
+
+		return false;
 	}
 
 	public void OnEatByPet() {

@@ -2,16 +2,17 @@
 using System.Collections;
 
 [DisallowMultipleComponent]
-[AddComponentMenu("Behaviour/Prey/Gunner Tactics")]
+[AddComponentMenu("Behaviour/Prey/Dragon Tactics")]
 [RequireComponent(typeof(WanderBehaviour))]
 [RequireComponent(typeof(AttackBehaviour))]
-public class GunnerTactics : Initializable {
+[RequireComponent(typeof(EvadeBehaviour))]
+public class DragonTactics : Initializable {
 
 	private enum State {
 		None = 0,
 		Wander,
 		Attack,
-		Retreate
+		Retreat
 	};
 
 	private State m_state;
@@ -20,9 +21,7 @@ public class GunnerTactics : Initializable {
 
 	private WanderBehaviour m_wander;
 	private AttackBehaviour m_attack;
-	private EdibleBehaviour m_edible;
-
-	public bool m_canBeEatenWhileAttacking = true;
+	private EvadeBehaviour m_evade;
 
 	// Use this for initialization
 	void Start () {
@@ -36,8 +35,9 @@ public class GunnerTactics : Initializable {
 		
 		m_wander = GetComponent<WanderBehaviour>();
 		m_attack = GetComponent<AttackBehaviour>();
-		m_edible = GetComponent<EdibleBehaviour>();
+		m_evade = GetComponent<EvadeBehaviour>();
 		m_wander.enabled = false;
+		m_evade.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -46,25 +46,23 @@ public class GunnerTactics : Initializable {
 			ChangeState();
 		}
 
-		if (m_attack != null)
-		switch( m_attack.state )
-		{
-			case AttackBehaviour.State.Pursuit:
-			case AttackBehaviour.State.Attack:
-			{
-				m_nextState = State.Attack;
-			}break;
-			case AttackBehaviour.State.AttackRetreat:
-			{
-				m_nextState = State.Retreate;
-			}break;
-			case AttackBehaviour.State.Idle:
-			default:
-			{
-				m_nextState = State.Wander;
-			}break;
+		if (m_attack != null) {
+			switch (m_attack.state) {
+				case AttackBehaviour.State.Pursuit:
+				case AttackBehaviour.State.Attack:
+					m_nextState = State.Attack;
+					break;
+
+				case AttackBehaviour.State.AttackRetreat:
+					m_nextState = State.Retreat;
+					break;
+
+				case AttackBehaviour.State.Idle:
+				default:
+					m_nextState = State.Wander;
+					break;
+			}	
 		}
-	
 	}
 
 	private void ChangeState() {
@@ -73,32 +71,23 @@ public class GunnerTactics : Initializable {
 			case State.Wander:
 				m_wander.enabled = false;
 				break;
-			case State.Retreate:
-			case State.Attack:
-			{
-				if (m_edible && !m_canBeEatenWhileAttacking)
-				{
-					m_edible.enabled = true;
-				}
-			}break;
+
+			case State.Retreat:
+				m_wander.enabled = false;
+				m_evade.enabled = false;
+				break;
 		}
 		
 		// enter State
 		switch (m_nextState) {
 			case State.Wander:
-			{
 				m_wander.enabled = true;
-			}break;
-			case State.Attack:
-			{
-				// Check invencible
-				m_wander.enabled = false;
-			}break;
-			case State.Retreate:
-			{
-				// Check invencible
+				break;
+
+			case State.Retreat:
 				m_wander.enabled = true;
-			}break;
+				m_evade.enabled = true;
+				break;
 		}
 		
 		m_state = m_nextState;

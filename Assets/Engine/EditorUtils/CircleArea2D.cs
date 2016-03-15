@@ -14,6 +14,8 @@ public class CircleArea2D : MonoBehaviour, Area {
 		get {
 			if (m_bounds == null) {
 				m_bounds = new CircleAreaBounds(center, radius);
+			} else {
+				m_bounds.UpdateBounds(center, Vector3.one * radius * 2f);
 			}
 
 			return m_bounds;

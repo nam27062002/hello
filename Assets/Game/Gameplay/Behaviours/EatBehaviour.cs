@@ -189,11 +189,17 @@ public abstract class EatBehaviour : MonoBehaviour {
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
 			if (entity.def.edibleFromTier <= m_tier) {
-				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+				// then, check if the edible is in front
+				Vector3 direction = m_motion.direction;
+				Vector3 relativePos = m_suction.InverseTransformPoint(entity.transform.position);
 
-				if (edible.enabled) {
-					Eat(edible, entity.def.biteResistance);
-					break;
+				if (relativePos.x > 0) {					
+					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+
+					if (edible.CanBeEaten(direction)) {
+						Eat(edible, entity.def.biteResistance);
+						break;
+					}
 				}
 			}
 		}

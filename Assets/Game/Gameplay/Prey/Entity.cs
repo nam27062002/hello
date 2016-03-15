@@ -38,7 +38,7 @@ public class Entity : Initializable {
 	void Awake() {
 		m_materials = new Dictionary<int, Material[]>();
 
-		m_bounds = GetComponent<CircleArea2D>();
+		m_bounds = GetComponentInChildren<CircleArea2D>();
 
 		// keep the original materials, sometimes it will become Gold!
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();

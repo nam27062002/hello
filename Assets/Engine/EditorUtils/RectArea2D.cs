@@ -14,6 +14,8 @@ public class RectArea2D : MonoBehaviour, Area {
 		get {
 			if (m_bounds == null) {
 				m_bounds = new RectAreaBounds(center, size);
+			} else {
+				m_bounds.UpdateBounds(center, size);
 			}
 
 			return m_bounds;

@@ -26,7 +26,6 @@ public class AttackBehaviour : Initializable {
 	private PreyMotion m_motion;
 	private PreyOrientation m_orientation;
 	private SensePlayer m_sensor;
-	private EvadeBehaviour m_evade;
 	private DragonMotion m_dragon;
 	private Transform m_target; // all the attacks will aim to this target
 
@@ -42,7 +41,6 @@ public class AttackBehaviour : Initializable {
 		m_motion = GetComponent<PreyMotion>();
 		m_orientation = GetComponent<PreyOrientation>();
 		m_sensor = GetComponent<SensePlayer>();
-		m_evade  = GetComponent<EvadeBehaviour>();
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
@@ -91,9 +89,7 @@ public class AttackBehaviour : Initializable {
 			m_target = m_dragon.GetAttackPointNear(transform.position);
 	}
 
-	void OnDisable() {		
-		if (m_evade) m_evade.enabled = true;
-
+	void OnDisable() {
 		if (m_animator && m_animator.isInitialized) {
 			m_animator.SetBool("move", false);
 			m_animator.SetBool("fast", false);
@@ -195,8 +191,6 @@ public class AttackBehaviour : Initializable {
 		if (m_state != m_nextState) {
 			switch (m_state) {
 				case State.Pursuit:
-					if (m_evade) m_evade.enabled = false;
-
 					m_animator.SetBool("move", false);
 					m_animator.SetBool("fast", false);
 					break;
@@ -207,8 +201,6 @@ public class AttackBehaviour : Initializable {
 
 			switch (m_nextState) {
 				case State.Pursuit:
-					if (m_evade) m_evade.enabled = true;
-
 					m_animator.SetBool("move", true);
 					m_animator.SetBool("fast", true);
 					m_attackCount = 0;

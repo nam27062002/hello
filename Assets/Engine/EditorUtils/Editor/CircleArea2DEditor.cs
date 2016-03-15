@@ -17,17 +17,15 @@ public class CircleArea2DEditor : Editor {
 
 
 	public void Awake() {
-
 		m_target = (CircleArea2D)target;
 		m_radius = 0;
 	}
 
 	void OnSceneGUI() {
-
 		bool isTargetDirty = false;
 
 		if (m_target) {
-			DrawHandle(m_target.bounds.bounds);
+			DrawHandle();
 
 			isTargetDirty = isTargetDirty || UpdateCenterHandle();
 			isTargetDirty = isTargetDirty || UpdateHorizontalHandles();
@@ -41,9 +39,7 @@ public class CircleArea2DEditor : Editor {
 	}
 
 	public override void OnInspectorGUI() {
-
 		if (m_target) {
-
 			GUI.changed = false;
 
 			m_target.offset = EditorGUILayout.Vector2Field("Offset", m_target.offset);
@@ -60,11 +56,11 @@ public class CircleArea2DEditor : Editor {
 	private bool UpdateCenterHandle() {
 
 		EditorGUI.BeginChangeCheck();
-		Vector3 position = MoveHandle(m_target.bounds.bounds.center);
+		Vector3 position = MoveHandle(m_center);
 		
 		if (EditorGUI.EndChangeCheck()) {
 
-			m_target.offset += (Vector2)(position - m_target.bounds.bounds.center);
+			m_target.offset += (Vector2)(position - m_center);
 			return true;
 		}
 		
@@ -121,15 +117,16 @@ public class CircleArea2DEditor : Editor {
 		return false;
 	}
 
-	private void DrawHandle(Bounds _bounds) {
+	private void DrawHandle() {
+		Bounds bounds = m_target.bounds.bounds;
 
-		m_radius 	= _bounds.extents.x;
+		m_radius 	= m_target.radius;
+		m_center	= m_target.center;
 
-		m_center	= _bounds.center;
-		m_right 	= new Vector3(_bounds.max.x, _bounds.center.y, _bounds.center.z);
-		m_left 		= new Vector3(_bounds.min.x, _bounds.center.y, _bounds.center.z);
-		m_top 		= new Vector3(_bounds.center.x, _bounds.max.y, _bounds.center.z);
-		m_bottom 	= new Vector3(_bounds.center.x, _bounds.min.y, _bounds.center.z);
+		m_right 	= new Vector3(m_center.x + m_target.radius, m_center.y, m_center.z);
+		m_left 		= new Vector3(m_center.x - m_target.radius, m_center.y, m_center.z);
+		m_top 		= new Vector3(m_center.x, m_center.y + m_target.radius, m_center.z);
+		m_bottom 	= new Vector3(m_center.x, m_center.y - m_target.radius, m_center.z);
 
 		Handles.color =  m_target.color;
 		Handles.DrawSolidDisc(m_center, Vector3.forward, m_radius);

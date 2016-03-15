@@ -432,6 +432,7 @@ GameObject:
   - 4: {fileID: 468602}
   - 95: {fileID: 9541652}
   - 114: {fileID: 11444652}
+  - 114: {fileID: 11475706}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -871,7 +872,6 @@ GameObject:
   - 114: {fileID: 11483048}
   - 114: {fileID: 11485678}
   - 114: {fileID: 11485618}
-  - 114: {fileID: 11403970}
   - 114: {fileID: 11427412}
   - 114: {fileID: 11402336}
   - 114: {fileID: 11487872}
@@ -879,6 +879,7 @@ GameObject:
   - 114: {fileID: 11445172}
   - 114: {fileID: 11489350}
   - 114: {fileID: 11483026}
+  - 114: {fileID: 11447908}
   m_Layer: 8
   m_Name: PF_EnemyRhino
   m_TagString: Untagged
@@ -1259,8 +1260,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193142}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -276.6, y: 58.3, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalPosition: {x: 120.02, y: 60, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 468602}
   m_Father: {fileID: 0}
@@ -1474,7 +1475,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 145148}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: -0.728, y: -0.412, z: 0}
+  m_LocalPosition: {x: -1.29, y: -0.62, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 482122}
@@ -1822,24 +1823,10 @@ MonoBehaviour:
   m_mass: 0.5
   m_distanceAttenuation: 3.5
   m_checkCollisions: 1
-  m_maxSpeed: 13
-  m_maxRunSpeed: 25
+  m_maxSpeed: 5
+  m_maxRunSpeed: 10
   m_slowingRadius: 0
   m_fallOnBurn: 1
---- !u!114 &11403970
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 193142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -1.0218048, y: 0.8517227}
-  radius: 2.5
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11427412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1852,10 +1839,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_idleTime: 0
-  m_chaoticMovement: 1
-  m_displacementDistance: 5
-  m_displacementRadius: 1
-  m_angleIncrement: 0
+  m_chaoticMovement: 0
+  m_displacementDistance: 2
+  m_displacementRadius: 0.5
+  m_angleIncrement: 5
   m_idleProbability: 1
 --- !u!114 &11436956
 MonoBehaviour:
@@ -1897,6 +1884,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canBeEatenWhileAttacking: 0
+--- !u!114 &11447908
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 193142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11475706
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 145148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.36714935, y: 0.7014351}
+  radius: 0.5535462
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11483026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1960,6 +1972,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_vulnerable: 2
   m_onEatenParticle: 
   m_onEatenSounds: []
 --- !u!114 &11487872
@@ -1973,8 +1986,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 2.32
-  m_sensorMaxRadius: 25
+  m_sensorMinRadius: 1
+  m_sensorMaxRadius: 5
   m_sensorAngle: 360
   m_sensorAngleOffset: 360
   m_target: 0
