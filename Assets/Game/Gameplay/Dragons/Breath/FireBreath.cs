@@ -7,7 +7,30 @@ public class FireBreath : DragonBreathBehaviour {
 
 	[Header("Emitter")]
 	[SerializeField] private float m_length = 6f;
+	public float length
+	{
+		get
+		{
+			return m_length;
+		}
+		set
+		{
+			m_length = value;
+		}
+	}
 	[SerializeField] private AnimationCurve m_sizeCurve = AnimationCurve.Linear(0, 0, 1, 3f);	// Will be used by the inspector to easily setup the values for each level
+	public AnimationCurve curve
+	{
+		get
+		{
+			return m_sizeCurve;
+		}
+		set
+		{
+			m_sizeCurve = value;
+		}
+	}
+
 	[SerializeField] private int m_particleSpawn = 2;
 	[SerializeField] private int m_maxParticles = 75;
 
