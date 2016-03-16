@@ -29,6 +29,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private DragonAttackBehaviour 	m_attackBehaviour;
 	private Animator m_animator;
 
+	// Cache content values
+	protected float m_furyMax = 1f;
+	protected float m_furyDuration = 1f;
+
 	protected bool m_isFuryOn;
 	protected bool m_isSuperFuryOn;
 	protected float m_actualLength;	// Set breath length. Used by the camera
@@ -53,6 +57,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_isFuryOn = false;
 		m_isSuperFuryOn = false;
 		m_bounds2D = new Rect();
+
+		// Init content cache
+		m_furyMax = m_dragon.data.def.GetAsFloat("furyMax");
+		m_furyDuration = m_dragon.data.def.GetAsFloat("furyDuration");
 
 		ExtendedStart();
 
@@ -86,9 +94,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		bool cheating = (Debug.isDebugBuild && (DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 		if(cheating) {
 			if ( DebugSettings.infiniteFire )
-				m_dragon.AddFury(m_dragon.data.def.maxFury - m_dragon.fury);	// Set to max fury
+				m_dragon.AddFury(m_furyMax - m_dragon.fury);	// Set to max fury
 			else if ( DebugSettings.infiniteSuperFire )
-				m_dragon.AddSuperFury(m_dragon.data.def.maxFury - m_dragon.superFury);
+				m_dragon.AddSuperFury(m_furyMax - m_dragon.superFury);
 		}
 
 		if (m_isFuryOn || m_isSuperFuryOn) 
@@ -96,11 +104,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 			// Don't decrease fury if cheating
 			if(!cheating) {
-				float dt = Time.deltaTime / m_dragon.data.def.furyDuration;
+				float dt = Time.deltaTime / m_furyDuration;
 				if ( m_isFuryOn )
-					m_dragon.AddFury(-(dt * m_dragon.data.def.maxFury));
+					m_dragon.AddFury(-(dt * m_furyMax));
 				else
-					m_dragon.AddSuperFury(-(dt * m_dragon.data.def.maxFury));
+					m_dragon.AddSuperFury(-(dt * m_furyMax));
 			}
 
 			if ((m_isFuryOn && m_dragon.fury <= 0) || (m_isSuperFuryOn && m_dragon.superFury <= 0)) 
@@ -109,7 +117,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if ( m_isFuryOn )
 				{
 					m_dragon.StopFury();
-					m_dragon.AddSuperFury(m_dragon.data.def.maxFury * 0.2f);
+					m_dragon.AddSuperFury(m_furyMax * 0.2f);
 				}
 				else
 				{
@@ -128,7 +136,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}
 		} else {
 
-			if ( m_dragon.superFury >= m_dragon.data.def.maxFury )
+			if ( m_dragon.superFury >= m_furyMax )
 			{
 				m_isSuperFuryOn = true;
 				BeginBreath();
@@ -138,7 +146,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
 				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
 			}
-			else if (m_dragon.fury >= m_dragon.data.def.maxFury) 
+			else if (m_dragon.fury >= m_furyMax) 
 			{
 				m_isFuryOn = true;
 				BeginBreath();

@@ -44,7 +44,7 @@ public static class PersistenceManager {
 		/// </summary>
 		public SaveData() {
 			// Dragons persistence requires a special initialization
-			List<string> dragonSkus = DefinitionsManager.dragons.skus;
+			List<string> dragonSkus = Definitions.GetSkuList(Definitions.Category.DRAGONS);
 			dragons = new DragonData.SaveData[dragonSkus.Count];
 			for(int i = 0; i < dragonSkus.Count; i++) {
 				dragons[i] = new DragonData.SaveData();

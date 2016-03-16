@@ -15,8 +15,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 		m_motion = GetComponent<DragonMotion>();
 
-		m_tier = m_dragon.data.def.tier;
-		m_biteSkill = m_dragon.data.biteSkill.value;
+		m_tier = m_dragon.data.tier;
 
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 	}

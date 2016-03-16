@@ -62,7 +62,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		DragonData data = DragonManager.GetDragonData(_sku);
 
 		// Update price
-		m_priceText.text = StringUtils.FormatNumber(data.def.unlockPriceCoins);
+		m_priceText.text = StringUtils.FormatNumber(data.def.GetAsLong("unlockPriceCoins"));
 	}
 
 	/// <summary>
@@ -71,8 +71,9 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	public void OnUnlock() {
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
-		if(UserProfile.coins >= data.def.unlockPriceCoins) {
-			UserProfile.AddCoins(-data.def.unlockPriceCoins);
+		long priceCoins = data.def.GetAsLong("unlockPriceCoins");
+		if(UserProfile.coins >= priceCoins) {
+			UserProfile.AddCoins(-priceCoins);
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {

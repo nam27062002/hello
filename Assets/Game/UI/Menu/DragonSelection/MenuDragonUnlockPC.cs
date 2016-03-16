@@ -62,7 +62,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 		DragonData data = DragonManager.GetDragonData(_sku);
 
 		// Update price
-		m_priceText.text = StringUtils.FormatNumber(data.def.unlockPricePC);
+		m_priceText.text = StringUtils.FormatNumber(data.def.GetAsLong("unlockPricePC"));
 	}
 
 	/// <summary>
@@ -71,8 +71,9 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	public void OnUnlock() {
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
-		if(UserProfile.pc >= data.def.unlockPricePC) {
-			UserProfile.AddPC(-data.def.unlockPricePC);
+		long pricePC = data.def.GetAsLong("unlockPricePC");
+		if(UserProfile.pc >= pricePC) {
+			UserProfile.AddPC(-pricePC);
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {

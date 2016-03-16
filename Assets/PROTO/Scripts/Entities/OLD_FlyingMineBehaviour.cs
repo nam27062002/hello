@@ -44,7 +44,7 @@ public class OLD_FlyingMineBehaviour : MonoBehaviour {
 
 			if (collision != null){
 				DragonMotion player = collision.collider.GetComponent<DragonMotion>();
-				if (player != null && edible.edibleFromTier >= InstanceManager.player.data.def.tier){
+				if (player != null && edible.edibleFromTier >= InstanceManager.player.data.tier){
 					player.OnImpact(transform.position, damage, 100f, GetComponent<DamageDealer_OLD>());
 					FinalExplosion();
 				}

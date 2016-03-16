@@ -23,17 +23,13 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	// All dragons have the same amount of levels
-	[System.Obsolete]
-	public static readonly int NUM_LEVELS = 10;
-
 	/// <summary>
 	/// Auxiliar serializable class to save/load to persistence.
 	/// </summary>
 	[Serializable]
 	public class SaveData {
 		// Only dynamic data is relevant
-		[SkuList(typeof(DragonDef), false)] public string sku;
+		public string sku;
 		public float xp = 0;
 		public int level = 0;
 		public int biteSkillLevel = 0;
@@ -56,11 +52,15 @@ public class DragonData {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Definition
-	[SerializeField] private DragonDef m_def = null;
-	public DragonDef def { get { return m_def; }}
+	[SerializeField] private DefinitionNode m_def = null;
+	public DefinitionNode def { get { return m_def; }}
+
+	[SerializeField] private DefinitionNode m_tierDef = null;
+	public DefinitionNode tierDef { get { return m_tierDef; }}
 
 	// Progression
 	[SerializeField] private bool m_owned = false;
+	public DragonTier tier { get { return (DragonTier)m_tierDef.GetAsInt("order"); }}
 	public LockState lockState { get { return GetLockState(); }}
 	public bool isLocked { get { return lockState == LockState.LOCKED; }}
 	public bool isOwned { get { return m_owned; }}
@@ -69,13 +69,13 @@ public class DragonData {
 	public DragonProgression progression { get { return m_progression; }}
 
 	// Level-dependant stats
+	private Range m_healthRange = new Range();
 	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
+
+	private Range m_scaleRange = new Range(1f, 1f);
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
 	// Skills
-	[SerializeField] private DragonSkill m_biteSkill = null;
-	public DragonSkill biteSkill { get { return m_biteSkill; }}
-
 	[SerializeField] private DragonSkill m_speedSkill = null;
 	public DragonSkill speedSkill { get { return m_speedSkill; }}
 
@@ -99,18 +99,22 @@ public class DragonData {
 	/// Initialization using a definition. Should be called immediately after the constructor.
 	/// </summary>
 	/// <param name="_def">The definition of this dragon.</param>
-	public void Init(DragonDef _def) {
+	public void Init(DefinitionNode _def) {
 		// Store definition
 		m_def = _def;
+		m_tierDef = Definitions.GetDefinition(Definitions.Category.DRAGON_TIERS, _def.GetAsString("tier"));
 
 		// Progression
 		m_progression = new DragonProgression(this);
+
+		// Level-dependant stats
+		m_healthRange = m_def.GetAsRange("health");
+		m_scaleRange = m_def.GetAsRange("scale");
 		
 		// Skills
-		m_biteSkill = new DragonSkill(this, _def.biteSkill);
-		m_speedSkill = new DragonSkill(this, _def.speedSkill);
-		m_boostSkill = new DragonSkill(this, _def.boostSkill);
-		m_fireSkill = new DragonSkill(this, _def.fireSkill);
+		m_speedSkill = new DragonSkill(this, "speed");
+		m_boostSkill = new DragonSkill(this, "boost");
+		m_fireSkill = new DragonSkill(this, "fire");
 
 		// Items
 		m_equip = new Dictionary<Equipable.AttachPoint, string>();
@@ -129,9 +133,7 @@ public class DragonData {
 	/// <param name="_sku">The sku of the wanted skill.</param>
 	public DragonSkill GetSkill(string _sku) {
 		// [AOC] Quick'n'dirty
-		if(m_biteSkill.def.sku == _sku) {
-			return m_biteSkill;
-		} else if(m_speedSkill.def.sku == _sku) {
+		if(m_speedSkill.def.sku == _sku) {
 			return m_speedSkill;
 		} else if(m_boostSkill.def.sku == _sku) {
 			return m_boostSkill;
@@ -148,7 +150,7 @@ public class DragonData {
 	/// <param name="_level">The level at which we want to know the max health value.</param>
 	public float GetMaxHealthAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
-		return def.healthRange.Lerp(levelDelta);
+		return m_healthRange.Lerp(levelDelta);
 	}
 
 	/// <summary>
@@ -158,7 +160,7 @@ public class DragonData {
 	/// <param name="_level">The level at which we want to know the scale value.</param>
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
-		return def.scaleRange.Lerp(levelDelta) + m_scaleOffset;
+		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
 	}
 
 	/// <summary>
@@ -198,7 +200,7 @@ public class DragonData {
 		if(m_owned) return LockState.OWNED;
 
 		// b) Is tier unlocked?
-		if(DragonManager.IsTierUnlocked(this.def.tier)) {
+		if(DragonManager.IsTierUnlocked(tier)) {
 			return LockState.AVAILABLE;
 		}
 
@@ -239,7 +241,6 @@ public class DragonData {
 		progression.Load(_data.xp, _data.level);
 
 		// Skills
-		m_biteSkill.Load(_data.biteSkillLevel);
 		m_speedSkill.Load(_data.speedSkillLevel);
 		m_boostSkill.Load(_data.boostSkillLevel);
 		m_fireSkill.Load(_data.fireSkillLevel);
@@ -264,12 +265,11 @@ public class DragonData {
 		data.owned = m_owned;
 		data.xp = progression.xp;
 		data.level = progression.level;
-
-		data.biteSkillLevel = m_biteSkill.level;
+		
 		data.speedSkillLevel = m_speedSkill.level;
 		data.boostSkillLevel = m_boostSkill.level;
 		data.fireSkillLevel = m_fireSkill.level;
-
+		
 		data.equip = new string[m_equip.Count];
 		int count = 0;
 		foreach (Equipable.AttachPoint key in m_equip.Keys) {

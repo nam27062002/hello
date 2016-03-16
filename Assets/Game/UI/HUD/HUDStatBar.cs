@@ -74,9 +74,9 @@ public class HUDStatBar : MonoBehaviour {
 	private float GetMaxValue() {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.data.maxHealth;
-			case Type.Energy:	return InstanceManager.player.data.def.maxEnergy;
-			case Type.Fury:		return InstanceManager.player.data.def.maxFury;
-			case Type.SuperFury:return InstanceManager.player.data.def.maxFury;
+			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("energyMax");
+			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("furyMax");
+			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("furyMax");
 		}
 		return 0;
 	}

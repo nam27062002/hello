@@ -26,7 +26,7 @@ public class MenuDragonPreview : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] [SkuList(typeof(DragonDef))] private string m_sku;
+	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; }}
 
 	//------------------------------------------------------------------//
