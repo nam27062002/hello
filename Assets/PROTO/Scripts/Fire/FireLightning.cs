@@ -110,17 +110,25 @@ public class FireLightning : DragonBreathBehaviour {
 
 
 		m_rays[0] = new Lightning(m_segmentWidth, Color.white, m_length/m_segmentLength,m_rayMaterial);
-		m_rays[0].m_amplitude = m_maxAmplitude*0.25f;
 		m_rays[0].m_segmentLength = m_segmentLength;
 
 		m_rays[1] = new Lightning(m_segmentWidth*0.5f, Color.grey, m_length/m_segmentLength,m_rayMaterial);
-		m_rays[1].m_amplitude = m_maxAmplitude*0.5f;
 		m_rays[1].m_segmentLength = m_segmentLength;
 
 		m_rays[2] = new Lightning(m_segmentWidth*0.25f, new Color(0.25f,0.25f,0.25f,1f), m_length/m_segmentLength,m_rayMaterial);
-		m_rays[2].m_amplitude = m_maxAmplitude*0.5f;
 		m_rays[2].m_segmentLength = m_segmentLength;
 
+		SetAmplitude( m_maxAmplitude );
+
+		m_actualLength = m_length;
+	}
+
+	public void SetAmplitude( float amplitude )
+	{
+		m_maxAmplitude = amplitude;
+		m_rays[0].m_amplitude = m_maxAmplitude*0.25f;
+		m_rays[1].m_amplitude = m_maxAmplitude*0.5f;
+		m_rays[2].m_amplitude = m_maxAmplitude*0.5f;
 	}
 
 	override protected void Breath()
@@ -128,26 +136,6 @@ public class FireLightning : DragonBreathBehaviour {
 		m_dir = m_mouthTransform.position - m_headTransform.position;
 		m_dir.z = 0f;
 		m_dir.Normalize();
-		/*
-		float rayStep = 2f;
-		Vector3 p;
-		RaycastHit hit;
-		for(float i=0;i<m_length/rayStep;i+=rayStep){
-			
-			p = m_mouthTransform.position+m_dir*i;
-			if (Physics.Linecast(p+Vector3.forward*-400f,p+Vector3.forward*800f,out hit,m_fireMask)){
-				
-				if (hit.collider != null){
-					
-					// Burn whatever burnable
-					InflammableBehaviour flamable =  hit.collider.GetComponent<InflammableBehaviour>();
-					if (flamable != null){
-						flamable.Burn (damage * Time.deltaTime, transform);
-					}
-				}
-			}
-		}
-		*/
 
 		Vector3 p1 = m_mouthTransform.position;
 		m_particleStart.transform.position = m_mouthTransform.position;
@@ -157,8 +145,10 @@ public class FireLightning : DragonBreathBehaviour {
 		RaycastHit ground;
 		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+m_dir*m_length, out ground, m_groundMask)){
 			p2 = ground.point;
+			m_actualLength = ground.distance;
 		}else{
 			p2 =  m_mouthTransform.position+m_dir*m_length;
+			m_actualLength = m_length;
 		}
 
 		m_particleEnd.transform.position = p2;
@@ -167,9 +157,17 @@ public class FireLightning : DragonBreathBehaviour {
 			m_rays[i].Draw(p1,p2);
 
 		// Look entities to damage!
-
-			
+		Entity[] preys = EntityManager.instance.GetEntitiesIn( (Vector2)m_mouthTransform.position, (Vector2)m_dir, m_maxAmplitude, m_actualLength);
+		for (int i = 0; i < preys.Length; i++) {
+			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
+			if (entity != null) 
+			{
+				entity.Burn(damage * Time.deltaTime, transform);
+			}
+		}
 	}
+
+
 
 	override protected void BeginBreath() 
 	{
@@ -197,5 +195,14 @@ public class FireLightning : DragonBreathBehaviour {
 		for(int i=0;i<m_rays.Length;i++)
 			m_rays[i].Hide ();
 
+	}
+
+
+	void OnDrawGizmos() {
+		if (m_isFuryOn || m_isSuperFuryOn) 
+		{
+			Gizmos.color = Color.magenta;
+			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + m_dir * m_actualLength );
+		}
 	}
 }

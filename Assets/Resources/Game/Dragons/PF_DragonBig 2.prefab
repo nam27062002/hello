@@ -902,7 +902,6 @@ GameObject:
   - 135: {fileID: 13593700}
   - 114: {fileID: 11451702}
   - 114: {fileID: 11427934}
-  - 114: {fileID: 11493054}
   - 114: {fileID: 11463312}
   - 114: {fileID: 11469624}
   - 114: {fileID: 11479732}
@@ -2533,49 +2532,6 @@ MonoBehaviour:
   m_particleStartPrefab: {fileID: 175336, guid: b9eae05b51ef04a64bbf2913767f44b1,
     type: 2}
   m_particleEndPrefab: {fileID: 175336, guid: b9eae05b51ef04a64bbf2913767f44b1, type: 2}
---- !u!114 &11493054
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 184332}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 75
-  m_length: 10
-  m_sizeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: -0.0017864751
-      value: 0.18814778
-      inSlope: 2.3691835
-      outSlope: 2.3691835
-      tangentMode: 0
-    - time: 0.6272868
-      value: 1.9588286
-      inSlope: 4.186264
-      outSlope: 4.186264
-      tangentMode: 0
-    - time: 1.0919297
-      value: 4.0119567
-      inSlope: -2.5896702
-      outSlope: -2.5896702
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_particleSpawn: 2
-  m_maxParticles: 100
-  m_lifeTime: 0.25
-  m_finalScale:
-    min: 1.5
-    max: 2.5
-  m_flameParticle: Flame
-  m_flameUpParticle: FlameUp
-  m_flameLight: PF_FireLight
 --- !u!114 &11493742
 MonoBehaviour:
   m_ObjectHideFlags: 1

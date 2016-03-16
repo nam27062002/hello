@@ -6,8 +6,9 @@ public class DragonFireLength : MonoBehaviour {
 
 	private Slider m_slider;
 	private float m_length = 0;
-	private FireBreath m_fireBreath;
 
+	private FireBreath m_fireBreath;
+	private FireLightning m_fireLightning;
 
 	void Start() {
 		m_slider = GetComponent<Slider>();
@@ -17,6 +18,11 @@ public class DragonFireLength : MonoBehaviour {
 			m_fireBreath = InstanceManager.player.GetComponent<FireBreath>();
 			if ( m_fireBreath )
 				m_length = m_fireBreath.length;
+
+			m_fireLightning = InstanceManager.player.GetComponent<FireLightning>();
+			if ( m_fireLightning )
+				m_length = m_fireLightning.length;
+
 			m_slider.value = m_length;
 		}
 
@@ -35,6 +41,8 @@ public class DragonFireLength : MonoBehaviour {
 			m_length = _length;
 			if ( m_fireBreath != null )
 				m_fireBreath.length = _length;
+			if ( m_fireLightning != null )
+				m_fireLightning.length = _length;
 		}
 	}
 

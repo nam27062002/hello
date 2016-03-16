@@ -54,4 +54,34 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 
 		return nearestEntity;
 	}
+
+	/**
+	*
+	*/
+	public Entity[] GetEntitiesIn( Vector2 position, Vector2 dir, float amplitude, float length)
+	{
+		m_searchList.Clear();
+		float halfAmplitude = amplitude/2.0f;
+		float angle = Mathf.Atan2( dir.y, dir.x);
+		float aaa = Mathf.Rad2Deg * angle;
+		for (int i = 0; i < m_entities.Count; i++) 
+		{
+			Entity e = m_entities[i];
+			if (e != null) 
+			{				
+				Vector2 entityPos = (Vector2)e.transform.position;
+				Vector2 inversePos = entityPos - position;
+				inversePos = inversePos.RotateRadians( -angle );
+				if ( inversePos.x >= 0 && inversePos.x <= length )
+				{
+					if ( inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude )
+					{
+						m_searchList.Add( e );
+					}
+				}
+			}
+		}
+
+		return m_searchList.ToArray();
+	}
 }
