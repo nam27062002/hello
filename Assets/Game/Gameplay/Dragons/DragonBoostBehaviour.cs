@@ -19,6 +19,10 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private bool m_trailsActive = false;
 	private bool m_insideWater = false;
 
+	// Cache content data
+	private float m_energyDrain = 0f;	// energy per second
+	private float m_energyRefill = 1f;	// energy per second
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -30,6 +34,10 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 		m_active = false;
 		m_ready = true;
+
+		// Cache content data
+		m_energyDrain = m_dragon.data.def.GetAsFloat("energyDrain");
+		m_energyRefill = m_dragon.data.def.GetAsFloat("energyRefillRate");
 
 		for( int i = 0; i<m_trails.Count; i++ )
 		{
@@ -74,13 +82,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if (m_active) {
 			// Don't drain energy if cheat is enabled
 			if(!Debug.isDebugBuild || !DebugSettings.infiniteBoost) {
-				m_dragon.AddEnergy(-Time.deltaTime * m_dragon.data.def.energyDrainPerSecond);
+				m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain);
 				if (m_dragon.energy <= 0f) {
 					StopBoost();
 				}
 			}
 		} else {
-			m_dragon.AddEnergy(Time.deltaTime * m_dragon.data.def.energyRefillPerSecond);
+			m_dragon.AddEnergy(Time.deltaTime * m_energyRefill);
 		}
 	}
 

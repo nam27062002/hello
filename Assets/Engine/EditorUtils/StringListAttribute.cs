@@ -1,42 +1,38 @@
-// MenuDragonPreview.cs
-// Hungry Dragon
+﻿// StringListAttribute.cs
 // 
-// Created by Alger Ortín Castellví on 26/01/2016.
+// Created by Alger Ortín Castellví on 16/03/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Preview of a dragon in the main menu.
+/// Custom attribute to select a definition from a list containing all the definitions of the target type.
+/// Usage: [StringList("option1", "option2", "option3")]
 /// </summary>
-public class MenuDragonPreview : MonoBehaviour {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public class StringListAttribute : PropertyAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private string m_sku;
-	public string sku { get { return m_sku; }}
+	public string[] m_options = new string[0];
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// Parametrized constructor.
 	/// </summary>
-	private void Awake() {
-		
+	/// <param name="_options">Valid values to be used.</param>
+	public StringListAttribute(params string[] _options) {
+		// Just store options array
+		m_options = _options;
 	}
 }
 

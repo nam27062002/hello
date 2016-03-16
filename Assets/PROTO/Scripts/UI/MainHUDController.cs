@@ -117,8 +117,8 @@ public class MainHUDController : MonoBehaviour {
 
 		// Set max values
 		lifeBar.maxValue = InstanceManager.player.data.maxHealth;
-		energyBar.maxValue = InstanceManager.player.data.def.maxEnergy;
-		furyBar.maxValue = InstanceManager.player.data.def.maxFury;
+		energyBar.maxValue = InstanceManager.player.data.def.GetAsFloat("maxEnergy");
+		furyBar.maxValue = InstanceManager.player.data.def.GetAsFloat("maxFury");
 		
 		// Init score and coins
 		OnScoreChanged(0, App.Instance.gameLogic.score);

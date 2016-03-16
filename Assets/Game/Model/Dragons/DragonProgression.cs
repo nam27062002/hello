@@ -32,16 +32,20 @@ public class DragonProgression : SerializableClass {
 	// XP
 	private float m_xp = 0;
 	public float xp { get { return m_xp; }}
-	public float[] levelsXP { get { return owner.def.levelsXP; }}
+
+	private float[] m_levelsXp = null;	// Includes redundant level 0
+	public float[] levelsXP { get { return m_levelsXp; }}
+
 	public float xpToNextLevel { get { return levelsXP[nextLevel] - levelsXP[level]; }}	// Should be safe, nextLevel is protected and level should never be > lastLevel
 	public Range xpRange { get { return GetXpRangeForLevel(level); }}
 		
 	// Level
 	private int m_level = 0;
-	public int level { get { return m_level; }}	// Should never be > lastLevel
+	public int level { get { return m_level; }}	// [0..N-1], should never be > lastLevel
+
+	public int numLevels { get { return m_levelsXp.Length; }}
 	public int nextLevel { get { return Mathf.Min(m_level + 1, lastLevel); }}
 	public int lastLevel { get { return numLevels - 1; }}
-	public int numLevels { get { return owner.def.numLevels; }}
 	public bool isMaxLevel { get { return m_level == lastLevel; }}
 
 	// Progress [0..1]
@@ -69,6 +73,41 @@ public class DragonProgression : SerializableClass {
 	/// <param name="_owner">The dragon data this progression belongs to.</param>
 	public DragonProgression(DragonData _owner) {
 		m_owner = _owner;
+
+		if(_owner != null) {
+			InitFromDef(_owner.def);
+		} else {
+			InitFromDef(null);
+		}
+	}
+
+	/// <summary>
+	/// Initialize the level's XP data with the given dragonDefinition.
+	/// </summary>
+	/// <param name="_def">The dragon definition to be used.</param>
+	public void InitFromDef(DefinitionNode _def) {
+		// Check params
+		if(_def == null) {
+			// Clear current data and return
+			m_levelsXp = new float[1];
+			m_levelsXp[0] = 0;
+			return;
+		}
+
+		// Get relevant data from definition
+		int numLevels = _def.GetAsInt("numLevels", 1);
+		int dragonIdx = _def.GetAsInt("order") + 1;	// [1..N]
+		float coefA = _def.GetAsFloat("xpCoefA");
+		float coefB = _def.GetAsFloat("xpCoefB");
+
+		// Reset xp array
+		m_levelsXp = new float[numLevels];
+		m_levelsXp[0] = 0;	// XP required for level 0 is always 0
+		for(int i = 1; i < numLevels; i++) {
+			// Magic formula from content!
+			// xp to complete level X = ([order] + 1)*[xpCoefA] + X*[xpCoefB]
+			m_levelsXp[i] = (dragonIdx * coefA) + (i * coefB);
+		}
 	}
 
 	//------------------------------------------------------------------//

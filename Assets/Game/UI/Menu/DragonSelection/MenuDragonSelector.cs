@@ -27,7 +27,7 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	private int m_selectedIdx = 0;
-	private List<DragonDef> m_sortedDefs = null;
+	private List<DefinitionNode> m_sortedDefs = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -44,7 +44,8 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// </summary>
 	private void Start() {
 		// Store a reference to all dragon defs sorted
-		m_sortedDefs = DefinitionsManager.dragons.defsListByMenuOrder;
+		m_sortedDefs = Definitions.GetDefinitions(Definitions.Category.DRAGONS);
+		Definitions.SortByProperty(ref m_sortedDefs, "order", Definitions.SortType.NUMERIC);
 
 		// Figure out initial index
 		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;

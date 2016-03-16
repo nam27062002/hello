@@ -42,18 +42,24 @@ namespace LevelEditor {
 			// Dragon prefabs
 			SelectionGrid.Group dragonGroup = m_grid.GetGroup("DragonPreviews", true);
 			if(dragonGroup != null) {
+				// Aux vars
+				List<DefinitionNode> dragonDefs = Definitions.GetDefinitions(Definitions.Category.DRAGONS);
+
 				// Basic properties
 				dragonGroup.m_name = "Dragon Previews";
-				dragonGroup.m_data = new Object[DefinitionsManager.dragons.Count];
-				dragonGroup.m_contents = new GUIContent[DefinitionsManager.dragons.Count];
+				dragonGroup.m_data = new Object[dragonDefs.Count];
+				dragonGroup.m_contents = new GUIContent[dragonDefs.Count];
 
 				// Init contents
-				List<DragonDef> dragonDefs = DefinitionsManager.dragons.defsList;
 				for(int i = 0; i < dragonDefs.Count; i++) {
 					// Load the prefab for the dragon with the given ID
-					GameObject prefabObj = Resources.Load<GameObject>(dragonDefs[i].prefabPath);
-					dragonGroup.m_data[i] = prefabObj;
-					dragonGroup.m_contents[i] = new GUIContent(prefabObj.name, AssetPreview.GetAssetPreview(prefabObj));
+					GameObject prefabObj = Resources.Load<GameObject>(dragonDefs[i].GetAsString("gamePrefab"));
+					if(prefabObj == null) {
+						Debug.Log(dragonDefs[i].GetAsString("gamePrefab") + " NULL! Check content!");
+					} else {
+						dragonGroup.m_data[i] = prefabObj;
+						dragonGroup.m_contents[i] = new GUIContent(prefabObj.name, AssetPreview.GetAssetPreview(prefabObj));
+					}
 				}
 			}
 

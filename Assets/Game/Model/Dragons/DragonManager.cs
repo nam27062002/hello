@@ -43,7 +43,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		// Create a dragon data object for every known dragon definition
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
-		List<DragonDef> defs = DefinitionsManager.dragons.defsList;
+		List<DefinitionNode> defs = Definitions.GetDefinitions(Definitions.Category.DRAGONS);
 		for(int i = 0; i < defs.Count; i++) {
 			newDragonData = new DragonData();
 			newDragonData.Init(defs[i]);
@@ -77,7 +77,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		List<DragonData> list = new List<DragonData>();
 		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
 			// Does this dragon belong to the target tier?
-			if(kvp.Value.def.tier == _tier) {
+			if(kvp.Value.tier == _tier) {
 				// Yes!! Add it to the list
 				list.Add(kvp.Value);
 			}
@@ -149,7 +149,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		DebugUtils.SoftAssert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
 
 		// Load the prefab for the dragon with the given ID
-		GameObject prefabObj = Resources.Load<GameObject>(data.def.prefabPath);
+		GameObject prefabObj = Resources.Load<GameObject>(data.def.GetAsString("gamePrefab"));
 		DebugUtils.SoftAssert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property
@@ -170,7 +170,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 			// If not initialized, initialize with default values
 			if(_data[i] == null) {
 				_data[i] = new DragonData.SaveData();
-				_data[i].sku = DefinitionsManager.dragons.skus[i];	// This is risky - shouldn't happen though
+				_data[i].sku = Definitions.GetSkuList(Definitions.Category.DRAGONS)[i];	// This is risky, order of the SaveData does not necessary match order of the definitions - shouldn't happen though
 			}
 			GetDragonData(_data[i].sku).Load(_data[i]);
 		}

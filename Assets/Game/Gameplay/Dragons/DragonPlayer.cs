@@ -23,7 +23,7 @@ public class DragonPlayer : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[Header("Type and general data")]
-	[SerializeField] [SkuList(typeof(DragonDef))] private string m_sku = "";
+	[SerializeField] private string m_sku = "";
 	[SerializeField] private float m_invulnerableTime = 5f;
 
 	private DragonData m_data = null;
@@ -43,6 +43,10 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_superFury;
 	private bool m_superFuryActive = false;
 	public float superFury{ get { return m_superFury; } }
+
+	// Cache content data
+	private float m_energyMax = 1f;
+	private float m_furyMax = 1f;
 
 	// Interaction
 	 public bool playable {
@@ -80,6 +84,10 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Store reference into Instance Manager for immediate global access
 		InstanceManager.player = this;
+
+		// Cache content data
+		m_energyMax = m_data.def.GetAsFloat("energyMax");
+		m_furyMax = m_data.def.GetAsFloat("furyMax");
 
 		// Initialize stats
 		ResetStats(false);
@@ -135,7 +143,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	public void ResetStats(bool _revive) {
 		m_health = data.maxHealth;
-		m_energy = data.def.maxEnergy;
+		m_energy = m_energyMax;
 
 		playable = true;
 
@@ -183,7 +191,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of energy to be added/removed.</param>
 	public void AddEnergy(float _offset) {
-		m_energy = Mathf.Min(m_data.def.maxEnergy, Mathf.Max(0, m_energy + _offset));
+		m_energy = Mathf.Min(m_energyMax, Mathf.Max(0, m_energy + _offset));
 	}
 		
 	/// <summary>
@@ -194,9 +202,9 @@ public class DragonPlayer : MonoBehaviour {
 		if ( !m_superFuryActive )
 		{
 			if (m_furyActive && _offset >= 0) {
-				m_fury[1] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[1] + _offset)); 
+				m_fury[1] = Mathf.Min(m_furyMax, Mathf.Max(0, m_fury[1] + _offset)); 
 			} else {
-				m_fury[0] = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_fury[0] + _offset)); 
+				m_fury[0] = Mathf.Min(m_furyMax, Mathf.Max(0, m_fury[0] + _offset)); 
 			}
 		}
 	}
@@ -234,7 +242,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of super fury to be added/removed.</param>
 	public void AddSuperFury(float _offset) {
-		m_superFury = Mathf.Min(m_data.def.maxFury, Mathf.Max(0, m_superFury + _offset)); 
+		m_superFury = Mathf.Min(m_furyMax, Mathf.Max(0, m_superFury + _offset)); 
 	}
 
 	/// <summary>

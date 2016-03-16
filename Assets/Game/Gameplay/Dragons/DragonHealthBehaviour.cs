@@ -28,7 +28,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_gameController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
-		m_healthDrainPerSecond = m_dragon.data.def.healthDrainPerSecond;
+		m_healthDrainPerSecond = m_dragon.data.def.GetAsFloat("healthDrain");
 		m_healthDrainIncForTime = GameSettings.healthDrainIncForTime;
 
 		m_elapsedSecondsCheckPoint = 0;

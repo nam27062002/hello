@@ -183,6 +183,38 @@ public class DefinitionNode {
 		return "";
 	}
 
+	/// <summary>
+	/// Get a pair of properties as a range.
+	/// The properties must share the same preffix <paramref name="_property"/>and 
+	/// have the "Min" and "Max" suffixes respectively (e.g. <c>"healthMin"</c> and <c>"healthMax"</c>).
+	/// </summary>
+	/// <returns>A new range composed by the values of the properties named with the preffix <paramref name="_property"/>and the suffixes "Min" and "Max".</returns>
+	/// <param name="_property">Property.</param>
+	/// <param name="_defaultMin">The min value to be returned if the property wasn't found in this definition.</param>
+	/// <param name="_defaultMax">The max value to be returned if the property wasn't found in this definition.</param>
+	public Range GetAsRange(string _property, float _defaultMin = 0f, float _defaultMax = 1f) {
+		Range newRange = new Range();
+		newRange.min = GetAsFloat(_property + "Min", _defaultMin);
+		newRange.max = GetAsFloat(_property + "Max", _defaultMax);
+		return newRange;
+	}
+
+	/// <summary>
+	/// Get a pair of properties as a range.
+	/// The properties must share the same preffix <paramref name="_property"/>and 
+	/// have the "Min" and "Max" suffixes respectively (e.g. <c>"healthMin"</c> and <c>"healthMax"</c>).
+	/// </summary>
+	/// <returns>A new range composed by the values of the properties named with the preffix <paramref name="_property"/>and the suffixes "Min" and "Max".</returns>
+	/// <param name="_property">Property.</param>
+	/// <param name="_defaultMin">The min value to be returned if the property wasn't found in this definition.</param>
+	/// <param name="_defaultMax">The max value to be returned if the property wasn't found in this definition.</param>
+	public RangeInt GetAsRangeInt(string _property, int _defaultMin = 0, int _defaultMax = 1) {
+		RangeInt newRange = new RangeInt();
+		newRange.min = GetAsInt(_property + "Min", _defaultMin);
+		newRange.max = GetAsInt(_property + "Max", _defaultMax);
+		return newRange;
+	}
+
 	//------------------------------------------------------------------------//
 	// CUSTOMIZER METHODS													  //
 	//------------------------------------------------------------------------//

@@ -27,7 +27,15 @@ public class Definitions : Singleton<Definitions> {
 	//------------------------------------------------------------------------//
 	public enum Category {
 		UNKNOWN,
+
+		// General
 		LOCALIZATION,
+		SETTINGS,		// Contains several xml files with different signatures: gameSettings, dragonSettings...
+
+		// Dragons
+		DRAGONS,
+		DRAGON_TIERS,
+		DRAGON_SKILLS,	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
 
 		// Egg manager
 		EGGS,
@@ -74,6 +82,13 @@ public class Definitions : Singleton<Definitions> {
 
 		// Settings
 		LoadDefinitionsFile(Category.LOCALIZATION, "Rules/localizationDefinitions");
+		LoadDefinitionsFile(Category.SETTINGS, "Rules/dragonSettings");
+
+		// Dragons
+		LoadDefinitionsFile(Category.DRAGONS, "Rules/dragonDefinitions");
+		LoadDefinitionsFile(Category.DRAGON_TIERS, "Rules/dragonTierDefinitions");
+		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillDefinitions");
+		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillProgressionDefinitions");
 
 		// Gacha
 		LoadDefinitionsFile(Category.EGGS, "Rules/eggDefinitions");

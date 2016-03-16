@@ -22,7 +22,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[Header("Data")]
-	[SkuList(typeof(DragonSkillDef), false)]
+	[StringListAttribute("speed", "boost", "fire")]
 	public string m_skillSku;
 
 	[Header("References")]
@@ -69,7 +69,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		DragonSkill skillData = DragonManager.GetDragonData(_sku).GetSkill(m_skillSku);
 
 		// Label
-		m_labelText.text = Localization.Localize(skillData.def.tidName);
+		m_labelText.text = skillData.def.GetLocalized("tidName");
 
 		// Bar value
 		m_bar.minValue = 0;
@@ -77,11 +77,8 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		m_bar.value = skillData.level;	// [0..N-1] bar starts empty and should be filled when we're at level 5
 			
 		// Text
-		// [AOC] TODO!! Depends on skill type
+		// [AOC] TODO!! May depend on skill type
 		switch(skillData.def.sku) {
-			case "skill_speed":
-				m_valueText.text = String.Format("{0}", StringUtils.FormatNumber(skillData.value, 0));
-				break;
 			default:
 				m_valueText.text = String.Format("{0}", StringUtils.FormatNumber(skillData.value, 2));
 				break;

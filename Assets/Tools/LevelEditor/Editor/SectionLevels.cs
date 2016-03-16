@@ -233,7 +233,7 @@ namespace LevelEditor {
 					GUILayout.Label("Test Dragon:");
 					
 					// Dragon selector
-					string[] options = DefinitionsManager.dragons.skus.ToArray();
+					string[] options = Definitions.GetSkuList(Definitions.Category.DRAGONS).ToArray();
 					int oldIdx = ArrayUtility.IndexOf<string>(options, oldDragon);
 					int newIdx = EditorGUILayout.Popup(oldIdx, options);
 					if(oldIdx != newIdx) {

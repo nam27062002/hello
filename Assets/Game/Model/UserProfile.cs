@@ -31,7 +31,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		// Add here any required data
 		public long coins = 0;
 		public long pc = 0;
-		[SkuList(typeof(DragonDef), false)] public string currentDragon = "";	// sku
+		public string currentDragon = "";	// sku
 		[SkuList(typeof(LevelDef), false)] public string currentLevel = "";	// sku
 		public TutorialStep tutorialStep = TutorialStep.INIT;
 	}
@@ -57,7 +57,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	}
 
 	[Separator("Game Settings")]
-	[SerializeField] [SkuList(typeof(DragonDef), false)] private string m_currentDragon = "";
+	[SerializeField] private string m_currentDragon = "";
 	public static string currentDragon {
 		get { return instance.m_currentDragon; }
 		set { instance.m_currentDragon = value; }

@@ -48,7 +48,7 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	private ShowHideAnimator m_animator = null;
 
 	// Internal
-	private List<DragonDef> m_sortedDefs = null;
+	private List<DefinitionNode> m_sortedDefs = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -66,7 +66,8 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get sorted defs
-		m_sortedDefs = DefinitionsManager.dragons.defsListByMenuOrder;
+		m_sortedDefs = Definitions.GetDefinitions(Definitions.Category.DRAGONS);
+		Definitions.SortByProperty(ref m_sortedDefs, "order", Definitions.SortType.NUMERIC);
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
@@ -122,13 +123,14 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 		}
 
 		// Dragon ID (overrides ownership status)
+		int dragonIdx = dragon.def.GetAsInt("order");
 		switch(m_hideForDragons) {
 			case HideForDragons.NONE:	break;	// Nothing to change
-			case HideForDragons.FIRST:	toShow &= (dragon.def.menuOrder != 0);	break;
-			case HideForDragons.LAST:	toShow &= (dragon.def.menuOrder != (m_sortedDefs.Count - 1));	break;
+			case HideForDragons.FIRST:	toShow &= (dragonIdx != 0);	break;
+			case HideForDragons.LAST:	toShow &= (dragonIdx != (m_sortedDefs.Count - 1));	break;
 			case HideForDragons.FIRST_AND_LAST:	{
-				toShow &= (dragon.def.menuOrder != 0);
-				toShow &= (dragon.def.menuOrder != (m_sortedDefs.Count - 1));
+				toShow &= (dragonIdx != 0);
+				toShow &= (dragonIdx != (m_sortedDefs.Count - 1));
 			} break;
 			case HideForDragons.ALL:	toShow = false;	break;	// Force hiding
 		}

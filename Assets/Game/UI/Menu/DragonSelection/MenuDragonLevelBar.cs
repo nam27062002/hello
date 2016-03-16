@@ -75,6 +75,6 @@ public class MenuDragonLevelBar : MonoBehaviour {
 		                                StringUtils.FormatNumber(m_levelBar.value, 0));
 
 		// Dragon Name
-		m_nameText.text = Localization.Localize(data.def.tidName);
+		m_nameText.text = data.def.GetLocalized("tidName");
 	}
 }

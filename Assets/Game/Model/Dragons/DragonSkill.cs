@@ -21,19 +21,20 @@ public class DragonSkill : SerializableClass {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly int NUM_LEVELS = 6;
+	public static readonly int NUM_LEVELS = 6;	// Redundant level 0 counts as well!
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Def
-	private DragonSkillDef m_def = null;
-	public DragonSkillDef def { get { return m_def; }}
+	private DefinitionNode m_def = null;
+	public DefinitionNode def { get { return m_def; }}
 
-	private DragonDef.SkillData m_data = null;
-	public DragonDef.SkillData skillData { get { return m_data; }}
+	private DefinitionNode m_progressionDef = null;
+	public DefinitionNode progressionDef { get { return m_progressionDef; }}
 
 	// Values
+	private Range m_valueRange = new Range(0f, 1f);
 	public float value { get { return GetValueAtLevel(level); }}
 	public float nextLevelValue { get { return GetValueAtLevel(nextLevel); }}
 
@@ -44,7 +45,8 @@ public class DragonSkill : SerializableClass {
 	public int lastLevel { get { return NUM_LEVELS - 1; }}
 
 	// Level unlock prices
-	public long nextLevelUnlockPrice { get { return skillData.m_unlockPrices[nextLevel]; }}
+	private long[] m_unlockPrices = new long[NUM_LEVELS];	// Redundant level 0
+	public long nextLevelUnlockPrice { get { return m_unlockPrices[nextLevel]; }}
 
 	// Progress
 	public float progress { get { return Mathf.InverseLerp(0, lastLevel, level); }}
@@ -64,12 +66,32 @@ public class DragonSkill : SerializableClass {
 	/// Parametrized constructor.
 	/// </summary>
 	/// <param name="_owner">The dragon data this skill belongs to.</param>
-	/// <param name="_data">The initialization data of this skill.</param>
-	public DragonSkill(DragonData _owner, DragonDef.SkillData _data) {
+	/// <param name="_skillSku">The sku of the skill definition to initialize this skill data.</param>
+	public DragonSkill(DragonData _owner, string _skillSku) {
+		// Store references
 		m_owner = _owner;
-		m_data = _data;
-		m_def = DefinitionsManager.dragonSkills.GetDef(_data.m_sku);
+		Debug.Assert(m_owner != null, "A skill data object must always be linked to a DragonData instance.");
 
+		m_def = Definitions.GetDefinition(Definitions.Category.DRAGON_SKILLS, _skillSku);
+		Debug.Assert(m_def != null, "Skill " + _skillSku + " not recognized!");
+
+		m_progressionDef = Definitions.GetDefinition(Definitions.Category.DRAGON_SKILLS, _owner.def.sku);	// Shares sku with the dragons
+		Debug.Assert(m_progressionDef != null, "Skill progression def for dragon " + _owner.def.sku + " couldn't be found!");
+
+		// [unlockPriceCoinsLevel1]	[unlockPriceCoinsLevel2]	[unlockPriceCoinsLevel3]	[unlockPriceCoinsLevel4]	[unlockPriceCoinsLevel5]	[fireMin]	[fireMax]	[speedMin]	[speedMax]	[boostMin]	[boostMax]
+		// Init value range from def
+		// [AOC] Tricky! Value range is stored in columns named after the skill sku!
+		m_valueRange.min = m_progressionDef.GetAsFloat(m_def.sku + "Min");	// e.g. speedMin, fireMin, boostMin
+		m_valueRange.max = m_progressionDef.GetAsFloat(m_def.sku + "Max");	// e.g. speedMax, fireMax, boostMax
+
+		// Init unlock prices from def
+		m_unlockPrices = new long[NUM_LEVELS];
+		m_unlockPrices[0] = 0;	// Level 0 is always free! ^_^
+		for(int i = 1; i < NUM_LEVELS; i++) {
+			m_unlockPrices[i] = m_progressionDef.GetAsLong("unlockPriceCoinsLevel" + i);
+		}
+
+		// Init debug vars
 		m_valueOffset = 0;
 	}
 
@@ -117,7 +139,7 @@ public class DragonSkill : SerializableClass {
 	/// <param name="_level">The level at which we want to know the skill's value.</param>
 	public float GetValueAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, lastLevel, _level);
-		return m_data.m_valueRange.Lerp(levelDelta) + m_valueOffset;
+		return m_valueRange.Lerp(levelDelta) + m_valueOffset;
 	}
 
 	/// <summary>

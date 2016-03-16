@@ -153,8 +153,8 @@ public class GameCameraController : MonoBehaviour {
 		m_nearStart = Camera.main.nearClipPlane;
 		m_farStart = Camera.main.farClipPlane;
 
-		defaultZoom = InstanceManager.player.data.def.cameraDefaultZoom;
-		farZoom = InstanceManager.player.data.def.cameraFarZoom;
+		defaultZoom = InstanceManager.player.data.def.GetAsFloat("cameraDefaultZoom");
+		farZoom = InstanceManager.player.data.def.GetAsFloat("cameraFarZoom");
 
 		// Register to Fury events
 		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);

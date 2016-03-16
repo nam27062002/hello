@@ -23,16 +23,6 @@ public class DefinitionsManager : SingletonScriptableObject<DefinitionsManager> 
 	//------------------------------------------------------------------//
 	// Add here as much definition sets as needed
 	// References must be initialized from inspector
-	[Separator("Dragons")]
-	[SerializeField] private DragonDefinitions m_dragons = null;
-	public static DragonDefinitions dragons { get { return instance.m_dragons; }}
-
-	[SerializeField] private DragonTierDefinitions m_dragonTiers = null;
-	public static DragonTierDefinitions dragonTiers { get { return instance.m_dragonTiers; }}
-
-	[SerializeField] private DragonSkillDefinitions m_dragonSkills = null;
-	public static DragonSkillDefinitions dragonSkills { get { return instance.m_dragonSkills; }}
-
 	[Separator("Entities")]
 	[SerializeField] private EntityDefinitions m_entities = null;
 	public static EntityDefinitions entities { get { return instance.m_entities; }}
@@ -81,17 +71,8 @@ public class DefinitionsManager : SingletonScriptableObject<DefinitionsManager> 
 		// Compact code
 		Type defType = typeof(T);
 
-		// Dragons
-		if(defType == typeof(DragonDef)) {
-			return dragons as DefinitionSet<T>;
-		} else if(defType == typeof(DragonTierDef)) {
-			return dragonTiers as DefinitionSet<T>;
-		} else if(defType == typeof(DragonSkillDef)) {
-			return dragonSkills as DefinitionSet<T>;
-		}
-
 		// Entities
-		else if(defType == typeof(EntityDef)) {
+		if(defType == typeof(EntityDef)) {
 			return entities as DefinitionSet<T>;
 		} else if(defType == typeof(EntityCategoryDef)) {
 			return entityCategories as DefinitionSet<T>;
