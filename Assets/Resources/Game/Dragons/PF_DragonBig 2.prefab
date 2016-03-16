@@ -911,6 +911,7 @@ GameObject:
   - 114: {fileID: 11417954}
   - 114: {fileID: 11409410}
   - 114: {fileID: 11478106}
+  - 114: {fileID: 11481262}
   m_Layer: 12
   m_Name: PF_DragonBig 2
   m_TagString: Player
@@ -2512,13 +2513,33 @@ MonoBehaviour:
   m_minEatAnimTime: 0.65
   m_eatDistance: 4
   m_burpSounds: []
---- !u!114 &11493054
+--- !u!114 &11481262
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184332}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48f0dabda9d774437bbff41bb90ad77d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 25
+  m_segmentLength: 5
+  m_segmentWidth: 5
+  m_maxAmplitude: 5
+  m_rayMaterial: {fileID: 2100000, guid: 0751fbabac08a4525ad127bec81ba879, type: 2}
+  m_length: 6
+  m_particleStartPrefab: {fileID: 175336, guid: b9eae05b51ef04a64bbf2913767f44b1,
+    type: 2}
+  m_particleEndPrefab: {fileID: 175336, guid: b9eae05b51ef04a64bbf2913767f44b1, type: 2}
+--- !u!114 &11493054
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 184332}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
@@ -2552,6 +2573,9 @@ MonoBehaviour:
   m_finalScale:
     min: 1.5
     max: 2.5
+  m_flameParticle: Flame
+  m_flameUpParticle: FlameUp
+  m_flameLight: PF_FireLight
 --- !u!114 &11493742
 MonoBehaviour:
   m_ObjectHideFlags: 1

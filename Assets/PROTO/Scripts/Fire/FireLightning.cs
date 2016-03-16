@@ -4,62 +4,62 @@ using System.Collections.Generic;
 
 public class FireLightning : DragonBreathBehaviour {
 
-	public float firePower = 1f;
+	public float m_segmentLength = 25f; 
+	public float m_segmentWidth = 5f; 
+	public float m_maxAmplitude = 50f; 
 
-	public float segmentLength = 25f; 
-	public float segmentWidth = 5f; 
-	public float maxAmplitude = 50f; 
-
-	public Material rayMaterial;
+	public Material m_rayMaterial;
 
 	// Test
-	public float maxRayLength = 500f;
+	[SerializeField] private float m_length = 6f;
+	public float length
+	{
+		get
+		{
+			return m_length;
+		}
+		set
+		{
+			m_length = value;
+		}
+	}
 
-	float timer = 0f;
-	float moveTimer = 0f;
-
-	public Object particleStartPrefab;
-	public Object particleEndPrefab;
+	public Object m_particleStartPrefab;
+	public Object m_particleEndPrefab;
 	
-	GameObject particleStart;
-	GameObject particleEnd;
+	GameObject m_particleStart;
+	GameObject m_particleEnd;
 
-	Transform mouthPosition;
-	Transform headPosition;
-	Vector3 dir;
+	Transform m_mouthTransform;
+	Transform m_headTransform;
+	Vector3 m_dir;
 
-	int fireMask;
-	int groundMask;
-	bool firing = false;
-	int fireFrame = 0;
+	int m_fireMask;
+	int m_groundMask;
+	bool m_firing = false;
 
-	Lightning[] rays = new Lightning[3];
+	Lightning[] m_rays = new Lightning[3];
 
 
 	class Lightning{
 
-		List<LineRenderer> lines = new List<LineRenderer>();
+		LineRenderer m_line;
 
-		public float amplitude;
-		public float segmentLength;
+		public float m_amplitude;
+		public float m_segmentLength;
 	
-		public Lightning(float rayWidth, Color color,float numSegments, Material rayMaterial){
-			
-			for(int i=0;i<numSegments;i++){
-				
-				GameObject obj = new GameObject();
-				obj.name = "RaySegment";
-				obj.transform.parent = GameObject.Find ("Instances").transform;
-				LineRenderer rayRender = obj.AddComponent<LineRenderer>();
-				rayRender.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-				rayRender.receiveShadows = false;
-				rayRender.SetWidth( rayWidth, rayWidth);
-				rayRender.SetColors(color,color);
-				rayRender.material = rayMaterial;
-				rayRender.enabled = false; 
-				lines.Add(rayRender);
-				
-			}
+		public Lightning(float rayWidth, Color color,float numSegments, Material rayMaterial)
+		{
+			GameObject obj = new GameObject();
+			obj.name = "RaySegment";
+			obj.transform.parent = GameObject.Find ("InstanceManager").transform;
+			m_line = obj.AddComponent<LineRenderer>();
+			m_line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+			m_line.receiveShadows = false;
+			m_line.SetWidth( rayWidth, rayWidth);
+			m_line.SetColors(color,color);
+			m_line.material = rayMaterial;
+			m_line.enabled = false; 
 		}
 
 		public void Draw(Vector3 start, Vector3 end){
@@ -68,148 +68,134 @@ public class FireLightning : DragonBreathBehaviour {
 			Vector3 dir = (end-start).normalized;
 			Vector3 normal = Vector3.Cross(dir,Vector3.forward);
 			float dist = (end-start).magnitude;
-			float numSegments = dist/segmentLength;
-			for(int i=0;i<(int)numSegments;i++){
-				lines[i].enabled = true;
-				lines[i].SetPosition(0,previous);
-				dir  = (end-previous).normalized;
-				previous = previous+dir*segmentLength+normal*Random.Range (-amplitude, amplitude);
-				if (i < numSegments-1)
-					lines[i].SetPosition(1,previous);
-				else
-					lines[i].SetPosition(1,start);
+			int numSegments = (int)(dist/m_segmentLength);
+			m_line.SetVertexCount(numSegments + 1);
+			m_line.enabled = true;
+
+			for(int i=0;i<(int)numSegments;i++)
+			{
+				m_line.SetPosition(i,previous);
+				// dir  = (end-previous).normalized;
+				previous = previous+dir*m_segmentLength+normal*Random.Range (-m_amplitude, m_amplitude);
 			}
-			
-			
-			for(int i=(int)numSegments;i<lines.Count;i++){
-				lines[i].enabled = false;
-			}
+			m_line.SetPosition( numSegments, end );
+
 		}
 
-		public void Hide(){
-			for(int i=0;i<lines.Count;i++){
-				lines[i].enabled = false;
-			}
+		public void Hide()
+		{
+				m_line.enabled = false;
 		}
 	}
 
 
 
 	// Use this for initialization
-	override protected void ExtendedStart () {
-	
-
-
-		particleStart = (GameObject)Object.Instantiate(particleStartPrefab);
-		particleStart.transform.localPosition = Vector3.zero;
-		particleStart.gameObject.SetActive(true);
+	override protected void ExtendedStart () 
+	{
+		m_particleStart = (GameObject)Object.Instantiate(m_particleStartPrefab);
+		m_particleStart.transform.localPosition = Vector3.zero;
+		m_particleStart.gameObject.SetActive(true);
 		
-		particleEnd = (GameObject)Object.Instantiate(particleStartPrefab);
-		particleEnd.transform.localPosition = Vector3.zero;
-		particleEnd.gameObject.SetActive(true);
+		m_particleEnd = (GameObject)Object.Instantiate(m_particleStartPrefab);
+		m_particleEnd.transform.localPosition = Vector3.zero;
+		m_particleEnd.gameObject.SetActive(true);
 
-		mouthPosition = transform.FindTransformRecursive("eat");
-		headPosition = transform.FindTransformRecursive("head");
-
-		fireMask = 1 << LayerMask.NameToLayer("Edible") | 1 << LayerMask.NameToLayer("Burnable");
-		groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_mouthTransform = GetComponent<DragonMotion>().tongue;
+		m_headTransform = GetComponent<DragonMotion>().head;
 
 
-		rays[0] = new Lightning(segmentWidth, Color.white, maxRayLength/segmentLength,rayMaterial);
-		rays[0].amplitude = maxAmplitude*0.25f;
-		rays[0].segmentLength = segmentLength;
+		m_fireMask = 1 << LayerMask.NameToLayer("Edible") | 1 << LayerMask.NameToLayer("Burnable");
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
-		rays[1] = new Lightning(segmentWidth*0.5f, Color.grey, maxRayLength/segmentLength,rayMaterial);
-		rays[1].amplitude = maxAmplitude*0.5f;
-		rays[1].segmentLength = segmentLength;
 
-		rays[2] = new Lightning(segmentWidth*0.25f, new Color(0.25f,0.25f,0.25f,1f), maxRayLength/segmentLength,rayMaterial);
-		rays[2].amplitude = maxAmplitude*0.5f;
-		rays[2].segmentLength = segmentLength;
+		m_rays[0] = new Lightning(m_segmentWidth, Color.white, m_length/m_segmentLength,m_rayMaterial);
+		m_rays[0].m_amplitude = m_maxAmplitude*0.25f;
+		m_rays[0].m_segmentLength = m_segmentLength;
+
+		m_rays[1] = new Lightning(m_segmentWidth*0.5f, Color.grey, m_length/m_segmentLength,m_rayMaterial);
+		m_rays[1].m_amplitude = m_maxAmplitude*0.5f;
+		m_rays[1].m_segmentLength = m_segmentLength;
+
+		m_rays[2] = new Lightning(m_segmentWidth*0.25f, new Color(0.25f,0.25f,0.25f,1f), m_length/m_segmentLength,m_rayMaterial);
+		m_rays[2].m_amplitude = m_maxAmplitude*0.5f;
+		m_rays[2].m_segmentLength = m_segmentLength;
 
 	}
-	
-	// Update is called once per frame
-	override protected void ExtendedUpdate () {
 
-		
-		if (firing){
-			timer += Time.deltaTime;
-		
-			dir = mouthPosition.position - headPosition.position;
-			dir.z = 0f;
-			dir.Normalize();
+	override protected void Breath()
+	{
+		m_dir = m_mouthTransform.position - m_headTransform.position;
+		m_dir.z = 0f;
+		m_dir.Normalize();
+		/*
+		float rayStep = 2f;
+		Vector3 p;
+		RaycastHit hit;
+		for(float i=0;i<m_length/rayStep;i+=rayStep){
 			
-			float rayStep = 2f;
-			Vector3 p;
-			RaycastHit hit;
-			for(float i=0;i<maxRayLength/rayStep;i+=rayStep){
+			p = m_mouthTransform.position+m_dir*i;
+			if (Physics.Linecast(p+Vector3.forward*-400f,p+Vector3.forward*800f,out hit,m_fireMask)){
 				
-				p = mouthPosition.position+dir*i;
-				if (Physics.Linecast(p+Vector3.forward*-400f,p+Vector3.forward*800f,out hit,fireMask)){
+				if (hit.collider != null){
 					
-					if (hit.collider != null){
-						
-						// Burn whatever burnable
-						FlamableBehaviour flamable =  hit.collider.GetComponent<FlamableBehaviour>();
-						if (flamable != null){
-							flamable.Burn (hit.point, firePower);
-						}
+					// Burn whatever burnable
+					InflammableBehaviour flamable =  hit.collider.GetComponent<InflammableBehaviour>();
+					if (flamable != null){
+						flamable.Burn (damage * Time.deltaTime, transform);
 					}
 				}
 			}
+		}
+		*/
 
-			Vector3 p1 = mouthPosition.position;
-			particleStart.transform.position = mouthPosition.position;
+		Vector3 p1 = m_mouthTransform.position;
+		m_particleStart.transform.position = m_mouthTransform.position;
 
-			Vector3 p2;
+		Vector3 p2;
 
-			RaycastHit ground;
-			if (Physics.Linecast( mouthPosition.position, mouthPosition.position+dir*maxRayLength, out ground, groundMask)){
-				p2 = ground.point;
-			}else{
-				p2 =  mouthPosition.position+dir*maxRayLength;
-			}
-
-			particleEnd.transform.position = p2;
-
-			for(int i=0;i<rays.Length;i++)
-				rays[i].Draw(p1,p2);
-
-
-			// DEtect we are not receiving Fire orders anymore
-			fireFrame++;
-			if (fireFrame >= 2){
-				firing = false;
-				particleStart.gameObject.SetActive(false);
-				particleEnd.gameObject.SetActive(false);
-				for(int i=0;i<rays.Length;i++)
-					rays[i].Hide ();
-
-			}
+		RaycastHit ground;
+		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+m_dir*m_length, out ground, m_groundMask)){
+			p2 = ground.point;
+		}else{
+			p2 =  m_mouthTransform.position+m_dir*m_length;
 		}
 
+		m_particleEnd.transform.position = p2;
+
+		for(int i=0;i<m_rays.Length;i++)
+			m_rays[i].Draw(p1,p2);
+
+		// Look entities to damage!
+
+			
 	}
 
-	override protected void Breath(){
+	override protected void BeginBreath() 
+	{
+		base.BeginBreath();
+		m_firing = true;
+		m_particleStart.transform.position = m_mouthTransform.position;
+		m_dir = m_mouthTransform.position - m_headTransform.position;
+		m_dir.z = 0f;
+		m_dir.Normalize();
+		m_particleEnd.transform.position = m_mouthTransform.position+m_dir*m_length;
 		
-		if (!firing){
-			
-			particleStart.transform.position = mouthPosition.position;
-			dir = mouthPosition.position - headPosition.position;
-			dir.z = 0f;
-			dir.Normalize();
-			particleEnd.transform.position = mouthPosition.position+dir*maxRayLength;
-			
-			particleStart.gameObject.SetActive(true);
-			particleEnd.gameObject.SetActive(true);
+		m_particleStart.gameObject.SetActive(true);
+		m_particleEnd.gameObject.SetActive(true);
 
-			for(int i=0;i<rays.Length;i++)
-				rays[i].Hide ();
+		for(int i=0;i<m_rays.Length;i++)
+			m_rays[i].Hide ();
+	}
 
-			firing = true;
-		}
-		
-		fireFrame = 0;
+	override protected void EndBreath() 
+	{
+		base.EndBreath();
+		m_firing = false;
+		m_particleStart.gameObject.SetActive(false);
+		m_particleEnd.gameObject.SetActive(false);
+		for(int i=0;i<m_rays.Length;i++)
+			m_rays[i].Hide ();
+
 	}
 }
