@@ -58,17 +58,16 @@ public class FireBreath : DragonBreathBehaviour {
 	private int m_frame;
 
 	private GameObject m_light;
-	private GameObject m_fireTip;
-	private ParticleSystem m_fireTipParticle;
+
+	public string m_flameParticle = "Flame";
+	public string m_flameUpParticle = "FlameUp";
+	public string m_flameLight = "PF_FireLight";
 
 	override protected void ExtendedStart() {
 
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/Flame"), m_maxParticles, false);
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FlameUp"), m_maxParticles, false);
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireLight"), 1, false);
-		m_fireTip = Instantiate( Resources.Load("Particles/FireTip")) as GameObject;
-		m_fireTipParticle = m_fireTip.GetComponent<ParticleSystem>();
-		m_fireTipParticle.Stop();
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameParticle), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameUpParticle), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameLight), 1, false);
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_noPlayerMask = ~(1 << LayerMask.NameToLayer("Player"));
@@ -129,7 +128,7 @@ public class FireBreath : DragonBreathBehaviour {
 	{
 		base.BeginBreath();
 		AudioManager.instance.PlayClip("audio/sfx/Dragon/Menu_Scratch_13");
-		m_light = PoolManager.GetInstance("PF_FireLight");
+		m_light = PoolManager.GetInstance(m_flameLight);
 		m_light.transform.position = m_mouthTransform.position;
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);
 	}
@@ -168,22 +167,7 @@ public class FireBreath : DragonBreathBehaviour {
 			{
 				flamesUpDir = Vector3.Reflect( m_direction, ground.normal);
 				flamesUpDir.Normalize();
-				/*
-				m_fireTipParticle.Play();
-				m_fireTip.transform.position = ground.point;
-				// m_fireTip.transform.rotation = Quaternion.FromToRotation(Vector3.forward, ground.normal);
-				m_fireTip.transform.rotation = Quaternion.FromToRotation(Vector3.forward, Vector3.Reflect( m_direction, ground.normal));
 
-				// Check curve size
-				ParticleSystem ps = m_fireTip.GetComponent<ParticleSystem>();
-				ParticleSystem.ShapeModule shape = ps.shape;
-				shape.box = (Vector3.right + Vector3.up) * m_sizeCurve.Evaluate( ground.distance / m_length) * 0.5f + Vector3.forward;
-				// ps.shape = shape;
-				*/
-			}
-			else
-			{
-				// m_fireTipParticle.Stop();
 			}
 
 
@@ -211,7 +195,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 		for (int i = 0; i < m_particleSpawn; i++) {
 			
-			GameObject obj = PoolManager.GetInstance("Flame");
+			GameObject obj = PoolManager.GetInstance(m_flameParticle);
 			
 			if (obj != null) {
 				FlameParticle particle = obj.GetComponent<FlameParticle>();
@@ -224,7 +208,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 		for (int i = 0; i < m_particleSpawn / 2; i++) 
 		{
-			GameObject obj = PoolManager.GetInstance("FlameUp");
+			GameObject obj = PoolManager.GetInstance(m_flameUpParticle);
 			
 			if (obj != null) {
 				FlameUp particle = obj.GetComponent<FlameUp>();

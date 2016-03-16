@@ -27,10 +27,11 @@ public class FlameUp : MonoBehaviour
 
 	Transform m_referenceTransform;
 	Vector3 m_referencePosition;
-
+	Color m_baseColor;
 	void Start()
 	{
 		m_renderers = GetComponentsInChildren<SpriteRenderer>();
+		m_baseColor = m_renderers[0].color;
 	}
 
 	void LateUpdate()
@@ -63,7 +64,7 @@ public class FlameUp : MonoBehaviour
 					transform.localScale = Vector3.one * m_startScale * tt;
 
 					// Alpha
-					Color c = Color.white * tt;
+					Color c = m_baseColor * tt;
 					// c.a = tt;
 					for( int i = 0; i <m_renderers.Length; i++ )
 					{
