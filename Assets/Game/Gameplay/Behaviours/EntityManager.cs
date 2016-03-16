@@ -63,7 +63,6 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 		m_searchList.Clear();
 		float halfAmplitude = amplitude/2.0f;
 		float angle = Mathf.Atan2( dir.y, dir.x);
-		float aaa = Mathf.Rad2Deg * angle;
 		for (int i = 0; i < m_entities.Count; i++) 
 		{
 			Entity e = m_entities[i];

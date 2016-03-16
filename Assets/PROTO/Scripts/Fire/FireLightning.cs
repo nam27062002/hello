@@ -36,7 +36,6 @@ public class FireLightning : DragonBreathBehaviour {
 
 	int m_fireMask;
 	int m_groundMask;
-	bool m_firing = false;
 
 	Lightning[] m_rays = new Lightning[3];
 
@@ -165,6 +164,10 @@ public class FireLightning : DragonBreathBehaviour {
 				entity.Burn(damage * Time.deltaTime, transform);
 			}
 		}
+
+		m_bounds2D.center = m_mouthTransform.position;
+		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
+		m_bounds2D.height = Mathf.Max( m_actualLength, m_maxAmplitude);
 	}
 
 
@@ -172,7 +175,6 @@ public class FireLightning : DragonBreathBehaviour {
 	override protected void BeginBreath() 
 	{
 		base.BeginBreath();
-		m_firing = true;
 		m_particleStart.transform.position = m_mouthTransform.position;
 		m_dir = m_mouthTransform.position - m_headTransform.position;
 		m_dir.z = 0f;
@@ -189,7 +191,6 @@ public class FireLightning : DragonBreathBehaviour {
 	override protected void EndBreath() 
 	{
 		base.EndBreath();
-		m_firing = false;
 		m_particleStart.gameObject.SetActive(false);
 		m_particleEnd.gameObject.SetActive(false);
 		for(int i=0;i<m_rays.Length;i++)
@@ -204,5 +205,26 @@ public class FireLightning : DragonBreathBehaviour {
 			Gizmos.color = Color.magenta;
 			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + m_dir * m_actualLength );
 		}
+	}
+
+	override public bool IsInsideArea(Vector2 _point) { 
+	
+		if (m_isFuryOn || m_isSuperFuryOn) 
+		{
+			float halfAmplitude = m_maxAmplitude/2.0f;
+			float angle = Mathf.Atan2( m_dir.y, m_dir.x);
+
+			Vector2 inversePos = _point - (Vector2)m_mouthTransform.position;
+			inversePos = inversePos.RotateRadians( -angle );
+			if ( inversePos.x >= 0 && inversePos.x <= length )
+			{
+				if ( inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude )
+				{
+					return true;
+				}
+			}
+		}
+
+		return false; 
 	}
 }
