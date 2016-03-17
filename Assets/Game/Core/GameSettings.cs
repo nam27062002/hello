@@ -29,22 +29,14 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Add here any global setup variable such as quality, server ip, debug enabled, ...
-	[Separator("Gameplay")]
 	[Comment("Name of the dragon instance on the scene")]
+	[Separator("Gameplay")]
 	[SerializeField] private string m_playerName = "Player";
 	public static string playerName { get { return instance.m_playerName; }}
 
-	[CommentAttribute("")]
+	[Comment("Increase intervals for dragon's health drain.\nTODO!! Must be re-designed and implemented.")]
 	[SerializeField] private List<TimeDrain> m_healthDrainIncForTime;
 	public static List<TimeDrain> healthDrainIncForTime { get { return instance.m_healthDrainIncForTime; } }
-
-	[Separator("Economy")]
-	[Comment("Equivalence Time/PC: PC = CoefA * time(min) + CoefB")]
-	[SerializeField] private float m_timePcCoefA = 0.2f;
-	public static float timePcCoefA { get { return instance.m_timePcCoefA; }}
-
-	[SerializeField] private float m_timePcCoefB = 4.5f;
-	public static float timePcCoefB { get { return instance.m_timePcCoefB; }}
 
 	[Separator("Versioning")]
 	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
@@ -57,17 +49,11 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	public static Version androidVersion { get { return instance.m_androidVersion; }}
 
 	[SerializeField] private int m_androidVersionCode = 0;
-	public static int androidVersionCode 
-	{ 
-		get 
-		{ 
-			return instance.m_androidVersionCode; 
-		}
-		set
-		{
-			instance.m_androidVersionCode = value;
-		}
+	public static int androidVersionCode { 
+		get { return instance.m_androidVersionCode; }
+		set { instance.m_androidVersionCode = value; }
 	}
+
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
@@ -77,6 +63,11 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	/// <returns>The amount of PC worth for <paramref name="_time"/> amount of time.</returns>
 	/// <param name="_time">Amount of time to be evaluated.</param>
 	public static int ComputePCForTime(TimeSpan _time) {
+		// Get coeficients from definition
+		DefinitionNode gameSettingsDef = Definitions.GetDefinition(Definitions.Category.SETTINGS, "gameSettings");
+		float timePcCoefA = gameSettingsDef.GetAsFloat("timeToPCCoefA");
+		float timePcCoefB = gameSettingsDef.GetAsFloat("timeToPCCoefB");
+
 		// Just apply Hadrian's formula
 		double pc = timePcCoefA * _time.TotalMinutes + timePcCoefB;
 		pc = Math.Round(pc, MidpointRounding.AwayFromZero);

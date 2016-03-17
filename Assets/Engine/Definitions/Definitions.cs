@@ -82,6 +82,7 @@ public class Definitions : Singleton<Definitions> {
 
 		// Settings
 		LoadDefinitionsFile(Category.LOCALIZATION, "Rules/localizationDefinitions");
+		LoadDefinitionsFile(Category.SETTINGS, "Rules/gameSettings");
 		LoadDefinitionsFile(Category.SETTINGS, "Rules/dragonSettings");
 
 		// Dragons
