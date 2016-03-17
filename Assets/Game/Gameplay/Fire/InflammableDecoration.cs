@@ -173,7 +173,7 @@ public class InflammableDecoration : Initializable {
 	{
 		// Maybe check if a critial node was hit
 		// Compare dragon size/tier to decoration Size
-		DragonTier _dragonTier = InstanceManager.player.data.def.tier;
+		DragonTier _dragonTier = InstanceManager.player.data.tier;
 		switch( _dragonTier )
 		{
 			case DragonTier.TIER_3:
