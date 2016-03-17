@@ -35,7 +35,7 @@ public class AOCQuickTestEditor : Editor {
 	public override void OnInspectorGUI() {
 		// Test button
 		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
-			targetTest.OnCustomCallback();
+			targetTest.OnTestButton();
 		}
 
 		// Default

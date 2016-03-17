@@ -7,6 +7,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -70,5 +71,59 @@ public class MathUtils {
 			magnitude *= 10f;
 		}
 		return magnitude;
+	}
+
+	/// <summary>
+	/// Check whether a given value is between two limits, <b>both included</b>.
+	/// </summary>
+	/// <returns><c>true</c> if is <paramref name="_value"/> is between <paramref name="_limit1"/> and <paramref name="_limit2"/>, regardless of their order; <c>false</c> otherwise.</returns>
+	/// <param name="_value">The value to be checked.</param>
+	/// <param name="_limit1">Min or max limit.</param>
+	/// <param name="_limit2">The other limit.</param>
+	public static bool IsBetween(IComparable _value, IComparable _limit1, IComparable _limit2) {
+		// CompareTo:
+		// - Less than zero: The current instance precedes the object specified by the CompareTo method in the sort order.
+		// - Zero: This current instance occurs in the same position in the sort order as the object specified by the CompareTo method.
+		// - Greater than zero: This current instance follows the object specified by the CompareTo method in the sort order.
+
+		// a) _limit1 smaller than _limit2
+		if(_value.CompareTo(_limit1) >= 0 && _value.CompareTo(_limit2) <= 0) {
+			return true;
+		}
+
+		// b) _limit2 smaller than _limit1
+		else if(_value.CompareTo(_limit2) >= 0 && _value.CompareTo(_limit1) <= 0) {
+			return true;
+		}
+
+		// c) outside limits
+		return false;
+	}
+
+	/// <summary>
+	/// Check whether a given value is between two limits, <b>both excluded</b>.
+	/// </summary>
+	/// <returns><c>true</c> if is <paramref name="_value"/> is within <paramref name="_limit1"/> and <paramref name="_limit2"/>, regardless of their order; <c>false</c> otherwise.</returns>
+	/// <param name="_value">The value to be checked.</param>
+	/// <param name="_limit1">Min or max limit.</param>
+	/// <param name="_limit2">The other limit.</param>
+	public static bool IsWithin(IComparable _value, IComparable _limit1, IComparable _limit2) {
+		// CompareTo:
+		// - Less than zero: The current instance precedes the object specified by the CompareTo method in the sort order.
+		// - Zero: This current instance occurs in the same position in the sort order as the object specified by the CompareTo method.
+		// - Greater than zero: This current instance follows the object specified by the CompareTo method in the sort order.
+
+		// a) _limit1 smaller than _limit2
+		if(_value.CompareTo(_limit1) > 0 && _value.CompareTo(_limit2) < 0) {
+			return true;
+		}
+
+		// b) _limit2 smaller than _limit1
+		else if(_value.CompareTo(_limit2) > 0 && _value.CompareTo(_limit1) < 0) {
+			return true;
+		}
+
+		// c) outside limits
+		return false;
 	}
 }
