@@ -26,6 +26,8 @@ public class EdibleBehaviour : Initializable {
 	private Vector3 m_originalScale;
 
 	public string m_onEatenParticle = "";
+	[Range(0f, 100f)]
+	public float m_onEatenSoundProbability = 50.0f;
 	public List<string> m_onEatenSounds = new List<string>();
 
 	//-----------------------------------------------
@@ -78,7 +80,7 @@ public class EdibleBehaviour : Initializable {
 		OnEatBehaviours(false);
 		if ( m_animator != null )
 			m_animator.SetTrigger("being eaten");
-		if ( m_onEatenSounds.Count > 0)
+		if ( m_onEatenSounds.Count > 0 && Random.Range(0, 100) <= m_onEatenSoundProbability)
 		{
 			// Play sound!
 			string soundName = m_onEatenSounds[ Random.Range( 0, m_onEatenSounds.Count ) ];
