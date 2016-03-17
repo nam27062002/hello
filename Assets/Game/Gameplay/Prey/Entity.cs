@@ -71,7 +71,8 @@ public class Entity : Initializable {
 				}
 				renderers[i].materials = materials;
 			} else {
-				renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
+				if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
+					renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 			}
 		}
 
