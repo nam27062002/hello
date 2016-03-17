@@ -6,10 +6,10 @@ public class Wardrobe : Singleton<Wardrobe> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private static readonly string SKIN_PATH = "Game/Equipable/Skins/";
-	private static readonly string ITEM_PATH = "Game/Equipable/Items/";
+	public static readonly string SKIN_PATH = "Game/Equipable/Skins/";
+	public static readonly string ITEM_PATH = "Game/Equipable/Items/";
 
-	private static readonly int MAX_LEVEL = 3;
+	public static readonly int MAX_LEVEL = 3;
 
 	/// <summary>
 	/// Auxiliar class for persistence load/save.
