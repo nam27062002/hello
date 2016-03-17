@@ -31,39 +31,30 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Content/Definitions Manager", false, 0)]
 	public static void ShowDefintionsManager() { OpenFile("DefinitionsManager.asset", SINGLETONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/DragonDefinitions", false, 50)]
-	public static void ShowDefintions1() { OpenFile("DragonDefinitions.asset", DEFINITIONS_FOLDER); }
-
-	[MenuItem("Hungry Dragon/Content/DragonTierDefinitions", false, 51)]
-	public static void ShowDefintions2() { OpenFile("DragonTierDefinitions.asset", DEFINITIONS_FOLDER); }
-
-	[MenuItem("Hungry Dragon/Content/DragonSkillDefinitions", false, 52)]
-	public static void ShowDefintions3() { OpenFile("DragonSkillDefinitions.asset", DEFINITIONS_FOLDER); }
-
-	[MenuItem("Hungry Dragon/Content/EntityDefinitions", false, 100)]
+	[MenuItem("Hungry Dragon/Content/EntityDefinitions", false, 50)]
 	public static void ShowDefintions4() { OpenFile("EntityDefinitions.asset", DEFINITIONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 101)]
+	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 51)]
 	public static void ShowDefintions5() { OpenFile("EntityCategoryDefinitions.asset", DEFINITIONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/LevelDefinitions", false, 150)]
+	[MenuItem("Hungry Dragon/Content/LevelDefinitions", false, 100)]
 	public static void ShowDefintions6() { OpenFile("LevelDefinitions.asset", DEFINITIONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 151)]
+	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 101)]
 	public static void ShowDefintions7() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
 
 	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Chest Manager", false, 200)]
+	[MenuItem("Hungry Dragon/Content/Chest Manager", false, 150)]
 	public static void ShowManager1() { OpenFile("ChestManager.asset", SINGLETONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/Missions Manager", false, 201)]
+	[MenuItem("Hungry Dragon/Content/Missions Manager", false, 151)]
 	public static void ShowManager2() { OpenFile("PF_MissionManager.prefab", SINGLETONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/Rewards Manager", false, 202)]
+	[MenuItem("Hungry Dragon/Content/Rewards Manager", false, 152)]
 	public static void ShowManager3() { OpenFile("PF_RewardManager.prefab", SINGLETONS_FOLDER); }
 
 	//--------------------------------------------------- SETTINGS ---------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Game Settings", false, 250)]
+	[MenuItem("Hungry Dragon/Content/Game Settings", false, 200)]
 	public static void ShowSettings1() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
 
 	//---------------------------------------------------- TOOLS -----------------------------------------------------//

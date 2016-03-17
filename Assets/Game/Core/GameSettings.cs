@@ -34,14 +34,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private string m_playerName = "Player";
 	public static string playerName { get { return instance.m_playerName; }}
 
-	[Comment("Percentage of maxHealth where to trigger the starving warning")]
-	[SerializeField] [Range(0, 1)] private float m_healthWarningThreshold = 0.2f;
-	public static float healthWarningThreshold { get { return instance.m_healthWarningThreshold; }}
-
-	[Comment("Minimum amount of energy required to boost")]
-	[SerializeField] private float m_energyRequiredToBoost = 25f;
-	public static float energyRequiredToBoost { get { return instance.m_energyRequiredToBoost; }}
-
 	[CommentAttribute("")]
 	[SerializeField] private List<TimeDrain> m_healthDrainIncForTime;
 	public static List<TimeDrain> healthDrainIncForTime { get { return instance.m_healthDrainIncForTime; } }

@@ -22,6 +22,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	// Cache content data
 	private float m_energyDrain = 0f;	// energy per second
 	private float m_energyRefill = 1f;	// energy per second
+	private float m_energyRequiredToBoost = 0.2f;	// Percent of total energy
 
 	//-----------------------------------------------
 	// Methods
@@ -38,6 +39,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// Cache content data
 		m_energyDrain = m_dragon.data.def.GetAsFloat("energyDrain");
 		m_energyRefill = m_dragon.data.def.GetAsFloat("energyRefillRate");
+		m_energyRequiredToBoost = Definitions.GetDefinition(Definitions.Category.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
+		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
 
 		for( int i = 0; i<m_trails.Count; i++ )
 		{
@@ -68,7 +71,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if (activate) {
 			if (m_ready) {
 				m_ready = false;
-				if (m_dragon.energy > GameSettings.energyRequiredToBoost) {
+				if (m_dragon.energy > m_energyRequiredToBoost) {
 					StartBoost();
 				}
 			}

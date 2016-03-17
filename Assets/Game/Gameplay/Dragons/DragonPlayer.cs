@@ -20,7 +20,7 @@ using System.Collections;
 /// </summary>
 public class DragonPlayer : MonoBehaviour {
 	//------------------------------------------------------------------//
-	// PROPERTIES														//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	[Header("Type and general data")]
 	[SerializeField] private string m_sku = "";
@@ -47,9 +47,10 @@ public class DragonPlayer : MonoBehaviour {
 	// Cache content data
 	private float m_energyMax = 1f;
 	private float m_furyMax = 1f;
+	private float m_healthWarningThreshold = 1f;
 
 	// Interaction
-	 public bool playable {
+	public bool playable {
 		set {
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
@@ -60,15 +61,11 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
 	// References
 	private DragonBreathBehaviour m_breathBehaviour = null;
 
 	// Internal
 	private float m_speedMultiplier;
-
 	private float m_invulnerableAfterReviveTimer;
 
 	//------------------------------------------------------------------//
@@ -88,6 +85,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Cache content data
 		m_energyMax = m_data.def.GetAsFloat("energyMax");
 		m_furyMax = m_data.def.GetAsFloat("furyMax");
+		m_healthWarningThreshold = Definitions.GetDefinition(Definitions.Category.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
 
 		// Initialize stats
 		ResetStats(false);
@@ -330,7 +328,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return (health < data.maxHealth * GameSettings.healthWarningThreshold);
+		return (health < data.maxHealth * m_healthWarningThreshold);
 	}
 	
 	/// <summary>
