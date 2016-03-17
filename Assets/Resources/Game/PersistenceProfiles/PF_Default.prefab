@@ -45,6 +45,7 @@ MonoBehaviour:
       pc: 10
       currentDragon: dragon_small
       currentLevel: level_0
+      tutorialStep: -1
     dragons:
     - sku: dragon_small
       xp: 0
@@ -153,16 +154,22 @@ MonoBehaviour:
       - sku: 
         state: 0
         rewardSku: 
+        isNew: 1
       - sku: 
         state: 0
         rewardSku: 
+        isNew: 1
       - sku: 
         state: 0
         rewardSku: 
+        isNew: 1
       incubatingEgg:
         sku: 
         state: 0
         rewardSku: 
+        isNew: 1
+    wardrobe:
+      disguises: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
