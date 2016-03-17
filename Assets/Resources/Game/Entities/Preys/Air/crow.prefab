@@ -420,7 +420,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEatenParticle: 
+  m_vulnerable: 0
+  m_onEatenParticle: 
+  m_onEatenSoundProbability: 50
+  m_onEatenSounds: []
 --- !u!114 &11418200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -433,6 +436,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: crow
+  m_onAppearSoundProbability: 40
+  m_onApprearSounds: []
 --- !u!114 &11422932
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -514,6 +519,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_canBeAfraid: 0
   m_canPanic: 0
+  m_afraidSounds: []
 --- !u!114 &11472838
 MonoBehaviour:
   m_ObjectHideFlags: 1
