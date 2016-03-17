@@ -45,6 +45,12 @@ public class AOCQuickTest : MonoBehaviour {
 	public float m_testNumber = 0f;
 	public Range m_range = new Range();
 
+	[List("opt0", "opt1", "opt2", "opt3", "opt4")]
+	public string m_testString = "";
+
+	[List(1, 2, 3, 4, 5)]
+	public int m_testInt = 0;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -73,14 +79,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		Debug.Log(
-			"MathUtils.IsBetween(" + m_testNumber + ", " + m_range.min + ", " + m_range.max + ")\n" +
-			MathUtils.IsBetween(m_testNumber, m_range.min, m_range.max)
-		);
-		Debug.Log(
-			"MathUtils.IsWithin(" + m_testNumber + ", " + m_range.min + ", " + m_range.max + ")\n" +
-			MathUtils.IsWithin(m_testNumber, m_range.min, m_range.max)
-		);
+		
 	}
 
 	/// <summary>

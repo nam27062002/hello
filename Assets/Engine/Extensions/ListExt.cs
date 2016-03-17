@@ -10,6 +10,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -142,6 +143,30 @@ public static class ListExt {
 		// Check for empty lists
 		if(_array.Length == 0) return default(T);
 		return (T)_array.GetValue(_array.Length - 1);
+	}
+
+	/// <summary>
+	/// Create a new list casting all the items from this list to a specific type.
+	/// </summary>
+	/// <param name="_list">The list to be casted.</param>
+	/// <returns>A new list with all the elements casted.</returns>
+	public static List<U> Cast<T, U>(this List<T> _list) {
+		// Linq makes it easy for us
+		return _list.Cast<U>().ToList();
+	}
+
+	/// <summary>
+	/// Create a new array casting all the items from this array to a specific type.
+	/// </summary>
+	/// <param name="_array">The array to be casted.</param>
+	/// <returns>A new array with all the elements casted.</returns>
+	public static U[] Cast<U>(this Array _array) {
+		// Array.Convert all doesn't seem to work properly with generics (or my brain just can't see it), so do it the old-fashioned way
+		U[] newArray = new U[_array.Length];
+		for(int i = 0; i < _array.Length; i++) {
+			newArray[i] = (U)_array.GetValue(i);
+		}
+		return newArray;
 	}
 
 	/// <summary>

@@ -1,4 +1,4 @@
-﻿// StringListAttributeEditor.cs
+﻿// ListAttributeEditor.cs
 // 
 // Created by Alger Ortín Castellví on 16/03/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
@@ -19,8 +19,8 @@ using System.Collections.Generic;
 /// <summary>
 /// Drawer for the SkuList custom attribute.
 /// </summary>
-[CustomPropertyDrawer(typeof(StringListAttribute))]
-public class StringListAttributeEditor : ExtendedPropertyDrawer {
+[CustomPropertyDrawer(typeof(ListAttribute))]
+public class ListAttributeEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -31,25 +31,32 @@ public class StringListAttributeEditor : ExtendedPropertyDrawer {
 	/// <param name="_property">The property we're drawing.</param>
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
-		// Check field type
-		if(_property.propertyType != SerializedPropertyType.String) {
-			m_pos.height = EditorStyles.largeLabel.lineHeight;
-			EditorGUI.LabelField(m_pos, _label.text, "ERROR! StringList attribute can only be applied to string properties!");
-			AdvancePos();
-			return;
-		}
-
 		// Obtain the attribute
-		StringListAttribute attr = attribute as StringListAttribute;
-		// [AOC] POTENTIAL!! base.fieldInfo.GetType();
+		ListAttribute attr = attribute as ListAttribute;
+
+		// Use hardcore reflection stuff to access the object being changed
+		// [AOC] Small trick from http://answers.unity3d.com/questions/425012/get-the-instance-the-serializedproperty-belongs-to.html
+		object target = fieldInfo.GetValue(_property.serializedObject.targetObject) as object;
 
 		// Options list - at least empty value!
-		List<string> options = new List<string>(attr.m_options);
-		if(options.Count == 0) options.Add("");
+		// Find out current selected value as well
+		int selectedIdx = -1;
+		List<string> options = new List<string>(attr.m_options.Length);
+		if(attr.m_options.Length == 0) {
+			options.Add("");
+		} else {
+			for(int i = 0; i < attr.m_options.Length; i++) {
+				// Add string representing this option
+				options.Add(attr.m_options[i].ToString());
 
-		// Find out current selected value
-		// If current value was not found, force it to first value (which will be "NONE" if allowed)
-		int selectedIdx = options.FindIndex(_option => _property.stringValue.Equals(_option, StringComparison.Ordinal));
+				// Is it the current value?
+				if(target.Equals(attr.m_options[i])) {
+					selectedIdx = i;
+				}
+			}
+		}
+
+		// If current value was not found, force it to first value
 		if(selectedIdx < 0) {
 			selectedIdx = 0;
 		}
@@ -59,7 +66,8 @@ public class StringListAttributeEditor : ExtendedPropertyDrawer {
 		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, selectedIdx, options.ToArray());
 
 		// Store new value
-		_property.stringValue = options[newSelectedIdx];
+		// Again use hardcore reflection to do it
+		fieldInfo.SetValue(_property.serializedObject.targetObject, attr.m_options[newSelectedIdx]);
 
 		// Leave room for next property drawer
 		AdvancePos();
