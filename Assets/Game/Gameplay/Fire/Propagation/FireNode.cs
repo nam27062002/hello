@@ -36,6 +36,15 @@ public class FireNode : MonoBehaviour {
 
 	private Reward m_reward;
 
+	Vector3 m_lastBreathDirection;
+	public Vector3 lastBreathHitDiretion
+	{
+		get
+		{
+			return m_lastBreathDirection;
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
@@ -59,7 +68,7 @@ public class FireNode : MonoBehaviour {
 
 		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
-
+		m_lastBreathDirection = Vector3.up;
 		m_fireSpriteScale = Vector3.zero;
 	}
 
@@ -125,13 +134,18 @@ public class FireNode : MonoBehaviour {
 		return m_state > State.Damaged && m_timer < m_burningTime * 0.5f;
 	}
 
+	public bool IsDamaged()
+	{
+		return m_state >= State.Damaged;
+	}
+
 	public void Burn(float _damage, Vector2 _direction, bool _dragonBreath) {
 
 		if (_dragonBreath) {
 			GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position + Vector3.back * 2);				
 			if (hitParticle != null && m_hitParticleMatchDirection) {
 				Vector3 angle = new Vector3(0, 90, 0);
-
+				m_lastBreathDirection = _direction;
 				if (_direction.x < 0) {
 					angle.y *= -1;
 				}
@@ -178,6 +192,17 @@ public class FireNode : MonoBehaviour {
 			}
 
 			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(1f, 2f));
+		}
+	}
+
+	public void InstaBurnForReward()
+	{
+		if ( m_state < State.Burning)
+		{
+			// Insta reward
+			m_state = State.Burned;
+			FirePropagationManager.Remove(transform);
+			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
 		}
 	}
 

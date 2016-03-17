@@ -31,6 +31,14 @@ public class Entity : Initializable {
 
 	private Dictionary<int, Material[]> m_materials;
 
+	[Range(0f, 100f)]
+	public float m_onAppearSoundProbability = 40.0f;
+	public List<string> m_onApprearSounds = new List<string>();
+	private bool m_isOnScreen = false;
+	private float m_checkOnScreenTimer = 0;
+
+	GameCameraController m_camera;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -47,17 +55,48 @@ public class Entity : Initializable {
 		}
 	}
 
+	void Start()
+	{
+		m_camera = Camera.main.GetComponent<GameCameraController>();
+	}
+
 	public override void Initialize() {
 	//	m_health = m_maxHealth;		
 		SetGolden((Random.Range(0f, 1f) <= def.goldenChance));
 
 		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
 		m_givePC = (Random.Range(0f, 1f) <= def.pcChance);
+
+		m_isOnScreen = false;
+		m_checkOnScreenTimer = 0;
 	}
 
 /*	public void AddLife(float _offset) {
 		m_health = Mathf.Min(m_maxHealth, Mathf.Max(0, m_health + _offset)); 
 	}*/
+
+
+	void Update()
+	{
+		if ( m_onApprearSounds.Count > 0 )
+		{
+			m_checkOnScreenTimer -= Time.deltaTime;
+			if ( m_checkOnScreenTimer <= 0 )
+			{	
+				bool test = m_camera.IsInsideActivationMinArea( transform.position );
+				if ( test && !m_isOnScreen )	// If I wast on screen and new I am
+				{
+					if (Random.Range( 0, 100.0f ) < m_onAppearSoundProbability)
+					{
+						string soundName = m_onApprearSounds[ Random.Range( 0, m_onApprearSounds.Count ) ];
+						AudioManager.instance.PlayClip( soundName );
+					}
+				}
+				m_isOnScreen = test;
+				m_checkOnScreenTimer = 0.5f;
+			}
+		}
+	}
 
 	private void SetGolden(bool _value) {
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
@@ -71,7 +110,8 @@ public class Entity : Initializable {
 				}
 				renderers[i].materials = materials;
 			} else {
-				renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
+				if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
+					renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 			}
 		}
 

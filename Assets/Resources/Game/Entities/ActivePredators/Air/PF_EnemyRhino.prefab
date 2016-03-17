@@ -876,10 +876,10 @@ GameObject:
   - 114: {fileID: 11402336}
   - 114: {fileID: 11487872}
   - 114: {fileID: 11493128}
-  - 114: {fileID: 11445172}
   - 114: {fileID: 11489350}
   - 114: {fileID: 11483026}
   - 114: {fileID: 11447908}
+  - 114: {fileID: 11433426}
   m_Layer: 8
   m_Name: PF_EnemyRhino
   m_TagString: Untagged
@@ -1844,6 +1844,17 @@ MonoBehaviour:
   m_displacementRadius: 0.5
   m_angleIncrement: 5
   m_idleProbability: 1
+--- !u!114 &11433426
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 193142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ef8852582a6d47709d3e3eb3c75643e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11436956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1872,18 +1883,6 @@ MonoBehaviour:
   m_eatBigSound: {fileID: 0}
   m_wingsWindSound: {fileID: 0}
   m_wingsStrongFlap: {fileID: 0}
---- !u!114 &11445172
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 193142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_canBeEatenWhileAttacking: 0
 --- !u!114 &11447908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1933,6 +1932,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: enemyRhino
+  m_onAppearSoundProbability: 40
+  m_onApprearSounds: []
 --- !u!114 &11485618
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1974,6 +1975,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_vulnerable: 2
   m_onEatenParticle: 
+  m_onEatenSoundProbability: 50
   m_onEatenSounds: []
 --- !u!114 &11487872
 MonoBehaviour:
