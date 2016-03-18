@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class DisguisesScreenController : MonoBehaviour {
 
-
-
+	[SerializeField] GameObject m_disguiseTitle;
+	[SerializeField] Text m_name;
+	[SerializeField] GameObject[] m_upgrades;
+	[SerializeField] GameObject[] m_powers;
 	[SerializeField] RectTransform m_layout;
 
 
