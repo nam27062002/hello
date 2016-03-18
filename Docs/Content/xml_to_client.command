@@ -17,7 +17,7 @@ cd "$(dirname "$0")"
 # [AOC] Unfortunately, we can't use the -u (update) parameter since git rewrites all timestamps
 #       and they can't be used to detect which files have changed, as rsync does. Instead we'll 
 #       just copy all the files, slower but 100% safe.
-RSYNC_PARAMS="-r -a --exclude=.svn* --ignore-errors"
+RSYNC_PARAMS="-r -a --exclude=.svn* --exclude=*.meta --exclude=.DS_Store --ignore-errors"
 
 # Anticipate which files will be deleted and ask for confirmation
 # The -n parameter will run only a simulation of what would be changed

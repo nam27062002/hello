@@ -9,8 +9,8 @@ set OUTPUT_DIR=..\..\Assets\Resources\Rules
 REM Go to script's dir
 cd "%~dp0"
 
-REM Perform the copy. robocopy allows us to exclude hidden .svn folders :)
-robocopy %INPUT_DIR% %OUTPUT_DIR% /E /V /XD .svn*
+REM Perform the copy. robocopy allows us to exclude hidden .svn folders and other patterns :)
+robocopy %INPUT_DIR% %OUTPUT_DIR% /E /V /XD .svn* .DS_Store /XF *.meta
 
 REM Show finish feedback
 echo "--------------------- DONE! ----------------------"
