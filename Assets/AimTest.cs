@@ -27,12 +27,13 @@ public class AimTest : MonoBehaviour {
 
 			//between aim [0.9 - 1 - 0.9] we'll rotate the model
 			//for testing purpose, it'll go from 90 to 270 degrees and back. Aim value 1 is 180 degrees of rotation
-			if (aim >= 0.6f) {
+			float absAim = Mathf.Abs(aim);
+			if (absAim >= 0.6f) {
 				float angleSide = 90f;
 				if (targetDir.x < 0) {
 					angleSide = 270f;
 				}
-				float angle = (((aim - 0.6f) / (1f - 0.6f)) * (180f - angleSide)) + angleSide;
+				float angle = (((absAim - 0.6f) / (1f - 0.6f)) * (180f - angleSide)) + angleSide;
 				transform.localRotation = Quaternion.Euler(new Vector3(0, angle, 0));
 			}
 

@@ -85,10 +85,6 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &290044820 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400020, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
-  m_PrefabInternal: {fileID: 1734953485}
 --- !u!1 &771577895
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,7 +150,7 @@ Transform:
 GameObject:
   m_PrefabParentObject: {fileID: 100000, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
   m_PrefabInternal: {fileID: 1734953485}
---- !u!114 &1200712893
+--- !u!114 &1200712891
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -162,12 +158,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1200712890}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 175cf60c2accc48e79f87078ce3f233e, type: 3}
+  m_Script: {fileID: 11500000, guid: db1b2e6168a524b0a89c8c0a8013d666, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ikActive: 1
-  rightHandObj: {fileID: 290044820}
-  lookObj: {fileID: 1475117923}
+  m_eye: {fileID: 1623551506}
+  m_target: {fileID: 1475117923}
+--- !u!4 &1200712893 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 400002, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
+  m_PrefabInternal: {fileID: 1734953485}
 --- !u!1 &1416822117
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,10 +323,37 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1475117919}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.19, y: 1.269, z: 2.32}
+  m_LocalPosition: {x: 2.32, y: 1.269, z: -0.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 3
+--- !u!1 &1623551505
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1623551506}
+  m_Layer: 0
+  m_Name: eye
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1623551506
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1623551505}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.632, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1200712893}
   m_RootOrder: 3
 --- !u!1001 &1734953485
 Prefab:
@@ -354,7 +380,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
       propertyPath: m_LocalRotation.z
@@ -362,7 +388,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071067
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
       propertyPath: m_RootOrder
@@ -374,13 +400,7 @@ Prefab:
       objectReference: {fileID: 9100000, guid: 4409232b26659406497af7a452656614, type: 2}
     - target: {fileID: 9500000, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some transforms are animated by both a Humanoid animation
-        clip and a Generic animation clip. Only the Humanoid clip will be applied
-        on those transforms.\n\tTransform 'Human_L_Forearm'\n\tTransform 'Human_Spine1'\n\tTransform
-        'Human_Spine2'\n\tTransform 'Human_Head'\n\tTransform 'Human_R_Upperarm'\n\tTransform
-        'Human_Neck'\n\tTransform 'Human_L_Weapon_01'\n\tTransform 'Human_L_Calf'\n\tTransform
-        'Human_R_Thigh'\n\tTransform 'Human_L_Thigh'\n\tand more ...\n\tFrom animation
-        clip 'Run'\n\tFrom animation clip 'Walk'\n\tFrom animation clip 'SideAttack'"
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a4f7a0287c26d49148a2f247ef5819c9, type: 3}
