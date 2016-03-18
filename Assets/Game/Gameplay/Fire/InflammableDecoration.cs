@@ -5,18 +5,15 @@ public class InflammableDecoration : Initializable {
 
 	[CommentAttribute("Add an explosion effect when this object is burned out.")]
 	[SerializeField] private string m_explosionParticle = "";
-	[SerializeField] private string m_instantExplosionParticle = "";
 
 	private GameObject m_view;
 	private GameObject m_viewBurned;
-	private GameObject m_viewExploded;
 
 	private FireNode[] m_fireNodes;
 	private bool m_burned;
 	private DeltaTimer m_timer = new DeltaTimer();
 
 	private AutoSpawnBehaviour m_autoSpawner;
-	public bool m_crumble = false;
 	private Vector3 m_startPosition;
 
 	public enum DecorationSize
@@ -26,17 +23,15 @@ public class InflammableDecoration : Initializable {
 		BIG
 	};
 	public DecorationSize m_decorationSize;
-	public bool m_forceInstantExplode = true;
+
+	private Dictionary<Renderer, Material[]>  m_originalMaterials = new Dictionary<Renderer, Material[]>();
+	private Material m_ashMaterial;
 
 	// Use this for initialization
 	void Start () {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
-		m_viewExploded = null;
-		Transform tr = transform.FindChild("view_exploded");
-		if ( tr != null )
-			m_viewExploded = tr.gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>();
 		m_burned = false;
 
@@ -55,24 +50,33 @@ public class InflammableDecoration : Initializable {
 		m_fireNodes[m_fireNodes.Length - 1].Init(coins - (coinsPerNode * (m_fireNodes.Length - 1)));
 
 		m_startPosition = transform.position;
+
+
+		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) 
+		{
+			m_originalMaterials[ renderers[i] ] = renderers[i].materials;
+		}
+		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
 	}
 
 	public override void Initialize() {
 		m_view.SetActive(true);
 		m_viewBurned.SetActive(false);
-		if ( m_viewExploded != null )
-			m_viewExploded.SetActive(false);
 
 		transform.localScale = Vector3.one;
 		m_burned = false;
 
-		for (int i = 0; i < m_fireNodes.Length; i++) {
+		for (int i = 0; i < m_fireNodes.Length; i++) 
+		{
 			m_fireNodes[i].Reset();
 		}
 
 		enabled = true;
 
 		transform.position = m_startPosition;
+		ResetViewMaterials();
+
 	}
 
 	// Update is called once per frame
@@ -83,20 +87,12 @@ public class InflammableDecoration : Initializable {
 
 		if (m_burned) 
 		{
-			// Wait burn animation to end
-			Vector3 scale = transform.localScale;
-			scale.y = 0.5f + (0.5f - (m_timer.GetDelta() * 0.5f));
-			transform.localScale = scale;
-
-			Vector3 pos = m_startPosition;
-			float size = 0.1f;
-			pos.x += Random.Range( -size, size );
-			pos.y += Random.Range( -size, size );
-			pos.z += Random.Range( -size, size );
-			transform.position = pos;
+			// Advance dissolve!
+			m_ashMaterial.SetFloat("_AshLevel", m_timer.GetDelta());
 
 			if ( m_timer.Finished() )
 			{
+				m_view.SetActive(false);
 				m_autoSpawner.Respawn();
 			}
 		} 
@@ -104,68 +100,49 @@ public class InflammableDecoration : Initializable {
 		{
 			m_burned = true;
 			bool oneIsDamaged = false;
-			Vector3 breathDir = Vector3.zero;
+			// Vector3 breathDir = Vector3.zero;	-> usefull if you need to orientate the explosion particle
 			for (int i = 0; i < m_fireNodes.Length; i++) 
 			{
 				m_burned = m_burned && m_fireNodes[i].IsBurned();
 				if (m_fireNodes[i].IsDamaged())
 				{
 					oneIsDamaged = true;
-					breathDir += m_fireNodes[i].lastBreathHitDiretion;
+					// breathDir += m_fireNodes[i].lastBreathHitDiretion;
 				}
 			}
 
-			if ( ShouldInstantExplode() && oneIsDamaged && m_viewExploded != null)
+			bool instantExplode = ShouldInstantExplode();
+			if ((instantExplode && oneIsDamaged))
 			{
-				// How to get explosion direction?
-				if (m_instantExplosionParticle != "" ) 
-				{
-					GameObject destroyParticle = ParticleManager.Spawn(m_instantExplosionParticle, transform.position + Vector3.back * 3f);
-					if ( destroyParticle != null )
-					{
-						breathDir.Normalize();
-						destroyParticle.transform.rotation.SetLookRotation( breathDir );
-					}
-				}
-
-				// Insta burn all fire nodes, so the player can get the reward
 				for (int i = 0; i < m_fireNodes.Length; i++) 
 				{
 					m_fireNodes[i].InstaBurnForReward();
 				}
-
-				// Instant Explode!!
-				m_view.SetActive(false);
-				m_viewBurned.SetActive(false);
-				if ( m_viewExploded != null )
-					m_viewExploded.SetActive(true);
-
-				m_autoSpawner.Respawn();
-			}
-			else if ( m_burned )
-			{
-				if (m_explosionParticle != "" ) 
+				if (m_explosionParticle != "" )
 				{
 					ParticleManager.Spawn(m_explosionParticle, transform.position + Vector3.back * 3f);
+					// breathDir.Normalize();	-> if you need to recolocate for the explosion
+					// destroyParticle.transform.rotation.SetLookRotation( breathDir );
 				}
-
-				for (int i = 0; i < m_fireNodes.Length && m_burned; i++) {
-					m_fireNodes[i].StartSmoke();
-				}
+				m_autoSpawner.Respawn();
 				m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
-				if ( m_viewExploded != null )
-					m_viewExploded.SetActive(false);
-				if (m_crumble)
-				{
-					m_timer.Start( 2f );
-				}
-				else
-				{
-					m_autoSpawner.Respawn();
-				}
-			}
+				// Switch material for the view to the dark and start dissolving
 
+			}
+			else if (m_burned)
+			{
+				for (int i = 0; i < m_fireNodes.Length; i++) 
+				{
+					m_fireNodes[i].StartSmoke();
+				}
+
+				// Crumble and dissolve time
+				m_timer.Start( 2f );
+				// m_view.SetActive(false);
+				m_viewBurned.SetActive(true);
+				SwitchViewToDissolve();
+			}
 		}
 	}
 
@@ -201,5 +178,29 @@ public class InflammableDecoration : Initializable {
 		}
 
 		return false;
+	}
+
+	void ResetViewMaterials()
+	{
+		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) 
+		{
+			renderers[i].materials = m_originalMaterials[ renderers[i] ];
+		}
+	}
+
+	void SwitchViewToDissolve()
+	{
+		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) 
+		{
+			Material[] materials = renderers[i].materials;
+			for (int m = 0; m < materials.Length; m++) 
+			{
+				materials[m] = m_ashMaterial;
+			}
+			renderers[i].materials = materials;
+		}
+		m_ashMaterial.SetFloat("_AshLevel", 0);
 	}
 }
