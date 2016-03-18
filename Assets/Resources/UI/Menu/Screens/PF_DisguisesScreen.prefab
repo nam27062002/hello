@@ -342,6 +342,7 @@ GameObject:
   - 222: {fileID: 22297312}
   - 114: {fileID: 11478406}
   - 114: {fileID: 11493964}
+  - 114: {fileID: 11489614}
   - 114: {fileID: 11463200}
   - 114: {fileID: 11407816}
   m_Layer: 5
@@ -806,7 +807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b058f69ef77694990963f634220a2e57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_name: wardrobe
+  m_name: disguises
 --- !u!114 &11418630
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1246,8 +1247,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnUnlock
+      - m_Target: {fileID: 11482750}
+        m_MethodName: OnUnuse
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1518,8 +1519,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnUnlock
+      - m_Target: {fileID: 11482750}
+        m_MethodName: OnUse
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1857,7 +1858,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dd33d7477d4740fa8d21b461caf122c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_disguiseTitle: {fileID: 193938}
+  m_name: {fileID: 11444244}
+  m_upgrades:
+  - {fileID: 191764}
+  - {fileID: 115406}
+  - {fileID: 152856}
+  m_powerList: {fileID: 145618}
+  m_powers:
+  - {fileID: 155588}
+  - {fileID: 106358}
+  - {fileID: 166274}
   m_layout: {fileID: 22494694}
+  m_buyButton: {fileID: 153508}
+  m_useButton: {fileID: 163740}
+  m_unuseButton: {fileID: 194840}
 --- !u!114 &11486310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1932,6 +1947,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &11489614
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetScreen: 3
 --- !u!114 &11492186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2038,8 +2065,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnUnlock
+      - m_Target: {fileID: 11489614}
+        m_MethodName: OnNavigationButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

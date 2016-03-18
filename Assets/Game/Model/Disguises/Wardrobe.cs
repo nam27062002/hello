@@ -23,7 +23,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	private int[] m_disguises;
+	private SortedList<string, int> m_disguises;
 
 
 	//------------------------------------------------------------------//
@@ -34,12 +34,16 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
 	public static void InitFromDefinitions() {
-		int size = Definitions.GetCategoryCount(Definitions.Category.DISGUISES);
-		instance.m_disguises = new int[size];
+		List<string> skus = Definitions.GetSkuList(Definitions.Category.DISGUISES);
+		instance.m_disguises = new SortedList<string, int>();
 
-		for (int i = 0; i < size; i++) {
-			instance.m_disguises[i] = 0;
+		for (int i = 0; i < skus.Count; i++) {
+			instance.m_disguises.Add(skus[i], 0);
 		}
+	}
+
+	public static int GetDisguiseLevel(string _sku) {
+		return instance.m_disguises[_sku];
 	}
 
 
@@ -58,8 +62,10 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public static void Load(SaveData _data) {
 		int size = _data.disguises.Length;
+		IList<string> keys = instance.m_disguises.Keys;
+
 		for (int i = 0; i < size; i++) {
-			instance.m_disguises[i] = _data.disguises[i];
+			instance.m_disguises[keys[i]] = _data.disguises[i];
 		}
 	}
 
@@ -68,12 +74,15 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public static SaveData Save() {
-		// Create new object, initialize and return it
+		IList<int> values = instance.m_disguises.Values;
+
 		SaveData data = new SaveData();
-		data.disguises = new int[instance.m_disguises.Length];
-		for (int i = 0; i < instance.m_disguises.Length; i++) {
-			data.disguises[i] = instance.m_disguises[i];
+		data.disguises = new int[values.Count];
+
+		for (int i = 0; i < values.Count; i++) {
+			data.disguises[i] = values[i];
 		}
+
 		return data;
 	}
 }
