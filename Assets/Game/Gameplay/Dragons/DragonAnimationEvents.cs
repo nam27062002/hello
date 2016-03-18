@@ -70,4 +70,45 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_eatBigSound.Play();
 		}
 	}
+
+
+	public void OnInsideWater()
+	{
+		if (m_wingsWindSound != null)
+			m_wingsWindSound.mute = true;
+		if (m_wingsSound != null)
+			m_wingsSound.mute = true;
+		if (m_wingsStrongFlap != null)
+			m_wingsStrongFlap.mute = true;
+	}
+
+	public void OnExitWater()
+	{
+		if (m_wingsWindSound != null)
+			m_wingsWindSound.mute = false;
+		if (m_wingsSound != null)
+			m_wingsSound.mute = false;
+		if (m_wingsStrongFlap != null)
+			m_wingsStrongFlap.mute = false;
+	}
+
+	public void OnOutterSpace()
+	{
+		if (m_wingsWindSound != null)
+			m_wingsWindSound.mute = true;
+		if (m_wingsSound != null)
+			m_wingsSound.mute = true;
+		if (m_wingsStrongFlap != null)
+			m_wingsStrongFlap.mute = true;
+	}
+
+	public void OnReturnFromOutterSpace()
+	{
+		if (m_wingsWindSound != null)
+			m_wingsWindSound.mute = false;
+		if (m_wingsSound != null)
+			m_wingsSound.mute = false;
+		if (m_wingsStrongFlap != null)
+			m_wingsStrongFlap.mute = false;
+	}
 }

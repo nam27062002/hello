@@ -46,6 +46,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonPlayer			m_dragon;
 	DragonControl			m_controls;
 	Orientation			   	m_orientation;
+	DragonAnimationEvents 	m_animationEventController;
 
 
 	// Movement control
@@ -155,6 +156,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_dragon			= GetComponent<DragonPlayer>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_orientation	 	= GetComponent<Orientation>();
+		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 
 		Transform sensors	= transform.FindChild("sensors").transform; 
 		m_sensor.top 		= sensors.FindChild("TopSensor").transform;
@@ -644,6 +646,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_waterMovementModifier = 0;
 		if ( m_bubbles != null )
 			m_bubbles.Play();
+		m_animationEventController.OnInsideWater();
 		ChangeState(State.InsideWater);
 	}
 
@@ -655,6 +658,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_bubbles.Stop();
 		if (m_animator )
 			m_animator.SetBool("boost", false);
+		m_animationEventController.OnExitWater();
 		StartCoroutine( EndWaterCoroutine() );
 	}
 
@@ -666,12 +670,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartSpaceMovement()
 	{
+		m_animationEventController.OnOutterSpace();
 		ChangeState(State.OutterSpace);
 	}
 
 	public void EndSpaceMovement()
 	{
 		// Wait a second 
+		m_animationEventController.OnReturnFromOutterSpace();
 		StartCoroutine( EndSpaceCoroutine() );
 	}
 
