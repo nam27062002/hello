@@ -21,11 +21,12 @@ public enum EngineEvents {
 
 	// Screen Navigation System
 	// [AOC] Triggered at the start of the animation, 2 versions:
-	NAVIGATION_SCREEN_CHANGED,	// params: NavigationScreen _fromScreen, NavigationScreen _toScreen, bool _animate
+	NAVIGATION_SCREEN_CHANGED,		// params: NavigationScreen _fromScreen, NavigationScreen _toScreen, bool _animate
 	NAVIGATION_SCREEN_CHANGED_INT,	// params: int _fromScreen, int _toScreen, bool _animate
 
-	// Localization
-	EVENT_LANGUAGE_CHANGED,	// no params
+	// Rules and localization
+	LANGUAGE_CHANGED,		// no params
+	DEFINITIONS_LOADED,		// no params
 
 	// Custom Game Events:
 	// This should always be the last element of the EngineEvents enum

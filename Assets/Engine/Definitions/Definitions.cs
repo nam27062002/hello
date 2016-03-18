@@ -76,7 +76,7 @@ public class Definitions : Singleton<Definitions> {
 	/// Load all the definitions from disk
 	/// </summary>
 	private void LoadDefinitions() {
-		Debug.Log("LOAD DEFINITIONS");
+		if(Application.isPlaying) Debug.Log("LOAD DEFINITIONS");
 		m_defsByCategoryAndSku.Clear();
 		m_skusByCategory.Clear();
 
@@ -98,6 +98,7 @@ public class Definitions : Singleton<Definitions> {
 		// ADD HERE ANY NEW DEFINITIONS FILE!
 
 		// Warn all other managers and definition consumers
+		Messenger.Broadcast(EngineEvents.DEFINITIONS_LOADED);
 
 		// Calculate CRC?
 		// calculateRulesCRC ();
@@ -119,7 +120,7 @@ public class Definitions : Singleton<Definitions> {
 		// TODO (miguel) : Check config file to know if we can load definitions from cache or directly go to resources folder
 		bool fromCache = (File.Exists(cachePath) /*&& InstanceManager.Config.getDefinitionsFromAssetsLUT()*/);
 		str += (fromCache) ? " from cache " + cachePath : " from resources";
-		Debug.Log(str);
+		if(Application.isPlaying) Debug.Log(str);
 
 		XmlDocument doc = null;
 
@@ -152,7 +153,7 @@ public class Definitions : Singleton<Definitions> {
 			}
 			fileContent = textAsset.text;
 
-			Debug.Log(_path + " rules file loaded from ipa");
+			if(Application.isPlaying) Debug.Log(_path + " rules file loaded from ipa");
 
 			doc = new XmlDocument();
 			doc.LoadXml(fileContent);

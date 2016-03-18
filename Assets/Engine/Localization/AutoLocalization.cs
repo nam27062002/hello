@@ -58,7 +58,7 @@ public class AutoLocalization : MonoBehaviour {
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(EngineEvents.EVENT_LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.AddListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	/// <summary>
@@ -66,7 +66,7 @@ public class AutoLocalization : MonoBehaviour {
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(EngineEvents.EVENT_LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.RemoveListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	//------------------------------------------------------------------//

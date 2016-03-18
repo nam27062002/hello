@@ -226,7 +226,7 @@ public static class Localization
 
 		m_dictionary = dictionary;
 		localizationHasBeenSet = true;
-		Messenger.Broadcast(EngineEvents.EVENT_LANGUAGE_CHANGED);
+		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
 	}
 	
 
