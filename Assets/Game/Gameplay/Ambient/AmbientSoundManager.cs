@@ -17,10 +17,11 @@ public class AmbientSoundManager : MonoBehaviour
 	// Ambient Sound
 	public AudioSource m_audioSoure_1;
 	public AudioSource m_audioSoure_2;
+	private string m_lastLoadedSound = "";
 	private int sign;
 
 	private AudioClip m_waitingAudioClip;
-	private string m_defaultSound = "Ambient_Battle_Wind";
+	private string m_defaultSound = "Ambient/Ambient_Battle_Wind";
 
 	List<AmbientSoundNode> m_currentNodes;
 
@@ -193,28 +194,33 @@ public class AmbientSoundManager : MonoBehaviour
 
 	IEnumerator AudioClipLoad( string audioName )
 	{
-		ResourceRequest request = Resources.LoadAsync<AudioClip>( "audio/sfx/" + audioName );
-		yield return request;
+		if ( audioName != m_lastLoadedSound )
+		{
+			m_lastLoadedSound = audioName;
+			ResourceRequest request = Resources.LoadAsync<AudioClip>( "audio/sfx/" + audioName );
+			yield return request;
 
-		AudioClip clip = request.asset as AudioClip;
-		if ( m_audioSoure_1.clip == null )
-		{
-			m_audioSoure_1.clip = clip;
-			m_audioSoure_1.volume = 0;
-			m_audioSoure_1.Play();
-			sign = 1;
+			AudioClip clip = request.asset as AudioClip;
+			if ( m_audioSoure_1.clip == null )
+			{
+				m_audioSoure_1.clip = clip;
+				m_audioSoure_1.volume = 0;
+				m_audioSoure_1.Play();
+				sign = 1;
+			}
+			else if ( m_audioSoure_2.clip == null )
+			{
+				m_audioSoure_2.clip = clip;
+				m_audioSoure_2.volume = 0;
+				m_audioSoure_2.Play();
+				sign = -1;
+			}
+			else
+			{
+				m_waitingAudioClip = clip;	
+			}
 		}
-		else if ( m_audioSoure_2.clip == null )
-		{
-			m_audioSoure_2.clip = clip;
-			m_audioSoure_2.volume = 0;
-			m_audioSoure_2.Play();
-			sign = -1;
-		}
-		else
-		{
-			m_waitingAudioClip = clip;	
-		}
+		yield return null;
 	}
 
 
