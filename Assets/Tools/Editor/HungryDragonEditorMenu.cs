@@ -37,10 +37,7 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 51)]
 	public static void ShowDefintions5() { OpenFile("EntityCategoryDefinitions.asset", DEFINITIONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/LevelDefinitions", false, 100)]
-	public static void ShowDefintions6() { OpenFile("LevelDefinitions.asset", DEFINITIONS_FOLDER); }
-
-	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 101)]
+	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 100)]
 	public static void ShowDefintions7() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
 
 	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
