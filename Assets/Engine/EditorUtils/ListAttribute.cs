@@ -50,5 +50,13 @@ public class ListAttribute : PropertyAttribute {
 		// Just store options array
 		m_options = _options;
 	}
+
+	/// <summary>
+	/// Make sure the options array is updated.
+	/// To be implemented by heirs if needed.
+	/// </summary>
+	public virtual void ValidateOptions() {
+		// Nothing to do, to be implemented by heirs if needed
+	}
 }
 

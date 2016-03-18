@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Drawer for the SkuList custom attribute.
 /// </summary>
-[CustomPropertyDrawer(typeof(ListAttribute))]
+[CustomPropertyDrawer(typeof(ListAttribute), true)]
 public class ListAttributeEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -37,6 +37,9 @@ public class ListAttributeEditor : ExtendedPropertyDrawer {
 		// Use hardcore reflection stuff to access the object being changed
 		// [AOC] Small trick from http://answers.unity3d.com/questions/425012/get-the-instance-the-serializedproperty-belongs-to.html
 		object target = fieldInfo.GetValue(_property.serializedObject.targetObject) as object;
+
+		// Validate list values
+		attr.ValidateOptions();
 
 		// Options list - at least empty value!
 		// Find out current selected value as well
