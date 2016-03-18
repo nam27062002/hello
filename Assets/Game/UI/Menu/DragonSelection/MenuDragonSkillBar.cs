@@ -22,7 +22,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[Header("Data")]
-	[List("speed", "boost", "fire")]
+	[SkuListNew(Definitions.Category.DRAGON_SKILLS)]
 	public string m_skillSku;
 
 	[Header("References")]

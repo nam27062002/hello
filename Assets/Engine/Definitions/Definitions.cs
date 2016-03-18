@@ -32,6 +32,10 @@ public class Definitions : Singleton<Definitions> {
 		LOCALIZATION,
 		SETTINGS,		// Contains several xml files with different signatures: gameSettings, dragonSettings...
 
+		// Progression
+		LEVELS,
+		MISSIONS,
+
 		// Dragons
 		DRAGONS,
 		DRAGON_TIERS,
@@ -84,6 +88,9 @@ public class Definitions : Singleton<Definitions> {
 		LoadDefinitionsFile(Category.LOCALIZATION, "Rules/localizationDefinitions");
 		LoadDefinitionsFile(Category.SETTINGS, "Rules/gameSettings");
 		LoadDefinitionsFile(Category.SETTINGS, "Rules/dragonSettings");
+
+		// Progression
+		LoadDefinitionsFile(Category.LEVELS, "Rules/levelDefinitions");
 
 		// Dragons
 		LoadDefinitionsFile(Category.DRAGONS, "Rules/dragonDefinitions");

@@ -51,6 +51,9 @@ public class AOCQuickTest : MonoBehaviour {
 	[List(1, 2, 3, 4, 5)]
 	public int m_testInt = 0;
 
+	[SkuListNew(Definitions.Category.DRAGONS)]
+	public string m_skuString = "";
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

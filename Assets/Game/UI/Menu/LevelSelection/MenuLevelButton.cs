@@ -27,7 +27,7 @@ public class MenuLevelButton : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Setup
 	[Comment("Sku of the level in the LevelDefinitions")]
-	[SkuList(typeof(LevelDef), false)]
+	[SkuListNew(Definitions.Category.LEVELS)]
 	[SerializeField] private string m_levelSku = "";
 
 	// References
@@ -39,7 +39,7 @@ public class MenuLevelButton : MonoBehaviour {
 	[SerializeField] private GameObject m_playerPointer = null;
 
 	// Data
-	LevelDef m_levelDef = null;
+	DefinitionNode m_levelDef = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,11 +63,11 @@ public class MenuLevelButton : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get level def
-		m_levelDef = DefinitionsManager.levels.GetDef(m_levelSku);
+		m_levelDef = Definitions.GetDefinition(Definitions.Category.LEVELS, m_levelSku);
 
 		// Set name and description
-		m_titleText.text = m_levelDef.tidName;
-		m_titleDesc.text = m_levelDef.tidDescription;
+		m_titleText.text = m_levelDef.GetLocalized("tidName");
+		m_titleDesc.text = m_levelDef.GetLocalized("tidDesc");
 
 		// Unfold if current level
 		bool isCurrentLevel = (m_levelSku == UserProfile.currentLevel);

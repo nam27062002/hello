@@ -160,7 +160,7 @@ public static class Localization
 			}
 		}
 
-		string languageTxtFilename = localizationDef.Get("txtName");
+		string languageTxtFilename = localizationDef.Get("txtFilename");
 		string isoCode = localizationDef.Get("isoCode");
 
 		// Try downloaded file from assetsLUT

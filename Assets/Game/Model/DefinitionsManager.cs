@@ -30,10 +30,6 @@ public class DefinitionsManager : SingletonScriptableObject<DefinitionsManager> 
 	[SerializeField] private EntityCategoryDefinitions m_entityCategories = null;
 	public static EntityCategoryDefinitions entityCategories { get { return instance.m_entityCategories; }}
 
-	[Separator("Meta-game")]
-	[SerializeField] private LevelDefinitions m_levels = null;
-	public static LevelDefinitions levels { get { return instance.m_levels; }}
-
 	[SerializeField] private MissionDefinitions m_missions = null;
 	public static MissionDefinitions missions { get { return instance.m_missions; }}
 
@@ -79,9 +75,7 @@ public class DefinitionsManager : SingletonScriptableObject<DefinitionsManager> 
 		}
 
 		// Meta-game
-		else if(defType == typeof(LevelDef)) {
-			return levels as DefinitionSet<T>;
-		} else if(defType == typeof(MissionDef)) {
+		else if(defType == typeof(MissionDef)) {
 			return missions as DefinitionSet<T>;
 		}
 
