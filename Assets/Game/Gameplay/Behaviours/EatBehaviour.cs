@@ -23,6 +23,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
 
 	protected DragonTier m_tier;
+	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
 
 	private float m_eatingTimer;
 	private float m_eatingTime;
@@ -146,7 +147,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		_prey.OnEat();
 
 		// Yes!! Eat it!!
-		m_eatingTimer = m_eatingTime = _biteResistance;
+		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _biteResistance);
 
 		if (m_eatingTime >= 0.5f) {
 			SlowDown(true);

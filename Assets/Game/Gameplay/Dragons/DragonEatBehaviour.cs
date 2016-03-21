@@ -16,6 +16,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_motion = GetComponent<DragonMotion>();
 
 		m_tier = m_dragon.data.tier;
+		m_eatSpeedFactor = m_dragon.data.def.Get<float>("eatSpeedFactor");
 
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 	}
