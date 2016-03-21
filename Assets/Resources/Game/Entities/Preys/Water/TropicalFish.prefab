@@ -123,8 +123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 3
-  m_sensorMaxRadius: 14
+  m_sensorMinRadius: 0
+  m_sensorMaxRadius: 0
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
   m_target: 0
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: crow
+  m_sku: tropicalFish
   m_onAppearSoundProbability: 40
   m_onApprearSounds: []
 --- !u!114 &11422932
@@ -349,11 +349,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMinRadius
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_sensorMaxRadius
-      value: 14
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Name
@@ -394,6 +394,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_maxHealth
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_sku
+      value: tropicalFish
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
