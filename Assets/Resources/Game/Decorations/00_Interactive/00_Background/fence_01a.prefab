@@ -106,7 +106,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 141196}
   m_LocalRotation: {x: 0, y: -0.700428, z: 0, w: 0.7137231}
-  m_LocalPosition: {x: -10.63, y: -29.18, z: 13.44}
+  m_LocalPosition: {x: 375.94153, y: -99.53682, z: -6.644217}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 492080}
@@ -254,7 +254,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
-  m_resistanceMax: 25
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 1
   m_burningTime: 10
   m_damagePerSecond: 6
 --- !u!114 &11404680
@@ -269,6 +270,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: fence_01a
+  m_onAppearSoundProbability: 40
+  m_onApprearSounds: []
 --- !u!114 &11448460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -281,7 +284,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
-  m_resistanceMax: 25
+  m_hitParticleMatchDirection: 0
+  m_resistanceMax: 1
   m_burningTime: 10
   m_damagePerSecond: 6
 --- !u!114 &11464900
@@ -307,7 +311,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_explosionPrefab: {fileID: 0}
+  m_explosionParticle: 
+  m_decorationSize: 0
+  m_ashesAsset: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
