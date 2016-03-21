@@ -41,10 +41,7 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Content/Chest Manager", false, 150)]
 	public static void ShowManager1() { OpenFile("ChestManager.asset", SINGLETONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/Missions Manager", false, 151)]
-	public static void ShowManager2() { OpenFile("PF_MissionManager.prefab", SINGLETONS_FOLDER); }
-
-	[MenuItem("Hungry Dragon/Content/Rewards Manager", false, 152)]
+	[MenuItem("Hungry Dragon/Content/Rewards Manager", false, 151)]
 	public static void ShowManager3() { OpenFile("PF_RewardManager.prefab", SINGLETONS_FOLDER); }
 
 	//--------------------------------------------------- SETTINGS ---------------------------------------------------//

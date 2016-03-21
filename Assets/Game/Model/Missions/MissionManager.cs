@@ -74,6 +74,25 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Initialize internal values from content
+		List<DefinitionNode> difficultyDefs = Definitions.GetDefinitions(Definitions.Category.MISSION_DIFFICULTIES);
+		for(int i = 0; i < difficultyDefs.Count; i++) {
+			int difficultyIdx = difficultyDefs[i].Get<int>("index");
+
+			m_dragonsToUnlock[difficultyIdx] = difficultyDefs[i].Get<int>("dragonsToUnlock");
+			m_cooldownPerDifficulty[difficultyIdx] = difficultyDefs[i].Get<int>("cooldownMinutes");
+			m_maxRewardPerDifficulty[difficultyIdx] = difficultyDefs[i].Get<int>("maxRewardCoins");
+
+			// For now all difficulties share the same coefs
+			m_removeMissionPCCoefA = difficultyDefs[i].Get<float>("removeMissionPCCoefA");
+			m_removeMissionPCCoefB = difficultyDefs[i].Get<float>("removeMissionPCCoefB");
+		}
+	}
+
+	/// <summary>
 	/// Scriptable object has been enabled.
 	/// </summary>
 	private void OnEnable() {

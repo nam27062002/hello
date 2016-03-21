@@ -179,7 +179,7 @@ public class Mission {
 		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
 		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
 		int totalDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY).Count;
-		float multiplier = (1f/(float)totalDragons) * (float)ownedDragons;
+		float multiplier = (float)ownedDragons/(float)totalDragons;
 		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)difficulty] * multiplier);
 	}
 
