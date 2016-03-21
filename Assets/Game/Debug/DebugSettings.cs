@@ -29,6 +29,7 @@ public static class DebugSettings {
 	public static readonly string DRAGON_DIVE			 = "DRAGON_DIVE";
 	public static readonly string DRAGON_EAT_DISTANCE_POWER_UP = "DRAGON_EAT_DISTANCE_POWER_UP";
 	public static readonly string DRAGON_SLOW_POWER_UP   = "DRAGON_SLOW_POWER_UP";
+	public static readonly string NEW_CAMERA_SYSTEM   = "NEW_CAMERA_SYSTEM";
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -73,5 +74,10 @@ public static class DebugSettings {
 	public static bool slowPowerUp {
 		get { return Prefs.GetBool(DRAGON_SLOW_POWER_UP, false); }
 		set { Prefs.SetBool(DRAGON_SLOW_POWER_UP, value); }
+	}
+
+	public static bool newCameraSystem{
+		get { return Prefs.GetBool(NEW_CAMERA_SYSTEM, false); }
+		set { Prefs.SetBool(NEW_CAMERA_SYSTEM, value); }
 	}
 }
