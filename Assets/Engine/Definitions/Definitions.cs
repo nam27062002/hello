@@ -35,6 +35,7 @@ public class Definitions : Singleton<Definitions> {
 		// Progression
 		LEVELS,
 		MISSIONS,
+		MISSION_TYPES,
 
 		// Dragons
 		DRAGONS,
@@ -91,6 +92,8 @@ public class Definitions : Singleton<Definitions> {
 
 		// Progression
 		LoadDefinitionsFile(Category.LEVELS, "Rules/levelDefinitions");
+		LoadDefinitionsFile(Category.MISSIONS, "Rules/missionDefinitions");
+		LoadDefinitionsFile(Category.MISSION_TYPES, "Rules/missionTypeDefinitions");
 
 		// Dragons
 		LoadDefinitionsFile(Category.DRAGONS, "Rules/dragonDefinitions");

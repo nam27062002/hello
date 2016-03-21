@@ -21,6 +21,7 @@ public class MissionObjectiveKill : MissionObjective {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	private string[] m_targets;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -30,6 +31,9 @@ public class MissionObjectiveKill : MissionObjective {
 	/// </summary>
 	/// <param name="_parentMission">The mission this objective belongs to.</param>
 	public MissionObjectiveKill(Mission _parentMission) : base(_parentMission) {
+		// Store targets
+		m_targets = parentMission.def.GetAsArray<string>("parameters");
+
 		// Subscribe to external events
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnKill);
@@ -58,36 +62,35 @@ public class MissionObjectiveKill : MissionObjective {
 	/// </summary>
 	override public string GetDescription() {
 		// Replace with the target amount and type
-		string[] parameters = parentMission.def.parameters;
 		string typeStr = "";
 
 		// Any type
-		if(parameters.Length == 0) {
-			typeStr = Localization.Localize("enemies");
+		if(m_targets.Length == 0) {
+			typeStr = Localization.Localize("enemies");	// [AOC] HARDCODED!!
 		}
 
 		// First type
-		if(parameters.Length > 0) {
-			typeStr = parameters[0];
+		if(m_targets.Length > 0) {
+			typeStr = m_targets[0];
 
 		}
 
 		// Next types
-		for(int i = 1; i < parameters.Length; i++) {
+		for(int i = 1; i < m_targets.Length; i++) {
 			// Comma separated list except the last one in the list
-			if(i == parameters.Length - 1) {
-				typeStr += Localization.Localize(" or ");
+			if(i == m_targets.Length - 1) {
+				typeStr += Localization.Localize(" or ");	// [AOC] HARDCODED!!
 			} else {
-				typeStr += Localization.Localize(", ");
+				typeStr += Localization.Localize(", ");	// [AOC] HARDCODED!!
 			}
 
 			// Attach name
 			// [AOC] TODO!! Use TIDs!!
-			typeStr += parameters[i];
+			typeStr += m_targets[i];
 		}
 
 		// Compose full text and return
-		return Localization.Localize(parentMission.def.tidDesc, GetTargetValueFormatted(), typeStr);
+		return Localization.Localize(GetDescriptionTID(), GetTargetValueFormatted(), typeStr);
 	}
 
 	//------------------------------------------------------------------//
@@ -100,14 +103,14 @@ public class MissionObjectiveKill : MissionObjective {
 	/// <param name="_reward">The reward.</param>
 	private void OnKill(Transform _entity, Reward _reward) {
 		// Count automatically if we don't have any type filter
-		if(parentMission.def.parameters.Length == 0) {
+		if(m_targets.Length == 0) {
 			currentValue++;
 		} else {
 			// Is it one of the target types?
 			Entity prey = _entity.GetComponent<Entity>();
 			if(prey != null) {
-				for(int i = 0; i < parentMission.def.parameters.Length; i++) {
-					if(parentMission.def.parameters[i] == prey.sku) {
+				for(int i = 0; i < m_targets.Length; i++) {
+					if(m_targets[i] == prey.sku) {
 						// Found!
 						currentValue++;
 						break;

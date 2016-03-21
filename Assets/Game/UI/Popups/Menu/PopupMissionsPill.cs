@@ -131,7 +131,7 @@ public class PopupMissionsPill : MonoBehaviour {
 
 		// Progress
 		// Optionally hide progress for singlerun missions
-		bool show = !m_mission.def.singleRun || m_showProgressForSingleRunMissions;
+		bool show = !m_mission.def.Get<bool>("singleRun") || m_showProgressForSingleRunMissions;
 		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
 		if(show) {
 			m_activeObj.FindComponentRecursive<Text>("ProgressText").text = System.String.Format("{0}/{1}", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
@@ -191,7 +191,7 @@ public class PopupMissionsPill : MonoBehaviour {
 		if(remainingDragonsToUnlock == 1) {
 			m_lockedObj.FindComponentRecursive<Text>("LockedText").text = Localization.Localize("LOCKED!\nOwn 1 more dragon to unlock this mission");	// [AOC] HARDCODED!!
 		} else {
-			m_lockedObj.FindComponentRecursive<Text>("LockedText").text = Localization.Localize("LOCKED!\nOwn {0} more dragons to unlock this mission", StringUtils.FormatNumber(remainingDragonsToUnlock));	// [AOC] HARDCODED!!
+			m_lockedObj.FindComponentRecursive<Text>("LockedText").text = Localization.Localize("LOCKED!\nOwn %U0 more dragons to unlock this mission", StringUtils.FormatNumber(remainingDragonsToUnlock));	// [AOC] HARDCODED!!
 		}
 	}
 
@@ -244,7 +244,7 @@ public class PopupMissionsPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newMission">The new mission replacing the one removed.</param>
 	private void OnMissionRemoved(Mission _newMission) {
-		if(_newMission.def.difficulty == m_missionDifficulty) {
+		if(_newMission.difficulty == m_missionDifficulty) {
 			m_mission = _newMission;
 			Refresh();
 		}
@@ -256,7 +256,7 @@ public class PopupMissionsPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_mission">The mission that has finished its cooldown.</param>
 	private void OnMissionCooldownFinished(Mission _mission) {
-		if(_mission.def.difficulty == m_missionDifficulty) {
+		if(_mission.difficulty == m_missionDifficulty) {
 			Refresh();
 		}
 	}

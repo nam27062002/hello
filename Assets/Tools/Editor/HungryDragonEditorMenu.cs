@@ -37,9 +37,6 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 51)]
 	public static void ShowDefintions5() { OpenFile("EntityCategoryDefinitions.asset", DEFINITIONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/MissionDefinitions", false, 100)]
-	public static void ShowDefintions7() { OpenFile("MissionDefinitions.asset", DEFINITIONS_FOLDER); }
-
 	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
 	[MenuItem("Hungry Dragon/Content/Chest Manager", false, 150)]
 	public static void ShowManager1() { OpenFile("ChestManager.asset", SINGLETONS_FOLDER); }

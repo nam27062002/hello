@@ -50,7 +50,7 @@ public class MissionObjectiveScore : MissionObjective {
 	/// </summary>
 	override public string GetDescription() {
 		// Replace with the target amount
-		return Localization.Localize(parentMission.def.tidDesc, GetTargetValueFormatted());
+		return Localization.Localize(GetDescriptionTID(), GetTargetValueFormatted());
 	}
 
 	//------------------------------------------------------------------//

@@ -58,9 +58,15 @@ public class Mission {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Definition
-	[SerializeField] private MissionDef m_def = null;
-	public MissionDef def { get { return m_def; }}
+	// Definitions - serialized to be able to debug from the inspector
+	[SerializeField] private DefinitionNode m_def = null;
+	public DefinitionNode def { get { return m_def; }}
+
+	[SerializeField] private DefinitionNode m_typeDef = null;
+	public DefinitionNode typeDef { get { return m_typeDef; }}
+
+	// Data shortcuts
+	public Difficulty difficulty { get { return (Difficulty)m_def.GetAsInt("difficulty"); }}
 
 	// Objective
 	private MissionObjective m_objective = null;
@@ -78,7 +84,7 @@ public class Mission {
 	// Cooldown
 	private DateTime m_cooldownStartTimestamp = new DateTime();
 	public DateTime cooldownStartTimestamp { get { return m_cooldownStartTimestamp; }}
-	public TimeSpan cooldownDuration { get { return new TimeSpan(0, MissionManager.cooldownPerDifficulty[(int)m_def.difficulty], 0); }}
+	public TimeSpan cooldownDuration { get { return new TimeSpan(0, MissionManager.cooldownPerDifficulty[(int)difficulty], 0); }}
 	public TimeSpan cooldownElapsed { get { return DateTime.UtcNow - m_cooldownStartTimestamp; }}
 	public TimeSpan cooldownRemaining { get { return cooldownDuration - cooldownElapsed; }}
 	public float cooldownProgress { get { return Mathf.InverseLerp(0f, (float)cooldownDuration.TotalSeconds, (float)cooldownElapsed.TotalSeconds); }}
@@ -90,9 +96,12 @@ public class Mission {
 	/// Initialize this mission using the given definition.
 	/// </summary>
 	/// <param name="_def">The definition to be used.</param>
-	public void InitFromDefinition(MissionDef _def) {
+	public void InitFromDefinition(DefinitionNode _def) {
 		// Store a reference to the definition
 		m_def = _def;
+
+		// Get the type definition as well
+		m_typeDef = Definitions.GetDefinition(Definitions.Category.MISSION_TYPES, m_def.GetAsString("typeSku"));
 
 		// Destroy current objective (if any)
 		if(m_objective != null) {
@@ -102,7 +111,7 @@ public class Mission {
 
 		// Create and initialize new objective
 		m_objective = MissionObjective.Create(this);
-		m_objective.OnObjectiveComplete += OnObjectiveComplete;
+		m_objective.OnObjectiveComplete.AddListener(OnObjectiveComplete);
 	}
 
 	/// <summary>
@@ -171,7 +180,7 @@ public class Mission {
 		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
 		int totalDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY).Count;
 		float multiplier = (1f/(float)totalDragons) * (float)ownedDragons;
-		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)def.difficulty] * multiplier);
+		return (int)((float)MissionManager.maxRewardPerDifficulty[(int)difficulty] * multiplier);
 	}
 
 	/// <summary>

@@ -122,8 +122,8 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	/// <returns>The definition of a mission with the given sku. <c>null</c> if not found.</returns>
 	/// <param name="_sku">The sku of the wanted definition.</param>
-	public static MissionDef GetDef(string _sku) {
-		return DefinitionsManager.missions.GetDef(_sku);
+	public static DefinitionNode GetDef(string _sku) {
+		return Definitions.GetDefinition(Definitions.Category.MISSIONS, _sku);
 	}
 
 	/// <summary>
@@ -227,8 +227,8 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		// 		 For now let's pick a new mission definition from the content list matching the requested difficulty
 		int idx = m_generationIdx[(int)_difficulty];
 		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
-		MissionDef def = null;
-		List<MissionDef> defsList = DefinitionsManager.missions.defsList;	// [AOC] Order is not trustable, but we don't care since this is temporal
+		DefinitionNode def = null;
+		List<DefinitionNode> defsList = Definitions.GetDefinitions(Definitions.Category.MISSIONS);	// [AOC] Order is not trustable, but we don't care since this is temporal
 		for( ; ; idx++) {
 			// If reached the last definition but still haven't looped, do it now
 			// Otherwise it means there are no definitions for the requested difficulty, throw an exception
@@ -244,7 +244,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 
 			// Is this mission def of the requested difficulty?
 			def = defsList[idx];
-			if(def != null && def.difficulty == _difficulty) {
+			if(def != null && def.GetAsInt("difficulty") == (int)_difficulty) {
 				// Found! Break the loop
 				break;
 			}
@@ -264,7 +264,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		}
 
 		// Increase generation index - loop if last mission is reached
-		m_generationIdx[(int)_difficulty] = (idx + 1) % DefinitionsManager.missions.Count;
+		m_generationIdx[(int)_difficulty] = (idx + 1) % defsList.Count;
 
 		// Return new mission
 		return m_missions[(int)_difficulty];

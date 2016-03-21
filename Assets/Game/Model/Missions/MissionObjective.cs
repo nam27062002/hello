@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 using System;
 
 //----------------------------------------------------------------------//
@@ -21,13 +22,6 @@ public class MissionObjective {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	// Type of implemented objectives, mainly used to fill missions content
-	// Add here any new objective implementation
-	public enum Type {
-		SCORE,
-		SURVIVE_TIME,
-		KILL
-	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -39,17 +33,17 @@ public class MissionObjective {
 
 	// Objective tracking
 	// Use float to have more precision while tracking (i.e. time), although target value is int
-	[SerializeField] protected float m_currentValue = 0;
+	[SerializeField] protected float m_currentValue = 0f;
 	public float currentValue {
 		get { return m_currentValue; }
 		set { SetValue(value); }	// Use internal method, which will check for objective completion
 	}
 
-	public int targetValue { get { return parentMission.def.targetValue; }}	// Shortcut
+	private int m_targetValue = 0;
+	public int targetValue { get { return m_targetValue; }}
 
 	// Delegates
-	public delegate void OnObjectiveCompleteDelegate();
-	public OnObjectiveCompleteDelegate OnObjectiveComplete = delegate() { };	// Default initialization to avoid null reference when invoking. Add as many listeners as you want to this specific event by using the += syntax
+	public UnityEvent OnObjectiveComplete = new UnityEvent();
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -72,6 +66,9 @@ public class MissionObjective {
 		// Store parent mission ref
 		m_parentMission = _parentMission;
 
+		// Initialize some values
+		m_targetValue = _parentMission.def.GetAsInt("targetValue");
+
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
@@ -85,6 +82,7 @@ public class MissionObjective {
 		m_parentMission = null;
 
 		// Just in case, make sure delegate loses all its references
+		OnObjectiveComplete.RemoveAllListeners();
 		OnObjectiveComplete = null;
 
 		// Unsubscribe from external events
@@ -110,21 +108,60 @@ public class MissionObjective {
 		// Check completion
 		if(isCompleted) {
 			// Invoke delegate
-			OnObjectiveComplete();
+			OnObjectiveComplete.Invoke();
 		}
+	}
+
+	/// <summary>
+	/// Get the TID for the name of this mission from the definition. If not defined,
+	/// the default TID from the mission type definition will be returned instead.
+	/// </summary>
+	/// <returns>The TID for the name of this mission.</returns>
+	protected string GetNameTID() {
+		string tid = parentMission.def.GetAsString("tidName");
+		if(string.IsNullOrEmpty(tid)) tid = parentMission.typeDef.GetAsString("tidName");
+		return tid;
+	}
+
+	/// <summary>
+	/// Get the TID for the description of this mission from the definition. If not defined,
+	/// the default TID from the mission type definition will be returned instead.
+	/// </summary>
+	/// <returns>The TID for the description of this mission.</returns>
+	protected string GetDescriptionTID() {
+		string tid = parentMission.def.GetAsString("tidDesc");
+		if(string.IsNullOrEmpty(tid)) {
+			// Different default tids for single and multi run
+			if(parentMission.def.GetAsBool("singleRun")) {
+				tid = parentMission.typeDef.GetAsString("tidDescSingleRun");
+			} else {
+				tid = parentMission.typeDef.GetAsString("tidDescMultiRun");
+			}
+		}
+		return tid;
 	}
 
 	//------------------------------------------------------------------//
 	// OVERRIDE CANDIDATES												//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Gets the description of this objective properly formatted.
+	/// Gets the name of this objective localized and properly formatted.
+	/// Override to customize text in specific objective types.
+	/// </summary>
+	/// <returns>The name properly formatted.</returns>
+	public virtual string GetName() {
+		// Default
+		return Localization.Localize(GetNameTID());
+	}
+
+	/// <summary>
+	/// Gets the description of this objective localized and properly formatted.
 	/// Override to customize text in specific objective types.
 	/// </summary>
 	/// <returns>The description properly formatted.</returns>
 	public virtual string GetDescription() {
 		// Default
-		return Localization.Localize(parentMission.def.tidDesc);
+		return Localization.Localize(GetDescriptionTID());
 	}
 
 	/// <summary>
@@ -153,7 +190,7 @@ public class MissionObjective {
 	/// </summary>
 	public void OnGameStarted() {
 		// We only care if we're a single-run objective
-		if(parentMission.def.singleRun) {
+		if(parentMission.def.GetAsBool("singleRun")) {
 			// Reset counter
 			m_currentValue = 0;
 		}
@@ -165,7 +202,7 @@ public class MissionObjective {
 	public void OnGameEnded() {
 		// We only care if we're a single-run objective
 		// Don't reset if objective was completed
-		if(parentMission.def.singleRun && !isCompleted) {
+		if(parentMission.def.GetAsBool("singleRun") && !isCompleted) {
 			// Reset counter
 			m_currentValue = 0;
 		}
@@ -182,10 +219,10 @@ public class MissionObjective {
 	/// <param name="_parentMission">The mission where the new objective will belong.</param>
 	public static MissionObjective Create(Mission _parentMission) {
 		// Create a new objective based on mission type
-		switch(_parentMission.def.type) {
-			case Type.SCORE:		return new MissionObjectiveScore(_parentMission);
-			case Type.SURVIVE_TIME:	return new MissionObjectiveSurviveTime(_parentMission);
-			case Type.KILL:			return new MissionObjectiveKill(_parentMission);
+		switch(_parentMission.def.GetAsString("typeSku")) {
+			case "score":			return new MissionObjectiveScore(_parentMission);
+			case "survive_time":	return new MissionObjectiveSurviveTime(_parentMission);
+			case "kill":			return new MissionObjectiveKill(_parentMission);
 		}
 
 		// Unrecoginzed mission type, aborting

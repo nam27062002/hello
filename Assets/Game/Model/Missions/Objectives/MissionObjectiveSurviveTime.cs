@@ -51,7 +51,7 @@ public class MissionObjectiveSurviveTime : MissionObjective {
 	/// <returns>The description properly formatted.</returns>
 	override public string GetDescription() {
 		// Replace with the target amount
-		return Localization.Localize(parentMission.def.tidDesc, GetTargetValueFormatted());
+		return Localization.Localize(GetDescriptionTID(), GetTargetValueFormatted());
 	}
 
 	/// <summary>
