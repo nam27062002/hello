@@ -26,6 +26,7 @@ public class InflammableDecoration : Initializable {
 
 	private Dictionary<Renderer, Material[]>  m_originalMaterials = new Dictionary<Renderer, Material[]>();
 	private Material m_ashMaterial;
+	public string m_ashesAsset;
 
 	// Use this for initialization
 	void Start () {
@@ -202,5 +203,15 @@ public class InflammableDecoration : Initializable {
 			renderers[i].materials = materials;
 		}
 		m_ashMaterial.SetFloat("_AshLevel", 0);
+
+		if (!string.IsNullOrEmpty( m_ashesAsset)) 
+		{
+			GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_view.transform.position, "Ashes/");
+			if (particle) 
+			{
+				particle.transform.rotation = m_view.transform.rotation;
+				particle.transform.localScale = m_view.transform.localScale;
+			}
+		}
 	}
 }
