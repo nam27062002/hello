@@ -61,6 +61,7 @@ public class GameCameraController : MonoBehaviour {
 	private bool m_slowMotionOn;
 	private bool m_slowMoJustStarted;
 	private bool m_boostOn;
+	private Camera m_camera;
 
 	// Positioning
 	private Vector3 m_forward = Vector3.right;
@@ -83,6 +84,8 @@ public class GameCameraController : MonoBehaviour {
 	private Bounds m_deactivation = new Bounds();
 
 	private Transform m_transform;
+	Vector3 m_lastScreenPosition;
+	Vector3 m_lerpAxis = Vector3.zero;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -164,6 +167,10 @@ public class GameCameraController : MonoBehaviour {
 		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 
 		transform.position = playerPos;
+
+		m_camera = GetComponent<Camera>();
+		m_lastScreenPosition = -Vector3.one * 1000;
+		m_lerpAxis = Vector3.zero;
 	}
 
 	/// <summary>
@@ -200,19 +207,27 @@ public class GameCameraController : MonoBehaviour {
 			Vector3 dragonDirection = dragonVelocity.normalized;
 
 			m_forward = Vector3.Lerp( m_forward, dragonDirection, Time.deltaTime);
-			
+
+			bool cameraMovementNewVersion = DebugSettings.newCameraSystem;
+			float lerpoValue = 0;
+			if ( cameraMovementNewVersion )
+			{
+				float speedModifier = 5;
+				lerpoValue = m_dragonMotion.lastSpeed * speedModifier * Time.deltaTime;
+			}
+
 			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
 			if (m_furyOn)
 			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, m_dragonBreath.actualLength * 0.5f, Time.deltaTime );
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f) + lerpoValue, Time.deltaTime );
 			}
 			else if ( m_boostOn )
 			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, 1, Time.deltaTime );
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue + 1, Time.deltaTime );
 			}
 			else
 			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, 0, Time.deltaTime );
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue, Time.deltaTime );
 			}
 			targetPos = targetPos + m_forward * m_forwardOffset;
 
@@ -237,15 +252,51 @@ public class GameCameraController : MonoBehaviour {
 			targetPos.z = -m_currentZoom;
 
 
-			// Apply movement smoothing
-			// float lerpValue = 2.0f + m_dragonMotion.lastSpeed / 10.0f;
-			// lerpValue = Mathf.Max( lerpValue, 2.5f);
+			if (cameraMovementNewVersion)
+			{
+				// if pixels difference from targetPos to newPos is bigger than a region we smooth transition
+				Vector3 realTarget = targetPos;
+				realTarget.z = m_dragonMotion.cameraLookAt.position.z;
 
-			newPos = Vector3.Lerp(transform.position, targetPos, 0.95f);
-			newPos.z = targetPos.z;	// Except Z, we don't want to smooth zoom - it's already smoothed by the interpolator, using custom speed/duration
+				// Only move if necessary
+				Vector3 screenPos = m_camera.WorldToScreenPoint( realTarget );
+				float halfRange = 0.1f;
+				if ( screenPos.x  > Screen.width * (0.5f + halfRange ))
+				{
+					m_lerpAxis.x = 1;
+				}
+				else if ( screenPos.x  < Screen.width * (0.5f - halfRange) )
+				{
+					m_lerpAxis.x = -1;
+				}
 
-			newPos = UpdateByShake(newPos);
+				if ( screenPos.y > Screen.height * (0.5f + halfRange))
+				{
+					m_lerpAxis.y = 1;
+				}
+				else if ( screenPos.y < Screen.height * (0.5f - halfRange) )
+				{
+					m_lerpAxis.y = -1;
+				}
+
+				// to lerp you need the same axis
+				if ( m_lerpAxis.x * ( targetPos.x - newPos.x ) < 0)	// Worng axis movement
+					targetPos.x = newPos.x;
+
+				if ( m_lerpAxis.y * ( targetPos.y - newPos.y ) < 0)	// Worng axis movement
+					targetPos.y = newPos.y;
+				newPos = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 5.0f );
+			}
+			else
+			{
+				newPos = Vector3.Lerp(transform.position, targetPos, 0.9f );
+				newPos.z = targetPos.z;
+			}
+
+
 		}
+
+		newPos = UpdateByShake(newPos);
 
 		// DONE! Apply new position
 		transform.position = newPos;
