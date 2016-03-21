@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -64,7 +65,7 @@ public class DefinitionNode {
 	}
 
 	//------------------------------------------------------------------------//
-	// GETTERS																  //
+	// BASIC GETTERS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Check whether this definition contains a property with a specific id.
@@ -85,16 +86,27 @@ public class DefinitionNode {
 	}
 
 	/// <summary>
+	/// Generic getter implementation.
+	/// </summary>
+	/// <param name="_property">The id of the property to be obtained.</param>
+	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
+	/// <typeparam name="T">Type of the property. Limited to string, numeric types and bool.</typeparam>
+	public T Get<T>(string _property, T _defaultValue = default(T)) {
+		// Use the internal ParseValue() method
+		if(m_properties.ContainsKey(_property)) {
+			return ParseValue<T>(m_properties[_property], _defaultValue);
+		}
+		return _defaultValue;
+	}
+
+	/// <summary>
 	/// Get the property with the given id in the desired format.
 	/// </summary>
 	/// <returns>The value of the requested property in this definition, <paramref name="_defaultValue"/> if not found.</returns>
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
 	public string GetAsString(string _property, string _defaultValue = "") {
-		if(m_properties.ContainsKey(_property)) {
-			return m_properties[_property];
-		}
-		return _defaultValue;
+		return Get<string>(_property, _defaultValue);
 	}
 
 	/// <summary>
@@ -104,11 +116,7 @@ public class DefinitionNode {
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
 	public float GetAsFloat(string _property, float _defaultValue = 1.0f) {
-		float result = 0f;
-		if(float.TryParse(Get(_property), out result)) {
-			return result;
-		}
-		return _defaultValue;
+		return Get<float>(_property, _defaultValue);
 	}
 
 	/// <summary>
@@ -118,11 +126,7 @@ public class DefinitionNode {
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
 	public double GetAsDouble(string _property, double _defaultValue = 1.0) {
-		double result = 0;
-		if(double.TryParse(Get(_property), out result)) {
-			return result;
-		}
-		return _defaultValue;
+		return Get<double>(_property, _defaultValue);
 	}
 
 	/// <summary>
@@ -132,11 +136,7 @@ public class DefinitionNode {
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
 	public int GetAsInt(string _property, int _defaultValue = 0) {
-		int result = 0;
-		if(int.TryParse(Get(_property), out result)) {
-			return result;
-		}
-		return _defaultValue;
+		return Get<int>(_property, _defaultValue);
 	}
 
 	/// <summary>
@@ -146,11 +146,7 @@ public class DefinitionNode {
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
 	public long GetAsLong(string _property, long _defaultValue = 0) {
-		long result = 0;
-		if(long.TryParse(Get(_property), out result)) {
-			return result;
-		}
-		return _defaultValue;
+		return Get<long>(_property, _defaultValue);
 	}
 
 	/// <summary>
@@ -160,16 +156,12 @@ public class DefinitionNode {
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
 	public bool GetAsBool(string _property, bool _defaultValue = false) {
-		bool result = false;
-		string value = Get(_property);
-		if(bool.TryParse(value, out result)) {
-			return result;
-		} else if(value == "true") {
-			return true;
-		}
-		return _defaultValue;
+		return Get<bool>(_property, _defaultValue);
 	}
 
+	//------------------------------------------------------------------------//
+	// SPECIAL GETTERS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Get and localize a property using the current localization language.
 	/// </summary>
@@ -181,6 +173,44 @@ public class DefinitionNode {
 			return Localization.Localize(m_properties[_property], _replacements);
 		}
 		return "";
+	}
+
+	/// <summary>
+	/// Get as a list of values, defined in Excel as a single string with a separator
+	/// character between items in the list.
+	/// </summary>
+	/// <returns>The given property as a list of values.</returns>
+	/// <param name="_property">The id of the property to be obtained.</param>
+	/// <param name="_separator">The separator used to split between items in the list.</param>
+	/// <typeparam name="T">The type of the list elements.</typeparam>
+	public List<T> GetAsList<T>(string _property, string _separator = ";") {
+		// Get raw string value
+		string strValue = GetAsString(_property);
+
+		// Use the separator string to split the string value
+		string[] splitResult = strValue.Split(new string[] { _separator }, StringSplitOptions.None);
+
+		// Convert each split part into the target type
+		List<T> finalList = new List<T>(splitResult.Length);
+		for(int i = 0; i < splitResult.Length; i++) {
+			finalList.Add(ParseValue<T>(splitResult[i]));
+		}
+
+		// Return the list
+		return finalList;
+	}
+
+	/// <summary>
+	/// Get as an array of values, defined in Excel as a single string with a separator
+	/// character between items in the array.
+	/// </summary>
+	/// <returns>The given property as a array of values.</returns>
+	/// <param name="_property">The id of the property to be obtained.</param>
+	/// <param name="_separator">The separator used to split between items in the array.</param>
+	/// <typeparam name="T">The type of the array elements.</typeparam>
+	public T[] GetAsArray<T>(string _property, string _separator = ";") {
+		// Use list getter
+		return GetAsList<T>(_property, _separator).ToArray();
 	}
 
 	/// <summary>
@@ -213,6 +243,85 @@ public class DefinitionNode {
 		newRange.min = GetAsInt(_property + "Min", _defaultMin);
 		newRange.max = GetAsInt(_property + "Max", _defaultMax);
 		return newRange;
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Converts the given value, in string format, to a target type.
+	/// </summary>
+	/// <returns>The value parsed from the input string.</returns>
+	/// <param name="_rawValue">The string representation of the value to be converted.</param>
+	/// <param name="_defaultValue">A default value that will be returned if input value couldn't be parsed.</param>
+	/// <typeparam name="T">The desired type of value.</typeparam>
+	private T ParseValue<T>(string _rawValue, T _defaultValue = default(T)) {
+		// [AOC] Unfortunately we can't switch a type directly, but we can compare type via an if...else collection
+		// [AOC] There might be a better way to do this, no time to research
+		// [AOC] Double cast trick to prevent compilation errors: http://stackoverflow.com/questions/4092393/value-of-type-t-cannot-be-converted-to
+		Type t = typeof(T);
+
+		// String
+		if(t == typeof(string)) {
+			return (T)(object)_rawValue;	// No treatment required!
+		}
+
+		// Float
+		else if(t == typeof(float)) {
+			float result = 0f;
+			if(float.TryParse(_rawValue, out result)) {
+				return (T)(object)result;
+			}
+		}
+
+		// Double
+		else if(t == typeof(double)) {
+			double result = 0;
+			if(double.TryParse(_rawValue, out result)) {
+				return (T)(object)result;
+			}
+		}
+
+		// Int
+		else if(t == typeof(int)) {
+			int result = 0;
+			if(int.TryParse(_rawValue, out result)) {
+				return (T)(object)result;
+			}
+		}
+
+		// Long
+		else if(t == typeof(long)) {
+			long result = 0;
+			if(long.TryParse(_rawValue, out result)) {
+				return (T)(object)result;
+			}
+		}
+
+		// Bool
+		else if(t == typeof(bool)) {
+			// We will accept either text (any capitalization options) or numbers (0, > 0)
+			string cleanRawValue = _rawValue.ToLowerInvariant();
+			if(cleanRawValue == bool.TrueString.ToLowerInvariant()) {
+				return (T)(object)true;
+			} else if(cleanRawValue == bool.FalseString.ToLowerInvariant()) {
+				return (T)(object)false;
+			} else {
+				// Numerical compare
+				int intValue = ParseValue<int>(_rawValue, -1);
+				if(intValue == 0) {
+					return (T)(object)false;
+				} else if(intValue > 0) {
+					return (T)(object)true;
+				}
+			}
+		}
+
+		else {
+			Debug.LogError("Type " + t.Name + " uncompatible with Definition's generic Get, returning default value");
+		}
+
+		return _defaultValue;
 	}
 
 	//------------------------------------------------------------------------//
