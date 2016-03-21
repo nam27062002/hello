@@ -5,7 +5,7 @@ echo " "
 REM Aux vars
 set INPUT_FILE=HungryDragonContent.xlsx
 set OUTPUT_DIR=xml
-set TOOL_EXECUTABLE=XML_Content_Generator_v3_2.jar
+set TOOL_EXECUTABLE=xml_content_generator.jar
 
 REM Go to script's dir
 cd "%~dp0"

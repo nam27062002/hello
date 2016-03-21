@@ -7,7 +7,7 @@ echo " "
 # Aux vars
 INPUT_FILE=HungryDragonContent.xlsx
 OUTPUT_DIR=xml
-TOOL_EXECUTABLE=XML_Content_Generator_v3_2.jar
+TOOL_EXECUTABLE=xml_content_generator.jar
 
 # Go to script's dir
 cd "$(dirname "$0")"
