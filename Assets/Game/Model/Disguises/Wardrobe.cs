@@ -31,7 +31,6 @@ public class Wardrobe : Singleton<Wardrobe> {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	private SortedList<string, int> m_disguises;
-
 	private Dictionary<string, string> m_equiped;
 
 
