@@ -56,9 +56,17 @@ public class Wardrobe : Singleton<Wardrobe> {
 	//------------------------------------------------------------------//
 
 	public static void Equip(string _dragonSku, string _disguiseSku) {
+		string oldDisguise = "";
+
+		if (instance.m_equiped.ContainsKey(_dragonSku)) {
+			oldDisguise = instance.m_equiped[_dragonSku];
+		}
+
 		instance.m_equiped[_dragonSku] = _disguiseSku;
 
-		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, _dragonSku);
+		if (oldDisguise != _disguiseSku) {
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, _dragonSku);
+		}
 	}
 
 	public static string GetEquipedDisguise(string _dragonSku) {

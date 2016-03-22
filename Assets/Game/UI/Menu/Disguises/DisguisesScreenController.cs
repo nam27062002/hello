@@ -14,7 +14,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SeparatorAttribute]
 	[SerializeField] private GameObject m_buyButton;
 	[SerializeField] private GameObject m_useButton;
-	[SerializeField] private GameObject m_unuseButton;
 
 	[SeparatorAttribute]
 	public Transform m_dragonWorldPos;
@@ -58,11 +57,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
 		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/" + m_dragonSku);
 
-
 		// we don't have any disguise equiped
 		m_using = null;
 		m_preview = null;
-
 
 		// hide all the info
 		m_powerList.SetActive(false);
@@ -72,7 +69,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		// hide the buttons
-		ShowButtons(false, false, false);
+		ShowButtons(false, false);
 
 		// load data and persistence
 		for (int i = 0; i < defList.Count; i++) {
@@ -92,6 +89,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				OnUse();
 			} else {
 				m_disguises[i].Use(false);
+				m_disguises[i].Select(false);
 			}
 		}
 	}
@@ -123,6 +121,8 @@ public class DisguisesScreenController : MonoBehaviour {
 				for (int i = 0; i < m_powers.Length; i++) {
 					m_powers[i].SetActive(true);
 				}
+			} else {
+				m_preview.Select(false);
 			}
 
 			// update name
@@ -134,43 +134,55 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 
 			m_preview = _pill;
+			m_preview.Select(true);
 
 			Wardrobe.Equip(m_dragonSku, m_preview.def.sku);
 
 			if (m_preview.level == 0) {
-				ShowButtons(true, false, false);
+				ShowButtons(true, false);
 			} else {
-				if (m_preview == m_using) {
-					ShowButtons(false, false, true);
-				} else {
-					ShowButtons(false, true, false);
-				}				
+				ShowButtons(false, true);
 			}
 		}
 	}
 
 	public void OnUse() {
-		if (m_using != null) {
+		if (m_using != m_preview) {
+			if (m_using != null) {
+				m_using.Use(false);
+			} 
+			m_preview.Use(true);
+			m_using = m_preview;
+
+			Wardrobe.Equip(m_dragonSku, m_using.def.sku);
+		} else {
 			m_using.Use(false);
-		} 
-		m_preview.Use(true);
-		m_using = m_preview;
+			m_using = null;
 
-		ShowButtons(false, false, true);
+			Wardrobe.Equip(m_dragonSku, "");
+		}
+
+		ShowButtons(false, true);
 	}
 
-	public void OnUnuse() {
-		m_using.Use(false);
-		m_using = null;
-
-		Wardrobe.Equip(m_dragonSku, "");
-
-		ShowButtons(false, true, false);
+	public void OnBuy() {
+		PopupController popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
+		//popup.GetComponent<PopupEggShop>().initialEgg = “”;
 	}
 
-	private void ShowButtons(bool _buy, bool _use, bool _unuse) {
+	private void ShowButtons(bool _buy, bool _use) {
 		m_buyButton.SetActive(_buy);
+
 		m_useButton.SetActive(_use);
-		m_unuseButton.SetActive(_unuse);
+
+		if (_use) {
+			Text text = m_useButton.GetComponentInChildren<Text>();
+			if (m_preview == m_using) {
+				// unuse
+				text.text = "UNEQUIP";
+			} else {
+				text.text = "USE";
+			}
+		}
 	}
 }

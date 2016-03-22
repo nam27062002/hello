@@ -14,8 +14,8 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	//------------------------------------------//
 
-	private Color m_commonColor = new Color(255f / 255f, 255f / 255f, 255f / 255f);
-	private Color m_rareColor = new Color(152f / 255f, 217f / 255f, 255f / 255f);
+	private Color m_commonColor = new Color(242f / 255f, 196f / 255f, 156f / 255f);
+	private Color m_rareColor = new Color(255f / 255f, 255f / 255f, 255f / 255f);
 	private Color m_epicColor = new Color(255f / 255f, 168f / 255f, 0f / 255f);
 
 	private DefinitionNode m_def;
@@ -28,6 +28,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	private Image m_disguiseIcon;
 	private GameObject m_lockIcon;
+	private GameObject m_selection;
 	private GameObject m_equipedIcon;
 	private GameObject[] m_upgradeIcons;
 
@@ -45,6 +46,9 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 		m_lockIcon = transform.FindChild("IconLock").gameObject;
 		m_lockIcon.SetActive(true);
+
+		m_selection = transform.FindChild("SelectionEffect").gameObject;
+		m_selection.SetActive(false);
 
 		m_bgEquipedIcon = transform.FindChild("IconBg").GetComponent<Image>();
 		m_equipedIcon = m_bgEquipedIcon.gameObject;
@@ -94,6 +98,10 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	public void Use(bool _value) {
 		m_equipedIcon.SetActive(_value);
+	}
+
+	public void Select(bool _value) {
+		m_selection.SetActive(_value);
 	}
 
 	//------------------------------------------------------------------//
