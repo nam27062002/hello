@@ -100,7 +100,7 @@ public class Definitions : Singleton<Definitions> {
 
 		// Disguises
 		LoadDefinitionsFile(Category.DISGUISES, "Rules/disguisesDefinitions");
-		LoadDefinitionsFile(Category.DISGUISES_EQUIP, "Rules/disguisesEquipDefinitions");
+		LoadDefinitionsFile(Category.DISGUISES_EQUIP, "Rules/disguiseEquipDefinitions");
 
 		// ADD HERE ANY NEW DEFINITIONS FILE!
 

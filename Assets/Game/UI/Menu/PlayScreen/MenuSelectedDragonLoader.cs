@@ -23,6 +23,8 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	[SerializeField] private bool m_resetDragonScale = false;
+
 	private GameObject m_dragonPreview = null;
 
 	//------------------------------------------------------------------//
@@ -81,6 +83,10 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 			m_dragonPreview.transform.SetParent(this.transform);
 			m_dragonPreview.transform.localPosition = Vector3.zero;
 			m_dragonPreview.transform.localRotation = Quaternion.identity;
+
+			if (m_resetDragonScale) {
+				m_dragonPreview.transform.localScale = Vector3.one;
+			}
 		}
 	}
 

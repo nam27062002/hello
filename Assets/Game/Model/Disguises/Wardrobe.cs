@@ -25,6 +25,8 @@ public class Wardrobe : Singleton<Wardrobe> {
 	//------------------------------------------------------------------//
 	private SortedList<string, int> m_disguises;
 
+	private Dictionary<string, string> m_equiped;
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -40,6 +42,8 @@ public class Wardrobe : Singleton<Wardrobe> {
 		for (int i = 0; i < skus.Count; i++) {
 			instance.m_disguises.Add(skus[i], 0);
 		}
+
+		instance.m_equiped = new Dictionary<string, string>();
 	}
 
 	public static int GetDisguiseLevel(string _sku) {
@@ -51,7 +55,18 @@ public class Wardrobe : Singleton<Wardrobe> {
 	// EQUIP															//
 	//------------------------------------------------------------------//
 
+	public static void Equip(string _dragonSku, string _disguiseSku) {
+		instance.m_equiped[_dragonSku] = _disguiseSku;
 
+		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, _dragonSku);
+	}
+
+	public static string GetEquipedDisguise(string _dragonSku) {
+		if (instance.m_equiped.ContainsKey(_dragonSku)) {
+			return instance.m_equiped[_dragonSku];
+		} 
+		return "";
+	}
 
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
