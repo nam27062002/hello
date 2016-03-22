@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 
 public class DragonEquip : MonoBehaviour {
-	private DragonPlayer m_dragon;
+
+	private string m_dragonSku;
 
 	void Start() {
-		m_dragon = GetComponent<DragonPlayer>();
-		Dictionary<Equipable.AttachPoint, string> equip = m_dragon.data.equip;
+		DragonPlayer player = GetComponent<DragonPlayer>();
 
+		if (player != null) {
+			m_dragonSku = player.data.def.sku;
+		} else {
+			MenuDragonPreview preview = GetComponent<MenuDragonPreview>();
+			m_dragonSku = preview.sku;
+		}
+
+		EquipDisguise();
+
+		/* TODO: refractor full equip function
+		 Dictionary<Equipable.AttachPoint, string> equip = dragon.data.equip;
 		// Change skin if there is any custom available
 		if (equip.ContainsKey(Equipable.AttachPoint.Skin)) {
 			SetSkin(equip[Equipable.AttachPoint.Skin]);
@@ -28,6 +39,40 @@ public class DragonEquip : MonoBehaviour {
 				// get equipable object!
 				points[i].Equip(equipable.GetComponent<Equipable>());
 			}
+		}*/
+	}
+
+	/// <summary>
+	/// The component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+	}
+	
+	/// <summary>
+	/// The component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+	}
+
+	private void OnDisguiseChanged(string _sku) {
+		if (m_dragonSku == _sku) {
+			EquipDisguise();
+		}
+	}
+	
+	private void EquipDisguise() {
+		string disguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
+		
+		DefinitionNode def = Definitions.GetDefinition(Definitions.Category.DISGUISES_EQUIP, disguise);
+
+		if (def != null)  {
+			SetSkin(def.GetAsString("skin"));
+		} else {
+			SetSkin(null);
 		}
 	}
 
@@ -35,13 +80,13 @@ public class DragonEquip : MonoBehaviour {
 		Material bodyMat;
 		Material wingsMat;
 
-		if (_name == null) {
-			_name = m_dragon.data.def.sku;
-			bodyMat  = Resources.Load("Game/Assets/Dragons/" + _name + "/Materials/" + _name + "_Body", typeof(Material)) as Material;
-			wingsMat = Resources.Load("Game/Assets/Dragons/" + _name + "/Materials/" + _name + "_Wings", typeof(Material)) as Material;
+		if (_name == null || _name.Equals("")) {
+			_name = m_dragonSku;
+			bodyMat  = Resources.Load<Material>("Game/Assets/Dragons/" + _name + "/Materials/" + _name + "_Body");
+			wingsMat = Resources.Load<Material>("Game/Assets/Dragons/" + _name + "/Materials/" + _name + "_Wings");
 		} else {
-			bodyMat  = Resources.Load("Game/Equipable/Skins/" + _name + "/" + _name + "_Body", typeof(Material)) as Material;
-			wingsMat = Resources.Load("Game/Equipable/Skins/" + _name + "/" + _name + "_Wings", typeof(Material)) as Material;
+			bodyMat  = Resources.Load<Material>("Game/Equipable/Skins/" + _name + "/" + _name + "_Body");
+			wingsMat = Resources.Load<Material>("Game/Equipable/Skins/" + _name + "/" + _name + "_Wings");
 		}
 
 		Renderer renderer = GetComponentInChildren<Renderer>();

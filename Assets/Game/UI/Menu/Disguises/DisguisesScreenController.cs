@@ -96,6 +96,13 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 	}
 
+	void OnDisable() {
+		if (m_using != null) {
+			Wardrobe.Equip(m_dragonSku, m_using.def.sku);
+		} else {
+			Wardrobe.Equip(m_dragonSku, "");
+		}
+	}
 
 	void Update() {
 
@@ -128,6 +135,8 @@ public class DisguisesScreenController : MonoBehaviour {
 
 			m_preview = _pill;
 
+			Wardrobe.Equip(m_dragonSku, m_preview.def.sku);
+
 			if (m_preview.level == 0) {
 				ShowButtons(true, false, false);
 			} else {
@@ -146,8 +155,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		} 
 		m_preview.Use(true);
 		m_using = m_preview;
-
-		Wardrobe.Equip(m_dragonSku, m_using.def.sku);
 
 		ShowButtons(false, false, true);
 	}
