@@ -45,9 +45,24 @@ public class DragonPlayer : MonoBehaviour {
 	public float superFury{ get { return m_superFury; } }
 
 	// Cache content data
+	private float m_healthMax = 1f;
+	public float healthMax {get{return m_healthMax;}}
+
 	private float m_energyMax = 1f;
+	public float energyMax {get{return m_energyMax;}}
+
 	private float m_furyMax = 1f;
+	public float furyMax{get{return m_furyMax;}}
+
 	private float m_healthWarningThreshold = 1f;
+
+	// Power up addition done to the max value
+	private float m_healthModifier;
+	public float healthModifier{ get{return m_healthModifier;} }
+	private float m_energyModifier;
+	public float energyModifier{ get{return m_energyModifier;} }
+	private float m_furyModifier;
+	public float furyModifier{ get{return m_furyModifier;} }
 
 	// Interaction
 	public bool playable {
@@ -83,9 +98,23 @@ public class DragonPlayer : MonoBehaviour {
 		InstanceManager.player = this;
 
 		// Cache content data
+		m_healthMax = m_data.def.GetAsFloat("healthMax");
 		m_energyMax = m_data.def.GetAsFloat("energyMax");
 		m_furyMax = m_data.def.GetAsFloat("furyMax");
 		m_healthWarningThreshold = Definitions.GetDefinition(Definitions.Category.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
+
+		// Calculate health modifier
+		// m_healthModifier = m_data.def.GetAsFloat("healthMax") * 0.1f;
+		m_healthModifier = 0;
+		m_healthMax += m_healthModifier;
+
+		// m_energyModifier = m_data.def.GetAsFloat("energyMax") * 0.1f;
+		m_energyModifier = 0;
+		m_energyMax += m_energyModifier;
+
+		// m_furyModifier = m_data.def.GetAsFloat("furyMax") * 0.1f;
+		m_furyModifier = 0;
+		m_furyMax += m_furyModifier;
 
 		// Initialize stats
 		ResetStats(false);
@@ -140,7 +169,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// Reset some variable stats for this dragon.
 	/// </summary>
 	public void ResetStats(bool _revive) {
-		m_health = data.maxHealth;
+		m_health = m_healthMax;
 		m_energy = m_energyMax;
 
 		playable = true;
@@ -166,7 +195,7 @@ public class DragonPlayer : MonoBehaviour {
 		bool wasStarving = IsStarving();
 
 		// Update health
-		m_health = Mathf.Min(m_data.maxHealth, Mathf.Max(0, m_health + _offset));
+		m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
 
 		// Check for death!
 		if(m_health <= 0f) {
@@ -328,7 +357,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return (health < data.maxHealth * m_healthWarningThreshold);
+		return (health < m_healthMax * m_healthWarningThreshold);
 	}
 	
 	/// <summary>

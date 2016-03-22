@@ -60,6 +60,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			return m_speedMultiplier;
 		}
 	}
+	// Speed Value wich results from dragon data + power ups
+	private float m_speedValue;
+	public float speed{get {return m_speedValue;}}
 
 	private float m_stunnedTimer;
 
@@ -202,6 +205,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_forbiddenDirection = Vector3.zero;
 		m_forbiddenValue = 0;
+
+		// Set to base
+		m_speedValue = m_dragon.data.speedSkill.value;
+
+		// Add modifiers
+
 	}
 
 	void OnEnable() {
@@ -377,7 +386,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// Updates the movement.
 	/// </summary>
 	private void UpdateMovement() {
-		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speedSkill.value * m_speedMultiplier); 
+		Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_speedMultiplier); 
 
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
@@ -396,7 +405,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private void UpdateWaterMovement()
 	{
-		Vector3 impulse = m_controls.GetImpulse(m_dragon.data.speedSkill.value * 0.5f * m_speedMultiplier);
+		Vector3 impulse = m_controls.GetImpulse(m_speedValue * 0.5f * m_speedMultiplier);
 
 		if ( impulse.y > 0 )
 		{
@@ -411,7 +420,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 0.25f, Time.deltaTime);
 		}
 
-		impulse.y += m_dragon.data.speedSkill.value * m_waterMovementModifier;
+		impulse.y += m_speedValue * m_waterMovementModifier;
 	
 
 
@@ -442,7 +451,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private void FlyAwayFromGround() {
 		if (m_height < 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
 			Vector3 oldDirection = m_direction;
-			Vector3 impulse = Vector3.up * m_dragon.data.speedSkill.value * 0.1f;			
+			Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
 
 			ComputeFinalImpulse(impulse);	
 			m_direction = oldDirection;
@@ -618,13 +627,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	
 	// max speed without boost
 	public float maxSpeed {
-		get { return m_dragon.data.speedSkill.value * m_speedMultiplier; }
+		get { return m_speedValue * m_speedMultiplier; }
 	}
 
 	// max speed with boost
 	public float absoluteMaxSpeed
 	{
-		get { return m_dragon.data.speedSkill.value * m_dragon.data.boostSkill.value; }
+		get { return m_speedValue * m_dragon.data.boostSkill.value; }
 	}
 
 	public void SetSpeedMultiplier(float _value) {
