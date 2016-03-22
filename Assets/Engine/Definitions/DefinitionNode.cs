@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Text;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -26,6 +27,7 @@ public class DefinitionNode {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	private Dictionary<string, string> m_properties;
+	private Dictionary<string, DefinitionNode> m_childNodes;
 
 	/// <summary>
 	/// It stores the original value for some properties that have been rewritten by calling <c>ChangeValue()</c>, passing <c>true</c> to the
@@ -47,6 +49,7 @@ public class DefinitionNode {
 	/// </summary>
 	public DefinitionNode() {
 		m_properties = new Dictionary<string, string>();
+		m_childNodes = new Dictionary<string, DefinitionNode>();
 	}
 
 	/// <summary>
@@ -61,7 +64,17 @@ public class DefinitionNode {
 
 			m_properties.Add(attr.Name, attr.Value);
 		}
-		
+
+		// Parse nested nodes
+		foreach(XmlNode childNode in xml.ChildNodes) {
+			DefinitionNode childDef = new DefinitionNode();
+			childDef.LoadFromXml(childNode);
+			if(!m_childNodes.ContainsKey(childDef.sku)) {
+				m_childNodes.Add(childDef.sku, childDef);
+			} else {
+				Debug.LogError("This DefinitionNode (" + sku + ") already contains a child node with sku " + childDef.sku);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -87,6 +100,7 @@ public class DefinitionNode {
 
 	/// <summary>
 	/// Generic getter implementation.
+	/// Can be used to get child nodes as well.
 	/// </summary>
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
@@ -95,6 +109,11 @@ public class DefinitionNode {
 		// Use the internal ParseValue() method
 		if(m_properties.ContainsKey(_property)) {
 			return ParseValue<T>(m_properties[_property], _defaultValue);
+		}
+
+		// Special case for child nodes
+		else if(typeof(T) == typeof(DefinitionNode)) {
+			return (T)(object)GetChildNode(_property);
 		}
 		return _defaultValue;
 	}
@@ -246,6 +265,29 @@ public class DefinitionNode {
 	}
 
 	//------------------------------------------------------------------------//
+	// CHILD NODES MANAGEMENT												  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get a definition node nested to this one.
+	/// </summary>
+	/// <returns>The child node with the given sku, <c>null</c> if not found.</returns>
+	/// <param name="_sku">The identifier of the child node to be returned.</param>
+	public DefinitionNode GetChildNode(string _sku) {
+		if(m_childNodes.ContainsKey(_sku)) {
+			return m_childNodes[_sku];
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Get a list with all the definition nodes nested to this one.
+	/// </summary>
+	/// <returns>All the child nodes of this definition node.</returns>
+	public List<DefinitionNode> GetChildNodes() {
+		return m_childNodes.Values.ToList();
+	}
+
+	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -391,17 +433,40 @@ public class DefinitionNode {
 	/// </summary>
 	/// <returns>A string that represents the current <see cref="DefinitionNode"/>.</returns>
 	public override string ToString() {
+		return ToStringInternal(0);
+	}
+
+	/// <summary>
+	/// Helper method for ToString() allowing us to indent child nodes.
+	/// </summary>
+	/// <returns>A string that represents the current <see cref="DefinitionNode"/>.</returns>
+	/// <param name="_indentationLevel">Indentation level.</param>
+	private string ToStringInternal(int _indentationLevel) {
 		// [AOC] One property per line, sku as header
 		StringBuilder sb = new StringBuilder();
 
 		// Header with sku
+		sb.Append('\t', _indentationLevel);	// Indentation
 		sb.Append("<").Append(sku).Append(">");
 
 		// Rest of the properties
-		foreach(KeyValuePair<string, string> p  in m_properties) {
+		foreach(KeyValuePair<string, string> kvp  in m_properties) {
 			// Skip if sku
-			if(p.Key == "sku") continue;
-			sb.Append("\n\t").Append(p.Key).Append(": ").Append(p.Value);
+			if(kvp.Key == "sku") continue;
+
+			// Compose the string
+			sb.Append('\n');	// New line
+			sb.Append('\t', _indentationLevel + 1);	// Indentation (properties are indented in)
+			sb.Append(kvp.Key).Append(": ").Append(kvp.Value);	// Key + value
+		}
+
+		// Child nodes
+		// Recursive call, indented
+		foreach(KeyValuePair<string, DefinitionNode> kvp in m_childNodes) {
+			sb.Append('\n');	// New line
+			sb.Append(
+				kvp.Value.ToStringInternal(_indentationLevel + 1)
+			);
 		}
 
 		// Done!
