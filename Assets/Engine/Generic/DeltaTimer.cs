@@ -1,179 +1,172 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DeltaTimer
-{
+/// <summary>
+/// Timer class independent of Unity's Update loop.
+/// </summary>
+public class DeltaTimer {
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	private float m_startTime;
+	private float m_stopTime;
 
-		//--------------------------------------------------------------------//
-		// GENERIC METHODS													  //
-		//--------------------------------------------------------------------//
-		/**
-		 * Default constructor
-		 */
-        public DeltaTimer()
-        {
-			mStartTime = 0;
-			mLoop = false;
-			mDuration = 0;
-			mStopTime = 0;
-			mStopped = false;
-			mCurves = new CustomEase(CustomEase.EaseType.linear_01);
-			mSpeedMultiplier = 1;
-        }
-		
-		/**
-		 *
-		 */
-        public virtual void Start(float duration, bool loop = false)
-        {
-			mDuration = duration;
-			mStopTime = 0;
-			mLoop = loop;
-			mStopped = false;
+	private float m_duration;
+	private bool m_stopped;
+	private bool m_loop;
+	private CustomEase m_ease;
+	private float m_speedMultiplier;
 
-			mStartTime = GetSystemTime();
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Default constructor
+	/// </summary>
+	public DeltaTimer() {
+		m_startTime = 0;
+		m_loop = false;
+		m_duration = 0;
+		m_stopTime = 0;
+		m_stopped = false;
+		m_ease = new CustomEase(CustomEase.EaseType.linear_01);
+		m_speedMultiplier = 1;
+	}
 
-			// Apply current speed multiplier to duration vars
-			SetSpeedMultiplier(mSpeedMultiplier);
+	/// <summary>
+	/// Start the timer.
+	/// </summary>
+	/// <param name="_duration">Duration in seconds.</param>
+	/// <param name="_loop">Loop?.</param>
+	public virtual void Start(float _duration, bool _loop = false) {
+		m_duration = _duration;
+		m_stopTime = 0;
+		m_loop = _loop;
+		m_stopped = false;
 
-        }
-		
-		/**
-		 * Stops the timer, subsequent calls to getTime/getDelta will return the same values until resume or start are called
-		 */
-		public virtual void Stop()
-		{
-			if (mStopped) return;
+		m_startTime = GetSystemTime();
+
+		// Apply current speed multiplier to duration vars
+		SetSpeedMultiplier(m_speedMultiplier);
+
+	}
+
+	/// <summary>
+	/// Stops the timer, subsequent calls to GetTime/GetDelta will return the same
+	/// values until resume or start are called
+	/// </summary>
+	public virtual void Stop() {
+		if(m_stopped) return;
 			
-			mStopped = true;
-			mStopTime = GetSystemTime() - mStartTime;
-		}
-		
-		/**
-		 * Resume a previously stopped timer
-		 */
-        public void Resume()
-        {
-			if (!mStopped) return;
+		m_stopped = true;
+		m_stopTime = GetSystemTime() - m_startTime;
+	}
 
-			mStopped = false;
-			mStartTime = GetSystemTime() - mStopTime;
-        }
-		
-		/**
-		 * Elapsed time since start in seconds
-		 */
-        public virtual float GetTime()
-        {
-			if (!mLoop)
-			{
-				if ( mStopped )
-				{
-					return mStopTime;
-				}
-				else
-				{
-					return GetSystemTime() - mStartTime;	
-				}
+	/// <summary>
+	/// Resume a previously stopped timer
+	/// </summary>
+	public void Resume() {
+		if(!m_stopped) return;
 
+		m_stopped = false;
+		m_startTime = GetSystemTime() - m_stopTime;
+	}
+
+	/// <summary>
+	/// Elapsed time since start in seconds
+	/// </summary>
+	/// <returns>The time elapsed since the timer started, in seconds.</returns>
+	public virtual float GetTime() {
+		if(!m_loop) {
+			if(m_stopped) {
+				return m_stopTime;
+			} else {
+				return GetSystemTime() - m_startTime;	
 			}
-			else
-			{
-				if (mStopped)
-            		return (float)(mStopTime%mDuration);
-        		else
-            		return (float)((GetSystemTime() - mStartTime)%mDuration);
+		} else {
+			if(m_stopped) {
+				return (float)(m_stopTime % m_duration);
+			} else {
+				return (float)((GetSystemTime() - m_startTime) % m_duration);
 			}
-        }
-		
-		
-		/**
-		 * Get percentage of the timer completed. In 0.0...1.0 range. A curve function can be specified.
-		 */
-		public float GetDelta(CustomEase.EaseType curve = CustomEase.EaseType.linear_01)
-        {
-			mCurves.SetType(curve);
-    		return mCurves.Get(GetTime(),mDuration);
-
-        }
-		
-		/**
-		 * True if the timer has reached it's end or it has never started
-		 */
-        public bool Finished()
-        {
-			return !mLoop && GetTime() > mDuration;
-        }
-		
-		/**
-		 * True if the timer has been manually stopped using the stop() method
-		 */
-        public bool IsStopped()
-        {
-			return mStopped;
-        }
-		
-		/**
-		 * Add time to the timer, useful to start animation from a middle point for instance
-		 */
-        public void AddTime(float time)
-        {
-        	mStartTime -= time;
-        }
-		
-		/**
-		 *
-		 */
-        public float GetTimeLeft()
-        {
-			float d = GetDelta();
-		    if (d == 0) return mDuration;
-		    float t = GetTime();
-		    return ((1 - d) / d) * t;
-        }
-		
-		/**
-		 *
-		 */
-		public float GetDuration()
-		{
-			// Correct speed multiplier modification
-			return mDuration * mSpeedMultiplier;
 		}
-		
-		/**
-		 *
-		 */
-		public void SetSpeedMultiplier(float _fSpeedMultiplier)
-		{
-			// Store new speed multiplier
-			mSpeedMultiplier = _fSpeedMultiplier;
+	}
+
+	/// <summary>
+	/// Percentage of the timer completed, [0..1] range.
+	/// Can be eeased by a given function.
+	/// </summary>
+	/// <returns>The delta.</returns>
+	/// <param name="_ease">Ease curve function.</param>
+	public float GetDelta(CustomEase.EaseType _ease = CustomEase.EaseType.linear_01) {
+		m_ease.SetType(_ease);
+		return m_ease.Get(GetTime(), m_duration);
+	}
+
+	/// <summary>
+	/// Has the timer finished?
+	/// </summary>
+	/// <returns><c>true</c> if the timer has reached its end or it was never started</returns>
+	public bool Finished() {
+		return !m_loop && GetTime() > m_duration;
+	}
+
+	/// <summary>
+	/// Is the timer stopped?
+	/// </summary>
+	/// <returns><c>true</c> if the <c>Stop()</c> method has been called.</returns>
+	public bool IsStopped() {
+		return m_stopped;
+	}
+
+	/// <summary>
+	/// Add time to the timer (advance seconds), useful to start animation from a middle point for instance.
+	/// </summary>
+	/// <param name="_time">Time to be advanced in seconds.</param>
+	public void AddTime(float _time) {
+		m_startTime -= _time;
+	}
+
+	/// <summary>
+	/// Gets the time left.
+	/// </summary>
+	/// <returns>Remaining time in seconds.</returns>
+	public float GetTimeLeft() {
+		float d = GetDelta();
+		if(d == 0) return m_duration;
+		float t = GetTime();
+		return ((1 - d) / d) * t;
+	}
+
+	/// <summary>
+	/// Total duration of the timer.
+	/// </summary>
+	/// <returns>Duration of the timer in seconds.</returns>
+	public float GetDuration() {
+		// Correct speed multiplier modification
+		return m_duration * m_speedMultiplier;
+	}
+
+	/// <summary>
+	/// Accelerate/decelerate the time speed.
+	/// </summary>
+	/// <param name="_speedMultiplier">Factor.</param>
+	public void SetSpeedMultiplier(float _speedMultiplier) {
+		// Store new speed multiplier
+		m_speedMultiplier = _speedMultiplier;
 			
-			// Change mDuration vars based on the new multiplier
-			mDuration /= mSpeedMultiplier;
-		}
-
+		// Change mDuration vars based on the new multiplier
+		m_duration /= m_speedMultiplier;
+	}
 		
-		//--------------------------------------------------------------------//
-        // STATIC INIT METHODS												  //
-		//--------------------------------------------------------------------//
-		/**
-		 * [static] Returns current device's time in milliseconds
-		 */
-        static float GetSystemTime()
-        {
-        	return Time.realtimeSinceStartup;
-        }
-
-
-        float mStartTime;
-        float mStopTime;
-
-        float     mDuration;
-        bool      mStopped;
-        bool      mLoop;
-		CustomEase     mCurves;
-		float     mSpeedMultiplier;
-
-
+	//--------------------------------------------------------------------//
+	// STATIC INIT METHODS												  //
+	//--------------------------------------------------------------------//
+	/// <summary>
+	/// Current device's time in milliseconds.
+	/// </summary>
+	/// <returns>The system time in millis.</returns>
+	static float GetSystemTime() {
+		return Time.realtimeSinceStartup;
+	}
 }
