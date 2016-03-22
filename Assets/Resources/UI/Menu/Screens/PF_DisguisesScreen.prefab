@@ -342,7 +342,6 @@ GameObject:
   - 222: {fileID: 22297312}
   - 114: {fileID: 11478406}
   - 114: {fileID: 11493964}
-  - 114: {fileID: 11489614}
   - 114: {fileID: 11463200}
   - 114: {fileID: 11407816}
   m_Layer: 5
@@ -1889,7 +1888,8 @@ MonoBehaviour:
   m_useButton: {fileID: 163740}
   m_unuseButton: {fileID: 194840}
   m_dragonWorldPos: {fileID: 0}
-  m_dragonUIPos: {fileID: 22431710}
+  m_dragonUIPos: {fileID: 22470612}
+  m_depth: 13
 --- !u!114 &11486310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1964,18 +1964,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
---- !u!114 &11489614
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 153508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 3
 --- !u!114 &11492186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2082,8 +2070,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11489614}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 11482750}
+        m_MethodName: OnBuy
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2907,7 +2895,7 @@ RectTransform:
   m_RootOrder: 5
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -71}
+  m_AnchoredPosition: {x: -124, y: -198}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22470846
