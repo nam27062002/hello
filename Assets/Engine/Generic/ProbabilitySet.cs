@@ -194,17 +194,23 @@ public class ProbabilitySet {
 	/// <summary>
 	/// Define the probability of the target element.
 	/// The probabilities of the whole set will be redistributed accordingly.
-	/// Locked status will be ignored when calling this method.
+	/// Locked status of the target element will be ignored when calling this method.
 	/// </summary>
 	/// <param name="_elementIdx">The index of the element to be modified.</param>
 	/// <param name="_probability">The new probability [0..1] for the target element.</param>
-	public void SetProbability(int _elementIdx, float _probability) {
+	/// <param name="_redistribute">If <c>true></c>, all probabilities will be adjusted to add up 1. Be careful when using <c>false</c>, since you could end up with an invalid probability set.</param>
+	public void SetProbability(int _elementIdx, float _probability, bool _redistribute = true) {
 		// Check params
 		if(_elementIdx < 0 || _elementIdx >= numElements) return;
 
-		// Store new value and redistribute
+		// In any case probability can't be outside range
+		_probability = Mathf.Clamp01(_probability);
+
+		// Store new value
 		m_elements[_elementIdx].probability = _probability;
-		Redistribute(false, m_elements[_elementIdx]);
+
+		// Redistribute
+		if(_redistribute) Redistribute(false, m_elements[_elementIdx]);
 	}
 
 	/// <summary>
@@ -324,82 +330,96 @@ public class ProbabilitySet {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// INTERNAL																  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Redistribute probability proportionally between all elements.
+	/// Determines whether this probability set is valid.
+	/// A probability set is considered valid when the sum of probabilities of all
+	/// its elements adds up to exactly <c>1</c>.
+	/// </summary>
+	/// <returns><c>true</c> if the set is valid.</returns>
+	/// <param name="_errorMargin">Optional tolerance since some precision errors may occur when redistributing.</param>
+	public bool IsValid(float _errorMargin = 0.0001f) {
+		float totalProb = 0f;
+		for(int i = 0; i < m_elements.Count; i++) {
+			totalProb += m_elements[i].probability;
+		}
+		return MathUtils.IsBetween(totalProb, 1f - _errorMargin, 1f + _errorMargin);
+	}
+
+	/// <summary>
+	/// If the set is not valid, force a redistribution, ignoring locks and everything.
+	/// </summary>
+	public void Validate() {
+		if(!IsValid()) Redistribute(true);
+	}
+
+	/// <summary>
+	/// Redistribute probability proportionally between all elements to make sure
+	/// all probabilities add up 1.
 	/// </summary>
 	/// <param name="_overrideLocks">If set to <c>true</c>, locked sliders will be modified too.</param> 
 	/// <param name="_skipElement">Single element to be skipped from the redistribution (i.e. the element that has just been modified).</param>
-	private void Redistribute(bool _overrideLocks, Element _skipElement) {
+	public void Redistribute(bool _overrideLocks = false, Element _skipElement = null) {
 		// [AOC] From HumbleBundle's web page code:
 		// Calculate the splits for all the elements.
 		// Conceptually, we remove the active slider from the mix. Then we normalize the siblings to 1 to
 		// determine their weights relative to each other. Then we divide the split that is left over from the moved
 		// slider with these relative weights.
-		if(_skipElement == null) return;	// Redistribution should always be caused by an element being modified
 
-		// Amount to distribute between the siblings
-		float totalToDistribute = 1f - _skipElement.probability;
+		// Amount to distribute between the elements
+		float totalToDistribute = 1f;
 
-		// Compute total amount of unlocked siblings to distribute proportionally
+		// Compute total amount of unlocked elements to distribute proportionally
 		// Adjust amount to distribute by ignoring locked sliders
-		float unlockedSiblingsTotal = 0f;
-		float unlockedSiblingsCount = 0f;	// [AOC] Use float directly to avoid casting later on
-		Element element = null;
+		float unlockedTotal = 0f;
+		float unlockedCount = 0f;	// [AOC] Use float directly to avoid casting later on
+		float lockedCount = 0f;
 		for(int i = 0; i < numElements; i++) {
-			// Get element
-			element = m_elements[i];
-
-			// Skip current
-			if(element == _skipElement) continue;
-
-			// Is it locked?
-			if(_overrideLocks || !element.locked) {
-				unlockedSiblingsTotal += element.probability;
-				unlockedSiblingsCount++;
+			// Remove from the total to distribute locked elements and element to skip
+			if(m_elements[i] == _skipElement) {
+				totalToDistribute -= _skipElement.probability;
+			} else if(!_overrideLocks && m_elements[i].locked) {
+				totalToDistribute -= m_elements[i].probability;
+				lockedCount++;
 			} else {
-				totalToDistribute -= element.probability;
+				unlockedTotal += m_elements[i].probability;
+				unlockedCount++;
 			}
 		}
 
 		// Locked sliders may limit new value, check it here
-		// If the amount to distribute is negative, add (subtract) that amount to changed slider value
+		// If the amount to distribute is negative (too many locked items), add (subtract) that amount to changed element
+		// If we're not targeting any element, just ignore excess of probability
 		if(!_overrideLocks && totalToDistribute < 0f) {
-			_skipElement.probability += totalToDistribute;
+			if(_skipElement != null) _skipElement.probability += totalToDistribute;
 			totalToDistribute = 0;
 		}
 
-		// Compute and assign new value to each sibling based on its weight
+		// Compute and assign new value to each element based on its weight
 		float remainingToDistribute = totalToDistribute;
 		for(int i = 0; i < numElements; i++) {
-			// Get element
-			element = m_elements[i];
-
 			// Skip current
-			if(element == _skipElement) continue;
+			if(m_elements[i] == _skipElement) continue;
 
 			// Skip if locked
-			if(!_overrideLocks && element.locked) continue;
+			if(!_overrideLocks && m_elements[i].locked) continue;
 
-			// Compute relative weight of this sibling in relation to all active siblings (or something like that :s)
-			float siblingWeight = 0;
-			if(unlockedSiblingsTotal == 0f) {
-				// If all sliders except the one being moved are at 0, we split the movement evently amongst them
-				siblingWeight = 1f/unlockedSiblingsCount;
+			// Compute relative weight of this element in relation to all active elements
+			float elementWeight = 0;
+			if(unlockedTotal == 0f) {
+				// If all elements except the target one are at 0, we split the movement evently amongst them
+				elementWeight = 1f/unlockedCount;
 			} else {
-				siblingWeight = element.probability/unlockedSiblingsTotal;
+				elementWeight = m_elements[i].probability/unlockedTotal;
 			}
 
 			// Compute new value for the sibling and store it to the property
-			element.probability = totalToDistribute * siblingWeight;
-			remainingToDistribute -= element.probability;
+			m_elements[i].probability = totalToDistribute * elementWeight;
+			remainingToDistribute -= m_elements[i].probability;
 		}
 
 		// If not everything could be distributed, limit the movement of the target slider.
-		// This could happen when all siblings are either locked or already 0
-		if(remainingToDistribute > 0f) {
+		// This could happen when all elements are either locked or already 0
+		if(remainingToDistribute > 0f && _skipElement != null) {
 			_skipElement.probability += remainingToDistribute;
 		}
 	}

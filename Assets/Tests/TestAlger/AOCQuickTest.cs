@@ -42,17 +42,9 @@ public class AOCQuickTest : MonoBehaviour {
 		}
 	);
 
-	public float m_testNumber = 0f;
-	public Range m_range = new Range();
-
-	[List("opt0", "opt1", "opt2", "opt3", "opt4")]
-	public string m_testString = "";
-
-	[List(1, 2, 3, 4, 5)]
-	public int m_testInt = 0;
-
-	[SkuListNew(Definitions.Category.DRAGONS)]
-	public string m_skuString = "";
+	public float m_newValue = 0.25f;
+	public bool m_resetProbSet = false;
+	public bool m_redistribute = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -82,7 +74,17 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		
+		if(m_resetProbSet) {
+			m_probSet = new ProbabilitySet();
+			m_resetProbSet = false;
+		}
+
+		m_probSet.AddElement("New Element " + m_probSet.numElements);
+		m_probSet.SetProbability(m_probSet.numElements - 1, m_newValue, false);
+
+		if(m_redistribute) {
+			m_probSet.Redistribute();
+		}
 	}
 
 	/// <summary>
