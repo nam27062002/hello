@@ -1398,7 +1398,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 461318}
   - 114: {fileID: 11479926}
-  - 114: {fileID: 11484542}
   m_Layer: 0
   m_Name: CurrentDragon
   m_TagString: Untagged
@@ -2686,7 +2685,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_lookAtPointLocal: {x: 0, y: 0, z: 30}
-  m_lookAtObject: {fileID: 461318}
+  m_lookAtObject: {fileID: 0}
   m_editMode: 0
 --- !u!114 &11426798
 MonoBehaviour:
@@ -2819,6 +2818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b4307df3638f47a29e60f0bc3d5abee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_resetDragonScale: 1
 --- !u!114 &11480720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2855,18 +2855,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lookAtObject: {fileID: 0}
---- !u!114 &11484542
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 198928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f82d75dd653934b0db06d6f19f39ea69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_viewportPoint: {fileID: 0}
 --- !u!114 &11488296
 MonoBehaviour:
   m_ObjectHideFlags: 1
