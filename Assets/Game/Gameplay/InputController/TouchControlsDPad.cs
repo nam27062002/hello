@@ -5,7 +5,6 @@ using System.Collections;
 public class TouchControlsDPad : TouchControls {
 	
 	// INSPECTOR VARIABLES
-	public bool m_isFixed = false;
 	public GameObject m_dpadObj;
 	public GameObject m_dpadDotObj;
 
@@ -20,10 +19,8 @@ public class TouchControlsDPad : TouchControls {
 	// DPAD Rendering
 	private bool m_isInitialTouchPosSet = false;
 		
-	private Vector3 m_dpadPos = Vector3.zero;
-	private Vector3 m_dpadDotPos = Vector3.zero;
-
-	// [AOC] Quick'n'dirty fix!
+	// [AOC] 
+	private RectTransform m_dPadContainerRectTransform = null;
 	private RectTransform m_dPadRectTransform = null;
 	private RectTransform m_dPadDotRectTransform = null;
 
@@ -31,29 +28,21 @@ public class TouchControlsDPad : TouchControls {
 	// Use this for initialization
 	override public void Start () 
 	{
-		// [AOC] Quick'n'dirty fix!
+		// [AOC]
 		m_dPadRectTransform = m_dpadObj.transform as RectTransform;
 		m_dPadDotRectTransform = m_dpadDotObj.transform as RectTransform;
+		m_dPadContainerRectTransform = m_dPadRectTransform.parent as RectTransform;
+		m_dPadContainerRectTransform.anchoredPosition = Vector2.zero;	// Make sure it's centered to its anchors, which we will be moving around!
 
 		base.Start();
 		
 		m_type = TouchControlsType.dpad;
-				
 
-		RectTransform rt = m_dpadObj.GetComponent<RectTransform>();
-
-		if (rt != null) {
-			//m_radiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 0.45f;
-			//m_boostRadiusToCheck = rt.sizeDelta.x * rt.lossyScale.x * 1.65f;
-
-			// [AOC] Quick'n'dirty fix!
-			m_radiusToCheck = m_dPadRectTransform.rect.width * 0.45f;
-			m_boostRadiusToCheck = m_dPadRectTransform.rect.width * 1.65f;
-		} else {
-			m_radiusToCheck = Screen.height * 0.09f;
-			m_boostRadiusToCheck = Screen.height * 0.15f;
-		}
-
+		// [AOC]
+		CanvasScaler parentCanvasScaler = m_dPadRectTransform.GetComponentInParent<CanvasScaler>();
+		m_radiusToCheck = (m_dPadRectTransform.rect.width * 0.45f) * Screen.width / parentCanvasScaler.referenceResolution.x;	// Half width of the D-Pad applying the ratio between the retina-ref resolution our canvas is using and the actual screen size
+		m_boostRadiusToCheck = m_radiusToCheck * 1.2f;
+			
 		m_dpadObj.SetActive(false);
 		m_dpadDotObj.SetActive(false);
 	}
@@ -67,55 +56,32 @@ public class TouchControlsDPad : TouchControls {
 	override public void SetTouchObjRendering(bool on)
 	{
 		base.SetTouchObjRendering(on);
-		
-		//if(King._Instance != null)	// don't want to render anything in WIP levels
-		{	
-			if(on || m_isFixed)
-			{
-				// sync the circle and dot position to touch positions in screen space
-				// NOTE: the positions are scaled because the camera quadrants are each in the range (+/- 960, +/-640)
-				// while the screen quadrants (extents) are screen-dependent... 1280 x 960 or 1024 x 768.., etc.,
-				m_dpadPos.x = m_initialTouchPos.x;
-				m_dpadPos.y = m_initialTouchPos.y;
-				m_dpadPos.z = 0;
-				//m_dpadObj.transform.position = m_dpadPos;
 
-				// project current touch pos on circle
-				Vector3 diffUnit = (m_currentTouchPos - m_initialTouchPos);
-				if(diffUnit.magnitude > m_radiusToCheck)
-				{
-					diffUnit.Normalize();
-					diffUnit *= m_radiusToCheck;
-					diffUnit += m_initialTouchPos;
-					
-					m_dpadDotPos.x = diffUnit.x;
-					m_dpadDotPos.y = diffUnit.y;
-					m_dpadDotPos.z = 0;
-					//m_dpadDotObj.transform.position = m_dpadDotPos;
-				}
-				else
-				{
-					m_dpadDotPos.x = m_currentTouchPos.x;
-					m_dpadDotPos.y = m_currentTouchPos.y;
-					m_dpadDotPos.z = 0;
-					//m_dpadDotObj.transform.position = m_dpadDotPos;
-				}
+		// [AOC]
+		if(on) {
+			// Leave DPad static and move parent instead (which contains both the DPad and the Dot)
+			// Using the anchors allows us to directly set relative position [0..1] within the parent
+			// Since the parent of the container is directly the full-screen canvas, 
+			// we just have to compute the relative pos of the touch in relation to the screen and apply it directly
+			Vector2 correctedDPadPos = new Vector2(
+				(m_initialTouchPos.x / Screen.width),
+				(m_initialTouchPos.y / Screen.height)
+			);
+			m_dPadContainerRectTransform.anchorMin = correctedDPadPos;
+			m_dPadContainerRectTransform.anchorMax = correctedDPadPos;
 
-				// [AOC] Quick'n'dirty fix!
-				Vector2 correctedDPadPos = new Vector2(
-					(m_dpadPos.x / Screen.width),
-					(m_dpadPos.y / Screen.height)
-				);
-				m_dPadRectTransform.anchorMin = correctedDPadPos;
-				m_dPadRectTransform.anchorMax = correctedDPadPos;
+			// Move dot a distance within the pad's size in the same orientation as the touch diff vector and proportional to it
+			// Using the anchors allows us to directly set relative position [0..1] within the parent
+			Vector3 diff = (m_currentTouchPos - m_initialTouchPos);
+			Vector3 dir = Vector3.Normalize(diff);
+			float delta = Mathf.Clamp01(diff.magnitude/m_radiusToCheck);
+			Vector2 correctedDPadDotPos = new Vector2(
+				dir.x * delta * 0.5f + 0.5f,	// Scale from [-1..1] to [0..1]
+				dir.y * delta * 0.5f + 0.5f		// Scale from [-1..1] to [0..1]
+			);
+			m_dPadDotRectTransform.anchorMin = correctedDPadDotPos;
+			m_dPadDotRectTransform.anchorMax = correctedDPadDotPos;
 
-				Vector2 correctedDPadDotPos = new Vector2(
-					(m_dpadDotPos.x / Screen.width),
-					(m_dpadDotPos.y / Screen.height)
-				);
-				m_dPadDotRectTransform.anchorMin = correctedDPadDotPos;
-				m_dPadDotRectTransform.anchorMax = correctedDPadDotPos;
-			}
 		}
 	}
 	
@@ -144,53 +110,32 @@ public class TouchControlsDPad : TouchControls {
 	
 	override public bool OnTouchPress()
 	{
-		if(!m_isFixed)
+		// ensure touch is within the borders
+		float radius = 1.25f * m_radiusToCheck;
+		Vector2 touchPos = GameInput.touchPosition[0];
+		
+		//if ( App.inGame )
 		{
-			// ensure touch is within the borders
-			float radius = 1.25f * m_radiusToCheck;
-			Vector2 touchPos = GameInput.touchPosition[0];
+			// player touched in the border... snap the circle and dot (and touch) to however far it can go...
+			if(touchPos.x < radius)
+				m_initialTouchPos.x = radius;
+			else if(touchPos.x > (Screen.width - radius))
+				m_initialTouchPos.x = Screen.width - radius;
+			else
+				m_initialTouchPos.x = touchPos.x;
 			
-			//if ( App.inGame )
-			{
-				// player touched in the border... snap the circle and dot (and touch) to however far it can go...
-				if(touchPos.x < radius)
-					m_initialTouchPos.x = radius;
-				else if(touchPos.x > (Screen.width - radius))
-					m_initialTouchPos.x = Screen.width - radius;
-				else
-					m_initialTouchPos.x = touchPos.x;
-				
-				// do the same for y
-				if(touchPos.y < radius)
-					m_initialTouchPos.y = radius;
-				else if(touchPos.y > (Screen.height - radius))
-					m_initialTouchPos.y = Screen.height - radius;
-				else
-					m_initialTouchPos.y = touchPos.y;
-								
+			// do the same for y
+			if(touchPos.y < radius)
+				m_initialTouchPos.y = radius;
+			else if(touchPos.y > (Screen.height - radius))
+				m_initialTouchPos.y = Screen.height - radius;
+			else
+				m_initialTouchPos.y = touchPos.y;
+							
 
-				m_initialTouchPos.z = 0;
-			}			
-			return true;
-		}
-		else
-		{
-			// click has to be in the right area
- 			float minX = m_initialTouchPos.x - m_radiusToCheck;
-			float minY = m_initialTouchPos.y + m_radiusToCheck;
-			float width = 2 * m_radiusToCheck;
-				
-			Vector2 mousePos = GameInput.touchPosition[0];
-			if(((mousePos.x > minX) && (mousePos.x < (minX + width))) &&
-				((mousePos.y < minY) && (mousePos.y > (minY - width))))
-			{
-				RefreshCurrentTouchPos();
-				RefreshDiffVec();
-				
-				return true;
-			}
-			return false;
-		}
+			m_initialTouchPos.z = 0;
+		}			
+		return true;
 	}
 	
 	override public bool OnTouchHeld()
@@ -212,21 +157,6 @@ public class TouchControlsDPad : TouchControls {
 	{
 		RefreshDiffVec();
 		return true;
-	}
-	
-	override public void UpdateTouchControls() 
-	{	
-		// for fixed dpad, set initial position
-		if(GameInput.m_controlMethod == ControlMethod.touch)
-		{
-			if(m_isFixed && !m_isInitialTouchPosSet)
-			{
-				m_isInitialTouchPosSet = true;
-				SetInitialTouchPos();
-			}
-		}
-		
-		base.UpdateTouchControls();
 	}
 	
 	override public void CalcSharkDesiredVelocity(float speed, bool disableDecceleration = false)
