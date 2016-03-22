@@ -190,13 +190,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 			Entity entity = preys[e];
 			if (entity.def.edibleFromTier <= m_tier) {
 				// then, check if the edible is in front
-				Vector3 direction = m_motion.direction;
-				Vector3 relativePos = m_suction.InverseTransformPoint(entity.transform.position);
 
-				if (relativePos.x > 0) {					
+				Vector3 heading = entity.transform.position - m_mouth.position;
+				float dot = Vector3.Dot(heading.normalized, m_motion.direction);
+
+				// check distance to dragon mouth
+				if (dot > 0) {
 					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
 
-					if (edible.CanBeEaten(direction)) {
+					if (edible.CanBeEaten(m_motion.direction)) {
 						Eat(edible, entity.def.biteResistance);
 						break;
 					}
