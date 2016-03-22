@@ -11,12 +11,19 @@ public class Wardrobe : Singleton<Wardrobe> {
 
 	public static readonly int MAX_LEVEL = 3;
 
+	[Serializable]
+	public class DragonDisguise {
+		public string dragon;
+		public string disguise;
+	}
+
 	/// <summary>
 	/// Auxiliar class for persistence load/save.
 	/// </summary>
 	[Serializable]
 	public class SaveData {
 		public int[] disguises;
+		public DragonDisguise[] equiped;
 	}
 
 
@@ -37,7 +44,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// </summary>
 	public static void InitFromDefinitions() {
 		List<string> skus = Definitions.GetSkuList(Definitions.Category.DISGUISES);
-		instance.m_disguises = new SortedList<string, int>();
+		instance.m_disguises = new SortedList<string, int>(new AlphanumComparatorFast());
 
 		for (int i = 0; i < skus.Count; i++) {
 			instance.m_disguises.Add(skus[i], 0);
@@ -72,7 +79,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	public static string GetEquipedDisguise(string _dragonSku) {
 		if (instance.m_equiped.ContainsKey(_dragonSku)) {
 			return instance.m_equiped[_dragonSku];
-		} 
+		}
 		return "";
 	}
 
@@ -90,6 +97,10 @@ public class Wardrobe : Singleton<Wardrobe> {
 		for (int i = 0; i < size; i++) {
 			instance.m_disguises[keys[i]] = _data.disguises[i];
 		}
+
+		for (int k = 0; k < _data.equiped.Length; k++) {
+			instance.m_equiped[_data.equiped[k].dragon] = _data.equiped[k].disguise;
+		}
 	}
 
 	/// <summary>
@@ -104,6 +115,19 @@ public class Wardrobe : Singleton<Wardrobe> {
 
 		for (int i = 0; i < values.Count; i++) {
 			data.disguises[i] = values[i];
+		}
+			
+		int k = 0;
+		data.equiped = new DragonDisguise[instance.m_equiped.Count];
+		foreach (KeyValuePair<string, string> pair in instance.m_equiped) {
+			DragonDisguise dd = new DragonDisguise();
+
+			dd.dragon = pair.Key;
+			dd.disguise = pair.Value;
+
+			data.equiped[k] = dd;
+
+			k++;
 		}
 
 		return data;
