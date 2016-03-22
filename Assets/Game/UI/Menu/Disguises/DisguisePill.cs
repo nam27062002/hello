@@ -14,6 +14,10 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	//------------------------------------------//
 
+	private Color m_commonColor = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+	private Color m_rareColor = new Color(152f / 255f, 217f / 255f, 255f / 255f);
+	private Color m_epicColor = new Color(186f / 255f, 129f / 255f, 234f / 255f);
+
 	private DefinitionNode m_def;
 	public DefinitionNode def { get { return m_def; } }
 
@@ -27,11 +31,16 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	private GameObject m_equipedIcon;
 	private GameObject[] m_upgradeIcons;
 
+	private Image m_bgDisguise;
+	private Image m_bgFrame;
+
 	//------------------------------------------//
 
 
 	void Awake() {
 		m_disguiseIcon = transform.FindChild("DragonSkinIcon").GetComponent<Image>();
+		m_bgDisguise = transform.FindChild("BgDisguise").GetComponent<Image>();
+		m_bgFrame = transform.FindChild("BgFrame").GetComponent<Image>();
 
 		m_lockIcon = transform.FindChild("IconLock").gameObject;
 		m_lockIcon.SetActive(true);
@@ -48,7 +57,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		}
 	}
 
-	public void Load(DefinitionNode _def, int _level) {
+	public void Load(DefinitionNode _def, int _level, Sprite _spr) {
 		m_def = _def;
 		m_level = _level;
 
@@ -56,6 +65,19 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		for (int i = 0; i < m_upgradeIcons.Length; i++) {
 			m_upgradeIcons[i].SetActive(i < _level);
 		}
+
+		if (m_def.GetAsString("rarity") == "common") {
+			m_bgDisguise.color = m_commonColor;
+			m_bgFrame.color = m_commonColor;
+		} else if (m_def.GetAsString("rarity") == "rare") {
+			m_bgDisguise.color = m_rareColor;
+			m_bgFrame.color = m_rareColor;
+		} else if (m_def.GetAsString("rarity") == "epic") {
+			m_bgDisguise.color = m_epicColor;
+			m_bgFrame.color = m_epicColor;
+		}
+
+		m_disguiseIcon.sprite = _spr;
 	}
 
 	public void Use(bool _value) {

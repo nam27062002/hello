@@ -16,10 +16,17 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private GameObject m_useButton;
 	[SerializeField] private GameObject m_unuseButton;
 
+	[SeparatorAttribute]
+	public Transform m_dragonWorldPos;
+	public RectTransform m_dragonUIPos;
+	public float m_depth = 25f;
+
 	private DisguisePill[] m_disguises;
 
 	private DisguisePill m_using; 
 	private DisguisePill m_preview;
+
+	private string m_dragonSku;
 
 
 	// Use this for initialization
@@ -37,23 +44,25 @@ public class DisguisesScreenController : MonoBehaviour {
 
 			m_disguises[i].OnPillClicked.AddListener(OnPillClicked);
 		}
+
+		m_dragonSku = "";
 	}
 
 	void OnEnable() {
 		// get disguises levels of the current dragon
-		string dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
-		List<DefinitionNode> defList = Definitions.GetDefinitionsByVariable(Definitions.Category.DISGUISES, "dragonSku", dragonSku);
+		m_dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		List<DefinitionNode> defList = Definitions.GetDefinitionsByVariable(Definitions.Category.DISGUISES, "dragonSku", m_dragonSku);
 
-		Definitions.SortByProperty(ref defList, "sku", Definitions.SortType.ALPHANUMERIC);
+		Definitions.SortByProperty(ref defList, "shopOrder", Definitions.SortType.NUMERIC);
 
-		for (int i = 0; i < defList.Count; i++) {
-			m_disguises[i].Load(defList[i], Wardrobe.GetDisguiseLevel(defList[i].sku));
-			m_disguises[i].Use(false);
-		}
+		string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
+		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/" + m_dragonSku);
+
 
 		// we don't have any disguise equiped
 		m_using = null;
 		m_preview = null;
+
 
 		// hide all the info
 		m_powerList.SetActive(false);
@@ -64,6 +73,39 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// hide the buttons
 		ShowButtons(false, false, false);
+
+		// load data and persistence
+		for (int i = 0; i < defList.Count; i++) {
+			DefinitionNode def = defList[i];
+
+			Sprite spr = null;
+			for (int s = 0; s < icons.Length; s++) {
+				if (icons[i].name == def.GetAsString("icon")) {
+					spr = icons[i];
+				}
+			}
+
+			m_disguises[i].Load(def, Wardrobe.GetDisguiseLevel(def.sku), spr);
+
+			if (def.sku == currentDisguise) {
+				OnPillClicked(m_disguises[i]);
+				OnUse();
+			} else {
+				m_disguises[i].Use(false);
+			}
+		}
+	}
+
+
+	void Update() {
+
+		Canvas canvas = GetComponentInParent<Canvas>();
+		Vector3 viewportPos = canvas.worldCamera.WorldToViewportPoint(m_dragonUIPos.position);
+
+		Camera camera = InstanceManager.GetSceneController<MenuSceneController>().screensController.camera;
+		viewportPos.z = m_depth;
+		m_dragonWorldPos.position = camera.ViewportToWorldPoint(viewportPos);
+
 	}
 
 	void OnPillClicked(DisguisePill _pill) {
@@ -77,7 +119,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 
 			// update name
-			m_name.text = _pill.def.sku; // we have to change this
+			m_name.text = _pill.def.GetAsString("tidName"); // we have to change this
 
 			// update level
 			for (int i = 0; i < m_upgrades.Length; i++) {
@@ -104,12 +146,18 @@ public class DisguisesScreenController : MonoBehaviour {
 		} 
 		m_preview.Use(true);
 		m_using = m_preview;
+
+		Wardrobe.Equip(m_dragonSku, m_using.def.sku);
+
 		ShowButtons(false, false, true);
 	}
 
 	public void OnUnuse() {
 		m_using.Use(false);
 		m_using = null;
+
+		Wardrobe.Equip(m_dragonSku, "");
+
 		ShowButtons(false, true, false);
 	}
 
