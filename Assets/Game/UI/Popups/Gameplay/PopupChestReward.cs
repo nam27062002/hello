@@ -97,14 +97,14 @@ public class PopupChestReward : MonoBehaviour {
 			case ChestManager.RewardType.COINS: {
 				GameObject rewardObj = this.FindObjectRecursive("RewardCoins");
 				rewardObj.SetActive(true);
-				rewardObj.FindComponentRecursive<Text>("Text").text = Localization.Localize("+{0}", StringUtils.FormatNumber(ChestManager.rewardAmount));	// [AOC] HARDCODED!!
+				rewardObj.FindComponentRecursive<Text>("Text").text = Localization.Localize("+%U0", StringUtils.FormatNumber(ChestManager.rewardAmount));	// [AOC] HARDCODED!!
 				rewardObj.GetComponent<DOTweenAnimation>().DOPlay();
 			} break;
 
 			case ChestManager.RewardType.PC: {
 				GameObject rewardObj = this.FindObjectRecursive("RewardPC");
 				rewardObj.SetActive(true);
-				rewardObj.FindComponentRecursive<Text>("Text").text = Localization.Localize("+{0}", StringUtils.FormatNumber(ChestManager.rewardAmount));	// [AOC] HARDCODED!!
+				rewardObj.FindComponentRecursive<Text>("Text").text = Localization.Localize("+%U0", StringUtils.FormatNumber(ChestManager.rewardAmount));	// [AOC] HARDCODED!!
 				rewardObj.GetComponent<DOTweenAnimation>().DOPlay();
 			} break;
 

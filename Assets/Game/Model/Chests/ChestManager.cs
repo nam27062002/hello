@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// Has its own asset in the Resources/Singletons folder with all the required parameters.
 /// </summary>
 [CreateAssetMenu]
-public class ChestManager : SingletonScriptableObject<ChestManager> {
+public class ChestManager : Singleton<ChestManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -36,23 +36,8 @@ public class ChestManager : SingletonScriptableObject<ChestManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// To be defined from the inspector
-	[SerializeField] private ProbabilitySet m_rewardDropRate = new ProbabilitySet(
-		new ProbabilitySet.Element[] {
-			new ProbabilitySet.Element("Coins"),
-			new ProbabilitySet.Element("PC"),
-			new ProbabilitySet.Element("Booster"),
-			new ProbabilitySet.Element("Egg")
-		}
-	);
-
-	[Space(10)]
-	[SerializeField] private float m_rewardCoinsFactorA = 140f;
-	[SerializeField] private float m_rewardCoinsFactorB = 1f;
-
-	[Space(10)]
-	[SerializeField] private float m_rewardPCFactorA = 50f;
-	[SerializeField] private float m_rewardPCFactorB = 100f;
+	// Store drop rate probabilities
+	private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
 
 	// Internal vars
 	private Chest m_selectedChest = null;
@@ -74,8 +59,16 @@ public class ChestManager : SingletonScriptableObject<ChestManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	protected void OnEnable() {
-		
+	public ChestManager() {
+		// Initialize probability set from definitions
+		m_rewardDropRate = new ProbabilitySet();
+		List<DefinitionNode> rewardDefs = Definitions.GetDefinitions(Definitions.Category.CHEST_REWARDS);
+		Definitions.SortByProperty(ref rewardDefs, "index", Definitions.SortType.NUMERIC);	// Make sure it matches the enum
+		for(int i = 0; i < rewardDefs.Count; i++) {
+			m_rewardDropRate.AddElement(rewardDefs[i].sku);
+			m_rewardDropRate.SetProbability(i, rewardDefs[i].Get<float>("dropRate"), false);
+		}
+		m_rewardDropRate.Validate();
 	}
 
 	//------------------------------------------------------------------//
@@ -128,24 +121,45 @@ public class ChestManager : SingletonScriptableObject<ChestManager> {
 		// First of all, select reward type
 		instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
 
+		// If reward is an egg and incubator is full, we need another reward type
+		while(instance.m_rewardType == RewardType.EGG && EggManager.isInventoryFull) {
+			instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
+		}
+
 		// Now compute amount/sku based on reward type
 		switch(instance.m_rewardType) {
 			case RewardType.COINS: {
 				// [AOC] Formula defined in the chestsRewards table
+				// A(LN(MaxDragon) +1)/B
+				DefinitionNode rewardDef = Definitions.GetDefinition(Definitions.Category.CHEST_REWARDS, "coins");
+				float A = rewardDef.Get<float>("factorA");
+				float B = rewardDef.Get<float>("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
-				ownedDragons = 1;
-				float reward = (Mathf.Log(ownedDragons) * instance.m_rewardCoinsFactorA + instance.m_rewardCoinsFactorA * ownedDragons)/instance.m_rewardCoinsFactorB;
+				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
+				float minReward = A * (Mathf.Log(1) + 1) / B;
+				float reward = Random.Range(minReward, maxReward);
+				Debug.Log("REWARD: " + reward + " [" + minReward + ", " + maxReward + "]");
 				instance.m_rewardAmount = (int)MathUtils.Snap(reward, 100f);
+				Debug.Log("\t snapped: " + instance.m_rewardAmount);
 				instance.m_rewardAmount = Mathf.Max(1, instance.m_rewardAmount);	// At least 1 coin
+				Debug.Log("\t min: " + instance.m_rewardAmount);
 			} break;
 
 			case RewardType.PC: {
 				// [AOC] Formula defined in the chestsRewards table
+				// A(LN(MaxDragon) +1)/B
+				DefinitionNode rewardDef = Definitions.GetDefinition(Definitions.Category.CHEST_REWARDS, "pc");
+				float A = rewardDef.Get<float>("factorA");
+				float B = rewardDef.Get<float>("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
-				ownedDragons = 1;
-				float reward = (Mathf.Log(ownedDragons) * instance.m_rewardPCFactorA + instance.m_rewardPCFactorA * ownedDragons)/instance.m_rewardPCFactorB;
+				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
+				float minReward = A * (Mathf.Log(1) + 1) / B;
+				float reward = Random.Range(minReward, maxReward);
+				Debug.Log("REWARD: " + reward + " [" + minReward + ", " + maxReward + "]");
 				instance.m_rewardAmount = (int)MathUtils.Snap(reward, 1f);
+				Debug.Log("\t snapped: " + instance.m_rewardAmount);
 				instance.m_rewardAmount = Mathf.Max(1, instance.m_rewardAmount);	// At least 1 pc
+				Debug.Log("\t min: " + instance.m_rewardAmount);
 			} break;
 
 			case RewardType.BOOSTER: {
@@ -155,7 +169,7 @@ public class ChestManager : SingletonScriptableObject<ChestManager> {
 
 			case RewardType.EGG: {
 				instance.m_rewardAmount = 1;
-				instance.m_rewardSku = Egg.GetRandomDef(false).sku;	// [AOC] TODO!! Use true, false only for demo purposes.
+				instance.m_rewardSku = Egg.GetRandomDef(true).sku;
 			} break;
 		}
 	}

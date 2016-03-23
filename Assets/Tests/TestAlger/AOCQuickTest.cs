@@ -33,26 +33,16 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	public ProbabilitySet m_probSet = new ProbabilitySet(
-		new ProbabilitySet.Element[] {
-			new ProbabilitySet.Element("el 1"),
-			new ProbabilitySet.Element("el 2"),
-			new ProbabilitySet.Element("el 3"),
-			new ProbabilitySet.Element("el 4")
-		}
-	);
-
-	public float m_testNumber = 0f;
-	public Range m_range = new Range();
-
-	[List("opt0", "opt1", "opt2", "opt3", "opt4")]
-	public string m_testString = "";
-
-	[List(1, 2, 3, 4, 5)]
-	public int m_testInt = 0;
-
-	[SkuListNew(Definitions.Category.DRAGONS)]
-	public string m_skuString = "";
+	[Space]
+	public Definitions.Category m_category = Definitions.Category.UNKNOWN;
+	public string m_sku = "";
+	public string m_propertyId = "sku";
+	[Space]
+	public string m_stringValue = "";
+	public float m_floatValue = 0f;
+	public int m_intValue = 0;
+	public double m_doubleValue = 0;
+	public long m_longValue = 0;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -82,7 +72,33 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		
+		if(m_category == Definitions.Category.UNKNOWN) {
+			Debug.LogError("Please select a valid category!");
+			return;
+		}
+
+		DefinitionNode def = Definitions.GetDefinition(m_category, m_sku);
+		if(def == null) {
+			string str = "Def not found, candidate skus are: ";
+			List<string> skus = Definitions.GetSkuList(m_category);
+			for(int i = 0; i < skus.Count; i++) str += "\n" + skus[i];
+			Debug.LogError(str);
+			return;
+		}
+
+		if(!def.Has(m_propertyId)) {
+			string str = "Property not found, candidate are: ";
+			List<string> properties = def.GetPropertyList();
+			for(int i = 0; i < properties.Count; i++) str += "\n" + properties[i];
+			Debug.LogError(str);
+			return;
+		}
+
+		m_stringValue = def.Get<string>(m_propertyId);
+		m_floatValue = def.Get<float>(m_propertyId);
+		m_intValue = def.Get<int>(m_propertyId);
+		m_doubleValue = def.Get<double>(m_propertyId);
+		m_longValue = def.Get<long>(m_propertyId);
 	}
 
 	/// <summary>

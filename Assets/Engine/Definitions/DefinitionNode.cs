@@ -13,6 +13,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Text;
+using System.Linq;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -26,6 +28,8 @@ public class DefinitionNode {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	private Dictionary<string, string> m_properties;
+	private Dictionary<string, DefinitionNode> m_childNodesBySku;
+	private Dictionary<string, List<DefinitionNode>> m_childNodesByTag;
 
 	/// <summary>
 	/// It stores the original value for some properties that have been rewritten by calling <c>ChangeValue()</c>, passing <c>true</c> to the
@@ -39,6 +43,12 @@ public class DefinitionNode {
 		get { return m_sku; } 
 	}
 
+	// Original tag of the xml node
+	private string m_tag = "";
+	public string tag {
+		get { return m_tag; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -47,6 +57,8 @@ public class DefinitionNode {
 	/// </summary>
 	public DefinitionNode() {
 		m_properties = new Dictionary<string, string>();
+		m_childNodesBySku = new Dictionary<string, DefinitionNode>();
+		m_childNodesByTag = new Dictionary<string, List<DefinitionNode>>();
 	}
 
 	/// <summary>
@@ -54,6 +66,10 @@ public class DefinitionNode {
 	/// </summary>
 	/// <param name="xml">Source xml node.</param>
 	public void LoadFromXml(XmlNode xml) {
+		// Store tag
+		m_tag = xml.LocalName;
+
+		// Store properties
 		XmlAttributeCollection list = xml.Attributes;
 		foreach(XmlAttribute attr in list) {
 			// Store sku apart
@@ -61,12 +77,38 @@ public class DefinitionNode {
 
 			m_properties.Add(attr.Name, attr.Value);
 		}
-		
+
+		// Parse nested nodes
+		foreach(XmlNode childNode in xml.ChildNodes) {
+			DefinitionNode childDef = new DefinitionNode();
+			childDef.LoadFromXml(childNode);
+
+			// Add to the sku dictionary
+			if(!m_childNodesBySku.ContainsKey(childDef.sku)) {
+				m_childNodesBySku.Add(childDef.sku, childDef);
+			} else {
+				Debug.LogError("This DefinitionNode (" + sku + ") already contains a child node with sku " + childDef.sku);
+			}
+
+			// Add to the by tag dictionary
+			if(!m_childNodesByTag.ContainsKey(childDef.tag)) {
+				m_childNodesByTag.Add(childDef.tag, new List<DefinitionNode>());
+			}
+			m_childNodesByTag[childDef.tag].Add(childDef);
+		}
 	}
 
 	//------------------------------------------------------------------------//
 	// BASIC GETTERS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get a list with the IDs of all the properties in this definition.
+	/// </summary>
+	/// <returns>The list of properties in this definition.</returns>
+	public List<string> GetPropertyList() {
+		return m_properties.Keys.ToList();
+	}
+
 	/// <summary>
 	/// Check whether this definition contains a property with a specific id.
 	/// </summary>
@@ -87,6 +129,7 @@ public class DefinitionNode {
 
 	/// <summary>
 	/// Generic getter implementation.
+	/// Can be used to get child nodes as well.
 	/// </summary>
 	/// <param name="_property">The id of the property to be obtained.</param>
 	/// <param name="_defaultValue">The value to be returned if the property wasn't found in this definition.</param>
@@ -95,6 +138,11 @@ public class DefinitionNode {
 		// Use the internal ParseValue() method
 		if(m_properties.ContainsKey(_property)) {
 			return ParseValue<T>(m_properties[_property], _defaultValue);
+		}
+
+		// Special case for child nodes
+		else if(typeof(T) == typeof(DefinitionNode)) {
+			return (T)(object)GetChildNode(_property);
 		}
 		return _defaultValue;
 	}
@@ -246,6 +294,42 @@ public class DefinitionNode {
 	}
 
 	//------------------------------------------------------------------------//
+	// CHILD NODES MANAGEMENT												  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get a definition node nested to this one.
+	/// </summary>
+	/// <returns>The child node with the given sku, <c>null</c> if not found.</returns>
+	/// <param name="_sku">The identifier of the child node to be returned.</param>
+	public DefinitionNode GetChildNode(string _sku) {
+		if(m_childNodesBySku.ContainsKey(_sku)) {
+			return m_childNodesBySku[_sku];
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Get a list with all the definition nodes nested to this one.
+	/// </summary>
+	/// <returns>All the child nodes of this definition node.</returns>
+	public List<DefinitionNode> GetChildNodes() {
+		return m_childNodesBySku.Values.ToList();
+	}
+
+	/// <summary>
+	/// Get a list with all the definition nodes nested to this one matching a specific tag.
+	/// </summary>
+	/// <returns>All the child nodes of this definition node.</returns>
+	/// <param name="_tag">The xml tag of the child nodes.</param>
+	public List<DefinitionNode> GetChildNodesByTag(string _tag) {
+		if(m_childNodesByTag.ContainsKey(_tag)) {
+			return m_childNodesByTag[_tag];
+		} else {
+			return new List<DefinitionNode>();
+		}
+	}
+
+	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -259,6 +343,7 @@ public class DefinitionNode {
 		// [AOC] Unfortunately we can't switch a type directly, but we can compare type via an if...else collection
 		// [AOC] There might be a better way to do this, no time to research
 		// [AOC] Double cast trick to prevent compilation errors: http://stackoverflow.com/questions/4092393/value-of-type-t-cannot-be-converted-to
+		// [AOC] Important to use invariant culture when using C# native parsing methods! Othwerwise it will depend on current localization language and won't be properly read.
 		Type t = typeof(T);
 
 		// String
@@ -269,7 +354,7 @@ public class DefinitionNode {
 		// Float
 		else if(t == typeof(float)) {
 			float result = 0f;
-			if(float.TryParse(_rawValue, out result)) {
+			if(float.TryParse(_rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
 				return (T)(object)result;
 			}
 		}
@@ -277,7 +362,7 @@ public class DefinitionNode {
 		// Double
 		else if(t == typeof(double)) {
 			double result = 0;
-			if(double.TryParse(_rawValue, out result)) {
+			if(double.TryParse(_rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
 				return (T)(object)result;
 			}
 		}
@@ -285,7 +370,7 @@ public class DefinitionNode {
 		// Int
 		else if(t == typeof(int)) {
 			int result = 0;
-			if(int.TryParse(_rawValue, out result)) {
+			if(int.TryParse(_rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
 				return (T)(object)result;
 			}
 		}
@@ -293,7 +378,7 @@ public class DefinitionNode {
 		// Long
 		else if(t == typeof(long)) {
 			long result = 0;
-			if(long.TryParse(_rawValue, out result)) {
+			if(long.TryParse(_rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
 				return (T)(object)result;
 			}
 		}
@@ -391,17 +476,45 @@ public class DefinitionNode {
 	/// </summary>
 	/// <returns>A string that represents the current <see cref="DefinitionNode"/>.</returns>
 	public override string ToString() {
+		return ToStringInternal(0);
+	}
+
+	/// <summary>
+	/// Helper method for ToString() allowing us to indent child nodes.
+	/// </summary>
+	/// <returns>A string that represents the current <see cref="DefinitionNode"/>.</returns>
+	/// <param name="_indentationLevel">Indentation level.</param>
+	private string ToStringInternal(int _indentationLevel) {
 		// [AOC] One property per line, sku as header
 		StringBuilder sb = new StringBuilder();
 
-		// Header with sku
-		sb.Append("<").Append(sku).Append(">");
+		// Header with tag
+		sb.Append('\t', _indentationLevel);	// Indentation
+		sb.Append("<").Append(tag).Append(">");
+
+		// Sku first
+		sb.Append('\n');	// New line
+		sb.Append('\t', _indentationLevel + 1);	// Indentation (properties are indented in)
+		sb.Append("sku: ").Append(sku);
 
 		// Rest of the properties
-		foreach(KeyValuePair<string, string> p  in m_properties) {
+		foreach(KeyValuePair<string, string> kvp  in m_properties) {
 			// Skip if sku
-			if(p.Key == "sku") continue;
-			sb.Append("\n\t").Append(p.Key).Append(": ").Append(p.Value);
+			if(kvp.Key == "sku") continue;
+
+			// Compose the string
+			sb.Append('\n');	// New line
+			sb.Append('\t', _indentationLevel + 1);	// Indentation (properties are indented in)
+			sb.Append(kvp.Key).Append(": ").Append(kvp.Value);	// Key + value
+		}
+
+		// Child nodes
+		// Recursive call, indented
+		foreach(KeyValuePair<string, DefinitionNode> kvp in m_childNodesBySku) {
+			sb.Append('\n');	// New line
+			sb.Append(
+				kvp.Value.ToStringInternal(_indentationLevel + 1)
+			);
 		}
 
 		// Done!

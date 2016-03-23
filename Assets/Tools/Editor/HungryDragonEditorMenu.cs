@@ -37,12 +37,9 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 51)]
 	public static void ShowDefintions5() { OpenFile("EntityCategoryDefinitions.asset", DEFINITIONS_FOLDER); }
 
-	//------------------------------------------------ OTHER MANAGERS ------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Chest Manager", false, 150)]
-	public static void ShowManager1() { OpenFile("ChestManager.asset", SINGLETONS_FOLDER); }
-
-	[MenuItem("Hungry Dragon/Content/Rewards Manager", false, 151)]
-	public static void ShowManager3() { OpenFile("PF_RewardManager.prefab", SINGLETONS_FOLDER); }
+	//------------------------------------------------ CONTENT TOOLS -------------------------------------------------//
+	[MenuItem("Hungry Dragon/Content/Rules Reader", false, 100)]
+	public static void ShowRulesReader() { RulesReaderEditorWindow.ShowWindow(); }
 
 	//--------------------------------------------------- SETTINGS ---------------------------------------------------//
 	[MenuItem("Hungry Dragon/Content/Game Settings", false, 200)]

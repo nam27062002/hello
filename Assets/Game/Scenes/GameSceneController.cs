@@ -335,6 +335,10 @@ public class GameSceneController : GameSceneControllerBase {
 				// Notify the game
 				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
 			} break;
+
+			case EStates.FINISHED: {
+				InstanceManager.player.playable = false;
+			} break;
 		}
 		
 		// Store new state

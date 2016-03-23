@@ -49,7 +49,16 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public static bool isInventoryEmpty {
 		get {
 			for(int i = 0; i < INVENTORY_SIZE; i++) {
-				if(inventory[i] != null) return false;
+				if(inventory[i] != null) return false;	// Filled slot, inventory not empty
+			}
+			return true;
+		}
+	}
+
+	public static bool isInventoryFull {
+		get {
+			for(int i = 0; i < INVENTORY_SIZE; i++) {
+				if(inventory[i] == null) return false;	// Empty slot, inventory not full
 			}
 			return true;
 		}

@@ -43,9 +43,13 @@ public class Definitions : Singleton<Definitions> {
 		DRAGON_TIERS,
 		DRAGON_SKILLS,	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
 
-		// Egg manager
+		// Game
+		SCORE_MULTIPLIERS,
+
+		// Metagame
 		EGGS,
-		EGG_REWARDS
+		EGG_REWARDS,
+		CHEST_REWARDS
 	};
 
 	public enum SortType {
@@ -103,9 +107,13 @@ public class Definitions : Singleton<Definitions> {
 		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillDefinitions");
 		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillProgressionDefinitions");
 
-		// Gacha
+		// Game
+		LoadDefinitionsFile(Category.SCORE_MULTIPLIERS, "Rules/scoreMultiplierDefinitions");
+
+		// Metagame
 		LoadDefinitionsFile(Category.EGGS, "Rules/eggDefinitions");
 		LoadDefinitionsFile(Category.EGG_REWARDS, "Rules/eggRewardDefinitions");
+		LoadDefinitionsFile(Category.CHEST_REWARDS, "Rules/chestRewardDefinitions");
 
 		// ADD HERE ANY NEW DEFINITIONS FILE!
 
