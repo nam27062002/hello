@@ -79,9 +79,21 @@ public class DefinitionNode {
 		}
 
 		// Parse nested nodes
+		int autoSkuGenerationIdx = 0;
+		StringBuilder sb = new StringBuilder();
 		foreach(XmlNode childNode in xml.ChildNodes) {
+			// Create and parse child node
 			DefinitionNode childDef = new DefinitionNode();
 			childDef.LoadFromXml(childNode);
+
+			// If the node didn't have a sku (quite normal in nested nodes), generate one automatically
+			if(string.IsNullOrEmpty(childDef.sku)) {
+				// [AOC] StringBuilder.Clear() is only available for .NET 4 and above -_-
+				//		 This does the trick for previous versions such as Unity's Mono
+				sb.Length = 0;
+				childDef.m_sku = sb.Append("auto_sku_").Append(autoSkuGenerationIdx).ToString();
+				autoSkuGenerationIdx++;
+			}
 
 			// Add to the sku dictionary
 			if(!m_childNodesBySku.ContainsKey(childDef.sku)) {

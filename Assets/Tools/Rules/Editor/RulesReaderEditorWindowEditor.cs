@@ -48,6 +48,9 @@ public class RulesReaderEditorWindow : EditorWindow {
 	private bool m_boolValue = false;
 
 	private Vector2 m_scrollPos = Vector2.zero;
+	private Vector2 m_defPreviewScrollPos = Vector2.zero;
+	private bool m_defPreviewExpanded = true;
+	private bool m_propertyPreviewExpanded = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -58,7 +61,7 @@ public class RulesReaderEditorWindow : EditorWindow {
 	public static void ShowWindow() {
 		// Setup window
 		instance.titleContent = new GUIContent("Rules Reader");
-		instance.minSize = new Vector2(400, 200);	// Arbitrary
+		instance.minSize = new Vector2(300, 100);	// Arbitrary
 		instance.maxSize = new Vector2(float.PositiveInfinity, float.PositiveInfinity);		// Fixed width, limitless
 
 		// Show it
@@ -95,47 +98,78 @@ public class RulesReaderEditorWindow : EditorWindow {
 					m_sku = skus[skuIdx];
 				}
 			}
+
+			// Get target definition
 			DefinitionNode def = Definitions.GetDefinition(m_category, m_sku);
 
-			// Property selector
+			// Def preview
 			if(allValid) {
-				List<string> properties = def.GetPropertyList();
-				int propertyIdx = Mathf.Max(properties.IndexOf(m_propertyId), 0);	// If not found, first option
-				propertyIdx = EditorGUILayout.Popup("property", propertyIdx, properties.ToArray());
+				m_defPreviewExpanded = EditorGUILayout.Foldout(m_defPreviewExpanded, "Def Preview");
+				if(m_defPreviewExpanded) {
+					// Indent in
+					EditorGUI.indentLevel++;
 
-				// Validation
-				if(propertyIdx < 0 || propertyIdx >= properties.Count) {
-					EditorGUILayout.HelpBox("Please select a valid property!", MessageType.Error);
-					allValid = false;
-				} else {
-					m_propertyId = properties[propertyIdx];
+					// Draw definition as a string
+					GUIContent defContent = new GUIContent(def.ToString());
+					Vector2 defSize = EditorStyles.label.CalcSize(defContent);
+					m_defPreviewScrollPos = EditorGUILayout.BeginScrollView(m_defPreviewScrollPos, EditorStyles.helpBox, GUILayout.Height(Mathf.Min(defSize.y + 20f, 150f)), GUILayout.ExpandWidth(true)); {
+						GUILayout.Label(defContent);
+					} EditorGUILayoutExt.EndScrollViewSafe();
+
+					// Indent out
+					EditorGUI.indentLevel--;
 				}
 			}
 
-			// Draw the property in all its representations
+			// Property preview
 			if(allValid) {
-				EditorGUILayout.Space();
-				GUI.enabled = false;
-				EditorGUILayout.BeginVertical(EditorStyles.helpBox); {
-					m_stringValue = def.Get<string>(m_propertyId);
-					EditorGUILayout.LabelField("as string", m_stringValue);
+				m_propertyPreviewExpanded = EditorGUILayout.Foldout(m_propertyPreviewExpanded, "Property Preview");
+				if(m_propertyPreviewExpanded) {
+					// Indent in
+					EditorGUI.indentLevel++;
 
-					m_floatValue = def.Get<float>(m_propertyId);
-					EditorGUILayout.FloatField("as float", m_floatValue);
+					// Property selector
+					List<string> properties = def.GetPropertyList();
+					int propertyIdx = Mathf.Max(properties.IndexOf(m_propertyId), 0);	// If not found, first option
+					propertyIdx = EditorGUILayout.Popup("property", propertyIdx, properties.ToArray());
 
-					m_intValue = def.Get<int>(m_propertyId);
-					EditorGUILayout.IntField("as int", m_intValue);
+					// Validation
+					if(propertyIdx < 0 || propertyIdx >= properties.Count) {
+						EditorGUILayout.HelpBox("Please select a valid property!", MessageType.Error);
+						allValid = false;
+					} else {
+						m_propertyId = properties[propertyIdx];
+					}
 
-					m_doubleValue = def.Get<double>(m_propertyId);
-					EditorGUILayout.DoubleField("as double", m_doubleValue);
+					// Draw the property in all its representations
+					if(allValid) {
+						EditorGUILayout.Space();
+						GUI.enabled = false;
+						EditorGUILayout.BeginVertical(EditorStyles.helpBox); {
+							m_stringValue = def.Get<string>(m_propertyId);
+							EditorGUILayout.LabelField("as string", m_stringValue);
 
-					m_longValue = def.Get<long>(m_propertyId);
-					EditorGUILayout.LongField("as long", m_longValue);
+							m_floatValue = def.Get<float>(m_propertyId);
+							EditorGUILayout.FloatField("as float", m_floatValue);
 
-					m_boolValue = def.Get<bool>(m_propertyId);
-					EditorGUILayout.Toggle("as bool", m_boolValue);
-				} EditorGUILayoutExt.EndVerticalSafe();
-				GUI.enabled = true;
+							m_intValue = def.Get<int>(m_propertyId);
+							EditorGUILayout.IntField("as int", m_intValue);
+
+							m_doubleValue = def.Get<double>(m_propertyId);
+							EditorGUILayout.DoubleField("as double", m_doubleValue);
+
+							m_longValue = def.Get<long>(m_propertyId);
+							EditorGUILayout.LongField("as long", m_longValue);
+
+							m_boolValue = def.Get<bool>(m_propertyId);
+							EditorGUILayout.Toggle("as bool", m_boolValue);
+						} EditorGUILayoutExt.EndVerticalSafe();
+						GUI.enabled = true;
+					}
+
+					// Indent out
+					EditorGUI.indentLevel--;
+				}
 			}
 		} EditorGUILayoutExt.EndScrollViewSafe();
 	}
