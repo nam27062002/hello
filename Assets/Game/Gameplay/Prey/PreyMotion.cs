@@ -42,8 +42,8 @@ public class PreyMotion : Initializable, MotionInterface {
 	[SerializeField] private bool m_checkCollisions = true;
 
 [Header("Speed variations")]
-	[SerializeField] private float m_maxSpeed;
-	[SerializeField] private float m_maxRunSpeed;
+	[SerializeField] protected float m_maxSpeed;
+	[SerializeField] protected float m_maxRunSpeed;
 	[SerializeField] private float m_slowingRadius;
 
 
