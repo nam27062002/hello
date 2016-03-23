@@ -87,16 +87,16 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _CausticTex
+          name: _DetailTex
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: 682d74382eb76d04d91fb9054286fa0e, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailTex
+          name: _CausticTex
         second:
-          m_Texture: {fileID: 2800000, guid: 682d74382eb76d04d91fb9054286fa0e, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -154,6 +154,14 @@ Material:
         second: 0
       data:
         first:
+          name: _InnerLightAdd
+        second: 7.88
+      data:
+        first:
+          name: _SpecExponent
+        second: 4
+      data:
+        first:
           name: _Rimsize
         second: 1
       data:
@@ -178,16 +186,16 @@ Material:
         second: 0
       data:
         first:
-          name: _InnerLightAdd
-        second: 0.24
-      data:
-        first:
           name: _Outline
         second: 0.005
       data:
         first:
-          name: _SpecExponent
-        second: 4
+          name: _NoiseColor
+        second: 0
+      data:
+        first:
+          name: _NoiseValue
+        second: 0
     m_Colors:
       data:
         first:
@@ -203,6 +211,18 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
+          name: _ColorMultiply
+        second: {r: 0.9264706, g: 0.9196583, b: 0.92402756, a: 1}
+      data:
+        first:
+          name: _ColorAdd
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _InnerLightColor
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
           name: _RimColour
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
@@ -215,17 +235,9 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _ColorMultiply
-        second: {r: 0.9264706, g: 0.9196583, b: 0.92402756, a: 1}
-      data:
-        first:
-          name: _ColorAdd
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
           name: _OutlineColor
         second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
-          name: _InnerLightColor
-        second: {r: 1, g: 1, b: 1, a: 1}
+          name: _NoiseColor
+        second: {r: 0, g: 0.37931037, b: 1, a: 1}
