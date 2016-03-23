@@ -72,24 +72,29 @@ public class DisguisesScreenController : MonoBehaviour {
 		ShowButtons(false, false);
 
 		// load data and persistence
-		for (int i = 0; i < defList.Count; i++) {
-			DefinitionNode def = defList[i];
+		for (int i = 0; i < m_disguises.Length; i++) {
+			if (i < defList.Count) {
+				DefinitionNode def = defList[i];
 
-			Sprite spr = null;
-			for (int s = 0; s < icons.Length; s++) {
-				if (icons[i].name == def.GetAsString("icon")) {
-					spr = icons[i];
+				Sprite spr = null;
+				for (int s = 0; s < icons.Length; s++) {
+					if (icons[i].name == def.GetAsString("icon")) {
+						spr = icons[i];
+					}
 				}
-			}
 
-			m_disguises[i].Load(def, Wardrobe.GetDisguiseLevel(def.sku), spr);
+				m_disguises[i].Load(def, Wardrobe.GetDisguiseLevel(def.sku), spr);
 
-			if (def.sku == currentDisguise) {
-				OnPillClicked(m_disguises[i]);
-				OnUse();
+				if (def.sku == currentDisguise) {
+					OnPillClicked(m_disguises[i]);
+					OnUse();
+				} else {
+					m_disguises[i].Use(false);
+					m_disguises[i].Select(false);
+				}
+				m_disguises[i].gameObject.SetActive(true);
 			} else {
-				m_disguises[i].Use(false);
-				m_disguises[i].Select(false);
+				m_disguises[i].gameObject.SetActive(false);
 			}
 		}
 	}
@@ -167,7 +172,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	public void OnBuy() {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
-		//popup.GetComponent<PopupEggShop>().initialEgg = “”;
+		popup.GetComponent<PopupEggShop>().initialEgg = m_dragonSku;
 	}
 
 	private void ShowButtons(bool _buy, bool _use) {

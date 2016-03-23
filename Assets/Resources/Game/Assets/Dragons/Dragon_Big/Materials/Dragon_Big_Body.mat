@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_ao
-  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
+  m_Name: Dragon_Big_Body
+  m_Shader: {fileID: 4800000, guid: 2f8c595491dd543a8868ae13d5e98890, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -19,7 +19,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 07f6ce3d999d940109915bda557ee490, type: 3}
+          m_Texture: {fileID: 2800000, guid: 6feddd6092d9b4f6baccfc4edca124b3, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -78,27 +78,6 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ToonShade
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _CausticTex
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 682d74382eb76d04d91fb9054286fa0e, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -152,42 +131,6 @@ Material:
         first:
           name: _EmissionScaleUI
         second: 0
-      data:
-        first:
-          name: _Rimsize
-        second: 1
-      data:
-        first:
-          name: _RimIntensity
-        second: 0.448
-      data:
-        first:
-          name: _CausticSpeed
-        second: 0
-      data:
-        first:
-          name: _CausticScaleX
-        second: 0
-      data:
-        first:
-          name: _CausticScaleY
-        second: 0
-      data:
-        first:
-          name: _TintIntensity
-        second: 0
-      data:
-        first:
-          name: _InnerLightAdd
-        second: 0.24
-      data:
-        first:
-          name: _Outline
-        second: 0.005
-      data:
-        first:
-          name: _SpecExponent
-        second: 4
     m_Colors:
       data:
         first:
@@ -196,36 +139,16 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 0}
-      data:
-        first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _RimColour
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _CausticColour
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _Tint
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: 0.54697675, g: 0.54697675, b: 0.54697675, a: 1}
       data:
         first:
           name: _ColorMultiply
-        second: {r: 0.9264706, g: 0.9196583, b: 0.92402756, a: 1}
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _ColorAdd
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
-          name: _OutlineColor
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _InnerLightColor
+          name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
