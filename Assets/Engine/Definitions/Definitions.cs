@@ -43,6 +43,9 @@ public class Definitions : Singleton<Definitions> {
 		DRAGON_TIERS,
 		DRAGON_SKILLS,	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
 
+		// Game
+		SCORE_MULTIPLIERS,
+
 		// Metagame
 		EGGS,
 		EGG_REWARDS,
@@ -103,6 +106,9 @@ public class Definitions : Singleton<Definitions> {
 		LoadDefinitionsFile(Category.DRAGON_TIERS, "Rules/dragonTierDefinitions");
 		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillDefinitions");
 		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillProgressionDefinitions");
+
+		// Game
+		LoadDefinitionsFile(Category.SCORE_MULTIPLIERS, "Rules/scoreMultiplierDefinitions");
 
 		// Metagame
 		LoadDefinitionsFile(Category.EGGS, "Rules/eggDefinitions");

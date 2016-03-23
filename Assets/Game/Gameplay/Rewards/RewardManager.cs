@@ -44,23 +44,23 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private long m_score = 0;
+	[SerializeField] private long m_score = 0;
 	public static long score { 
 		get { return instance.m_score; }
 	}
 
-	private long m_coins = 0;
+	[SerializeField] private long m_coins = 0;
 	public static long coins {
 		get { return instance.m_coins; }
 	}
 
-	private long m_pc = 0;
+	[SerializeField] private long m_pc = 0;
 	public static long pc {
 		get { return instance.m_pc; }
 	}
 
 	// Score multiplier
-	private int m_currentScoreMultiplier = 0;
+	[SerializeField] private int m_currentScoreMultiplier = 0;
 	public static ScoreMultiplier currentScoreMultiplier {
 		get { return instance.m_scoreMultipliers[instance.m_currentScoreMultiplier]; }
 	}
@@ -69,7 +69,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	}
 
 	// Time to end the current killing streak
-	private float m_scoreMultiplierTimer = -1;
+	[SerializeField] private float m_scoreMultiplierTimer = -1;
 	public static float scoreMultiplierTimer {
 		get { return instance.m_scoreMultiplierTimer; }
 	}
@@ -77,6 +77,13 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	public void Awake() {
+		InitFromDef();
+	}
+
 	/// <summary>
 	/// The manager has been enabled.
 	/// </summary>
@@ -112,6 +119,35 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 			if(m_scoreMultiplierTimer <= 0) {
 				SetScoreMultiplier(0);
 			}
+		}
+	}
+
+	/// <summary>
+	/// Read setup from definitions.
+	/// Not-static since instance can't be accessed during the Awake call.
+	/// </summary>
+	public void InitFromDef() {
+		// Init score multipliers
+		List<DefinitionNode> defs = Definitions.GetDefinitions(Definitions.Category.SCORE_MULTIPLIERS);
+		Definitions.SortByProperty(ref defs, "order", Definitions.SortType.NUMERIC);
+		m_scoreMultipliers = new ScoreMultiplier[defs.Count];
+		ScoreMultiplier newMult;
+		List<DefinitionNode> feedbackDefs;
+		for(int i = 0; i < defs.Count; i++) {
+			// Create a new score multiplier
+			newMult = new ScoreMultiplier();
+			newMult.multiplier = defs[i].Get<float>("multiplier");
+			newMult.requiredKillStreak = defs[i].Get<int>("requiredKillStreak");
+			newMult.duration = defs[i].Get<float>("duration");
+
+			// Feedback messages
+			feedbackDefs = defs[i].GetChildNodesByTag("FeedbackMessage");
+			for(int j = 0; j < feedbackDefs.Count; j++) {
+				newMult.feedbackMessages.Add(feedbackDefs[j].Get<string>("tidMessage"));
+			}
+
+			// Store new multiplier
+			m_scoreMultipliers[i] = newMult;
 		}
 	}
 
