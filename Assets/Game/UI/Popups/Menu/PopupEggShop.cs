@@ -36,6 +36,8 @@ public class PopupEggShop : MonoBehaviour {
 	[SerializeField] private Text m_rewardsText = null;
 	[SerializeField] private Text m_priceText = null;
 
+	public string initialEgg = "";
+
 	// Internal
 	private List<PopupEggShopPill> m_pills = new List<PopupEggShopPill>();
 	private int m_selectedPill = -1;
@@ -54,6 +56,8 @@ public class PopupEggShop : MonoBehaviour {
 
 		Debug.Assert(m_rewardsText != null, "Required field!");
 		Debug.Assert(m_priceText != null, "Required field!");
+
+		initialEgg = "";
 
 		// Subscribe to events
 		GetComponent<PopupController>().OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
@@ -124,6 +128,15 @@ public class PopupEggShop : MonoBehaviour {
 		if(m_showIntroScroll) {
 			m_scrollList.SelectPoint(m_pills.First().snapPoint, true);
 			m_showIntroScroll = false;
+		}
+
+		if (initialEgg != "") {
+			for(int i = 0; i < m_pills.Count; i++) {
+				if (m_pills[i].eggDef.GetAsString("dragonSku") == initialEgg) {
+					m_scrollList.SelectPoint(m_pills[i].snapPoint);
+					break;
+				}
+			}
 		}
 	}
 

@@ -49,7 +49,11 @@ public class Definitions : Singleton<Definitions> {
 		// Metagame
 		EGGS,
 		EGG_REWARDS,
-		CHEST_REWARDS
+		CHEST_REWARDS,
+
+		// Disguises
+		DISGUISES,
+		DISGUISES_EQUIP
 	};
 
 	public enum SortType {
@@ -114,6 +118,10 @@ public class Definitions : Singleton<Definitions> {
 		LoadDefinitionsFile(Category.EGGS, "Rules/eggDefinitions");
 		LoadDefinitionsFile(Category.EGG_REWARDS, "Rules/eggRewardDefinitions");
 		LoadDefinitionsFile(Category.CHEST_REWARDS, "Rules/chestRewardDefinitions");
+
+		// Disguises
+		LoadDefinitionsFile(Category.DISGUISES, "Rules/disguisesDefinitions");
+		LoadDefinitionsFile(Category.DISGUISES_EQUIP, "Rules/disguiseEquipDefinitions");
 
 		// ADD HERE ANY NEW DEFINITIONS FILE!
 
@@ -350,6 +358,19 @@ public class Definitions : Singleton<Definitions> {
 		} else {
 			return new List<string>();
 		}
+	}
+
+	/// <summary>
+	/// Return the number of defintions in one category
+	/// </summary>
+	/// <returns>The number of definitions.</returns>
+	/// <param name="_category">The category to be searched.</param>
+	public static int GetCategoryCount(Category _category) {
+		if (instance.m_skusByCategory.ContainsKey(_category)) {
+			return instance.m_skusByCategory[_category].Count;
+		}
+
+		return 0;
 	}
 
 	/// <summary>
