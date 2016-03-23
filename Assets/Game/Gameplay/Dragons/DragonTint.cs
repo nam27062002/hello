@@ -23,6 +23,9 @@ public class DragonTint : MonoBehaviour
 	// Fury Timer
 	float m_furyTimer = 0;
 
+	// Shield
+	float m_shieldValue = 0;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -89,6 +92,17 @@ public class DragonTint : MonoBehaviour
 			m_furyTimer = 0;
 		}
 		m_dragonRenderer.material.SetFloat("_InnerLightAdd", innerValue );
+
+		// Shield
+		if (m_player.mineShield)
+		{
+			m_shieldValue = Mathf.Lerp( m_shieldValue, 1, Time.deltaTime);
+		}
+		else
+		{
+			m_shieldValue = Mathf.Lerp( m_shieldValue, 0, Time.deltaTime);
+		}
+		m_dragonRenderer.material.SetFloat("_NoiseValue", m_shieldValue );
 
 	}
 
