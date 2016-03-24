@@ -66,7 +66,7 @@ namespace LevelEditor {
 		[HideEnumValues(false, true)] public Mode selectedMode = Mode.SPAWNERS;	// Selected mode
 
 		[Separator("Level Settings", 20)]
-		[SkuList(Definitions.Category.DRAGONS)]
+		[SkuList(DefinitionsCategory.DRAGONS)]
 		public string testDragon = "";	// Dragon with which to test the level
 
 		[Separator("Ground Settings", 20)]

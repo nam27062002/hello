@@ -39,7 +39,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// Cache content data
 		m_energyDrain = m_dragon.data.def.GetAsFloat("energyDrain");
 		m_energyRefill = m_dragon.data.def.GetAsFloat("energyRefillRate");
-		m_energyRequiredToBoost = Definitions.GetDefinition(Definitions.Category.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
+		m_energyRequiredToBoost = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
 
 		for( int i = 0; i<m_trails.Count; i++ )

@@ -43,7 +43,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		// Create a dragon data object for every known dragon definition
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
-		List<DefinitionNode> defs = Definitions.GetDefinitions(Definitions.Category.DRAGONS);
+		List<DefinitionNode> defs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGONS);
 		for(int i = 0; i < defs.Count; i++) {
 			newDragonData = new DragonData();
 			newDragonData.Init(defs[i]);
@@ -170,7 +170,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 			// If not initialized, initialize with default values
 			if(_data[i] == null) {
 				_data[i] = new DragonData.SaveData();
-				_data[i].sku = Definitions.GetSkuList(Definitions.Category.DRAGONS)[i];	// This is risky, order of the SaveData does not necessary match order of the definitions - shouldn't happen though
+				_data[i].sku = DefinitionsManager.GetSkuList(DefinitionsCategory.DRAGONS)[i];	// This is risky, order of the SaveData does not necessary match order of the definitions - shouldn't happen though
 			}
 			GetDragonData(_data[i].sku).Load(_data[i]);
 		}

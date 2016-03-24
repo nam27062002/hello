@@ -50,9 +50,9 @@ public class DisguisesScreenController : MonoBehaviour {
 	void OnEnable() {
 		// get disguises levels of the current dragon
 		m_dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
-		List<DefinitionNode> defList = Definitions.GetDefinitionsByVariable(Definitions.Category.DISGUISES, "dragonSku", m_dragonSku);
+		List<DefinitionNode> defList = DefinitionsManager.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonSku);
 
-		Definitions.SortByProperty(ref defList, "shopOrder", Definitions.SortType.NUMERIC);
+		DefinitionsManager.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
 		string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
 		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/" + m_dragonSku);

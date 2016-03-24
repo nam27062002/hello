@@ -27,7 +27,7 @@ public class MenuLevelButton : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Setup
 	[Comment("Sku of the level in the LevelDefinitions")]
-	[SkuList(Definitions.Category.LEVELS)]
+	[SkuList(DefinitionsCategory.LEVELS)]
 	[SerializeField] private string m_levelSku = "";
 
 	// References
@@ -63,7 +63,7 @@ public class MenuLevelButton : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get level def
-		m_levelDef = Definitions.GetDefinition(Definitions.Category.LEVELS, m_levelSku);
+		m_levelDef = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, m_levelSku);
 
 		// Set name and description
 		m_titleText.text = m_levelDef.GetLocalized("tidName");

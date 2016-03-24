@@ -104,7 +104,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthMax = m_data.def.GetAsFloat("healthMax");
 		m_energyMax = m_data.def.GetAsFloat("energyMax");
 		m_furyMax = m_data.def.GetAsFloat("furyMax");
-		m_healthWarningThreshold = Definitions.GetDefinition(Definitions.Category.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
+		m_healthWarningThreshold = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
 
 		// Calculate health modifier
 		// m_healthModifier = m_data.def.GetAsFloat("healthMax") * 0.1f;

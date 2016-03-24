@@ -161,7 +161,7 @@ public class PopupEggShop : MonoBehaviour {
 		// Refresh info with the pill data
 		DefinitionNode eggDef = m_pills[m_selectedPill].eggDef;
 		if(eggDef == null) return;	// Could happen if pills haven't already been initialized
-		DefinitionNode dragonDef = Definitions.GetDefinition(Definitions.Category.DRAGONS, eggDef.GetAsString("dragonSku"));
+		DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, eggDef.GetAsString("dragonSku"));
 		if(dragonDef == null) return;
 
 		// Rewards text

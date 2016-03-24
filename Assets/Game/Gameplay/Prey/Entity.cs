@@ -87,7 +87,7 @@ public class Entity : Initializable {
 	/// </summary>
 	private void InitFromDef() {
 		// Get the definition
-		m_def = Definitions.GetDefinition(Definitions.Category.ENTITIES, sku);
+		m_def = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, sku);
 
 		// Cache some frequently accessed values from the definition for faster access
 		// Reward

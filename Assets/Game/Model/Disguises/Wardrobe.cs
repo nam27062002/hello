@@ -42,7 +42,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
 	public static void InitFromDefinitions() {
-		List<string> skus = Definitions.GetSkuList(Definitions.Category.DISGUISES);
+		List<string> skus = DefinitionsManager.GetSkuList(DefinitionsCategory.DISGUISES);
 		instance.m_disguises = new SortedList<string, int>(new AlphanumComparatorFast());
 
 		for (int i = 0; i < skus.Count; i++) {
