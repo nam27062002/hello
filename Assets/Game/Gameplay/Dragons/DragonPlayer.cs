@@ -64,6 +64,9 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_furyModifier;
 	public float furyModifier{ get{return m_furyModifier;} }
 
+	private bool m_mineShield;
+	public bool mineShield{ get{return m_mineShield;} }
+
 	// Interaction
 	public bool playable {
 		set {
@@ -115,6 +118,9 @@ public class DragonPlayer : MonoBehaviour {
 		// m_furyModifier = m_data.def.GetAsFloat("furyMax") * 0.1f;
 		m_furyModifier = 0;
 		m_furyMax += m_furyModifier;
+
+		// Check avoid first hit modifiers
+		m_mineShield = false;
 
 		// Initialize stats
 		ResetStats(false);
@@ -389,5 +395,10 @@ public class DragonPlayer : MonoBehaviour {
 		// Assume it's this dragon
 		// Make sure the dragon has the scale according to its level
 		gameObject.transform.localScale = Vector3.one * data.scale;
+	}
+
+	public void LoseMineShield()
+	{
+		m_mineShield = false;
 	}
 }

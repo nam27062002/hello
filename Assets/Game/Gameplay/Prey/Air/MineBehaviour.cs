@@ -71,7 +71,16 @@ public class MineBehaviour : Initializable {
 		if (m_dragon != null && m_dragon.enabled) {
 			DragonMotion motion = _collision.gameObject.GetComponent<DragonMotion>();
 			if (motion != null) { // the dragon Collided with the mine
-				m_dragon.ReceiveDamage(m_damage, this.transform);
+				// Check if dragon has shield!
+				DragonPlayer dp = _collision.gameObject.GetComponent<DragonPlayer>();
+				if ( dp.mineShield )
+				{
+					dp.LoseMineShield();
+				}
+				else
+				{
+					m_dragon.ReceiveDamage(m_damage, this.transform);
+				}
 				motion.AddForce(_collision.impulse.normalized * m_forceStrength);
 				Explode();
 			}

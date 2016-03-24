@@ -39,6 +39,11 @@ public class GroundPreyMotion : PreyMotion {
 			m_velocityProject = Vector2.zero;
 		}
 
+		if (m_animator) {
+			float speedBlend =  ((m_currentSpeed - m_maxSpeed) / (m_maxRunSpeed - m_maxSpeed)) * (1f - 0f) + 0f;
+			m_animator.SetFloat("speed", speedBlend);
+		}
+
 		Debug.DrawLine(m_position, m_position + m_velocityProject, Color.white);
 	}
 

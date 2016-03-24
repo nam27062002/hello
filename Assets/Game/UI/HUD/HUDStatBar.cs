@@ -126,11 +126,9 @@ public class HUDStatBar : MonoBehaviour {
 		switch( m_type ) 
 		{
 			case Type.Health: 	return InstanceManager.player.healthModifier;
-			/*
-			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("energyMax");
-			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("furyMax");
-			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("furyMax");
-			*/
+			case Type.Energy:	return InstanceManager.player.energyModifier;
+			case Type.Fury:		return InstanceManager.player.furyModifier;
+			case Type.SuperFury:return InstanceManager.player.furyModifier;
 		}
 		return 0;
 	}
@@ -155,6 +153,6 @@ public class HUDStatBar : MonoBehaviour {
 			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("");
 		}
 		*/		
-		return 1;
+		return 5;
 	}
 }
