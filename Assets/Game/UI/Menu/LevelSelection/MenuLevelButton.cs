@@ -27,7 +27,7 @@ public class MenuLevelButton : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Setup
 	[Comment("Sku of the level in the LevelDefinitions")]
-	[SkuListNew(Definitions.Category.LEVELS)]
+	[SkuList(Definitions.Category.LEVELS)]
 	[SerializeField] private string m_levelSku = "";
 
 	// References
