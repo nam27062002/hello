@@ -188,13 +188,14 @@ public class GameCameraController : MonoBehaviour {
 			Vector3 targetPos;
 			// Compute new target position
 			// Is there a danger nearby?
-			if(m_interest != null) 
+			/*if(m_interest != null) 
 			{
 				m_interestLerp += Time.deltaTime * 0.5f;
 				m_interestLerp = Mathf.Min( m_interestLerp, 0.25f);
 				m_interestPosition = m_interest.position - m_dragonMotion.cameraLookAt.position;
 			} 
 			else 
+			*/
 			{
 				m_interestLerp -= Time.deltaTime * 0.5f;
 				m_interestLerp = Mathf.Max( m_interestLerp, 0);
