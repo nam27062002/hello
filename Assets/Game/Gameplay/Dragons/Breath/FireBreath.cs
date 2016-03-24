@@ -69,7 +69,7 @@ public class FireBreath : DragonBreathBehaviour {
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameUpParticle), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameLight), 1, false);
 
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_groundMask = 1 << LayerMask.NameToLayer("Ground") | 1 << LayerMask.NameToLayer("Water");
 		m_noPlayerMask = ~(1 << LayerMask.NameToLayer("Player"));
 
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
@@ -151,12 +151,15 @@ public class FireBreath : DragonBreathBehaviour {
 				length = m_length * 2;
 
 		Vector3 flamesUpDir = Vector3.up;
+		bool hitingWater = false;
 		if (m_frame == 0) {
 			// Raycast to ground
 			RaycastHit ground;				
 			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) 
 			{
 				m_actualLength = ground.distance;
+				if ( ground.collider.tag == "Water" )
+					hitingWater = true;
 			} 
 			else 
 			{				
@@ -227,6 +230,10 @@ public class FireBreath : DragonBreathBehaviour {
 			}
 		}
 
+		if ( hitingWater )	// if hitting water => show steam
+		{
+			
+		}
 
 		float lerpT = 0.15f;
 
@@ -274,5 +281,25 @@ public class FireBreath : DragonBreathBehaviour {
 				Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
 			}
 		}
+	}
+
+	void OnTriggerEnter(Collider _other)
+	{
+		if ( _other.tag == "Water" )
+		{
+			if ( m_isFuryOn )
+			{
+				DragonPlayer player = GetComponent<DragonPlayer>();
+				if ( player != null )
+					player.StopFury();
+			}
+			else if ( m_isSuperFuryOn )
+			{
+				DragonPlayer player = GetComponent<DragonPlayer>();
+				if ( player != null )
+					player.StopSuperFury();
+			}
+		}
+
 	}
 }
