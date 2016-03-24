@@ -27,14 +27,17 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private DragonEatBehaviour 		m_eatBehaviour;
 	private DragonHealthBehaviour 	m_healthBehaviour;
 	private DragonAttackBehaviour 	m_attackBehaviour;
-	private Animator m_animator;
+	protected Animator m_animator;
 
 	// Cache content values
 	protected float m_furyMax = 1f;
 	protected float m_furyDuration = 1f;
 
 	protected bool m_isFuryOn;
+	protected bool m_isFuryPaused;
 	protected bool m_isSuperFuryOn;
+	protected bool m_isSuperFuryPaused;
+
 	protected float m_actualLength;	// Set breath length. Used by the camera
 	public float actualLength
 	{
@@ -105,34 +108,38 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			// Don't decrease fury if cheating
 			if(!cheating) {
 				float dt = Time.deltaTime / m_furyDuration;
-				if ( m_isFuryOn )
+				if ( m_isFuryOn && !m_isFuryPaused)
 					m_dragon.AddFury(-(dt * m_furyMax));
-				else
+
+				if ( m_isSuperFuryOn && !m_isSuperFuryPaused )
 					m_dragon.AddSuperFury(-(dt * m_furyMax));
 			}
 
-			if ((m_isFuryOn && m_dragon.fury <= 0) || (m_isSuperFuryOn && m_dragon.superFury <= 0)) 
+			if ( !m_isFuryPaused && !m_isSuperFuryPaused)
 			{
-				EndBreath();
-				if ( m_isFuryOn )
+				if ((m_isFuryOn && m_dragon.fury <= 0) || (m_isSuperFuryOn && m_dragon.superFury <= 0)) 
 				{
-					m_dragon.StopFury();
-					m_dragon.AddSuperFury(m_furyMax * 0.2f);
+					EndBreath();
+					if ( m_isFuryOn )
+					{
+						m_dragon.StopFury();
+						m_dragon.AddSuperFury(m_furyMax * 0.2f);
+					}
+					else
+					{
+						m_dragon.StopSuperFury();
+					}
+					m_isFuryOn = false;
+					m_isSuperFuryOn = false;
+					m_animator.SetBool("breath", false);
+					if (m_healthBehaviour) m_healthBehaviour.enabled = true;
+					if (m_eatBehaviour) m_eatBehaviour.enabled = true;
+					if (m_attackBehaviour) m_attackBehaviour.enabled = true;
+					Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
+				} else {				
+					Breath();
+					m_animator.SetBool("breath", true);
 				}
-				else
-				{
-					m_dragon.StopSuperFury();
-				}
-				m_isFuryOn = false;
-				m_isSuperFuryOn = false;
-				m_animator.SetBool("breath", false);
-				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
-				if (m_eatBehaviour) m_eatBehaviour.enabled = true;
-				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
-				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
-			} else {				
-				Breath();
-				m_animator.SetBool("breath", true);
 			}
 		} else {
 

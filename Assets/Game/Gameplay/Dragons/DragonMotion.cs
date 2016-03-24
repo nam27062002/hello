@@ -441,8 +441,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private void UpdateParabolicMovement( float moveValue )
 	{
+		Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_speedMultiplier * Time.deltaTime * 0.1f); 
+
 		// check collision with ground, only down?
 		m_impulse.y += moveValue * Time.deltaTime;
+
+		m_impulse.x += impulse.x;
+
 		m_direction = m_impulse.normalized;
 		m_orientation.SetDirection(m_direction);
 		m_rbody.velocity = m_impulse;

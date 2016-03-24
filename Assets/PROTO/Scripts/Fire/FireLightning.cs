@@ -24,6 +24,8 @@ public class FireLightning : DragonBreathBehaviour {
 		}
 	}
 
+	private float m_currentLength;
+
 	public Object m_particleStartPrefab;
 	public Object m_particleEndPrefab;
 	
@@ -36,6 +38,8 @@ public class FireLightning : DragonBreathBehaviour {
 
 	int m_fireMask;
 	int m_groundMask;
+	int m_waterMask;
+	bool m_insideWater;
 
 	Lightning[] m_rays = new Lightning[3];
 
@@ -106,6 +110,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 		m_fireMask = 1 << LayerMask.NameToLayer("Edible") | 1 << LayerMask.NameToLayer("Burnable");
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_waterMask = 1 << LayerMask.NameToLayer("Water");
 
 
 		m_rays[0] = new Lightning(m_segmentWidth, Color.white, m_length/m_segmentLength,m_rayMaterial);
@@ -120,6 +125,8 @@ public class FireLightning : DragonBreathBehaviour {
 		SetAmplitude( m_maxAmplitude );
 
 		m_actualLength = m_length;
+		m_currentLength = m_length;
+		m_insideWater = false;
 	}
 
 	public void SetAmplitude( float amplitude )
@@ -142,12 +149,31 @@ public class FireLightning : DragonBreathBehaviour {
 		Vector3 p2;
 
 		RaycastHit ground;
-		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+m_dir*m_length, out ground, m_groundMask)){
+		float length = m_length;
+		if ( m_insideWater )
+		{
+			m_currentLength = Mathf.Lerp(m_currentLength, m_length * 2f, Time.deltaTime * 2);
+		}
+		else
+		{
+			if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+m_dir*length, out ground, m_waterMask))
+			{
+				float addition = (length - ground.distance); // distance enering water
+				// length += addition;	// We double it
+				m_currentLength = Mathf.Lerp( m_currentLength, m_length + addition, Time.deltaTime * 2);
+			}
+			else
+			{
+				m_currentLength = Mathf.Lerp( m_currentLength, m_length, Time.deltaTime * 2);
+			}
+		}
+
+		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+m_dir*m_currentLength, out ground, m_groundMask)){
 			p2 = ground.point;
 			m_actualLength = ground.distance;
 		}else{
-			p2 =  m_mouthTransform.position+m_dir*m_length;
-			m_actualLength = m_length;
+			p2 =  m_mouthTransform.position+m_dir*m_currentLength;
+			m_actualLength = m_currentLength;
 		}
 
 		m_particleEnd.transform.position = p2;
@@ -226,5 +252,21 @@ public class FireLightning : DragonBreathBehaviour {
 		}
 
 		return false; 
+	}
+
+	void OnTriggerEnter(Collider _other)
+	{
+		if ( _other.tag == "Water" )
+		{
+			m_insideWater = true;
+		}
+	}
+
+	void OnTriggerExit(Collider _other)
+	{
+		if ( _other.tag == "Water" )
+		{
+			m_insideWater = false;
+		}
 	}
 }
