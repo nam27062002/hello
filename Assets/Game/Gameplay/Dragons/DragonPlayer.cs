@@ -420,4 +420,21 @@ public class DragonPlayer : MonoBehaviour {
 	{
 		return m_freeRevives;
 	}
+
+	/// <summary>
+	/// Gets the tier when breaking. Because we can have the "Destroy" power up wich increases the 
+	/// tier on the dragon breaking things we have this function to ask on the proper places
+	/// </summary>
+	/// <returns>The tier when breaking.</returns>
+	public DragonTier GetTierWhenBreaking()
+	{
+		DragonTier ret = m_data.tier;
+		/*
+		if ( Destroy power up )
+		{
+			ret = ret + 1;
+		}
+		*/
+		return ret;
+	}
 }

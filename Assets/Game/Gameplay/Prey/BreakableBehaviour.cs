@@ -13,14 +13,15 @@ public class BreakableBehaviour : MonoBehaviour
 		if ( collision.transform.tag == "Player" )
 		{
 			DragonPlayer player = collision.transform.gameObject.GetComponent<DragonPlayer>();
-			if (player.data.tier >= m_tierNoTurboBreak)
+			DragonTier tier = player.GetTierWhenBreaking();
+			if (tier >= m_tierNoTurboBreak)
 			{
 				Break();
 			}
 			else
 			{
 				DragonBoostBehaviour boost = collision.transform.gameObject.GetComponent<DragonBoostBehaviour>();	
-				if ( boost.IsBoostActive() && player.data.tier >= m_tierWithTurboBreak )
+				if ( boost.IsBoostActive() && tier >= m_tierWithTurboBreak )
 				{
 					Break();
 				}
