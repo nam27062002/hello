@@ -60,8 +60,8 @@ public class LoadingSceneController : SceneController {
 		//		 Do it now so we have it under control
 		//		 Add all the new created singletons
 		// Content and persistence
+		Definitions.CreateInstance();
 		UserProfile.CreateInstance();
-		DefinitionsManager.CreateInstance();
 
 		// Game
 		DragonManager.CreateInstance();

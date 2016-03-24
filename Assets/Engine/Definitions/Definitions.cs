@@ -43,6 +43,10 @@ public class Definitions : Singleton<Definitions> {
 		DRAGON_TIERS,
 		DRAGON_SKILLS,	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
 
+		// Entities
+		ENTITIES,
+		ENTITY_CATEGORIES,
+
 		// Game
 		SCORE_MULTIPLIERS,
 
@@ -106,6 +110,10 @@ public class Definitions : Singleton<Definitions> {
 		LoadDefinitionsFile(Category.DRAGON_TIERS, "Rules/dragonTierDefinitions");
 		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillDefinitions");
 		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillProgressionDefinitions");
+
+		// Entites
+		LoadDefinitionsFile(Category.ENTITIES, "Rules/entityDefinitions");
+		LoadDefinitionsFile(Category.ENTITY_CATEGORIES, "Rules/entityCategoryDefinitions");
 
 		// Game
 		LoadDefinitionsFile(Category.SCORE_MULTIPLIERS, "Rules/scoreMultiplierDefinitions");
@@ -209,6 +217,17 @@ public class Definitions : Singleton<Definitions> {
 		}	
 
 		m_skusByCategory[_category] = skuList;
+	}
+
+	//------------------------------------------------------------------------//
+	// PUBLIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Use carefully!
+	/// </summary>
+	public static void ReloadDefinitions() {
+		instance.m_isReady = false;
+		instance.LoadDefinitions();
 	}
 
 	//------------------------------------------------------------------------//

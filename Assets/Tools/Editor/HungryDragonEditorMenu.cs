@@ -27,29 +27,26 @@ public class HungryDragonEditorMenu {
 	//------------------------------------------------------------------//
 	// MENU SETUP														//
 	//------------------------------------------------------------------//
-	//-------------------------------------------------- DEFINITIONS -------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Definitions Manager", false, 0)]
-	public static void ShowDefintionsManager() { OpenFile("DefinitionsManager.asset", SINGLETONS_FOLDER); }
+	//--------------------------------------------------- CONTENT ----------------------------------------------------//
+	[MenuItem("Hungry Dragon/Content/Game Settings", false, 0)]
+	public static void ShowSettings() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
 
-	[MenuItem("Hungry Dragon/Content/EntityDefinitions", false, 50)]
-	public static void ShowDefintions4() { OpenFile("EntityDefinitions.asset", DEFINITIONS_FOLDER); }
-
-	[MenuItem("Hungry Dragon/Content/EntityCategoryDefinitions", false, 51)]
-	public static void ShowDefintions5() { OpenFile("EntityCategoryDefinitions.asset", DEFINITIONS_FOLDER); }
-
-	//------------------------------------------------ CONTENT TOOLS -------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Rules Reader", false, 100)]
-	public static void ShowRulesReader() { RulesReaderEditorWindow.ShowWindow(); }
-
-	//--------------------------------------------------- SETTINGS ---------------------------------------------------//
-	[MenuItem("Hungry Dragon/Content/Game Settings", false, 200)]
-	public static void ShowSettings1() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
+	[MenuItem("Hungry Dragon/Content/Reload Rules", false, 50)]
+	public static void ReloadDefinitions() { Definitions.ReloadDefinitions(); }
 
 	//---------------------------------------------------- TOOLS -----------------------------------------------------//
 	/// <summary>
+	/// Simple content viewer.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 0)]
+	public static void ShowRulesReader() {
+		RulesReaderEditorWindow.ShowWindow(); 
+	}
+
+	/// <summary>
 	/// Regenerate the icon for all the spawners in the scene.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons", false, 2)]
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons", false, 1)]
 	public static void GenerateSpawnerIcons() {
 		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
 	}
@@ -57,7 +54,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Saves all assets to disk. Useful to make sure changes in scriptable object instances are stored.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 3)]
+	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 2)]
 	public static void SaveAssets() {
 		AssetDatabase.SaveAssets();
 	}
@@ -66,7 +63,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Add menu item to be able to open the level editor.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Level Editor", false, 10)]
+	[MenuItem("Hungry Dragon/Level Editor", false, 50)]
 	public static void ShowLevelEditorWindow() {
 		// Show existing window instance. If one doesn't exist, make one.
 		LevelEditor.LevelEditorWindow window = LevelEditor.LevelEditorWindow.instance;
@@ -87,7 +84,7 @@ public class HungryDragonEditorMenu {
 	/// <summary>
 	/// Add menu item to be open the persistence profiles editor.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Persistence Profiles", false, 11)]
+	[MenuItem("Hungry Dragon/Persistence Profiles", false, 51)]
 	public static void ShowPersistenceProfilesWindow() {
 		// Show existing window instance. If one doesn't exist, make one.
 		PersistenceProfilesEditorWindow window = PersistenceProfilesEditorWindow.instance;
@@ -105,19 +102,19 @@ public class HungryDragonEditorMenu {
 	}
 
 	//----------------------------------------------- SCENE SHORTCUTS -------------------------------------------------//
-	[MenuItem("Hungry Dragon/Scenes/SC_Loading", false, 50)]
+	[MenuItem("Hungry Dragon/Scenes/SC_Loading", false, 0)]
 	public static void OpenScene1() { OpenScene("Assets/Game/Scenes/SC_Loading.unity"); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_Menu", false, 51)]
+	[MenuItem("Hungry Dragon/Scenes/SC_Menu", false, 1)]
 	public static void OpenScene2() { OpenScene("Assets/Game/Scenes/SC_Menu.unity"); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_Game", false, 52)]
+	[MenuItem("Hungry Dragon/Scenes/SC_Game", false, 2)]
 	public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity"); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_LevelEditor", false, 101)]
+	[MenuItem("Hungry Dragon/Scenes/SC_LevelEditor", false, 51)]
 	public static void OpenScene4() { OpenScene("Assets/Tools/LevelEditor/SC_LevelEditor.unity"); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 151)]
+	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 52)]
 	public static void OpenScene5() { OpenScene("Assets/Tests/SC_Popups.unity"); }
 
 	//------------------------------------------------------------------//

@@ -126,7 +126,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if(entity == null) return;
 
 		// Check that there's actually some text to be spawned
-		string text = entity.def.feedbackData.GetFeedback(_type);
+		string text = entity.feedbackData.GetFeedback(_type);
 		if(string.IsNullOrEmpty(text)) return;
 
 		// Get an instance from the pool and spawn it!

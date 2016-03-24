@@ -70,7 +70,7 @@ public class HUDDamageMessage : MonoBehaviour {
 		Entity entity = _source.GetComponent<Entity>();
 		if(entity != null) {
 			// Yes!! Show a message?
-			string msg = entity.def.feedbackData.GetFeedback(FeedbackData.Type.DAMAGE);
+			string msg = entity.feedbackData.GetFeedback(FeedbackData.Type.DAMAGE);
 			if(!String.IsNullOrEmpty(msg)) {
 				// Set text and launch anim
 				m_text.text = msg;

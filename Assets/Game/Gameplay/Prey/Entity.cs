@@ -8,18 +8,42 @@ public class Entity : Initializable {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
+	// Exposed to inspector
 	[FormerlySerializedAs("m_typeID")]
 	[EntitySkuList]
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
 
-	private EntityDef m_def = null;
-	public EntityDef def { 
+	// Reading frequently from the definition is expensive, try to use the below cached values rather
+	private DefinitionNode m_def = null;
+	public DefinitionNode def { 
 		get { 
-			if(m_def == null) m_def = DefinitionsManager.entities.GetDef(sku); 
+			if(m_def == null) InitFromDef();
 			return m_def;
 		}
 	}
+
+	// Cache some frequently accessed values from the definition for faster access
+	private Reward m_reward;
+	public Reward reward { get { return m_reward; }}
+
+	private float m_goldenChance = 0f;
+	public float goldenChance { get { return m_goldenChance; }}
+
+	private float m_pcChance = 0f;
+	public float pcChance { get { return m_pcChance; }}
+
+	private bool m_isEdible = true;
+	public bool isEdible { get { return m_isEdible; }}
+
+	private DragonTier m_edibleFromTier = 0;
+	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
+
+	private float m_biteResistance = 1f;
+	public float biteResistance { get { return m_biteResistance; }}
+
+	private FeedbackData m_feedbackData = new FeedbackData();
+	public FeedbackData feedbackData { get { return m_feedbackData; }}
 
 	//-----------------------------------------------
 	// Attributes
@@ -44,6 +68,9 @@ public class Entity : Initializable {
 	//-----------------------------------------------
 	// Use this for initialization
 	void Awake() {
+		// [AOC] Obtain the definition and initialize important data
+		InitFromDef();
+
 		m_materials = new Dictionary<int, Material[]>();
 
 		m_bounds = GetComponentInChildren<CircleArea2D>();
@@ -55,17 +82,45 @@ public class Entity : Initializable {
 		}
 	}
 
+	/// <summary>
+	/// Initialize important values from the definition.
+	/// </summary>
+	private void InitFromDef() {
+		// Get the definition
+		m_def = Definitions.GetDefinition(Definitions.Category.ENTITIES, sku);
+
+		// Cache some frequently accessed values from the definition for faster access
+		// Reward
+		m_reward.score = m_def.GetAsInt("rewardScore");
+		m_reward.coins = m_def.GetAsInt("rewardCoins");
+		m_reward.pc = m_def.GetAsInt("rewardPC");
+		m_reward.health = m_def.GetAsFloat("rewardHealth");
+		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
+		m_reward.fury = m_def.GetAsFloat("rewardFury");
+		m_reward.xp = m_def.GetAsFloat("rewardXp");
+
+		// Simple data
+		m_goldenChance = m_def.GetAsFloat("goldenChance");
+		m_pcChance = m_def.GetAsFloat("pcChance");
+		m_isEdible = m_def.GetAsBool("isEdible");
+		m_edibleFromTier = (DragonTier)m_def.GetAsInt("edibleFromTier");
+		m_biteResistance = m_def.GetAsFloat("biteResistance");
+
+		// Feedback data
+		m_feedbackData.InitFromDef(m_def);
+	}
+
 	void Start()
 	{
 		m_camera = Camera.main.GetComponent<GameCameraController>();
 	}
 
 	public override void Initialize() {
-	//	m_health = m_maxHealth;		
-		SetGolden((Random.Range(0f, 1f) <= def.goldenChance));
+		//	m_health = m_maxHealth;		
+		SetGolden((Random.Range(0f, 1f) <= goldenChance));
 
 		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
-		m_givePC = (Random.Range(0f, 1f) <= def.pcChance);
+		m_givePC = (Random.Range(0f, 1f) <= pcChance);
 
 		m_isOnScreen = false;
 		m_checkOnScreenTimer = 0;
@@ -126,7 +181,7 @@ public class Entity : Initializable {
 	/// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
 	public Reward GetOnKillReward(bool _burnt) {
 		// Create a copy of the base rewards and tune them
-		Reward newReward = def.reward;	// Since it's a struct, this creates a new copy rather than being a reference
+		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
 		// Give coins? True if the entity was golden or has been burnt
 		if(!m_isGolden && !_burnt) {

@@ -236,17 +236,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_typeID: straw_bale
-  m_reward:
-    score: 1
-    coins: 5
-    pc: 0
-    health: 0
-    energy: 0
-    fury: 0
-    xp: 0
-  m_goldenChance: 0
-  m_pcChance: 0
+  m_sku: straw_bale
+  m_onAppearSoundProbability: 40
+  m_onApprearSounds: []
 --- !u!114 &11435030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -258,10 +250,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_breathHitParticle: PF_FireHit
+  m_hitParticleMatchDirection: 0
   m_resistanceMax: 50
   m_burningTime: 10
   m_damagePerSecond: 6
-  m_maxDistanceLinkNode: 5
 --- !u!114 &11476532
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -273,7 +266,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_explosionPrefab: {fileID: 0}
+  m_explosionParticle: 
+  m_decorationSize: 0
+  m_ashesAsset: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -51,8 +51,12 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 		// Obtain the attribute
 		EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
 
-		// Get the definitions
-		Dictionary<string, List<EntityDef>> defsByCategory = DefinitionsManager.entities.defsByCategory;
+		// Get the definitions and sort them by category
+		List<string> categorySkus = Definitions.GetSkuList(Definitions.Category.ENTITY_CATEGORIES);
+		Dictionary<string, List<DefinitionNode>> defsByCategory = new Dictionary<string, List<DefinitionNode>>();
+		for(int i = 0; i < categorySkus.Count; i++) {
+			defsByCategory.Add(categorySkus[i], Definitions.GetDefinitionsByVariable(Definitions.Category.ENTITIES, "category", categorySkus[i]));
+		}
 
 		// Create the skus list
 		m_skus = new List<string>();
@@ -63,7 +67,7 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 		}
 
 		// Iterate defs and add them to the skus list
-		foreach(KeyValuePair<string, List<EntityDef>> kvp in defsByCategory) {
+		foreach(KeyValuePair<string, List<DefinitionNode>> kvp in defsByCategory) {
 			// Add a separator for each category
 			m_skus.Add(SelectionPopupWindow.SECTION + kvp.Key);
 
