@@ -67,6 +67,8 @@ public class DragonPlayer : MonoBehaviour {
 	private bool m_mineShield;
 	public bool mineShield{ get{return m_mineShield;} }
 
+	private int m_freeRevives = 0;
+
 	// Interaction
 	public bool playable {
 		set {
@@ -121,6 +123,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Check avoid first hit modifiers
 		m_mineShield = false;
+
+		m_freeRevives = 0;
 
 		// Initialize stats
 		ResetStats(false);
@@ -204,17 +208,27 @@ public class DragonPlayer : MonoBehaviour {
 		m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
 
 		// Check for death!
-		if(m_health <= 0f) {
-			// Send global even
-			Messenger.Broadcast(GameEvents.PLAYER_KO);
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
+		if(m_health <= 0f) 
+		{
+			// Check if free revive
+			if (m_freeRevives > 0)
+			{
+				ResetStats(true);
+				Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
+			}
+			else
+			{
+				// Send global even
+				Messenger.Broadcast(GameEvents.PLAYER_KO);
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
 
-			// Make dragon unplayable (xD)
-			playable = false;
+				// Make dragon unplayable (xD)
+				playable = false;
+			}
 		}
 
 		// Check for starvation
-		else if(wasStarving != IsStarving()) {
+		if(wasStarving != IsStarving()) {
 			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, IsStarving());
 		}
 	}
@@ -400,5 +414,10 @@ public class DragonPlayer : MonoBehaviour {
 	public void LoseMineShield()
 	{
 		m_mineShield = false;
+	}
+
+	public int GetReminingLives()
+	{
+		return m_freeRevives;
 	}
 }

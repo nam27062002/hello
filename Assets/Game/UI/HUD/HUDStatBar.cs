@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
-
+using System.Collections.Generic;
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
@@ -40,7 +40,8 @@ public class HUDStatBar : MonoBehaviour {
 	private Slider m_bar;
 	private Slider m_baseBar;
 	private Text m_valueTxt;
-	
+	private GameObject m_icon;
+	private List<GameObject> m_extraIcons = null;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -61,6 +62,14 @@ public class HUDStatBar : MonoBehaviour {
 			m_baseBar = child.GetComponent<Slider>();
 
 		m_valueTxt = gameObject.FindComponentRecursive<Text>("TextValue");
+
+		child = transform.FindChild("Icon");
+		if ( child )
+		{
+			m_icon = child.gameObject;
+			m_extraIcons = new List<GameObject>();
+
+		}
 	}
 
 	IEnumerator Start()
@@ -83,6 +92,23 @@ public class HUDStatBar : MonoBehaviour {
 			size = rectTransform.sizeDelta;
 			size.x = (GetMaxValue() - GetPowerUpsAddition()) * GetSizePerUnit();
 			rectTransform.sizeDelta = size;
+		}
+
+		if ( m_type == Type.Health )
+		{
+			// Check remaining lives to show more health Icons!
+			Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.AddListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+			RefreshIcons();
+		}
+	}
+
+	void OnDestroy()
+	{
+		if ( m_type == Type.Health )
+		{
+			Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.RemoveListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
 		}
 	}
 
@@ -154,5 +180,69 @@ public class HUDStatBar : MonoBehaviour {
 		}
 		*/		
 		return 5;
+	}
+
+	void OnPlayerKo()
+	{
+		RefreshIcons();
+	}
+
+	void OnFreeRevive()
+	{
+		RefreshIcons( true );
+	}
+
+	private void RefreshIcons( bool showAnimations = false )
+	{
+		switch( m_type )
+		{
+			case Type.Health:
+			{
+				int remainingLives = InstanceManager.player.GetReminingLives();
+				int max = Mathf.Max( m_extraIcons.Count, remainingLives);
+				for( int i = 0; i<max; i++ )
+				{
+					while ( i >= m_extraIcons.Count )
+					{
+						// Add icon
+						// Set active false
+						GameObject extraIcon = Instantiate( m_icon );
+						extraIcon.transform.parent = m_icon.transform.parent;
+
+						RectTransform extraRt = extraIcon.GetComponent<RectTransform>();
+						RectTransform rt = m_icon.GetComponent<RectTransform>();
+
+						extraRt.sizeDelta = rt.sizeDelta;
+						extraRt.localPosition = rt.position + Vector3.right * (rt.rect.width * 0.2f * (m_extraIcons.Count + 1));
+						extraRt.localScale = rt.localScale;
+						// extraRt.offsetMax.y = 0;
+
+						m_extraIcons.Add( extraIcon );
+
+
+					}
+					/*
+					if ( showAnimations )
+					{
+						bool wasActive = m_extraIcons[ i ].activeSelf;
+						bool shouldBeActive = i < remainingLives;
+						if ( wasActive && !shouldBeActive )	// if was active and now it's not we lose a life -> show particle breaking the icon
+						{
+							
+						}
+						else if ( !wasActive && shouldBeActive ) // Wasn't active and now it is so we won a life
+						{
+								
+						}
+					}
+					else
+					*/
+					{
+						m_extraIcons[ i ].SetActive( i < remainingLives );
+					}
+					
+				}
+			}break;
+		}
 	}
 }
