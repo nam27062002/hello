@@ -54,4 +54,24 @@ public class FireBallBreath : DragonBreathBehaviour {
 	{
 		base.EndBreath();
 	}
+
+	void OnTriggerEnter(Collider _other)
+	{
+		if ( _other.tag == "Water" )
+		{
+			if ( m_isFuryOn )
+			{
+				DragonPlayer player = GetComponent<DragonPlayer>();
+				if ( player != null )
+					player.StopFury();
+			}
+			else if ( m_isSuperFuryOn )
+			{
+				DragonPlayer player = GetComponent<DragonPlayer>();
+				if ( player != null )
+					player.StopSuperFury();
+			}
+		}
+
+	}
 }
