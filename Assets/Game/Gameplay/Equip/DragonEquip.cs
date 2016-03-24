@@ -67,7 +67,7 @@ public class DragonEquip : MonoBehaviour {
 	private void EquipDisguise() {
 		string disguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
 		
-		DefinitionNode def = Definitions.GetDefinition(Definitions.Category.DISGUISES_EQUIP, disguise);
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_EQUIP, disguise);
 
 		if (def != null)  {
 			SetSkin(def.GetAsString("skin"));

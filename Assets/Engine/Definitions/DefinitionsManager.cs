@@ -19,47 +19,50 @@ using System.Text;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
+/// Custom definitions categories
+/// </summary>
+public enum DefinitionsCategory {
+	UNKNOWN,
+
+	// General
+	LOCALIZATION,
+	SETTINGS,		// Contains several xml files with different signatures: gameSettings, dragonSettings...
+
+	// Progression
+	LEVELS,
+	MISSIONS,
+	MISSION_TYPES,
+	MISSION_DIFFICULTIES,
+
+	// Dragons
+	DRAGONS,
+	DRAGON_TIERS,
+	DRAGON_SKILLS,	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
+
+	// Entities
+	ENTITIES,
+	ENTITY_CATEGORIES,
+
+	// Game
+	SCORE_MULTIPLIERS,
+
+	// Metagame
+	EGGS,
+	EGG_REWARDS,
+	CHEST_REWARDS,
+
+	// Disguises
+	DISGUISES,
+	DISGUISES_EQUIP
+};
+
+/// <summary>
 /// Manager for all the rules and definitions imported from content xmls.
 /// </summary>
-public class Definitions : Singleton<Definitions> {
+public class DefinitionsManager : Singleton<DefinitionsManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public enum Category {
-		UNKNOWN,
-
-		// General
-		LOCALIZATION,
-		SETTINGS,		// Contains several xml files with different signatures: gameSettings, dragonSettings...
-
-		// Progression
-		LEVELS,
-		MISSIONS,
-		MISSION_TYPES,
-		MISSION_DIFFICULTIES,
-
-		// Dragons
-		DRAGONS,
-		DRAGON_TIERS,
-		DRAGON_SKILLS,	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
-
-		// Entities
-		ENTITIES,
-		ENTITY_CATEGORIES,
-
-		// Game
-		SCORE_MULTIPLIERS,
-
-		// Metagame
-		EGGS,
-		EGG_REWARDS,
-		CHEST_REWARDS,
-
-		// Disguises
-		DISGUISES,
-		DISGUISES_EQUIP
-	};
-
 	public enum SortType {
 		NUMERIC,
 		ALPHABETIC,		// sku_1, sku_11, sku_15, sku_2, sku_21, sku_250, sku_3, sku_35, zz_sku...
@@ -70,8 +73,8 @@ public class Definitions : Singleton<Definitions> {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Internal data containers
-	private Dictionary<Category, Dictionary<string,  DefinitionNode > > m_defsByCategoryAndSku = new Dictionary<Category, Dictionary<string, DefinitionNode> >();
-	private Dictionary<Category, List<string>> m_skusByCategory = new Dictionary<Category, List<string>>();
+	private Dictionary<DefinitionsCategory, Dictionary<string,  DefinitionNode > > m_defsByCategoryAndSku = new Dictionary<DefinitionsCategory, Dictionary<string, DefinitionNode> >();
+	private Dictionary<DefinitionsCategory, List<string>> m_skusByCategory = new Dictionary<DefinitionsCategory, List<string>>();
 
 	// Control
 	private bool m_isReady = false;
@@ -85,7 +88,7 @@ public class Definitions : Singleton<Definitions> {
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public Definitions() {
+	public DefinitionsManager() {
 		// Load the rules from disk
 		LoadDefinitions();
 	}
@@ -99,37 +102,37 @@ public class Definitions : Singleton<Definitions> {
 		m_skusByCategory.Clear();
 
 		// Settings
-		LoadDefinitionsFile(Category.LOCALIZATION, "Rules/localizationDefinitions");
-		LoadDefinitionsFile(Category.SETTINGS, "Rules/gameSettings");
-		LoadDefinitionsFile(Category.SETTINGS, "Rules/dragonSettings");
+		LoadDefinitionsFile(DefinitionsCategory.LOCALIZATION, "Rules/localizationDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.SETTINGS, "Rules/gameSettings");
+		LoadDefinitionsFile(DefinitionsCategory.SETTINGS, "Rules/dragonSettings");
 
 		// Progression
-		LoadDefinitionsFile(Category.LEVELS, "Rules/levelDefinitions");
-		LoadDefinitionsFile(Category.MISSIONS, "Rules/missionDefinitions");
-		LoadDefinitionsFile(Category.MISSION_TYPES, "Rules/missionTypeDefinitions");
-		LoadDefinitionsFile(Category.MISSION_DIFFICULTIES, "Rules/missionDifficultyDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.LEVELS, "Rules/levelDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.MISSIONS, "Rules/missionDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.MISSION_TYPES, "Rules/missionTypeDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.MISSION_DIFFICULTIES, "Rules/missionDifficultyDefinitions");
 
 		// Dragons
-		LoadDefinitionsFile(Category.DRAGONS, "Rules/dragonDefinitions");
-		LoadDefinitionsFile(Category.DRAGON_TIERS, "Rules/dragonTierDefinitions");
-		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillDefinitions");
-		LoadDefinitionsFile(Category.DRAGON_SKILLS, "Rules/dragonSkillProgressionDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.DRAGONS, "Rules/dragonDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.DRAGON_TIERS, "Rules/dragonTierDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.DRAGON_SKILLS, "Rules/dragonSkillDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.DRAGON_SKILLS, "Rules/dragonSkillProgressionDefinitions");
 
 		// Entites
-		LoadDefinitionsFile(Category.ENTITIES, "Rules/entityDefinitions");
-		LoadDefinitionsFile(Category.ENTITY_CATEGORIES, "Rules/entityCategoryDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.ENTITIES, "Rules/entityDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.ENTITY_CATEGORIES, "Rules/entityCategoryDefinitions");
 
 		// Game
-		LoadDefinitionsFile(Category.SCORE_MULTIPLIERS, "Rules/scoreMultiplierDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.SCORE_MULTIPLIERS, "Rules/scoreMultiplierDefinitions");
 
 		// Metagame
-		LoadDefinitionsFile(Category.EGGS, "Rules/eggDefinitions");
-		LoadDefinitionsFile(Category.EGG_REWARDS, "Rules/eggRewardDefinitions");
-		LoadDefinitionsFile(Category.CHEST_REWARDS, "Rules/chestRewardDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.EGGS, "Rules/eggDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.EGG_REWARDS, "Rules/eggRewardDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.CHEST_REWARDS, "Rules/chestRewardDefinitions");
 
 		// Disguises
-		LoadDefinitionsFile(Category.DISGUISES, "Rules/disguisesDefinitions");
-		LoadDefinitionsFile(Category.DISGUISES_EQUIP, "Rules/disguiseEquipDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.DISGUISES, "Rules/disguisesDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.DISGUISES_EQUIP, "Rules/disguiseEquipDefinitions");
 
 		// ADD HERE ANY NEW DEFINITIONS FILE!
 
@@ -148,7 +151,7 @@ public class Definitions : Singleton<Definitions> {
 	/// </summary>
 	/// <param name="_category">Category where the definitions file will belong to.</param>
 	/// <param name="_path">Full path from the Resources folder (without including extension) of the target xml file.</param>
-	private void LoadDefinitionsFile(Category _category, string _path) {
+	private void LoadDefinitionsFile(DefinitionsCategory _category, string _path) {
 		string fileContent = "";
 		string cachePath = Application.persistentDataPath + "/" + _path + ".xml";
 
@@ -247,7 +250,7 @@ public class Definitions : Singleton<Definitions> {
 	/// <returns>The definition, <c>null</c> if no definition with the given sku was found.</returns>
 	/// <param name="_sku">The sku of the definition to be searched.</param>
 	public static DefinitionNode GetDefinition(string _sku) {
-		foreach(KeyValuePair<Category, Dictionary<string,DefinitionNode >> category in instance.m_defsByCategoryAndSku) {
+		foreach(KeyValuePair<DefinitionsCategory, Dictionary<string,DefinitionNode >> category in instance.m_defsByCategoryAndSku) {
 			Dictionary<string, DefinitionNode> cat = category.Value;
 			if(cat.ContainsKey(_sku)) {
 				return cat[_sku];
@@ -262,7 +265,7 @@ public class Definitions : Singleton<Definitions> {
 	/// <returns>The definition, <c>null</c> if no definition with the given sku was found.</returns>
 	/// <param name="_category">The category where to search the definition.</param>
 	/// <param name="_sku">The sku of the definition to be searched.</param>
-	public static DefinitionNode GetDefinition(Category _category, string _sku) {
+	public static DefinitionNode GetDefinition(DefinitionsCategory _category, string _sku) {
 		if(instance.m_defsByCategoryAndSku.ContainsKey(_category)) {
 			Dictionary<string, DefinitionNode> cat = instance.m_defsByCategoryAndSku[_category];
 			if(cat.ContainsKey(_sku)) {
@@ -277,7 +280,7 @@ public class Definitions : Singleton<Definitions> {
 	/// </summary>
 	/// <returns>The definitions belonging to the target category, not sorted.</returns>
 	/// <param name="_category">The target category.</param>
-	public static List<DefinitionNode> GetDefinitions(Category _category) {
+	public static List<DefinitionNode> GetDefinitions(DefinitionsCategory _category) {
 		Dictionary<string, DefinitionNode> dict = GetDefinitionsDict(_category);
 		if(dict != null) {
 			List<DefinitionNode> list = new List<DefinitionNode>(dict.Count);
@@ -294,7 +297,7 @@ public class Definitions : Singleton<Definitions> {
 	/// </summary>
 	/// <returns>The definitions belonging to the target category, sorted by sku.</returns>
 	/// <param name="_category">The target category.</param>
-	public static Dictionary<string, DefinitionNode> GetDefinitionsDict(Category _category) {
+	public static Dictionary<string, DefinitionNode> GetDefinitionsDict(DefinitionsCategory _category) {
 		if(instance.m_defsByCategoryAndSku.ContainsKey(_category)) {
 			return instance.m_defsByCategoryAndSku[_category];
 		}
@@ -307,7 +310,7 @@ public class Definitions : Singleton<Definitions> {
 	/// <returns>The list of definitions matching both search parameters.</returns>
 	/// <param name="_category">The category to be searched.</param>
 	/// <param name="_prefix">Sku prefix to filter definitions by.</param>
-	public static List<DefinitionNode> GetDefinitionsWithPrefix(Category _category, string _prefix) {
+	public static List<DefinitionNode> GetDefinitionsWithPrefix(DefinitionsCategory _category, string _prefix) {
 		List<DefinitionNode> defs = new List<DefinitionNode>();
 		if(instance.m_defsByCategoryAndSku.ContainsKey(_category)) {
 			Dictionary<string, DefinitionNode> cat = instance.m_defsByCategoryAndSku[_category];
@@ -328,7 +331,7 @@ public class Definitions : Singleton<Definitions> {
 	/// <param name="_category">Category where to look.</param>
 	/// <param name="_variable">Name of the definition's parameter to filter by.</param>
 	/// <param name="_value">Value of the definition's parameter to filter by.</param>
-	public static DefinitionNode GetDefinitionByVariable(Category _category, string _variable, string _value) {
+	public static DefinitionNode GetDefinitionByVariable(DefinitionsCategory _category, string _variable, string _value) {
 		if(instance.m_defsByCategoryAndSku.ContainsKey(_category)) {
 			Dictionary<string, DefinitionNode> cat = instance.m_defsByCategoryAndSku[_category];
 			foreach(DefinitionNode node in cat.Values) {
@@ -349,7 +352,7 @@ public class Definitions : Singleton<Definitions> {
 	/// <param name="_category">Category where to look.</param>
 	/// <param name="_variable">Name of the definition's parameter to filter by.</param>
 	/// <param name="_value">Value of the definition's parameter to filter by.</param>
-	public static List<DefinitionNode> GetDefinitionsByVariable(Category _category, string _variable, string _value) {
+	public static List<DefinitionNode> GetDefinitionsByVariable(DefinitionsCategory _category, string _variable, string _value) {
 		if(instance.m_defsByCategoryAndSku.ContainsKey(_category)) {
 			List<DefinitionNode> nodes = new List<DefinitionNode>();
 			Dictionary<string, DefinitionNode> cat = instance.m_defsByCategoryAndSku[_category];
@@ -371,7 +374,7 @@ public class Definitions : Singleton<Definitions> {
 	/// </summary>
 	/// <returns>The list of skus belonging to <paramref name="_category"/>.</returns>
 	/// <param name="_category">The category to be searched.</param>
-	public static List<string> GetSkuList(Category _category) {
+	public static List<string> GetSkuList(DefinitionsCategory _category) {
 		if(instance.m_skusByCategory.ContainsKey(_category)) {
 			return instance.m_skusByCategory[_category];
 		} else {
@@ -384,7 +387,7 @@ public class Definitions : Singleton<Definitions> {
 	/// </summary>
 	/// <returns>The number of definitions.</returns>
 	/// <param name="_category">The category to be searched.</param>
-	public static int GetCategoryCount(Category _category) {
+	public static int GetCategoryCount(DefinitionsCategory _category) {
 		if (instance.m_skusByCategory.ContainsKey(_category)) {
 			return instance.m_skusByCategory[_category].Count;
 		}
@@ -397,14 +400,14 @@ public class Definitions : Singleton<Definitions> {
 	/// </summary>
 	/// <returns>The first category owning a definition with the given sku.</returns>
 	/// <param name="_sku">The sku to look for.</param>
-	public static Category GetCategoryForSku(string _sku) {
-		foreach(KeyValuePair<Category, Dictionary<string,DefinitionNode>> category in instance.m_defsByCategoryAndSku) {
+	public static DefinitionsCategory GetCategoryForSku(string _sku) {
+		foreach(KeyValuePair<DefinitionsCategory, Dictionary<string,DefinitionNode>> category in instance.m_defsByCategoryAndSku) {
 			Dictionary<string, DefinitionNode> cat = category.Value;
 			if(cat.ContainsKey(_sku)) {
 				return category.Key;
 			}
 		}
-		return Category.UNKNOWN;
+		return DefinitionsCategory.UNKNOWN;
 	}
 
 	/// <summary>

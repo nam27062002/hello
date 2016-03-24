@@ -67,7 +67,7 @@ public static class Localization
 	public static void SetSavedLanguage()
 	{
 		string languageSku = PlayerPrefs.GetString(KEY_SETTINGS_LANGUAGE);
-		if ( string.IsNullOrEmpty(languageSku) || Definitions.GetDefinition( Definitions.Category.LOCALIZATION, languageSku) == null)
+		if ( string.IsNullOrEmpty(languageSku) || DefinitionsManager.GetDefinition( DefinitionsCategory.LOCALIZATION, languageSku) == null)
 		{
 			languageSku = GetDefaultSystemLanguage();
 		}
@@ -126,7 +126,7 @@ public static class Localization
 		}
 
 		// make sure, language found is available, if not use the default one
-		if ( Definitions.GetDefinition( Definitions.Category.LOCALIZATION, languageSku) == null )	// If it doesn't exists get default
+		if ( DefinitionsManager.GetDefinition( DefinitionsCategory.LOCALIZATION, languageSku) == null )	// If it doesn't exists get default
 		{
 			languageSku = SETTINGS_LANGUAGE_DEFAULT;
 		}
@@ -148,12 +148,12 @@ public static class Localization
 		if ( languageSku == m_language )
 			return true;
 
-		DefinitionNode localizationDef = Definitions.GetDefinition( Definitions.Category.LOCALIZATION, languageSku); 
+		DefinitionNode localizationDef = DefinitionsManager.GetDefinition( DefinitionsCategory.LOCALIZATION, languageSku); 
 
 		if (localizationDef == null)
 		{
 			languageSku = "lang_english";	// Default Lanuguage
-			localizationDef = Definitions.GetDefinition( Definitions.Category.LOCALIZATION, languageSku);
+			localizationDef = DefinitionsManager.GetDefinition( DefinitionsCategory.LOCALIZATION, languageSku);
 			if (localizationDef == null)
 			{
 				return false;

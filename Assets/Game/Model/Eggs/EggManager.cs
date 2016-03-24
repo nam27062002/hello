@@ -107,14 +107,14 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	/// </summary>
 	public static void InitFromDefinitions() {
 		// Check requirements
-		Debug.Assert(Definitions.ready, "Definitions Manager must be ready before invoking this method.");
+		Debug.Assert(DefinitionsManager.ready, "Definitions Manager must be ready before invoking this method.");
 
 		// Initialize reward drop rate table based on definitions
 		// Perform a double loop since every time we add a new element the probabilities 
 		// are readjusted - therefore we need to first add all the elements and then 
 		// define the probabilities for each one
 		instance.m_rewardDropRate = new ProbabilitySet();
-		List<DefinitionNode> rewardDefs = Definitions.GetDefinitions(Definitions.Category.EGG_REWARDS);
+		List<DefinitionNode> rewardDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.EGG_REWARDS);
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			instance.m_rewardDropRate.AddElement(rewardDefs[i].sku);
 		}
@@ -256,7 +256,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public static DefinitionNode GenerateReward() {
 		// Probabiliy set makes it easy for us!
 		string rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
-		return Definitions.GetDefinition(Definitions.Category.EGG_REWARDS, rewardSku);
+		return DefinitionsManager.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
 	}
 
 	//------------------------------------------------------------------//

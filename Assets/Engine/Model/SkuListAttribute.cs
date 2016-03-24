@@ -22,7 +22,7 @@ public class SkuListAttribute : ListAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public Definitions.Category m_category = Definitions.Category.UNKNOWN;
+	public DefinitionsCategory m_category = DefinitionsCategory.UNKNOWN;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -32,7 +32,7 @@ public class SkuListAttribute : ListAttribute {
 	/// </summary>
 	/// <param name="_category">The type of definition to be parsed.</param>
 	/// <param name="_allowNullValue">If set to <c>true</c>, the "NONE" option will be available.</param>
-	public SkuListAttribute(Definitions.Category _category, bool _allowNullValue = true) {
+	public SkuListAttribute(DefinitionsCategory _category, bool _allowNullValue = true) {
 		m_category = _category;
 		ValidateOptions();
 	}
@@ -42,7 +42,7 @@ public class SkuListAttribute : ListAttribute {
 	/// </summary>
 	public override void ValidateOptions() {
 		// Get sku list
-		List<string> skus = Definitions.GetSkuList(m_category);
+		List<string> skus = DefinitionsManager.GetSkuList(m_category);
 
 		// Convert to object array
 		m_options = skus.Cast<string, object>().ToArray();

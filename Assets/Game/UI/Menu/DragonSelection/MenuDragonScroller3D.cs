@@ -167,7 +167,7 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// <param name="_animate">Whether to animate or do an instant camera swap.</param>
 	public void FocusDragon(string _sku, bool _animate) {
 		// Trust that snap points are placed based on dragons' menuOrder value
-		DefinitionNode def = Definitions.GetDefinition(Definitions.Category.DRAGONS, _sku);
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
 		int menuOrder = def.GetAsInt("order");
 		if(_animate) {
 			SnapTo(menuOrder);

@@ -71,7 +71,7 @@ public class PopupEggShopPill : MonoBehaviour {
 		m_eggPreviewScene.InitRawImage(ref m_previewArea);
 
 		// Initialize from the given egg sku
-		InitFromDef(Definitions.GetDefinition(Definitions.Category.EGGS, m_eggSku));
+		InitFromDef(DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, m_eggSku));
 	}
 
 	/// <summary>

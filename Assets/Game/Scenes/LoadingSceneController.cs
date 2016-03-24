@@ -60,7 +60,7 @@ public class LoadingSceneController : SceneController {
 		//		 Do it now so we have it under control
 		//		 Add all the new created singletons
 		// Content and persistence
-		Definitions.CreateInstance();
+		DefinitionsManager.CreateInstance();
 		UserProfile.CreateInstance();
 
 		// Game

@@ -128,8 +128,8 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void InitFromDef() {
 		// Init score multipliers
-		List<DefinitionNode> defs = Definitions.GetDefinitions(Definitions.Category.SCORE_MULTIPLIERS);
-		Definitions.SortByProperty(ref defs, "order", Definitions.SortType.NUMERIC);
+		List<DefinitionNode> defs = DefinitionsManager.GetDefinitions(DefinitionsCategory.SCORE_MULTIPLIERS);
+		DefinitionsManager.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		m_scoreMultipliers = new ScoreMultiplier[defs.Count];
 		ScoreMultiplier newMult;
 		List<DefinitionNode> feedbackDefs;

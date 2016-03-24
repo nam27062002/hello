@@ -307,7 +307,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// [AOC] TODO!! Replace egg view by the reward prefab
 		// Create a fake reward view
-		DefinitionNode dragonDef = Definitions.GetDefinition(Definitions.Category.DRAGONS, m_egg.eggData.def.GetAsString("dragonSku"));
+		DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, m_egg.eggData.def.GetAsString("dragonSku"));
 		if(dragonDef != null) {
 			// Create instance
 			GameObject prefab = Resources.Load<GameObject>(dragonDef.GetAsString("menuPrefab"));
