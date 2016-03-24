@@ -69,7 +69,6 @@ public class ProjectileBehaviour : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider _other) {
-		Debug.Log(_other.tag);
 		if (!m_edible.isBeingEaten && _other.tag == "Player") 
 		{
 			Explode(true);

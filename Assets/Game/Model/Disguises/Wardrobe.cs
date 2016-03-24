@@ -22,8 +22,8 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// </summary>
 	[Serializable]
 	public class SaveData {
-		public int[] disguises;
-		public DragonDisguise[] equiped;
+		public int[] disguises = new int[0];
+		public DragonDisguise[] equiped = new DragonDisguise[0];
 	}
 
 
