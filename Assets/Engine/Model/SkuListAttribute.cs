@@ -1,4 +1,4 @@
-﻿// SkuListNewAttribute.cs
+﻿// SkuListAttribute.cs
 // 
 // Created by Alger Ortín Castellví on 18/03/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// definitions category.
 /// Usage: [SkuList(Definitions.Category.TARGET_CATEGORY)]
 /// </summary>
-public class SkuListNewAttribute : ListAttribute {
+public class SkuListAttribute : ListAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -32,7 +32,7 @@ public class SkuListNewAttribute : ListAttribute {
 	/// </summary>
 	/// <param name="_category">The type of definition to be parsed.</param>
 	/// <param name="_allowNullValue">If set to <c>true</c>, the "NONE" option will be available.</param>
-	public SkuListNewAttribute(Definitions.Category _category, bool _allowNullValue = true) {
+	public SkuListAttribute(Definitions.Category _category, bool _allowNullValue = true) {
 		m_category = _category;
 		ValidateOptions();
 	}

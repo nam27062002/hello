@@ -32,7 +32,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		public long coins = 0;
 		public long pc = 0;
 		public string currentDragon = "";	// sku
-		/*[SkuListNew(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
+		/*[SkuList(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
 		public TutorialStep tutorialStep = TutorialStep.INIT;
 	}
 
@@ -63,7 +63,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		set { instance.m_currentDragon = value; }
 	}
 
-	[SerializeField] /*[SkuListNew(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
+	[SerializeField] /*[SkuList(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
 	public static string currentLevel {
 		get { return instance.m_currentLevel; }
 		set { instance.m_currentLevel = value; }
