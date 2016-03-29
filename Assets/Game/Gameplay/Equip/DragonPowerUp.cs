@@ -83,6 +83,13 @@ public class DragonPowerUp : MonoBehaviour {
 					int increase = def.GetAsInt("param1");
 					player.SetOnBreakIncrease( increase );
 				}break;
+				case "preyHpBoost":
+				{
+					string from = def.Get("param1");
+					float percentage = def.GetAsFloat("param2");
+					DragonEatBehaviour eatBehaviour = GetComponent<DragonEatBehaviour>();
+					eatBehaviour.AddEatingBost( from, percentage);
+				}break;
 			}
 
 		}
