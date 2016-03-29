@@ -16,7 +16,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private GameObject m_useButton;
 
 	[SeparatorAttribute]
-	public Transform m_dragonWorldPos;
+	private Transform m_dragonWorldPos;
 	public RectTransform m_dragonUIPos;
 	public float m_depth = 25f;
 
@@ -48,6 +48,12 @@ public class DisguisesScreenController : MonoBehaviour {
 	}
 
 	void OnEnable() {
+		// find the 3D dragon position
+		GameObject disguiseScene = GameObject.Find("PF_MenuDisguisesScene");
+		if (disguiseScene != null) {
+			m_dragonWorldPos = disguiseScene.transform.FindChild("CurrentDragon");
+		}
+
 		// get disguises levels of the current dragon
 		m_dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
 		List<DefinitionNode> defList = DefinitionsManager.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonSku);
