@@ -20,7 +20,7 @@ public class UINotification : ShowHideAnimator {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string RESOURCES_PREFAB_PATH = "UI/Common/Generic/PF_UINotification";	// Just for comfort, change it if path changes
+	public static string DEFAULT_PREFAB_PATH = "UI/Common/Generic/PF_UINotification";	// Just for comfort, change it if path changes
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -54,11 +54,19 @@ public class UINotification : ShowHideAnimator {
 	/// it to the given RectTransform.
 	/// </summary>
 	/// <param name="_parent">The transform to attach this notification to. Can be <c>null</c>.</param>
-	public static UINotification Create(RectTransform _parent) {
-		// Load and instantiate prefab
-		GameObject prefab = Resources.Load<GameObject>(RESOURCES_PREFAB_PATH);
+	/// <param name="_prefabPath">The prefab to be used for this notification. If not defined, the default one will be used.</param>>
+	public static UINotification Create(RectTransform _parent, string _prefabPath = "") {
+		// Load prefab
+		if(string.IsNullOrEmpty(_prefabPath)) _prefabPath = DEFAULT_PREFAB_PATH;
+		GameObject prefab = Resources.Load<GameObject>(_prefabPath);
+		Debug.Assert(prefab != null, "Prefab " + _prefabPath + " for UINotification not found!");
+
+		// Create a new instance
 		GameObject newObj = GameObject.Instantiate<GameObject>(prefab);
+
+		// Initialize the UINotification component
 		UINotification newNotification = newObj.GetComponent<UINotification>();
+		Debug.Assert(newNotification != null,  "Prefab " + _prefabPath + " doesn't have a UINotification component!");
 
 		// Attach to someone?
 		if(_parent != null) {
