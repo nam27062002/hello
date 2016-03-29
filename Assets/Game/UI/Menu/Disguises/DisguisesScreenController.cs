@@ -83,7 +83,6 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_powers[i].SetActive(false);
 		}
 
-
 		int defaultSelection = -1;
 		bool usingIt = false;
 
@@ -162,7 +161,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 
 			// update name
-			m_name.text = _pill.def.GetAsString("tidName"); // we have to change this
+			m_name.text = _pill.def.GetLocalized("tidName"); // we have to change this
 
 			// update level
 			for (int i = 0; i < m_upgrades.Length; i++) {
