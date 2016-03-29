@@ -32,6 +32,11 @@ public class Egg {
 		SHOWROOM	// Egg for display only, state is not relevant
 	};
 
+	public struct EggReward {
+		public string type;
+		public string value;
+	}
+
 	/// <summary>
 	/// Auxiliar class for persistence load/save.
 	/// </summary>
@@ -55,6 +60,11 @@ public class Egg {
 	private DefinitionNode m_rewardDef = null;	// Only valid after the egg has been collected
 	public DefinitionNode rewardDef {
 		get { return m_rewardDef; }
+	}
+
+	private EggReward m_rewardData = new EggReward();
+	public EggReward rewardData {
+		get { return m_rewardData; }
 	}
 
 	// Logic
@@ -214,8 +224,25 @@ public class Egg {
 
 		// Apply the reward
 		switch(rewardDef.GetAsString("type")) {
-			case "suit": {
-				// [AOC] TODO!!
+			case "suit": {				
+					string rarity = rewardDef.sku;
+					rarity = rarity.Replace("suit_", "");
+
+					string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);				
+					bool leveled = Wardrobe.LevelUpDisguise(disguise);
+
+					if (leveled) {
+						m_rewardData.type = "suit";
+						m_rewardData.value = disguise;
+					} else {
+						// give coins
+						int coins = Wardrobe.GetDisguiseValue(disguise);
+
+						UserProfile.AddCoins(coins);
+
+						m_rewardData.type = "coins";
+						m_rewardData.value = coins.ToString();
+					}
 			} break;
 
 			case "pet": {
@@ -226,6 +253,8 @@ public class Egg {
 				// [AOC] TODO!!
 			} break;
 		}
+
+		PersistenceManager.Save();
 
 		// Change state
 		ChangeState(State.COLLECTED);

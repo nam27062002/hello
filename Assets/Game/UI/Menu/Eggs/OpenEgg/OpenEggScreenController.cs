@@ -294,15 +294,16 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_rewardText.color = Colors.WithAlpha(m_rewardText.color, 1f);
 		m_rewardText.transform.DOBlendableLocalMoveBy(Vector3.up * 500f, 0.30f).From().SetEase(Ease.OutBounce).SetRecyclable(true);
 		m_rewardText.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
+
 		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
 			case "suit": {
-				m_rewardText.text = "You've got " + m_egg.eggData.rewardDef.sku + " for dragon " + m_egg.eggData.def.GetAsString("dragonSku") + "!";
-			} break;
+					m_rewardText.text = "You've got " + m_egg.eggData.rewardData.value + " for dragon " + m_egg.eggData.def.GetAsString("dragonSku") + "!";
+				} break;
 
 			case "pet":
 			case "dragon": {
 					m_rewardText.text = "You've got " + m_egg.eggData.rewardDef.sku + "!";
-			} break;
+				} break;
 		}
 
 		// [AOC] TODO!! Replace egg view by the reward prefab
@@ -321,14 +322,8 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardView.transform.localRotation = Quaternion.identity;
 			m_rewardView.transform.localScale = Vector3.one;
 
-			// [AOC] TEMP!! Apply some crazy tint to make it clear it's not a standard dragon!
-			SkinnedMeshRenderer rewardRenderer = m_rewardView.GetComponentInChildren<SkinnedMeshRenderer>();
-			if(rewardRenderer != null) {
-				Color[] colors = new Color[] { Colors.red, Colors.green, Colors.blue, Colors.cyan, Colors.magenta, Colors.yellow };
-				for(int i = 0; i < rewardRenderer.materials.Length; i++) {
-					//rewardRenderer.materials[i].color = colors.GetRandomValue();
-					rewardRenderer.materials[i].SetColor("_ColorMultiply", colors.GetRandomValue());
-				}
+			if (m_egg.eggData.rewardDef.GetAsString("type") == "suit") {
+				m_rewardView.GetComponent<DragonEquip>().PreviewDisguise(m_egg.eggData.rewardData.value);
 			}
 
 			// Animate reward
@@ -393,10 +388,14 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_egg == null) return;
 		if(m_egg.eggData.state != Egg.State.COLLECTED) return;
 
+		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+
 		// Depending on opened egg's reward, perform different actions
 		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
 			case "suit": {
-				// [AOC] TODO!! Go to suits screen
+				NavigationScreen disguiseScreen = screensController.GetScreen((int)MenuScreens.DISGUISES);				
+				disguiseScreen.FindComponentRecursive<DisguisesScreenController>().m_previewDisguise = m_egg.eggData.rewardData.value;
+				screensController.GoToScreen((int)MenuScreens.DISGUISES);
 			} break;
 
 			case "pet": {
