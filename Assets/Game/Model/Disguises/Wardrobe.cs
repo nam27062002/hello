@@ -75,7 +75,9 @@ public class Wardrobe : Singleton<Wardrobe> {
 	}
 
 	public static int GetDisguiseLevel(string _sku) {
-		return instance.m_disguises[_sku];
+		if ( instance.m_disguises != null && instance.m_disguises.ContainsKey(_sku))
+			return instance.m_disguises[_sku];
+		return -1;
 	}
 
 	public static bool LevelUpDisguise(string _sku) {
@@ -107,7 +109,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	}
 
 	public static string GetEquipedDisguise(string _dragonSku) {
-		if (instance.m_equiped.ContainsKey(_dragonSku)) {
+		if (instance.m_equiped != null && instance.m_equiped.ContainsKey(_dragonSku)) {
 			return instance.m_equiped[_dragonSku];
 		}
 		return "";

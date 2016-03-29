@@ -73,7 +73,7 @@ public class MineBehaviour : Initializable {
 			if (motion != null) { // the dragon Collided with the mine
 				// Check if dragon has shield!
 				DragonPlayer dp = _collision.gameObject.GetComponent<DragonPlayer>();
-				if ( dp.mineShield )
+				if ( dp.HasMineShield() )
 				{
 					dp.LoseMineShield();
 				}

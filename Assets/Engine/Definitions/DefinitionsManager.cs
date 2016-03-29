@@ -53,7 +53,12 @@ public enum DefinitionsCategory {
 
 	// Disguises
 	DISGUISES,
-	DISGUISES_EQUIP
+	DISGUISES_EQUIP,
+	DISGUISES_POWERUPS,
+
+	// Power Ups
+	POWERUPS,
+
 };
 
 /// <summary>
@@ -133,6 +138,10 @@ public class DefinitionsManager : Singleton<DefinitionsManager> {
 		// Disguises
 		LoadDefinitionsFile(DefinitionsCategory.DISGUISES, "Rules/disguisesDefinitions");
 		LoadDefinitionsFile(DefinitionsCategory.DISGUISES_EQUIP, "Rules/disguiseEquipDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.DISGUISES_POWERUPS, "Rules/disguisePowerUpsDefinitions");
+
+		// Power Ups
+		LoadDefinitionsFile(DefinitionsCategory.POWERUPS, "Rules/powerUpsDefinitions");
 
 		// ADD HERE ANY NEW DEFINITIONS FILE!
 

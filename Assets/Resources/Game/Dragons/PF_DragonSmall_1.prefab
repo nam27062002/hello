@@ -873,6 +873,7 @@ GameObject:
   - 114: {fileID: 11425292}
   - 114: {fileID: 11455292}
   - 114: {fileID: 11408306}
+  - 114: {fileID: 11401554}
   m_Layer: 12
   m_Name: PF_DragonSmall_1
   m_TagString: Player
@@ -2878,6 +2879,17 @@ MonoBehaviour:
   m_eatBigSound: {fileID: 0}
   m_wingsWindSound: {fileID: 0}
   m_wingsStrongFlap: {fileID: 0}
+--- !u!114 &11401554
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a2fe1b5a7a344b88962c88a1f75241e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11403382
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3047,6 +3059,9 @@ MonoBehaviour:
   m_finalScale:
     min: 0.75
     max: 1.25
+  m_flameParticle: Flame
+  m_flameUpParticle: FlameUp
+  m_flameLight: PF_FireLight
 --- !u!114 &11494734
 MonoBehaviour:
   m_ObjectHideFlags: 1
