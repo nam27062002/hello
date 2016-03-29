@@ -791,6 +791,7 @@ GameObject:
   - 114: {fileID: 11425292}
   - 114: {fileID: 11455292}
   - 114: {fileID: 11408306}
+  - 114: {fileID: 11448546}
   m_Layer: 12
   m_Name: PF_DragonSmall
   m_TagString: Player
@@ -3002,6 +3003,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_turningSpeed: 8
+--- !u!114 &11448546
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a2fe1b5a7a344b88962c88a1f75241e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11455292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3080,6 +3092,9 @@ MonoBehaviour:
   m_finalScale:
     min: 0.75
     max: 1.25
+  m_flameParticle: Flame
+  m_flameUpParticle: FlameUp
+  m_flameLight: PF_FireLight
 --- !u!135 &13519264
 SphereCollider:
   m_ObjectHideFlags: 1

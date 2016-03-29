@@ -108,18 +108,9 @@ public class DragonPlayer : MonoBehaviour {
 		m_furyMax = m_data.def.GetAsFloat("furyMax");
 		m_healthWarningThreshold = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
 
-		// Calculate health modifier
-		// m_healthModifier = m_data.def.GetAsFloat("healthMax") * 0.1f;
 		m_healthModifier = 0;
-		m_healthMax += m_healthModifier;
-
-		// m_energyModifier = m_data.def.GetAsFloat("energyMax") * 0.1f;
 		m_energyModifier = 0;
-		m_energyMax += m_energyModifier;
-
-		// m_furyModifier = m_data.def.GetAsFloat("furyMax") * 0.1f;
 		m_furyModifier = 0;
-		m_furyMax += m_furyModifier;
 
 		// Check avoid first hit modifiers
 		m_mineShield = false;
@@ -436,5 +427,33 @@ public class DragonPlayer : MonoBehaviour {
 		}
 		*/
 		return ret;
+	}
+
+
+	// Increases health max by value where value is a tant per cent
+	public void SetHealthModifier( float value )
+	{
+		m_healthMax = m_data.def.GetAsFloat("healthMax");
+		m_healthModifier = m_data.def.GetAsFloat("healthMax") * value / 100.0f;
+		m_healthMax += m_healthModifier;
+	}
+
+	public void SetBoostModifier( float value )
+	{
+		m_energyMax = m_data.def.GetAsFloat("energyMax");
+		m_energyModifier = m_data.def.GetAsFloat("energyMax") * value / 100.0f;
+		m_energyMax += m_energyModifier;
+	}
+
+	public void SetFuryModifier( float value )
+	{
+		m_furyMax = m_data.def.GetAsFloat("furyMax");
+		m_furyModifier = m_data.def.GetAsFloat("furyMax") * value / 100.0f;
+		m_furyMax += m_furyModifier;
+	}
+
+	public void SetFreeRevives( int revives )
+	{
+		m_freeRevives = revives;
 	}
 }
