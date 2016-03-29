@@ -65,8 +65,9 @@ public class DragonPlayer : MonoBehaviour {
 	public float furyModifier{ get{return m_furyModifier;} }
 
 	private int m_mineShield;
-
 	private int m_freeRevives = 0;
+	private int m_tierIncreaseBreak = 0;
+
 
 	// Interaction
 	public bool playable {
@@ -114,6 +115,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Check avoid first hit modifiers
 		m_mineShield = 0;
 		m_freeRevives = 0;
+		m_tierIncreaseBreak = 0;
 
 		// Initialize stats
 		ResetStats(false);
@@ -422,16 +424,14 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns>The tier when breaking.</returns>
 	public DragonTier GetTierWhenBreaking()
 	{
-		DragonTier ret = m_data.tier;
-		/*
-		if ( Destroy power up )
-		{
-			ret = ret + 1;
-		}
-		*/
+		DragonTier ret = m_data.tier + m_tierIncreaseBreak;
 		return ret;
 	}
 
+	public void SetOnBreakIncrease( int increase )
+	{
+		m_tierIncreaseBreak = increase;
+	}
 
 	// Increases health max by value where value is a tant per cent
 	public void SetHealthModifier( float value )

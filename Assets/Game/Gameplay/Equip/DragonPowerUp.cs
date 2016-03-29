@@ -78,6 +78,11 @@ public class DragonPowerUp : MonoBehaviour {
 					int numExtraLives = def.GetAsInt("param1");
 					player.SetFreeRevives( numExtraLives );
 				}break;
+				case "dragonram":
+				{
+					int increase = def.GetAsInt("param1");
+					player.SetOnBreakIncrease( increase );
+				}break;
 			}
 
 		}
