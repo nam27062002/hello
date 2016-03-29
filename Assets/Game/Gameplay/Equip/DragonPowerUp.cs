@@ -30,7 +30,9 @@ public class DragonPowerUp : MonoBehaviour {
 
 	void SetPowerUp( string powerUpSku )
 	{
+		DragonPlayer player = GetComponent<DragonPlayer>();
 		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
+
 		if ( def != null )
 		{
 			string type = def.Get("type");
@@ -39,17 +41,14 @@ public class DragonPowerUp : MonoBehaviour {
 			{
 				case "hp_increase":	// gives the player extra health
 				{
-					DragonPlayer player = GetComponent<DragonPlayer>();
 					player.SetHealthModifier( def.GetAsFloat("param1") );
 				}break;
 				case "boost_increase":
 				{
-					DragonPlayer player = GetComponent<DragonPlayer>();
 					player.SetBoostModifier( def.GetAsFloat("param1") );
 				}break;
 				case "fury_increase":
 				{
-					DragonPlayer player = GetComponent<DragonPlayer>();
 					player.SetFuryModifier( def.GetAsFloat("param1") );
 				}break;
 
@@ -67,6 +66,7 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						case "mine":
 						{
+							player.SetMineShields( numHits );
 						}break;
 						case "poison":
 						{
@@ -76,7 +76,6 @@ public class DragonPowerUp : MonoBehaviour {
 				case "lives":
 				{
 					int numExtraLives = def.GetAsInt("param1");
-					DragonPlayer player = GetComponent<DragonPlayer>();
 					player.SetFreeRevives( numExtraLives );
 				}break;
 			}

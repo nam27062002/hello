@@ -64,8 +64,7 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_furyModifier;
 	public float furyModifier{ get{return m_furyModifier;} }
 
-	private bool m_mineShield;
-	public bool mineShield{ get{return m_mineShield;} }
+	private int m_mineShield;
 
 	private int m_freeRevives = 0;
 
@@ -113,8 +112,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_furyModifier = 0;
 
 		// Check avoid first hit modifiers
-		m_mineShield = false;
-
+		m_mineShield = 0;
 		m_freeRevives = 0;
 
 		// Initialize stats
@@ -204,6 +202,7 @@ public class DragonPlayer : MonoBehaviour {
 			// Check if free revive
 			if (m_freeRevives > 0)
 			{
+				m_freeRevives--;
 				ResetStats(true);
 				Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
 			}
@@ -404,7 +403,11 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void LoseMineShield()
 	{
-		m_mineShield = false;
+		m_mineShield--;
+	}
+	public bool HasMineShield()
+	{
+		return m_mineShield > 0;
 	}
 
 	public int GetReminingLives()
@@ -436,6 +439,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthMax = m_data.def.GetAsFloat("healthMax");
 		m_healthModifier = m_data.def.GetAsFloat("healthMax") * value / 100.0f;
 		m_healthMax += m_healthModifier;
+		m_health = m_healthMax;
 	}
 
 	public void SetBoostModifier( float value )
@@ -443,6 +447,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_energyMax = m_data.def.GetAsFloat("energyMax");
 		m_energyModifier = m_data.def.GetAsFloat("energyMax") * value / 100.0f;
 		m_energyMax += m_energyModifier;
+		m_energy = m_energyMax;
 	}
 
 	public void SetFuryModifier( float value )
@@ -455,5 +460,10 @@ public class DragonPlayer : MonoBehaviour {
 	public void SetFreeRevives( int revives )
 	{
 		m_freeRevives = revives;
+	}
+
+	public void SetMineShields( int numHits )
+	{
+		m_mineShield = numHits;
 	}
 }

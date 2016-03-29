@@ -94,7 +94,7 @@ public class DragonTint : MonoBehaviour
 		m_dragonRenderer.material.SetFloat("_InnerLightAdd", innerValue );
 
 		// Shield
-		if (m_player.mineShield)
+		if (m_player.HasMineShield())
 		{
 			m_shieldValue = Mathf.Lerp( m_shieldValue, 1, Time.deltaTime);
 		}
