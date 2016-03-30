@@ -13,9 +13,8 @@ cd "%~dp0"
 REM Make sure export folder exists
 if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
 
-# Clear previously exported files
-rm -rf $OUTPUT_DIR/*
-del /F /Q /S "%OUTPUTDIR%\*"
+REM Clear previously exported files
+del /F /Q /S "%OUTPUT_DIR%\*"
 
 REM Run Java tool
 java -jar %TOOL_EXECUTABLE% %INPUT_FILE% %OUTPUT_DIR%
