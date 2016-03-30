@@ -50,6 +50,7 @@ public class FireNode : MonoBehaviour {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 		m_reward = new Reward();
 		m_reward.coins = 0;
+		m_reward.origin = "firenode";
 
 		// get two closets neighbours
 		FindNeighbours();

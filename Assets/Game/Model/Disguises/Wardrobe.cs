@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class Wardrobe : Singleton<Wardrobe> {
@@ -52,10 +53,40 @@ public class Wardrobe : Singleton<Wardrobe> {
 		instance.m_equiped = new Dictionary<string, string>();
 	}
 
+	public static string GetRandomDisguise(string _dragonSku, string _rarity) {
+		List<DefinitionNode> defs = DefinitionsManager.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
+		List<string> disguises = new List<string>();
+		disguises.Shuffle<string>(Time.renderedFrameCount);
+
+		for (int i = 0; i < defs.Count; i++) {
+			if (defs[i].GetAsString("rarity") == _rarity) {
+				disguises.Add(defs[i].sku);
+			}
+		}
+
+		int individualChance = 100 / disguises.Count;
+		int index = UnityEngine.Random.Range(0, 100) / individualChance;
+
+		return disguises[index];
+	}
+
+	public static int GetDisguiseValue(string _sku) {
+		return DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, _sku).GetAsInt("value");
+	}
+
 	public static int GetDisguiseLevel(string _sku) {
 		if ( instance.m_disguises != null && instance.m_disguises.ContainsKey(_sku))
 			return instance.m_disguises[_sku];
 		return -1;
+	}
+
+	public static bool LevelUpDisguise(string _sku) {
+		if (instance.m_disguises[_sku] < MAX_LEVEL) {
+			instance.m_disguises[_sku]++;
+			return true;
+		}
+
+		return false;
 	}
 
 
