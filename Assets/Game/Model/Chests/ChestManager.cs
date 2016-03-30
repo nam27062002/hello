@@ -62,8 +62,8 @@ public class ChestManager : Singleton<ChestManager> {
 	public ChestManager() {
 		// Initialize probability set from definitions
 		m_rewardDropRate = new ProbabilitySet();
-		List<DefinitionNode> rewardDefs = Definitions.GetDefinitions(Definitions.Category.CHEST_REWARDS);
-		Definitions.SortByProperty(ref rewardDefs, "index", Definitions.SortType.NUMERIC);	// Make sure it matches the enum
+		List<DefinitionNode> rewardDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.CHEST_REWARDS);
+		DefinitionsManager.SortByProperty(ref rewardDefs, "index", DefinitionsManager.SortType.NUMERIC);	// Make sure it matches the enum
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			m_rewardDropRate.AddElement(rewardDefs[i].sku);
 			m_rewardDropRate.SetProbability(i, rewardDefs[i].Get<float>("dropRate"), false);
@@ -131,7 +131,7 @@ public class ChestManager : Singleton<ChestManager> {
 			case RewardType.COINS: {
 				// [AOC] Formula defined in the chestsRewards table
 				// A(LN(MaxDragon) +1)/B
-				DefinitionNode rewardDef = Definitions.GetDefinition(Definitions.Category.CHEST_REWARDS, "coins");
+				DefinitionNode rewardDef = DefinitionsManager.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "coins");
 				float A = rewardDef.Get<float>("factorA");
 				float B = rewardDef.Get<float>("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
@@ -148,7 +148,7 @@ public class ChestManager : Singleton<ChestManager> {
 			case RewardType.PC: {
 				// [AOC] Formula defined in the chestsRewards table
 				// A(LN(MaxDragon) +1)/B
-				DefinitionNode rewardDef = Definitions.GetDefinition(Definitions.Category.CHEST_REWARDS, "pc");
+				DefinitionNode rewardDef = DefinitionsManager.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "pc");
 				float A = rewardDef.Get<float>("factorA");
 				float B = rewardDef.Get<float>("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;

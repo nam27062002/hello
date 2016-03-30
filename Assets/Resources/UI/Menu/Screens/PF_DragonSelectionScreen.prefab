@@ -1023,6 +1023,7 @@ GameObject:
   - 114: {fileID: 11444648}
   - 114: {fileID: 11490130}
   - 114: {fileID: 11456968}
+  - 114: {fileID: 11471068}
   m_Layer: 5
   m_Name: BtnOptions
   m_TagString: Untagged
@@ -1649,13 +1650,13 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 11462712}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 154674}
-        m_MethodName: 
+      - m_Target: {fileID: 11410068}
+        m_MethodName: OnNavigationButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5504,6 +5505,19 @@ MonoBehaviour:
   m_shadowAngle: 135
   m_shadowSize: 0
   m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!114 &11471068
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 164308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd9d6786299474aadb7237279cc9986a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_text: Coming Soon!
+  m_pos: {x: 0.5, y: 0.5}
 --- !u!114 &11471376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6680,7 +6694,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 11444648}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11471068}
+        m_MethodName: OnWipButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &11491028

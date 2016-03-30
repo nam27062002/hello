@@ -5,7 +5,7 @@ public class DragonEquip : MonoBehaviour {
 
 	private string m_dragonSku;
 
-	void Start() {
+	void Awake() {
 		DragonPlayer player = GetComponent<DragonPlayer>();
 
 		if (player != null) {
@@ -15,7 +15,7 @@ public class DragonEquip : MonoBehaviour {
 			m_dragonSku = preview.sku;
 		}
 
-		EquipDisguise();
+		EquipDisguise(Wardrobe.GetEquipedDisguise(m_dragonSku));
 
 		/* TODO: refractor full equip function
 		 Dictionary<Equipable.AttachPoint, string> equip = dragon.data.equip;
@@ -42,6 +42,10 @@ public class DragonEquip : MonoBehaviour {
 		}*/
 	}
 
+	public void PreviewDisguise(string _disguise) {
+		EquipDisguise(_disguise);
+	}
+
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
@@ -60,14 +64,12 @@ public class DragonEquip : MonoBehaviour {
 
 	private void OnDisguiseChanged(string _sku) {
 		if (m_dragonSku == _sku) {
-			EquipDisguise();
+			EquipDisguise(Wardrobe.GetEquipedDisguise(m_dragonSku));
 		}
 	}
 	
-	private void EquipDisguise() {
-		string disguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
-		
-		DefinitionNode def = Definitions.GetDefinition(Definitions.Category.DISGUISES_EQUIP, disguise);
+	private void EquipDisguise(string _disguise) {				
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_EQUIP, _disguise);
 
 		if (def != null)  {
 			SetSkin(def.GetAsString("skin"));

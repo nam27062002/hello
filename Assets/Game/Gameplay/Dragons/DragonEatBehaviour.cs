@@ -6,6 +6,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	private DragonPlayer m_dragon;
 	private DragonBoostBehaviour m_dragonBoost;
+	private Dictionary<string, float> m_eatingBoosts = new Dictionary<string, float>();
 
 	//--------------
 
@@ -27,7 +28,16 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	void OnEntityEaten( Transform t, Reward reward )
 	{
-		m_dragon.AddLife(reward.health);
+		// Check if origin is in power up and give proper boost
+		if ( m_eatingBoosts.ContainsKey( reward.origin ) )
+		{
+			m_dragon.AddLife(reward.health + (reward.health * m_eatingBoosts[reward.origin] / 100.0f));
+		}
+		else
+		{
+			m_dragon.AddLife(reward.health);
+		}
+
 		m_dragon.AddFury(reward.fury);
 	}
 
@@ -41,5 +51,10 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_dragonBoost.ResumeBoost();
 			m_slowedDown = false;
 		}
+	}
+
+	public void AddEatingBost( string entitySku, float value )
+	{
+		m_eatingBoosts.Add( entitySku, value);
 	}
 }

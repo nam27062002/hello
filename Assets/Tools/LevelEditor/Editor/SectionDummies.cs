@@ -43,7 +43,7 @@ namespace LevelEditor {
 			SelectionGrid.Group dragonGroup = m_grid.GetGroup("DragonPreviews", true);
 			if(dragonGroup != null) {
 				// Aux vars
-				List<DefinitionNode> dragonDefs = Definitions.GetDefinitions(Definitions.Category.DRAGONS);
+				List<DefinitionNode> dragonDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGONS);
 
 				// Basic properties
 				dragonGroup.m_name = "Dragon Previews";

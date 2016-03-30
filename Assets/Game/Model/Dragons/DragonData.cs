@@ -102,7 +102,7 @@ public class DragonData {
 	public void Init(DefinitionNode _def) {
 		// Store definition
 		m_def = _def;
-		m_tierDef = Definitions.GetDefinition(Definitions.Category.DRAGON_TIERS, _def.GetAsString("tier"));
+		m_tierDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGON_TIERS, _def.GetAsString("tier"));
 
 		// Progression
 		m_progression = new DragonProgression(this);

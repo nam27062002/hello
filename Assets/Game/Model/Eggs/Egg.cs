@@ -32,6 +32,11 @@ public class Egg {
 		SHOWROOM	// Egg for display only, state is not relevant
 	};
 
+	public struct EggReward {
+		public string type;
+		public string value;
+	}
+
 	/// <summary>
 	/// Auxiliar class for persistence load/save.
 	/// </summary>
@@ -57,6 +62,11 @@ public class Egg {
 		get { return m_rewardDef; }
 	}
 
+	private EggReward m_rewardData = new EggReward();
+	public EggReward rewardData {
+		get { return m_rewardData; }
+	}
+
 	// Logic
 	private State m_state = State.INIT;
 	public State state { 
@@ -80,10 +90,10 @@ public class Egg {
 	/// <param name="_eggSku">The sku of the egg in the EGGS definitions category.</param>
 	public static Egg CreateFromSku(string _eggSku) {
 		// Egg can't be created if definitions are not loaded
-		Debug.Assert(Definitions.ready, "Definitions not yet loaded!");
+		Debug.Assert(DefinitionsManager.ready, "Definitions not yet loaded!");
 
 		// Find and validate definition
-		DefinitionNode eggDef = Definitions.GetDefinition(Definitions.Category.EGGS, _eggSku);
+		DefinitionNode eggDef = DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, _eggSku);
 
 		// Create and return new egg
 		return CreateFromDef(eggDef);
@@ -98,10 +108,10 @@ public class Egg {
 	/// <param name="_dragonSku">The sku of the dragon the new egg should be associated to.</param>
 	public static Egg CreateByDragon(string _dragonSku) {
 		// Egg can't be created if definitions are not loaded
-		Debug.Assert(Definitions.ready, "Definitions not yet loaded!");
+		Debug.Assert(DefinitionsManager.ready, "Definitions not yet loaded!");
 
 		// Find an egg definition associated to the given dragon sku
-		DefinitionNode eggDef = Definitions.GetDefinitionByVariable(Definitions.Category.EGGS, "dragonSku", _dragonSku);
+		DefinitionNode eggDef = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", _dragonSku);
 
 		// Create and return new egg
 		return CreateFromDef(eggDef);
@@ -158,7 +168,7 @@ public class Egg {
 	/// <param name="_onlyOwnedDragons">Whether to restrict the random selection to eggs related to owned dragons only.</param>
 	public static DefinitionNode GetRandomDef(bool _onlyOwnedDragons = true) {
 		// Get all egg definitions
-		List<DefinitionNode> eggDefs = Definitions.GetDefinitions(Definitions.Category.EGGS);
+		List<DefinitionNode> eggDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.EGGS);
 
 		// Filter those whose linked dragon is not valid
 		// If required, select only those whose dragon is owned
@@ -214,8 +224,25 @@ public class Egg {
 
 		// Apply the reward
 		switch(rewardDef.GetAsString("type")) {
-			case "suit": {
-				// [AOC] TODO!!
+			case "suit": {				
+					string rarity = rewardDef.sku;
+					rarity = rarity.Replace("suit_", "");
+
+					string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);				
+					bool leveled = Wardrobe.LevelUpDisguise(disguise);
+
+					if (leveled) {
+						m_rewardData.type = "suit";
+						m_rewardData.value = disguise;
+					} else {
+						// give coins
+						int coins = Wardrobe.GetDisguiseValue(disguise);
+
+						UserProfile.AddCoins(coins);
+
+						m_rewardData.type = "coins";
+						m_rewardData.value = coins.ToString();
+					}
 			} break;
 
 			case "pet": {
@@ -226,6 +253,8 @@ public class Egg {
 				// [AOC] TODO!!
 			} break;
 		}
+
+		PersistenceManager.Save();
 
 		// Change state
 		ChangeState(State.COLLECTED);
@@ -263,17 +292,17 @@ public class Egg {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SaveData _data) {
 		// Check requirements
-		Debug.Assert(Definitions.ready, "Definitions not yet loaded!");
+		Debug.Assert(DefinitionsManager.ready, "Definitions not yet loaded!");
 
 		// Def
-		m_def = Definitions.GetDefinition(Definitions.Category.EGGS, _data.sku);
+		m_def = DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, _data.sku);
 
 		// State
 		m_state = _data.state;
 		m_isNew = _data.isNew;
 
 		// Reward
-		m_rewardDef = Definitions.GetDefinition(Definitions.Category.EGG_REWARDS, _data.rewardSku);
+		m_rewardDef = DefinitionsManager.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data.rewardSku);
 	}
 
 	/// <summary>

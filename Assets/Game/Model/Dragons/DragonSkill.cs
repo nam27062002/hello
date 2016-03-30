@@ -72,10 +72,10 @@ public class DragonSkill : SerializableClass {
 		m_owner = _owner;
 		Debug.Assert(m_owner != null, "A skill data object must always be linked to a DragonData instance.");
 
-		m_def = Definitions.GetDefinition(Definitions.Category.DRAGON_SKILLS, _skillSku);
+		m_def = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGON_SKILLS, _skillSku);
 		Debug.Assert(m_def != null, "Skill " + _skillSku + " not recognized!");
 
-		m_progressionDef = Definitions.GetDefinition(Definitions.Category.DRAGON_SKILLS, _owner.def.sku);	// Shares sku with the dragons
+		m_progressionDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGON_SKILLS, _owner.def.sku);	// Shares sku with the dragons
 		Debug.Assert(m_progressionDef != null, "Skill progression def for dragon " + _owner.def.sku + " couldn't be found!");
 
 		// [unlockPriceCoinsLevel1]	[unlockPriceCoinsLevel2]	[unlockPriceCoinsLevel3]	[unlockPriceCoinsLevel4]	[unlockPriceCoinsLevel5]	[fireMin]	[fireMax]	[speedMin]	[speedMax]	[boostMin]	[boostMax]

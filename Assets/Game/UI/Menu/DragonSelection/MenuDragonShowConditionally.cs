@@ -66,8 +66,8 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get sorted defs
-		m_sortedDefs = Definitions.GetDefinitions(Definitions.Category.DRAGONS);
-		Definitions.SortByProperty(ref m_sortedDefs, "order", Definitions.SortType.NUMERIC);
+		m_sortedDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGONS);
+		DefinitionsManager.SortByProperty(ref m_sortedDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);

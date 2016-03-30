@@ -64,7 +64,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	/// <param name="_time">Amount of time to be evaluated.</param>
 	public static int ComputePCForTime(TimeSpan _time) {
 		// Get coeficients from definition
-		DefinitionNode gameSettingsDef = Definitions.GetDefinition(Definitions.Category.SETTINGS, "gameSettings");
+		DefinitionNode gameSettingsDef = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
 		float timePcCoefA = gameSettingsDef.GetAsFloat("timeToPCCoefA");
 		float timePcCoefB = gameSettingsDef.GetAsFloat("timeToPCCoefB");
 

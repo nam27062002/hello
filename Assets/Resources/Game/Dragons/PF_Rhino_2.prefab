@@ -217,6 +217,7 @@ GameObject:
   - 114: {fileID: 11447270}
   - 114: {fileID: 11442574}
   - 114: {fileID: 11455772}
+  - 114: {fileID: 11458446}
   m_Layer: 12
   m_Name: PF_Rhino_2
   m_TagString: Player
@@ -2287,6 +2288,9 @@ MonoBehaviour:
   m_finalScale:
     min: 0.75
     max: 1.5
+  m_flameParticle: Flame
+  m_flameUpParticle: FlameUp
+  m_flameLight: PF_FireLight
 --- !u!114 &11414988
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2422,6 +2426,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 090ee74b4c8f446638d451fe04e3c3c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11458446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a2fe1b5a7a344b88962c88a1f75241e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11459072

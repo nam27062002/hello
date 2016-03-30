@@ -36,7 +36,7 @@ public class RulesReaderEditorWindow : EditorWindow {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	private Definitions.Category m_category = Definitions.Category.UNKNOWN;
+	private DefinitionsCategory m_category = DefinitionsCategory.UNKNOWN;
 	private string m_sku = "";
 	private string m_propertyId = "sku";
 
@@ -76,17 +76,17 @@ public class RulesReaderEditorWindow : EditorWindow {
 		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true)); {
 			// Category selector
 			bool allValid = true;
-			m_category = (Definitions.Category)EditorGUILayout.EnumPopup("category", m_category);
+			m_category = (DefinitionsCategory)EditorGUILayout.EnumPopup("category", m_category);
 
 			// Category validation
-			if(m_category == Definitions.Category.UNKNOWN) {
+			if(m_category == DefinitionsCategory.UNKNOWN) {
 				EditorGUILayout.HelpBox("Please select a valid category!", MessageType.Error);
 				allValid = false;
 			}
 
 			// Sku selector
 			if(allValid) {
-				List<string> skus = Definitions.GetSkuList(m_category);
+				List<string> skus = DefinitionsManager.GetSkuList(m_category);
 				int skuIdx = Mathf.Max(skus.IndexOf(m_sku), 0);	// If not found, first option
 				skuIdx = EditorGUILayout.Popup("sku", skuIdx, skus.ToArray());
 
@@ -100,7 +100,7 @@ public class RulesReaderEditorWindow : EditorWindow {
 			}
 
 			// Get target definition
-			DefinitionNode def = Definitions.GetDefinition(m_category, m_sku);
+			DefinitionNode def = DefinitionsManager.GetDefinition(m_category, m_sku);
 
 			// Def preview
 			if(allValid) {

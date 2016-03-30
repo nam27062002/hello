@@ -34,7 +34,7 @@ namespace LevelEditor {
 		/// Initialization.
 		/// </summary>
 		override protected void Awake() {
-			Definitions.CreateInstance();
+			DefinitionsManager.CreateInstance();
 
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);

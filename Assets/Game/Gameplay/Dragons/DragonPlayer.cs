@@ -64,8 +64,10 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_furyModifier;
 	public float furyModifier{ get{return m_furyModifier;} }
 
-	private bool m_mineShield;
-	public bool mineShield{ get{return m_mineShield;} }
+	private int m_mineShield;
+	private int m_freeRevives = 0;
+	private int m_tierIncreaseBreak = 0;
+
 
 	// Interaction
 	public bool playable {
@@ -104,23 +106,16 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthMax = m_data.def.GetAsFloat("healthMax");
 		m_energyMax = m_data.def.GetAsFloat("energyMax");
 		m_furyMax = m_data.def.GetAsFloat("furyMax");
-		m_healthWarningThreshold = Definitions.GetDefinition(Definitions.Category.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
+		m_healthWarningThreshold = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
 
-		// Calculate health modifier
-		// m_healthModifier = m_data.def.GetAsFloat("healthMax") * 0.1f;
 		m_healthModifier = 0;
-		m_healthMax += m_healthModifier;
-
-		// m_energyModifier = m_data.def.GetAsFloat("energyMax") * 0.1f;
 		m_energyModifier = 0;
-		m_energyMax += m_energyModifier;
-
-		// m_furyModifier = m_data.def.GetAsFloat("furyMax") * 0.1f;
 		m_furyModifier = 0;
-		m_furyMax += m_furyModifier;
 
 		// Check avoid first hit modifiers
-		m_mineShield = false;
+		m_mineShield = 0;
+		m_freeRevives = 0;
+		m_tierIncreaseBreak = 0;
 
 		// Initialize stats
 		ResetStats(false);
@@ -204,17 +199,28 @@ public class DragonPlayer : MonoBehaviour {
 		m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
 
 		// Check for death!
-		if(m_health <= 0f) {
-			// Send global even
-			Messenger.Broadcast(GameEvents.PLAYER_KO);
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
+		if(m_health <= 0f) 
+		{
+			// Check if free revive
+			if (m_freeRevives > 0)
+			{
+				m_freeRevives--;
+				ResetStats(true);
+				Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
+			}
+			else
+			{
+				// Send global even
+				Messenger.Broadcast(GameEvents.PLAYER_KO);
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
 
-			// Make dragon unplayable (xD)
-			playable = false;
+				// Make dragon unplayable (xD)
+				playable = false;
+			}
 		}
 
 		// Check for starvation
-		else if(wasStarving != IsStarving()) {
+		if(wasStarving != IsStarving()) {
 			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, IsStarving());
 		}
 	}
@@ -399,6 +405,65 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void LoseMineShield()
 	{
-		m_mineShield = false;
+		m_mineShield--;
+	}
+	public bool HasMineShield()
+	{
+		return m_mineShield > 0;
+	}
+
+	public int GetReminingLives()
+	{
+		return m_freeRevives;
+	}
+
+	/// <summary>
+	/// Gets the tier when breaking. Because we can have the "Destroy" power up wich increases the 
+	/// tier on the dragon breaking things we have this function to ask on the proper places
+	/// </summary>
+	/// <returns>The tier when breaking.</returns>
+	public DragonTier GetTierWhenBreaking()
+	{
+		DragonTier ret = m_data.tier + m_tierIncreaseBreak;
+		return ret;
+	}
+
+	public void SetOnBreakIncrease( int increase )
+	{
+		m_tierIncreaseBreak = increase;
+	}
+
+	// Increases health max by value where value is a tant per cent
+	public void SetHealthModifier( float value )
+	{
+		m_healthMax = m_data.def.GetAsFloat("healthMax");
+		m_healthModifier = m_data.def.GetAsFloat("healthMax") * value / 100.0f;
+		m_healthMax += m_healthModifier;
+		m_health = m_healthMax;
+	}
+
+	public void SetBoostModifier( float value )
+	{
+		m_energyMax = m_data.def.GetAsFloat("energyMax");
+		m_energyModifier = m_data.def.GetAsFloat("energyMax") * value / 100.0f;
+		m_energyMax += m_energyModifier;
+		m_energy = m_energyMax;
+	}
+
+	public void SetFuryModifier( float value )
+	{
+		m_furyMax = m_data.def.GetAsFloat("furyMax");
+		m_furyModifier = m_data.def.GetAsFloat("furyMax") * value / 100.0f;
+		m_furyMax += m_furyModifier;
+	}
+
+	public void SetFreeRevives( int revives )
+	{
+		m_freeRevives = revives;
+	}
+
+	public void SetMineShields( int numHits )
+	{
+		m_mineShield = numHits;
 	}
 }

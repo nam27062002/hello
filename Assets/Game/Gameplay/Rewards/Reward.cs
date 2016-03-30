@@ -15,6 +15,9 @@ public struct Reward  {
 	[Separator("", 7)]
 	public float xp;
 
+	public string origin;
+
+
 	//--------------------------------------------------------------------------//
 	// OPERATORS																//
 	//--------------------------------------------------------------------------//
@@ -33,6 +36,7 @@ public struct Reward  {
 		newReward.energy = _r1.energy + _r2.energy;
 		newReward.fury = _r1.fury + _r2.fury;
 		newReward.xp = _r1.xp + _r2.xp;
+		newReward.origin = _r1.origin + _r2.origin;
 		return newReward;
 	}
 
@@ -51,6 +55,7 @@ public struct Reward  {
 		newReward.energy = _r1.energy - _r2.energy;
 		newReward.fury = _r1.fury - _r2.fury;
 		newReward.xp = _r1.xp - _r2.xp;
+		newReward.origin = "-";
 		return newReward;
 	}
 
@@ -69,6 +74,7 @@ public struct Reward  {
 		newReward.energy = _r1.energy * _r2.energy;
 		newReward.fury = _r1.fury * _r2.fury;
 		newReward.xp = _r1.xp * _r2.xp;
+		newReward.origin = "*";
 		return newReward;
 	}
 
@@ -87,6 +93,7 @@ public struct Reward  {
 		newReward.energy = _r1.energy / _r2.energy;
 		newReward.fury = _r1.fury / _r2.fury;
 		newReward.xp = _r1.xp / _r2.xp;
+		newReward.origin = "/";
 		return newReward;
 	}
 
@@ -108,6 +115,7 @@ public struct Reward  {
 		newReward.energy = _r1.energy + _amount;
 		newReward.fury = _r1.fury + _amount;
 		newReward.xp = _r1.xp + _amount;
+		newReward.origin = _r1.origin;
 		return newReward;
 	}
 
@@ -126,6 +134,7 @@ public struct Reward  {
 		newReward.energy = _r1.energy * _factor;
 		newReward.fury = _r1.fury * _factor;
 		newReward.xp = _r1.xp * _factor;
+		newReward.origin = _r1.origin;
 		return newReward;
 	}
 }

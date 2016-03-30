@@ -34,7 +34,7 @@ public class AOCQuickTest : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	[Space]
-	public Definitions.Category m_category = Definitions.Category.UNKNOWN;
+	public DefinitionsCategory m_category = DefinitionsCategory.UNKNOWN;
 	public string m_sku = "";
 	public string m_propertyId = "sku";
 	[Space]
@@ -72,15 +72,15 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		if(m_category == Definitions.Category.UNKNOWN) {
+		if(m_category == DefinitionsCategory.UNKNOWN) {
 			Debug.LogError("Please select a valid category!");
 			return;
 		}
 
-		DefinitionNode def = Definitions.GetDefinition(m_category, m_sku);
+		DefinitionNode def = DefinitionsManager.GetDefinition(m_category, m_sku);
 		if(def == null) {
 			string str = "Def not found, candidate skus are: ";
-			List<string> skus = Definitions.GetSkuList(m_category);
+			List<string> skus = DefinitionsManager.GetSkuList(m_category);
 			for(int i = 0; i < skus.Count; i++) str += "\n" + skus[i];
 			Debug.LogError(str);
 			return;

@@ -87,7 +87,7 @@ public class Entity : Initializable {
 	/// </summary>
 	private void InitFromDef() {
 		// Get the definition
-		m_def = Definitions.GetDefinition(Definitions.Category.ENTITIES, sku);
+		m_def = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, sku);
 
 		// Cache some frequently accessed values from the definition for faster access
 		// Reward
@@ -98,6 +98,7 @@ public class Entity : Initializable {
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
 		m_reward.fury = m_def.GetAsFloat("rewardFury");
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
+		m_reward.origin = m_def.Get("sku");
 
 		// Simple data
 		m_goldenChance = m_def.GetAsFloat("goldenChance");

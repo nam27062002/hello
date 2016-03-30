@@ -44,7 +44,7 @@ public class ContainerBehaviour : MonoBehaviour
 				yield return null;
 			}
 			DragonPlayer player = InstanceManager.player.GetComponent<DragonPlayer>();
-			m_tier = player.data.tier;
+			m_tier = player.GetTierWhenBreaking();
 			m_currentHits = new ContainerHit();
 			ResetHits();
 		}

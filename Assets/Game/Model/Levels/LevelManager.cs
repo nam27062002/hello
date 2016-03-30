@@ -30,7 +30,7 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	//------------------------------------------------------------------//
 	// Shortcut to get the data of the currently selected level
 	public static DefinitionNode currentLevelDef {
-		get { return Definitions.GetDefinition(Definitions.Category.LEVELS, UserProfile.currentLevel); }
+		get { return DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, UserProfile.currentLevel); }
 	}
 
 	//------------------------------------------------------------------//
@@ -53,7 +53,7 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	/// <returns><c>true</c> the level with the specified _sku is unlocked; <c>false</c> otherwise.</returns>
 	/// <param name="_sku">The sku of the level to be checked.</param>
 	public static bool IsLevelUnlocked(string _sku) {
-		DefinitionNode def = Definitions.GetDefinition(Definitions.Category.LEVELS, _sku);
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
 		if(def == null) return false;
 		return def.GetAsInt("dragonsToUnlock") <= DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
 	}
@@ -73,7 +73,7 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 		}
 
 		// Get the data for the new level
-		DefinitionNode def = Definitions.GetDefinition(Definitions.Category.LEVELS, _sku);
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
 		DebugUtils.SoftAssert(def != null, "Attempting to load level with sku " + _sku + ", but the manager has no data linked to this index");
 
 		// Load additively all the scenes for the level with the given index
