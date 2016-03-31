@@ -92,6 +92,25 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 	}
 
+	// Public properties
+	// Sequence delta, only for tween animations
+	public float delta {
+		get {
+			if(m_sequence == null) {
+				return 0f;
+			} else {
+				return m_sequence.ElapsedPercentage(false); 
+			}
+		}
+		set { 
+			if(m_sequence == null) {
+				return;
+			} else {
+				m_sequence.Goto(Mathf.Clamp01(value), m_sequence.IsPlaying()); 
+			}
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -184,9 +203,9 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	public void ForceShow(bool _animate = true) {
-		// Force state to make sure Hide() call is not skipped
+		// Force state to make sure Show() call is not skipped
 		m_state = State.HIDDEN;
-		Hide(_animate);
+		Show(_animate);
 	}
 
 	/// <summary>

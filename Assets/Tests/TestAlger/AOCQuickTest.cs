@@ -44,6 +44,9 @@ public class AOCQuickTest : MonoBehaviour {
 	public double m_doubleValue = 0;
 	public long m_longValue = 0;
 
+	// Tooltip test
+	private int m_tooltipOpenCount = 0;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -99,6 +102,17 @@ public class AOCQuickTest : MonoBehaviour {
 		m_intValue = def.Get<int>(m_propertyId);
 		m_doubleValue = def.Get<double>(m_propertyId);
 		m_longValue = def.Get<long>(m_propertyId);
+	}
+
+	/// <summary>
+	/// A tooltip is being opened
+	/// </summary>
+	/// <param name="_tooltip">The tooltip that is being opened.</param>
+	public void OnTooltipOpen(UITooltip _tooltip) {
+		m_tooltipOpenCount++;
+
+		Text txt = _tooltip.GetComponentInChildren<Text>();
+		if(txt != null) txt.text = "The tooltip has been opened " + m_tooltipOpenCount + " times!";
 	}
 
 	/// <summary>
