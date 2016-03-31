@@ -18,15 +18,17 @@ public class DragonPowerUp : MonoBehaviour {
 		int level = Wardrobe.GetDisguiseLevel(disguise);
 
 		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
-		def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, def.GetAsString("powerupSet"));
 
-		for( int i = 0; i<level;i++ )
-		{
-			string powerUp = def.Get("powerup"+(i+1).ToString());
-			if ( !string.IsNullOrEmpty(powerUp))
-				SetPowerUp(powerUp);
+		if (def != null) {
+			def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, def.GetAsString("powerupSet"));
+
+			for( int i = 0; i<level;i++ )
+			{
+				string powerUp = def.Get("powerup"+(i+1).ToString());
+				if ( !string.IsNullOrEmpty(powerUp))
+					SetPowerUp(powerUp);
+			}
 		}
-
 	}
 
 	void SetPowerUp( string powerUpSku )

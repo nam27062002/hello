@@ -1,14 +1,14 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &175342
+--- !u!1 &117748
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 405286}
-  - 114: {fileID: 11411218}
+  - 4: {fileID: 449226}
+  - 114: {fileID: 11463780}
   m_Layer: 0
   m_Name: PF_Default
   m_TagString: Untagged
@@ -16,24 +16,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &405286
+--- !u!4 &449226
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 175342}
+  m_GameObject: {fileID: 117748}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11411218
+--- !u!114 &11463780
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 175342}
+  m_GameObject: {fileID: 117748}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a56bd6868b354bc18bcb74d052c56ca, type: 3}
@@ -41,21 +41,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_data:
     profile:
-      coins: 100
-      pc: 10
-      currentDragon: dragon_small
-      currentLevel: level_0
+      coins: 0
+      pc: 0
+      currentDragon: 
+      currentLevel: 
       tutorialStep: -1
     dragons:
-    - sku: dragon_small
-      xp: 0
-      level: 0
-      biteSkillLevel: 0
-      speedSkillLevel: 0
-      boostSkillLevel: 0
-      fireSkillLevel: 0
-      owned: 1
-      equip: []
     - sku: rhino
       xp: 0
       level: 0
@@ -74,7 +65,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_big
+    - sku: dragon_tiger
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -83,7 +74,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_big
+    - sku: dragon_pink
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -92,7 +83,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_big
+    - sku: dragon_glow
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -101,7 +92,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_big
+    - sku: dragon_water
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -110,7 +101,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_big
+    - sku: dragon_magma
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -119,7 +110,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_big
+    - sku: dragon_watermelon
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -128,7 +119,16 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_big
+    - sku: dragon_cow
+      xp: 0
+      level: 0
+      biteSkillLevel: 0
+      speedSkillLevel: 0
+      boostSkillLevel: 0
+      fireSkillLevel: 0
+      owned: 0
+      equip: []
+    - sku: dragon_metal
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -140,13 +140,13 @@ MonoBehaviour:
     missions:
       activeMissions:
       - sku: 
-        state: 2
+        state: 3
         currentValue: 0
       - sku: 
-        state: 0
+        state: 3
         currentValue: 0
       - sku: 
-        state: 0
+        state: 3
         currentValue: 0
       generationIdx: 000000000000000000000000
     eggs:
@@ -168,122 +168,17 @@ MonoBehaviour:
         state: 0
         rewardSku: 
         isNew: 1
+    wardrobe:
+      disguises: 
+      equiped: []
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.size
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].equip.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.profile.coins
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.profile.pc
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].id
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[2].id
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[0].owned
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].owned
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.missions.activeMissions.Array.data[1].state
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.missions.activeMissions.Array.data[2].state
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.profile.currentLevel
-      value: level_0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.profile.currentDragon
-      value: dragon_small
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[0].sku
-      value: dragon_small
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].sku
-      value: rhino
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[2].sku
-      value: dragon_big
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[0].speedSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[0].boostSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[0].fireSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].speedSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].boostSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].fireSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[2].boostSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[2].speedSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[2].fireSkillLevel
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[0]
-      value: Pet_1:Game/Equipable/Pets/PF_BabyRhino
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[1]
-      value: Head_1:Game/Equipable/Items/PF_CubicHat
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_data.dragons.Array.data[1].equip.Array.data[2]
-      value: Skin:Kenshin
-      objectReference: {fileID: 0}
+    m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 175342}
+  m_RootGameObject: {fileID: 117748}
   m_IsPrefabParent: 1
