@@ -30,17 +30,18 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Comment("If a tooltip instance is defined in the inspector, it will be used directly.\nIf not defined, a new instance of the defined prefab will be created as needed.")]
+	[SerializeField]
+	private UITooltip m_tooltip = null;
+	public UITooltip tooltip {
+		get { return m_tooltip; }
+	}
+
 	[SerializeField] private string m_prefabPath = "";
 
 	// Events, subscribe as needed via inspector or code
 	[Serializable] public class TooltipEvent : UnityEvent<UITooltip> { }
 	public TooltipEvent OnTooltipOpen = new TooltipEvent();
-
-	// Internal
-	private UITooltip m_tooltip = null;
-	public UITooltip tooltip {
-		get { return m_tooltip; }
-	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -49,7 +50,8 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
+		// If there is a tooltip instance linked, make sure it starts hidden
+		if(m_tooltip != null) m_tooltip.ForceHide(false);
 	}
 
 	/// <summary>
