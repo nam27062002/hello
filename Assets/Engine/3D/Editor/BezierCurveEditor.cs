@@ -63,6 +63,10 @@ public class BezierCurveEditor : Editor {
 	private bool m_editorSettingsExpanded = false;
 	private float m_clickRadius = 1f;
 
+	// Tools
+	private bool m_toolsExpanded = false;
+	private Vector3 m_resetOffset = new Vector3(50f, 0f, 0f);
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
@@ -143,14 +147,6 @@ public class BezierCurveEditor : Editor {
 			}
 		} EditorGUILayoutExt.EndHorizontalSafe();
 
-		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
-		serializedObject.ApplyModifiedProperties();
-
-		// If something has changed, force a repaint of the scene
-		if(EditorGUI.EndChangeCheck()) {
-			SceneView.RepaintAll();
-		}
-
 		// General editing settings
 		// Separator
 		EditorGUILayoutExt.Separator();
@@ -160,10 +156,63 @@ public class BezierCurveEditor : Editor {
 		m_editorSettingsExpanded = EditorGUILayout.Foldout(m_editorSettingsExpanded, "Editor Settings");
 		EditorPrefs.SetBool("AOCBezierCurveSettingsExpanded", m_editorSettingsExpanded);
 		if(m_editorSettingsExpanded) {
+			// Indent in
+			EditorGUI.indentLevel++;
+
 			// Click radius
 			m_clickRadius = EditorPrefs.GetFloat("AOCBezierCurveClickRadius");
 			m_clickRadius = EditorGUILayout.Slider("Click Radius", m_clickRadius, 0f, 1f);
 			EditorPrefs.SetFloat("AOCBezierCurveClickRadius", m_clickRadius);
+
+			// Indent out
+			EditorGUI.indentLevel--;
+		}
+
+		// Tools
+		EditorGUILayoutExt.Separator();
+		m_toolsExpanded = EditorPrefs.GetBool("BezierCurveToolsExpanded");
+		m_toolsExpanded = EditorGUILayout.Foldout(m_toolsExpanded, "Tools");
+		EditorPrefs.SetBool("BezierCurveToolsExpanded", m_toolsExpanded);
+		if(m_toolsExpanded) {
+			// Indent in
+			EditorGUI.indentLevel++;
+
+			// Info Label
+			bool wasEnabled = GUI.enabled;
+			GUI.enabled = false;
+			EditorGUILayout.LabelField("Reset all points in a straight line starting at curve's origin");
+			GUI.enabled = wasEnabled;
+
+			// Reset!
+			m_resetOffset = EditorGUILayout.Vector3Field("Reset Offset", m_resetOffset);
+			if(GUILayout.Button("RESET", GUILayout.Height(30f))) {
+				// Apply to all points in the curve
+				Vector3 pos = Vector3.zero;
+				for(int i = 0; i < targetCurve.points.Count; i++) {
+					BezierPoint p = targetCurve.GetPoint(i);
+
+					bool wasLocked = p.locked;
+					p.locked = false;
+
+					p.position = pos;
+					p.handle1 = Vector3.left;
+					p.handle2 = Vector3.right;
+					pos += m_resetOffset;
+
+					p.locked = true;
+				}
+			}
+
+			// Indent out
+			EditorGUI.indentLevel--;
+		}
+
+		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
+		serializedObject.ApplyModifiedProperties();
+
+		// If something has changed, force a repaint of the scene
+		if(EditorGUI.EndChangeCheck()) {
+			SceneView.RepaintAll();
 		}
 	}
 
