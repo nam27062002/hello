@@ -64,10 +64,14 @@ public class Wardrobe : Singleton<Wardrobe> {
 			}
 		}
 
-		int individualChance = 100 / disguises.Count;
-		int index = UnityEngine.Random.Range(0, 100) / individualChance;
+		if (disguises.Count > 0) {
+			int individualChance = 100 / disguises.Count;
+			int index = UnityEngine.Random.Range(0, 100) / individualChance;
 
-		return disguises[index];
+			return disguises[index];
+		}
+
+		return "";
 	}
 
 	public static int GetDisguiseValue(string _sku) {
