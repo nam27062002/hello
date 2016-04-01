@@ -29,8 +29,6 @@ public class PreyMotion : Initializable, MotionInterface {
 	//---------------------------------------------------------------
 [Header("Movement")]
 	[SerializeField] private Range m_zOffset = new Range(-1f, 1f);
-	[SerializeField] private Range m_flockAvoidRadiusRange;
-	private float m_flockAvoidRadiusSqr;
 
 [Header("Force management")]
 		[CommentAttribute("Max magnitude of the steering force vector (velocity).")]
@@ -49,8 +47,6 @@ public class PreyMotion : Initializable, MotionInterface {
 
 	// --------------------------------------------------------------- //
 
-	private FlockController m_flock; // turn into flock controller
-	private float m_flockAvoidRadius;
 	
 	private float m_posZ;
 	protected Vector2 m_position; // we move on 2D space
@@ -74,7 +70,6 @@ public class PreyMotion : Initializable, MotionInterface {
 	protected Vector2 m_collisionNormal;
 
 	protected Orientation m_orientation;
-	protected SpawnBehaviour m_spawn;
 	protected Animator m_animator;
 
 	private uint m_collisionCheckPool; // each prey will detect collisions at different frames
@@ -107,7 +102,6 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_groundSensor = transform.FindChild("ground_sensor");
 
 		m_orientation = GetComponent<Orientation>();
-		m_spawn = GetComponent<SpawnBehaviour>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
 		m_steeringForces = new Vector2[Forces.Count];
@@ -132,10 +126,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	}
 
 	// Use this for initialization
-	public override void Initialize() {		
-		/*if (m_flock) {
-			m_lastPosition = m_position = m_flock.GetTarget(m_spawn.index);
-		} else*/
+	public override void Initialize() {	
 		if (m_groundSensor) {
 			m_lastPosition = m_position = m_groundSensor.transform.position;
 		} else {
@@ -166,43 +157,16 @@ public class PreyMotion : Initializable, MotionInterface {
 		SetAffectedBySlowDown(false);
 	}
 
-	void OnEnable() {		
-		m_flockAvoidRadius = m_flockAvoidRadiusRange.GetRandom();
-		m_flockAvoidRadiusSqr = m_flockAvoidRadius * m_flockAvoidRadius;
+	void OnEnable() {
 		if (m_animator) m_animator.enabled = true;
 	}
 	
 	void OnDisable() {
-		AttachFlock(null);
 		if (m_animator) m_animator.enabled = false;
-	}
-	
-	public void AttachFlock(FlockController _flock) {		
-		if (m_flock != null) {
-			m_flock.Remove(gameObject);
-		}
-		
-		m_flock = _flock;
-		
-		if (m_flock != null) {
-			m_flock.Add(gameObject);
-		}
 	}
 
 	public bool HasGroundSensor() { 
 		return m_groundSensor != null;
-	}
-
-	public bool HasFlockController() {
-		return m_flock != null;
-	}
-	
-	public Vector2 GetFlockTarget() {
-		if (m_spawn != null) {
-			return m_flock.GetTarget(m_spawn.index);
-		} else {
-			return m_flock.GetTarget(0);
-		}
 	}
 
 	public void Seek(Vector2 _target) {
@@ -237,6 +201,10 @@ public class PreyMotion : Initializable, MotionInterface {
 		DoFlee(_target + _velocity * t); // future position
 	}
 
+	public void FlockSeparation(Vector2 _avoid) {
+		m_steeringForces[Forces.Flock] += _avoid;
+	}
+
 	public void Stop() {
 		if (direction.x < 0) {
 			direction = Vector3.left;
@@ -250,10 +218,7 @@ public class PreyMotion : Initializable, MotionInterface {
 
 	// ------------------------------------------------------------------------------------ //
 	private void ApplySteering(float delta) {
-		if (m_flock != null) {
-			FlockSeparation();
-		}
-
+		
 		if (m_checkCollisions)
 			AvoidCollisions();
 
@@ -283,7 +248,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	}
 
 	void Update() {
-		ApplySteering( Time.deltaTime );
+		ApplySteering(Time.deltaTime);
 	}
 
 
@@ -320,27 +285,6 @@ public class PreyMotion : Initializable, MotionInterface {
 
 		desiredVelocity -= m_velocity;
 		m_steeringForces[Forces.Flee] += desiredVelocity;
-	}
-
-	private void FlockSeparation() {
-		Vector2 avoid = Vector2.zero;
-		Vector2 direction = Vector2.zero;
-		for (int i = 0; i < m_flock.entities.Length; i++) {			
-			GameObject entity = m_flock.entities[i];
-			
-			if (entity != null && entity != gameObject) {
-				direction = m_position - (Vector2)entity.transform.position;
-				float distanceSqr = direction.sqrMagnitude;
-				
-				if (distanceSqr < m_flockAvoidRadiusSqr) 
-				{
-					float distance = distanceSqr * m_flockAvoidRadius / m_flockAvoidRadiusSqr;
-					avoid += direction.normalized * (m_flockAvoidRadius - distance);
-				}
-			}
-		}
-		
-		m_steeringForces[Forces.Flock] += avoid;
 	}
 
 	protected virtual void AvoidCollisions() {

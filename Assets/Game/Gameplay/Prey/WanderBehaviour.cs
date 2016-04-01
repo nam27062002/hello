@@ -24,6 +24,7 @@ public class WanderBehaviour : Initializable {
 	
 	protected PreyMotion m_motion;
 	private Animator m_animator;
+	private FlockBehaviour m_flock;
 
 	protected Vector2 m_target;
 	private float m_timer;
@@ -38,6 +39,7 @@ public class WanderBehaviour : Initializable {
 	// --------------------------------------------------------------------------- //
 
 	virtual protected void Awake() {
+		m_flock = GetComponent<FlockBehaviour>();
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_isEvasive = (GetComponent("EvadeBehaviour") != null) || (GetComponent("FleeBehaviour") != null);
@@ -75,7 +77,7 @@ public class WanderBehaviour : Initializable {
 
 	virtual protected void FixedUpdate() {
 		if (m_state == State.Move) {
-			if (m_motion.HasFlockController()) {
+			if (m_flock != null) {
 				ChooseTarget();
 			} else {
 				if (m_chaoticMovement) {
@@ -127,8 +129,8 @@ public class WanderBehaviour : Initializable {
 	}
 
 	virtual protected void ChooseTarget() {
-		if (m_motion.HasFlockController()) {
-			m_target = m_motion.GetFlockTarget();
+		if (m_flock != null) {
+			m_target = m_flock.GetFlockTarget();
 		} else {
 			if (m_motion.area != null)
 				m_target = m_motion.area.RandomInside();

@@ -167,9 +167,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 		if (m_flockController) {
 			for (int i = 0; i < m_entities.Length; i++) {
 				if (m_entities[i] != null) {
-					PreyMotion motion = m_entities[i].GetComponent<PreyMotion>();
-					if (motion != null) {
-						motion.AttachFlock(m_flockController);
+					FlockBehaviour flock = m_entities[i].GetComponent<FlockBehaviour>();
+					if (flock != null) {
+						flock.AttachFlock(m_flockController);
 					}
 				}
 			}
