@@ -174,8 +174,8 @@ public class HUDStatBar : MonoBehaviour {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
 			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
-			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("fireBarRatio");
-			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("fireBarRatio");
+			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
+			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
 		}
 		return 5;
 	}
