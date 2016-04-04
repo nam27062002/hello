@@ -47,22 +47,25 @@ public class DragonPlayer : MonoBehaviour {
 	// Cache content data
 	private float m_healthMax = 1f;
 	public float healthMax {get{return m_healthMax;}}
+	private float m_healthBase = 1f;
+	public float healthBase {get{return m_healthBase;}}
 
 	private float m_energyMax = 1f;
 	public float energyMax {get{return m_energyMax;}}
+	private float m_energyBase = 1f;
+	public float energyBase {get{return m_energyBase;}}
 
 	private float m_furyMax = 1f;
 	public float furyMax{get{return m_furyMax;}}
+	private float m_furyBase = 1f;
+	public float furyBase {get{return m_furyBase;}}
 
 	private float m_healthWarningThreshold = 1f;
 
-	// Power up addition done to the max value
-	private float m_healthModifier;
-	public float healthModifier{ get{return m_healthModifier;} }
-	private float m_energyModifier;
-	public float energyModifier{ get{return m_energyModifier;} }
-	private float m_furyModifier;
-	public float furyModifier{ get{return m_furyModifier;} }
+	// Power up addition done to the max value ( tant per cent to add)
+	private float m_healthModifier = 0;
+	private float m_energyModifier = 0;
+	private float m_furyModifier = 0;
 
 	private int m_mineShield;
 	private int m_freeRevives = 0;
@@ -132,25 +135,27 @@ public class DragonPlayer : MonoBehaviour {
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 
 		gameObject.AddComponent<WindTrailManagement>();
+
+		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+	}
+
+	void OnDestroy()
+	{
+		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-
+	private void OnEnable() 
+	{
 		// Make sure the dragon has the scale according to its level
 		gameObject.transform.localScale = Vector3.one * data.scale;
-	}
-
-	/// <summary>
-	/// The component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		SetHealthModifier( m_healthModifier );
+		SetBoostModifier( m_energyModifier );
+		SetFuryModifier( m_furyModifier );
 	}
 
 	private void Update() {
@@ -380,6 +385,9 @@ public class DragonPlayer : MonoBehaviour {
 		// Assume it's this dragon
 		// Make sure the dragon has the scale according to its level
 		gameObject.transform.localScale = Vector3.one * data.scale;
+
+		SetHealthModifier( m_healthModifier );
+		SetBoostModifier( m_energyModifier );
 	}
 
 	public void LoseMineShield()
@@ -415,25 +423,25 @@ public class DragonPlayer : MonoBehaviour {
 	// Increases health max by value where value is a tant per cent
 	public void SetHealthModifier( float value )
 	{
-		m_healthMax = m_data.def.GetAsFloat("healthMax");
-		m_healthModifier = m_data.def.GetAsFloat("healthMax") * value / 100.0f;
-		m_healthMax += m_healthModifier;
+		m_healthBase = m_data.maxHealth;
+		m_healthModifier = value;
+		m_healthMax = m_healthBase + (m_healthModifier / 100.0f * m_healthBase);
 		m_health = m_healthMax;
 	}
 
 	public void SetBoostModifier( float value )
 	{
-		m_energyMax = m_data.def.GetAsFloat("energyMax");
-		m_energyModifier = m_data.def.GetAsFloat("energyMax") * value / 100.0f;
-		m_energyMax += m_energyModifier;
+		m_energyBase = m_data.energySkill.value;
+		m_energyModifier = value;
+		m_energyMax = m_energyBase + ( m_energyModifier / 100.0f * m_energyBase );
 		m_energy = m_energyMax;
 	}
 
-	public void SetFuryModifier( float value )
+	public void SetFuryModifier( float value)
 	{
-		m_furyMax = m_data.def.GetAsFloat("furyMax");
-		m_furyModifier = m_data.def.GetAsFloat("furyMax") * value / 100.0f;
-		m_furyMax += m_furyModifier;
+		m_furyBase = m_data.def.GetAsFloat("furyMax");
+		m_furyModifier = value;
+		m_furyMax = m_furyBase + ( m_furyModifier / 100.0f * m_furyBase );
 	}
 
 	public void SetFreeRevives( int revives )
