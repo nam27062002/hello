@@ -73,12 +73,12 @@ public class DragonEquip : MonoBehaviour {
 
 		if (def != null) {
 			def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_EQUIP, def.GetAsString("equipSet"));
+		}
 
-			if (def != null)  {
-				SetSkin(def.GetAsString("skin"));
-			} else {
-				SetSkin(null);
-			}
+		if (def != null)  {
+			SetSkin(def.GetAsString("skin"));
+		} else {
+			SetSkin(null);
 		}
 	}
 

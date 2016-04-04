@@ -228,20 +228,26 @@ public class Egg {
 					string rarity = rewardDef.sku;
 					rarity = rarity.Replace("suit_", "");
 
-					string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);				
-					bool leveled = Wardrobe.LevelUpDisguise(disguise);
+					string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);
 
-					if (leveled) {
+					if (disguise.Equals("")) {
 						m_rewardData.type = "suit";
-						m_rewardData.value = disguise;
+						m_rewardData.value = "missing";
 					} else {
-						// give coins
-						int coins = Wardrobe.GetDisguiseValue(disguise);
+						bool leveled = Wardrobe.LevelUpDisguise(disguise);
 
-						UserProfile.AddCoins(coins);
+						if (leveled) {
+							m_rewardData.type = "suit";
+							m_rewardData.value = disguise;
+						} else {
+							// give coins
+							int coins = Wardrobe.GetDisguiseValue(disguise);
 
-						m_rewardData.type = "coins";
-						m_rewardData.value = coins.ToString();
+							UserProfile.AddCoins(coins);
+
+							m_rewardData.type = "coins";
+							m_rewardData.value = coins.ToString();
+						}
 					}
 			} break;
 
