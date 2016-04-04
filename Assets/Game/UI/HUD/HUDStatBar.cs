@@ -78,21 +78,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			yield return null;
 		}
-		RectTransform rectTransform;
-		Vector2 size;
 
-		rectTransform = m_bar.GetComponent<RectTransform>();
-		size = rectTransform.sizeDelta;
-		size.x = GetMaxValue() * GetSizePerUnit();
-		rectTransform.sizeDelta = size;
-
-		if ( m_baseBar != null )
-		{
-			rectTransform = m_baseBar.GetComponent<RectTransform>();
-			size = rectTransform.sizeDelta;
-			size.x = (GetMaxValue() - GetPowerUpsAddition()) * GetSizePerUnit();
-			rectTransform.sizeDelta = size;
-		}
+		ResizeBars();
 
 		if ( m_type == Type.Health )
 		{
@@ -101,6 +88,8 @@ public class HUDStatBar : MonoBehaviour {
 			Messenger.AddListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
 			RefreshIcons();
 		}
+
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
 	void OnDestroy()
@@ -110,6 +99,7 @@ public class HUDStatBar : MonoBehaviour {
 			Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
 			Messenger.RemoveListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
 		}
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
 	/// <summary>
@@ -126,7 +116,7 @@ public class HUDStatBar : MonoBehaviour {
 			if ( m_baseBar != null )
 			{
 				m_baseBar.minValue = 0f;
-				m_baseBar.maxValue = GetMaxValue() - GetPowerUpsAddition();
+				m_baseBar.maxValue = GetBaseValue();
 				m_baseBar.value = GetValue();
 			}
 			// Text
@@ -148,13 +138,13 @@ public class HUDStatBar : MonoBehaviour {
 		return 0;
 	}
 
-	private float GetPowerUpsAddition() {
+	private float GetBaseValue() {
 		switch( m_type ) 
 		{
-			case Type.Health: 	return InstanceManager.player.healthModifier;
-			case Type.Energy:	return InstanceManager.player.energyModifier;
-			case Type.Fury:		return InstanceManager.player.furyModifier;
-			case Type.SuperFury:return InstanceManager.player.furyModifier;
+			case Type.Health: 	return InstanceManager.player.healthBase;
+			case Type.Energy:	return InstanceManager.player.energyBase;
+			case Type.Fury:		return InstanceManager.player.furyBase;
+			case Type.SuperFury:return InstanceManager.player.furyBase;
 		}
 		return 0;
 	}
@@ -171,14 +161,12 @@ public class HUDStatBar : MonoBehaviour {
 
 	public float GetSizePerUnit()
 	{
-		/*
 		switch (m_type) {
-			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("");
-			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("");
-			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("");
-			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("");
+			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
+			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
+			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
+			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
 		}
-		*/		
 		return 5;
 	}
 
@@ -245,4 +233,29 @@ public class HUDStatBar : MonoBehaviour {
 			}break;
 		}
 	}
+
+	void ResizeBars()
+	{
+		RectTransform rectTransform;
+		Vector2 size;
+
+		rectTransform = m_bar.GetComponent<RectTransform>();
+		size = rectTransform.sizeDelta;
+		size.x = GetMaxValue() * GetSizePerUnit();
+		rectTransform.sizeDelta = size;
+
+		if ( m_baseBar != null )
+		{
+			rectTransform = m_baseBar.GetComponent<RectTransform>();
+			size = rectTransform.sizeDelta;
+			size.x = GetBaseValue() * GetSizePerUnit();
+			rectTransform.sizeDelta = size;
+		}
+	}
+
+	private void OnLevelUp(DragonData _data) 
+	{
+		ResizeBars();	
+	}
+
 }
