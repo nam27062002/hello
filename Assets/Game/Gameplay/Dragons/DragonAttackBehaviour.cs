@@ -9,7 +9,6 @@ public class DragonAttackBehaviour : MonoBehaviour {
 	[SerializeField] private float m_attackDelay = 0.25f;
 	[SerializeField] private float m_damage = 10f;
 
-	private DragonPlayer m_dragon;
 	private DragonMotion m_motion;
 	private Animator m_animator;
 	
@@ -23,7 +22,6 @@ public class DragonAttackBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	void Start () {		
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_dragon = GetComponent<DragonPlayer>();
 		m_motion = GetComponent<DragonMotion>();
 
 		m_target = null;
@@ -78,7 +76,7 @@ public class DragonAttackBehaviour : MonoBehaviour {
 	public void OnAttack() {
 		
 		if (m_target != null) {
-			float damage = m_dragon.GetSpeedMultiplier();
+			float damage = m_motion.currentSpeedMultiplier;
 			if (damage > 1) {
 				damage *= m_damage;
 			}

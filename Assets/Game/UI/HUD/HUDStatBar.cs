@@ -171,14 +171,12 @@ public class HUDStatBar : MonoBehaviour {
 
 	public float GetSizePerUnit()
 	{
-		/*
 		switch (m_type) {
-			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("");
-			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("");
-			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("");
-			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("");
+			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
+			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
+			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("fireBarRatio");
+			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("fireBarRatio");
 		}
-		*/		
 		return 5;
 	}
 

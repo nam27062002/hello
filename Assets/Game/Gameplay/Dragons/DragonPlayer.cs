@@ -85,7 +85,6 @@ public class DragonPlayer : MonoBehaviour {
 	private DragonBreathBehaviour m_breathBehaviour = null;
 
 	// Internal
-	private float m_speedMultiplier;
 	private float m_invulnerableAfterReviveTimer;
 
 	//------------------------------------------------------------------//
@@ -103,8 +102,8 @@ public class DragonPlayer : MonoBehaviour {
 		InstanceManager.player = this;
 
 		// Cache content data
-		m_healthMax = m_data.def.GetAsFloat("healthMax");
-		m_energyMax = m_data.def.GetAsFloat("energyMax");
+		m_healthMax = m_data.maxHealth;
+		m_energyMax = m_data.energySkill.value;
 		m_furyMax = m_data.def.GetAsFloat("furyMax");
 		m_healthWarningThreshold = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
 
@@ -174,8 +173,6 @@ public class DragonPlayer : MonoBehaviour {
 		m_energy = m_energyMax;
 
 		playable = true;
-
-		m_speedMultiplier = 1f;
 
 		if (_revive) {
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
@@ -310,24 +307,6 @@ public class DragonPlayer : MonoBehaviour {
 		m_superFury = 0;
 	}
 
-
-	/// <summary>
-	/// Sets the speed multiplier.
-	/// </summary>
-	/// <param name="_value">The new speed multiplier.</param>
-	public void SetSpeedMultiplier(float _value) {
-		m_speedMultiplier = _value;
-	}
-
-	/// <summary>
-	/// Compute and get the accumulated speed multiplier.
-	/// </summary>
-	/// <returns>The current speed multiplier.</returns>
-	public float GetSpeedMultiplier() {
-		//we'll return the current speed factor. The dragon can be slowed down because it grabbed something or speed up by boost
-		//calculate the final value, multiplying all the factors
-		return m_speedMultiplier;
-	}
 
 	/// <summary>
 	/// Moves this dragon to its default spawn point in the current level.
