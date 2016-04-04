@@ -38,6 +38,13 @@ public class AlignAndDistributeEditorWindow : EditorWindow {
 
 	private static readonly float BUTTON_SIZE = 35f;
 
+	//------------------------------------------------------------------------//
+	// STATICS																  //
+	//------------------------------------------------------------------------//
+	// Button icons
+	private static Texture[][] s_alignButtonTextures = null;
+	private static Texture[] s_distributeButtonTextures = null;
+
 	// Windows instance
 	private static AlignAndDistributeEditorWindow m_instance = null;
 	public static AlignAndDistributeEditorWindow instance {
@@ -71,9 +78,52 @@ public class AlignAndDistributeEditorWindow : EditorWindow {
 	}
 
 	/// <summary>
+	/// Creates custom GUI styles if not already done.
+	/// Must only be called from the OnGUI() method.
+	/// </summary>
+	private void InitStyles() {
+		// Align buttons
+		if(s_alignButtonTextures == null) {
+			// Create array
+			s_alignButtonTextures = new Texture[3][];	// X-Y-Z, MIN-MID-MAX
+
+			// Icon names
+			string[] axisNames = new string[] {"x", "y", "z"};
+			string[] modeNames = new string[] {"min", "mid", "max"};
+
+			// Init array
+			for(int i = 0; i < 3; i++) {
+				s_alignButtonTextures[i] = new Texture[3];
+				for(int j = 0; j < 3; j++) {
+					string file = "Assets/Tools/AlignAndDistribute/Editor/Assets/" + "align_" + axisNames[i] + "_" + modeNames[j] + ".png";
+					s_alignButtonTextures[i][j] = AssetDatabase.LoadAssetAtPath<Texture>(file);
+				}
+			}
+		}
+
+		// Distribute buttons
+		if(s_distributeButtonTextures == null) {
+			// Create array
+			s_distributeButtonTextures = new Texture[3];	// X-Y-Z
+
+			// Icon names
+			string[] axisNames = new string[] {"x", "y", "z"};
+
+			// Init array
+			for(int i = 0; i < 3; i++) {
+				string file = "Assets/Tools/AlignAndDistribute/Editor/Assets/" + "distribute_" + axisNames[i] + ".png";
+				s_distributeButtonTextures[i] = AssetDatabase.LoadAssetAtPath<Texture>(file);
+			}
+		}
+	}
+
+	/// <summary>
 	/// Update the inspector window.
 	/// </summary>
 	public void OnGUI() {
+		// Make sure styles are initialized - must be done in the OnGUI call
+		InitStyles();
+
 		// Initial space
 		EditorGUILayout.Space();
 
@@ -97,7 +147,7 @@ public class AlignAndDistributeEditorWindow : EditorWindow {
 				for(int j = 0; j < 3; j++) {
 					// One button per mode
 					Mode mode = (Mode)j;
-					if(GUILayout.Button(mode.ToString(), GUILayout.Width(BUTTON_SIZE), GUILayout.Height(BUTTON_SIZE))) {
+					if(GUILayout.Button(s_alignButtonTextures[i][j], GUILayout.Width(BUTTON_SIZE), GUILayout.Height(BUTTON_SIZE))) {
 						Align(axis, mode);
 					}
 				}
@@ -109,10 +159,14 @@ public class AlignAndDistributeEditorWindow : EditorWindow {
 		//EditorGUILayout.LabelField("Distribute");
 		EditorGUILayoutExt.Separator(new SeparatorAttribute("Distribute", 2));
 		EditorGUILayout.BeginHorizontal(); {
+			// Try to align with "align" buttons
+			GUILayout.Space(23f);
+
+			// One button per axis
 			for(int i = 0; i < 3; i++) {
-				// One button per axis
+				// Button
 				Axis axis = (Axis)i;
-				if(GUILayout.Button(axis.ToString(), GUILayout.Height(BUTTON_SIZE))) {	// Fill space, no forced width
+				if(GUILayout.Button(s_distributeButtonTextures[i], GUILayout.Height(BUTTON_SIZE), GUILayout.Width(BUTTON_SIZE))) {
 					Distribute(axis);
 				}
 			}
