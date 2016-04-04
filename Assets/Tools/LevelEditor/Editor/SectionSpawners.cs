@@ -56,10 +56,7 @@ namespace LevelEditor {
 				// Spacing
 				GUILayout.Space(5);
 
-				// Shape
-				EditorGUIUtility.labelWidth = 50f;
-				LevelEditor.settings.spawnerShape = (SpawnerShape)EditorGUILayout.EnumPopup("Shape:", LevelEditor.settings.spawnerShape, GUILayout.Height(20));
-				EditorGUIUtility.labelWidth = 0f;
+
 				
 				// Type
 				EditorGUIUtility.labelWidth = 50f;
@@ -72,9 +69,17 @@ namespace LevelEditor {
 					DirectoryInfo rootDirInfo = new DirectoryInfo(dirPath);
 					CreateGroup(rootDirInfo);
 				}
-
 				EditorGUIUtility.labelWidth = 0f;
-				
+
+
+				// Shape
+				if ( LevelEditor.settings.spawnerType != SpawnerType.PATH )
+				{
+					EditorGUIUtility.labelWidth = 50f;
+					LevelEditor.settings.spawnerShape = (SpawnerShape)EditorGUILayout.EnumPopup("Shape:", LevelEditor.settings.spawnerShape, GUILayout.Height(20));
+					EditorGUIUtility.labelWidth = 0f;
+				}
+
 				// Label
 				GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
 				labelStyle.alignment = TextAnchor.MiddleCenter;
