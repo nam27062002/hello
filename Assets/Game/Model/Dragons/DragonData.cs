@@ -76,12 +76,15 @@ public class DragonData {
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
 	// Skills
+		// Speed Base
 	[SerializeField] private DragonSkill m_speedSkill = null;
 	public DragonSkill speedSkill { get { return m_speedSkill; }}
 
-	[SerializeField] private DragonSkill m_boostSkill = null;
-	public DragonSkill boostSkill { get { return m_boostSkill; }}
+		// Boost size
+	[SerializeField] private DragonSkill m_energySkill = null;
+	public DragonSkill energySkill { get { return m_energySkill; }}
 
+		// Fire Size
 	[SerializeField] private DragonSkill m_fireSkill = null;
 	public DragonSkill fireSkill { get { return m_fireSkill; }}
 
@@ -113,7 +116,7 @@ public class DragonData {
 		
 		// Skills
 		m_speedSkill = new DragonSkill(this, "speed");
-		m_boostSkill = new DragonSkill(this, "boost");
+		m_energySkill = new DragonSkill(this, "energy");
 		m_fireSkill = new DragonSkill(this, "fire");
 
 		// Items
@@ -135,8 +138,8 @@ public class DragonData {
 		// [AOC] Quick'n'dirty
 		if(m_speedSkill.def.sku == _sku) {
 			return m_speedSkill;
-		} else if(m_boostSkill.def.sku == _sku) {
-			return m_boostSkill;
+		} else if(m_energySkill.def.sku == _sku) {
+			return m_energySkill;
 		} else if(m_fireSkill.def.sku == _sku) {
 			return m_fireSkill;
 		}
@@ -242,7 +245,7 @@ public class DragonData {
 
 		// Skills
 		m_speedSkill.Load(_data.speedSkillLevel);
-		m_boostSkill.Load(_data.boostSkillLevel);
+		m_energySkill.Load(_data.boostSkillLevel);
 		m_fireSkill.Load(_data.fireSkillLevel);
 
 		// Equip
@@ -267,7 +270,7 @@ public class DragonData {
 		data.level = progression.level;
 		
 		data.speedSkillLevel = m_speedSkill.level;
-		data.boostSkillLevel = m_boostSkill.level;
+		data.boostSkillLevel = m_energySkill.level;
 		data.fireSkillLevel = m_fireSkill.level;
 		
 		data.equip = new string[m_equip.Count];

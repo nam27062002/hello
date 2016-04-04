@@ -123,6 +123,19 @@ public class PathFollower : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Instanly go to a specific delta in the path.
+	/// </summary>
+	/// <param name="_delta">Target delta.</param>
+	public void GoTo(float _delta) {
+		// Check params
+		if(m_target == null || m_path == null) return;
+
+		// Set delta and apply
+		delta = _delta;
+		Apply();
+	}
+
+	/// <summary>
 	/// Animate to a specific delta in the path.
 	/// </summary>
 	/// <param name="_delta">Target delta.</param>
@@ -154,6 +167,21 @@ public class PathFollower : MonoBehaviour {
 			m_tween.SetEase(_ease);
 			m_tween.Restart();
 		}
+	}
+
+	/// <summary>
+	/// Instantly go to a specific point in the path.
+	/// </summary>
+	/// <param name="_snapPoint">Target control point.</param>
+	/// <returns>The delta corresponding to the target snap point</returns>
+	public float SnapTo(int _snapPoint) {
+		// Check params
+		if(m_target == null || m_path == null) return 0f;
+
+		// Set the snap point and apply
+		snapPoint = _snapPoint;
+		Apply();
+		return delta;
 	}
 
 	/// <summary>
