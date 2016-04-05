@@ -174,7 +174,7 @@ public static class EditorUtils {
 	/// <param name="_focusScene">Focus scene camera on it? Overrides _select parameter if true.</param>
 	/// <param name="_ping">Ping effect. Overrides _select parameter if true.</param>
 	public static void FocusObject(UnityEngine.Object _obj, bool _select = true, bool _focusScene = true, bool _ping = true) {
-		if(_select || _focusScene || _ping) Selection.activeObject = _obj;
+		if(_select || _focusScene || _ping) Selection.activeObject = _obj;	// In order to ping/frame the object, it must be selected first
 		if(_ping) EditorGUIUtility.PingObject(_obj);
 		if(_focusScene) SceneView.FrameLastActiveSceneView();
 	}

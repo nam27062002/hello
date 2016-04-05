@@ -165,8 +165,9 @@ public class PopupEggShop : MonoBehaviour {
 		if(dragonDef == null) return;
 
 		// Rewards text
+		// [AOC] HARDCODED!!
 		StringBuilder sb = new StringBuilder();
-		sb.AppendLine(Localization.Localize("- A disguise for dragon %U0", dragonDef.sku));
+		sb.AppendLine(Localization.Localize("- A disguise for dragon %U0", dragonDef.GetLocalized("tidName")));
 		sb.AppendLine(Localization.Localize("- A pet to help you catch preys"));
 		sb.AppendLine(Localization.Localize("- An exclusive dragon!"));
 		m_rewardsText.text = sb.ToString();
@@ -181,6 +182,18 @@ public class PopupEggShop : MonoBehaviour {
 	public void OnPurchaseButton() {
 		// Check that current selection is valid
 		if(m_selectedPill < 0 || m_selectedPill >= m_pills.Count) return;
+
+		// Can the egg be purchased?
+		// Dragon must be owned
+		string dragonSku = m_pills[m_selectedPill].eggDef.GetAsString("dragonSku");
+		DragonData requiredDragon = DragonManager.GetDragonData(dragonSku);
+		if(!requiredDragon.isOwned) {
+			// Show feedback and return
+			string text = Localization.Localize("%U0 Required!", requiredDragon.def.GetLocalized("tidName"));	// [AOC] HARDCODED!!
+			UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch(text, new Vector2(0.5f, 0.5f), (RectTransform)this.transform);
+			textObj.GetComponent<Text>().color = Colors.red;
+			return;
+		}
 
 		// Get price and start purchase flow
 		long pricePC = m_pills[m_selectedPill].eggDef.GetAsLong("pricePC");
@@ -213,6 +226,8 @@ public class PopupEggShop : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// [AOC] TODO!!
+		UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch("Coming soon!",	new Vector2(0.5f, 0.5f), (RectTransform)this.transform);	// [AOC] HARDCODED!!
+		textObj.GetComponent<Text>().color = Colors.white;
 	}
 
 	/// <summary>

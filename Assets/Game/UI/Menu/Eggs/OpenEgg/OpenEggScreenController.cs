@@ -322,6 +322,9 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardView.transform.localRotation = Quaternion.identity;
 			m_rewardView.transform.localScale = Vector3.one;
 
+			// Launch fly animation
+			m_rewardView.GetComponentInChildren<Animator>().SetTrigger("fly_idle");
+
 			if (m_egg.eggData.rewardDef.GetAsString("type") == "suit") {
 				m_rewardView.GetComponent<DragonEquip>().PreviewDisguise(m_egg.eggData.rewardData.value);
 			}
@@ -443,7 +446,14 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnNavigationScreenChanged(int _fromScreen, int _toScreen, bool _animate) {
 		// If leaving this screen, launch all the hide animations that are not automated
 		if(_fromScreen == (int)MenuScreens.OPEN_EGG) {
+			// Hide reward text
 			m_rewardText.DOFade(0f, 0.25f);
+
+			// Destroy reward view
+			if(m_rewardView != null) {
+				GameObject.Destroy(m_rewardView);
+				m_rewardView = null;
+			}
 
 			// Restore HUD
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();

@@ -39,7 +39,7 @@ public class MenuScreensControllerToolbar {
 		MenuScreensController target = GameObject.FindObjectOfType<MenuScreensController>();
 		if(target == null) return;
 
-		/// http://answers.unity3d.com/questions/19321/onscenegui-called-without-any-object-selected.html
+		// http://answers.unity3d.com/questions/19321/onscenegui-called-without-any-object-selected.html
 		int screenToEdit = -1;
 		Handles.BeginGUI(); {
 			// In this particular case it's easier to just go with old school GUI calls
@@ -68,8 +68,13 @@ public class MenuScreensControllerToolbar {
 				scr = target.screens[i];
 				if(scr != null) {
 					if(i == screenToEdit) {
+						// [AOC] TODO!! Check why the scene framing throws an exception! :s
+						// Focus linked 3D scene in the scene
+						EditorUtils.FocusObject(target.scenes[i].gameObject, false, true, false);
+
+						// Select and ping screen in hierarchy
 						scr.gameObject.SetActive(true);
-						EditorUtils.FocusObject(scr.gameObject);
+						EditorUtils.FocusObject(scr.gameObject, true, false, true);
 					} else {
 						scr.gameObject.SetActive(false);
 					}
