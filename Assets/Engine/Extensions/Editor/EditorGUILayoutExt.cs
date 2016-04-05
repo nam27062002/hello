@@ -133,6 +133,35 @@ public static class EditorGUILayoutExt {
 		return _value;
 	}
 
+	/// <summary>
+	/// Generic object popup version.
+	/// </summary>
+	/// <returns>The newly selected object in the popup.</returns>
+	/// <param name="_label">The label of the inspector field.</param>
+	/// <param name="_selectedObject">Current selection.</param>
+	/// <param name="_options">Candidate values.</param>
+	/// <param name="_layoutOptions">Visual options for the inspector.</param>
+	public static T Popup<T>(string _label, T _selectedObject, T[] _options, params GUILayoutOption[] _layoutOptions) where T : UnityEngine.Object {
+		// Create options array and find out selected index
+		int selectedIdx = 0;	// First option by default
+		string[] options = new string[_options.Length];
+		for(int i = 0; i < options.Length; i++) {
+			options[i] = _options[i].name;
+			if(_options[i] == _selectedObject) {
+				selectedIdx = i;
+			}
+		}
+
+		// Show string popup
+		selectedIdx = EditorGUILayout.Popup(_label, selectedIdx, options, _layoutOptions);
+
+		// Return new selection
+		if(selectedIdx < _options.Length) {
+			return _options[selectedIdx];
+		}
+		return null;
+	}
+
 	//------------------------------------------------------------------//
 	// LAYOUT UTILS														//
 	//------------------------------------------------------------------//
