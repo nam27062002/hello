@@ -334,7 +334,9 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_tweenType == TweenType.NONE || m_tweenType == TweenType.CUSTOM) return;
 
 		// If the object doesn't have a canvas group, add it to be able to fade it in/out - all tween types will use it
-		if(m_canvasGroup == null) m_canvasGroup = gameObject.AddComponent<CanvasGroup>();
+		if(m_canvasGroup == null) {
+			m_canvasGroup = gameObject.AddComponent<CanvasGroup>();
+		}
 
 		// Create new sequence
 		m_sequence = DOTween.Sequence()
