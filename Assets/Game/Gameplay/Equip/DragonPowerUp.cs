@@ -44,11 +44,11 @@ public class DragonPowerUp : MonoBehaviour {
 			{
 				case "hp_increase":	// gives the player extra health
 				{
-					player.SetHealthModifier( def.GetAsFloat("param1") );
+					player.SetHealthModifier( def.GetAsFloat("param1"));
 				}break;
 				case "boost_increase":
 				{
-					player.SetBoostModifier( def.GetAsFloat("param1") );
+					player.SetBoostModifier( def.GetAsFloat("param1"));
 				}break;
 				case "fury_increase":
 				{

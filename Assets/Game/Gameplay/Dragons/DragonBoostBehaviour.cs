@@ -9,6 +9,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------
 	private DragonPlayer 	m_dragon;
+	private DragonMotion 	m_motion;
 	private DragonControl 	m_controls;
 	private Animator 		m_animator;
 
@@ -30,6 +31,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		m_dragon = GetComponent<DragonPlayer>();	
+		m_motion = GetComponent<DragonMotion>();
 		m_controls = GetComponent<DragonControl>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
@@ -99,7 +101,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private void StartBoost() 
 	{
 		m_active = true;
-		m_dragon.SetSpeedMultiplier(m_dragon.data.boostSkill.value);
+		m_motion.targetSpeedMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
 			m_animator.SetBool("boost", true);
@@ -109,7 +111,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	public void StopBoost() 
 	{
 		m_active = false;
-		m_dragon.SetSpeedMultiplier(1f);
+		m_motion.targetSpeedMultiplier = 1;
 		// DeactivateTrails();
 		if (m_animator && m_animator.isInitialized && !m_insideWater)
 			m_animator.SetBool("boost", false);
