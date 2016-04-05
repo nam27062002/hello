@@ -23,6 +23,8 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	[List("idle", "fly_idle")]
+	[SerializeField] private string m_initialAnim = "idle";
 	[SerializeField] private bool m_resetDragonScale = false;
 
 	private GameObject m_dragonPreview = null;
@@ -83,6 +85,9 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 			m_dragonPreview.transform.SetParent(this.transform);
 			m_dragonPreview.transform.localPosition = Vector3.zero;
 			m_dragonPreview.transform.localRotation = Quaternion.identity;
+
+			// Launch the default animation
+			m_dragonPreview.GetComponentInChildren<Animator>().SetTrigger(m_initialAnim);
 
 			if (m_resetDragonScale) {
 				m_dragonPreview.transform.localScale = Vector3.one;
