@@ -16,10 +16,16 @@ using DG.Tweening;
 /// <summary>
 /// 
 /// </summary>
+[ExecuteInEditMode]
 public class PathFollower : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public enum LinkMode {
+		NOT_LINKED,
+		DELTA,
+		SNAP_POINT
+	};
 	
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -28,11 +34,13 @@ public class PathFollower : MonoBehaviour {
 	[SerializeField] private Transform m_target = null;
 	public Transform target {
 		get { return m_target; }
+		set { m_target = value; }
 	}
 
 	[SerializeField] private BezierCurve m_path = null;
 	public BezierCurve path {
 		get { return m_path; }
+		set { m_path = value; }
 	}
 
 	// Properties
@@ -40,7 +48,11 @@ public class PathFollower : MonoBehaviour {
 	public float delta {
 		get { return m_delta; }
 		set {
+			// Update snap point as well and apply
 			m_delta = Mathf.Clamp01(value); 
+			if(m_path != null) {
+				m_snapPoint = m_path.GetPointAt(m_delta);
+			}
 			Apply();
 		}
 	}
@@ -52,15 +64,27 @@ public class PathFollower : MonoBehaviour {
 		}
 	}
 
+	[SerializeField] private int m_snapPoint = 0;
 	public int snapPoint {
-		get { 
-			if(m_path == null) return 0;
-			return m_path.GetPointAt(delta);
-		}
+		get { return m_snapPoint; }
 		set {
-			if(m_path == null) return;
-			delta = m_path.GetDelta(value);
+			// Update delta as well and apply
+			if(m_path != null) {
+				m_snapPoint = Mathf.Clamp(value, 0, m_path.pointCount - 1);
+				m_delta = m_path.GetDelta(m_snapPoint);
+				Apply();
+			}
 		}
+	}
+
+	public bool isTweening {
+		get { return m_tween != null && m_tween.IsPlaying(); }
+	}
+
+	[SerializeField] private LinkMode m_linkMode = LinkMode.DELTA;
+	public LinkMode linkMode {
+		get { return m_linkMode; }
+		set { m_linkMode = value; }
 	}
 
 	// Internal vars
@@ -80,7 +104,13 @@ public class PathFollower : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		
+		// Make sure target's position is updated - except if tweening!
+		if(!isTweening) {
+			switch(m_linkMode) {
+				case LinkMode.DELTA: Apply(); break;
+				case LinkMode.SNAP_POINT: SnapTo(m_snapPoint); break;
+			}
+		}
 	}
 
 	/// <summary>
