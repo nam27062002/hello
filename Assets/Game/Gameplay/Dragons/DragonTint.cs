@@ -6,11 +6,14 @@ public class DragonTint : MonoBehaviour
 	DragonBreathBehaviour m_breath;
 
 	DragonPlayer m_player;
+	DragonHealthBehaviour m_health;
 
 	SkinnedMeshRenderer m_dragonRenderer;
 
-	// Starving
-	float m_starvingTimer = 0;
+	float m_otherColorTimer = 0;
+
+	// Cursed
+	public Color m_curseColor = Color.green;
 
 	// Cave
 	Color m_caveColor = Color.white;
@@ -31,6 +34,7 @@ public class DragonTint : MonoBehaviour
 	{
 		m_breath = GetComponent<DragonBreathBehaviour>();
 		m_player = GetComponent<DragonPlayer>();
+		m_health = GetComponent<DragonHealthBehaviour>();
 		m_dragonRenderer = transform.GetFirstComponentInChildren<SkinnedMeshRenderer>();
 	}
 
@@ -63,18 +67,24 @@ public class DragonTint : MonoBehaviour
 			m_damageTimer = 0;
 		Color damageColor = m_damageColor * (m_damageTimer / m_damageTotalTime);
 
-		Color starveColor = Color.black;
-		if ( m_player.IsStarving() )
+
+		// Other color
+		Color otherColor = Color.black;
+		if ( m_health.IsCursed() )
 		{
-			m_starvingTimer += Time.deltaTime * 5;
-			starveColor = m_damageColor * (Mathf.Sin( m_starvingTimer) + 1) * 0.5f;
+			m_otherColorTimer += Time.deltaTime * 5;
+			otherColor = m_curseColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
+		}
+		else if ( m_player.IsStarving() )
+		{
+			m_otherColorTimer += Time.deltaTime * 5;
+			otherColor = m_damageColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
 		}
 		else
 		{
-			m_starvingTimer = 0;
+			m_otherColorTimer = 0;
 		}
-
-		m_dragonRenderer.material.SetColor("_ColorAdd",  damageColor + starveColor );
+		m_dragonRenderer.material.SetColor("_ColorAdd",  damageColor + otherColor );
 
 
 		// Inner light
