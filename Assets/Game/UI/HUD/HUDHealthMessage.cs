@@ -35,6 +35,7 @@ public class HUDHealthMessage : MonoBehaviour {
 		// Get external references
 		m_text = GetComponent<Text>();
 		m_text.text = "";
+		m_text.transform.localScale = Vector3.zero;
 	}
 
 	/// <summary>
