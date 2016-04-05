@@ -32,6 +32,7 @@ public class PathFollowerEditor : Editor {
 	// Store a reference of interesting properties for faster access
 	SerializedProperty m_targetProp = null;
 	SerializedProperty m_pathProp = null;
+	SerializedProperty m_linkModeProp = null;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -43,6 +44,7 @@ public class PathFollowerEditor : Editor {
 		// Store a reference of interesting properties for faster access
 		m_targetProp = serializedObject.FindProperty("m_target");
 		m_pathProp = serializedObject.FindProperty("m_path");
+		m_linkModeProp = serializedObject.FindProperty("m_linkMode");
 	}
 
 	/// <summary>
@@ -93,6 +95,9 @@ public class PathFollowerEditor : Editor {
 				Undo.RecordObject(target, "PathFollower.snapPoint");
 				targetPathFollower.snapPoint = newSnapPoint;
 			}
+
+			// Link mode
+			EditorGUILayout.PropertyField(m_linkModeProp);
 
 			// Debug buttons - only when application is playing, otherwise tweens don't work
 			if(Application.isPlaying) {

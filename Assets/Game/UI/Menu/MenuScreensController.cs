@@ -124,7 +124,7 @@ public class MenuScreensController : NavigationScreenSystem {
 		&& m_camera != null) {
 			// Perform camera transition!
 			// Camera snap point makes it easy for us! ^_^
-			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCirc);
+			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
 			tweenParams.OnComplete(OnCameraTweenCompleted);
 			targetScene.cameraSnapPoint.TweenTo(m_camera, 0.5f, tweenParams); 
 			m_tweening = true;

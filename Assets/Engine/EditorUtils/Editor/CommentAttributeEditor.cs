@@ -25,7 +25,6 @@ public class CommentAttributeEditor : DecoratorDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	private GUIStyle m_labelStyle = null;
 	private GUIContent m_content = new GUIContent();
 
 	//------------------------------------------------------------------//
@@ -39,17 +38,6 @@ public class CommentAttributeEditor : DecoratorDrawer {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public CommentAttributeEditor() {
-		// Initialize label style
-		m_labelStyle = new GUIStyle(EditorStyles.label);
-		m_labelStyle.fontStyle = FontStyle.Italic;
-		m_labelStyle.normal.textColor = Colors.gray;
-		m_labelStyle.wordWrap = true;
-	}
-
-	/// <summary>
 	/// Draw the decorator in the inspector.
 	/// </summary>
 	/// <param name="_area">The area designated by the inspector to draw this decoration.</param>
@@ -58,7 +46,7 @@ public class CommentAttributeEditor : DecoratorDrawer {
 		_area.y += comment.m_spaceAbove;
 
 		// Draw label
-		EditorGUI.LabelField(_area, m_content.text, m_labelStyle);
+		EditorGUI.LabelField(_area, m_content.text, CustomEditorStyles.commentLabelLeft);
 	}
 
 	/// <summary>
@@ -68,7 +56,7 @@ public class CommentAttributeEditor : DecoratorDrawer {
 	public override float GetHeight() {
 		// [AOC] Compute required height to draw the text using our custom box style with the current inspector window width
 		m_content.text = comment.m_text;
-		float requiredHeight = m_labelStyle.CalcHeight(m_content, Screen.width - 35f);	// Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
+		float requiredHeight = CustomEditorStyles.commentLabelLeft.CalcHeight(m_content, Screen.width - 35f);	// Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
 
 		// Add spacing, if positive
 		if(comment.m_spaceAbove > 0f) {

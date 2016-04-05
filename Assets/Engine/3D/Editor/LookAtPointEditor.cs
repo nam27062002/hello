@@ -37,9 +37,6 @@ public class LookAtPointEditor : Editor {
 	private Vector3[] m_points = new Vector3[2];
 	private bool m_restoreMoveTool = false;
 
-	// Custom styles
-	private static GUIStyle s_commentLabelStyle = null;
-
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
@@ -77,14 +74,6 @@ public class LookAtPointEditor : Editor {
 	/// Updates stuff on the inspector.
 	/// </summary>
 	public override void OnInspectorGUI() {
-		// If custom style wasn't created, do it now
-		if(s_commentLabelStyle == null) {
-			s_commentLabelStyle = new GUIStyle(EditorStyles.label);
-			s_commentLabelStyle.fontStyle = FontStyle.Italic;
-			s_commentLabelStyle.normal.textColor = Colors.gray;
-			s_commentLabelStyle.wordWrap = true;
-		}
-
 		// Try to stick to serialized properties, since they automatically manage
 		// multi-object editing, undo/redo, etc.
 		// Update the serializedProperty - always do this in the beginning of OnInspectorGUI.
@@ -130,7 +119,7 @@ public class LookAtPointEditor : Editor {
 
 		// Optional lookAt object
 		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("If lookAtObject is defined, lookAtPoint will be linked to the position of the object", s_commentLabelStyle);
+		EditorGUILayout.LabelField("If lookAtObject is defined, lookAtPoint will be linked to the position of the object", CustomEditorStyles.commentLabelLeft);
 		GUI.changed = false;
 		EditorGUILayout.PropertyField(m_lookAtObjectProp);
 		if(GUI.changed) {

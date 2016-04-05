@@ -26,8 +26,7 @@ public class CameraSnapPointEditor : Editor {
 	//------------------------------------------------------------------//
 	private CameraSnapPoint m_targetSnapPoint = null;
 	private Camera m_editionCamera = null;
-
-	private static GUIStyle m_commentLabelStyle = null;
+	private Camera m_customTargetCamera = null;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -75,14 +74,6 @@ public class CameraSnapPointEditor : Editor {
 	/// Updates stuff on the inspector.
 	/// </summary>
 	public override void OnInspectorGUI() {
-		// If custom style wasn't created, do it now
-		if(m_commentLabelStyle == null) {
-			m_commentLabelStyle = new GUIStyle(EditorStyles.label);
-			m_commentLabelStyle.fontStyle = FontStyle.Italic;
-			m_commentLabelStyle.normal.textColor = Colors.gray;
-			m_commentLabelStyle.wordWrap = true;
-		}
-
 		// Start recording
 		Undo.RecordObject(m_targetSnapPoint, "CameraSnapPoint");
 		EditorGUI.BeginChangeCheck();
@@ -93,7 +84,7 @@ public class CameraSnapPointEditor : Editor {
 
 		// Optional values - single line
 		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("Optional Parameters", m_commentLabelStyle);
+		EditorGUILayout.LabelField("Optional Parameters", CustomEditorStyles.commentLabelLeft);
 
 		// Fov
 		EditorGUILayout.BeginHorizontal(); {
@@ -121,7 +112,7 @@ public class CameraSnapPointEditor : Editor {
 
 		// Fog setup
 		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("Optional Fog Setup", m_commentLabelStyle);
+		EditorGUILayout.LabelField("Optional Fog Setup", CustomEditorStyles.commentLabelLeft);
 
 		// Fog Color
 		EditorGUILayout.BeginHorizontal(); {
@@ -149,10 +140,28 @@ public class CameraSnapPointEditor : Editor {
 
 		// Editor stuff
 		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("Editor Stuff", m_commentLabelStyle);
+		EditorGUILayout.LabelField("Editor Stuff", CustomEditorStyles.commentLabelLeft);
 
 		// Color
 		m_targetSnapPoint.gizmoColor = EditorGUILayout.ColorField("Gizmo Color", m_targetSnapPoint.gizmoColor);
+
+		// Apply to target camera
+		EditorGUILayout.BeginHorizontal(); {
+			// Label
+			EditorGUILayout.PrefixLabel("Apply to camera");
+
+			// Camera selection
+			Camera[] sceneCameras = GameObject.FindObjectsOfType<Camera>();
+			m_customTargetCamera = EditorGUILayoutExt.Popup<Camera>("", m_customTargetCamera, sceneCameras);
+
+			// Apply button
+			bool wasEnabled = GUI.enabled;
+			GUI.enabled = (m_customTargetCamera != null);
+			if(GUILayout.Button("Apply")) {
+				m_targetSnapPoint.Apply(m_customTargetCamera);
+			}
+			GUI.enabled = wasEnabled;
+		} EditorGUILayout.EndHorizontal();
 
 		// Live preview, if enabled
 		if(m_editionCamera != null) {
