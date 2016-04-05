@@ -14,7 +14,7 @@ public class FlockController : MonoBehaviour {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
-	[SerializeField] private int m_targetTimeSlots = 5;
+	[SerializeField] private int m_targetTimeSlots = 1;
 	[SerializeField] private float m_amountSecsInPast = 0.25f;
 
 	[SeparatorAttribute]
