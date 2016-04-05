@@ -322,6 +322,9 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardView.transform.localRotation = Quaternion.identity;
 			m_rewardView.transform.localScale = Vector3.one;
 
+			// Launch fly animation
+			m_rewardView.GetComponentInChildren<Animator>().SetTrigger("fly_idle");
+
 			if (m_egg.eggData.rewardDef.GetAsString("type") == "suit") {
 				m_rewardView.GetComponent<DragonEquip>().PreviewDisguise(m_egg.eggData.rewardData.value);
 			}
