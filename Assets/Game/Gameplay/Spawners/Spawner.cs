@@ -29,6 +29,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	protected AreaBounds m_area;
 
 	protected FlockController m_flockController;
+	protected EntityGroupController m_groupController;
 
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
@@ -61,8 +62,16 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_flockController = GetComponent<FlockController>();
 		if (m_flockController) {
 			// this spawner has a flock controller! let's setup it
-			m_flockController.Init(m_quantity.max);
+			m_flockController.Init();
 		}
+
+		m_groupController = GetComponent<EntityGroupController>();
+		if ( m_groupController )
+		{
+			m_groupController.Init( m_quantity.max );
+		}
+
+
 	}
 
 	protected virtual void OnEnable() {
@@ -164,12 +173,12 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		ExtendedSpawn();
 
-		if (m_flockController) {
+		if (m_groupController) {
 			for (int i = 0; i < m_entities.Length; i++) {
 				if (m_entities[i] != null) {
-					FlockBehaviour flock = m_entities[i].GetComponent<FlockBehaviour>();
-					if (flock != null) {
-						flock.AttachFlock(m_flockController);
+					EntityGroupBehaviour groupBehaviour = m_entities[i].GetComponent<EntityGroupBehaviour>();
+					if (groupBehaviour != null) {
+						groupBehaviour.AttachGroup(m_groupController);
 					}
 				}
 			}
@@ -178,7 +187,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
 			Vector3 pos = transform.position;
-			if (i > 0) pos += Random.onUnitSphere * 2f; // don't let multiple entities spawn on the same point
+			if (i > 0) 
+			{
+				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+			}
 
 			spawn.Spawn(this, i, pos, m_area);
 			spawn.transform.localScale = Vector3.one * m_scale.GetRandom();
@@ -210,5 +222,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	void OnDrawGizmos() {
 		GetArea().DrawGizmo();
+	}
+
+	virtual protected Vector3 RandomStartDisplacement()
+	{
+		return Random.onUnitSphere * 2f;
 	}
 }

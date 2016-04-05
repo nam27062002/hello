@@ -12,7 +12,7 @@ public class PathSpawner : Spawner {
 	}
 	
 	// Update is called once per frame
-	override protected void ExtendedSpawn() {		
+	override protected void ExtendedSpawn() {
 		Vector3 position = m_path.GetRandom();
 		for (int i = 0; i < m_entities.Length; i++) {
 			if (m_entities[i] != null) {
@@ -29,5 +29,14 @@ public class PathSpawner : Spawner {
 	override protected AreaBounds GetArea() {
 		m_path = GetComponent<PathController>();
 		return m_path.bounds;
+	}
+
+	// On spawn we move a little all the entities
+	override protected Vector3 RandomStartDisplacement()
+	{
+		Vector3 random = Vector3.zero;
+		random.x = Random.Range(-2.0f, 2.0f);
+		random.z = Random.Range(-2.0f, 2.0f);
+		return random;
 	}
 }

@@ -34,6 +34,7 @@ GameObject:
   - 114: {fileID: 11471918}
   - 114: {fileID: 11449248}
   - 114: {fileID: 11444364}
+  - 114: {fileID: 11408074}
   m_Layer: 8
   m_Name: bird_sardine
   m_TagString: Untagged
@@ -410,6 +411,20 @@ MonoBehaviour:
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
   m_target: 0
+--- !u!114 &11408074
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0acfa9987db4db6a4006005c3f5f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_groupAvoidRadiusRange:
+    min: 0.75
+    max: 1.25
 --- !u!114 &11418024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -481,9 +496,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38a0ec23dccf4b2b86c84e8267ea659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_flockAvoidRadiusRange:
-    min: 0.75
-    max: 1.25
 --- !u!114 &11446750
 MonoBehaviour:
   m_ObjectHideFlags: 1

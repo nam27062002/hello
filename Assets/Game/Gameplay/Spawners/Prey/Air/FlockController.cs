@@ -35,8 +35,6 @@ public class FlockController : MonoBehaviour {
 
 	// Flock control
 	private Vector3[] m_target;	
-	private GameObject[] m_entities;
-	public GameObject[] entities { get { return m_entities; } }
 
 	private Vector3 m_movingCircleCenter;
 	private float m_timer;
@@ -50,8 +48,7 @@ public class FlockController : MonoBehaviour {
 	
 	}
 
-	public void Init(int _maxEntities) {
-		m_entities = new GameObject[_maxEntities];
+	public void Init() {
 		
 		Area area = GetComponent<Area>();
 		if (area != null) {
@@ -64,24 +61,6 @@ public class FlockController : MonoBehaviour {
 		}
 
 		m_timer = Random.Range(0f, Mathf.PI * 2f);
-	}
-
-	public void Add(GameObject _entity) {
-		for (int i = 0; i < m_entities.Length; i++) {
-			if (m_entities[i] == null) {
-				m_entities[i] = _entity;
-				break;
-			}
-		}
-	}
-
-	public void Remove(GameObject _entity) {
-		for (int i = 0; i < m_entities.Length; i++) {
-			if (m_entities[i] == _entity) {
-				m_entities[i] = null;
-				break;
-			}
-		}
 	}
 
 	public Vector2 GetTarget(int _index) {
