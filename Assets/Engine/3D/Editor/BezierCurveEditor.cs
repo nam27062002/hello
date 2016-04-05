@@ -31,11 +31,6 @@ public class BezierCurveEditor : Editor {
 	}
 
 	//------------------------------------------------------------------//
-	// CUSTOM STYLES													//
-	//------------------------------------------------------------------//
-	private static GUIStyle s_sceneLabelStyle = null;
-
-	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	private BezierCurve targetCurve { get { return target as BezierCurve; }}
@@ -74,14 +69,6 @@ public class BezierCurveEditor : Editor {
 	/// The editor has been enabled - target object selected.
 	/// </summary>
 	private void OnEnable() {
-		// Initialize custom styles if not done
-		if(s_sceneLabelStyle == null) {
-			// Is style initialized?
-			s_sceneLabelStyle = new GUIStyle(EditorStyles.boldLabel);
-			s_sceneLabelStyle.normal.textColor = Colors.WithAlpha(Colors.white, 0.5f);
-			s_sceneLabelStyle.fontSize = 20;
-		}
-
 		// Store a reference of interesting properties for faster access
 		m_pointsProp = serializedObject.FindProperty("m_points");
 
@@ -290,7 +277,7 @@ public class BezierCurveEditor : Editor {
 			}
 
 			// Label
-			Handles.Label(p.globalPosition, i.ToString(), s_sceneLabelStyle);
+			Handles.Label(p.globalPosition, i.ToString(), CustomEditorStyles.bezierSceneLabel);
 		}
 
 		// Check several quit conditions before proceeding

@@ -26,7 +26,7 @@ public class InfoBoxAttributeEditor : DecoratorDrawer {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	private GUIStyle m_boxStyle = new GUIStyle(GUI.skin.GetStyle("HelpBox"));
+	private static GUIStyle s_boxStyle = null;
 	private GUIContent m_content = new GUIContent();
 
 	//------------------------------------------------------------------//
@@ -44,8 +44,11 @@ public class InfoBoxAttributeEditor : DecoratorDrawer {
 	/// </summary>
 	public InfoBoxAttributeEditor() {
 		// Initialize box style
-		m_boxStyle.margin = new RectOffset(50, 50, 50, 50);
-		m_boxStyle.padding = new RectOffset(5, 5, 5, 5);
+		if(s_boxStyle == null) {
+			s_boxStyle = new GUIStyle(GUI.skin.GetStyle("HelpBox"));
+			s_boxStyle.margin = new RectOffset(50, 50, 50, 50);
+			s_boxStyle.padding = new RectOffset(5, 5, 5, 5);
+		}
 	}
 
 	/// <summary>
@@ -67,7 +70,7 @@ public class InfoBoxAttributeEditor : DecoratorDrawer {
 	public override float GetHeight() {
 		// [AOC] Compute required height to draw the text using our custom box style with the current inspector window width
 		m_content.text = infoBox.m_text;
-		float requiredHeight = m_boxStyle.CalcHeight(m_content, Screen.width - 35f);	// Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
+		float requiredHeight = s_boxStyle.CalcHeight(m_content, Screen.width - 35f);	// Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
 
 		// Add margins and return
 		requiredHeight += MARGIN * 2f;	// Top and bot
