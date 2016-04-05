@@ -410,18 +410,40 @@ public static class GameObjectExt {
 	/// <returns>The first object of type T found in the scene.</returns>
 	/// <param name="_includeInactive">Whether to include inactive objects in the search.</param>
 	/// <typeparam name="T">Type to search.</typeparam>
-	public static T FindComponent<T>(bool _includeInactive = true) where T : Component {
-		// Use Unity method if inactives not required
+	public static T FindComponent<T>(bool _includeInactive = true, string _name = "") where T : Component {
+		// Use Unity methods if inactives not required
 		if(_includeInactive) {
 			// Traverse whole hierarchy
 			GameObject[] rootObjs = SceneManager.GetActiveScene().GetRootGameObjects();
 			for(int i = 0; i < rootObjs.Length; i++) {
-				T searchResult = rootObjs[i].FindComponentRecursive<T>();
+				// Check name?
+				T searchResult = null;
+				if(string.IsNullOrEmpty(_name)) {
+					searchResult = rootObjs[i].FindComponentRecursive<T>();
+				} else {
+					searchResult = rootObjs[i].FindComponentRecursive<T>(_name);
+				}
+
+				// If found, return! Otherwise check the next root object
 				if(searchResult != null) return searchResult;
 			}
 		} else {
-			return GameObject.FindObjectOfType<T>();
+			// Filter by name?
+			if(string.IsNullOrEmpty(_name)) {
+				// Just get the first component of type T
+				return GameObject.FindObjectOfType<T>();
+			} else {
+				// Get all components of type T and find the first one matching the requested name
+				T[] matches = GameObject.FindObjectsOfType<T>();
+				for(int i = 0; i < matches.Length; i++) {
+					if(matches[i].name == _name) {
+						return matches[i];
+					}
+				}
+			}
 		}
+
+		// Object matching the search criteria not found in the scene
 		return null;
 	}
 }
