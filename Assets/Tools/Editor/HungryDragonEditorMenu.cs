@@ -59,6 +59,14 @@ public class HungryDragonEditorMenu {
 		AssetDatabase.SaveAssets();
 	}
 
+	/// <summary>
+	/// Custom tools for the dragon selection menu.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Dragon Menu Tools", false, 3)]
+	public static void DragonMenuTools() {
+		DragonMenuToolsEditorWindow.ShowWindow();
+	}
+
 	//--------------------------------------------------- OTHERS -----------------------------------------------------//
 	/// <summary>
 	/// Add menu item to be able to open the level editor.
