@@ -8,17 +8,23 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// For now just an enum with the main tutorial steps.
+/// Masked enum with the main tutorial steps.
+/// Using a mask since we don't care in which order they are executed (moreover 
+/// we don't want to restrict the order so we can be more flexible when adding/removing
+/// steps).
 /// </summary>
+// Using flags attribute for easier mask setup 
+// see http://stackoverflow.com/questions/3261451/using-a-bitmask-in-c-sharp
+// https://msdn.microsoft.com/en-us/library/system.flagsattribute(v=vs.110).aspx
+[Flags]
 public enum TutorialStep {
-	INIT = -1,
-
-	FIRST_PLAY_SCREEN,
-
-	COUNT
+	INIT				= 1 << 0,
+	FIRST_PLAY_SCREEN	= 1 << 1,
+	CONTROLS_POPUP		= 1 << 2,
 }

@@ -4,15 +4,15 @@
 // Created by Alger Ortín Castellví on 24/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
-//----------------------------------------------------------------------//
-// INCLUDES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
 
-//----------------------------------------------------------------------//
-// CLASSES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 /// <summary>
 /// Main user profile. Store here all the user-related data: currencies, stats, 
 /// progress, purchases...
@@ -20,9 +20,9 @@ using System;
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
 public class UserProfile : SingletonMonoBehaviour<UserProfile> {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Auxiliar serializable class to save/load to persistence.
 	/// </summary>
@@ -33,16 +33,16 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		public long pc = 0;
 		public string currentDragon = "";	// sku
 		/*[SkuList(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
-		public TutorialStep tutorialStep = TutorialStep.INIT;
+		[EnumMask] public TutorialStep tutorialStep = TutorialStep.INIT;
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// MEMBERS																  //
+	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// PROPERTIES															  //
+	//------------------------------------------------------------------------//
 	// Set default values in the inspector, use static methods to set them from code
 	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
 	[Separator("Economy")]
@@ -75,13 +75,13 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		set { instance.m_tutorialStep = value; }
 	}
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------//
-	// PUBLIC METHODS													//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// PUBLIC STATIC METHODS												  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Add coins.
 	/// </summary>
@@ -104,9 +104,41 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _iAmount, pc);
 	}
 
-	//------------------------------------------------------------------//
-	// PERSISTENCE														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// TUTORIAL																  //
+	// To simplify bitmask operations										  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Check whether a tutorial step has been completed by this user.
+	/// </summary>
+	/// <returns><c>true</c> if <paramref name="_step"/> is marked as completed in this profile; otherwise, <c>false</c>.</returns>
+	/// <param name="_step">The tutorial step to be checked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be tested).</param>
+	public static bool IsTutorialStepCompleted(TutorialStep _step) {
+		// Special case for NONE: ignore
+		if(_step == TutorialStep.INIT) return true;
+
+		return (instance.m_tutorialStep & _step) != 0;
+	}
+
+	/// <summary>
+	/// Mark/unmark a tutorial step as completed.
+	/// </summary>
+	/// <param name="_step">The tutorial step to be marked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be marked).</param>
+	/// <param name="_completed">Whether to mark it as completed or uncompleted.</param>
+	public static void SetTutorialStepCompleted(TutorialStep _step, bool _completed = true) {
+		// Special case for NONE: ignore
+		if(_step == TutorialStep.INIT) return;
+
+		if(_completed) {
+			instance.m_tutorialStep |= _step;
+		} else {
+			instance.m_tutorialStep &= ~_step;
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// PERSISTENCE															  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Load state from a persistence object.
 	/// </summary>

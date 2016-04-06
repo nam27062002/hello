@@ -1,24 +1,27 @@
-﻿// MenuPlayButton.cs
-// Hungry Dragon
+// PopupTutorialControls.cs
 // 
-// Created by Alger Ortín Castellví on 09/03/2016.
+// Created by Alger Ortín Castellví on 05/04/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Simple controller for the big play button in the menu.
+/// Pause popup.
 /// </summary>
-public class MenuPlayButton : MenuNavigationButton {
+[RequireComponent(typeof(PopupController))]
+public class PopupTutorialControls : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public static readonly string PATH = "UI/Popups/Tutorial/PF_PopupTutorialControls";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -32,20 +35,24 @@ public class MenuPlayButton : MenuNavigationButton {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Play button has been pressed.
+	/// Open animation is about to start.
 	/// </summary>
-	public void OnPlayButton() {
-		// Depends on the tutorial status
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.FIRST_PLAY_SCREEN)) {
-			// Advance tutorial step
-			UserProfile.SetTutorialStepCompleted(TutorialStep.FIRST_PLAY_SCREEN);
-			PersistenceManager.Save();
+	public void OnOpenPreAnimation() {
+		// Pause the game
+		GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
+		if(gameController != null) {
+			gameController.PauseGame(true);
+		}
+	}
 
-			// Go straight to game
-			OnStartGameButton();
-		} else {
-			// Go to the dragon default screen defined in the inspector
-			OnNavigationButton();
+	/// <summary>
+	/// Close animation has finished.
+	/// </summary>
+	public void OnClosePostAnimation() {
+		// Restore the game
+		GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
+		if(gameController != null) {
+			gameController.PauseGame(false);
 		}
 	}
 }
