@@ -32,6 +32,11 @@ public class FlockBehaviour : MonoBehaviour {
 		{
 			return m_flock.GetTarget();
 		}
+		else
+		{
+			if (m_motion.area != null)
+				return m_motion.area.RandomInside();
+		}
 		return transform.position;
 	}
 }

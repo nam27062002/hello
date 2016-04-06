@@ -318,7 +318,6 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_steering += m_steeringForces[Forces.Seek];
 		m_steering += m_steeringForces[Forces.Flee];
 
-		Debug.Log(m_steering.magnitude);
 
 		if ((m_steeringForces[Forces.Seek] + m_steeringForces[Forces.Flee]).magnitude < 2f) {
 			m_steering.Set(-m_steeringForces[Forces.Flee].y, m_steeringForces[Forces.Flee].x);
