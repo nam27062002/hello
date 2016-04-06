@@ -33,6 +33,9 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	/*[SerializeField] public TutorialStep m_tutorialStep = TutorialStep.NONE;
+	public TutorialStep m_setMask = TutorialStep.NONE;
+	public bool m_setValue = true;*/
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -62,32 +65,32 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		// Delete current dragons
-		MenuDragonPreview[] toDelete = GetComponentsInChildren<MenuDragonPreview>();
-		for(int i = 0; i < toDelete.Length; i++) {
-			GameObject.DestroyImmediate(toDelete[i].gameObject);
-		}
-
-		// Load dragon definitions
-		List<DefinitionNode> defs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGONS);
-		DefinitionsManager.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
-
-		// Aux vars
-		BezierCurve lookAtPath = this.transform.parent.FindComponentRecursive<BezierCurve>("LookAtPath");
-
-		// Instantiate dragon prefabs
-		for(int i = 0; i < defs.Count; i++) {
-			// Get slot
-			Transform slotTransform = transform.FindChild("DragonSlot" + i);
-			if(slotTransform == null) continue;
-
-			// Instantiate the prefab and add it as child of this object
-			GameObject dragonPrefab = Resources.Load<GameObject>(defs[i].GetAsString("menuPrefab"));
-			GameObject dragonObj = PrefabUtility.InstantiatePrefab(dragonPrefab) as GameObject;
-			dragonObj.transform.SetParent(slotTransform, false);
-			dragonObj.name = dragonPrefab.name;	// Remove the "(Clone)" text
-		}
+		/*Debug.Log(m_setMask + ": " + IsTutorialStepCompleted(m_setMask));
+		SetTutorialStepCompleted(m_setMask, m_setValue);
+		Debug.Log(m_setMask + ": " + IsTutorialStepCompleted(m_setMask));*/
 	}
+
+	/// <summary>
+	/// Check whether a tutorial step has been completed by this user.
+	/// </summary>
+	/// <returns><c>true</c> if <paramref name="_step"/> is marked as completed in this profile; otherwise, <c>false</c>.</returns>
+	/// <param name="_step">The tutorial step to be checked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be tested).</param>
+	/*public bool IsTutorialStepCompleted(TutorialStep _step) {
+		return (m_tutorialStep & _step) != 0;
+	}
+
+	/// <summary>
+	/// Mark/unmark a tutorial step as completed.
+	/// </summary>
+	/// <param name="_step">The tutorial step to be marked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be marked).</param>
+	/// <param name="_completed">Whether to mark it as completed or uncompleted.</param>
+	public void SetTutorialStepCompleted(TutorialStep _step, bool _completed = true) {
+		if(_completed) {
+			m_tutorialStep |= _step;
+		} else {
+			m_tutorialStep &= ~_step;
+		}
+	}*/
 
 	/// <summary>
 	/// 
