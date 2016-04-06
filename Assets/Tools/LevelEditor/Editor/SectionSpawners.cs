@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -55,16 +56,30 @@ namespace LevelEditor {
 				// Spacing
 				GUILayout.Space(5);
 
-				// Shape
-				EditorGUIUtility.labelWidth = 50f;
-				LevelEditor.settings.spawnerShape = (SpawnerShape)EditorGUILayout.EnumPopup("Shape:", LevelEditor.settings.spawnerShape, GUILayout.Height(20));
-				EditorGUIUtility.labelWidth = 0f;
+
 				
 				// Type
 				EditorGUIUtility.labelWidth = 50f;
-				LevelEditor.settings.spawnerType = (SpawnerType)EditorGUILayout.EnumPopup("Type:", LevelEditor.settings.spawnerType, GUILayout.Height(20));
+				SpawnerType newType = (SpawnerType)EditorGUILayout.EnumPopup("Type:", LevelEditor.settings.spawnerType, GUILayout.Height(20));
+				if ( newType != LevelEditor.settings.spawnerType )
+				{
+					// Refresh grid content
+					LevelEditor.settings.spawnerType = newType;
+					string dirPath = Application.dataPath + "/Resources/" + RESOURCES_DIR;
+					DirectoryInfo rootDirInfo = new DirectoryInfo(dirPath);
+					CreateGroup(rootDirInfo);
+				}
 				EditorGUIUtility.labelWidth = 0f;
-				
+
+
+				// Shape
+				if ( LevelEditor.settings.spawnerType != SpawnerType.PATH )
+				{
+					EditorGUIUtility.labelWidth = 50f;
+					LevelEditor.settings.spawnerShape = (SpawnerShape)EditorGUILayout.EnumPopup("Shape:", LevelEditor.settings.spawnerShape, GUILayout.Height(20));
+					EditorGUIUtility.labelWidth = 0f;
+				}
+
 				// Label
 				GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
 				labelStyle.alignment = TextAnchor.MiddleCenter;
@@ -131,12 +146,32 @@ namespace LevelEditor {
 				if(dirGroup != null) {
 					// Basic properties
 					dirGroup.m_name = id;
-					
+
+					List<Object> datas = new List<Object>();
 					// Load prefabs!
-					dirGroup.m_data = new Object[files.Length];
-					for(int i = 0; i < files.Length; i++) {
-						dirGroup.m_data[i] = Resources.Load<GameObject>(resourcePath + "/" + Path.GetFileNameWithoutExtension(files[i].Name));
+					for(int i = 0; i < files.Length; i++) 
+					{
+						GameObject prefab = Resources.Load<GameObject>(resourcePath + "/" + Path.GetFileNameWithoutExtension(files[i].Name));
+						switch( LevelEditor.settings.spawnerType )
+						{
+							case SpawnerType.FLOCK:
+							{
+								if ( IsFlockBehaviour( prefab ) )
+									datas.Add( prefab );
+							}break;
+							case SpawnerType.PATH:
+							{
+								if ( IsPathBehaviour( prefab ) )
+									datas.Add( prefab );
+							}break;
+							case SpawnerType.STANDARD:
+							{
+								if ( !IsPathBehaviour( prefab ) && !IsFlockBehaviour( prefab ) )
+									datas.Add( prefab );
+							}break;
+						}
 					}
+					dirGroup.m_data = datas.ToArray();
 					
 					// Init contents
 					dirGroup.m_contents = new GUIContent[dirGroup.m_data.Length];
@@ -191,6 +226,27 @@ namespace LevelEditor {
 			
 			// Add the spawner component - and optionally a suffix
 			Spawner sp = null;
+			if ( IsPathBehaviour( entityPrefab ) )
+			{
+				sp = newSpawnerObj.AddComponent<PathSpawner>();
+				spawnerName += "Path";
+			}
+			else if ( IsFlockBehaviour( entityPrefab ) )
+			{
+				sp = newSpawnerObj.AddComponent<FlockSpawner>();
+				spawnerName += "Flock";
+			}
+			else
+			{
+				sp = newSpawnerObj.AddComponent<Spawner>();
+			}
+
+			if ( entityPrefab.GetComponent<EntityGroupBehaviour>() != null )
+				newSpawnerObj.AddComponent<EntityGroupController>();
+				
+
+			/*
+			// Old version
 			switch(LevelEditor.settings.spawnerType) {
 				case SpawnerType.STANDARD: {
 					sp = newSpawnerObj.AddComponent<Spawner>();
@@ -206,6 +262,7 @@ namespace LevelEditor {
 					spawnerName += "Path";
 				} break;
 			}
+			*/
 			
 			// Add a prefix of our own and generate unique name
 			newSpawnerObj.SetUniqueName(PREFIX + spawnerName);
@@ -246,5 +303,19 @@ namespace LevelEditor {
 			SceneView scene = SceneView.lastActiveSceneView;
 			scene.LookAt(newSpawnerObj.transform.position, scene.rotation, size, scene.orthographic, EditorApplication.isPlaying);
 		}
+
+		bool IsPathBehaviour( GameObject _entity)
+		{
+			return _entity.GetComponent<FollowPathBehaviour>() != null;	
+		}
+
+		bool IsFlockBehaviour( GameObject _entity )
+		{
+			return _entity.GetComponent<FlockBehaviour>() != null;	
+		}
+
+
 	}
+
+
 }

@@ -33,8 +33,10 @@ GameObject:
   - 114: {fileID: 11406772}
   - 114: {fileID: 11471918}
   - 114: {fileID: 11449248}
+  - 114: {fileID: 11444364}
+  - 114: {fileID: 11408074}
   m_Layer: 8
-  m_Name: yellow_bird
+  m_Name: bird_sardine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -357,7 +359,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 127370}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.317318, y: 15.180376, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 413978}
@@ -405,10 +407,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sensorMinRadius: 3
-  m_sensorMaxRadius: 14
+  m_sensorMaxRadius: 6
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
   m_target: 0
+--- !u!114 &11408074
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0acfa9987db4db6a4006005c3f5f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_groupAvoidRadiusRange:
+    min: 0.75
+    max: 1.25
 --- !u!114 &11418024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -469,6 +485,17 @@ MonoBehaviour:
   m_displacementRadius: 1
   m_angleIncrement: 10
   m_idleProbability: 1
+--- !u!114 &11444364
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38a0ec23dccf4b2b86c84e8267ea659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11446750
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -483,15 +510,10 @@ MonoBehaviour:
   m_zOffset:
     min: -1
     max: 1
-  m_flockAvoidRadiusRange:
-    min: 1.2
-    max: 1.8
-  m_steerForce: 0.1
-  m_mass: 0.2
-  m_distanceAttenuation: 8
+  m_distanceAttenuation: 4
   m_checkCollisions: 1
-  m_maxSpeed: 6.5
-  m_maxRunSpeed: 10
+  m_maxSpeed: 4
+  m_maxRunSpeed: 12
   m_slowingRadius: 2
   m_fallOnBurn: 0
 --- !u!114 &11449248
@@ -570,7 +592,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: aaa670cc00c9c41c38206049a145532b, type: 2}
+  - {fileID: 2100000, guid: 3f3fe446d3ab444e58af26538201b1f6, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
