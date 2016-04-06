@@ -23,6 +23,7 @@ public class HUDHealthMessage : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	private Text m_text = null;
+	private bool m_starving = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -34,6 +35,7 @@ public class HUDHealthMessage : MonoBehaviour {
 		// Get external references
 		m_text = GetComponent<Text>();
 		m_text.text = "";
+		m_text.transform.localScale = Vector3.zero;
 	}
 
 	/// <summary>
@@ -42,6 +44,7 @@ public class HUDHealthMessage : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarvingToggled);
+		Messenger.AddListener(GameEvents.PLAYER_CURSED, OnCursed);
 	}
 	
 	/// <summary>
@@ -50,6 +53,7 @@ public class HUDHealthMessage : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarvingToggled);
+		Messenger.RemoveListener(GameEvents.PLAYER_CURSED, OnCursed);
 	}
 
 	//------------------------------------------------------------------//
@@ -61,13 +65,27 @@ public class HUDHealthMessage : MonoBehaviour {
 	/// <param name="_isStarving">Whether the player is starving or not.</param>
 	private void OnStarvingToggled(bool _isStarving) {
 		// Toggle tweens
+		m_starving = _isStarving;
+		DOTween.Pause(gameObject);
 		if(_isStarving) {
 			m_text.text = "STARVING!";
 			GetComponent<DOTweenAnimation>().DORewind();
 			DOTween.Play(gameObject, "in");
 		} else {
-			DOTween.Pause(gameObject);
+			// DOTween.Pause(gameObject);
 			DOTween.Restart(gameObject, "out");
+		}
+	}
+
+	private void OnCursed()
+	{
+		if (!m_starving)
+		{
+			// Show AU message
+			m_text.text = "AU!";
+			DOTween.Pause(gameObject);
+			GetComponent<DOTweenAnimation>().DORewind();
+			DOTween.Play(gameObject, "one");
 		}
 	}
 }

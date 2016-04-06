@@ -91,10 +91,10 @@ GameObject:
   - 114: {fileID: 11478934}
   - 114: {fileID: 11421898}
   - 114: {fileID: 11448254}
-  - 114: {fileID: 11462906}
-  - 114: {fileID: 11431970}
-  - 114: {fileID: 11410540}
+  - 114: {fileID: 11405866}
   - 114: {fileID: 11467640}
+  - 114: {fileID: 11409254}
+  - 114: {fileID: 11494304}
   m_Layer: 8
   m_Name: bat_small
   m_TagString: Untagged
@@ -491,7 +491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_deactivate: 1
---- !u!114 &11410540
+--- !u!114 &11405866
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -499,7 +499,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 132400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
+  m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_canBeAfraid: 0
+  m_canPanic: 0
+  m_afraidSounds: []
+--- !u!114 &11409254
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38a0ec23dccf4b2b86c84e8267ea659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11421898
@@ -516,29 +530,12 @@ MonoBehaviour:
   m_zOffset:
     min: -1
     max: 1
-  m_flockAvoidRadiusRange:
-    min: 0.2
-    max: 0.5
-  m_steerForce: 0.1
-  m_mass: 0.25
   m_distanceAttenuation: 2
   m_checkCollisions: 1
-  m_maxSpeed: 8
-  m_maxRunSpeed: 10
+  m_maxSpeed: 5
+  m_maxRunSpeed: 8
   m_slowingRadius: 0
   m_fallOnBurn: 0
---- !u!114 &11431970
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_canBeEatenWhileAttacking: 1
 --- !u!114 &11448254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -597,24 +594,6 @@ MonoBehaviour:
   m_burnSize: 4
   m_burnDuration: 0.75
   m_orientedBurn: 1
---- !u!114 &11462906
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 0.5
-  m_attackDelay: 1
-  m_consecutiveAttacks: 1
-  m_retreatingTime: 0
-  m_hasAnimation: 0
-  m_projectilePrefab: {fileID: 0}
-  m_projectileSpawnPoint: {fileID: 0}
 --- !u!114 &11467640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -669,6 +648,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11494304
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0acfa9987db4db6a4006005c3f5f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_groupAvoidRadiusRange:
+    min: 1.5
+    max: 2.5
 --- !u!114 &11495124
 MonoBehaviour:
   m_ObjectHideFlags: 1

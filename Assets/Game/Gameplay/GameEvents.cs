@@ -43,6 +43,7 @@ public enum GameEvents {
 	PLAYER_KO,					// no params
 	PLAYER_DIED,				// no params
 	PLAYER_FREE_REVIVE,			// no params
+	PLAYER_CURSED,				// no params
 
 	// Collectible events
 	COLLECTIBLE_COLLECTED,		// params: Collectible _collectible

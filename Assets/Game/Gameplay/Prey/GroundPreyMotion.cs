@@ -14,9 +14,6 @@ public class GroundPreyMotion : PreyMotion {
 	protected override void UpdateVelocity(bool insidePowerUp) {
 		if (!m_burning)
 		{
-			m_steering = Vector2.ClampMagnitude(m_steering, m_steerForce);
-			m_steering = m_steering / m_mass;
-
 			float targetSpeed = m_currentMaxSpeed;
 			if ( insidePowerUp )
 				targetSpeed = m_currentMaxSpeed * 0.5f;

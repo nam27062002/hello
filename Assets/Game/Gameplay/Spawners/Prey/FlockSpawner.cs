@@ -2,6 +2,34 @@
 using System.Collections;
 
 [RequireComponent(typeof(FlockController))]
-public class FlockSpawner : Spawner {
-// nothing to do here
+public class FlockSpawner : Spawner 
+{
+	protected FlockController m_flockController;
+
+	override protected void Start()
+	{
+		base.Start();
+
+		m_flockController = GetComponent<FlockController>();
+		if (m_flockController) {
+			// this spawner has a flock controller! let's setup it
+			m_flockController.Init();
+		}
+	}
+
+	override protected void ExtendedSpawn()
+	{
+		if (m_flockController) 
+		{
+			for (int i = 0; i < m_entities.Length; i++) {
+				if (m_entities[i] != null) {
+					FlockBehaviour behaviour = m_entities[i].GetComponent<FlockBehaviour>();
+					if (behaviour != null) {
+						behaviour.SetFlock(m_flockController);
+					}
+				}
+			}
+		}
+	}
+
 }
