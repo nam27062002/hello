@@ -68,23 +68,10 @@ public class FeedbackData {
 		m_probabilities[(int)Type.DESTROY] = _def.GetAsFloat("destroyFeedbackChance");
 
 		// Feedback strings
-		int typeIdx = -1;
-		List<DefinitionNode> childNodes = _def.GetChildNodes();
-		for(int i = 0; i < childNodes.Count; i++) {
-			// Figure out type
-			switch(childNodes[i].tag) {
-				case "DamageFeedback":	typeIdx = (int)Type.DAMAGE;		break;
-				case "EatFeedback":		typeIdx = (int)Type.EAT;		break;
-				case "BurnFeedback":	typeIdx = (int)Type.BURN;		break;
-				case "DestroyFeedback":	typeIdx = (int)Type.DESTROY;	break;
-				default: 				typeIdx = -1; 					break;
-			}
-
-			// Add the new feedback string to the target type
-			if(typeIdx != -1) {
-				m_feedbacks[typeIdx].data.Add(childNodes[i].GetAsString("tidMessage"));
-			}
-		}
+		m_feedbacks[(int)Type.DAMAGE].data.AddRange(_def.GetAsArray<string>("tidDamageFeedback"));
+		m_feedbacks[(int)Type.EAT].data.AddRange(_def.GetAsArray<string>("tidEatFeedback"));
+		m_feedbacks[(int)Type.BURN].data.AddRange(_def.GetAsArray<string>("tidBurnFeedback"));
+		m_feedbacks[(int)Type.DESTROY].data.AddRange(_def.GetAsArray<string>("tidDestroyFeedback"));
 	}
 
 	//------------------------------------------------------------------//
@@ -100,8 +87,9 @@ public class FeedbackData {
 		if(m_feedbacks[typeIdx].data.Count > 0) {
 			// Probability of spawning a feedback message
 			if(UnityEngine.Random.Range(0f, 1f) < m_probabilities[typeIdx]) {
-				// Pick a random one and return it
-				return m_feedbacks[typeIdx].data[UnityEngine.Random.Range(0, m_feedbacks[typeIdx].data.Count)];
+				// Pick a random one, localize and return it
+				string feedbackTid = m_feedbacks[typeIdx].data[UnityEngine.Random.Range(0, m_feedbacks[typeIdx].data.Count)];
+				return Localization.Localize(feedbackTid);
 			}
 		}
 		return "";
