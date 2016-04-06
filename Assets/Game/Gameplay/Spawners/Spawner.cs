@@ -27,8 +27,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	// Attributes
 	//-----------------------------------------------
 	protected AreaBounds m_area;
-
-	protected FlockController m_flockController;
 	protected EntityGroupController m_groupController;
 
 	private uint m_entityAlive;
@@ -58,12 +56,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
 		m_area = GetArea();
-
-		m_flockController = GetComponent<FlockController>();
-		if (m_flockController) {
-			// this spawner has a flock controller! let's setup it
-			m_flockController.Init();
-		}
 
 		m_groupController = GetComponent<EntityGroupController>();
 		if ( m_groupController )

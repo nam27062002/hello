@@ -241,6 +241,10 @@ namespace LevelEditor {
 				sp = newSpawnerObj.AddComponent<Spawner>();
 			}
 
+			if ( entityPrefab.GetComponent<EntityGroupBehaviour>() != null )
+				newSpawnerObj.AddComponent<EntityGroupController>();
+				
+
 			/*
 			// Old version
 			switch(LevelEditor.settings.spawnerType) {

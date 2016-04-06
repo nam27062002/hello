@@ -45,24 +45,27 @@ public class EntityGroupBehaviour : MonoBehaviour
 
 	void Update()
 	{
-		Vector2 avoid = Vector2.zero;
-		Vector2 direction = Vector2.zero;
-
-		for (int i = 0; i < m_group.entities.Length; i++) 
+		if ( m_group != null )
 		{
-			GameObject entity = m_group.entities[i];
+			Vector2 avoid = Vector2.zero;
+			Vector2 direction = Vector2.zero;
 
-			if (entity != null && entity != gameObject) 
+			for (int i = 0; i < m_group.entities.Length; i++) 
 			{
-				direction = m_motion.position - (Vector2)entity.transform.position;
-				float distanceSqr = direction.sqrMagnitude;
+				GameObject entity = m_group.entities[i];
 
-				if (distanceSqr < m_groupAvoidRadiusSqr) {
-					float distance = distanceSqr * m_groupAvoidRadius / m_groupAvoidRadiusSqr;
-					avoid += direction.normalized * (m_groupAvoidRadius - distance);
+				if (entity != null && entity != gameObject) 
+				{
+					direction = m_motion.position - (Vector2)entity.transform.position;
+					float distanceSqr = direction.sqrMagnitude;
+
+					if (distanceSqr < m_groupAvoidRadiusSqr) {
+						float distance = distanceSqr * m_groupAvoidRadius / m_groupAvoidRadiusSqr;
+						avoid += direction.normalized * (m_groupAvoidRadius - distance);
+					}
 				}
 			}
+			m_motion.FlockSeparation(avoid);
 		}
-		m_motion.FlockSeparation(avoid);
 	}
 }
