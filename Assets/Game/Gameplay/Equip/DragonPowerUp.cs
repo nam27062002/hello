@@ -94,11 +94,75 @@ public class DragonPowerUp : MonoBehaviour {
 					eatBehaviour.AddEatingBost( from, percentage);
 				}break;
 			}
-
 		}
-
 	}
 
+	/// <summary>
+	/// Gets the description of this powerup, properly translated and formatted 
+	/// depending on powerup type.
+	/// </summary>
+	public static string GetDescription(string _powerSku) {
+		// Get definition
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
+		if(def == null) return "";
 
+		// Every power type has a different format
+		switch(def.GetAsString("type")) {
+			case "hp_increase":	 {
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0));
+			} break;
 
+			case "boost_increase": {
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0));
+			} break;
+
+			case "fury_increase": {
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0));
+			} break;
+
+			case "dive": {
+				return def.GetLocalized("tidDesc");
+			} break;
+			
+			case "avoid": {
+				// Check sub type with param one
+				string subtype = def.Get("param1");
+				int numHits = def.GetAsInt("param2");
+				switch(subtype) {
+					case "mine": {
+						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits));
+					} break;
+
+					case "poison": {
+						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits));
+					} break;
+
+					default: {
+						return def.GetLocalized("tidDesc");
+					} break;
+				}
+			} break;
+
+			case "lives": {
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")));
+			} break;
+
+			case "dragonram": {
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")));
+			} break;
+			
+			case "preyHpBoost": {
+				// Show target entity name
+				// [AOC] TODO!! Plural
+				DefinitionNode entityDef = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, def.GetAsString("param1"));
+				return def.GetLocalized("tidDesc", entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(def.GetAsFloat("param2"), 0));
+			} break;
+
+			default: {
+				return def.GetLocalized("tidDesc");
+			} break;
+		}
+
+		return "";
+	}
 }

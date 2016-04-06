@@ -27,6 +27,10 @@ public class DisguisesScreenController : MonoBehaviour {
 	private DisguisePill m_using; 
 	private DisguisePill m_preview;
 
+	private DefinitionNode[] m_powerDefs = new DefinitionNode[3];
+	private Sprite[] m_powerIcons = new Sprite[3];
+	private Sprite[] m_allPowerIcons = null;
+
 	private string m_dragonSku;
 
 
@@ -45,6 +49,9 @@ public class DisguisesScreenController : MonoBehaviour {
 
 			m_disguises[i].OnPillClicked.AddListener(OnPillClicked);
 		}
+
+		// Preload the powerup icon spritesheet
+		m_allPowerIcons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/powers/icons_powers"); 
 
 		m_dragonSku = "";
 		m_previewDisguise = "";
@@ -155,9 +162,39 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_preview.Select(false);
 			}
 
-			for (int i = 0; i < m_powers.Length; i++) {
+			// Update powers
+			// Get defs
+			DefinitionNode powerSetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, _pill.def.GetAsString("powerupSet"));
+			for(int i = 0; i < 3; i++) {
+				string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
+				m_powerDefs[i] = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
+			}
+
+			// Update icons
+			for(int i = 0; i < m_powers.Length; i++) {
+				// Show/hide
 				m_powers[i].SetActive(true);
+
+				// Lock
 				m_powers[i].transform.FindChild("IconLock").gameObject.SetActive(i >= _pill.level);
+
+				// Icons
+				if(m_powerDefs[i] != null) {
+					// Search icon within the spritesheet
+					string iconName = m_powerDefs[i].GetAsString("icon");
+					Image img = m_powers[i].FindComponentRecursive<Image>("PowerIcon");
+					img.sprite = null;
+					for(int j = 0; j < m_allPowerIcons.Length; j++) {
+						if(m_allPowerIcons[j].name == iconName) {
+							img.sprite = m_allPowerIcons[j];
+							img.SetNativeSize();	// Icons are already fit to the button
+							break;
+						}
+					}
+
+					// Store for further use
+					m_powerIcons[i] = img.sprite;
+				}
 			}
 
 			// update name
@@ -177,6 +214,36 @@ public class DisguisesScreenController : MonoBehaviour {
 				ShowButtons(true, false);
 			} else {
 				ShowButtons(false, true);
+			}
+		}
+	}
+
+	/// <summary>
+	/// A tooltip is about to be opened.
+	/// In this context, it means that a power button has been pressed.
+	/// </summary>
+	/// <param name="_tooltip">The tooltip about to be opened.</param>
+	/// <param name="_trigger">The button which triggered the event.</param>
+	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
+		// Find out which power has been tapped (buttons have the trigger component)
+		for(int i = 0; i < m_powers.Length; i++) {
+			if(m_powers[i] == _trigger.gameObject) {
+				// Found! Initialized tooltip with data from this power
+				DefinitionNode def = m_powerDefs[i];
+
+				// Name
+				_tooltip.FindComponentRecursive<Text>("PowerupNameText").text = def.GetLocalized("tidName");
+
+				// Desc
+				_tooltip.FindComponentRecursive<Text>("PowerupDescText").text = DragonPowerUp.GetDescription(def.sku);	// Custom formatting depending on powerup type
+
+				// Icon
+				Image img = _tooltip.FindComponentRecursive<Image>("Icon");
+				img.sprite = m_powerIcons[i];
+				img.SetNativeSize();	// Icons already have the desired size
+
+				// We're done!
+				break;
 			}
 		}
 	}
