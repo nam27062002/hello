@@ -33,12 +33,19 @@ public class AOCQuickTestEditor : Editor {
 	/// 
 	/// </summary>
 	public override void OnInspectorGUI() {
+		targetTest.m_setMask = (TutorialStep)EditorGUILayout.EnumMaskField("Set Mask", targetTest.m_setMask);
+		targetTest.m_setValue = EditorGUILayout.Toggle("Set Value", targetTest.m_setValue);
+		EditorGUILayout.Space();
+		targetTest.m_tutorialStep = (TutorialStep)EditorGUILayout.EnumMaskField("Current Value", targetTest.m_tutorialStep);
+		EditorGUILayout.Space();
+
 		// Test button
 		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
 			targetTest.OnTestButton();
 		}
 
 		// Default
+		EditorGUILayout.Space();
 		DrawDefaultInspector();
 	}
 }

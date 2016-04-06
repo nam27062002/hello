@@ -29,7 +29,6 @@ public class GameSceneController : GameSceneControllerBase {
 		LOADING_LEVEL,
 		COUNTDOWN,
 		RUNNING,
-		PAUSED,
 		FINISHED
 	};
 
@@ -53,9 +52,11 @@ public class GameSceneController : GameSceneControllerBase {
 		get { return m_state; }
 	}
 
+	// Pause management
+	private bool m_paused = false;
 	private float m_timeScaleBackup = 1f;	// When going to pause, store timescale to be restored later on
 	public bool paused {
-		get { return m_state == EStates.PAUSED; }
+		get { return m_paused; }
 	}
 
 	// Level loading
@@ -114,7 +115,7 @@ public class GameSceneController : GameSceneControllerBase {
 	/// <summary>
 	/// First update.
 	/// </summary>
-	void Start() {
+	private void Start() {
 		// Let's play!
 		StartGame();
 	}
@@ -122,7 +123,10 @@ public class GameSceneController : GameSceneControllerBase {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	void Update() {
+	private void Update() {
+		// Skip if paused
+		if(m_paused) return;
+
 		// Different actions based on current state
 		switch(m_state) {
 			// During loading, wait until level is loaded
@@ -199,6 +203,9 @@ public class GameSceneController : GameSceneControllerBase {
 	/// End the current game. Wont reset the stats so they can be used.
 	/// </summary>
 	public void EndGame() {
+		// Make sure game is not paused
+		PauseGame(false);
+
 		// Change state
 		ChangeState(EStates.FINISHED);
 
@@ -214,12 +221,22 @@ public class GameSceneController : GameSceneControllerBase {
 	/// </summary>
 	/// <param name="_bPause">Whether to pause the game or resume it.</param>
 	public void PauseGame(bool _bPause) {
-		// Only when playing
-		if(state == EStates.PAUSED || state == EStates.RUNNING) {
+		// Only allowed in specific states
+		if(state == EStates.RUNNING || state == EStates.COUNTDOWN) {
+			m_paused = _bPause;
 			if(_bPause) {
-				ChangeState(EStates.PAUSED);
+				// Store current timescale and set it to 0
+				m_timeScaleBackup = Time.timeScale;
+				Time.timeScale = 0.0f;
+
+				// Notify the game
+				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
 			} else {
-				ChangeState(EStates.RUNNING);
+				// Restore previous timescale
+				Time.timeScale = m_timeScaleBackup;
+
+				// Notify the game
+				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
 			}
 		}
 	}
@@ -277,6 +294,14 @@ public class GameSceneController : GameSceneControllerBase {
 				
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_STARTED);
+
+				// Check whether the tutorial popup must be displayed
+				if(!UserProfile.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
+					// Open popup
+					PopupManager.OpenPopupAsync(PopupTutorialControls.PATH);
+					UserProfile.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+					PersistenceManager.Save();
+				}
 			} break;
 
 			case EStates.COUNTDOWN: {
@@ -287,14 +312,6 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.RUNNING: {
 				// Unsubscribe from external events
 				Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
-			} break;
-
-			case EStates.PAUSED: {
-				// Restore previous timescale
-				Time.timeScale = m_timeScaleBackup;
-
-				// Notify the game
-				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
 			} break;
 		}
 		
@@ -322,18 +339,6 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Make dragon playable!
 				InstanceManager.player.playable = true;
-			} break;
-				
-			case EStates.PAUSED: {
-				// Ignore if not running
-				if(m_state != EStates.RUNNING) return;
-
-				// Store current timescale and set it to 0
-				m_timeScaleBackup = Time.timeScale;
-				Time.timeScale = 0.0f;
-
-				// Notify the game
-				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
 			} break;
 
 			case EStates.FINISHED: {
