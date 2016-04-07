@@ -49,6 +49,7 @@ public class DragonPlayer : MonoBehaviour {
 	public float healthMax {get{return m_healthMax;}}
 	private float m_healthBase = 1f;
 	public float healthBase {get{return m_healthBase;}}
+	public float healthFraction{ get{ return m_health / m_healthMax; } }
 
 	private float m_energyMax = 1f;
 	public float energyMax {get{return m_energyMax;}}

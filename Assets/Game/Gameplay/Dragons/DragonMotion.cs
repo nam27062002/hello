@@ -44,6 +44,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// References to components
 	Animator  				m_animator;
 	DragonPlayer			m_dragon;
+	DragonHealthBehaviour	m_health;
 	DragonControl			m_controls;
 	Orientation			   	m_orientation;
 	DragonAnimationEvents 	m_animationEventController;
@@ -164,6 +165,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
 		m_dragon			= GetComponent<DragonPlayer>();
+		m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_orientation	 	= GetComponent<Orientation>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
@@ -661,7 +663,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer_OLD _source) {
 		
-		m_dragon.AddLife(-_damage);
+		// m_dragon.AddLife(-_damage);
+		m_health.ReceiveDamage( _damage , null, false);
 	}
 
 	public void StartWaterMovement()
