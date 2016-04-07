@@ -34,7 +34,7 @@ ModelImporter:
     400024: Canary_RArm_3
     400026: Canary_Tail_1
     4300000: Canary
-    7400000: Take 001
+    7400000: Glid
     9500000: //RootNode
     13700000: Canary
   materials:
@@ -57,7 +57,59 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Glid
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 62
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Canary_Body
+        weight: 1
+      - path: Canary_Body/Canary_Head
+        weight: 1
+      - path: Canary_Body/Canary_Head/Canary_Hair
+        weight: 1
+      - path: Canary_Body/Canary_LArm_1
+        weight: 1
+      - path: Canary_Body/Canary_LArm_1/Canary_LArm_2
+        weight: 1
+      - path: Canary_Body/Canary_LArm_1/Canary_LArm_2/Canary_LArm_3
+        weight: 1
+      - path: Canary_Body/Canary_Legs
+        weight: 1
+      - path: Canary_Body/Canary_RArm_1
+        weight: 1
+      - path: Canary_Body/Canary_RArm_1/Canary_RArm_2
+        weight: 1
+      - path: Canary_Body/Canary_RArm_1/Canary_RArm_2/Canary_RArm_3
+        weight: 1
+      - path: Canary_Body/Canary_Tail_1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
