@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 public class FlockController : MonoBehaviour {
 	
 	//http://www.artbylogic.com/parametricart/spirograph/spirograph.htm
 	public enum GuideFunction{
 		Basic,
 		Hypotrochoid,
-		Epitrochoid
+		Epitrochoid,
+		FGOL_Shoal
 	};
 
 
@@ -19,6 +21,7 @@ public class FlockController : MonoBehaviour {
 	[SeparatorAttribute]
 	[SerializeField] private GuideFunction m_guideFunction = GuideFunction.Basic;
 	[SerializeField] private float m_guideSpeed = 2f;
+	[SerializeField] private float m_secondaryGuideSpeed = 2f;
 
 	[SerializeField] private float m_innerRadius = 10f; //r
 	[SerializeField] private float m_outterRadius = 20f; //R
@@ -37,6 +40,7 @@ public class FlockController : MonoBehaviour {
 
 	private Vector3 m_movingCircleCenter;
 	private float m_timer;
+	private float m_secondaryTimer;
 
 	private Transform m_dragonMouth;
 
@@ -58,6 +62,7 @@ public class FlockController : MonoBehaviour {
 		m_target = transform.position;	
 
 		m_timer = Random.Range(0f, Mathf.PI * 2f);
+		m_secondaryTimer = Random.Range(0f, Mathf.PI * 2f);
 	}
 
 	public Vector2 GetTarget() {
@@ -70,7 +75,7 @@ public class FlockController : MonoBehaviour {
 		// Move target for follow behaviour
 		if (m_area != null) {
 			m_timer += Time.smoothDeltaTime * m_guideSpeed;
-
+			m_secondaryTimer += Time.smoothDeltaTime * m_secondaryGuideSpeed;
 			float time = m_timer;
 			switch (m_guideFunction) {
 				case GuideFunction.Basic:
@@ -84,12 +89,18 @@ public class FlockController : MonoBehaviour {
 				case GuideFunction.Epitrochoid:
 					UpdateEpitrochoid(time);
 					break;
+				case GuideFunction.FGOL_Shoal:
+					UpdateShoal( time, m_secondaryTimer );
+					break;
 			}
-			// Check target against player
-			Vector3 dist = (Vector2)m_target - (Vector2)m_dragonMouth.position;
-			if ( Vector2.SqrMagnitude( dist ) < m_sensePlayerSqr )
+			if ( m_dragonMouth != null)
 			{
-				m_target = m_dragonMouth.position + dist.normalized * m_sensePlayer;
+				// Check target against player
+				Vector3 dist = (Vector2)m_target - (Vector2)m_dragonMouth.position;
+				if ( Vector2.SqrMagnitude( dist ) < m_sensePlayerSqr )
+				{
+					m_target = m_dragonMouth.position + dist.normalized * m_sensePlayer;
+				}
 			}
 		}
 	}
@@ -130,17 +141,12 @@ public class FlockController : MonoBehaviour {
 		m_target.y -= m_targetDistance * Mathf.Sin(tAngle);
 	}
 
-	void UpdateShoal()
+	void UpdateShoal( float _timeX, float _timeY )
 	{
-		float dt = Time.deltaTime;
-		// m_movePhase += m_guideSpeed * Time.deltaTime;
-		// timer should be 2
-		/*
-		float px = m_area.center.x + (Mathf.Sin(m_movePhase.x) * m_area.extentsX);
-		float py = m_area.center.y + (Mathf.Sin(m_movePhase.y) * m_area.extentsY);
+		float px = m_area.center.x + (Mathf.Sin(_timeX) * m_area.extentsX);
+		float py = m_area.center.y + (Mathf.Sin(_timeY) * m_area.extentsY);
 		m_target.x = px;
 		m_target.y = py;
-		*/
 	}
 
 	void OnDrawGizmos() {
@@ -151,43 +157,58 @@ public class FlockController : MonoBehaviour {
 	}
 
 	void OnDrawGizmosSelected() {
+		
+
+		if (m_area == null) {
+			Area area = GetComponent<Area>();
+			if (area != null) {
+				m_area = area.bounds;
+			}
+		}
+
+		if (!Application.isPlaying) {
+			m_timer += 0.25f * m_guideSpeed;
+			m_secondaryTimer += 0.25f * m_secondaryGuideSpeed;
+
+			float time = m_timer; // go back to the past :3
+			switch (m_guideFunction) {
+				case GuideFunction.Basic:
+				{
+					UpdateBasic( time );
+				}break;
+				case GuideFunction.Hypotrochoid:
+				{
+					UpdateHypotrochoid(time);
+					Color white = Color.blue;
+					white.a = 0.75f;
+
+					Gizmos.color = white;
+					Gizmos.DrawSphere(m_area.center, m_outterRadius);
+					Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
+				}break;
+
+				case GuideFunction.Epitrochoid:
+				{
+					UpdateEpitrochoid(time);
+					Color white = Color.blue;
+					white.a = 0.75f;
+
+					Gizmos.color = white;
+					Gizmos.DrawSphere(m_area.center, m_outterRadius);
+					Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
+				}break;
+				case GuideFunction.FGOL_Shoal:
+				{
+					UpdateShoal(m_timer, m_secondaryTimer);
+				}break;
+			}
+		}
 		Gizmos.color = Color.red;
 		Gizmos.DrawSphere(m_target, m_sensePlayer);
-		if (m_guideFunction != GuideFunction.Basic) {
-			if (m_area == null) {
-				Area area = GetComponent<Area>();
-				if (area != null) {
-					m_area = area.bounds;
-				}
-			}
-
-			if (!Application.isPlaying) {
-				m_timer += 0.25f;
-
-				float time = m_timer; // go back to the past :3
-				switch (m_guideFunction) {
-					case GuideFunction.Hypotrochoid:
-						UpdateHypotrochoid(time);
-						break;
-
-					case GuideFunction.Epitrochoid:
-						UpdateEpitrochoid(time);
-						break;
-				}
-			}
-
-			Color white = Color.blue;
-			white.a = 0.75f;
-
-			Gizmos.color = white;
-			Gizmos.DrawSphere(m_area.center, m_outterRadius);
-			Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
-
-			Gizmos.color = Color.red;
-			Gizmos.DrawLine(m_movingCircleCenter, m_target);
 
 
-		}
+		Gizmos.color = Color.red;
+		Gizmos.DrawLine(m_area.center, m_target);
 
 	}
 }
