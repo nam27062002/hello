@@ -3,13 +3,13 @@ using System.Collections;
 
 public class FlyLoopBehaviour : StateMachineBehaviour {
 
-	[SerializeField] private Range m_timeToGlide = new Range(3f, 4f);
+	public Range m_timeToGlide = new Range(3f, 4f);
 	private float m_timer = 4f;
 	
 	
 	// OnStateMachineEnter is called when entering a statemachine via its Entry Node
 	override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash){
-		m_timer = m_timeToGlide.GetRandom();
+		ResetTimer();
 	}
 	
 	// OnStateMachineExit is called when exiting a statemachine via its Exit Node
@@ -28,10 +28,15 @@ public class FlyLoopBehaviour : StateMachineBehaviour {
 		m_timer -= Time.deltaTime;
 		if (m_timer <= 0) {
 			animator.SetBool("glide", true);
-			m_timer = m_timeToGlide.GetRandom();
+			ResetTimer();
 		}
 	}
 
+
+	public void ResetTimer()
+	{
+		m_timer = m_timeToGlide.GetRandom();
+	}
 	// OnStateExit is called before OnStateExit is called on any state inside this state machine
 	//override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 	//

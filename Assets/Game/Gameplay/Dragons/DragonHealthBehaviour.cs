@@ -12,14 +12,26 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	private GameSceneControllerBase m_gameController;
 
+	// health drain
 	private float m_healthDrainPerSecond;
-	private List<TimeDrain> m_healthDrainIncForTime;
+	private float m_healthDrainAmpPerSecond;
 
-	private float m_elapsedSecondsCheckPoint;
-	private int m_nextIncrement;
+	// Damage Multiplier for buffs
+	private float m_damageMultiplier;
 
+	// Curse
 	private float m_curseTimer;
 	private float m_curseDPS;
+
+	// On session start modifiers
+	private float m_sessionStartHealthDrainTime;
+	private float m_sessionStartHealthDrainModifier;
+
+	// Critical health modifiers
+	private float m_healthCriticalLimit;
+	private float m_criticalHealthModifier;
+	private float m_starvingLimit;
+	private float m_starvingHealthModifier;
 
 	//-----------------------------------------------
 	// Methods
@@ -31,35 +43,36 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_gameController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
+		// Shark related values
 		m_healthDrainPerSecond = m_dragon.data.def.GetAsFloat("healthDrain");
-		m_healthDrainIncForTime = GameSettings.healthDrainIncForTime;
+		m_healthDrainAmpPerSecond = m_dragon.data.def.GetAsFloat("healthDrainAmpPerSecond"); // 0.005
+		m_sessionStartHealthDrainTime = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainTime"); // 45
+		m_sessionStartHealthDrainModifier = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainModifier");// 0.5
 
-		m_elapsedSecondsCheckPoint = 0;
-		m_nextIncrement = 0;
+		// Global setting values
+		DefinitionNode settings = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		m_healthCriticalLimit = settings.GetAsFloat("healthCriticalThreshold");	// 0.08
+		m_criticalHealthModifier = settings.GetAsFloat("healthCriticalModifier");	// 0.2
+		m_starvingLimit = settings.GetAsFloat("healthWarningThreshold");	// 0.20
+		m_starvingHealthModifier = settings.GetAsFloat("healthWarningModifier");	// 0.5
 
+		// Curse initialization
 		m_curseTimer = 0;
 		m_curseDPS = 0;
 	}
 		
 	// Update is called once per frame
-	void Update() {
-		if (m_healthDrainIncForTime.Count > 0) {
-			float secondsDelta = m_gameController.elapsedSeconds - m_elapsedSecondsCheckPoint;
-			if (secondsDelta >= m_healthDrainIncForTime[m_nextIncrement].seconds) {
-				m_healthDrainPerSecond += m_healthDrainIncForTime[m_nextIncrement].drainIncrement;
-
-				m_elapsedSecondsCheckPoint = m_gameController.elapsedSeconds;
-				if (m_nextIncrement < (m_healthDrainIncForTime.Count - 1)) {
-					m_nextIncrement++;
-				}
-			}
-		}
-		m_dragon.AddLife(-Time.deltaTime * m_healthDrainPerSecond);
+	void Update() 
+	{
+		
+		float drain = GetModifiedDamageForCurrentHealth( m_healthDrainPerSecond, true);
+		m_dragon.AddLife(-drain * Time.deltaTime);
 
 		if ( m_curseTimer > 0 )
 		{
 			m_curseTimer -= Time.deltaTime;
-			m_dragon.AddLife( -Time.deltaTime * m_curseDPS);
+			float curse =  GetModifiedDamageForCurrentHealth( m_curseDPS );
+			m_dragon.AddLife( -curse * Time.deltaTime );
 		}
 	}
 
@@ -72,10 +85,14 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		return m_curseTimer > 0;
 	}
 
-	public void ReceiveDamage(float _value, Transform _source = null) {
-		if (enabled) {
-			m_animator.SetTrigger("damage");// receive damage?
-			m_dragon.AddLife(-_value);
+	public void ReceiveDamage(float _value, Transform _source = null, bool hitAnimation = true) 
+	{
+		if (enabled) 
+		{
+			if ( hitAnimation )
+				m_animator.SetTrigger("damage");// receive damage?
+			float damage = GetModifiedDamageForCurrentHealth( _value );
+			m_dragon.AddLife(-damage);
 			Messenger.Broadcast<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _value, _source);
 		}
 	}
@@ -87,5 +104,39 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_animator.SetTrigger("damage");// receive damage?
 		Messenger.Broadcast(GameEvents.PLAYER_CURSED);
 	}
+
+
+	// before inflicting damage, push damage value through this method to get a possibly modified value
+	// that is reduced when health is low
+	protected virtual float GetModifiedDamageForCurrentHealth(float damage, bool includeHealthDrainAmp = false)
+	{
+        // Reduced health drain at session start
+        if (m_sessionStartHealthDrainTime > 0.0f)
+        {
+            m_sessionStartHealthDrainTime -= Time.deltaTime;
+            damage *= m_sessionStartHealthDrainModifier;
+            //Debug.Log("Reducing health drain! (" + (int)m_sessionStartHealthDrainTime + ")");
+        }
+
+		// apply the buffs multiplier.
+		damage += damage * m_damageMultiplier;
+
+		//Health Drain Amplitude over time
+		if (includeHealthDrainAmp)
+		{
+			damage = damage + (damage * (m_gameController.elapsedSeconds * m_healthDrainAmpPerSecond));
+		}
+
+		float healthFraction = m_dragon.healthFraction;
+
+		if(healthFraction < m_healthCriticalLimit)
+			return damage * m_criticalHealthModifier;
+
+		if(healthFraction < m_starvingLimit)
+			return damage * m_starvingHealthModifier;
+
+		return damage;
+	}
+
 
 }

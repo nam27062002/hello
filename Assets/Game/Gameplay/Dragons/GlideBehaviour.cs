@@ -3,18 +3,18 @@ using System.Collections;
 
 public class GlideBehaviour : StateMachineBehaviour {
 
-	[SerializeField] private Range m_glidingTime = new Range(4f, 6f);
+	public Range m_glidingTime = new Range(4f, 6f);
 	private float m_timer = 4f;
 	private float m_altTimer;
 
 	// OnStateMachineEnter is called when entering a statemachine via its Entry Node
 	override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash){
-		m_timer = m_glidingTime.GetRandom();
-		m_altTimer = m_timer * Random.Range(0.3f, 0.6f);
+		ResetTimer();
 	}
 	
 	// OnStateMachineExit is called when exiting a statemachine via its Exit Node
-	override public void OnStateMachineExit(Animator animator, int stateMachinePathHash) {
+	override public void OnStateMachineExit(Animator animator, int stateMachinePathHash) 
+	{
 		animator.SetBool("glide", false);
 	}
 
@@ -37,6 +37,12 @@ public class GlideBehaviour : StateMachineBehaviour {
 				m_altTimer = 0;
 			}
 		}
+	}
+
+	public void ResetTimer()
+	{
+		m_timer = m_glidingTime.GetRandom();
+		m_altTimer = m_timer * Random.Range(0.3f, 0.6f);
 	}
 
 	// OnStateExit is called before OnStateExit is called on any state inside this state machine
