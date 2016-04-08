@@ -14,11 +14,17 @@ public class AnimStateSetups : MonoBehaviour {
 		{
 			FlyLoopBehaviour loopBehaviour = anim.GetBehaviour<FlyLoopBehaviour>();
 			if ( loopBehaviour != null )
+			{
 				loopBehaviour.m_timeToGlide = m_timeToGlide;
+				loopBehaviour.ResetTimer();
+			}
 
 			GlideBehaviour glide = anim.GetBehaviour<GlideBehaviour>();
 			if (glide != null)
+			{
 				glide.m_glidingTime = m_glidingTime;
+				glide.ResetTimer();
+			}
 		}
 	}
 	

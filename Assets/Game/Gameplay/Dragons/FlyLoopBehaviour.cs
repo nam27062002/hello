@@ -9,7 +9,7 @@ public class FlyLoopBehaviour : StateMachineBehaviour {
 	
 	// OnStateMachineEnter is called when entering a statemachine via its Entry Node
 	override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash){
-		m_timer = m_timeToGlide.GetRandom();
+		ResetTimer();
 	}
 	
 	// OnStateMachineExit is called when exiting a statemachine via its Exit Node
@@ -28,10 +28,15 @@ public class FlyLoopBehaviour : StateMachineBehaviour {
 		m_timer -= Time.deltaTime;
 		if (m_timer <= 0) {
 			animator.SetBool("glide", true);
-			m_timer = m_timeToGlide.GetRandom();
+			ResetTimer();
 		}
 	}
 
+
+	public void ResetTimer()
+	{
+		m_timer = m_timeToGlide.GetRandom();
+	}
 	// OnStateExit is called before OnStateExit is called on any state inside this state machine
 	//override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 	//
