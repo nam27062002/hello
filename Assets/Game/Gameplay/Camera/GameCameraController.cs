@@ -210,6 +210,7 @@ public class GameCameraController : MonoBehaviour {
 			m_forward = Vector3.Lerp( m_forward, dragonDirection, Time.deltaTime);
 
 			bool cameraMovementNewVersion = DebugSettings.newCameraSystem;
+			cameraMovementNewVersion = true;
 			float lerpoValue = 0;
 			if ( cameraMovementNewVersion )
 			{
