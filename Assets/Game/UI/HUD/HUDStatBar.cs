@@ -42,6 +42,7 @@ public class HUDStatBar : MonoBehaviour {
 	private Text m_valueTxt;
 	private GameObject m_icon;
 	private List<GameObject> m_extraIcons = null;
+	private CanvasScaler m_scaler;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -52,6 +53,7 @@ public class HUDStatBar : MonoBehaviour {
 		// Get external references
 		// m_bar = GetComponentInChildren<Slider>();
 		// m_baseBar;
+		m_scaler = GetComponentInParent<CanvasScaler>();
 		Transform child;
 		child = transform.FindChild("Slider");
 		if ( child != null )
@@ -167,7 +169,20 @@ public class HUDStatBar : MonoBehaviour {
 			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
 			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
 		}
-		return 5;
+		return 0.01f;
+	}
+
+	public float GetMaxScreenSize()
+	{
+		/*
+		switch (m_type) {
+			case Type.Health: 	return Screen.width * 0.8f;
+			case Type.Energy:	return Screen.width * 0.8f;
+			case Type.Fury:		return Screen.width * 0.8f;
+			case Type.SuperFury:return Screen.width * 0.8f;
+		}
+		*/
+		return m_scaler.referenceResolution.x * 0.8f;
 	}
 
 	void OnPlayerKo()
@@ -241,14 +256,16 @@ public class HUDStatBar : MonoBehaviour {
 
 		rectTransform = m_bar.GetComponent<RectTransform>();
 		size = rectTransform.sizeDelta;
-		size.x = GetMaxValue() * GetSizePerUnit();
+		float fraction = Mathf.Clamp01(GetMaxValue() * GetSizePerUnit());
+		size.x = fraction * GetMaxScreenSize();
 		rectTransform.sizeDelta = size;
 
 		if ( m_baseBar != null )
 		{
 			rectTransform = m_baseBar.GetComponent<RectTransform>();
 			size = rectTransform.sizeDelta;
-			size.x = GetBaseValue() * GetSizePerUnit();
+			fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
+			size.x = fraction * GetMaxScreenSize();
 			rectTransform.sizeDelta = size;
 		}
 	}
