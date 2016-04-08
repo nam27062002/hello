@@ -330,7 +330,8 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_steering += m_steeringForces[Forces.Flock];
 		m_steering += m_steeringForces[Forces.Collision];
 
-		m_steering -= m_velocity;
+		// m_steering -= m_velocity;
+		m_steering.Normalize();
 
 		for (int i = 0; i < Forces.Count; i++) {
 			Debug.DrawLine(m_position, m_position + m_steeringForces[i], m_steeringColors[i]);
@@ -346,12 +347,16 @@ public class PreyMotion : Initializable, MotionInterface {
 				targetSpeed = m_currentMaxSpeed * 0.5f;
 
 			Vector2 oldVelocity = m_velocity;
-			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, targetSpeed, Time.deltaTime * 2));
-			m_velocity *= m_speedMultiplier;
+			Vector3 steering = m_steering * targetSpeed;
+			Vector3 aaa = m_velocity;
+			Util.MoveTowardsVector3XYWithDamping( ref aaa, ref steering, 32.0f * Time.deltaTime, 8.0f);
+			m_velocity = (Vector2)aaa;
+			// m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, targetSpeed, Time.deltaTime * 10));
+			// m_velocity *= m_speedMultiplier;
+			// m_velocity = Vector2.Lerp(oldVelocity, m_velocity, 0.25f);
 
-			m_velocity = Vector2.Lerp(oldVelocity, m_velocity, 0.25f);
-
-			if (m_velocity != Vector2.zero) {
+			if (m_velocity != Vector2.zero) 
+			{
 				m_direction = m_velocity.normalized;
 				m_orientation.SetDirection(m_direction);
 			}

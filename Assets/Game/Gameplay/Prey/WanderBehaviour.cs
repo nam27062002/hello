@@ -129,9 +129,13 @@ public class WanderBehaviour : Initializable {
 	}
 
 	virtual protected void ChooseTarget() {
-		if (m_flock != null) {
+		if (m_flock != null) 
+		{
 			m_target = m_flock.GetFlockTarget();
-		} else {
+			// Add some variation
+		} 
+		else 
+		{
 			if (m_motion.area != null)
 				m_target = m_motion.area.RandomInside();
 		}

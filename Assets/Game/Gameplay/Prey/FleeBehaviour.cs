@@ -28,6 +28,9 @@ public class FleeBehaviour : Initializable {
 	private State m_state;
 	private State m_nextState;
 
+	private float m_runningTime = 0;
+	private float m_nextRunTime = 0;
+
 	public List<string> m_afraidSounds = new List<string>();
 
 	// Use this for initialization
@@ -44,6 +47,8 @@ public class FleeBehaviour : Initializable {
 	public override void Initialize() {
 		m_state = State.None;
 		m_nextState = State.RunAway;
+		m_runningTime = 0;
+		m_nextRunTime = 0;
 	}
 
 	void OnEnable() {
@@ -82,7 +87,16 @@ public class FleeBehaviour : Initializable {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.RunAway:
-				if (m_sensor.alert) {
+				m_nextRunTime	-= Time.deltaTime;
+				if (m_sensor.alert && m_nextRunTime <= 0) 
+				{
+					m_motion.Flee(m_dragonMouth.position);
+					m_runningTime = 2;
+					m_nextRunTime = 4;
+				}
+				else if ( m_runningTime > 0 )
+				{
+					m_runningTime -= Time.deltaTime;
 					m_motion.Flee(m_dragonMouth.position);
 				}
 				break;
