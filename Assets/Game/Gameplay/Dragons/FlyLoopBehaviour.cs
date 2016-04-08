@@ -3,7 +3,7 @@ using System.Collections;
 
 public class FlyLoopBehaviour : StateMachineBehaviour {
 
-	[SerializeField] private Range m_timeToGlide = new Range(3f, 4f);
+	public Range m_timeToGlide = new Range(3f, 4f);
 	private float m_timer = 4f;
 	
 	

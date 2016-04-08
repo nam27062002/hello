@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GlideBehaviour : StateMachineBehaviour {
 
-	[SerializeField] private Range m_glidingTime = new Range(4f, 6f);
+	public Range m_glidingTime = new Range(4f, 6f);
 	private float m_timer = 4f;
 	private float m_altTimer;
 
@@ -14,7 +14,8 @@ public class GlideBehaviour : StateMachineBehaviour {
 	}
 	
 	// OnStateMachineExit is called when exiting a statemachine via its Exit Node
-	override public void OnStateMachineExit(Animator animator, int stateMachinePathHash) {
+	override public void OnStateMachineExit(Animator animator, int stateMachinePathHash) 
+	{
 		animator.SetBool("glide", false);
 	}
 
