@@ -28,7 +28,9 @@ public class FleeBehaviour : Initializable {
 	private State m_state;
 	private State m_nextState;
 
+	public Range m_runningTimeRange = new Range( 2,4);
 	private float m_runningTime = 0;
+	public Range m_waitRunningRange = new Range( 4, 5);
 	private float m_nextRunTime = 0;
 
 	public List<string> m_afraidSounds = new List<string>();
@@ -91,8 +93,8 @@ public class FleeBehaviour : Initializable {
 				if (m_sensor.alert && m_nextRunTime <= 0) 
 				{
 					m_motion.Flee(m_dragonMouth.position);
-					m_runningTime = 2;
-					m_nextRunTime = 4;
+					m_runningTime = m_runningTimeRange.GetRandom();
+					m_nextRunTime = m_waitRunningRange.GetRandom();
 				}
 				else if ( m_runningTime > 0 )
 				{
