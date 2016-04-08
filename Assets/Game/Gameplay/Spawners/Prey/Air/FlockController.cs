@@ -24,8 +24,8 @@ public class FlockController : MonoBehaviour {
 	[SerializeField] private float m_outterRadius = 20f; //R
 	[SerializeField] private float m_targetDistance = 5f; //d
 
-
-
+	public float m_sensePlayer = 0;
+	private float m_sensePlayerSqr;
 
 	//-----------------------------------------------
 	// Attributes
@@ -38,6 +38,7 @@ public class FlockController : MonoBehaviour {
 	private Vector3 m_movingCircleCenter;
 	private float m_timer;
 
+	private Transform m_dragonMouth;
 
 	//-----------------------------------------------
 	// Methods
@@ -48,7 +49,8 @@ public class FlockController : MonoBehaviour {
 	}
 
 	public void Init() {
-		
+		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
+		m_sensePlayerSqr = m_sensePlayer * m_sensePlayer;
 		Area area = GetComponent<Area>();
 		if (area != null) {
 			m_area = area.bounds;
@@ -83,6 +85,12 @@ public class FlockController : MonoBehaviour {
 					UpdateEpitrochoid(time);
 					break;
 			}
+			// Check target against player
+			Vector3 dist = (Vector2)m_target - (Vector2)m_dragonMouth.position;
+			if ( Vector2.SqrMagnitude( dist ) < m_sensePlayerSqr )
+			{
+				m_target = m_dragonMouth.position + dist.normalized * m_sensePlayer;
+			}
 		}
 	}
 
@@ -91,7 +99,8 @@ public class FlockController : MonoBehaviour {
 		m_target = m_area.center;
 		m_target.x += (Mathf.Sin(_a * 0.75f) * 0.5f + Mathf.Cos(_a * 0.25f) * 0.5f) * m_area.extentsX;
 		m_target.y += (Mathf.Sin(_a * 0.35f) * 0.5f + Mathf.Cos(_a * 0.65f) * 0.5f) * m_area.extentsY;
-		m_target.z +=  Mathf.Sin(_a) * m_area.bounds.extents.z;
+		// m_target.z +=  Mathf.Sin(_a) * m_area.bounds.extents.z;
+
 	}
 
 	void UpdateHypotrochoid(float _a) 
@@ -121,6 +130,19 @@ public class FlockController : MonoBehaviour {
 		m_target.y -= m_targetDistance * Mathf.Sin(tAngle);
 	}
 
+	void UpdateShoal()
+	{
+		float dt = Time.deltaTime;
+		// m_movePhase += m_guideSpeed * Time.deltaTime;
+		// timer should be 2
+		/*
+		float px = m_area.center.x + (Mathf.Sin(m_movePhase.x) * m_area.extentsX);
+		float py = m_area.center.y + (Mathf.Sin(m_movePhase.y) * m_area.extentsY);
+		m_target.x = px;
+		m_target.y = py;
+		*/
+	}
+
 	void OnDrawGizmos() {
 		if (Application.isPlaying) {
 			Gizmos.color = Color.red;
@@ -129,6 +151,8 @@ public class FlockController : MonoBehaviour {
 	}
 
 	void OnDrawGizmosSelected() {
+		Gizmos.color = Color.red;
+		Gizmos.DrawSphere(m_target, m_sensePlayer);
 		if (m_guideFunction != GuideFunction.Basic) {
 			if (m_area == null) {
 				Area area = GetComponent<Area>();
@@ -161,6 +185,9 @@ public class FlockController : MonoBehaviour {
 
 			Gizmos.color = Color.red;
 			Gizmos.DrawLine(m_movingCircleCenter, m_target);
+
+
 		}
+
 	}
 }
