@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 public class FlockController : MonoBehaviour {
 	
 	//http://www.artbylogic.com/parametricart/spirograph/spirograph.htm
 	public enum GuideFunction{
 		Basic,
 		Hypotrochoid,
-		Epitrochoid
+		Epitrochoid,
+		FGOL_Shoal
 	};
 
 
@@ -19,13 +21,14 @@ public class FlockController : MonoBehaviour {
 	[SeparatorAttribute]
 	[SerializeField] private GuideFunction m_guideFunction = GuideFunction.Basic;
 	[SerializeField] private float m_guideSpeed = 2f;
+	[SerializeField] private float m_secondaryGuideSpeed = 2f;
 
 	[SerializeField] private float m_innerRadius = 10f; //r
 	[SerializeField] private float m_outterRadius = 20f; //R
 	[SerializeField] private float m_targetDistance = 5f; //d
 
-
-
+	public float m_sensePlayer = 0;
+	private float m_sensePlayerSqr;
 
 	//-----------------------------------------------
 	// Attributes
@@ -37,7 +40,9 @@ public class FlockController : MonoBehaviour {
 
 	private Vector3 m_movingCircleCenter;
 	private float m_timer;
+	private float m_secondaryTimer;
 
+	private Transform m_dragonMouth;
 
 	//-----------------------------------------------
 	// Methods
@@ -48,7 +53,8 @@ public class FlockController : MonoBehaviour {
 	}
 
 	public void Init() {
-		
+		m_dragonMouth = InstanceManager.player.GetComponent<DragonMotion>().tongue;
+		m_sensePlayerSqr = m_sensePlayer * m_sensePlayer;
 		Area area = GetComponent<Area>();
 		if (area != null) {
 			m_area = area.bounds;
@@ -56,6 +62,7 @@ public class FlockController : MonoBehaviour {
 		m_target = transform.position;	
 
 		m_timer = Random.Range(0f, Mathf.PI * 2f);
+		m_secondaryTimer = Random.Range(0f, Mathf.PI * 2f);
 	}
 
 	public Vector2 GetTarget() {
@@ -68,7 +75,7 @@ public class FlockController : MonoBehaviour {
 		// Move target for follow behaviour
 		if (m_area != null) {
 			m_timer += Time.smoothDeltaTime * m_guideSpeed;
-
+			m_secondaryTimer += Time.smoothDeltaTime * m_secondaryGuideSpeed;
 			float time = m_timer;
 			switch (m_guideFunction) {
 				case GuideFunction.Basic:
@@ -82,6 +89,18 @@ public class FlockController : MonoBehaviour {
 				case GuideFunction.Epitrochoid:
 					UpdateEpitrochoid(time);
 					break;
+				case GuideFunction.FGOL_Shoal:
+					UpdateShoal( time, m_secondaryTimer );
+					break;
+			}
+			if ( m_dragonMouth != null)
+			{
+				// Check target against player
+				Vector3 dist = (Vector2)m_target - (Vector2)m_dragonMouth.position;
+				if ( Vector2.SqrMagnitude( dist ) < m_sensePlayerSqr )
+				{
+					m_target = m_dragonMouth.position + dist.normalized * m_sensePlayer;
+				}
 			}
 		}
 	}
@@ -91,7 +110,8 @@ public class FlockController : MonoBehaviour {
 		m_target = m_area.center;
 		m_target.x += (Mathf.Sin(_a * 0.75f) * 0.5f + Mathf.Cos(_a * 0.25f) * 0.5f) * m_area.extentsX;
 		m_target.y += (Mathf.Sin(_a * 0.35f) * 0.5f + Mathf.Cos(_a * 0.65f) * 0.5f) * m_area.extentsY;
-		m_target.z +=  Mathf.Sin(_a) * m_area.bounds.extents.z;
+		// m_target.z +=  Mathf.Sin(_a) * m_area.bounds.extents.z;
+
 	}
 
 	void UpdateHypotrochoid(float _a) 
@@ -121,6 +141,14 @@ public class FlockController : MonoBehaviour {
 		m_target.y -= m_targetDistance * Mathf.Sin(tAngle);
 	}
 
+	void UpdateShoal( float _timeX, float _timeY )
+	{
+		float px = m_area.center.x + (Mathf.Sin(_timeX) * m_area.extentsX);
+		float py = m_area.center.y + (Mathf.Sin(_timeY) * m_area.extentsY);
+		m_target.x = px;
+		m_target.y = py;
+	}
+
 	void OnDrawGizmos() {
 		if (Application.isPlaying) {
 			Gizmos.color = Color.red;
@@ -129,38 +157,58 @@ public class FlockController : MonoBehaviour {
 	}
 
 	void OnDrawGizmosSelected() {
-		if (m_guideFunction != GuideFunction.Basic) {
-			if (m_area == null) {
-				Area area = GetComponent<Area>();
-				if (area != null) {
-					m_area = area.bounds;
-				}
+		
+
+		if (m_area == null) {
+			Area area = GetComponent<Area>();
+			if (area != null) {
+				m_area = area.bounds;
 			}
-
-			if (!Application.isPlaying) {
-				m_timer += 0.25f;
-
-				float time = m_timer; // go back to the past :3
-				switch (m_guideFunction) {
-					case GuideFunction.Hypotrochoid:
-						UpdateHypotrochoid(time);
-						break;
-
-					case GuideFunction.Epitrochoid:
-						UpdateEpitrochoid(time);
-						break;
-				}
-			}
-
-			Color white = Color.blue;
-			white.a = 0.75f;
-
-			Gizmos.color = white;
-			Gizmos.DrawSphere(m_area.center, m_outterRadius);
-			Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
-
-			Gizmos.color = Color.red;
-			Gizmos.DrawLine(m_movingCircleCenter, m_target);
 		}
+
+		if (!Application.isPlaying) {
+			m_timer += 0.25f * m_guideSpeed;
+			m_secondaryTimer += 0.25f * m_secondaryGuideSpeed;
+
+			float time = m_timer; // go back to the past :3
+			switch (m_guideFunction) {
+				case GuideFunction.Basic:
+				{
+					UpdateBasic( time );
+				}break;
+				case GuideFunction.Hypotrochoid:
+				{
+					UpdateHypotrochoid(time);
+					Color white = Color.blue;
+					white.a = 0.75f;
+
+					Gizmos.color = white;
+					Gizmos.DrawSphere(m_area.center, m_outterRadius);
+					Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
+				}break;
+
+				case GuideFunction.Epitrochoid:
+				{
+					UpdateEpitrochoid(time);
+					Color white = Color.blue;
+					white.a = 0.75f;
+
+					Gizmos.color = white;
+					Gizmos.DrawSphere(m_area.center, m_outterRadius);
+					Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
+				}break;
+				case GuideFunction.FGOL_Shoal:
+				{
+					UpdateShoal(m_timer, m_secondaryTimer);
+				}break;
+			}
+		}
+		Gizmos.color = Color.red;
+		Gizmos.DrawSphere(m_target, m_sensePlayer);
+
+
+		Gizmos.color = Color.red;
+		Gizmos.DrawLine(m_area.center, m_target);
+
 	}
 }
