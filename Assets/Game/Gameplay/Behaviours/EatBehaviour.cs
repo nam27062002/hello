@@ -177,7 +177,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	private void Swallow(EdibleBehaviour _prey) {
-		_prey.OnSwallow();
+		_prey.OnSwallow( m_mouth );
 	}
 
 	private void FindSomethingToEat() {

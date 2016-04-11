@@ -93,7 +93,7 @@ public class EdibleBehaviour : Initializable {
 		EntityManager.instance.Unregister(GetComponent<Entity>());
 	}
 	
-	public void OnSwallow() {
+	public void OnSwallow( Transform _transform ) {
 		// Get the reward to be given from the entity
 		Reward reward = m_entity.GetOnKillReward(false);
 
@@ -104,7 +104,12 @@ public class EdibleBehaviour : Initializable {
 		for( int i = 0; i<m_onEatenParticles.Count; i++ )
 		{
 			if ( !string.IsNullOrEmpty(m_onEatenParticles[i]) )
-				ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
+			{
+				GameObject go = ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
+				FollowTransform ft = go.GetComponent<FollowTransform>();
+				if ( ft != null )
+					ft.m_follow = _transform;
+			}
 		}
 
 		OnEatBehaviours(true);
