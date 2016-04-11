@@ -169,14 +169,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (m_eatingTime >= 0.5f || m_prey.Count > 2) {
 			m_animator.SetTrigger("eat crazy");
 		}
-
+		/*
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
 		m_bloodEmitter.Add(ParticleManager.Spawn("bloodchurn-large", bloodPos));
+		*/
 	}
 
 	private void Swallow(EdibleBehaviour _prey) {
-		_prey.OnSwallow();
+		_prey.OnSwallow( m_mouth );
 	}
 
 	private void FindSomethingToEat() {

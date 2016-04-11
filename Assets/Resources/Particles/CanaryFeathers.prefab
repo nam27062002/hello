@@ -11,9 +11,9 @@ GameObject:
   - 198: {fileID: 19893708}
   - 199: {fileID: 19996024}
   - 114: {fileID: 11449276}
-  - 114: {fileID: 11401718}
+  - 114: {fileID: 11403594}
   m_Layer: 0
-  m_Name: Feathers
+  m_Name: CanaryFeathers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,13 +26,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 154552}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -433.8042, y: 62.758415, z: -72.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11401718
+--- !u!114 &11403594
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c15c2bdf3e8b542bbbdb40897f30a54f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_offset: {x: 0, y: 0, z: 0}
+  m_offset: {x: 0, y: 0, z: -1}
   m_follow: {fileID: 0}
 --- !u!114 &11449276
 MonoBehaviour:
@@ -65,7 +65,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 154552}
   serializedVersion: 2
-  lengthInSec: 0.5
+  lengthInSec: 0.1
   startDelay:
     scalar: 0
     maxCurve:
@@ -112,7 +112,7 @@ ParticleSystem:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 0.5
+      scalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -147,7 +147,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     startSpeed:
-      scalar: 5
+      scalar: 6.91
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -273,10 +273,10 @@ ParticleSystem:
         rgba: 4294967295
       maxColor:
         serializedVersion: 2
-        rgba: 4294967295
+        rgba: 4278251007
       minMaxState: 0
     startSize:
-      scalar: 1.25
+      scalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -292,7 +292,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.4
+          value: 0.39999998
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -397,13 +397,13 @@ ParticleSystem:
       minMaxState: 3
     randomizeRotationDirection: 0
     gravityModifier: 0
-    maxNumParticles: 20
+    maxNumParticles: 10
     rotation3D: 0
   ShapeModule:
     serializedVersion: 2
     enabled: 1
     type: 0
-    radius: 1
+    radius: 0.34
     angle: 25
     length: 5
     boxX: 1
