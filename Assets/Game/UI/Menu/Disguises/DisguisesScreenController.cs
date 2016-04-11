@@ -6,6 +6,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	[SerializeField] private GameObject m_disguiseTitle;
 	[SerializeField] private Text m_name;
+	[SerializeField] private GameObject m_upgradeList;
 	[SerializeField] private GameObject[] m_upgrades;
 	[SerializeField] private GameObject m_powerList;
 	[SerializeField] private GameObject[] m_powers;
@@ -17,6 +18,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	[SeparatorAttribute]
 	private Transform m_dragonWorldPos;
+	private Transform m_dragonRotationArrowsPos;
 	public RectTransform m_dragonUIPos;
 	public float m_depth = 25f;
 
@@ -62,6 +64,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		GameObject disguiseScene = GameObject.Find("PF_MenuDisguisesScene");
 		if (disguiseScene != null) {
 			m_dragonWorldPos = disguiseScene.transform.FindChild("CurrentDragon");
+			m_dragonRotationArrowsPos = disguiseScene.transform.FindChild("Arrows");
 		}
 
 		// get disguises levels of the current dragon
@@ -90,31 +93,25 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_powers[i].SetActive(false);
 		}
 
-		int defaultSelection = -1;
-		bool usingIt = false;
+		int defaultSelection = 0;
 
 		// load data and persistence
 		for (int i = 0; i < m_disguises.Length; i++) {
-			if (i < defList.Count) {
-				DefinitionNode def = defList[i];
+			if (i <= defList.Count) {
+				if (i == 0) {
+					m_disguises[i].LoadAsDefault(GetFromCollection(ref icons, "default"));
+				} else {
+					DefinitionNode def = defList[i - 1];
 
-				Sprite spr = null;
-				for (int s = 0; s < icons.Length; s++) {
-					if (icons[i].name == def.GetAsString("icon")) {
-						spr = icons[i];
+					Sprite spr = GetFromCollection(ref icons, def.GetAsString("icon"));
+
+					int level = Wardrobe.GetDisguiseLevel(def.sku);
+					m_disguises[i].Load(def, level, spr);
+
+					if (def.sku == currentDisguise) {
+						defaultSelection = i;
 					}
 				}
-
-				int level = Wardrobe.GetDisguiseLevel(def.sku);
-				m_disguises[i].Load(def, level, spr);
-
-				if (def.sku == currentDisguise) {
-					defaultSelection = i;
-					usingIt = true;
-				} else if (defaultSelection < 0 && level > 0) {
-					defaultSelection = i;
-				}
-
 				m_disguises[i].Use(false);
 				m_disguises[i].Select(false);
 				m_disguises[i].gameObject.SetActive(true);
@@ -123,94 +120,99 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
-		if (defaultSelection >= 0) {
-			OnPillClicked(m_disguises[defaultSelection]);
-			if (usingIt) OnUse();
-		} else {
-			// hide the buttons
-			ShowButtons(true, false);
+		OnPillClicked(m_disguises[defaultSelection]);
+		OnUse();
+	}
+
+	private Sprite GetFromCollection(ref Sprite[] _array, string _name) {
+		for (int i = 0; i < _array.Length; i++) {
+			if (_array[i].name == _name) {
+				return _array[i];
+			}
 		}
+
+		return null;
 	}
 
 	void OnDisable() {
 		if (m_using != null) {
-			Wardrobe.Equip(m_dragonSku, m_using.def.sku);
+			Wardrobe.Equip(m_dragonSku, m_using.sku);
 		} else {
-			Wardrobe.Equip(m_dragonSku, "");
+			Wardrobe.Equip(m_dragonSku, "default");
 		}
 
 		PersistenceManager.Save();
 	}
 
 	void Update() {
-
 		Canvas canvas = GetComponentInParent<Canvas>();
 		Vector3 viewportPos = canvas.worldCamera.WorldToViewportPoint(m_dragonUIPos.position);
 
 		Camera camera = InstanceManager.GetSceneController<MenuSceneController>().screensController.camera;
 		viewportPos.z = m_depth;
 		m_dragonWorldPos.position = camera.ViewportToWorldPoint(viewportPos);
-
+		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;
 	}
 
 	void OnPillClicked(DisguisePill _pill) {
 		if (m_preview != _pill) {
-			if (m_preview == null) {
-				m_powerList.SetActive(true);
+			if (m_preview == null) {				
 				m_disguiseTitle.SetActive(true);
 			} else {
 				m_preview.Select(false);
 			}
 
-			// Update powers
-			// Get defs
-			DefinitionNode powerSetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, _pill.def.GetAsString("powerupSet"));
-			for(int i = 0; i < 3; i++) {
-				string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
-				m_powerDefs[i] = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
-			}
+			if (_pill.isDefault) {
+				m_powerList.SetActive(false);
+				m_upgradeList.SetActive(false);
+			} else {
+				m_powerList.SetActive(true);
+				m_upgradeList.SetActive(true);
 
-			// Update icons
-			for(int i = 0; i < m_powers.Length; i++) {
-				// Show/hide
-				m_powers[i].SetActive(true);
-
-				// Lock
-				m_powers[i].transform.FindChild("IconLock").gameObject.SetActive(i >= _pill.level);
-
-				// Icons
-				if(m_powerDefs[i] != null) {
-					// Search icon within the spritesheet
-					string iconName = m_powerDefs[i].GetAsString("icon");
-					Image img = m_powers[i].FindComponentRecursive<Image>("PowerIcon");
-					img.sprite = null;
-					for(int j = 0; j < m_allPowerIcons.Length; j++) {
-						if(m_allPowerIcons[j].name == iconName) {
-							img.sprite = m_allPowerIcons[j];
-							img.SetNativeSize();	// Icons are already fit to the button
-							break;
-						}
-					}
-
-					// Store for further use
-					m_powerIcons[i] = img.sprite;
+				// Update powers
+				// Get defs
+				DefinitionNode powerSetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, _pill.powerUpSet);
+				for (int i = 0; i < 3; i++) {
+					string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
+					m_powerDefs[i] = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 				}
-			}
 
-			// update name
-			m_name.text = _pill.def.GetLocalized("tidName"); // we have to change this
+				// Update icons
+				for (int i = 0; i < m_powers.Length; i++) {
+					// Show/hide
+					m_powers[i].SetActive(true);
 
-			// update level
-			for (int i = 0; i < m_upgrades.Length; i++) {
-				m_upgrades[i].SetActive(i < _pill.level);
+					// Lock
+					m_powers[i].transform.FindChild("IconLock").gameObject.SetActive(i >= _pill.level);
+
+					// Icons
+					if (m_powerDefs[i] != null) {
+						// Search icon within the spritesheet
+						string iconName = m_powerDefs[i].GetAsString("icon");
+						Image img = m_powers[i].FindComponentRecursive<Image>("PowerIcon");
+						img.sprite = GetFromCollection(ref m_allPowerIcons, iconName);
+						img.SetNativeSize();
+
+						// Store for further use
+						m_powerIcons[i] = img.sprite;
+					}
+				}
+
+				// update name
+				m_name.text = _pill.nameLocalized;
+
+				// update level
+				for (int i = 0; i < m_upgrades.Length; i++) {
+					m_upgrades[i].SetActive(i < _pill.level);
+				}
 			}
 
 			m_preview = _pill;
 			m_preview.Select(true);
 
-			Wardrobe.Equip(m_dragonSku, m_preview.def.sku);
+			Wardrobe.Equip(m_dragonSku, m_preview.sku);
 
-			if (m_preview.level == 0) {
+			if (_pill.level == 0) {
 				ShowButtons(true, false);
 			} else {
 				ShowButtons(false, true);
@@ -256,7 +258,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_preview.Use(true);
 			m_using = m_preview;
 
-			Wardrobe.Equip(m_dragonSku, m_using.def.sku);
+			Wardrobe.Equip(m_dragonSku, m_using.sku);
 		} else {
 			m_using.Use(false);
 			m_using = null;
@@ -275,12 +277,11 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		m_useButton.SetActive(_use);
 
-		if (_use) {
-			Text text = m_useButton.GetComponentInChildren<Text>();
+		if (_use) {			
 			if (m_preview == m_using) {
-				// unuse
-				text.text = "UNEQUIP";
+				m_useButton.SetActive(false);
 			} else {
+				Text text = m_useButton.GetComponentInChildren<Text>();
 				text.text = "USE";
 			}
 		}

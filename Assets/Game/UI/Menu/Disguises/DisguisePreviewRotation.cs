@@ -47,7 +47,7 @@ public class DisguisePreviewRotation : MonoBehaviour, IBeginDragHandler, IDragHa
 
 	private void SetAngle(float _deltaX) {
 		if (m_dragonWorldTransform) {
-			float delta = _deltaX;
+			float delta = _deltaX * 0.5f;
 			m_dragonWorldTransform.rotation = Quaternion.Euler(new Vector3(0, m_angle + delta, 0));
 		}
 	}
