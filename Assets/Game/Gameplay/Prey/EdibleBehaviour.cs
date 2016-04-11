@@ -25,7 +25,7 @@ public class EdibleBehaviour : Initializable {
 	private Quaternion m_originalRotation;
 	private Vector3 m_originalScale;
 
-	public string m_onEatenParticle = "";
+	public List<string> m_onEatenParticles = new List<string>();
 	[Range(0f, 100f)]
 	public float m_onEatenSoundProbability = 50.0f;
 	public List<string> m_onEatenSounds = new List<string>();
@@ -101,8 +101,11 @@ public class EdibleBehaviour : Initializable {
 		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
 
 		// Particles
-		if ( !string.IsNullOrEmpty(m_onEatenParticle) )
-			ParticleManager.Spawn(m_onEatenParticle, transform.position);
+		for( int i = 0; i<m_onEatenParticles.Count; i++ )
+		{
+			if ( !string.IsNullOrEmpty(m_onEatenParticles[i]) )
+				ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
+		}
 
 		OnEatBehaviours(true);
 
