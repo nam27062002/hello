@@ -26,7 +26,7 @@ public static class Localization
 	private const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
 
 	//------------------------------------------------------------------//
-	// ATTRIBUTES														//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Whether the localization dictionary has been loaded.
@@ -37,11 +37,11 @@ public static class Localization
 	static Dictionary<string, string> m_dictionary = new Dictionary<string, string>();
 
 	// Currently selected language
-	static string m_language;
+	static string m_languageSku;
+	public static string languageSku {
+		get { return m_languageSku; }
+	}
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
 	// Current localization code as defined by the C# standards
 	// @see https://msdn.microsoft.com/en-us/goglobal/bb896001.aspx
 	private static string _code = CultureInfo.CurrentCulture.Name;
@@ -135,17 +135,17 @@ public static class Localization
 	
 	static public bool ReloadLanguage()
 	{
-		return SetLanguage( m_language );
+		return SetLanguage( m_languageSku );
 	}
 
 	/// <summary>
 	/// Set Language from language Sku
 	/// </summary>
-	static bool SetLanguage (string languageSku, bool saveLanguage = false)
+	public static bool SetLanguage (string languageSku, bool saveLanguage = false)
 	{
 		Debug.Log("Set Language: " + languageSku);
 
-		if ( languageSku == m_language )
+		if ( languageSku == m_languageSku )
 			return true;
 
 		DefinitionNode localizationDef = DefinitionsManager.GetDefinition( DefinitionsCategory.LOCALIZATION, languageSku); 
@@ -218,7 +218,7 @@ public static class Localization
 	/// </summary>
 	static private void SetLanguage (string languageSku, string languageCode, Dictionary<string, string> dictionary)
 	{
-		m_language = languageSku;
+		m_languageSku = languageSku;
 		// Create a new culture with the given code
 		_culture = CultureInfo.CreateSpecificCulture(languageCode);
 		// Just in case there is any wild formatting out there, change default current culture as well
