@@ -48,6 +48,7 @@ GameObject:
   - 222: {fileID: 22218442}
   - 114: {fileID: 11406366}
   - 114: {fileID: 11495092}
+  - 114: {fileID: 11495956}
   m_Layer: 5
   m_Name: TempRewardText
   m_TagString: Untagged
@@ -65,6 +66,7 @@ GameObject:
   - 224: {fileID: 22429342}
   - 222: {fileID: 22200140}
   - 114: {fileID: 11422202}
+  - 114: {fileID: 11457528}
   - 114: {fileID: 11413814}
   m_Layer: 5
   m_Name: Text
@@ -84,6 +86,7 @@ GameObject:
   - 222: {fileID: 22204154}
   - 114: {fileID: 11482644}
   - 114: {fileID: 11467766}
+  - 114: {fileID: 11474140}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -102,6 +105,7 @@ GameObject:
   - 222: {fileID: 22299094}
   - 114: {fileID: 11450288}
   - 114: {fileID: 11467134}
+  - 114: {fileID: 11436500}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -119,6 +123,7 @@ GameObject:
   - 224: {fileID: 22463572}
   - 222: {fileID: 22287844}
   - 114: {fileID: 11431984}
+  - 114: {fileID: 11498908}
   - 114: {fileID: 11404230}
   - 114: {fileID: 11482410}
   m_Layer: 5
@@ -176,6 +181,7 @@ GameObject:
   - 222: {fileID: 22234094}
   - 114: {fileID: 11478260}
   - 114: {fileID: 11400804}
+  - 114: {fileID: 11458930}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -548,8 +554,8 @@ MonoBehaviour:
   m_callToActionButton: {fileID: 11464556}
   m_shopButton: {fileID: 11431722}
   m_backButton: {fileID: 11440854}
-  m_tapInfoText: {fileID: 11431984}
-  m_rewardText: {fileID: 11406366}
+  m_tapInfoText: {fileID: 11498908}
+  m_rewardText: {fileID: 11495956}
 --- !u!114 &11428110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -718,6 +724,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11436500
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 158034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_BACK
+  m_replacements: []
 --- !u!114 &11440854
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -886,6 +905,32 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0
+--- !u!114 &11457528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 137644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_EGG_INSTANT_OPEN
+  m_replacements: []
+--- !u!114 &11458930
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 166804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_EGG_BUY_MORE
+  m_replacements: []
 --- !u!114 &11460290
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1036,6 +1081,19 @@ MonoBehaviour:
   m_shadowAngle: 315
   m_shadowSize: 3.5
   m_shadowColor: {r: 0.50980395, g: 0.13333334, b: 0.003921569, a: 1}
+--- !u!114 &11474140
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_EGG_CALL_TO_ACTION
+  m_replacements: []
 --- !u!114 &11474826
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1279,6 +1337,32 @@ MonoBehaviour:
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0
+--- !u!114 &11495956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 107126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_replacements: []
+--- !u!114 &11498908
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 161190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_EGG_TAP_TO_OPEN
+  m_replacements: []
 --- !u!222 &22200140
 CanvasRenderer:
   m_ObjectHideFlags: 1

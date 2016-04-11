@@ -233,6 +233,7 @@ GameObject:
   - 224: {fileID: 22447932}
   - 222: {fileID: 22205526}
   - 114: {fileID: 11486074}
+  - 114: {fileID: 11497008}
   - 114: {fileID: 11485820}
   m_Layer: 0
   m_Name: Text
@@ -359,6 +360,7 @@ GameObject:
   - 222: {fileID: 22254706}
   - 114: {fileID: 11443730}
   - 114: {fileID: 11457596}
+  - 114: {fileID: 11494810}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -394,6 +396,7 @@ GameObject:
   - 224: {fileID: 22492596}
   - 222: {fileID: 22246226}
   - 114: {fileID: 11463452}
+  - 114: {fileID: 11492112}
   - 114: {fileID: 11499444}
   m_Layer: 5
   m_Name: Title
@@ -428,6 +431,7 @@ GameObject:
   - 224: {fileID: 22422226}
   - 222: {fileID: 22253940}
   - 114: {fileID: 11483936}
+  - 114: {fileID: 11434970}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -566,6 +570,7 @@ GameObject:
   - 224: {fileID: 22428608}
   - 222: {fileID: 22261486}
   - 114: {fileID: 11462660}
+  - 114: {fileID: 11433064}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -583,6 +588,7 @@ GameObject:
   - 224: {fileID: 22420678}
   - 222: {fileID: 22211248}
   - 114: {fileID: 11480222}
+  - 114: {fileID: 11487896}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -601,6 +607,7 @@ GameObject:
   - 222: {fileID: 22272306}
   - 114: {fileID: 11431454}
   - 114: {fileID: 11486654}
+  - 114: {fileID: 11460060}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -1304,6 +1311,32 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &11433064
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_replacements: []
+--- !u!114 &11434970
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 155564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_replacements: []
 --- !u!114 &11436364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1404,8 +1437,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelSku: level_1
   m_tooltip: {fileID: 152536}
-  m_titleText: {fileID: 11443730}
-  m_titleDesc: {fileID: 11480222}
+  m_titleText: {fileID: 11494810}
+  m_titleDesc: {fileID: 11487896}
   m_playerPointer: {fileID: 192418}
 --- !u!114 &11441872
 MonoBehaviour:
@@ -1621,6 +1654,19 @@ MonoBehaviour:
   m_shadowAngle: 135
   m_shadowSize: 0
   m_shadowColor: {r: 0.19607843, g: 0.27450982, b: 0.23529412, a: 1}
+--- !u!114 &11460060
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_replacements: []
 --- !u!114 &11461500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1896,8 +1942,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelSku: level_0
   m_tooltip: {fileID: 188320}
-  m_titleText: {fileID: 11463452}
-  m_titleDesc: {fileID: 11483936}
+  m_titleText: {fileID: 11492112}
+  m_titleDesc: {fileID: 11434970}
   m_playerPointer: {fileID: 126256}
 --- !u!114 &11480222
 MonoBehaviour:
@@ -2104,7 +2150,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: BACK
+  m_Text: BACK_
 --- !u!114 &11486654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2126,6 +2172,19 @@ MonoBehaviour:
   m_shadowAngle: 135
   m_shadowSize: 0
   m_shadowColor: {r: 0.19607843, g: 0.27450982, b: 0.23529412, a: 1}
+--- !u!114 &11487896
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_replacements: []
 --- !u!114 &11489658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2139,8 +2198,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelSku: level_2
   m_tooltip: {fileID: 135914}
-  m_titleText: {fileID: 11431454}
-  m_titleDesc: {fileID: 11462660}
+  m_titleText: {fileID: 11460060}
+  m_titleDesc: {fileID: 11433064}
   m_playerPointer: {fileID: 198664}
 --- !u!114 &11490230
 MonoBehaviour:
@@ -2169,6 +2228,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11492112
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 148702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_replacements: []
 --- !u!114 &11494446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2221,6 +2293,32 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &11494810
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 142650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_replacements: []
+--- !u!114 &11497008
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 130402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_BACK
+  m_replacements: []
 --- !u!114 &11497528
 MonoBehaviour:
   m_ObjectHideFlags: 1

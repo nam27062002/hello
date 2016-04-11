@@ -33,8 +33,8 @@ public class MenuLevelButton : MonoBehaviour {
 	// References
 	[Comment("References")]
 	[SerializeField] private GameObject m_tooltip = null;
-	[SerializeField] private Text m_titleText = null;
-	[SerializeField] private Text m_titleDesc = null;
+	[SerializeField] private Localizer m_titleText = null;
+	[SerializeField] private Localizer m_titleDesc = null;
 
 	[SerializeField] private GameObject m_playerPointer = null;
 
@@ -66,8 +66,8 @@ public class MenuLevelButton : MonoBehaviour {
 		m_levelDef = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, m_levelSku);
 
 		// Set name and description
-		m_titleText.text = m_levelDef.GetLocalized("tidName");
-		m_titleDesc.text = m_levelDef.GetLocalized("tidDesc");
+		m_titleText.Localize(m_levelDef.GetAsString("tidName"));
+		m_titleDesc.Localize(m_levelDef.GetAsString("tidDesc"));
 
 		// Unfold if current level
 		bool isCurrentLevel = (m_levelSku == UserProfile.currentLevel);

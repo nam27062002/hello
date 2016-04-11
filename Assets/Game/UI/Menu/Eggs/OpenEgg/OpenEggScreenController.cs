@@ -37,7 +37,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Button m_callToActionButton = null;
 	[SerializeField] private Button m_shopButton = null;
 	[SerializeField] private Button m_backButton = null;
-	[SerializeField] private Text m_tapInfoText = null;
+	[SerializeField] private Localizer m_tapInfoText = null;
 
 	// References
 	private EggController m_egg = null;
@@ -58,7 +58,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	// Temp!!
 	[Comment("TEMP PLACEHOLDERS!!", 10f)]
-	[SerializeField] private Text m_rewardText = null;
+	[SerializeField] private Localizer m_rewardText = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -291,18 +291,18 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Show reward text
 		m_rewardText.gameObject.SetActive(true);
-		m_rewardText.color = Colors.WithAlpha(m_rewardText.color, 1f);
+		m_rewardText.text.color = Colors.WithAlpha(m_rewardText.text.color, 1f);
 		m_rewardText.transform.DOBlendableLocalMoveBy(Vector3.up * 500f, 0.30f).From().SetEase(Ease.OutBounce).SetRecyclable(true);
-		m_rewardText.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
+		m_rewardText.text.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
 
 		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
 			case "suit": {
-					m_rewardText.text = "You've got " + m_egg.eggData.rewardData.value + " for dragon " + m_egg.eggData.def.GetAsString("dragonSku") + "!";
+				m_rewardText.Localize("You've got %U0 for dragon %U1!", m_egg.eggData.rewardData.value, m_egg.eggData.def.GetAsString("dragonSku"));
 				} break;
 
 			case "pet":
 			case "dragon": {
-					m_rewardText.text = "You've got " + m_egg.eggData.rewardDef.sku + "!";
+				m_rewardText.Localize("You've got %U0!", m_egg.eggData.rewardDef.sku);
 				} break;
 		}
 
@@ -447,7 +447,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// If leaving this screen, launch all the hide animations that are not automated
 		if(_fromScreen == (int)MenuScreens.OPEN_EGG) {
 			// Hide reward text
-			m_rewardText.DOFade(0f, 0.25f);
+			m_rewardText.text.DOFade(0f, 0.25f);
 
 			// Destroy reward view
 			if(m_rewardView != null) {

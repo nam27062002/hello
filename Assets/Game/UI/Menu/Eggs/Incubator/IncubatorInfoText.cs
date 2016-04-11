@@ -27,7 +27,7 @@ public class IncubatorInfoText : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Scene references
-	[SerializeField] private Text m_text = null;
+	[SerializeField] private Localizer m_text = null;
 	private ShowHideAnimator m_anim = null;
 
 	//------------------------------------------------------------------//
@@ -80,9 +80,9 @@ public class IncubatorInfoText : MonoBehaviour {
 
 		// Different texts if inventory is empty or not
 		if(EggManager.isInventoryEmpty) {
-			m_text.text = Localization.Localize("Your nest is empty!\nGet free eggs by finding chests while playing!");	// [AOC] HARDCODED!!
+			m_text.Localize("Your nest is empty!\nGet free eggs by finding chests while playing!");	// [AOC] HARDCODED!!
 		} else {
-			m_text.text = Localization.Localize("Your nest is empty!\nDrag and drop an egg from the inventory at the right side of the screen!");	// [AOC] HARDCODED!!
+			m_text.Localize("Your nest is empty!\nDrag and drop an egg from the inventory at the right side of the screen!");	// [AOC] HARDCODED!!
 		}
 	}
 

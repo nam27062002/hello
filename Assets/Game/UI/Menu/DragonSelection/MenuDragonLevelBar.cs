@@ -22,8 +22,8 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[SerializeField] private Slider m_levelBar;
-	[SerializeField] private Text m_levelText;
-	[SerializeField] private Text m_nameText;
+	[SerializeField] private Localizer m_levelText;
+	[SerializeField] private Localizer m_nameText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -71,10 +71,9 @@ public class MenuDragonLevelBar : MonoBehaviour {
 		m_levelBar.value = data.progression.level + 1;	// [1..N] bar should never be empty and should be filled when we're at level 9
 			
 		// Text
-		m_levelText.text = String.Format("Lvl {0}",
-		                                StringUtils.FormatNumber(m_levelBar.value, 0));
+		m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_levelBar.value, 0));
 
 		// Dragon Name
-		m_nameText.text = data.def.GetLocalized("tidName");
+		m_nameText.Localize(data.def.GetAsString("tidName"));
 	}
 }

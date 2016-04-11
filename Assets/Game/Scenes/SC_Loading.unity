@@ -95,6 +95,7 @@ GameObject:
   - 224: {fileID: 91138016}
   - 222: {fileID: 91138019}
   - 114: {fileID: 91138018}
+  - 114: {fileID: 91138021}
   - 114: {fileID: 91138020}
   - 114: {fileID: 91138017}
   m_Layer: 5
@@ -194,6 +195,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!114 &91138021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 91138015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_LOADING
+  m_replacements: []
 --- !u!21 &268123644
 Material:
   serializedVersion: 6
@@ -360,12 +374,12 @@ Material:
         second: {r: 0.27171877, g: 0.25726563, b: 0.25148433, a: 1}
       data:
         first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
           name: _SkyColor
         second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      data:
+        first:
+          name: _EmissionColorUI
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _SunPos
@@ -594,7 +608,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchoredPosition.x
@@ -638,11 +652,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22489242, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0.316
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22489242, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11435682, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_Value

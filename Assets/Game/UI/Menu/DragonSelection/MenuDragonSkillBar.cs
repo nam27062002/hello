@@ -27,7 +27,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 
 	[Header("References")]
 	public Slider m_bar;
-	public Text m_labelText;
+	public Localizer m_labelText;
 	public Text m_valueText;
 	public Button m_levelUpButton;
 	
@@ -69,7 +69,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		DragonSkill skillData = DragonManager.GetDragonData(_sku).GetSkill(m_skillSku);
 
 		// Label
-		m_labelText.text = skillData.def.GetLocalized("tidName");
+		m_labelText.Localize(skillData.def.Get("tidName"));
 
 		// Bar value
 		m_bar.minValue = 0;
@@ -79,18 +79,18 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		// Text
 		// [AOC] TODO!! May depend on skill type
 		switch(skillData.def.sku) {
-			default:
-				m_valueText.text = String.Format("{0}", StringUtils.FormatNumber(skillData.value, 2));
-				break;
+			default: {
+				m_valueText.text = StringUtils.FormatNumber(skillData.value, 2);
+			} break;
 		}
 
 		// Level up button
 		m_levelUpButton.interactable = skillData.CanUnlockNextLevel();
-		Text m_text = m_levelUpButton.FindTransformRecursive("Text").GetComponent<Text>();
+		Localizer buttonText = m_levelUpButton.FindComponentRecursive<Localizer>("Text");
 		if(skillData.level == skillData.lastLevel) {
-			m_text.text = "Max";	// [AOC] HARDCODED!!
+			buttonText.Localize("TID_MAX");
 		} else {
-			m_text.text = String.Format("{0}", StringUtils.FormatNumber(skillData.nextLevelUnlockPrice));	// [AOC] HARDCODED!!
+			buttonText.text.text = StringUtils.FormatNumber(skillData.nextLevelUnlockPrice);
 		}
 	}
 

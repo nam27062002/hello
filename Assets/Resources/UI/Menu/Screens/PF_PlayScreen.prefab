@@ -90,7 +90,7 @@ GameObject:
   - 114: {fileID: 11474324}
   - 114: {fileID: 11475520}
   - 114: {fileID: 11426308}
-  - 114: {fileID: 11434768}
+  - 114: {fileID: 11414326}
   m_Layer: 5
   m_Name: BtnOptions
   m_TagString: Untagged
@@ -109,8 +109,9 @@ GameObject:
   - 222: {fileID: 22226296}
   - 114: {fileID: 11497026}
   - 114: {fileID: 11492264}
-  - 114: {fileID: 11494240}
   - 114: {fileID: 11450462}
+  - 114: {fileID: 11494240}
+  - 114: {fileID: 11486800}
   - 114: {fileID: 11479506}
   - 114: {fileID: 11415244}
   - 114: {fileID: 11401298}
@@ -223,6 +224,19 @@ MonoBehaviour:
   optionalRotationMode: 0
   optionalScrambleMode: 0
   optionalString: 
+--- !u!114 &11414326
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 175260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615e9e12f1be4d60bebd602a7599d30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_popupPath: UI/Popups/Settings/PF_PopupSettings
+  m_popup: {fileID: 0}
 --- !u!114 &11415244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -393,18 +407,6 @@ MonoBehaviour:
   m_tweenValue: 1
   m_tweenEase: 1
   m_tweenDelay: 0
---- !u!114 &11434768
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 175260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd9d6786299474aadb7237279cc9986a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_text: Coming Soon!
 --- !u!114 &11441014
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -872,7 +874,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11434768}
+      - m_Target: {fileID: 0}
         m_MethodName: OnWipButton
         m_Mode: 1
         m_Arguments:
@@ -933,6 +935,19 @@ MonoBehaviour:
   m_shadowAngle: 135
   m_shadowSize: 0
   m_shadowColor: {r: 0.7137255, g: 0.21960786, b: 0, a: 1}
+--- !u!114 &11486800
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 186714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_PLAY
+  m_replacements: []
 --- !u!114 &11488634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -945,6 +960,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_text: Work in Progress
+  m_pos: {x: 0.5, y: 0.5}
 --- !u!114 &11492264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -989,7 +1005,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: PLAY
+  m_Text: '#PLAY'
 --- !u!114 &11495474
 MonoBehaviour:
   m_ObjectHideFlags: 1
