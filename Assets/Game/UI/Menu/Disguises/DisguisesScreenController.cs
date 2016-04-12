@@ -99,7 +99,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		for (int i = 0; i < m_disguises.Length; i++) {
 			if (i <= defList.Count) {
 				if (i == 0) {
-					m_disguises[i].LoadAsDefault(GetFromCollection(ref icons, "default"));
+					m_disguises[i].LoadAsDefault(GetFromCollection(ref icons, "icon_default"));
 				} else {
 					DefinitionNode def = defList[i - 1];
 
@@ -165,6 +165,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			if (_pill.isDefault) {
 				m_powerList.SetActive(false);
 				m_upgradeList.SetActive(false);
+				m_name.text = _pill.nameLocalized;
 			} else {
 				m_powerList.SetActive(true);
 				m_upgradeList.SetActive(true);
@@ -192,6 +193,12 @@ public class DisguisesScreenController : MonoBehaviour {
 						Image img = m_powers[i].FindComponentRecursive<Image>("PowerIcon");
 						img.sprite = GetFromCollection(ref m_allPowerIcons, iconName);
 						img.SetNativeSize();
+
+						if (i < _pill.level) {
+							img.color = Color.white;
+						} else {
+							img.color = Color.gray;
+						}
 
 						// Store for further use
 						m_powerIcons[i] = img.sprite;

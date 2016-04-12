@@ -14,6 +14,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	//------------------------------------------//
 
+	private static Color m_defaultColor = new Color(176f / 255f, 164f / 255f, 153f / 255f);
 	private static Color m_commonColor = new Color(242f / 255f, 196f / 255f, 156f / 255f);
 	private static Color m_rareColor = new Color(255f / 255f, 255f / 255f, 255f / 255f);
 	private static Color m_epicColor = new Color(255f / 255f, 168f / 255f, 0f / 255f);
@@ -85,10 +86,11 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_selection.SetActive(false);
 		m_equipedIcon.SetActive(false);
 
-		Color color = m_colors["common"];
-		m_bgDisguise.color = color;
-		m_bgFrame.color = color;
-		m_bgIcon.color = color;
+		m_bgDisguise.color = m_defaultColor;
+		m_bgFrame.color = m_defaultColor;
+		m_bgIcon.color = m_defaultColor;
+
+		m_disguiseIcon.sprite = _spr;
 	}
 
 	public void Load(DefinitionNode _def, int _level, Sprite _spr) {
