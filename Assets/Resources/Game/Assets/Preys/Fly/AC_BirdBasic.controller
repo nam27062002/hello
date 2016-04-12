@@ -67,7 +67,7 @@ MonoBehaviour:
   m_timeToGlide:
     min: 3
     max: 4
---- !u!114 &11425430
+--- !u!114 &11489734
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -302,7 +302,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 110187708}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 11489734}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -333,8 +334,7 @@ AnimatorStateMachine:
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
-  m_StateMachineBehaviours:
-  - {fileID: 11425430}
+  m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 252, y: 60, z: 0}
   m_EntryPosition: {x: 744, y: 108, z: 0}
   m_ExitPosition: {x: 732, y: 0, z: 0}

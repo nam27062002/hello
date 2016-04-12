@@ -12,6 +12,7 @@ public class FleeBehaviour : Initializable {
 		Panic    // the prey reached the end of the area or map and runs to the other side in panic
 	};
 
+	public bool m_fleeAround = false;
 	[CommentAttribute("This prey stops and plays a special animation. Can be easily eaten.")]
 	[SerializeField] private bool m_canBeAfraid = false;
 	[CommentAttribute("This prey can't move away from the dragon in this direction so it tries to escape going back to the center of their movement area.")]
@@ -22,6 +23,7 @@ public class FleeBehaviour : Initializable {
 	private PreyMotion m_motion;
 	private Animator m_animator;
 	private SensePlayer m_sensor;
+	private FlockBehaviour m_flock;
 
 	private Vector2 m_panicTarget;
 	
@@ -40,6 +42,7 @@ public class FleeBehaviour : Initializable {
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_sensor = GetComponent<SensePlayer>();
+		m_flock = GetComponent<FlockBehaviour>();
 	}
 
 	void Start() {
@@ -68,6 +71,11 @@ public class FleeBehaviour : Initializable {
 			ChangeState();
 		}
 
+		if (m_runningTime > 0)
+		{
+			// Increase animation speed
+		}
+
 		if (m_state == State.RunAway) {
 			if (m_canBeAfraid || m_canPanic) {
 				if (m_sensor.alert && !m_area.Contains(m_motion.position)) {
@@ -89,18 +97,33 @@ public class FleeBehaviour : Initializable {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.RunAway:
-				m_nextRunTime	-= Time.deltaTime;
+				m_nextRunTime -= Time.deltaTime;
 				if (m_sensor.alert && m_nextRunTime <= 0) 
 				{
-					m_motion.Flee(m_dragonMouth.position);
 					m_runningTime = m_runningTimeRange.GetRandom();
 					m_nextRunTime = m_waitRunningRange.GetRandom();
 				}
 				else if ( m_runningTime > 0 )
 				{
 					m_runningTime -= Time.deltaTime;
-					m_motion.Flee(m_dragonMouth.position);
 				}
+
+				if ( (m_sensor.alert && m_nextRunTime <= 0) || m_runningTime > 0 )
+				{
+					if (m_fleeAround && m_flock != null)
+					{
+						Vector3 dir1 = (transform.position - m_dragonMouth.position);
+						Vector3 dir2 = ((Vector3)m_flock.GetFlockTarget() - m_dragonMouth.position);
+						Vector3 res = Vector3.RotateTowards( dir1, dir2, Time.deltaTime * 10.0f, 0);
+						Vector3 target = m_dragonMouth.position + res;
+						m_motion.RunTo( target );
+					}
+					else
+					{
+						m_motion.Flee(m_dragonMouth.position);
+					}
+				}
+
 				break;
 
 			case State.Afraid:
