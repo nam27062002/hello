@@ -70,6 +70,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
 	}
 
+	public void SetFuryMax( float max )
+	{
+		m_furyMax = max;
+	}
+
 	void OnDestroy()
 	{
 		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
