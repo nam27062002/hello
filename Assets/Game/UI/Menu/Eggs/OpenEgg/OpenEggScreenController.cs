@@ -344,7 +344,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			// Animate reward
 			DOTween.Kill(m_rewardAnchor, true);
 			m_rewardAnchor.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
-			m_rewardAnchor.DOLocalRotate(Vector3.up * 360f, 5f).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
+			m_rewardAnchor.DOLocalRotate(m_rewardAnchor.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
 		}
 
 		// Show/Hide buttons and HUD

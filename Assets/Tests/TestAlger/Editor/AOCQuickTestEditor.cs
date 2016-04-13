@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -33,19 +34,23 @@ public class AOCQuickTestEditor : Editor {
 	/// 
 	/// </summary>
 	public override void OnInspectorGUI() {
-		targetTest.m_setMask = (TutorialStep)EditorGUILayout.EnumMaskField("Set Mask", targetTest.m_setMask);
-		targetTest.m_setValue = EditorGUILayout.Toggle("Set Value", targetTest.m_setValue);
-		EditorGUILayout.Space();
-		targetTest.m_tutorialStep = (TutorialStep)EditorGUILayout.EnumMaskField("Current Value", targetTest.m_tutorialStep);
-		EditorGUILayout.Space();
+		// Default
+		DrawDefaultInspector();
 
 		// Test button
+		EditorGUILayout.Space();
 		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
 			targetTest.OnTestButton();
 		}
 
-		// Default
 		EditorGUILayout.Space();
-		DrawDefaultInspector();
+		if(targetTest.m_tweener != null) {
+			Tween t = (Tween)targetTest.m_tweener;
+			EditorGUILayout.LabelField("Elapsed Perc.", t.ElapsedPercentage().ToString());
+			EditorGUILayout.LabelField("Elapsed Perc. (looped)", t.ElapsedPercentage(true).ToString());
+			EditorGUILayout.LabelField("Full Position", t.fullPosition.ToString());
+			EditorGUILayout.TextArea(t.ToString());
+			EditorUtility.SetDirty(targetTest);
+		}
 	}
 }
