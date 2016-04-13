@@ -22,6 +22,7 @@ public class HUDMissionCompleted : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
+	[SerializeField] Text m_missionObjectiveText = null;
 	private Animator m_anim;
 	
 	//------------------------------------------------------------------//
@@ -58,7 +59,10 @@ public class HUDMissionCompleted : MonoBehaviour {
 	/// </summary>
 	/// <param name="_mission">The mission that has been completed.</param>
 	private void OnMissionCompleted(Mission _mission) {
-		// Just play the anim!
+		// Init text!
+		m_missionObjectiveText.text = _mission.objective.GetDescription();
+
+		// Play the anim!
 		m_anim.SetTrigger("start");
 	}
 }
