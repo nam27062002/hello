@@ -43,7 +43,7 @@ public class IncubatorCheatButton : MonoBehaviour {
 	/// </summary>
 	public void OnAddEgg() {
 		// Add it to the inventory
-		int slotIdx = EggManager.AddEggToInventory(Egg.CreateRandom(false));
+		int slotIdx = EggManager.AddEggToInventory(Egg.CreateRandom(true));
 
 		// If successful, save persistence
 		if(slotIdx >= 0) PersistenceManager.Save();
