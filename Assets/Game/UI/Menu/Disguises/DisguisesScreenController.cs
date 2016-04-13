@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class DisguisesScreenController : MonoBehaviour {
 
 	[SerializeField] private GameObject m_disguiseTitle;
-	[SerializeField] private Text m_name;
+	[SerializeField] private Localizer m_name;
 	[SerializeField] private GameObject m_upgradeList;
 	[SerializeField] private GameObject[] m_upgrades;
 	[SerializeField] private GameObject m_powerList;
@@ -165,7 +165,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			if (_pill.isDefault) {
 				m_powerList.SetActive(false);
 				m_upgradeList.SetActive(false);
-				m_name.text = _pill.nameLocalized;
+				m_name.Localize(_pill.tidName);
 			} else {
 				m_powerList.SetActive(true);
 				m_upgradeList.SetActive(true);
@@ -206,7 +206,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				}
 
 				// update name
-				m_name.text = _pill.nameLocalized;
+				m_name.Localize(_pill.tidName);
 
 				// update level
 				for (int i = 0; i < m_upgrades.Length; i++) {
@@ -241,10 +241,10 @@ public class DisguisesScreenController : MonoBehaviour {
 				DefinitionNode def = m_powerDefs[i];
 
 				// Name
-				_tooltip.FindComponentRecursive<Text>("PowerupNameText").text = def.GetLocalized("tidName");
+				_tooltip.FindComponentRecursive<Localizer>("PowerupNameText").Localize(def.Get("tidName"));
 
 				// Desc
-				_tooltip.FindComponentRecursive<Text>("PowerupDescText").text = DragonPowerUp.GetDescription(def.sku);	// Custom formatting depending on powerup type
+				_tooltip.FindComponentRecursive<Text>("PowerupDescText").text = DragonPowerUp.GetDescription(def.sku);	// Custom formatting depending on powerup type, already localized
 
 				// Icon
 				Image img = _tooltip.FindComponentRecursive<Image>("Icon");
