@@ -121,8 +121,7 @@ public class PopupEggShopPill : MonoBehaviour {
 		m_eggPreviewScene.SetEgg(Egg.CreateFromDef(_eggDef));
 
 		// Init name
-		//m_nameText.text = _eggDef.GetLocalized("tidName");
-		m_nameText.text = _eggDef.sku;
+		m_nameText.text = _eggDef.GetLocalized("tidName");
 	}
 
 	//------------------------------------------------------------------------//

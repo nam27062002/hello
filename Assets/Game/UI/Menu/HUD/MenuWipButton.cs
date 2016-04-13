@@ -26,7 +26,7 @@ public class MenuWipButton : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private string m_text = "Coming Soon!";
+	[SerializeField] private string m_tid = "TID_GEN_COMING_SOON";
 	[SerializeField] private Vector2 m_pos = new Vector2(0.5f, 0.5f);
 
 	//------------------------------------------------------------------------//
@@ -41,6 +41,6 @@ public class MenuWipButton : MonoBehaviour {
 	/// </summary>
 	public void OnWipButton() {
 		// Show feedback
-		UIFeedbackText target = UIFeedbackText.CreateAndLaunch(m_text, m_pos, transform.parent as RectTransform);
+		UIFeedbackText target = UIFeedbackText.CreateAndLaunch(Localization.Localize(m_tid), m_pos, transform.parent as RectTransform);
 	}
 }
