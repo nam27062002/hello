@@ -257,6 +257,31 @@ public class DisguisesScreenController : MonoBehaviour {
 				img.sprite = m_powerIcons[i];
 				img.SetNativeSize();	// Icons already have the desired size
 
+				// Move arrow based on wich powerup has been tapped
+				// [AOC] Quick'n'dirty: hardcoded values
+				RectTransform arrowTransform = _tooltip.FindComponentRecursive<RectTransform>("Arrow");
+				if(arrowTransform != null) {
+					switch(i) {
+						case 0: {
+							arrowTransform.anchorMin = new Vector2(0f, 0f);
+							arrowTransform.anchorMax = new Vector2(0f, 0f);
+							arrowTransform.anchoredPosition = new Vector2(48f, 0f);
+						} break;
+
+						case 1: {
+							arrowTransform.anchorMin = new Vector2(0.5f, 0f);
+							arrowTransform.anchorMax = new Vector2(0.5f, 0f);
+							arrowTransform.anchoredPosition = Vector2.zero;
+						} break;
+
+						case 2: {
+							arrowTransform.anchorMin = new Vector2(1f, 0f);
+							arrowTransform.anchorMax = new Vector2(1f, 0f);
+							arrowTransform.anchoredPosition = new Vector2(-48f, 0f);
+						} break;
+					}
+				}
+
 				// We're done!
 				break;
 			}
@@ -282,7 +307,8 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	public void OnBuy() {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
-		popup.GetComponent<PopupEggShop>().initialEgg = m_dragonSku;
+		popup.GetComponent<PopupEggShop>().SetInitialEgg(m_dragonSku);
+		popup.GetComponent<PopupEggShop>().SetVisibleEggs(new string[] { m_dragonSku });
 	}
 
 	private void ShowButtons(bool _buy, bool _use) {
