@@ -443,6 +443,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_furyBase = m_data.def.GetAsFloat("furyMax");
 		m_furyModifier = value;
 		m_furyMax = m_furyBase + ( m_furyModifier / 100.0f * m_furyBase );
+		m_breathBehaviour.SetFuryMax( m_furyMax );
 	}
 
 	public void SetFreeRevives( int revives )

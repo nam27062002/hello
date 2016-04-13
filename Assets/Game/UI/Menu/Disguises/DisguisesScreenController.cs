@@ -65,6 +65,8 @@ public class DisguisesScreenController : MonoBehaviour {
 		if (disguiseScene != null) {
 			m_dragonWorldPos = disguiseScene.transform.FindChild("CurrentDragon");
 			m_dragonRotationArrowsPos = disguiseScene.transform.FindChild("Arrows");
+
+			m_dragonWorldPos.gameObject.SetActive(true);
 		}
 
 		// get disguises levels of the current dragon
@@ -124,6 +126,20 @@ public class DisguisesScreenController : MonoBehaviour {
 		OnUse();
 	}
 
+	void OnDisable() {
+		if (m_dragonWorldPos != null) {
+			m_dragonWorldPos.gameObject.SetActive(false);
+		}
+
+		if (m_using != null) {
+			Wardrobe.Equip(m_dragonSku, m_using.sku);
+		} else {
+			Wardrobe.Equip(m_dragonSku, "default");
+		}
+
+		PersistenceManager.Save();
+	}
+
 	private Sprite GetFromCollection(ref Sprite[] _array, string _name) {
 		for (int i = 0; i < _array.Length; i++) {
 			if (_array[i].name == _name) {
@@ -132,16 +148,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		return null;
-	}
-
-	void OnDisable() {
-		if (m_using != null) {
-			Wardrobe.Equip(m_dragonSku, m_using.sku);
-		} else {
-			Wardrobe.Equip(m_dragonSku, "default");
-		}
-
-		PersistenceManager.Save();
 	}
 
 	void Update() {

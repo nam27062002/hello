@@ -27,7 +27,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
-		private static readonly string ASSETS_DIR = "Assets/Resources/Game/Levels";
+		private static readonly string ASSETS_DIR = "Assets/Game/Scenes/Levels";
 		private static readonly float AUTOSAVE_FREQUENCY = 60f;	// Seconds
 
 		//------------------------------------------------------------------//
