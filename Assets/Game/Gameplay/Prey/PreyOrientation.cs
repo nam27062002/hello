@@ -33,6 +33,10 @@ public class PreyOrientation : Orientation {
 		transform.rotation = m_rotation;
 	}
 
+	public override void SetRotation(Quaternion _rotation) {
+		m_targetRotation = _rotation;
+	}
+
 	public override void SetDirection(Vector3 _direction) {
 		if (m_faceDirection) {
 			float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;

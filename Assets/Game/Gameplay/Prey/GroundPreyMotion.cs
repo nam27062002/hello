@@ -23,9 +23,13 @@ public class GroundPreyMotion : PreyMotion {
 			RaycastHit sensorA;
 			RaycastHit sensorB;
 			CheckGround(out sensorA, out sensorB);
-			if (m_velocity.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
-			else 					m_direction = (sensorB.point - sensorA.point).normalized;
-			m_orientation.SetDirection(m_direction);
+
+			if (m_velocity != Vector2.zero) 
+			{
+				if (m_velocity.x < 0) 	m_direction = (sensorA.point - sensorB.point).normalized;
+				else 					m_direction = (sensorB.point - sensorA.point).normalized;
+				m_orientation.SetDirection(m_direction);
+			}
 
 			m_currentSpeed = m_velocity.magnitude;
 			m_velocityProject = Vector3.Project(m_velocity, m_direction);

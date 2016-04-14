@@ -72,16 +72,17 @@ public class ProjectileMotion : Initializable, MotionInterface
 				m_direction.Normalize();
 				m_forceVector = m_direction * Mathf.Min( force , 100 );
 			}break;
+
 			case Type.Arrow:
 			{
 				m_position = transform.position;
 				m_direction = _target - transform.position;
 				m_direction.Normalize();
 				m_duration = m_arrowMaxDuration;
-				float angle = Mathf.Atan2(m_direction.y, m_direction.x) * Mathf.Rad2Deg;
-				Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward)*Quaternion.AngleAxis(-angle, Vector3.left);
+			/*	float angle = Mathf.Atan2(m_direction.y, m_direction.x) * Mathf.Rad2Deg;
+				Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.back)*Quaternion.AngleAxis(-angle, Vector3.left);
 				Vector3 eulerRot = targetRotation.eulerAngles;		
-				transform.rotation = Quaternion.Euler(eulerRot);
+				transform.rotation = Quaternion.Euler(eulerRot);*/
 			}break;
 		}
 	}
