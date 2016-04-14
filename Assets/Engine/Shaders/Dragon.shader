@@ -28,27 +28,35 @@ SubShader {
 			#pragma fragment frag
 			#pragma multi_compile_fog
 			#include "UnityCG.cginc"
+			#include "Lighting.cginc"
 
 			struct appdata_t {
 				float4 vertex : POSITION;
 				float2 texcoord : TEXCOORD0;
 				float3 normal : NORMAL;
+				float4 tangent : TANGENT;
 			};
 
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
-				half2 movetexcoord : TEXCOORD3;
 				float3 normal : NORMAL;
 				float3 halfDir : VECTOR;
 				UNITY_FOG_COORDS(1)
 				float3 vertexLighting : TEXCOORD2;
+
+				float3 tangentWorld : TEXCOORD3;  
+		        float3 normalWorld : TEXCOORD4;
+		        float3 binormalWorld : TEXCOORD5;
+
+		        half2 movetexcoord : TEXCOORD6;
 			};
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			sampler2D _DetailTex;
 			float4 _DetailTex_ST;
+			uniform float4 _DetailTex_TexelSize;
 
 			float4 _ColorMultiply;
 			float4 _ColorAdd;
@@ -91,6 +99,14 @@ SubShader {
 	            }
 
 	            UNITY_TRANSFER_FOG(o,o.vertex);
+
+	            // To calculate tangent world
+	            float4x4 modelMatrix = _Object2World;
+     			float4x4 modelMatrixInverse = _World2Object; 
+	            o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
+     			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
+     			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
+
 				return o;
 			}
 			
@@ -100,21 +116,36 @@ SubShader {
 				fixed4 detail = tex2D(_DetailTex, i.texcoord);
 				fixed4 detailMov = tex2D(_DetailTex, i.movetexcoord);
 
-				fixed4 col = ( main * (1 + detail.r * _InnerLightAdd * _InnerLightColor)) * _ColorMultiply + _ColorAdd;
+				// Calc normal from detail texture normal and tangent world
+				float heightSampleCenter = tex2D (_DetailTex, i.texcoord).g;
+	            float heightSampleRight = tex2D (_DetailTex, i.texcoord + float2(_DetailTex_TexelSize.x, 0)).g;
+	            float heightSampleUp = tex2D (_DetailTex, i.texcoord + float2(0, _DetailTex_TexelSize.y)).g;
+	     
+	            float sampleDeltaRight = heightSampleRight - heightSampleCenter;
+	            float sampleDeltaUp = heightSampleUp - heightSampleCenter;
+	     
+	            //TODO: Expose?
+	            float _BumpStrength = 3.0f;
+	            float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength),float3(0, 1, sampleDeltaUp * _BumpStrength));
+	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
+     			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+
+     			fixed4 diffuse = main * max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0 * _ColorMultiply + _ColorAdd;
+     			fixed4 selfIlluminate = ( main * (detail.r * _InnerLightAdd * _InnerLightColor));
 
 				// Specular
-				float specularLight = pow(max(dot( i.normal, i.halfDir), 0), _SpecExponent) * detail.g;
-				col = col + specularLight;
+				float specularLight = pow(max(dot( normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
+
+				fixed4 col = diffuse + specularLight + fixed4(i.vertexLighting, 0) * main + selfIlluminate + UNITY_LIGHTMODEL_AMBIENT;
 
 				// Noise
-				// col += _NoiseColor * ((sin( _Time.y) + 1) * 0.5) * _NoiseValue * detail.b;
 				col += _NoiseColor * _NoiseValue * detailMov.b;
-				// col += _NoiseColor * _NoiseValue * ((sin(_Time.y + i.texcoord.y * 5) + 1) * 0.5);
 
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				UNITY_OPAQUE_ALPHA(col.a); 
 
-				return col + fixed4(i.vertexLighting, 0) * main; 
+				return col; 
+
 			}
 		ENDCG
 	}
