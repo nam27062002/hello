@@ -15,6 +15,8 @@ Properties {
 
 	_NoiseColor ("Noise Color", Color) = (1,1,1,1)
 	_NoiseValue ("Noise Value",  Range (0, 1)) = 0
+
+	_BumpStrength("Bump Strength", float) = 3
 }
 
 SubShader {
@@ -50,6 +52,8 @@ SubShader {
 		        float3 binormalWorld : TEXCOORD5;
 
 		        half2 movetexcoord : TEXCOORD6;
+
+		        fixed3 posWorld : TEXCOORD7;
 			};
 
 			sampler2D _MainTex;
@@ -69,6 +73,8 @@ SubShader {
 			uniform float4 _NoiseColor;
 			uniform float _NoiseValue;
 
+			uniform float _BumpStrength;
+
 			v2f vert (appdata_t v)
 			{
 				v2f o;
@@ -86,17 +92,7 @@ SubShader {
 
 
 				o.vertexLighting = float3(0,0,0);
-				float4 posWorld = mul( _Object2World, v.vertex );
-	            for (int index = 0; index <1; index++)
-	            {    
-		               float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
-		               float3 vertexToLightSource = lightPosition.xyz - posWorld.xyz;
-		               float3 lightDirection = normalize(vertexToLightSource);
-		               float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
-		               float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
-		               float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(o.normal, lightDirection));         
-		               o.vertexLighting = o.vertexLighting + diffuseReflection;
-	            }
+				o.posWorld = mul( _Object2World, v.vertex ).xyz;
 
 	            UNITY_TRANSFER_FOG(o,o.vertex);
 
@@ -125,18 +121,31 @@ SubShader {
 	            float sampleDeltaUp = heightSampleUp - heightSampleCenter;
 	     
 	            //TODO: Expose?
-	            float _BumpStrength = 3.0f;
+	            // float _BumpStrength = 10.0f;
 	            float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength),float3(0, 1, sampleDeltaUp * _BumpStrength));
 	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+     			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 
-     			fixed4 diffuse = main * max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0 * _ColorMultiply + _ColorAdd;
+     			fixed3 pointLights = fixed3(0,0,0);
+     			for (int index = 0; index <1; index++)
+	            {    
+		               float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
+		               float3 vertexToLightSource = lightPosition.xyz - i.posWorld.xyz;
+		               float3 lightDirection = normalize(vertexToLightSource);
+		               float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
+		               float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
+		               float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
+		               pointLights = pointLights + diffuseReflection;
+	            }
+
+	            // Inner lights
      			fixed4 selfIlluminate = ( main * (detail.r * _InnerLightAdd * _InnerLightColor));
 
 				// Specular
 				float specularLight = pow(max(dot( normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
 
-				fixed4 col = diffuse + specularLight + fixed4(i.vertexLighting, 0) * main + selfIlluminate + UNITY_LIGHTMODEL_AMBIENT;
+				fixed4 col = (diffuse + fixed4(pointLights,1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate + UNITY_LIGHTMODEL_AMBIENT;
 
 				// Noise
 				col += _NoiseColor * _NoiseValue * detailMov.b;
