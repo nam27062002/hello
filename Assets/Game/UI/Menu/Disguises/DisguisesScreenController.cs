@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class DisguisesScreenController : MonoBehaviour {
 
 	[SerializeField] private GameObject m_disguiseTitle;
-	[SerializeField] private Text m_name;
+	[SerializeField] private Localizer m_name;
 	[SerializeField] private GameObject m_upgradeList;
 	[SerializeField] private GameObject[] m_upgrades;
 	[SerializeField] private GameObject m_powerList;
@@ -171,7 +171,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			if (_pill.isDefault) {
 				m_powerList.SetActive(false);
 				m_upgradeList.SetActive(false);
-				m_name.text = _pill.nameLocalized;
+				m_name.Localize(_pill.tidName);
 			} else {
 				m_powerList.SetActive(true);
 				m_upgradeList.SetActive(true);
@@ -212,7 +212,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				}
 
 				// update name
-				m_name.text = _pill.nameLocalized;
+				m_name.Localize(_pill.tidName);
 
 				// update level
 				for (int i = 0; i < m_upgrades.Length; i++) {
@@ -247,15 +247,40 @@ public class DisguisesScreenController : MonoBehaviour {
 				DefinitionNode def = m_powerDefs[i];
 
 				// Name
-				_tooltip.FindComponentRecursive<Text>("PowerupNameText").text = def.GetLocalized("tidName");
+				_tooltip.FindComponentRecursive<Localizer>("PowerupNameText").Localize(def.Get("tidName"));
 
 				// Desc
-				_tooltip.FindComponentRecursive<Text>("PowerupDescText").text = DragonPowerUp.GetDescription(def.sku);	// Custom formatting depending on powerup type
+				_tooltip.FindComponentRecursive<Text>("PowerupDescText").text = DragonPowerUp.GetDescription(def.sku);	// Custom formatting depending on powerup type, already localized
 
 				// Icon
 				Image img = _tooltip.FindComponentRecursive<Image>("Icon");
 				img.sprite = m_powerIcons[i];
 				img.SetNativeSize();	// Icons already have the desired size
+
+				// Move arrow based on wich powerup has been tapped
+				// [AOC] Quick'n'dirty: hardcoded values
+				RectTransform arrowTransform = _tooltip.FindComponentRecursive<RectTransform>("Arrow");
+				if(arrowTransform != null) {
+					switch(i) {
+						case 0: {
+							arrowTransform.anchorMin = new Vector2(0f, 0f);
+							arrowTransform.anchorMax = new Vector2(0f, 0f);
+							arrowTransform.anchoredPosition = new Vector2(48f, 0f);
+						} break;
+
+						case 1: {
+							arrowTransform.anchorMin = new Vector2(0.5f, 0f);
+							arrowTransform.anchorMax = new Vector2(0.5f, 0f);
+							arrowTransform.anchoredPosition = Vector2.zero;
+						} break;
+
+						case 2: {
+							arrowTransform.anchorMin = new Vector2(1f, 0f);
+							arrowTransform.anchorMax = new Vector2(1f, 0f);
+							arrowTransform.anchoredPosition = new Vector2(-48f, 0f);
+						} break;
+					}
+				}
 
 				// We're done!
 				break;
@@ -282,7 +307,8 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	public void OnBuy() {
 		PopupController popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
-		popup.GetComponent<PopupEggShop>().initialEgg = m_dragonSku;
+		popup.GetComponent<PopupEggShop>().SetInitialEgg(m_dragonSku);
+		popup.GetComponent<PopupEggShop>().SetVisibleEggs(new string[] { m_dragonSku });
 	}
 
 	private void ShowButtons(bool _buy, bool _use) {

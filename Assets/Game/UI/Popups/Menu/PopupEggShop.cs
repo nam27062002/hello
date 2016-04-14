@@ -36,7 +36,8 @@ public class PopupEggShop : MonoBehaviour {
 	[SerializeField] private Text m_rewardsText = null;
 	[SerializeField] private Text m_priceText = null;
 
-	public string initialEgg = "";
+	// Special initialization settings
+	private string m_initialDragonSku = "";
 
 	// Internal
 	private List<PopupEggShopPill> m_pills = new List<PopupEggShopPill>();
@@ -57,7 +58,7 @@ public class PopupEggShop : MonoBehaviour {
 		Debug.Assert(m_rewardsText != null, "Required field!");
 		Debug.Assert(m_priceText != null, "Required field!");
 
-		initialEgg = "";
+		m_initialDragonSku = "";
 
 		// Subscribe to events
 		GetComponent<PopupController>().OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
@@ -73,6 +74,27 @@ public class PopupEggShop : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe to external events
 		Messenger.RemoveListener<string>(EngineEvents.SCENE_UNLOADED, OnSceneUnloaded);
+	}
+
+	//------------------------------------------------------------------//
+	// CUSTOM SETUP METHODS												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Define the egg to scroll to once the popup is opened.
+	/// Ideally to be called immediately after requesting the popup manager to open the popup.
+	/// </summary>
+	/// <param name="_initialDragonSku">Sku of the dragon whose egg we want to focus.</param>
+	public void SetInitialEgg(string _initialDragonSku) {
+		// Just store it
+		m_initialDragonSku = _initialDragonSku;
+	}
+
+	/// <summary>
+	/// Define which eggs should be displayed.
+	/// </summary>
+	/// <param name="_dragonSkus">Skus of the dragons whose related eggs we want to be in the shop. Empty will show all available eggs.</param>
+	public void SetVisibleEggs(string[] _dragonSkus) {
+		// [AOC] TODO!!
 	}
 
 	//------------------------------------------------------------------//
@@ -112,6 +134,9 @@ public class PopupEggShop : MonoBehaviour {
 		m_pills.Clear();
 		m_pills.AddRange(GetComponentsInChildren<PopupEggShopPill>(true));
 
+		// By default show all the eggs
+		SetVisibleEggs(null);
+
 		// Force a scroll animation by setting the scroll instantly to last pill then scrolling to the first one
 		// Only the first time
 		if(m_showIntroScroll) {
@@ -130,9 +155,10 @@ public class PopupEggShop : MonoBehaviour {
 			m_showIntroScroll = false;
 		}
 
-		if (initialEgg != "") {
+		// Scroll to initial egg
+		if(m_initialDragonSku != "") {
 			for(int i = 0; i < m_pills.Count; i++) {
-				if (m_pills[i].eggDef.GetAsString("dragonSku") == initialEgg) {
+				if (m_pills[i].eggDef.GetAsString("dragonSku") == m_initialDragonSku) {
 					m_scrollList.SelectPoint(m_pills[i].snapPoint);
 					break;
 				}
@@ -165,11 +191,10 @@ public class PopupEggShop : MonoBehaviour {
 		if(dragonDef == null) return;
 
 		// Rewards text
-		// [AOC] HARDCODED!!
 		StringBuilder sb = new StringBuilder();
-		sb.AppendLine(Localization.Localize("- A disguise for dragon %U0", dragonDef.GetLocalized("tidName")));
-		sb.AppendLine(Localization.Localize("- A pet to help you catch preys"));
-		sb.AppendLine(Localization.Localize("- An exclusive dragon!"));
+		sb.AppendLine(Localization.Localize("TID_EGG_SHOP_REWARDS_DISGUISE", dragonDef.GetLocalized("tidName")));
+		sb.AppendLine(Localization.Localize("TID_EGG_SHOP_REWARDS_PET"));
+		sb.AppendLine(Localization.Localize("TID_EGG_SHOP_REWARDS_SPECIAL_DRAGON"));
 		m_rewardsText.text = sb.ToString();
 
 		// Price
@@ -226,7 +251,7 @@ public class PopupEggShop : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// [AOC] TODO!!
-		UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch("Coming soon!",	new Vector2(0.5f, 0.5f), (RectTransform)this.transform);	// [AOC] HARDCODED!!
+		UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.5f), (RectTransform)this.transform);
 		textObj.GetComponent<Text>().color = Colors.white;
 	}
 

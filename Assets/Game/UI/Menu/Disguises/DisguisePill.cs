@@ -29,7 +29,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	public bool isDefault { get { return (m_def == null); } }
 	public string sku { get { if (m_def != null) return m_def.sku; else return "default"; } }
 	public string powerUpSet { get { if (m_def != null) return m_def.GetAsString("powerupSet"); else return ""; } }
-	public string nameLocalized { get { if (m_def != null) return m_def.GetLocalized("tidName"); else return "default"; } }
+	public string tidName { get { if (m_def != null) return m_def.Get("tidName"); else return "TID_DISGUISE_DEFAULT_NAME"; } }
 
 	//------------------------------------------//
 

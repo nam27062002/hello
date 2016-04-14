@@ -75,6 +75,10 @@ public class FireBreath : DragonBreathBehaviour {
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;
 
+
+		float lengthIncrease = m_length * 0.1f;
+		m_length += m_dragon.data.fireSkill.level * lengthIncrease;
+
 		m_actualLength = m_length;
 
 		m_sphCenter = m_mouthTransform.position;

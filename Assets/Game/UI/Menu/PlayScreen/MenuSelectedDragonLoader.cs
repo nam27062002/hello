@@ -43,17 +43,12 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// First update.
-	/// </summary>
-	private void Start() {
-		// Load currently selected dragon
-		LoadSelectedDragon();
-	}
-
-	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Load currently selected dragon
+		LoadSelectedDragon();
+
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_CONFIRMED, OnDragonChanged);
 	}

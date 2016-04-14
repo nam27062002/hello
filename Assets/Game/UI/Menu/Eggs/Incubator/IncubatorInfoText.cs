@@ -80,9 +80,9 @@ public class IncubatorInfoText : MonoBehaviour {
 
 		// Different texts if inventory is empty or not
 		if(EggManager.isInventoryEmpty) {
-			m_text.Localize("Your nest is empty!\nGet free eggs by finding chests while playing!");	// [AOC] HARDCODED!!
+			m_text.Localize("TID_INCUBATOR_EMPTY_INVENTORY_MESSAGE");
 		} else {
-			m_text.Localize("Your nest is empty!\nDrag and drop an egg from the inventory at the right side of the screen!");	// [AOC] HARDCODED!!
+			m_text.Localize("TID_INCUBATOR_EMPTY_NEST_MESSAGE");
 		}
 	}
 

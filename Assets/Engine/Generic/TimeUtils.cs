@@ -48,27 +48,27 @@ public class TimeUtils {
 	};
 
 	private static readonly string[] TIDS_ABBREVIATED = {
-		"y",	//"TID_GEN_TIME_YEARS_ABR",	// EPrecision.YEARS
-		"d",	//"TID_GEN_TIME_DAYS_ABR",	// EPrecision.DAYS
-		"h",	//"TID_GEN_TIME_HOURS_ABR",	// EPrecision.HOURS
-		"m",	//"TID_GEN_TIME_MINUTES_ABR",	// EPrecision.MINUTES
-		"s",	//"TID_GEN_TIME_SECONDS_ABR"	// EPrecision.SECONDS
+		"TID_GEN_TIME_YEARS_ABBR",	// EPrecision.YEARS
+		"TID_GEN_TIME_DAYS_ABBR",	// EPrecision.DAYS
+		"TID_GEN_TIME_HOURS_ABBR",	// EPrecision.HOURS
+		"TID_GEN_TIME_MINUTES_ABBR",	// EPrecision.MINUTES
+		"TID_GEN_TIME_SECONDS_ABBR"	// EPrecision.SECONDS
 	};
 
 	private static readonly string[] TIDS_SINGULAR = {
-		"year",		//"TID_GEN_TIME_YEAR",	// EPrecision.YEARS
-		"day",		//"TID_GEN_TIME_DAY",		// EPrecision.DAYS
-		"hour",		//"TID_GEN_TIME_HOUR",	// EPrecision.HOURS
-		"minute",	//"TID_GEN_TIME_MINUTE",	// EPrecision.MINUTES
-		"second",	//"TID_GEN_TIME_SECOND"	// EPrecision.SECONDS
+		"TID_GEN_TIME_YEAR",	// EPrecision.YEARS
+		"TID_GEN_TIME_DAY",		// EPrecision.DAYS
+		"TID_GEN_TIME_HOUR",	// EPrecision.HOURS
+		"TID_GEN_TIME_MINUTE",	// EPrecision.MINUTES
+		"TID_GEN_TIME_SECOND"	// EPrecision.SECONDS
 	};
 
 	private static readonly string[] TIDS_PLURAL = {
-		"years",	//"TID_GEN_TIME_YEARS",	// EPrecision.YEARS
-		"days",		//"TID_GEN_TIME_DAYS",	// EPrecision.DAYS
-		"hours",	//"TID_GEN_TIME_HOURS",	// EPrecision.HOURS
-		"minutes",	//"TID_GEN_TIME_MINUTES",	// EPrecision.MINUTES
-		"seconds",	//"TID_GEN_TIME_SECONDS"	// EPrecision.SECONDS
+		"TID_GEN_TIME_YEARS",	// EPrecision.YEARS
+		"TID_GEN_TIME_DAYS",	// EPrecision.DAYS
+		"TID_GEN_TIME_HOURS",	// EPrecision.HOURS
+		"TID_GEN_TIME_MINUTES",	// EPrecision.MINUTES
+		"TID_GEN_TIME_SECONDS"	// EPrecision.SECONDS
 	};
 
 	//------------------------------------------------------------------//

@@ -23,7 +23,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected Vector2 m_direction;
 	public Vector2 direction { get { return m_direction; } }
 
-	private DragonPlayer m_dragon;
+	protected DragonPlayer m_dragon;
 	private DragonEatBehaviour 		m_eatBehaviour;
 	private DragonHealthBehaviour 	m_healthBehaviour;
 	private DragonAttackBehaviour 	m_attackBehaviour;
@@ -64,6 +64,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		// Init content cache
 		m_furyMax = m_dragon.data.def.GetAsFloat("furyMax");
 		m_furyDuration = m_dragon.data.def.GetAsFloat("furyDuration");
+
+		// Get the level
+		float durationIncrease = m_furyDuration * 0.1f;
+		m_furyDuration += m_dragon.data.fireSkill.level * durationIncrease;
+		float damageIncrease = m_damage * 0.1f;
+		m_damage += m_dragon.data.fireSkill.level * damageIncrease;
 
 		ExtendedStart();
 

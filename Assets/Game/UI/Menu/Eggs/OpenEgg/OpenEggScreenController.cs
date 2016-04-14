@@ -297,16 +297,28 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
 			case "suit": {
-				m_rewardText.Localize("You've got %U0 for dragon %U1!", m_egg.eggData.rewardData.value, m_egg.eggData.def.GetAsString("dragonSku"));
-				} break;
+				// Get disguise and target dragon defs
+				DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, m_egg.eggData.rewardData.value);
+				DefinitionNode disguiseDragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, disguiseDef.GetAsString("dragonSku"));
+				m_rewardText.Localize("TID_EGG_REWARD_DISGUISE", disguiseDef.GetLocalized("tidName"), disguiseDragonDef.GetLocalized("tidName"));
+			} break;
 
-			case "pet":
+			case "coins": {
+				m_rewardText.Localize("TID_EGG_REWARD_COINS", m_egg.eggData.rewardData.value);
+			} break;
+
+			case "pet": {
+				// [AOC] TODO!!
+				m_rewardText.Localize("TID_EGG_REWARD_PET", m_egg.eggData.rewardDef.sku);
+			} break;
+
 			case "dragon": {
-				m_rewardText.Localize("You've got %U0!", m_egg.eggData.rewardDef.sku);
-				} break;
+				// [AOC] TODO!!
+				m_rewardText.Localize("TID_EGG_REWARD_DRAGON", m_egg.eggData.rewardDef.sku);
+			} break;
 		}
 
-		// [AOC] TODO!! Replace egg view by the reward prefab
+		// [AOC] TODO!! Proper reward preview depending on type!
 		// Create a fake reward view
 		DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, m_egg.eggData.def.GetAsString("dragonSku"));
 		if(dragonDef != null) {
@@ -332,6 +344,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			// Animate reward
 			DOTween.Kill(m_rewardAnchor, true);
 			m_rewardAnchor.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
+			m_rewardAnchor.DOLocalRotate(m_rewardAnchor.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
 		}
 
 		// Show/Hide buttons and HUD

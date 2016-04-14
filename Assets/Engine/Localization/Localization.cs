@@ -261,7 +261,14 @@ public static class Localization
 		CheckIfLanguageLoaded();
 
 		string val;
-		if (m_dictionary.TryGetValue(key, out val)) return val;
+		if (m_dictionary.TryGetValue(key, out val)) {
+			// [AOC] If translation is empty (probably not yet translated), return tid instead
+			if(string.IsNullOrEmpty(val)) {
+				Debug.LogWarning(key + " not yet translated to current language (" + languageSku + ")");
+				return key;
+			}
+			return val;
+		}
 
 #if UNITY_EDITOR
 		if (Application.isPlaying)
