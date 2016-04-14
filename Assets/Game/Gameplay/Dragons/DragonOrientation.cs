@@ -68,6 +68,10 @@ public class DragonOrientation : Orientation {
 	}
 
 
+	public override void SetRotation(Quaternion _rotation) {
+		m_targetRotation = _rotation;
+	}
+
 	public override void SetDirection(Vector3 direction) {
 	
 		Vector3 dir = direction.normalized;

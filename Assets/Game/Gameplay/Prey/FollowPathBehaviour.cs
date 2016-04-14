@@ -36,7 +36,7 @@ public class FollowPathBehaviour : Initializable {
 
 
 	// Use this for initialization
-	void Awake () {		
+	void Awake () {
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
@@ -71,8 +71,6 @@ public class FollowPathBehaviour : Initializable {
 		if (m_path != null) {
 			m_target = m_path.GetNearestTo(m_motion.position);
 		}
-
-		m_animator.SetBool("move", false);
 	}
 
 	public void SetPath(PathController _path) {

@@ -202,14 +202,14 @@ public class PreyMotion : Initializable, MotionInterface {
 	}
 
 	public void Stop() {
-		if (direction.x < 0) {
+		/*if (direction.x < 0) {
 			direction = Vector3.left;
 		} else {
 			direction = Vector3.right;
-		}
-	
+		}*/
+			
 		m_steering = Vector2.zero;
-		m_velocity = Vector3.zero;
+		m_velocity = Vector2.zero;
 	}
 
 	// ------------------------------------------------------------------------------------ //
