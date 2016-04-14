@@ -62,7 +62,8 @@ public class HUDRevive : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	void Start() {
-		m_animator.Hide(false);	// Start hidden
+		if ( m_animator != null )
+			m_animator.Hide(false);	// Start hidden
 	}
 
 	/// <summary>
@@ -129,7 +130,7 @@ public class HUDRevive : MonoBehaviour {
 			m_allowCurrencyPopup = true;
 
 			// Resume timer
-			m_timer.Stop();
+			m_timer.Resume();
 		}
 	}
 
@@ -137,12 +138,14 @@ public class HUDRevive : MonoBehaviour {
 	/// The player is KO.
 	/// </summary>
 	private void OnPlayerKo() {
-		m_pcText.text = StringUtils.FormatNumber(m_reviveCount + 1);	// [AOC] TODO!! Actual revive cost formula
+		if ( m_pcText != null )
+			m_pcText.text = StringUtils.FormatNumber(m_reviveCount + 1);	// [AOC] TODO!! Actual revive cost formula
 
 		m_timer.Start(m_reviveAvailableSecs);
 		m_allowCurrencyPopup = true;
 
-		m_animator.Show();
+		if ( m_animator != null )
+			m_animator.Show();
 
 		// Slow motion
 		Time.timeScale = 0.25f;
