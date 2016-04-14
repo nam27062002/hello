@@ -1,7 +1,7 @@
 #!/bin/Bash
 # This scripts generates xcode_stage and xcode_prod projects and generates the ipa files
 
-BRANCH="feature/builder_script"
+BRANCH="develop"
 BUILD_ANDROID=false
 BUILD_IOS=true
 INCREASE_VERSION_NUMBER=true
@@ -9,8 +9,8 @@ CREATE_TAG=true
 GAME_NAME="hd"
 
 # iOS Code Sign
-PROVISIONING_PROFILE="iOS Team Provisioning Profile: *"
-PROVISIONING_PROFILE_UUID="ed92bf60-ed3c-463e-aaa0-91b4d854b238"
+PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.hungrydragon.dev"
+PROVISIONING_PROFILE_UUID="99d18f4a-2a05-4e39-a5da-370321ce140b"
 SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
 
 # SMB Settings
