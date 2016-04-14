@@ -152,6 +152,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
+	RaycastHit m_raycastHit = new RaycastHit();
 		 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -465,6 +466,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	private void FlyAwayFromGround() {
+
+		CheckGround( out m_raycastHit);
 		if (m_height < 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
 			Vector3 oldDirection = m_direction;
 			Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
