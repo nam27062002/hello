@@ -145,7 +145,7 @@ SubShader {
 				// Specular
 				float specularLight = pow(max(dot( normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
 
-				fixed4 col = (diffuse + fixed4(pointLights,1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate + UNITY_LIGHTMODEL_AMBIENT;
+				fixed4 col = (diffuse + fixed4(pointLights + UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * main;// * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate;
 
 				// Noise
 				col += _NoiseColor * _NoiseValue * detailMov.b;
