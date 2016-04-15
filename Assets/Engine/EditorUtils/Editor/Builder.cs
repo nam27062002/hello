@@ -13,12 +13,21 @@ public class Builder : MonoBehaviour
 		"Assets/Game/Scenes/SC_Loading.unity",
 		"Assets/Game/Scenes/SC_Menu.unity",
 		"Assets/Game/Scenes/SC_Game.unity",
-		"Assets/Resources/Game/Levels/SC_Level_Test.unity",
-		"Assets/Resources/Game/Levels/SC_Level_Empty.unity",
-		"Assets/Resources/Game/Levels/SC_Level_HSEexp.unity"
+		"Assets/Game/Scenes/Levels/Spawners/SP_KOM_proto_01.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_KOM_proto_01.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_KOM_proto_01.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_Map1_v04.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_Map1_v04.unity",
+		"Assets/Game/Scenes/Levels/Spawners/SP_Map1_v04.unity",
+		"Assets/Game/Scenes/Levels/Spawners/SP_Map1_v03.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_Map1_v03.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_Map1_v03.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_PlayTest_01.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
+		"Assets/Game/Scenes/Levels/Spawners/SP_PlayTest_01.unity",
 	};
 
-	const string m_bundleIdentifier = "com.ubisoft.hungrydragon";
+	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
 	const string m_iOSSymbols = "";
 
 	const string m_apkName = "hd_";
