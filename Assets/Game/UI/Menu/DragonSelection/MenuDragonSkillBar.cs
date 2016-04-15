@@ -86,11 +86,11 @@ public class MenuDragonSkillBar : MonoBehaviour {
 
 		// Level up button
 		m_levelUpButton.interactable = skillData.CanUnlockNextLevel();
-		Localizer buttonText = m_levelUpButton.FindComponentRecursive<Localizer>("Text");
+		Text buttonText = m_levelUpButton.FindComponentRecursive<Text>("Text");
 		if(skillData.level == skillData.lastLevel) {
-			buttonText.Localize("TID_MAX");
+			buttonText.text = Localization.Localize("TID_MAX");
 		} else {
-			buttonText.text.text = StringUtils.FormatNumber(skillData.nextLevelUnlockPrice);
+			buttonText.text = StringUtils.FormatNumber(skillData.nextLevelUnlockPrice);
 		}
 	}
 
