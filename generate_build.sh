@@ -80,6 +80,7 @@ fi
 
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
+VERSION_ID="$(cat outputVersion.txt)"
 
 if $BUILD_ANDROID; then
 #Increase Android Version Code
@@ -101,9 +102,9 @@ if $BUILD_IOS; then
 
     #STAGE
     echo "Archiving"
-    BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
-    ARCHIVE_FILE="${GAME_NAME}_${BUNDLE_ID}.xcarchive"
-    STAGE_IPA_FILE="${GAME_NAME}_${BUNDLE_ID}_${DATE}.ipa"
+    # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
+    ARCHIVE_FILE="${GAME_NAME}_${VERSION_ID}.xcarchive"
+    STAGE_IPA_FILE="${GAME_NAME}_${VERSION_ID}_${DATE}.ipa"
     PROJECT_NAME="${SCRIPT_PATH}/xcode/Unity-iPhone.xcodeproj"
 
     xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 
@@ -113,7 +114,6 @@ if $BUILD_IOS; then
     mv "${SCRIPT_PATH}/ipas/Unity-iPhone.ipa" "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"
 fi
 
-VERSION_ID="$(cat outputVersion.txt)"
 
 # commit project changes
 echo "Committing changes"
