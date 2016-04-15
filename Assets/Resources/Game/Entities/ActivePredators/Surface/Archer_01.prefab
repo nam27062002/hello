@@ -1024,7 +1024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: soldier
+  m_sku: archer_01
   m_onAppearSoundProbability: 40
   m_onApprearSounds: []
 --- !u!114 &11422412
@@ -1084,19 +1084,19 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 146632}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_randomMovement: 0
-  m_idleProbability: 0.113
+  m_idleProbability: 0.417
   m_moveTime:
     min: 6
     max: 12
   m_idleTime:
-    min: 2
-    max: 3
+    min: 1
+    max: 2
 --- !u!114 &11462164
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1147,8 +1147,8 @@ MonoBehaviour:
     max: 0
   m_distanceAttenuation: 8
   m_checkCollisions: 1
-  m_maxSpeed: 1.5
-  m_maxRunSpeed: 3
+  m_maxSpeed: 2
+  m_maxRunSpeed: 3.5
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11470552
@@ -1204,7 +1204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damage: 4
   m_attackDelay: 0
-  m_consecutiveAttacks: 5
+  m_consecutiveAttacks: 6
   m_retreatingTime: 0
   m_hasAnimation: 1
   m_canAim: 1
