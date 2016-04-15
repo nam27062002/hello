@@ -59,21 +59,23 @@ public class SensePlayerEditor : Editor {
 
 		Vector3 from = Vector3.right.RotateXYDegrees(fromAngle);
 		Vector3 to = Vector3.right.RotateXYDegrees(toAngle);
-			
+
+		Vector3 pos = m_target.transform.position + m_target.sensorPosition;
+
 		// Outter area
 		Handles.color =  new Color(1f, 1f, 224f/255f, 0.125f * alphaFactor);
-		Handles.DrawSolidDisc(m_target.transform.position, Vector3.forward, m_target.sensorMaxRadius);
+		Handles.DrawSolidDisc(pos, Vector3.forward, m_target.sensorMaxRadius);
 
 		Handles.color =  new Color(1f, 1f, 224f/255f, 1f * alphaFactor);
-		Handles.DrawWireDisc(m_target.transform.position, Vector3.forward, m_target.sensorMaxRadius);
+		Handles.DrawWireDisc(pos, Vector3.forward, m_target.sensorMaxRadius);
 
 		// inner area
 		Handles.color =  new Color(220f/255f, 20f/255f, 60f/255f, 0.0625f * alphaFactor);
-		Handles.DrawSolidArc(m_target.transform.position, Vector3.forward, from, m_target.sensorAngle, m_target.sensorMinRadius);
+		Handles.DrawSolidArc(pos, Vector3.forward, from, m_target.sensorAngle, m_target.sensorMinRadius);
 				
 		Handles.color =  new Color(220f/255f, 20f/255f, 60f/255f, 1f * alphaFactor);
-		Handles.DrawWireArc(m_target.transform.position, Vector3.forward, from, m_target.sensorAngle, m_target.sensorMinRadius);
-		Handles.DrawLine(m_target.transform.position, m_target.transform.position + to * m_target.sensorMinRadius);
-		Handles.DrawLine(m_target.transform.position, m_target.transform.position + from * m_target.sensorMinRadius);
+		Handles.DrawWireArc(pos, Vector3.forward, from, m_target.sensorAngle, m_target.sensorMinRadius);
+		Handles.DrawLine(pos, pos + to * m_target.sensorMinRadius);
+		Handles.DrawLine(pos, pos + from * m_target.sensorMinRadius);
 	}
 }

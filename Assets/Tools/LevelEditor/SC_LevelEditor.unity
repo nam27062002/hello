@@ -467,13 +467,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -482,6 +475,13 @@ Material:
       data:
         first:
           name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -555,15 +555,15 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
         second: 0
       data:
         first:
@@ -596,12 +596,12 @@ Material:
         second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
       data:
         first:
-          name: _HorizonColor
-        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
-      data:
-        first:
           name: _SunPos
         second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
       data:
         first:
           name: _SunColor
@@ -1141,52 +1141,6 @@ GameObject:
 GameObject:
   m_PrefabParentObject: {fileID: 196568, guid: 42fc5745e90c44678a305d61293584b9, type: 2}
   m_PrefabInternal: {fileID: 642442394}
---- !u!1001 &1550423600
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -5.13
-      objectReference: {fileID: 0}
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.19
-      objectReference: {fileID: 0}
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071067
-      objectReference: {fileID: 0}
-    - target: {fileID: 400002, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9500000, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: fd14ce1cab96b4ed8af5929fa3ad325e, type: 2}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: a63e4c38c268d4ffe8379fab63eba81a, type: 3}
-  m_IsPrefabParent: 0
 --- !u!1 &1602931158
 GameObject:
   m_ObjectHideFlags: 0

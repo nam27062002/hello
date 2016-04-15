@@ -75,7 +75,9 @@ public class FleePathBehaviour : Initializable {
 
 		switch (m_state) {
 			case State.Run:
-				ChooseTarget();
+				if (Vector2.Distance(m_motion.position, m_target) <= m_path.radius) {
+					ChooseTarget();
+				}
 
 				if (m_sensor.isInsideMinArea) {
 					m_nextState = State.Scared;
@@ -83,9 +85,11 @@ public class FleePathBehaviour : Initializable {
 				break;
 
 			case State.Scared:
-				ChooseTarget();
+				if (Vector2.Distance(m_motion.position, m_target) <= m_path.radius) {
+					ChooseTarget();
+				}
 
-				if (m_sensor.distanceSqr < m_sensor.sensorMinRadiusSqr * 0.5f){
+				if (m_sensor.distanceSqr < m_sensor.sensorMinRadiusSqr * 0.25f){
 					m_nextState = State.Panic;
 				}
 				break;
@@ -100,7 +104,9 @@ public class FleePathBehaviour : Initializable {
 	
 	// Update is called once per frame
 	void FixedUpdate() {
-		if (m_state != State.Panic) {
+		if (m_state == State.Panic) {
+			m_motion.Stop();
+		} else {
 			m_motion.RunTo(m_target);
 		}
 	}
@@ -108,10 +114,17 @@ public class FleePathBehaviour : Initializable {
 	private void ChangeState() {
 		m_animator.SetBool("move", m_nextState != State.Panic);
 		m_animator.SetBool("scared", m_nextState != State.Run);
+
+		if (m_nextState == State.Panic) {
+			m_motion.Stop();
+		}
+
+		ChooseTarget();
+
 		m_state = m_nextState;
 	}
 
 	private void ChooseTarget() {
-
+		m_target = m_path.GetFurtherFrom(transform.position, m_sensor.targetPosition);
 	}
 }

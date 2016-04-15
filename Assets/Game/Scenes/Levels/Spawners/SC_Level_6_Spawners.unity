@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 691859444}
+  m_SkyboxMaterial: {fileID: 1607997399}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4449de16e7d2e465897e9964ea5f0a8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 167244, guid: aebbffa4d45afc84c8304a020b6387a6, type: 2}
+  m_entityPrefab: {fileID: 176072, guid: b524bf12b19bb4a828b2af701ec72524, type: 2}
   m_quantity:
     min: 1
     max: 1
@@ -268,7 +268,89 @@ Transform:
   - {fileID: 1461060245}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!21 &691859444
+--- !u!1 &1461060244
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1461060245}
+  - 114: {fileID: 1461060247}
+  - 114: {fileID: 1461060246}
+  m_Layer: 0
+  m_Name: GRP_citizen_0
+  m_TagString: Untagged
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1461060245
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1461060244}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.356026, y: 2.1331515, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2112445132}
+  m_Father: {fileID: 637566299}
+  m_RootOrder: 1
+--- !u!114 &1461060246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1461060244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_positionLock: 000001
+  m_rotationLock: 010100
+  m_scaleLock: 010101
+--- !u!114 &1461060247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1461060244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eab5ea6734a8467fadf03ce15e3d708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1592927396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1592927397}
+  m_Layer: 0
+  m_Name: DragonSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1592927397
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1592927396}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 5.41, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 433420543}
+  m_RootOrder: 0
+--- !u!21 &1607997399
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -313,13 +395,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -328,6 +403,13 @@ Material:
       data:
         first:
           name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -401,15 +483,15 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
         second: 0
       data:
         first:
@@ -442,12 +524,12 @@ Material:
         second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
       data:
         first:
-          name: _HorizonColor
-        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
-      data:
-        first:
           name: _SunPos
         second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
       data:
         first:
           name: _SunColor
@@ -456,88 +538,6 @@ Material:
         first:
           name: _AddColor
         second: {r: 0, g: 0, b: 0, a: 0}
---- !u!1 &1461060244
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1461060245}
-  - 114: {fileID: 1461060247}
-  - 114: {fileID: 1461060246}
-  m_Layer: 0
-  m_Name: GRP_citizen_0
-  m_TagString: Untagged
-  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
---- !u!4 &1461060245
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1461060244}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.356026, y: 2.1331515, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 2112445132}
-  m_Father: {fileID: 637566299}
-  m_RootOrder: 1
---- !u!114 &1461060246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1461060244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_positionLock: 000001
-  m_rotationLock: 010100
-  m_scaleLock: 010101
---- !u!114 &1461060247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1461060244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eab5ea6734a8467fadf03ce15e3d708, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &1592927396
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1592927397}
-  m_Layer: 0
-  m_Name: DragonSpawn
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1592927397
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1592927396}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 20, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 433420543}
-  m_RootOrder: 0
 --- !u!1 &2112445131
 GameObject:
   m_ObjectHideFlags: 0
