@@ -101,14 +101,24 @@ public class EdibleBehaviour : Initializable {
 		Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, this.transform, reward);
 
 		// Particles
-		for( int i = 0; i<m_onEatenParticles.Count; i++ )
+		if ( m_onEatenParticles.Count <= 0 )
 		{
-			if ( !string.IsNullOrEmpty(m_onEatenParticles[i]) )
+			GameObject go = ParticleManager.Spawn("bloodchurn-large", transform.position);
+					FollowTransform ft = go.GetComponent<FollowTransform>();
+					if ( ft != null )
+						ft.m_follow = _transform;
+		}
+		else
+		{
+			for( int i = 0; i<m_onEatenParticles.Count; i++ )
 			{
-				GameObject go = ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
-				FollowTransform ft = go.GetComponent<FollowTransform>();
-				if ( ft != null )
-					ft.m_follow = _transform;
+				if ( !string.IsNullOrEmpty(m_onEatenParticles[i]) )
+				{
+					GameObject go = ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
+					FollowTransform ft = go.GetComponent<FollowTransform>();
+					if ( ft != null )
+						ft.m_follow = _transform;
+				}
 			}
 		}
 
