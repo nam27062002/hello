@@ -895,11 +895,6 @@ MonoBehaviour:
   m_zOffset:
     min: 0
     max: 0
-  m_flockAvoidRadiusRange:
-    min: 2
-    max: 3
-  m_steerForce: 0.5
-  m_mass: 1
   m_distanceAttenuation: 20
   m_checkCollisions: 1
   m_maxSpeed: 5
@@ -960,7 +955,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 0
-  m_onEatenParticle: 
+  m_onEatenParticles: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds:
   - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v04
@@ -979,6 +974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 0
 --- !u!114 &11477934
 MonoBehaviour:

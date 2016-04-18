@@ -561,7 +561,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131280}
-  m_LocalRotation: {x: 0.6985103, y: -0.69814473, z: -0.15504153, w: 0.025289865}
+  m_LocalRotation: {x: 0.6985102, y: -0.6981447, z: -0.15504152, w: 0.025289861}
   m_LocalPosition: {x: 0.16254486, y: 0.106924586, z: 0.27912664}
   m_LocalScale: {x: 1.0000013, y: 0.9999998, z: 0.99999887}
   m_Children:
@@ -983,6 +983,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canPanic: 0
+  m_randomNode: 0
 --- !u!114 &11456412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1051,6 +1052,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 0
 --- !u!114 &11490220
 MonoBehaviour:
@@ -1065,11 +1067,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zOffset:
     min: -1
-    max: 1
+    max: 0
   m_distanceAttenuation: 8
   m_checkCollisions: 1
   m_maxSpeed: 5
-  m_maxRunSpeed: 7
+  m_maxRunSpeed: 6
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!137 &13707070
