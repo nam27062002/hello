@@ -5,11 +5,17 @@ using System.Collections;
 [RequireComponent(typeof(PreyMotion))]
 public class FleePathBehaviour : Initializable {
 
-	protected enum State {
+	private enum State {
 		None = 0,
 		Run,		// we'll start always running from the dragon, if it gets too close
 		Scared,		// then we'll start the scared animations until we have the dragon
 		Panic   // over us and we'll stop moving.
+	};
+
+	private enum Direction {
+		Any = 0,
+		Left,
+		Right
 	};
 
 	[CommentAttribute("This prey will stop running if the Dragon is too close.")]
@@ -25,6 +31,7 @@ public class FleePathBehaviour : Initializable {
 	private SensePlayer m_sensor;
 
 	private Vector3 m_target;
+	private Direction m_direction;
 
 	private State m_state;
 	private State m_nextState;
@@ -78,22 +85,20 @@ public class FleePathBehaviour : Initializable {
 			ChangeState();
 		}
 
+		if (m_state != State.Panic) {
+			if (Vector2.Distance(m_motion.position, m_target) <= m_path.radius) {
+				ChooseTarget();
+			} 
+		}
+
 		switch (m_state) {
 			case State.Run:
-				if (Vector2.Distance(m_motion.position, m_target) <= m_path.radius) {
-					ChooseTarget();
-				}
-
 				if (m_sensor.isInsideMinArea) {
 					m_nextState = State.Scared;
 				}
 				break;
 
 			case State.Scared:
-				if (Vector2.Distance(m_motion.position, m_target) <= m_path.radius) {
-					ChooseTarget();
-				}
-
 				if (m_canPanic) {
 					if (m_sensor.distanceSqr < 4f){
 						m_nextState = State.Panic;
@@ -126,7 +131,9 @@ public class FleePathBehaviour : Initializable {
 			m_motion.Stop();
 		}
 
-		ChooseTarget();
+		if (m_state != State.Panic) {
+			ChooseTarget();
+		}
 
 		m_state = m_nextState;
 	}
@@ -135,7 +142,33 @@ public class FleePathBehaviour : Initializable {
 		if (m_randomNode) {
 			m_target = m_path.GetRandom();
 		} else {
-			m_target = m_path.GetFurtherFrom(transform.position, m_sensor.targetPosition);
+			Direction newDirection;
+
+			if (transform.position.x <= m_sensor.targetPosition.x) {
+				newDirection = Direction.Left;
+			} else {
+				newDirection = Direction.Right;
+			}
+
+			if (m_direction == Direction.Any || m_direction != newDirection) {
+				m_direction = newDirection;
+				if (m_direction == Direction.Left) 	m_target = m_path.GetLeftmostPoint();
+				else 								m_target = m_path.GetRightmostPoint();
+			} else {
+				ChangeDirection();
+			}
+		}
+	}
+
+	private void ChangeDirection() {
+		if (!m_randomNode) {
+			if (m_direction == Direction.Left && transform.position.x > m_sensor.targetPosition.x) {
+				m_target = m_path.GetRightmostPoint();
+				m_direction = Direction.Right;
+			} else if (m_direction == Direction.Right && transform.position.x <= m_sensor.targetPosition.x) {
+				m_target = m_path.GetLeftmostPoint();
+				m_direction = Direction.Left;
+			}
 		}
 	}
 }
