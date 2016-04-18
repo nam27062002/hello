@@ -344,11 +344,8 @@ GameObject:
   - 114: {fileID: 11439776}
   - 114: {fileID: 11494724}
   - 114: {fileID: 11492188}
-  - 114: {fileID: 11492228}
   - 114: {fileID: 11413174}
   - 114: {fileID: 11456570}
-  - 114: {fileID: 11435296}
-  - 114: {fileID: 11470840}
   m_Layer: 8
   m_Name: PF_Villager_02
   m_TagString: Untagged
@@ -882,6 +879,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 0
 --- !u!114 &11430682
 MonoBehaviour:
@@ -897,25 +895,6 @@ MonoBehaviour:
   m_sku: citizen_01
   m_onAppearSoundProbability: 40
   m_onApprearSounds: []
---- !u!114 &11435296
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 176072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_randomMovement: 0
-  m_idleProbability: 0.25
-  m_moveTime:
-    min: 6
-    max: 12
-  m_idleTime:
-    min: 3
-    max: 6
 --- !u!114 &11439776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -967,18 +946,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b536950f8caa242459ca84514d370774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11470840
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 176072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43e1dc7833c3842c08e4cffbc7ebd5ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_canPanic: 0
 --- !u!114 &11492188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -999,23 +966,6 @@ MonoBehaviour:
   m_maxRunSpeed: 6.5
   m_slowingRadius: 0
   m_fallOnBurn: 0
---- !u!114 &11492228
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 176072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sensorMinRadius: 5
-  m_sensorMaxRadius: 10
-  m_sensorAngle: 360
-  m_sensorAngleOffset: 0
-  m_sensorPosition: {x: 0, y: 1.98, z: 0}
-  m_target: 0
 --- !u!114 &11494724
 MonoBehaviour:
   m_ObjectHideFlags: 1
