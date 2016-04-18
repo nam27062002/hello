@@ -560,7 +560,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131280}
-  m_LocalRotation: {x: 0.6985102, y: -0.6981447, z: -0.15504152, w: 0.025289867}
+  m_LocalRotation: {x: 0.6985102, y: -0.6981447, z: -0.15504152, w: 0.025289865}
   m_LocalPosition: {x: 0.16254486, y: 0.106924586, z: 0.27912664}
   m_LocalScale: {x: 1.0000013, y: 0.9999998, z: 0.99999887}
   m_Children:
@@ -936,7 +936,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 0
-  m_onEatenParticle: 
+  m_onEatenParticles: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
 --- !u!114 &11456412
@@ -964,8 +964,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fleeAround: 0
   m_canBeAfraid: 0
   m_canPanic: 1
+  m_runningTimeRange:
+    min: 3
+    max: 4
+  m_waitRunningRange:
+    min: 4
+    max: 4.5
   m_afraidSounds: []
 --- !u!114 &11464738
 MonoBehaviour:
@@ -1046,16 +1053,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zOffset:
     min: -1
-    max: 1
-  m_flockAvoidRadiusRange:
-    min: 0
-    max: 1
-  m_steerForce: 0.5
-  m_mass: 2
+    max: -1
   m_distanceAttenuation: 8
   m_checkCollisions: 1
-  m_maxSpeed: 5
-  m_maxRunSpeed: 7
+  m_maxSpeed: 3
+  m_maxRunSpeed: 4
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!137 &13707070

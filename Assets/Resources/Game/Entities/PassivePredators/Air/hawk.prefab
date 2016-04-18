@@ -578,6 +578,8 @@ MonoBehaviour:
   m_consecutiveAttacks: 1
   m_retreatingTime: 2
   m_hasAnimation: 0
+  m_canAim: 0
+  m_eye: {fileID: 0}
   m_projectilePrefab: {fileID: 0}
   m_projectileSpawnPoint: {fileID: 0}
 --- !u!114 &11403364
@@ -596,8 +598,8 @@ MonoBehaviour:
     max: 1
   m_distanceAttenuation: 3.5
   m_checkCollisions: 1
-  m_maxSpeed: 13
-  m_maxRunSpeed: 21
+  m_maxSpeed: 10
+  m_maxRunSpeed: 15
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11405390
@@ -749,7 +751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 2
-  m_onEatenParticle: 
+  m_onEatenParticles: []
   m_onEatenSoundProbability: 0
   m_onEatenSounds: []
 --- !u!137 &13756092
