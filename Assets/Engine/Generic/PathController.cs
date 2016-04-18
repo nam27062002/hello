@@ -77,9 +77,10 @@ public class PathController : MonoBehaviour {
 
 		m_index = 0;
 		for (int i = 0; i < m_points.Count; i++) {
-			if (( searchLeft && (m_points[i].x <= _dangerPosition.x))
-			||  (!searchLeft && (m_points[i].x >  _dangerPosition.x))) {
-				float d = (m_points[i] - _dangerPosition).sqrMagnitude;
+			Vector3 point = m_points[i] + transform.position;
+			if (( searchLeft && (point.x <= _dangerPosition.x))
+			||  (!searchLeft && (point.x >  _dangerPosition.x))) {
+				float d = (point - _dangerPosition).sqrMagnitude;
 				if (d >= maxD) {
 					maxD = d;
 					m_index = i;
