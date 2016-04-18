@@ -344,8 +344,11 @@ GameObject:
   - 114: {fileID: 11439776}
   - 114: {fileID: 11494724}
   - 114: {fileID: 11492188}
+  - 114: {fileID: 11428660}
   - 114: {fileID: 11413174}
   - 114: {fileID: 11456570}
+  - 114: {fileID: 11409816}
+  - 114: {fileID: 11481594}
   m_Layer: 8
   m_Name: PF_Villager_02
   m_TagString: Untagged
@@ -868,6 +871,25 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11409816
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_randomMovement: 0
+  m_idleProbability: 1
+  m_moveTime:
+    min: 6
+    max: 12
+  m_idleTime:
+    min: 3
+    max: 6
 --- !u!114 &11413174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -881,6 +903,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_hasTurnAnimations: 0
   m_faceDirection: 0
+--- !u!114 &11428660
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sensorMinRadius: 4
+  m_sensorMaxRadius: 7
+  m_sensorAngle: 0
+  m_sensorAngleOffset: 0
+  m_sensorPosition: {x: 0, y: 0, z: 0}
+  m_target: 0
 --- !u!114 &11430682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -946,6 +985,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b536950f8caa242459ca84514d370774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11481594
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e1dc7833c3842c08e4cffbc7ebd5ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_canPanic: 1
+  m_randomNode: 0
 --- !u!114 &11492188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -958,8 +1010,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_zOffset:
-    min: -1
-    max: 1
+    min: 0
+    max: 0
   m_distanceAttenuation: 3
   m_checkCollisions: 0
   m_maxSpeed: 1.25
