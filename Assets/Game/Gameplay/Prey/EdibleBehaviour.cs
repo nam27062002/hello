@@ -104,9 +104,12 @@ public class EdibleBehaviour : Initializable {
 		if ( m_onEatenParticles.Count <= 0 )
 		{
 			GameObject go = ParticleManager.Spawn("bloodchurn-large", transform.position);
-					FollowTransform ft = go.GetComponent<FollowTransform>();
-					if ( ft != null )
-						ft.m_follow = _transform;
+			if ( go != null)
+			{
+				FollowTransform ft = go.GetComponent<FollowTransform>();
+				if ( ft != null )
+					ft.m_follow = _transform;
+			}
 		}
 		else
 		{
@@ -115,9 +118,12 @@ public class EdibleBehaviour : Initializable {
 				if ( !string.IsNullOrEmpty(m_onEatenParticles[i]) )
 				{
 					GameObject go = ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
-					FollowTransform ft = go.GetComponent<FollowTransform>();
-					if ( ft != null )
-						ft.m_follow = _transform;
+					if ( go != null )
+					{
+						FollowTransform ft = go.GetComponent<FollowTransform>();
+						if ( ft != null )
+							ft.m_follow = _transform;
+					}
 				}
 			}
 		}
