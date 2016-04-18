@@ -12,6 +12,9 @@ public class FleePathBehaviour : Initializable {
 		Panic   // over us and we'll stop moving.
 	};
 
+	[CommentAttribute("This prey will stop running if the Dragon is too close.")]
+	[SerializeField] private bool m_canPanic = true; 
+
 	private PathController m_path;
 	public PathController path { set { m_path = value; } }
 
@@ -89,8 +92,10 @@ public class FleePathBehaviour : Initializable {
 					ChooseTarget();
 				}
 
-				if (m_sensor.distanceSqr < m_sensor.sensorMinRadiusSqr * 0.25f){
-					m_nextState = State.Panic;
+				if (m_canPanic) {
+					if (m_sensor.distanceSqr < 4f){
+						m_nextState = State.Panic;
+					}
 				}
 				break;
 
