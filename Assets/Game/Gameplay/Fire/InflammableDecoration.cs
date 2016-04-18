@@ -170,7 +170,8 @@ public class InflammableDecoration : Initializable {
 			}break;
 			case DragonTier.TIER_0:
 			{
-				return false;
+				if ( m_decorationSize <= DecorationSize.SMALL )
+					return true;
 			}break;
 			default:
 			{
