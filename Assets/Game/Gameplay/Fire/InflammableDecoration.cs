@@ -198,6 +198,7 @@ public class InflammableDecoration : Initializable {
 			Material[] materials = renderers[i].materials;
 			for (int m = 0; m < materials.Length; m++) 
 			{
+				m_ashMaterial.SetTexture("_AlphaMask", materials[m].mainTexture);
 				materials[m] = m_ashMaterial;
 			}
 			renderers[i].materials = materials;
