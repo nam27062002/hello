@@ -67,11 +67,11 @@ public class MenuDragonLevelBar : MonoBehaviour {
 
 		// Bar value
 		m_levelBar.minValue = 0;
-		m_levelBar.maxValue = data.progression.numLevels;
-		m_levelBar.value = data.progression.level + 1;	// [1..N] bar should never be empty and should be filled when we're at level 9
+		m_levelBar.maxValue = 1;
+		m_levelBar.value = data.progression.progressCurrentLevel;
 			
 		// Text
-		m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_levelBar.value, 0));
+		m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber( (float)data.progression.level+1, 0));
 
 		// Dragon Name
 		m_nameText.Localize(data.def.GetAsString("tidName"));
