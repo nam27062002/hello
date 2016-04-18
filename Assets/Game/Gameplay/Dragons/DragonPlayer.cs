@@ -367,6 +367,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		// During fire, we're invulnerable
 		if(m_breathBehaviour.IsFuryOn()) return true;
+
+		if(m_breathBehaviour.IsSuperFuryOn()) return true;
 		
 		// If cheat is enable
 		if(DebugSettings.invulnerable) return true;

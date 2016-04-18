@@ -27,6 +27,7 @@ public enum GameEvents {
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
 	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier
 	FURY_RUSH_TOGGLED,			// params: bool _activated
+	SUPER_FURY_RUSH_TOGGLED,			// params: bool _activated
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
 	BOOST_TOGGLED,				// params: bool _activated

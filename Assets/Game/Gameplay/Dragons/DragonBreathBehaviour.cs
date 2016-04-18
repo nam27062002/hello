@@ -95,12 +95,18 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 			if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 			Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
+			Messenger.Broadcast<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, false);
 		}
 	}
 
 	public bool IsFuryOn() {
 		
-		return m_isFuryOn || m_isSuperFuryOn;
+		return m_isFuryOn;
+	}
+
+	public bool IsSuperFuryOn()
+	{
+		return m_isSuperFuryOn;
 	}
 
 	void Update() {
@@ -147,6 +153,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 					if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 					Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, false);
+					Messenger.Broadcast<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, false);
 				} else {				
 					Breath();
 					m_animator.SetBool("breath", true);
@@ -162,7 +169,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 				if (m_eatBehaviour) m_eatBehaviour.enabled = false;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
-				Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
+				Messenger.Broadcast<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, true);
 			}
 			else if (m_dragon.fury >= m_furyMax) 
 			{
