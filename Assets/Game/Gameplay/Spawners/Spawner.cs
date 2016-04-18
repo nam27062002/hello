@@ -15,6 +15,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	[Header("Activation")]
 	[SerializeField] private bool m_alwaysActive = false;
+	[SerializeField] private bool m_activeOnStart = false;
 	[SerializeField] private float m_enableTime;
 	[SerializeField] private float m_disableTime;
 
@@ -63,7 +64,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 			m_groupController.Init( m_quantity.max );
 		}
 
-
+		if (m_activeOnStart) {
+			Spawn();
+		}
 	}
 
 	protected virtual void OnEnable() {

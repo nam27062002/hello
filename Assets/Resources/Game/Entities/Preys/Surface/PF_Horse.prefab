@@ -302,11 +302,12 @@ GameObject:
   - 114: {fileID: 11471570}
   - 114: {fileID: 11403422}
   - 114: {fileID: 11430668}
-  - 114: {fileID: 11451608}
   - 114: {fileID: 11430024}
-  - 114: {fileID: 11478480}
+  - 114: {fileID: 11424540}
+  - 114: {fileID: 11402772}
+  - 114: {fileID: 11489508}
   m_Layer: 8
-  m_Name: horse
+  m_Name: PF_Horse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -469,7 +470,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 161436}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 246.8893, y: -48.924076, z: -257.0547}
+  m_LocalPosition: {x: -19, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 472292}
@@ -514,7 +515,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118224}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.023, y: 0.568, z: 0}
+  m_LocalPosition: {x: 0.023, y: 0.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 404074}
@@ -868,6 +869,25 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11402772
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 161436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_randomMovement: 1
+  m_idleProbability: 1
+  m_moveTime:
+    min: 6
+    max: 12
+  m_idleTime:
+    min: 3
+    max: 6
 --- !u!114 &11403422
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -883,7 +903,7 @@ MonoBehaviour:
     min: -1
     max: 1
   m_distanceAttenuation: 28
-  m_checkCollisions: 1
+  m_checkCollisions: 0
   m_maxSpeed: 8
   m_maxRunSpeed: 10
   m_slowingRadius: 0
@@ -928,6 +948,17 @@ MonoBehaviour:
   m_burnSize: 6
   m_burnDuration: 0.75
   m_orientedBurn: 0
+--- !u!114 &11424540
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 161436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b536950f8caa242459ca84514d370774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11430024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -939,6 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 1
   m_faceDirection: 0
 --- !u!114 &11430668
 MonoBehaviour:
@@ -955,21 +987,8 @@ MonoBehaviour:
   m_sensorMaxRadius: 20
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
---- !u!114 &11451608
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 161436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_canBeAfraid: 0
-  m_canPanic: 1
-  m_afraidSounds: []
 --- !u!114 &11452028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -982,7 +1001,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 0
-  m_onEatenParticle: 
+  m_onEatenParticles: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
 --- !u!114 &11452058
@@ -1011,10 +1030,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.0931744, y: 1.9822712}
-  radius: 2
+  offset: {x: 0.45393986, y: 1.4356616}
+  radius: 1.3440688
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11478480
+--- !u!114 &11489508
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1022,9 +1041,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 161436}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54a749db5ec7e4607a9344a71d42e1e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 43e1dc7833c3842c08e4cffbc7ebd5ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_canPanic: 0
 --- !u!137 &13766628
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

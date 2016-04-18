@@ -347,13 +347,13 @@ GameObject:
   - 114: {fileID: 11469764}
   - 114: {fileID: 11447996}
   - 114: {fileID: 11482352}
-  - 114: {fileID: 11452252}
   - 114: {fileID: 11469212}
-  - 114: {fileID: 11499178}
-  - 114: {fileID: 11424680}
   - 114: {fileID: 11422876}
+  - 114: {fileID: 11494420}
+  - 114: {fileID: 11451490}
+  - 114: {fileID: 11414762}
   m_Layer: 8
-  m_Name: sheep
+  m_Name: PF_Sheep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -437,7 +437,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 172236}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.303, z: 0}
+  m_LocalPosition: {x: 0, y: 0.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 428614}
@@ -552,7 +552,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 183558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23.568523, y: 1.2345891, z: 5.4}
+  m_LocalPosition: {x: -12.57, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 448684}
@@ -758,6 +758,19 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11414762
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 183558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e1dc7833c3842c08e4cffbc7ebd5ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_canPanic: 0
+  m_randomNode: 1
 --- !u!114 &11421246
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -787,17 +800,6 @@ MonoBehaviour:
   m_groupAvoidRadiusRange:
     min: 2
     max: 3
---- !u!114 &11424680
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 183558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ca34221fa3d04a9bb6023c830ed0f7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11439612
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -854,11 +856,11 @@ MonoBehaviour:
     max: 1
   m_distanceAttenuation: 5
   m_checkCollisions: 1
-  m_maxSpeed: 6
+  m_maxSpeed: 2
   m_maxRunSpeed: 8
   m_slowingRadius: 0
   m_fallOnBurn: 0
---- !u!114 &11452252
+--- !u!114 &11451490
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -866,12 +868,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 183558}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
+  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_canBeAfraid: 0
-  m_canPanic: 1
-  m_afraidSounds: []
+  m_randomMovement: 1
+  m_idleProbability: 0.5
+  m_moveTime:
+    min: 6
+    max: 12
+  m_idleTime:
+    min: 3
+    max: 6
 --- !u!114 &11469212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -883,6 +890,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 0
 --- !u!114 &11469764
 MonoBehaviour:
@@ -895,8 +903,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.1444664, y: 0.790582}
-  radius: 0.9421852
+  offset: {x: 0.12260342, y: 0.6921923}
+  radius: 0.77820224
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11475528
 MonoBehaviour:
@@ -910,7 +918,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 0
-  m_onEatenParticle: 
+  m_onEatenParticles: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
 --- !u!114 &11482352
@@ -928,8 +936,9 @@ MonoBehaviour:
   m_sensorMaxRadius: 7
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
---- !u!114 &11499178
+--- !u!114 &11494420
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -937,17 +946,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 183558}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 334f833cd87604018ac6d0d51b507e33, type: 3}
+  m_Script: {fileID: 11500000, guid: b536950f8caa242459ca84514d370774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_randomMovement: 0
-  m_idleProbability: 0.5
-  m_moveTime:
-    min: 0
-    max: 4
-  m_idleTime:
-    min: 0
-    max: 4
 --- !u!137 &13765048
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

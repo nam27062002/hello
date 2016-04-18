@@ -14,6 +14,8 @@ public class FleePathBehaviour : Initializable {
 
 	[CommentAttribute("This prey will stop running if the Dragon is too close.")]
 	[SerializeField] private bool m_canPanic = true; 
+	[CommentAttribute("When this prey is fleeing from the dragon it can move to random nodes or the node further from dragon.")]
+	[SerializeField] private bool m_randomNode = false;
 
 	private PathController m_path;
 	public PathController path { set { m_path = value; } }
@@ -27,7 +29,7 @@ public class FleePathBehaviour : Initializable {
 	private State m_state;
 	private State m_nextState;
 
-	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Use this for initialization
 	void Awake () {
@@ -69,7 +71,7 @@ public class FleePathBehaviour : Initializable {
 		}
 	}
 
-	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	void Update() {
 		if (m_state != m_nextState) {
@@ -130,6 +132,10 @@ public class FleePathBehaviour : Initializable {
 	}
 
 	private void ChooseTarget() {
-		m_target = m_path.GetFurtherFrom(transform.position, m_sensor.targetPosition);
+		if (m_randomNode) {
+			m_target = m_path.GetRandom();
+		} else {
+			m_target = m_path.GetFurtherFrom(transform.position, m_sensor.targetPosition);
+		}
 	}
 }
