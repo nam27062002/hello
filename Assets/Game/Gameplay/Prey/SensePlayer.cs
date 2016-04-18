@@ -23,6 +23,9 @@ public class SensePlayer : MonoBehaviour {
 	[SerializeField][Range(0,360)] private float m_sensorAngleOffset;
 	public float sensorAngleOffset { get { return m_sensorAngleOffset; } }
 
+	[SerializeField] private Vector3 m_sensorPosition = Vector3.zero;
+	public Vector3 sensorPosition { get { return m_sensorPosition; } }
+
 	[SerializeField] private Target m_target = Target.Mouth;
 
 
@@ -40,7 +43,9 @@ public class SensePlayer : MonoBehaviour {
 
 	private PreyMotion m_motion;
 	private DragonPlayer m_dragon;
-	private Transform m_dragonTarget; 
+
+	private Transform m_dragonTarget;
+	public Vector3 targetPosition { get { return m_dragonTarget.position; } }
 
 	private float m_dragonRadiusSqr;
 
@@ -99,7 +104,7 @@ public class SensePlayer : MonoBehaviour {
 			}
 		} else if (m_dragon.IsAlive()) {
 			// we have too much erro if we only sense the dragon when it is inside the spawn area, it can be too small
-			Vector2 vectorToPlayer = (Vector2)m_dragonTarget.position - m_motion.position;
+			Vector2 vectorToPlayer = (Vector2)(m_dragonTarget.position - (transform.position + m_sensorPosition));
 			m_distanceSqr = vectorToPlayer.sqrMagnitude - m_dragonRadiusSqr;
 
 			if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {

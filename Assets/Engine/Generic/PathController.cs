@@ -71,6 +71,25 @@ public class PathController : MonoBehaviour {
 		return GetNext();
 	}
 
+	public Vector3 GetFurtherFrom(Vector3 _yourPosition, Vector3 _dangerPosition) {
+		float maxD = 0f;
+		bool searchLeft = _yourPosition.x <= _dangerPosition.x;
+
+		m_index = 0;
+		for (int i = 0; i < m_points.Count; i++) {
+			if (( searchLeft && (m_points[i].x <= _dangerPosition.x))
+			||  (!searchLeft && (m_points[i].x >  _dangerPosition.x))) {
+				float d = (m_points[i] - _dangerPosition).sqrMagnitude;
+				if (d >= maxD) {
+					maxD = d;
+					m_index = i;
+				}
+			}
+		}
+
+		return GetNext();
+	}
+
 	public Vector3 GetNext() {
 		int current = m_index;
 		if (m_circular) {
