@@ -2,8 +2,7 @@
 
 [DisallowMultipleComponent]
 public class PreyOrientation : Orientation {
-
-	[SerializeField] private bool m_hasTurnAnimations = false;
+	
 	[SerializeField] private bool m_faceDirection;
 	public bool faceDirection { get { return m_faceDirection; } }
 
@@ -13,11 +12,6 @@ public class PreyOrientation : Orientation {
 	private Quaternion m_rotation;
 
 	private Animator m_animator;
-
-	private float m_angle;
-
-	private bool m_turningRight;
-	private bool m_turningLeft;
 
 
 	// Use this for initialization
@@ -59,14 +53,6 @@ public class PreyOrientation : Orientation {
 			}
 
 			m_targetRotation = Quaternion.Euler(0, angleY, 0);
-		}
-
-		if (m_hasTurnAnimations && m_animator) {
-			if (m_direction.x >= 0f && _direction.x < 0f) {
-				m_animator.SetTrigger("turn right");
-			} else if (m_direction.x < 0f && _direction.x >= 0f) {
-				m_animator.SetTrigger("turn left");
-			}
 		}
 
 		m_direction = _direction;

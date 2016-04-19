@@ -18,6 +18,8 @@ public class FleePathBehaviour : Initializable {
 		Right
 	};
 
+	[CommentAttribute("This prey has special animations when it changes directions running.")]
+	[SerializeField] private bool m_hasTurnAnimations = false;
 	[CommentAttribute("This prey will stop running if the Dragon is too close.")]
 	[SerializeField] private bool m_canPanic = true; 
 	[CommentAttribute("When this prey is fleeing from the dragon it can move to random nodes or the node further from dragon.")]
@@ -152,22 +154,20 @@ public class FleePathBehaviour : Initializable {
 
 			if (m_direction == Direction.Any || m_direction != newDirection) {
 				m_direction = newDirection;
-				if (m_direction == Direction.Left) 	m_target = m_path.GetLeftmostPoint();
-				else 								m_target = m_path.GetRightmostPoint();
 			} else {
-				ChangeDirection();
+				if (m_direction == Direction.Left)	m_direction = Direction.Right;
+				else 								m_direction = Direction.Left;
 			}
-		}
-	}
 
-	private void ChangeDirection() {
-		if (!m_randomNode) {
-			if (m_direction == Direction.Left && transform.position.x > m_sensor.targetPosition.x) {
-				m_target = m_path.GetRightmostPoint();
-				m_direction = Direction.Right;
-			} else if (m_direction == Direction.Right && transform.position.x <= m_sensor.targetPosition.x) {
+			if (m_direction == Direction.Left) {
 				m_target = m_path.GetLeftmostPoint();
-				m_direction = Direction.Left;
+			} else {
+				m_target = m_path.GetRightmostPoint();
+			}
+
+			if (m_hasTurnAnimations) {
+				if (m_direction == Direction.Left)	m_animator.SetTrigger("turn left");
+				else 								m_animator.SetTrigger("turn right");
 			}
 		}
 	}
