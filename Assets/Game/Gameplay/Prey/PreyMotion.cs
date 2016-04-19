@@ -34,6 +34,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		[CommentAttribute("Distance can reduce the effect of evasive behaviours.")]
 	[SerializeField] private float m_distanceAttenuation = 5f;
 	[SerializeField] private bool m_checkCollisions = true;
+	[SerializeField] private bool m_keepInsideArea = false;
 
 [Header("Speed variations")]
 	[SerializeField] protected float m_maxSpeed;
@@ -217,6 +218,12 @@ public class PreyMotion : Initializable, MotionInterface {
 		
 		if (m_checkCollisions)
 			AvoidCollisions();
+
+		if (m_keepInsideArea && !m_area.Contains( m_position ))
+		{
+			// move back
+			m_steeringForces[Forces.Collision] += (((Vector2)m_area.center) - m_position) * 100;
+		}
 
 		UpdateSteering();
 		UpdateVelocity( m_slowPowerUp );
