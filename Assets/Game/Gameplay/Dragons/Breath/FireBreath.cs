@@ -18,17 +18,12 @@ public class FireBreath : DragonBreathBehaviour {
 			m_length = value;
 		}
 	}
+
 	[SerializeField] private AnimationCurve m_sizeCurve = AnimationCurve.Linear(0, 0, 1, 3f);	// Will be used by the inspector to easily setup the values for each level
 	public AnimationCurve curve
 	{
-		get
-		{
-			return m_sizeCurve;
-		}
-		set
-		{
-			m_sizeCurve = value;
-		}
+		get { return m_sizeCurve; }
+		set	{ m_sizeCurve = value; }
 	}
 
 	[SerializeField] private int m_particleSpawn = 2;
@@ -79,6 +74,8 @@ public class FireBreath : DragonBreathBehaviour {
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;
 
+
+		m_length *= transform.localScale.x;
 
 		float lengthIncrease = m_length * 0.1f;
 		m_length += m_dragon.data.fireSkill.level * lengthIncrease;
@@ -138,7 +135,7 @@ public class FireBreath : DragonBreathBehaviour {
 		AudioManager.instance.PlayClip("audio/sfx/Dragon/Menu_Scratch_13");
 		m_light = PoolManager.GetInstance(m_flameLight);
 		m_light.transform.position = m_mouthTransform.position;
-		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);
+		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * transform.localScale.x * 1.75f, 1f);
 	}
 
 	override protected void EndBreath() 
@@ -186,8 +183,8 @@ public class FireBreath : DragonBreathBehaviour {
 		{
 			// Pre-Calculate Triangle: wider bounding triangle to make burning easier
 			m_triP0 = m_mouthTransform.position;
-			m_triP1 = m_triP0 + m_direction * m_actualLength - m_directionP * m_sizeCurve.Evaluate(1) * 0.5f;
-			m_triP2 = m_triP0 + m_direction * m_actualLength + m_directionP * m_sizeCurve.Evaluate(1) * 0.5f;
+			m_triP1 = m_triP0 + m_direction * m_actualLength - m_directionP * m_sizeCurve.Evaluate(1) * transform.localScale.x * 0.5f;
+			m_triP2 = m_triP0 + m_direction * m_actualLength + m_directionP * m_sizeCurve.Evaluate(1) * transform.localScale.x * 0.5f;
 			m_area = (-m_triP1.y * m_triP2.x + m_triP0.y * (-m_triP1.x + m_triP2.x) + m_triP0.x * (m_triP1.y - m_triP2.y) + m_triP1.x * m_triP2.y) * 0.5f;
 
 			// Circumcenter
@@ -233,7 +230,7 @@ public class FireBreath : DragonBreathBehaviour {
 				FlameUp particle = obj.GetComponent<FlameUp>();
 				float pos = Random.Range( length / 5.0f, length);
 				float delta = pos / m_length;
-				float scale = m_sizeCurve.Evaluate( pos / length );
+				float scale = m_sizeCurve.Evaluate( pos / length ) * transform.localScale.x;
 				float correctedPos = pos;
 				float distanceMultiplier = 1.5f;
 				if ( pos > m_actualLength )

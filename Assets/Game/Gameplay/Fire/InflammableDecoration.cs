@@ -175,7 +175,7 @@ public class InflammableDecoration : Initializable {
 			}break;
 			default:
 			{
-				return false;
+				return true;
 			}break;
 		}
 

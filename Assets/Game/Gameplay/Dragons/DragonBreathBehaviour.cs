@@ -10,11 +10,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public float damage { 
 		get 
 		{ 
-			if ( m_isSuperFuryOn )
+			if (m_isSuperFuryOn)
 				return m_damage * 2;
 			else
 				return m_damage; 
-		} 
+		}
 	}
 	
 	protected Rect m_bounds2D;
