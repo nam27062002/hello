@@ -86,21 +86,13 @@ public class PathController : MonoBehaviour {
 		return m_points[m_index] + transform.position;
 	}
 
-	public Vector3 GetFurtherFrom(Vector3 _yourPosition, Vector3 _dangerPosition) {
-		float maxD = 0f;
-		bool goLeft = _yourPosition.x <= _dangerPosition.x;
+	public Vector3 GetLeftmostPoint() {
+		m_index = m_leftmostNode;
+		return m_points[m_index] + transform.position;
+	}
 
-		int newIndex = 0;
-		if (goLeft) {
-			newIndex = m_leftmostNode;
-			if (m_index == newIndex) newIndex = m_rightmostNode;
-		} else {
-			newIndex = m_rightmostNode;
-			if (m_index == newIndex) newIndex = m_leftmostNode;
-		}
-
-		m_index = newIndex;
-
+	public Vector3 GetRightmostPoint() {
+		m_index = m_rightmostNode;
 		return m_points[m_index] + transform.position;
 	}
 
