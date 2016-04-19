@@ -5,6 +5,7 @@ public class FrameColoring : MonoBehaviour
 {
 	
 	public Color m_fireColor = Color.black;
+	public Color m_superFireColor = Color.black;
 	public Color m_startingColor = Color.black;
 
 	private float m_value = 0.5f;
@@ -12,6 +13,7 @@ public class FrameColoring : MonoBehaviour
 	public Material m_material;
 
 	private bool m_furyOn = false;
+	private bool m_superFuryOn = false;
 	private bool m_stargingOn = false;
 
 	void Start()
@@ -19,18 +21,25 @@ public class FrameColoring : MonoBehaviour
 		m_value = 0;
 		m_color = Color.black;
 		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, OnSuperFury);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
 	}
 
 	private void OnDestroy() 
 	{
 		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, OnSuperFury);
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
 	}
 
 	void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
-		if (m_furyOn)
+    	if (m_superFuryOn)
+    	{
+			m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 15);
+			m_color = Color.Lerp( m_color, m_superFireColor, Time.deltaTime * 15 );
+    	}
+		else if (m_furyOn)
 		{
 			m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 10);
 			m_color = Color.Lerp( m_color, m_fireColor, Time.deltaTime * 10 );
@@ -59,6 +68,11 @@ public class FrameColoring : MonoBehaviour
 
 	private void OnFury(bool _enabled) {
 		m_furyOn = _enabled;
+	}
+
+	private void OnSuperFury( bool _enable )
+	{
+		m_superFuryOn = _enable;
 	}
 
 	private void OnStarving( bool _enabled )

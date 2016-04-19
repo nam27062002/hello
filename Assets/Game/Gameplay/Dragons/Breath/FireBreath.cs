@@ -61,12 +61,16 @@ public class FireBreath : DragonBreathBehaviour {
 
 	public string m_flameParticle = "Flame";
 	public string m_flameUpParticle = "FlameUp";
+	public string m_superFlameParticle = "Flame";
+	public string m_superFlameUpParticle = "FlameUp";
 	public string m_flameLight = "PF_FireLight";
 
 	override protected void ExtendedStart() {
 
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameParticle), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameUpParticle), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_superFlameParticle), m_maxParticles, false);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_superFlameUpParticle), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameLight), 1, false);
 
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground") | 1 << LayerMask.NameToLayer("Water");
@@ -202,7 +206,11 @@ public class FireBreath : DragonBreathBehaviour {
 
 		for (int i = 0; i < m_particleSpawn; i++) {
 			
-			GameObject obj = PoolManager.GetInstance(m_flameParticle);
+			GameObject obj = null;
+			if ( m_isFuryOn )
+				obj = PoolManager.GetInstance(m_flameParticle);
+			else if ( m_isSuperFuryOn )
+				obj = PoolManager.GetInstance(m_superFlameParticle);
 			
 			if (obj != null) {
 				FlameParticle particle = obj.GetComponent<FlameParticle>();
@@ -215,8 +223,12 @@ public class FireBreath : DragonBreathBehaviour {
 
 		for (int i = 0; i < m_particleSpawn / 2; i++) 
 		{
-			GameObject obj = PoolManager.GetInstance(m_flameUpParticle);
-			
+			GameObject obj = null;
+			if ( m_isFuryOn )
+				obj = PoolManager.GetInstance(m_flameUpParticle);
+			else if ( m_isSuperFuryOn )
+				obj = PoolManager.GetInstance(m_superFlameUpParticle);
+
 			if (obj != null) {
 				FlameUp particle = obj.GetComponent<FlameUp>();
 				float pos = Random.Range( length / 5.0f, length);
