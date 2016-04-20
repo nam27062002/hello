@@ -481,6 +481,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 3.2
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11408074
 MonoBehaviour:
@@ -584,6 +585,7 @@ MonoBehaviour:
     max: 1
   m_distanceAttenuation: 2
   m_checkCollisions: 0
+  m_keepInsideArea: 0
   m_maxSpeed: 1.2
   m_maxRunSpeed: 4.7
   m_slowingRadius: 0
@@ -600,6 +602,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 1
+  m_faceLeftAngleY: 180
+  m_faceRightAngleY: 0
 --- !u!114 &11471918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -661,8 +665,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_timeToGlide:
-    min: 120
-    max: 180
+    min: 240
+    max: 300
   m_glidingTime:
     min: 0.5
     max: 1
