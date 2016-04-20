@@ -40,16 +40,29 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 	void Update() {
 		//check if this intersecs with dragon breath
-		m_timer -= Time.deltaTime;
-		if (m_timer <= 0) {
-			m_timer += m_checkFireTime;
+		if ( m_breath.IsFuryOn() )
+		{
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0) 
+			{
+				m_timer += m_checkFireTime;
+				Transform[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
 
-			Transform[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
-
-			for (int i = 0; i < nodes.Length; i++) {
-				Transform node = nodes[i];
-				if (m_breath.IsInsideArea(node.position)) {
-					node.GetComponent<FireNode>().Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
+				for (int i = 0; i < nodes.Length; i++) {
+					Transform node = nodes[i];
+					if (m_breath.IsInsideArea(node.position)) 
+					{
+						// Check if I can burn this fire Node
+						FireNode fireNode = node.GetComponent<FireNode>();
+						if ( fireNode.canBurn )
+						{
+							fireNode.Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
+						}
+						else
+						{
+							// Show message: "I cannot burn this!"
+						}
+					}
 				}
 			}
 		}

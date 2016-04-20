@@ -21,11 +21,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				case Type.Standard:
 				{
 					return m_damage;
-				}break;
+				}
 				case Type.Super:
 				{
 					return m_damage * 2;
-				}break;
+				}
 			}
 			return m_damage;
 		} 
@@ -360,4 +360,21 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			return DragonManager.superFuryProgression/m_superFuryMax;
 		}
 	}
+
+	public bool CanBurn( InflammableBehaviour _inflammable)
+	{
+		if ( m_type == Type.Super )
+			return true;
+		
+		return false;
+	}
+
+	public bool CanBurn( InflammableDecoration _decoration )
+	{
+		if ( m_type == Type.Super )
+			return true;
+
+		return false;
+	}
+
 }

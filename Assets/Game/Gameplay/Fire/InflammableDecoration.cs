@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class InflammableDecoration : Initializable {
@@ -29,7 +30,13 @@ public class InflammableDecoration : Initializable {
 	public string m_ashesAsset;
 
 	// Use this for initialization
-	void Start () {
+	IEnumerator Start()
+	{
+		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+		{
+			yield return null;
+		}
+
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
@@ -38,17 +45,20 @@ public class InflammableDecoration : Initializable {
 
 		int coins = 0;
 
-		if (GetComponent<Entity>() != null) {
+		if (GetComponent<Entity>() != null) 
+		{
 			coins = GetComponent<Entity>().reward.coins;
 		}
 
 		int coinsPerNode = coins / m_fireNodes.Length;
 
+		DragonBreathBehaviour breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
+		bool _canBeBurned = breath.CanBurn( this );
 		for (int i = 0; i < m_fireNodes.Length - 1; i++) {
-			m_fireNodes[i].Init(coinsPerNode);
+			m_fireNodes[i].Init(coinsPerNode, _canBeBurned);
 		}
 
-		m_fireNodes[m_fireNodes.Length - 1].Init(coins - (coinsPerNode * (m_fireNodes.Length - 1)));
+		m_fireNodes[m_fireNodes.Length - 1].Init(coins - (coinsPerNode * (m_fireNodes.Length - 1)), _canBeBurned);
 
 		m_startPosition = transform.position;
 
@@ -82,6 +92,9 @@ public class InflammableDecoration : Initializable {
 
 	// Update is called once per frame
 	void Update() {	
+
+		if (m_autoSpawner == null)
+			return;
 
 		if ( m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning )	// if respawning we wait
 			return;

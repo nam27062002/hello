@@ -43,6 +43,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 				FireBall fb = go.GetComponent<FireBall>();
 				if ( fb != null )
 				{
+					fb.SetBreath( this );
 					fb.Shoot( m_direction, damage);
 					fb.m_speed = m_dragonMotion.lastSpeed + 10;
 				}
