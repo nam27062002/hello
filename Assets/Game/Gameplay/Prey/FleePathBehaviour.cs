@@ -61,6 +61,7 @@ public class FleePathBehaviour : Initializable {
 			m_target = m_path.GetNearestTo(m_motion.position);
 		}
 
+		m_target = Vector3.zero;
 		m_state = State.None;
 		m_nextState = State.Run; 
 	}
@@ -144,26 +145,30 @@ public class FleePathBehaviour : Initializable {
 		if (m_randomNode) {
 			m_target = m_path.GetRandom();
 		} else {
-			Direction newDirection;
-
 			if (transform.position.x <= m_sensor.targetPosition.x) {
-				newDirection = Direction.Left;
+				m_direction = Direction.Left;
 			} else {
-				newDirection = Direction.Right;
+				m_direction = Direction.Right;
 			}
 
-			if (m_direction == Direction.Any || m_direction != newDirection) {
-				m_direction = newDirection;
-			} else {
-				if (m_direction == Direction.Left)	m_direction = Direction.Right;
-				else 								m_direction = Direction.Left;
-			}
-
+			Vector3 newTarget;
 			if (m_direction == Direction.Left) {
-				m_target = m_path.GetLeftmostPoint();
+				newTarget = m_path.GetLeftmostPoint();
 			} else {
-				m_target = m_path.GetRightmostPoint();
+				newTarget = m_path.GetRightmostPoint();
 			}
+
+			if (m_target == newTarget) {
+				if (m_direction == Direction.Left) {
+					m_direction = Direction.Right;
+					newTarget = m_path.GetRightmostPoint();
+				} else {
+					m_direction = Direction.Left;
+					newTarget = m_path.GetLeftmostPoint();
+				}
+			}
+
+			m_target = newTarget;
 
 			if (m_hasTurnAnimations) {
 				if (m_direction == Direction.Left)	m_animator.SetTrigger("turn left");
