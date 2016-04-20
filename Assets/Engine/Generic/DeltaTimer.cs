@@ -52,6 +52,13 @@ public class DeltaTimer {
 	}
 
 	/// <summary>
+	/// Restart timer using its initial parameters.
+	/// </summary>
+	public virtual void Restart() {
+		Start(m_duration, m_loop);
+	}
+
+	/// <summary>
 	/// Stops the timer, subsequent calls to GetTime/GetDelta will return the same
 	/// values until resume or start are called
 	/// </summary>
@@ -125,6 +132,14 @@ public class DeltaTimer {
 	/// <param name="_time">Time to be advanced in seconds.</param>
 	public void AddTime(float _time) {
 		m_startTime -= _time;
+	}
+
+	/// <summary>
+	/// Force the timer to end.
+	/// </summary>
+	public void Finish() {
+		m_loop = false;
+		AddTime(m_duration);	// This will ensure that the Finished() method returns true.
 	}
 
 	/// <summary>
