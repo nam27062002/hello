@@ -97,7 +97,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	private float m_superFuryLengthModifier;
 	private float m_superFuryMax;
-	// private float m_superFuryCoinMultiplier;
+	private float m_superFuryCoinsMultiplier;
 
 	//-----------------------------------------------
 	// Methods
@@ -108,7 +108,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		m_superFuryLengthModifier = settings.GetAsFloat("superFuryLengthModifier", 1.2f);
 		m_superFuryMax = settings.GetAsFloat("superfuryMax", 8);
-		// m_superFuryCoinMultiplier = settings.GetAsFloat("superFuryCoinMultiplier", 3.0f);
+		m_superFuryCoinsMultiplier = settings.GetAsFloat("superFuryCoinsMultiplier", 3.0f);
 
 
 		m_dragon = GetComponent<DragonPlayer>();
@@ -277,10 +277,16 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			{
 				// Set super gold rush progress
 				m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration * m_superFuryLengthModifier;
+
+				// Set coins multiplier for burn
+				RewardManager.burnCoinsMultiplier = m_superFuryCoinsMultiplier;
 			}break;
 			case Type.Standard:
 			{
 				m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration;
+
+				// Set coins multiplier for burn
+				RewardManager.burnCoinsMultiplier = 1;
 			}break;
 		}
 

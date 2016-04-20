@@ -74,6 +74,12 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_scoreMultiplierTimer; }
 	}
 
+	[SerializeField] private float m_burnCoinsMultiplier = 1;
+	public static float burnCoinsMultiplier {
+		get { return instance.m_burnCoinsMultiplier; }
+		set { instance.m_burnCoinsMultiplier = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -90,7 +96,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	public void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnKill);
+		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
@@ -101,7 +107,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	public void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnKill);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
@@ -261,6 +267,11 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 
 		// Update multiplier
 		UpdateScoreMultiplier();
+	}
+
+	private void OnBurned( Transform _entity, Reward _reward){
+		_reward.coins = (int)(_reward.coins * m_burnCoinsMultiplier);
+		OnKill( _entity, _reward );
 	}
 
 	/// <summary>
