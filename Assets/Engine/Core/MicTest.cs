@@ -9,7 +9,7 @@ public class MicTest : MonoBehaviour
 	const int m_BufferSize = 1024;
 	float[] m_Samples = null;
 
-	DragonPlayer m_dragon;
+	DragonBreathBehaviour m_dragon;
 	
 	// Use this for initialization
 	void Start () 
@@ -24,7 +24,7 @@ public class MicTest : MonoBehaviour
 		m_ReadHead = 0;
 
 
-		m_dragon = GetComponent<DragonPlayer>();
+		m_dragon = GetComponent<DragonBreathBehaviour>();
 	}
 	
 	void Update()
