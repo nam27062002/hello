@@ -38,7 +38,7 @@ public class HUDFireRush : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
 	}
 	
 	/// <summary>
@@ -46,7 +46,7 @@ public class HUDFireRush : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
 	}
 
 	//------------------------------------------------------------------//
@@ -56,7 +56,7 @@ public class HUDFireRush : MonoBehaviour {
 	/// Fury rush has been toggled.
 	/// </summary>
 	/// <param name="_active">Whether the fury rush has been activated or not.</param>
-	private void OnFuryRushToggled(bool _active) {
+	private void OnFuryRushToggled(bool _active, DragonBreathBehaviour.Type _type) {
 		// Just launch the text animation when activated
 		if(_active) {
 			DOTween.Restart("fireRushIn");

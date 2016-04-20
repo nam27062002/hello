@@ -198,9 +198,9 @@ public class FireLightning : DragonBreathBehaviour {
 
 
 
-	override protected void BeginBreath() 
+	override protected void BeginFury( Type _type ) 
 	{
-		base.BeginBreath();
+		base.BeginFury( _type );
 		m_particleStart.transform.position = m_mouthTransform.position;
 		m_dir = m_mouthTransform.position - m_headTransform.position;
 		m_dir.z = 0f;
@@ -214,9 +214,9 @@ public class FireLightning : DragonBreathBehaviour {
 			m_rays[i].Hide ();
 	}
 
-	override protected void EndBreath() 
+	override protected void EndFury() 
 	{
-		base.EndBreath();
+		base.EndFury();
 		m_particleStart.gameObject.SetActive(false);
 		m_particleEnd.gameObject.SetActive(false);
 		for(int i=0;i<m_rays.Length;i++)
@@ -226,7 +226,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 
 	void OnDrawGizmos() {
-		if (m_isFuryOn || m_isSuperFuryOn) 
+		if (m_isFuryOn) 
 		{
 			Gizmos.color = Color.magenta;
 			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + m_dir * m_actualLength );
@@ -235,7 +235,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 	override public bool IsInsideArea(Vector2 _point) { 
 	
-		if (m_isFuryOn || m_isSuperFuryOn) 
+		if (m_isFuryOn) 
 		{
 			float halfAmplitude = m_maxAmplitude/2.0f;
 			float angle = Mathf.Atan2( m_dir.y, m_dir.x);

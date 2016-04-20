@@ -89,15 +89,7 @@ public class DragonTint : MonoBehaviour
 
 		// Inner light
 		float innerValue = 0;
-		if (m_breath.IsSuperFuryOn())
-		{
-			// animate fury color and inner light
-			m_furyTimer += Time.deltaTime;
-
-			innerValue = (Mathf.Sin( m_furyTimer * 2 ) * 0.5f) + 0.5f;
-			innerValue *= 4;
-		}
-		else if ( m_breath.IsFuryOn())
+		if ( m_breath.IsFuryOn())
 		{
 			// animate fury color and inner light
 			m_furyTimer += Time.deltaTime;

@@ -69,6 +69,12 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		set { instance.m_currentLevel = value; }
 	}
 
+	[SerializeField] private int m_superFuryProgression = 0;
+	public static int superFuryProgression {
+		get { return instance.m_superFuryProgression; }
+		set { instance.m_superFuryProgression = value; }
+	}
+
 	[SerializeField] private TutorialStep m_tutorialStep;
 	public static TutorialStep tutorialStep { 
 		get { return instance.m_tutorialStep; }

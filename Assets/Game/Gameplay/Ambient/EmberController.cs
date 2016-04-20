@@ -10,14 +10,14 @@ public class EmberController : MonoBehaviour {
 		m_emberParticle = GetComponent<ParticleSystem>();
 		m_emberParticle.Stop();
 
-		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	void OnDisable() {
-		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
-	private void OnFuryToggled(bool _value) {
+	private void OnFuryToggled(bool _value, DragonBreathBehaviour.Type _type) {
 		if (_value) {
 			m_emberParticle.Clear();
 			m_emberParticle.Play();

@@ -96,7 +96,7 @@ public class Entity : Initializable {
 		m_reward.pc = m_def.GetAsInt("rewardPC");
 		m_reward.health = m_def.GetAsFloat("rewardHealth");
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
-		m_reward.fury = m_def.GetAsFloat("rewardFury");
+		// m_reward.fury = m_def.GetAsFloat("rewardFury");
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.origin = m_def.Get("sku");
 
