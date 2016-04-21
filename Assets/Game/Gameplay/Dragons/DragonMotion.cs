@@ -23,13 +23,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	//------------------------------------------------------------------//
 
 	public enum State {
+		
 		Idle = 0,
 		Fly,
 		Fly_Up,
 		Fly_Down,
 		Stunned,
 		InsideWater,
-		OutterSpace
+		OutterSpace,
+		Intro,
+		None,
 	};
 
 	//------------------------------------------------------------------//
@@ -86,7 +89,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private List<Transform> m_hitTargets;
 
-	private State m_state;
+	private State m_state = State.None;
 	public State state
 	{
 		get
@@ -153,7 +156,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 
 	RaycastHit m_raycastHit = new RaycastHit();
-		 
+
+	private Vector3 m_introTarget;
+	public Vector3 introTarget
+	{
+		get { return introTarget; }
+		set { introTarget = value; }
+	}
+
+	private float m_introTimer;
+	private const float m_introDuration = 3;
+	private Vector3 m_destination;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -213,7 +226,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_direction = Vector3.right;
 		m_lastPosition = transform.position;
 		m_lastSpeed = 0;
-		ChangeState(State.Idle);
+
+		if (m_state == State.None)
+			ChangeState(State.Fly);
 
 		m_forbiddenDirection = Vector3.zero;
 		m_forbiddenValue = 0;
@@ -254,6 +269,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OutterSpace:
 				{
 					m_animator.SetBool("fly down", false);
+				}break;
+				case State.Intro:
+				{
+					m_animator.SetBool("fly", false);
+					m_animator.SetBool("fly down", false);
+					m_introTimer = m_introDuration;
 				}break;
 			}
 
@@ -297,6 +318,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OutterSpace:
 				{
 					m_animator.SetBool("fly down", true);
+				}break;
+				case State.Intro:
+				{
+					m_animator.SetBool("fly", true);
+					m_animator.SetBool("fly down", true);
+					m_introTimer = m_introDuration;
 				}break;
 			}
 
@@ -345,6 +372,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					ChangeState(State.Idle);
 				}
 				break;
+			case State.Intro:
+			{
+				m_introTimer -= Time.deltaTime;
+				if ( m_introTimer <= 0 )
+					ChangeState( State.Idle );
+				float delta = m_introTimer / m_introDuration;
+				m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
+				m_destination += m_introTarget;
+
+
+			}break;
 		}
 				
 		m_animator.SetFloat("height", m_height);
@@ -378,15 +416,27 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case State.OutterSpace:
 				UpdateParabolicMovement( -m_parabolicMovementValue);
 				break;
+			case State.Intro:
+			{
+				m_impulse = (m_destination - transform.position).normalized;
+				m_direction = m_impulse;
+				m_impulse *= m_speedValue;
+				transform.position = m_destination;
+				m_rbody.velocity = Vector3.zero;
+				transform.rotation.SetLookRotation( Vector3.right );
+			}break;
 		}
 		
 		m_rbody.angularVelocity = Vector3.zero;
 
 		m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
 
-		Vector3 position = transform.position;
-		position.z = 0f;
-		transform.position = position;
+		if ( m_state != State.Intro )
+		{
+			Vector3 position = transform.position;
+			position.z = 0f;
+			transform.position = position;
+		}
 
 		m_lastPosition = transform.position;
 	}
@@ -716,6 +766,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		ChangeState( State.Fly_Down);
 	} 
 
+
+	public void StartIntroMovement(Vector3 introTarget)
+	{
+		m_introTarget = introTarget;
+		m_introTimer = m_introDuration;
+		ChangeState(State.Intro);
+	}
+
+	public void EndIntroMovement()
+	{
+		
+	}
 
 	/// <summary>
 	/// Raises the trigger enter event.
