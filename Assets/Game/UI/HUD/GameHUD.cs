@@ -43,7 +43,7 @@ public class GameHUD : MonoBehaviour {
 		InstanceManager.GetSceneController<GameSceneController>().PauseGame(true);
 
 		// Open pause popup
-		PopupManager.OpenPopupInstant(PopupPause.PATH);
+		PopupManager.OpenPopupInstant(PopupMissionsIngame.PATH);
 	}
 
 	/// <summary>
