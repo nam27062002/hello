@@ -23293,15 +23293,15 @@ Prefab:
       objectReference: {fileID: 2100000, guid: 203fda9169afc4f4fbb84947c916a699, type: 2}
     - target: {fileID: 400006, guid: d087b092436774240b5829438be1e3b2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -505
+      value: -273
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: d087b092436774240b5829438be1e3b2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12
+      value: -9.5
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: d087b092436774240b5829438be1e3b2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.63292
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: d087b092436774240b5829438be1e3b2, type: 3}
       propertyPath: m_LocalScale.x
@@ -23318,6 +23318,34 @@ Prefab:
     - target: {fileID: 100008, guid: d087b092436774240b5829438be1e3b2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: d087b092436774240b5829438be1e3b2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -936
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: d087b092436774240b5829438be1e3b2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -39.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: d087b092436774240b5829438be1e3b2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.029471815
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: d087b092436774240b5829438be1e3b2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 5.1852824e-15
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: d087b092436774240b5829438be1e3b2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -5.335364e-15
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: d087b092436774240b5829438be1e3b2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99956566
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: d087b092436774240b5829438be1e3b2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d087b092436774240b5829438be1e3b2, type: 3}
@@ -32520,6 +32548,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -32528,13 +32563,6 @@ Material:
       data:
         first:
           name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -32608,15 +32636,15 @@ Material:
         second: 0
       data:
         first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
-        second: 0
-      data:
-        first:
-          name: _EmissionScaleUI
         second: 0
       data:
         first:
@@ -32649,12 +32677,12 @@ Material:
         second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
       data:
         first:
-          name: _HorizonColor
-        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
-      data:
-        first:
           name: _SunPos
         second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
       data:
         first:
           name: _SunColor
