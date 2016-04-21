@@ -272,6 +272,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Intro:
 				{
+					m_animator.SetBool("fly", false);
+					m_animator.SetBool("fly down", false);
 					m_introTimer = m_introDuration;
 				}break;
 			}
@@ -316,6 +318,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OutterSpace:
 				{
 					m_animator.SetBool("fly down", true);
+				}break;
+				case State.Intro:
+				{
+					m_animator.SetBool("fly", true);
+					m_animator.SetBool("fly down", true);
+					m_introTimer = m_introDuration;
 				}break;
 			}
 
