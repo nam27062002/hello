@@ -1260,7 +1260,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193142}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 120.02, y: 60, z: 0}
+  m_LocalPosition: {x: -53.906204, y: -63.337288, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 468602}
@@ -1793,8 +1793,8 @@ Animator:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 145148}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: eca847315eceb46afbc2df53aeb3fe17, type: 3}
-  m_Controller: {fileID: 22100000, guid: ce2c79cab1e2441c5a9271c1f9897517, type: 2}
+  m_Avatar: {fileID: 9000000, guid: 20f23bc2d6f00e84a9eabee0fff0cd06, type: 3}
+  m_Controller: {fileID: 22100000, guid: c509b6cdf40484837848ed7007f9ccdc, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1818,8 +1818,9 @@ MonoBehaviour:
     max: 1
   m_distanceAttenuation: 3.5
   m_checkCollisions: 1
+  m_keepInsideArea: 0
   m_maxSpeed: 5
-  m_maxRunSpeed: 10
+  m_maxRunSpeed: 12
   m_slowingRadius: 0
   m_fallOnBurn: 1
 --- !u!114 &11427412
@@ -1983,10 +1984,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 1
-  m_sensorMaxRadius: 5
+  m_sensorMinRadius: 8
+  m_sensorMaxRadius: 12
   m_sensorAngle: 360
   m_sensorAngleOffset: 360
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11489350
 MonoBehaviour:
@@ -2000,6 +2002,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 1
+  m_faceLeftAngleY: 180
+  m_faceRightAngleY: 0
 --- !u!114 &11493128
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2011,11 +2015,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 10
-  m_attackDelay: 0.5
-  m_consecutiveAttacks: 3
-  m_retreatingTime: 1
+  m_damage: 15
+  m_attackDelay: 0
+  m_consecutiveAttacks: 1
+  m_retreatingTime: 2
   m_hasAnimation: 0
+  m_canAim: 0
+  m_eye: {fileID: 0}
   m_projectilePrefab: {fileID: 0}
   m_projectileSpawnPoint: {fileID: 0}
 --- !u!136 &13694184
@@ -2061,7 +2067,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_Mesh: {fileID: 4300000, guid: eca847315eceb46afbc2df53aeb3fe17, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 20f23bc2d6f00e84a9eabee0fff0cd06, type: 3}
   m_Bones:
   - {fileID: 423798}
   - {fileID: 482122}
