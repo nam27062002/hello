@@ -108,11 +108,59 @@ public static class Colors {
 	/// <returns>The color 32.</returns>
 	/// <param name="_source">Source Color.</param>
 	public static Color32 ToColor32(this Color _source) {
+		// Clamp to prevent unexpected values
 		return new Color32(
-			(byte)(_source.r * 255f),
-			(byte)(_source.g * 255f),
-			(byte)(_source.b * 255f),
-			(byte)(_source.a * 255f)
+			(byte)(Mathf.Clamp01(_source.r) * 255f),
+			(byte)(Mathf.Clamp01(_source.g) * 255f),
+			(byte)(Mathf.Clamp01(_source.b) * 255f),
+			(byte)(Mathf.Clamp01(_source.a) * 255f)
 		);
+	}
+
+	/// <summary>
+	/// Initialize color from rgba components.
+	/// </summary>
+	/// <param name="_source">Color being modified.</param>
+	/// <param name="_r">R.</param>
+	/// <param name="_g">G.</param>
+	/// <param name="_b">B.</param>
+	/// <param name="_a">A.</param>
+	public static void Set(this Color _source, float _r, float _g, float _b, float _a) {
+		_source.r = _r;
+		_source.g = _g;
+		_source.b = _b;
+		_source.a = _a;
+	}
+
+	/// <summary>
+	/// Initialize color from rgb components.
+	/// </summary>
+	/// <param name="_source">Color being modified.</param>
+	/// <param name="_r">R.</param>
+	/// <param name="_g">G.</param>
+	/// <param name="_b">B.</param>
+	public static void Set(this Color _source, float _r, float _g, float _b) {
+		_source.r = _r;
+		_source.g = _g;
+		_source.b = _b;
+	}
+
+	/// <summary>
+	/// Initialize color from a vector.
+	/// </summary>
+	/// <param name="_source">Color being modified.</param>
+	/// <param name="_v">Vector with the new values.</param>
+	public static void Set(this Color _source, Vector3 _v) {
+		_source.r = _v[0];
+		_source.g = _v[1];
+		_source.b = _v[2];
+	}
+
+	/// <summary>
+	/// Get the rgb components of the color.
+	/// </summary>
+	/// <param name="_source">Source color.</param>
+	public static Vector3 RGB(this Color _source) {
+		return new Vector3(_source.r, _source.g, _source.b);
 	}
 }
