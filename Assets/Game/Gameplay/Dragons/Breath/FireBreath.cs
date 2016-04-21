@@ -98,7 +98,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override public bool IsInsideArea(Vector2 _point) { 
 	
-		if (m_isFuryOn || m_isSuperFuryOn) {
+		if (m_isFuryOn) {
 			if (m_bounds2D.Contains(_point)) {
 				return IsInsideTriangle( _point );
 			}
@@ -109,7 +109,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override public bool Overlaps( CircleArea2D _circle)
 	{
-		if (m_isFuryOn || m_isSuperFuryOn) 
+		if (m_isFuryOn) 
 		{
 			if (_circle.Overlaps( m_bounds2D )) 
 			{
@@ -132,18 +132,18 @@ public class FireBreath : DragonBreathBehaviour {
 		return s > 0 && t > 0 && (s + t) < 2 * m_area * sign;
 	}
 
-	override protected void BeginBreath() 
+	override protected void BeginFury(Type _type) 
 	{
-		base.BeginBreath();
+		base.BeginFury( _type);
 		AudioManager.instance.PlayClip("audio/sfx/Dragon/Menu_Scratch_13");
 		m_light = PoolManager.GetInstance(m_flameLight);
 		m_light.transform.position = m_mouthTransform.position;
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * 1.75f, 1f);
 	}
 
-	override protected void EndBreath() 
+	override protected void EndFury() 
 	{
-		base.EndBreath();
+		base.EndFury();
 		m_light.SetActive(false);
 		PoolManager.ReturnInstance( m_light );
 		m_light = null;
@@ -155,8 +155,8 @@ public class FireBreath : DragonBreathBehaviour {
 		m_directionP.Set(m_direction.y, -m_direction.x);
 
 		float length = m_length;
-			if ( m_isSuperFuryOn )
-				length = m_length * 2;
+		if ( m_type == Type.Super )
+			length = m_length * 2;
 
 		Vector3 flamesUpDir = Vector3.up;
 		bool hitingWater = false;
@@ -207,10 +207,17 @@ public class FireBreath : DragonBreathBehaviour {
 		for (int i = 0; i < m_particleSpawn; i++) {
 			
 			GameObject obj = null;
-			if ( m_isFuryOn )
-				obj = PoolManager.GetInstance(m_flameParticle);
-			else if ( m_isSuperFuryOn )
-				obj = PoolManager.GetInstance(m_superFlameParticle);
+			switch( m_type )
+			{
+				case Type.Standard:
+				{
+					obj = PoolManager.GetInstance(m_flameParticle);
+				}break;
+				case Type.Super:
+				{
+					obj = PoolManager.GetInstance(m_superFlameParticle);
+				}break;
+			}
 			
 			if (obj != null) {
 				FlameParticle particle = obj.GetComponent<FlameParticle>();
@@ -224,10 +231,18 @@ public class FireBreath : DragonBreathBehaviour {
 		for (int i = 0; i < m_particleSpawn / 2; i++) 
 		{
 			GameObject obj = null;
-			if ( m_isFuryOn )
-				obj = PoolManager.GetInstance(m_flameUpParticle);
-			else if ( m_isSuperFuryOn )
-				obj = PoolManager.GetInstance(m_superFlameUpParticle);
+			switch( m_type )
+			{
+				case Type.Standard:
+				{
+					obj = PoolManager.GetInstance(m_flameUpParticle);
+				}break;
+				case Type.Super:
+				{
+					obj = PoolManager.GetInstance(m_superFlameUpParticle);
+				}break;
+			}
+				
 
 			if (obj != null) {
 				FlameUp particle = obj.GetComponent<FlameUp>();
@@ -278,7 +293,7 @@ public class FireBreath : DragonBreathBehaviour {
 	}
 
 	void OnDrawGizmos() {
-		if (m_isFuryOn || m_isSuperFuryOn) {
+		if (m_isFuryOn) {
 			Gizmos.color = Color.magenta;
 
 			Gizmos.DrawLine(m_triP0, m_triP1);
@@ -288,13 +303,16 @@ public class FireBreath : DragonBreathBehaviour {
 			Gizmos.DrawWireSphere(m_sphCenter, m_sphRadius);
 
 			Gizmos.color = Color.green;
-			if ( m_isSuperFuryOn )
+			switch(m_type)
 			{
-				Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
-			}
-			else
-			{
-				Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
+				case Type.Standard:
+				{
+					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length * 2);
+				}break;
+				case Type.Super:
+				{
+					Gizmos.DrawLine(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_length);
+				}break;
 			}
 		}
 	}
@@ -308,11 +326,7 @@ public class FireBreath : DragonBreathBehaviour {
 				m_isFuryPaused = true;
 				m_animator.SetBool("breath", false);
 			}
-			else if ( m_isSuperFuryOn )
-			{
-				m_isSuperFuryPaused = true;
-				m_animator.SetBool("breath", false);
-			}
+
 		}
 	}
 
@@ -321,7 +335,6 @@ public class FireBreath : DragonBreathBehaviour {
 		if ( _other.tag == "Water" )
 		{
 			m_isFuryPaused = false;
-			m_isSuperFuryPaused = false;
 		}
 	}
 }

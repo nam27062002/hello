@@ -54,7 +54,7 @@ public class DragonGrab : MonoBehaviour
 				flyHeight =  transform.position.y - ground.point.y;
 			}
 
-			if ( m_grabbingTimer > 2 || flyHeight > 100 || m_breath.IsFuryOn() || m_breath.IsSuperFuryOn() )	// or is x high
+			if ( m_grabbingTimer > 2 || flyHeight > 100 || m_breath.IsFuryOn()  )	// or is x high
 			{
 				Drop();
 			}
@@ -106,6 +106,6 @@ public class DragonGrab : MonoBehaviour
 
 	public bool CanGrab()
 	{
-		return !IsGrabbing() && !m_breath.IsFuryOn() && !m_breath.IsSuperFuryOn();
+		return !IsGrabbing() && !m_breath.IsFuryOn();
 	}
 }

@@ -109,7 +109,8 @@ public class HUDStatBar : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Only if player is alive
-		if (InstanceManager.player != null) {
+		if (InstanceManager.player != null) 
+		{
 			// Bar value
 			m_bar.minValue = 0f;
 			m_bar.maxValue = GetMaxValue();
@@ -134,8 +135,8 @@ public class HUDStatBar : MonoBehaviour {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.healthMax;
 			case Type.Energy:	return InstanceManager.player.energyMax;
-			case Type.Fury:		return InstanceManager.player.furyMax;
-			case Type.SuperFury:return InstanceManager.player.furyMax;
+			case Type.Fury:		return 1;
+			case Type.SuperFury:return 1;
 		}
 		return 0;
 	}
@@ -145,8 +146,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			case Type.Health: 	return InstanceManager.player.healthBase;
 			case Type.Energy:	return InstanceManager.player.energyBase;
-			case Type.Fury:		return InstanceManager.player.furyBase;
-			case Type.SuperFury:return InstanceManager.player.furyBase;
+			case Type.Fury:		return 1;
+			case Type.SuperFury:return 1;
 		}
 		return 0;
 	}
@@ -155,8 +156,8 @@ public class HUDStatBar : MonoBehaviour {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.health;
 			case Type.Energy:	return InstanceManager.player.energy;
-			case Type.Fury:		return InstanceManager.player.fury;
-			case Type.SuperFury:return InstanceManager.player.superFury;
+			case Type.Fury:		return InstanceManager.player.furyProgression;
+			case Type.SuperFury:return InstanceManager.player.superFuryProgression;
 		}		
 		return 0;
 	}
@@ -166,22 +167,20 @@ public class HUDStatBar : MonoBehaviour {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
 			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
-			case Type.Fury:		return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
-			case Type.SuperFury:return InstanceManager.player.data.def.GetAsFloat("furyBarRatio");
 		}
 		return 0.01f;
 	}
 
 	public float GetMaxScreenSize()
 	{
-		/*
-		switch (m_type) {
-			case Type.Health: 	return Screen.width * 0.8f;
-			case Type.Energy:	return Screen.width * 0.8f;
-			case Type.Fury:		return Screen.width * 0.8f;
-			case Type.SuperFury:return Screen.width * 0.8f;
+		switch (m_type) 
+		{
+			case Type.Health: 	return m_scaler.referenceResolution.x * 0.8f;
+			case Type.Energy:	return m_scaler.referenceResolution.x * 0.8f;
+			case Type.Fury:		return m_scaler.referenceResolution.x * 0.4f;
+			case Type.SuperFury:return m_scaler.referenceResolution.x * 0.4f;
 		}
-		*/
+
 		return m_scaler.referenceResolution.x * 0.8f;
 	}
 
@@ -251,22 +250,51 @@ public class HUDStatBar : MonoBehaviour {
 
 	void ResizeBars()
 	{
-		RectTransform rectTransform;
-		Vector2 size;
-
-		rectTransform = m_bar.GetComponent<RectTransform>();
-		size = rectTransform.sizeDelta;
-		float fraction = Mathf.Clamp01(GetMaxValue() * GetSizePerUnit());
-		size.x = fraction * GetMaxScreenSize();
-		rectTransform.sizeDelta = size;
-
-		if ( m_baseBar != null )
+		switch( m_type )
 		{
-			rectTransform = m_baseBar.GetComponent<RectTransform>();
-			size = rectTransform.sizeDelta;
-			fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
-			size.x = fraction * GetMaxScreenSize();
-			rectTransform.sizeDelta = size;
+			case Type.Energy:
+			case Type.Health:
+			{
+				RectTransform rectTransform;
+				Vector2 size;
+
+				rectTransform = m_bar.GetComponent<RectTransform>();
+				size = rectTransform.sizeDelta;
+				float fraction = Mathf.Clamp01(GetMaxValue() * GetSizePerUnit());
+				size.x = fraction * GetMaxScreenSize();
+				rectTransform.sizeDelta = size;
+
+				if ( m_baseBar != null )
+				{
+					rectTransform = m_baseBar.GetComponent<RectTransform>();
+					size = rectTransform.sizeDelta;
+					fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
+					size.x = fraction * GetMaxScreenSize();
+					rectTransform.sizeDelta = size;
+				}
+			}break;
+			case Type.Fury:
+			case Type.SuperFury:
+			{
+				RectTransform rectTransform;
+				Vector2 size;
+				rectTransform = m_bar.GetComponent<RectTransform>();
+				size = rectTransform.sizeDelta;
+				float fraction = GetMaxValue();
+				size.x = fraction * GetMaxScreenSize();
+				rectTransform.sizeDelta = size;
+
+
+				if ( m_baseBar != null )
+				{
+					rectTransform = m_baseBar.GetComponent<RectTransform>();
+					size = rectTransform.sizeDelta;
+					fraction = GetBaseValue();
+					size.x = fraction * GetMaxScreenSize();
+					rectTransform.sizeDelta = size;
+				}
+
+			}break;
 		}
 	}
 

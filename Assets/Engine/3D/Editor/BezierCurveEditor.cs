@@ -218,15 +218,18 @@ public class BezierCurveEditor : Editor {
 			p = targetCurve.GetPoint(i);
 			if(p.locked) continue;
 
-			// The point itself
-			Handles.color = Colors.white;
-			p.globalPosition = Handles.PositionHandle(p.globalPosition, Quaternion.identity);
-
-			// Handlers
-			if(p.handleStyle != BezierPoint.HandleStyle.NONE) {
-				Handles.color = Colors.skyBlue;
-				p.globalHandle1 = Handles.PositionHandle(p.globalHandle1, Quaternion.identity);
-				p.globalHandle2 = Handles.PositionHandle(p.globalHandle2, Quaternion.identity);
+			// Draw either the handler for the point itself or for the handles
+			if(!(Event.current.modifiers == EventModifiers.Control)) {
+				// The point itself
+				Handles.color = Colors.white;
+				p.globalPosition = Handles.PositionHandle(p.globalPosition, Quaternion.identity);
+			} else {
+				// Handlers
+				if(p.handleStyle != BezierPoint.HandleStyle.NONE) {
+					Handles.color = Colors.skyBlue;
+					p.globalHandle1 = Handles.PositionHandle(p.globalHandle1, Quaternion.identity);
+					p.globalHandle2 = Handles.PositionHandle(p.globalHandle2, Quaternion.identity);
+				}
 			}
 		}
 

@@ -81,7 +81,7 @@ public class MainHUDController : MonoBehaviour {
 		energyBar.value = InstanceManager.player.energy;
 
 		// Update fury bar
-		furyBar.value = InstanceManager.player.fury;
+		// furyBar.value = InstanceManager.player.fury;
 
 		// Update time - only if changed by more than 1 second
 		long currentTime = (long)App.Instance.gameLogic.elapsedSeconds;

@@ -13,36 +13,41 @@ public class FrameColoring : MonoBehaviour
 	public Material m_material;
 
 	private bool m_furyOn = false;
-	private bool m_superFuryOn = false;
+	DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
 	private bool m_stargingOn = false;
 
 	void Start()
 	{
 		m_value = 0;
 		m_color = Color.black;
-		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.AddListener<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, OnSuperFury);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
 	}
 
 	private void OnDestroy() 
 	{
-		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.RemoveListener<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, OnSuperFury);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
 	}
 
 	void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
-    	if (m_superFuryOn)
-    	{
-			m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 15);
-			m_color = Color.Lerp( m_color, m_superFireColor, Time.deltaTime * 15 );
-    	}
-		else if (m_furyOn)
+    	if (m_furyOn)
 		{
-			m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 10);
-			m_color = Color.Lerp( m_color, m_fireColor, Time.deltaTime * 10 );
+			switch( m_furyType )
+			{
+				case DragonBreathBehaviour.Type.Standard:
+				{
+					m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 10);
+					m_color = Color.Lerp( m_color, m_fireColor, Time.deltaTime * 10 );
+				}break;
+				case DragonBreathBehaviour.Type.Super:
+				{
+					m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 15);
+					m_color = Color.Lerp( m_color, m_superFireColor, Time.deltaTime * 15 );
+				}break;
+			}
+
 		}
 		else if ( m_stargingOn )
 		{
@@ -66,13 +71,9 @@ public class FrameColoring : MonoBehaviour
 		}
     }
 
-	private void OnFury(bool _enabled) {
+	private void OnFury(bool _enabled, DragonBreathBehaviour.Type _type) {
 		m_furyOn = _enabled;
-	}
-
-	private void OnSuperFury( bool _enable )
-	{
-		m_superFuryOn = _enable;
+		m_furyType = _type;
 	}
 
 	private void OnStarving( bool _enabled )

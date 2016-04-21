@@ -58,7 +58,7 @@ public class GameCameraController : MonoBehaviour {
 	private float m_interestLerp = 0;
 	private Vector3 m_interestPosition = Vector3.zero;
 	private bool m_furyOn = false;
-	private bool m_superFury = false;
+	private DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
 	private bool m_slowMotionOn;
 	private bool m_slowMoJustStarted;
 	private bool m_boostOn;
@@ -158,7 +158,6 @@ public class GameCameraController : MonoBehaviour {
 		// Reset camera target
 		m_interest = null;
 		m_furyOn = false;
-		m_superFury = false;
 		m_slowMotionOn = false;
 		m_slowMoJustStarted = false;
 		m_boostOn = false;
@@ -173,8 +172,7 @@ public class GameCameraController : MonoBehaviour {
 		// Register to Fury events
 		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
 
-		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.AddListener<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, OnSuperFury);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
@@ -260,7 +258,7 @@ public class GameCameraController : MonoBehaviour {
 					}
 
 					// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
-					if (m_furyOn || m_superFury)
+					if (m_furyOn)
 					{
 						m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f) + lerpoValue, Time.deltaTime );
 					}
@@ -288,7 +286,7 @@ public class GameCameraController : MonoBehaviour {
 					}
 					else
 					{
-						if ( m_interest != null || m_slowMotionOn || m_furyOn || m_superFury || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
+						if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
 							targetZoom = m_farZoom;
 						m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime);
 					}
@@ -377,8 +375,7 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() 
 	{
-		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.RemoveListener<bool>(GameEvents.SUPER_FURY_RUSH_TOGGLED, OnSuperFury);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
@@ -474,12 +471,9 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Callbacks														//
 	//------------------------------------------------------------------//
-	private void OnFury(bool _enabled) {
+	private void OnFury(bool _enabled, DragonBreathBehaviour.Type _type) {
 		m_furyOn = _enabled;
-	}
-
-	private void OnSuperFury(bool _enable){
-		m_superFury = _enable;
+		m_furyType = _type;
 	}
 
 	private void OnSlowMotion( bool _enabled)
