@@ -598,6 +598,7 @@ MonoBehaviour:
     max: 1
   m_distanceAttenuation: 3.5
   m_checkCollisions: 1
+  m_keepInsideArea: 0
   m_maxSpeed: 10
   m_maxRunSpeed: 15
   m_slowingRadius: 0
@@ -641,10 +642,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 4
+  m_sensorMinRadius: 2.5
   m_sensorMaxRadius: 7.74
   m_sensorAngle: 360
   m_sensorAngleOffset: 360
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11409000
 MonoBehaviour:
@@ -713,6 +715,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 1
+  m_faceLeftAngleY: 180
+  m_faceRightAngleY: 0
 --- !u!114 &11486564
 MonoBehaviour:
   m_ObjectHideFlags: 1
