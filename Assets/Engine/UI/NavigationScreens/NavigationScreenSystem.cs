@@ -61,6 +61,10 @@ public class NavigationScreenSystem : MonoBehaviour {
 			if(m_screens[i] == m_initialScreen) {
 				m_currentScreenIdx = i;
 				m_screens[i].Show(NavigationScreen.AnimType.NONE);
+
+				// Notify game!
+				Messenger.Broadcast<NavigationScreen, NavigationScreen, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED, null, currentScreen, false);
+				Messenger.Broadcast<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, -1, i, false);
 			} else {
 				m_screens[i].Hide(NavigationScreen.AnimType.NONE);
 			}
