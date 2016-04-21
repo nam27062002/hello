@@ -45,9 +45,9 @@ public class InflammableDecoration : Initializable {
 
 		int coins = 0;
 
-		if (GetComponent<Entity>() != null) 
+		if (m_entity!= null) 
 		{
-			coins = GetComponent<Entity>().reward.coins;
+			coins = m_entity.reward.coins;
 		}
 
 		int coinsPerNode = coins / m_fireNodes.Length;
