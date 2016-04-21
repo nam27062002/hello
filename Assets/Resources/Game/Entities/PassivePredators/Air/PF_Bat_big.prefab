@@ -91,12 +91,13 @@ GameObject:
   - 114: {fileID: 11478934}
   - 114: {fileID: 11421898}
   - 114: {fileID: 11448254}
-  - 114: {fileID: 11405866}
+  - 114: {fileID: 11462906}
+  - 114: {fileID: 11431970}
+  - 114: {fileID: 11410540}
   - 114: {fileID: 11467640}
-  - 114: {fileID: 11409254}
-  - 114: {fileID: 11494304}
+  - 114: {fileID: 11427696}
   m_Layer: 8
-  m_Name: bat_small
+  m_Name: PF_Bat_big
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -262,7 +263,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 132400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.810619, y: 22.170092, z: 5.4}
+  m_LocalPosition: {x: 102.94, y: 6.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 443172}
@@ -342,7 +343,7 @@ Transform:
   m_GameObject: {fileID: 132418}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: -0}
-  m_LocalScale: {x: 0.125, y: 0.125, z: 0.125}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children:
   - {fileID: 479232}
   - {fileID: 460014}
@@ -491,7 +492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_deactivate: 1
---- !u!114 &11405866
+--- !u!114 &11410540
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -499,28 +500,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 132400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_fleeAround: 0
-  m_canBeAfraid: 0
-  m_canPanic: 0
-  m_runningTimeRange:
-    min: 2
-    max: 4
-  m_waitRunningRange:
-    min: 7
-    max: 10
-  m_afraidSounds: []
---- !u!114 &11409254
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d38a0ec23dccf4b2b86c84e8267ea659, type: 3}
+  m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11421898
@@ -540,10 +520,33 @@ MonoBehaviour:
   m_distanceAttenuation: 2
   m_checkCollisions: 1
   m_keepInsideArea: 0
-  m_maxSpeed: 5
-  m_maxRunSpeed: 8
+  m_maxSpeed: 8
+  m_maxRunSpeed: 10
   m_slowingRadius: 0
   m_fallOnBurn: 0
+--- !u!114 &11427696
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38a0ec23dccf4b2b86c84e8267ea659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11431970
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_canBeEatenWhileAttacking: 0
 --- !u!114 &11448254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -572,8 +575,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.006564636, y: 0.019999523}
-  radius: 0.263443
+  offset: {x: 0.046878353, y: 0.03343822}
+  radius: 0.46503448
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11459194
 MonoBehaviour:
@@ -603,6 +606,26 @@ MonoBehaviour:
   m_burnSize: 4
   m_burnDuration: 0.75
   m_orientedBurn: 1
+--- !u!114 &11462906
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 3
+  m_attackDelay: 0
+  m_consecutiveAttacks: 2
+  m_retreatingTime: 0
+  m_hasAnimation: 0
+  m_canAim: 0
+  m_eye: {fileID: 0}
+  m_projectilePrefab: {fileID: 0}
+  m_projectileSpawnPoint: {fileID: 0}
 --- !u!114 &11467640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -659,20 +682,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11494304
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea0acfa9987db4db6a4006005c3f5f71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_groupAvoidRadiusRange:
-    min: 1.5
-    max: 2.5
 --- !u!114 &11495124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -964,6 +973,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_hasAnimation
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.z
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_checkCollisions

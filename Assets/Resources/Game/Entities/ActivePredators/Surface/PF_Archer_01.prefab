@@ -293,7 +293,7 @@ GameObject:
   - 114: {fileID: 11453872}
   - 114: {fileID: 11427266}
   m_Layer: 8
-  m_Name: Archer_01
+  m_Name: PF_Archer_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1065,6 +1065,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 18
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11442016
 MonoBehaviour:
@@ -1147,6 +1148,7 @@ MonoBehaviour:
     max: 0
   m_distanceAttenuation: 8
   m_checkCollisions: 1
+  m_keepInsideArea: 0
   m_maxSpeed: 2
   m_maxRunSpeed: 3.5
   m_slowingRadius: 0
@@ -1163,6 +1165,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
+  m_faceLeftAngleY: 180
+  m_faceRightAngleY: 0
 --- !u!114 &11478228
 MonoBehaviour:
   m_ObjectHideFlags: 1

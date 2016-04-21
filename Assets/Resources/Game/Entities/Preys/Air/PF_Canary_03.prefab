@@ -114,7 +114,7 @@ GameObject:
   - 114: {fileID: 11444364}
   - 114: {fileID: 11408074}
   m_Layer: 8
-  m_Name: canary_01
+  m_Name: PF_Canary_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -389,7 +389,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 127370}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 79.71251, y: -24.720491, z: -19.132746}
+  m_LocalPosition: {x: 366.4442, y: -32.986336, z: -19.132746}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 436502}
@@ -435,8 +435,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 5
-  m_sensorMaxRadius: 7
+  m_sensorMinRadius: 2.2
+  m_sensorMaxRadius: 4
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
   m_sensorPosition: {x: 0, y: 0, z: 0}
@@ -453,8 +453,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_groupAvoidRadiusRange:
-    min: 1.3
-    max: 1.7
+    min: 0.4
+    max: 0.5
 --- !u!114 &11418024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -558,11 +558,11 @@ MonoBehaviour:
   m_zOffset:
     min: -1
     max: 1
-  m_distanceAttenuation: 4
+  m_distanceAttenuation: 2.7
   m_checkCollisions: 1
   m_keepInsideArea: 0
-  m_maxSpeed: 2.2
-  m_maxRunSpeed: 3
+  m_maxSpeed: 1.5
+  m_maxRunSpeed: 10
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11449248
@@ -594,11 +594,11 @@ MonoBehaviour:
   m_canBeAfraid: 0
   m_canPanic: 0
   m_runningTimeRange:
-    min: 2
-    max: 3
+    min: 0.8
+    max: 1.2
   m_waitRunningRange:
-    min: 4
-    max: 5
+    min: 1.2
+    max: 3.5
   m_afraidSounds: []
 --- !u!114 &11472838
 MonoBehaviour:
@@ -650,7 +650,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: 9176f5222aa7948898b709ffb9fca480, type: 2}
+  - {fileID: 2100000, guid: de5cff992f1244b9089de5fe5db0c597, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
