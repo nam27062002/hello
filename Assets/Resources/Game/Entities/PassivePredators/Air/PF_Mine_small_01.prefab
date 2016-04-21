@@ -1,0 +1,431 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &170486
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 403548}
+  - 114: {fileID: 11415042}
+  - 114: {fileID: 11496622}
+  - 114: {fileID: 11478026}
+  - 114: {fileID: 11490742}
+  - 114: {fileID: 11463056}
+  - 114: {fileID: 11488518}
+  - 114: {fileID: 11455984}
+  - 114: {fileID: 11498944}
+  - 135: {fileID: 13545632}
+  m_Layer: 11
+  m_Name: PF_Mine_small_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &185214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 405044}
+  - 33: {fileID: 3360394}
+  - 23: {fileID: 2303024}
+  m_Layer: 11
+  m_Name: view
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &403548
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 130.005, y: 7.003, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 405044}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!4 &405044
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185214}
+  m_LocalRotation: {x: 0, y: 0.873729, z: 0, w: -0.48641318}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 403548}
+  m_RootOrder: 0
+--- !u!23 &2303024
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185214}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 2100000, guid: f701550604f6c45b880885de2478cabe, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &3360394
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185214}
+  m_Mesh: {fileID: 4300000, guid: 5b79d2c7dc2744b13aa5c62bde4f1c8a, type: 3}
+--- !u!114 &11415042
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eea89842f1064996b9ae1da2fb16e9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 15
+  m_forceStrength: 10
+  m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
+  m_delayRange:
+    min: 0
+    max: 0.1
+  m_scaleRange:
+    min: 1
+    max: 1.5
+  m_rotationRange:
+    min: 0
+    max: 360
+--- !u!114 &11455984
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 1
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &11463056
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_vulnerable: 0
+  m_onEatenParticles: []
+  m_onEatenSoundProbability: 50
+  m_onEatenSounds: []
+--- !u!114 &11478026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c28447e5a0434b5bb4ef7346dabab11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_rotationSpeed: {x: 10, y: 10, z: 10}
+--- !u!114 &11488518
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: mine_small
+  m_onAppearSoundProbability: 40
+  m_onApprearSounds: []
+--- !u!114 &11490742
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23a8e538a74e34b1bb701e0aaeab8b36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_deactivate: 1
+--- !u!114 &11496622
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c3935b25f9e54b058102e55c7851942, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_amplitude: 0.4
+  m_frequency: 1.5
+--- !u!114 &11498944
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 279d857c822824ee89d79e757d0876fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_destroyOnBurn: 0
+  m_checkFireTime: 0.25
+  m_maxHealth: 1
+  m_ashesAsset: 
+  m_dissolveTime: 0.75
+  m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
+  m_scaleRange:
+    min: 1
+    max: 1.5
+  m_rotationRange:
+    min: 0
+    max: 360
+  m_shake: 0
+  m_slowMotion: 0
+  m_burnSize: 4
+  m_burnDuration: 0.75
+  m_orientedBurn: 1
+--- !u!135 &13545632
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170486}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.75
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_radius
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_edibleFromTier
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_maxHealth
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_typeID
+      value: mine_small_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_rotationSpeed.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_rotationSpeed.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_rotationSpeed.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_reward.score
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbackProbability
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.data[0]
+      value: Booom!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.data[1]
+      value: Watch Out!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: damageFeedbacks.Array.data[2]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.data[0]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.data[1]
+      value: Steel Stomach!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: eatFeedbacks.Array.data[2]
+      value: Hot!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbackProbability
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.data[0]
+      value: Boooom!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.data[1]
+      value: Minefield!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damageFeedbacks.Array.data[2]
+      value: Watch Out!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.data[0]
+      value: Iron Stomach!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.data[1]
+      value: Hot!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_eatFeedbacks.Array.data[2]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_probabilities.Array.data[1]
+      value: .25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[0]
+      value: Watch Out!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[1]
+      value: Minefield!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[0].data.Array.data[2]
+      value: Boooom!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[0]
+      value: Minesweeper!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[1]
+      value: Iron Stomach!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_feedbacks.Array.data[1].data.Array.data[2]
+      value: Tasty!
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_goldenChance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_forceStrength
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_damage
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_dissolveTime
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_explosionPrefab
+      value: 
+      objectReference: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
+    - target: {fileID: 0}
+      propertyPath: m_scaleRange.max
+      value: 1.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 170486}
+  m_IsPrefabParent: 1

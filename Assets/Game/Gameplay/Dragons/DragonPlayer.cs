@@ -270,6 +270,25 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
+	public void StartIntroMovement()
+	{
+		// Look for a default spawn point for this dragon type in the scene and move the dragon there
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + data.def.sku);
+		if(spawnPointObj == null) {
+			// We couldn't find a spawn point for this specific type, try to find a generic one
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
+		}
+		if(spawnPointObj != null) 
+		{
+			Vector3 introPos = spawnPointObj.transform.position;
+			transform.position = introPos + Vector3.left * 30;
+			if (InstanceManager.pet != null) {
+				InstanceManager.pet.transform.position = introPos;
+			}
+			GetComponent<DragonMotion>().StartIntroMovement(introPos);
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GETTERS															//
 	//------------------------------------------------------------------//

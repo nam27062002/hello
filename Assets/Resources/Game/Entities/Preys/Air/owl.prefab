@@ -435,13 +435,9 @@ MonoBehaviour:
   m_zOffset:
     min: 0
     max: 0
-  m_flockAvoidRadiusRange:
-    min: 0.9
-    max: 1.4
-  m_steerForce: 0.1
-  m_mass: 0.2
   m_distanceAttenuation: 8
   m_checkCollisions: 1
+  m_keepInsideArea: 0
   m_maxSpeed: 5.5
   m_maxRunSpeed: 10
   m_slowingRadius: 2
@@ -471,8 +467,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35a21328d0ae84514abd801849140d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fleeAround: 0
   m_canBeAfraid: 0
   m_canPanic: 0
+  m_runningTimeRange:
+    min: 2
+    max: 4
+  m_waitRunningRange:
+    min: 4
+    max: 5
   m_afraidSounds: []
 --- !u!114 &11417704
 MonoBehaviour:
@@ -486,7 +489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 0
-  m_onEatenParticle: 
+  m_onEatenParticles: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
 --- !u!114 &11433180
@@ -533,6 +536,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 14
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11469796
 MonoBehaviour:
@@ -546,6 +550,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
+  m_faceLeftAngleY: 180
+  m_faceRightAngleY: 0
 --- !u!114 &11475506
 MonoBehaviour:
   m_ObjectHideFlags: 1
