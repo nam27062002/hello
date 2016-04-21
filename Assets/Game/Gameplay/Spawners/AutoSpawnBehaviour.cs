@@ -37,7 +37,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	void Start() {
 		SpawnerManager.instance.Register(this);
 
-		m_state = State.Idle;
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
 		GameObject viewBurned = transform.FindChild("view_burned").gameObject;
@@ -49,7 +48,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		}
 	}
 
-	void Update() {
+	public void Initialize() {
+		m_state = State.Idle;
+	}
+
+	public void UpdateTimers() {
 		if (m_state == State.Respawning) {
 			if (m_timer > 0) {
 				m_timer -= Time.deltaTime;
@@ -64,9 +67,17 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		}
 	}
 
-	public void Respawn() {
+	public void UpdateLogic() {
+
+	}
+
+	public void StartRespawn() {
 		m_timer = m_spawnTime;
 		m_state = State.Respawning;
+	}
+
+	public void Respawn() {
+
 	}
 		
 	private void Spawn() {		
