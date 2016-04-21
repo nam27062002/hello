@@ -54,7 +54,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 					{
 						// Check if I can burn this fire Node
 						FireNode fireNode = node.GetComponent<FireNode>();
-						if ( fireNode.canBurn )
+						if ( fireNode.canBurn || m_breath.type == DragonBreathBehaviour.Type.Super )
 						{
 							fireNode.Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
 						}

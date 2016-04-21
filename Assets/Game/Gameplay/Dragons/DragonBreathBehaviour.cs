@@ -99,6 +99,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private float m_superFuryMax;
 	private float m_superFuryCoinsMultiplier;
 
+	private DefinitionNode m_spawnEffects = null;
+	private DefinitionNode m_decorationEffects = null;
+
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -118,6 +122,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_isFuryOn = false;
 		m_bounds2D = new Rect();
+
+
+		// From dragon tier get burning possibilities
+		m_spawnEffects = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "tier", m_dragon.data.tierDef.sku);
+		m_decorationEffects = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "tier", m_dragon.data.tierDef.sku);
 
 		// Init content cache
 		m_furyBase = m_dragon.data.def.GetAsFloat("furyMax");
@@ -361,19 +370,37 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 
+
+	// First version to check burn/explode flags. This should be cached? or only consulted once?
+
 	public bool CanBurn( InflammableBehaviour _inflammable)
 	{
-		if ( m_type == Type.Super )
-			return true;
-		
+		if ( m_spawnEffects != null )
+		{
+			return m_spawnEffects.GetAsBool( _inflammable.sku , false);
+		}
 		return false;
 	}
 
 	public bool CanBurn( InflammableDecoration _decoration )
 	{
-		if ( m_type == Type.Super )
-			return true;
+		if ( m_decorationEffects != null )
+		{
+			string param = m_decorationEffects.Get( _decoration.sku, "" );
+			if ( param.Equals("explode") || param.Equals("true") )
+				return true;
+		}
+		return false;
+	}
 
+	public bool ShouldExplode( InflammableDecoration _decoration )
+	{
+		if ( m_decorationEffects != null )
+		{
+			string param = m_decorationEffects.Get( _decoration.sku, "" );
+			if ( param.Equals("explode"))
+				return true;
+		}
 		return false;
 	}
 

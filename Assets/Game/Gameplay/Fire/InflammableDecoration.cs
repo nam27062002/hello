@@ -17,17 +17,16 @@ public class InflammableDecoration : Initializable {
 	private AutoSpawnBehaviour m_autoSpawner;
 	private Vector3 m_startPosition;
 
-	public enum DecorationSize
-	{
-		SMALL,
-		MEDIUM,
-		BIG
-	};
-	public DecorationSize m_decorationSize;
-
 	private Dictionary<Renderer, Material[]>  m_originalMaterials = new Dictionary<Renderer, Material[]>();
 	private Material m_ashMaterial;
 	public string m_ashesAsset;
+	private Entity m_entity;
+	public string sku
+	{
+		get{ return m_entity.sku; }
+	}
+
+	private bool m_shouldExplode;
 
 	// Use this for initialization
 	IEnumerator Start()
@@ -37,6 +36,7 @@ public class InflammableDecoration : Initializable {
 			yield return null;
 		}
 
+		m_entity = GetComponent<Entity>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
@@ -54,6 +54,7 @@ public class InflammableDecoration : Initializable {
 
 		DragonBreathBehaviour breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 		bool _canBeBurned = breath.CanBurn( this );
+		m_shouldExplode = breath.ShouldExplode( this );
 		for (int i = 0; i < m_fireNodes.Length - 1; i++) {
 			m_fireNodes[i].Init(coinsPerNode, _canBeBurned);
 		}
@@ -163,34 +164,12 @@ public class InflammableDecoration : Initializable {
 	bool ShouldInstantExplode()
 	{
 		// Maybe check if a critial node was hit
-		// Compare dragon size/tier to decoration Size
+		if ( m_shouldExplode )
+			return true;
+
 		DragonTier _dragonTier = InstanceManager.player.data.tier;
-		switch( _dragonTier )
-		{
-			case DragonTier.TIER_3:
-			{
-				return true;
-			}break;
-			case DragonTier.TIER_2:
-			{
-				if ( m_decorationSize <= DecorationSize.MEDIUM )
-					return true;	
-			}break;
-			case DragonTier.TIER_1:
-			{
-				if ( m_decorationSize <= DecorationSize.SMALL )
-					return true;
-			}break;
-			case DragonTier.TIER_0:
-			{
-				if ( m_decorationSize <= DecorationSize.SMALL )
-					return true;
-			}break;
-			default:
-			{
-				return false;
-			}break;
-		}
+		if (InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Super)
+			return true;
 
 		return false;
 	}

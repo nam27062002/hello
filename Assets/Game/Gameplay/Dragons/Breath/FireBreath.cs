@@ -290,7 +290,7 @@ public class FireBreath : DragonBreathBehaviour {
 				if (IsInsideArea(entity.transform.position)) 
 				{
 					// Check if I can burn it
-					if (CanBurn( entity ))
+					if (CanBurn( entity ) || m_type == Type.Super)
 					{
 						entity.Burn(damage * Time.deltaTime, transform);
 					}

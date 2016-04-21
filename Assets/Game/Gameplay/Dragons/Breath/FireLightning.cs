@@ -188,7 +188,7 @@ public class FireLightning : DragonBreathBehaviour {
 			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
 			if (entity != null) 
 			{
-				if ( CanBurn( entity ) )
+				if ( CanBurn( entity ) || m_type == Type.Super )
 				{
 					entity.Burn(damage * Time.deltaTime, transform);
 				}

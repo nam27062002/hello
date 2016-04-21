@@ -80,7 +80,7 @@ public class FireBall : MonoBehaviour
 			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
 			if (entity != null) 
 			{
-				if (m_breath.CanBurn( entity ))
+				if (m_breath.CanBurn( entity ) || m_breath.type == DragonBreathBehaviour.Type.Super)
 				{
 					entity.Burn(m_damage, transform);
 				}
