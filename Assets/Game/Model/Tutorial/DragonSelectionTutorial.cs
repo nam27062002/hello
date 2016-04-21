@@ -27,18 +27,25 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		IDLE,
 		DELAY,
 		RUNNING,
+		BACK_DELAY,
 		BACK
 	};
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// External references
+	// Exposed setup
 	[SerializeField] private float m_delay = 1f;
 	[SerializeField] private float m_duration = 10f;
+	[SerializeField] private float m_backdelay = 1f;
 	[SerializeField] private float m_backDuration = 1.5f;
 	[SerializeField] private CustomEase.EaseType m_ease = CustomEase.EaseType.quartInOut_01;
+
+	// External references
 	private MenuDragonScroller3D m_scroller = null;
+	private CanvasGroup m_canvasGroup = null;
+
+	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
 	private State m_state = State.IDLE;
 	
@@ -51,6 +58,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	private void Awake() {
 		// Get external references
 		m_scroller = FindObjectOfType<MenuDragonScroller3D>();
+		m_canvasGroup = GetComponent<CanvasGroup>();
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
 		Messenger.AddListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnScreenChanged);
@@ -82,20 +90,26 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_state = State.RUNNING;
 					m_timer.Start(m_duration);
 				}
-
-				// [AOC] HACK!! For some reason the HUD is not hiding on the StartTutorial call - force it here
-				//InstanceManager.GetSceneController<MenuSceneController>().hud.enabled = false;
 			} break;
 
 			case State.RUNNING: {
 				// Timer finished?
 				if(m_timer.Finished()) {
-					// Yes! Start scroll back animation
-					m_state = State.BACK;
+					// Yes! Pause before going back
+					m_state = State.BACK_DELAY;
 					m_timer.Start(m_backDuration);
 				} else {
 					// Timer not finished, scroll
 					m_scroller.delta = m_timer.GetDelta(m_ease);
+				}
+			} break;
+
+			case State.BACK_DELAY: {
+				// Timer finished?
+				if(m_timer.Finished()) {
+					// Yes! Start scroll back animation
+					m_state = State.BACK;
+					m_timer.Start(m_backDuration);
 				}
 			} break;
 
@@ -132,7 +146,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 			// Hide HUD and UI
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
-			GetComponent<CanvasGroup>().alpha = 0;
+			if(m_canvasGroup != null) m_canvasGroup.alpha = 0;
 
 			// Instant scroll to first dragon
 			m_scroller.delta = 0f;
@@ -155,7 +169,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 			// Show UI back
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceShow(true);
-			GetComponent<CanvasGroup>().DOFade(1f, 0.25f);
+			if(m_canvasGroup != null) m_canvasGroup.DOFade(1f, 0.25f);
 
 			// Control vars
 			m_state = State.IDLE;
