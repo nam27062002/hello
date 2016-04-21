@@ -145,9 +145,12 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	}
 
 	private void PlayHitAnimation() {
-		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-		if (stateInfo.shortNameHash != m_damageAnimState) { // not working
-			m_animator.SetTrigger("damage");// receive damage?
+		if ( m_animator != null )
+		{
+			AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+			if (stateInfo.shortNameHash != m_damageAnimState) { // not working
+				m_animator.SetTrigger("damage");// receive damage?
+			}
 		}
 	}
 
