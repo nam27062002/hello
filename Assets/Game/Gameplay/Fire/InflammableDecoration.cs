@@ -216,4 +216,13 @@ public class InflammableDecoration : Initializable {
 			}
 		}
 	}
+
+	void OnDrawGizmosSelected() {
+		if (m_fireNodes != null) {
+			Gizmos.color = Color.magenta;
+			for (int i = 0; i < m_fireNodes.Length; i++) {
+				Gizmos.DrawSphere(m_fireNodes[i].transform.position, 0.25f);
+			}
+		}
+	}
 }
