@@ -22,7 +22,7 @@ public class PathController : MonoBehaviour {
 	private RectAreaBounds m_bounds = new RectAreaBounds(Vector3.zero, Vector3.zero);
 	public RectAreaBounds bounds { get { UpdateBounds(); return m_bounds; } }
 
-	void Start() {
+	void Awake() {
 		m_index = 0;
 		m_direction = 1;
 
