@@ -62,5 +62,5 @@ SubShader {
 		ENDCG
 	}
 }
-
+Fallback "Mobile/VertexLit"
 }

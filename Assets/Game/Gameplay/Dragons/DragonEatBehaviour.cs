@@ -13,7 +13,6 @@ public class DragonEatBehaviour : EatBehaviour {
 	void Start() {
 		m_dragon = GetComponent<DragonPlayer>();
 		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
-
 		m_motion = GetComponent<DragonMotion>();
 
 		m_tier = m_dragon.data.tier;
@@ -37,8 +36,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		{
 			m_dragon.AddLife(reward.health);
 		}
-
-		m_dragon.AddFury(reward.fury);
 	}
 
 	protected override void SlowDown(bool _enable) {

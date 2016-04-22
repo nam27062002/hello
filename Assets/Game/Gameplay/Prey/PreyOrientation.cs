@@ -3,25 +3,22 @@
 [DisallowMultipleComponent]
 public class PreyOrientation : Orientation {
 
+	[SeparatorAttribute]
 	[SerializeField] private bool m_faceDirection;
 	public bool faceDirection { get { return m_faceDirection; } }
+
+	[SeparatorAttribute]
+	[SerializeField] private float m_faceLeftAngleY = 180f;
+	[SerializeField] private float m_faceRightAngleY = 0f;
 
 	private Vector3 m_direction;
 
 	private Quaternion m_targetRotation;
 	private Quaternion m_rotation;
 
-	private Animator m_animator;
-
-	private float m_angle;
-
-	private bool m_turningRight;
-	private bool m_turningLeft;
-
 
 	// Use this for initialization
 	void Awake() {
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_targetRotation = transform.rotation;
 		m_rotation = transform.rotation;
 		m_direction = Vector3.right;
@@ -51,21 +48,13 @@ public class PreyOrientation : Orientation {
 			m_targetRotation = Quaternion.Euler(eulerRot);		
 		} else {
 			// Rotate so it faces the right direction (replaces 2D sprite flip)
-			float angleY = 0f;
+			float angleY = m_faceRightAngleY;
 
 			if (m_direction.x < 0f) {
-				angleY = 180f;
+				angleY = m_faceLeftAngleY;
 			}
 
 			m_targetRotation = Quaternion.Euler(0, angleY, 0);
-		}
-
-		if (m_animator) {
-			if (m_direction.x >= 0f && _direction.x < 0f) {
-				m_animator.SetTrigger("turn right");
-			} else if (m_direction.x < 0f && _direction.x >= 0f) {
-				m_animator.SetTrigger("turn left");
-			}
 		}
 
 		m_direction = _direction;

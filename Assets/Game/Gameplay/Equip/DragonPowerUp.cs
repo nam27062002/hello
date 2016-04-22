@@ -52,7 +52,11 @@ public class DragonPowerUp : MonoBehaviour {
 				}break;
 				case "fury_increase":
 				{
-					player.SetFuryModifier( def.GetAsFloat("param1") );
+					/*
+					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
+					if ( breath != null )
+						breath.SetFuryModifier( def.GetAsFloat("param1") );
+						*/
 				}break;
 
 				case "dive":	// lets you move inside water

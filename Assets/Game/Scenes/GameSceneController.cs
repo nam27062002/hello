@@ -287,7 +287,8 @@ public class GameSceneController : GameSceneControllerBase {
 				// Don't make it playable until the countdown ends
 				InstanceManager.player.playable = false;
 				InstanceManager.player.gameObject.SetActive(true);
-				InstanceManager.player.MoveToSpawnPoint();
+				// InstanceManager.player.MoveToSpawnPoint();
+				InstanceManager.player.StartIntroMovement();
 
 				// Spawn chest
 				ChestManager.SelectChest();

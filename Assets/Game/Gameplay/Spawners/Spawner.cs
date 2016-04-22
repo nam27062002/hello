@@ -15,6 +15,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	[Header("Activation")]
 	[SerializeField] private bool m_alwaysActive = false;
+	[SerializeField] private bool m_activeOnStart = false;
 	[SerializeField] private float m_enableTime;
 	[SerializeField] private float m_disableTime;
 
@@ -47,8 +48,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Use this for initialization
 	protected virtual void Start() {
-		SpawnerManager.instance.Register(this);
-
 		m_entities = new GameObject[m_quantity.max];
 
 		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
@@ -58,15 +57,16 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_area = GetArea();
 
 		m_groupController = GetComponent<EntityGroupController>();
-		if ( m_groupController )
-		{
+		if (m_groupController) {
 			m_groupController.Init( m_quantity.max );
 		}
 
+		SpawnerManager.instance.Register(this);
 
+		gameObject.SetActive(false);
 	}
 
-	protected virtual void OnEnable() {
+	public void Initialize() {
 		m_enableTimer = m_enableTime;
 		m_disableTimer = m_disableTime;
 
@@ -78,6 +78,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_entitiesKilled = 0;
 
 		m_allEntitiesKilledByPlayer = false;
+
+		if (m_activeOnStart) {
+			Spawn();
+		}
 	}
 
 	public void ResetSpawnTimer()
@@ -113,9 +117,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 		}
 	}
-
-	// Update is called once per frame
-	void Update () {		
+		
+	public void UpdateTimers() {		
 		if (m_alwaysActive) {
 			if (m_entityAlive == 0) {
 				Spawn();
@@ -155,7 +158,15 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 	}
 
-	void Spawn() {
+	public void UpdateLogic() {
+		ExtendedUpdateLogic();
+	}
+
+	public void Respawn() {
+
+	}
+
+	private void Spawn() {
 		m_entitySpawned = (uint)m_quantity.GetRandom();
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			m_entities[i] = PoolManager.GetInstance(m_entityPrefab.name);
@@ -201,6 +212,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	protected virtual void ExtendedSpawn() {}
+	protected virtual void ExtendedUpdateLogic() {}
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();

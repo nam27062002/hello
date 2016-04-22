@@ -10,7 +10,7 @@ public struct Reward  {
 	[Separator("", 7)]
 	public float health;
 	public float energy;
-	public float fury;
+	// public float fury;
 
 	[Separator("", 7)]
 	public float xp;
@@ -34,7 +34,7 @@ public struct Reward  {
 		newReward.pc = _r1.pc + _r2.pc;
 		newReward.health = _r1.health + _r2.health;
 		newReward.energy = _r1.energy + _r2.energy;
-		newReward.fury = _r1.fury + _r2.fury;
+		// newReward.fury = _r1.fury + _r2.fury;
 		newReward.xp = _r1.xp + _r2.xp;
 		newReward.origin = _r1.origin + _r2.origin;
 		return newReward;
@@ -53,7 +53,7 @@ public struct Reward  {
 		newReward.pc = _r1.pc - _r2.pc;
 		newReward.health = _r1.health - _r2.health;
 		newReward.energy = _r1.energy - _r2.energy;
-		newReward.fury = _r1.fury - _r2.fury;
+		// newReward.fury = _r1.fury - _r2.fury;
 		newReward.xp = _r1.xp - _r2.xp;
 		newReward.origin = "-";
 		return newReward;
@@ -72,7 +72,7 @@ public struct Reward  {
 		newReward.pc = _r1.pc * _r2.pc;
 		newReward.health = _r1.health * _r2.health;
 		newReward.energy = _r1.energy * _r2.energy;
-		newReward.fury = _r1.fury * _r2.fury;
+		// newReward.fury = _r1.fury * _r2.fury;
 		newReward.xp = _r1.xp * _r2.xp;
 		newReward.origin = "*";
 		return newReward;
@@ -91,7 +91,7 @@ public struct Reward  {
 		newReward.pc = _r1.pc / _r2.pc;
 		newReward.health = _r1.health / _r2.health;
 		newReward.energy = _r1.energy / _r2.energy;
-		newReward.fury = _r1.fury / _r2.fury;
+		// newReward.fury = _r1.fury / _r2.fury;
 		newReward.xp = _r1.xp / _r2.xp;
 		newReward.origin = "/";
 		return newReward;
@@ -113,7 +113,7 @@ public struct Reward  {
 		newReward.pc = (int)(_r1.pc + _amount);
 		newReward.health = _r1.health + _amount;
 		newReward.energy = _r1.energy + _amount;
-		newReward.fury = _r1.fury + _amount;
+		// newReward.fury = _r1.fury + _amount;
 		newReward.xp = _r1.xp + _amount;
 		newReward.origin = _r1.origin;
 		return newReward;
@@ -132,7 +132,7 @@ public struct Reward  {
 		newReward.pc = (int)(_r1.pc * _factor);
 		newReward.health = _r1.health * _factor;
 		newReward.energy = _r1.energy * _factor;
-		newReward.fury = _r1.fury * _factor;
+		// newReward.fury = _r1.fury * _factor;
 		newReward.xp = _r1.xp * _factor;
 		newReward.origin = _r1.origin;
 		return newReward;

@@ -33,6 +33,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private float m_starvingLimit;
 	private float m_starvingHealthModifier;
 
+
+	private int m_damageAnimState;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -59,6 +62,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		// Curse initialization
 		m_curseTimer = 0;
 		m_curseDPS = 0;
+
+		//
+		m_damageAnimState = Animator.StringToHash("Damage");
 	}
 		
 	// Update is called once per frame
@@ -87,10 +93,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	public void ReceiveDamage(float _value, Transform _source = null, bool hitAnimation = true) 
 	{
-		if (enabled) 
-		{
-			if ( hitAnimation )
-				m_animator.SetTrigger("damage");// receive damage?
+		if (enabled) {
+			if (hitAnimation)
+				PlayHitAnimation();
+			
 			float damage = GetModifiedDamageForCurrentHealth( _value );
 			m_dragon.AddLife(-damage);
 			Messenger.Broadcast<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _value, _source);
@@ -101,7 +107,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	{
 		m_curseTimer = _duration;
 		m_curseDPS = _damage;
-		m_animator.SetTrigger("damage");// receive damage?
+		PlayHitAnimation();
 		Messenger.Broadcast(GameEvents.PLAYER_CURSED);
 	}
 
@@ -138,5 +144,17 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		return damage;
 	}
 
+	private void PlayHitAnimation() {
+		if ( m_animator != null )
+		{
+			AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+			if (stateInfo.shortNameHash != m_damageAnimState) { // not working
+				m_animator.SetTrigger("damage");// receive damage?
+			}
+		}
+	}
 
+	void OnEnable() {
+		PlayHitAnimation();
+	}
 }

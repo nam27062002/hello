@@ -27,7 +27,14 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	private int m_selectedIdx = 0;
+	public int selectedIdx {
+		get { return m_selectedIdx; }
+	}
+
 	private List<DefinitionNode> m_sortedDefs = null;
+	public List<DefinitionNode> sortedDefs {
+		get { return m_sortedDefs; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -78,6 +85,19 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	public void SetSelectedDragon(string _sku) {
 		// Notify game
 		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _sku);
+	}
+
+	/// <summary>
+	/// Changes dragon selected to the given one, by dragon index.
+	/// Index will be clamped to the amount of dragons.
+	/// </summary>
+	/// <param name="_idx">Index of the dragon we want to be the current one.</param>
+	public void SetSelectedDragon(int _idx) {
+		// Clamp index
+		_idx = Mathf.Clamp(_idx, 0, m_sortedDefs.Count);
+
+		// Select by sku
+		SetSelectedDragon(m_sortedDefs[_idx].sku);
 	}
 
 	//------------------------------------------------------------------//

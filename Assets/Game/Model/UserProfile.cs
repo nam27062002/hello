@@ -32,6 +32,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		public long coins = 0;
 		public long pc = 0;
 		public string currentDragon = "";	// sku
+		public int superFuryProgression = 0;
 		/*[SkuList(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
 		[EnumMask] public TutorialStep tutorialStep = TutorialStep.INIT;
 	}
@@ -67,6 +68,12 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	public static string currentLevel {
 		get { return instance.m_currentLevel; }
 		set { instance.m_currentLevel = value; }
+	}
+
+	[SerializeField] private int m_superFuryProgression = 0;
+	public static int superFuryProgression {
+		get { return instance.m_superFuryProgression; }
+		set { instance.m_superFuryProgression = value; }
 	}
 
 	[SerializeField] private TutorialStep m_tutorialStep;
@@ -150,6 +157,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		instance.m_currentDragon = _data.currentDragon;
 		instance.m_currentLevel = _data.currentLevel;
 		instance.m_tutorialStep = _data.tutorialStep;
+		instance.m_superFuryProgression = _data.superFuryProgression;
 	}
 
 	/// <summary>
@@ -166,6 +174,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		data.currentDragon = instance.m_currentDragon;
 		data.currentLevel = instance.m_currentLevel;
 		data.tutorialStep = instance.m_tutorialStep;
+		data.superFuryProgression = instance.m_superFuryProgression;
 
 		// Return it
 		return data;

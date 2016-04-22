@@ -180,7 +180,7 @@ namespace LevelEditor {
 						case "pc":		toDisplay = _reward[i].pc.ToString();		break;
 						case "health":	toDisplay = _reward[i].health.ToString();	break;
 						case "energy":	toDisplay = _reward[i].energy.ToString();	break;
-						case "fury":	toDisplay = _reward[i].fury.ToString();		break;
+						// case "fury":	toDisplay = _reward[i].fury.ToString();		break;
 						case "xp":		toDisplay = _reward[i].xp.ToString();		break;
 					}
 

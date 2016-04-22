@@ -34,6 +34,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		[CommentAttribute("Distance can reduce the effect of evasive behaviours.")]
 	[SerializeField] private float m_distanceAttenuation = 5f;
 	[SerializeField] private bool m_checkCollisions = true;
+	[SerializeField] private bool m_keepInsideArea = false;
 
 [Header("Speed variations")]
 	[SerializeField] protected float m_maxSpeed;
@@ -218,6 +219,12 @@ public class PreyMotion : Initializable, MotionInterface {
 		if (m_checkCollisions)
 			AvoidCollisions();
 
+		if (m_keepInsideArea && !m_area.Contains( m_position ))
+		{
+			// move back
+			m_steeringForces[Forces.Collision] += (((Vector2)m_area.center) - m_position) * 100;
+		}
+
 		UpdateSteering();
 		UpdateVelocity( m_slowPowerUp );
 		UpdatePosition(delta);
@@ -264,7 +271,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		// we'll keep the distance to our target for external components
 		m_lastSeekDistanceSqr = distanceSqr;
 
-		//desiredVelocity -= m_velocity;
+		desiredVelocity -= m_velocity;
 		m_steeringForces[Forces.Seek] += desiredVelocity;
 	}
 	
@@ -279,7 +286,7 @@ public class PreyMotion : Initializable, MotionInterface {
 			desiredVelocity *= (m_distanceAttenuation * m_distanceAttenuation) / distanceSqr;
 		}
 
-		//desiredVelocity -= m_velocity;
+		desiredVelocity -= m_velocity;
 		m_steeringForces[Forces.Flee] += desiredVelocity;
 	}
 
@@ -318,13 +325,14 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_steering += m_steeringForces[Forces.Seek];
 		m_steering += m_steeringForces[Forces.Flee];
 
+		if (fleeMagnitude > 0 && seekMagnitude > 0) {
+			if ((m_steeringForces[Forces.Seek] + m_steeringForces[Forces.Flee]).magnitude < 2f) {
+				m_steering.Set(-m_steeringForces[Forces.Flee].y, m_steeringForces[Forces.Flee].x);
+				m_steering.Normalize();
+				m_steering *= seekMagnitude;
 
-		if ((m_steeringForces[Forces.Seek] + m_steeringForces[Forces.Flee]).magnitude < 2f) {
-			m_steering.Set(-m_steeringForces[Forces.Flee].y, m_steeringForces[Forces.Flee].x);
-			m_steering.Normalize();
-			m_steering *= seekMagnitude;
-
-			Debug.DrawLine(m_position, m_position + m_steering, Color.blue);
+				Debug.DrawLine(m_position, m_position + m_steering, Color.blue);
+			}
 		}
 			
 		m_steering += m_steeringForces[Forces.Flock];
@@ -338,8 +346,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		}
 	}
 
-	protected virtual void UpdateVelocity( bool insidePowerUp ) {		
-
+	protected virtual void UpdateVelocity( bool insidePowerUp ) {
 		if (!m_burning)
 		{
 			float targetSpeed = m_currentMaxSpeed;
@@ -347,14 +354,17 @@ public class PreyMotion : Initializable, MotionInterface {
 				targetSpeed = m_currentMaxSpeed * 0.5f;
 
 			Vector2 oldVelocity = m_velocity;
-			Vector3 steering = m_steering * targetSpeed;
+			// ????????
+			/*Vector3 steering = m_steering * targetSpeed;
 			Vector3 aaa = m_velocity;
 			Util.MoveTowardsVector3XYWithDamping( ref aaa, ref steering, 32.0f * Time.deltaTime, 8.0f);
 			m_velocity = (Vector2)aaa;
-			// m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, targetSpeed, Time.deltaTime * 10));
-			// m_velocity *= m_speedMultiplier;
-			// m_velocity = Vector2.Lerp(oldVelocity, m_velocity, 0.25f);
+			*/
 
+			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, targetSpeed, Time.deltaTime * 10));
+			m_velocity *= m_speedMultiplier;
+			m_velocity = Vector2.Lerp(oldVelocity, m_velocity, 0.25f);
+			
 			if (m_velocity != Vector2.zero) 
 			{
 				m_direction = m_velocity.normalized;

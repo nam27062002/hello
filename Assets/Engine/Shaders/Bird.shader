@@ -49,7 +49,10 @@
 				float3 normalDirection = normalize(mul(float4(v.normal, 0.0), _World2Object).xyz);
             	float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz); 
             	float3 diffuseReflection = max(0.0, dot(normalDirection, lightDirection)) * _LightColor0;
-            	o.light = fixed4(diffuseReflection + UNITY_LIGHTMODEL_AMBIENT.rgb, 1);
+            	o.light.rgb = ShadeSH9(float4(normalDirection, 1.0)) + diffuseReflection;
+            	o.light.a = 1;
+            	// o.light = fixed4(diffuseReflection , 1) + (UNITY_LIGHTMODEL_AMBIENT * 2);
+
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}

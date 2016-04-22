@@ -85,7 +85,7 @@ public class FollowPathBehaviour : Initializable {
 			ChangeState();
 		}
 
-		if (m_idleProbability > 0f) {
+		if (m_idleProbability > 0f && m_idleProbability < 1f) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0) {
 				switch (m_state) {

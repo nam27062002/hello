@@ -1363,6 +1363,8 @@ MonoBehaviour:
   m_consecutiveAttacks: 5
   m_retreatingTime: 0
   m_hasAnimation: 1
+  m_canAim: 0
+  m_eye: {fileID: 0}
   m_projectilePrefab: {fileID: 173528, guid: 78d009bbb03e2487a988b7740f9aa35b, type: 2}
   m_projectileSpawnPoint: {fileID: 405490}
 --- !u!114 &11415360
@@ -1377,6 +1379,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_faceDirection: 0
+  m_faceLeftAngleY: 180
+  m_faceRightAngleY: 0
 --- !u!114 &11416204
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1443,7 +1447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 0
-  m_onEatenParticle: 
+  m_onEatenParticles: []
   m_onEatenSoundProbability: 40
   m_onEatenSounds:
   - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v06
@@ -1478,6 +1482,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 18
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
+  m_sensorPosition: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11461924
 MonoBehaviour:
@@ -1493,13 +1498,9 @@ MonoBehaviour:
   m_zOffset:
     min: 0
     max: 0
-  m_flockAvoidRadiusRange:
-    min: 0
-    max: 1
-  m_steerForce: 0.5
-  m_mass: 1
   m_distanceAttenuation: 8
   m_checkCollisions: 1
+  m_keepInsideArea: 0
   m_maxSpeed: 5
   m_maxRunSpeed: 8
   m_slowingRadius: 0

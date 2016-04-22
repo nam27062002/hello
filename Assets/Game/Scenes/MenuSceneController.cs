@@ -113,26 +113,6 @@ public class MenuSceneController : SceneController {
 	}
 
 	/// <summary>
-	/// Add xp to the currently selected dragon (if owned). Debug purposes only.
-	/// Will add 1/3 of the current level.
-	/// </summary>
-	public void OnAddXPButton() {
-		// Get current selected dragon data
-		DragonData data = DragonManager.GetDragonData(selectedDragon);
-		if(!data.isOwned) return;
-
-		// Add xp
-		float amount = data.progression.GetXpRangeForLevel(data.progression.level).distance * 0.33f;
-		data.progression.AddXp(amount, true);
-
-		// Save persistence
-		PersistenceManager.Save();
-
-		// Simulate a dragon selected event so everything is refreshed
-		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragon);
-	}
-
-	/// <summary>
 	/// The selected dragon has changed.
 	/// </summary>
 	/// <param name="_id">The id of the selected dragon.</param>

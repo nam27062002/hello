@@ -68,7 +68,7 @@ public class DEBUG_SETTINGS : MonoBehaviour {
 		if(m_infiniteFire != infiniteFire) {
 			m_infiniteFire = infiniteFire;
 		} else if(m_infiniteFire) {	// Prevent fire to turn off
-			InstanceManager.player.AddFury(InstanceManager.player.data.def.GetAsFloat("maxFury"));
+			InstanceManager.player.GetComponent<DragonBreathBehaviour>().AddFury(InstanceManager.player.data.def.GetAsFloat("maxFury"));
 		}
 	}
 

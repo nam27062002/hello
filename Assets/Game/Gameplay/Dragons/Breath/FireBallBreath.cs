@@ -21,9 +21,9 @@ public class FireBallBreath : DragonBreathBehaviour {
 	}
 
 
-	override protected void BeginBreath() 
+	override protected void BeginFury( Type _type ) 
 	{
-		base.BeginBreath();
+		base.BeginFury(_type);
 		m_timer = m_timeBetweenFires;
 	}
 
@@ -50,9 +50,9 @@ public class FireBallBreath : DragonBreathBehaviour {
 		}
 	}
 
-	override protected void EndBreath() 
+	override protected void EndFury() 
 	{
-		base.EndBreath();
+		base.EndFury();
 	}
 
 
@@ -66,11 +66,6 @@ public class FireBallBreath : DragonBreathBehaviour {
 				m_isFuryPaused = true;
 				m_animator.SetBool("breath", false);
 			}
-			else if ( m_isSuperFuryOn )
-			{
-				m_isSuperFuryPaused = true;
-				m_animator.SetBool("breath", false);
-			}
 		}
 	}
 
@@ -79,7 +74,6 @@ public class FireBallBreath : DragonBreathBehaviour {
 		if ( _other.tag == "Water" )
 		{
 			m_isFuryPaused = false;
-			m_isSuperFuryPaused = false;
 		}
 	}
 }

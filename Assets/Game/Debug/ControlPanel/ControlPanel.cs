@@ -17,26 +17,47 @@ using UnityEngine.UI;
 /// </summary>
 public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	[SerializeField] private GameObject m_panel;
-	public GameObject m_toggleButton;
-	public Text m_fpsCounter;
-	private float m_activateTimer;
+	public static readonly Color FPS_THRESHOLD_COLOR_1 = new Color(0f, 1f, 0f, 0.75f);	// Green
+	public static readonly Color FPS_THRESHOLD_COLOR_2 = new Color(1f, 0.5f, 0f, 0.75f);	// Orange
+	public static readonly Color FPS_THRESHOLD_COLOR_3 = new Color(1f, 0f, 0f, 0.75f);	// Red
 
+	//------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES											//
+	//------------------------------------------------------------------//
+	// External references
+	[SerializeField] private RectTransform m_panel;
+	public static RectTransform panel {
+		get { return instance.m_panel; }
+	}
+
+	[SerializeField] private Button m_toggleButton;
+	public static Button toggleButton {
+		get { return instance.m_toggleButton; }
+	}
+
+	[SerializeField] private Text m_fpsCounter;
+	public static Text fpsCounter {
+		get { return instance.m_fpsCounter; }
+	}
+
+	// Internal logic
+	private float m_activateTimer;
 	const int m_NumDeltaTimes = 30;
 	float[] m_DeltaTimes;
 	int m_DeltaIndex;
+
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Initialization.
 	/// </summary>
 	protected void Awake() {
 		// Start disabled
-		m_panel.SetActive(false);
-		m_toggleButton.SetActive( Debug.isDebugBuild );
+		m_panel.gameObject.SetActive(false);
+		m_toggleButton.gameObject.SetActive( Debug.isDebugBuild );
 		m_fpsCounter.gameObject.SetActive( Debug.isDebugBuild );
 		m_activateTimer = 0;
 	}
@@ -92,19 +113,24 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 		if ( m_fpsCounter != null )
 		{
 			float fps = GetFPS();
-			if ( fps < 15 )
-			{
-				m_fpsCounter.color = Color.red;
+			if(fps >= 0) {
+				if ( fps < 15 )
+				{
+					m_fpsCounter.color = FPS_THRESHOLD_COLOR_3;
+				}
+				else if ( fps < 25 )
+				{
+					m_fpsCounter.color = FPS_THRESHOLD_COLOR_2;
+				}
+				else
+				{
+					m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
+				}
+				m_fpsCounter.text = ((int)fps).ToString("D");
+			} else { 
+				m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
+				m_fpsCounter.text = "-";
 			}
-			else if ( fps < 25 )
-			{
-				m_fpsCounter.color = Color.yellow;
-			}
-			else
-			{
-				m_fpsCounter.color = Color.green;
-			}
-			m_fpsCounter.text = ((int)fps).ToString("D");
 		}
 	}
 
@@ -127,11 +153,11 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 	/// </summary>
 	public void Toggle() {
 		// Toggle panel
-		m_panel.SetActive(!m_panel.activeSelf);
+		m_panel.gameObject.SetActive(!m_panel.gameObject.activeSelf);
 
 		// Disable player control while control panel is up
 		if(InstanceManager.player != null) {
-			InstanceManager.player.playable = !m_panel.activeSelf;
+			InstanceManager.player.playable = !m_panel.gameObject.activeSelf;
 		}
 	}
 }

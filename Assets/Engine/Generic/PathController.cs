@@ -15,13 +15,28 @@ public class PathController : MonoBehaviour {
 
 	private int m_index;
 	private int m_direction;
+
+	private int m_leftmostNode;
+	private int m_rightmostNode;
 	
 	private RectAreaBounds m_bounds = new RectAreaBounds(Vector3.zero, Vector3.zero);
 	public RectAreaBounds bounds { get { UpdateBounds(); return m_bounds; } }
 
-	void Start() {
+	void Awake() {
 		m_index = 0;
 		m_direction = 1;
+
+		m_leftmostNode = 0;
+		m_rightmostNode = 0;
+		for (int i = 1; i < m_points.Count; i++) {
+			if (m_points[m_leftmostNode].x > m_points[i].x) {
+				m_leftmostNode = i;
+			}
+
+			if (m_points[m_rightmostNode].x < m_points[i].x) {
+				m_rightmostNode = i;
+			}
+		}
 	}
 
 	private void UpdateBounds() {
@@ -52,8 +67,8 @@ public class PathController : MonoBehaviour {
 		int current = m_index;
 		do {
 			m_index = Random.Range(0, m_points.Count);
-		} while (current != m_index);
-		return GetNext();
+		} while (current == m_index);
+		return m_points[m_index] + transform.position;
 	}
 
 	public Vector3 GetNearestTo(Vector3 _point) {
@@ -68,7 +83,17 @@ public class PathController : MonoBehaviour {
 			}
 		}
 
-		return GetNext();
+		return m_points[m_index] + transform.position;
+	}
+
+	public Vector3 GetLeftmostPoint() {
+		m_index = m_leftmostNode;
+		return m_points[m_index] + transform.position;
+	}
+
+	public Vector3 GetRightmostPoint() {
+		m_index = m_rightmostNode;
+		return m_points[m_index] + transform.position;
 	}
 
 	public Vector3 GetNext() {

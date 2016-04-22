@@ -22,6 +22,11 @@ public class PathSpawner : Spawner {
 				if (pathBehaviour != null) {
 					pathBehaviour.SetPath(m_path);
 				}
+
+				FleePathBehaviour fleePathBehaviour = m_entities[i].GetComponent<FleePathBehaviour>();
+				if (fleePathBehaviour != null) {
+					fleePathBehaviour.SetPath(m_path);
+				}
 			}
 		}
 	}

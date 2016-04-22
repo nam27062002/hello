@@ -70,7 +70,7 @@ public class FlockController : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {	
+	public void UpdateLogic() {	
 		// Control flocking
 		// Move target for follow behaviour
 		if (m_area != null) {

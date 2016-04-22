@@ -57,7 +57,8 @@ public class GameCameraController : MonoBehaviour {
 	private Transform m_interest = null;
 	private float m_interestLerp = 0;
 	private Vector3 m_interestPosition = Vector3.zero;
-	private bool m_furyOn;
+	private bool m_furyOn = false;
+	private DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
 	private bool m_slowMotionOn;
 	private bool m_slowMoJustStarted;
 	private bool m_boostOn;
@@ -86,6 +87,13 @@ public class GameCameraController : MonoBehaviour {
 	private Transform m_transform;
 	Vector3 m_lastScreenPosition;
 	Vector3 m_lerpAxis = Vector3.zero;
+
+	enum State
+	{
+		INTRO,
+		PLAY
+	};
+	State m_state = State.INTRO;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -130,12 +138,14 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		m_transform = transform;
+		m_state = State.INTRO;
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	IEnumerator Start() {
+		
 		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
 		{
 			yield return null;
@@ -152,25 +162,45 @@ public class GameCameraController : MonoBehaviour {
 		m_slowMoJustStarted = false;
 		m_boostOn = false;
 
-		m_currentZoom = m_defaultZoom;
 		m_nearStart = Camera.main.nearClipPlane;
 		m_farStart = Camera.main.farClipPlane;
 
 		defaultZoom = InstanceManager.player.data.def.GetAsFloat("cameraDefaultZoom");
 		farZoom = InstanceManager.player.data.def.GetAsFloat("cameraFarZoom");
+		m_currentZoom = m_defaultZoom * 2;
 
 		// Register to Fury events
 		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
 
-		Messenger.AddListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
-		transform.position = playerPos;
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
+		if(spawnPointObj == null) 
+		{
+			// We couldn't find a spawn point for this specific type, try to find a generic one
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
+		}
+		Vector3 pos = spawnPointObj.transform.position;
+		pos.z = -m_currentZoom;
+		transform.position = pos;
 
 		m_camera = GetComponent<Camera>();
 		m_lastScreenPosition = -Vector3.one * 1000;
 		m_lerpAxis = Vector3.zero;
+
+		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
+		{
+			m_state = State.PLAY;
+		}
+
+	}
+
+	private void CountDownEnded()
+	{
+		m_state = State.PLAY;
 	}
 
 	/// <summary>
@@ -181,121 +211,130 @@ public class GameCameraController : MonoBehaviour {
 		
 		Vector3 newPos = m_transform.position;
 
-		// it depends on previous fixed updates
-		if ( m_dragonMotion != null)
+		switch( m_state )
 		{
-
-			Vector3 targetPos;
-			// Compute new target position
-			// Is there a danger nearby?
-			/*if(m_interest != null) 
+			case State.INTRO:
+			{	
+				m_currentZoom = Mathf.Lerp( m_currentZoom, m_defaultZoom, Time.deltaTime);
+				newPos.z = -m_currentZoom;
+			}break;
+			case State.PLAY:
 			{
-				m_interestLerp += Time.deltaTime * 0.5f;
-				m_interestLerp = Mathf.Min( m_interestLerp, 0.25f);
-				m_interestPosition = m_interest.position - m_dragonMotion.cameraLookAt.position;
-			} 
-			else 
-			*/
-			{
-				m_interestLerp -= Time.deltaTime * 0.5f;
-				m_interestLerp = Mathf.Max( m_interestLerp, 0);
-			}
-
-			targetPos = Vector3.Lerp(m_dragonMotion.cameraLookAt.position, m_dragonMotion.cameraLookAt.position + m_interestPosition, m_interestLerp);
-
-
-			Vector3 dragonVelocity = m_dragonMotion.velocity;
-			Vector3 dragonDirection = dragonVelocity.normalized;
-
-			m_forward = Vector3.Lerp( m_forward, dragonDirection, Time.deltaTime);
-
-			bool cameraMovementNewVersion = DebugSettings.newCameraSystem;
-			cameraMovementNewVersion = true;
-			float lerpoValue = 0;
-			if ( cameraMovementNewVersion )
-			{
-				float speedModifier = 5;
-				lerpoValue = m_dragonMotion.lastSpeed * speedModifier * Time.deltaTime;
-			}
-
-			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
-			if (m_furyOn)
-			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f) + lerpoValue, Time.deltaTime );
-			}
-			else if ( m_boostOn )
-			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue + 1, Time.deltaTime );
-			}
-			else
-			{
-				m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue, Time.deltaTime );
-			}
-			targetPos = targetPos + m_forward * m_forwardOffset;
-
-			// Clamp X to defined limits
-			targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
-
-
-			// Compute Z, defined by the zoom factor
-			float targetZoom = m_defaultZoom;
-			if ( m_slowMoJustStarted )
-			{
-				targetZoom = m_farZoom;
-				m_currentZoom = targetZoom;
-				m_slowMoJustStarted = false;
-			}
-			else
-			{
-				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
-					targetZoom = m_farZoom;
-				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime);
-			}
-			targetPos.z = -m_currentZoom;
-
-
-			if (cameraMovementNewVersion)
-			{
-				// if pixels difference from targetPos to newPos is bigger than a region we smooth transition
-				Vector3 realTarget = targetPos;
-				realTarget.z = m_dragonMotion.cameraLookAt.position.z;
-
-				// Only move if necessary
-				Vector3 screenPos = m_camera.WorldToScreenPoint( realTarget );
-				float halfRange = 0.1f;
-				if ( screenPos.x  > Screen.width * (0.5f + halfRange ))
+				// it depends on previous fixed updates
+				if ( m_dragonMotion != null)
 				{
-					m_lerpAxis.x = 1;
+
+					Vector3 targetPos;
+					// Compute new target position
+					// Is there a danger nearby?
+					/*if(m_interest != null) 
+					{
+						m_interestLerp += Time.deltaTime * 0.5f;
+						m_interestLerp = Mathf.Min( m_interestLerp, 0.25f);
+						m_interestPosition = m_interest.position - m_dragonMotion.cameraLookAt.position;
+					} 
+					else 
+					*/
+					{
+						m_interestLerp -= Time.deltaTime * 0.5f;
+						m_interestLerp = Mathf.Max( m_interestLerp, 0);
+					}
+
+					targetPos = Vector3.Lerp(m_dragonMotion.cameraLookAt.position, m_dragonMotion.cameraLookAt.position + m_interestPosition, m_interestLerp);
+
+
+					Vector3 dragonVelocity = m_dragonMotion.velocity;
+					Vector3 dragonDirection = dragonVelocity.normalized;
+
+					m_forward = Vector3.Lerp( m_forward, dragonDirection, Time.deltaTime);
+
+					bool cameraMovementNewVersion = DebugSettings.newCameraSystem;
+					cameraMovementNewVersion = true;
+					float lerpoValue = 0;
+					if ( cameraMovementNewVersion )
+					{
+						float speedModifier = 5;
+						lerpoValue = m_dragonMotion.lastSpeed * speedModifier * Time.deltaTime;
+					}
+
+					// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
+					if (m_furyOn)
+					{
+						m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f) + lerpoValue, Time.deltaTime );
+					}
+					else if ( m_boostOn )
+					{
+						m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue + 1, Time.deltaTime );
+					}
+					else
+					{
+						m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue, Time.deltaTime );
+					}
+					targetPos = targetPos + m_forward * m_forwardOffset;
+
+					// Clamp X to defined limits
+					targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
+
+
+					// Compute Z, defined by the zoom factor
+					float targetZoom = m_defaultZoom;
+					if ( m_slowMoJustStarted )
+					{
+						targetZoom = m_farZoom;
+						m_currentZoom = targetZoom;
+						m_slowMoJustStarted = false;
+					}
+					else
+					{
+						if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
+							targetZoom = m_farZoom;
+						m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime);
+					}
+					targetPos.z = -m_currentZoom;
+
+
+					if (cameraMovementNewVersion)
+					{
+						// if pixels difference from targetPos to newPos is bigger than a region we smooth transition
+						Vector3 realTarget = targetPos;
+						realTarget.z = m_dragonMotion.cameraLookAt.position.z;
+
+						// Only move if necessary
+						Vector3 screenPos = m_camera.WorldToScreenPoint( realTarget );
+						float halfRange = 0.1f;
+						if ( screenPos.x  > Screen.width * (0.5f + halfRange ))
+						{
+							m_lerpAxis.x = 1;
+						}
+						else if ( screenPos.x  < Screen.width * (0.5f - halfRange) )
+						{
+							m_lerpAxis.x = -1;
+						}
+
+						if ( screenPos.y > Screen.height * (0.5f + halfRange))
+						{
+							m_lerpAxis.y = 1;
+						}
+						else if ( screenPos.y < Screen.height * (0.5f - halfRange) )
+						{
+							m_lerpAxis.y = -1;
+						}
+
+						// to lerp you need the same axis
+						if ( m_lerpAxis.x * ( targetPos.x - newPos.x ) < 0)	// Worng axis movement
+							targetPos.x = newPos.x;
+
+						if ( m_lerpAxis.y * ( targetPos.y - newPos.y ) < 0)	// Worng axis movement
+							targetPos.y = newPos.y;
+						newPos = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 5.0f );
+					}
+					else
+					{
+						newPos = Vector3.Lerp(transform.position, targetPos, 0.9f );
+						newPos.z = targetPos.z;
+					}
 				}
-				else if ( screenPos.x  < Screen.width * (0.5f - halfRange) )
-				{
-					m_lerpAxis.x = -1;
-				}
-
-				if ( screenPos.y > Screen.height * (0.5f + halfRange))
-				{
-					m_lerpAxis.y = 1;
-				}
-				else if ( screenPos.y < Screen.height * (0.5f - halfRange) )
-				{
-					m_lerpAxis.y = -1;
-				}
-
-				// to lerp you need the same axis
-				if ( m_lerpAxis.x * ( targetPos.x - newPos.x ) < 0)	// Worng axis movement
-					targetPos.x = newPos.x;
-
-				if ( m_lerpAxis.y * ( targetPos.y - newPos.y ) < 0)	// Worng axis movement
-					targetPos.y = newPos.y;
-				newPos = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 5.0f );
-			}
-			else
-			{
-				newPos = Vector3.Lerp(transform.position, targetPos, 0.9f );
-				newPos.z = targetPos.z;
-			}
-
-
+			}break;
 		}
 
 		newPos = UpdateByShake(newPos);
@@ -336,9 +375,10 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() 
 	{
-		Messenger.RemoveListener<bool>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -431,8 +471,9 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Callbacks														//
 	//------------------------------------------------------------------//
-	private void OnFury(bool _enabled) {
+	private void OnFury(bool _enabled, DragonBreathBehaviour.Type _type) {
 		m_furyOn = _enabled;
+		m_furyType = _type;
 	}
 
 	private void OnSlowMotion( bool _enabled)

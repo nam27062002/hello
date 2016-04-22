@@ -94,7 +94,7 @@ public class InflammableDecoration : Initializable {
 			if ( m_timer.Finished() )
 			{
 				m_view.SetActive(false);
-				m_autoSpawner.Respawn();
+				m_autoSpawner.StartRespawn();
 			}
 		} 
 		else 
@@ -170,11 +170,12 @@ public class InflammableDecoration : Initializable {
 			}break;
 			case DragonTier.TIER_0:
 			{
-				return false;
+				if ( m_decorationSize <= DecorationSize.SMALL )
+					return true;
 			}break;
 			default:
 			{
-				return false;
+				return true;
 			}break;
 		}
 
@@ -212,6 +213,15 @@ public class InflammableDecoration : Initializable {
 			{
 				particle.transform.rotation = m_view.transform.rotation;
 				particle.transform.localScale = m_view.transform.localScale;
+			}
+		}
+	}
+
+	void OnDrawGizmosSelected() {
+		if (m_fireNodes != null) {
+			Gizmos.color = Color.magenta;
+			for (int i = 0; i < m_fireNodes.Length; i++) {
+				Gizmos.DrawSphere(m_fireNodes[i].transform.position, 0.25f);
 			}
 		}
 	}

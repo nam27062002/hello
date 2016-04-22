@@ -144,16 +144,18 @@ public class AttackBehaviour : Initializable {
 					Aim();
 				}
 
-				if (v.sqrMagnitude <= m_sensor.sensorMinRadius * m_sensor.sensorMinRadius) {
-					m_timer -= Time.deltaTime;
-					if (m_timer <= 0) {
-						m_timer = 0;
+				m_timer -= Time.deltaTime;
+				if (m_timer <= 0) {
+					m_timer = 0;
 
-						//do attack
-						if (!m_playingAttackAnimation) {
+					if (!m_playingAttackAnimation) {
+						if (v.sqrMagnitude <= m_sensor.sensorMinRadius * m_sensor.sensorMinRadius) {
+							//do attack
+							m_playingAttackAnimation = true;
+
 							m_onAttachEventDone = false;
-                         	m_onDamageEventDone = false;
-                         	m_onAttackEndEventDone = false;
+	                       	m_onDamageEventDone = false;
+	                       	m_onAttackEndEventDone = false;
 
 							if (m_hasAnimation) {
 								m_animator.SetBool("attack", true);
@@ -162,12 +164,12 @@ public class AttackBehaviour : Initializable {
 								OnAttack();
 								OnAttackEnd();
 							}
-
 							m_timer = m_attackDelay;
+						} else {
+							m_animator.SetBool("attack", false);
+							m_nextState = State.Pursuit;
 						}
 					}
-				} else {
-					m_nextState = State.Pursuit;
 				}
 				break;
 			case State.AttackRetreat:
@@ -292,6 +294,7 @@ public class AttackBehaviour : Initializable {
 				m_animator.SetBool("attack", false);
 			}
 
+			m_playingAttackAnimation = false;
 			m_onAttackEndEventDone = true;
 		}
 	}
