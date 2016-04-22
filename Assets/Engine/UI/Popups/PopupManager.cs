@@ -117,6 +117,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 		if(controller == null) {
 			// Create a new instance!
 			GameObject popupObj = Instantiate(_prefab);
+			popupObj.SetActive(true); // Awake is never called if the popup is saved disabled
 			popupObj.transform.SetParent(instance.m_canvas.transform, false);
 			popupObj.name = _prefab.name;	// To be able to identify it later on
 			

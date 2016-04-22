@@ -43,17 +43,6 @@ public class GameHUD : MonoBehaviour {
 		InstanceManager.GetSceneController<GameSceneController>().PauseGame(true);
 
 		// Open pause popup
-		PopupManager.OpenPopupInstant(PopupMissionsIngame.PATH);
-	}
-
-	/// <summary>
-	/// Callback for the missions button.
-	/// </summary>
-	public void OnMissionsButton() {
-		// Pause game
-		InstanceManager.GetSceneController<GameSceneController>().PauseGame(true);
-
-		// Open missions popup
-		PopupManager.OpenPopupInstant(PopupMissionsIngame.PATH);
+		PopupManager.OpenPopupInstant(PopupPause.PATH);
 	}
 }
