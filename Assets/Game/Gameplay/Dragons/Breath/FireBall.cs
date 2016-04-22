@@ -11,6 +11,7 @@ public class FireBall : MonoBehaviour
 	public float m_speed;
 	public float m_maxTime;
 	public GameObject m_explosionParticle;
+	private DragonBreathBehaviour m_breath;
 
 	// Use this for initialization
 	void Start () 
@@ -44,6 +45,11 @@ public class FireBall : MonoBehaviour
 		}
 	}
 
+	public void SetBreath( DragonBreathBehaviour _breath )
+	{
+		m_breath = _breath;
+	}
+
 	public void Shoot( Vector3 _direction, float _damage)
 	{
 		m_direction = _direction;
@@ -74,7 +80,14 @@ public class FireBall : MonoBehaviour
 			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
 			if (entity != null) 
 			{
-				entity.Burn(m_damage, transform);
+				if (m_breath.CanBurn( entity ) || m_breath.type == DragonBreathBehaviour.Type.Super)
+				{
+					entity.Burn(m_damage, transform);
+				}
+				else
+				{
+					// Show I cannot burn this entity!
+				}
 			}
 		}
 

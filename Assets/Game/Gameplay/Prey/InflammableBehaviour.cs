@@ -42,6 +42,11 @@ public class InflammableBehaviour : Initializable {
 	// Attributes
 	//-----------------------------------------------
 	private Entity m_entity;
+
+	public string sku
+	{
+		get{ return m_entity.sku; }
+	}
 	
 	private float m_health;
 	private float m_timer;
@@ -216,4 +221,5 @@ public class InflammableBehaviour : Initializable {
 	}
 
 	protected virtual void OnBurn() {}
+
 }
