@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class InflammableDecoration : Initializable {
@@ -16,20 +17,26 @@ public class InflammableDecoration : Initializable {
 	private AutoSpawnBehaviour m_autoSpawner;
 	private Vector3 m_startPosition;
 
-	public enum DecorationSize
-	{
-		SMALL,
-		MEDIUM,
-		BIG
-	};
-	public DecorationSize m_decorationSize;
-
 	private Dictionary<Renderer, Material[]>  m_originalMaterials = new Dictionary<Renderer, Material[]>();
 	private Material m_ashMaterial;
 	public string m_ashesAsset;
+	private Entity m_entity;
+	public string sku
+	{
+		get{ return m_entity.sku; }
+	}
+
+	private bool m_shouldExplode;
 
 	// Use this for initialization
-	void Start () {
+	IEnumerator Start()
+	{
+		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+		{
+			yield return null;
+		}
+
+		m_entity = GetComponent<Entity>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
@@ -38,17 +45,21 @@ public class InflammableDecoration : Initializable {
 
 		int coins = 0;
 
-		if (GetComponent<Entity>() != null) {
-			coins = GetComponent<Entity>().reward.coins;
+		if (m_entity!= null) 
+		{
+			coins = m_entity.reward.coins;
 		}
 
 		int coinsPerNode = coins / m_fireNodes.Length;
 
+		DragonBreathBehaviour breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
+		bool _canBeBurned = breath.CanBurn( this );
+		m_shouldExplode = breath.ShouldExplode( this );
 		for (int i = 0; i < m_fireNodes.Length - 1; i++) {
-			m_fireNodes[i].Init(coinsPerNode);
+			m_fireNodes[i].Init(coinsPerNode, _canBeBurned);
 		}
 
-		m_fireNodes[m_fireNodes.Length - 1].Init(coins - (coinsPerNode * (m_fireNodes.Length - 1)));
+		m_fireNodes[m_fireNodes.Length - 1].Init(coins - (coinsPerNode * (m_fireNodes.Length - 1)), _canBeBurned);
 
 		m_startPosition = transform.position;
 
@@ -83,6 +94,9 @@ public class InflammableDecoration : Initializable {
 	// Update is called once per frame
 	void Update() {	
 
+		if (m_autoSpawner == null)
+			return;
+
 		if ( m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning )	// if respawning we wait
 			return;
 
@@ -94,7 +108,7 @@ public class InflammableDecoration : Initializable {
 			if ( m_timer.Finished() )
 			{
 				m_view.SetActive(false);
-				m_autoSpawner.StartRespawn();
+				m_autoSpawner.Respawn();
 			}
 		} 
 		else 
@@ -150,34 +164,12 @@ public class InflammableDecoration : Initializable {
 	bool ShouldInstantExplode()
 	{
 		// Maybe check if a critial node was hit
-		// Compare dragon size/tier to decoration Size
+		if ( m_shouldExplode )
+			return true;
+
 		DragonTier _dragonTier = InstanceManager.player.data.tier;
-		switch( _dragonTier )
-		{
-			case DragonTier.TIER_3:
-			{
-				return true;
-			}break;
-			case DragonTier.TIER_2:
-			{
-				if ( m_decorationSize <= DecorationSize.MEDIUM )
-					return true;	
-			}break;
-			case DragonTier.TIER_1:
-			{
-				if ( m_decorationSize <= DecorationSize.SMALL )
-					return true;
-			}break;
-			case DragonTier.TIER_0:
-			{
-				if ( m_decorationSize <= DecorationSize.SMALL )
-					return true;
-			}break;
-			default:
-			{
-				return true;
-			}break;
-		}
+		if (InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Super)
+			return true;
 
 		return false;
 	}

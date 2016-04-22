@@ -279,11 +279,22 @@ public class FireBreath : DragonBreathBehaviour {
 		// try to burn things!!!
 		// search for preys!
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
-		for (int i = 0; i < preys.Length; i++) {
+		for (int i = 0; i < preys.Length; i++) 
+		{
 			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
-			if (entity != null) {
-				if (IsInsideArea(entity.transform.position)) {
-					entity.Burn(damage * Time.deltaTime, transform);
+			if (entity != null) 
+			{
+				if (IsInsideArea(entity.transform.position)) 
+				{
+					// Check if I can burn it
+					if (CanBurn( entity ) || m_type == Type.Super)
+					{
+						entity.Burn(damage * Time.deltaTime, transform);
+					}
+					else
+					{
+						// Show message saying I cannot burn it
+					}
 				}
 			}
 		}

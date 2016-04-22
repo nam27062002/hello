@@ -145,6 +145,18 @@ public class PopupMissionsPill : MonoBehaviour {
 		// [AOC] The pill might not have it (e.g. in-game pill)
 		Text removeCostText = m_activeObj.FindComponentRecursive<Text>("TextCost");
 		if(removeCostText != null) removeCostText.text = StringUtils.FormatNumber(m_mission.removeCostPC);
+
+		// Check if this mission is complete
+		GameObject completedObj = m_activeObj.FindObjectRecursive("CompletedMission");
+		if (completedObj != null) completedObj.SetActive(m_mission.objective.isCompleted);
+
+		// Change Icon
+		GameObject iconBoxObj = m_activeObj.FindObjectRecursive("IconBox");
+		if (iconBoxObj != null) {
+			Image img = iconBoxObj.FindObjectRecursive("Image").GetComponent<Image>();
+			Sprite spr = Resources.Load<Sprite>(m_mission.def.GetAsString("icon"));
+			img.sprite = spr;
+		}
 	}
 
 	/// <summary>

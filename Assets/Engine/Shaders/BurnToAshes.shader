@@ -38,7 +38,6 @@ SubShader {
 
 			sampler2D _MainTex;
 			sampler2D _AlphaMask;
-
 			float4 _MainTex_ST;
 			uniform float _AshLevel;
 
@@ -62,5 +61,5 @@ SubShader {
 		ENDCG
 	}
 }
-Fallback "Mobile/VertexLit"
+
 }
