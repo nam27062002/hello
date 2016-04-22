@@ -36,6 +36,12 @@ public class FireNode : MonoBehaviour {
 
 	private Reward m_reward;
 
+	private bool m_canBurn = false;
+	public bool canBurn
+	{
+		get{ return m_canBurn; }
+	}
+
 	Vector3 m_lastBreathDirection;
 	public Vector3 lastBreathHitDiretion
 	{
@@ -56,10 +62,12 @@ public class FireNode : MonoBehaviour {
 		FindNeighbours();
 	}
 
-	public void Init(int _goldReward) {
+	public void Init(int _goldReward, bool _canBurn) {
 		m_reward.coins = _goldReward;
-		
+		m_canBurn = _canBurn;
 		Reset();
+		if ( !m_canBurn )
+			enabled = false;
 	}
 
 	public void Reset() {
@@ -185,7 +193,6 @@ public class FireNode : MonoBehaviour {
 				m_fireSprite.transform.Rotate(Vector3.up, 180, Space.Self);
 				// Move child!!
 				if (m_fireSprite.transform.childCount > 0) {
-					Transform child_0 = m_fireSprite.transform.GetChild(0);
 					Vector3 p = transform.localPosition;
 					p.z = -p.z;
 					transform.localPosition = p;

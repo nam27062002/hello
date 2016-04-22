@@ -84,6 +84,10 @@ public class DragonPlayer : MonoBehaviour {
 
 	// References
 	private DragonBreathBehaviour m_breathBehaviour = null;
+	public DragonBreathBehaviour breathBehaviour
+	{
+		get{ return m_breathBehaviour; }
+	}
 
 	// Internal
 	private float m_invulnerableAfterReviveTimer;

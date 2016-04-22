@@ -56,6 +56,10 @@ public enum DefinitionsCategory {
 	DISGUISES_EQUIP,
 	DISGUISES_POWERUPS,
 
+	// Fire properties
+	FIRE_SPAWN_EFFECTS,
+	FIRE_DECORATION_EFFECTS,
+
 	// Power Ups
 	POWERUPS,
 
@@ -139,6 +143,9 @@ public class DefinitionsManager : Singleton<DefinitionsManager> {
 		LoadDefinitionsFile(DefinitionsCategory.DISGUISES, "Rules/disguisesDefinitions");
 		LoadDefinitionsFile(DefinitionsCategory.DISGUISES_EQUIP, "Rules/disguiseEquipDefinitions");
 		LoadDefinitionsFile(DefinitionsCategory.DISGUISES_POWERUPS, "Rules/disguisePowerUpsDefinitions");
+
+		LoadDefinitionsFile(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "Rules/entityDragonBurnDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "Rules/spawnersDragonBurnDefinitions");
 
 		// Power Ups
 		LoadDefinitionsFile(DefinitionsCategory.POWERUPS, "Rules/powerUpsDefinitions");
