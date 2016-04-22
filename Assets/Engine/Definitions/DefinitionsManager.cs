@@ -144,8 +144,8 @@ public class DefinitionsManager : Singleton<DefinitionsManager> {
 		LoadDefinitionsFile(DefinitionsCategory.DISGUISES_EQUIP, "Rules/disguiseEquipDefinitions");
 		LoadDefinitionsFile(DefinitionsCategory.DISGUISES_POWERUPS, "Rules/disguisePowerUpsDefinitions");
 
-		LoadDefinitionsFile(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "Rules/entityDragonBurnDefinitions");
-		LoadDefinitionsFile(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "Rules/spawnersDragonBurnDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "Rules/spawnersDragonBurnDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "Rules/entityDragonBurnDefinitions");
 
 		// Power Ups
 		LoadDefinitionsFile(DefinitionsCategory.POWERUPS, "Rules/powerUpsDefinitions");
