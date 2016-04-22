@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -24,6 +25,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	[SerializeField] private Slider m_levelBar;
 	[SerializeField] private Localizer m_levelText;
 	[SerializeField] private Localizer m_nameText;
+	[SerializeField] private Localizer m_descText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -36,6 +38,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 		DebugUtils.Assert(m_levelBar != null, "Required field!");
 		DebugUtils.Assert(m_levelText != null, "Required field!");
 		DebugUtils.Assert(m_nameText != null, "Required field!");
+		DebugUtils.Assert(m_descText != null, "Required field!");
 	}
 
 	/// <summary>
@@ -43,10 +46,10 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		
 		// Do a first refresh
-		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+		StartCoroutine(Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon));
 	}
 
 	/// <summary>
@@ -54,14 +57,20 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>
 	/// Refresh with data from currently selected dragon
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon</param>
-	public void Refresh(string _sku) {
+	/// <param name="_delay">Optional delay before refreshing the data</param>
+	public IEnumerator Refresh(string _sku, float _delay = -1f) {
+		// If there is a delay, respect it
+		if(_delay > 0f) {
+			yield return new WaitForSeconds(_delay);
+		}
+
 		// Get new dragon's data from the dragon manager
 		DragonData data = DragonManager.GetDragonData(_sku);
 
@@ -75,5 +84,15 @@ public class MenuDragonLevelBar : MonoBehaviour {
 
 		// Dragon Name
 		m_nameText.Localize(data.def.GetAsString("tidName"));
+		m_descText.Localize(data.def.GetAsString("tidDesc"));
+	}
+
+	/// <summary>
+	/// A new dragon has been selected.
+	/// </summary>
+	/// <param name="_sku">The sku of the selected dragon.</param>
+	private void OnDragonSelected(string _sku) {
+		// Refresh after some delay to let the animation finish
+		StartCoroutine(Refresh(_sku, 0.25f));
 	}
 }
