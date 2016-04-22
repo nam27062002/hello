@@ -16,7 +16,8 @@ SubShader {
 	
 	ZWrite Off
 	Blend SrcAlpha OneMinusSrcAlpha 
-	
+	Lighting Off
+
 	Pass {  
 		CGPROGRAM
 			#pragma vertex vert
@@ -62,5 +63,5 @@ SubShader {
 		ENDCG
 	}
 }
-Fallback "Mobile/VertexLit"
+Fallback "Unlit/Transparent"
 }
