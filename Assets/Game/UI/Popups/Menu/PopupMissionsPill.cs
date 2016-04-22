@@ -149,6 +149,14 @@ public class PopupMissionsPill : MonoBehaviour {
 		// Check if this mission is complete
 		GameObject completedObj = m_activeObj.FindObjectRecursive("CompletedMission");
 		if (completedObj != null) completedObj.SetActive(m_mission.objective.isCompleted);
+
+		// Change Icon
+		GameObject iconBoxObj = m_activeObj.FindObjectRecursive("IconBox");
+		if (iconBoxObj != null) {
+			Image img = iconBoxObj.FindObjectRecursive("Image").GetComponent<Image>();
+			Sprite spr = Resources.Load<Sprite>(m_mission.def.GetAsString("icon"));
+			img.sprite = spr;
+		}
 	}
 
 	/// <summary>
