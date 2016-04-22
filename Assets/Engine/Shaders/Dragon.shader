@@ -113,9 +113,9 @@ SubShader {
 				fixed4 detailMov = tex2D(_DetailTex, i.movetexcoord);
 
 				// Calc normal from detail texture normal and tangent world
-				float heightSampleCenter = tex2D (_DetailTex, i.texcoord).g;
-	            float heightSampleRight = tex2D (_DetailTex, i.texcoord + float2(_DetailTex_TexelSize.x, 0)).g;
-	            float heightSampleUp = tex2D (_DetailTex, i.texcoord + float2(0, _DetailTex_TexelSize.y)).g;
+				float heightSampleCenter = tex2D (_DetailTex, i.texcoord).a;
+	            float heightSampleRight = tex2D (_DetailTex, i.texcoord + float2(_DetailTex_TexelSize.x, 0)).a;
+	            float heightSampleUp = tex2D (_DetailTex, i.texcoord + float2(0, _DetailTex_TexelSize.y)).a;
 	     
 	            float sampleDeltaRight = heightSampleRight - heightSampleCenter;
 	            float sampleDeltaUp = heightSampleUp - heightSampleCenter;
