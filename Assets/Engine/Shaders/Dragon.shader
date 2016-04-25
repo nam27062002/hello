@@ -113,18 +113,20 @@ SubShader {
 				fixed4 detailMov = tex2D(_DetailTex, i.movetexcoord);
 
 				// Calc normal from detail texture normal and tangent world
-				float heightSampleCenter = tex2D (_DetailTex, i.texcoord).g;
-	            float heightSampleRight = tex2D (_DetailTex, i.texcoord + float2(_DetailTex_TexelSize.x, 0)).g;
-	            float heightSampleUp = tex2D (_DetailTex, i.texcoord + float2(0, _DetailTex_TexelSize.y)).g;
+				float heightSampleCenter = tex2D (_DetailTex, i.texcoord).b;
+	            float heightSampleRight = tex2D (_DetailTex, i.texcoord + float2(_DetailTex_TexelSize.x, 0)).b;
+	            float heightSampleUp = tex2D (_DetailTex, i.texcoord + float2(0, _DetailTex_TexelSize.y)).b;
 	     
 	            float sampleDeltaRight = heightSampleRight - heightSampleCenter;
 	            float sampleDeltaUp = heightSampleUp - heightSampleCenter;
 	     
 	            //TODO: Expose?
 	            // float _BumpStrength = 10.0f;
-	            float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength),float3(0, 1, sampleDeltaUp * _BumpStrength));
+	            float3 encodedNormal = cross(float3(1, 0, sampleDeltaRight * _BumpStrength ),float3(0, 1, sampleDeltaUp * _BumpStrength));
 	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+     			// return fixed4(normalDirection, 1);
+
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 
      			fixed3 pointLights = fixed3(0,0,0);
@@ -149,7 +151,7 @@ SubShader {
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 
 				// Noise
-				col += _NoiseColor * _NoiseValue * detailMov.b;
+				// col += _NoiseColor * _NoiseValue * detailMov.b;
 
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				UNITY_OPAQUE_ALPHA(col.a); 
