@@ -51,7 +51,8 @@ public class InflammableBehaviour : Initializable {
 	private float m_health;
 	private float m_timer;
 
-	private Material m_ashMaterial;
+	private Material[] m_ashMaterials;
+	private Renderer[] m_renderers;
 
 
 	private State m_state;
@@ -69,7 +70,33 @@ public class InflammableBehaviour : Initializable {
 
 		m_timer = m_checkFireTime;
 
-		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
+		// Renderers And Materials
+		m_renderers = GetComponentsInChildren<Renderer>();
+		if ( m_renderers.Length > 0 )
+		{
+			m_ashMaterials = new Material[ m_renderers.Length ];
+			for( int i = 0;i<m_renderers.Length; i++ )
+			{
+				string shaderName = m_renderers[i].material.shader.name;
+				if ( shaderName.EndsWith("Additive") )
+				{
+					// We will set to null and hide it at the beggining 
+					m_ashMaterials[i] = null;
+				}
+				else if ( shaderName.EndsWith("Bird") )
+				{
+					// We ignore mask because its used for masking the diffuse texture
+					Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);	
+					m_ashMaterials[i] = newMat;
+				}
+				else
+				{
+					Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);	
+					newMat.SetTexture("_AlphaMask", m_renderers[i].material.mainTexture );
+					m_ashMaterials[i] = newMat;
+				}
+			}
+		}
 
 		m_state = State.Idle;
 	}
@@ -115,8 +142,18 @@ public class InflammableBehaviour : Initializable {
 						}
 					}break;
 				}
-			} else if (m_state == State.Ashes) {
-				m_ashMaterial.SetFloat("_AshLevel", Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime))));
+			} 
+			else if (m_state == State.Ashes) 
+			{
+				float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime)));
+				for( int i = 0; i<m_ashMaterials.Length; i++ )
+				{
+					if (m_ashMaterials[i] != null)
+					{
+						m_ashMaterials[i].SetFloat("_AshLevel", Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime))));	
+					}
+				}
+
 			}
 		}
 	}
@@ -143,13 +180,23 @@ public class InflammableBehaviour : Initializable {
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, this.transform, reward);
 
 				// Material
-				Renderer[] renderers = GetComponentsInChildren<Renderer>();
-				for (int i = 0; i < renderers.Length; i++) {
+				for (int i = 0; i < m_renderers.Length; i++) //  Force each renderer to have only one material!!!
+				{
+					/*
 					Material[] materials = renderers[i].materials;
 					for (int m = 0; m < materials.Length; m++) {
 						materials[m] = m_ashMaterial;
 					}
 					renderers[i].materials = materials;
+					*/
+					if ( m_ashMaterials[i] != null )
+					{
+						m_renderers[i].material = m_ashMaterials[i];
+					}
+					else
+					{
+						m_renderers[i].enabled = false;
+					}
 				}
 
 				// Deactivate edible
@@ -165,7 +212,7 @@ public class InflammableBehaviour : Initializable {
 					// motion.enabled = false;
 				}
 
-				m_ashMaterial.SetFloat("_AshLevel", 0);
+				// m_ashMaterial.SetFloat("_AshLevel", 0);
 
 				m_state = State.Burned;
 				m_timer = 0.5f; //secs
