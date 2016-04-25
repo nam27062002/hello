@@ -225,11 +225,6 @@ public class HeliBehaviour : MonoBehaviour {
 			DestroyObject(this.gameObject);
 		}
 
-		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("PROTO/Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
-		exp.finalRadius = 400f;
-		Vector3 p = transform.position;
-		p.z = 0f;
-		exp.center = p;
 
 
 		Camera.main.GetComponent<CameraController_OLD>().Shake ();
