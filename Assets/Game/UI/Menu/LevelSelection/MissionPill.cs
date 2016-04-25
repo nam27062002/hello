@@ -1,4 +1,4 @@
-// PopupMissionsPill.cs
+// MissionPill.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 01/12/2015.
@@ -15,9 +15,11 @@ using UnityEngine.UI;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Pill representing a single mission for the temp popup.
+/// Pill representing a single mission popup.
+/// Used both in the pause menu and in the level selection menu, be careful when
+/// doing changes in any of them!
 /// </summary>
-public class PopupMissionsPill : MonoBehaviour {
+public class MissionPill : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -36,6 +38,7 @@ public class PopupMissionsPill : MonoBehaviour {
 	[SerializeField] private GameObject m_lockedObj = null;
 	[SerializeField] private GameObject m_cooldownObj = null;
 	[SerializeField] private GameObject m_activeObj = null;
+	private GameObject m_currentObj = null;
 
 	// Cooldown group
 	private Text m_cooldownText = null;
@@ -81,8 +84,16 @@ public class PopupMissionsPill : MonoBehaviour {
 	/// Component enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Detect hot language changes
+		Messenger.AddListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+
 		// Make sure we're up to date
 		Refresh();
+	}
+
+	private void OnDisable() {
+		// Only detect hot language changes while active
+		Messenger.RemoveListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	/// <summary>
@@ -91,13 +102,25 @@ public class PopupMissionsPill : MonoBehaviour {
 	private void Update() {
 		// Update time-dependant fields
 		if(m_mission.state == Mission.State.COOLDOWN) {
-			RefreshCooldown();
+			RefreshCooldownTimers();
 		}
 	}
 
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Initializes the pill using the given mission. Will overwrite the missionDifficulty
+	/// property.
+	/// </summary>
+	/// <param name="_mission">The mission to displayed in this pill.</param>
+	public void InitFromMission(Mission _mission) {
+		// Easy!
+		m_mission = _mission;
+		if(m_mission != null) m_missionDifficulty = m_mission.difficulty;
+		Refresh();
+	}
+
 	/// <summary>
 	/// Update the pill with the data from the target mission.
 	/// </summary>
@@ -120,6 +143,10 @@ public class PopupMissionsPill : MonoBehaviour {
 			case Mission.State.ACTIVATION_PENDING: 	RefreshActivationPending(); break;
 			case Mission.State.ACTIVE: 				RefreshActive(); 			break;
 		}
+
+		// Shared stuff
+		// Shared mission difficulty text
+		RefreshDifficulty(this.FindComponentRecursive<Localizer>("DifficultyTextTitle"), true);
 	}
 
 	/// <summary>
@@ -134,7 +161,7 @@ public class PopupMissionsPill : MonoBehaviour {
 		bool show = !m_mission.def.Get<bool>("singleRun") || m_showProgressForSingleRunMissions;
 		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
 		if(show) {
-			m_activeObj.FindComponentRecursive<Text>("ProgressText").text = System.String.Format("{0}/{1}", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
+			m_activeObj.FindComponentRecursive<Localizer>("ProgressText").Localize("TID_FRACTION", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
 			m_activeObj.FindComponentRecursive<Slider>("ProgressBar").value = m_mission.objective.progress;
 		}
 
@@ -157,18 +184,46 @@ public class PopupMissionsPill : MonoBehaviour {
 			Sprite spr = Resources.Load<Sprite>(m_mission.def.GetAsString("icon"));
 			img.sprite = spr;
 		}
+
+		// Where
+		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
+		Localizer whereText = m_activeObj.FindComponentRecursive<Localizer>("TextPlaceValue");
+		if(whereText != null) {
+			whereText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
+		}
+
+		// With
+		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
+		Localizer withText = m_activeObj.FindComponentRecursive<Localizer>("TextWithValue");
+		if(withText != null) {
+			withText.Localize("TID_MISSIONS_WITH_ANY_DRAGON");
+		}
+
+		// Difficulty
+		RefreshDifficulty(m_activeObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
 	}
 
 	/// <summary>
 	/// Refresh the cooldown state object.
 	/// </summary>
 	private void RefreshCooldown() {
+		// Update the timers
+		RefreshCooldownTimers();
+
+		// Difficulty
+		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+	}
+
+	/// <summary>
+	/// Refresh the timers part of the cooldown. Optimized to be called every frame.
+	/// </summary>
+	private void RefreshCooldownTimers() {
 		// Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
 		// Cooldown remaining time
 		m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
 
 		// Cooldown bar
-		m_cooldownBar.normalizedValue = m_mission.cooldownProgress;	// [AOC] Reverse bar
+		m_cooldownBar.normalizedValue = m_mission.cooldownProgress;
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
@@ -186,11 +241,14 @@ public class PopupMissionsPill : MonoBehaviour {
 		m_cooldownText.text = "";
 
 		// Cooldown bar
-		m_cooldownBar.normalizedValue = 1f;	// [AOC] Reverse bar
+		m_cooldownBar.normalizedValue = 1f;
 
 		// Skip cost - shouldn't exist in ACTIVATION_PENDING state, but just in case
 		// [AOC] The pill might not have it (e.g. in-game pill)
 		if(m_skipCostText != null) m_skipCostText.text = "";
+
+		// Difficulty
+		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
 	}
 
 	/// <summary>
@@ -201,9 +259,36 @@ public class PopupMissionsPill : MonoBehaviour {
 		int dragonsOwned = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
 		int remainingDragonsToUnlock = MissionManager.dragonsToUnlock[(int)m_missionDifficulty] - dragonsOwned;
 		if(remainingDragonsToUnlock == 1) {
-			m_lockedObj.FindComponentRecursive<Text>("LockedText").text = Localization.Localize("LOCKED!\nOwn 1 more dragon to unlock this mission");	// [AOC] HARDCODED!!
+			m_lockedObj.FindComponentRecursive<Localizer>("LockedText").Localize("TID_MISSIONS_UNLOCK_REQUIREMENT_SINGULAR");
+			m_lockedObj.FindComponentRecursive<Localizer>("WarningText").Localize("TID_MISSIONS_UNLOCK_NEED_DRAGONS_SINGULAR");
 		} else {
-			m_lockedObj.FindComponentRecursive<Text>("LockedText").text = Localization.Localize("LOCKED!\nOwn %U0 more dragons to unlock this mission", StringUtils.FormatNumber(remainingDragonsToUnlock));	// [AOC] HARDCODED!!
+			m_lockedObj.FindComponentRecursive<Localizer>("LockedText").Localize("TID_MISSIONS_UNLOCK_REQUIREMENT_PLURAL", StringUtils.FormatNumber(remainingDragonsToUnlock));
+			m_lockedObj.FindComponentRecursive<Localizer>("WarningText").Localize("TID_MISSIONS_UNLOCK_NEED_DRAGONS_PLURAL", StringUtils.FormatNumber(remainingDragonsToUnlock));
+		}
+
+		// Difficulty
+		RefreshDifficulty(m_lockedObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+	}
+
+	/// <summary>
+	/// Refreshes the difficulty info.
+	/// </summary>
+	/// <param name="_loc">Localizer to be updated. If <c>null</c> process will be skipped.</param>
+	/// <param name="_applyColor">Whether to change the color of the text to match the color of the difficulty based on content values.</param>
+	private void RefreshDifficulty(Localizer _loc, bool _applyColor) {
+		// Check params
+		if(_loc == null) return;
+
+		// Get difficulty definition
+		DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(m_missionDifficulty);
+		if(difficultyDef == null) return;
+			
+		// Set text
+		_loc.Localize(difficultyDef.GetAsString("tidName"));
+
+		// Set color (if requested)
+		if(_applyColor) {
+			if(_loc.text != null) _loc.text.color = difficultyDef.GetAsColor("color");
 		}
 	}
 
@@ -271,5 +356,13 @@ public class PopupMissionsPill : MonoBehaviour {
 		if(_mission.difficulty == m_missionDifficulty) {
 			Refresh();
 		}
+	}
+
+	/// <summary>
+	/// The language has been changed.
+	/// </summary>
+	private void OnLanguageChanged() {
+		// Just update all the info
+		Refresh();
 	}
 }

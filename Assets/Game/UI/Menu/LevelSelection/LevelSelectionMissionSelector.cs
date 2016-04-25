@@ -27,6 +27,21 @@ public class LevelSelectionMissionSelector : TabSystem {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Reset all buttons
+		for(int i = 0; i < m_tabButtons.Count; i++) {
+			m_tabButtons[i].interactable = true;
+		}
+
+		// Re-select the current tab to make sure everything is properly initialized
+		int screen = currentScreenIdx;
+		if(screen == SCREEN_NONE) screen = (int)Mission.Difficulty.EASY;
+		GoToScreen(SCREEN_NONE, NavigationScreen.AnimType.NONE);
+		GoToScreen(screen, NavigationScreen.AnimType.AUTO);
+	}
 
 	//------------------------------------------------------------------------//
 	// OVERRIDES															  //
@@ -41,12 +56,16 @@ public class LevelSelectionMissionSelector : TabSystem {
 		if(currentScreen != null) currentScreen.Hide(NavigationScreen.AnimType.NONE);
 
 		// Refresh new screen's content with the equivalent mission data
-		/*LevelSelectionMissionTab newTab = GetScreen(_newScreen) as LevelSelectionMissionTab;
-		if(newTab != null) {
-			// Buttons are sorted following the mission's difficulty order, so we can directly access the new mission
-			Mission newMission = MissionManager.GetMission((Mission.Difficulty)_newScreen);
-			newTab.InitFromMission(newMission);
-		}*/
+		NavigationScreen newScreen = GetScreen(_newScreen) as Tab;
+		if(newScreen != null) {
+			// The new tab should have the MissionPîll component
+			MissionPill pill = newScreen.GetComponent<MissionPill>();
+			if(pill != null) {
+				// Buttons are sorted following the mission's difficulty order, so we can directly access the new mission
+				Mission newMission = MissionManager.GetMission((Mission.Difficulty)_newScreen);
+				pill.InitFromMission(newMission);
+			}
+		}
 
 		// Let parent do the rest
 		base.GoToScreen(_newScreen, _animType);
