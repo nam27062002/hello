@@ -38,7 +38,6 @@ public class MissionPill : MonoBehaviour {
 	[SerializeField] private GameObject m_lockedObj = null;
 	[SerializeField] private GameObject m_cooldownObj = null;
 	[SerializeField] private GameObject m_activeObj = null;
-	private GameObject m_currentObj = null;
 
 	// Cooldown group
 	private Text m_cooldownText = null;
@@ -267,7 +266,7 @@ public class MissionPill : MonoBehaviour {
 		}
 
 		// Difficulty
-		RefreshDifficulty(m_lockedObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+		RefreshDifficulty(m_lockedObj.FindComponentRecursive<Localizer>("DifficultyText"), false);
 	}
 
 	/// <summary>

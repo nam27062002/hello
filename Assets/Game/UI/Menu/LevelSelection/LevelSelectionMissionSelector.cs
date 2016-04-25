@@ -28,9 +28,32 @@ public class LevelSelectionMissionSelector : TabSystem {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// First update call.
+	/// </summary>
+	override protected void Start() {
+		// Let parent do the rest
+		base.Start();
+
+		// Select initial tab
+		Initialize();
+	}
+
+	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Select initial tab
+		Initialize();
+	}
+
+	/// <summary>
+	/// Internal initialization, to be called every time the level selection screen is opened.
+	/// Because the OnEnable() is called before the Start(), and the NavigationScreenSystem
+	/// hides all screens at Start(), we can't do this during the OnEnable() event (it would
+	/// be overriden by the NavigationScreenSystem's Start()). We can't do it either at the Start(),
+	/// since we want this to happen every time the level selection screen is opened.
+	/// </summary>
+	private void Initialize() {
 		// Reset all buttons
 		for(int i = 0; i < m_tabButtons.Count; i++) {
 			m_tabButtons[i].interactable = true;
