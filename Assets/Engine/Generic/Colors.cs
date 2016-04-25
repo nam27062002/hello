@@ -7,6 +7,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System.Globalization;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -115,6 +116,44 @@ public static class Colors {
 			(byte)(Mathf.Clamp01(_source.b) * 255f),
 			(byte)(Mathf.Clamp01(_source.a) * 255f)
 		);
+	}
+
+	/// <summary>
+	/// Parses a string representing a color in hexadecimal.
+	/// Accepts the following formats, capitals not relevant:
+	/// - RRGGBB
+	/// - RRGGBBAA
+	/// - 0xRRGGBB
+	/// - 0xRRGGBBAA
+	/// - #RRGGBB
+	/// - #RRGGBBAA
+	/// </summary>
+	/// <returns>A new color initialized with the parsed rgb values.</returns>
+	/// <param name="_hexString">The string representing the hex rgb value of the color.</param>
+	public static Color ParseHexString(string _hexString) {
+		// From http://www.bugstacker.com/15/how-to-parse-a-hex-color-string-in-unity-c%23
+		// Remove known prefixes
+		if(_hexString.StartsWith("#")) {
+			_hexString = _hexString.Substring(1);
+		}
+
+		if(_hexString.StartsWith("0x")) {
+			_hexString = _hexString.Substring(2);
+		}
+
+		// Check string length (can be either 6 or 8, depending on whether alpha is included or not)
+		if(_hexString.Length != 6 && _hexString.Length != 8) {
+			throw new System.Exception(string.Format("{0} is not a valid color string.", _hexString));
+		}
+
+		// Parse color components
+		byte r = byte.Parse(_hexString.Substring(0, 2), NumberStyles.HexNumber);
+		byte g = byte.Parse(_hexString.Substring(2, 2), NumberStyles.HexNumber);
+		byte b = byte.Parse(_hexString.Substring(4, 2), NumberStyles.HexNumber);
+		byte a = (_hexString.Length > 6) ? byte.Parse(_hexString.Substring(6, 2), NumberStyles.HexNumber) : (byte)255;
+		 
+		// Create and return new color!
+		return new Color32(r, g, b, a).ToColor();
 	}
 
 	/// <summary>
