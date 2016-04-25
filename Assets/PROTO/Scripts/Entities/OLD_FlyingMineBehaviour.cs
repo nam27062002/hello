@@ -58,12 +58,6 @@ public class OLD_FlyingMineBehaviour : MonoBehaviour {
 		Camera.main.GetComponent<CameraController_OLD>().Shake ();
 
 
-		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("PROTO/Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
-		exp.finalRadius = 500f;
-		Vector3 p = transform.position;
-		p.z = 0f;
-		exp.center = p;
-
 
 		// Launch explosion
 		CompositeExplosion explosion = GetComponent<CompositeExplosion>();
