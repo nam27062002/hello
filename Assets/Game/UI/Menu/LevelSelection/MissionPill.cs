@@ -46,6 +46,14 @@ public class MissionPill : MonoBehaviour {
 
 	// Data
 	private Mission m_mission = null;
+	public Mission mission {
+		get {
+			if(m_mission == null) {
+				m_mission = MissionManager.GetMission(m_missionDifficulty);
+			}
+			return m_mission;
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -67,7 +75,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.AddListener<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, OnMissionCooldownFinished);
+		Messenger.AddListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
 	}
 
 	/// <summary>
@@ -76,7 +84,7 @@ public class MissionPill : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.RemoveListener<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, OnMissionCooldownFinished);
+		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
 	}
 
 	/// <summary>
@@ -100,7 +108,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update time-dependant fields
-		if(m_mission.state == Mission.State.COOLDOWN) {
+		if(mission != null && mission.state == Mission.State.COOLDOWN) {
 			RefreshCooldownTimers();
 		}
 	}
@@ -124,11 +132,8 @@ public class MissionPill : MonoBehaviour {
 	/// Update the pill with the data from the target mission.
 	/// </summary>
 	public void Refresh() {
-		// Get mission
-		if(m_mission == null) {
-			m_mission = MissionManager.GetMission(m_missionDifficulty);
-			if(m_mission == null) return;
-		}
+		// Make sure mission is valid
+		if(mission == null) return;
 
 		// Select which object should be visible
 		m_lockedObj.SetActive(m_mission.state == Mission.State.LOCKED);
@@ -219,10 +224,10 @@ public class MissionPill : MonoBehaviour {
 	private void RefreshCooldownTimers() {
 		// Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
 		// Cooldown remaining time
-		m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+		if(m_cooldownText != null) m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
 
 		// Cooldown bar
-		m_cooldownBar.normalizedValue = m_mission.cooldownProgress;
+		if(m_cooldownBar != null) m_cooldownBar.normalizedValue = m_mission.cooldownProgress;
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
@@ -347,12 +352,16 @@ public class MissionPill : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// A mission cooldown has finished. If it matches the difficulty of this pill,
-	/// refresh visuals. Works both for skipped missions and real cooldown timer endings.
+	/// A mission state has changed. If it matches the difficulty of this pill,
+	/// refresh visuals.
 	/// </summary>
 	/// <param name="_mission">The mission that has finished its cooldown.</param>
-	private void OnMissionCooldownFinished(Mission _mission) {
-		if(_mission.difficulty == m_missionDifficulty) {
+	/// <param name="_oldState">The previous state of the mission.</param>
+	/// <param name="_newState">The new state of the mission.</param>
+	private void OnMissionStateChanged(Mission _mission, Mission.State _oldState, Mission.State _newState) {
+		// Is it this mission?
+		if(m_mission == _mission) {
+			Debug.Log(_mission.difficulty + " from " + _oldState + " to " + _newState);
 			Refresh();
 		}
 	}
