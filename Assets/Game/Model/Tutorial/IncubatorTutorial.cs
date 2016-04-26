@@ -53,6 +53,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	{
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
 		Messenger.AddListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnScreenChanged);
+		Messenger.AddListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
 	}
 
 	/// <summary>
@@ -62,6 +63,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events.
 		Messenger.RemoveListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnScreenChanged);
+		Messenger.RemoveListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
 	}
 
 	/// <summary>
@@ -138,6 +140,7 @@ public class IncubatorTutorial : MonoBehaviour {
 			m_timer.Finish();
 
 			// Hide hand
+			m_finger.gameObject.SetActive( false );
 		}
 	}
 
@@ -158,10 +161,21 @@ public class IncubatorTutorial : MonoBehaviour {
 			return;
 		}
 
+		Egg targetEgg = EggManager.inventory[0];
 		// If the tutorial wasn't completed, launch it now
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) || true) // Check we have an egg
+		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR) && EggManager.incubatingEgg == null && targetEgg != null)
 		{
 			StartTutorial();
 		}
+	}
+
+	private void OnEggDragEnded(EggController _egg) 
+	{
+		// if incubating end tutorial
+		if(EggManager.incubatingEgg != null)
+		{
+			UserProfile.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR);
+			StopTutorial();
+		}	
 	}
 }
