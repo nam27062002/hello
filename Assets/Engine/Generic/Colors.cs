@@ -7,6 +7,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System.Globalization;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -108,11 +109,97 @@ public static class Colors {
 	/// <returns>The color 32.</returns>
 	/// <param name="_source">Source Color.</param>
 	public static Color32 ToColor32(this Color _source) {
+		// Clamp to prevent unexpected values
 		return new Color32(
-			(byte)(_source.r * 255f),
-			(byte)(_source.g * 255f),
-			(byte)(_source.b * 255f),
-			(byte)(_source.a * 255f)
+			(byte)(Mathf.Clamp01(_source.r) * 255f),
+			(byte)(Mathf.Clamp01(_source.g) * 255f),
+			(byte)(Mathf.Clamp01(_source.b) * 255f),
+			(byte)(Mathf.Clamp01(_source.a) * 255f)
 		);
+	}
+
+	/// <summary>
+	/// Parses a string representing a color in hexadecimal.
+	/// Accepts the following formats, capitals not relevant:
+	/// - RRGGBB
+	/// - RRGGBBAA
+	/// - 0xRRGGBB
+	/// - 0xRRGGBBAA
+	/// - #RRGGBB
+	/// - #RRGGBBAA
+	/// </summary>
+	/// <returns>A new color initialized with the parsed rgb values.</returns>
+	/// <param name="_hexString">The string representing the hex rgb value of the color.</param>
+	public static Color ParseHexString(string _hexString) {
+		// From http://www.bugstacker.com/15/how-to-parse-a-hex-color-string-in-unity-c%23
+		// Remove known prefixes
+		if(_hexString.StartsWith("#")) {
+			_hexString = _hexString.Substring(1);
+		}
+
+		if(_hexString.StartsWith("0x")) {
+			_hexString = _hexString.Substring(2);
+		}
+
+		// Check string length (can be either 6 or 8, depending on whether alpha is included or not)
+		if(_hexString.Length != 6 && _hexString.Length != 8) {
+			throw new System.Exception(string.Format("{0} is not a valid color string.", _hexString));
+		}
+
+		// Parse color components
+		byte r = byte.Parse(_hexString.Substring(0, 2), NumberStyles.HexNumber);
+		byte g = byte.Parse(_hexString.Substring(2, 2), NumberStyles.HexNumber);
+		byte b = byte.Parse(_hexString.Substring(4, 2), NumberStyles.HexNumber);
+		byte a = (_hexString.Length > 6) ? byte.Parse(_hexString.Substring(6, 2), NumberStyles.HexNumber) : (byte)255;
+		 
+		// Create and return new color!
+		return new Color32(r, g, b, a).ToColor();
+	}
+
+	/// <summary>
+	/// Initialize color from rgba components.
+	/// </summary>
+	/// <param name="_source">Color being modified.</param>
+	/// <param name="_r">R.</param>
+	/// <param name="_g">G.</param>
+	/// <param name="_b">B.</param>
+	/// <param name="_a">A.</param>
+	public static void Set(this Color _source, float _r, float _g, float _b, float _a) {
+		_source.r = _r;
+		_source.g = _g;
+		_source.b = _b;
+		_source.a = _a;
+	}
+
+	/// <summary>
+	/// Initialize color from rgb components.
+	/// </summary>
+	/// <param name="_source">Color being modified.</param>
+	/// <param name="_r">R.</param>
+	/// <param name="_g">G.</param>
+	/// <param name="_b">B.</param>
+	public static void Set(this Color _source, float _r, float _g, float _b) {
+		_source.r = _r;
+		_source.g = _g;
+		_source.b = _b;
+	}
+
+	/// <summary>
+	/// Initialize color from a vector.
+	/// </summary>
+	/// <param name="_source">Color being modified.</param>
+	/// <param name="_v">Vector with the new values.</param>
+	public static void Set(this Color _source, Vector3 _v) {
+		_source.r = _v[0];
+		_source.g = _v[1];
+		_source.b = _v[2];
+	}
+
+	/// <summary>
+	/// Get the rgb components of the color.
+	/// </summary>
+	/// <param name="_source">Source color.</param>
+	public static Vector3 RGB(this Color _source) {
+		return new Vector3(_source.r, _source.g, _source.b);
 	}
 }

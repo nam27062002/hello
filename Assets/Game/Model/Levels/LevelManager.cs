@@ -55,6 +55,11 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	public static bool IsLevelUnlocked(string _sku) {
 		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
 		if(def == null) return false;
+
+		// Special case for "Coming Soon" levels
+		if(def.GetAsBool("comingSoon")) return false;
+
+		// Just do  the math
 		return def.GetAsInt("dragonsToUnlock") <= DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
 	}
 

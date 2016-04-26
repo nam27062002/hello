@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -26,7 +27,8 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	public string m_skillSku;
 
 	[Header("References")]
-	public Slider m_bar;
+	public GameObject m_levelsParent;	// game object containing all the toggles to show the levels
+	private List<Toggle> m_levelToggles = new List<Toggle>();
 	public Localizer m_labelText;
 	public Text m_valueText;
 	public Button m_levelUpButton;
@@ -37,8 +39,25 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	private void Awake() 
+	{
+		int i = 1;
+		Toggle levelToggle = null;
+		do
+		{
+			levelToggle = null;
+			Transform child = m_levelsParent.transform.FindChild( "Level_" + i );
+			if ( child != null )
+			{
+				levelToggle = child.GetComponent<Toggle>();
+				if ( levelToggle != null )
+				{
+					m_levelToggles.Add( levelToggle );
+					i++;
+				}
+			}
 
+		}while( levelToggle != null );
 	}
 
 	/// <summary>
@@ -50,6 +69,8 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		
 		// Do a first refresh
 		Refresh(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
+
+
 	}
 	
 	/// <summary>
@@ -71,11 +92,12 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		// Label
 		m_labelText.Localize(skillData.def.Get("tidName"));
 
-		// Bar value
-		m_bar.minValue = 0;
-		m_bar.maxValue = DragonSkill.NUM_LEVELS - 1;
-		m_bar.value = skillData.level;	// [0..N-1] bar starts empty and should be filled when we're at level 5
-			
+		// Level Values
+		for( int i = 0; i<m_levelToggles.Count; i++ )
+		{
+			m_levelToggles[i].isOn = i < skillData.level;
+		}
+
 		// Text
 		// [AOC] TODO!! May depend on skill type
 		switch(skillData.def.sku) {
