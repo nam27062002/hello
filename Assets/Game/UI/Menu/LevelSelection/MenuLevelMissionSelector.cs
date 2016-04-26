@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Custom implementation of a tab system for the missions in the level selection screen.
 /// </summary>
-public class LevelSelectionMissionSelector : TabSystem {
+public class MenuLevelMissionSelector : TabSystem {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
