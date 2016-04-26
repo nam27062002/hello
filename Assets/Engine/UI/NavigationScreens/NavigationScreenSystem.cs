@@ -53,14 +53,16 @@ public class NavigationScreenSystem : MonoBehaviour {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// First update call.
 	/// </summary>
 	virtual protected void Start() {
 		// Initial screen is visible from the beginning
+		bool initialScreenSet = false;
 		for(int i = 0; i < m_screens.Count; i++) {
-			if(m_screens[i] == m_initialScreen) {
+			if(m_screens[i] == m_initialScreen && !initialScreenSet) {
 				m_currentScreenIdx = i;
 				m_screens[i].Show(NavigationScreen.AnimType.NONE);
+				initialScreenSet = true;
 
 				// Notify game!
 				Messenger.Broadcast<NavigationScreen, NavigationScreen, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED, null, currentScreen, false);

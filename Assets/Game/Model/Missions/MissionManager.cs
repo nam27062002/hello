@@ -146,6 +146,16 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	}
 
 	/// <summary>
+	/// Given a mission difficulty, get its definition.
+	/// </summary>
+	/// <returns>The definition of the requested difficulty.</returns>
+	/// <param name="_difficulty">The difficulty whose definition we want.</param>
+	public static DefinitionNode GetDifficultyDef(Mission.Difficulty _difficulty) {
+		// Int representation of the difficulty should match the "index" field of the definition
+		return DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.MISSION_DIFFICULTIES, "index", ((int)(_difficulty)).ToString());
+	}
+
+	/// <summary>
 	/// Get a reference to the active mission with the given difficulty.
 	/// If there is no mission at the requested difficulty, a new one will be generated.
 	/// </summary>
