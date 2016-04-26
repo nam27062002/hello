@@ -239,7 +239,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActivationPending() {
 		// Info text
-		m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = Localization.Localize("Mission will be available for next game!");	// [AOC] HARDCODED!!
+		m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = Localization.Localize("TID_MISSIONS_ACTIVATION_PENDING");
 
 		// Cooldown remaining time
 		m_cooldownText.text = "";
