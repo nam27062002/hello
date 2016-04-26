@@ -57,7 +57,13 @@ public class TutorialFinger : MonoBehaviour
 			.Join( m_image.DOFade(0f, 0.5f))
 
 			// Sequence Loop
-			.SetLoops(-1, LoopType.Restart);
+			.OnComplete( ResetDrag);
+			// .SetLoops(-1, LoopType.Restart);
+	}
+
+	void ResetDrag()
+	{
+		SetupDrag( m_start, m_end);
 	}
 
 	void OnStartSequence()

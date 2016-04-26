@@ -33,7 +33,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private float m_delay = 1f;
+	[SerializeField] private float m_delay = 3f;
 	[SerializeField] private float m_duration = 10f;
 	public Transform m_fingerStart;
 	public Transform m_fingerEnd;
@@ -81,6 +81,19 @@ public class IncubatorTutorial : MonoBehaviour {
 					// Yes! Start scrolling
 					m_state = State.RUNNING;
 					m_timer.Start(m_duration);
+
+					if ( m_finger == null )
+					{
+						GameObject go = Instantiate( Resources.Load( TutorialFinger.PATH ) ) as GameObject;
+						go.transform.parent = transform;
+						m_finger = go.GetComponent<TutorialFinger>();
+					}
+					m_finger.gameObject.SetActive( true );
+
+					// Search egg to incubate
+
+					// Set animation from egg to incubator
+					m_finger.SetupDrag( m_fingerStart, m_fingerEnd);
 				}
 			} break;
 
@@ -90,10 +103,8 @@ public class IncubatorTutorial : MonoBehaviour {
 				{
 					m_state = State.DELAY;
 					m_timer.Start(m_delay);
-				} else {
-					
-
-				}
+					m_finger.gameObject.SetActive( false );
+				} 
 			} break;
 		}
 	}
@@ -108,17 +119,6 @@ public class IncubatorTutorial : MonoBehaviour {
 	{
 		if(m_state == State.IDLE) 
 		{
-			if ( m_finger == null )
-			{
-				GameObject go = Instantiate( Resources.Load( TutorialFinger.PATH ) ) as GameObject;
-				go.transform.parent = transform;
-				m_finger = go.GetComponent<TutorialFinger>();
-			}
-			// Search egg to incubate
-
-			// Set animation from egg to incubator
-			m_finger.SetupDrag( m_fingerStart, m_fingerEnd);
-
 			// Start timer
 			m_timer.Start(m_delay);
 
