@@ -101,12 +101,14 @@ public class IncubatorTutorial : MonoBehaviour {
 
 			case State.RUNNING: {
 				// Timer finished?
+				/*
 				if(m_timer.Finished()) 
 				{
 					m_state = State.DELAY;
 					m_timer.Start(m_delay);
 					m_finger.gameObject.SetActive( false );
 				} 
+				*/
 			} break;
 		}
 	}

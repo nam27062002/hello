@@ -15,6 +15,8 @@ public class TutorialFinger : MonoBehaviour
 	private RectTransform m_rectTransform;
 	private float m_moveSpeed = 100;
 
+	private static Vector3 DEFAULT_SCALE = new Vector3(-1, 1, 1);
+
 	void Awake () 
 	{
 		m_image = GetComponent<Image>();
@@ -40,7 +42,7 @@ public class TutorialFinger : MonoBehaviour
 			.OnStart(OnStartSequence)
 
 			// In
-			.Append(m_rectTransform.DOScale(1f, 0.5f).SetEase(Ease.OutBack))
+			.Append(m_rectTransform.DOScale(DEFAULT_SCALE * 1f, 0.5f).SetEase(Ease.OutBack))
 			.Join(m_image.DOFade(1f, 0.5f))
 
 			// Wait
@@ -53,12 +55,12 @@ public class TutorialFinger : MonoBehaviour
 			.AppendInterval(0.2f)
 
 			// Out
-			.Append( m_rectTransform.DOScale( 2, 0.5f))
+			.Append( m_rectTransform.DOScale( DEFAULT_SCALE * 2, 0.5f))
 			.Join( m_image.DOFade(0f, 0.5f))
 
 			// Sequence Loop
-			.OnComplete( ResetDrag);
-			// .SetLoops(-1, LoopType.Restart);
+			// .OnComplete( ResetDrag);
+			.SetLoops(-1, LoopType.Restart);
 	}
 
 	void ResetDrag()
@@ -69,13 +71,15 @@ public class TutorialFinger : MonoBehaviour
 	void OnStartSequence()
 	{
 		// Double scale
-		m_rectTransform.localScale = Vector3.one * 2;
+		m_rectTransform.localScale = DEFAULT_SCALE * 2;
 		// Set start sequence position
 		transform.position = m_start.position;
 		// Set transparent
 		Color c = Color.white;
 		c.a = 0;
 		m_image.color = c;
+
+
 	}
 
 	/// <summary>
