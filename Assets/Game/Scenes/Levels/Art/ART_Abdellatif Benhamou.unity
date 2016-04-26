@@ -13742,6 +13742,7 @@ Transform:
   - {fileID: 1084934858}
   - {fileID: 234481363}
   - {fileID: 1010454824}
+  - {fileID: 945341242}
   m_Father: {fileID: 1692293352}
   m_RootOrder: 0
 --- !u!1001 &912111018
@@ -14202,6 +14203,68 @@ Light:
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
+--- !u!1001 &945341241
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 911483439}
+    m_Modifications:
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -1591.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -135.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 49.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0.6024397
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0.24015649
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0.75850755
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: -0.0636993
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_RootOrder
+      value: 78
+      objectReference: {fileID: 0}
+    - target: {fileID: 160712, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_Name
+      value: PF_CS_L_Ground_Cave_02_0 (27)
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 2.885634
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 2.8856325
+      objectReference: {fileID: 0}
+    - target: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 2.8856318
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+  m_IsPrefabParent: 0
+--- !u!4 &945341242 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 431130, guid: f1e5c0c18f573453a853363b6e6d1a95, type: 2}
+  m_PrefabInternal: {fileID: 945341241}
 --- !u!1001 &945887005
 Prefab:
   m_ObjectHideFlags: 0
@@ -32677,12 +32740,12 @@ Material:
         second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
       data:
         first:
-          name: _SunPos
-        second: {r: 1, g: 0, b: 0, a: 0}
-      data:
-        first:
           name: _HorizonColor
         second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
+      data:
+        first:
+          name: _SunPos
+        second: {r: 1, g: 0, b: 0, a: 0}
       data:
         first:
           name: _SunColor
