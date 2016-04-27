@@ -58,6 +58,8 @@ namespace LevelEditor {
 			// Subscribe to external events
 			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 			Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+
+			SpawnerManager.instance.EnableSpawners();
 		}
 		
 		/// <summary>
