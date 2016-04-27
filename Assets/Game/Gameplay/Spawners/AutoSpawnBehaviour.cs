@@ -52,6 +52,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		m_state = State.Idle;
 	}
 
+	public void ForceRemoveEntities() {
+
+	}
+
 	public void UpdateTimers() {
 		if (m_state == State.Respawning) {
 			if (m_timer > 0) {

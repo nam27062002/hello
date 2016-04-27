@@ -33,6 +33,12 @@ public class GameSceneController : GameSceneControllerBase {
 	};
 
 	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
+
+	[SerializeField] private GameObject m_resultsScreen;
+
+	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 
@@ -157,8 +163,14 @@ public class GameSceneController : GameSceneControllerBase {
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
-						// Open popup!
-						PopupManager.OpenPopupAsync(PopupSummary.PATH);
+						// Disable dragon and entities!
+						InstanceManager.player.gameObject.SetActive(false);
+						SpawnerManager.instance.DisableSpawners();
+
+						// Enable Results screen and move the camera to that position
+						if (m_resultsScreen != null) {
+							m_resultsScreen.SetActive(true);
+						}
 					}
 				}
 			} break;
@@ -330,6 +342,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// Start countdown timer
 				m_timer = COUNTDOWN;
 
+				// enable spawners
+				SpawnerManager.instance.EnableSpawners();
+
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_STARTED);
 			} break;
@@ -343,6 +358,7 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
 			case EStates.FINISHED: {
+				// Disable dragon
 				InstanceManager.player.playable = false;
 			} break;
 		}
