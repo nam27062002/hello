@@ -43,6 +43,9 @@ public class LevelLoadingSplash : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		m_sceneController = InstanceManager.GetSceneController<GameSceneController>();
+
+		// Show!
+		GetComponent<ShowHideAnimator>().ForceShow(false);
 	}
 
 	/// <summary>
@@ -51,9 +54,6 @@ public class LevelLoadingSplash : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
-
-		// Show!
-		GetComponent<ShowHideAnimator>().ForceShow(false);
 	}
 	
 	/// <summary>

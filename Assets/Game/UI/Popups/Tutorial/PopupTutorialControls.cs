@@ -78,7 +78,6 @@ public class PopupTutorialControls : MonoBehaviour {
 	/// </summary>
 	public void OnClosePreAnimation() {
 		// Start playing!
-		Debug.Log("OnClosePreAnimation");
 		m_sceneController.startWhenLoaded = true;
 	}
 }
