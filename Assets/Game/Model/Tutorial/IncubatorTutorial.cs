@@ -87,7 +87,8 @@ public class IncubatorTutorial : MonoBehaviour {
 					if ( m_finger == null )
 					{
 						GameObject go = Instantiate( Resources.Load( TutorialFinger.PATH ) ) as GameObject;
-						go.transform.parent = transform;
+						//go.transform.parent = transform;	// <---- [AOC] Both this and SetParent(transform, true) cause my Unity to hang :s
+						go.transform.SetParent(transform, false);
 						m_finger = go.GetComponent<TutorialFinger>();
 					}
 					m_finger.gameObject.SetActive( true );
