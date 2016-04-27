@@ -33,15 +33,12 @@ public class GameSceneController : GameSceneControllerBase {
 	};
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-
+	// Exposed
 	[SerializeField] private GameObject m_resultsScreen;
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-
+	// Countdown
 	public float countdown {
 		get {
 			if(state == EStates.COUNTDOWN) {
@@ -82,10 +79,14 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-	// Internal vars
+	// For the tutorial
+	private bool m_startWhenLoaded = true;
+	public bool startWhenLoaded {
+		get { return m_startWhenLoaded; }
+		set { m_startWhenLoaded = value; }
+	}
+
+	// Internal
 	private float m_timer = -1;	// Misc use
 
 	//------------------------------------------------------------------//
@@ -137,9 +138,14 @@ public class GameSceneController : GameSceneControllerBase {
 		switch(m_state) {
 			// During loading, wait until level is loaded
 			case EStates.LOADING_LEVEL: {
-				m_timer -= Time.deltaTime;
+				// Update timer
+				if(m_timer > 0) {
+					m_timer -= Time.deltaTime;
+				}
+
+				// Change state only if allowed, otherwise it will be manually done
 				if(levelLoadingProgress >= 1) {
-					ChangeState(EStates.COUNTDOWN);
+					if(m_startWhenLoaded) ChangeState(EStates.COUNTDOWN);
 				}
 			} break;
 
@@ -307,14 +313,6 @@ public class GameSceneController : GameSceneControllerBase {
 				
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_STARTED);
-
-				// Check whether the tutorial popup must be displayed
-				if(!UserProfile.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
-					// Open popup
-					PopupManager.OpenPopupAsync(PopupTutorialControls.PATH);
-					UserProfile.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
-					PersistenceManager.Save();
-				}
 			} break;
 
 			case EStates.COUNTDOWN: {
@@ -336,6 +334,14 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
+
+				// Check whether the tutorial popup must be displayed
+				if(!UserProfile.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
+					// Open popup
+					PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
+					UserProfile.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+					PersistenceManager.Save();
+				}
 			} break;
 
 			case EStates.COUNTDOWN: {
