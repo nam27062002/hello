@@ -38,9 +38,11 @@ public class ResultsScreenController : MonoBehaviour {
 		// Launch number animators
 		m_scoreAnimator.SetValue(0, (int)RewardManager.score);
 		m_coinsAnimator.SetValue(0, (int)RewardManager.coins);
-		m_bonusCoinsAnimator.SetValue(0, 0); //TODO: get bouns coins from Reward Manager
+		m_bonusCoinsAnimator.SetValue(0, RewardManager.instance.CalculateSurvivalBonus()); //TODO: get bouns coins from Reward Manager
 
-		m_highScoreLabel.text = "High Score: " + RewardManager.score;
+		m_highScoreLabel.text = "High Score: " + UserProfile.highScore;
+
+		m_newHighScoreDeco.SetActive(RewardManager.isHighScore);
 
 		// Set time - format to MM:SS
 		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();

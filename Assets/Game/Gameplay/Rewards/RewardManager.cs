@@ -88,9 +88,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 
 	// Highscore
 	private bool m_isHighScore;
-	public bool isHighScore
+	public static bool isHighScore
 	{
-		get {  return m_isHighScore; }
+		get {  return instance.m_isHighScore; }
 	}
 
 
@@ -374,7 +374,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// Calculates the survival bonus at the end of the game
 	/// </summary>
 	/// <returns>The survival bonus.</returns>
-	private int CalculateSurvivalBonus()
+	public int CalculateSurvivalBonus()
     {
         //Survival bonus is awarded for every block of 10 seconds the user has survived
         float elapsedTime = GameTime();

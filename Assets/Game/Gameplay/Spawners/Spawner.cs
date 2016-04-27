@@ -89,6 +89,19 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_respawnTimer = 0;
 	}
 
+	public void ForceRemoveEntities() {
+		for (int i = 0; i < m_entitySpawned; i++) {			
+			if (m_entities[i] != null) {
+				PoolManager.ReturnInstance(m_entities[i]);
+				m_entities[i] = null;
+			}
+		}
+
+		m_entityAlive = 0;
+		m_respawnTimer = 0;
+		m_allEntitiesKilledByPlayer = false;
+	}
+
 	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
 		for (int i = 0; i < m_entitySpawned; i++) {			
