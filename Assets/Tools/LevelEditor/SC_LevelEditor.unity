@@ -206,6 +206,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 219.35782, y: 134.65068, z: -998.921}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1024261114}
   m_RootOrder: 4
@@ -279,6 +280,7 @@ Canvas:
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -291,6 +293,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1894821864}
   - {fileID: 1841321834}
@@ -571,20 +574,20 @@ Material:
         second: {r: 0.15668255, g: 0.16544718, b: 0.33823532, a: 1}
       data:
         first:
-          name: _SkyColor
-        second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
-      data:
-        first:
           name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _SunPos
-        second: {r: 1, g: 0, b: 0, a: 0}
+          name: _SkyColor
+        second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
       data:
         first:
           name: _HorizonColor
         second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
+      data:
+        first:
+          name: _SunPos
+        second: {r: 1, g: 0, b: 0, a: 0}
       data:
         first:
           name: _SunColor
@@ -617,6 +620,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.3578186, y: 5.3493137, z: -1.0789595}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1245504243}
   - {fileID: 1978301880}
@@ -831,7 +835,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22494112, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 84.75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22429272, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_AnchorMin.y
@@ -935,7 +939,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22452748, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 56.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22487768, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.x
@@ -947,7 +951,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22443424, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 113
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22419774, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.x
@@ -955,7 +959,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22419774, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 81.36
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22445474, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.x
@@ -963,7 +967,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22445474, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 113
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22417466, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.x
@@ -971,7 +975,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22417466, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 56.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22438116, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.x
@@ -979,7 +983,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22438116, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 56.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22417782, guid: fc680621f0a7c4ec68d428fe8326fe82, type: 2}
       propertyPath: m_AnchorMin.y
@@ -1102,6 +1106,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.3578186, y: -5.3493137, z: 1.0789595}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1024261114}
   m_RootOrder: 0
@@ -1195,6 +1200,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.3578186, y: -5.3493137, z: 1.0789595}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1024261114}
   m_RootOrder: 5

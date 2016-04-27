@@ -40,7 +40,7 @@ public class MineBehaviour : Initializable {
 	}
 
 	void OnEnable() {
-		MeshRenderer renderer = transform.FindChild("view").GetComponent<MeshRenderer>();
+		Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
 		renderer.enabled = true;
 		m_timer = 0;
 	}
@@ -90,7 +90,7 @@ public class MineBehaviour : Initializable {
 	private void Explode() {
 
 		// Hide mesh and destroy object after all explosions have been triggered
-		MeshRenderer renderer = transform.FindChild("view").GetComponent<MeshRenderer>();
+		Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
 		renderer.enabled = false;
 
 		m_camera.Shake(0.75f, new Vector3(0.75f, 0.75f, 0));

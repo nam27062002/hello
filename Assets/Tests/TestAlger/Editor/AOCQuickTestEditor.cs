@@ -44,13 +44,5 @@ public class AOCQuickTestEditor : Editor {
 		}
 
 		EditorGUILayout.Space();
-		if(targetTest.m_tweener != null) {
-			Tween t = (Tween)targetTest.m_tweener;
-			EditorGUILayout.LabelField("Elapsed Perc.", t.ElapsedPercentage().ToString());
-			EditorGUILayout.LabelField("Elapsed Perc. (looped)", t.ElapsedPercentage(true).ToString());
-			EditorGUILayout.LabelField("Full Position", t.fullPosition.ToString());
-			EditorGUILayout.TextArea(t.ToString());
-			EditorUtility.SetDirty(targetTest);
-		}
 	}
 }
