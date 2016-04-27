@@ -49,7 +49,7 @@ public class PathFollower : MonoBehaviour {
 		get { return m_delta; }
 		set {
 			// Update snap point as well and apply
-			m_delta = Mathf.Clamp01(value); 
+			m_delta = ClampDelta(value); 
 			if(m_path != null) {
 				m_snapPoint = m_path.GetPointAt(m_delta);
 			}
@@ -103,8 +103,9 @@ public class PathFollower : MonoBehaviour {
 	/// <summary>
 	/// Called every frame
 	/// </summary>
-	private void Update() {
+	private void FixedUpdate() {
 		// Make sure target's position is updated - except if tweening!
+		// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
 		if(!isTweening) {
 			switch(m_linkMode) {
 				case LinkMode.DELTA: Apply(); break;
@@ -175,8 +176,10 @@ public class PathFollower : MonoBehaviour {
 		// Check params
 		if(m_target == null || m_path == null) return;
 
-		// Make sure target value is valid
-		_delta = Mathf.Clamp01(_delta);
+		// If path is not closed clamp target value
+		if(!m_path.closed) {
+			_delta = Mathf.Clamp01(_delta);
+		}
 
 		// If tween is not created, do it now
 		if(m_tween == null) {
@@ -184,8 +187,9 @@ public class PathFollower : MonoBehaviour {
 				() => { 
 					return delta; 
 				}, 
-				_newValue => { 
+				_newValue => {
 					m_delta = _newValue;	// Don't use property setter, which would kill the tween!
+					m_delta = ClampDelta(m_delta);	// If path is closed, loop around ^_^
 					Apply();
 				}, 
 				_delta,
@@ -240,6 +244,26 @@ public class PathFollower : MonoBehaviour {
 		if(m_tween != null && m_tween.IsPlaying()) {
 			m_tween.Pause();
 		}
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL UTILS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Clamps the delta between 0 and 1.
+	/// If the path is closed, we will loop. Otherwise delta will be just clamped.
+	/// </summary>
+	/// <returns>New clamped delta value.</returns>
+	/// <param name="_delta">Delta value to be clamped.</param>
+	private float ClampDelta(float _delta) {
+		// If path is not null and it's closed, loop around
+		if(m_path != null && m_path.closed) {
+			while(_delta < 0f) _delta += 1f;
+			while(_delta >= 1f) _delta -= 1f;	// If 1f, set 0f
+		} else {
+			_delta = Mathf.Clamp01(_delta);
+		}
+		return _delta;
 	}
 
 	//------------------------------------------------------------------//

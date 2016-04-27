@@ -43,7 +43,7 @@ public class MenuLevelStartButton : MonoBehaviour {
 	/// <summary>
 	/// Component disabled.
 	/// </summary>
-	private void OnDestroy() {
+	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}

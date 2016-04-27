@@ -316,7 +316,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	public int GetPointAt(float _t) {
 		// Check params
 		if(_t <= 0f) return 0;
-		if(_t >= 1f) return m_points.Count - 1;
+		if(_t >= 1f) return closed ? 0 : m_points.Count - 1;	// If closed, last point is the first one!
 
 		// Manual search
 		float d2 = GetDelta(0);
@@ -365,7 +365,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	public Vector3 GetValue(float _t) {
 		// Check params
 		if(_t <= 0f) return m_points[0].globalPosition;
-		if(_t >= 1f) return m_points[m_points.Count - 1].globalPosition;
+		if(_t >= 1f) return closed ? m_points[0].globalPosition : m_points[m_points.Count - 1].globalPosition;	// If closed, last point is the first one
 
 		// Here starts the black magic from the original script
 		// Aux vars
