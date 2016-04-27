@@ -410,7 +410,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	void OnGameEnded()
 	{
 		// Check final score and mark if its a new HighScore
-		if ( m_score >= UserProfile.highScore )
+		if ( m_score > UserProfile.highScore )
 		{
 			m_isHighScore = true;
 			UserProfile.highScore = m_score;
