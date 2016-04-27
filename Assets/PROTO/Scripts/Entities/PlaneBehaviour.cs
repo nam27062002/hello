@@ -244,13 +244,6 @@ public class PlaneBehaviour : MonoBehaviour {
 		if(mExplosion != null) {
 			mExplosion.Explode();
 		}
-		
-		// Look for any other burnable object around us
-		ExplosionExpansion exp = ((GameObject)Object.Instantiate(Resources.Load ("PROTO/Effects/ExplosionExpansion"))).GetComponent<ExplosionExpansion>();
-		exp.finalRadius = 400f;
-		Vector3 p = transform.position;
-		p.z = 0f;
-		exp.center = p;
 
 
 		// Shake camera
