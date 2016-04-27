@@ -55,8 +55,14 @@ public class CPProgressionCheats : MonoBehaviour {
 		// If not in the menu, show feedback message and return
 		if(!CheckScene()) return;
 
+		// Close control panel
+		ControlPanel.instance.Toggle();
+
 		// Clear persistence
 		PersistenceManager.Clear();
+
+		// Reset game vars
+		GameVars.playScreenShown = false;
 
 		// Restart game
 		FlowManager.Restart();
