@@ -88,6 +88,10 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 
 	// Highscore
 	private bool m_isHighScore;
+	public bool isHighScore
+	{
+		get {  return m_isHighScore; }
+	}
 
 
 	//------------------------------------------------------------------//
