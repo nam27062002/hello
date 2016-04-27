@@ -1,14 +1,14 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &117748
+--- !u!1 &106966
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 449226}
-  - 114: {fileID: 11463780}
+  - 4: {fileID: 413826}
+  - 114: {fileID: 11426782}
   m_Layer: 0
   m_Name: PF_Default
   m_TagString: Untagged
@@ -16,24 +16,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &449226
+--- !u!4 &413826
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 117748}
+  m_GameObject: {fileID: 106966}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11463780
+--- !u!114 &11426782
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 117748}
+  m_GameObject: {fileID: 106966}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a56bd6868b354bc18bcb74d052c56ca, type: 3}
@@ -43,11 +44,12 @@ MonoBehaviour:
     profile:
       coins: 0
       pc: 0
-      currentDragon: rhino
+      currentDragon: dragon_baby
+      superFuryProgression: 0
       currentLevel: level_0
       tutorialStep: 1
     dragons:
-    - sku: rhino
+    - sku: dragon_baby
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -56,7 +58,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 1
       equip: []
-    - sku: dragon_big
+    - sku: dragon_fat
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -65,7 +67,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_tiger
+    - sku: dragon_crocodile
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -74,7 +76,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_pink
+    - sku: dragon_bug
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -83,7 +85,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_glow
+    - sku: dragon_chinese
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -92,7 +94,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_water
+    - sku: dragon_reptile
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -101,7 +103,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_magma
+    - sku: dragon_classic
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -110,7 +112,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_watermelon
+    - sku: dragon_devil
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -119,7 +121,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_cow
+    - sku: dragon_balrog
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -128,7 +130,7 @@ MonoBehaviour:
       fireSkillLevel: 0
       owned: 0
       equip: []
-    - sku: dragon_metal
+    - sku: dragon_titan
       xp: 0
       level: 0
       biteSkillLevel: 0
@@ -151,8 +153,8 @@ MonoBehaviour:
       generationIdx: 000000000000000000000000
     eggs:
       inventory:
-      - sku: 
-        state: 0
+      - sku: egg_dragon_baby
+        state: 1
         rewardSku: 
         isNew: 1
       - sku: 
@@ -180,5 +182,5 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 117748}
+  m_RootGameObject: {fileID: 106966}
   m_IsPrefabParent: 1

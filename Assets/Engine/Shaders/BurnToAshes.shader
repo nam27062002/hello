@@ -3,7 +3,7 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Unlit/BurnToAshes" {
+Shader "Unlit/BurnToAshes (Transparent)" {
 Properties {
 	_MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
 	_AshLevel( "Ash Level", Range (0, 1)) = 0
@@ -16,6 +16,7 @@ SubShader {
 	
 	ZWrite Off
 	Blend SrcAlpha OneMinusSrcAlpha 
+	ColorMask RGBA
 	
 	Pass {  
 		CGPROGRAM
@@ -24,7 +25,7 @@ SubShader {
 			#pragma multi_compile_fog
 			
 			#include "UnityCG.cginc"
-
+			 
 			struct appdata_t {
 				float4 vertex : POSITION;
 				float2 texcoord : TEXCOORD0;
@@ -54,8 +55,10 @@ SubShader {
 			{
 				clip(tex2D(_MainTex, i.texcoord).rgb - _AshLevel);
 				fixed alpha = tex2D( _AlphaMask, i.texcoord ).a;
-				fixed4 col = fixed4(0,0,0,alpha);
+				fixed4 col = fixed4(0,0,0,1);
 				UNITY_APPLY_FOG(i.fogCoord, col);
+				col.a = alpha;
+
 				return col;
 			}
 		ENDCG

@@ -12,7 +12,7 @@ public class WindTrailManagement : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		m_trailPrefab = Resources.Load("Proto/WeatherEffects/WindTrail") as GameObject;
+		m_trailPrefab = Resources.Load("Game/Assets/FX/WindTrail") as GameObject;
 		m_trailPool = new Pool(m_trailPrefab, null, 10, true, true);	// [AOC] Create new container if given container is the Pool Manager.
 		m_canSpawnTrails = true;
 		m_spawnSize = new Vector2( 10, 10);
