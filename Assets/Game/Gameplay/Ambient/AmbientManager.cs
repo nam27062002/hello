@@ -25,7 +25,7 @@ public class AmbientManager : MonoBehaviour
 		}
 	};
 	AmbientNodeResults[] m_resultNodes = new AmbientNodeResults[NODES_TO_TAKE_INTO_ACCOUNT];
-	AmbientNodeResults[] m_resultLightDir = new AmbientNodeResults[NODES_TO_TAKE_INTO_ACCOUNT];
+	// AmbientNodeResults[] m_resultLightDir = new AmbientNodeResults[NODES_TO_TAKE_INTO_ACCOUNT];
 
 	RainController m_rainController;
 
@@ -227,7 +227,7 @@ public class AmbientManager : MonoBehaviour
 		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
 		{
 			m_resultNodes[i].Reset();
-			m_resultLightDir[i].Reset();
+			// m_resultLightDir[i].Reset();
 		}
 
 		for( int i = 0; i<m_ambientNodes.Length; i++ )
@@ -261,6 +261,7 @@ public class AmbientManager : MonoBehaviour
 			}
 
 			// Light Dir Values
+			/*
 			if ( m_ambientNodes[i].m_useLightDir )
 			{
 				int selectedLightIndex = -1;
@@ -284,6 +285,7 @@ public class AmbientManager : MonoBehaviour
 					m_resultLightDir[selectedLightIndex].m_node = m_ambientNodes[i];
 				}
 			}
+			*/
 		}
 
 		// Now set the weigth
@@ -297,12 +299,13 @@ public class AmbientManager : MonoBehaviour
 				m_resultNodes[i].m_node.SetIsUsed(true);
 				totalDistance += m_resultNodes[i].m_distance;
 			}
-
+			/*
 			if( m_resultLightDir[i].m_node != null )
 			{
 				m_resultLightDir[i].m_node.SetIsUsed( true );
 				totalLightDistance += m_resultLightDir[i].m_distance;
 			}
+			*/
 		}
 
 			// Inverse Values
@@ -315,11 +318,13 @@ public class AmbientManager : MonoBehaviour
 				m_resultNodes[i].m_weight = totalDistance - m_resultNodes[i].m_distance;
 				totalWeight += m_resultNodes[i].m_weight;
 			}
+			/*
 			if ( m_resultLightDir[i].m_node != null )
 			{
 				m_resultLightDir[i].m_weight = totalLightDistance - m_resultNodes[i].m_distance;
 				totalLightWeight += m_resultLightDir[i].m_weight;
 			}
+			*/
 		}
 
 			// Normalize values
@@ -329,11 +334,12 @@ public class AmbientManager : MonoBehaviour
 			{
 				m_resultNodes[i].m_weight = m_resultNodes[i].m_weight / totalWeight;
 			}
-
+			/*
 			if ( m_resultLightDir[i].m_node != null )
 			{
 				m_resultLightDir[i].m_weight = m_resultLightDir[i].m_weight / totalLightWeight;
 			}
+			*/
 		}
 	}
 
@@ -380,8 +386,11 @@ public class AmbientManager : MonoBehaviour
 					
 					// Rain
 				m_targetRainIntensity += node.m_rainIntensity * nodeResult.m_weight;
-			}
 
+					// Sun size
+				m_targetSunSize += node.m_sunSize * nodeResult.m_weight;
+			}
+			/*
 			if ( m_resultLightDir[i].m_node != null )
 			{
 				AmbientNodeResults nodeResult = m_resultLightDir[i];
@@ -392,6 +401,7 @@ public class AmbientManager : MonoBehaviour
 				m_targetLightAngles += node.transform.rotation.eulerAngles * nodeResult.m_weight;
 				m_targetFlaresIntensity += node.m_flaresIntensity * nodeResult.m_weight;
 			}
+			*/
 		}
 	}
 
