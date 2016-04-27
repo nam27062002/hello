@@ -369,37 +369,44 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 
 		// Here starts the black magic from the original script
 		// Aux vars
-		float totalPercent = 0f;
-		float curvePercent = 0f;
+		float processedDelta = 0f;
+		float segmentDelta = 0f;
+		float segmentLength = 0f;
 		BezierPoint p1 = null;
 		BezierPoint p2 = null;
 
 		// Iterate all the points up to the last one
 		for(int i = 0; i < m_points.Count - 1; i++) {
 			// Compute percentage equivalent to the curve between current point and the next one
-			curvePercent = ApproximateLength(m_points[i], m_points[i + 1], resolution) / length;
+			segmentLength = ApproximateLength(m_points[i], m_points[i + 1], resolution);
+			segmentDelta = segmentLength / length;
 
 			// Have we reached requested delta?
-			if(totalPercent + curvePercent >= _t) {
+			if(processedDelta + segmentDelta >= _t) {
 				// Yes!! Store target points
 				p1 = m_points[i];
 				p2 = m_points[i + 1];
 				break;
 			} else {
 				// No! Increase traversed percentage and keep looping
-				totalPercent += curvePercent;
+				processedDelta += segmentDelta;
 			}
 		}
 
 		// If the curve is closed and we didn't find the target points, it means that the given delta belongs to the last segment of curve (between last and first points)
 		if(closed && p1 == null) {
+			// Select points
 			p1 = m_points[m_points.Count - 1];
 			p2 = m_points[0];
+
+			// Compute required data
+			segmentLength = ApproximateLength(p1, p2, resolution);
+			segmentDelta = segmentLength / length;
 		}
 
 		// Compute relative remaining percent between the two points and get the value at that segment
-		_t -= totalPercent;
-		return GetValue(p1, p2, _t/curvePercent);
+		_t -= processedDelta;
+		return GetValue(p1, p2, _t/segmentDelta);
 	}
 
 	/// <summary>
