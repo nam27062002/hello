@@ -86,6 +86,10 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	int m_lastAwardedSurvivalBonusMinute = -1;
 	private GameSceneControllerBase m_sceneController;
 
+	// Highscore
+	private bool m_isHighScore;
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -105,6 +109,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -116,6 +121,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -186,6 +192,8 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		instance.m_sceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 		// Survival Bonus
 		instance.ParseSurvivalBonus( InstanceManager.player.data.tierDef.sku );
+
+		instance.m_isHighScore = false;
 	}
 
 	/// <summary>
@@ -393,4 +401,21 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		return 0;
     }
 
+
+    // 
+	void OnGameEnded()
+	{
+		// Check final score and mark if its a new HighScore
+		if ( m_score >= UserProfile.highScore )
+		{
+			m_isHighScore = true;
+			UserProfile.highScore = m_score;
+			UserProfile.Save();
+		}
+		else
+		{
+			m_isHighScore = false;
+		}
+
+	}
 }
