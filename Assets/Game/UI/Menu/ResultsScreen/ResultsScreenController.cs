@@ -34,11 +34,7 @@ public class ResultsScreenController : MonoBehaviour {
 		m_scoreAnimator.SetValue(0, 0);
 		m_coinsAnimator.SetValue(0, 0);
 		m_bonusCoinsAnimator.SetValue(0, 0);
-		m_highScoreLabel = "0";
-
-		// Set time - format to MM:SS
-		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();
-		m_timeLabel.text = TimeUtils.FormatTime(game.elapsedSeconds, TimeUtils.EFormat.ABBREVIATIONS, 2, TimeUtils.EPrecision.MINUTES);
+		m_highScoreLabel.text = "0";
 
 		// Hide high score decoration
 		m_newHighScoreDeco.SetActive(false);
@@ -46,7 +42,16 @@ public class ResultsScreenController : MonoBehaviour {
 
 	void OnEnable() {
 		// set values from score manager
+		// Launch number animators
+		m_scoreAnimator.SetValue(0, (int)RewardManager.score);
+		m_coinsAnimator.SetValue(0, (int)RewardManager.coins);
+		m_bonusCoinsAnimator.SetValue(0, 0); //TODO: get bouns coins from Reward Manager
 
+		m_highScoreLabel.text = "" + RewardManager.score;
+
+		// Set time - format to MM:SS
+		GameSceneController game = InstanceManager.GetSceneController<GameSceneController>();
+		m_timeLabel.text = TimeUtils.FormatTime(game.elapsedSeconds, TimeUtils.EFormat.ABBREVIATIONS, 2, TimeUtils.EPrecision.MINUTES);
 	}
 
 
