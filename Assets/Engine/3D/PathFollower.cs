@@ -104,12 +104,32 @@ public class PathFollower : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void FixedUpdate() {
-		// Make sure target's position is updated - except if tweening!
-		// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
-		if(!isTweening) {
-			switch(m_linkMode) {
-				case LinkMode.DELTA: Apply(); break;
-				case LinkMode.SNAP_POINT: SnapTo(m_snapPoint); break;
+		// Use the update loop for the editor, fixed update for the game (less calls -> better performance)
+		if(Application.isPlaying) {
+			// Make sure target's position is updated - except if tweening!
+			// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
+			if(!isTweening) {
+				switch(m_linkMode) {
+					case LinkMode.DELTA: Apply(); break;
+					case LinkMode.SNAP_POINT: SnapTo(m_snapPoint); break;
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Called every frame
+	/// </summary>
+	private void Update() {
+		// Use the update loop for the editor, fixed update for the game (less calls -> better performance)
+		if(!Application.isPlaying) {
+			// Make sure target's position is updated - except if tweening!
+			// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
+			if(!isTweening) {
+				switch(m_linkMode) {
+					case LinkMode.DELTA: Apply(); break;
+					case LinkMode.SNAP_POINT: SnapTo(m_snapPoint); break;
+				}
 			}
 		}
 	}

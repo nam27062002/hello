@@ -22,6 +22,11 @@ public class MenuLevelScroller3D : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	public enum AnimDir {
+		BACKWARDS = -1,
+		NONE = 0,	// Don't animate
+		FORWARD = 1
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -64,31 +69,14 @@ public class MenuLevelScroller3D : MonoBehaviour {
 	/// First update call
 	/// </summary>
 	private void Start() {
+		// Distribute levels uniformly through the path
+		float deltaOffset = 1f/m_levels.Count;
+		for(int i = 0; i < m_levels.Count; i++) {
+			m_levels[i].follower.GoTo(i * deltaOffset);	// No animation
+		}
+
 		// Focus current selected level
-		FocusLevel(InstanceManager.GetSceneController<MenuSceneController>().selectedLevel, false);
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
-	}
-
-	/// <summary>
-	/// Update loop.
-	/// </summary>
-	private void Update() {
-		
+		FocusLevel(InstanceManager.GetSceneController<MenuSceneController>().selectedLevel, AnimDir.NONE);
 	}
 
 	//------------------------------------------------------------------//
@@ -98,49 +86,25 @@ public class MenuLevelScroller3D : MonoBehaviour {
 	/// Focus a specific level.
 	/// </summary>
 	/// <param name="_sku">The level identifier.</param>
-	/// <param name="_animate">Whether to animate or not.</param>
-	public void FocusLevel(string _sku, bool _animate) {
-		// Find out target index
+	/// <param name="_dir">In which direction to animate.</param>
+	public void FocusLevel(string _sku, AnimDir _dir) {
+		// Find out target index and get its path follower
 		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
-		int selectedIndex = def.GetAsInt("order");
+		int targetIdx = def.GetAsInt("order");
 
-		// Compute the target delta in the path for each level
-		// [AOC] This is a bit tricky:
-		// Basically we want the selected level at the center of the curve (delta 0.5)
-		// and the rest at its sides at a "constant" distance.
-		// To compute that distance, we will distribute the curve in 2N-1 divisions,
-		// N being the total amount of levels.
-		// Then, we will compute the target deltas for all the levels considering selected
-		// one is 0.5 and at what order distance they are from it.
+		// Compute delta offset for the target level in the requested direction
+		// Target level should be at delta 0 (or 1, which is equivalent in a closed path)
+		float targetDelta = 1f;
+		if(_dir == AnimDir.FORWARD) targetDelta = 0f;
+		float deltaOffset = targetDelta - m_levels[targetIdx].follower.delta;
 
-		// Pre-math
-		int slots = m_levels.Count * 2 - 1;
-		float deltaDist = 1f/slots;
-
-		// Go level by level and move them to their target deltas
+		// Apply the same offset to all levels
 		for(int i = 0; i < m_levels.Count; i++) {
-			// Compute target delta
-			int dif = i - selectedIndex;
-			float targetDelta = 0.5f + dif * deltaDist;
-			targetDelta = Mathf.Clamp01(targetDelta);	// Should never happen (because of maths), but just in case
-
-			// Launch animation! Use a path follower for that
-			PathFollower follower = m_levels[i].GetComponent<PathFollower>();
-			if(follower != null) {
-				if(_animate) {
-					follower.GoTo(targetDelta, m_animDuration, m_animEase);
-				} else {
-					follower.GoTo(targetDelta);
-				}
+			targetDelta = m_levels[i].follower.delta + deltaOffset;
+			if(_dir == AnimDir.NONE) {
+				m_levels[i].follower.GoTo(targetDelta);
 			} else {
-				// No follower was found, set position directly (shouldn't happen)
-				Vector3 targetPos = m_path.GetValue(targetDelta);
-				m_levels[i].transform.DOKill();
-				if(_animate) {
-					m_levels[i].transform.DOMove(targetPos, m_animDuration).SetEase(m_animEase).SetRecyclable(true);
-				} else {
-					m_levels[i].transform.position = targetPos;
-				}
+				m_levels[i].follower.GoTo(targetDelta, m_animDuration, m_animEase);
 			}
 		}
 	}
@@ -148,13 +112,5 @@ public class MenuLevelScroller3D : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// The selected dragon has been changed.
-	/// </summary>
-	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
-	private void OnLevelSelected(string _sku) {
-		// Move camera to the newly selected dragon
-		FocusLevel(_sku, true);
-	}
 }
 

@@ -16,6 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Preview of a dragon in the main menu.
 /// </summary>
+[RequireComponent(typeof(PathFollower))]	// Required by the scroller
 public class MenuLevelPreview : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -40,6 +41,15 @@ public class MenuLevelPreview : MonoBehaviour {
 	// References
 	private GameObject m_lockInfoObj = null;
 	private Localizer m_unlockInfoText = null;
+	private PathFollower m_follower = null;
+	public PathFollower follower {
+		get {
+			if(m_follower == null) {
+				m_follower = GetComponent<PathFollower>();
+			}
+			return m_follower;
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
