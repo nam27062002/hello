@@ -14,17 +14,17 @@ SceneSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 6
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogMode: 2
+  m_FogDensity: 0.003
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientIntensity: 1.09
+  m_AmbientMode: 3
   m_SkyboxMaterial: {fileID: 2116321886}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -1143,7 +1143,7 @@ Transform:
   m_LocalRotation: {x: 0.44347167, y: 0.16686822, z: -0.41793162, w: 0.77512646}
   m_LocalPosition: {x: 924.97, y: -16.57, z: -0.86362267}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 55.788998, y: -11.489699, z: -62.761898}
   m_Children: []
   m_Father: {fileID: 720585758}
   m_RootOrder: 2
@@ -8711,8 +8711,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8451609bd8ed49cd8a5fd8e0491f597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ambientColor: {r: 0.375, g: 0.375, b: 0.375, a: 1}
-  m_ambientIntensity: 0
+  m_ambientColor: {r: 0.6117647, g: 0.6117647, b: 0.6117647, a: 1}
+  m_ambientIntensity: 1.09
   m_sunSize: 0
   m_atmosphereThickness: 0
   m_skyColor: {r: 0.50735295, g: 0.65344805, b: 1, a: 1}
@@ -19563,8 +19563,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8451609bd8ed49cd8a5fd8e0491f597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ambientColor: {r: 0.375, g: 0.375, b: 0.375, a: 1}
-  m_ambientIntensity: 0
+  m_ambientColor: {r: 0.6117647, g: 0.6117647, b: 0.6117647, a: 1}
+  m_ambientIntensity: 1.09
   m_sunSize: 0
   m_atmosphereThickness: 0
   m_skyColor: {r: 0.50735295, g: 0.65344805, b: 1, a: 1}
@@ -34932,7 +34932,7 @@ Transform:
   m_LocalRotation: {x: 0.19420627, y: 0.07196483, z: -0.037640937, w: 0.97759306}
   m_LocalPosition: {x: 924.97, y: -16.57, z: -0.86362267}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 22.6516, y: 7.8525, z: -2.8349}
   m_Children: []
   m_Father: {fileID: 720585758}
   m_RootOrder: 1
@@ -35499,10 +35499,10 @@ Transform:
   m_PrefabParentObject: {fileID: 460262, guid: e8d4e67c26b4cac47b5b5358f076ee3d, type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1727207647}
-  m_LocalRotation: {x: 0.6087615, y: 0, z: 0, w: 0.7933533}
+  m_LocalRotation: {x: 0.42470935, y: 0.14294274, z: -0.14094394, w: 0.8827934}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 52.199997, y: 12.5, z: -12}
   m_Children: []
   m_Father: {fileID: 720585758}
   m_RootOrder: 0
@@ -35516,15 +35516,15 @@ Light:
   m_Enabled: 1
   serializedVersion: 6
   m_Type: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.8
+  m_Color: {r: 0.9843137, g: 0.93333334, b: 0.7254902, a: 1}
+  m_Intensity: 0.84
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
     m_Type: 1
     m_Resolution: -1
-    m_Strength: 0.211
+    m_Strength: 0.741
     m_Bias: 0.27
     m_NormalBias: 0
     m_NearPlane: 0.1
@@ -44308,20 +44308,20 @@ Material:
         second: {r: 0.15668255, g: 0.16544718, b: 0.33823532, a: 1}
       data:
         first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
           name: _SkyColor
         second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
       data:
         first:
-          name: _HorizonColor
-        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
+          name: _EmissionColorUI
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _SunPos
         second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
       data:
         first:
           name: _SunColor
