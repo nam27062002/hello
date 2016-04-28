@@ -20,9 +20,8 @@ public enum EngineEvents {
 	POPUP_DESTROYED,		// params: PopupController _popup
 
 	// Screen Navigation System
-	// [AOC] Triggered at the start of the animation, 2 versions:
-	NAVIGATION_SCREEN_CHANGED,		// params: NavigationScreen _fromScreen, NavigationScreen _toScreen, bool _animate
-	NAVIGATION_SCREEN_CHANGED_INT,	// params: int _fromScreen, int _toScreen, bool _animate
+	// [AOC] Triggered at the start of the animation, parameters englobed in a custom class:
+	NAVIGATION_SCREEN_CHANGED,		// params: NavigationScreenSystem.ScreenChangedEvent _eventData
 
 	// Rules and localization
 	LANGUAGE_CHANGED,		// no params
