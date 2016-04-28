@@ -60,6 +60,21 @@ public class PopupEggShop : MonoBehaviour {
 
 		m_initialDragonSku = "";
 
+	
+		// Create all the Egg pills and add them inside the scroll
+
+		// Get the the content
+		List<DefinitionNode> defList = DefinitionsManager.GetDefinitions(DefinitionsCategory.EGGS);
+		DefinitionsManager.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
+
+		for (int i = 0; i < defList.Count; i++) {
+			GameObject pill = GameObject.Instantiate<GameObject>(m_pillPrefab);
+			PopupEggShopPill eggPill = pill.GetComponent<PopupEggShopPill>();
+
+			eggPill.InitFromDef(defList[i]);
+			pill.transform.parent = m_scrollList.content;
+		}
+
 		// Subscribe to events
 		GetComponent<PopupController>().OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
 		GetComponent<PopupController>().OnOpenPostAnimation.AddListener(OnOpenPostAnimation);

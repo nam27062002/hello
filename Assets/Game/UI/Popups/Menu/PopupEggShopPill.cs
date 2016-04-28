@@ -66,12 +66,10 @@ public class PopupEggShopPill : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		// Create the 3D preview scene and initialize the raw image
-		m_eggPreviewScene = EggUIScene3D.CreateEmpty();
-		m_eggPreviewScene.InitRawImage(ref m_previewArea);
-
 		// Initialize from the given egg sku
-		InitFromDef(DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, m_eggSku));
+		if (m_eggDef == null && m_eggSku != "") {
+			InitFromDef(DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, m_eggSku));
+		}
 	}
 
 	/// <summary>
@@ -116,6 +114,11 @@ public class PopupEggShopPill : MonoBehaviour {
 	public void InitFromDef(DefinitionNode _eggDef) {
 		// Store definition
 		m_eggDef = _eggDef;
+		m_eggSku = m_eggDef.sku;
+
+		// Create the 3D preview scene and initialize the raw image
+		m_eggPreviewScene = EggUIScene3D.CreateEmpty();
+		m_eggPreviewScene.InitRawImage(ref m_previewArea);
 
 		// The scene will take care of everything
 		m_eggPreviewScene.SetEgg(Egg.CreateFromDef(_eggDef));
