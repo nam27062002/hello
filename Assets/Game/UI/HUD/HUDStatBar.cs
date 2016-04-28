@@ -46,6 +46,7 @@ public class HUDStatBar : MonoBehaviour {
 	private CanvasGroup m_canvasGroup;
 	private float m_timer = 0;
 	private float m_timerDuration = 0;
+	private bool m_instantSet;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -74,8 +75,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			m_icon = child.gameObject;
 			m_extraIcons = new List<GameObject>();
-
 		}
+		m_instantSet = true;
 	}
 
 	IEnumerator Start()
@@ -128,13 +129,25 @@ public class HUDStatBar : MonoBehaviour {
 			// Bar value
 			m_bar.minValue = 0f;
 			m_bar.maxValue = GetMaxValue();
-			m_bar.value = GetValue();
+			if ( m_instantSet )
+			{
+				m_bar.value	= GetValue();
+				m_instantSet = false;
+			}
+			else
+			{
+				float value = GetValue();
+				if ( value > m_bar.value )
+					m_bar.value = Mathf.Lerp( m_bar.value, GetValue(), Time.deltaTime );
+				else 
+					m_bar.value = value;
+			}
 
 			if ( m_baseBar != null )
 			{
 				m_baseBar.minValue = 0f;
 				m_baseBar.maxValue = GetBaseValue();
-				m_baseBar.value = GetValue();
+				m_baseBar.value = m_bar.value;
 			}
 			// Text
 			if (m_valueTxt != null) {
