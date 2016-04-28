@@ -162,7 +162,8 @@ public class Entity : Initializable {
 				Material goldMat = Resources.Load ("Game/Assets/Materials/Gold") as Material;
 				Material[] materials = renderers[i].materials;
 				for (int m = 0; m < materials.Length; m++) {
-					materials[m] = goldMat;
+					if ( !materials[m].shader.name.EndsWith("Additive") )
+						materials[m] = goldMat;
 				}
 				renderers[i].materials = materials;
 			} else {
