@@ -52,7 +52,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	private void Awake() 
 	{
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 		Messenger.AddListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
 	}
 
@@ -62,7 +62,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 		Messenger.RemoveListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
 	}
 
@@ -153,12 +153,13 @@ public class IncubatorTutorial : MonoBehaviour {
 	/// <summary>
 	/// The current menu screen has changed.
 	/// </summary>
-	/// <param name="_fromScreen">Previous screen.</param>
-	/// <param name="_toScreen">New screen.</param>
-	/// <param name="_animated">Whether it was animated or not.</param>
-	public void OnScreenChanged(int _fromScreen, int _toScreen, bool _animated) {
-		// Only interested if new screen is the Incubator screen
-		if(_toScreen != (int)MenuScreens.INCUBATOR) {
+	/// <param name="_event">Event data.</param>
+	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEvent _event) {
+		// Only if it comes from the main screen navigation system
+		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+
+		// If leaving the incubator screen, stop the tutorial
+		if(_event.toScreenIdx != (int)MenuScreens.INCUBATOR) {
 			// Stop the tutorial if it's running
 			StopTutorial();
 			return;
