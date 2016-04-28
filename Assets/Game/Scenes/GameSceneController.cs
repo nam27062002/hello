@@ -104,22 +104,6 @@ public class GameSceneController : GameSceneControllerBase {
 	}
 
 	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-	}
-
-	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
@@ -259,27 +243,6 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 	}
 
-	/// <summary>
-	/// Go back to the main menu, finalizing all the required stuff in the game scene.
-	/// </summary>
-	public void GoToMenu() {
-		// [AOC] TODO!! Update global stats
-
-		// Apply rewards to user profile
-		RewardManager.ApplyRewardsToProfile();
-
-		// Process Missions: give rewards and generate new missions replacing those completed
-		MissionManager.ProcessMissions();
-
-		// Clear chest manager
-		ChestManager.ClearSelectedChest();
-
-		// Save persistence
-		PersistenceManager.Save();
-
-		// Go back to main menu
-		FlowManager.GoToMenu();
-	}
 
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
@@ -385,29 +348,6 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Add some delay to the summary popup
 		m_timer = 0.5f;
-	}
-
-	/// <summary>
-	/// A popup has been closed.
-	/// </summary>
-	/// <param name="_popup">The popup that has been closed</param>
-	public void OnPopupClosed(PopupController _popup) {
-		// Figure out which popup eas closed
-		// a) Summary popup?
-		if(_popup.GetComponent<PopupSummary>() != null) {
-			// If a chest was collected, show chest popup, otherwise finish the game
-			if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
-				PopupManager.OpenPopupAsync(PopupChestReward.PATH);
-			} else {
-				GoToMenu();
-			}
-		}
-
-		// b) Chest reward popup?
-		else if(_popup.GetComponent<PopupChestReward>() != null) {
-			// Go back to menu
-			GoToMenu();
-		}
 	}
 
 	public override bool IsLevelLoaded()

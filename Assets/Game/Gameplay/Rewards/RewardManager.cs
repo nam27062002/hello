@@ -207,6 +207,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	public static void ApplyRewardsToProfile() {
 		// Just do it :)
 		UserProfile.AddCoins(instance.m_coins);
+		UserProfile.AddCoins(CalculateSurvivalBonus());
 		UserProfile.AddPC(instance.m_pc);
 	}
 
