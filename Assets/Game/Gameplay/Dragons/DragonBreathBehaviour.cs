@@ -106,14 +106,17 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	void Start() {
 
+	void Awake()
+	{
 		DefinitionNode settings = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
-
 		m_superFuryLengthModifier = settings.GetAsFloat("superFuryLengthModifier", 1.2f);
 		m_superFuryMax = settings.GetAsFloat("superfuryMax", 8);
 		m_superFuryCoinsMultiplier = settings.GetAsFloat("superFuryCoinsMultiplier", 3.0f);
+	}
 
+	void Start() 
+	{
 
 		m_dragon = GetComponent<DragonPlayer>();
 		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
