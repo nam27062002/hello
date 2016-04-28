@@ -35,7 +35,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	[SerializeField] private float m_distanceAttenuation = 5f;
 	[SerializeField] private bool m_checkCollisions = true;
 	[SerializeField] private bool m_keepInsideArea = false;
-
+	[SerializeField] private bool m_avoidWater = false;
 [Header("Speed variations")]
 	[SerializeField] protected float m_maxSpeed;
 	[SerializeField] protected float m_maxRunSpeed;
@@ -61,7 +61,8 @@ public class PreyMotion : Initializable, MotionInterface {
 
 	protected float m_lastSeekDistanceSqr;
 		
-	protected int m_groundMask;	
+	protected static int m_groundMask;	
+	protected static int m_waterMask;	
 	protected Transform m_groundSensor;
 	protected float m_collisionAvoidFactor;
 	protected Vector2 m_collisionNormal;
@@ -97,6 +98,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_posZ = m_zOffset.GetRandom();
 		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 		m_groundSensor = transform.FindChild("ground_sensor");
+		m_waterMask = 1 << LayerMask.NameToLayer("Water");
 
 		m_orientation = GetComponent<Orientation>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
@@ -218,6 +220,8 @@ public class PreyMotion : Initializable, MotionInterface {
 		
 		if (m_checkCollisions)
 			AvoidCollisions();
+		if ( m_avoidWater )
+			AvoidWater();
 
 		if (m_keepInsideArea && !m_area.Contains( m_position ))
 		{
@@ -303,6 +307,33 @@ public class PreyMotion : Initializable, MotionInterface {
 				// 2- calc a big force to move away from the ground	
 				m_collisionAvoidFactor = (distanceCheck / ground.distance) * 100f;
 				m_collisionNormal = ground.normal;
+			} else {
+				m_collisionAvoidFactor *= 0.75f;
+			}
+		}
+
+		if (m_collisionAvoidFactor > 1f) {
+			for (int i = 0; i < Forces.Count; i++) {
+				m_steeringForces[i] /= m_collisionAvoidFactor;
+			}
+			m_steeringForces[Forces.Collision] += (m_collisionNormal * m_collisionAvoidFactor);
+		}
+	}
+
+	protected virtual void AvoidWater()
+	{
+		// 1- ray cast in the same direction where we are flying
+		if (m_collisionCheckPool == Time.frameCount % CollisionCheckPools) {
+			RaycastHit water;
+
+			float distanceCheck = 5f;
+			Vector3 dir = (Vector3)m_direction;
+			Debug.DrawLine(transform.position, transform.position + (dir * distanceCheck), Color.gray);
+
+			if (Physics.Linecast(transform.position, transform.position + (dir * distanceCheck), out water, m_waterMask)) {
+				// 2- calc a big force to move away from the ground	
+				m_collisionAvoidFactor = (distanceCheck / water.distance) * 100f;
+				m_collisionNormal = water.normal;
 			} else {
 				m_collisionAvoidFactor *= 0.75f;
 			}
