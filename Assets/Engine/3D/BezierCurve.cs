@@ -152,7 +152,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	private void LateUpdate() {
 		// If curve is dirty, recalculate length and sample segments
 		if(dirty) {
 			// Do it

@@ -34,13 +34,19 @@ public class PathFollower : MonoBehaviour {
 	[SerializeField] private Transform m_target = null;
 	public Transform target {
 		get { return m_target; }
-		set { m_target = value; }
+		set { 
+			m_target = value; 
+			m_dirty = true;
+		}
 	}
 
 	[SerializeField] private BezierCurve m_path = null;
 	public BezierCurve path {
 		get { return m_path; }
-		set { m_path = value; }
+		set { 
+			m_path = value; 
+			m_dirty = true;
+		}
 	}
 
 	// Properties
@@ -84,11 +90,15 @@ public class PathFollower : MonoBehaviour {
 	[SerializeField] private LinkMode m_linkMode = LinkMode.DELTA;
 	public LinkMode linkMode {
 		get { return m_linkMode; }
-		set { m_linkMode = value; }
+		set { 
+			m_linkMode = value; 
+			m_dirty = true;
+		}
 	}
 
 	// Internal vars
 	private Tweener m_tween = null;
+	private bool m_dirty = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -103,28 +113,10 @@ public class PathFollower : MonoBehaviour {
 	/// <summary>
 	/// Called every frame
 	/// </summary>
-	private void FixedUpdate() {
-		// Use the update loop for the editor, fixed update for the game (less calls -> better performance)
-		if(Application.isPlaying) {
-			// Make sure target's position is updated - except if tweening!
-			// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
-			if(!isTweening) {
-				switch(m_linkMode) {
-					case LinkMode.DELTA: Apply(); break;
-					case LinkMode.SNAP_POINT: SnapTo(m_snapPoint); break;
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// Called every frame
-	/// </summary>
 	private void Update() {
-		// Use the update loop for the editor, fixed update for the game (less calls -> better performance)
-		if(!Application.isPlaying) {
-			// Make sure target's position is updated - except if tweening!
-			// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
+		// Make sure target's position is updated - except if tweening!
+		// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
+		if(m_dirty || (m_path != null && m_path.dirty)) {
 			if(!isTweening) {
 				switch(m_linkMode) {
 					case LinkMode.DELTA: Apply(); break;
@@ -171,6 +163,9 @@ public class PathFollower : MonoBehaviour {
 
 		// Just do it!
 		m_target.position = m_path.GetValue(m_delta);
+
+		// Not dirty anymore :)
+		m_dirty = false;
 	}
 
 	/// <summary>
