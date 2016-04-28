@@ -33,7 +33,7 @@ public class ResultsScreenController : MonoBehaviour {
 		DebugUtils.Assert(m_newHighScoreDeco != null, "Required field not initialized!");
 	}
 
-	void OnEnable() {
+	public void Initialize() {
 		// set values from score manager
 		// Launch number animators
 		m_scoreAnimator.SetValue(0, (int)RewardManager.score);
