@@ -52,6 +52,10 @@ public class Entity : Initializable {
 	private bool m_givePC = false;
 
 	private CircleArea2D m_bounds;
+	public CircleArea2D circleArea
+	{
+		get{ return m_bounds; }
+	}
 
 	private Dictionary<int, Material[]> m_materials;
 
