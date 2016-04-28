@@ -33,11 +33,29 @@ public class ResultsScreenController : MonoBehaviour {
 		DebugUtils.Assert(m_newHighScoreDeco != null, "Required field not initialized!");
 	}
 
-	void OnEnable() {
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+	}
+
+	public void Initialize() {
 		// set values from score manager
 		// Launch number animators
+		int survivalBonus = RewardManager.instance.CalculateSurvivalBonus();
+
 		m_scoreAnimator.SetValue(0, (int)RewardManager.score);
-		m_coinsAnimator.SetValue(0, (int)RewardManager.coins);
+		m_coinsAnimator.SetValue(0, (int)(RewardManager.coins + survivalBonus));
 		m_bonusCoinsAnimator.SetValue(0, RewardManager.instance.CalculateSurvivalBonus()); //TODO: get bouns coins from Reward Manager
 
 		m_highScoreLabel.text = "High Score: " + UserProfile.highScore;
@@ -61,12 +79,47 @@ public class ResultsScreenController : MonoBehaviour {
 		m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber( (float)data.progression.level+1, 0));
 	}
 
+	private void GoToMenu() {
+		// [AOC] TODO!! Update global stats
+
+		// Apply rewards to user profile
+		RewardManager.ApplyRewardsToProfile();
+
+		// Process Missions: give rewards and generate new missions replacing those completed
+		MissionManager.ProcessMissions();
+
+		// Clear chest manager
+		ChestManager.ClearSelectedChest();
+
+		// Save persistence
+		PersistenceManager.Save();
+
+		// Go back to main menu
+		FlowManager.GoToMenu();
+	}
 
 	//------------------------------------------------------------------//
 	// DELEGATES														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// A popup has been closed.
+	/// </summary>
+	/// <param name="_popup">The popup that has been closed</param>
+	public void OnPopupClosed(PopupController _popup) {
+		if(_popup.GetComponent<PopupChestReward>() != null) {
+			// Go back to menu
+			GoToMenu();
+		}
+	}
 
+	/// <summary>
+	/// Go back to the main menu, finalizing all the required stuff in the game scene.
+	/// </summary>
 	public void OnGoToMenu() {
-		FlowManager.GoToMenu();
+		if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
+			PopupManager.OpenPopupAsync(PopupChestReward.PATH);
+		} else {
+			GoToMenu();
+		}
 	}
 }
