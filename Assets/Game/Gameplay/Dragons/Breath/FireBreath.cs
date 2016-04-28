@@ -284,7 +284,8 @@ public class FireBreath : DragonBreathBehaviour {
 			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
 			if (entity != null) 
 			{
-				if (IsInsideArea(entity.transform.position)) 
+				Entity prey = preys[i];
+				if ((prey.circleArea != null && Overlaps(prey.circleArea)) || IsInsideArea(entity.transform.position)) 
 				{
 					// Check if I can burn it
 					if (CanBurn( entity ) || m_type == Type.Super)
