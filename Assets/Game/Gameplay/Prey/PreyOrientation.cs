@@ -16,17 +16,35 @@ public class PreyOrientation : Orientation {
 	private Quaternion m_targetRotation;
 	private Quaternion m_rotation;
 
+	private float m_targetAngle;
+	private float m_angle;
+
 
 	// Use this for initialization
 	void Awake() {
 		m_targetRotation = transform.rotation;
 		m_rotation = transform.rotation;
+
+		m_targetAngle = m_rotation.eulerAngles.y;
+		m_angle = m_targetAngle;
+
+		if (Random.Range(0f, 1f) < 0.5f) {
+			m_faceLeftAngleY *= -1f;
+			m_faceRightAngleY *= -1f;
+		}
+
 		m_direction = Vector3.right;
 	}
 
 	// Update is called once per frame
 	void Update() {		
-		m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * 2f);
+		if (m_faceDirection) {
+			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * 2f);
+		} else {
+			m_angle = Mathf.Lerp(m_angle, m_targetAngle, Time.deltaTime * 2f);
+			m_rotation = Quaternion.Euler(0, m_angle, 0);
+		}
+
 		transform.rotation = m_rotation;
 	}
 
@@ -54,7 +72,7 @@ public class PreyOrientation : Orientation {
 				angleY = m_faceLeftAngleY;
 			}
 
-			m_targetRotation = Quaternion.Euler(0, angleY, 0);
+			m_targetAngle = angleY;
 		}
 
 		m_direction = _direction;
