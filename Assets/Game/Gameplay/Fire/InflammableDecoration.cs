@@ -70,6 +70,7 @@ public class InflammableDecoration : Initializable {
 			m_originalMaterials[ renderers[i] ] = renderers[i].materials;
 		}
 		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
+		m_ashMaterial.renderQueue = 3000;// Force transparent
 	}
 
 	public override void Initialize() {
