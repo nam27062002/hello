@@ -205,6 +205,14 @@ public class InflammableBehaviour : Initializable {
 					edible.enabled = false;
 				}
 
+				// Disable colliders if they give us problems
+				if ( GetComponent<MineBehaviour>() != null || GetComponent<CurseAttackBehaviour>() != null )
+				{
+					Collider c = GetComponent<Collider>();
+					if (c != null)
+						c.enabled = false;
+				}
+
 				PreyMotion motion = GetComponent<PreyMotion>();
 				if (motion != null) 
 				{
