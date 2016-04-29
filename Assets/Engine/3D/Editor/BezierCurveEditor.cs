@@ -1,4 +1,4 @@
-﻿// AOCBezierCurveEditor.cs
+﻿// BezierCurveEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 19/12/2016.
@@ -15,7 +15,7 @@ using System.Collections.Generic;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the AOCBezierCurve class.
+/// Custom editor for the BezierCurve class.
 /// </summary>
 [CustomEditor(typeof(BezierCurve))]
 [CanEditMultipleObjects]
@@ -28,6 +28,11 @@ public class BezierCurveEditor : Editor {
 		DRAG,
 		BOX_SELECT,
 		MOVE_SELECTED
+	}
+
+	private enum Tool {
+		LINE,
+		CIRCLE
 	}
 
 	//------------------------------------------------------------------//
@@ -60,7 +65,15 @@ public class BezierCurveEditor : Editor {
 
 	// Tools
 	private bool m_toolsExpanded = false;
-	private Vector3 m_resetOffset = new Vector3(50f, 0f, 0f);
+	private Tool m_toolSelected = Tool.LINE;
+
+	// Line Tool
+	private Vector3 m_lineToolStartPoint = Vector3.zero;
+	private Vector3 m_lineToolOffset = new Vector3(50f, 0f, 0f);
+
+	// Circle Tool
+	private Vector3 m_circleToolCenter = Vector3.zero;
+	private float m_circleToolRadius = 10f;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -92,7 +105,7 @@ public class BezierCurveEditor : Editor {
 		serializedObject.Update();
 
 		// Start tracking changes
-		Undo.RecordObject(targetCurve, "AOCBezierCurve Data Change");
+		Undo.RecordObject(targetCurve, "BezierCurve Data Change");
 		EditorGUI.BeginChangeCheck();
 
 		// Closed curve?
@@ -107,13 +120,13 @@ public class BezierCurveEditor : Editor {
 		// Z-lock
 		targetCurve.lockZ = EditorGUILayout.Toggle("Z-Lock", targetCurve.lockZ);
 
-		// Spacing
-		EditorGUILayout.Space();
+		// Separator
+		EditorGUILayoutExt.Separator();
 
 		// Points list, foldable but not directly editable
 		m_pointsProp.isExpanded = EditorGUILayout.Foldout(m_pointsProp.isExpanded, m_pointsProp.displayName + " [" + targetCurve.pointCount + "]");
 		if(m_pointsProp.isExpanded) {
-			DrawPoints();
+			DoPoints();
 		}
 
 		// Add/Remove points buttons
@@ -134,26 +147,26 @@ public class BezierCurveEditor : Editor {
 			}
 		} EditorGUILayoutExt.EndHorizontalSafe();
 
-		// General editing settings
+		/*// General editing settings
 		// Separator
 		EditorGUILayoutExt.Separator();
 
 		// [AOC] Grouped in a foldout, stored in EditorPrefs
-		m_editorSettingsExpanded = EditorPrefs.GetBool("AOCBezierCurveSettingsExpanded");
+		m_editorSettingsExpanded = EditorPrefs.GetBool("BezierCurveSettingsExpanded");
 		m_editorSettingsExpanded = EditorGUILayout.Foldout(m_editorSettingsExpanded, "Editor Settings");
-		EditorPrefs.SetBool("AOCBezierCurveSettingsExpanded", m_editorSettingsExpanded);
+		EditorPrefs.SetBool("BezierCurveSettingsExpanded", m_editorSettingsExpanded);
 		if(m_editorSettingsExpanded) {
 			// Indent in
 			EditorGUI.indentLevel++;
 
 			// Click radius
-			m_clickRadius = EditorPrefs.GetFloat("AOCBezierCurveClickRadius");
+			m_clickRadius = EditorPrefs.GetFloat("BezierCurveClickRadius");
 			m_clickRadius = EditorGUILayout.Slider("Click Radius", m_clickRadius, 0f, 1f);
-			EditorPrefs.SetFloat("AOCBezierCurveClickRadius", m_clickRadius);
+			EditorPrefs.SetFloat("BezierCurveClickRadius", m_clickRadius);
 
 			// Indent out
 			EditorGUI.indentLevel--;
-		}
+		}*/
 
 		// Tools
 		EditorGUILayoutExt.Separator();
@@ -161,36 +174,9 @@ public class BezierCurveEditor : Editor {
 		m_toolsExpanded = EditorGUILayout.Foldout(m_toolsExpanded, "Tools");
 		EditorPrefs.SetBool("BezierCurveToolsExpanded", m_toolsExpanded);
 		if(m_toolsExpanded) {
-			// Indent in
+			// Draw tools menu
 			EditorGUI.indentLevel++;
-
-			// Info Label
-			bool wasEnabled = GUI.enabled;
-			GUI.enabled = false;
-			EditorGUILayout.LabelField("Reset all points in a straight line starting at curve's origin");
-			GUI.enabled = wasEnabled;
-
-			// Reset!
-			m_resetOffset = EditorGUILayout.Vector3Field("Reset Offset", m_resetOffset);
-			if(GUILayout.Button("RESET", GUILayout.Height(30f))) {
-				// Apply to all points in the curve
-				Vector3 pos = Vector3.zero;
-				for(int i = 0; i < targetCurve.points.Count; i++) {
-					BezierPoint p = targetCurve.GetPoint(i);
-
-					bool wasLocked = p.locked;
-					p.locked = false;
-
-					p.position = pos;
-					p.handle1 = Vector3.left;
-					p.handle2 = Vector3.right;
-					pos += m_resetOffset;
-
-					p.locked = true;
-				}
-			}
-
-			// Indent out
+			DoTools();
 			EditorGUI.indentLevel--;
 		}
 
@@ -208,7 +194,7 @@ public class BezierCurveEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Record changes
-		Undo.RecordObject(targetCurve, "AOCBezierCurve Data Change");
+		Undo.RecordObject(targetCurve, "BezierCurve Data Change");
 
 		// Scene-related stuff
 		// Draw position handles to move points and handlers
@@ -366,7 +352,7 @@ public class BezierCurveEditor : Editor {
 	/// <summary>
 	/// Draw and edit the points list.
 	/// </summary>
-	private void DrawPoints() {
+	private void DoPoints() {
 		// Aux vars
 		BezierPoint p;
 		bool wasEnabled;
@@ -375,6 +361,9 @@ public class BezierCurveEditor : Editor {
 
 		// Indent in
 		EditorGUI.indentLevel++;
+
+		// Info comment
+		EditorGUILayout.LabelField("Handles can be edited directly on the scene by holding the Control key", CustomEditorStyles.commentLabelLeft);
 
 		// Toggle All
 		int allLocked = 0;	// 0 -> false, 1 -> true, 2 -> mixed
@@ -509,7 +498,126 @@ public class BezierCurveEditor : Editor {
 			Handles.DrawLine(lastPoint, currentPoint);
 			lastPoint = currentPoint;
 		}
-	}	
+	}
+
+	/// <summary>
+	/// Do the tools section
+	/// </summary>
+	private void DoTools() {
+		// Tool selector
+		m_toolSelected = EditorGUILayoutExt.PrefField<Tool>("Tool", "BezierCurveToolSelected", Tool.LINE);
+
+		// Do different stuff depending on selected tool
+		switch(m_toolSelected) {
+			case Tool.LINE:		DoToolLine();	break;
+			case Tool.CIRCLE:	DoToolCircle();	break;
+		}
+	}
+
+	/// <summary>
+	/// Draw the controls for the Line tool.
+	/// </summary>
+	private void DoToolLine() {
+		// Info Label
+		EditorGUILayout.LabelField("Reset all points in a straight line", CustomEditorStyles.commentLabelLeft);
+
+		// Start point
+		m_lineToolStartPoint = EditorGUILayoutExt.PrefField<Vector3>("Start Point", "BezierCurveLineToolStartPoint", m_lineToolStartPoint);
+
+		// Offset
+		m_lineToolOffset = EditorGUILayoutExt.PrefField<Vector3>("Offset", "BezierCurveLineToolOffset", m_lineToolOffset);
+
+		// Do it!
+		// Reset!
+		if(GUILayout.Button("DO IT!", GUILayout.Height(30f))) {
+			// Apply to all points in the curve
+			Vector3 pos = m_lineToolStartPoint;
+			for(int i = 0; i < targetCurve.points.Count; i++) {
+				BezierPoint p = targetCurve.GetPoint(i);
+
+				bool wasLocked = p.locked;
+				p.locked = false;
+
+				p.position = pos;
+				p.handle1 = Vector3.left;
+				p.handle2 = Vector3.right;
+				pos += m_lineToolOffset;
+
+				p.locked = wasLocked;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Draw the controls for the Circle tool.
+	/// </summary>
+	private void DoToolCircle() {
+		// Info Label
+		EditorGUILayout.LabelField("Reset all points in a circle\nCurve will be closed", CustomEditorStyles.commentLabelLeft);
+
+		// Center point
+		m_circleToolCenter = EditorGUILayoutExt.PrefField<Vector3>("Center", "BezierCurveCircleToolCenter", m_circleToolCenter);
+
+		// Offset
+		m_circleToolRadius = EditorGUILayoutExt.PrefField<float>("Radius", "BezierCurveCircleToolRadius", m_circleToolRadius);
+
+		// Do it!
+		// Reset!
+		if(GUILayout.Button("DO IT!", GUILayout.Height(30f))) {
+			// Make sure curve is closed and z is not locked!
+			targetCurve.closed = true;
+			targetCurve.lockZ = false;
+
+			// Apply to all points in the curve
+			int numPoints = targetCurve.points.Count;
+			for(int i = 0; i < numPoints; i++) {
+				// Get target point
+				BezierPoint p = targetCurve.GetPoint(i);
+
+				// Force unlock and connected style
+				bool wasLocked = p.locked;
+				p.locked = false;
+
+				// Compute position in the X-Y plane
+				float angle = (float)i/(float)numPoints * 360f;
+				Quaternion q = Quaternion.AngleAxis(angle, Vector3.up);
+				p.position = m_circleToolCenter + q * (Vector3.right * m_circleToolRadius);	// This will do the trick!
+
+				// Restore lock state
+				p.locked = wasLocked;
+			}
+
+			// Do a second iteration for the handles
+			int i0 = numPoints - 1;
+			int i1 = 0;
+			int i2 = 1;
+			for(int i = 0; i < numPoints; i++) {
+				// Based on http://devmag.org.za/2011/06/23/bzier-path-algorithms/
+				// Get target point, previous one and next one
+				BezierPoint p0 = targetCurve.GetPoint(i0);
+				BezierPoint p1 = targetCurve.GetPoint(i1);
+				BezierPoint p2 = targetCurve.GetPoint(i2);
+
+				// Force unlock and connected style
+				bool wasLocked = p1.locked;
+				p1.locked = false;
+				p1.handleStyle = BezierPoint.HandleStyle.CONNECTED;
+
+				// Handle 2 is automatically computed (CONNECTED style forced)
+				Vector3 tangent = (p2.position - p0.position).normalized;
+				float scale = (p2.position - p1.position).magnitude / 3f;	// [AOC] Don't fully understand this /3f, but it definitely is the right parameter
+				p1.handle1 = -scale * tangent;
+
+				// Restore lock state
+				p1.locked = wasLocked;
+
+				// Increase indexes
+				i0 = (i0 + 1) % numPoints;
+				i1 = (i1 + 1) % numPoints;
+				i2 = (i2 + 1) % numPoints;
+			}
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
@@ -518,7 +626,7 @@ public class BezierCurveEditor : Editor {
 	/// Compute nearest control point to current mouse position and nearest split point.
 	/// Store the result in the m_nearestControlPointIdx and m_splitPos members respectively.
 	/// </summary>
-	void ComputeNearestCPAndSplitPosition() {
+	private void ComputeNearestCPAndSplitPosition() {
 		// Skip if not enough points
 		if(targetCurve.pointCount < 2) {
 			m_nearestControlPointIdx = -1;

@@ -55,7 +55,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	//------------------------------------------------------------------//
 	// Drawing parameters
 	public Color drawColor = Color.white;
-	public bool lockZ = true;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public bool lockZ = false;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
 
 	#if UNITY_EDITOR
 	private static GUIStyle s_sceneLabelStyle = null;
