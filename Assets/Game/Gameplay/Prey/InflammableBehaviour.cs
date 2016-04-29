@@ -90,13 +90,13 @@ public class InflammableBehaviour : Initializable {
 					else if ( shaderName.EndsWith("Bird") )
 					{
 						// We ignore mask because its used for masking the diffuse texture
-						Material newMat = Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material;	
+						Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);	
 						newMat.renderQueue = 3000;
 						materials[j] = newMat;
 					}
 					else
 					{
-						Material newMat = Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material;
+						Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
 						newMat.SetTexture("_AlphaMask", m_renderers[i].material.mainTexture );
 						newMat.renderQueue = 3000;
 						materials[j] = newMat;
