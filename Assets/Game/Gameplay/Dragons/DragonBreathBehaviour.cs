@@ -266,6 +266,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void OnEntityBurned(Transform t, Reward reward)
 	{	
 		m_dragon.AddLife( reward.health );
+		m_dragon.AddEnergy(reward.energy);
 	}
 
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
