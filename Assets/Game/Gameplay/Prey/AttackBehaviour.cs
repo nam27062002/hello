@@ -322,8 +322,7 @@ public class AttackBehaviour : Initializable {
 			}
 
 			// face target
-			Quaternion rot = Quaternion.Euler(new Vector3(0, angle, 0));
-			m_orientation.SetRotation(rot);
+			m_orientation.SetAngle(angle);
 
 			// blend between attack directions
 			m_animator.SetFloat("aim", aim);

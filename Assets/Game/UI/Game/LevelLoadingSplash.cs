@@ -22,14 +22,10 @@ public class LevelLoadingSplash : MonoBehaviour {
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	[SerializeField] private Slider m_progressBar = null;
-	[SerializeField] private Text m_text = null;
-
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
+	private GameSceneController m_sceneController = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -40,7 +36,16 @@ public class LevelLoadingSplash : MonoBehaviour {
 	private void Awake() {
 		// Check required references
 		DebugUtils.Assert(m_progressBar != null, "Required param!");
-		DebugUtils.Assert(m_text != null, "Required param!");
+	}
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		m_sceneController = InstanceManager.GetSceneController<GameSceneController>();
+
+		// Show!
+		GetComponent<ShowHideAnimator>().ForceShow(false);
 	}
 
 	/// <summary>
@@ -56,7 +61,7 @@ public class LevelLoadingSplash : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update progress
-		m_progressBar.normalizedValue = InstanceManager.GetSceneController<GameSceneController>().levelLoadingProgress;
+		m_progressBar.normalizedValue = m_sceneController.levelLoadingProgress;
 	}
 
 	/// <summary>
@@ -81,20 +86,7 @@ public class LevelLoadingSplash : MonoBehaviour {
 	/// The game level has been loaded.
 	/// </summary>
 	private void OnGameLevelLoaded() {
-		// Go out - using animation (if any)
-		Animator anim = GetComponent<Animator>();
-		if(anim != null) {
-			anim.SetTrigger("out");
-		} else {
-			OnOutAnimFinished();
-		}
-	}
-
-	/// <summary>
-	/// The out animation has finished.
-	/// </summary>
-	private void OnOutAnimFinished() {
-		//Destroy(gameObject);	// [AOC] For some reason this is problematic
-		gameObject.SetActive(false);
+		// Hide!
+		GetComponent<ShowHideAnimator>().ForceHide();
 	}
 }

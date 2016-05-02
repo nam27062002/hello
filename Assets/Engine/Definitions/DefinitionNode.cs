@@ -305,6 +305,23 @@ public class DefinitionNode {
 		return newRange;
 	}
 
+	/// <summary>
+	/// Get the property with the given id as a color.
+	/// Must be formatted as a rrggbb/rrggbbaa hex color string, with either the 
+	/// prefix "0x", "#" or no prefix at all.
+	/// </summary>
+	/// <returns>The value of the property as a color.</returns>
+	/// <param name="_property">The id of the property to be obtained.</param>
+	public Color GetAsColor(string _property) {
+		Color c = Colors.red;
+		try {
+			c = Colors.ParseHexString(GetAsString(_property).ToLowerInvariant());
+		} catch {
+			c = Colors.red;
+		}
+		return c;
+	}
+
 	//------------------------------------------------------------------------//
 	// CHILD NODES MANAGEMENT												  //
 	//------------------------------------------------------------------------//
@@ -379,8 +396,8 @@ public class DefinitionNode {
 			}
 		}
 
-		// Int
-		else if(t == typeof(int)) {
+		// Int or enum
+		else if(t == typeof(int) || t.IsEnum) {
 			int result = 0;
 			if(int.TryParse(_rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
 				return (T)(object)result;

@@ -52,6 +52,10 @@ public class Entity : Initializable {
 	private bool m_givePC = false;
 
 	private CircleArea2D m_bounds;
+	public CircleArea2D circleArea
+	{
+		get{ return m_bounds; }
+	}
 
 	private Dictionary<int, Material[]> m_materials;
 
@@ -162,7 +166,8 @@ public class Entity : Initializable {
 				Material goldMat = Resources.Load ("Game/Assets/Materials/Gold") as Material;
 				Material[] materials = renderers[i].materials;
 				for (int m = 0; m < materials.Length; m++) {
-					materials[m] = goldMat;
+					if ( !materials[m].shader.name.EndsWith("Additive") )
+						materials[m] = goldMat;
 				}
 				renderers[i].materials = materials;
 			} else {

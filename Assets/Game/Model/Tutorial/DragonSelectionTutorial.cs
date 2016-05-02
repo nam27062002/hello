@@ -61,7 +61,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_canvasGroup = GetComponent<CanvasGroup>();
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -70,7 +70,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.AddListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -183,12 +183,13 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// <summary>
 	/// The current menu screen has changed.
 	/// </summary>
-	/// <param name="_fromScreen">Previous screen.</param>
-	/// <param name="_toScreen">New screen.</param>
-	/// <param name="_animated">Whether it was animated or not.</param>
-	public void OnScreenChanged(int _fromScreen, int _toScreen, bool _animated) {
-		// Only interested if new screen is the Dragon Selection screen
-		if(_toScreen != (int)MenuScreens.DRAGON_SELECTION) {
+	/// <param name="_event">Event data.</param>
+	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEvent _event) {
+		// Only if it comes from the main screen navigation system
+		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+
+		// If leaving the dragon selection screen, force the tutorial to stop (shouldn't happen)
+		if(_event.toScreenIdx != (int)MenuScreens.DRAGON_SELECTION) {
 			// Stop the tutorial if it's running
 			StopTutorial();
 			return;

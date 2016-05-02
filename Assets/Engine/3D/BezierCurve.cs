@@ -51,19 +51,16 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	}
 	
 	//------------------------------------------------------------------//
-	// MEMBERS 															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Drawing parameters
 	public Color drawColor = Color.white;
-	public bool lockZ = true;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public bool lockZ = false;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
 
 	#if UNITY_EDITOR
 	private static GUIStyle s_sceneLabelStyle = null;
 	#endif
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
 	/// <summary>
 	/// Control points of the curve.
 	/// </summary>
@@ -137,6 +134,31 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 			return m_length;
 		}
 	}
+
+	// Auto Smooth
+	/// <summary>
+	/// If enabled, handle points will be automatically computed.
+	/// </summary>
+	private bool m_autoSmooth = true;
+	public bool autoSmooth {
+		get { return m_autoSmooth; }
+		set { 
+			if(value != m_autoSmooth) SetDirty();
+			m_autoSmooth = value;
+		}
+	}
+
+	/// <summary>
+	/// Amount of auto-smoothing.
+	/// </summary>
+	private float m_autoSmoothFactor = 0.33f;	// 0.33f turns out to be quite balanced
+	public float autoSmoothFactor {
+		get { return m_autoSmoothFactor; }
+		set {
+			if(value != m_autoSmoothFactor) SetDirty();
+			m_autoSmoothFactor = value;
+		}
+	}
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -152,11 +174,14 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	private void LateUpdate() {
 		// If curve is dirty, recalculate length and sample segments
 		if(dirty) {
 			// Do it
 			ComputeLength();
+
+			// If auto-smooth is enabled, apply it
+			if(autoSmooth) AutoSmooth(autoSmoothFactor);
 
 			// Not dirty anymore :)
 			dirty = false;
@@ -209,6 +234,59 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 					lastPos = currentPos;
 				}
 			}
+		}
+	}
+
+	/// <summary>
+	/// Automatically adjust all handlers to get a smooth curve.
+	/// Roughly based on http://devmag.org.za/2011/06/23/bzier-path-algorithms/
+	/// </summary>
+	/// <param name="_factor">Curvature factor.</param>
+	public void AutoSmooth(float _factor) {
+		// Figure out handles position based on previous and next point
+		int numPoints = points.Count;
+		int i0 = numPoints - 1;
+		int i1 = 0;
+		int i2 = 1;
+		BezierPoint p0 = null;
+		BezierPoint p1 = null;
+		BezierPoint p2 = null;
+		for(int i = 0; i < numPoints; i++) {
+			// Based on http://devmag.org.za/2011/06/23/bzier-path-algorithms/
+			// Get target point, previous one and next one
+			p0 = GetPoint(i0);
+			p1 = GetPoint(i1);
+			p2 = GetPoint(i2);
+
+			// Force unlock and connected style
+			bool wasLocked = p1.locked;
+			p1.locked = false;
+
+			// Handle 2 is automatically computed (CONNECTED style forced)
+			// Special cases for first and last points (if the curve is not closed)
+			if(i1 == 0 && !closed) {	// First point
+				p1.handleStyle = BezierPoint.HandleStyle.BROKEN;
+				Vector3 tangent = p2.position - p1.position;
+				p1.handle1 = _factor * tangent;
+				p1.handle2 = Vector3.zero;
+			} else if(i1 == numPoints - 1 && !closed) {	// Last point
+				p1.handleStyle = BezierPoint.HandleStyle.BROKEN;
+				Vector3 tangent = p1.position - p0.position;
+				p1.handle1 = -_factor * tangent;
+				p1.handle2 = Vector3.zero;
+			} else {	// Rest of the points
+				p1.handleStyle = BezierPoint.HandleStyle.CONNECTED;
+				Vector3 tangent = (p2.position - p0.position).normalized;
+				p1.handle1 = -_factor * tangent * (p1.position - p0.position).magnitude;
+			}
+
+			// Restore lock state
+			p1.locked = wasLocked;
+
+			// Increase indexes
+			i0 = (i0 + 1) % numPoints;
+			i1 = (i1 + 1) % numPoints;
+			i2 = (i2 + 1) % numPoints;
 		}
 	}
 
@@ -316,7 +394,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	public int GetPointAt(float _t) {
 		// Check params
 		if(_t <= 0f) return 0;
-		if(_t >= 1f) return m_points.Count - 1;
+		if(_t >= 1f) return closed ? 0 : m_points.Count - 1;	// If closed, last point is the first one!
 
 		// Manual search
 		float d2 = GetDelta(0);
@@ -365,41 +443,48 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	public Vector3 GetValue(float _t) {
 		// Check params
 		if(_t <= 0f) return m_points[0].globalPosition;
-		if(_t >= 1f) return m_points[m_points.Count - 1].globalPosition;
+		if(_t >= 1f) return closed ? m_points[0].globalPosition : m_points[m_points.Count - 1].globalPosition;	// If closed, last point is the first one
 
 		// Here starts the black magic from the original script
 		// Aux vars
-		float totalPercent = 0f;
-		float curvePercent = 0f;
+		float processedDelta = 0f;
+		float segmentDelta = 0f;
+		float segmentLength = 0f;
 		BezierPoint p1 = null;
 		BezierPoint p2 = null;
 
 		// Iterate all the points up to the last one
 		for(int i = 0; i < m_points.Count - 1; i++) {
 			// Compute percentage equivalent to the curve between current point and the next one
-			curvePercent = ApproximateLength(m_points[i], m_points[i + 1], resolution) / length;
+			segmentLength = ApproximateLength(m_points[i], m_points[i + 1], resolution);
+			segmentDelta = segmentLength / length;
 
 			// Have we reached requested delta?
-			if(totalPercent + curvePercent >= _t) {
+			if(processedDelta + segmentDelta >= _t) {
 				// Yes!! Store target points
 				p1 = m_points[i];
 				p2 = m_points[i + 1];
 				break;
 			} else {
 				// No! Increase traversed percentage and keep looping
-				totalPercent += curvePercent;
+				processedDelta += segmentDelta;
 			}
 		}
 
 		// If the curve is closed and we didn't find the target points, it means that the given delta belongs to the last segment of curve (between last and first points)
 		if(closed && p1 == null) {
+			// Select points
 			p1 = m_points[m_points.Count - 1];
 			p2 = m_points[0];
+
+			// Compute required data
+			segmentLength = ApproximateLength(p1, p2, resolution);
+			segmentDelta = segmentLength / length;
 		}
 
 		// Compute relative remaining percent between the two points and get the value at that segment
-		_t -= totalPercent;
-		return GetValue(p1, p2, _t/curvePercent);
+		_t -= processedDelta;
+		return GetValue(p1, p2, _t/segmentDelta);
 	}
 
 	/// <summary>

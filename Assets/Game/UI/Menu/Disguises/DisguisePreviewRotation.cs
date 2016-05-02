@@ -60,18 +60,18 @@ public class DisguisePreviewRotation : MonoBehaviour, IBeginDragHandler, IDragHa
 	/// </summary>
 	/// <param name="_event">Data related to the event.</param>
 	public void OnDrag(PointerEventData _event) {
-		SetAngle(m_pointerX - _event.position.x);
+		SetAngle((m_pointerX - _event.position.x) * m_manualRotationSpeed);
 	}
 
 	public void OnEndDrag(PointerEventData _event) {
 		m_dragging = false;
-		SetAngle(m_pointerX - _event.position.x);
+		SetAngle((m_pointerX - _event.position.x) * m_manualRotationSpeed);
 		m_angle = m_dragonWorldTransform.rotation.eulerAngles.y;
 	}
 
 	private void SetAngle(float _deltaDegrees) {
 		if(m_dragonWorldTransform) {
-			m_dragonWorldTransform.rotation = Quaternion.Euler(new Vector3(0, m_angle + _deltaDegrees, 0));
+			m_dragonWorldTransform.rotation = Quaternion.Euler(new Vector3(0, (m_angle + _deltaDegrees) % 360f, 0));
 		}
 	}
 }

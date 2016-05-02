@@ -103,7 +103,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events.
 		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
-		Messenger.AddListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnNavigationScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
 	/// <summary>
@@ -138,7 +138,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
-		Messenger.RemoveListener<int, int, bool>(EngineEvents.NAVIGATION_SCREEN_CHANGED_INT, OnNavigationScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -453,12 +453,13 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// <summary>
 	/// Navigation screen has changed (animation starts now).
 	/// </summary>
-	/// <param name="_fromScreen">From screen.</param>
-	/// <param name="_toScreen">To screen.</param>
-	/// <param name="_animate">Animated?</param>
-	private void OnNavigationScreenChanged(int _fromScreen, int _toScreen, bool _animate) {
+	/// <param name="_event">Event data.</param>
+	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEvent _event) {
+		// Only if it comes from the main screen navigation system
+		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+
 		// If leaving this screen, launch all the hide animations that are not automated
-		if(_fromScreen == (int)MenuScreens.OPEN_EGG) {
+		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
 			// Hide reward text
 			m_rewardText.text.DOFade(0f, 0.25f);
 
@@ -473,7 +474,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
-		if(_toScreen == (int)MenuScreens.OPEN_EGG) {
+		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
 			// At this point automated ones have already been launched, so we override them
 			m_backButton.GetComponent<ShowHideAnimator>().Hide(false);
 			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);

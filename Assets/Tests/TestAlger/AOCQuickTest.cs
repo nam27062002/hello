@@ -33,7 +33,8 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	public Tweener m_tweener = null;
+	public float m_targetDelta = 0f;
+	public float m_duration = 1f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,8 +64,8 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		DOTween.Kill(transform);
-		m_tweener = transform.DOLocalRotate(Vector3.up * 360f, 5f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).Play();
+		PathFollower follower = GetComponent<PathFollower>();
+		follower.GoTo(m_targetDelta, m_duration);
 	}
 
 	/// <summary>

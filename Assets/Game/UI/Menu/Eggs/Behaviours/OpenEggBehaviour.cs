@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using DG.Tweening;
 
 //----------------------------------------------------------------------//
@@ -18,7 +19,7 @@ using DG.Tweening;
 /// Controls a single egg on the open egg menu.
 /// </summary>
 [RequireComponent(typeof(EggController))]
-public class OpenEggBehaviour : MonoBehaviour {
+public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -46,13 +47,6 @@ public class OpenEggBehaviour : MonoBehaviour {
 			this.enabled = false;
 			return;
 		}
-
-
-		// Subscribe to mouse events on the collider
-		MouseEventsPropagator mouseEvents = GetComponentInChildren<MouseEventsPropagator>(true);
-		if(mouseEvents != null) {
-			mouseEvents.onMouseUpAsButton.AddListener(OnEggMouseUpAsButton);
-		}
 	}
 
 	//------------------------------------------------------------------//
@@ -62,7 +56,7 @@ public class OpenEggBehaviour : MonoBehaviour {
 	/// OnMouseUpAsButton is only called when the mouse is released over the same 
 	/// GUIElement or Collider as it was pressed.
 	/// </summary>
-	private void OnEggMouseUpAsButton() {
+	public void OnPointerClick(PointerEventData _eventData) {
 		// Ignore if component is not enabled
 		if(!this.enabled) return;
 		if(m_tapCount >= TAPS_TO_OPEN) return;

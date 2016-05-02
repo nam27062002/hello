@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Entity))]
 public class InflammableBehaviour : Initializable {
@@ -51,7 +52,7 @@ public class InflammableBehaviour : Initializable {
 	private float m_health;
 	private float m_timer;
 
-	private Material[] m_ashMaterials;
+	private List<Material[]> m_ashMaterials = new List<Material[]>();
 	private Renderer[] m_renderers;
 
 
@@ -74,30 +75,37 @@ public class InflammableBehaviour : Initializable {
 		m_renderers = GetComponentsInChildren<Renderer>();
 		if ( m_renderers.Length > 0 )
 		{
-			m_ashMaterials = new Material[ m_renderers.Length ];
 			for( int i = 0;i<m_renderers.Length; i++ )
 			{
-				string shaderName = m_renderers[i].material.shader.name;
-				if ( shaderName.EndsWith("Additive") )
+				Renderer renderer = m_renderers[i];
+				Material[] materials = new Material[ renderer.materials.Length];
+				for( int j = 0; j<renderer.materials.Length; j++ )
 				{
-					// We will set to null and hide it at the beggining 
-					m_ashMaterials[i] = null;
+					string shaderName = renderer.materials[j].shader.name;
+					if ( shaderName.EndsWith("Additive") )
+					{
+						// We will set to null and hide it at the beggining 
+						materials[j] = null;
+					}
+					else if ( shaderName.EndsWith("Bird") )
+					{
+						// We ignore mask because its used for masking the diffuse texture
+						Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);	
+						newMat.renderQueue = 3000;
+						materials[j] = newMat;
+					}
+					else
+					{
+						Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
+						newMat.SetTexture("_AlphaMask", m_renderers[i].material.mainTexture );
+						newMat.renderQueue = 3000;
+						materials[j] = newMat;
+					}
 				}
-				else if ( shaderName.EndsWith("Bird") )
-				{
-					// We ignore mask because its used for masking the diffuse texture
-					Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);	
-					m_ashMaterials[i] = newMat;
-				}
-				else
-				{
-					Material newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);	
-					newMat.SetTexture("_AlphaMask", m_renderers[i].material.mainTexture );
-					m_ashMaterials[i] = newMat;
-				}
+				m_ashMaterials.Add(materials);
 			}
 		}
-
+		m_dissolveTime = 10;
 		m_state = State.Idle;
 	}
 		
@@ -146,11 +154,12 @@ public class InflammableBehaviour : Initializable {
 			else if (m_state == State.Ashes) 
 			{
 				float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime)));
-				for( int i = 0; i<m_ashMaterials.Length; i++ )
+				for( int i = 0; i<m_ashMaterials.Count; i++ )
 				{
-					if (m_ashMaterials[i] != null)
+					Material[] mats = m_ashMaterials[i];
+					for( int j = 0; j<mats.Length; j++ )
 					{
-						m_ashMaterials[i].SetFloat("_AshLevel", Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime))));	
+						mats[j].SetFloat("_AshLevel", ashLevel);	
 					}
 				}
 
@@ -191,18 +200,27 @@ public class InflammableBehaviour : Initializable {
 					*/
 					if ( m_ashMaterials[i] != null )
 					{
-						m_renderers[i].material = m_ashMaterials[i];
+						m_renderers[i].materials = m_ashMaterials[i];
 					}
 					else
 					{
 						m_renderers[i].enabled = false;
 					}
+
 				}
 
 				// Deactivate edible
 				EdibleBehaviour edible = GetComponent<EdibleBehaviour>();
 				if (edible != null) {
 					edible.enabled = false;
+				}
+
+				// Disable colliders if they give us problems
+				if ( GetComponent<MineBehaviour>() != null || GetComponent<CurseAttackBehaviour>() != null )
+				{
+					Collider c = GetComponent<Collider>();
+					if (c != null)
+						c.enabled = false;
 				}
 
 				PreyMotion motion = GetComponent<PreyMotion>();

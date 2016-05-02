@@ -88,12 +88,10 @@ public class DragonEquip : MonoBehaviour {
 
 		if (_name == null || _name.Equals("default") || _name.Equals("")) {
 			_name = m_dragonSku;
-			bodyMat  = Resources.Load<Material>("Game/Assets/Dragons/" + _name + "/Materials/" + _name + "_Body");
-			wingsMat = Resources.Load<Material>("Game/Assets/Dragons/" + _name + "/Materials/" + _name + "_Wings");
-		} else {
-			bodyMat  = Resources.Load<Material>("Game/Equipable/Skins/" + _name + "/" + _name + "_Body");
-			wingsMat = Resources.Load<Material>("Game/Equipable/Skins/" + _name + "/" + _name + "_Wings");
 		}
+
+		bodyMat  = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_body");
+		wingsMat = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_wings");
 
 		Renderer renderer = GetComponentInChildren<Renderer>();
 		Material[] materials = renderer.materials;

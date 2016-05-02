@@ -27,5 +27,6 @@ public enum TutorialStep {
 	INIT				= 1 << 0,
 	FIRST_PLAY_SCREEN	= 1 << 1,
 	CONTROLS_POPUP		= 1 << 2,
-	DRAGON_SELECTION	= 1 << 3
+	DRAGON_SELECTION	= 1 << 3,
+	EGG_INCUBATOR		= 1 << 4
 }
