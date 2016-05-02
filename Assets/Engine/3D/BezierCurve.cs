@@ -51,19 +51,16 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	}
 	
 	//------------------------------------------------------------------//
-	// MEMBERS 															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Drawing parameters
 	public Color drawColor = Color.white;
-	public bool lockZ = true;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public bool lockZ = false;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
 
 	#if UNITY_EDITOR
 	private static GUIStyle s_sceneLabelStyle = null;
 	#endif
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
 	/// <summary>
 	/// Control points of the curve.
 	/// </summary>
@@ -137,6 +134,31 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 			return m_length;
 		}
 	}
+
+	// Auto Smooth
+	/// <summary>
+	/// If enabled, handle points will be automatically computed.
+	/// </summary>
+	private bool m_autoSmooth = true;
+	public bool autoSmooth {
+		get { return m_autoSmooth; }
+		set { 
+			if(value != m_autoSmooth) SetDirty();
+			m_autoSmooth = value;
+		}
+	}
+
+	/// <summary>
+	/// Amount of auto-smoothing.
+	/// </summary>
+	private float m_autoSmoothFactor = 0.33f;	// 0.33f turns out to be quite balanced
+	public float autoSmoothFactor {
+		get { return m_autoSmoothFactor; }
+		set {
+			if(value != m_autoSmoothFactor) SetDirty();
+			m_autoSmoothFactor = value;
+		}
+	}
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -157,6 +179,9 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 		if(dirty) {
 			// Do it
 			ComputeLength();
+
+			// If auto-smooth is enabled, apply it
+			if(autoSmooth) AutoSmooth(autoSmoothFactor);
 
 			// Not dirty anymore :)
 			dirty = false;
@@ -209,6 +234,59 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 					lastPos = currentPos;
 				}
 			}
+		}
+	}
+
+	/// <summary>
+	/// Automatically adjust all handlers to get a smooth curve.
+	/// Roughly based on http://devmag.org.za/2011/06/23/bzier-path-algorithms/
+	/// </summary>
+	/// <param name="_factor">Curvature factor.</param>
+	public void AutoSmooth(float _factor) {
+		// Figure out handles position based on previous and next point
+		int numPoints = points.Count;
+		int i0 = numPoints - 1;
+		int i1 = 0;
+		int i2 = 1;
+		BezierPoint p0 = null;
+		BezierPoint p1 = null;
+		BezierPoint p2 = null;
+		for(int i = 0; i < numPoints; i++) {
+			// Based on http://devmag.org.za/2011/06/23/bzier-path-algorithms/
+			// Get target point, previous one and next one
+			p0 = GetPoint(i0);
+			p1 = GetPoint(i1);
+			p2 = GetPoint(i2);
+
+			// Force unlock and connected style
+			bool wasLocked = p1.locked;
+			p1.locked = false;
+
+			// Handle 2 is automatically computed (CONNECTED style forced)
+			// Special cases for first and last points (if the curve is not closed)
+			if(i1 == 0 && !closed) {	// First point
+				p1.handleStyle = BezierPoint.HandleStyle.BROKEN;
+				Vector3 tangent = p2.position - p1.position;
+				p1.handle1 = _factor * tangent;
+				p1.handle2 = Vector3.zero;
+			} else if(i1 == numPoints - 1 && !closed) {	// Last point
+				p1.handleStyle = BezierPoint.HandleStyle.BROKEN;
+				Vector3 tangent = p1.position - p0.position;
+				p1.handle1 = -_factor * tangent;
+				p1.handle2 = Vector3.zero;
+			} else {	// Rest of the points
+				p1.handleStyle = BezierPoint.HandleStyle.CONNECTED;
+				Vector3 tangent = (p2.position - p0.position).normalized;
+				p1.handle1 = -_factor * tangent * (p1.position - p0.position).magnitude;
+			}
+
+			// Restore lock state
+			p1.locked = wasLocked;
+
+			// Increase indexes
+			i0 = (i0 + 1) % numPoints;
+			i1 = (i1 + 1) % numPoints;
+			i2 = (i2 + 1) % numPoints;
 		}
 	}
 
