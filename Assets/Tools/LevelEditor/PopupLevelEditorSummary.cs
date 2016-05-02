@@ -28,7 +28,8 @@ namespace LevelEditor {
 
 		public enum Result {
 			NONE,
-			FINISH
+			FINISH,
+			REVIVE
 		}
 
 		//------------------------------------------------------------------//
@@ -89,6 +90,14 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CALLBACKS														//
 		//------------------------------------------------------------------//
+		/// <summary>
+		/// The revive button has been pressed.
+		/// </summary>
+		public void OnReviveButton() {
+			result = Result.REVIVE;
+			GetComponent<PopupController>().Close(true);
+		}
+
 		/// <summary>
 		/// The finish button has been pressed.
 		/// </summary>

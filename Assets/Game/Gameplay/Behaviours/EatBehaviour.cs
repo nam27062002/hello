@@ -206,6 +206,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 						break;
 					}
 				}
+			} else {
+				Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
 			}
 		}
 	}

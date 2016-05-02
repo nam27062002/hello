@@ -30,6 +30,7 @@ public enum GameEvents {
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
 	BOOST_TOGGLED,				// params: bool _activated
+	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message)
 
 	// Entity events
 	ENTITY_EATEN,		// params: Transform _entity, Reward _reward
