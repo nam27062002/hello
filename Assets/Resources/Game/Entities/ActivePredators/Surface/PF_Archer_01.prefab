@@ -287,11 +287,11 @@ GameObject:
   - 114: {fileID: 11462164}
   - 114: {fileID: 11478228}
   - 114: {fileID: 11464320}
-  - 114: {fileID: 11499868}
   - 114: {fileID: 11470552}
   - 114: {fileID: 11469492}
   - 114: {fileID: 11453872}
   - 114: {fileID: 11427266}
+  - 114: {fileID: 11401450}
   m_Layer: 8
   m_Name: PF_Archer_01
   m_TagString: Untagged
@@ -1062,6 +1062,26 @@ MonoBehaviour:
   m_sku: archer_01
   m_onAppearSoundProbability: 40
   m_onApprearSounds: []
+--- !u!114 &11401450
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 146632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f2976564a4b64696b4d183727f82102, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 4
+  m_attackDelay: 0
+  m_consecutiveAttacks: 6
+  m_retreatingTime: 0
+  m_hasAnimation: 1
+  m_canAim: 1
+  m_eye: {fileID: 496224}
+  m_projectilePrefab: {fileID: 173528, guid: 78d009bbb03e2487a988b7740f9aa35b, type: 2}
+  m_projectileSpawnPoint: {fileID: 451042}
 --- !u!114 &11422412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1100,7 +1120,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 18
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
-  m_sensorPosition: {x: 0, y: 0, z: 0}
+  m_sensorOffset: {x: 0, y: 1.91, z: 0}
   m_target: 0
 --- !u!114 &11442016
 MonoBehaviour:
@@ -1231,26 +1251,6 @@ MonoBehaviour:
   m_burnSize: 6
   m_burnDuration: 0.75
   m_orientedBurn: 0
---- !u!114 &11499868
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 146632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 4
-  m_attackDelay: 0
-  m_consecutiveAttacks: 6
-  m_retreatingTime: 0
-  m_hasAnimation: 1
-  m_canAim: 1
-  m_eye: {fileID: 496224}
-  m_projectilePrefab: {fileID: 173528, guid: 78d009bbb03e2487a988b7740f9aa35b, type: 2}
-  m_projectileSpawnPoint: {fileID: 451042}
 --- !u!137 &13717068
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
