@@ -265,4 +265,9 @@ public class FireNode : MonoBehaviour {
 			}
 		}
 	}
+
+	void OnDrawGizmosSelected() {
+		Gizmos.color = Color.magenta;
+		Gizmos.DrawSphere(transform.position, 0.25f);
+	}
 }
