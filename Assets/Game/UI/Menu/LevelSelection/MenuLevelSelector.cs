@@ -26,6 +26,7 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Internal data
 	private int m_selectedIdx = 0;
 	public int selectedIdx {
 		get { return m_selectedIdx; }
@@ -36,6 +37,9 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 		get { return m_sortedDefs; }
 	}
 
+	// External References
+	private MenuLevelScroller3D m_scroller = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -43,12 +47,19 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 	/// First update.
 	/// </summary>
 	private void Start() {
+		// Aux vars
+		MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
+
+		// Get external references
+		m_scroller = sceneController.screensController.GetScene((int)MenuScreens.LEVEL_SELECTION).FindComponentRecursive<MenuLevelScroller3D>();
+		Debug.Assert(m_scroller != null, "Required scroller not found!");
+
 		// Store a reference to all level defs sorted
 		m_sortedDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.LEVELS);
 		DefinitionsManager.SortByProperty(ref m_sortedDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
 		// Figure out initial index
-		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedLevel;
+		string selectedSku = sceneController.selectedLevel;
 		for(int i = 0; i < m_sortedDefs.Count; i++) {
 			if(selectedSku == m_sortedDefs[i].sku) {
 				m_selectedIdx = i;
@@ -57,11 +68,17 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 		}
 	}
 
+	//------------------------------------------------------------------//
+	// LEVEL SELECTION METHODS											//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Changes level selected to the given one.
 	/// </summary>
 	/// <param name="_sku">The sku of the level we want to select.</param>
 	public void SetSelectedLevel(string _sku) {
+		// Scroll without animation
+		m_scroller.FocusLevel(_sku, MenuLevelScroller3D.AnimDir.NONE);
+
 		// Notify game
 		Messenger.Broadcast<string>(GameEvents.MENU_LEVEL_SELECTED, _sku);
 	}
@@ -79,9 +96,6 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 		SetSelectedLevel(m_sortedDefs[_idx].sku);
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
 	/// <summary>
 	/// Select next level.
 	/// </summary>
@@ -96,7 +110,13 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 
 		// Change selection
 		m_selectedIdx = newSelectedIdx;
-		SetSelectedLevel(m_sortedDefs[m_selectedIdx].sku);
+		string sku = m_sortedDefs[m_selectedIdx].sku;
+		
+		// Scroll
+		m_scroller.FocusLevel(m_sortedDefs[m_selectedIdx].sku, MenuLevelScroller3D.AnimDir.FORWARD);
+
+		// Notify game
+		Messenger.Broadcast<string>(GameEvents.MENU_LEVEL_SELECTED, sku);
 	}
 
 	/// <summary>
@@ -113,9 +133,18 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 
 		// Change selection
 		m_selectedIdx = newSelectedIdx;
-		SetSelectedLevel(m_sortedDefs[m_selectedIdx].sku);
+		string sku = m_sortedDefs[m_selectedIdx].sku;
+
+		// Scroll
+		m_scroller.FocusLevel(m_sortedDefs[m_selectedIdx].sku, MenuLevelScroller3D.AnimDir.BACKWARDS);
+
+		// Notify game
+		Messenger.Broadcast<string>(GameEvents.MENU_LEVEL_SELECTED, sku);
 	}
 
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// The input has started dragging over this element.
 	/// </summary>
@@ -123,9 +152,9 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 	public void OnBeginDrag(PointerEventData _event) {
 		// Select next/previous level based on drag horizontal direction
 		if(_event.delta.x > 0) {
-			SelectPreviousLevel(false);
+			SelectPreviousLevel(true);
 		} else {
-			SelectNextLevel(false);
+			SelectNextLevel(true);
 		}
 	}
 

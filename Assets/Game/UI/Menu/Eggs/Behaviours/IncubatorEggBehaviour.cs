@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -17,7 +18,7 @@ using UnityEngine.UI;
 /// Controls a single egg on the incubator menu.
 /// </summary>
 [RequireComponent(typeof(EggController))]
-public class IncubatorEggBehaviour : MonoBehaviour {
+public class IncubatorEggBehaviour : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -56,14 +57,6 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 
 		// Search the UI warning message as well
 		m_warningMessage = incubatorScreen.FindComponentRecursive<IncubatorWarningMessage>();
-
-		// Subscribe to mouse events on the collider
-		MouseEventsPropagator mouseEvents = GetComponentInChildren<MouseEventsPropagator>(true);
-		if(mouseEvents != null) {
-			mouseEvents.onMouseDown.AddListener(OnEggMouseDown);
-			mouseEvents.onMouseDrag.AddListener(OnEggMouseDrag);
-			mouseEvents.onMouseUp.AddListener(OnEggMouseUp);
-		}
 	}
 
 	//------------------------------------------------------------------//
@@ -109,7 +102,7 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 	/// <summary>
 	/// Input has started on this object.
 	/// </summary>
-	public void OnEggMouseDown() {
+	public void OnBeginDrag(PointerEventData _eventData) {
 		// Ignore if component is disabled
 		if(!enabled) return;
 
@@ -134,7 +127,7 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 	/// <summary>
 	/// A drag movement started on this object is moving.
 	/// </summary>
-	public void OnEggMouseDrag() {
+	public void OnDrag(PointerEventData _eventData) {
 		// Ignore if component is disabled
 		if(!enabled) return;
 
@@ -150,7 +143,7 @@ public class IncubatorEggBehaviour : MonoBehaviour {
 	/// <summary>
 	/// Input started on this object has been released.
 	/// </summary>
-	public void OnEggMouseUp() {
+	public void OnEndDrag(PointerEventData _eventData) {
 		// Ignore if component is disabled
 		if(!enabled) return;
 

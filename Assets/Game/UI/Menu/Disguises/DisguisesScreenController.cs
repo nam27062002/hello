@@ -22,7 +22,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	public RectTransform m_dragonUIPos;
 	public float m_depth = 25f;
 
-	[HideInInspector] public string m_previewDisguise;
+	[HideInInspector] public string m_previewDisguise = "";
 
 	private DisguisePill[] m_disguises;
 
@@ -56,7 +56,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_allPowerIcons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/powers/icons_powers"); 
 
 		m_dragonSku = "";
-		m_previewDisguise = "";
 	}
 
 	void OnEnable() {

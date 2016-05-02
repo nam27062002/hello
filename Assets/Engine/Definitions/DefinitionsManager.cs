@@ -45,6 +45,7 @@ public enum DefinitionsCategory {
 
 	// Game
 	SCORE_MULTIPLIERS,
+	SURVIVAL_BONUS,
 
 	// Metagame
 	EGGS,
@@ -133,6 +134,7 @@ public class DefinitionsManager : Singleton<DefinitionsManager> {
 
 		// Game
 		LoadDefinitionsFile(DefinitionsCategory.SCORE_MULTIPLIERS, "Rules/scoreMultiplierDefinitions");
+		LoadDefinitionsFile(DefinitionsCategory.SURVIVAL_BONUS, "Rules/survivalBonusDefinitions");
 
 		// Metagame
 		LoadDefinitionsFile(DefinitionsCategory.EGGS, "Rules/eggDefinitions");

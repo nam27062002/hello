@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using DG.Tweening;
 
 //----------------------------------------------------------------------//
@@ -18,7 +19,7 @@ using DG.Tweening;
 /// Controls a single egg when it's ready for collection.
 /// </summary>
 [RequireComponent(typeof(EggController))]
-public class ReadyEggBehaviour : MonoBehaviour {
+public class ReadyEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -40,12 +41,6 @@ public class ReadyEggBehaviour : MonoBehaviour {
 			this.enabled = false;
 			return;
 		}
-
-		// Subscribe to mouse events on the collider
-		MouseEventsPropagator mouseEvents = GetComponentInChildren<MouseEventsPropagator>(true);
-		if(mouseEvents != null) {
-			mouseEvents.onMouseUpAsButton.AddListener(OnMouseUpAsButton);
-		}
 	}
 
 	//------------------------------------------------------------------//
@@ -54,7 +49,7 @@ public class ReadyEggBehaviour : MonoBehaviour {
 	/// <summary>
 	/// The egg has been tapped.
 	/// </summary>
-	public void OnMouseUpAsButton() {
+	public void OnPointerClick(PointerEventData _eventData) {
 		// Ignore if component is disabled
 		if(!enabled) return;
 

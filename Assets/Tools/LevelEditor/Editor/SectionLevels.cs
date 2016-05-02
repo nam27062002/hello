@@ -235,7 +235,7 @@ namespace LevelEditor {
 					// Dragon selector
 					string[] options = DefinitionsManager.GetSkuList(DefinitionsCategory.DRAGONS).ToArray();
 					int oldIdx = ArrayUtility.IndexOf<string>(options, oldDragon);
-					int newIdx = EditorGUILayout.Popup(oldIdx, options);
+					int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);	// Select first dragon if saved dragon was not found (i.e. sku changes)
 					if(oldIdx != newIdx) {
 						newDragon = options[newIdx];
 						LevelEditor.settings.testDragon = newDragon;

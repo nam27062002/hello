@@ -16,6 +16,6 @@ public class ResultsSceneController : MonoBehaviour {
 
 		m_gameUI.SetActive(false);
 		m_resultsUI.SetActive(true);
-
+		m_resultsUI.GetComponentInChildren<ResultsScreenController>().Initialize();
 	}
 }

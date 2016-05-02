@@ -43,6 +43,10 @@ public class HUDStatBar : MonoBehaviour {
 	private GameObject m_icon;
 	private List<GameObject> m_extraIcons = null;
 	private CanvasScaler m_scaler;
+	private CanvasGroup m_canvasGroup;
+	private float m_timer = 0;
+	private float m_timerDuration = 0;
+	private bool m_instantSet;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -54,6 +58,7 @@ public class HUDStatBar : MonoBehaviour {
 		// m_bar = GetComponentInChildren<Slider>();
 		// m_baseBar;
 		m_scaler = GetComponentInParent<CanvasScaler>();
+		m_canvasGroup = GetComponent<CanvasGroup>();
 		Transform child;
 		child = transform.FindChild("Slider");
 		if ( child != null )
@@ -70,8 +75,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			m_icon = child.gameObject;
 			m_extraIcons = new List<GameObject>();
-
 		}
+		m_instantSet = true;
 	}
 
 	IEnumerator Start()
@@ -92,6 +97,12 @@ public class HUDStatBar : MonoBehaviour {
 		}
 
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		m_timer = 10;
+		m_timerDuration = 10;
+		if ( m_type == Type.SuperFury )
+		{
+			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		}
 	}
 
 	void OnDestroy()
@@ -100,6 +111,10 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
 			Messenger.RemoveListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+		}
+		else if ( m_type == Type.SuperFury )
+		{
+			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		}
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
@@ -114,19 +129,52 @@ public class HUDStatBar : MonoBehaviour {
 			// Bar value
 			m_bar.minValue = 0f;
 			m_bar.maxValue = GetMaxValue();
-			m_bar.value = GetValue();
+			if ( m_instantSet )
+			{
+				m_bar.value	= GetValue();
+				m_instantSet = false;
+			}
+			else
+			{
+				float value = GetValue();
+				if ( value > m_bar.value )
+					m_bar.value = Mathf.Lerp( m_bar.value, GetValue(), Time.deltaTime );
+				else 
+					m_bar.value = value;
+			}
 
 			if ( m_baseBar != null )
 			{
 				m_baseBar.minValue = 0f;
 				m_baseBar.maxValue = GetBaseValue();
-				m_baseBar.value = GetValue();
+				m_baseBar.value = m_bar.value;
 			}
 			// Text
 			if (m_valueTxt != null) {
 				m_valueTxt.text = String.Format("{0}/{1}",
 				                                StringUtils.FormatNumber(m_bar.value, 0),
 				                                StringUtils.FormatNumber(m_bar.maxValue, 0));
+			}
+		}
+
+		if ( m_type == Type.SuperFury )
+		{
+			m_timer -= Time.deltaTime;
+			if ( m_timer <= 0 )
+			{
+				m_canvasGroup.alpha = 0;
+			}
+			else if ( m_timer <= 1 ) 
+			{
+				m_canvasGroup.alpha = m_timer;
+			}
+			else if ( m_timer >= (m_timerDuration -1 ))
+			{
+				m_canvasGroup.alpha = 1.0f - (m_timer - ( m_timerDuration - 1));
+			}
+			else
+			{
+				m_canvasGroup.alpha = 1;
 			}
 		}
 	}
@@ -300,7 +348,29 @@ public class HUDStatBar : MonoBehaviour {
 
 	private void OnLevelUp(DragonData _data) 
 	{
-		ResizeBars();	
+		ResizeBars();
+	}
+
+	void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type )
+	{
+		if ( type == DragonBreathBehaviour.Type.Standard && _active == false)
+		{
+			m_timer = m_timerDuration = 10;
+		}
+		else if ( type == DragonBreathBehaviour.Type.Super )
+		{
+			if ( _active )
+			{
+				// Fade IN
+				m_timer = m_timerDuration = 3600;
+			}
+			else
+			{
+				// Fade Out
+				m_timer = 1;
+			}
+		}
+		 
 	}
 
 }

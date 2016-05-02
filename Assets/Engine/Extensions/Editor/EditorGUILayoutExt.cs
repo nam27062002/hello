@@ -206,4 +206,91 @@ public static class EditorGUILayoutExt {
 			
 		}
 	}
+
+	//------------------------------------------------------------------//
+	// PREFENCES FIELDS 												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Draws the default field for the given type, loading and saving the new value 
+	/// to the EditorPrefs dictionary.
+	/// </summary>
+	/// <returns>The new value of the pref.</returns>
+	/// <param name="_prefId">The pref identifier.</param>
+	/// <param name="_defaultValue">Default value if the pref wasn't stored.</param>
+	/// <typeparam name="T">Type of the preference value. Should be string, int, float, bool or Enum</typeparam>
+	public static T PrefField<T>(string _label, string _prefId, T _defaultValue, params GUILayoutOption[] _options) {
+		// [AOC] Unfortunately we can't switch a type directly, but we can compare type via an if...else collection
+		// [AOC] Double cast trick to prevent compilation errors: http://stackoverflow.com/questions/4092393/value-of-type-t-cannot-be-converted-to
+		Type t = typeof(T);
+
+		// String
+		if(t == typeof(string)) {
+			string value = Prefs.GetString(_prefId, (string)(object)_defaultValue);
+			value = EditorGUILayout.TextField(_label, value, _options);
+			Prefs.SetString(_prefId, value);
+			return (T)(object)value;
+		}
+
+		// Float
+		else if(t == typeof(float)) {
+			float value = Prefs.GetFloat(_prefId, (float)(object)_defaultValue);
+			value = EditorGUILayout.FloatField(_label, value, _options);
+			Prefs.SetFloat(_prefId, value);
+			return (T)(object)value;
+		}
+
+		// Int
+		else if(t == typeof(int)) {
+			int value = Prefs.GetInt(_prefId, (int)(object)_defaultValue);
+			value = EditorGUILayout.IntField(_label, value, _options);
+			Prefs.SetInt(_prefId, value);
+			return (T)(object)value;
+		}
+
+		// Bool
+		else if(t == typeof(bool)) {
+			bool value = Prefs.GetBool(_prefId, (bool)(object)_defaultValue);
+			value = EditorGUILayout.Toggle(_label, value, _options);
+			Prefs.SetBool(_prefId, value);
+			return (T)(object)value;
+		}
+
+		// Enum
+		else if(t.IsEnum) {
+			Enum value = (Enum)(object)Prefs.Get<T>(_prefId, _defaultValue);
+			value = EditorGUILayout.EnumPopup(_label, value, _options);
+			Prefs.Set<T>(_prefId, (T)(object)value);
+			return (T)(object)value;
+		}
+
+		// Vector2
+		else if(t == typeof(Vector2)) {
+			Vector2 value = Prefs.GetVector2(_prefId, (Vector2)(object)_defaultValue);
+			value = EditorGUILayout.Vector2Field(_label, value, _options);
+			Prefs.SetVector2(_prefId, value);
+			return (T)(object)value;
+		}
+
+		// Vector3
+		else if(t == typeof(Vector3)) {
+			Vector3 value = Prefs.GetVector3(_prefId, (Vector3)(object)_defaultValue);
+			value = EditorGUILayout.Vector3Field(_label, value, _options);
+			Prefs.SetVector3(_prefId, value);
+			return (T)(object)value;
+		}
+
+		// Color
+		else if(t == typeof(Color)) {
+			Color value = Prefs.GetColor(_prefId, (Color)(object)_defaultValue);
+			value = EditorGUILayout.ColorField(_label, value, _options);
+			Prefs.SetColor(_prefId, value);
+			return (T)(object)value;
+		}
+
+		// Unsupported
+		else {
+			Debug.Log("Unsupported type!");
+		}
+		return _defaultValue;
+	}
 }

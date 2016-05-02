@@ -396,8 +396,8 @@ public class DefinitionNode {
 			}
 		}
 
-		// Int
-		else if(t == typeof(int)) {
+		// Int or enum
+		else if(t == typeof(int) || t.IsEnum) {
 			int result = 0;
 			if(int.TryParse(_rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
 				return (T)(object)result;
