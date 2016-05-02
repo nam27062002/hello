@@ -440,11 +440,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.HoldingPrey:
 			{
-				Vector3 deltaPosition = Vector3.Lerp( tongue.position, m_holdPreyTransform.position, Time.deltaTime * 10);	// Mouth should be moving and orienting
-				Quaternion deltaRotation = Quaternion.Lerp( tongue.rotation, m_holdPreyTransform.rotation, Time.deltaTime * 10);
+				Vector3 deltaPosition = Vector3.Lerp( tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
 				transform.position += deltaPosition - tongue.position;
-
-				// transform.position = Vector3.Lerp( transform.position, m_holdPreyTransform.position, Time.deltaTime * 10);	// Mouth should be moving and orienting
 			}break;
 
 		}

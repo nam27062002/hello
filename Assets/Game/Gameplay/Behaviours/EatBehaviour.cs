@@ -47,6 +47,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// public AudioSource m_burpAudio;
 
 	private float m_noAttackTime = 0;
+	private float m_holdingBlood = 0;
 
 	//-----------------------------------------------
 	// Methods
@@ -184,6 +185,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private void UpdateHoldingPrey()
 	{
+		if (m_holdingBlood <= 0)
+		{
+			Vector3 bloodPos = m_mouth.position;
+			bloodPos.z = -50f;
+			m_bloodEmitter.Add(ParticleManager.Spawn("bloodchurn-large", bloodPos));
+			m_holdingBlood = 0.5f;
+		}
+		else
+		{
+			m_holdingBlood -= Time.deltaTime;
+		}
+
 		// damage prey
 		float m_holdDamage = 10;
 		m_holdingPrey.HoldingDamage( m_holdDamage * Time.deltaTime);
