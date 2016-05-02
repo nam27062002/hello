@@ -29,6 +29,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_eatingTime;
 	protected bool m_slowedDown;
 	private float m_burpTime;
+	private float m_holdPreyTimer = 0;
+	private EdibleBehaviour m_holdingPrey = null;
 
 	private Transform m_suction;
 	private Transform m_mouth;
@@ -90,36 +92,19 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {			
-		if (m_eatingTimer <= 0) 
+
+		// if not holding
+		if (m_holdingPrey == null)
 		{
-			FindSomethingToEat();
-			if ( m_burpTime > 0 )
-			{
-				m_burpTime -= Time.deltaTime;
-				if ( m_burpTime <= 0 )
-				{
-					if ( Random.Range(0,100) < 60 )
-					{
-						Burp();
-					}
-				}
-			}
-		} else {
-			/*
-			if (m_burpAudio != null && m_burpAudio.isPlaying)
-			{
-				m_burpAudio.Stop();
-			}
-			*/
-			m_eatingTimer -= Time.deltaTime;
-			if (m_eatingTimer <= 0) 
-			{
-				m_eatingTimer = 0;
-				m_burpTime = 2;
-			}
+			FindSomethingToEat( m_prey.Count <= 0 );
+		}
+		else
+		{
+			UpdateHoldingPrey();	
 		}
 
-		if (m_prey.Count > 0) {	
+		if (m_prey.Count > 0) 
+		{	
 			Chew();
 		}
 
@@ -142,12 +127,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_almostEat = true;
 	}
 
-	private void Eat(EdibleBehaviour _prey, float _biteResistance) {
+	private void Eat(EdibleBehaviour _prey) {
 		
 		_prey.OnEat();
 
 		// Yes!! Eat it!!
-		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _biteResistance);
+		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _prey.biteResistance);
 
 		if (m_eatingTime >= 0.5f) {
 			SlowDown(true);
@@ -166,7 +151,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		m_animator.SetBool("eat", true);
 
-		if (m_eatingTime >= 0.5f || m_prey.Count > 2) {
+		if (m_eatingTime >= 0.5f || m_prey.Count > 2) 
+		{
 			m_animator.SetTrigger("eat crazy");
 		}
 		/*
@@ -176,37 +162,78 @@ public abstract class EatBehaviour : MonoBehaviour {
 		*/
 	}
 
+	private void StartHold(EdibleBehaviour _prey) 
+	{
+		// look for closer hold point
+
+		m_holdingPrey = _prey;
+		m_holdPreyTimer = 2.0f;
+	}
+
+	private void UpdateHoldingPrey()
+	{
+		// damage prey
+		float m_holdDamage = 10;
+		m_holdingPrey.HoldingDamage( m_holdDamage * Time.deltaTime);
+		if ( m_holdingPrey.isDead() )
+		{
+			m_holdingPrey.OnSwallow( m_mouth );
+		}
+		else
+		{
+			// Swallow
+			m_holdPreyTimer -= Time.deltaTime;
+			if ( m_holdPreyTimer <= 0 ) // or prey is death
+			{
+				// release prey
+
+			}	
+		}
+	}
+
 	private void Swallow(EdibleBehaviour _prey) {
 		_prey.OnSwallow( m_mouth );
 	}
 
-	private void FindSomethingToEat() {
+	private void FindSomethingToEat( bool _canHold = true ) 
+	{
 		float eatDistance = m_eatDistance * transform.localScale.x;
 		if (DebugSettings.eatDistancePowerUp) {
 			eatDistance *= 2;
 		}
 
+		EdibleBehaviour preyToHold = null;
+		List<EdibleBehaviour> preysToEat = new List<EdibleBehaviour>();
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
 			if (entity.edibleFromTier <= m_tier) 
 			{
-				// then, check if the edible is in front
-				/*
-				Vector3 heading = entity.transform.position - m_mouth.position;
-				float dot = Vector3.Dot(heading.normalized, m_motion.direction);
-				// check distance to dragon mouth
-				if (dot > 0) 
-				*/
+				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+				if (edible.CanBeEaten(m_motion.direction)) 
 				{
-					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-
-					if (edible.CanBeEaten(m_motion.direction)) {
-						Eat(edible, entity.biteResistance);
-						break;
-					}
+					preysToEat.Add(edible);
 				}
 			}
+			else if (_canHold && entity.canBeHolded && (entity.holdFromTier <= m_tier) )
+			{
+				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+				if (edible.CanBeEaten(m_motion.direction)) 
+				{
+					preyToHold = edible;
+					break;
+				}
+			}
+		}
+
+		if ( preyToHold != null )
+		{
+			StartHold(preyToHold);
+		}
+		else if ( preysToEat.Count > 0 )
+		{
+			for( int i = 0; i<preysToEat.Count; i++ )
+				Eat(preysToEat[i]);
 		}
 	}
 

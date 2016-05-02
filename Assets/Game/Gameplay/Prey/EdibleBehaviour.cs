@@ -30,6 +30,8 @@ public class EdibleBehaviour : Initializable {
 	public float m_onEatenSoundProbability = 50.0f;
 	public List<string> m_onEatenSounds = new List<string>();
 
+	public float biteResistance { get { return m_entity.biteResistance; }}
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -144,4 +146,30 @@ public class EdibleBehaviour : Initializable {
 		if ( po != null )
 			po.enabled = _enable;
 	}
+
+	public void OnHoldBy( EatBehaviour holder )
+	{
+		
+	}
+
+	public void ReleaseHold()
+	{
+		
+	}
+
+	public bool BeingHeld()
+	{
+		
+	}
+
+	public void HoldingDamage( float damage )
+	{
+		m_entity.Damage( damage );
+	}
+
+	public bool isDead()
+	{
+		return m_entity.health <= 0;
+	}
+
 }

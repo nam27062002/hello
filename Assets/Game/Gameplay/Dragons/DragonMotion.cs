@@ -32,6 +32,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		InsideWater,
 		OutterSpace,
 		Intro,
+		HoldingPrey,
 		None,
 	};
 
@@ -167,6 +168,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_introTimer;
 	private const float m_introDuration = 3;
 	private Vector3 m_destination;
+	private Transform m_holdPreyTransform = null;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -276,6 +278,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.SetBool("fly down", false);
 					m_introTimer = m_introDuration;
 				}break;
+				case State.HoldingPrey:
+				{
+				}break;
 			}
 
 			// entering new state
@@ -324,6 +329,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.SetBool("fly", true);
 					m_animator.SetBool("fly down", true);
 					m_introTimer = m_introDuration;
+				}break;
+				case State.HoldingPrey:
+				{
 				}break;
 			}
 
@@ -380,9 +388,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				float delta = m_introTimer / m_introDuration;
 				m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
 				m_destination += m_introTarget;
-
-
 			}break;
+			case State.HoldingPrey:
+			{
+				
+			}break;
+
 		}
 				
 		m_animator.SetFloat("height", m_height);
