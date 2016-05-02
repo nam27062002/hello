@@ -125,7 +125,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 
-		gameObject.AddComponent<WindTrailManagement>();
+		// gameObject.AddComponent<WindTrailManagement>();
 
 		m_dragonBreath = GetComponent<DragonBreathBehaviour>();
 
