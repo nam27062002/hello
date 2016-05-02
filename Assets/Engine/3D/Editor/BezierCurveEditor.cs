@@ -111,6 +111,15 @@ public class BezierCurveEditor : Editor {
 		// Closed curve?
 		targetCurve.closed = EditorGUILayout.Toggle("Closed?", targetCurve.closed);
 
+		// Auto-smooth
+		targetCurve.autoSmooth = EditorGUILayout.Toggle("Auto Smooth", targetCurve.autoSmooth);
+		if(targetCurve.autoSmooth) {
+			targetCurve.autoSmoothFactor = EditorGUILayout.FloatField("Auto Smooth Factor", targetCurve.autoSmoothFactor);
+		}
+
+		// Separator
+		EditorGUILayoutExt.Separator();
+
 		// Resolution
 		targetCurve.resolution = EditorGUILayout.IntField("Resolution", targetCurve.resolution);
 
@@ -210,8 +219,8 @@ public class BezierCurveEditor : Editor {
 				Handles.color = Colors.white;
 				p.globalPosition = Handles.PositionHandle(p.globalPosition, Quaternion.identity);
 			} else {
-				// Handlers
-				if(p.handleStyle != BezierPoint.HandleStyle.NONE) {
+				// Handlers - except if "NONE" or autoSmooth is enabled
+				if(p.handleStyle != BezierPoint.HandleStyle.NONE && !targetCurve.autoSmooth) {
 					Handles.color = Colors.skyBlue;
 					p.globalHandle1 = Handles.PositionHandle(p.globalHandle1, Quaternion.identity);
 					p.globalHandle2 = Handles.PositionHandle(p.globalHandle2, Quaternion.identity);
@@ -437,30 +446,34 @@ public class BezierCurveEditor : Editor {
 				if(GUILayout.Button("X", GUILayout.Width(20f))) {
 					swapPoint1 = i;
 				}
-
 			} EditorGUILayoutExt.EndHorizontalSafe();
 
-			// Handle Type
 			EditorGUI.indentLevel++;
+
+			// Handle Type - disabled if auto-smoothing
+			wasEnabled = GUI.enabled;
+			GUI.enabled = !targetCurve.autoSmooth;
 			p.handleStyle = (BezierPoint.HandleStyle)EditorGUILayout.EnumPopup("Handle Style", p.handleStyle);
+			GUI.enabled = wasEnabled;
 
 			// Position
 			wasEnabled = GUI.enabled;
 			GUI.enabled = !p.locked;
 			p.position = EditorGUILayout.Vector3Field("Position", p.position);
+			GUI.enabled = wasEnabled;
 
-			// Handle 1
+			// Handles 1 and 2 - disabled if auto-smoothing
+			wasEnabled = GUI.enabled;
+			GUI.enabled = !p.locked && !targetCurve.autoSmooth;
 			p.handle1 = EditorGUILayout.Vector3Field("Handle 1", p.handle1);
-
-			// Handle 2
 			p.handle2 = EditorGUILayout.Vector3Field("Handle 2", p.handle2);
+			GUI.enabled = wasEnabled;
 
 			// Spacing
 			EditorGUILayout.Space();
 
 			// End
 			EditorGUI.indentLevel--;
-			GUI.enabled = wasEnabled;
 		}
 
 		// End
@@ -587,35 +600,8 @@ public class BezierCurveEditor : Editor {
 				p.locked = wasLocked;
 			}
 
-			// Do a second iteration for the handles
-			int i0 = numPoints - 1;
-			int i1 = 0;
-			int i2 = 1;
-			for(int i = 0; i < numPoints; i++) {
-				// Based on http://devmag.org.za/2011/06/23/bzier-path-algorithms/
-				// Get target point, previous one and next one
-				BezierPoint p0 = targetCurve.GetPoint(i0);
-				BezierPoint p1 = targetCurve.GetPoint(i1);
-				BezierPoint p2 = targetCurve.GetPoint(i2);
-
-				// Force unlock and connected style
-				bool wasLocked = p1.locked;
-				p1.locked = false;
-				p1.handleStyle = BezierPoint.HandleStyle.CONNECTED;
-
-				// Handle 2 is automatically computed (CONNECTED style forced)
-				Vector3 tangent = (p2.position - p0.position).normalized;
-				float scale = (p2.position - p1.position).magnitude / 3f;	// [AOC] Don't fully understand this /3f, but it definitely is the right parameter
-				p1.handle1 = -scale * tangent;
-
-				// Restore lock state
-				p1.locked = wasLocked;
-
-				// Increase indexes
-				i0 = (i0 + 1) % numPoints;
-				i1 = (i1 + 1) % numPoints;
-				i2 = (i2 + 1) % numPoints;
-			}
+			// Auto-smooth handlers for a nice rounded shape!
+			targetCurve.AutoSmooth(0.33f);
 		}
 	}
 

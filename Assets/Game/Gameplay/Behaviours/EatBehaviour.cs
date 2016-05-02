@@ -281,7 +281,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_mouth = transform.FindTransformRecursive("Fire_Dummy");
 		m_head = transform.FindTransformRecursive("Dragon_Head");
 
-		m_suction = transform.FindTransformRecursive("mouth");
+		m_suction = transform.FindTransformRecursive("Fire_Dummy");
 		if (m_suction == null) {
 			m_suction = m_mouth;
 		}
