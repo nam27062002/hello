@@ -32,6 +32,8 @@ public class EdibleBehaviour : Initializable {
 
 	public float biteResistance { get { return m_entity.biteResistance; }}
 
+	bool m_beingHeld = false;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -149,17 +151,19 @@ public class EdibleBehaviour : Initializable {
 
 	public void OnHoldBy( EatBehaviour holder )
 	{
-		
+		m_beingHeld = true;
+		OnEatBehaviours(false);
 	}
 
 	public void ReleaseHold()
 	{
-		
+		m_beingHeld = false;
+		OnEatBehaviours(true);
 	}
 
-	public bool BeingHeld()
+	public bool IsBeingHeld()
 	{
-		
+		return m_beingHeld;
 	}
 
 	public void HoldingDamage( float damage )

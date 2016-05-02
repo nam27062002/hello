@@ -332,6 +332,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.HoldingPrey:
 				{
+					
 				}break;
 			}
 
@@ -391,7 +392,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.HoldingPrey:
 			{
-				
+				m_destination = m_holdPreyTransform.position;
+				m_orientation.SetRotation( m_holdPreyTransform.rotation );
 			}break;
 
 		}
@@ -436,6 +438,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_rbody.velocity = Vector3.zero;
 				transform.rotation.SetLookRotation( Vector3.right );
 			}break;
+			case State.HoldingPrey:
+			{
+				Vector3 deltaPosition = Vector3.Lerp( tongue.position, m_holdPreyTransform.position, Time.deltaTime * 10);	// Mouth should be moving and orienting
+				Quaternion deltaRotation = Quaternion.Lerp( tongue.rotation, m_holdPreyTransform.rotation, Time.deltaTime * 10);
+				transform.position += deltaPosition - tongue.position;
+
+				// transform.position = Vector3.Lerp( transform.position, m_holdPreyTransform.position, Time.deltaTime * 10);	// Mouth should be moving and orienting
+			}break;
+
 		}
 		
 		m_rbody.angularVelocity = Vector3.zero;
@@ -777,6 +788,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		ChangeState( State.Fly_Down);
 	} 
 
+	public void StartHoldPreyMovement( Transform _holdPreyTransform )
+	{
+		m_holdPreyTransform = _holdPreyTransform;
+		ChangeState(State.HoldingPrey);
+	}
+
+	public void EndHoldMovement()
+	{
+		ChangeState(State.Idle);
+	}
 
 	public void StartIntroMovement(Vector3 introTarget)
 	{

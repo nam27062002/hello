@@ -46,6 +46,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public List<string> m_burpSounds = new List<string>();
 	// public AudioSource m_burpAudio;
 
+	private float m_noAttackTime = 0;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -91,16 +93,22 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update() {			
+	void Update() 
+	{
+		if ( m_noAttackTime > 0 )
+		{
+			m_noAttackTime -= Time.deltaTime;
+		}
 
 		// if not holding
-		if (m_holdingPrey == null)
+		if (m_holdingPrey == null && m_noAttackTime <= 0)
 		{
 			FindSomethingToEat( m_prey.Count <= 0 );
 		}
 		else
 		{
-			UpdateHoldingPrey();	
+			if ( m_holdingPrey != null )
+				UpdateHoldingPrey();	
 		}
 
 		if (m_prey.Count > 0) 
@@ -162,12 +170,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 		*/
 	}
 
-	private void StartHold(EdibleBehaviour _prey) 
+	virtual protected void StartHold(EdibleBehaviour _prey) 
 	{
 		// look for closer hold point
-
+		_prey.OnHoldBy(this);
 		m_holdingPrey = _prey;
 		m_holdPreyTimer = 2.0f;
+		m_animator.SetBool("eat", true);
+		// TODO (miguel) this has to be adapted to the pet
+		DragonMotion motion = GetComponent<DragonMotion>();
+		motion.StartHoldPreyMovement( _prey.transform);
 	}
 
 	private void UpdateHoldingPrey()
@@ -178,6 +190,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_holdingPrey.isDead() )
 		{
 			m_holdingPrey.OnSwallow( m_mouth );
+			EndHold();
 		}
 		else
 		{
@@ -186,9 +199,20 @@ public abstract class EatBehaviour : MonoBehaviour {
 			if ( m_holdPreyTimer <= 0 ) // or prey is death
 			{
 				// release prey
-
+				m_holdingPrey.ReleaseHold();
+				EndHold();
 			}	
 		}
+	}
+
+	private void EndHold()
+	{
+		// TODO (miguel) this has to be adapted to the pet
+		DragonMotion motion = GetComponent<DragonMotion>();
+		motion.EndHoldMovement();
+		m_holdingPrey = null;
+		m_noAttackTime = 1.0f;
+		m_animator.SetBool("eat", false);
 	}
 
 	private void Swallow(EdibleBehaviour _prey) {
@@ -207,6 +231,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
+			/*
 			if (entity.edibleFromTier <= m_tier) 
 			{
 				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
@@ -216,6 +241,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				}
 			}
 			else if (_canHold && entity.canBeHolded && (entity.holdFromTier <= m_tier) )
+			*/
 			{
 				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
 				if (edible.CanBeEaten(m_motion.direction)) 
