@@ -18,6 +18,7 @@ public abstract class AttackBehaviour : Initializable {
 	[SerializeField] private int m_consecutiveAttacks;
 	[SerializeField] private float m_retreatingTime;
 	[SerializeField] private bool m_hasAnimation = true;
+	[SerializeField] private bool m_invulnerableWhileAttacking = false;
 
 	protected Animator m_animator;
 	protected PreyMotion m_motion;
@@ -25,6 +26,8 @@ public abstract class AttackBehaviour : Initializable {
 	protected SensePlayer m_sensor;
 	protected DragonMotion m_dragon;
 	protected Transform m_target; // all the attacks will aim to this target
+
+	private EdibleBehaviour m_edible;
 
 	private bool m_playingAttackAnimation;
 	private bool m_onAttachEventDone;
@@ -47,12 +50,17 @@ public abstract class AttackBehaviour : Initializable {
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
+		if (m_invulnerableWhileAttacking) {
+			m_edible = GetComponent<EdibleBehaviour>();
+		}
+
 		m_playingAttackAnimation = false;
 		m_onAttachEventDone = false;
      	m_onDamageEventDone = false;
      	m_onAttackEndEventDone = false;
 
 		m_target = m_dragon.GetAttackPointNear(transform.position);
+		m_sensor.dragonTarget = m_target;
 
 		PreyAnimationEvents animEvents = transform.FindChild("view").GetComponent<PreyAnimationEvents>();
 		if (animEvents != null) {
@@ -86,8 +94,10 @@ public abstract class AttackBehaviour : Initializable {
 		m_state = State.None;
 		m_nextState = State.Pursuit;
 
-		if (m_dragon != null)
+		if (m_dragon != null) {
 			m_target = m_dragon.GetAttackPointNear(transform.position);
+			m_sensor.dragonTarget = m_target;
+		}
 	}
 
 	protected virtual void OnDisable() {
@@ -96,6 +106,8 @@ public abstract class AttackBehaviour : Initializable {
 			m_animator.SetBool("fast", false);
 			m_animator.SetBool("attack", false);
 		}
+
+		if (m_edible != null) m_edible.enabled = true;
 	}
 
 	// Update is called once per frame
@@ -106,16 +118,15 @@ public abstract class AttackBehaviour : Initializable {
 
 		switch (m_state) {
 			case State.Idle:
-				if (m_timer > 0) {
-					m_timer -= Time.deltaTime;
-				} else if (m_sensor.isInsideMaxArea) {
+				m_motion.Stop();
+				if (m_sensor.isInsideMaxArea) {
 					m_nextState = State.Pursuit;
 				}
 			break;
 
 			case State.Pursuit:
 				if (!m_sensor.isInsideMaxArea || (m_area != null && !m_area.Contains(transform.position))) {
-					m_timer = 5.0f;
+					m_sensor.Shutdown(m_retreatingTime);
 					m_nextState = State.Idle;
 				} else {
 					if (m_sensor.isInsideMinArea) {
@@ -162,14 +173,6 @@ public abstract class AttackBehaviour : Initializable {
 					}
 				}
 				break;
-
-			case State.AttackRetreat:
-				m_timer -= Time.deltaTime;
-				if (m_timer <= 0) {
-					// Check Sensor
-					m_nextState = State.Idle;
-					m_timer = 5.0f;
-				}
 			break;
 		}
 
@@ -203,6 +206,8 @@ public abstract class AttackBehaviour : Initializable {
 					break;
 
 				case State.Attack:
+					m_animator.SetBool("attack", false);
+					if (m_edible != null) m_edible.enabled = true;
 					break;
 			}
 
@@ -215,6 +220,7 @@ public abstract class AttackBehaviour : Initializable {
 					
 				case State.Attack:
 					m_playingAttackAnimation = false;
+					if (m_edible != null) m_edible.enabled = false;
 
 					m_motion.Stop();
 					m_timer = 0;
@@ -260,8 +266,8 @@ public abstract class AttackBehaviour : Initializable {
 				m_attackCount++;
 				if (m_attackCount >= m_consecutiveAttacks) {
 					m_animator.SetBool("attack", false);
-					m_timer = m_retreatingTime;
-					m_nextState = State.AttackRetreat;	// While retreating normal movement should do its thing. Its set on tactics
+					m_sensor.Shutdown(m_retreatingTime);
+					m_nextState = State.Idle;
 				}
 			}
 

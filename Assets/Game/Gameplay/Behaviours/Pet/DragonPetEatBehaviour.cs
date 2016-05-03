@@ -5,10 +5,16 @@ public class DragonPetEatBehaviour : EatBehaviour {
 
 	[SerializeField] private DragonTier m_petTier;
 
-	void Start() {
+	protected void Start() {
 		m_motion = GetComponent<PreyMotion>();
 		m_tier = m_petTier;
 		m_eatSpeedFactor = 0.5f;	// [AOC] HARDCODED!!
+		m_canHold = false;
+		m_limitEating = true;
+		m_limitEatingValue = 1;
+		m_isPlayer = false;
+
+		SetupHoldParametersForTier( DragonData.TierToSku( m_petTier));
 	}
 
 	protected override void SlowDown(bool _enable) {

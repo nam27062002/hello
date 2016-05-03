@@ -39,8 +39,23 @@ public class Entity : Initializable {
 	private DragonTier m_edibleFromTier = 0;
 	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
 
+	private DragonTier m_holdFromTier = 0;
+	public DragonTier holdFromTier { get { return m_holdFromTier; } }
+
+	private bool m_canBeHolded;
+	public bool canBeHolded { get { return m_canBeHolded; } }
+
 	private float m_biteResistance = 1f;
 	public float biteResistance { get { return m_biteResistance; }}
+
+	// Health
+	private float m_maxHealth;
+	private float m_health;
+	public float health
+	{
+		get { return m_health; }
+		set { m_health = value; }
+	}
 
 	private FeedbackData m_feedbackData = new FeedbackData();
 	public FeedbackData feedbackData { get { return m_feedbackData; }}
@@ -109,6 +124,11 @@ public class Entity : Initializable {
 		m_pcChance = m_def.GetAsFloat("pcChance");
 		m_isEdible = m_def.GetAsBool("isEdible");
 		m_edibleFromTier = (DragonTier)m_def.GetAsInt("edibleFromTier");
+
+		m_holdFromTier = (DragonTier)m_def.GetAsInt("holdFromTier");
+		m_canBeHolded = m_def.GetAsBool("canBeHolded", false);
+		m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
+
 		m_biteResistance = m_def.GetAsFloat("biteResistance");
 
 		// Feedback data
@@ -129,6 +149,7 @@ public class Entity : Initializable {
 
 		m_isOnScreen = false;
 		m_checkOnScreenTimer = 0;
+		m_health = m_maxHealth;
 	}
 
 /*	public void AddLife(float _offset) {
@@ -232,5 +253,10 @@ public class Entity : Initializable {
 
 	public Vector3 RandomInsideBounds() {
 		return m_bounds.bounds.RandomInside();
+	}
+
+	public void Damage( float damage ) 
+	{
+		m_health -= damage;
 	}
 }

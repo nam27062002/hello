@@ -6,13 +6,12 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Enemy_Rhino_Wings
-  m_Shader: {fileID: 4800000, guid: fdec87edad46940c7b29cc608e58dd7a, type: 3}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
+  m_Name: Transparent
+  m_Shader: {fileID: 4800000, guid: 3cd58fe3c002449ad8d117141b2a4e08, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: 2000
+  stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -20,7 +19,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 2c623b4ceb9fa4b39be170f315f58c44, type: 3}
+          m_Texture: {fileID: 2800000, guid: 8c0e73e771ff747e79316870152c9be9, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -46,13 +45,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -61,6 +53,13 @@ Material:
       data:
         first:
           name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -79,6 +78,20 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DissolveMask
+        second:
+          m_Texture: {fileID: 2800000, guid: 8c0e73e771ff747e79316870152c9be9, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _AlphaMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -87,7 +100,7 @@ Material:
       data:
         first:
           name: _DstBlend
-        second: 10
+        second: 0
       data:
         first:
           name: _Cutoff
@@ -99,7 +112,7 @@ Material:
       data:
         first:
           name: _ZWrite
-        second: 0
+        second: 1
       data:
         first:
           name: _Glossiness
@@ -122,16 +135,20 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Mode
-        second: 3
+        second: 0
       data:
         first:
           name: _Metallic
         second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
+          name: _AshLevel
+        second: 0.22157598
     m_Colors:
       data:
         first:
@@ -140,7 +157,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _EmissionColorUI

@@ -17,7 +17,7 @@ public class EdibleBehaviour : Initializable {
 	[SerializeField] private EatenFrom m_vulnerable = EatenFrom.All;
 
 	private Entity m_entity;
-	private MotionInterface m_motion;
+	private PreyMotion m_motion;
 	private Animator m_animator;
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
@@ -30,19 +30,47 @@ public class EdibleBehaviour : Initializable {
 	public float m_onEatenSoundProbability = 50.0f;
 	public List<string> m_onEatenSounds = new List<string>();
 
+	public float biteResistance { get { return m_entity.biteResistance; }}
+
+	bool m_beingHeld = false;
+
+	private List<Transform> m_holdPreyPoints = new List<Transform>();
+	public List<Transform> holdPreyPoints
+	{
+		get{ return m_holdPreyPoints; }
+	}
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Awake() {
+	void Awake() 
+	{
 		m_originalRotation = transform.rotation;
 		m_originalScale = transform.localScale;
+		// Find all hold prey opints
+		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
+		if ( holdPoints != null )
+		{
+			for( int i = 0;i<holdPoints.Length; i++ )
+			{
+				m_holdPreyPoints.Add( holdPoints[i].transform);
+			}
+		}
 	}
 
 	void Start() {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_entity = GetComponent<Entity>();
-		m_motion = GetComponent<MotionInterface>();
+		m_motion = GetComponent<PreyMotion>();
+	}
+
+	void Update()
+	{
+		if ( m_beingHeld )
+		{
+			m_motion.Stop();
+		}
 	}
 
 	public override void Initialize() {
@@ -144,4 +172,32 @@ public class EdibleBehaviour : Initializable {
 		if ( po != null )
 			po.enabled = _enable;
 	}
+
+	public void OnHoldBy( EatBehaviour holder )
+	{
+		m_beingHeld = true;
+		// OnEatBehaviours(false);
+	}
+
+	public void ReleaseHold()
+	{
+		m_beingHeld = false;
+		// OnEatBehaviours(true);
+	}
+
+	public bool IsBeingHeld()
+	{
+		return m_beingHeld;
+	}
+
+	public void HoldingDamage( float damage )
+	{
+		m_entity.Damage( damage );
+	}
+
+	public bool isDead()
+	{
+		return m_entity.health <= 0;
+	}
+
 }
