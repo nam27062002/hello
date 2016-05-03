@@ -118,10 +118,44 @@ public class UIFeedbackText : MonoBehaviour {
 	// FACTORY METHOS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Create a new UI text feedback using and attach it to the given RectTransform.
+	/// Create a new UI text feedback using an object as position reference and 
+	/// attach it to the given RectTransform.
 	/// </summary>
-	/// <param name="_parent">The transform to attach the new text feedback to, optional.</param>
-	/// <param name="_pos">The initial position of the text, relative parent canvas coords [(0,0)..(1,1)].</param>
+	/// <param name="_text">The text to be displayed.</param>
+	/// <param name="_anchor">The transform used as a reference to define the spawn position of the feedback.</param>
+	/// <param name="_offset">The position offset relative to the <paramref name="_anchor"/>'s position.</param>
+	/// <param name="_parent">The transform to attach the new text feedback to.</param>
+	/// <param name="_name">The name to be given to the new text feedback. If another UIFeedbackText with the same name already exists on the target rect transform, it will be instantly killed.</param>
+	/// <param name="_prefabPath">The prefab to be used for this notification. If not defined, the default one will be used.</param>
+	public static UIFeedbackText CreateAndLaunch(string _text, RectTransform _anchor, Vector2 _offset, RectTransform _parent, string _name = "UIFeedbackText", string _prefabPath = "") {
+		// Don't do anything if parent is not valid
+		if(_parent == null) return null;
+
+		// Convert anchor's transform coords to parent's transform coords
+		// 1) Target position in anchor's local coordinates
+		Vector3 pos = new Vector3(
+			_offset.x,
+			_offset.y,
+			0f
+		);
+
+		// 2) Position in world coords
+		pos = _anchor.TransformPoint(pos);
+
+		// 3) Position in parent's local coords
+		pos = _parent.InverseTransformPoint(pos);
+
+		// Use the other factory method
+		return CreateAndLaunchLocal(_text, pos, _parent, _name, _prefabPath);
+	}
+
+	/// <summary>
+	/// Create a new UI text feedback using a global viewport position and attach 
+	/// it to the given RectTransform.
+	/// </summary>
+	/// <param name="_text">The text to be displayed.</param>
+	/// <param name="_viewportPos">The initial position of the text, relative parent canvas coords [(0,0)..(1,1)].</param>
+	/// <param name="_parent">The transform to attach the new text feedback to.</param>
 	/// <param name="_name">The name to be given to the new text feedback. If another UIFeedbackText with the same name already exists on the target rect transform, it will be instantly killed.</param>
 	/// <param name="_prefabPath">The prefab to be used for this notification. If not defined, the default one will be used.</param>
 	public static UIFeedbackText CreateAndLaunch(string _text, Vector2 _viewportPos, RectTransform _parent, string _name = "UIFeedbackText", string _prefabPath = "") {
@@ -153,7 +187,7 @@ public class UIFeedbackText : MonoBehaviour {
 	/// <summary>
 	/// Create a new UI text feedback using and attach it to the given RectTransform.
 	/// </summary>
-	/// <param name="_parent">The transform to attach the new text feedback to, optional.</param>
+	/// <param name="_parent">The transform to attach the new text feedback to.</param>
 	/// <param name="_pos">The initial position of the text, local coords relative to parent transform.</param>
 	/// <param name="_name">The name to be given to the new text feedback. If another UIFeedbackText with the same name already exists on the target rect transform, it will be instantly killed.</param>
 	/// <param name="_prefabPath">The prefab to be used for this notification. If not defined, the default one will be used.</param>
