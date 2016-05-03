@@ -1078,6 +1078,7 @@ MonoBehaviour:
   m_consecutiveAttacks: 6
   m_retreatingTime: 0
   m_hasAnimation: 1
+  m_invulnerableWhileAttacking: 0
   m_canAim: 1
   m_eye: {fileID: 496224}
   m_projectilePrefab: {fileID: 173528, guid: 78d009bbb03e2487a988b7740f9aa35b, type: 2}
@@ -1122,6 +1123,9 @@ MonoBehaviour:
   m_sensorAngleOffset: 0
   m_sensorOffset: {x: 0, y: 1.91, z: 0}
   m_target: 0
+  m_senseDelay:
+    min: 0.25
+    max: 1.25
 --- !u!114 &11442016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1207,6 +1211,9 @@ MonoBehaviour:
   m_avoidWater: 0
   m_maxSpeed: 2
   m_maxRunSpeed: 3.5
+  m_speedVariationRange:
+    min: 0.75
+    max: 1.25
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11470552
