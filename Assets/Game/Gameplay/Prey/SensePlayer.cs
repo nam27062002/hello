@@ -6,7 +6,8 @@ public class SensePlayer : MonoBehaviour {
 
 	enum Target {
 		Mouth = 0,
-		Pivot
+		Pivot,
+		Custom
 	};
 
 	[SerializeField] private float m_sensorMinRadius;
@@ -45,6 +46,7 @@ public class SensePlayer : MonoBehaviour {
 	private DragonPlayer m_dragon;
 
 	private Transform m_dragonTarget;
+	public Transform dragonTarget { set { m_dragonTarget = value; m_target = Target.Custom;} }
 	public Vector3 targetPosition { get { return m_dragonTarget.position; } }
 
 	private float m_dragonRadiusSqr;
@@ -61,6 +63,7 @@ public class SensePlayer : MonoBehaviour {
 		switch (m_target) {
 			case Target.Mouth: m_dragonTarget = m_dragon.GetComponent<DragonMotion>().tongue; break;
 			case Target.Pivot: m_dragonTarget = m_dragon.transform; break;
+			case Target.Custom: m_dragonTarget = m_dragon.transform; break;
 		}
 
 		m_dragonRadiusSqr = 0;
