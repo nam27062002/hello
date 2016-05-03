@@ -91,11 +91,11 @@ GameObject:
   - 114: {fileID: 11478934}
   - 114: {fileID: 11421898}
   - 114: {fileID: 11448254}
-  - 114: {fileID: 11462906}
   - 114: {fileID: 11431970}
   - 114: {fileID: 11410540}
   - 114: {fileID: 11467640}
   - 114: {fileID: 11427696}
+  - 114: {fileID: 11433696}
   m_Layer: 8
   m_Name: PF_Bat_big
   m_TagString: Untagged
@@ -564,6 +564,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_canBeEatenWhileAttacking: 0
+--- !u!114 &11433696
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db93e9f797714658ac0f02e1b151059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 3
+  m_attackDelay: 0
+  m_consecutiveAttacks: 2
+  m_retreatingTime: 0
+  m_hasAnimation: 0
+  m_meleeWeapon: {fileID: 0}
 --- !u!114 &11448254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -579,7 +596,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 5
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
-  m_sensorPosition: {x: 0, y: 0, z: 0}
+  m_sensorOffset: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11453876
 MonoBehaviour:
@@ -623,26 +640,6 @@ MonoBehaviour:
   m_burnSize: 4
   m_burnDuration: 0.75
   m_orientedBurn: 1
---- !u!114 &11462906
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 3
-  m_attackDelay: 0
-  m_consecutiveAttacks: 2
-  m_retreatingTime: 0
-  m_hasAnimation: 0
-  m_canAim: 0
-  m_eye: {fileID: 0}
-  m_projectilePrefab: {fileID: 0}
-  m_projectileSpawnPoint: {fileID: 0}
 --- !u!114 &11467640
 MonoBehaviour:
   m_ObjectHideFlags: 1

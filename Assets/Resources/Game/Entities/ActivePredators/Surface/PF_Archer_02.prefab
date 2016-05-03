@@ -14,9 +14,9 @@ GameObject:
   - 114: {fileID: 11479276}
   - 114: {fileID: 11423810}
   - 114: {fileID: 11429626}
-  - 114: {fileID: 11463328}
   - 114: {fileID: 11406264}
   - 114: {fileID: 11447452}
+  - 114: {fileID: 11446464}
   m_Layer: 8
   m_Name: PF_Archer_02
   m_TagString: Untagged
@@ -1127,6 +1127,26 @@ MonoBehaviour:
   offset: {x: -0.032571256, y: 1.0567853}
   radius: 1.0592805
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &11446464
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f2976564a4b64696b4d183727f82102, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 6
+  m_attackDelay: 0
+  m_consecutiveAttacks: 8
+  m_retreatingTime: 0
+  m_hasAnimation: 1
+  m_canAim: 1
+  m_eye: {fileID: 464666}
+  m_projectilePrefab: {fileID: 173528, guid: 78d009bbb03e2487a988b7740f9aa35b, type: 2}
+  m_projectileSpawnPoint: {fileID: 478846}
 --- !u!114 &11447452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1161,26 +1181,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_deactivate: 1
---- !u!114 &11463328
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 6
-  m_attackDelay: 0
-  m_consecutiveAttacks: 8
-  m_retreatingTime: 0
-  m_hasAnimation: 1
-  m_canAim: 1
-  m_eye: {fileID: 464666}
-  m_projectilePrefab: {fileID: 173528, guid: 78d009bbb03e2487a988b7740f9aa35b, type: 2}
-  m_projectileSpawnPoint: {fileID: 478846}
 --- !u!114 &11479276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1213,10 +1213,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sensorMinRadius: 14
-  m_sensorMaxRadius: 20
+  m_sensorMaxRadius: 14
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
-  m_sensorPosition: {x: 0, y: 0, z: 0}
+  m_sensorOffset: {x: 0, y: 1.98, z: 0}
   m_target: 0
 --- !u!137 &13715338
 SkinnedMeshRenderer:

@@ -46,9 +46,9 @@ GameObject:
   - 114: {fileID: 11437978}
   - 114: {fileID: 11403364}
   - 114: {fileID: 11406306}
-  - 114: {fileID: 11402686}
   - 114: {fileID: 11409000}
   - 114: {fileID: 11462684}
+  - 114: {fileID: 11423018}
   m_Layer: 8
   m_Name: PF_Hawk
   m_TagString: Untagged
@@ -581,26 +581,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11402686
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 063e023482f53477185a78c933e7eecb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 8
-  m_attackDelay: 0
-  m_consecutiveAttacks: 1
-  m_retreatingTime: 2
-  m_hasAnimation: 0
-  m_canAim: 0
-  m_eye: {fileID: 0}
-  m_projectilePrefab: {fileID: 0}
-  m_projectileSpawnPoint: {fileID: 0}
 --- !u!114 &11403364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -618,6 +598,7 @@ MonoBehaviour:
   m_distanceAttenuation: 3.5
   m_checkCollisions: 1
   m_keepInsideArea: 0
+  m_avoidWater: 0
   m_maxSpeed: 10
   m_maxRunSpeed: 15
   m_slowingRadius: 0
@@ -665,7 +646,7 @@ MonoBehaviour:
   m_sensorMaxRadius: 7.74
   m_sensorAngle: 360
   m_sensorAngleOffset: 360
-  m_sensorPosition: {x: 0, y: 0, z: 0}
+  m_sensorOffset: {x: 0, y: 0, z: 0}
   m_target: 0
 --- !u!114 &11409000
 MonoBehaviour:
@@ -694,6 +675,23 @@ MonoBehaviour:
   m_onAppearSoundProbability: 40
   m_onApprearSounds:
   - audio/sfx/animals/air/SFX_Knowledge_Vision_Eagle_Cry_V02
+--- !u!114 &11423018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db93e9f797714658ac0f02e1b151059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 8
+  m_attackDelay: 0
+  m_consecutiveAttacks: 1
+  m_retreatingTime: 2
+  m_hasAnimation: 0
+  m_meleeWeapon: {fileID: 0}
 --- !u!114 &11437978
 MonoBehaviour:
   m_ObjectHideFlags: 1

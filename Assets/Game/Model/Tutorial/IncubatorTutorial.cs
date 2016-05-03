@@ -165,8 +165,8 @@ public class IncubatorTutorial : MonoBehaviour {
 			return;
 		}
 
+		// If the tutorial wasn't completed, the incubator is not busy and we have an egg at the first slot of the inventory, launch the tutorial now
 		Egg targetEgg = EggManager.inventory[0];
-		// If the tutorial wasn't completed, launch it now
 		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR) && EggManager.incubatingEgg == null && targetEgg != null)
 		{
 			StartTutorial();
