@@ -11,85 +11,68 @@ public class DragonTactics : Initializable {
 	private enum State {
 		None = 0,
 		Wander,
-		Attack,
-		Retreat
+		Attack
 	};
 
 	private State m_state;
 	private State m_nextState;
-	// private SensePlayer m_sensor;
 
 	private WanderBehaviour m_wander;
 	private AttackBehaviour m_attack;
 	private EvadeBehaviour m_evade;
+	private SensePlayer m_sensor;
 
-	// Use this for initialization
-	void Start () {
-		// m_sensor = GetComponent<SensePlayer>();
-	}
 
 	public override void Initialize() {
-		//start at random anim position
-		m_state = State.None;
-		m_nextState = State.Wander;
-		
 		m_wander = GetComponent<WanderBehaviour>();
 		m_attack = GetComponent<AttackBehaviour>();
 		m_evade = GetComponent<EvadeBehaviour>();
+		m_sensor = GetComponent<SensePlayer>();
+
+		m_attack.enabled = false;
 		m_wander.enabled = false;
 		m_evade.enabled = false;
+
+		m_state = State.None;
+		m_nextState = State.Wander;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (m_state != m_nextState) {
 			ChangeState();
 		}
 
-		if (m_attack != null) {
-			switch (m_attack.state) {
-				case AttackBehaviour.State.Pursuit:
-				case AttackBehaviour.State.Attack:
+		switch (m_nextState) {
+			case State.Wander:
+				if (m_sensor.isInsideMaxArea) {
 					m_nextState = State.Attack;
-					break;
+				}
+				break;
 
-				case AttackBehaviour.State.AttackRetreat:
-					m_nextState = State.Retreat;
-					break;
-
-				case AttackBehaviour.State.Idle:
-				default:
+			case State.Attack:
+				if (!m_sensor.isInsideMaxArea) {
 					m_nextState = State.Wander;
-					break;
-			}	
+				}
+				break;
 		}
 	}
 
 	private void ChangeState() {
-		// exit State
-		switch (m_state) {
+		switch (m_nextState) {
 			case State.Wander:
-				m_wander.enabled = false;
+				m_attack.enabled = false;
+				m_wander.enabled = true;
+				m_evade.enabled = true;
 				break;
 
-			case State.Retreat:
+			case State.Attack:
+				m_attack.enabled = true;
 				m_wander.enabled = false;
 				m_evade.enabled = false;
 				break;
 		}
-		
-		// enter State
-		switch (m_nextState) {
-			case State.Wander:
-				m_wander.enabled = true;
-				break;
 
-			case State.Retreat:
-				m_wander.enabled = true;
-				m_evade.enabled = true;
-				break;
-		}
-		
 		m_state = m_nextState;
 	}
 }

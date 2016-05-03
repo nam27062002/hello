@@ -60,7 +60,7 @@ public class SensePlayerEditor : Editor {
 		Vector3 from = Vector3.right.RotateXYDegrees(fromAngle);
 		Vector3 to = Vector3.right.RotateXYDegrees(toAngle);
 
-		Vector3 pos = m_target.transform.position + m_target.sensorPosition;
+		Vector3 pos = m_target.sensorPosition;
 
 		// Outter area
 		Handles.color =  new Color(1f, 1f, 224f/255f, 0.125f * alphaFactor);

@@ -52,15 +52,16 @@ public class MineBehaviour : Initializable {
 
 				m_timer = 0;
 				GameObject explosion = PoolManager.GetInstance(m_explosionPrefab.name);
+				if(explosion != null) {
+					// Random position within range
+					explosion.transform.position = transform.position;
 
-				// Random position within range
-				explosion.transform.position = transform.position;
-
-				// Random scale within range
-				explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();
-				
-				// Random rotation within range
-				explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+					// Random scale within range
+					explosion.transform.localScale = Vector3.one * m_scaleRange.GetRandom();
+					
+					// Random rotation within range
+					explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
+				}
 
 				gameObject.SetActive(false);
 			}

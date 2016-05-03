@@ -36,6 +36,8 @@ public class DragonEatBehaviour : EatBehaviour {
 		{
 			m_dragon.AddLife(reward.health);
 		}
+
+		m_dragon.AddEnergy(reward.energy);
 	}
 
 	protected override void SlowDown(bool _enable) {

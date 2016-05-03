@@ -269,6 +269,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 						preysToEat.Add(edible);
 					}
 				}
+			} else {
+				Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
 			}
 			else if (_canHold && entity.canBeHolded && (entity.holdFromTier <= m_tier) )
 			{
