@@ -91,11 +91,12 @@ GameObject:
   - 114: {fileID: 11478934}
   - 114: {fileID: 11421898}
   - 114: {fileID: 11448254}
-  - 114: {fileID: 11431970}
   - 114: {fileID: 11410540}
   - 114: {fileID: 11467640}
   - 114: {fileID: 11427696}
   - 114: {fileID: 11433696}
+  - 114: {fileID: 11432786}
+  - 114: {fileID: 11418496}
   m_Layer: 8
   m_Name: PF_Bat_big
   m_TagString: Untagged
@@ -519,6 +520,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11418496
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0acfa9987db4db6a4006005c3f5f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_groupAvoidRadiusRange:
+    min: 1
+    max: 1.5
 --- !u!114 &11421898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -537,8 +552,8 @@ MonoBehaviour:
   m_checkCollisions: 1
   m_keepInsideArea: 0
   m_avoidWater: 1
-  m_maxSpeed: 1.5
-  m_maxRunSpeed: 4
+  m_maxSpeed: 4
+  m_maxRunSpeed: 8
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11427696
@@ -552,7 +567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38a0ec23dccf4b2b86c84e8267ea659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11431970
+--- !u!114 &11432786
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -560,10 +575,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 132400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ef8852582a6d47709d3e3eb3c75643e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_canBeEatenWhileAttacking: 0
 --- !u!114 &11433696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -577,9 +591,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_damage: 3
   m_attackDelay: 0
-  m_consecutiveAttacks: 2
-  m_retreatingTime: 0
+  m_consecutiveAttacks: 1
+  m_retreatingTime: 1
   m_hasAnimation: 0
+  m_invulnerableWhileAttacking: 0
   m_meleeWeapon: {fileID: 0}
 --- !u!114 &11448254
 MonoBehaviour:
@@ -592,8 +607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 2
-  m_sensorMaxRadius: 5
+  m_sensorMinRadius: 1
+  m_sensorMaxRadius: 4
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
   m_sensorOffset: {x: 0, y: 0, z: 0}
