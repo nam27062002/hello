@@ -30,7 +30,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_slowedDown;
 	private float m_burpTime;
 	private float m_holdPreyTimer = 0;
-	private EdibleBehaviour m_holdingPrey = null;
+	protected EdibleBehaviour m_holdingPrey = null;
+	protected Transform m_holdTransform = null;
 
 	private Transform m_suction;
 	private Transform m_mouth;
@@ -48,6 +49,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private float m_noAttackTime = 0;
 	private float m_holdingBlood = 0;
+
+	protected bool m_canHold = true;		// if this eater can hold a prey
+	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
+	protected int m_limitEatingValue = 1;	// limit value
 
 	//-----------------------------------------------
 	// Methods
@@ -104,7 +109,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// if not holding
 		if (m_holdingPrey == null && m_noAttackTime <= 0)
 		{
-			FindSomethingToEat( m_prey.Count <= 0 );
+			FindSomethingToEat( m_prey.Count <= 0 && m_canHold);
 		}
 		else
 		{
@@ -174,13 +179,26 @@ public abstract class EatBehaviour : MonoBehaviour {
 	virtual protected void StartHold(EdibleBehaviour _prey) 
 	{
 		// look for closer hold point
+		float distance = float.MaxValue;
+		List<Transform> points = _prey.holdPreyPoints;
+		m_holdTransform = null;
+		for( int i = 0; i<points.Count; i++ )
+		{
+			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
+			{
+				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
+				m_holdTransform = points[i];
+			}
+		}
+
+		if ( m_holdTransform == null )
+			m_holdTransform = _prey.transform;
+
 		_prey.OnHoldBy(this);
 		m_holdingPrey = _prey;
 		m_holdPreyTimer = 2.0f;
 		m_animator.SetBool("eat", true);
-		// TODO (miguel) this has to be adapted to the pet
-		DragonMotion motion = GetComponent<DragonMotion>();
-		motion.StartHoldPreyMovement( _prey.transform);
+
 	}
 
 	private void UpdateHoldingPrey()
@@ -218,11 +236,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	private void EndHold()
+	virtual protected void EndHold()
 	{
-		// TODO (miguel) this has to be adapted to the pet
-		DragonMotion motion = GetComponent<DragonMotion>();
-		motion.EndHoldMovement();
 		m_holdingPrey = null;
 		m_noAttackTime = 1.0f;
 		m_animator.SetBool("eat", false);
@@ -244,17 +259,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
-			/*
 			if (entity.edibleFromTier <= m_tier) 
 			{
-				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-				if (edible.CanBeEaten(m_motion.direction)) 
+				if ( m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
 				{
-					preysToEat.Add(edible);
+					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+					if (edible.CanBeEaten(m_motion.direction)) 
+					{
+						preysToEat.Add(edible);
+					}
 				}
 			}
 			else if (_canHold && entity.canBeHolded && (entity.holdFromTier <= m_tier) )
-			*/
 			{
 				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
 				if (edible.CanBeEaten(m_motion.direction)) 

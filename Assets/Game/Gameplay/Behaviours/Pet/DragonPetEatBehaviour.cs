@@ -9,6 +9,9 @@ public class DragonPetEatBehaviour : EatBehaviour {
 		m_motion = GetComponent<PreyMotion>();
 		m_tier = m_petTier;
 		m_eatSpeedFactor = 0.5f;	// [AOC] HARDCODED!!
+		m_canHold = false;
+		m_limitEating = true;
+		m_limitEatingValue = 1;
 	}
 
 	protected override void SlowDown(bool _enable) {

@@ -34,13 +34,29 @@ public class EdibleBehaviour : Initializable {
 
 	bool m_beingHeld = false;
 
+	private List<Transform> m_holdPreyPoints = new List<Transform>();
+	public List<Transform> holdPreyPoints
+	{
+		get{ return m_holdPreyPoints; }
+	}
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Awake() {
+	void Awake() 
+	{
 		m_originalRotation = transform.rotation;
 		m_originalScale = transform.localScale;
+		// Find all hold prey opints
+		Transform holdPoints = transform.FindChild("holdPoints");
+		if ( holdPoints )
+		{
+			for( int i = 0;i<holdPoints.childCount; i++ )
+			{
+				m_holdPreyPoints.Add( holdPoints.GetChild(i));
+			}
+		}
 	}
 
 	void Start() {

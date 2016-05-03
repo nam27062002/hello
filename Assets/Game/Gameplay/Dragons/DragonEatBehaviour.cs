@@ -54,4 +54,20 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
 		m_eatingBoosts.Add( entitySku, value);
 	}
+
+	override protected void StartHold(EdibleBehaviour _prey) 
+	{
+		base.StartHold(_prey);
+		// TODO (miguel) this has to be adapted to the pet
+		DragonMotion motion = GetComponent<DragonMotion>();
+		motion.StartHoldPreyMovement( m_holdTransform);
+	}
+
+	override protected void EndHold()
+	{
+		base.EndHold();
+		// TODO (miguel) this has to be adapted to the pet
+		DragonMotion motion = GetComponent<DragonMotion>();
+		motion.EndHoldMovement();
+	}
 }
