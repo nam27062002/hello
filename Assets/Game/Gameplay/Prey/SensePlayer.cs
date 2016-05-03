@@ -29,6 +29,7 @@ public class SensePlayer : MonoBehaviour {
 
 	[SerializeField] private Target m_target = Target.Mouth;
 
+	[SerializeField] private Range m_senseDelay = new Range(0.25f, 1.25f);
 
 	private bool m_alert;
 	public bool alert { get { return m_alert; } }
@@ -51,7 +52,8 @@ public class SensePlayer : MonoBehaviour {
 
 	private float m_dragonRadiusSqr;
 
-	private float m_shutdownTime;
+	private float m_shutdownTimer;
+	private float m_senseTimer;
 
 	void Awake() {
 		m_motion = GetComponent<PreyMotion>();
@@ -80,11 +82,12 @@ public class SensePlayer : MonoBehaviour {
 		m_isInsideMaxArea = false;
 		m_distanceSqr = 0;
 
-		m_shutdownTime = 0;
+		m_shutdownTimer = 0;
+		m_senseTimer = m_senseDelay.GetRandom();
 	}
 
 	void OnEnable() {
-		m_shutdownTime = 0;
+		m_shutdownTimer = 0;
 	}
 
 	void OnDisable() {		
@@ -94,83 +97,80 @@ public class SensePlayer : MonoBehaviour {
 	}
 
 	public void Shutdown(float _time) {
-		m_shutdownTime = _time;
+		m_shutdownTimer = _time;
 		OnDisable();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (m_shutdownTime > 0) {
-			m_shutdownTime -= Time.deltaTime;
-			if (m_shutdownTime <= 0) {
-				m_shutdownTime = 0;
+		if (m_shutdownTimer > 0) {
+			m_shutdownTimer -= Time.deltaTime;
+			if (m_shutdownTimer <= 0) {
+				m_shutdownTimer = 0;
 			}
-		} else if (m_dragon.IsAlive()) {
-			// we have too much erro if we only sense the dragon when it is inside the spawn area, it can be too small
-			Vector2 vectorToPlayer = (Vector2)(m_dragonTarget.position - sensorPosition);
-			m_distanceSqr = vectorToPlayer.sqrMagnitude - m_dragonRadiusSqr;
+		} else {
+			m_senseTimer -= Time.deltaTime;
 
-			if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {
-				// check if the dragon is inside the sense zone
-				if (m_distanceSqr < m_sensorMinRadius * m_sensorMinRadius) {
-					// Check if this entity can see the player
-					if (sensorAngle == 360) {
-						m_alert = true;
-						m_isInsideMinArea = true;
-					} else {
-						Vector2 direction = (m_motion.direction.x < 0)? Vector2.left : Vector2.right;
-						float angle = Vector2.Angle(direction, vectorToPlayer); // angle between them: from 0 to 180
+			if (m_senseTimer <= 0) {
+				if (m_dragon.IsAlive()) {
+					// we have too much erro if we only sense the dragon when it is inside the spawn area, it can be too small
+					Vector2 vectorToPlayer = (Vector2)(m_dragonTarget.position - sensorPosition);
+					m_distanceSqr = vectorToPlayer.sqrMagnitude - m_dragonRadiusSqr;
 
-						Vector3 cross = Vector3.Cross(m_motion.direction, vectorToPlayer);					
-						if (cross.z > 0) {
-							angle = 306 - angle;
-						}
+					if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {
+						// check if the dragon is inside the sense zone
+						if (m_distanceSqr < m_sensorMinRadius * m_sensorMinRadius) {
+							// Check if this entity can see the player
+							if (sensorAngle == 360) {
+								m_alert = true;
+								m_isInsideMinArea = true;
+							} else {
+								Vector2 direction = (m_motion.direction.x < 0)? Vector2.left : Vector2.right;
+								float angle = Vector2.Angle(direction, vectorToPlayer); // angle between them: from 0 to 180
 
-						float sensorAngleFrom = sensorAngleOffset - (sensorAngle * 0.5f);
-						if (sensorAngleFrom < 0) {
-							sensorAngleFrom += 360;
-						}
+								Vector3 cross = Vector3.Cross(m_motion.direction, vectorToPlayer);					
+								if (cross.z > 0) angle = 306 - angle;
 
-						float sensorAngleTo = sensorAngleOffset + (sensorAngle * 0.5f);
-						if (sensorAngleTo > 360) {
-							sensorAngleTo -= 360;
-						}
+								float sensorAngleFrom = sensorAngleOffset - (sensorAngle * 0.5f);
+								if (sensorAngleFrom < 0) sensorAngleFrom += 360;
 
-						if (angle >= sensorAngleFrom || angle <= sensorAngleTo) {
-							m_alert = true;
-							m_isInsideMinArea = true;
+								float sensorAngleTo = sensorAngleOffset + (sensorAngle * 0.5f);
+								if (sensorAngleTo > 360) sensorAngleTo -= 360;
+
+								if (angle >= sensorAngleFrom || angle <= sensorAngleTo) {
+									m_alert = true;
+									m_isInsideMinArea = true;
+								} else {
+									m_isInsideMinArea = false;
+								}
+							}
 						} else {
 							m_isInsideMinArea = false;
 						}
+						m_isInsideMaxArea = true;
+					} else {
+						m_alert = false;
+						m_isInsideMinArea = false;
+						m_isInsideMaxArea = false;
+					}
+
+					// if Slow Power up and affects this type of prey
+					if (DebugSettings.slowPowerUp) {
+						if (m_isInsideMinArea) {
+							// if is of type X
+							m_motion.SetAffectedBySlowDown(true);
+						} else {
+							m_motion.SetAffectedBySlowDown(false);
+						}
 					}
 				} else {
+					m_alert = false;
 					m_isInsideMinArea = false;
+					m_isInsideMaxArea = false;
 				}
-				m_isInsideMaxArea = true;
-			} else {
-				m_alert = false;
-				m_isInsideMinArea = false;
-				m_isInsideMaxArea = false;
-			}
 
-			// if Slow Power up and affects this type of prey
-			if( DebugSettings.slowPowerUp )
-			{
-				if ( m_isInsideMinArea )
-				{
-					// if is of type X
-					m_motion.SetAffectedBySlowDown( true );
-				}
-				else
-				{
-					m_motion.SetAffectedBySlowDown( false );
-				}
+				m_senseTimer = m_senseDelay.GetRandom();
 			}
-
-		} else {
-			m_alert = false;
-			m_isInsideMinArea = false;
-			m_isInsideMaxArea = false;
 		}
 	}
 }
