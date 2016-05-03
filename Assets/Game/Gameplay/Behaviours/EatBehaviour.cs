@@ -53,6 +53,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_canHold = true;		// if this eater can hold a prey
 	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
 	protected int m_limitEatingValue = 1;	// limit value
+	protected bool m_isPlayer = true;
 
 	//-----------------------------------------------
 	// Methods
@@ -269,8 +270,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 						preysToEat.Add(edible);
 					}
 				}
-			} else {
-				Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
 			}
 			else if (_canHold && entity.canBeHolded && (entity.holdFromTier <= m_tier) )
 			{
@@ -280,6 +279,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 					preyToHold = edible;
 					break;
 				}
+			}
+			else 
+			{
+				if ( m_isPlayer )
+					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
 			}
 		}
 

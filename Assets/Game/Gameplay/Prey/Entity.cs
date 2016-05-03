@@ -127,8 +127,7 @@ public class Entity : Initializable {
 
 		m_holdFromTier = (DragonTier)m_def.GetAsInt("holdFromTier");
 		m_canBeHolded = m_def.GetAsBool("canBeHolded", false);
-		m_maxHealth = m_def.GetAsFloat("maxHealth");
-		m_maxHealth = 100;
+		m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
 
 		m_biteResistance = m_def.GetAsFloat("biteResistance");
 

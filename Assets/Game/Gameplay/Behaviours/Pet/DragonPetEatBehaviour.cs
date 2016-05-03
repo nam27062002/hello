@@ -12,6 +12,7 @@ public class DragonPetEatBehaviour : EatBehaviour {
 		m_canHold = false;
 		m_limitEating = true;
 		m_limitEatingValue = 1;
+		m_isPlayer = false;
 	}
 
 	protected override void SlowDown(bool _enable) {
