@@ -56,7 +56,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		m_area = GetArea();
 
-		m_groupController = transform.ForceGetComponent<EntityGroupController>();
+		m_groupController = GetComponent<EntityGroupController>();
 		if (m_groupController) {
 			m_groupController.Init(m_quantity.max);
 		}

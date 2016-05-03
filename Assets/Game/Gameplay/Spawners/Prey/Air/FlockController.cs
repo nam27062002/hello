@@ -22,12 +22,16 @@ public class FlockController : MonoBehaviour {
 	[SerializeField] private GuideFunction m_guideFunction = GuideFunction.Basic;
 	[SerializeField] private float m_guideSpeed = 2f;
 	[SerializeField] private float m_secondaryGuideSpeed = 2f;
+	[SerializeField] private float m_sensePlayer = 0;
 
 	[SerializeField] private float m_innerRadius = 10f; //r
 	[SerializeField] private float m_outterRadius = 20f; //R
 	[SerializeField] private float m_targetDistance = 5f; //d
 
-	public float m_sensePlayer = 0;
+	[SeparatorAttribute]
+	[SerializeField] private float m_previewStep = 0.1f;
+	[SerializeField] private float m_previewMaxTime = 60f;
+
 	private float m_sensePlayerSqr;
 
 	//-----------------------------------------------
@@ -77,31 +81,36 @@ public class FlockController : MonoBehaviour {
 			m_timer += Time.smoothDeltaTime * m_guideSpeed;
 			m_secondaryTimer += Time.smoothDeltaTime * m_secondaryGuideSpeed;
 			float time = m_timer;
-			switch (m_guideFunction) {
-				case GuideFunction.Basic:
-					UpdateBasic(time);
-				 	break;
 
-				case GuideFunction.Hypotrochoid:
-					UpdateHypotrochoid(time);
-					break;
+			UpdateFunction(time, m_secondaryTimer);
 
-				case GuideFunction.Epitrochoid:
-					UpdateEpitrochoid(time);
-					break;
-				case GuideFunction.FGOL_Shoal:
-					UpdateShoal( time, m_secondaryTimer );
-					break;
-			}
-			if ( m_dragonMouth != null)
-			{
+			if (m_dragonMouth != null) {
 				// Check target against player
 				Vector3 dist = (Vector2)m_target - (Vector2)m_dragonMouth.position;
-				if ( Vector2.SqrMagnitude( dist ) < m_sensePlayerSqr )
-				{
+				if (Vector2.SqrMagnitude(dist) < m_sensePlayerSqr) {
 					m_target = m_dragonMouth.position + dist.normalized * m_sensePlayer;
 				}
 			}
+		}
+	}
+
+	void UpdateFunction(float _time, float _secondaryTime) {
+		switch (m_guideFunction) {
+			case GuideFunction.Basic:
+				UpdateBasic(_time);
+				break;
+
+			case GuideFunction.Hypotrochoid:
+				UpdateHypotrochoid(_time);
+				break;
+
+			case GuideFunction.Epitrochoid:
+				UpdateEpitrochoid(_time);
+				break;
+
+			case GuideFunction.FGOL_Shoal:
+				UpdateShoal(_time, _secondaryTime);
+				break;
 		}
 	}
 
@@ -166,49 +175,28 @@ public class FlockController : MonoBehaviour {
 			}
 		}
 
-		if (!Application.isPlaying) {
-			m_timer += 0.25f * m_guideSpeed;
-			m_secondaryTimer += 0.25f * m_secondaryGuideSpeed;
+		if (Application.isPlaying) {
+			Gizmos.color = Color.red;
+			Gizmos.DrawSphere(m_target, m_sensePlayer);
 
-			float time = m_timer; // go back to the past :3
-			switch (m_guideFunction) {
-				case GuideFunction.Basic:
-				{
-					UpdateBasic( time );
-				}break;
-				case GuideFunction.Hypotrochoid:
-				{
-					UpdateHypotrochoid(time);
-					Color white = Color.blue;
-					white.a = 0.75f;
+			Gizmos.color = Color.red;
+			Gizmos.DrawLine(m_area.center, m_target);
+		} else { 
+			float time = 0;
+			float secondaryTime = 0;
+			float maxTime = m_previewMaxTime;
+			float step = Mathf.Max(0.1f, m_previewStep);
 
-					Gizmos.color = white;
-					Gizmos.DrawSphere(m_area.center, m_outterRadius);
-					Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
-				}break;
+			UpdateFunction(time, secondaryTime);
+			Vector3 lastTarget = m_target;
 
-				case GuideFunction.Epitrochoid:
-				{
-					UpdateEpitrochoid(time);
-					Color white = Color.blue;
-					white.a = 0.75f;
-
-					Gizmos.color = white;
-					Gizmos.DrawSphere(m_area.center, m_outterRadius);
-					Gizmos.DrawSphere(m_movingCircleCenter, m_innerRadius);
-				}break;
-				case GuideFunction.FGOL_Shoal:
-				{
-					UpdateShoal(m_timer, m_secondaryTimer);
-				}break;
+			Gizmos.color = Color.white;
+			for (time = step; time < maxTime; time += step) {
+				secondaryTime += step * (m_secondaryGuideSpeed / m_guideSpeed);
+				UpdateFunction(time, secondaryTime);
+				Gizmos.DrawLine(lastTarget, m_target);
+				lastTarget = m_target;
 			}
 		}
-		Gizmos.color = Color.red;
-		Gizmos.DrawSphere(m_target, m_sensePlayer);
-
-
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine(m_area.center, m_target);
-
 	}
 }
