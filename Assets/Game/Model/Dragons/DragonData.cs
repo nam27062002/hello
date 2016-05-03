@@ -283,4 +283,9 @@ public class DragonData {
 
 		return data;
 	}
+
+	public static string TierToSku( DragonTier _tier)
+	{
+		return "tier_" + ((int)_tier);
+	}
 }

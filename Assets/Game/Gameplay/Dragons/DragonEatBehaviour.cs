@@ -9,8 +9,8 @@ public class DragonEatBehaviour : EatBehaviour {
 	private Dictionary<string, float> m_eatingBoosts = new Dictionary<string, float>();
 
 	//--------------
-
-	void Start() {
+	protected void Start() 
+	{
 		m_dragon = GetComponent<DragonPlayer>();
 		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
 		m_motion = GetComponent<DragonMotion>();
@@ -19,6 +19,8 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_eatSpeedFactor = m_dragon.data.def.Get<float>("eatSpeedFactor");
 
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+
+		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
 	}
 
 	void OnDestroy() {

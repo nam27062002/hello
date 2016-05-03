@@ -55,6 +55,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected int m_limitEatingValue = 1;	// limit value
 	protected bool m_isPlayer = true;
 
+
+	protected float m_holdStunTime;
+	protected float m_holdDamage;
+	protected float m_holdHealthGainRate;
+	protected float m_holdDuration;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -70,6 +75,23 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_slowedDown = false;
 
 		GetMouth();
+		m_holdStunTime = 0.5f;
+		m_holdDamage = 10;
+		m_holdHealthGainRate = 10;
+		m_holdDuration = 1;
+	}
+
+	protected void SetupHoldParametersForTier( string tierSku)
+	{
+		DefinitionNode def = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.HOLD_PREY_TIER, "tier", tierSku);
+
+		if ( def != null)
+		{
+			m_holdStunTime = def.GetAsFloat("stunTime");
+			m_holdDamage = def.GetAsFloat("damage");
+			m_holdHealthGainRate = def.GetAsFloat("healthDrain");
+			m_holdDuration = def.GetAsFloat("duration");
+		}
 	}
 
 	void OnDisable() {
@@ -197,7 +219,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		_prey.OnHoldBy(this);
 		m_holdingPrey = _prey;
-		m_holdPreyTimer = 2.0f;
+		m_holdPreyTimer = m_holdDuration;
 		m_animator.SetBool("eat", true);
 
 	}
@@ -217,7 +239,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 
 		// damage prey
-		float m_holdDamage = 10;
 		m_holdingPrey.HoldingDamage( m_holdDamage * Time.deltaTime);
 		if ( m_holdingPrey.isDead() )
 		{
@@ -240,7 +261,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	virtual protected void EndHold()
 	{
 		m_holdingPrey = null;
-		m_noAttackTime = 1.0f;
+		m_noAttackTime = m_holdStunTime;
 		m_animator.SetBool("eat", false);
 	}
 
