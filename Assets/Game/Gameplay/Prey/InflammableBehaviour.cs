@@ -83,7 +83,9 @@ public class InflammableBehaviour : Initializable {
 					if ( shaderName.EndsWith("Additive") )
 					{
 						// We will set to null and hide it at the beggining 
-						materials[j] = null;
+						Material newMat = new Material(Resources.Load ("Game/Assets/Materials/Transparent") as Material);	
+						newMat.renderQueue = 3000;
+						materials[j] = newMat;
 					}
 					else if ( shaderName.EndsWith("Bird") )
 					{
@@ -103,7 +105,6 @@ public class InflammableBehaviour : Initializable {
 				m_ashMaterials.Add(materials);
 			}
 		}
-		m_dissolveTime = 10;
 		m_state = State.Idle;
 	}
 		
