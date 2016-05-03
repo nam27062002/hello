@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // [RequireComponent(typeof(PreyMotion))]
 public class ProjectileBehaviour : MonoBehaviour {
@@ -18,6 +19,8 @@ public class ProjectileBehaviour : MonoBehaviour {
 	private ProjectileMotion m_pMotion;
 	private EdibleBehaviour m_edible;
 
+	public List<GameObject> m_activateOnShoot = new List<GameObject>();
+
 	// Use this for initialization
 	void Start () {		
 		if (m_explosionPrefab != null) {
@@ -33,6 +36,14 @@ public class ProjectileBehaviour : MonoBehaviour {
 		if (m_edible) m_edible.enabled = false;
 
 		m_hasBeenShot = false;
+	}
+
+	void OnDisable()
+	{
+		for( int i = 0; i<m_activateOnShoot.Count; i++ )
+		{
+			m_activateOnShoot[i].SetActive(false);
+		}
 	}
 
 	public void AttachTo(Transform _parent) {
@@ -82,6 +93,11 @@ public class ProjectileBehaviour : MonoBehaviour {
 		m_damage = _damage;
 
 		m_hasBeenShot = true;
+
+		for( int i = 0; i<m_activateOnShoot.Count; i++ )
+		{
+			m_activateOnShoot[i].SetActive(true);
+		}
 	}
 
 	void Update() {
