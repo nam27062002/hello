@@ -410,7 +410,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
 			case "suit": {
 				NavigationScreen disguiseScreen = screensController.GetScreen((int)MenuScreens.DISGUISES);				
-				disguiseScreen.FindComponentRecursive<DisguisesScreenController>().m_previewDisguise = m_egg.eggData.rewardData.value;
+				disguiseScreen.FindComponentRecursive<DisguisesScreenController>().previewDisguise = m_egg.eggData.rewardData.value;
 				screensController.GoToScreen((int)MenuScreens.DISGUISES);
 			} break;
 

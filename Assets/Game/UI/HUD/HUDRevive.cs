@@ -104,7 +104,12 @@ public class HUDRevive : MonoBehaviour {
 		if(UserProfile.pc >= costPC) {
 			// Revive!
 			m_reviveCount++;
+			bool wasStarving = InstanceManager.player.IsStarving();
 			InstanceManager.player.ResetStats(true);
+			// Check for starvation
+			if(wasStarving != InstanceManager.player.IsStarving()) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, InstanceManager.player.IsStarving());
+			}
 			m_timer.Stop();
 
 			// Perform transaction
