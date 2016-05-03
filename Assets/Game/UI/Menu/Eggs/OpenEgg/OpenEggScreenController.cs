@@ -414,12 +414,10 @@ public class OpenEggScreenController : MonoBehaviour {
 				screensController.GoToScreen((int)MenuScreens.DISGUISES);
 			} break;
 
-			case "pet": {
-				// [AOC] TODO!! Go to pets screen
-			} break;
-
+			case "pet":
 			case "dragon": {
-				// [AOC] TODO!!	Go to special dragons screen
+				// [AOC] TODO!!	Go to pets/special dragons screen
+				UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_GEN_COMING_SOON"), m_callToActionButton.transform as RectTransform, Vector2.zero, this.transform as RectTransform);
 			} break;
 		}
 	}
