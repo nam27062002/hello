@@ -229,7 +229,7 @@ public class PopupEggShop : MonoBehaviour {
 		DragonData requiredDragon = DragonManager.GetDragonData(dragonSku);
 		if(!requiredDragon.isOwned) {
 			// Show feedback and return
-			string text = Localization.Localize("%U0 Required!", requiredDragon.def.GetLocalized("tidName"));	// [AOC] HARDCODED!!
+			string text = Localization.Localize("TID_EGG_SHOP_DRAGON_REQUIRED", requiredDragon.def.GetLocalized("tidName"));
 			UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch(text, new Vector2(0.5f, 0.5f), (RectTransform)this.transform);
 			textObj.GetComponent<Text>().color = Colors.red;
 			return;
