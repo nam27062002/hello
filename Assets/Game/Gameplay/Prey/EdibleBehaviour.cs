@@ -17,7 +17,7 @@ public class EdibleBehaviour : Initializable {
 	[SerializeField] private EatenFrom m_vulnerable = EatenFrom.All;
 
 	private Entity m_entity;
-	private MotionInterface m_motion;
+	private PreyMotion m_motion;
 	private Animator m_animator;
 	private bool m_isBeingEaten;
 	public bool isBeingEaten { get { return m_isBeingEaten; } }
@@ -49,12 +49,12 @@ public class EdibleBehaviour : Initializable {
 		m_originalRotation = transform.rotation;
 		m_originalScale = transform.localScale;
 		// Find all hold prey opints
-		Transform holdPoints = transform.FindChild("holdPoints");
-		if ( holdPoints )
+		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
+		if ( holdPoints != null )
 		{
-			for( int i = 0;i<holdPoints.childCount; i++ )
+			for( int i = 0;i<holdPoints.Length; i++ )
 			{
-				m_holdPreyPoints.Add( holdPoints.GetChild(i));
+				m_holdPreyPoints.Add( holdPoints[i].transform);
 			}
 		}
 	}
@@ -62,7 +62,15 @@ public class EdibleBehaviour : Initializable {
 	void Start() {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_entity = GetComponent<Entity>();
-		m_motion = GetComponent<MotionInterface>();
+		m_motion = GetComponent<PreyMotion>();
+	}
+
+	void Update()
+	{
+		if ( m_beingHeld )
+		{
+			m_motion.Stop();
+		}
 	}
 
 	public override void Initialize() {
@@ -168,13 +176,13 @@ public class EdibleBehaviour : Initializable {
 	public void OnHoldBy( EatBehaviour holder )
 	{
 		m_beingHeld = true;
-		OnEatBehaviours(false);
+		// OnEatBehaviours(false);
 	}
 
 	public void ReleaseHold()
 	{
 		m_beingHeld = false;
-		OnEatBehaviours(true);
+		// OnEatBehaviours(true);
 	}
 
 	public bool IsBeingHeld()

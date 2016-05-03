@@ -52,6 +52,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonControl			m_controls;
 	Orientation			   	m_orientation;
 	DragonAnimationEvents 	m_animationEventController;
+	SphereCollider 			m_groundCollider;
 
 
 	// Movement control
@@ -206,7 +207,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 
 		m_rbody = GetComponent<Rigidbody>();
-
+		m_groundCollider = GetComponentInChildren<SphereCollider>();
 		m_height = 10f;
 
 		m_targetSpeedMultiplier = 1;
@@ -280,6 +281,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.HoldingPrey:
 				{
+					m_groundCollider.enabled = true;
 				}break;
 			}
 
@@ -332,7 +334,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.HoldingPrey:
 				{
-					
+					m_groundCollider.enabled = false;
 				}break;
 			}
 
@@ -392,8 +394,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.HoldingPrey:
 			{
-				m_destination = m_holdPreyTransform.position;
 				m_orientation.SetRotation( m_holdPreyTransform.rotation );
+				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
+				transform.position += deltaPosition - m_tongue.position;
+
 			}break;
 
 		}
@@ -440,8 +444,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.HoldingPrey:
 			{
-				Vector3 deltaPosition = Vector3.Lerp( tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
-				transform.position += deltaPosition - tongue.position;
+				m_impulse = Vector3.zero;
+				m_rbody.velocity = Vector3.zero;
 			}break;
 
 		}
@@ -450,7 +454,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
 
-		if ( m_state != State.Intro )
+		if ( m_state != State.Intro && m_state != State.HoldingPrey)
 		{
 			Vector3 position = transform.position;
 			position.z = 0f;
