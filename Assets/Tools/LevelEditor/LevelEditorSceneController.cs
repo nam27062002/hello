@@ -26,6 +26,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
+		private float m_timer = 0.5f;
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
@@ -57,7 +58,7 @@ namespace LevelEditor {
 		private void OnEnable() {
 			// Subscribe to external events
 			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+			Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
 
 			SpawnerManager.instance.EnableSpawners();
 		}
@@ -68,7 +69,7 @@ namespace LevelEditor {
 		private void OnDisable() {
 			// Unsubscribe from external events
 			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+			Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
 		}
 
 		/// <summary>
@@ -77,6 +78,12 @@ namespace LevelEditor {
 		private void Update() {
 			// Update running time
 			m_elapsedSeconds += Time.deltaTime;
+
+			// Quick'n'dirty timer to place the dragon at the spawn point
+			if(m_timer > 0f) {
+				m_timer -= Time.deltaTime;
+				if(m_timer <= 0f) InstanceManager.player.MoveToSpawnPoint();
+			}
 		}
 
 		/// <summary>
@@ -115,24 +122,16 @@ namespace LevelEditor {
 			m_elapsedSeconds = 0;
 		}
 
-		/// <summary>
-		/// Do all the necessary stuff when ending a game.
-		/// </summary>
-		private void EndGame() {
-			// Just open summary popup for now
-			Time.timeScale = 0.0f;	// Pause game
-			PopupManager.OpenPopupInstant(PopupLevelEditorSummary.PATH);
-		}
-
 		//------------------------------------------------------------------//
 		// CALLBACKS														//
 		//------------------------------------------------------------------//
 		/// <summary>
-		/// The player has died.
+		/// The player is ko.
 		/// </summary>
-		private void OnPlayerDied() {
-			// End game
-			EndGame();
+		private void OnPlayerKo() {
+			// Just open summary popup for now
+			Time.timeScale = 0.0f;	// Pause game
+			PopupManager.OpenPopupInstant(PopupLevelEditorSummary.PATH);
 		}
 
 		/// <summary>
@@ -151,6 +150,11 @@ namespace LevelEditor {
 						#else
 						Application.Quit();
 						#endif
+					} break;
+
+					case PopupLevelEditorSummary.Result.REVIVE: {
+						Time.timeScale = 1f;	// Unpause
+						InstanceManager.player.ResetStats(true);
 					} break;
 				}
 			}

@@ -361,6 +361,7 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
             if (lineTranslation != null && !string.IsNullOrEmpty(lineTranslation.Text))
             {
                 text = (string)lineTranslation.Text;
+                text = ReplaceCharacters( text );
             }
 
             writer.WriteLine( name + "=" + text);
@@ -385,10 +386,27 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
                 else
                 {
                     _extractedTids.Add(c.Name);
-                    writer.WriteLine(c.Name + "=" + c.Text);
+                    string str = ReplaceCharacters(c.Text);
+                    writer.WriteLine(c.Name + "=" + str);
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Replaces all characters we need to work with our system
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private string ReplaceCharacters(string str)
+        {
+            string ret = str;
+            if ( !string.IsNullOrEmpty(ret) )
+            { 
+                ret = ret.Replace("\n", "\\n");
+            }
+           
+            return ret;
         }
 
         private string SearchLineCustomDataValue(int lineId, string customValueName)
