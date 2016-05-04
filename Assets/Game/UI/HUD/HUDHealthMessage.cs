@@ -68,7 +68,7 @@ public class HUDHealthMessage : MonoBehaviour {
 		m_starving = _isStarving;
 		DOTween.Pause(gameObject);
 		if(_isStarving) {
-			m_text.text = "STARVING!";
+			m_text.text = Localization.Get("TID_FEEDBACK_STARVING");
 			GetComponent<DOTweenAnimation>().DORewind();
 			DOTween.Play(gameObject, "in");
 		} else {
@@ -82,7 +82,7 @@ public class HUDHealthMessage : MonoBehaviour {
 		if (!m_starving)
 		{
 			// Show AU message
-			m_text.text = "AU!";
+			m_text.text = Localization.Get("TID_FEEDBACK_CURSED");
 			DOTween.Pause(gameObject);
 			GetComponent<DOTweenAnimation>().DORewind();
 			DOTween.Play(gameObject, "one");
