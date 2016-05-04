@@ -31,10 +31,12 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	[SerializeField] private GameObject m_killFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockBonusFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockScoreFeedbackPrefab = null;
+	[SerializeField] private GameObject m_escapedFeedbackPrefab = null;
 
 	[Separator("Container References")]
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
 	[SerializeField] private GameObject m_killFeedbackContainer = null;
+	[SerializeField] private GameObject m_escapeFeedbackContainer = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -80,7 +82,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			}
 			PoolManager.CreatePool(m_killFeedbackPrefab, parent, 5, false);
 		}
-
+			
 		if(m_flockBonusFeedbackPrefab != null) { 
 			Transform parent = this.transform;
 			if(m_scoreFeedbackContainer != null) {
@@ -96,6 +98,15 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			}
 			PoolManager.CreatePool(m_flockScoreFeedbackPrefab, parent, 2);
 		}
+
+		if ( m_escapedFeedbackPrefab != null )
+		{
+			Transform parent = this.transform;
+			if(m_escapeFeedbackContainer != null) {
+				parent = m_escapeFeedbackContainer.transform;
+			}
+			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, 2, false);
+		}
 	}
 
 	/// <summary>
@@ -108,6 +119,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
 	}
 	
 	/// <summary>
@@ -120,6 +132,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
 	}
 
 	/// <summary>
@@ -154,6 +167,25 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if (obj != null) {
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
 			worldFeedback.Spawn(text, _entity.position);
+		}
+	}
+
+	private void SpawnEscapedFeedback( Transform _entity)
+	{
+		string tid = "TID_FEEDBACK_ESCAPED";
+		switch( Random.Range(0,3))
+		{
+			case 0: tid = "TID_FEEDBACK_ESCAPED";break;
+			case 1: tid = "TID_FEEDBACK_SO_CLOSE";break;
+			case 2: tid = "TID_FEEDBACK_GOT_AWAY";break;
+		}
+
+		// Get an instance from the pool and spawn it!
+		GameObject obj = PoolManager.GetInstance(m_escapedFeedbackPrefab.name);
+		if (obj != null) 
+		{
+			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
+			worldFeedback.Spawn( Localization.Get( tid ) , _entity.position);
 		}
 	}
 	
@@ -224,7 +256,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	private void OnDestroyed(Transform _entity, Reward _reward) {
 		SpawnKillFeedback(FeedbackData.Type.DESTROY, _entity);
 	}
-
+		
 	/// <summary>
 	/// A full flock has been eaten.
 	/// </summary>
@@ -244,5 +276,11 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			WorldFeedbackController worldFeedback = flockScore.GetComponent<WorldFeedbackController>();
 			worldFeedback.Spawn(text, _entity.position);
 		}
+	}
+
+
+	private void OnEscaped(Transform _entity)
+	{
+		SpawnEscapedFeedback(_entity);
 	}
 }

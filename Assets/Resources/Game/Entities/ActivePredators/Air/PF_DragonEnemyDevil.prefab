@@ -147,7 +147,7 @@ GameObject:
   m_Layer: 8
   m_Name: PF_DragonEnemyDevil
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 8467475693731670952, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -2190,7 +2190,7 @@ MonoBehaviour:
   m_zOffset:
     min: -1
     max: 1
-  m_distanceAttenuation: 5
+  m_distanceAttenuation: 3.5
   m_checkCollisions: 1
   m_keepInsideArea: 0
   m_avoidWater: 0
@@ -2199,7 +2199,7 @@ MonoBehaviour:
   m_speedVariationRange:
     min: 0.75
     max: 1.25
-  m_slowingRadius: 2
+  m_slowingRadius: 1
   m_fallOnBurn: 1
 --- !u!114 &11426172
 MonoBehaviour:
@@ -2226,7 +2226,7 @@ MonoBehaviour:
   m_damage: 140
   m_attackDelay: 0
   m_consecutiveAttacks: 1
-  m_retreatingTime: 2
+  m_retreatingTime: 4
   m_hasAnimation: 1
   m_invulnerableWhileAttacking: 1
   m_meleeWeapon: {fileID: 11469306}
@@ -2241,6 +2241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 1
   m_faceLeftAngleY: 180
   m_faceRightAngleY: 0
@@ -2278,8 +2279,8 @@ MonoBehaviour:
   m_sensorOffset: {x: 0, y: 0, z: 0}
   m_target: 1
   m_senseDelay:
-    min: 0
-    max: 0
+    min: 0.25
+    max: 1.25
 --- !u!114 &11469306
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -252,6 +252,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 			if ( m_holdPreyTimer <= 0 ) // or prey is death
 			{
 				// release prey
+				// Escaped Event
+				Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
 				m_holdingPrey.ReleaseHold();
 				EndHold();
 			}	

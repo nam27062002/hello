@@ -14,7 +14,8 @@ public class FrameColoring : MonoBehaviour
 
 	private bool m_furyOn = false;
 	DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
-	private bool m_stargingOn = false;
+	private bool m_starvingOn = false;
+	private bool m_criticaOn = false;
 
 	void Start()
 	{
@@ -22,12 +23,14 @@ public class FrameColoring : MonoBehaviour
 		m_color = Color.black;
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		Messenger.AddListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCritical);
 	}
 
 	private void OnDestroy() 
 	{
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		Messenger.RemoveListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCritical);
 	}
 
 	void OnRenderImage (RenderTexture source, RenderTexture destination)
@@ -49,17 +52,22 @@ public class FrameColoring : MonoBehaviour
 			}
 
 		}
-		else if ( m_stargingOn )
+		else if ( m_criticaOn )
 		{
 			m_value = Mathf.Lerp( m_value, 0.7f + Mathf.Sin( Time.time * 5 ) * 0.2f, Time.deltaTime * 10);
 			m_color = Color.Lerp( m_color, m_startingColor, Time.deltaTime * 10);
+		}
+		else if ( m_starvingOn )
+		{
+			m_value = Mathf.Lerp( m_value, 0.15f + Mathf.Sin( Time.time * 2.5f ) * 0.1f, Time.deltaTime * 10);
+			m_color = Color.Lerp( m_color, m_startingColor, Time.deltaTime * 5);
 		}
 		else
 		{
 			m_value = Mathf.Lerp( m_value, 0, Time.deltaTime);
 			m_color = Color.Lerp( m_color, Color.black, Time.deltaTime);
 		}
-		if ( m_value <= 0.1f )
+		if ( m_value <= 0.04f )
 		{
 			Graphics.Blit (source, destination);
 		}
@@ -78,6 +86,11 @@ public class FrameColoring : MonoBehaviour
 
 	private void OnStarving( bool _enabled )
 	{
-		m_stargingOn = _enabled;
+		m_starvingOn = _enabled;
+	}
+
+	private void OnCritical( bool _isCritical ) 
+	{
+		m_criticaOn = _isCritical;
 	}
 }
