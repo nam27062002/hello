@@ -71,6 +71,8 @@ public enum GameEvents {
 	MISSION_COOLDOWN_FINISHED,	// params: Mission _mission
 	MISSION_STATE_CHANGED,		// params: Mission _mission, Mission.State _oldState, Mission.State _newState
 
+	SURVIVAL_BONUS_ACHIEVED,	// no params
+
 	// Egg management events
 	EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
 	EGG_ADDED_TO_INVENTORY,		// params: Egg _egg, int _slotIdx

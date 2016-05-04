@@ -144,7 +144,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		}
 
 		// Check survival bonus
-		// CheckSurvivalBonus();
+		CheckSurvivalBonus();
 	}
 
 	/// <summary>
@@ -327,14 +327,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
                     m_lastAwardedSurvivalBonusMinute = elapsedMinutes;
 
                     // Trigger event so HUD can show an event!
-
-					// play SFX.
-					// AudioManager.PlaySfx(AudioManager.Ui.SurvivalBonus);
-                    // if(TextSystem.Instance != null)
-                    // {
-                      //  TextSystem.Instance.ShowSituationalText(SituationalTextSystem.Type.SurvivalBonus);
-                    //}
-					// EventManager.Instance.TriggerEvent(Events.SurvivalBonusAchieved);
+					Messenger.Broadcast(GameEvents.SURVIVAL_BONUS_ACHIEVED);
 
                     break;
                 }
