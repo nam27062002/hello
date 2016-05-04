@@ -355,9 +355,9 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Different texts if the disguise was just unlocked
 				int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
 				if(disguiseLevel == 1) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", disguiseDef.Get("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", disguiseDef.GetLocalized("tidName"));
 				} else {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", disguiseDef.Get("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", disguiseDef.GetLocalized("tidName"));
 				}
 			} break;
 
