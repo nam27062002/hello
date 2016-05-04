@@ -24,6 +24,7 @@ public class HUDHealthMessage : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private Text m_text = null;
 	private bool m_starving = false;
+	private bool m_critical = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -44,6 +45,7 @@ public class HUDHealthMessage : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarvingToggled);
+		Messenger.AddListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCriticalToggled);
 		Messenger.AddListener(GameEvents.PLAYER_CURSED, OnCursed);
 	}
 	
@@ -53,6 +55,7 @@ public class HUDHealthMessage : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarvingToggled);
+		Messenger.RemoveListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCriticalToggled);
 		Messenger.RemoveListener(GameEvents.PLAYER_CURSED, OnCursed);
 	}
 
@@ -66,20 +69,39 @@ public class HUDHealthMessage : MonoBehaviour {
 	private void OnStarvingToggled(bool _isStarving) {
 		// Toggle tweens
 		m_starving = _isStarving;
+		HealthMessageCheck();
+	}
+
+	private void OnCriticalToggled( bool _isCritical )
+	{
+		m_critical = _isCritical;
+		HealthMessageCheck();
+	}
+
+	private void HealthMessageCheck()
+	{
 		DOTween.Pause(gameObject);
-		if(_isStarving) {
+		if ( m_critical )
+		{
+			m_text.text = Localization.Get("TID_FEEDBACK_CRITICAL");
+			GetComponent<DOTweenAnimation>().DORewind();
+			DOTween.Play(gameObject, "in");
+		}
+		else if ( m_starving )
+		{
 			m_text.text = Localization.Get("TID_FEEDBACK_STARVING");
 			GetComponent<DOTweenAnimation>().DORewind();
 			DOTween.Play(gameObject, "in");
-		} else {
-			// DOTween.Pause(gameObject);
+		}
+		else
+		{
 			DOTween.Restart(gameObject, "out");
 		}
 	}
 
 	private void OnCursed()
 	{
-		if (!m_starving)
+		if (!m_starving && !m_critical)
 		{
 			// Show AU message
 			m_text.text = Localization.Get("TID_FEEDBACK_CURSED");

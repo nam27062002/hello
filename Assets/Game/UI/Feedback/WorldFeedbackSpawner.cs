@@ -34,6 +34,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	[Separator("Container References")]
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
 	[SerializeField] private GameObject m_killFeedbackContainer = null;
+	[SerializeField] private GameObject m_escapeFeedbackContainer = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -83,8 +84,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if ( m_escapedFeedbackPrefab != null )
 		{
 			Transform parent = this.transform;
-			if(m_killFeedbackContainer != null) {
-				parent = m_killFeedbackContainer.transform;
+			if(m_escapeFeedbackContainer != null) {
+				parent = m_escapeFeedbackContainer.transform;
 			}
 			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, 2, false);
 		}

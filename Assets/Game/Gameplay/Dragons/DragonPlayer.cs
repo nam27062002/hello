@@ -51,6 +51,7 @@ public class DragonPlayer : MonoBehaviour {
 	public float energyBase {get{return m_energyBase;}}
 
 	private float m_healthWarningThreshold = 1f;
+	private float m_healthCriticalThreshold = 1;
 
 	// Power up addition done to the max value ( tant per cent to add)
 	private float m_healthModifier = 0;
@@ -109,7 +110,10 @@ public class DragonPlayer : MonoBehaviour {
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.energySkill.value;
-		m_healthWarningThreshold = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("healthWarningThreshold");
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		m_healthWarningThreshold = def.GetAsFloat("healthWarningThreshold");
+		m_healthCriticalThreshold = def.GetAsFloat("healthCriticalThreshold");
+
 
 		m_healthModifier = 0;
 		m_energyModifier = 0;
@@ -188,7 +192,7 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Aux vars
 		bool wasStarving = IsStarving();
-
+		bool wasCritical = IsCritical();
 		// Update health
 		m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
 
@@ -207,6 +211,7 @@ public class DragonPlayer : MonoBehaviour {
 				// Send global even
 				Messenger.Broadcast(GameEvents.PLAYER_KO);
 				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, false);
 
 				// Make dragon unplayable (xD)
 				playable = false;
@@ -216,6 +221,10 @@ public class DragonPlayer : MonoBehaviour {
 		// Check for starvation
 		if(wasStarving != IsStarving()) {
 			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, IsStarving());
+		}
+
+		if ( wasCritical != IsCritical() ){
+			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, IsCritical());
 		}
 	}
 
@@ -309,7 +318,16 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon is alive and its current life under the specified warning threshold; otherwise, <c>false</c>.</returns>
 	public bool IsStarving() {
-		return (health < m_healthMax * m_healthWarningThreshold);
+		return (m_health < m_healthMax * m_healthWarningThreshold);
+	}
+
+	/// <summary>
+	/// Is dragon in critical confition?
+	/// </summary>
+	/// <returns><c>true</c> if this instance is critical; otherwise, <c>false</c>.</returns>
+	public bool IsCritical()
+	{
+		return (m_health < m_healthMax * m_healthCriticalThreshold);
 	}
 	
 	/// <summary>
