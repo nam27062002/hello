@@ -11,6 +11,7 @@ public abstract class AttackBehaviour : Initializable {
 		Pursuit,
 		Attack,
 		AttackRetreat,
+		BeingHeld
 	};
 
 	[SerializeField] protected float m_damage;
@@ -50,9 +51,8 @@ public abstract class AttackBehaviour : Initializable {
 		m_dragon = InstanceManager.player.GetComponent<DragonMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 
-		if (m_invulnerableWhileAttacking) {
-			m_edible = GetComponent<EdibleBehaviour>();
-		}
+		m_edible = GetComponent<EdibleBehaviour>();
+	
 
 		m_playingAttackAnimation = false;
 		m_onAttachEventDone = false;
@@ -116,69 +116,94 @@ public abstract class AttackBehaviour : Initializable {
 			ChangeState();
 		}
 
-		switch (m_state) {
+		switch (m_state) 
+		{
 			case State.Idle:
-				m_motion.Stop();
-				if (m_sensor.isInsideMaxArea) {
-					m_nextState = State.Pursuit;
+				if ( !m_edible.IsBeingHeld() )
+				{
+					m_motion.Stop();
+					if (m_sensor.isInsideMaxArea) {
+						m_nextState = State.Pursuit;
+					}
+				}
+				else
+				{
+					m_nextState = State.BeingHeld;
 				}
 			break;
 
 			case State.Pursuit:
-				if (!m_sensor.isInsideMaxArea || (m_area != null && !m_area.Contains(transform.position))) {
-					m_sensor.Shutdown(m_retreatingTime);
-					m_nextState = State.Idle;
-				} else {
-					if (m_sensor.isInsideMinArea) {
-						m_nextState = State.Attack;
+				if ( !m_edible.IsBeingHeld() )
+				{
+					if (!m_sensor.isInsideMaxArea || (m_area != null && !m_area.Contains(transform.position))) {
+						m_sensor.Shutdown(m_retreatingTime);
+						m_nextState = State.Idle;
 					} else {
-						m_motion.Pursuit(m_target.position, m_dragon.velocity, m_dragon.maxSpeed);
+						if (m_sensor.isInsideMinArea) {
+							m_nextState = State.Attack;
+						} else {
+							m_motion.Pursuit(m_target.position, m_dragon.velocity, m_dragon.maxSpeed);
+						}
 					}
+				}
+				else
+				{
+					m_nextState = State.BeingHeld;
 				}
 				break;
 				
 			case State.Attack:
 				m_motion.Stop();
+				if ( m_edible.IsBeingHeld() )
+				{
+					m_nextState = State.BeingHeld;
+				}
+				else
+				{
+					m_timer -= Time.deltaTime;
+					if (m_timer <= 0) {
+						m_timer = 0;
 
-				m_timer -= Time.deltaTime;
-				if (m_timer <= 0) {
-					m_timer = 0;
+						if (!m_playingAttackAnimation) {
+							if (m_sensor.isInsideMinArea) {
+								//do attack
+								m_playingAttackAnimation = true;
 
-					if (!m_playingAttackAnimation) {
-						if (m_sensor.isInsideMinArea) {
-							//do attack
-							m_playingAttackAnimation = true;
+								m_onAttachEventDone = false;
+		                       	m_onDamageEventDone = false;
+		                       	m_onAttackEndEventDone = false;
 
-							m_onAttachEventDone = false;
-	                       	m_onDamageEventDone = false;
-	                       	m_onAttackEndEventDone = false;
+								OnAttackStart_Extended();
 
-							OnAttackStart_Extended();
-
-							if (m_hasAnimation) {
-								m_animator.SetBool("attack", true);
+								if (m_hasAnimation) {
+									m_animator.SetBool("attack", true);
+								} else {
+									m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
+									OnAttackEnd();
+								}
+								m_timer = m_attackDelay;
 							} else {
-								m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
-								OnAttackEnd();
-							}
-							m_timer = m_attackDelay;
-						} else {
-							m_animator.SetBool("attack", false);
-							if (m_sensor.isInsideMaxArea) {
-								m_nextState = State.Pursuit;
-							} else {
-								m_nextState = State.Idle;
+								m_animator.SetBool("attack", false);
+								if (m_sensor.isInsideMaxArea) {
+									m_nextState = State.Pursuit;
+								} else {
+									m_nextState = State.Idle;
+								}
 							}
 						}
 					}
 				}
 				break;
-			break;
+			case State.BeingHeld:
+			{
+				if (!m_edible.IsBeingHeld())
+					m_nextState = State.Idle;
+			}break;
 		}
 
 		UpdateOrientation();
 	}
-
+		
 	protected virtual void UpdateOrientation() {
 		if (m_orientation.faceDirection) {
 			m_motion.direction = m_target.position - (Vector3)m_motion.position;
@@ -207,8 +232,13 @@ public abstract class AttackBehaviour : Initializable {
 
 				case State.Attack:
 					m_animator.SetBool("attack", false);
-					if (m_edible != null) m_edible.enabled = true;
+					if (m_edible != null && m_invulnerableWhileAttacking) 
+						m_edible.enabled = true;
 					break;
+				case State.BeingHeld:
+				{
+					m_animator.SetBool("hold", false);
+				}break;
 			}
 
 			switch (m_nextState) {
@@ -220,11 +250,16 @@ public abstract class AttackBehaviour : Initializable {
 					
 				case State.Attack:
 					m_playingAttackAnimation = false;
-					if (m_edible != null) m_edible.enabled = false;
+					if (m_edible != null && m_invulnerableWhileAttacking) 
+						m_edible.enabled = false;
 
 					m_motion.Stop();
 					m_timer = 0;
 					break;
+				case State.BeingHeld:
+				{
+					m_animator.SetBool("hold", true);
+				}break;
 			}
 
 			m_state = m_nextState;

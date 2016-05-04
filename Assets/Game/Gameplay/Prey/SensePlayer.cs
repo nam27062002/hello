@@ -55,8 +55,11 @@ public class SensePlayer : MonoBehaviour {
 	private float m_shutdownTimer;
 	private float m_senseTimer;
 
+	static int s_groundMask;
+
 	void Awake() {
 		m_motion = GetComponent<PreyMotion>();
+		s_groundMask = 1 << LayerMask.NameToLayer("Ground");
 	}
 
 	void Start() {
@@ -144,6 +147,16 @@ public class SensePlayer : MonoBehaviour {
 									m_isInsideMinArea = false;
 								}
 							}
+							if( m_isInsideMinArea )
+							{
+								// Check line cast
+								if (Physics.Linecast( sensorPosition, m_dragonTarget.position, s_groundMask))
+								{
+									m_isInsideMinArea = false;
+									m_alert = false;
+								}
+							}
+
 						} else {
 							m_isInsideMinArea = false;
 						}
