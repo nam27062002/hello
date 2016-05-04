@@ -393,6 +393,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &174378
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 479296}
+  - 114: {fileID: 11480602}
+  m_Layer: 0
+  m_Name: HoldPreyPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &176072
 GameObject:
   m_ObjectHideFlags: 0
@@ -569,6 +585,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.8512}
   m_Children:
   - {fileID: 412334}
+  - {fileID: 479296}
   m_Father: {fileID: 443926}
   m_RootOrder: 2
 --- !u!4 &408032
@@ -753,7 +770,7 @@ Transform:
   m_LocalRotation: {x: -0.0000017186113, y: 0.000009511902, z: 0.1969991, w: 0.98040366}
   m_LocalPosition: {x: -0.118617095, y: 0, z: 0}
   m_LocalScale: {x: 0.99999976, y: 1.0000005, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -0.0004, y: 0.0009999999, z: 22.723099}
   m_Children:
   - {fileID: 479952}
   m_Father: {fileID: 470834}
@@ -867,6 +884,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 430572}
   m_RootOrder: 0
+--- !u!4 &479296
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 174378}
+  m_LocalRotation: {x: 0.74933064, y: -0.64025337, z: -0.05679156, w: -0.15922923}
+  m_LocalPosition: {x: -1.189087, y: -0.077953205, z: -0.0000041585236}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: -18.1408, y: -187.1805, z: -97.8288}
+  m_Children: []
+  m_Father: {fileID: 407820}
+  m_RootOrder: 1
 --- !u!4 &479902
 Transform:
   m_ObjectHideFlags: 1
@@ -890,7 +920,7 @@ Transform:
   m_LocalRotation: {x: -0.034944106, y: 0.14358862, z: 0.34024572, w: 0.92865175}
   m_LocalPosition: {x: -0.22567047, y: 0.038680285, z: 0.0000000208462}
   m_LocalScale: {x: 1.0000004, y: 0.9999997, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -9.3586, y: 14.2519, z: 39.0718}
   m_Children: []
   m_Father: {fileID: 444996}
   m_RootOrder: 0
@@ -1049,7 +1079,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 1.53, z: 2}
+  m_Size: {x: 3, y: 1.53, z: 3}
   m_Center: {x: 0.00000041485742, y: 1.01, z: -0.00000019009686}
 --- !u!95 &9590370
 Animator:
@@ -1139,7 +1169,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
-  m_maxHealth: 25
   m_ashesAsset: 
   m_dissolveTime: 1
   m_explosionPrefab: {fileID: 0}
@@ -1177,11 +1206,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db93e9f797714658ac0f02e1b151059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 15
+  m_damage: 22
   m_attackDelay: 0
   m_consecutiveAttacks: 0
   m_retreatingTime: 0
   m_hasAnimation: 1
+  m_invulnerableWhileAttacking: 0
   m_meleeWeapon: {fileID: 11410966}
 --- !u!114 &11475072
 MonoBehaviour:
@@ -1192,6 +1222,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11480602
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 174378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11492188
@@ -1214,6 +1255,9 @@ MonoBehaviour:
   m_avoidWater: 0
   m_maxSpeed: 1
   m_maxRunSpeed: 6.5
+  m_speedVariationRange:
+    min: 0.75
+    max: 1.25
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11492228
@@ -1227,12 +1271,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 8
-  m_sensorMaxRadius: 8
+  m_sensorMinRadius: 9
+  m_sensorMaxRadius: 9
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
   m_sensorOffset: {x: 0, y: 2.39, z: 0}
   m_target: 1
+  m_senseDelay:
+    min: 0.25
+    max: 1.25
 --- !u!114 &11494724
 MonoBehaviour:
   m_ObjectHideFlags: 1

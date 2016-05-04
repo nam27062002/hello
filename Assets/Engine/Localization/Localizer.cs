@@ -20,6 +20,17 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Text))]
 public class Localizer : MonoBehaviour {
 	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	public enum Case {
+		DEFAULT,
+		UPPER_CASE,
+		LOWER_CASE,
+		REPLACEMENTS_UPPER_CASE,
+		REPLACEMENTS_LOWER_CASE
+	}
+
+	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
@@ -27,6 +38,12 @@ public class Localizer : MonoBehaviour {
 	[SerializeField] private string m_tid = "";
 	public string tid {
 		get { return m_tid; }
+	}
+
+	[SerializeField] private Case m_caseType = Case.DEFAULT;
+	public Case caseType {
+		get { return m_caseType; }
+		set { m_caseType = value; }
 	}
 
 	[SerializeField] string[] m_replacements;
@@ -93,7 +110,28 @@ public class Localizer : MonoBehaviour {
 	private void Localize() {
 		// Just do it
 		if(m_text == null) return;
-		m_text.text = Localization.Localize(m_tid, m_replacements);
+
+		// Process casing first
+		string[] processedReplacements = new string[m_replacements.Length];
+		for(int i = 0; i < m_replacements.Length; i++) {
+			switch(m_caseType) {
+				case Case.REPLACEMENTS_LOWER_CASE: 	processedReplacements[i] = m_replacements[i].ToLower(Localization.culture);	break;
+				case Case.REPLACEMENTS_UPPER_CASE: 	processedReplacements[i] = m_replacements[i].ToUpper(Localization.culture);	break;
+				default: 							processedReplacements[i] = m_replacements[i];								break;
+			}
+		}
+
+		// Perform the localization
+		string localizedString = Localization.Localize(m_tid, replacements);
+
+		// Process full string
+		switch(m_caseType) {
+			case Case.LOWER_CASE: 	localizedString = localizedString.ToLower(Localization.culture);	break;
+			case Case.UPPER_CASE: 	localizedString = localizedString.ToUpper(Localization.culture);	break;
+		}
+
+		// Apply to textfield
+		m_text.text = localizedString;
 	}
 
 	/// <summary>

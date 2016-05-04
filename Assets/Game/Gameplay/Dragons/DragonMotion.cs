@@ -32,6 +32,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		InsideWater,
 		OutterSpace,
 		Intro,
+		HoldingPrey,
 		None,
 	};
 
@@ -51,6 +52,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonControl			m_controls;
 	Orientation			   	m_orientation;
 	DragonAnimationEvents 	m_animationEventController;
+	SphereCollider 			m_groundCollider;
 
 
 	// Movement control
@@ -167,6 +169,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_introTimer;
 	private const float m_introDuration = 3;
 	private Vector3 m_destination;
+	private Transform m_holdPreyTransform = null;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -204,7 +207,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 
 		m_rbody = GetComponent<Rigidbody>();
-
+		m_groundCollider = GetComponentInChildren<SphereCollider>();
 		m_height = 10f;
 
 		m_targetSpeedMultiplier = 1;
@@ -276,6 +279,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.SetBool("fly down", false);
 					m_introTimer = m_introDuration;
 				}break;
+				case State.HoldingPrey:
+				{
+					m_groundCollider.enabled = true;
+				}break;
 			}
 
 			// entering new state
@@ -324,6 +331,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.SetBool("fly", true);
 					m_animator.SetBool("fly down", true);
 					m_introTimer = m_introDuration;
+				}break;
+				case State.HoldingPrey:
+				{
+					m_groundCollider.enabled = false;
 				}break;
 			}
 
@@ -380,9 +391,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				float delta = m_introTimer / m_introDuration;
 				m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
 				m_destination += m_introTarget;
-
+			}break;
+			case State.HoldingPrey:
+			{
+				m_orientation.SetRotation( m_holdPreyTransform.rotation );
+				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
+				transform.position += deltaPosition - m_tongue.position;
 
 			}break;
+
 		}
 				
 		m_animator.SetFloat("height", m_height);
@@ -425,13 +442,19 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_rbody.velocity = Vector3.zero;
 				transform.rotation.SetLookRotation( Vector3.right );
 			}break;
+			case State.HoldingPrey:
+			{
+				m_impulse = Vector3.zero;
+				m_rbody.velocity = Vector3.zero;
+			}break;
+
 		}
 		
 		m_rbody.angularVelocity = Vector3.zero;
 
 		m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
 
-		if ( m_state != State.Intro )
+		if ( m_state != State.Intro && m_state != State.HoldingPrey)
 		{
 			Vector3 position = transform.position;
 			position.z = 0f;
@@ -766,6 +789,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		ChangeState( State.Fly_Down);
 	} 
 
+	public void StartHoldPreyMovement( Transform _holdPreyTransform )
+	{
+		m_holdPreyTransform = _holdPreyTransform;
+		ChangeState(State.HoldingPrey);
+	}
+
+	public void EndHoldMovement()
+	{
+		ChangeState(State.Idle);
+	}
 
 	public void StartIntroMovement(Vector3 introTarget)
 	{

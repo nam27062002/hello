@@ -29,6 +29,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_eatingTime;
 	protected bool m_slowedDown;
 	private float m_burpTime;
+	private float m_holdPreyTimer = 0;
+	protected EdibleBehaviour m_holdingPrey = null;
+	protected Transform m_holdTransform = null;
 
 	private Transform m_suction;
 	private Transform m_mouth;
@@ -44,6 +47,19 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public List<string> m_burpSounds = new List<string>();
 	// public AudioSource m_burpAudio;
 
+	private float m_noAttackTime = 0;
+	private float m_holdingBlood = 0;
+
+	protected bool m_canHold = true;		// if this eater can hold a prey
+	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
+	protected int m_limitEatingValue = 1;	// limit value
+	protected bool m_isPlayer = true;
+
+
+	protected float m_holdStunTime;
+	protected float m_holdDamage;
+	protected float m_holdHealthGainRate;
+	protected float m_holdDuration;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -59,6 +75,23 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_slowedDown = false;
 
 		GetMouth();
+		m_holdStunTime = 0.5f;
+		m_holdDamage = 10;
+		m_holdHealthGainRate = 10;
+		m_holdDuration = 1;
+	}
+
+	protected void SetupHoldParametersForTier( string tierSku)
+	{
+		DefinitionNode def = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.HOLD_PREY_TIER, "tier", tierSku);
+
+		if ( def != null)
+		{
+			m_holdStunTime = def.GetAsFloat("stunTime");
+			m_holdDamage = def.GetAsFloat("damage");
+			m_holdHealthGainRate = def.GetAsFloat("healthDrain");
+			m_holdDuration = def.GetAsFloat("duration");
+		}
 	}
 
 	void OnDisable() {
@@ -89,37 +122,26 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update() {			
-		if (m_eatingTimer <= 0) 
+	void Update() 
+	{
+		if ( m_noAttackTime > 0 )
 		{
-			FindSomethingToEat();
-			if ( m_burpTime > 0 )
-			{
-				m_burpTime -= Time.deltaTime;
-				if ( m_burpTime <= 0 )
-				{
-					if ( Random.Range(0,100) < 60 )
-					{
-						Burp();
-					}
-				}
-			}
-		} else {
-			/*
-			if (m_burpAudio != null && m_burpAudio.isPlaying)
-			{
-				m_burpAudio.Stop();
-			}
-			*/
-			m_eatingTimer -= Time.deltaTime;
-			if (m_eatingTimer <= 0) 
-			{
-				m_eatingTimer = 0;
-				m_burpTime = 2;
-			}
+			m_noAttackTime -= Time.deltaTime;
 		}
 
-		if (m_prey.Count > 0) {	
+		// if not holding
+		if (m_holdingPrey == null && m_noAttackTime <= 0)
+		{
+			FindSomethingToEat( m_prey.Count <= 0 && m_canHold);
+		}
+		else
+		{
+			if ( m_holdingPrey != null )
+				UpdateHoldingPrey();	
+		}
+
+		if (m_prey.Count > 0) 
+		{	
 			Chew();
 		}
 
@@ -142,12 +164,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_almostEat = true;
 	}
 
-	private void Eat(EdibleBehaviour _prey, float _biteResistance) {
+	private void Eat(EdibleBehaviour _prey) {
 		
 		_prey.OnEat();
 
 		// Yes!! Eat it!!
-		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _biteResistance);
+		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _prey.biteResistance);
 
 		if (m_eatingTime >= 0.5f) {
 			SlowDown(true);
@@ -166,7 +188,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		m_animator.SetBool("eat", true);
 
-		if (m_eatingTime >= 0.5f || m_prey.Count > 2) {
+		if (m_eatingTime >= 0.5f || m_prey.Count > 2) 
+		{
 			m_animator.SetTrigger("eat crazy");
 		}
 		/*
@@ -176,39 +199,123 @@ public abstract class EatBehaviour : MonoBehaviour {
 		*/
 	}
 
+	virtual protected void StartHold(EdibleBehaviour _prey) 
+	{
+		// look for closer hold point
+		float distance = float.MaxValue;
+		List<Transform> points = _prey.holdPreyPoints;
+		m_holdTransform = null;
+		for( int i = 0; i<points.Count; i++ )
+		{
+			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
+			{
+				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
+				m_holdTransform = points[i];
+			}
+		}
+
+		if ( m_holdTransform == null )
+			m_holdTransform = _prey.transform;
+
+		_prey.OnHoldBy(this);
+		m_holdingPrey = _prey;
+		m_holdPreyTimer = m_holdDuration;
+		m_animator.SetBool("eat", true);
+
+	}
+
+	private void UpdateHoldingPrey()
+	{
+		if (m_holdingBlood <= 0)
+		{
+			Vector3 bloodPos = m_mouth.position;
+			bloodPos.z = -50f;
+			m_bloodEmitter.Add(ParticleManager.Spawn("bloodchurn-large", bloodPos));
+			m_holdingBlood = 0.5f;
+		}
+		else
+		{
+			m_holdingBlood -= Time.deltaTime;
+		}
+
+		// damage prey
+		m_holdingPrey.HoldingDamage( m_holdDamage * Time.deltaTime);
+		if ( m_holdingPrey.isDead() )
+		{
+			m_holdingPrey.OnSwallow( m_mouth );
+			EndHold();
+		}
+		else
+		{
+			// Swallow
+			m_holdPreyTimer -= Time.deltaTime;
+			if ( m_holdPreyTimer <= 0 ) // or prey is death
+			{
+				// release prey
+				m_holdingPrey.ReleaseHold();
+				EndHold();
+			}	
+		}
+	}
+
+	virtual protected void EndHold()
+	{
+		m_holdingPrey = null;
+		m_noAttackTime = m_holdStunTime;
+		m_animator.SetBool("eat", false);
+	}
+
 	private void Swallow(EdibleBehaviour _prey) {
 		_prey.OnSwallow( m_mouth );
 	}
 
-	private void FindSomethingToEat() {
+	private void FindSomethingToEat( bool _canHold = true ) 
+	{
 		float eatDistance = m_eatDistance * transform.localScale.x;
 		if (DebugSettings.eatDistancePowerUp) {
 			eatDistance *= 2;
 		}
 
+		EdibleBehaviour preyToHold = null;
+		List<EdibleBehaviour> preysToEat = new List<EdibleBehaviour>();
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
 			if (entity.edibleFromTier <= m_tier) 
 			{
-				// then, check if the edible is in front
-				/*
-				Vector3 heading = entity.transform.position - m_mouth.position;
-				float dot = Vector3.Dot(heading.normalized, m_motion.direction);
-				// check distance to dragon mouth
-				if (dot > 0) 
-				*/
+				if ( m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
 				{
 					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-
-					if (edible.CanBeEaten(m_motion.direction)) {
-						Eat(edible, entity.biteResistance);
-						break;
+					if (edible.CanBeEaten(m_motion.direction)) 
+					{
+						preysToEat.Add(edible);
 					}
 				}
-			} else {
-				Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
 			}
+			else if (_canHold && entity.canBeHolded && (entity.holdFromTier <= m_tier) )
+			{
+				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+				if (edible.CanBeEaten(m_motion.direction)) 
+				{
+					preyToHold = edible;
+					break;
+				}
+			}
+			else 
+			{
+				if ( m_isPlayer )
+					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
+			}
+		}
+
+		if ( preyToHold != null )
+		{
+			StartHold(preyToHold);
+		}
+		else if ( preysToEat.Count > 0 )
+		{
+			for( int i = 0; i<preysToEat.Count; i++ )
+				Eat(preysToEat[i]);
 		}
 	}
 

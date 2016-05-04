@@ -453,8 +453,11 @@ MonoBehaviour:
   m_sensorMaxRadius: 4
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
-  m_sensorPosition: {x: 0, y: 0, z: 0}
+  m_sensorOffset: {x: 0, y: 0, z: 0}
   m_target: 0
+  m_senseDelay:
+    min: 0.25
+    max: 1.25
 --- !u!114 &11408074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -578,6 +581,9 @@ MonoBehaviour:
   m_avoidWater: 1
   m_maxSpeed: 1.85
   m_maxRunSpeed: 3.6
+  m_speedVariationRange:
+    min: 0.75
+    max: 1.25
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11449248

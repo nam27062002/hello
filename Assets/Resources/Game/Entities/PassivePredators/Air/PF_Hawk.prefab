@@ -46,9 +46,10 @@ GameObject:
   - 114: {fileID: 11437978}
   - 114: {fileID: 11403364}
   - 114: {fileID: 11406306}
-  - 114: {fileID: 11409000}
   - 114: {fileID: 11462684}
   - 114: {fileID: 11423018}
+  - 114: {fileID: 11430998}
+  - 114: {fileID: 11452520}
   m_Layer: 8
   m_Name: PF_Hawk
   m_TagString: Untagged
@@ -419,7 +420,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_Children:
   - {fileID: 444710}
   - {fileID: 404374}
@@ -601,6 +602,9 @@ MonoBehaviour:
   m_avoidWater: 0
   m_maxSpeed: 10
   m_maxRunSpeed: 15
+  m_speedVariationRange:
+    min: 0.75
+    max: 1.25
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11405390
@@ -616,7 +620,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
-  m_maxHealth: 2
   m_ashesAsset: PF_Ash_Falcon
   m_dissolveTime: 0.75
   m_explosionPrefab: {fileID: 0}
@@ -648,18 +651,9 @@ MonoBehaviour:
   m_sensorAngleOffset: 360
   m_sensorOffset: {x: 0, y: 0, z: 0}
   m_target: 0
---- !u!114 &11409000
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7860ae3c450416cab70c2643a3d819, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_canBeEatenWhileAttacking: 0
+  m_senseDelay:
+    min: 0.25
+    max: 1.25
 --- !u!114 &11420202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -686,12 +680,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db93e9f797714658ac0f02e1b151059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 8
+  m_damage: 16
   m_attackDelay: 0
   m_consecutiveAttacks: 1
   m_retreatingTime: 2
   m_hasAnimation: 0
+  m_invulnerableWhileAttacking: 1
   m_meleeWeapon: {fileID: 0}
+--- !u!114 &11430998
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df311e10eeb84a3383bd27aa4ad0282, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11437978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -709,6 +715,17 @@ MonoBehaviour:
   m_displacementRadius: 1
   m_angleIncrement: 0
   m_idleProbability: 1
+--- !u!114 &11452520
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ef8852582a6d47709d3e3eb3c75643e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11453100
 MonoBehaviour:
   m_ObjectHideFlags: 1

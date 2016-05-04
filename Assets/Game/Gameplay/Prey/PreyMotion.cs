@@ -39,6 +39,7 @@ public class PreyMotion : Initializable, MotionInterface {
 [Header("Speed variations")]
 	[SerializeField] protected float m_maxSpeed;
 	[SerializeField] protected float m_maxRunSpeed;
+	[SerializeField] protected Range m_speedVariationRange = new Range(0.75f, 1.25f);
 	[SerializeField] private float m_slowingRadius;
 
 
@@ -57,6 +58,7 @@ public class PreyMotion : Initializable, MotionInterface {
 
 	protected float m_currentMaxSpeed;
 	protected float m_currentSpeed;
+	protected float m_speedVariation;
 	protected float m_speedMultiplier;
 
 	protected float m_lastSeekDistanceSqr;
@@ -137,6 +139,9 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_velocity = Vector2.zero;
 		m_currentSpeed = 0;
 		m_speedMultiplier = 1;
+		m_speedVariation = m_speedVariationRange.GetRandom();
+
+		m_animator.speed = m_speedVariation;
 
 		m_collisionAvoidFactor = 0;
 		m_collisionNormal = Vector2.up;
@@ -267,7 +272,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		
 		desiredVelocity.Normalize();
 		
-		desiredVelocity *= m_currentMaxSpeed;
+		desiredVelocity *= m_currentMaxSpeed * m_speedVariation;
 		if (distanceSqr < slowingRadiusSqr) {
 			desiredVelocity *= (distanceSqr / slowingRadiusSqr);
 		}
@@ -284,7 +289,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		float distanceSqr = desiredVelocity.sqrMagnitude;
 
 		desiredVelocity.Normalize();
-		desiredVelocity *= m_currentMaxSpeed;
+		desiredVelocity *= m_currentMaxSpeed * m_speedVariation;
 
 		if (distanceSqr > 0) {
 			desiredVelocity *= (m_distanceAttenuation * m_distanceAttenuation) / distanceSqr;
@@ -380,9 +385,9 @@ public class PreyMotion : Initializable, MotionInterface {
 	protected virtual void UpdateVelocity( bool insidePowerUp ) {
 		if (!m_burning)
 		{
-			float targetSpeed = m_currentMaxSpeed;
+			float targetSpeed = m_currentMaxSpeed * m_speedVariation;
 			if ( insidePowerUp )
-				targetSpeed = m_currentMaxSpeed * 0.5f;
+				targetSpeed *= 0.5f;
 
 			Vector2 oldVelocity = m_velocity;
 			// ????????

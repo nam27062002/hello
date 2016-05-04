@@ -625,7 +625,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: 0.25
-  m_maxHealth: 1
   m_ashesAsset: 
   m_dissolveTime: 0.75
   m_explosionPrefab: {fileID: 0}
@@ -660,6 +659,9 @@ MonoBehaviour:
   m_avoidWater: 0
   m_maxSpeed: 0.5
   m_maxRunSpeed: 0.5
+  m_speedVariationRange:
+    min: 0.75
+    max: 1.25
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11474016
@@ -687,7 +689,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af0b7322a4d56464691070ceb6cb2cc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damage: 5
+  m_damage: 6
   m_duration: 4
 --- !u!114 &11488400
 MonoBehaviour:

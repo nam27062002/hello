@@ -18,7 +18,6 @@ public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	[SerializeField] private bool m_destroyOnBurn = false;
 	[SerializeField] private float m_checkFireTime = 0.25f;
-	[SerializeField] private float m_maxHealth = 100f;
 
 	[SeparatorAttribute]
 	[SerializeField] private string m_ashesAsset;
@@ -48,8 +47,7 @@ public class InflammableBehaviour : Initializable {
 	{
 		get{ return m_entity.sku; }
 	}
-	
-	private float m_health;
+
 	private float m_timer;
 
 	private List<Material[]> m_ashMaterials = new List<Material[]>();
@@ -85,7 +83,9 @@ public class InflammableBehaviour : Initializable {
 					if ( shaderName.EndsWith("Additive") )
 					{
 						// We will set to null and hide it at the beggining 
-						materials[j] = null;
+						Material newMat = new Material(Resources.Load ("Game/Assets/Materials/Transparent") as Material);	
+						newMat.renderQueue = 3000;
+						materials[j] = newMat;
 					}
 					else if ( shaderName.EndsWith("Bird") )
 					{
@@ -105,12 +105,11 @@ public class InflammableBehaviour : Initializable {
 				m_ashMaterials.Add(materials);
 			}
 		}
-		m_dissolveTime = 10;
 		m_state = State.Idle;
 	}
 		
-	public override void Initialize() {
-		m_health = m_maxHealth;
+	public override void Initialize() 
+	{
 		m_state = State.Idle;
 	}
 
@@ -174,9 +173,9 @@ public class InflammableBehaviour : Initializable {
 			//spawn fire hit particle!	
 			ParticleManager.Spawn("PF_FireHit", transform.position + Vector3.back * 2);
 
-			m_health -= _damage;
+			m_entity.Damage( _damage );
 
-			if (m_health <= 0) {
+			if (m_entity.health <= 0) {
 				EntityManager.instance.Unregister(m_entity);
 				
 				// Let heirs do their magic

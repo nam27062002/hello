@@ -61,6 +61,9 @@ public enum DefinitionsCategory {
 	FIRE_SPAWN_EFFECTS,
 	FIRE_DECORATION_EFFECTS,
 
+	// Hold Prey
+	HOLD_PREY_TIER,
+
 	// Power Ups
 	POWERUPS,
 
@@ -148,6 +151,8 @@ public class DefinitionsManager : Singleton<DefinitionsManager> {
 
 		LoadDefinitionsFile(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "Rules/spawnersDragonBurnDefinitions");
 		LoadDefinitionsFile(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "Rules/entityDragonBurnDefinitions");
+
+		LoadDefinitionsFile(DefinitionsCategory.HOLD_PREY_TIER, "Rules/holdPreyTierSettingsDefinitions");
 
 		// Power Ups
 		LoadDefinitionsFile(DefinitionsCategory.POWERUPS, "Rules/powerUpsDefinitions");
