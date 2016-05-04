@@ -69,26 +69,32 @@ public class HUDHealthMessage : MonoBehaviour {
 	private void OnStarvingToggled(bool _isStarving) {
 		// Toggle tweens
 		m_starving = _isStarving;
-		DOTween.Pause(gameObject);
-		if(_isStarving) {
-			m_text.text = Localization.Get("TID_FEEDBACK_STARVING");
-			GetComponent<DOTweenAnimation>().DORewind();
-			DOTween.Play(gameObject, "in");
-		} else {
-			// DOTween.Pause(gameObject);
-			DOTween.Restart(gameObject, "out");
-		}
+		HealthMessageCheck();
 	}
 
 	private void OnCriticalToggled( bool _isCritical )
 	{
 		m_critical = _isCritical;
-		if(_isCritical) {
+		HealthMessageCheck();
+	}
+
+	private void HealthMessageCheck()
+	{
+		DOTween.Pause(gameObject);
+		if ( m_critical )
+		{
 			m_text.text = Localization.Get("TID_FEEDBACK_CRITICAL");
 			GetComponent<DOTweenAnimation>().DORewind();
 			DOTween.Play(gameObject, "in");
-		} else {
-			// DOTween.Pause(gameObject);
+		}
+		else if ( m_starving )
+		{
+			m_text.text = Localization.Get("TID_FEEDBACK_STARVING");
+			GetComponent<DOTweenAnimation>().DORewind();
+			DOTween.Play(gameObject, "in");
+		}
+		else
+		{
 			DOTween.Restart(gameObject, "out");
 		}
 	}
