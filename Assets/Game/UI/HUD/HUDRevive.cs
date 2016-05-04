@@ -105,10 +105,14 @@ public class HUDRevive : MonoBehaviour {
 			// Revive!
 			m_reviveCount++;
 			bool wasStarving = InstanceManager.player.IsStarving();
+			bool wasCritical = InstanceManager.player.IsCritical();
 			InstanceManager.player.ResetStats(true);
 			// Check for starvation
 			if(wasStarving != InstanceManager.player.IsStarving()) {
 				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, InstanceManager.player.IsStarving());
+			}
+			if(wasCritical != InstanceManager.player.IsCritical()) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, InstanceManager.player.IsCritical());
 			}
 			m_timer.Stop();
 
