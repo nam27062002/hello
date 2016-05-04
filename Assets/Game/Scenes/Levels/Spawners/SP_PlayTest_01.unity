@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 1719952665}
+  m_SkyboxMaterial: {fileID: 1823293491}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1079,13 +1079,19 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 1687712185}
-  - {fileID: 1218742812}
-  - {fileID: 107666294}
-  - {fileID: 545267861}
-  - {fileID: 1055327767}
-  m_Father: {fileID: 1149156408}
-  m_RootOrder: 1
+  - {fileID: 139090060}
+  - {fileID: 349505032}
+  - {fileID: 714126518}
+  - {fileID: 1055736850}
+  - {fileID: 1384225671}
+  - {fileID: 1750920944}
+  - {fileID: 1633593064}
+  - {fileID: 1512704405}
+  - {fileID: 155869919}
+  - {fileID: 1345947482}
+  - {fileID: 163850062}
+  m_Father: {fileID: 1405462146}
+  m_RootOrder: 0
 --- !u!1 &38827675
 GameObject:
   m_ObjectHideFlags: 0
@@ -2272,7 +2278,7 @@ Transform:
   - {fileID: 93078096}
   - {fileID: 681926416}
   - {fileID: 131283159}
-  m_Father: {fileID: 259663510}
+  m_Father: {fileID: 1306058275}
   m_RootOrder: 0
 --- !u!1 &93078095
 GameObject:
@@ -2654,8 +2660,8 @@ Transform:
   m_Children:
   - {fileID: 911016958}
   - {fileID: 1186916388}
-  m_Father: {fileID: 38532112}
-  m_RootOrder: 2
+  m_Father: {fileID: 1149156408}
+  m_RootOrder: 3
 --- !u!1 &109042690
 GameObject:
   m_ObjectHideFlags: 0
@@ -4029,7 +4035,7 @@ Transform:
   - {fileID: 210384404}
   - {fileID: 161667029}
   - {fileID: 1864327551}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 0
 --- !u!1 &140401849
 GameObject:
@@ -5386,7 +5392,7 @@ Transform:
   - {fileID: 306654003}
   - {fileID: 15948029}
   - {fileID: 149133890}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 8
 --- !u!1 &156640422
 GameObject:
@@ -5889,7 +5895,7 @@ Transform:
   - {fileID: 1582827768}
   - {fileID: 1064966696}
   - {fileID: 1896964282}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 10
 --- !u!1 &171261128
 GameObject:
@@ -7654,7 +7660,7 @@ Transform:
   - {fileID: 1951353230}
   - {fileID: 1087387800}
   - {fileID: 486910276}
-  m_Father: {fileID: 2089734429}
+  m_Father: {fileID: 1377633844}
   m_RootOrder: 1
 --- !u!1 &236494180
 GameObject:
@@ -8161,7 +8167,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 401194, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 189300, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
       propertyPath: m_Name
@@ -8320,36 +8326,6 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!1 &259663509
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 259663510}
-  m_Layer: 0
-  m_Name: GRP_Village
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &259663510
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 259663509}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 90500731}
-  - {fileID: 1812558137}
-  m_Father: {fileID: 1306058275}
-  m_RootOrder: 0
 --- !u!1 &264160739
 GameObject:
   m_ObjectHideFlags: 0
@@ -8379,7 +8355,7 @@ Transform:
   - {fileID: 923813276}
   - {fileID: 582547884}
   - {fileID: 1295163742}
-  m_Father: {fileID: 2089734429}
+  m_Father: {fileID: 1377633844}
   m_RootOrder: 2
 --- !u!1 &270753800
 GameObject:
@@ -8813,7 +8789,7 @@ Transform:
   m_Children:
   - {fileID: 540800681}
   - {fileID: 1298051676}
-  m_Father: {fileID: 2089734429}
+  m_Father: {fileID: 1377633844}
   m_RootOrder: 3
 --- !u!1 &288542795
 GameObject:
@@ -11401,7 +11377,7 @@ Transform:
   - {fileID: 140401850}
   - {fileID: 1691821319}
   - {fileID: 1004403187}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 1
 --- !u!1 &356290978
 GameObject:
@@ -14520,7 +14496,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 401194, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
       propertyPath: m_RootOrder
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 189300, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
       propertyPath: m_Name
@@ -17352,8 +17328,8 @@ Transform:
   m_Children:
   - {fileID: 1451925795}
   - {fileID: 1478730989}
-  m_Father: {fileID: 38532112}
-  m_RootOrder: 3
+  m_Father: {fileID: 1149156408}
+  m_RootOrder: 4
 --- !u!1 &551587454
 GameObject:
   m_ObjectHideFlags: 0
@@ -21012,7 +20988,7 @@ Transform:
   - {fileID: 1137393411}
   - {fileID: 2092815114}
   - {fileID: 539359235}
-  m_Father: {fileID: 2089734429}
+  m_Father: {fileID: 1377633844}
   m_RootOrder: 0
 --- !u!1 &656819702
 GameObject:
@@ -23847,7 +23823,7 @@ Transform:
   - {fileID: 1496621156}
   - {fileID: 1199075644}
   - {fileID: 1702091603}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 2
 --- !u!1 &714392900
 GameObject:
@@ -25008,7 +24984,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 401194, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 189300, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
       propertyPath: m_Name
@@ -32377,9 +32353,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 1813675955}
-  m_Father: {fileID: 1149156408}
-  m_RootOrder: 3
+  - {fileID: 1549517818}
+  - {fileID: 1656562271}
+  m_Father: {fileID: 1405462146}
+  m_RootOrder: 2
 --- !u!1 &969268402
 GameObject:
   m_ObjectHideFlags: 0
@@ -36065,8 +36042,8 @@ Transform:
   m_Children:
   - {fileID: 1271359441}
   - {fileID: 772519746}
-  m_Father: {fileID: 38532112}
-  m_RootOrder: 4
+  m_Father: {fileID: 1149156408}
+  m_RootOrder: 5
 --- !u!1 &1055736849
 GameObject:
   m_ObjectHideFlags: 0
@@ -36094,7 +36071,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1157226391}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 3
 --- !u!1 &1055926440
 GameObject:
@@ -37558,7 +37535,7 @@ Transform:
   m_Children:
   - {fileID: 1412117121}
   m_Father: {fileID: 1149156408}
-  m_RootOrder: 5
+  m_RootOrder: 6
 --- !u!114 &1106097089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38873,10 +38850,11 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1897001631}
-  - {fileID: 38532112}
-  - {fileID: 1377633844}
-  - {fileID: 967122209}
-  - {fileID: 1306058275}
+  - {fileID: 1405462146}
+  - {fileID: 1218742812}
+  - {fileID: 107666294}
+  - {fileID: 545267861}
+  - {fileID: 1055327767}
   - {fileID: 1106097088}
   - {fileID: 253749834}
   - {fileID: 734616306}
@@ -41650,8 +41628,8 @@ Transform:
   m_Children:
   - {fileID: 363331561}
   - {fileID: 9882208}
-  m_Father: {fileID: 38532112}
-  m_RootOrder: 1
+  m_Father: {fileID: 1149156408}
+  m_RootOrder: 2
 --- !u!1 &1221766204
 GameObject:
   m_ObjectHideFlags: 0
@@ -45428,9 +45406,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 259663510}
-  m_Father: {fileID: 1149156408}
-  m_RootOrder: 4
+  - {fileID: 90500731}
+  - {fileID: 1812558137}
+  m_Father: {fileID: 1405462146}
+  m_RootOrder: 3
 --- !u!1 &1311867053
 GameObject:
   m_ObjectHideFlags: 0
@@ -46694,7 +46673,7 @@ Transform:
   - {fileID: 1377912231}
   - {fileID: 1260706330}
   - {fileID: 1400767653}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 9
 --- !u!1 &1358947969
 GameObject:
@@ -47056,9 +47035,13 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 2089734429}
-  m_Father: {fileID: 1149156408}
-  m_RootOrder: 2
+  - {fileID: 654479347}
+  - {fileID: 234392551}
+  - {fileID: 264160740}
+  - {fileID: 288270291}
+  - {fileID: 1467983359}
+  m_Father: {fileID: 1405462146}
+  m_RootOrder: 1
 --- !u!1 &1377912230
 GameObject:
   m_ObjectHideFlags: 0
@@ -47186,7 +47169,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1140454281}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 4
 --- !u!1 &1385328697
 GameObject:
@@ -47907,6 +47890,38 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!1 &1405462145
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1405462146}
+  m_Layer: 0
+  m_Name: GRP_Village_0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1405462146
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1405462145}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 38532112}
+  - {fileID: 1377633844}
+  - {fileID: 967122209}
+  - {fileID: 1306058275}
+  m_Father: {fileID: 1149156408}
+  m_RootOrder: 1
 --- !u!1 &1407049321
 GameObject:
   m_ObjectHideFlags: 0
@@ -50585,7 +50600,7 @@ Transform:
   - {fileID: 1464475821}
   - {fileID: 796529345}
   - {fileID: 954485428}
-  m_Father: {fileID: 2089734429}
+  m_Father: {fileID: 1377633844}
   m_RootOrder: 4
 --- !u!1 &1478177052
 GameObject:
@@ -51890,7 +51905,7 @@ Transform:
   - {fileID: 1865259333}
   - {fileID: 66690732}
   - {fileID: 1414999383}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 7
 --- !u!1 &1515477388
 GameObject:
@@ -53470,7 +53485,7 @@ Transform:
   - {fileID: 128362998}
   - {fileID: 674297859}
   - {fileID: 928976339}
-  m_Father: {fileID: 1813675955}
+  m_Father: {fileID: 967122209}
   m_RootOrder: 0
 --- !u!1 &1549723926
 GameObject:
@@ -57321,7 +57336,7 @@ Transform:
   - {fileID: 811820539}
   - {fileID: 1651109926}
   - {fileID: 1126725317}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 6
 --- !u!1 &1638044280
 GameObject:
@@ -58031,7 +58046,7 @@ Transform:
   - {fileID: 2035534932}
   - {fileID: 1191107197}
   - {fileID: 2087315121}
-  m_Father: {fileID: 1813675955}
+  m_Father: {fileID: 967122209}
   m_RootOrder: 1
 --- !u!1 &1665526139
 GameObject:
@@ -59118,45 +59133,6 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!1 &1687712184
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1687712185}
-  m_Layer: 0
-  m_Name: GRP_Village_0
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1687712185
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1687712184}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 139090060}
-  - {fileID: 349505032}
-  - {fileID: 714126518}
-  - {fileID: 1055736850}
-  - {fileID: 1384225671}
-  - {fileID: 1750920944}
-  - {fileID: 1633593064}
-  - {fileID: 1512704405}
-  - {fileID: 155869919}
-  - {fileID: 1345947482}
-  - {fileID: 163850062}
-  m_Father: {fileID: 38532112}
-  m_RootOrder: 0
 --- !u!1 &1688380100
 GameObject:
   m_ObjectHideFlags: 0
@@ -61137,194 +61113,6 @@ MonoBehaviour:
   m_positionLock: 000000
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!21 &1719952665
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Skybox
-  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 1000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-      data:
-        first:
-          name: _MainTex
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _BumpMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailNormalMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ParallaxMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _OcclusionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailAlbedoMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _MetallicGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-    m_Floats:
-      data:
-        first:
-          name: _SrcBlend
-        second: 1
-      data:
-        first:
-          name: _DstBlend
-        second: 0
-      data:
-        first:
-          name: _Cutoff
-        second: 0.5
-      data:
-        first:
-          name: _Exposure
-        second: 1.1099983
-      data:
-        first:
-          name: _SunSize
-        second: 0.274
-      data:
-        first:
-          name: _AtmosphereThickness
-        second: 0.68999904
-      data:
-        first:
-          name: _Parallax
-        second: 0.02
-      data:
-        first:
-          name: _ZWrite
-        second: 1
-      data:
-        first:
-          name: _Glossiness
-        second: 0.5
-      data:
-        first:
-          name: _BumpScale
-        second: 1
-      data:
-        first:
-          name: _OcclusionStrength
-        second: 1
-      data:
-        first:
-          name: _DetailNormalMapScale
-        second: 1
-      data:
-        first:
-          name: _UVSec
-        second: 0
-      data:
-        first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
-          name: _Mode
-        second: 0
-      data:
-        first:
-          name: _Metallic
-        second: 0
-      data:
-        first:
-          name: _HorizonHeight
-        second: 0.131
-    m_Colors:
-      data:
-        first:
-          name: _EmissionColor
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SkyTint
-        second: {r: 0, g: 0.5862069, b: 1, a: 1}
-      data:
-        first:
-          name: _GroundColor
-        second: {r: 0.15668255, g: 0.16544718, b: 0.33823532, a: 1}
-      data:
-        first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SkyColor
-        second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
-      data:
-        first:
-          name: _SunPos
-        second: {r: 1, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _HorizonColor
-        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
-      data:
-        first:
-          name: _SunColor
-        second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
-      data:
-        first:
-          name: _AddColor
-        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1723564071
 GameObject:
   m_ObjectHideFlags: 0
@@ -62249,7 +62037,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1846730396}
-  m_Father: {fileID: 1687712185}
+  m_Father: {fileID: 38532112}
   m_RootOrder: 5
 --- !u!1 &1754718138
 GameObject:
@@ -64445,38 +64233,8 @@ Transform:
   - {fileID: 1802746711}
   - {fileID: 1098900669}
   - {fileID: 109042691}
-  m_Father: {fileID: 259663510}
+  m_Father: {fileID: 1306058275}
   m_RootOrder: 1
---- !u!1 &1813675954
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1813675955}
-  m_Layer: 0
-  m_Name: GRP_Village
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1813675955
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1813675954}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 1549517818}
-  - {fileID: 1656562271}
-  m_Father: {fileID: 967122209}
-  m_RootOrder: 0
 --- !u!1 &1820591566
 GameObject:
   m_ObjectHideFlags: 0
@@ -64845,6 +64603,194 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!21 &1823293491
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Skybox
+  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 1000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailNormalMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _OcclusionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailAlbedoMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _SrcBlend
+        second: 1
+      data:
+        first:
+          name: _DstBlend
+        second: 0
+      data:
+        first:
+          name: _Cutoff
+        second: 0.5
+      data:
+        first:
+          name: _Exposure
+        second: 1.1099983
+      data:
+        first:
+          name: _SunSize
+        second: 0.274
+      data:
+        first:
+          name: _AtmosphereThickness
+        second: 0.68999904
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
+      data:
+        first:
+          name: _ZWrite
+        second: 1
+      data:
+        first:
+          name: _Glossiness
+        second: 0.5
+      data:
+        first:
+          name: _BumpScale
+        second: 1
+      data:
+        first:
+          name: _OcclusionStrength
+        second: 1
+      data:
+        first:
+          name: _DetailNormalMapScale
+        second: 1
+      data:
+        first:
+          name: _UVSec
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
+          name: _Mode
+        second: 0
+      data:
+        first:
+          name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _HorizonHeight
+        second: 0.131
+    m_Colors:
+      data:
+        first:
+          name: _EmissionColor
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SkyTint
+        second: {r: 0, g: 0.5862069, b: 1, a: 1}
+      data:
+        first:
+          name: _GroundColor
+        second: {r: 0.15668255, g: 0.16544718, b: 0.33823532, a: 1}
+      data:
+        first:
+          name: _EmissionColorUI
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SkyColor
+        second: {r: 0.89705884, g: 0.49083492, b: 0.27043685, a: 1}
+      data:
+        first:
+          name: _SunPos
+        second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 0.9558824, g: 0.8725093, b: 0.6536549, a: 1}
+      data:
+        first:
+          name: _SunColor
+        second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
+      data:
+        first:
+          name: _AddColor
+        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1824437203
 GameObject:
   m_ObjectHideFlags: 0
@@ -74957,39 +74903,6 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!1 &2089734428
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 2089734429}
-  m_Layer: 0
-  m_Name: GRP_Village
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2089734429
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2089734428}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 654479347}
-  - {fileID: 234392551}
-  - {fileID: 264160740}
-  - {fileID: 288270291}
-  - {fileID: 1467983359}
-  m_Father: {fileID: 1377633844}
-  m_RootOrder: 0
 --- !u!1 &2091955456
 GameObject:
   m_ObjectHideFlags: 0
