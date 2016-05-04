@@ -4,12 +4,15 @@
 public class PreyOrientation : Orientation {
 
 	[SeparatorAttribute]
+	[SerializeField] private bool m_hasTurnAnimations;
 	[SerializeField] private bool m_faceDirection;
 	public bool faceDirection { get { return m_faceDirection; } }
 
 	[SeparatorAttribute]
 	[SerializeField] private float m_faceLeftAngleY = 180f;
 	[SerializeField] private float m_faceRightAngleY = 0f;
+
+	private Animator m_animator;
 
 	private Vector3 m_direction;
 
@@ -19,9 +22,13 @@ public class PreyOrientation : Orientation {
 	private float m_targetAngle;
 	private float m_angle;
 
+	private bool m_turningRight;
+	private bool m_turningLeft;
 
 	// Use this for initialization
 	void Awake() {
+		m_animator = transform.FindChild("view").GetComponent<Animator>();
+
 		m_targetRotation = transform.rotation;
 		m_rotation = transform.rotation;
 
@@ -38,11 +45,30 @@ public class PreyOrientation : Orientation {
 
 	// Update is called once per frame
 	void Update() {		
+
+		float angle = 0; 
+
 		if (m_faceDirection) {
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * 2f);
+			angle = Quaternion.Angle(m_rotation, m_targetRotation);
 		} else {
 			m_angle = Mathf.Lerp(m_angle, m_targetAngle, Time.deltaTime * 2f);
 			m_rotation = Quaternion.Euler(0, m_angle, 0);
+
+			angle = m_angle;
+		}
+
+		if (m_hasTurnAnimations) {
+			if (m_turningRight) {
+				// change direction
+				m_turningRight = angle > 60f;
+			} else if (m_turningLeft) {
+				// change direction
+				m_turningLeft = angle > 60f;
+			}
+
+			m_animator.SetBool("turn right", m_turningRight);
+			m_animator.SetBool("turn left", m_turningLeft);
 		}
 
 		transform.rotation = m_rotation;
@@ -77,6 +103,16 @@ public class PreyOrientation : Orientation {
 			}
 
 			m_targetAngle = angleY;
+		}
+
+		if (m_hasTurnAnimations) {
+			if (m_direction.x >= 0f && _direction.x < 0f) {
+				m_turningRight = true;
+				m_turningLeft = false;
+			} else if (m_direction.x < 0f && _direction.x >= 0f) {
+				m_turningLeft = true;
+				m_turningRight = false;
+			}
 		}
 
 		m_direction = _direction;
