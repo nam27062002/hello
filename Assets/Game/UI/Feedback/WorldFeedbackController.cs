@@ -82,6 +82,7 @@ public class WorldFeedbackController : MonoBehaviour {
 		m_anim.SetTrigger("start");
 	}
 
+
 	/// <summary>
 	/// Make sure the feedback is positioned relative to the reference world position.
 	/// </summary>

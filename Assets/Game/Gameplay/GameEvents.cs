@@ -36,6 +36,7 @@ public enum GameEvents {
 	ENTITY_EATEN,		// params: Transform _entity, Reward _reward
 	ENTITY_BURNED,		// params: Transform _entity, Reward _reward
 	ENTITY_DESTROYED,	// params: Transform _entity, Reward _reward
+	FLOCK_EATEN,		// params: Transform _entity, Reward _reward
 
 	// Player events
 	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, Transform _source
