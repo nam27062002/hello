@@ -12,6 +12,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
 	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
+	[SerializeField] private bool m_hasFlockBonus = false;
 
 	[Header("Activation")]
 	[SerializeField] private bool m_alwaysActive = false;
@@ -122,7 +123,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			if (m_allEntitiesKilledByPlayer) {
 				// check if player has destroyed all the flock
-				if (m_entitiesKilled >= 3) {
+				if (m_hasFlockBonus) {
 					// TODO: give flock reward! rise event
 				}
 			} else {
