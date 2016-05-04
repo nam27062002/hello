@@ -12,7 +12,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
 	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
-	[SerializeField] private bool m_hasFlockBonus = false;
+	[SerializeField] private int m_flockBonus = 0;
 
 	[Header("Activation")]
 	[SerializeField] private bool m_alwaysActive = false;
@@ -123,8 +123,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			if (m_allEntitiesKilledByPlayer) {
 				// check if player has destroyed all the flock
-				if (m_hasFlockBonus) {
-					// TODO: give flock reward! rise event
+				if (m_flockBonus > 0) {
+					Reward reward = new Reward();
+					reward.score = m_flockBonus;
+					Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
 				}
 			} else {
 				m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
