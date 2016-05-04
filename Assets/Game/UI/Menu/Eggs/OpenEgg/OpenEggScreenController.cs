@@ -541,7 +541,25 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_state != State.IDLE) return;
 
 		// Show shop popup!
-		PopupManager.OpenPopupInstant(PopupEggShop.PATH);
+		//PopupManager.OpenPopupInstant(PopupEggShop.PATH);
+
+		// Get price and start purchase flow
+		long pricePC = m_egg.eggData.def.GetAsLong("pricePC");
+		if(UserProfile.pc >= pricePC) {
+			// Perform transaction
+			UserProfile.AddPC(-pricePC);
+			PersistenceManager.Save();
+
+			// Create a new egg instance
+			Egg purchasedEgg = Egg.CreateFromDef(m_egg.eggData.def);
+			purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
+
+			// Restart flow!
+			StartFlow(purchasedEgg);
+		} else {
+			// Open PC shop popup
+			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		}
 	}
 
 	/// <summary>
