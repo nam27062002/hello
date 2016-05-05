@@ -30,6 +30,13 @@ public class UITooltip : ShowHideAnimator{
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Start hidden
+		ForceHide(false);
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
