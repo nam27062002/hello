@@ -33,8 +33,9 @@ public class Egg {
 	};
 
 	public struct EggReward {
-		public string type;
-		public string value;
+		public string type;		// Reward type, matches rewardDefinitions "type" property.
+		public string value;	// Typically a sku: disguiseSku, petSku, specialDragonSku.
+		public long coins;		// Coins to be given instead of the reward. Only if bigger than 0.
 	}
 
 	/// <summary>
@@ -222,33 +223,37 @@ public class Egg {
 		// Generate the reward
 		m_rewardDef = EggManager.GenerateReward();
 
+		// Initialize the reward data
+		m_rewardData.type = m_rewardDef.GetAsString("type");
+		m_rewardData.value = "";
+		m_rewardData.coins = 0;
+
 		// Apply the reward
-		switch(rewardDef.GetAsString("type")) {
-			case "suit": {				
-					string rarity = rewardDef.sku;
-					rarity = rarity.Replace("suit_", "");
+		switch(m_rewardData.type) {
+			case "suit": {
+				// Get a random disguise of the target rarity
+				string rarity = rewardDef.sku;
+				rarity = rarity.Replace("suit_", "");
+				string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);
 
-					string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);
+				// Initialize reward data based on obtained disguise
+				if(disguise.Equals("")) {
+					// The target dragon has no disguises (probably missing content)
+					m_rewardData.value = "missing";
+				} else {
+					// We got a disguise!
+					m_rewardData.value = disguise;
 
-					if (disguise.Equals("")) {
-						m_rewardData.type = "suit";
-						m_rewardData.value = "missing";
-					} else {
-						bool leveled = Wardrobe.LevelUpDisguise(disguise);
+					// Level up the disguise
+					bool leveled = Wardrobe.LevelUpDisguise(disguise);
 
-						if (leveled) {
-							m_rewardData.type = "suit";
-							m_rewardData.value = disguise;
-						} else {
-							// give coins
-							int coins = Wardrobe.GetDisguiseValue(disguise);
-
-							UserProfile.AddCoins(coins);
-
-							m_rewardData.type = "coins";
-							m_rewardData.value = coins.ToString();
-						}
+					// If the disguise is max leveled, give coins instead
+					if(!leveled) {
+						// Give coins
+						m_rewardData.coins = (long)Wardrobe.GetDisguiseValue(disguise);
+						UserProfile.AddCoins(m_rewardData.coins);
 					}
+				}
 			} break;
 
 			case "pet": {
@@ -260,6 +265,7 @@ public class Egg {
 			} break;
 		}
 
+		// Save persistence
 		PersistenceManager.Save();
 
 		// Change state
