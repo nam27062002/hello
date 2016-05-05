@@ -322,7 +322,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Show/Hide buttons and HUD
 		//InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();	// Keep HUD hidden
 		//m_shopButton.GetComponent<ShowHideAnimator>().Show();
-		//m_callToActionButton.GetComponent<ShowHideAnimator>().Show();
+		m_callToActionButton.GetComponent<ShowHideAnimator>().Set(m_egg.eggData.rewardData.type != "coins", false);	// All reward types have action except "coins"
 		m_actionButtonsAnimator.GetComponent<ShowHideAnimator>().Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
@@ -338,12 +338,13 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void LaunchRewardAnimation() {
 		// Aux vars
 		DefinitionNode rewardDef = m_egg.eggData.rewardDef;
+		string rewardType = m_egg.eggData.rewardData.type;
 
 		// Activate info container
 		m_rewardInfo.GetComponent<ShowHideAnimator>().Show(false);
 
 		// Different initializations based on reward type
-		switch(rewardDef.GetAsString("type")) {
+		switch(rewardType) {
 			case "suit": {
 				// Get disguise def
 				DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, m_egg.eggData.rewardData.value);
@@ -355,9 +356,9 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Different texts if the disguise was just unlocked
 				int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
 				if(disguiseLevel == 1) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", disguiseDef.Get("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", disguiseDef.GetLocalized("tidName"));
 				} else {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", disguiseDef.Get("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", disguiseDef.GetLocalized("tidName"));
 				}
 			} break;
 
@@ -395,7 +396,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_rewardDescText.text.DOFade(0f, 0.15f).From().SetDelay(0.20f).SetEase(Ease.Linear).SetRecyclable(true);
 
 		// Create a fake reward view
-		switch(rewardDef.GetAsString("type")) {
+		switch(rewardType) {
 			case "dragon":
 			case "pet":
 			case "suit": {
@@ -417,7 +418,7 @@ public class OpenEggScreenController : MonoBehaviour {
 					m_rewardView.GetComponentInChildren<Animator>().SetTrigger("fly_idle");
 
 					// If it's a suit, apply it
-					if(rewardDef.GetAsString("type") == "suit") {
+					if(rewardType == "suit") {
 						m_rewardView.GetComponent<DragonEquip>().PreviewDisguise(m_egg.eggData.rewardData.value);
 					}
 
@@ -430,9 +431,14 @@ public class OpenEggScreenController : MonoBehaviour {
 
 			case "coins": {
 				// Create instance and attach it to the anchor
-				GameObject prefab = Resources.Load<GameObject>("");
+				GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
 				m_rewardView = GameObject.Instantiate<GameObject>(prefab);
 				m_rewardView.transform.SetParent(m_rewardAnchor, false);
+
+				// Quick'n'dirty transformation
+				Transform view = m_rewardView.FindTransformRecursive("view");
+				view.localScale = view.localScale * 3f;
+				view.localPosition = view.localPosition + (Vector3.up * 1f);
 
 				// Animate it
 				DOTween.Kill(m_rewardAnchor, true);
@@ -442,7 +448,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 
 		// If reward is a disguise, initialize and show powers
-		if(rewardDef.GetAsString("type") == "suit") {
+		if(rewardType == "suit") {
 			// Show
 			m_rewardPowers.GetComponent<ShowHideAnimator>().Show(false);
 
@@ -463,8 +469,8 @@ public class OpenEggScreenController : MonoBehaviour {
 
 				// Animate it
 				// TODO!! Cool unlock effect
-				powerIcon.transform.DOScale(2f, 0.25f).From().SetDelay(1f).SetEase(Ease.OutCubic).SetRecyclable(true);
-				powerIcon.GetComponent<CanvasGroup>().DOFade(0f, 0.15f).From().SetDelay(1f).SetRecyclable(true);
+				powerIcon.transform.DOScale(2f, 0.25f).From().SetDelay(0.65f + i * 0.15f).SetEase(Ease.OutCubic).SetRecyclable(true);
+				powerIcon.GetComponent<CanvasGroup>().DOFade(0f, 0.15f).From().SetDelay(0.65f + i * 0.15f).SetRecyclable(true);
 			}
 		} else {
 			m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
@@ -518,7 +524,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 
 		// Depending on opened egg's reward, perform different actions
-		switch(m_egg.eggData.rewardDef.GetAsString("type")) {
+		switch(m_egg.eggData.rewardData.type) {
 			case "suit": {
 				NavigationScreen disguiseScreen = screensController.GetScreen((int)MenuScreens.DISGUISES);				
 				disguiseScreen.FindComponentRecursive<DisguisesScreenController>().previewDisguise = m_egg.eggData.rewardData.value;
@@ -541,7 +547,25 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_state != State.IDLE) return;
 
 		// Show shop popup!
-		PopupManager.OpenPopupInstant(PopupEggShop.PATH);
+		//PopupManager.OpenPopupInstant(PopupEggShop.PATH);
+
+		// Get price and start purchase flow
+		long pricePC = m_egg.eggData.def.GetAsLong("pricePC");
+		if(UserProfile.pc >= pricePC) {
+			// Perform transaction
+			UserProfile.AddPC(-pricePC);
+			PersistenceManager.Save();
+
+			// Create a new egg instance
+			Egg purchasedEgg = Egg.CreateFromDef(m_egg.eggData.def);
+			purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
+
+			// Restart flow!
+			StartFlow(purchasedEgg);
+		} else {
+			// Open PC shop popup
+			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+		}
 	}
 
 	/// <summary>
