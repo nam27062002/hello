@@ -23,8 +23,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// References
 	[Separator("References")]
-	[SerializeField] private ShowHideAnimator m_disguiseTitle;
-	[SerializeField] private Localizer m_name;
+	[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
 	[SerializeField] private DisguisePowerIcon[] m_powers;
 	[SerializeField] private RectTransform m_layout;
 
@@ -115,7 +114,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/" + m_dragonSku);
 
 		// Hide all the info
-		m_disguiseTitle.ForceHide(false);
+		m_disguiseTitle.GetComponent<ShowHideAnimator>().ForceHide(false);
 		for(int i = 0; i < m_powerAnims.Length; i++) {
 			m_powerAnims[i].ForceHide(false);
 		}
@@ -253,15 +252,14 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Skip if pill is already the selected one
 		if(m_selectedPill == _pill) return;
 
-		// Show/Hide title
-		m_disguiseTitle.Hide(false);
-		m_disguiseTitle.Set(_pill != null);
+		// Update and Show/Hide title
+		ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
+		titleAnimator.Hide(false);
+		titleAnimator.Set(_pill != null);
+		m_disguiseTitle.InitFromDefinition(_pill.def);
 
 		// Remove highlight from previously selected pill
 		if(m_selectedPill != null) m_selectedPill.Select(false);
-
-		// Update name
-		m_name.Localize(_pill.tidName);
 
 		// Refresh power icons
 		// Except default disguise, which has no powers whatsoever

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: b9fac0378f11c499bb7d05021964e498
-timeCreated: 1462264725
+guid: cd6e02b7c7d1b4dfa81e48c178d98158
+timeCreated: 1462442320
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
@@ -70,6 +70,9 @@ ModelImporter:
     100124: Dragon_Tongue_02
     100126: Dragon_Tongue_03
     100128: //RootNode
+    100130: Dragon_LLeg_3
+    100132: Dragon_RLeg_3
+    100134: Fire_Dummy
     400000: Dragon_
     400002: Dragon_Chest
     400004: Dragon_Head
@@ -135,7 +138,10 @@ ModelImporter:
     400124: Dragon_Tongue_02
     400126: Dragon_Tongue_03
     400128: //RootNode
-    7400000: Eat
+    400130: Dragon_LLeg_3
+    400132: Dragon_RLeg_3
+    400134: Fire_Dummy
+    7400000: idle
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -159,10 +165,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Eat
+      name: idle
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 10
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -182,15 +188,8 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.31165338
-        functionName: AttackDealDamage
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.696793
-        functionName: AttackEnd
+      - time: 0.62017167
+        functionName: WingsSound
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

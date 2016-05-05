@@ -13,8 +13,11 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	public DisguisePillEvent OnPillClicked = new DisguisePillEvent();
 
 	//------------------------------------------//
-
+	// Will be NULL if default disguise
 	private DefinitionNode m_def;
+	public DefinitionNode def {
+		get { return m_def; }
+	}
 
 	private int m_level;
 
