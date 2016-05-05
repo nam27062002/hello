@@ -80,6 +80,36 @@ public static class GameObjectExt {
 		}
 	}
 
+	/// <summary>
+	/// Sets the parent of a transform (as the defaut SetParent() method would do)
+	/// and resets the child transform properties to default values.
+	/// </summary>
+	/// <param name="_t">The transform to be moved.</param>
+	/// <param name="_parent">The new parent.</param>
+	public static void SetParentAndReset(this Transform _t, Transform _parent) {
+		// Use the other version
+		_t.SetParentAndReset(_parent, Vector3.zero, Quaternion.identity, Vector3.one);
+	}
+
+	/// <summary>
+	/// Sets the parent of a transform (as the defaut SetParent() method would do)
+	/// and resets the child transform properties to the given values.
+	/// </summary>
+	/// <param name="_t">The transform to be moved.</param>
+	/// <param name="_parent">The new parent.</param>
+	/// <param name="_localPosition">New position.</param>
+	/// <param name="_localRotation">New rotation.</param>
+	/// <param name="_localScale">New scale.</param>
+	public static void SetParentAndReset(this Transform _t, Transform _parent, Vector3 _localPosition, Quaternion _localRotation, Vector3 _localScale) {
+		// Set parent
+		_t.SetParent(_parent);
+
+		// Reset transform
+		_t.localPosition = _localPosition;
+		_t.localRotation = _localRotation;
+		_t.localScale = _localScale;
+	}
+
 	//------------------------------------------------------------------//
 	// HIERARCHY NAVIGATION HELPERS										//
 	// Imported from Hungry Dragon										//

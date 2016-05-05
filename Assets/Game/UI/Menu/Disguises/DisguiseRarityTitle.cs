@@ -25,14 +25,12 @@ public class DisguiseRarityTitle : MonoBehaviour {
 	[Serializable]
 	private class RarityBackground {
 		public string rarity = "";
-		public Image image = null;
+		public GameObject gameObject = null;
 	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed References
-	[SerializeField] private Localizer m_nameText = null;
 	[Comment("There should be one background for each rarity (as defined in the content)", 10)]
 	[SerializeField] private List<RarityBackground> m_backgroundsByRarity = new List<RarityBackground>();
 
@@ -49,8 +47,7 @@ public class DisguiseRarityTitle : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Check required fields
-		Debug.Assert(m_nameText != null, "Required field!");
+		
 	}
 
 	//------------------------------------------------------------------------//
@@ -64,18 +61,51 @@ public class DisguiseRarityTitle : MonoBehaviour {
 		// Save definition
 		m_disguiseDef = _disguiseDef;
 
-		// Name
-		if(_disguiseDef == null) {
-			m_nameText.Localize("TID_DISGUISE_DEFAULT_NAME");
-		} else {
-			m_nameText.Localize(_disguiseDef.Get("tidName"));
-		}
-
 		// Choose right background
 		string rarity = m_disguiseDef == null ? "common" : m_disguiseDef.GetAsString("rarity");
 		for(int i = 0; i < m_backgroundsByRarity.Count; i++) {
+			// Is it a match?
+			bool match = (m_backgroundsByRarity[i].rarity == rarity);
+
 			// Only show target rarity background
-			m_backgroundsByRarity[i].image.gameObject.SetActive(m_backgroundsByRarity[i].rarity == rarity);
+			m_backgroundsByRarity[i].gameObject.SetActive(match);
+
+			// Set text
+			if(match) {
+				Localizer localizer = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<Localizer>();
+				if(localizer != null) {
+					if(_disguiseDef == null) {
+						localizer.Localize("TID_DISGUISE_DEFAULT_NAME");
+					} else {
+						localizer.Localize(_disguiseDef.Get("tidName"));
+					}
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Manually initializes with a hardcoded rarity value.
+	/// </summary>
+	/// <param name="_rarity">Rarity value.</param>
+	/// <param name="_text">Text to be displayed as name, already localized.</parm>
+	public void InitFromRarity(string _rarity, string _text) {
+		// Not using definition
+		m_disguiseDef = null;
+
+		// Choose right background
+		for(int i = 0; i < m_backgroundsByRarity.Count; i++) {
+			// Is it a match?
+			bool match = (m_backgroundsByRarity[i].rarity == _rarity);
+
+			// Only show target rarity background
+			m_backgroundsByRarity[i].gameObject.SetActive(match);
+
+			// Set text
+			if(match) {
+				Text text = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<Text>();
+				if(text != null) text.text = _text;
+			}
 		}
 	}
 

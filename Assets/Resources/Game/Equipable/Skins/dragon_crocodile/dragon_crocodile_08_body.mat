@@ -6,13 +6,12 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_baby_09_wings
-  m_Shader: {fileID: 4800000, guid: fdec87edad46940c7b29cc608e58dd7a, type: 3}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
+  m_Name: dragon_crocodile_08_body
+  m_Shader: {fileID: 4800000, guid: 2f8c595491dd543a8868ae13d5e98890, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: 2000
+  stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -20,7 +19,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 4e10fa1812ab044dfb22ac7ddf4d7c07, type: 3}
+          m_Texture: {fileID: 2800000, guid: 26cebcfffc24b4cc08a480437c7abccf, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -46,13 +45,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -61,6 +53,13 @@ Material:
       data:
         first:
           name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -87,7 +86,7 @@ Material:
       data:
         first:
           name: _DstBlend
-        second: 10
+        second: 0
       data:
         first:
           name: _Cutoff
@@ -99,7 +98,7 @@ Material:
       data:
         first:
           name: _ZWrite
-        second: 0
+        second: 1
       data:
         first:
           name: _Glossiness
@@ -122,15 +121,15 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
+          name: _Mode
         second: 0
       data:
         first:
-          name: _Mode
-        second: 3
+          name: _Metallic
+        second: 0
       data:
         first:
-          name: _Metallic
+          name: _EmissionScaleUI
         second: 0
     m_Colors:
       data:
@@ -145,3 +144,11 @@ Material:
         first:
           name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _ColorMultiply
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _ColorAdd
+        second: {r: 0, g: 0, b: 0, a: 0}
