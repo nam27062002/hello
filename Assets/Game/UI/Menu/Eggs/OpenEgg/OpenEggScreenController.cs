@@ -44,7 +44,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	[Separator("Rewards")]
 	[SerializeField] private GameObject m_rewardInfo = null;
-	[SerializeField] private Localizer m_rewardTypeText = null;
+	[SerializeField] private DisguiseRarityTitle m_rewardRarity = null;
 	[SerializeField] private Localizer m_rewardDescText = null;
 	[SerializeField] private GameObject m_rewardPowers = null;
 
@@ -172,6 +172,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_egg = null;
 		}
 
+		// Same with reward view
 		if(m_rewardView != null) {
 			GameObject.Destroy(m_rewardView);
 			m_rewardView = null;
@@ -322,7 +323,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Show/Hide buttons and HUD
 		//InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();	// Keep HUD hidden
 		//m_shopButton.GetComponent<ShowHideAnimator>().Show();
-		m_callToActionButton.GetComponent<ShowHideAnimator>().Set(m_egg.eggData.rewardData.type != "coins", false);	// All reward types have action except "coins"
+		m_callToActionButton.GetComponent<ShowHideAnimator>().Set(m_egg.eggData.rewardData.coins <= 0, false);	// All reward types have action except "coins"
 		m_actionButtonsAnimator.GetComponent<ShowHideAnimator>().Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
@@ -337,6 +338,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void LaunchRewardAnimation() {
 		// Aux vars
+		Egg.EggReward rewardData = m_egg.eggData.rewardData;
 		DefinitionNode rewardDef = m_egg.eggData.rewardDef;
 		string rewardType = m_egg.eggData.rewardData.type;
 
@@ -347,30 +349,26 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(rewardType) {
 			case "suit": {
 				// Get disguise def
-				DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, m_egg.eggData.rewardData.value);
+				DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
 
 				// Disguise rarity
-				// TODO!! Different background/color
-				m_rewardTypeText.Localize(rewardDef.Get("tidName"));
+				m_rewardRarity.InitFromRarity(disguiseDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
 
-				// Different texts if the disguise was just unlocked
+				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
 				int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
-				if(disguiseLevel == 1) {
+				if(rewardData.coins > 0) {
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", disguiseDef.GetLocalized("tidName"), StringUtils.FormatNumber(rewardData.coins));
+				} else if(disguiseLevel == 1) {
 					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", disguiseDef.GetLocalized("tidName"));
 				} else {
 					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", disguiseDef.GetLocalized("tidName"));
 				}
 			} break;
 
-			case "coins": {
-				m_rewardTypeText.Localize(rewardDef.Get("tidName"));
-				m_rewardDescText.Localize("TID_EGG_REWARD_COINS", m_egg.eggData.rewardData.value);
-			} break;
-
 			case "pet": {
 				// Pet rarity
-				// TODO!! Different background/color
-				m_rewardTypeText.Localize(rewardDef.Get("tidName"));
+				string rarity = rewardDef.sku.Replace("pet_", "");
+				m_rewardRarity.InitFromRarity(rarity, rewardDef.GetLocalized("tidName"));
 
 				// [AOC] TODO!!
 				//m_rewardDescText.Localize("TID_EGG_REWARD_PET", rewardDef.sku);
@@ -378,17 +376,20 @@ public class OpenEggScreenController : MonoBehaviour {
 			} break;
 
 			case "dragon": {
+				// Rarity
+				m_rewardRarity.InitFromRarity("epic", rewardDef.GetLocalized("tidName"));
+
 				// [AOC] TODO!!
-				m_rewardTypeText.Localize(rewardDef.Get("tidName"));
 				//m_rewardDescText.Localize("TID_EGG_REWARD_DRAGON", rewardDef.sku);
 				m_rewardDescText.Localize("TID_GEN_COMING_SOON");
 			} break;
 		}
 
-		// Type text animation
-		m_rewardTypeText.text.color = Colors.WithAlpha(m_rewardTypeText.text.color, 1f);
-		m_rewardTypeText.transform.DOScale(3f, 0.30f).From().SetEase(Ease.OutCubic).SetRecyclable(true);
-		m_rewardTypeText.text.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
+		// Rarity title animation
+		CanvasGroup rarityCanvasGroup = m_rewardRarity.ForceGetComponent<CanvasGroup>();
+		rarityCanvasGroup.alpha = 1f;
+		rarityCanvasGroup.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
+		m_rewardRarity.transform.DOScale(3f, 0.30f).From().SetEase(Ease.OutCubic).SetRecyclable(true);
 
 		// Description text animation
 		m_rewardDescText.text.color = Colors.WithAlpha(m_rewardDescText.text.color, 1f);
@@ -400,50 +401,45 @@ public class OpenEggScreenController : MonoBehaviour {
 			case "dragon":
 			case "pet":
 			case "suit": {
+				// Initialize reward view
+				// Attach it to the anchor and reset transformation
+				m_rewardView = new GameObject("RewardView");
+				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);
+
+				// Instantiate dragon view
 				DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, m_egg.eggData.def.GetAsString("dragonSku"));
 				if(dragonDef != null) {
 					// Create instance
 					GameObject prefab = Resources.Load<GameObject>(dragonDef.GetAsString("menuPrefab"));
-					m_rewardView = GameObject.Instantiate<GameObject>(prefab);
+					GameObject dragonObj = GameObject.Instantiate<GameObject>(prefab);
 
-					// Attach it to the anchor and reset transformation
+					// Attach it to the reward view and reset transformation
 					// The anchor is setup to display all dragons at scale 1
 					// [AOC] TODO!! Add some scale factor more or less proportional to content scale factor
-					m_rewardView.transform.SetParent(m_rewardAnchor);
-					m_rewardView.transform.localPosition = Vector3.zero;
-					m_rewardView.transform.localRotation = Quaternion.identity;
-					m_rewardView.transform.localScale = Vector3.one;
+					dragonObj.transform.SetParentAndReset(m_rewardView.transform);
 
 					// Launch fly animation
-					m_rewardView.GetComponentInChildren<Animator>().SetTrigger("fly_idle");
+					dragonObj.GetComponentInChildren<Animator>().SetTrigger("fly_idle");
 
 					// If it's a suit, apply it
 					if(rewardType == "suit") {
-						m_rewardView.GetComponent<DragonEquip>().PreviewDisguise(m_egg.eggData.rewardData.value);
+						dragonObj.GetComponent<DragonEquip>().PreviewDisguise(rewardData.value);
 					}
 
 					// Animate it
-					DOTween.Kill(m_rewardAnchor, true);
-					m_rewardAnchor.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
-					m_rewardAnchor.DOLocalRotate(m_rewardAnchor.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
+					dragonObj.transform.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
+					dragonObj.transform.DOLocalRotate(dragonObj.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
 				}
-			} break;
 
-			case "coins": {
-				// Create instance and attach it to the anchor
-				GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
-				m_rewardView = GameObject.Instantiate<GameObject>(prefab);
-				m_rewardView.transform.SetParent(m_rewardAnchor, false);
+				// If the reward is being replaced by coins, show it
+				if(rewardData.coins > 0) {
+					// Create instance
+					GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
+					GameObject coinsObj = GameObject.Instantiate<GameObject>(prefab);
 
-				// Quick'n'dirty transformation
-				Transform view = m_rewardView.FindTransformRecursive("view");
-				view.localScale = view.localScale * 3f;
-				view.localPosition = view.localPosition + (Vector3.up * 1f);
-
-				// Animate it
-				DOTween.Kill(m_rewardAnchor, true);
-				m_rewardAnchor.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
-				m_rewardAnchor.DOLocalRotate(m_rewardAnchor.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
+					// Attach it to the reward view and reset transformation
+					coinsObj.transform.SetParent(m_rewardView.transform, false);
+				}
 			} break;
 		}
 
