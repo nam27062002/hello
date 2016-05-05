@@ -12,6 +12,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
 	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
+	[CommentAttribute("Amount of points obtained after killing the whole flock. Points are multiplied by the amount of entities spawned.")]
 	[SerializeField] private int m_flockBonus = 0;
 
 	[Header("Activation")]
@@ -125,7 +126,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				// check if player has destroyed all the flock
 				if (m_flockBonus > 0) {
 					Reward reward = new Reward();
-					reward.score = m_flockBonus;
+					reward.score = (int)(m_flockBonus * m_entitiesKilled);
 					Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
 				}
 			} else {
@@ -183,7 +184,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	private void Spawn() {
-		m_entitySpawned = (uint)m_quantity.GetRandom();
+		if (m_entitiesKilled == m_entitySpawned) {
+			m_entitySpawned = (uint)m_quantity.GetRandom();
+		} else {
+			// If player didn't killed all the spawned entities we'll re spawn only the remaining alive.
+			// Also, this respawn will be instant.
+			m_entitySpawned = m_entitySpawned - m_entitiesKilled;
+		}
+
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			m_entities[i] = PoolManager.GetInstance(m_entityPrefab.name);
 			m_entityAlive++;

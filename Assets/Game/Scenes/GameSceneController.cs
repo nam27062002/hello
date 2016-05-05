@@ -308,6 +308,7 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
 			case EStates.COUNTDOWN: {
+				LevelManager.SetArtSceneActive(UserProfile.currentLevel);
 				// Start countdown timer
 				m_timer = COUNTDOWN;
 
