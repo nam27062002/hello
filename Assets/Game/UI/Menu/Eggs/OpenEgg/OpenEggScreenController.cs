@@ -450,7 +450,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardPowers.GetComponent<ShowHideAnimator>().Show(false);
 
 			// Aux vars
-			DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, m_egg.eggData.rewardData.value);
+			DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
 			int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
 
 			// Initialize with actual powers data
@@ -464,10 +464,61 @@ public class OpenEggScreenController : MonoBehaviour {
 				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power" + (i+1).ToString());
 				powerIcon.InitFromDefinition(powerDef, i >= disguiseLevel);
 
-				// Animate it
-				// TODO!! Cool unlock effect
-				powerIcon.transform.DOScale(2f, 0.25f).From().SetDelay(0.65f + i * 0.15f).SetEase(Ease.OutCubic).SetRecyclable(true);
-				powerIcon.GetComponent<CanvasGroup>().DOFade(0f, 0.15f).From().SetDelay(0.65f + i * 0.15f).SetRecyclable(true);
+				// Intro animation
+				float delay = 0.65f + i * 0.15f;
+				powerIcon.transform.DOScale(2f, 0.25f).From().SetDelay(delay).SetEase(Ease.OutCubic).SetRecyclable(true);
+				powerIcon.GetComponent<CanvasGroup>().DOFade(0f, 0.15f).From().SetDelay(delay).SetRecyclable(true);
+
+				// If just unlocked this power, add a nice unlock effect
+				// The power will just be unlocked if the power index matches the level of the disguise and there is no coins reward (meaning disguise is not already maxed)
+				GameObject godraysObj = powerIcon.FindObjectRecursive("godrayFX");	// Find previously instantiated effects first
+				if(i == (disguiseLevel - 1) && rewardData.coins <= 0) {
+					// Anim params
+					float speedMult = 1f;	// To easily adjust timings
+
+					// Show lock and animate it out
+					Image lockIcon = powerIcon.FindComponentRecursive<Image>("IconLock");
+					lockIcon.gameObject.SetActive(true);
+
+					// Lock scale up
+					delay += 0.1f;	// Sync with icon anim
+					lockIcon.transform.DOScale(4f, 1.0f * speedMult).SetDelay(delay).SetEase(Ease.OutExpo);
+
+					// Lock fade out (halfway through the scale up anim)
+					delay += 0.75f * speedMult;
+					lockIcon.DOFade(0f, 0.25f * speedMult).SetDelay(delay)
+						.OnComplete(() => {
+							// Reset icon for next time
+							lockIcon.color = Color.white; 
+							lockIcon.transform.localScale = Vector3.one;
+							lockIcon.gameObject.SetActive(false);
+						});
+
+					// If not already done, instantiate God Rays effect
+					if(godraysObj == null) {
+						GameObject prefab = Resources.Load<GameObject>("UI/Common/Effects/PF_GodRayFX");
+						godraysObj = GameObject.Instantiate<GameObject>(prefab);
+						godraysObj.name = "godrayFX";
+						godraysObj.transform.SetParentAndReset(powerIcon.transform);
+						(godraysObj.transform as RectTransform).anchoredPosition = Vector2.zero;
+						godraysObj.transform.SetSiblingIndex(0);	// At the bottom of the group
+					}
+					godraysObj.SetActive(true);
+
+					// Animate godrays effect
+					// Scale in
+					delay += -0.10f * speedMult;	// Around the same time as the lock starts fading out
+					godraysObj.transform.localScale = Vector3.zero;
+					godraysObj.transform.DOScale(3f, 0.15f * speedMult).SetDelay(delay);
+
+					// Scale back to default
+					delay += 0.15f * speedMult;	// Right after the scale in
+					godraysObj.transform.DOScale(1f, 0.25f * speedMult).SetDelay(delay);
+				} else {
+					// This power was not unlocked
+					// Disable godray effect, if any
+					if(godraysObj != null) godraysObj.SetActive(false);
+				}
 			}
 		} else {
 			m_rewardPowers.GetComponent<ShowHideAnimator>().Hide(false);
