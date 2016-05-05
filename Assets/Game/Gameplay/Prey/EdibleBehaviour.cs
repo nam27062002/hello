@@ -75,7 +75,7 @@ public class EdibleBehaviour : Initializable {
 
 	public override void Initialize() {
 		m_isBeingEaten = false;
-
+		m_beingHeld = false;
 		transform.rotation = m_originalRotation;
 		transform.localScale = m_originalScale;
 

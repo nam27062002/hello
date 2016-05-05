@@ -108,5 +108,6 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// </summary>
 	private void OnAnimFinished() {
 		gameObject.SetActive(false);
+		PoolManager.ReturnInstance( gameObject );
 	}
 }
