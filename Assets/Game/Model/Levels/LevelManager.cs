@@ -96,10 +96,21 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 		}
 
 		loadingTask = SceneManager.LoadSceneAsync(def.GetAsString("artScene"), LoadSceneMode.Additive);
-		if(DebugUtils.SoftAssert(loadingTasks != null, "The art scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
+		if(DebugUtils.SoftAssert(loadingTasks != null, "The art scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) 
+		{
 			loadingTasks.Add(loadingTask);
+			loadingTask.allowSceneActivation = true;
+
 		}
 
 		return loadingTasks.ToArray();
+	}
+
+	public static void SetArtSceneActive( string _sku )
+	{
+		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
+		Scene scene = SceneManager.GetSceneByName(def.GetAsString("artScene"));
+		SceneManager.SetActiveScene(scene);
+
 	}
 }
