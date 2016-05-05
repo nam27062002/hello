@@ -112,6 +112,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
@@ -124,6 +125,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
@@ -300,6 +302,11 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	private void OnBurned( Transform _entity, Reward _reward){
 		_reward.coins = (int)(_reward.coins * m_burnCoinsMultiplier);
 		OnKill( _entity, _reward );
+	}
+
+	private void OnFlockEaten(Transform _entity, Reward _reward) {
+		// Add the reward
+		ApplyReward(_reward, _entity);
 	}
 
 	/// <summary>

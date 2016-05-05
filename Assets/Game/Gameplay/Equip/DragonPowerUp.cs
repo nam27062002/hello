@@ -113,15 +113,15 @@ public class DragonPowerUp : MonoBehaviour {
 		// Every power type has a different format
 		switch(def.GetAsString("type")) {
 			case "hp_increase":	 {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0));
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0), Colors.lime.ToHexString("#"));
 			} break;
 
 			case "boost_increase": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0));
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0), Colors.teal.ToHexString("#"));
 			} break;
 
 			case "fury_increase": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0));
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0), Colors.red.ToHexString("#"));
 			} break;
 
 			case "dive": {
@@ -134,11 +134,11 @@ public class DragonPowerUp : MonoBehaviour {
 				int numHits = def.GetAsInt("param2");
 				switch(subtype) {
 					case "mine": {
-						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits));
+						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits), Colors.orange.ToHexString("#"));
 					} break;
 
 					case "poison": {
-						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits));
+						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits), Colors.skyBlue.ToHexString("#"));
 					} break;
 
 					default: {
@@ -148,18 +148,18 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			case "lives": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")));
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")), Colors.lime.ToHexString("#"));
 			} break;
 
 			case "dragonram": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")));
+				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")), Colors.orange.ToHexString("#"));
 			} break;
 			
 			case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
 				DefinitionNode entityDef = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, def.GetAsString("param1"));
-				return def.GetLocalized("tidDesc", entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(def.GetAsFloat("param2"), 0));
+				return def.GetLocalized("tidDesc", entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(def.GetAsFloat("param2"), 0), Colors.skyBlue.ToHexString("#"), Colors.lime.ToHexString("#"));
 			} break;
 
 			default: {

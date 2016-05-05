@@ -25,7 +25,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[Separator("References")]
 	[SerializeField] private ShowHideAnimator m_disguiseTitle;
 	[SerializeField] private Localizer m_name;
-	[SerializeField] private ShowHideAnimator[] m_powers;
+	[SerializeField] private DisguisePowerIcon[] m_powers;
 	[SerializeField] private RectTransform m_layout;
 
 	// Buttons
@@ -52,9 +52,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	private DisguisePill m_selectedPill;	// Pill corresponding to the selected disguise
 
 	// Powers
-	private DefinitionNode[] m_powerDefs = new DefinitionNode[3];
-	private Sprite[] m_powerIcons = new Sprite[3];
-	private Sprite[] m_allPowerIcons = null;
+	private ShowHideAnimator[] m_powerAnims = new ShowHideAnimator[3];
 
 	// Buy button
 	private DefinitionNode m_eggDef = null;	// Egg matching dragon sku
@@ -83,11 +81,13 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_pills[i].OnPillClicked.AddListener(OnPillClicked);
 		}
 
-		// Preload the powerup icon spritesheet
-		m_allPowerIcons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/powers/icons_powers"); 
-
 		m_dragonSku = "";
 		m_eggDef = null;
+
+		// Store some references
+		for(int i = 0; i < m_powers.Length; i++) {
+			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
+		}
 	}
 
 	/// <summary>
@@ -116,8 +116,8 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Hide all the info
 		m_disguiseTitle.ForceHide(false);
-		for(int i = 0; i < m_powers.Length; i++) {
-			m_powers[i].ForceHide(false);
+		for(int i = 0; i < m_powerAnims.Length; i++) {
+			m_powerAnims[i].ForceHide(false);
 		}
 
 		// Find out initial disguise
@@ -168,11 +168,14 @@ public class DisguisesScreenController : MonoBehaviour {
 			// Price
 			m_buyButton.FindComponentRecursive<Text>("TextPrice").text = StringUtils.FormatNumber(m_eggDef.GetAsInt("pricePC"));
 
-			// Create the 3D preview scene and initialize the raw image
-			RawImage eggPreviewArea = m_buyButton.GetComponentInChildren<RawImage>();
-			m_eggPreviewScene = EggUIScene3D.CreateEmpty();
-			m_eggPreviewScene.InitRawImage(ref eggPreviewArea);
+			// If the 3D preview scene was not created, do it now and link it to the raw image
+			if(m_eggPreviewScene == null) {
+				RawImage eggPreviewArea = m_buyButton.GetComponentInChildren<RawImage>();
+				m_eggPreviewScene = EggUIScene3D.CreateEmpty();
+				m_eggPreviewScene.InitRawImage(ref eggPreviewArea);
+			}
 
+			// Initialize with the target egg
 			// The scene will take care of everything
 			m_eggPreviewScene.SetEgg(Egg.CreateFromDef(m_eggDef));
 		}
@@ -200,12 +203,6 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_previewAnchor.gameObject.SetActive(false);
 		}
 
-		// Destroy Egg 3D scene
-		if(m_eggPreviewScene != null) {
-			UIScene3DManager.Remove(m_eggPreviewScene);
-			m_eggPreviewScene = null;
-		}
-
 		// Restore equipped disguise
 		if(m_equippedPill != null) {
 			Wardrobe.Equip(m_dragonSku, m_equippedPill.sku);
@@ -213,6 +210,17 @@ public class DisguisesScreenController : MonoBehaviour {
 			Wardrobe.Equip(m_dragonSku, "default");
 		}
 		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Destroy Egg 3D scene
+		if(m_eggPreviewScene != null) {
+			UIScene3DManager.Remove(m_eggPreviewScene);
+			m_eggPreviewScene = null;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -258,45 +266,26 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Refresh power icons
 		// Except default disguise, which has no powers whatsoever
 		if(_pill.isDefault) {
-			for(int i = 0; i < m_powers.Length; i++) {
-				m_powers[i].Hide();
+			// Hide all power icons
+			for(int i = 0; i < m_powerAnims.Length; i++) {
+				m_powerAnims[i].Hide();
 			}
 		} else {
-			// Get defs
+			// Init powers
 			DefinitionNode powerSetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, _pill.powerUpSet);
-			for (int i = 0; i < 3; i++) {
+			for(int i = 0; i < 3; i++) {
+				// Get def
 				string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
-				m_powerDefs[i] = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
-			}
+				DefinitionNode powerDef = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
-			// Update icons
-			for (int i = 0; i < m_powers.Length; i++) {
+				// Refresh data
+				bool locked = (i >= _pill.level);
+				m_powers[i].InitFromDefinition(powerDef, locked);
+
 				// Show
 				// Force an instant hide first to force the animation to be launched
-				m_powers[i].Hide();
-				m_powers[i].Show();
-
-				// Lock
-				m_powers[i].transform.FindChild("IconLock").gameObject.SetActive(i >= _pill.level);
-
-				// Icons
-				if(m_powerDefs[i] != null) {
-					// Search icon within the spritesheet
-					string iconName = m_powerDefs[i].GetAsString("icon");
-					Image img = m_powers[i].FindComponentRecursive<Image>("PowerIcon");
-					img.sprite = GetFromCollection(ref m_allPowerIcons, iconName);
-					img.SetNativeSize();
-
-					// Gray out if power is locked
-					if(i < _pill.level) {
-						img.color = Color.white;
-					} else {
-						img.color = Color.gray;
-					}
-
-					// Store for further use
-					m_powerIcons[i] = img.sprite;
-				}
+				m_powerAnims[i].Hide(false);
+				m_powerAnims[i].Show();
 			}
 		}
 
@@ -320,61 +309,6 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_selectedPill.Use(true);
 			m_equippedPill = m_selectedPill;
 			PersistenceManager.Save();
-		}
-	}
-
-	/// <summary>
-	/// A tooltip is about to be opened.
-	/// In this context, it means that a power button has been pressed.
-	/// </summary>
-	/// <param name="_tooltip">The tooltip about to be opened.</param>
-	/// <param name="_trigger">The button which triggered the event.</param>
-	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
-		// Find out which power has been tapped (buttons have the trigger component)
-		for(int i = 0; i < m_powers.Length; i++) {
-			if(m_powers[i].gameObject == _trigger.gameObject) {
-				// Found! Initialized tooltip with data from this power
-				DefinitionNode def = m_powerDefs[i];
-
-				// Name
-				_tooltip.FindComponentRecursive<Localizer>("PowerupNameText").Localize(def.Get("tidName"));
-
-				// Desc
-				_tooltip.FindComponentRecursive<Text>("PowerupDescText").text = DragonPowerUp.GetDescription(def.sku);	// Custom formatting depending on powerup type, already localized
-
-				// Icon
-				Image img = _tooltip.FindComponentRecursive<Image>("Icon");
-				img.sprite = m_powerIcons[i];
-				img.SetNativeSize();	// Icons already have the desired size
-
-				// Move arrow based on wich powerup has been tapped
-				// [AOC] Quick'n'dirty: hardcoded values
-				RectTransform arrowTransform = _tooltip.FindComponentRecursive<RectTransform>("Arrow");
-				if(arrowTransform != null) {
-					switch(i) {
-						case 0: {
-							arrowTransform.anchorMin = new Vector2(0f, 0f);
-							arrowTransform.anchorMax = new Vector2(0f, 0f);
-							arrowTransform.anchoredPosition = new Vector2(48f, 0f);
-						} break;
-
-						case 1: {
-							arrowTransform.anchorMin = new Vector2(0.5f, 0f);
-							arrowTransform.anchorMax = new Vector2(0.5f, 0f);
-							arrowTransform.anchoredPosition = Vector2.zero;
-						} break;
-
-						case 2: {
-							arrowTransform.anchorMin = new Vector2(1f, 0f);
-							arrowTransform.anchorMax = new Vector2(1f, 0f);
-							arrowTransform.anchoredPosition = new Vector2(-48f, 0f);
-						} break;
-					}
-				}
-
-				// We're done!
-				break;
-			}
 		}
 	}
 

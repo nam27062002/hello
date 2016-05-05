@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Globalization;
+using System.Text;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -154,6 +155,34 @@ public static class Colors {
 		 
 		// Create and return new color!
 		return new Color32(r, g, b, a).ToColor();
+	}
+
+	/// <summary>
+	/// Create a string with the hex representation of a color.
+	/// </summary>
+	/// <returns>The hex string.</returns>
+	/// <param name="_color">The color to be represented.</param>
+	/// <param name="_prefix">Prefix (i.e. "0x", "#").</param>
+	/// <param name="_includeAlpha">Whether to use rrggbb or rrggbbaa.</param>
+	public static string ToHexString(this Color _color, string _prefix = "", bool _includeAlpha = true) {
+		// Use string builder for memory performance
+		StringBuilder sb = new StringBuilder();
+
+		// Add prefix
+		sb.Append(_prefix);
+
+		// RGB
+		// https://msdn.microsoft.com/en-us/library/dwhawy9k.aspx
+		Color32 c = _color.ToColor32();
+		sb.Append(c.r.ToString("x2"));
+		sb.Append(c.g.ToString("x2"));
+		sb.Append(c.b.ToString("x2"));
+
+		// Alpha
+		if(_includeAlpha) sb.Append(c.a.ToString("x2"));
+
+		// Done!
+		return sb.ToString();
 	}
 
 	/// <summary>

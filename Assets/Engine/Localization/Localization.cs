@@ -295,7 +295,7 @@ public static class Localization
 		
 		while (startIndex > -1)
 		{
-			int endIndex = str.IndexOf (">");
+			int endIndex = str.IndexOf (">", startIndex);
 			
 			if (endIndex == -1)
 			{
@@ -304,11 +304,19 @@ public static class Localization
 			}
 			else
 			{
+				// Only do the replacement if the text is actually a known tid!
 				string tid = str.Substring(startIndex + 1, endIndex - startIndex - 1);
-				string text = Get(tid);
-				str = str.Replace ("<" + tid + ">", text);
+				if(Exists(tid)) {
+					// Replace!
+					string text = Get(tid);
+					str = str.Replace ("<" + tid + ">", text);
 
-				startIndex = str.IndexOf ("<");
+					// Find next one
+					startIndex = str.IndexOf ("<");
+				} else {
+					// Find next one
+					startIndex = str.IndexOf ("<", endIndex);
+				}
 			}
 		}
 
