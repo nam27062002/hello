@@ -389,6 +389,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		CanvasGroup rarityCanvasGroup = m_rewardRarity.ForceGetComponent<CanvasGroup>();
 		rarityCanvasGroup.alpha = 1f;
 		rarityCanvasGroup.DOFade(0f, 0.15f).From().SetEase(Ease.Linear).SetRecyclable(true);
+		m_rewardRarity.transform.localScale = Vector3.one;
 		m_rewardRarity.transform.DOScale(3f, 0.30f).From().SetEase(Ease.OutCubic).SetRecyclable(true);
 
 		// Description text animation
