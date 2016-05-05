@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
@@ -159,5 +160,20 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 		if(InstanceManager.player != null) {
 			InstanceManager.player.playable = !m_panel.gameObject.activeSelf;
 		}
+	}
+
+	public void OnUnlockCasablancaLevels(bool _value) {
+		List<DefinitionNode> levels = DefinitionsManager.GetDefinitions(DefinitionsCategory.LEVELS);
+		DefinitionsManager.SortByProperty(ref levels, "order", DefinitionsManager.SortType.NUMERIC);
+
+		for (int i = 1; i < levels.Count; i++) {
+			if (_value) {
+				levels[i].SetValue("comingSoon", "false");
+			} else {
+				levels[i].SetValue("comingSoon", "true");
+			}
+		}
+
+		Messenger.Broadcast(GameEvents.DEBUG_UNLOCK_LEVELS);
 	}
 }

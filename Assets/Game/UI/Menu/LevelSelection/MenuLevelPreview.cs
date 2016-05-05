@@ -40,6 +40,7 @@ public class MenuLevelPreview : MonoBehaviour {
 
 	// References
 	private GameObject m_lockInfoObj = null;
+	private GameObject m_debugInfoObj = null;
 	private Localizer m_unlockInfoText = null;
 	private PathFollower m_follower = null;
 	public PathFollower follower {
@@ -64,6 +65,8 @@ public class MenuLevelPreview : MonoBehaviour {
 
 		m_unlockInfoText = m_lockInfoObj.FindComponentRecursive<Localizer>("WarningText");
 		Debug.Assert(m_unlockInfoText != null, "Required child missing!");
+
+		m_debugInfoObj = gameObject.FindObjectRecursive("DebugInfo");
 	}
 
 	/// <summary>
@@ -72,6 +75,7 @@ public class MenuLevelPreview : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener(GameEvents.DEBUG_UNLOCK_LEVELS, RefreshLockInfo);
 
 		// Make sure all info is updated
 		RefreshLockInfo();
@@ -83,6 +87,7 @@ public class MenuLevelPreview : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener(GameEvents.DEBUG_UNLOCK_LEVELS, RefreshLockInfo);
 	}
 
 	//------------------------------------------------------------------------//
@@ -113,6 +118,12 @@ public class MenuLevelPreview : MonoBehaviour {
 					m_unlockInfoText.Localize("TID_LEVEL_UNLOCK_REQUIREMENT_PLURAL", StringUtils.FormatNumber(remainingDragonsToUnlock));
 				}
 			}
+		} 
+
+		if(m_debugInfoObj != null) {
+			Text txt = m_debugInfoObj.FindComponentRecursive<Text>();
+			txt.text = def.Get("tidName");
+			m_debugInfoObj.SetActive(!locked);
 		}
 	}
 
