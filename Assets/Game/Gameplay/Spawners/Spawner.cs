@@ -184,7 +184,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	private void Spawn() {
-		m_entitySpawned = (uint)m_quantity.GetRandom();
+		if (m_entitiesKilled == m_entitySpawned) {
+			m_entitySpawned = (uint)m_quantity.GetRandom();
+		} else {
+			// If player didn't killed all the spawned entities we'll re spawn only the remaining alive.
+			// Also, this respawn will be instant.
+			m_entitySpawned = m_entitySpawned - m_entitiesKilled;
+		}
+
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			m_entities[i] = PoolManager.GetInstance(m_entityPrefab.name);
 			m_entityAlive++;
