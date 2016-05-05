@@ -16,8 +16,12 @@ using System.Collections.Generic;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Generic collection of definitions.
-/// To be inherited with a definition type of your own.
+/// Generic serializable dictionary.
+/// MUST BE inherited with specific types in order to be exposed to Unity's inspector, using the [Serializable] tag.
+/// <example><code>
+/// [Serializable]
+/// public class MyDict : SerializableDictionary<string, GameObject> { }
+/// </code></example>
 /// Implements ISerializationCallbackReceiver to be able to edit definitions as an array, 
 /// but store them as a dictionary.
 /// See http://docs.unity3d.com/ScriptReference/ISerializationCallbackReceiver.OnBeforeSerialize.html
