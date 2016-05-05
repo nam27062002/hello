@@ -12,6 +12,7 @@ public enum GameEvents {
 	// Debug events
 	DEBUG_MENU_DRAGON_SELECTED = EngineEvents.END,
 	DEBUG_SIMULATION_FINISHED,
+	DEBUG_UNLOCK_LEVELS,
 
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
@@ -71,6 +72,8 @@ public enum GameEvents {
 	MISSION_UNLOCKED,			// params: Mission _mission
 	MISSION_COOLDOWN_FINISHED,	// params: Mission _mission
 	MISSION_STATE_CHANGED,		// params: Mission _mission, Mission.State _oldState, Mission.State _newState
+
+	SURVIVAL_BONUS_ACHIEVED,	// no params
 
 	// Egg management events
 	EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
