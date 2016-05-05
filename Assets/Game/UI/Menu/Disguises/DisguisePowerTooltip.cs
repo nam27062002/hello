@@ -27,7 +27,7 @@ public class DisguisePowerTooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Localizer m_nameText = null;
-	[SerializeField] private Localizer m_descriptionText = null;
+	[SerializeField] private Text m_descriptionText = null;
 	[Space]
 	[SerializeField] private Image m_powerIcon = null;
 	[SerializeField] private GameObject m_lockInfo = null;
@@ -84,7 +84,7 @@ public class DisguisePowerTooltip : MonoBehaviour {
 		m_nameText.Localize(_powerDef.Get("tidName"));
 
 		// Desc
-		m_descriptionText.text.text = DragonPowerUp.GetDescription(_powerDef.sku);	// Custom formatting depending on powerup type, already localized
+		m_descriptionText.text = DragonPowerUp.GetDescription(_powerDef.sku);	// Custom formatting depending on powerup type, already localized
 	}
 
 	/// <summary>
