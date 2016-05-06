@@ -93,6 +93,16 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get {  return instance.m_isHighScore; }
 	}
 
+	// Dragon progression - store dragon progression at the beginning of the game
+	private int m_dragonInitialLevel = 0;
+	public static int dragonInitialLevel {
+		get { return instance.m_dragonInitialLevel; }
+	}
+
+	private float m_dragonInitialLevelProgress = 0;
+	public static float dragonInitialLevelProgress {
+		get { return instance.m_dragonInitialLevelProgress; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -200,6 +210,10 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		instance.ParseSurvivalBonus( InstanceManager.player.data.tierDef.sku );
 
 		instance.m_isHighScore = false;
+
+		// Current dragon progress
+		instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
+		instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
 	}
 
 	/// <summary>
@@ -415,7 +429,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		{
 			m_isHighScore = true;
 			UserProfile.highScore = m_score;
-			UserProfile.Save();
+			PersistenceManager.Save();
 		}
 		else
 		{
