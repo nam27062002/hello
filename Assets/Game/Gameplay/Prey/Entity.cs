@@ -142,7 +142,8 @@ public class Entity : Initializable {
 
 	public override void Initialize() {
 		//	m_health = m_maxHealth;		
-		SetGolden((Random.Range(0f, 1f) <= goldenChance));
+		DragonTier tier = InstanceManager.player.data.tier;
+		SetGolden((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
 
 		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
 		m_givePC = (Random.Range(0f, 1f) <= pcChance);
