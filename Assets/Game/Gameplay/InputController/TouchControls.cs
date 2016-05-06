@@ -139,7 +139,7 @@ abstract public class TouchControls : MonoBehaviour {
 				{
 					if (m_boostWithHardPush)
 					{
-						if ( GameInput.touchPressure[0] > 0.5f )
+						if ( GameInput.touchPressure[0] > 0.85f )
 							touchAction = true;
 					}
 				}

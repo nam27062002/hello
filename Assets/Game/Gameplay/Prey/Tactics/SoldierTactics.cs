@@ -37,13 +37,13 @@ public class SoldierTactics : Initializable {
 
 		switch (m_nextState) {
 			case State.Wander:
-				if (m_sensor.alert) {
+				if (m_sensor.isInsideMaxArea) {
 					m_nextState = State.Attack;
 				}
 				break;
 
 			case State.Attack:
-				if (!m_sensor.alert) {
+				if (!m_sensor.isInsideMaxArea) {
 					m_nextState = State.Wander;
 				}
 				break;
