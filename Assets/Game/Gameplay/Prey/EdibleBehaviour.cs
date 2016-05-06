@@ -159,7 +159,7 @@ public class EdibleBehaviour : Initializable {
 		OnEatBehaviours(true);
 
 		// deactivate
-		gameObject.SetActive(false);
+		GetComponent<SpawnBehaviour>().EatOrBurn();
 	}
 
 	void OnEatBehaviours( bool _enable)

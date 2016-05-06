@@ -145,7 +145,9 @@ public class InflammableBehaviour : Initializable {
 							Collider c = GetComponent<Collider>();
 							if (c != null)
 								c.enabled = true;
-							gameObject.SetActive(false);
+
+							// deactivate
+							GetComponent<SpawnBehaviour>().EatOrBurn();
 						}
 					}break;
 				}
@@ -177,7 +179,9 @@ public class InflammableBehaviour : Initializable {
 
 			if (m_entity.health <= 0) {
 				EntityManager.instance.Unregister(m_entity);
-				
+
+				//
+
 				// Let heirs do their magic
 				OnBurn();
 
