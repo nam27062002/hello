@@ -294,13 +294,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 					}
 				}
 			}
-			else if (_canHold && entity.canBeHolded && (entity.holdFromTier <= m_tier) )
+			else if ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )
 			{
-				EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-				if (edible.CanBeEaten(m_motion.direction)) 
+				if (_canHold)
 				{
-					preyToHold = edible;
-					break;
+					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+					if (edible.CanBeEaten(m_motion.direction)) 
+					{
+						preyToHold = edible;
+						break;
+					}
 				}
 			}
 			else 
