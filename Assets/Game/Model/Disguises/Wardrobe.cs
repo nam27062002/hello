@@ -18,12 +18,18 @@ public class Wardrobe : Singleton<Wardrobe> {
 		public string disguise;
 	}
 
+	[Serializable]
+	public class DisguiseLevel {
+		public string disguise;
+		public int level;
+	}
+
 	/// <summary>
 	/// Auxiliar class for persistence load/save.
 	/// </summary>
 	[Serializable]
 	public class SaveData {
-		public int[] disguises = new int[0];
+		public DisguiseLevel[] disguises = new DisguiseLevel[0];
 		public DragonDisguise[] equiped = new DragonDisguise[0];
 	}
 
@@ -31,7 +37,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	private SortedList<string, int> m_disguises;
+	private Dictionary<string, int> m_disguises;
 	private Dictionary<string, string> m_equiped;
 
 
@@ -44,8 +50,8 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// </summary>
 	public static void InitFromDefinitions() {
 		List<string> skus = DefinitionsManager.GetSkuList(DefinitionsCategory.DISGUISES);
-		instance.m_disguises = new SortedList<string, int>(new AlphanumComparatorFast());
 
+		instance.m_disguises = new Dictionary<string, int>();
 		for (int i = 0; i < skus.Count; i++) {
 			instance.m_disguises.Add(skus[i], 0);
 		}
@@ -127,14 +133,13 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public static void Load(SaveData _data) {
-		int size = _data.disguises.Length;
-		IList<string> keys = instance.m_disguises.Keys;
-
-		for (int i = 0; i < size; i++) {
-			instance.m_disguises[keys[i]] = _data.disguises[i];
+		int disguisesLength = _data.disguises.Length;
+		for (int i = 0; i < disguisesLength; i++) {
+			instance.m_disguises[_data.disguises[i].disguise] = _data.disguises[i].level;
 		}
 
-		for (int k = 0; k < _data.equiped.Length; k++) {
+		int equipedLength = _data.equiped.Length;
+		for (int k = 0; k < equipedLength; k++) {
 			instance.m_equiped[_data.equiped[k].dragon] = _data.equiped[k].disguise;
 		}
 	}
@@ -144,15 +149,21 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public static SaveData Save() {
-		IList<int> values = instance.m_disguises.Values;
-
 		SaveData data = new SaveData();
-		data.disguises = new int[values.Count];
 
-		for (int i = 0; i < values.Count; i++) {
-			data.disguises[i] = values[i];
+		List<DisguiseLevel> saveDisguises = new List<DisguiseLevel>();
+		foreach (KeyValuePair<string, int> pair in instance.m_disguises) {
+			if (pair.Value > 0) {
+				DisguiseLevel dl = new DisguiseLevel();
+
+				dl.disguise = pair.Key;
+				dl.level = pair.Value;
+
+				saveDisguises.Add(dl);
+			}
 		}
-			
+		data.disguises = saveDisguises.ToArray();
+
 		int k = 0;
 		data.equiped = new DragonDisguise[instance.m_equiped.Count];
 		foreach (KeyValuePair<string, string> pair in instance.m_equiped) {
