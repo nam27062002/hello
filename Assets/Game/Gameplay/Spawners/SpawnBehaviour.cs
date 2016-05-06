@@ -16,36 +16,38 @@ public class SpawnBehaviour : MonoBehaviour {
 
 	private GameCameraController m_camera;
 
-	protected bool m_wasEaten;
+	private bool m_wasEatenOrBurned;
 
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	void Start() {
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
-		m_wasEaten = true;
 	}
 
 	void OnEnable() {
 		EntityManager.instance.Register(GetComponent<Entity>());
-		m_wasEaten = true;
+		m_wasEatenOrBurned = false;
 	}
 
 	void OnDisable() {
-		if ( EntityManager.instance != null )
+		if (EntityManager.instance != null)
 			EntityManager.instance.Unregister(GetComponent<Entity>());
 
-		if (m_spawner) 
-		{
-			m_spawner.RemoveEntity(gameObject, m_wasEaten);
+		if (m_spawner) {
+			m_spawner.RemoveEntity(gameObject, m_wasEatenOrBurned);
 			m_spawner = null;
 		}
+	}
+
+	public void EatOrBurn() {
+		m_wasEatenOrBurned = true;
+		gameObject.SetActive(false);
 	}
 
 	void LateUpdate() {
 		if (m_deactivate && m_camera.IsInsideDeactivationArea(transform.position)) {
 			if (m_spawner) {
-				m_wasEaten = false;
 				gameObject.SetActive(false);
 			}
 		}

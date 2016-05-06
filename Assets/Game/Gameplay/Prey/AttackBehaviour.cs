@@ -136,7 +136,9 @@ public abstract class AttackBehaviour : Initializable {
 				if ( !m_edible.IsBeingHeld() )
 				{
 					if (!m_sensor.isInsideMaxArea || (m_area != null && !m_area.Contains(transform.position))) {
-						m_sensor.Shutdown(m_retreatingTime);
+						if (m_retreatingTime > 0) {
+							m_sensor.Shutdown(m_retreatingTime);
+						}
 						m_nextState = State.Idle;
 					} else {
 						if (m_sensor.isInsideMinArea) {
@@ -301,7 +303,9 @@ public abstract class AttackBehaviour : Initializable {
 				m_attackCount++;
 				if (m_attackCount >= m_consecutiveAttacks) {
 					m_animator.SetBool("attack", false);
-					m_sensor.Shutdown(m_retreatingTime);
+					if (m_retreatingTime > 0) {
+						m_sensor.Shutdown(m_retreatingTime);
+					}
 					m_nextState = State.Idle;
 				}
 			}
