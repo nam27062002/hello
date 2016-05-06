@@ -28,17 +28,21 @@ public class HUDRevive : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[SerializeField] private Localizer m_timerText = null;
 	[SerializeField] private Text m_pcText = null;
-	[SerializeField] private Text m_reviveText = null;
+	[SerializeField] private GameObject m_freeReviveButton = null;
 
 	// Exposed setup
+	[Space]
 	[SerializeField] private float m_reviveAvailableSecs = 5f;	// [AOC] TODO!! From content
+	[SerializeField] private int m_freeRevivesPerGame = 2;	// [AOC] TODO!! From content, check design
 
 	// Internal references
 	private ShowHideAnimator m_animator = null;
 
 	// Internal logic
-	private int m_reviveCount = 0;
+	private int m_paidReviveCount = 0;
+	private int m_freeReviveCount = 0;
 	private DeltaTimer m_timer = new DeltaTimer();
 	private bool m_allowCurrencyPopup = true;
 
@@ -55,7 +59,8 @@ public class HUDRevive : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
 		m_timer.Stop();
-		m_reviveCount = 0;
+		m_paidReviveCount = 0;
+		m_freeReviveCount = 0;
 	}
 
 	/// <summary>
@@ -82,13 +87,43 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	void Update() {
 		if(!m_timer.IsStopped()) {
-			m_reviveText.text = Localization.Localize("Revive %U0", StringUtils.FormatNumber(Mathf.CeilToInt(m_timer.GetTimeLeft())));	// [AOC] HARDCODED!!
+			m_timerText.Localize(m_timerText.tid, StringUtils.FormatNumber(Mathf.CeilToInt(m_timer.GetTimeLeft())));
 			if(m_timer.Finished()) {
 				m_timer.Stop();
 				m_animator.Hide();
 				Messenger.Broadcast(GameEvents.PLAYER_DIED);
 			}
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Performs the revive logic
+	/// </summary>
+	private void DoRevive() {
+		// Revive!
+		bool wasStarving = InstanceManager.player.IsStarving();
+		bool wasCritical = InstanceManager.player.IsCritical();
+		InstanceManager.player.ResetStats(true);
+
+		// Disable status effects if required
+		if(wasStarving != InstanceManager.player.IsStarving()) {
+			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, InstanceManager.player.IsStarving());
+		}
+		if(wasCritical != InstanceManager.player.IsCritical()) {
+			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, InstanceManager.player.IsCritical());
+		}
+
+		// Stop timer
+		m_timer.Stop();
+
+		// Hide
+		m_animator.Hide();
+
+		// Restore timescale
+		Time.timeScale = 1f;
 	}
 
 	//------------------------------------------------------------------------//
@@ -100,31 +135,15 @@ public class HUDRevive : MonoBehaviour {
 	public void OnRevive() {
 		// Perform transaction
 		// If not enough funds, pause timer and open PC shop popup
-		long costPC = m_reviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
+		long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
 		if(UserProfile.pc >= costPC) {
-			// Revive!
-			m_reviveCount++;
-			bool wasStarving = InstanceManager.player.IsStarving();
-			bool wasCritical = InstanceManager.player.IsCritical();
-			InstanceManager.player.ResetStats(true);
-			// Check for starvation
-			if(wasStarving != InstanceManager.player.IsStarving()) {
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, InstanceManager.player.IsStarving());
-			}
-			if(wasCritical != InstanceManager.player.IsCritical()) {
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, InstanceManager.player.IsCritical());
-			}
-			m_timer.Stop();
-
 			// Perform transaction
 			UserProfile.AddPC(-costPC);
 			PersistenceManager.Save();
 
-			// Hide button
-			m_animator.Hide();
-
-			// Restore timescale
-			Time.timeScale = 1f;
+			// Do it!
+			m_paidReviveCount++;
+			DoRevive();
 		} else if(m_allowCurrencyPopup) {
 			// Open PC shop popup
 			PopupController popup = PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
@@ -144,15 +163,34 @@ public class HUDRevive : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// The free revive button has been clicked.
+	/// </summary>
+	public void OnFreeRevive() {
+		// [AOC] TODO!! Show a video ad!
+
+		// Increase counter
+		m_freeReviveCount++;
+
+		// Do it!
+		DoRevive();
+	}
+
+	/// <summary>
 	/// The player is KO.
 	/// </summary>
 	private void OnPlayerKo() {
+		// Initialize PC cost
 		if ( m_pcText != null )
-			m_pcText.text = StringUtils.FormatNumber(m_reviveCount + 1);	// [AOC] TODO!! Actual revive cost formula
+			m_pcText.text = StringUtils.FormatNumber(m_paidReviveCount + 1);	// [AOC] TODO!! Actual revive cost formula
 
+		// Free revive available?
+		m_freeReviveButton.SetActive(m_freeReviveCount < m_freeRevivesPerGame);
+
+		// Reset timer and control vars
 		m_timer.Start(m_reviveAvailableSecs);
 		m_allowCurrencyPopup = true;
 
+		// Show!
 		if ( m_animator != null )
 			m_animator.Show();
 

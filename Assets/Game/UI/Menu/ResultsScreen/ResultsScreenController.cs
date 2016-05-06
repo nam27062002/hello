@@ -13,7 +13,7 @@ public class ResultsScreenController : MonoBehaviour {
 	[SerializeField] private NumberTextAnimator m_coinsAnimator = null;
 	[SerializeField] private NumberTextAnimator m_bonusCoinsAnimator = null;
 
-	[SerializeField] private Text m_highScoreLabel = null;
+	[SerializeField] private Localizer m_highScoreLabel = null;
 	[SerializeField] private GameObject m_newHighScoreDeco = null;
 
 	[SerializeField] private Slider m_levelBar;
@@ -70,7 +70,7 @@ public class ResultsScreenController : MonoBehaviour {
 		m_coinsAnimator.SetValue(0, (int)(RewardManager.coins + survivalBonus));
 		m_bonusCoinsAnimator.SetValue(0, RewardManager.instance.CalculateSurvivalBonus()); //TODO: get bouns coins from Reward Manager
 
-		m_highScoreLabel.text = "High Score: " + StringUtils.FormatNumber(UserProfile.highScore);	// [AOC] HARDCODED!!
+		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(UserProfile.highScore));
 
 		m_newHighScoreDeco.SetActive(RewardManager.isHighScore);
 

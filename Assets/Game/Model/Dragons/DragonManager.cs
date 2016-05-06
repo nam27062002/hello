@@ -158,11 +158,11 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 
 		// Get the data for the new dragon
 		DragonData data = DragonManager.GetDragonData(_sku);
-		DebugUtils.SoftAssert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
+		Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
 
 		// Load the prefab for the dragon with the given ID
 		GameObject prefabObj = Resources.Load<GameObject>(data.def.GetAsString("gamePrefab"));
-		DebugUtils.SoftAssert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
+		Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property
 		playerObj = Instantiate<GameObject>(prefabObj);
