@@ -25,24 +25,21 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// The data - indexed by sku
+	// The data
+	// We will keep it in a dictionary, but have lists with commonly used sorting ways
 	private Dictionary<string, DragonData> m_dragonsBySku = null;
+	public static Dictionary<string, DragonData> dragonsBySku {
+		get { return instance.m_dragonsBySku; }
+	}
+
+	private List<DragonData> m_dragonsByOrder = null;
+	public static List<DragonData> dragonsByOrder {
+		get { return instance.m_dragonsByOrder; }
+	}
 
 	// Shortcut to get the data of the currently selected dragon
 	public static DragonData currentDragon {
 		get { return GetDragonData(UserProfile.currentDragon); }
-	}
-
-	public static int superFuryProgression
-	{
-		get
-		{
-			return UserProfile.superFuryProgression;
-		}
-		set
-		{
-			UserProfile.superFuryProgression = value;
-		}
 	}
 
 	//------------------------------------------------------------------//
@@ -60,6 +57,13 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 			newDragonData = new DragonData();
 			newDragonData.Init(defs[i]);
 			m_dragonsBySku[defs[i].sku] = newDragonData;
+		}
+
+		// Initialize ordered list
+		DefinitionsManager.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		m_dragonsByOrder = new List<DragonData>();
+		for(int i = 0; i < defs.Count; i++) {
+			m_dragonsByOrder.Add(m_dragonsBySku[defs[i].sku]);
 		}
 	}
 

@@ -182,6 +182,12 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		instance.m_gamesPlayed = _data.gamesPlayed;
 		instance.m_highScore = _data.highScore;
 		instance.m_superFuryProgression = _data.superFuryProgression;
+
+		// Some cheats override profile settings - will be saved with the next Save()
+		if(Prefs.GetBool("skipTutorialCheat")) {
+			instance.m_tutorialStep = TutorialStep.ALL;
+			Prefs.SetBool("skipTutorialCheat", false);
+		}
 	}
 
 	/// <summary>

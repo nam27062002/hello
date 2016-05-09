@@ -13,8 +13,8 @@ Properties {
 
 	_SpecExponent ("Specular Exponent", float) = 1
 
-	_NoiseColor ("Noise Color", Color) = (1,1,1,1)
-	_NoiseValue ("Noise Value",  Range (0, 1)) = 0
+	// _NoiseColor ("Noise Color", Color) = (1,1,1,1)
+	// _NoiseValue ("Noise Value",  Range (0, 1)) = 0
 
 	_BumpStrength("Bump Strength", float) = 3
 }
@@ -23,8 +23,9 @@ SubShader {
 	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 	LOD 100
 	
-	ZWrite Off
+	ZWrite On
 	Blend SrcAlpha OneMinusSrcAlpha 
+	Cull Back
 	
 	Pass {
 		CGPROGRAM
@@ -72,8 +73,8 @@ SubShader {
 
 			uniform float _SpecExponent;
 
-			uniform float4 _NoiseColor;
-			uniform float _NoiseValue;
+			// uniform float4 _NoiseColor;
+			// uniform float _NoiseValue;
 
 			uniform float _BumpStrength;
 

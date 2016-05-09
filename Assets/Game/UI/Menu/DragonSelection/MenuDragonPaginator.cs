@@ -30,9 +30,6 @@ public class MenuDragonPaginator : TabSystem {
 	// Exposed setup
 	[SerializeField] private GameObject m_buttonPrefab = null;
 	[SerializeField] private Tab m_dummyTab = null;
-
-	// Internal
-	private List<DefinitionNode> m_sortedDefs = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -45,13 +42,9 @@ public class MenuDragonPaginator : TabSystem {
 		Debug.Assert(m_buttonPrefab != null, "Required field!");
 		Debug.Assert(m_dummyTab != null, "Required field!");
 
-		// Get all definitions
-		m_sortedDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGONS);
-		DefinitionsManager.SortByProperty(ref m_sortedDefs, "order", DefinitionsManager.SortType.NUMERIC);
-
 		// Create a button for each dragon
 		// Re-use the loop to initialize selected dragon
-		for(int i = 0; i < m_sortedDefs.Count; i++) {
+		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
 			// Create a new instance of the prefab as a child of this object
 			// Will be auto-positioned by the Layout component
 			GameObject newInstanceObj = GameObject.Instantiate<GameObject>(m_buttonPrefab);
@@ -120,8 +113,8 @@ public class MenuDragonPaginator : TabSystem {
 		// Find out and select initial tab
 		int selectedIdx = 0;
 		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
-		for(int i = 0; i < m_sortedDefs.Count; i++) {
-			if(m_sortedDefs[i].sku == selectedSku) {
+		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
+			if(DragonManager.dragonsByOrder[i].def.sku == selectedSku) {
 				selectedIdx = i;
 				break;
 			}
@@ -138,8 +131,8 @@ public class MenuDragonPaginator : TabSystem {
 	/// <param name="_id">The id of the selected dragon.</param>
 	public void OnDragonSelected(string _sku) {
 		// Select the matching tab
-		for(int i = 0; i < m_sortedDefs.Count; i++) {
-			if(_sku == m_sortedDefs[i].sku) {
+		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
+			if(_sku == DragonManager.dragonsByOrder[i].def.sku) {
 				GoToScreen(i, NavigationScreen.AnimType.NONE);
 				break;
 			}

@@ -46,16 +46,16 @@ public class IncubatorIncubationInfo : MonoBehaviour {
 
 		// Get external assets
 		m_anim = GetComponent<ShowHideAnimator>();
+
+		// Subscribe to external events
+		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
+		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_ENDED, OnEggIncubationEnded);
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Subscribe to external events
-		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
-		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_ENDED, OnEggIncubationEnded);
-
 		// Perform a first refresh
 		Refresh();
 
