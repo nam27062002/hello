@@ -55,8 +55,6 @@ namespace LevelEditor {
 			EditorGUILayout.BeginVertical(); {
 				// Spacing
 				GUILayout.Space(5);
-
-
 				
 				// Type
 				EditorGUIUtility.labelWidth = 50f;
@@ -71,9 +69,12 @@ namespace LevelEditor {
 				}
 				EditorGUIUtility.labelWidth = 0f;
 
-
 				// Shape
-				if ( LevelEditor.settings.spawnerType != SpawnerType.PATH )
+				if ( LevelEditor.settings.spawnerType == SpawnerType.PATH ) 
+				{// Path spawners don't need a shape
+					LevelEditor.settings.spawnerShape = SpawnerShape.POINT;
+				}
+				else
 				{
 					EditorGUIUtility.labelWidth = 50f;
 					LevelEditor.settings.spawnerShape = (SpawnerShape)EditorGUILayout.EnumPopup("Shape:", LevelEditor.settings.spawnerShape, GUILayout.Height(20));
