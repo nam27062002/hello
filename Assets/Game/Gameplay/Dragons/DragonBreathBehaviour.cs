@@ -24,7 +24,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				}
 				case Type.Super:
 				{
-					return m_damage * 2;
+					return m_damage * m_superFuryDamageMultiplier;
 				}
 			}
 			return m_damage;
@@ -95,9 +95,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private float m_scoreToAddForNextFuryRushes;
 	private float m_maxScoreToAddForNextFuryRushes;
 
-	private float m_superFuryLengthModifier;
 	private float m_superFuryMax;
-	private float m_superFuryCoinsMultiplier;
+	protected float m_superFuryDurationModifier;
+	protected float m_superFuryCoinsMultiplier;
+	protected float m_superFuryDamageMultiplier;
+	protected float m_superFuryLengthMultiplier;
 
 	private DefinitionNode m_spawnEffects = null;
 	private DefinitionNode m_decorationEffects = null;
@@ -110,9 +112,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	void Awake()
 	{
 		DefinitionNode settings = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
-		m_superFuryLengthModifier = settings.GetAsFloat("superFuryLengthModifier", 1.2f);
 		m_superFuryMax = settings.GetAsFloat("superfuryMax", 8);
-		m_superFuryCoinsMultiplier = settings.GetAsFloat("superFuryCoinsMultiplier", 3.0f);
+		m_superFuryDurationModifier = settings.GetAsFloat("superFuryDurationModifier", 1.2f);
+		m_superFuryCoinsMultiplier = settings.GetAsFloat("superFuryCoinsMultiplier", 1.2f);
+		m_superFuryDamageMultiplier = settings.GetAsFloat("superFuryDamageMultiplier", 1.2f);
+		m_superFuryLengthMultiplier = settings.GetAsFloat("superFuryLengthMultiplier", 1.2f);
 	}
 
 	void Start() 
@@ -291,7 +295,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			case Type.Super:
 			{
 				// Set super gold rush progress
-				m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration * m_superFuryLengthModifier;
+				m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration * m_superFuryDurationModifier;
 
 				// Set coins multiplier for burn
 				RewardManager.burnCoinsMultiplier = m_superFuryCoinsMultiplier;
