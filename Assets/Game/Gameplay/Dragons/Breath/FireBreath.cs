@@ -152,7 +152,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 		float length = m_length;
 		if ( m_type == Type.Super )
-			length = m_length * 1.5f;
+			length = m_length * m_superFuryLengthMultiplier;
 
 		Vector3 flamesUpDir = Vector3.up;
 		bool hitingWater = false;
