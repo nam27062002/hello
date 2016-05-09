@@ -38,16 +38,16 @@ public class IncubatorOpenEggButton : MonoBehaviour {
 	private void Awake() {
 		// Get external assets
 		m_anim = GetComponent<ShowHideAnimator>();
+
+		// Subscribe to external events
+		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_ENDED, OnEggIncubationEnded);
+		Messenger.AddListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Subscribe to external events
-		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_ENDED, OnEggIncubationEnded);
-		Messenger.AddListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
-
 		// Setup initial visibility
 		m_anim.Set(EggManager.isReadyForCollection, false);
 	}
