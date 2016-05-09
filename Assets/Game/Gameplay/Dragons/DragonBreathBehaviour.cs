@@ -251,10 +251,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if ( DebugSettings.infiniteFire )
 					AddFury(m_furyMax - m_currentFury);	// Set to max fury
 				else if ( DebugSettings.infiniteSuperFire )
-					DragonManager.superFuryProgression = (int)m_superFuryMax;
+					UserProfile.superFuryProgression = (int)m_superFuryMax;
 			}
 
-			if ( DragonManager.superFuryProgression >= m_superFuryMax )
+			if ( UserProfile.superFuryProgression >= m_superFuryMax )
 			{
 				BeginFury( Type.Super );
 
@@ -323,14 +323,14 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		{
 			case Type.Standard:
 			{
-				DragonManager.superFuryProgression++;
+				UserProfile.superFuryProgression++;
 				m_currentFury = 0;
 				m_furyRushesCompleted++;
 			}break;
 			case Type.Super:
 			{
 				// Set super fury counter to 0
-				DragonManager.superFuryProgression = 0;
+				UserProfile.superFuryProgression = 0;
 			}break;
 
 		}
@@ -376,7 +376,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 		else
 		{
-			return DragonManager.superFuryProgression/m_superFuryMax;
+			return UserProfile.superFuryProgression/m_superFuryMax;
 		}
 	}
 

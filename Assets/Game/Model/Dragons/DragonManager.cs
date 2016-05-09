@@ -42,18 +42,6 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		get { return GetDragonData(UserProfile.currentDragon); }
 	}
 
-	public static int superFuryProgression
-	{
-		get
-		{
-			return UserProfile.superFuryProgression;
-		}
-		set
-		{
-			UserProfile.superFuryProgression = value;
-		}
-	}
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
