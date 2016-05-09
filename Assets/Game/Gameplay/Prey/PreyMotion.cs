@@ -280,7 +280,7 @@ public class PreyMotion : Initializable, MotionInterface {
 		// we'll keep the distance to our target for external components
 		m_lastSeekDistanceSqr = distanceSqr;
 
-		desiredVelocity -= m_velocity;
+		//desiredVelocity -= m_velocity;
 		m_steeringForces[Forces.Seek] += desiredVelocity;
 	}
 	
@@ -295,7 +295,7 @@ public class PreyMotion : Initializable, MotionInterface {
 			desiredVelocity *= (m_distanceAttenuation * m_distanceAttenuation) / distanceSqr;
 		}
 
-		desiredVelocity -= m_velocity;
+		//desiredVelocity -= m_velocity;
 		m_steeringForces[Forces.Flee] += desiredVelocity;
 	}
 
@@ -362,23 +362,27 @@ public class PreyMotion : Initializable, MotionInterface {
 		m_steering += m_steeringForces[Forces.Flee];
 
 		if (fleeMagnitude > 0 && seekMagnitude > 0) {
-			if ((m_steeringForces[Forces.Seek] + m_steeringForces[Forces.Flee]).magnitude < 2f) {
+			if ((m_steeringForces[Forces.Seek] + m_steeringForces[Forces.Flee]).magnitude < (seekMagnitude  + fleeMagnitude) / 2f) {
 				m_steering.Set(-m_steeringForces[Forces.Flee].y, m_steeringForces[Forces.Flee].x);
 				m_steering.Normalize();
 				m_steering *= seekMagnitude;
+				m_steering -= m_velocity;
 
 				Debug.DrawLine(m_position, m_position + m_steering, Color.blue);
 			}
+		} else {
+			if (fleeMagnitude > 0) m_steering -= m_velocity;
+			if (seekMagnitude > 0) m_steering -= m_velocity;
 		}
 			
-		m_steering += m_steeringForces[Forces.Flock];
-		m_steering += m_steeringForces[Forces.Collision];
+		m_steering += m_steeringForces[Forces.Flock] - m_velocity;
+		m_steering += m_steeringForces[Forces.Collision] - m_velocity;
 
 		// m_steering -= m_velocity;
 		m_steering.Normalize();
 
 		for (int i = 0; i < Forces.Count; i++) {
-			Debug.DrawLine(m_position, m_position + m_steeringForces[i], m_steeringColors[i]);
+			Debug.DrawLine(m_position, m_position + m_steeringForces[i] - m_velocity, m_steeringColors[i]);
 		}
 	}
 
@@ -391,16 +395,16 @@ public class PreyMotion : Initializable, MotionInterface {
 
 			Vector2 oldVelocity = m_velocity;
 			// ????????
-			/*Vector3 steering = m_steering * targetSpeed;
+			Vector3 steering = m_steering * targetSpeed;
 			Vector3 aaa = m_velocity;
 			Util.MoveTowardsVector3XYWithDamping( ref aaa, ref steering, 32.0f * Time.deltaTime, 8.0f);
 			m_velocity = (Vector2)aaa;
-			*/
 
+			/*
 			m_velocity = Vector2.ClampMagnitude(m_velocity + m_steering, Mathf.Lerp(m_currentSpeed, targetSpeed, Time.deltaTime * 10));
 			m_velocity *= m_speedMultiplier;
 			m_velocity = Vector2.Lerp(oldVelocity, m_velocity, 0.25f);
-			
+			*/
 			if (m_velocity != Vector2.zero) 
 			{
 				m_direction = m_velocity.normalized;

@@ -477,15 +477,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 4.3
-  m_sensorMaxRadius: 6.3
+  m_sensorMinRadius: 4.5
+  m_sensorMaxRadius: 6
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
   m_sensorOffset: {x: 0, y: 0, z: 0}
   m_target: 0
   m_senseDelay:
-    min: 0.25
-    max: 1.25
+    min: 0
+    max: 0.15
 --- !u!114 &11408074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -498,8 +498,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_groupAvoidRadiusRange:
-    min: 0.6
-    max: 0.8
+    min: 1.5
+    max: 1.75
 --- !u!114 &11418024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -586,12 +586,12 @@ MonoBehaviour:
   m_zOffset:
     min: -1
     max: 1
-  m_distanceAttenuation: 4
+  m_distanceAttenuation: 3.5
   m_checkCollisions: 1
   m_keepInsideArea: 0
   m_avoidWater: 0
   m_maxSpeed: 4.5
-  m_maxRunSpeed: 11
+  m_maxRunSpeed: 20
   m_speedVariationRange:
     min: 0.75
     max: 1.25
