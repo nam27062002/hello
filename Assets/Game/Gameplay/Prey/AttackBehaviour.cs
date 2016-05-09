@@ -119,11 +119,13 @@ public abstract class AttackBehaviour : Initializable {
 		switch (m_state) 
 		{
 			case State.Idle:
-				if ( !m_edible.IsBeingHeld() )
+				if (!m_edible.IsBeingHeld())
 				{
 					m_motion.Stop();
 					if (m_sensor.isInsideMaxArea) {
-						m_nextState = State.Pursuit;
+						if (m_area == null || m_area.Contains(transform.position)) {
+							m_nextState = State.Pursuit;
+						}
 					}
 				}
 				else
@@ -135,17 +137,27 @@ public abstract class AttackBehaviour : Initializable {
 			case State.Pursuit:
 				if ( !m_edible.IsBeingHeld() )
 				{
-					if (!m_sensor.isInsideMaxArea || (m_area != null && !m_area.Contains(transform.position))) {
+					bool goToIdle = false;
+
+					if (m_sensor.isInsideMaxArea) {
+						if (m_sensor.isInsideMinArea) {
+							m_nextState = State.Attack;
+						} else {
+							if (m_area != null && !m_area.Contains(transform.position)) {
+								goToIdle = true;
+							} else {
+								m_motion.Pursuit(m_target.position, m_dragon.velocity, m_dragon.maxSpeed);
+							}
+						}
+					} else {
+						goToIdle = true;
+					}
+
+					if (goToIdle) {
 						if (m_retreatingTime > 0) {
 							m_sensor.Shutdown(m_retreatingTime);
 						}
 						m_nextState = State.Idle;
-					} else {
-						if (m_sensor.isInsideMinArea) {
-							m_nextState = State.Attack;
-						} else {
-							m_motion.Pursuit(m_target.position, m_dragon.velocity, m_dragon.maxSpeed);
-						}
 					}
 				}
 				else

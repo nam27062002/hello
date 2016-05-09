@@ -53,6 +53,8 @@ public class SoldierTactics : Initializable {
 	private void ChangeState() {
 		switch (m_nextState) {
 			case State.Wander:
+				m_sensor.dragonTarget = InstanceManager.player.GetComponent<DragonMotion>().GetAttackPointNear(transform.position);
+
 				m_attack.enabled = false;
 				m_wander.enabled = true;
 				break;

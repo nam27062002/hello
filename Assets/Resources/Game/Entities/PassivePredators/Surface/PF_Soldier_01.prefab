@@ -1079,8 +1079,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 1.53, z: 3}
-  m_Center: {x: 0.00000041485742, y: 1.01, z: -0.00000019009686}
+  m_Size: {x: 3, y: 2, z: 3}
+  m_Center: {x: 0.00000041485742, y: 1.22, z: -0.00000019009686}
 --- !u!95 &9590370
 Animator:
   serializedVersion: 3
@@ -1120,6 +1120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 0
   m_faceLeftAngleY: 180
   m_faceRightAngleY: 0
@@ -1271,15 +1272,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 9
+  m_sensorMinRadius: 4
   m_sensorMaxRadius: 9
   m_sensorAngle: 360
   m_sensorAngleOffset: 0
   m_sensorOffset: {x: 0, y: 2.39, z: 0}
   m_target: 1
   m_senseDelay:
-    min: 0.25
-    max: 1.25
+    min: 0
+    max: 0
 --- !u!114 &11494724
 MonoBehaviour:
   m_ObjectHideFlags: 1
