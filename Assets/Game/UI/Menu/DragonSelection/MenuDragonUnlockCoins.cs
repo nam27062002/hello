@@ -77,7 +77,10 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {
-			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+
+			// Currency popup / Resources flow disabled for now
+			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 }

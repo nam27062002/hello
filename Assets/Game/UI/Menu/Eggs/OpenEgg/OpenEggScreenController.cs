@@ -593,9 +593,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		// This option should only be available on the IDLE state
 		if(m_state != State.IDLE) return;
 
-		// Show shop popup!
-		//PopupManager.OpenPopupInstant(PopupEggShop.PATH);
-
 		// Get price and start purchase flow
 		long pricePC = m_egg.eggData.def.GetAsLong("pricePC");
 		if(UserProfile.pc >= pricePC) {
@@ -611,7 +608,10 @@ public class OpenEggScreenController : MonoBehaviour {
 			StartFlow(purchasedEgg);
 		} else {
 			// Open PC shop popup
-			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+
+			// Currency popup / Resources flow disabled for now
+			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 

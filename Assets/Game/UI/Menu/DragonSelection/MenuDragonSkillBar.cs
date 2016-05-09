@@ -126,7 +126,10 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		// Enough resources?
 		if(UserProfile.coins < skillData.nextLevelUnlockPrice) {
 			// Show currency shop
-			PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+
+			// Currency popup / Resources flow disabled for now
+			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		} else {
 			// Perform transaction
 			UserProfile.AddCoins(-skillData.nextLevelUnlockPrice);
