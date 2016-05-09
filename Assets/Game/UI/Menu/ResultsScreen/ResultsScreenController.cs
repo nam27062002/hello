@@ -145,7 +145,8 @@ public class ResultsScreenController : MonoBehaviour {
 	}
 
 	private void GoToMenu() {
-		// [AOC] TODO!! Update global stats
+		// Update global stats
+		UserProfile.gamesPlayed = UserProfile.gamesPlayed + 1;
 
 		// Apply rewards to user profile
 		RewardManager.ApplyRewardsToProfile();
