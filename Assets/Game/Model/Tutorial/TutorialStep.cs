@@ -28,5 +28,6 @@ public enum TutorialStep {
 	FIRST_PLAY_SCREEN	= 1 << 1,
 	CONTROLS_POPUP		= 1 << 2,
 	DRAGON_SELECTION	= 1 << 3,
-	EGG_INCUBATOR		= 1 << 4
+	EGG_INCUBATOR		= 1 << 4,
+	ALL					= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

@@ -50,8 +50,9 @@ public class CPProgressionCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Reset full progress and restart application.
+	/// <param name="_skipTutorial">Whether to skip the tutorial on the resetted persistence file.</param>
 	/// </summary>
-	public void OnResetProgress() {
+	public void OnResetProgress(bool _skipTutorial) {
 		// If not in the menu, show feedback message and return
 		if(!CheckScene()) return;
 
@@ -61,8 +62,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Clear persistence
 		PersistenceManager.Clear();
 
-		// Reset game vars
-		GameVars.playScreenShown = false;
+		// If required, tutorial will be auto-completed next time we reload the profile
+		Prefs.SetBool("skipTutorialCheat", _skipTutorial);
 
 		// Restart game
 		FlowManager.Restart();
