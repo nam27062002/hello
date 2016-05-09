@@ -249,7 +249,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float damage = m_holdDamage;
 		// if active boost
 		if (m_boost.IsBoostActive())
+		{
 			damage *= m_holdBoostDamageMultiplier;
+			// Increase eating speed
+			m_animator.SetFloat("eatingSpeed", m_holdBoostDamageMultiplier / 2.0f);
+		}
+		else
+		{
+			// Change speed back
+			m_animator.SetFloat("eatingSpeed", 1);
+		}
 
 		m_holdingPrey.HoldingDamage( damage * Time.deltaTime);
 		if ( m_holdingPrey.isDead() )
@@ -277,6 +286,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey = null;
 		m_noAttackTime = m_holdStunTime;
 		m_animator.SetBool("eat", false);
+
+		// Set back default speed
+		m_animator.SetFloat("eatingSpeed", 1);
 	}
 
 	private void Swallow(EdibleBehaviour _prey) {
