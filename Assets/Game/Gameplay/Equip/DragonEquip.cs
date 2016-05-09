@@ -96,7 +96,7 @@ public class DragonEquip : MonoBehaviour {
 		Renderer renderer = GetComponentInChildren<Renderer>();
 		Material[] materials = renderer.materials;
 		materials[0] = bodyMat;
-		materials[1] = wingsMat;
+		// materials[1] = wingsMat;	// TODO(miguel): set it back when propertly done
 		renderer.materials = materials;
 	}
 }
