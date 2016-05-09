@@ -322,7 +322,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Show/Hide buttons and HUD
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
-		m_callToActionButton.GetComponent<ShowHideAnimator>().Set(m_egg.eggData.rewardData.coins <= 0, false);	// All reward types have action except "coins"
+		//m_callToActionButton.GetComponent<ShowHideAnimator>().Show(false);	// Always visible for now
 		m_actionButtonsAnimator.GetComponent<ShowHideAnimator>().Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
