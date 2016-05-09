@@ -32,10 +32,13 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		public long coins = 0;
 		public long pc = 0;
 		public string currentDragon = "";	// sku
-		public int superFuryProgression = 0;
-		public long highScore = 0;
 		/*[SkuList(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
 		[EnumMask] public TutorialStep tutorialStep = TutorialStep.INIT;
+
+		// Game stats
+		public int gamesPlayed = 0;
+		public long highScore = 0;
+		public int superFuryProgression = 0;
 	}
 
 	//------------------------------------------------------------------------//
@@ -71,10 +74,17 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		set { instance.m_currentLevel = value; }
 	}
 
-	[SerializeField] private int m_superFuryProgression = 0;
-	public static int superFuryProgression {
-		get { return instance.m_superFuryProgression; }
-		set { instance.m_superFuryProgression = value; }
+	[SerializeField] private TutorialStep m_tutorialStep;
+	public static TutorialStep tutorialStep { 
+		get { return instance.m_tutorialStep; }
+		set { instance.m_tutorialStep = value; }
+	}
+
+	[Separator("Game Stats")]
+	[SerializeField] private int m_gamesPlayed = 0;
+	public static int gamesPlayed {
+		get { return instance.m_gamesPlayed; }
+		set { instance.m_gamesPlayed = value; }
 	}
 
 	[SerializeField] private long m_highScore = 0;
@@ -82,11 +92,11 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		get { return instance.m_highScore; }
 		set { instance.m_highScore = value; }
 	}
-
-	[SerializeField] private TutorialStep m_tutorialStep;
-	public static TutorialStep tutorialStep { 
-		get { return instance.m_tutorialStep; }
-		set { instance.m_tutorialStep = value; }
+	
+	[SerializeField] private int m_superFuryProgression = 0;
+	public static int superFuryProgression {
+		get { return instance.m_superFuryProgression; }
+		set { instance.m_superFuryProgression = value; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -159,13 +169,19 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public static void Load(SaveData _data) {
 		// Just read values from persistence object
+		// Economy
 		instance.m_coins = _data.coins;
 		instance.m_pc = _data.pc;
+
+		// Game settings
 		instance.m_currentDragon = _data.currentDragon;
 		instance.m_currentLevel = _data.currentLevel;
 		instance.m_tutorialStep = _data.tutorialStep;
-		instance.m_superFuryProgression = _data.superFuryProgression;
+
+		// Game stats
+		instance.m_gamesPlayed = _data.gamesPlayed;
 		instance.m_highScore = _data.highScore;
+		instance.m_superFuryProgression = _data.superFuryProgression;
 	}
 
 	/// <summary>
@@ -177,13 +193,19 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		SaveData data = new SaveData();
 
 		// Initialize it
+		// Economy
 		data.coins = instance.m_coins;
 		data.pc = instance.m_pc;
+
+		// Game settings
 		data.currentDragon = instance.m_currentDragon;
 		data.currentLevel = instance.m_currentLevel;
 		data.tutorialStep = instance.m_tutorialStep;
-		data.superFuryProgression = instance.m_superFuryProgression;
+
+		// Game stats
+		data.gamesPlayed = instance.m_gamesPlayed;
 		data.highScore = instance.m_highScore;
+		data.superFuryProgression = instance.m_superFuryProgression;
 
 		// Return it
 		return data;

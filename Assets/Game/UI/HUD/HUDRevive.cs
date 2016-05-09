@@ -35,7 +35,8 @@ public class HUDRevive : MonoBehaviour {
 	// Exposed setup
 	[Space]
 	[SerializeField] private float m_reviveAvailableSecs = 5f;	// [AOC] TODO!! From content
-	[SerializeField] private int m_freeRevivesPerGame = 2;	// [AOC] TODO!! From content, check design
+	[SerializeField] private int m_freeRevivesPerGame = 2;	// [AOC] TODO!! From content
+	[SerializeField] private int m_minGamesBeforeFreeReviveAvailable = 3;	// [AOC] TODO!! From content
 
 	// Internal references
 	private ShowHideAnimator m_animator = null;
@@ -174,12 +175,12 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	public void OnFreeRevive() {
 		// [AOC] TODO!! Show a video ad!
+		// Open placeholder popup
+		PopupController popup = PopupManager.OpenPopupInstant(PopupAdRevive.PATH);
+		popup.OnClosePostAnimation.AddListener(OnAdClosed);
 
-		// Increase counter
-		m_freeReviveCount++;
-
-		// Do it!
-		DoRevive();
+		// Pause timer
+		m_timer.Stop();
 	}
 
 	/// <summary>
@@ -188,10 +189,10 @@ public class HUDRevive : MonoBehaviour {
 	private void OnPlayerKo() {
 		// Initialize PC cost
 		if ( m_pcText != null )
-			m_pcText.text = StringUtils.FormatNumber(m_paidReviveCount + 1);	// [AOC] TODO!! Actual revive cost formula
+			m_pcText.text = StringUtils.FormatNumber((m_freeReviveCount + m_paidReviveCount) + 1);	// [AOC] TODO!! Actual revive cost formula
 
 		// Free revive available?
-		m_freeReviveButton.SetActive(m_freeReviveCount < m_freeRevivesPerGame);
+		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UserProfile.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
 
 		// Reset timer and control vars
 		m_timer.Start(m_reviveAvailableSecs);
@@ -203,5 +204,14 @@ public class HUDRevive : MonoBehaviour {
 
 		// Slow motion
 		Time.timeScale = 0.25f;
+	}
+
+	/// <summary>
+	/// Ad has finished, free revive!
+	/// </summary>
+	private void OnAdClosed() {
+		// Do it!
+		m_freeReviveCount++;
+		DoRevive();
 	}
 }

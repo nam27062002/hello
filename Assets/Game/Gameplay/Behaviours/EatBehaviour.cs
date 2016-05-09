@@ -58,8 +58,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected float m_holdStunTime;
 	protected float m_holdDamage;
+	protected float m_holdBoostDamageMultiplier;
 	protected float m_holdHealthGainRate;
 	protected float m_holdDuration;
+
+	protected DragonBoostBehaviour m_boost;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -68,6 +71,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_eatingTimer = 0;
 		m_burpTime = 0;
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
+		m_boost = GetComponent<DragonBoostBehaviour>();
 
 		m_prey = new List<PreyData>();
 		m_bloodEmitter = new List<GameObject>();
@@ -77,6 +81,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		GetMouth();
 		m_holdStunTime = 0.5f;
 		m_holdDamage = 10;
+		m_holdBoostDamageMultiplier = 3;
 		m_holdHealthGainRate = 10;
 		m_holdDuration = 1;
 	}
@@ -89,6 +94,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			m_holdStunTime = def.GetAsFloat("stunTime");
 			m_holdDamage = def.GetAsFloat("damage");
+			m_holdBoostDamageMultiplier = def.GetAsFloat("boostMultiplier");
 			m_holdHealthGainRate = def.GetAsFloat("healthDrain");
 			m_holdDuration = def.GetAsFloat("duration");
 		}
@@ -239,7 +245,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 
 		// damage prey
-		m_holdingPrey.HoldingDamage( m_holdDamage * Time.deltaTime);
+
+		float damage = m_holdDamage;
+		// if active boost
+		if (m_boost.IsBoostActive())
+			damage *= m_holdBoostDamageMultiplier;
+
+		m_holdingPrey.HoldingDamage( damage * Time.deltaTime);
 		if ( m_holdingPrey.isDead() )
 		{
 			m_holdingPrey.OnSwallow( m_mouth );
