@@ -258,7 +258,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128296}
-  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
+  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -449,8 +449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 3.6
-  m_sensorMaxRadius: 4
+  m_sensorMinRadius: 4.7
+  m_sensorMaxRadius: 5
   m_sensorAngle: 360
   m_sensorAngleOffset: 218
   m_sensorOffset: {x: 0, y: 0, z: 0}
@@ -579,8 +579,8 @@ MonoBehaviour:
   m_checkCollisions: 1
   m_keepInsideArea: 0
   m_avoidWater: 1
-  m_maxSpeed: 1.85
-  m_maxRunSpeed: 3.6
+  m_maxSpeed: 3.85
+  m_maxRunSpeed: 5.6
   m_speedVariationRange:
     min: 0.75
     max: 1.25
@@ -597,6 +597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 1
   m_faceLeftAngleY: 180
   m_faceRightAngleY: 0
@@ -634,7 +635,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
-  m_maxHealth: 1
   m_ashesAsset: PF_Ash_Crow
   m_dissolveTime: 1
   m_explosionPrefab: {fileID: 0}
