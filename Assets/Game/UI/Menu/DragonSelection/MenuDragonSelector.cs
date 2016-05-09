@@ -31,11 +31,6 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 		get { return m_selectedIdx; }
 	}
 
-	private List<DefinitionNode> m_sortedDefs = null;
-	public List<DefinitionNode> sortedDefs {
-		get { return m_sortedDefs; }
-	}
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -50,14 +45,10 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Store a reference to all dragon defs sorted
-		m_sortedDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGONS);
-		DefinitionsManager.SortByProperty(ref m_sortedDefs, "order", DefinitionsManager.SortType.NUMERIC);
-
 		// Figure out initial index
 		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
-		for(int i = 0; i < m_sortedDefs.Count; i++) {
-			if(selectedSku == m_sortedDefs[i].sku) {
+		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
+			if(selectedSku == DragonManager.dragonsByOrder[i].def.sku) {
 				m_selectedIdx = i;
 				break;
 			}
@@ -94,10 +85,10 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// <param name="_idx">Index of the dragon we want to be the current one.</param>
 	public void SetSelectedDragon(int _idx) {
 		// Clamp index
-		_idx = Mathf.Clamp(_idx, 0, m_sortedDefs.Count);
+		_idx = Mathf.Clamp(_idx, 0, DragonManager.dragonsByOrder.Count);
 
 		// Select by sku
-		SetSelectedDragon(m_sortedDefs[_idx].sku);
+		SetSelectedDragon(DragonManager.dragonsByOrder[_idx].def.sku);
 	}
 
 	//------------------------------------------------------------------//
@@ -125,14 +116,14 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	public void SelectNextDragon(bool _loop) {
 		// Figure out next dragon's sku
 		int newSelectedIdx = m_selectedIdx + 1;
-		if(newSelectedIdx >= m_sortedDefs.Count) {
+		if(newSelectedIdx >= DragonManager.dragonsByOrder.Count) {
 			if(!_loop) return;
 			newSelectedIdx = 0;
 		}
 
 		// Change selection
 		m_selectedIdx = newSelectedIdx;
-		SetSelectedDragon(m_sortedDefs[m_selectedIdx].sku);
+		SetSelectedDragon(DragonManager.dragonsByOrder[m_selectedIdx].def.sku);
 	}
 
 	/// <summary>
@@ -144,12 +135,12 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 		int newSelectedIdx = m_selectedIdx - 1;
 		if(newSelectedIdx < 0) {
 			if(!_loop) return;
-			newSelectedIdx = m_sortedDefs.Count - 1;
+			newSelectedIdx = DragonManager.dragonsByOrder.Count - 1;
 		}
 
 		// Change selection
 		m_selectedIdx = newSelectedIdx;
-		SetSelectedDragon(m_sortedDefs[m_selectedIdx].sku);
+		SetSelectedDragon(DragonManager.dragonsByOrder[m_selectedIdx].def.sku);
 	}
 
 	/// <summary>
