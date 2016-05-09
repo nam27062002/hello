@@ -144,7 +144,14 @@ public class HUDRevive : MonoBehaviour {
 			// Do it!
 			m_paidReviveCount++;
 			DoRevive();
-		} else if(m_allowCurrencyPopup) {
+		} else {
+			// Currency popup / Resources flow disabled for now
+			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		}
+
+		// [AOC] TEMP!! Disable currency popup
+		/*
+		else if(m_allowCurrencyPopup) {
 			// Open PC shop popup
 			PopupController popup = PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 			popup.OnClosePostAnimation.AddListener(OnRevive);	// [AOC] Quick'n'dirty: try to revive again, but don't show the popup twice if we're out of currency!
@@ -159,7 +166,7 @@ public class HUDRevive : MonoBehaviour {
 
 			// Resume timer
 			m_timer.Resume();
-		}
+		}*/
 	}
 
 	/// <summary>
