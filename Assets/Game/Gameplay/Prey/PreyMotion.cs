@@ -375,14 +375,17 @@ public class PreyMotion : Initializable, MotionInterface {
 			if (seekMagnitude > 0) m_steering -= m_velocity;
 		}
 			
-		m_steering += m_steeringForces[Forces.Flock] - m_velocity;
-		m_steering += m_steeringForces[Forces.Collision] - m_velocity;
+		if (m_steeringForces[Forces.Flock] != Vector2.zero) {
+			m_steering += m_steeringForces[Forces.Flock] - m_velocity;
+		}
+			
+		m_steering += m_steeringForces[Forces.Collision];
 
 		// m_steering -= m_velocity;
 		m_steering.Normalize();
 
 		for (int i = 0; i < Forces.Count; i++) {
-			Debug.DrawLine(m_position, m_position + m_steeringForces[i] - m_velocity, m_steeringColors[i]);
+			Debug.DrawLine(m_position, m_position + m_steeringForces[i], m_steeringColors[i]);
 		}
 	}
 
