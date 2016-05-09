@@ -43,6 +43,10 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_fpsCounter; }
 	}
 
+	// Exposed setup
+	[Space]
+	[SerializeField] private float m_activationTime = 3f;
+
 	// Internal logic
 	private float m_activateTimer;
 	const int m_NumDeltaTimes = 30;
@@ -77,14 +81,20 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 
 	protected void Update()
 	{
-		if ( Input.touchCount > 0 )
+		if ( Input.touchCount > 0 || Input.GetMouseButton(0))
 		{
-			Touch t = Input.GetTouch(0);
-			Debug.Log( t.position );
-			if (t.position.x < (Screen.width * 0.1f) && t.position.y < (Screen.height * 0.1f))
+			Vector2 pos = Vector2.zero;
+			if(Input.touchCount > 0) {
+				Touch t = Input.GetTouch(0);
+				pos = t.position;
+			} else {
+				pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+			}
+
+			if (pos.x < (Screen.width * 0.1f) && pos.y < (Screen.height * 0.1f))
 			{
 				m_activateTimer += Time.deltaTime;
-				if ( m_activateTimer > 3.0f )
+				if ( m_activateTimer > m_activationTime )
 				{
 					Toggle();
 					m_activateTimer = 0;
