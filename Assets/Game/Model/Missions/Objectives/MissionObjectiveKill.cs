@@ -66,27 +66,27 @@ public class MissionObjectiveKill : MissionObjective {
 
 		// Any type
 		if(m_targets.Length == 0) {
-			typeStr = Localization.Localize("enemies");	// [AOC] HARDCODED!!
-		}
-
-		// First type
-		if(m_targets.Length > 0) {
-			typeStr = m_targets[0];
-
+			typeStr = Localization.Localize("TID_MISSION_OBJECTIVE_GENERIC_ENEMIES");
 		}
 
 		// Next types
-		for(int i = 1; i < m_targets.Length; i++) {
-			// Comma separated list except the last one in the list
-			if(i == m_targets.Length - 1) {
-				typeStr += Localization.Localize(" or ");	// [AOC] HARDCODED!!
-			} else {
-				typeStr += Localization.Localize(", ");	// [AOC] HARDCODED!!
+		for(int i = 0; i < m_targets.Length; i++) {
+			// Comma separated list except the first and last one in the list
+			if(i > 0) {
+				if(i == m_targets.Length - 1) {
+					typeStr += Localization.Localize("TID_GEN_LIST_SEPARATOR_OR");
+				} else {
+					typeStr += Localization.Localize("TID_GEN_LIST_SEPARATOR");
+				}
 			}
 
-			// Attach name
-			// [AOC] TODO!! Use TIDs!!
-			typeStr += m_targets[i];
+			// Add type name
+			DefinitionNode targetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, m_targets[0]);
+			if(targetDef != null) {
+				typeStr = targetDef.GetLocalized("tidName");
+			} else {
+				typeStr = m_targets[i];
+			}
 		}
 
 		// Compose full text and return
