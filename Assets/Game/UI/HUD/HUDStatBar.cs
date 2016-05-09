@@ -223,8 +223,8 @@ public class HUDStatBar : MonoBehaviour {
 	{
 		switch (m_type) 
 		{
-			case Type.Health: 	return m_scaler.referenceResolution.x * 0.8f;
-			case Type.Energy:	return m_scaler.referenceResolution.x * 0.8f;
+			case Type.Health: 	return m_scaler.referenceResolution.x * 0.65f;
+			case Type.Energy:	return m_scaler.referenceResolution.x * 0.65f;
 			case Type.Fury:		return m_scaler.referenceResolution.x * 0.4f;
 			case Type.SuperFury:return m_scaler.referenceResolution.x * 0.4f;
 		}
