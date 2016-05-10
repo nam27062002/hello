@@ -32,6 +32,7 @@ public class MissionButton : MonoBehaviour {
 
 	// References - keep references to objects that are often accessed
 	[Separator]
+	[SerializeField] private Image m_missionTypeIcon = null;
 	[SerializeField] private Image m_lockIcon = null;
 	[SerializeField] private Text m_cooldownText = null;
 	[SerializeField] private Slider m_cooldownBar = null;
@@ -100,6 +101,19 @@ public class MissionButton : MonoBehaviour {
 	public void Refresh() {
 		// Make sure mission is valid
 		if(mission == null) return;
+
+		// Mission type icon
+		if(m_missionTypeIcon != null) {
+			// Special icon when mission is not active
+			string iconPath = "";
+			if(m_mission.state != Mission.State.ACTIVE) {
+				DefinitionNode unknownTypeDef = DefinitionsManager.GetDefinition(DefinitionsCategory.MISSION_TYPES, "unknown");
+				iconPath = unknownTypeDef.GetAsString("icon");
+			} else {
+				iconPath = m_mission.typeDef.GetAsString("icon");
+			}
+			m_missionTypeIcon.sprite = Resources.Load<Sprite>(iconPath);
+		}
 
 		// Show lock icon?
 		if(m_lockIcon != null) m_lockIcon.gameObject.SetActive(m_mission.state == Mission.State.LOCKED);
