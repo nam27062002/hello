@@ -150,8 +150,13 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 			m_scoreMultiplierTimer -= Time.deltaTime;
 			
 			// If timer has ended, end multiplier streak
-			if(m_scoreMultiplierTimer <= 0) {
-				SetScoreMultiplier(0);
+			if(m_scoreMultiplierTimer <= 0) 
+			{
+				if (m_currentScoreMultiplier != 0)
+				{
+					SetScoreMultiplier(0);
+					Messenger.Broadcast(GameEvents.SCORE_MULTIPLIER_LOST);
+				}
 			}
 		}
 
@@ -330,7 +335,11 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// <param name="_source">The source of the damage.</param>
 	private void OnDamageReceived(float _amount, Transform _source) {
 		// Break current streak
-		SetScoreMultiplier(0);
+		if (m_currentScoreMultiplier != 0)
+		{
+			SetScoreMultiplier(0);
+			Messenger.Broadcast(GameEvents.SCORE_MULTIPLIER_LOST);
+		}
 	}
 
 	private void CheckSurvivalBonus()

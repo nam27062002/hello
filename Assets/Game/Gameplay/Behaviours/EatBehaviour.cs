@@ -28,7 +28,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_eatingTimer;
 	private float m_eatingTime;
 	protected bool m_slowedDown;
-	private float m_burpTime;
 	private float m_holdPreyTimer = 0;
 	protected EdibleBehaviour m_holdingPrey = null;
 	protected Transform m_holdTransform = null;
@@ -69,7 +68,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		m_eatingTimer = 0;
-		m_burpTime = 0;
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_boost = GetComponent<DragonBoostBehaviour>();
 
@@ -157,7 +155,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_almostEat = false;
 	}
 
-	private void Burp()
+	protected void Burp()
 	{
 		if ( m_burpSounds.Count > 0 )
 		{
