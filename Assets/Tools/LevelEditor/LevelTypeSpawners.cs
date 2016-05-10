@@ -71,7 +71,7 @@ namespace LevelEditor {
 
 			GameCameraController camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 
-			if (camera != null) {
+			if (camera != null && spawnPointObj != null) {
 				camera.transform.position = spawnPointObj.transform.position;
 			}
 
