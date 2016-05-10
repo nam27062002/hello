@@ -261,7 +261,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey.HoldingDamage( damage * Time.deltaTime);
 		if ( m_holdingPrey.isDead() )
 		{
-			m_holdingPrey.OnSwallow( m_mouth );
+			m_holdingPrey.OnSwallow( m_mouth , true);
 			EndHold();
 		}
 		else
