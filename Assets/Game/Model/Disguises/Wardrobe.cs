@@ -152,29 +152,35 @@ public class Wardrobe : Singleton<Wardrobe> {
 		SaveData data = new SaveData();
 
 		List<DisguiseLevel> saveDisguises = new List<DisguiseLevel>();
-		foreach (KeyValuePair<string, int> pair in instance.m_disguises) {
-			if (pair.Value > 0) {
-				DisguiseLevel dl = new DisguiseLevel();
+		if(instance.m_disguises != null) {
+			foreach (KeyValuePair<string, int> pair in instance.m_disguises) {
+				if (pair.Value > 0) {
+					DisguiseLevel dl = new DisguiseLevel();
 
-				dl.disguise = pair.Key;
-				dl.level = pair.Value;
+					dl.disguise = pair.Key;
+					dl.level = pair.Value;
 
-				saveDisguises.Add(dl);
+					saveDisguises.Add(dl);
+				}
 			}
 		}
 		data.disguises = saveDisguises.ToArray();
 
-		int k = 0;
-		data.equiped = new DragonDisguise[instance.m_equiped.Count];
-		foreach (KeyValuePair<string, string> pair in instance.m_equiped) {
-			DragonDisguise dd = new DragonDisguise();
+		if(instance.m_equiped != null) {
+			int k = 0;
+			data.equiped = new DragonDisguise[instance.m_equiped.Count];
+			foreach (KeyValuePair<string, string> pair in instance.m_equiped) {
+				DragonDisguise dd = new DragonDisguise();
 
-			dd.dragon = pair.Key;
-			dd.disguise = pair.Value;
+				dd.dragon = pair.Key;
+				dd.disguise = pair.Value;
 
-			data.equiped[k] = dd;
+				data.equiped[k] = dd;
 
-			k++;
+				k++;
+			}
+		} else {
+			data.equiped = new DragonDisguise[0];
 		}
 
 		return data;
