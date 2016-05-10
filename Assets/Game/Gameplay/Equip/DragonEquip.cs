@@ -96,11 +96,24 @@ public class DragonEquip : MonoBehaviour {
 		Transform view = transform.FindChild("view");
 		if ( view != null )
 		{
-			Renderer renderer = view.GetComponentInChildren<Renderer>();
-			Material[] materials = renderer.materials;
-			materials[0] = bodyMat;
-			// materials[1] = wingsMat;	// TODO(miguel): set it back when propertly done
-			renderer.materials = materials;
+			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
+			for( int i = 0; i<renderers.Length; i++ )
+			{
+				Renderer r = renderers[i];
+				Material[] mats = r.materials;
+				for( int j = 0;j<mats.Length; j++ )
+				{
+					if ( mats[j].shader.name.Contains("Wings") )
+					{
+						mats[j] = wingsMat;
+					}
+					else if (mats[j].shader.name.Contains("Dragon"))
+					{
+						mats[j] = bodyMat;
+					}
+				}
+				r.materials = mats;
+			}
 		}
 	}
 }
