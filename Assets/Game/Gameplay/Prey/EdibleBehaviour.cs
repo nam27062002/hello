@@ -176,12 +176,14 @@ public class EdibleBehaviour : Initializable {
 	public void OnHoldBy( EatBehaviour holder )
 	{
 		m_beingHeld = true;
+		m_animator.SetBool("hold", true);
 		// OnEatBehaviours(false);
 	}
 
 	public void ReleaseHold()
 	{
 		m_beingHeld = false;
+		m_animator.SetBool("hold", false);
 		// OnEatBehaviours(true);
 	}
 
