@@ -33,6 +33,13 @@ public class GameVars : SingletonMonoBehaviour<GameVars> {
 		set { instance.m_playScreenShown = value; }
 	}
 
+	[Comment("Screen to go first when loading the menu scene. Will be reset after applied.")]
+	[SerializeField] private MenuScreens m_menuInitialScreen = MenuScreens.NONE;
+	public static MenuScreens menuInitialScreen {
+		get { return instance.m_menuInitialScreen; }
+		set { instance.m_menuInitialScreen = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
