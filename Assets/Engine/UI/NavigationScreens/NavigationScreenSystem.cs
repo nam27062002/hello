@@ -41,6 +41,7 @@ public class NavigationScreenSystem : MonoBehaviour {
 	[SerializeField] protected NavigationScreen m_initialScreen = null;
 	public NavigationScreen initialScreen {
 		get { return m_initialScreen; }
+		set { m_initialScreen = value; }
 	}
 
 	[SerializeField] protected List<NavigationScreen> m_screens = new List<NavigationScreen>();
