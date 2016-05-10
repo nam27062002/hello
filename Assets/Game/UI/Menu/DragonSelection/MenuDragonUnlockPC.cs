@@ -68,7 +68,11 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// <summary>
 	/// The unlock button has been pressed.
 	/// </summary>
-	public void OnUnlock() {
+	public void OnUnlock() 
+	{
+		// Play Sound
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 		long pricePC = data.def.GetAsLong("unlockPricePC");

@@ -113,7 +113,10 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// Select next dragon. To be linked with the "next" button.
 	/// </summary>
 	/// <param name="_loop">Allow going from last to first dragon or not.</param>
-	public void SelectNextDragon(bool _loop) {
+	public void SelectNextDragon(bool _loop) 
+	{
+		// Play Sound
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 		// Figure out next dragon's sku
 		int newSelectedIdx = m_selectedIdx + 1;
 		if(newSelectedIdx >= DragonManager.dragonsByOrder.Count) {
@@ -130,7 +133,11 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// Select previous dragon. To be linked with the "previous" button.
 	/// </summary>
 	/// <param name="_loop">Allow going from first to last dragon or not.</param>
-	public void SelectPreviousDragon(bool _loop) {
+	public void SelectPreviousDragon(bool _loop) 
+	{
+		// Play Sound
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
 		// Figure out previous dragon's sku
 		int newSelectedIdx = m_selectedIdx - 1;
 		if(newSelectedIdx < 0) {
