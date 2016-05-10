@@ -99,6 +99,9 @@ public class MissionObjective {
 		// Skip if not enabled
 		if(!enabled) return;
 
+		// Skip during first game session (tutorial)
+		if(UserProfile.gamesPlayed < 1) return;
+
 		// Skip if already completed
 		if(isCompleted) return;
 
