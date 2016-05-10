@@ -449,15 +449,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b3e952564b24a3b8b237cd2c26a14b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensorMinRadius: 4.5
-  m_sensorMaxRadius: 7.8
+  m_sensorMinRadius: 4
+  m_sensorMaxRadius: 4.5
   m_sensorAngle: 360
-  m_sensorAngleOffset: 218
+  m_sensorAngleOffset: 0
   m_sensorOffset: {x: 0, y: 0, z: 0}
   m_target: 0
   m_senseDelay:
-    min: 0.4
-    max: 0.6
+    min: 0.25
+    max: 0.5
 --- !u!114 &11408074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -578,12 +578,12 @@ MonoBehaviour:
   m_distanceAttenuation: 3
   m_checkCollisions: 1
   m_keepInsideArea: 1
-  m_avoidWater: 1
-  m_maxSpeed: 3.85
-  m_maxRunSpeed: 5.2
+  m_avoidWater: 0
+  m_maxSpeed: 3
+  m_maxRunSpeed: 4
   m_speedVariationRange:
-    min: 0.75
-    max: 1.25
+    min: 0.65
+    max: 1.15
   m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11449248
@@ -615,12 +615,13 @@ MonoBehaviour:
   m_fleeAround: 0
   m_canBeAfraid: 0
   m_canPanic: 0
+  m_limitRunTime: 0
   m_runningTimeRange:
-    min: 1.5
-    max: 2
+    min: 1
+    max: 1.5
   m_waitRunningRange:
-    min: 2
-    max: 2.5
+    min: 1.25
+    max: 1.75
   m_afraidSounds: []
 --- !u!114 &11472838
 MonoBehaviour:
