@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 936824305}
+  m_SkyboxMaterial: {fileID: 460167525}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -181,8 +181,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &602976
 MonoBehaviour:
@@ -584,7 +584,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 321025161}
-  m_RootOrder: 5
+  m_RootOrder: 4
 --- !u!114 &18998713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -722,8 +722,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &36293020
 MonoBehaviour:
@@ -1552,8 +1552,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &44190218
 MonoBehaviour:
@@ -1908,7 +1908,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 321025161}
-  m_RootOrder: 7
+  m_RootOrder: 6
 --- !u!114 &63269827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2179,6 +2179,35 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!1 &70291008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 70291009}
+  m_Layer: 0
+  m_Name: GRP_Archers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &70291009
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 70291008}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 1759189401}
+  m_Father: {fileID: 1968332862}
+  m_RootOrder: 1
 --- !u!1 &78999528
 GameObject:
   m_ObjectHideFlags: 0
@@ -2499,8 +2528,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &101362528
 MonoBehaviour:
@@ -2983,8 +3012,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &114674709
 MonoBehaviour:
@@ -3791,8 +3820,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &132983535
 MonoBehaviour:
@@ -3857,7 +3886,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 17
+  m_RootOrder: 16
 --- !u!114 &137695592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4027,8 +4056,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &138087591
 MonoBehaviour:
@@ -4576,7 +4605,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 23
+  m_RootOrder: 22
 --- !u!114 &144375119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5934,8 +5963,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &163546361
 MonoBehaviour:
@@ -6452,8 +6481,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &187523534
 MonoBehaviour:
@@ -6722,7 +6751,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 7
+  m_RootOrder: 6
 --- !u!114 &198124593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7855,8 +7884,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &236494185
 MonoBehaviour:
@@ -8118,8 +8147,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &250444786
 MonoBehaviour:
@@ -8168,7 +8197,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 20
+  m_RootOrder: 19
 --- !u!114 &253272874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8631,7 +8660,7 @@ Transform:
   - {fileID: 1484957313}
   - {fileID: 1611892635}
   - {fileID: 1691034062}
-  m_Father: {fileID: 1451925795}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 5
 --- !u!1 &281591219
 GameObject:
@@ -9305,8 +9334,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &291062717
 MonoBehaviour:
@@ -9605,7 +9634,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 8
+  m_RootOrder: 7
 --- !u!114 &294771217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10043,7 +10072,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 22
+  m_RootOrder: 21
 --- !u!114 &311042474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10744,7 +10773,6 @@ Transform:
   - {fileID: 699857538}
   - {fileID: 1780694487}
   - {fileID: 2098670718}
-  - {fileID: 987129548}
   - {fileID: 18998712}
   - {fileID: 1614915308}
   - {fileID: 63269826}
@@ -10968,8 +10996,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &326549396
 MonoBehaviour:
@@ -11045,7 +11073,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 13
+  m_RootOrder: 11
 --- !u!114 &331024985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11317,8 +11345,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &334931234
 MonoBehaviour:
@@ -11434,8 +11462,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &337229282
 MonoBehaviour:
@@ -11585,8 +11613,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &356290983
 MonoBehaviour:
@@ -11879,9 +11907,7 @@ Transform:
   - {fileID: 1313812851}
   - {fileID: 2081938839}
   - {fileID: 1962867736}
-  - {fileID: 541455125}
   - {fileID: 198124592}
-  - {fileID: 827685775}
   - {fileID: 1769016843}
   - {fileID: 1613785849}
   - {fileID: 1068709844}
@@ -13496,8 +13522,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &436357976
 MonoBehaviour:
@@ -13741,8 +13767,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &456276357
 MonoBehaviour:
@@ -13775,6 +13801,194 @@ MonoBehaviour:
   m_positionLock: 000000
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!21 &460167525
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Skybox
+  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 1000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailNormalMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _OcclusionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailAlbedoMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _SrcBlend
+        second: 1
+      data:
+        first:
+          name: _DstBlend
+        second: 0
+      data:
+        first:
+          name: _Cutoff
+        second: 0.5
+      data:
+        first:
+          name: _Exposure
+        second: 1.1099983
+      data:
+        first:
+          name: _SunSize
+        second: 0
+      data:
+        first:
+          name: _AtmosphereThickness
+        second: 0.68999904
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
+      data:
+        first:
+          name: _ZWrite
+        second: 1
+      data:
+        first:
+          name: _Glossiness
+        second: 0.5
+      data:
+        first:
+          name: _BumpScale
+        second: 1
+      data:
+        first:
+          name: _OcclusionStrength
+        second: 1
+      data:
+        first:
+          name: _DetailNormalMapScale
+        second: 1
+      data:
+        first:
+          name: _UVSec
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
+          name: _Mode
+        second: 0
+      data:
+        first:
+          name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _HorizonHeight
+        second: 0.009999999
+    m_Colors:
+      data:
+        first:
+          name: _EmissionColor
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SkyTint
+        second: {r: 0, g: 0.5862069, b: 1, a: 1}
+      data:
+        first:
+          name: _GroundColor
+        second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
+      data:
+        first:
+          name: _EmissionColorUI
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SkyColor
+        second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
+      data:
+        first:
+          name: _SunPos
+        second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
+      data:
+        first:
+          name: _SunColor
+        second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
+      data:
+        first:
+          name: _AddColor
+        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &461956088
 GameObject:
   m_ObjectHideFlags: 0
@@ -13871,8 +14085,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &461956094
 MonoBehaviour:
@@ -13942,7 +14156,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 2028664815}
-  m_RootOrder: 28
+  m_RootOrder: 25
 --- !u!114 &464302455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14396,8 +14610,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &477493584
 MonoBehaviour:
@@ -14584,8 +14798,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &481054955
 MonoBehaviour:
@@ -14749,8 +14963,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &484492637
 MonoBehaviour:
@@ -14866,8 +15080,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &485902812
 MonoBehaviour:
@@ -15520,8 +15734,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &500424377
 MonoBehaviour:
@@ -15623,8 +15837,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &501608948
 MonoBehaviour:
@@ -15726,8 +15940,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &501943209
 MonoBehaviour:
@@ -16027,6 +16241,109 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!1 &514213612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 514213613}
+  - 114: {fileID: 514213617}
+  - 114: {fileID: 514213616}
+  - 114: {fileID: 514213615}
+  - 114: {fileID: 514213614}
+  m_Layer: 0
+  m_Name: SP_Archer_02Path_0 (38)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &514213613
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514213612}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 411.15, y: -34.95, z: 6.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1206069480}
+  m_RootOrder: 0
+--- !u!114 &514213614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514213612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b698911fc5a641d08b7cdc1bf08211f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_backgroundColor: {r: 0, g: 0, b: 0, a: 0.25}
+  m_tex: {fileID: 0}
+--- !u!114 &514213615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514213612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4449de16e7d2e465897e9964ea5f0a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: {fileID: 100124, guid: 1dd45220408bc40a69432acca0930ae4, type: 2}
+  m_quantity:
+    min: 1
+    max: 1
+  m_scale:
+    min: 1
+    max: 1
+  m_flockBonus: 0
+  m_alwaysActive: 0
+  m_activeOnStart: 0
+  m_enableTime: 240
+  m_disableTime: 0
+  m_spawnTime:
+    min: 40
+    max: 45
+  m_maxSpawns: 0
+--- !u!114 &514213616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514213612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+--- !u!114 &514213617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514213612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_positionLock: 000000
+  m_rotationLock: 010101
+  m_scaleLock: 010101
 --- !u!1 &517457592
 GameObject:
   m_ObjectHideFlags: 0
@@ -16299,8 +16616,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &519032943
 MonoBehaviour:
@@ -16605,8 +16922,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &529651199
 MonoBehaviour:
@@ -17139,7 +17456,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 374926016}
+  m_Father: {fileID: 1880389834}
   m_RootOrder: 6
 --- !u!114 &541455126
 MonoBehaviour:
@@ -17335,8 +17652,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 1451925795}
-  - {fileID: 1478730989}
+  - {fileID: 704830439}
+  - {fileID: 1940346234}
   m_Father: {fileID: 1149156408}
   m_RootOrder: 4
 --- !u!1 &551587454
@@ -17372,7 +17689,7 @@ Transform:
   - {fileID: 754835163}
   - {fileID: 678952976}
   - {fileID: 2080062553}
-  m_Father: {fileID: 1451925795}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 3
 --- !u!1 &555865246
 GameObject:
@@ -17407,7 +17724,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 18
+  m_RootOrder: 17
 --- !u!114 &555865248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17811,8 +18128,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &557957208
 MonoBehaviour:
@@ -17875,7 +18192,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 12
+  m_RootOrder: 10
 --- !u!114 &562576340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18128,8 +18445,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &566374276
 MonoBehaviour:
@@ -18194,7 +18511,8 @@ Transform:
   - {fileID: 477493580}
   - {fileID: 993038650}
   - {fileID: 326549392}
-  m_Father: {fileID: 1451925795}
+  - {fileID: 987129548}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 6
 --- !u!1 &575996892
 GameObject:
@@ -18859,8 +19177,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &588906234
 MonoBehaviour:
@@ -19493,8 +19811,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &604903199
 MonoBehaviour:
@@ -20034,8 +20352,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &618965672
 MonoBehaviour:
@@ -20327,6 +20645,140 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 632538638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_positionLock: 000001
+  m_rotationLock: 010101
+  m_scaleLock: 010101
+--- !u!1 &637160933
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 637160934}
+  - 114: {fileID: 637160940}
+  - 114: {fileID: 637160939}
+  - 114: {fileID: 637160938}
+  - 114: {fileID: 637160937}
+  - 114: {fileID: 637160936}
+  - 114: {fileID: 637160935}
+  m_Layer: 0
+  m_Name: SP_bat_smallFlock_0 (9)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &637160934
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637160933}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 426.95, y: -15.43, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1872199936}
+  m_RootOrder: 4
+--- !u!114 &637160935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637160933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b698911fc5a641d08b7cdc1bf08211f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_backgroundColor: {r: 0, g: 0, b: 0, a: 0.25}
+  m_tex: {fileID: 0}
+--- !u!114 &637160936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637160933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 3.997593
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &637160937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637160933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &637160938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637160933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41b79b4192e24dd2add814a1be140ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: {fileID: 132400, guid: 4b39e2e8b2124e84d83a17cf6af177ad, type: 2}
+  m_quantity:
+    min: 8
+    max: 8
+  m_scale:
+    min: 0.8
+    max: 1
+  m_flockBonus: 25
+  m_alwaysActive: 0
+  m_activeOnStart: 0
+  m_enableTime: 0
+  m_disableTime: 0
+  m_spawnTime:
+    min: 40
+    max: 45
+  m_maxSpawns: 0
+--- !u!114 &637160939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637160933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1aacd4a6157b43dfb51dc936d9e9f7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_amountSecsInPast: 0.25
+  m_guideFunction: 0
+  m_guideSpeed: 2
+  m_secondaryGuideSpeed: 2
+  m_sensePlayer: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 5
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
+--- !u!114 &637160940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 637160933}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
@@ -20926,7 +21378,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 2028664815}
-  m_RootOrder: 29
+  m_RootOrder: 26
 --- !u!114 &656819704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21695,8 +22147,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &675351129
 MonoBehaviour:
@@ -21802,8 +22254,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &676260366
 MonoBehaviour:
@@ -22120,8 +22572,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &678952980
 MonoBehaviour:
@@ -22241,8 +22693,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &679800424
 MonoBehaviour:
@@ -22729,8 +23181,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &693630286
 MonoBehaviour:
@@ -22899,6 +23351,45 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!1 &704830438
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 704830439}
+  m_Layer: 0
+  m_Name: GRP_Time_0s_to_infinite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &704830439
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 704830438}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 935227484}
+  - {fileID: 1681890854}
+  - {fileID: 1872199936}
+  - {fileID: 551587455}
+  - {fileID: 1880389834}
+  - {fileID: 270753801}
+  - {fileID: 569236160}
+  - {fileID: 1956622180}
+  - {fileID: 829695922}
+  - {fileID: 896460694}
+  - {fileID: 1654733200}
+  m_Father: {fileID: 545267861}
+  m_RootOrder: 0
 --- !u!1 &707362623
 GameObject:
   m_ObjectHideFlags: 0
@@ -23652,8 +24143,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &714392905
 MonoBehaviour:
@@ -23916,8 +24407,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &715501603
 MonoBehaviour:
@@ -24188,8 +24679,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 1443296862}
-  m_RootOrder: 13
+  m_Father: {fileID: 935227484}
+  m_RootOrder: 10
 --- !u!114 &726776339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24693,8 +25184,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &732599769
 MonoBehaviour:
@@ -25676,8 +26167,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &754835167
 MonoBehaviour:
@@ -25917,8 +26408,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &757296947
 MonoBehaviour:
@@ -26158,8 +26649,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &777465888
 MonoBehaviour:
@@ -26841,8 +27332,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &810950156
 MonoBehaviour:
@@ -26954,8 +27445,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &818920587
 MonoBehaviour:
@@ -27163,8 +27654,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &826743400
 MonoBehaviour:
@@ -27233,8 +27724,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 374926016}
-  m_RootOrder: 8
+  m_Father: {fileID: 1880389834}
+  m_RootOrder: 7
 --- !u!114 &827685776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27483,8 +27974,8 @@ Transform:
   - {fileID: 1870128475}
   - {fileID: 2018277786}
   - {fileID: 501608944}
-  m_Father: {fileID: 1478730989}
-  m_RootOrder: 0
+  m_Father: {fileID: 704830439}
+  m_RootOrder: 8
 --- !u!1 &831675380
 GameObject:
   m_ObjectHideFlags: 0
@@ -28474,8 +28965,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &850810143
 MonoBehaviour:
@@ -28874,7 +29365,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 2028664815}
-  m_RootOrder: 31
+  m_RootOrder: 28
 --- !u!114 &880957730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29044,8 +29535,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &883623088
 MonoBehaviour:
@@ -29261,8 +29752,9 @@ Transform:
   - {fileID: 1686809987}
   - {fileID: 557957204}
   - {fileID: 2083211074}
-  m_Father: {fileID: 1478730989}
-  m_RootOrder: 1
+  - {fileID: 1194989602}
+  m_Father: {fileID: 704830439}
+  m_RootOrder: 9
 --- !u!1 &897724438
 GameObject:
   m_ObjectHideFlags: 0
@@ -29466,8 +29958,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &907338195
 MonoBehaviour:
@@ -29772,8 +30264,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &925830834
 MonoBehaviour:
@@ -30301,7 +30793,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 931125817}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 430.1, y: 21.5, z: 0}
+  m_LocalPosition: {x: 432.3, y: 43.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -30369,8 +30861,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &931125823
 MonoBehaviour:
@@ -30441,196 +30933,12 @@ Transform:
   - {fileID: 715501598}
   - {fileID: 1060612874}
   - {fileID: 818920582}
-  m_Father: {fileID: 1451925795}
+  - {fileID: 1773316997}
+  - {fileID: 1781525651}
+  - {fileID: 726776338}
+  - {fileID: 1917169049}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 0
---- !u!21 &936824305
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Skybox
-  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 1000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-      data:
-        first:
-          name: _MainTex
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _BumpMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailNormalMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ParallaxMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _OcclusionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailAlbedoMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _MetallicGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-    m_Floats:
-      data:
-        first:
-          name: _SrcBlend
-        second: 1
-      data:
-        first:
-          name: _DstBlend
-        second: 0
-      data:
-        first:
-          name: _Cutoff
-        second: 0.5
-      data:
-        first:
-          name: _Exposure
-        second: 1.1099983
-      data:
-        first:
-          name: _SunSize
-        second: 0
-      data:
-        first:
-          name: _AtmosphereThickness
-        second: 0.68999904
-      data:
-        first:
-          name: _Parallax
-        second: 0.02
-      data:
-        first:
-          name: _ZWrite
-        second: 1
-      data:
-        first:
-          name: _Glossiness
-        second: 0.5
-      data:
-        first:
-          name: _BumpScale
-        second: 1
-      data:
-        first:
-          name: _OcclusionStrength
-        second: 1
-      data:
-        first:
-          name: _DetailNormalMapScale
-        second: 1
-      data:
-        first:
-          name: _UVSec
-        second: 0
-      data:
-        first:
-          name: _Mode
-        second: 0
-      data:
-        first:
-          name: _Metallic
-        second: 0
-      data:
-        first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
-          name: _HorizonHeight
-        second: 0.009999999
-    m_Colors:
-      data:
-        first:
-          name: _EmissionColor
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SkyTint
-        second: {r: 0, g: 0.5862069, b: 1, a: 1}
-      data:
-        first:
-          name: _GroundColor
-        second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
-      data:
-        first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SkyColor
-        second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
-      data:
-        first:
-          name: _SunPos
-        second: {r: 1, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _HorizonColor
-        second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
-      data:
-        first:
-          name: _SunColor
-        second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
-      data:
-        first:
-          name: _AddColor
-        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &938453580
 GameObject:
   m_ObjectHideFlags: 0
@@ -31534,8 +31842,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &954628889
 MonoBehaviour:
@@ -31878,7 +32186,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 969268402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 423, y: 43, z: 0}
+  m_LocalPosition: {x: 416.2, y: 43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -31946,8 +32254,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &969268408
 MonoBehaviour:
@@ -32682,8 +32990,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 321025161}
-  m_RootOrder: 4
+  m_Father: {fileID: 569236160}
+  m_RootOrder: 7
 --- !u!114 &987129549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32821,8 +33129,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &987180785
 MonoBehaviour:
@@ -33155,8 +33463,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &993038654
 MonoBehaviour:
@@ -33604,8 +33912,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1003992049
 MonoBehaviour:
@@ -34094,8 +34402,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1017429158
 MonoBehaviour:
@@ -35242,8 +35550,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1042958251
 MonoBehaviour:
@@ -35363,8 +35671,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1051129459
 MonoBehaviour:
@@ -35449,8 +35757,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1054951169
 MonoBehaviour:
@@ -35745,8 +36053,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1057224077
 MonoBehaviour:
@@ -36008,8 +36316,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1060612879
 MonoBehaviour:
@@ -36177,7 +36485,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 11
+  m_RootOrder: 9
 --- !u!114 &1068709845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36275,13 +36583,11 @@ Transform:
   - {fileID: 1606402481}
   - {fileID: 719006179}
   - {fileID: 1192531756}
-  - {fileID: 1194989602}
   - {fileID: 1160956120}
   - {fileID: 1412249367}
   - {fileID: 1686911989}
   - {fileID: 1094101796}
   - {fileID: 294771216}
-  - {fileID: 1759189401}
   - {fileID: 1967175802}
   - {fileID: 1399832893}
   - {fileID: 1109434432}
@@ -36724,7 +37030,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 7
+  m_RootOrder: 6
 --- !u!114 &1094101797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37082,8 +37388,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1106213352
 MonoBehaviour:
@@ -37151,7 +37457,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 12
+  m_RootOrder: 10
 --- !u!114 &1109434433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37291,8 +37597,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1109879875
 MonoBehaviour:
@@ -38064,7 +38370,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1149156406}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44e11959d7cc440a68d6ba3c51322f0f, type: 3}
   m_Name: 
@@ -38362,7 +38668,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 4
+  m_RootOrder: 3
 --- !u!114 &1160956121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38516,8 +38822,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1161542261
 MonoBehaviour:
@@ -38970,6 +39276,35 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!1 &1168371391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1168371392}
+  m_Layer: 0
+  m_Name: GRP_Bats_big
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1168371392
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1168371391}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 1367177226}
+  m_Father: {fileID: 1940346234}
+  m_RootOrder: 1
 --- !u!1 &1174142122
 GameObject:
   m_ObjectHideFlags: 0
@@ -39039,8 +39374,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1174142127
 MonoBehaviour:
@@ -39175,8 +39510,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1175904198
 MonoBehaviour:
@@ -39399,8 +39734,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1184424845
 MonoBehaviour:
@@ -40122,8 +40457,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1193398796
 MonoBehaviour:
@@ -40190,8 +40525,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 1078616411}
-  m_RootOrder: 3
+  m_Father: {fileID: 896460694}
+  m_RootOrder: 28
 --- !u!114 &1194989603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40562,6 +40897,35 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!1 &1206069479
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1206069480}
+  m_Layer: 0
+  m_Name: GRP_Archers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1206069480
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1206069479}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 514213613}
+  m_Father: {fileID: 1940346234}
+  m_RootOrder: 0
 --- !u!1 &1212861940
 GameObject:
   m_ObjectHideFlags: 0
@@ -43015,8 +43379,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1285579804
 MonoBehaviour:
@@ -43489,8 +43853,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1290171001
 MonoBehaviour:
@@ -45106,8 +45470,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1340002654
 MonoBehaviour:
@@ -45358,8 +45722,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1342495242
 MonoBehaviour:
@@ -45565,7 +45929,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 321025161}
-  m_RootOrder: 8
+  m_RootOrder: 7
 --- !u!114 &1358947971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45860,6 +46224,128 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1364120969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_positionLock: 000001
+  m_rotationLock: 010101
+  m_scaleLock: 010101
+--- !u!1 &1367177225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1367177226}
+  - 114: {fileID: 1367177231}
+  - 114: {fileID: 1367177230}
+  - 114: {fileID: 1367177229}
+  - 114: {fileID: 1367177228}
+  - 114: {fileID: 1367177227}
+  m_Layer: 0
+  m_Name: SP_bat_bigFlock_0 (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1367177226
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1367177225}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 439.21, y: -16.48, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1168371392}
+  m_RootOrder: 0
+--- !u!114 &1367177227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1367177225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b698911fc5a641d08b7cdc1bf08211f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_backgroundColor: {r: 0, g: 0, b: 0, a: 0.25}
+  m_tex: {fileID: 0}
+--- !u!114 &1367177228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1367177225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 2.9964294
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &1367177229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1367177225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41b79b4192e24dd2add814a1be140ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: {fileID: 132400, guid: 0f1ff7094c7259b4a95ba1ccdd21ecd3, type: 2}
+  m_quantity:
+    min: 3
+    max: 3
+  m_scale:
+    min: 1
+    max: 1
+  m_flockBonus: 25
+  m_alwaysActive: 0
+  m_activeOnStart: 0
+  m_enableTime: 240
+  m_disableTime: 0
+  m_spawnTime:
+    min: 40
+    max: 45
+  m_maxSpawns: 0
+--- !u!114 &1367177230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1367177225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1aacd4a6157b43dfb51dc936d9e9f7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_amountSecsInPast: 0.25
+  m_guideFunction: 0
+  m_guideSpeed: 2
+  m_secondaryGuideSpeed: 2
+  m_sensePlayer: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 5
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
+--- !u!114 &1367177231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1367177225}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
@@ -46563,7 +47049,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 11
+  m_RootOrder: 9
 --- !u!114 &1399832894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47163,7 +47649,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 5
+  m_RootOrder: 4
 --- !u!114 &1412249368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47992,8 +48478,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1428009266
 MonoBehaviour:
@@ -48449,8 +48935,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1442838809
 MonoBehaviour:
@@ -48522,7 +49008,6 @@ Transform:
   - {fileID: 1557072612}
   - {fileID: 1221766205}
   - {fileID: 1389974896}
-  - {fileID: 726776338}
   - {fileID: 1862727529}
   - {fileID: 2024617856}
   - {fileID: 1495333102}
@@ -48805,42 +49290,6 @@ Transform:
   - {fileID: 415495121}
   m_Father: {fileID: 50054226}
   m_RootOrder: 1
---- !u!1 &1451925794
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1451925795}
-  m_Layer: 0
-  m_Name: GRP_Air
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1451925795
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1451925794}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 935227484}
-  - {fileID: 1681890854}
-  - {fileID: 1872199936}
-  - {fileID: 551587455}
-  - {fileID: 1880389834}
-  - {fileID: 270753801}
-  - {fileID: 569236160}
-  - {fileID: 1956622180}
-  m_Father: {fileID: 545267861}
-  m_RootOrder: 0
 --- !u!1 &1452105579
 GameObject:
   m_ObjectHideFlags: 0
@@ -48991,7 +49440,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 21
+  m_RootOrder: 20
 --- !u!114 &1453555942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49466,37 +49915,6 @@ Transform:
   - {fileID: 1723564072}
   m_Father: {fileID: 50054226}
   m_RootOrder: 3
---- !u!1 &1478730988
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1478730989}
-  m_Layer: 0
-  m_Name: GRP_Ground
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1478730989
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1478730988}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 829695922}
-  - {fileID: 896460694}
-  - {fileID: 1654733200}
-  m_Father: {fileID: 545267861}
-  m_RootOrder: 1
 --- !u!1 &1484957312
 GameObject:
   m_ObjectHideFlags: 0
@@ -49581,8 +49999,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1484957317
 MonoBehaviour:
@@ -49645,7 +50063,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 15
+  m_RootOrder: 13
 --- !u!114 &1484961439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49917,8 +50335,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1487723403
 MonoBehaviour:
@@ -50117,7 +50535,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 16
+  m_RootOrder: 15
 --- !u!114 &1495333103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50453,7 +50871,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 19
+  m_RootOrder: 18
 --- !u!114 &1498750054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52257,8 +52675,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1545731308
 MonoBehaviour:
@@ -53267,8 +53685,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1574156863
 MonoBehaviour:
@@ -53370,8 +53788,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1580783814
 MonoBehaviour:
@@ -54174,8 +54592,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1591945086
 MonoBehaviour:
@@ -54549,8 +54967,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1600323521
 MonoBehaviour:
@@ -54672,8 +55090,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1602347682
 MonoBehaviour:
@@ -54930,8 +55348,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1611892639
 MonoBehaviour:
@@ -54994,7 +55412,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 10
+  m_RootOrder: 8
 --- !u!114 &1613785850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55094,7 +55512,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 321025161}
-  m_RootOrder: 6
+  m_RootOrder: 5
 --- !u!114 &1614915309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55232,8 +55650,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1616221672
 MonoBehaviour:
@@ -56479,8 +56897,8 @@ Transform:
   - {fileID: 732599765}
   - {fileID: 481054951}
   - {fileID: 1340002650}
-  m_Father: {fileID: 1478730989}
-  m_RootOrder: 2
+  m_Father: {fileID: 704830439}
+  m_RootOrder: 10
 --- !u!1 &1656562270
 GameObject:
   m_ObjectHideFlags: 0
@@ -57002,8 +57420,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1675462371
 MonoBehaviour:
@@ -57417,7 +57835,7 @@ Transform:
   - {fileID: 969268403}
   - {fileID: 461956089}
   - {fileID: 604903194}
-  m_Father: {fileID: 1451925795}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 1
 --- !u!1 &1684038231
 GameObject:
@@ -57488,8 +57906,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1684038236
 MonoBehaviour:
@@ -57590,8 +58008,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1686809991
 MonoBehaviour:
@@ -57654,7 +58072,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 6
+  m_RootOrder: 5
 --- !u!114 &1686911990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57909,8 +58327,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1691034066
 MonoBehaviour:
@@ -58279,8 +58697,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1694627124
 MonoBehaviour:
@@ -58866,8 +59284,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1710549550
 MonoBehaviour:
@@ -59109,8 +59527,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1713547133
 MonoBehaviour:
@@ -60675,8 +61093,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 1078616411}
-  m_RootOrder: 9
+  m_Father: {fileID: 70291009}
+  m_RootOrder: 0
 --- !u!114 &1759189402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60711,7 +61129,7 @@ MonoBehaviour:
   m_flockBonus: 0
   m_alwaysActive: 0
   m_activeOnStart: 0
-  m_enableTime: 0
+  m_enableTime: 200
   m_disableTime: 0
   m_spawnTime:
     min: 40
@@ -60843,8 +61261,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1763022904
 MonoBehaviour:
@@ -60912,7 +61330,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 9
+  m_RootOrder: 7
 --- !u!114 &1769016844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61150,8 +61568,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1772853715
 MonoBehaviour:
@@ -61215,8 +61633,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 2028664815}
-  m_RootOrder: 25
+  m_Father: {fileID: 935227484}
+  m_RootOrder: 8
 --- !u!114 &1773316998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61583,8 +62001,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 2028664815}
-  m_RootOrder: 26
+  m_Father: {fileID: 935227484}
+  m_RootOrder: 9
 --- !u!114 &1781525652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62239,8 +62657,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1798176312
 MonoBehaviour:
@@ -62770,8 +63188,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1820591571
 MonoBehaviour:
@@ -64154,7 +64572,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 14
+  m_RootOrder: 13
 --- !u!114 &1862727530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64654,7 +65072,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 374926016}
-  m_RootOrder: 14
+  m_RootOrder: 12
 --- !u!114 &1868233305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64926,8 +65344,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1870128479
 MonoBehaviour:
@@ -64990,7 +65408,8 @@ Transform:
   - {fileID: 1591945081}
   - {fileID: 1763022899}
   - {fileID: 693630281}
-  m_Father: {fileID: 1451925795}
+  - {fileID: 637160934}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 2
 --- !u!1 &1880389833
 GameObject:
@@ -65024,7 +65443,9 @@ Transform:
   - {fileID: 1820591567}
   - {fileID: 954628885}
   - {fileID: 679800420}
-  m_Father: {fileID: 1451925795}
+  - {fileID: 541455125}
+  - {fileID: 827685775}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 4
 --- !u!1 &1882344083
 GameObject:
@@ -66694,12 +67115,12 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1917169048}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 438.5, y: 46.6, z: 0}
+  m_LocalPosition: {x: 430.3, y: 20.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 2028664815}
-  m_RootOrder: 27
+  m_Father: {fileID: 935227484}
+  m_RootOrder: 11
 --- !u!114 &1917169050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66934,6 +67355,36 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!1 &1940346233
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1940346234}
+  m_Layer: 0
+  m_Name: GRP_Time_240s_to_infinite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1940346234
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1940346233}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 1206069480}
+  - {fileID: 1168371392}
+  m_Father: {fileID: 545267861}
+  m_RootOrder: 1
 --- !u!1 &1942284914
 GameObject:
   m_ObjectHideFlags: 0
@@ -67505,8 +67956,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1952564446
 MonoBehaviour:
@@ -67571,7 +68022,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 2028664815}
-  m_RootOrder: 30
+  m_RootOrder: 27
 --- !u!114 &1954343386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67704,7 +68155,7 @@ Transform:
   - {fileID: 236494181}
   - {fileID: 1428009262}
   - {fileID: 250444782}
-  m_Father: {fileID: 1451925795}
+  m_Father: {fileID: 704830439}
   m_RootOrder: 7
 --- !u!1 &1957540704
 GameObject:
@@ -68205,7 +68656,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1078616411}
-  m_RootOrder: 10
+  m_RootOrder: 8
 --- !u!114 &1967175803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68303,6 +68754,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1203790164}
+  - {fileID: 70291009}
   m_Father: {fileID: 107666294}
   m_RootOrder: 1
 --- !u!1 &1969812932
@@ -68823,8 +69275,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1983777958
 MonoBehaviour:
@@ -68925,8 +69377,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1985030220
 MonoBehaviour:
@@ -69362,8 +69814,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &1999188200
 MonoBehaviour:
@@ -69734,8 +70186,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &2018277790
 MonoBehaviour:
@@ -70157,7 +70609,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1443296862}
-  m_RootOrder: 15
+  m_RootOrder: 14
 --- !u!114 &2024617857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70560,9 +71012,6 @@ Transform:
   - {fileID: 1090963654}
   - {fileID: 927386845}
   - {fileID: 1272238450}
-  - {fileID: 1773316997}
-  - {fileID: 1781525651}
-  - {fileID: 1917169049}
   - {fileID: 464302454}
   - {fileID: 656819703}
   - {fileID: 1954343385}
@@ -70772,8 +71221,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &2033969628
 MonoBehaviour:
@@ -71076,8 +71525,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &2043682631
 MonoBehaviour:
@@ -71647,8 +72096,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &2056891168
 MonoBehaviour:
@@ -71947,8 +72396,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &2067500126
 MonoBehaviour:
@@ -72303,8 +72752,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &2080062557
 MonoBehaviour:
@@ -72510,8 +72959,8 @@ MonoBehaviour:
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 20
-    max: 25
+    min: 40
+    max: 45
   m_maxSpawns: 0
 --- !u!114 &2083211078
 MonoBehaviour:
