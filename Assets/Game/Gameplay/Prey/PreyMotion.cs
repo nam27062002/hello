@@ -183,8 +183,8 @@ public class PreyMotion : Initializable, MotionInterface {
 		DoSeek(_target);
 	}
 	
-	public void Flee(Vector2 _target) {
-		m_currentMaxSpeed = m_maxRunSpeed;
+	public void Flee(Vector2 _target, bool _run = true) {
+		m_currentMaxSpeed = (_run)? m_maxRunSpeed : m_maxSpeed;
 		DoFlee(_target);
 	}
 	
@@ -375,10 +375,7 @@ public class PreyMotion : Initializable, MotionInterface {
 			if (seekMagnitude > 0) m_steering -= m_velocity;
 		}
 			
-		if (m_steeringForces[Forces.Flock] != Vector2.zero) {
-			m_steering += m_steeringForces[Forces.Flock] - m_velocity;
-		}
-			
+		m_steering += m_steeringForces[Forces.Flock];			
 		m_steering += m_steeringForces[Forces.Collision];
 
 		// m_steering -= m_velocity;
