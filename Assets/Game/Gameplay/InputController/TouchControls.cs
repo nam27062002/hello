@@ -6,7 +6,7 @@ abstract public class TouchControls : MonoBehaviour {
 	// INSPECTOR VARIABLES
 	public bool m_boostWithRadiusCheck = false;
 	public bool m_boostWithSecondTouch = true;
-	public bool m_boostWithHardPush = true;
+	public bool m_boostWithHardPush = false;
 
 	// PROTECTED MEMBERS
 	protected TouchControlsType m_type;

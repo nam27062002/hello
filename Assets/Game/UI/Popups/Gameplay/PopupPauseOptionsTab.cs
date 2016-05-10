@@ -23,7 +23,6 @@ public class PopupPauseOptionsTab : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	private bool m_endGame = false;
-	private Tab m_tabScreen;
 
 	//------------------------------------------------------------------//
 	// DELEGATES														//
@@ -38,29 +37,14 @@ public class PopupPauseOptionsTab : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Open animation is about to start.
-	/// </summary>
-	public void OnOpenPreAnimation() {
-		// Pause the game
-		GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
-		if(gameController != null) {
-			//gameController.PauseGame(true);
-		}
-	}
-
-	/// <summary>
 	/// Close animation has finished.
 	/// </summary>
 	public void OnClosePostAnimation() {
-		// Keep playing or end the game?
-		GameSceneController gameScene = InstanceManager.GetSceneController<GameSceneController>();
-		if(gameScene != null) {
-			if(m_endGame) {
-				// Instantly finish the game for now
-				InstanceManager.GetSceneController<GameSceneController>().EndGame();
-			} else {
-				// Keep playing
-				gameScene.PauseGame(false);
+		// End the game?
+		if(m_endGame) {
+			GameSceneController gameController = InstanceManager.GetSceneController<GameSceneController>();
+			if(gameController != null) {
+				gameController.EndGame();
 			}
 		}
 	}
