@@ -108,6 +108,13 @@ public class EdibleBehaviour : Initializable {
 		OnEatBehaviours(false);
 		if ( m_animator != null )
 			m_animator.SetTrigger("being eaten");
+		
+
+		EntityManager.instance.Unregister(GetComponent<Entity>());
+	}
+	
+	public void OnSwallow( Transform _transform ) 
+	{
 		if ( m_onEatenSounds.Count > 0 && Random.Range(0, 100) <= m_onEatenSoundProbability)
 		{
 			// Play sound!
@@ -118,10 +125,6 @@ public class EdibleBehaviour : Initializable {
 			}
 		}
 
-		EntityManager.instance.Unregister(GetComponent<Entity>());
-	}
-	
-	public void OnSwallow( Transform _transform ) {
 		// Get the reward to be given from the entity
 		Reward reward = m_entity.GetOnKillReward(false);
 
