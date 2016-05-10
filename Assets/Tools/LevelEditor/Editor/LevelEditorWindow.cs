@@ -308,6 +308,12 @@ namespace LevelEditor {
 			// Make sure we have the level editor stuff loaded
 			OpenLevelEditorScene();
 
+			// If an art scene is opened, make it the main scene (so the lightning setup is the right one)
+			Level artLevel = sectionLevels.GetLevel(LevelEditorSettings.Mode.ART);
+			if(artLevel != null) {
+				EditorSceneManager.SetActiveScene(artLevel.gameObject.scene);
+			}
+
 			// Force a repaint
 			Repaint();
 		}

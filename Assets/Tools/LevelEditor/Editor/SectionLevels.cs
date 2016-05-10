@@ -55,6 +55,18 @@ namespace LevelEditor {
 				return ASSETS_DIR;
 			}
 		}
+
+		//------------------------------------------------------------------//
+		// GETTERS															//
+		//------------------------------------------------------------------//
+		/// <summary>
+		/// Get the level corresponding to the given editor mode.
+		/// </summary>
+		/// <returns>The level. Null if no level of the target type is open.</returns>
+		/// <param name="_mode">Type of level to be retrieved.</param>
+		public Level GetLevel(LevelEditorSettings.Mode _mode) {
+			return m_activeLevel[(int)_mode];
+		}
 		
 		//------------------------------------------------------------------//
 		// INTERFACE IMPLEMENTATION											//
