@@ -7,6 +7,7 @@ public class FleeBehaviour : Initializable {
 
 	private enum State {
 		None = 0,
+		Evade,
 		RunAway, // flee from the dragon
 		Afraid,  // the prey is scared and can't move anymore
 		Panic    // the prey reached the end of the area or map and runs to the other side in panic
@@ -17,6 +18,11 @@ public class FleeBehaviour : Initializable {
 	[SerializeField] private bool m_canBeAfraid = false;
 	[CommentAttribute("This prey can't move away from the dragon in this direction so it tries to escape going back to the center of their movement area.")]
 	[SerializeField] private bool m_canPanic = false;
+
+	[CommentAttribute("This prey will flee away from the dragon running only for a limited amount of time. Then it'll keep fleeing away but at normal speed.")]
+	[SerializeField] private bool m_limitRunTime = false;
+	[SerializeField] private Range m_runningTimeRange = new Range(0f, 0f);
+	[SerializeField] private Range m_waitRunningRange = new Range(0f, 0f);
 
 	private Transform m_dragonMouth;
 			
@@ -30,9 +36,7 @@ public class FleeBehaviour : Initializable {
 	private State m_state;
 	private State m_nextState;
 
-	public Range m_runningTimeRange = new Range( 2,4);
 	private float m_runningTime = 0;
-	public Range m_waitRunningRange = new Range( 4, 5);
 	private float m_nextRunTime = 0;
 
 	public List<string> m_afraidSounds = new List<string>();
@@ -51,14 +55,14 @@ public class FleeBehaviour : Initializable {
 	
 	public override void Initialize() {
 		m_state = State.None;
-		m_nextState = State.RunAway;
+		m_nextState = State.Evade;
 		m_runningTime = 0;
 		m_nextRunTime = 0;
 	}
 
 	void OnEnable() {
 		m_state = State.None;
-		m_nextState = State.RunAway;
+		m_nextState = State.Evade;
 	}
 
 	void OnDisable() {
@@ -71,12 +75,11 @@ public class FleeBehaviour : Initializable {
 			ChangeState();
 		}
 
-		if (m_runningTime > 0)
-		{
-			// Increase animation speed
-		}
-
-		if (m_state == State.RunAway) {
+		if (m_state == State.Evade) {
+			if (m_sensor.alert) {
+				m_nextState = State.RunAway;
+			}
+		} else if (m_state == State.RunAway) {
 			if (m_canBeAfraid || m_canPanic) {
 				if (m_sensor.alert && !m_area.Contains(m_motion.position)) {
 					if (m_canBeAfraid) {
@@ -91,40 +94,37 @@ public class FleeBehaviour : Initializable {
 				m_nextState = State.RunAway;
 			}
 		}
+
+		if (!m_sensor.isInsideMaxArea) {
+			m_nextState = State.Evade;
+		}
 	}
 
 	// Update is called once per frame
 	void FixedUpdate() {
 		switch (m_state) {
-			case State.RunAway:
-				m_nextRunTime -= Time.deltaTime;
-				if (m_sensor.alert && m_nextRunTime <= 0) 
-				{
-					m_runningTime = m_runningTimeRange.GetRandom();
-					m_nextRunTime = m_waitRunningRange.GetRandom();
-				}
-				else if ( m_runningTime > 0 )
-				{
-					m_runningTime -= Time.deltaTime;
-				}
-
-				if ( (m_sensor.alert && m_nextRunTime <= 0) || m_runningTime > 0 )
-				{
-					if (m_fleeAround && m_flock != null)
-					{
-						Vector3 dir1 = (transform.position - m_dragonMouth.position);
-						Vector3 dir2 = ((Vector3)m_flock.GetFlockTarget() - m_dragonMouth.position);
-						Vector3 res = Vector3.RotateTowards( dir1, dir2, Time.deltaTime * 10.0f, 0);
-						Vector3 target = m_dragonMouth.position + res;
-						m_motion.RunTo( target );
-					}
-					else
-					{
-						m_motion.Flee(m_dragonMouth.position);
-					}
-				}
-
+			case State.Evade:
+				m_motion.Flee(m_dragonMouth.position, false);
 				break;
+				
+			case State.RunAway: {					
+				bool run = true;
+
+				if (m_limitRunTime) {
+					if (m_runningTime > 0) {
+						m_runningTime -= Time.deltaTime;
+					} else {
+						m_nextRunTime -= Time.deltaTime;
+						if (m_nextRunTime <= 0) {
+							m_runningTime = m_runningTimeRange.GetRandom();
+							m_nextRunTime = m_waitRunningRange.GetRandom();
+						}
+						run = false;
+					}
+				}
+
+				m_motion.Flee(m_dragonMouth.position, run);
+			}	break;
 
 			case State.Afraid:
 				Vector3 player = m_dragonMouth.position;
