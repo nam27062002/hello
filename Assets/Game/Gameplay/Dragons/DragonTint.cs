@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DragonTint : MonoBehaviour 
 {
@@ -8,7 +9,8 @@ public class DragonTint : MonoBehaviour
 	DragonPlayer m_player;
 	DragonHealthBehaviour m_health;
 
-	SkinnedMeshRenderer m_dragonRenderer;
+	Renderer[] m_dragonRenderers = null;
+	List<Material> m_materials = new List<Material>();
 
 	float m_otherColorTimer = 0;
 
@@ -35,7 +37,28 @@ public class DragonTint : MonoBehaviour
 		m_breath = GetComponent<DragonBreathBehaviour>();
 		m_player = GetComponent<DragonPlayer>();
 		m_health = GetComponent<DragonHealthBehaviour>();
-		m_dragonRenderer = transform.GetFirstComponentInChildren<SkinnedMeshRenderer>();
+		Transform t = transform.FindChild("view");
+		if ( t != null )
+		{
+			m_dragonRenderers = t.GetComponentsInChildren<Renderer>();
+			GetMaterials();
+		}
+	}
+
+	void GetMaterials()
+	{
+		m_materials.Clear();
+		if ( m_dragonRenderers != null )
+		for( int i = 0; i<m_dragonRenderers.Length; i++ )
+		{
+			Material[] mats = m_dragonRenderers[i].materials;
+			for( int j = 0;j<mats.Length; j++ )
+			{
+				string shaderName = mats[j].shader.name;
+				if ( shaderName.Contains("Wings") || shaderName.Contains("Dragon") )
+					m_materials.Add( mats[j] );
+			}
+		}
 	}
 
 	void OnEnable() 
@@ -58,8 +81,7 @@ public class DragonTint : MonoBehaviour
 	void LateUpdate () 
 	{
 		// Color multiply
-		m_dragonRenderer.material.SetColor("_ColorMultiply", m_caveColor );
-
+		SetColorMultiply(m_caveColor);
 
 		// Color add
 		m_damageTimer -= Time.deltaTime;
@@ -84,7 +106,7 @@ public class DragonTint : MonoBehaviour
 		{
 			m_otherColorTimer = 0;
 		}
-		m_dragonRenderer.material.SetColor("_ColorAdd",  damageColor + otherColor );
+		SetColorAdd(damageColor + otherColor);
 
 
 		// Inner light
@@ -101,9 +123,10 @@ public class DragonTint : MonoBehaviour
 		{
 			m_furyTimer = 0;
 		}
-		m_dragonRenderer.material.SetFloat("_InnerLightAdd", innerValue );
+		SetInnerLightAdd( innerValue );
 
 		// Shield
+		/*
 		if (m_player.HasMineShield())
 		{
 			m_shieldValue = Mathf.Lerp( m_shieldValue, 1, Time.deltaTime);
@@ -113,7 +136,26 @@ public class DragonTint : MonoBehaviour
 			m_shieldValue = Mathf.Lerp( m_shieldValue, 0, Time.deltaTime);
 		}
 		m_dragonRenderer.material.SetFloat("_NoiseValue", m_shieldValue );
+		*/
 
+	}
+
+	void SetColorMultiply( Color c )
+	{
+		for( int i = 0; i<m_materials.Count; i++ )	
+			m_materials[i].SetColor("_ColorMultiply", c );
+	}
+
+	void SetColorAdd( Color c)
+	{
+		for( int i = 0; i<m_materials.Count; i++ )	
+			m_materials[i].SetColor("_ColorAdd", c );
+	}
+
+	void SetInnerLightAdd( float innerValue )
+	{
+		for( int i = 0; i<m_materials.Count; i++ )	
+			m_materials[i].SetFloat("_InnerLightAdd", innerValue );
 	}
 
 	public void SetCaveColor( Color c )
