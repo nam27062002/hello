@@ -89,7 +89,7 @@ public class ChestManager : Singleton<ChestManager> {
 			// Don't enable chest during the first run
 			GameObject chestObj = null;
 			if(UserProfile.gamesPlayed > 0) { 
-				chests.GetRandomValue();
+				chestObj = chests.GetRandomValue();
 				instance.m_selectedChest = chestObj.GetComponent<Chest>();
 			}
 
