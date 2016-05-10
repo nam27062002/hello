@@ -39,9 +39,6 @@ public class GameHUD : MonoBehaviour {
 	/// Callback for the pause button.
 	/// </summary>
 	public void OnPauseButton() {
-		// Pause game
-		InstanceManager.GetSceneController<GameSceneController>().PauseGame(true);
-
 		// Open pause popup
 		PopupManager.OpenPopupInstant(PopupPause.PATH);
 	}

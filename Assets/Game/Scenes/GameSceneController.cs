@@ -214,7 +214,7 @@ public class GameSceneController : GameSceneControllerBase {
 		// Dispatch game event
 		Messenger.Broadcast(GameEvents.GAME_ENDED);
 
-		// Open summary popup immediately - override timer after calling this method if you want some delay
+		// Open summary screen - override timer after calling this method if you want some delay
 		m_timer = 0.0125f;
 	}
 
