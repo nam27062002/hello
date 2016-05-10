@@ -108,6 +108,13 @@ public class EdibleBehaviour : Initializable {
 		OnEatBehaviours(false);
 		if ( m_animator != null )
 			m_animator.SetTrigger("being eaten");
+
+		TryOnEatSound();
+		EntityManager.instance.Unregister(GetComponent<Entity>());
+	}
+
+	private void TryOnEatSound()
+	{
 		if ( m_onEatenSounds.Count > 0 && Random.Range(0, 100) <= m_onEatenSoundProbability)
 		{
 			// Play sound!
@@ -117,11 +124,14 @@ public class EdibleBehaviour : Initializable {
 				AudioManager.instance.PlayClip( soundName );
 			}
 		}
-
-		EntityManager.instance.Unregister(GetComponent<Entity>());
 	}
 	
-	public void OnSwallow( Transform _transform ) {
+	public void OnSwallow( Transform _transform, bool tryOnEatSound = false ) 
+	{
+		
+		if ( tryOnEatSound )
+			TryOnEatSound();
+
 		// Get the reward to be given from the entity
 		Reward reward = m_entity.GetOnKillReward(false);
 
@@ -176,12 +186,14 @@ public class EdibleBehaviour : Initializable {
 	public void OnHoldBy( EatBehaviour holder )
 	{
 		m_beingHeld = true;
+		m_animator.SetBool("hold", true);
 		// OnEatBehaviours(false);
 	}
 
 	public void ReleaseHold()
 	{
 		m_beingHeld = false;
+		m_animator.SetBool("hold", false);
 		// OnEatBehaviours(true);
 	}
 

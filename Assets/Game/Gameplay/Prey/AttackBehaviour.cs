@@ -251,7 +251,6 @@ public abstract class AttackBehaviour : Initializable {
 					break;
 				case State.BeingHeld:
 				{
-					m_animator.SetBool("hold", false);
 				}break;
 			}
 
@@ -272,7 +271,6 @@ public abstract class AttackBehaviour : Initializable {
 					break;
 				case State.BeingHeld:
 				{
-					m_animator.SetBool("hold", true);
 				}break;
 			}
 
