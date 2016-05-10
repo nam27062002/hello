@@ -60,6 +60,9 @@ public class FireBreath : DragonBreathBehaviour {
 	public string m_superFlameUpParticle = "FlameUp";
 	public string m_flameLight = "PF_FireLight";
 
+	float m_timeToNextLoopAudio = 0;
+	AudioSource m_lastAudioSource;
+
 	override protected void ExtendedStart() {
 
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameParticle), m_maxParticles, false);
@@ -131,7 +134,8 @@ public class FireBreath : DragonBreathBehaviour {
 	override protected void BeginFury(Type _type) 
 	{
 		base.BeginFury( _type);
-		AudioManager.instance.PlayClip("audio/sfx/Dragon/Menu_Scratch_13");
+		m_lastAudioSource  = AudioManager.instance.PlayClip("audio/sfx/Burning/Flamethrower first");
+		m_timeToNextLoopAudio = m_lastAudioSource.clip.length;
 		m_light = PoolManager.GetInstance(m_flameLight);
 		m_light.transform.position = m_mouthTransform.position;
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * transform.localScale.x * 1.75f, 1f);
@@ -140,6 +144,10 @@ public class FireBreath : DragonBreathBehaviour {
 	override protected void EndFury() 
 	{
 		base.EndFury();
+		// Stop loop clip!
+		m_lastAudioSource.Stop();
+		m_lastAudioSource = null;
+		AudioManager.instance.PlayClip("audio/sfx/Burning/Flamethrower End");
 		m_light.SetActive(false);
 		PoolManager.ReturnInstance( m_light );
 		m_light = null;
@@ -149,6 +157,23 @@ public class FireBreath : DragonBreathBehaviour {
 		m_direction = m_mouthTransform.position - m_headTransform.position;
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
+
+		m_timeToNextLoopAudio -= Time.deltaTime;
+		if ( m_timeToNextLoopAudio <= 0f )
+		{
+			switch( Random.Range(0,2))
+			{
+				case 0:
+				{
+					m_lastAudioSource  = AudioManager.instance.PlayClip("audio/sfx/Burning/loop 1");
+				}break;
+				case 1:
+				{
+					m_lastAudioSource  = AudioManager.instance.PlayClip("audio/sfx/Burning/loop 2");
+				}break;
+			}
+			m_timeToNextLoopAudio = m_lastAudioSource.clip.length;
+		}
 
 		float length = m_length;
 		if ( m_type == Type.Super )

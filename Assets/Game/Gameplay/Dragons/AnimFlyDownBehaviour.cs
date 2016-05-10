@@ -3,6 +3,7 @@ using System.Collections;
 
 public class AnimFlyDownBehaviour : StateMachineBehaviour 
 {
+	/*
 	int loopHash = Animator.StringToHash("Loop");
 
 	void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
@@ -20,4 +21,5 @@ public class AnimFlyDownBehaviour : StateMachineBehaviour
 			animator.gameObject.SendMessage("TurboLoopEnd");
 		}
 	}
+	*/
 }

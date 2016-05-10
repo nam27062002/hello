@@ -309,6 +309,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			}break;
 		}
 
+		switch( Random.Range(0,3) )
+		{
+			case 0:AudioManager.instance.PlayClip("audio/sfx/Dragon/AI_ANY_ONO_ORG_REA_GENE_ZEDS_001_005_GENE");break;
+			case 1:AudioManager.instance.PlayClip("audio/sfx/Dragon/AI_ANY_ONO_ORG_REA_GENE_ZEGS_001_002_GENE");break;
+			case 2:AudioManager.instance.PlayClip("audio/sfx/Dragon/AI_ANY_ONO_ORG_REA_GENE_ZEGS_001_003_GENE");break;
+		}
+
 
 		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 		if (m_eatBehaviour) m_eatBehaviour.enabled = false;

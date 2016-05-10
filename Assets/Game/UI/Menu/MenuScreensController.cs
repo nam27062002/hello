@@ -66,7 +66,11 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// </summary>
 	private void Awake() {
 		// Just define initial screen on the navigation system before it actually starts
-		if(GameVars.playScreenShown) {
+		if(GameVars.menuInitialScreen != MenuScreens.NONE) {
+			// Forced initial screen
+			SetInitialScreen((int)GameVars.menuInitialScreen);
+			GameVars.menuInitialScreen = MenuScreens.NONE;
+		} else if(GameVars.playScreenShown) {
 			SetInitialScreen((int)MenuScreens.DRAGON_SELECTION);
 		} else {
 			SetInitialScreen((int)MenuScreens.PLAY);
