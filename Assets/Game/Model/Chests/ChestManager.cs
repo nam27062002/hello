@@ -84,12 +84,16 @@ public class ChestManager : Singleton<ChestManager> {
 		// Get all the chests in the scene
 		GameObject[] chests = GameObject.FindGameObjectsWithTag(TAG);
 		if(chests.Length > 0) {
-			// Grab a random one from the list
+			// Grab a random one from the list and define it as active chest
 			// [AOC] CHECK!! We might need to filter by dragon tier (different heights, etc.)
-			GameObject chestObj = chests.GetRandomValue();
+			// Don't enable chest during the first run
+			GameObject chestObj = null;
+			if(UserProfile.gamesPlayed > 0) { 
+				chests.GetRandomValue();
+				instance.m_selectedChest = chestObj.GetComponent<Chest>();
+			}
 
-			// Define it as active chest and remove the rest of chests from the scene
-			instance.m_selectedChest = chestObj.GetComponent<Chest>();
+			// Remove the rest of chests from the scene
 			for(int i = 0; i < chests.Length; i++) {
 				// Skip if selected chest
 				if(chests[i] == chestObj) continue;
@@ -119,11 +123,22 @@ public class ChestManager : Singleton<ChestManager> {
 	/// </summary>
 	public static void GenerateReward() {
 		// First of all, select reward type
-		instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
-
-		// If reward is an egg and incubator is full, we need another reward type
-		while(instance.m_rewardType == RewardType.EGG && EggManager.isInventoryFull) {
+		// Special case: force egg reward for the first chest found
+		if(UserProfile.IsTutorialStepCompleted(TutorialStep.CHEST_REWARD)) {
+			// Tutorial completed, get random reward
 			instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
+
+			// If reward is an egg and incubator is full, we need another reward type
+			while(instance.m_rewardType == RewardType.EGG && EggManager.isInventoryFull) {
+				instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
+			}
+		} else {
+			// Tutorial not completed: force egg reward
+			instance.m_rewardType = RewardType.EGG;
+
+			// Complete tutorial
+			UserProfile.SetTutorialStepCompleted(TutorialStep.CHEST_REWARD);
+			PersistenceManager.Save();
 		}
 
 		// Now compute amount/sku based on reward type
@@ -138,11 +153,8 @@ public class ChestManager : Singleton<ChestManager> {
 				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
 				float minReward = A * (Mathf.Log(1) + 1) / B;
 				float reward = Random.Range(minReward, maxReward);
-				Debug.Log("REWARD: " + reward + " [" + minReward + ", " + maxReward + "]");
 				instance.m_rewardAmount = (int)MathUtils.Snap(reward, 100f);
-				Debug.Log("\t snapped: " + instance.m_rewardAmount);
 				instance.m_rewardAmount = Mathf.Max(1, instance.m_rewardAmount);	// At least 1 coin
-				Debug.Log("\t min: " + instance.m_rewardAmount);
 			} break;
 
 			case RewardType.PC: {
@@ -155,11 +167,8 @@ public class ChestManager : Singleton<ChestManager> {
 				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
 				float minReward = A * (Mathf.Log(1) + 1) / B;
 				float reward = Random.Range(minReward, maxReward);
-				Debug.Log("REWARD: " + reward + " [" + minReward + ", " + maxReward + "]");
 				instance.m_rewardAmount = (int)MathUtils.Snap(reward, 1f);
-				Debug.Log("\t snapped: " + instance.m_rewardAmount);
 				instance.m_rewardAmount = Mathf.Max(1, instance.m_rewardAmount);	// At least 1 pc
-				Debug.Log("\t min: " + instance.m_rewardAmount);
 			} break;
 
 			case RewardType.BOOSTER: {
