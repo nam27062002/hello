@@ -69,6 +69,12 @@ namespace LevelEditor {
 				spawnPointObj.transform.SetParent(spawnContainerObj.transform, true);
 			}
 
+			GameCameraController camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+
+			if (camera != null && spawnPointObj != null) {
+				camera.transform.position = spawnPointObj.transform.position;
+			}
+
 			return spawnPointObj;
 		}
 	}
