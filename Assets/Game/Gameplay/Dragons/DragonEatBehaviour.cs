@@ -19,12 +19,14 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_eatSpeedFactor = m_dragon.data.def.Get<float>("eatSpeedFactor");
 
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
 	}
 
 	void OnDestroy() {
 		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
 	}
 
 	void OnEntityEaten( Transform t, Reward reward )
@@ -40,6 +42,14 @@ public class DragonEatBehaviour : EatBehaviour {
 		}
 
 		m_dragon.AddEnergy(reward.energy);
+	}
+
+	void OnMultiplierLost()
+	{
+		if ( Random.Range(0, 100.0f) <= 60.0f )
+		{
+			Burp();
+		}
 	}
 
 	protected override void SlowDown(bool _enable) {
