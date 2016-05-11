@@ -98,7 +98,6 @@ public class EdibleBehaviour : Initializable {
 	public void OnEatByPet() {
 		m_isBeingEaten = true;
 		OnEatBehaviours(false);
-		m_animator.SetTrigger("being eaten");
 
 		EntityManager.instance.Unregister(GetComponent<Entity>());
 	}
@@ -106,8 +105,6 @@ public class EdibleBehaviour : Initializable {
 	public void OnEat() {
 		m_isBeingEaten = true;
 		OnEatBehaviours(false);
-		if ( m_animator != null )
-			m_animator.SetTrigger("being eaten");
 
 		TryOnEatSound();
 		EntityManager.instance.Unregister(GetComponent<Entity>());
@@ -118,8 +115,8 @@ public class EdibleBehaviour : Initializable {
 		if ( m_onEatenSounds.Count > 0 && Random.Range(0, 100) <= m_onEatenSoundProbability)
 		{
 			// Play sound!
-			string soundName = m_onEatenSounds[ Random.Range( 0, m_onEatenSounds.Count ) ];
-			if (!string.IsNullOrEmpty( soundName ))
+			string soundName = m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)];
+			if (!string.IsNullOrEmpty(soundName))
 			{
 				AudioManager.instance.PlayClip( soundName );
 			}

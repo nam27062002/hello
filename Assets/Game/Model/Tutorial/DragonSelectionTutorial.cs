@@ -57,7 +57,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_scroller = FindObjectOfType<MenuDragonScroller3D>();
+		MenuDragonScreenController screenController = InstanceManager.GetSceneController<MenuSceneController>().GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>(); 
+		m_scroller = screenController.dragonScroller3D;
 		m_canvasGroup = GetComponent<CanvasGroup>();
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.

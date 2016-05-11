@@ -60,6 +60,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	public void Refresh(string _sku) {
 		// Get new dragon's data from the dragon manager
 		DragonData data = DragonManager.GetDragonData(_sku);
+		if(data == null) return;
 
 		// Update price
 		m_priceText.text = StringUtils.FormatNumber(data.def.GetAsLong("unlockPricePC"));
@@ -68,7 +69,11 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// <summary>
 	/// The unlock button has been pressed.
 	/// </summary>
-	public void OnUnlock() {
+	public void OnUnlock() 
+	{
+		// Play Sound
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 		long pricePC = data.def.GetAsLong("unlockPricePC");

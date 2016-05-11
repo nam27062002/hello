@@ -60,6 +60,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	public void Refresh(string _sku) {
 		// Get new dragon's data from the dragon manager
 		DragonData data = DragonManager.GetDragonData(_sku);
+		if(data == null) return;
 
 		// Update price
 		m_priceText.text = StringUtils.FormatNumber(data.def.GetAsLong("unlockPriceCoins"));

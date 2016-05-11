@@ -41,12 +41,17 @@ public class FleeBehaviour : Initializable {
 
 	public List<string> m_afraidSounds = new List<string>();
 
+	// dirty and fast implementation of sound for running away groups
+	private Entity m_entity;
+	static Dictionary<string, int> m_runningAway = new Dictionary<string,int>();
+
 	// Use this for initialization
 	void Awake () {
 		m_motion = GetComponent<PreyMotion>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_sensor = GetComponent<SensePlayer>();
 		m_flock = GetComponent<FlockBehaviour>();
+		m_entity = GetComponent<Entity>();
 	}
 
 	void Start() {
@@ -147,6 +152,7 @@ public class FleeBehaviour : Initializable {
 		switch (m_state) {
 			case State.RunAway:
 				m_animator.SetBool("move", false);
+				m_runningAway[ m_entity.sku ]--;
 				break;
 				
 			case State.Afraid:
@@ -161,8 +167,20 @@ public class FleeBehaviour : Initializable {
 		// enter State
 		switch (m_nextState) {
 			case State.RunAway:
+			{
 				m_animator.SetBool("move", true);
-				break;
+				if (m_runningAway.ContainsKey(m_entity.sku))
+				{
+					m_runningAway[ m_entity.sku ]++;
+				}
+				else
+				{
+					m_runningAway.Add(m_entity.sku, 1);	
+				}
+
+				CheckRunAwaySound();
+
+			}break;
 				
 			case State.Afraid:
 			{
@@ -188,5 +206,40 @@ public class FleeBehaviour : Initializable {
 		}
 		
 		m_state = m_nextState;
+	}
+
+
+	/// <summary>
+	/// Checks the run away sound. Checks if enough entities are running away to play a sound. 
+	/// This should be done somwhere else. Maybe inside Ambient Sound Manager registering the states of each entity and having information from content
+	/// </summary>
+	private void CheckRunAwaySound()
+	{
+		// We should add this to content or do it somwhere else
+		switch( m_entity.sku )
+		{
+			case "canary":
+			{
+				if ( m_runningAway[ m_entity.sku ] == 4 )	// play sound
+				{
+					switch( Random.Range(0,2) )
+					{
+						case 0:AudioManager.instance.PlayClip("audio/sfx/Animals/Air/PigeonsFly");break;
+						case 1:AudioManager.instance.PlayClip("audio/sfx/Animals/Air/Amb_Rnd_PerchedBirdsFlee_02");break;
+					}
+				}
+			}break;
+			case "starling":
+			{
+				if ( m_runningAway[ m_entity.sku ] == 4 )	// play sound
+				{
+					switch( Random.Range(0,2) )
+					{
+						case 0:AudioManager.instance.PlayClip("audio/sfx/Animals/Air/PigeonsFly");break;
+						case 1:AudioManager.instance.PlayClip("audio/sfx/Animals/Air/Amb_Rnd_PerchedBirdsFlee_02");break;
+					}
+				}
+			}break;
+		}
 	}
 }

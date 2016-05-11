@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MineBehaviour : Initializable {
 
@@ -8,6 +9,7 @@ public class MineBehaviour : Initializable {
 
 	[Header("Explosion")]
 	[SerializeField] private GameObject m_explosionPrefab = null;
+	[SerializeField] private List<string> m_explosionSounds = new List<string>();
 	[SerializeField] private Range m_delayRange = new Range(0f, 0.25f);
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
@@ -97,6 +99,16 @@ public class MineBehaviour : Initializable {
 		m_camera.Shake(0.75f, new Vector3(0.75f, 0.75f, 0));
 
 		m_timer = m_delayRange.GetRandom();
+
+		if ( m_explosionSounds.Count > 0 )
+		{
+			string soundName = m_explosionSounds[ Random.Range(0, m_explosionSounds.Count) ];
+			if (!string.IsNullOrEmpty( soundName ))
+			{
+				AudioManager.instance.PlayClip( soundName );
+			}
+		}
+
 
 		GetComponent<Collider>().enabled = false;
 	}
