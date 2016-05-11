@@ -74,8 +74,11 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
 	public void SetSelectedDragon(string _sku) {
-		// Notify game
-		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _sku);
+		// Find out index
+		DragonData data = DragonManager.GetDragonData(_sku);
+
+		// Use select by index
+		SetSelectedDragon(data.def.GetAsInt("order"));
 	}
 
 	/// <summary>
@@ -87,8 +90,11 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 		// Clamp index
 		_idx = Mathf.Clamp(_idx, 0, DragonManager.dragonsByOrder.Count);
 
-		// Select by sku
-		SetSelectedDragon(DragonManager.dragonsByOrder[_idx].def.sku);
+		// Store new selected index
+		m_selectedIdx = _idx;
+
+		// Notify game
+		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, DragonManager.dragonsByOrder[_idx].def.sku);
 	}
 
 	//------------------------------------------------------------------//
@@ -113,8 +119,7 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 	/// Select next dragon. To be linked with the "next" button.
 	/// </summary>
 	/// <param name="_loop">Allow going from last to first dragon or not.</param>
-	public void SelectNextDragon(bool _loop) 
-	{
+	public void SelectNextDragon(bool _loop) {
 		// Figure out next dragon's sku
 		int newSelectedIdx = m_selectedIdx + 1;
 		if(newSelectedIdx >= DragonManager.dragonsByOrder.Count) {
@@ -123,17 +128,14 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 		}
 
 		// Change selection
-		m_selectedIdx = newSelectedIdx;
-		SetSelectedDragon(DragonManager.dragonsByOrder[m_selectedIdx].def.sku);
+		SetSelectedDragon(newSelectedIdx);
 	}
 
 	/// <summary>
 	/// Select previous dragon. To be linked with the "previous" button.
 	/// </summary>
 	/// <param name="_loop">Allow going from first to last dragon or not.</param>
-	public void SelectPreviousDragon(bool _loop) 
-	{
-
+	public void SelectPreviousDragon(bool _loop)  {
 		// Figure out previous dragon's sku
 		int newSelectedIdx = m_selectedIdx - 1;
 		if(newSelectedIdx < 0) {
@@ -142,8 +144,7 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 		}
 
 		// Change selection
-		m_selectedIdx = newSelectedIdx;
-		SetSelectedDragon(DragonManager.dragonsByOrder[m_selectedIdx].def.sku);
+		SetSelectedDragon(newSelectedIdx);
 	}
 
 	/// <summary>
