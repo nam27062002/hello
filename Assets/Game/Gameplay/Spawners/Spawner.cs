@@ -43,6 +43,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 	private float m_respawnTimer;
 	private uint m_respawnCount;
 
+	private bool m_readyToBeDisabled;
+
 	private GameCameraController m_camera;
 	
 	//-----------------------------------------------
@@ -80,6 +82,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_entitiesKilled = 0;
 
 		m_allEntitiesKilledByPlayer = false;
+
+		m_readyToBeDisabled = false;
 
 		if (m_activeOnStart) {
 			Spawn();
@@ -132,6 +136,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 			} else {
 				m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
 			}
+
+			if (m_readyToBeDisabled) {
+				SpawnerManager.instance.Unregister(this);
+			}
 		}
 	}
 		
@@ -150,15 +158,18 @@ public class Spawner : MonoBehaviour, ISpawner {
 			} else {
 				// re-spawn logic
 				if (m_entityAlive == 0) {
-					if (m_respawnTimer > 0) {
-						m_respawnTimer -= Time.deltaTime;
-						if (m_respawnTimer <= 0) {
-							m_respawnTimer = 0;
-						}
+					if (m_readyToBeDisabled) {
+						SpawnerManager.instance.Unregister(this);
 					} else {
-						if (m_camera != null && m_camera.IsInsideActivationArea(transform.position)) {
-							Spawn();
-							m_respawnTimer = m_spawnTime.GetRandom();
+						if (m_respawnTimer > 0) {
+							m_respawnTimer -= Time.deltaTime;
+							if (m_respawnTimer <= 0) {
+								m_respawnTimer = 0;
+							}
+						} else {
+							if (m_camera != null && m_camera.IsInsideActivationArea(transform.position)) {
+								Spawn();
+							}
 						}
 					}
 				}
@@ -167,8 +178,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				if (m_disableTimer > 0) {
 					m_disableTimer -= Time.deltaTime;
 					if (m_disableTimer <= 0) {
-						gameObject.SetActive(false);
-						SpawnerManager.instance.Unregister(this);
+						m_readyToBeDisabled = true;
 					}
 				}
 			}
@@ -233,6 +243,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 
 		m_allEntitiesKilledByPlayer = false;
+
+		m_respawnTimer = m_spawnTime.GetRandom();
 	}
 
 	protected virtual void ExtendedSpawn() {}
