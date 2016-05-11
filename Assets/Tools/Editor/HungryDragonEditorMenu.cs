@@ -17,12 +17,35 @@ using UnityEditor.SceneManagement;
 /// <summary>
 /// Setup of the Hungry Dragon menu entry in the Unity Editor menu, giving fast access to several tools.
 /// </summary>
+[InitializeOnLoad]	// To call the constructor upon Unity initialization
 public class HungryDragonEditorMenu {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	private static readonly string DEFINITIONS_FOLDER = "Assets/Resources/Definitions/";
 	private static readonly string SINGLETONS_FOLDER = "Assets/Resources/Singletons/";
+
+	//------------------------------------------------------------------//
+	// GENERIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Constructor.
+	/// </summary>
+	static HungryDragonEditorMenu() {
+		// Subscribe to the scene update call
+		//SceneView.onSceneGUIDelegate += OnSceneGUI;
+	}
+
+	/// <summary>
+	/// Scene has been updated.
+	/// </summary>
+	/// <param name="_sceneview">Target scene view.</param>
+	public static void OnSceneGUI(SceneView _sceneview) {
+		/*Event e = Event.current;
+		if(e != null && e.keyCode != KeyCode.None) {
+			Debug.Log("Key pressed in editor: " + e.keyCode);
+		}*/
+	}
 
 	//------------------------------------------------------------------//
 	// MENU SETUP														//
