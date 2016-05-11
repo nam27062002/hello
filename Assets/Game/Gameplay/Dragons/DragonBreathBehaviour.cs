@@ -139,6 +139,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_furyBase = m_dragon.data.def.GetAsFloat("furyMax");
 		m_furyMax = m_furyBase;
 		m_currentFury = 0;
+
+		if (!UserProfile.furyUsed) {
+			m_currentFury = m_furyMax * 0.5f;
+		}
+
 		// m_furyModifier = 0;
 
 		// Get the level
@@ -289,6 +294,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 		m_type = _type;
 		m_isFuryOn = true;
+
+		UserProfile.furyUsed = true;
 
 		switch( m_type )
 		{
