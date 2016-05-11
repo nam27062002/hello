@@ -35,6 +35,8 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		/*[SkuList(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
 		[EnumMask] public TutorialStep tutorialStep = TutorialStep.INIT;
 
+		public bool furyUsed = false;
+
 		// Game stats
 		public int gamesPlayed = 0;
 		public long highScore = 0;
@@ -78,6 +80,12 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	public static TutorialStep tutorialStep { 
 		get { return instance.m_tutorialStep; }
 		set { instance.m_tutorialStep = value; }
+	}
+
+	[SerializeField] private bool m_furyUsed = false;
+	public static bool furyUsed {
+		get { return instance.m_furyUsed; }
+		set { instance.m_furyUsed = value; }
 	}
 
 	[Separator("Game Stats")]
@@ -177,6 +185,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		instance.m_currentDragon = _data.currentDragon;
 		instance.m_currentLevel = _data.currentLevel;
 		instance.m_tutorialStep = _data.tutorialStep;
+		instance.m_furyUsed = _data.furyUsed;
 
 		// Game stats
 		instance.m_gamesPlayed = _data.gamesPlayed;
@@ -207,6 +216,7 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 		data.currentDragon = instance.m_currentDragon;
 		data.currentLevel = instance.m_currentLevel;
 		data.tutorialStep = instance.m_tutorialStep;
+		data.furyUsed = instance.m_furyUsed;
 
 		// Game stats
 		data.gamesPlayed = instance.m_gamesPlayed;
