@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 798591386}
+  m_SkyboxMaterial: {fileID: 683860922}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -4809,7 +4809,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -5414,7 +5414,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -16138,7 +16138,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -17014,7 +17014,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -17148,7 +17148,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -18231,7 +18231,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -18338,7 +18338,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -19757,7 +19757,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -21851,7 +21851,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -21985,7 +21985,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -23918,6 +23918,194 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!21 &683860922
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Skybox
+  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 1000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailNormalMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _OcclusionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailAlbedoMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _SrcBlend
+        second: 1
+      data:
+        first:
+          name: _DstBlend
+        second: 0
+      data:
+        first:
+          name: _Cutoff
+        second: 0.5
+      data:
+        first:
+          name: _Exposure
+        second: 1.1099983
+      data:
+        first:
+          name: _SunSize
+        second: 0
+      data:
+        first:
+          name: _AtmosphereThickness
+        second: 0.68999904
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
+      data:
+        first:
+          name: _ZWrite
+        second: 1
+      data:
+        first:
+          name: _Glossiness
+        second: 0.5
+      data:
+        first:
+          name: _BumpScale
+        second: 1
+      data:
+        first:
+          name: _OcclusionStrength
+        second: 1
+      data:
+        first:
+          name: _DetailNormalMapScale
+        second: 1
+      data:
+        first:
+          name: _UVSec
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
+          name: _Mode
+        second: 0
+      data:
+        first:
+          name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _HorizonHeight
+        second: 0.009999999
+    m_Colors:
+      data:
+        first:
+          name: _EmissionColor
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SkyTint
+        second: {r: 0, g: 0.5862069, b: 1, a: 1}
+      data:
+        first:
+          name: _GroundColor
+        second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
+      data:
+        first:
+          name: _EmissionColorUI
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SkyColor
+        second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
+      data:
+        first:
+          name: _SunPos
+        second: {r: 1, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
+      data:
+        first:
+          name: _SunColor
+        second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
+      data:
+        first:
+          name: _AddColor
+        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &688668278
 GameObject:
   m_ObjectHideFlags: 0
@@ -24788,7 +24976,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -27064,7 +27252,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -28487,7 +28675,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 0
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -28624,194 +28812,6 @@ MonoBehaviour:
   m_positionLock: 000000
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!21 &798591386
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Skybox
-  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 1000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-      data:
-        first:
-          name: _MainTex
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _BumpMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailNormalMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ParallaxMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _OcclusionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailAlbedoMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _MetallicGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-    m_Floats:
-      data:
-        first:
-          name: _SrcBlend
-        second: 1
-      data:
-        first:
-          name: _DstBlend
-        second: 0
-      data:
-        first:
-          name: _Cutoff
-        second: 0.5
-      data:
-        first:
-          name: _Exposure
-        second: 1.1099983
-      data:
-        first:
-          name: _SunSize
-        second: 0
-      data:
-        first:
-          name: _AtmosphereThickness
-        second: 0.68999904
-      data:
-        first:
-          name: _Parallax
-        second: 0.02
-      data:
-        first:
-          name: _ZWrite
-        second: 1
-      data:
-        first:
-          name: _Glossiness
-        second: 0.5
-      data:
-        first:
-          name: _BumpScale
-        second: 1
-      data:
-        first:
-          name: _OcclusionStrength
-        second: 1
-      data:
-        first:
-          name: _DetailNormalMapScale
-        second: 1
-      data:
-        first:
-          name: _UVSec
-        second: 0
-      data:
-        first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
-          name: _Mode
-        second: 0
-      data:
-        first:
-          name: _Metallic
-        second: 0
-      data:
-        first:
-          name: _HorizonHeight
-        second: 0.009999999
-    m_Colors:
-      data:
-        first:
-          name: _EmissionColor
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SkyTint
-        second: {r: 0, g: 0.5862069, b: 1, a: 1}
-      data:
-        first:
-          name: _GroundColor
-        second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
-      data:
-        first:
-          name: _EmissionColorUI
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SkyColor
-        second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
-      data:
-        first:
-          name: _SunPos
-        second: {r: 1, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _HorizonColor
-        second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
-      data:
-        first:
-          name: _SunColor
-        second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
-      data:
-        first:
-          name: _AddColor
-        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &810950151
 GameObject:
   m_ObjectHideFlags: 0
@@ -30435,7 +30435,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -31677,7 +31677,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -32089,7 +32089,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -33693,7 +33693,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 0
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -33822,7 +33822,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -36130,7 +36130,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -37578,7 +37578,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -39174,7 +39174,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -40758,7 +40758,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -43626,7 +43626,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -43791,7 +43791,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -45126,7 +45126,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -45260,7 +45260,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -46487,7 +46487,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -46837,7 +46837,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -46939,7 +46939,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -47941,7 +47941,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -48040,7 +48040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 3.6279774
+  radius: 3.8578224
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &1329322765
 MonoBehaviour:
@@ -49544,7 +49544,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1377633844}
   m_Layer: 0
-  m_Name: GRP_Time_0s_to_50s
+  m_Name: GRP_Time_0s_to_80s
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50763,7 +50763,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -52008,7 +52008,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -52142,7 +52142,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -53140,7 +53140,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 0
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -56959,7 +56959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 5
+  radius: 4.9425354
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &1573212726
 MonoBehaviour:
@@ -56994,7 +56994,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -61570,7 +61570,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -63352,7 +63352,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -71507,7 +71507,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 1
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -71674,7 +71674,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -72042,7 +72042,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -77242,7 +77242,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -78322,7 +78322,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -78558,7 +78558,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -78928,7 +78928,7 @@ MonoBehaviour:
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
-  m_disableTime: 50
+  m_disableTime: 80
   m_spawnTime:
     min: 40
     max: 45
@@ -79795,7 +79795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 4.1052017
+  radius: 3.5880318
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &2125595380
 MonoBehaviour:
