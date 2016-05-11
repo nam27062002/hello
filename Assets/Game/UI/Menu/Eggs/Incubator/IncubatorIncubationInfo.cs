@@ -123,6 +123,9 @@ public class IncubatorIncubationInfo : MonoBehaviour {
 	/// The skip button has been pressed.
 	/// </summary>
 	public void OnSkipButton() {
+		// Play Sound
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
 		// Resources check
 		long pricePC = (long)EggManager.GetIncubationSkipCostPC();
 		if(UserProfile.pc >= pricePC) {
