@@ -42,6 +42,24 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		get { return GetDragonData(UserProfile.currentDragon); }
 	}
 
+	// Shortcut to get the data of the dragon following the currently selected
+	// Null for last dragon
+	public static DragonData nextDragon {
+		get {
+			// [AOC] We could use the "order" field, but I don't trust it to be always consistent with the dragons list, so just search by sku
+			for(int i = 0; i < instance.m_dragonsByOrder.Count - 1; i++) {	// [AOC] Skip last dragon (since it doesn't have a "next" dragon)
+				// Is it the current dragon?
+				if(instance.m_dragonsByOrder[i].def.sku == UserProfile.currentDragon) {
+					// Yes! Return next dragon
+					return instance.m_dragonsByOrder[i + 1];	// [AOC] Should be safe since we're excluding last dragon from the loop
+				}
+			}
+
+			// Current dragon not found or was last dragon
+			return null;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

@@ -104,6 +104,11 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_dragonInitialLevelProgress; }
 	}
 
+	private float m_dragonInitialUnlockProgress = 0;
+	public static float dragonInitialUnlockProgress {
+		get { return instance.m_dragonInitialUnlockProgress; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -219,6 +224,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		// Current dragon progress
 		instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
 		instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+		instance.m_dragonInitialUnlockProgress = DragonManager.currentDragon.progression.progressByXp;
 	}
 
 	/// <summary>
