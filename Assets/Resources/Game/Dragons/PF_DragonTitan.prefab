@@ -998,7 +998,6 @@ GameObject:
   - 114: {fileID: 11470442}
   - 114: {fileID: 11414254}
   - 114: {fileID: 11498956}
-  - 114: {fileID: 11417560}
   - 114: {fileID: 11449584}
   - 114: {fileID: 11473956}
   - 114: {fileID: 11441758}
@@ -1854,7 +1853,7 @@ Transform:
   m_LocalRotation: {x: 0.7070257, y: 0.010697019, z: -0.70702606, w: -0.010697025}
   m_LocalPosition: {x: 0, y: 0.64, z: 0.02}
   m_LocalScale: {x: 2, y: 2, z: 2}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 178.26639}
   m_Children: []
   m_Father: {fileID: 474010}
   m_RootOrder: 3
@@ -1989,7 +1988,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
   m_LocalPosition: {x: -1.952, y: -0.292, z: 0}
   m_LocalScale: {x: 1.75, y: 1.75, z: 1.75}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_Children:
   - {fileID: 441394}
   - {fileID: 470860}
@@ -2499,12 +2498,12 @@ Rigidbody:
   m_GameObject: {fileID: 177616}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 1.5
-  m_AngularDrag: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 120
+  m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!65 &6546718
 BoxCollider:
@@ -2512,7 +2511,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 148250}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2937,18 +2936,6 @@ MonoBehaviour:
   m_stunnedTime: 0.5
   m_rbody: {fileID: 0}
   m_bubbles: {fileID: 19837946}
---- !u!114 &11417560
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 177616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20bece88168c34eaa8589c1a54ccefd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_turningSpeed: 8
 --- !u!114 &11422626
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3129,7 +3116,7 @@ SphereCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184462}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

@@ -744,6 +744,12 @@ public static class Util
 	{
 		return Mathf.Atan2(v.y, v.x)*Mathf.Rad2Deg;
 	}
+
+	public static float ToAngleDegrees(this Vector3 v)
+	{
+		return Mathf.Atan2(v.y, v.x)*Mathf.Rad2Deg;
+	}
+
 	public static float ToAngleRadians(this Vector2 v)
 	{
 		return Mathf.Atan2(v.y, v.x);

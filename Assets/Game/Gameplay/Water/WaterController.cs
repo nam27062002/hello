@@ -24,7 +24,7 @@ public class WaterController : MonoBehaviour {
 		&&  pos.x < waterPos.x + (m_bounds.size.x * 0.5f)) {		
 			if (pos.y > waterPos.y - 1 && pos.y < waterPos.y + 1) {
 				pos.y = waterPos.y;
-				activeTrail = Mathf.Abs(m_player.m_rbody.velocity.x) > 1.5f;
+				activeTrail = Mathf.Abs(m_player.rbody.velocity.x) > 1.5f;
 				if (m_waterTrail != null) {
 					m_waterTrail.transform.position = pos;
 				}
