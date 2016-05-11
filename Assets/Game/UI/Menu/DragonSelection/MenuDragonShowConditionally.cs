@@ -107,6 +107,7 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 		// Check whether the object should be visible or not
 		bool toShow = false;
 		DragonData dragon = DragonManager.GetDragonData(_sku);
+		if(dragon == null) return;
 
 		// Ownership status
 		switch(dragon.lockState) {

@@ -90,6 +90,7 @@ public class MenuLevelScroller3D : MonoBehaviour {
 	public void FocusLevel(string _sku, AnimDir _dir) {
 		// Find out target index and get its path follower
 		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
+		if(def == null) return;
 		int targetIdx = def.GetAsInt("order");
 
 		// Compute delta offset for the target level in the requested direction

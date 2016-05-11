@@ -500,6 +500,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 224: {fileID: 22499148}
+  - 114: {fileID: 11498108}
   - 114: {fileID: 11454040}
   - 114: {fileID: 11466192}
   - 225: {fileID: 22570220}
@@ -5344,9 +5345,9 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 0
+  m_Spacing: 30
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandHeight: 1
 --- !u!114 &11435018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8184,7 +8185,7 @@ MonoBehaviour:
   m_initialScreen: {fileID: 0}
   m_screens: []
   m_tabButtons: []
-  m_buttonPrefab: {fileID: 164356, guid: 1740ab30e7252407e96e46ace11efdba, type: 2}
+  m_buttonPrefab: {fileID: 164356, guid: 35eaef0e8c67c40a192220c917ea0b30, type: 2}
   m_dummyTab: {fileID: 11434668}
 --- !u!114 &11478044
 MonoBehaviour:
@@ -9168,7 +9169,7 @@ MonoBehaviour:
   m_outline: 1
   m_outlineQuality: 0
   m_outlineSize: 2
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineColor: {r: 0.125, g: 0.118071266, b: 0.112132356, a: 1}
   m_shadow: 0
   m_shadowAngle: 135
   m_shadowSize: 0
@@ -9401,7 +9402,7 @@ MonoBehaviour:
   m_outline: 1
   m_outlineQuality: 0
   m_outlineSize: 2
-  m_outlineColor: {r: 0.304282, g: 0.43644956, b: 0.61764705, a: 1}
+  m_outlineColor: {r: 0.125, g: 0.118071266, b: 0.112132356, a: 1}
   m_shadow: 0
   m_shadowAngle: 135
   m_shadowSize: 0
@@ -9420,6 +9421,17 @@ MonoBehaviour:
   m_EffectColor: {r: 0.066176474, g: 0.059607487, b: 0.053038497, a: 1}
   m_EffectDistance: {x: 1, y: 2}
   m_UseGraphicAlpha: 1
+--- !u!114 &11498108
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4182271ffbe0426c8b081e8b2398fde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11498148
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9469,7 +9481,7 @@ MonoBehaviour:
   m_tweenDuration: 0.25
   m_tweenValue: 0
   m_tweenEase: 27
-  m_tweenDelay: 0.1
+  m_tweenDelay: 0.2
 --- !u!114 &11499614
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10283,7 +10295,7 @@ RectTransform:
   m_RootOrder: 6
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 96.75}
+  m_AnchoredPosition: {x: 0, y: 70}
   m_SizeDelta: {x: 580, y: 210}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &22407154
@@ -10899,7 +10911,7 @@ RectTransform:
   m_RootOrder: 7
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 96.75}
+  m_AnchoredPosition: {x: 0, y: 70}
   m_SizeDelta: {x: 580, y: 210}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &22432278
@@ -12163,7 +12175,7 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 376}
+  m_AnchoredPosition: {x: 0, y: 420}
   m_SizeDelta: {x: 1106, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22491772

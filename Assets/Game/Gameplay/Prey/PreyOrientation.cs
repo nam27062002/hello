@@ -35,7 +35,7 @@ public class PreyOrientation : Orientation {
 		m_targetAngle = m_rotation.eulerAngles.y;
 		m_angle = m_targetAngle;
 
-		if (Random.Range(0f, 1f) < 0.5f) {
+		if (Random.Range(0f, 1f) < 0.25f) {
 			m_faceLeftAngleY *= -1f;
 			m_faceRightAngleY *= -1f;
 		}

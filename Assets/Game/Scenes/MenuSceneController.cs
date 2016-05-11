@@ -92,6 +92,28 @@ public class MenuSceneController : SceneController {
 	}
 
 	//------------------------------------------------------------------//
+	// PUBLIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Quick access to one of the UI screens composing the menu scene.
+	/// </summary>
+	/// <returns>The requested UI screen.</returns>
+	/// <param name="_screen">The screen to be obtained.</param>
+	public NavigationScreen GetScreen(MenuScreens _screen) {
+		return screensController.GetScreen((int)_screen);
+	}
+
+	/// <summary>
+	/// Quick access to one of the 3D scenes linked of each of the screens composing 
+	/// the menu scene.
+	/// </summary>
+	/// <returns>The requested scene.</returns>
+	/// <param name="_screen">The screen whose scene we want.</param>
+	public MenuScreenScene GetScreenScene(MenuScreens _screen) {
+		return screensController.GetScene((int)_screen);
+	}
+
+	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
