@@ -109,7 +109,7 @@ public class InflammableDecoration : Initializable {
 			if ( m_timer.Finished() )
 			{
 				m_view.SetActive(false);
-				m_autoSpawner.Respawn();
+				m_autoSpawner.StartRespawn();
 			}
 		} 
 		else 

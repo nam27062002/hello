@@ -122,7 +122,10 @@ public abstract class AttackBehaviour : Initializable {
 				if (!m_edible.IsBeingHeld())
 				{
 					m_motion.Stop();
-					if (m_sensor.isInsideMaxArea) {
+
+					if (m_sensor.alert) {
+						m_nextState = State.Attack;
+					} else if (m_sensor.isInsideMaxArea) {
 						if (m_area == null || m_area.Contains(transform.position)) {
 							m_nextState = State.Pursuit;
 						}

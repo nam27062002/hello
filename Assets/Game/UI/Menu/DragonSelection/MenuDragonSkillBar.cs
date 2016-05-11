@@ -123,6 +123,9 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		// Get skill data
 		DragonSkill skillData = DragonManager.currentDragon.GetSkill(m_skillSku);
 
+		// Play Sound
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
 		// Enough resources?
 		if(UserProfile.coins < skillData.nextLevelUnlockPrice) {
 			// Show currency shop

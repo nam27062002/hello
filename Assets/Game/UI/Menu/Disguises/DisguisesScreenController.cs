@@ -252,6 +252,8 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Skip if pill is already the selected one
 		if(m_selectedPill == _pill) return;
 
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
 		// Update and Show/Hide title
 		ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
 		titleAnimator.Hide(false);
@@ -317,6 +319,8 @@ public class DisguisesScreenController : MonoBehaviour {
 		/*PopupController popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
 		popup.GetComponent<PopupEggShop>().SetInitialEgg(m_dragonSku);
 		popup.GetComponent<PopupEggShop>().SetVisibleEggs(new string[] { m_dragonSku });*/
+
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Can the egg be purchased? It should be, we can't open the disguises screen for dragons we don't yet own! Check it just in case
 		// Dragon must be owned
