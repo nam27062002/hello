@@ -1044,7 +1044,6 @@ GameObject:
   - 114: {fileID: 11495740}
   - 114: {fileID: 11423962}
   - 114: {fileID: 11490244}
-  - 114: {fileID: 11483492}
   - 114: {fileID: 11413244}
   - 114: {fileID: 11490858}
   - 114: {fileID: 11454650}
@@ -1351,7 +1350,7 @@ Transform:
   m_LocalRotation: {x: 0.7070257, y: 0.010697019, z: -0.70702606, w: -0.010697025}
   m_LocalPosition: {x: 0, y: 0.64, z: 0.02}
   m_LocalScale: {x: 2, y: 2, z: 2}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 178.26639}
   m_Children: []
   m_Father: {fileID: 423986}
   m_RootOrder: 3
@@ -2499,12 +2498,12 @@ Rigidbody:
   m_GameObject: {fileID: 182064}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 1.5
-  m_AngularDrag: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 120
+  m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!65 &6569574
 BoxCollider:
@@ -2512,7 +2511,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 144652}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -3036,18 +3035,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a2fe1b5a7a344b88962c88a1f75241e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11483492
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20bece88168c34eaa8589c1a54ccefd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_turningSpeed: 8
 --- !u!114 &11490244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3129,7 +3116,7 @@ SphereCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 106656}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

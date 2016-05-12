@@ -73,6 +73,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 
 		// Get new dragon's data from the dragon manager
 		DragonData data = DragonManager.GetDragonData(_sku);
+		if(data == null) yield break;
 
 		// Bar value
 		m_levelBar.minValue = 0;

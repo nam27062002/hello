@@ -42,18 +42,34 @@ public class MenuDragonPaginator : TabSystem {
 		Debug.Assert(m_buttonPrefab != null, "Required field!");
 		Debug.Assert(m_dummyTab != null, "Required field!");
 
-		// Create a button for each dragon
-		// Re-use the loop to initialize selected dragon
-		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
+		// Create a button for each tier
+		List<DefinitionNode> tierDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGON_TIERS);
+		DefinitionsManager.SortByProperty(ref tierDefs, "order", DefinitionsManager.SortType.NUMERIC);
+		for(int i = 0; i < tierDefs.Count; i++) {
 			// Create a new instance of the prefab as a child of this object
 			// Will be auto-positioned by the Layout component
 			GameObject newInstanceObj = GameObject.Instantiate<GameObject>(m_buttonPrefab);
 			newInstanceObj.transform.SetParent(this.transform, false);
 
+			// Load the icon corresponding to the target tier
+			Image tierIcon = newInstanceObj.GetComponent<Image>();
+			if(tierIcon != null) tierIcon.sprite = Resources.Load<Sprite>(tierDefs[i].GetAsString("icon"));
+
+			// Add a listener to the button to select the first dragon of that tier whenever the button is pressed
+			Button tierButton = newInstanceObj.GetComponent<Button>();
+			DragonTier tier = (DragonTier)i;	// Can't use "i" directly with a lambda expression http://stackoverflow.com/questions/3168375/using-the-iterator-variable-of-foreach-loop-in-a-lambda-expression-why-fails
+			tierButton.onClick.AddListener(
+				() => { OnTierButtonClick(tier); }	// Way to add a listener with parameters (basically call a delegate function without parameters which in turn will call our actual callback with the desired parameter)
+			);
+
 			// Save button as one of the tab buttons and add a dummy associated tab
-			m_tabButtons.Add(newInstanceObj.GetComponent<Button>());
+			m_tabButtons.Add(tierButton);
 			m_screens.Add(m_dummyTab);
 		}
+	}
+
+	public void OnTierButtonClickTest() {
+		Debug.Log("CLICK!");
 	}
 
 	/// <summary>
@@ -62,11 +78,6 @@ public class MenuDragonPaginator : TabSystem {
 	override protected void Start() {
 		// Let parent do its magic
 		base.Start();
-
-		// Remove listeners from buttons since in this particular case we don't want to be able to navigate through them
-		for(int i = 0; i < m_tabButtons.Count; i++) {
-			m_tabButtons[i].onClick.RemoveAllListeners();
-		}
 
 		// Select initial tab
 		Initialize();
@@ -87,7 +98,7 @@ public class MenuDragonPaginator : TabSystem {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe to external events
+		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
@@ -111,15 +122,12 @@ public class MenuDragonPaginator : TabSystem {
 		GoToScreen(SCREEN_NONE, NavigationScreen.AnimType.NONE);
 
 		// Find out and select initial tab
-		int selectedIdx = 0;
+		// Luckily, tier indexes match the order of the buttons, so we can do this really fast
 		string selectedSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
-		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
-			if(DragonManager.dragonsByOrder[i].def.sku == selectedSku) {
-				selectedIdx = i;
-				break;
-			}
+		DragonData selectedDragon = DragonManager.GetDragonData(selectedSku);
+		if(selectedDragon != null) {
+			GoToScreen((int)selectedDragon.tier, NavigationScreen.AnimType.NONE);
 		}
-		GoToScreen(selectedIdx, NavigationScreen.AnimType.NONE);
 	}
 
 	//------------------------------------------------------------------------//
@@ -130,11 +138,24 @@ public class MenuDragonPaginator : TabSystem {
 	/// </summary>
 	/// <param name="_id">The id of the selected dragon.</param>
 	public void OnDragonSelected(string _sku) {
-		// Select the matching tab
+		// Luckily, tier indexes match the order of the buttons, so we can do this really fast
+		DragonTier selectedTier = DragonManager.GetDragonData(_sku).tier;
+		GoToScreen((int)selectedTier, NavigationScreen.AnimType.NONE);
+	}
+
+	/// <summary>
+	/// A tier button has been pressed.
+	/// </summary>
+	/// <param name="_tierDef">The tier that has been clicked.</param>
+	public void OnTierButtonClick(DragonTier _tier) {
+		// Select first dragon of the target tier
 		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
-			if(_sku == DragonManager.dragonsByOrder[i].def.sku) {
-				GoToScreen(i, NavigationScreen.AnimType.NONE);
-				break;
+			// Does this dragon belong to the target tier?
+			if(DragonManager.dragonsByOrder[i].tier == _tier) {
+				// Yes!! Select it and return
+				MenuDragonScreenController screenController = InstanceManager.GetSceneController<MenuSceneController>().GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
+				screenController.dragonSelector.SetSelectedDragon(i);
+				return;
 			}
 		}
 	}

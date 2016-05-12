@@ -86,8 +86,13 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The _sku of the selected dragon</param>
 	public void Refresh(string _sku) {
+		// Get dragon data
+		DragonData dragonData = DragonManager.GetDragonData(_sku);
+		if(dragonData == null) return;
+
 		// Get skill data
-		DragonSkill skillData = DragonManager.GetDragonData(_sku).GetSkill(m_skillSku);
+		DragonSkill skillData = dragonData.GetSkill(m_skillSku);
+		if(skillData == null) return;
 
 		// Label
 		m_labelText.Localize(skillData.def.Get("tidName"));

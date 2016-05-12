@@ -286,7 +286,6 @@ GameObject:
   - 114: {fileID: 11408926}
   - 114: {fileID: 11438592}
   - 114: {fileID: 11412152}
-  - 114: {fileID: 11464372}
   - 114: {fileID: 11444004}
   - 114: {fileID: 11416810}
   - 114: {fileID: 11414988}
@@ -2333,12 +2332,12 @@ Rigidbody:
   m_GameObject: {fileID: 120086}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 1.5
-  m_AngularDrag: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 120
+  m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!65 &6565196
 BoxCollider:
@@ -2346,7 +2345,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 119186}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2981,18 +2980,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_trails: []
---- !u!114 &11464372
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20bece88168c34eaa8589c1a54ccefd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_turningSpeed: 8
 --- !u!114 &11483596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3034,7 +3021,7 @@ SphereCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193748}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
