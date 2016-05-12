@@ -34,7 +34,7 @@ public class MineBehaviour : Initializable {
 
 	public override void Initialize() {		
 		Entity entity = GetComponent<Entity>();
-		if(entity != null && entity.edibleFromTier <= InstanceManager.player.data.tier) {
+		if(entity != null && entity.isEdible && entity.edibleFromTier <= InstanceManager.player.data.tier) {
 			enabled = false;
 		}
 
