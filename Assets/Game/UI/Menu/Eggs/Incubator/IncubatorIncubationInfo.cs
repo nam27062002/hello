@@ -32,6 +32,9 @@ public class IncubatorIncubationInfo : MonoBehaviour {
 	[SerializeField] private Text m_skipPCText = null;
 	private ShowHideAnimator m_anim = null;
 
+	// Internal logic
+	private int m_previousCostPC = -1;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -93,8 +96,19 @@ public class IncubatorIncubationInfo : MonoBehaviour {
 		// Timer text
 		m_timerText.text = TimeUtils.FormatTime(EggManager.incubationRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
 
-		// Skip PC cost
-		m_skipPCText.text = StringUtils.FormatNumber(EggManager.GetIncubationSkipCostPC());
+		// Skip PC cost - only when changed
+		int costPC = EggManager.GetIncubationSkipCostPC();
+		if(costPC != m_previousCostPC) {
+			// Update control var
+			m_previousCostPC = costPC;
+
+			// If cost is 0, use the "free" word instead
+			if(costPC == 0) {
+				m_skipPCText.text = Localization.Localize("TID_GEN_EXCLAMATION_EXPRESSION", Localization.Localize("TID_GEN_FREE"));
+			} else {
+				m_skipPCText.text = StringUtils.FormatNumber(costPC);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
