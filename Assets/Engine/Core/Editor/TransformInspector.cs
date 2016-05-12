@@ -15,9 +15,13 @@ public class TransformInspector : Editor
 	{
 		instance = this;
 
-		mPos = serializedObject.FindProperty("m_LocalPosition");
-		mRot = serializedObject.FindProperty("m_LocalRotation");
-		mScale = serializedObject.FindProperty("m_LocalScale");
+		try {
+			mPos = serializedObject.FindProperty("m_LocalPosition");
+			mRot = serializedObject.FindProperty("m_LocalRotation");
+			mScale = serializedObject.FindProperty("m_LocalScale");
+		} catch {
+			
+		}
 	}
 
 	void OnDestroy () { instance = null; }
