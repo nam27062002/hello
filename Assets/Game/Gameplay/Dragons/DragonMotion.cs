@@ -41,16 +41,21 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	//------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private float m_stunnedTime;
+	[SerializeField] private float m_velocityBlendRate = 256.0f;
+	[SerializeField] private float m_rotBlendRate = 350.0f;
 
-	// Public members
-	[HideInInspector] public Rigidbody m_rbody;
+
+	protected Rigidbody m_rbody;
+	public Rigidbody rbody
+	{
+		get{ return m_rbody; }
+	}
 
 	// References to components
 	Animator  				m_animator;
 	DragonPlayer			m_dragon;
 	DragonHealthBehaviour	m_health;
 	DragonControl			m_controls;
-	Orientation			   	m_orientation;
 	DragonAnimationEvents 	m_animationEventController;
 	SphereCollider 			m_groundCollider;
 
@@ -58,6 +63,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Movement control
 	private Vector3 m_impulse;
 	private Vector3 m_direction;
+	private Vector3 m_angularVelocity;
 	private float m_targetSpeedMultiplier;
 	public float targetSpeedMultiplier
 	{
@@ -100,9 +106,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
-
-	private float m_impulseTransformationSpeed;
-
 	private Transform m_tongue;
 	private Transform m_head;
 	private Transform m_cameraLookAt;
@@ -112,7 +115,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public ParticleSystem m_bubbles;
 
-	private bool m_canMoveInsideWater = true;
+	private bool m_canMoveInsideWater = false;
 	public bool canDive
 	{
 		get
@@ -131,7 +134,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector3 m_forbiddenDirection;
 	private float m_forbiddenValue;
 
-	private List<Vector3> m_normalContacts = new List<Vector3>();
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -184,7 +186,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_dragon			= GetComponent<DragonPlayer>();
 		m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControl>();
-		m_orientation	 	= GetComponent<Orientation>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 
 		Transform sensors	= transform.FindChild("sensors").transform; 
@@ -211,9 +212,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_height = 10f;
 
 		m_targetSpeedMultiplier = 1;
-
-		// TODO (miguel): This should come from dragon settings
-		m_impulseTransformationSpeed = 25.0f;
 	}
 
 	/// <summary>
@@ -294,7 +292,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_rbody.velocity = m_impulse;
 					if (m_direction.x < 0)	m_direction = Vector3.left;
 					else 					m_direction = Vector3.right;
-					m_orientation.SetDirection(m_direction);
+					RotateToDirection( m_direction );
 					break;
 
 				case State.Fly:
@@ -394,7 +392,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.HoldingPrey:
 			{
-				m_orientation.SetRotation( m_holdPreyTransform.rotation );
+				// m_orientation.SetRotation( m_holdPreyTransform.rotation );
+				RotateToDirection( m_holdPreyTransform.forward );
 				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
 				transform.position += deltaPosition - m_tongue.position;
 
@@ -403,6 +402,23 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 				
 		m_animator.SetFloat("height", m_height);
+
+		const float angleCheck = 1;
+		if ( m_angularVelocity.y > angleCheck )
+		{
+			m_animator.SetBool("turn right", true);
+			m_animator.SetBool("turn left", false);	
+		}
+		else if( m_angularVelocity.y < -angleCheck )
+		{
+			m_animator.SetBool("turn right", false);
+			m_animator.SetBool("turn left", true);	
+		}
+		else
+		{
+			m_animator.SetBool("turn right", false);
+			m_animator.SetBool("turn left", false);	
+		}
 	}
 
 	/// <summary>
@@ -450,7 +466,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		}
 		
-		m_rbody.angularVelocity = Vector3.zero;
+		m_rbody.angularVelocity = m_angularVelocity;
 
 		m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
 
@@ -463,7 +479,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_lastPosition = transform.position;
 	}
-	
+
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
@@ -479,8 +495,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
 			ComputeFinalImpulse(impulse);
-
-			m_orientation.SetDirection(m_direction);
+			RotateToDirection( m_impulse );
+			// m_orientation.SetDirection(m_direction);
 		} else {
 			ChangeState(State.Idle);
 		}
@@ -515,8 +531,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
 			ComputeFinalImpulse(impulse);
-
-			m_orientation.SetDirection(m_direction);
+			RotateToDirection( m_impulse );
 		} else {
 			ChangeState(State.Idle);
 		}
@@ -534,7 +549,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_impulse.x += impulse.x;
 
 		m_direction = m_impulse.normalized;
-		m_orientation.SetDirection(m_direction);
+		RotateToDirection( m_impulse );
 		m_rbody.velocity = m_impulse;
 	}
 
@@ -547,96 +562,64 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 			ComputeFinalImpulse(impulse);	
 			m_direction = oldDirection;
-
-			m_orientation.SetDirection(m_direction);
-			
 			m_rbody.velocity = m_impulse;
 		} else {
 			m_rbody.velocity = Vector3.zero;
 		}
+		RotateToDirection(m_direction);
 	}
 
 	private void ComputeFinalImpulse(Vector3 _impulse) {
 		// we keep the velocity value
-		float v = _impulse.magnitude;
-		/*
-		// check collision with ground, only down!!
-		RaycastHit sensorA = new RaycastHit();
-		float dot = 0;
-
-		float minDis = 2f;
-		bool nearGround = CheckGround(out sensorA);
-		if (_impulse.y > 0) {
-			minDis = 2f;
-			nearGround = CheckCeiling(out sensorA);
-		} 
-
-		if (nearGround) {
-			// we are moving towards ground or away?
-			dot = Vector3.Dot(sensorA.normal, _impulse.normalized);
-			nearGround = dot < 0;
-		}
-
-		if (nearGround && false) {
-			//m_direction = Vector3.right;
-			if ((sensorA.normal.y < 0 && _impulse.x < 0) || (sensorA.normal.y > 0 && _impulse.x > 0)) {
-				m_direction = new Vector3(sensorA.normal.y, -sensorA.normal.x, sensorA.normal.z);
-			} else {
-				m_direction = new Vector3(-sensorA.normal.y, sensorA.normal.x, sensorA.normal.z);
-			}
-			m_direction.Normalize();
-
-			if ((sensorA.distance <= minDis)) {
-				float f = 1 + ((dot - (-0.5f)) / (-1 - (-0.5f))) * (0 - 1);
-				m_impulse = m_direction * Mathf.Min(1f, Mathf.Max(0f, f));
-			} else {
-				// the direction will be parallel to ground, but we'll still moving down until the dragon is near enough
-				m_impulse = _impulse.normalized;				
-			}	
-		} else 
-		*/
-
 		{
 			// on air impulse formula, we don't fully change the velocity vector 
-			m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
-			m_impulse.Normalize();
+			// m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
+			// m_impulse.Normalize();
 
-
-			if (m_normalContacts.Count > 0)
-			{
-				m_forbiddenDirection = Vector3.zero;
-				for( int i = 0; i < m_normalContacts.Count; i++ )
-				{
-					m_forbiddenDirection += m_normalContacts[i];
-				}
-				m_forbiddenDirection.Normalize();
-				m_forbiddenValue = 1;
-				m_normalContacts.Clear();
-			}
-
-
-			if ( m_forbiddenValue > 0)
-			{
-				float forbiddenDot = Vector3.Dot( m_impulse, m_forbiddenDirection);	
-				if ( forbiddenDot < 0 )
-				{
-					m_forbiddenValue -= Time.deltaTime * 2;
-					float outPush = Mathf.Sin( m_forbiddenValue * Mathf.PI * 0.5f);	
-					m_impulse = m_impulse + (m_forbiddenDirection * -forbiddenDot * outPush);
-					m_impulse.Normalize();
-				}
-				else
-				{
-					m_forbiddenValue = 0;
-					m_forbiddenDirection = Vector3.zero;
-				}
-			}
-
-			m_direction = m_impulse;
+			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
+			m_direction = m_impulse.normalized;
 		}			
-		
-		m_impulse *= v;
 	}
+
+
+
+
+	protected virtual void RotateToDirection(Vector3 dir)
+	{
+		float len = dir.magnitude;
+		// m_rotBlendRate is param
+		float blendRate = m_rotBlendRate;
+		float slowRange = 0.05f;
+		if(len < slowRange)
+			blendRate *= (len/slowRange);
+
+		
+		if(blendRate > Mathf.Epsilon)
+		{
+			float angle = dir.ToAngleDegrees();
+			float pitch = angle;
+			float twist = angle;
+			float yaw = 0.0f;
+			Quaternion qPitch = Quaternion.Euler(0.0f, 0.0f, pitch);
+			Quaternion qYaw = Quaternion.Euler(0.0f, yaw, 0.0f);
+			Quaternion qTwist = Quaternion.Euler(twist, 0.0f, 0.0f);
+			Quaternion qDesired = qPitch * qYaw * qTwist;
+			Vector3 eulerRot = qDesired.eulerAngles;		
+			if (dir.y > 0.25f) {
+				eulerRot.z = Mathf.Min(40f, eulerRot.z);
+			} else if (dir.y < -0.25f) {
+				eulerRot.z = Mathf.Max(300f, eulerRot.z);
+			}
+			qDesired = Quaternion.Euler(eulerRot);
+
+			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(transform.rotation, qDesired, blendRate);
+		}
+		else
+		{
+			m_angularVelocity = Vector3.zero;
+		}
+	}
+
 
 	private bool CheckGround(out RaycastHit _leftHit) {
 		Vector3 distance = Vector3.down * 10f;
@@ -864,10 +847,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			default:
 			{
-				for( int i = 0; i<collision.contacts.Length; i++ )
-				{
-					m_normalContacts.Add( collision.contacts[i].normal);
-				}
 			}break;
 		}
 
@@ -875,10 +854,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	void OnCollisionStay(Collision collision)
 	{
-		for( int i = 0; i<collision.contacts.Length; i++ )
-		{
-			m_normalContacts.Add( collision.contacts[i].normal);
-		}
 	}
 
 }
