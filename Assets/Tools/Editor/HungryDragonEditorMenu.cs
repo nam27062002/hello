@@ -90,6 +90,14 @@ public class HungryDragonEditorMenu {
 		DragonMenuToolsEditorWindow.ShowWindow();
 	}
 
+	/// <summary>
+	/// Custom tools for the dragon selection menu.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 4)]
+	public static void HungryDragonToolbar() {
+		HungryDragonEditorToolbar.ShowWindow();
+	}
+
 	//--------------------------------------------------- OTHERS -----------------------------------------------------//
 	/// <summary>
 	/// Add menu item to be able to open the level editor.
@@ -167,6 +175,9 @@ public class HungryDragonEditorMenu {
 	/// </summary>
 	/// <param name="_sceneName">The path of the scene starting at project root and with extension (e.g. "Assets/MyScenesFolder/MyScene.unity").</param>
 	public static void OpenScene(string _scenePath) {
+		// Ask to save current scenes first
+		EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+
 		// Just do it
 		EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);	// Will close all open scenes
 	}
