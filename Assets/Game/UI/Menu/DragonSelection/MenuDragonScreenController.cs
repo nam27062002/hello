@@ -41,7 +41,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	public MenuDragonScroller3D dragonScroller3D {
 		get {
 			if(m_dragonScroller3D == null) {
-				InstanceManager.GetSceneController<MenuSceneController>().GetScreenScene(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonScroller3D>();
+				m_dragonScroller3D = InstanceManager.GetSceneController<MenuSceneController>().GetScreenScene(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonScroller3D>();
 			}
 			return m_dragonScroller3D;
 		}
