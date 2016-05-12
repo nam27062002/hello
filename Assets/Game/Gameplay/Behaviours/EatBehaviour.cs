@@ -305,33 +305,35 @@ public abstract class EatBehaviour : MonoBehaviour {
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
-			if (entity.edibleFromTier <= m_tier) 
-			{
-				if ( m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
+			if (entity.isEdible) {
+				if (entity.edibleFromTier <= m_tier) 
 				{
-					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-					if (edible.CanBeEaten(m_motion.direction)) 
+					if ( m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
 					{
-						preysToEat.Add(edible);
+						EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+						if (edible.CanBeEaten(m_motion.direction)) 
+						{
+							preysToEat.Add(edible);
+						}
 					}
 				}
-			}
-			else if ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )
-			{
-				if (_canHold)
+				else if ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )
 				{
-					EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-					if (edible.CanBeEaten(m_motion.direction)) 
+					if (_canHold)
 					{
-						preyToHold = edible;
-						break;
+						EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
+						if (edible.CanBeEaten(m_motion.direction)) 
+						{
+							preyToHold = edible;
+							break;
+						}
 					}
 				}
-			}
-			else 
-			{
-				if ( m_isPlayer )
-					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
+				else 
+				{
+					if ( m_isPlayer )
+						Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
+				}
 			}
 		}
 

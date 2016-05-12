@@ -83,7 +83,7 @@ public class EdibleBehaviour : Initializable {
 	}
 
 	public bool CanBeEaten(Vector3 _eaterDirection) {
-		if (enabled) {
+		if (enabled && m_entity.isEdible) {
 			if (m_motion == null || m_vulnerable == EatenFrom.All) {
 				return true;
 			} else {
