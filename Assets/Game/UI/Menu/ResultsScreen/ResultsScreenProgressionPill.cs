@@ -22,7 +22,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private static readonly float ANIM_SPEED_MULT = 1f;	// To easily adjust timings
-	private static readonly bool UNLOCK_DRAGON_CHEAT = true;
+	private static readonly bool UNLOCK_DRAGON_CHEAT = false;
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
