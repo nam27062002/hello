@@ -24,6 +24,7 @@ public class ResultsScreenController : MonoBehaviour {
 
 	[Separator]
 	[SerializeField] private GameObject m_nextDragonGroup = null;
+	[SerializeField] private GameObject m_nextDragonScene3DPrefab = null;
 
 	// Internal
 	private int m_levelAnimCount = 0;
@@ -50,6 +51,7 @@ public class ResultsScreenController : MonoBehaviour {
 		DebugUtils.Assert(m_dragonNameText != null, "Required field not initialized!");
 
 		DebugUtils.Assert(m_nextDragonGroup != null, "Required field not initialized!");
+		DebugUtils.Assert(m_nextDragonScene3DPrefab != null, "Required field not initialized!");
 	}
 
 	/// <summary>
@@ -119,11 +121,13 @@ public class ResultsScreenController : MonoBehaviour {
 		m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_levelAnimCount + 1));
 		LaunchXPBarAnim();
 
-		// Next dragon unlock bar - animate!
+		// Next dragon unlock
 		// Don't show if next dragon is already unlocked or if the dragon we played with was already maxed
-		bool show = RewardManager.dragonInitialUnlockProgress < 1f && DragonManager.nextDragon != null;
+		DragonData nextDragonData = DragonManager.nextDragon;
+		bool show = RewardManager.dragonInitialUnlockProgress < 1f && nextDragonData != null && !nextDragonData.isOwned;
 		m_nextDragonGroup.SetActive(show);
 		if(show) {
+			// Bar: animate!
 			Slider nextDragonBar = m_nextDragonGroup.GetComponentInChildren<Slider>();
 			if(nextDragonBar) {
 				// Initialize bar
@@ -134,6 +138,33 @@ public class ResultsScreenController : MonoBehaviour {
 				// Program animation
 				LaunchNextDragonBarAnim(nextDragonBar);
 			}
+
+			// Next dragon 3D preview
+			// Clear any existing 3D scene
+			if(m_nextDragonScene3D != null) {
+				UIScene3DManager.Remove(m_nextDragonScene3D);
+				m_nextDragonScene3D = null;
+			}
+				
+			// Create and initializ a new 3D scene
+			m_nextDragonScene3D = UIScene3DManager.CreateFromPrefab<UIScene3D>(m_nextDragonScene3DPrefab);
+			MenuDragonLoader dragonLoader = m_nextDragonScene3D.FindComponentRecursive<MenuDragonLoader>();
+			if(dragonLoader != null) {
+				// Load and pose the dragon
+				dragonLoader.LoadDragonPreview(nextDragonData.def.sku);
+				dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
+			}
+
+			// Initialize the raw image where the dragon will be rendered
+			RawImage nextDragonRawImage = m_nextDragonGroup.GetComponentInChildren<RawImage>();
+			if(nextDragonRawImage != null) {
+				nextDragonRawImage.texture = m_nextDragonScene3D.renderTexture;
+				nextDragonRawImage.color = Colors.white;
+			}
+
+			// Hide unlock group
+			GameObject unlockFXGroup = m_nextDragonGroup.FindObjectRecursive("UnlockFX");
+			unlockFXGroup.SetActive(false);
 		}
 	}
 
@@ -195,7 +226,9 @@ public class ResultsScreenController : MonoBehaviour {
 	/// <param name="_bar">The bar to be animated.</param>
 	private void LaunchNextDragonBarAnim(Slider _bar) {
 		// Aux vars
+		bool unlockCheat = false;
 		float targetDelta = DragonManager.currentDragon.progression.progressByXp;
+		if(unlockCheat) targetDelta = 1f;
 
 		// Launch the tween!
 		DOTween.To(
@@ -221,24 +254,60 @@ public class ResultsScreenController : MonoBehaviour {
 			.OnComplete(
 				() => {
 					// If we reached max delta, a dragon has been unlocked!
-					if(targetDelta >= 1f) {
-						// Show unlock animation
-						float delay = 0f;
+					if(targetDelta >= 1f || unlockCheat) {
+						// Aux vars
+						DragonData nextDragonData = DragonManager.nextDragon;
 						float speedMult = 1f;	// To easily adjust timings
-						Image lockIcon = m_nextDragonGroup.FindComponentRecursive<Image>("IconLockPLACEHOLDER");
+						GameObject unlockFXGroup = m_nextDragonGroup.FindObjectRecursive("UnlockFX");
 
-						// Lock scale up
-						lockIcon.transform.DOScale(2f, 1.0f * speedMult).SetDelay(delay).SetEase(Ease.OutExpo);
+						// Prepare for animation
+						unlockFXGroup.SetActive(true);
+						unlockFXGroup.transform.localScale = Vector3.zero;
 
-						// Lock fade out (halfway through the scale up anim)
-						delay += 0.75f * speedMult;
-						lockIcon.DOFade(0f, 0.25f * speedMult).SetDelay(delay)
+						// Animation
+						DOTween.Sequence()
+							// Pause
+							.AppendInterval(0.5f)
+
+							// Scale up
+							.Append(unlockFXGroup.transform.DOScale(1f, 0.25f * speedMult).SetEase(Ease.OutBack))
+
+							// Change bar text as well
+							.AppendCallback(() => {
+								Localizer barText = m_nextDragonGroup.FindComponentRecursive<Localizer>("InfoText");
+								if(barText != null) {
+									barText.Localize("TID_RESULTS_DRAGON_UNLOCKED", nextDragonData.def.GetLocalized("tidName"));
+								}
+							})
+
+							// Pause
+							.AppendInterval(1f)
+
+							// Scale out
+							.Append(unlockFXGroup.transform.DOScale(2f, 0.5f * speedMult).SetEase(Ease.OutCubic))
+
+							// Fade out
+							.Join(unlockFXGroup.GetComponent<CanvasGroup>().DOFade(0f, 0.5f * speedMult).SetEase(Ease.OutCubic))
+
+							// Disable object once the sequence is completed
 							.OnComplete(() => {
-								// Reset icon for next time
-								lockIcon.color = Color.white; 
-								lockIcon.transform.localScale = Vector3.one;
-								lockIcon.gameObject.SetActive(false);
-							});
+								unlockFXGroup.SetActive(false);
+							})
+
+							// Go!!!
+							.Play();
+
+						// Update text with the name of the unlocked dragon
+						Localizer unlockText = unlockFXGroup.FindComponentRecursive<Localizer>("UnlockText");
+						if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", nextDragonData.def.GetLocalized("tidName"));
+
+						// Play cool dragon animation!
+						/*if(m_nextDragonScene3D != null) {
+							Animator anim = m_nextDragonScene3D.FindComponentRecursive<Animator>();
+							if(anim != null) {
+								anim.SetTrigger("unlocked");
+							}
+						}*/
 					}
 				}
 			);

@@ -228,6 +228,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		// If no egg is incubating or incubation has finished, return 0.
 		if(incubatingEgg == null || isReadyForCollection) return 0;
 
+		// Skip is free during the tutorial
+		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) return 0;
+
 		// Just use standard time/pc formula
 		return GameSettings.ComputePCForTime(incubationRemaining);
 	}
@@ -274,6 +277,12 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 
 			// Notify game
 			Messenger.Broadcast(GameEvents.EGG_INCUBATOR_CLEARED);
+
+			// If tutorial wasn't completed, do it now
+			if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) {
+				UserProfile.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
+				PersistenceManager.Save();
+			}
 		}
 	}
 
