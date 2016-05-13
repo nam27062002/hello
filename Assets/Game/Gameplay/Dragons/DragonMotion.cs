@@ -26,7 +26,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		
 		Idle = 0,
 		Fly,
-		Fly_Up,
 		Fly_Down,
 		Stunned,
 		InsideWater,
@@ -63,6 +62,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Movement control
 	private Vector3 m_impulse;
 	private Vector3 m_direction;
+	private Vector3 m_desiredDirection;
 	private Vector3 m_angularVelocity;
 	private float m_targetSpeedMultiplier;
 	public float targetSpeedMultiplier
@@ -109,6 +109,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Transform m_tongue;
 	private Transform m_head;
 	private Transform m_cameraLookAt;
+	private Transform m_transform;
+	private float m_currentBendX;
+	private float m_currentBendY;
 
 	// Parabolic movement
 	private float m_parabolicMovementValue = 10;
@@ -212,6 +215,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_height = 10f;
 
 		m_targetSpeedMultiplier = 1;
+
+		m_transform = transform;
+		m_currentBendX = 0;
+		m_currentBendY = 0;
 	}
 
 	/// <summary>
@@ -250,10 +257,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// we are leaving old state
 			switch (m_state) {
 				case State.Fly:
-					break;
-
-				case State.Fly_Up:
-					m_animator.SetBool("fly up", false);
 					break;
 
 				case State.Fly_Down:
@@ -297,11 +300,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 				case State.Fly:
 					m_animator.SetBool("fly", true);
-					break;
-
-				case State.Fly_Up:
-					m_animator.SetBool("fly", true);
-					m_animator.SetBool("fly up", true);
 					break;
 
 				case State.Fly_Down:
@@ -356,16 +354,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case State.Fly:
 				if (m_direction.y < -0.65f) {
 					ChangeState(State.Fly_Down);
-				} else if (m_direction.y > 0.65f) {
-					ChangeState(State.Fly_Up);				
-				}
-				break;
-
-			case State.Fly_Up:
-				if (m_currentSpeedMultiplier > 1.5f) {
-					ChangeState(State.Fly_Down);
-				} else if (m_direction.y < 0.65f) {
-					ChangeState(State.Fly);			
 				}
 				break;
 
@@ -403,23 +391,48 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				
 		m_animator.SetFloat("height", m_height);
 
-		const float angleCheck = 1;
-		if ( m_angularVelocity.y > angleCheck )
-		{
-			m_animator.SetBool("turn right", true);
-			m_animator.SetBool("turn left", false);	
-		}
-		else if( m_angularVelocity.y < -angleCheck )
-		{
-			m_animator.SetBool("turn right", false);
-			m_animator.SetBool("turn left", true);	
-		}
-		else
-		{
-			m_animator.SetBool("turn right", false);
-			m_animator.SetBool("turn left", false);	
-		}
+		// m_animator.SetFloat("BendBodyX", m_angularVelocity.x);
+		// m_animator.SetFloat("BendBodyY", m_angularVelocity.y);
+		UpdateBodyBending();
 	}
+
+	void UpdateBodyBending()
+	{		
+		float dt = Time.deltaTime;
+		Vector3 dir = m_desiredDirection;
+		// if(m_isPlayingAttackAnim && m_targetTransform != null && m_mouthPoint!= null)	// but if we're biting something, try to track the thing we're biting
+		//	dir = (m_targetTransform.position - m_mouthPoint.position);
+				
+		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
+
+		float blendRate = 3.0f;	// todo: blend @ slower rate when stopped?
+		float blendDampingRange = 0.2f;
+
+		float newBendX = 0.0f;
+		float newBendY = 0.0f;
+
+
+		float desiredBendX = Mathf.Clamp(-localDir.z*3.0f, -1.0f, 1.0f);	// max X bend is about 30 degrees, so *3
+		// float currentBendX = m_animControlFish.paramBodyBendX;
+		m_currentBendX = Util.MoveTowardsWithDamping(m_currentBendX, desiredBendX, blendRate*dt, blendDampingRange);
+		m_animator.SetFloat("BendBodyX", m_currentBendX);
+		
+
+		float desiredBendY = Mathf.Clamp(localDir.y*2.0f, -1.0f, 1.0f);		// max Y bend is about 45 degrees, so *2.
+		// float currentBendY = m_animControlFish.paramBodyBendY;
+		m_currentBendY = Util.MoveTowardsWithDamping(m_currentBendY, desiredBendY, blendRate*dt, blendDampingRange);
+		m_animator.SetFloat("BendBodyY", m_currentBendX);
+
+		// update 'body bending' boolean parameter, we use this in the anim state machine
+		// to notify things like straight swim variations that they should break out and return
+		// to normal directional swim
+		float m_isBendingThreshold = 0.1f;
+		float maxBend = Mathf.Max(Mathf.Abs(newBendX), Mathf.Abs(newBendY));
+		bool isBending = (maxBend > m_isBendingThreshold);
+		m_animator.SetBool("Bend", isBending);
+		
+	}
+
 
 	/// <summary>
 	/// Called once per frame at regular intervals.
@@ -431,7 +444,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				break;
 
 			case State.Fly:
-			case State.Fly_Up:
 			case State.Fly_Down:
 				UpdateMovement();
 				break;
@@ -488,7 +500,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// </summary>
 	private void UpdateMovement() {
 		Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier); 
-
+		m_desiredDirection = impulse;
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
 			float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
@@ -499,6 +511,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// m_orientation.SetDirection(m_direction);
 		} else {
 			ChangeState(State.Idle);
+			m_desiredDirection = m_direction;
 		}
 
 		m_rbody.velocity = m_impulse;
@@ -580,9 +593,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_direction = m_impulse.normalized;
 		}			
 	}
-
-
-
 
 	protected virtual void RotateToDirection(Vector3 dir)
 	{
@@ -750,7 +760,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	IEnumerator EndWaterCoroutine()
 	{
 		yield return new WaitForSeconds(0.1f);
-		ChangeState( State.Fly_Up);
+		ChangeState( State.Fly);
 	} 
 
 	public void StartSpaceMovement()
