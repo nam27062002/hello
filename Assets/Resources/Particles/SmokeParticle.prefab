@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 460480}
   - 198: {fileID: 19865626}
   - 199: {fileID: 19992956}
+  - 114: {fileID: 11407236}
   m_Layer: 0
   m_Name: SmokeParticle
   m_TagString: Untagged
@@ -26,9 +27,23 @@ Transform:
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -309.5, y: 91.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11407236
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 0
+  m_returnTo: 0
 --- !u!198 &19865626
 ParticleSystem:
   m_ObjectHideFlags: 1
