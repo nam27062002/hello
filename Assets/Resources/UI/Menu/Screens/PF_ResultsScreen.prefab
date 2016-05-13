@@ -143,13 +143,15 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 224: {fileID: 22423082}
+  - 114: {fileID: 11493376}
+  - 114: {fileID: 11434082}
   m_Layer: 0
-  m_Name: MissionLabel
+  m_Name: MissionPill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &112654
 GameObject:
   m_ObjectHideFlags: 1
@@ -398,8 +400,10 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 224: {fileID: 22459280}
+  - 114: {fileID: 11483714}
+  - 114: {fileID: 11447512}
   m_Layer: 0
-  m_Name: ProgresionLabel
+  m_Name: ProgressionPill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -890,6 +894,22 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!1 &174456
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 22444426}
+  - 114: {fileID: 11486200}
+  m_Layer: 0
+  m_Name: Carousel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!1 &174684
 GameObject:
@@ -2043,9 +2063,7 @@ MonoBehaviour:
   m_levelBar: {fileID: 11458142}
   m_levelText: {fileID: 11415966}
   m_dragonNameText: {fileID: 11417618}
-  m_nextDragonGroup: {fileID: 132038}
-  m_nextDragonScene3DPrefab: {fileID: 117136, guid: c8a223167136d476e8ff451983c6c24a,
-    type: 2}
+  m_carousel: {fileID: 11486200}
 --- !u!114 &11431002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2238,6 +2256,28 @@ MonoBehaviour:
   m_shadowAngle: 280
   m_shadowSize: 2
   m_shadowColor: {r: 0.5254902, g: 0.48235297, b: 0.43137258, a: 1}
+--- !u!114 &11434082
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 110934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fd57540cf84144a89eb46729266b958, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  m_missionIcon: {fileID: 11442786}
+  m_missionText: {fileID: 11487436}
+  m_rewardText: {fileID: 11461282}
+  m_completedFXIcon: {fileID: 11428358}
+  m_coinsTotalAnimator: {fileID: 11418994}
+  difficulty: 0
 --- !u!114 &11434160
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2734,6 +2774,27 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &11447512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 315483189297041eb8332e04206f6019, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  m_progressBar: {fileID: 11435130}
+  m_infoText: {fileID: 11406260}
+  m_unlockFX: {fileID: 130372}
+  m_nextDragonScene3DPrefab: {fileID: 117136, guid: c8a223167136d476e8ff451983c6c24a,
+    type: 2}
 --- !u!114 &11447878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3711,6 +3772,36 @@ MonoBehaviour:
   m_shadowAngle: 280
   m_shadowSize: 2
   m_shadowColor: {r: 0.5254902, g: 0.48235297, b: 0.43137258, a: 1}
+--- !u!114 &11483714
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 3
+  m_tweenDuration: 0.5
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0
+--- !u!114 &11486200
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 174456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 021fdfe1cf099402cbb815be1b4a9364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_progressionPill: {fileID: 11447512}
+  m_missionPill: {fileID: 11434082}
 --- !u!114 &11486508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4108,6 +4199,23 @@ MonoBehaviour:
   optionalRotationMode: 0
   optionalScrambleMode: 0
   optionalString: 
+--- !u!114 &11493376
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 110934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 3
+  m_tweenDuration: 0.5
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0
 --- !u!114 &11493596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4777,12 +4885,12 @@ RectTransform:
   m_Children:
   - {fileID: 22496808}
   - {fileID: 22493166}
-  m_Father: {fileID: 22452560}
-  m_RootOrder: 3
+  m_Father: {fileID: 22444426}
+  m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -1084, y: 253}
+  m_AnchoredPosition: {x: 0, y: 49.999996}
+  m_SizeDelta: {x: 864, y: 253}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &22423742
 RectTransform:
@@ -4971,6 +5079,26 @@ RectTransform:
   m_AnchoredPosition: {x: -85.39999, y: -8.87}
   m_SizeDelta: {x: -209.99998, y: 80}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!224 &22444426
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 174456}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 22423082}
+  - {fileID: 22459280}
+  m_Father: {fileID: 22452560}
+  m_RootOrder: 3
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -200}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22445336
 RectTransform:
   m_ObjectHideFlags: 1
@@ -4984,10 +5112,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 22406426}
   m_RootOrder: 1
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 59.85254, y: -40}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22445456
 RectTransform:
@@ -5116,8 +5244,7 @@ RectTransform:
   - {fileID: 22424946}
   - {fileID: 22480926}
   - {fileID: 22408712}
-  - {fileID: 22423082}
-  - {fileID: 22459280}
+  - {fileID: 22444426}
   m_Father: {fileID: 22452400}
   m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
@@ -5213,12 +5340,12 @@ RectTransform:
   - {fileID: 22473352}
   - {fileID: 22459256}
   - {fileID: 22476770}
-  m_Father: {fileID: 22452560}
-  m_RootOrder: 4
+  m_Father: {fileID: 22444426}
+  m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -1084, y: 200}
+  m_AnchoredPosition: {x: 0, y: 49.999996}
+  m_SizeDelta: {x: 864, y: 200}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &22459990
 RectTransform:
@@ -5476,10 +5603,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 22406426}
   m_RootOrder: 2
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 192.60254, y: -40}
-  m_SizeDelta: {x: 195.5, y: 50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22475840
 RectTransform:
