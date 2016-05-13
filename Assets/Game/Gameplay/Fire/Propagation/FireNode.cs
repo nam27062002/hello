@@ -11,14 +11,12 @@ public class FireNode : MonoBehaviour {
 		Burned
 	};
 
-
 	[SerializeField] private string m_breathHitParticle = "PF_FireHit";
 	[SerializeField] private bool m_hitParticleMatchDirection = false;
 	[SeparatorAttribute]
 	[SerializeField] private float m_resistanceMax = 25f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerSecond = 6f;
-
 
 	private List<FireNode> m_neighbours;
 	private State m_state;
@@ -32,27 +30,18 @@ public class FireNode : MonoBehaviour {
 	private GameObject m_fireSprite;
 	private GameCameraController m_camera;
 
-	private ParticleSystem m_smoke;
-
 	private Reward m_reward;
 
 	private bool m_canBurn = false;
-	public bool canBurn
-	{
-		get{ return m_canBurn; }
-	}
+	public bool canBurn { get { return m_canBurn; } }
 
 	Vector3 m_lastBreathDirection;
-	public Vector3 lastBreathHitDiretion
-	{
-		get
-		{
-			return m_lastBreathDirection;
-		}
-	}
+	public Vector3 lastBreathHitDiretion { get { return m_lastBreathDirection; } }
 
 	// Use this for initialization
 	void Start () {
+		FirePropagationManager.Insert(this);
+
 		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 		m_reward = new Reward();
 		m_reward.coins = 0;
@@ -60,20 +49,21 @@ public class FireNode : MonoBehaviour {
 
 		// get two closets neighbours
 		FindNeighbours();
+
+		gameObject.SetActive(false);
 	}
 
 	public void Init(int _goldReward, bool _canBurn) {
 		m_reward.coins = _goldReward;
 		m_canBurn = _canBurn;
 		Reset();
-		if ( !m_canBurn )
+		if (!m_canBurn) {
 			enabled = false;
+		}
 	}
 
 	public void Reset() {
 		StopFire();
-		StopSmoke();
-		FirePropagationManager.Insert(transform);
 
 		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
@@ -81,14 +71,10 @@ public class FireNode : MonoBehaviour {
 		m_fireSpriteScale = Vector3.zero;
 	}
 
-	void Update() {
-
+	public void UpdateLogic() {
 		if (m_fireSprite != null)
 			m_fireSprite.transform.position = transform.position;
-
-		if (m_smoke != null)
-			m_smoke.transform.position = transform.position;
-
+		
 		switch(m_state)
 		{
 			case State.Burning:
@@ -113,8 +99,9 @@ public class FireNode : MonoBehaviour {
 					}
 				} else {
 					m_timer = 5;
+					StartSmoke(m_timer);
+
 					m_state = State.Burned;
-					StartSmoke();
 				}
 			} break;
 			case State.Burned:
@@ -126,15 +113,6 @@ public class FireNode : MonoBehaviour {
 						StopFire();
 					}
 				}
-
-				if (m_smoke != null)
-				{
-					m_timer -= Time.deltaTime;
-					if ( m_timer < 0 )
-						StopSmoke();
-				}
-
-
 			} break;
 		}
 	}
@@ -143,44 +121,38 @@ public class FireNode : MonoBehaviour {
 		return m_state > State.Damaged && m_timer < m_burningTime * 0.5f;
 	}
 
-	public bool IsDamaged()
-	{
+	public bool IsDamaged() {
 		return m_state >= State.Damaged;
 	}
 
 	public void Burn(float _damage, Vector2 _direction, bool _dragonBreath) {
+		if (m_state == State.Idle || m_state == State.Damaged) {	
+			if (_dragonBreath) {
+				GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position + Vector3.back * 2);				
+				if (hitParticle != null && m_hitParticleMatchDirection) {
+					Vector3 angle = new Vector3(0, 90, 0);
+					m_lastBreathDirection = _direction;
+					if (_direction.x < 0) {
+						angle.y *= -1;
+					}
 
-		if (_dragonBreath) {
-			GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position + Vector3.back * 2);				
-			if (hitParticle != null && m_hitParticleMatchDirection) {
-				Vector3 angle = new Vector3(0, 90, 0);
-				m_lastBreathDirection = _direction;
-				if (_direction.x < 0) {
-					angle.y *= -1;
+					hitParticle.transform.rotation = Quaternion.Euler(angle);
 				}
-
-				hitParticle.transform.rotation = Quaternion.Euler(angle);
 			}
-		}
 
-		if (m_state == State.Idle || m_state == State.Damaged) {
-			
 			m_resistance -= _damage;
 			m_state = State.Damaged;
 
 			if (m_resistance <= 0) {
 				m_state = State.Burning;
 				m_timer = m_burningTime;
-								
-				FirePropagationManager.Remove(transform);
-
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
 			}
 		}
 	}
 
 	private void StartFire() {
-		FirePropagationManager.InsertBurning( transform );
+		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
 			m_fireSprite = PoolManager.GetInstance("FireSprite");
 
@@ -203,13 +175,11 @@ public class FireNode : MonoBehaviour {
 		}
 	}
 
-	public void InstaBurnForReward()
-	{
-		if ( m_state < State.Burning)
-		{
+	public void InstaBurnForReward() {
+		if ( m_state < State.Burning) {
 			// Insta reward
 			m_state = State.Burned;
-			FirePropagationManager.Remove(transform);
+			//FirePropagationManager.Remove(this);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
 		}
 	}
@@ -223,41 +193,16 @@ public class FireNode : MonoBehaviour {
 		m_fireSprite = null;
 	}
 
-	public void StartSmoke()
-	{
-		if ( m_smoke == null )
-		{
-			GameObject smoke = PoolManager.GetInstance("SmokeParticle");
-			smoke.transform.position = transform.position;
-			m_smoke = smoke.GetComponent<ParticleSystem>();
-			m_smoke.Play();
-		}
-	}
-
-	private void StopSmoke()
-	{
-		if ( m_smoke != null )
-		{
-			m_smoke.Stop();
-			StartCoroutine( WaitEndSmokeToDeactivate( m_smoke ));
-		}
-		m_smoke = null;
-	}
-
-	IEnumerator WaitEndSmokeToDeactivate( ParticleSystem ps )
-	{
-		while( ps.particleCount > 0 )
-		{
-			yield return null;
-		}
-		ps.gameObject.SetActive(false);
-		PoolManager.ReturnInstance(ps.gameObject);
-		yield return null;
+	public void StartSmoke(float _time) {
+		GameObject smoke = PoolManager.GetInstance("SmokeParticle");
+		smoke.transform.position = transform.position;
+		smoke.GetComponent<DisableInSeconds>().activeTime = _time;
+		smoke.GetComponent<ParticleSystem>().Play();
 	}
 
 	private void FindNeighbours() {
 		m_neighbours = new List<FireNode>();
-		FireNode[] nodes = transform.parent.GetComponentsInChildren<FireNode>();
+		FireNode[] nodes = transform.parent.GetComponentsInChildren<FireNode>(true);
 		
 		for (int i = 0; i < nodes.Length; i++) {
 			if (nodes[i] != null && nodes[i] != this) {

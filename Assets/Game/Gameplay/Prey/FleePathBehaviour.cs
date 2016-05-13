@@ -71,7 +71,8 @@ public class FleePathBehaviour : Initializable {
 			m_target = m_path.GetNearestTo(m_motion.position);
 		}
 
-		m_animator.SetBool("scared", false);
+		if (m_animator.isInitialized)
+			m_animator.SetBool("scared", false);
 	}
 
 	public void SetPath(PathController _path) {

@@ -40,13 +40,12 @@ public class InflammableDecoration : Initializable {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
-		m_fireNodes = transform.GetComponentsInChildren<FireNode>();
+		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 		m_burned = false;
 
 		int coins = 0;
 
-		if (m_entity!= null) 
-		{
+		if (m_entity!= null) {
 			coins = m_entity.reward.coins;
 		}
 
@@ -98,7 +97,7 @@ public class InflammableDecoration : Initializable {
 		if (m_autoSpawner == null)
 			return;
 
-		if ( m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning )	// if respawning we wait
+		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning )	// if respawning we wait
 			return;
 
 		if (m_burned) 
@@ -109,7 +108,7 @@ public class InflammableDecoration : Initializable {
 			if ( m_timer.Finished() )
 			{
 				m_view.SetActive(false);
-				m_autoSpawner.StartRespawn();
+				m_autoSpawner.Respawn();
 			}
 		} 
 		else 
@@ -148,13 +147,12 @@ public class InflammableDecoration : Initializable {
 			}
 			else if (m_burned)
 			{
-				for (int i = 0; i < m_fireNodes.Length; i++) 
-				{
-					m_fireNodes[i].StartSmoke();
+				for (int i = 0; i < m_fireNodes.Length; i++) {
+					m_fireNodes[i].StartSmoke(2f);
 				}
 
 				// Crumble and dissolve time
-				m_timer.Start( 2f );
+				m_timer.Start(2f);
 				// m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
 				SwitchViewToDissolve();

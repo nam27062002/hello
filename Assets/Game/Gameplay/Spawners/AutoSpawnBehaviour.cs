@@ -75,13 +75,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	}
 
-	public void StartRespawn() {
+	public void Respawn() {
 		m_timer = m_spawnTime;
 		m_state = State.Respawning;
-	}
-
-	public void Respawn() {
-
 	}
 		
 	private void Spawn() {		

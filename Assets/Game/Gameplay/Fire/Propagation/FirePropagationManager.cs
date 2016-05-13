@@ -7,6 +7,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	[SerializeField] private float m_checkFireTime = 0.25f;
 
 	private QuadTree m_fireNodes;
+	private List<FireNode> m_fireNodesLogic;
 	private AudioSource m_fireNodeAudio;
 	private DragonBreathBehaviour m_breath;
 	
@@ -16,6 +17,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 	void Awake() {
 		m_fireNodes = new QuadTree(-600f, -100f, 1000f, 400f);
+		m_fireNodesLogic = new List<FireNode>();
 
 		m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
 		m_fireNodeAudio.playOnAwake = false;
@@ -66,16 +68,20 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 				}
 			}
 		}
+
+		for (int i = 0; i < m_fireNodesLogic.Count; i++) {
+			m_fireNodesLogic[i].UpdateLogic();
+		}
 	}
-	
-	public static void Insert(Transform _fireNode) {
-
-		instance.m_fireNodes.Insert(_fireNode);
+		
+	public static void Insert(FireNode _fireNode) {
+		instance.m_fireNodes.Insert(_fireNode.transform);
+		instance.m_fireNodesLogic.Add(_fireNode);
 	}
 
-	public static void Remove(Transform _fireNode) {
-
-		instance.m_fireNodes.Remove(_fireNode);
+	public static void Remove(FireNode _fireNode) {
+		instance.m_fireNodes.Remove(_fireNode.transform);
+		instance.m_fireNodesLogic.Remove(_fireNode);
 	}
 
 	/// <summary>
