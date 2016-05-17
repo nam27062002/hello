@@ -607,6 +607,7 @@ GameObject:
   - 222: {fileID: 22216274}
   - 114: {fileID: 11436466}
   - 114: {fileID: 11487280}
+  - 114: {fileID: 11466236}
   m_Layer: 0
   m_Name: Dragon
   m_TagString: Untagged
@@ -2793,8 +2794,7 @@ MonoBehaviour:
   m_progressBar: {fileID: 11435130}
   m_infoText: {fileID: 11406260}
   m_unlockFX: {fileID: 130372}
-  m_nextDragonScene3DPrefab: {fileID: 117136, guid: c8a223167136d476e8ff451983c6c24a,
-    type: 2}
+  m_nextDragonScene3DLoader: {fileID: 11466236}
 --- !u!114 &11447878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3243,6 +3243,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11466236
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e23ca9b58b6a4c1fb6454e8c9b05b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scenePrefab: {fileID: 117136, guid: c8a223167136d476e8ff451983c6c24a, type: 2}
+  m_sceneInstance: {fileID: 0}
 --- !u!114 &11466940
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3785,7 +3798,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_animator: {fileID: 0}
   m_tweenType: 3
-  m_tweenDuration: 0.5
+  m_tweenDuration: 0.25
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0
@@ -4212,7 +4225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_animator: {fileID: 0}
   m_tweenType: 3
-  m_tweenDuration: 0.5
+  m_tweenDuration: 0.25
   m_tweenValue: 300
   m_tweenEase: 27
   m_tweenDelay: 0
