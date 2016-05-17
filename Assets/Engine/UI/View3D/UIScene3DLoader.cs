@@ -29,9 +29,13 @@ public class UIScene3DLoader : MonoBehaviour {
 	[SerializeField] private GameObject m_scenePrefab = null;
 
 	// Internal
-	private UIScene3D m_scene = null;
+	[Comment("Scene instance exposed for convenience, do not set it from the inspector", 5)]
+	[SerializeField] private UIScene3D m_sceneInstance = null;
 	public UIScene3D scene {
-		get { return m_scene; }
+		get { 
+			if(m_sceneInstance == null) LoadScene(m_scenePrefab);
+			return m_sceneInstance; 
+		}
 	}
 
 	private RawImage m_rawImage = null;
@@ -57,7 +61,10 @@ public class UIScene3DLoader : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		LoadScene(m_scenePrefab);
+		// If scene wasn't already loaded, do it now
+		if(m_sceneInstance == null) {
+			LoadScene(m_scenePrefab);
+		}
 	}
 
 	/// <summary>
@@ -75,6 +82,7 @@ public class UIScene3DLoader : MonoBehaviour {
 	/// </summary>
 	/// <param name="_scenePrefab">Scene prefab.</param>
 	public void LoadScene(GameObject _scenePrefab) {
+		Debug.Log("LOADING SCENE " + _scenePrefab.name);
 		// The prefab must contain a UIScene3D component
 		if(_scenePrefab.GetComponent<UIScene3D>() == null) {
 			Debug.LogError("Trying to load a scene without the UIScene3D component - aborting");
@@ -87,10 +95,10 @@ public class UIScene3DLoader : MonoBehaviour {
 		// Load the new scene
 		// UIScene3DManager makes it easy for us! d
 		m_scenePrefab = _scenePrefab;
-		m_scene = UIScene3DManager.CreateFromPrefab<UIScene3D>(m_scenePrefab);
+		m_sceneInstance = UIScene3DManager.CreateFromPrefab<UIScene3D>(m_scenePrefab);
 
 		// Initialize the raw image where the dragon will be rendered
-		m_rawImage.texture = m_scene.renderTexture;
+		m_rawImage.texture = m_sceneInstance.renderTexture;
 		m_rawImage.color = Colors.white;
 	}
 
@@ -99,9 +107,9 @@ public class UIScene3DLoader : MonoBehaviour {
 	/// </summary>
 	public void UnloadScene() {
 		// Destroy next dragon 3D scene
-		if(m_scene != null) {
-			UIScene3DManager.Remove(m_scene);
-			m_scene = null;
+		if(m_sceneInstance != null) {
+			UIScene3DManager.Remove(m_sceneInstance);
+			m_sceneInstance = null;
 			m_rawImage.texture = null;
 		}
 	}
