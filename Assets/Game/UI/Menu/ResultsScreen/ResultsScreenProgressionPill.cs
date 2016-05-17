@@ -32,10 +32,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	[SerializeField] private Localizer m_infoText = null;
 	[SerializeField] private GameObject m_unlockFX = null;
 	[Space]
-	[SerializeField] private GameObject m_nextDragonScene3DPrefab = null;
-
-	// Internal
-	private UIScene3D m_nextDragonScene3D = null;
+	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -48,18 +45,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		Debug.Assert(m_progressBar != null, "Required field not initialized!");
 		Debug.Assert(m_infoText != null, "Required field not initialized!");
 		Debug.Assert(m_unlockFX != null, "Required field not initialized!");
-		Debug.Assert(m_nextDragonScene3DPrefab != null, "Required field not initialized!");
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		// Destroy next dragon 3D scene
-		if(m_nextDragonScene3D != null) {
-			UIScene3DManager.Remove(m_nextDragonScene3D);
-			m_nextDragonScene3D = null;
-		}
+		Debug.Assert(m_nextDragonScene3DLoader != null, "Required field not initialized!");
 	}
 
 	//------------------------------------------------------------------------//
@@ -102,22 +88,8 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		// Hide unlock group
 		m_unlockFX.SetActive(false);
 
-		// Load next dragon 3D preview
-		// If scene wasn't yet created, do it now
-		if(m_nextDragonScene3D == null) {
-			// UIScene3DManager makes it easy for us! d
-			m_nextDragonScene3D = UIScene3DManager.CreateFromPrefab<UIScene3D>(m_nextDragonScene3DPrefab);
-
-			// Initialize the raw image where the dragon will be rendered
-			RawImage nextDragonRawImage = this.gameObject.GetComponentInChildren<RawImage>();
-			if(nextDragonRawImage != null) {
-				nextDragonRawImage.texture = m_nextDragonScene3D.renderTexture;
-				nextDragonRawImage.color = Colors.white;
-			}
-		}
-
 		// Load and pose the dragon - will override any existing dragon
-		MenuDragonLoader dragonLoader = m_nextDragonScene3D.FindComponentRecursive<MenuDragonLoader>();
+		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
 		if(dragonLoader != null) {
 			dragonLoader.LoadDragonPreview(nextDragonData.def.sku);
 			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
