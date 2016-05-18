@@ -17,8 +17,8 @@ using UnityEngine.Serialization;
 /// The target object will always look towards the defined point.
 /// If lookAtObject is defined, lookAtPoint will be linked to the position of the object
 /// </summary>
-[ExecuteInEditMode]  
-public class LookAtPoint : MonoBehaviour {
+[ExecuteInEditMode]
+public class LookAt : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -39,21 +39,23 @@ public class LookAtPoint : MonoBehaviour {
 		set { 
 			m_lookAtPointLocal = value;
 			if(m_lookAtObject != null) m_lookAtObject.position = lookAtPointGlobal;
+			m_dirty = true;
 		}
 	}
 
 	public Vector3 lookAtPointRelative {
-		get { return (transform.localPosition - m_lookAtPointLocal); }
+		get { return (m_lookAtPointLocal - transform.localPosition); }
 		set { lookAtPointLocal = transform.localPosition + value; }
 	}
 
 	public Vector3 lookAtPointGlobal {
 		get {
 			if(transform.parent != null) {
-				return transform.parent.TransformPoint(m_lookAtPointLocal); 
+				return transform.parent.TransformPoint(m_lookAtPointLocal);
 			} else {
 				return m_lookAtPointLocal;
 			}
+			return transform.TransformPoint(m_lookAtPointLocal); 
 		}
 		set {
 			if(transform.parent != null) {
@@ -80,21 +82,29 @@ public class LookAtPoint : MonoBehaviour {
 		get { return m_editMode; }
 	}
 
+	// Internal
+	private bool m_dirty = true;
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Logic update call.
+	/// Update loop.
 	/// </summary>
-	void Update() {
+	public void Update() {
 		if(isActiveAndEnabled) {
 			// Make sure lookAtPoint is linked to the object (if any)
-			if(m_lookAtObject != null) {
+			if(m_lookAtObject != null && m_lookAtObject.transform.hasChanged) {
 				lookAtPointGlobal = m_lookAtObject.position;
+				m_lookAtObject.transform.hasChanged = false;	// Beware that this might cause conflict with other components using the hasChanged flag
+				m_dirty = true;
 			}
 
-			// Modify our own rotation
-			transform.LookAt(lookAtPointGlobal);
+			// If cahnges occurred, modify our own rotation
+			if(m_dirty) {
+				transform.LookAt(lookAtPointGlobal);
+				m_dirty = false;
+			}
 		}
 	}
 }
