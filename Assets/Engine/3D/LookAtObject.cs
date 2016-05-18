@@ -16,6 +16,7 @@ using UnityEngine;
 /// The target object will always look towards the defined object.
 /// </summary>
 [ExecuteInEditMode]  
+[System.Obsolete("This component is obsolete, use LookAt component instead.")]
 public class LookAtObject : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//

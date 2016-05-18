@@ -9,6 +9,7 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using UnityEditor.SceneManagement;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -16,7 +17,7 @@ using System;
 /// <summary>
 /// Custom editor for the lookAt point script.
 /// </summary>
-[CustomEditor(typeof(LookAtPoint))]
+[CustomEditor(typeof(LookAt))]
 [CanEditMultipleObjects]
 public class LookAtPointEditor : Editor {
 	//------------------------------------------------------------------//
@@ -27,8 +28,8 @@ public class LookAtPointEditor : Editor {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Target objects and properties
-	private LookAtPoint m_target;
-	private LookAtPoint[] m_targets;
+	private LookAt m_target;
+	private LookAt[] m_targets;
 	private SerializedProperty m_lookAtLocalProp = null;
 	private SerializedProperty m_lookAtObjectProp = null;
 	private SerializedProperty m_editModeProp = null;
@@ -45,10 +46,10 @@ public class LookAtPointEditor : Editor {
 	/// </summary>
 	public void OnEnable() {
 		// Cast targets
-		m_target = target as LookAtPoint;
-		m_targets = new LookAtPoint[targets.Length];
+		m_target = target as LookAt;
+		m_targets = new LookAt[targets.Length];
 		for(int i = 0; i < targets.Length; i++) {
-			m_targets[i] = targets[i] as LookAtPoint;
+			m_targets[i] = targets[i] as LookAt;
 		}
 
 		// Serialized properties
@@ -81,11 +82,14 @@ public class LookAtPointEditor : Editor {
 
 		// In this case, a single property (m_lookAtPointLocal) can be edited by 4 different ways:
 		// Global Coords, Local Coords, Relative Coords and Scene Handlers
+		EditorGUILayout.LabelField("Point in the 3D space where the object is looking to, different coordinate systems", CustomEditorStyles.commentLabelLeft);
+		EditorGUILayout.PrefixLabel("LookAt Point");
 		EditorGUI.showMixedValue = m_lookAtLocalProp.hasMultipleDifferentValues;
+		EditorGUI.indentLevel++;
 
 		// Local coords: use a mix between serialized property and getter/setter
 		GUI.changed = false;
-		EditorGUILayout.PropertyField(m_lookAtLocalProp);
+		EditorGUILayout.PropertyField(m_lookAtLocalProp, new GUIContent("Local"));
 		if(GUI.changed) {
 			serializedObject.ApplyModifiedProperties();
 			Undo.RecordObjects(m_targets, "LookAtPoint localPos changed");
@@ -93,35 +97,40 @@ public class LookAtPointEditor : Editor {
 				m_targets[i].lookAtPointLocal = m_targets[i].lookAtPointLocal;	// Just to use the setter with the new value
 			}
 			SceneView.RepaintAll();
+			m_target.Update();
 		}
 
 		// Relative coords: use getter/setter
 		GUI.changed = false;
-		Vector3 newRelativePos = EditorGUILayout.Vector3Field("Look At Point Relative", m_target.lookAtPointRelative);	// Show first object's value
+		Vector3 newRelativePos = EditorGUILayout.Vector3Field("Relative", m_target.lookAtPointRelative);	// Show first object's value
 		if(GUI.changed) {
 			Undo.RecordObjects(m_targets, "LookAtPoint relativePos changed");
 			for(int i = 0; i < m_targets.Length; i++) {
 				m_targets[i].lookAtPointRelative = newRelativePos;
 			}
 			SceneView.RepaintAll();
+			m_target.Update();
 		}
 
 		// Global coords: use getter/setter
 		GUI.changed = false;
-		Vector3 newGlobalPos = EditorGUILayout.Vector3Field("Look At Point Global", m_target.lookAtPointGlobal);	// Show first object's value
+		Vector3 newGlobalPos = EditorGUILayout.Vector3Field("Global", m_target.lookAtPointGlobal);	// Show first object's value
 		if(GUI.changed) {
 			Undo.RecordObjects(m_targets, "LookAtPoint globalPos changed");
 			for(int i = 0; i < m_targets.Length; i++) {
 				m_targets[i].lookAtPointGlobal = newGlobalPos;
 			}
 			SceneView.RepaintAll();
+			m_target.Update();
 		}
+
+		EditorGUI.indentLevel--;
 
 		// Optional lookAt object
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("If lookAtObject is defined, lookAtPoint will be linked to the position of the object", CustomEditorStyles.commentLabelLeft);
 		GUI.changed = false;
-		EditorGUILayout.PropertyField(m_lookAtObjectProp);
+		EditorGUILayout.PropertyField(m_lookAtObjectProp, new GUIContent("LookAt Object"));
 		if(GUI.changed) {
 			serializedObject.ApplyModifiedProperties();
 			Undo.RecordObjects(m_targets, "LookAtPoint lookAtObj changed");
@@ -129,10 +138,12 @@ public class LookAtPointEditor : Editor {
 				m_targets[i].lookAtObject = m_targets[i].lookAtObject;	// Just to use the setter with the new value
 			}
 			SceneView.RepaintAll();
+			m_target.Update();
 		}
 
 		// Edit mode
 		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("How the object's position and lookAt are linked", CustomEditorStyles.commentLabelLeft);
 		EditorGUILayout.PropertyField(m_editModeProp);
 
 		// Save object
@@ -149,7 +160,7 @@ public class LookAtPointEditor : Editor {
 		GUI.changed = false;
 
 		// Aux vars
-		LookAtPoint t = target as LookAtPoint;
+		LookAt t = target as LookAt;
 		Vector3 lookAtOffset = Vector3.zero;
 		Vector3 posOffset = Vector3.zero;
 		Handles.color = Color.cyan;
@@ -166,7 +177,7 @@ public class LookAtPointEditor : Editor {
 			lookAtOffset = Handles.PositionHandle(t.lookAtPointGlobal, Quaternion.identity) - t.lookAtPointGlobal;
 		} else {
 			posOffset = Handles.PositionHandle(t.transform.position, t.transform.rotation) - t.transform.position;
-			lookAtOffset = t.lookAtPointGlobal = Handles.PositionHandle(t.lookAtPointGlobal, t.transform.rotation) - t.lookAtPointGlobal;	// [AOC] Use object's rotation
+			lookAtOffset = Handles.PositionHandle(t.lookAtPointGlobal, t.transform.rotation) - t.lookAtPointGlobal;	// [AOC] Use object's rotation
 		}
 
 		// Draw line from the object (camera) to the lookAt for clarity
@@ -189,23 +200,24 @@ public class LookAtPointEditor : Editor {
 
 				// Based on edit mode, apply offset to the position as well
 				switch(t.editMode) {
-					case LookAtPoint.EditMode.LINKED: {
+					case LookAt.EditMode.LINKED: {
 						t.transform.position += lookAtOffset;
 						t.lookAtPointGlobal += posOffset;
 					} break;
 
-					case LookAtPoint.EditMode.LOOK_AT_FOLLOWS_POSITION: {
+					case LookAt.EditMode.LOOK_AT_FOLLOWS_POSITION: {
 						t.lookAtPointGlobal += posOffset;
 					} break;
 
-					case LookAtPoint.EditMode.POSITION_FOLLOWS_LOOK_AT: {
+					case LookAt.EditMode.POSITION_FOLLOWS_LOOK_AT: {
 						t.transform.position += lookAtOffset;
 					} break;
 				}
-
-				// Mark as dirty so scene is refreshed
-				EditorUtility.SetDirty(t);
 			}
+
+			// Refresh scene
+			SceneView.RepaintAll();
+			m_target.Update();
 		}
 	}
 }
