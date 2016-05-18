@@ -15,7 +15,7 @@ using DG.Tweening;
 /// <summary>
 /// Define a camera setup.
 /// </summary>
-[RequireComponent(typeof(LookAtPoint))]
+[RequireComponent(typeof(LookAt))]
 public class CameraSnapPoint : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -51,7 +51,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	public Color gizmoColor = new Color(0f, 1f, 1f, 0.25f);
 
 	// Internal references
-	private LookAtPoint m_lookAtPoint = null;
+	private LookAt m_lookAtPoint = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -60,7 +60,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// Get references.
 	/// </summary>
 	void Awake() {
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
 	}
 
 	/// <summary>
@@ -68,7 +68,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// </summary>
 	private void OnDrawGizmos() {
 		// Make sure lookAtPoint reference is valid
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
 
 		// LookAt line
 		Gizmos.color = Colors.WithAlpha(Colors.cyan, 0.75f);
@@ -118,7 +118,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	public void Apply(Camera _cam) {
 		// Check params
 		if(_cam == null) return;
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
 
 		// Camera position
 		_cam.transform.position = m_lookAtPoint.transform.position;
@@ -147,7 +147,7 @@ public class CameraSnapPoint : MonoBehaviour {
 		// Check params
 		if(_cam == null) return;
 		if(_params == null) return;
-		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAtPoint>();
+		if(m_lookAtPoint == null) m_lookAtPoint = GetComponent<LookAt>();
 
 		// [AOC] Make sure tweens are autokilled and recyclable, so we do a "pooling" of this tween type, avoiding creating memory garbage
 		string tweenId = GetTweenId(_cam);
