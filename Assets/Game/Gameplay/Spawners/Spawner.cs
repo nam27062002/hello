@@ -261,7 +261,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	void OnDrawGizmos() {
+		// Draw spawn area
 		GetArea().DrawGizmo();
+
+		// Draw icon! - only in editor!
+		#if UNITY_EDITOR
+		// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
+		Gizmos.DrawIcon(transform.position, this.m_entityPrefab.name, true);
+		#endif
 	}
 
 	virtual protected Vector3 RandomStartDisplacement()
