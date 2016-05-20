@@ -68,7 +68,7 @@ public class Server
 		errorCodesWithRetry.Add (502);		// 503: Bad Gateway
 		errorCodesWithRetry.Add (404);		// 404: Not Found
 
-		NetworkManager.SharedInstance.Initialise(serverUrl, ENCRYPT_PASSWORD, clientVersion);
+		NetworkManager.instance.Initialise(serverUrl, ENCRYPT_PASSWORD, clientVersion);
 	}
 
 

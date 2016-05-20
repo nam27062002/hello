@@ -11,7 +11,7 @@ using System.Threading;
 
 #pragma warning disable 414
 
-public class NetworkManager : MonoBehaviour
+public class NetworkManager : SingletonMonoBehaviour<NetworkManager>
 {
 	
 	
@@ -20,9 +20,6 @@ public class NetworkManager : MonoBehaviour
 	[DllImport ("__Internal", CallingConvention=CallingConvention.Cdecl)] private static extern int NetworkClient_GetDefaultProxyPort ();
 #endif
 
-	// Singleton ///////////////////////////////////////////////////////////
-	private static NetworkManager s_pInstance = null;
-	
 	private bool debug = false;
 
 	public class HttpRequestCreator : IWebRequestCreate {
@@ -33,22 +30,10 @@ public class NetworkManager : MonoBehaviour
 		}
 	}
 	
-	public static NetworkManager SharedInstance
-	{
-		get
-		{
-			if (s_pInstance == null)
-			{
-				//GameObject go = (new GameObject("Singleton - NetworkManager"));
-				s_pInstance = (new GameObject("Singleton - NetworkManager")).AddComponent<NetworkManager>();
-				WebRequest.RegisterPrefix("http", new HttpRequestCreator()); // new! fix to the new random NotSupportedException-Whatever
-			}
-
-			return s_pInstance;
-		}
+	override public string ToString() {
+		return "NetworkManager"; 
 	}
 
-	override public string ToString(){ return "NetworkManager"; } 
 	//////////////////////////////////////////////////////////////////////////
 
 	public static int NUM_NETWORK_RETRIES = 3;
@@ -571,7 +556,7 @@ public class NetworkManager : MonoBehaviour
 	// UNITY METHODS /////////////////////////////////////////////////////////
 	void Awake ()
 	{
-		DontDestroyOnLoad(this);
+		WebRequest.RegisterPrefix("http", new HttpRequestCreator()); // new! fix to the new random NotSupportedException-Whatever
 
 		m_kPendingNetworkRequests = new List<NetworkRequest> ();
 		m_kPendingNetworkDownloads = new List<NetworkRequest> ();
