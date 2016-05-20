@@ -47,11 +47,12 @@ public class InflammableDecorationEditor : Editor {
 				case Tool.Scale:	 m_fireNodes[i].localScale = Handles.ScaleHandle(m_fireNodes[i].localScale, m_fireNodes[i].position, m_fireNodes[i].rotation, 1.5f);break;
 			}
 			m_fireParticles[i].transform.CopyFrom(m_fireNodes[i]);
+			m_fireParticles[i].GetComponent<ParticleSystem>().Simulate(1f, true);
 		}
 	}
 
 	private void GetFireNodesData() {
-		GameObject prefab = (GameObject)Resources.Load("Particles/FireSprite");
+		GameObject prefab = (GameObject)Resources.Load("Particles/PF_BuildingFire");
 		InflammableDecoration targetGO = (InflammableDecoration)target;
 
 		FireNode[] nodes = targetGO.transform.GetComponentsInChildren<FireNode>();
@@ -61,6 +62,7 @@ public class InflammableDecorationEditor : Editor {
 			m_fireParticles.Add(Instantiate(prefab));
 			m_fireParticles[i].transform.CopyFrom(m_fireNodes[i]);
 			m_fireParticles[i].hideFlags = HideFlags.HideAndDontSave;
+			m_fireParticles[i].GetComponent<ParticleSystem>().Simulate(1f, true);
 		}
 	}
 
