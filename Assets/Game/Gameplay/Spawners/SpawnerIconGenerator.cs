@@ -16,6 +16,7 @@ using System.Collections;
 /// <summary>
 /// Auxiliar component for spawners generating a custom icon for that spawner.
 /// </summary>
+[System.Obsolete("To be deleted soon")]
 public class SpawnerIconGenerator : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
