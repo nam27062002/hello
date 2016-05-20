@@ -71,7 +71,8 @@ public class HungryDragonEditorMenu {
 	/// </summary>
 	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons", false, 1)]
 	public static void GenerateSpawnerIcons() {
-		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
+		//SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
+		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);
 	}
 
 	/// <summary>

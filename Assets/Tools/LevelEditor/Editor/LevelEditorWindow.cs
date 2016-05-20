@@ -39,16 +39,8 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// Sections
 		private ILevelEditorSection[] m_sections = new ILevelEditorSection[] {
-			new SectionLevels(),
-			new SectionGroups(),
-			new SectionGround(),
-			new SectionSpawners(),
-			new SectionDecos(),
-			new SectionDummies(),
-			new SectionColliders()
+			new SectionLevels()
 		};
-
-		private Dictionary<string, ILevelEditorSection> m_tabs = new Dictionary<string, ILevelEditorSection>();
 
 		// Styles
 		private Styles m_styles = null;	// Can't be initialized here
@@ -72,12 +64,6 @@ namespace LevelEditor {
 		 
 		// Section shortcuts - don't change order in the array!!
 		public SectionLevels sectionLevels { get { return m_sections[0] as SectionLevels; }}
-		public SectionGroups sectionGroups { get { return m_sections[1] as SectionGroups; }}
-		public SectionGround sectionGround { get { return m_sections[2] as SectionGround; }}
-		public SectionSpawners sectionSpawners { get { return m_sections[3] as SectionSpawners; }}
-		public SectionDecos sectionDecos { get { return m_sections[4] as SectionDecos; }}
-		public SectionDummies sectionDummies { get { return m_sections[5] as SectionDummies; }}
-		public SectionColliders sectionColliders { get { return m_sections[6] as SectionColliders; }}
 
 		// Styles shortcut
 		public Styles styles { get { return m_styles; }}
@@ -86,12 +72,7 @@ namespace LevelEditor {
 		// GENERIC METHODS													//
 		//------------------------------------------------------------------//
 		public LevelEditorWindow() {
-			// Initialize tabs dictionary
-			m_tabs.Add("Spawners", sectionSpawners);
-			m_tabs.Add("Collisions", sectionGround);
-			m_tabs.Add("Colliders", sectionColliders);
-			m_tabs.Add("Decorations", sectionDecos);
-			m_tabs.Add("Dummies", sectionDummies);
+			
 		}
 
 		/// <summary>
@@ -211,38 +192,6 @@ namespace LevelEditor {
 				// Draw sections
 				// Level section - always drawn
 				sectionLevels.OnGUI();
-
-				// Rest of the sections: only if a level is loaded and we're not testing
-				if(sectionLevels.activeLevel != null && !EditorApplication.isPlaying) {
-					// Groups section
-					GUILayout.Space(10f);
-					sectionGroups.OnGUI();
-
-					// Tabbed sections
-					GUILayout.Space(10f);
-					EditorGUILayout.BeginVertical(styles.boxStyle); {
-						// Tab selector - different options based on mode
-						List<string> tabNames = new List<string>();
-						switch(LevelEditor.settings.selectedMode) {
-							case LevelEditorSettings.Mode.SPAWNERS:		tabNames = new List<string>(new string[] { "Spawners", "Dummies" });	break;
-							case LevelEditorSettings.Mode.COLLISION:	tabNames = new List<string>(new string[] { "Collisions", "Colliders" });break;
-							case LevelEditorSettings.Mode.ART:			tabNames = new List<string>(new string[] { "Decorations" });			break;
-						}
-						int newTab = GUILayout.Toolbar(LevelEditor.settings.selectedTab, tabNames.ToArray());
-
-						// If tab has changed, Init new tab
-						if(newTab != LevelEditor.settings.selectedTab) {
-							m_tabs[tabNames[newTab]].Init();
-							LevelEditor.settings.selectedTab = newTab;
-							AssetDatabase.SaveAssets();	// Record settings
-						}
-
-						// Tab content
-						EditorGUILayout.BeginVertical(styles.boxStyle, GUILayout.ExpandHeight(true)); {
-							m_tabs[tabNames[newTab]].OnGUI();
-						} EditorGUILayoutExt.EndVerticalSafe();
-					} EditorGUILayoutExt.EndVerticalSafe();
-				}
 			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 

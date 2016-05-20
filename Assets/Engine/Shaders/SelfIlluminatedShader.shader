@@ -13,7 +13,7 @@ Properties
 	_MainTex ("Base (RGB) Gloss (A)", 2D) = "white" {}
 	_Color("Tint", Color) = (1,1,1,1)
 	_AmbientColor("Ambient Color", Color) = (1,1,1,1)
-	_LightDir("Light Dir", Vector) = (1,1,1,1)
+	[LightDirection] _LightDir("Light Dir", Vector) = (1,1,1,1)
 	_LightColor("Light Color", Color) = (1,1,1,1)
 	_Shininess ("Shininess", Range (0.03, 10)) = 0.078125
 	_SpecIntensity ("Spec Intensity", Range (0, 1)) = 0.5

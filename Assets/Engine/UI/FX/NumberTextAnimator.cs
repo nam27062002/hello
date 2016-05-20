@@ -1,40 +1,64 @@
 ﻿// NumberTextAnimator.cs
-// Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 31/03/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
-#region INCLUDES AND PREPROCESSOR --------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
 using UnityEngine.UI;
-#endregion
 
-#region CLASSES --------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 /// <summary>
 /// Animate a textfield by interpolating between two numbers.
 /// </summary>
-[RequireComponent (typeof(Text))]
+[RequireComponent(typeof(Text))]
 public class NumberTextAnimator : MonoBehaviour {
-	#region CONSTANTS --------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
 
-	#endregion
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed setup
+	[SerializeField] private float m_duration = 0.5f;
+	public float duration {
+		get { return m_duration; }
+		set { m_duration = value; }
+	}
 
-	#region EXPOSED MEMBERS --------------------------------------------------------------------------------------------
-	public float m_duration = 0.5f;
-	#endregion
-
-	#region INTERNAL MEMBERS -------------------------------------------------------------------------------------------
+	// References
 	private Text m_targetTxt;
-	private int m_initialValue = 0;
-	private int m_finalValue = 0;
-	private int m_currentValue = 0;
-	private float m_startTime = 0;
-	#endregion
+	public Text text {
+		get { return m_targetTxt; }
+	}
 
-	#region GENERIC METHODS --------------------------------------------------------------------------------------------
+	// Value tracking
+	private int m_initialValue = 0;
+	public int initialValue {
+		get { return m_initialValue; }
+	}
+
+	private int m_finalValue = 0;
+	public int finalValue {
+		get { return m_finalValue; }
+	}
+
+	private int m_currentValue = 0;
+	public int currentValue {
+		get { return m_currentValue; }
+	}
+
+	// Internal logic
+	private float m_startTime = 0;
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialization
 	/// </summary>
@@ -86,17 +110,16 @@ public class NumberTextAnimator : MonoBehaviour {
 		// Call the other version
 		SetValue(m_currentValue, _iFinalValue);
 	}
-	#endregion
 
-	#region INTERNAL UTILS --------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Apply the given value to the textfield. That way we make sure formatting is always respected.
 	/// </summary>
 	/// <param name="_iValue">The value to be applied.</param>
 	private void ApplyValue(int _iValue) {
 		// Just do it
-		m_targetTxt.text = _iValue.ToString("N0", CultureInfo.CurrentCulture);
+		m_targetTxt.text = StringUtils.FormatNumber(_iValue);
 	}
-	#endregion
 }
-#endregion
