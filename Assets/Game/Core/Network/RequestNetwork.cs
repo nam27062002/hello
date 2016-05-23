@@ -143,8 +143,8 @@ public class RequestNetwork : SingletonMonoBehaviour<RequestNetwork>
 		// System.DateTime origin = new System.DateTime( 1970,1,1,0,0,0,0);
 		// currentServerTime = (System.DateTime.Now - origin).TotalSeconds;
 		m_currentServerTime = 0;
-		//TextAsset textAsset  = (TextAsset) Resources.Load( "version", typeof(TextAsset));
-		//m_clientVersion = textAsset.text.Trim();
+		TextAsset textAsset  = (TextAsset) Resources.Load( "version", typeof(TextAsset));
+		m_clientVersion = textAsset.text.Trim();
 	}
 	
 	void OnDestroy()

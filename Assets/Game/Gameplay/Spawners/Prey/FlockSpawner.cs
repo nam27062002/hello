@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(EntityGroupController))]
 [RequireComponent(typeof(FlockController))]
 public class FlockSpawner : Spawner 
 {

@@ -189,8 +189,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 468300}
-  - 114: {fileID: 11487806}
-  - 65: {fileID: 6512840}
   m_Layer: 0
   m_Name: Bat_Head
   m_TagString: Untagged
@@ -394,18 +392,6 @@ Transform:
   - {fileID: 454346}
   m_Father: {fileID: 432846}
   m_RootOrder: 2
---- !u!65 &6512840
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182082}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Center: {x: -0.21, y: 0, z: 0}
 --- !u!95 &9526290
 Animator:
   serializedVersion: 3
@@ -415,7 +401,7 @@ Animator:
   m_GameObject: {fileID: 167958}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 4c8448a29ac684ba891f69a0bd3a0d77, type: 3}
-  m_Controller: {fileID: 22100000, guid: bcae704867f844c08afa03cbdbde6550, type: 2}
+  m_Controller: {fileID: 9100000, guid: 457b589949bd04336bf147a747cb7da8, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -458,8 +444,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_groupAvoidRadiusRange:
-    min: 1.5
-    max: 1.75
+    min: 1
+    max: 1.5
 --- !u!114 &11421898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -483,7 +469,7 @@ MonoBehaviour:
   m_speedVariationRange:
     min: 0.75
     max: 1.25
-  m_slowingRadius: 1
+  m_slowingRadius: 0
   m_fallOnBurn: 0
 --- !u!114 &11427696
 MonoBehaviour:
@@ -522,9 +508,9 @@ MonoBehaviour:
   m_attackDelay: 0
   m_consecutiveAttacks: 1
   m_retreatingTime: 2
-  m_hasAnimation: 1
+  m_hasAnimation: 0
   m_invulnerableWhileAttacking: 0
-  m_meleeWeapon: {fileID: 11487806}
+  m_meleeWeapon: {fileID: 0}
 --- !u!114 &11448254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -632,17 +618,6 @@ MonoBehaviour:
   m_displacementRadius: 1
   m_angleIncrement: 10
   m_idleProbability: 1
---- !u!114 &11487806
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11495124
 MonoBehaviour:
   m_ObjectHideFlags: 1

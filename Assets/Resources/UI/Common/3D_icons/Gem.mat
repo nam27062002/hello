@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_Wood_5
-  m_Shader: {fileID: 4800000, guid: c4ca9c8014af1422bb0b5f7de3761109, type: 3}
+  m_Name: Gem
+  m_Shader: {fileID: 4800000, guid: 752de70dd3618402daea83508ee5cdd5, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -19,8 +19,8 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 95e1bcac86e5c204f860d9b6e694cae9, type: 3}
-          m_Scale: {x: 5, y: 5}
+          m_Texture: {fileID: 2800000, guid: 75a7d428dd7253f4aab6aa8872a5401c, type: 3}
+          m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
@@ -45,6 +45,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -53,13 +60,6 @@ Material:
       data:
         first:
           name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -93,6 +93,14 @@ Material:
         second: 0.5
       data:
         first:
+          name: _Shininess
+        second: 0.078125
+      data:
+        first:
+          name: _SpecIntensity
+        second: 0.5
+      data:
+        first:
           name: _Parallax
         second: 0.02
       data:
@@ -121,17 +129,25 @@ Material:
         second: 0
       data:
         first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
         second: 0
+    m_Colors:
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-    m_Colors:
+          name: _LightDir
+        second: {r: 0.4878565, g: 0.6172504, b: 0.6172504, a: 1}
+      data:
+        first:
+          name: _LightColor
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _EmissionColor
@@ -139,6 +155,10 @@ Material:
       data:
         first:
           name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _AmbientColor
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
