@@ -39,7 +39,8 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// Sections
 		private ILevelEditorSection[] m_sections = new ILevelEditorSection[] {
-			new SectionLevels()
+			new SectionLevels(),
+			new SectionSimulation()
 		};
 
 		// Styles
@@ -64,6 +65,7 @@ namespace LevelEditor {
 		 
 		// Section shortcuts - don't change order in the array!!
 		public SectionLevels sectionLevels { get { return m_sections[0] as SectionLevels; }}
+		public SectionSimulation sectionSimulation { get { return m_sections[1] as SectionSimulation; }}
 
 		// Styles shortcut
 		public Styles styles { get { return m_styles; }}
@@ -192,6 +194,11 @@ namespace LevelEditor {
 				// Draw sections
 				// Level section - always drawn
 				sectionLevels.OnGUI();
+
+				// Simulation section - only if spawners level is loaded
+				if(sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS) != null) {
+					sectionSimulation.OnGUI();
+				}
 			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 
