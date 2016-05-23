@@ -80,13 +80,32 @@ public class PolyMeshEditor : Editor {
 		if(autoEdit) {
 			HideWireframe(hideWireframe);
 		}
+
+		// Subscribe to the Undo event
+		#if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
+			Undo.undoRedoPerformed += OnUndoRedo;
+		#else
+			//Crazy hack to register undo
+			if(m_undoCallback == null) {
+				m_undoCallback = typeof(EditorApplication).GetField("undoRedoPerformed", BindingFlags.NonPublic | BindingFlags.Static);
+				if(m_undoCallback != null) {
+					m_undoCallback.SetValue(null, new EditorApplication.CallbackFunction(OnUndoRedo));
+				}
+			}
+		#endif
 	}
 
 	/// <summary>
 	/// Inspector closed.
 	/// </summary>
 	private void OnDisable() {
-
+		// Unsubscribe from the Undo event
+		#if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
+			Undo.undoRedoPerformed -= OnUndoRedo;
+		#else
+			// Crazy hack to register undo
+			if(m_undoCallback != null) m_undoCallback = null;
+		#endif
 	}
 
 	//------------------------------------------------------------------------//
@@ -177,7 +196,7 @@ public class PolyMeshEditor : Editor {
 
 			EditorGUILayout.BeginHorizontal(); {
 				if(GUILayout.Button("Rebuild Mesh")) {
-					polyMesh.BuildMesh();
+					polyMesh.RebuildMesh();
 				}
 
 				if(GUILayout.Button("Save Mesh to Library")) {
@@ -406,8 +425,7 @@ public class PolyMeshEditor : Editor {
 	/// Raises the scene GU event.
 	/// </summary>
 	private void OnSceneGUI() {
-		if(target == null)
-			return;
+		if(target == null) return;
 
 		// Toggle editing - ignore if autoEdit
 		if(KeyPressed(editKey) && !autoEdit) {
@@ -416,10 +434,11 @@ public class PolyMeshEditor : Editor {
 
 		if(m_editing || autoEdit) {
 			if(e.type == EventType.keyDown && e.keyCode == KeyCode.Keypad0) {
-				if(polyMesh.transform.GetComponent<MeshRenderer>().enabled)
+				if(polyMesh.transform.GetComponent<MeshRenderer>().enabled) {
 					polyMesh.transform.GetComponent<MeshRenderer>().enabled = false;
-				else
+				} else {
 					polyMesh.transform.GetComponent<MeshRenderer>().enabled = true;
+				}
 			}
 
 			//Update lists
@@ -427,13 +446,6 @@ public class PolyMeshEditor : Editor {
 				m_keyPoints = new List<Vector3>(polyMesh.keyPoints);
 				m_curvePoints = new List<Vector3>(polyMesh.curvePoints);
 				m_isCurve = new List<bool>(polyMesh.isCurve);
-			}
-
-			//Crazy hack to register undo
-			if(m_undoCallback == null) {
-				m_undoCallback = typeof(EditorApplication).GetField("undoRedoPerformed", BindingFlags.NonPublic | BindingFlags.Static);
-				if(m_undoCallback != null)
-					m_undoCallback.SetValue(null, new EditorApplication.CallbackFunction(OnUndoRedo));
 			}
 
 			//Load handle matrix
@@ -445,12 +457,14 @@ public class PolyMeshEditor : Editor {
 			for(int i = 0; i < m_keyPoints.Count; i++) {
 				Handles.color = m_nearestLine == i ? Color.green : Color.white;
 				DrawSegment(i);
+
 				if(m_selectedIndices.Contains(i)) {
 					Handles.color = Color.green;
 					DrawCircle(m_keyPoints[i], 0.08f);
-				}
-				else
+				} else {
 					Handles.color = Color.white;
+				}
+
 				DrawKeyPoint(i);
 				if(m_isCurve[i]) {
 					Handles.color = (m_draggingCurve && m_dragIndex == i) ? Color.white : Color.blue;
@@ -466,13 +480,14 @@ public class PolyMeshEditor : Editor {
 					case KeyCode.W:
 					case KeyCode.E:
 					case KeyCode.R:
-					return;
+						return;
 				}
 			}
 
 			//Quit if panning or no camera exists
-			if(Tools.current == Tool.View || (e.isMouse && e.button > 0) || Camera.current == null || e.type == EventType.ScrollWheel)
+			if(Tools.current == Tool.View || (e.isMouse && e.button > 0) || Camera.current == null || e.type == EventType.ScrollWheel) {
 				return;
+			}
 
 			//Quit if laying out
 			if(e.type == EventType.Layout) {
@@ -487,11 +502,12 @@ public class PolyMeshEditor : Editor {
 			//Extrude key state
 			if(e.keyCode == extrudeKey) {
 				if(m_extrudeKeyDown) {
-					if(e.type == EventType.KeyUp)
+					if(e.type == EventType.KeyUp) {
 						m_extrudeKeyDown = false;
-				}
-				else if(e.type == EventType.KeyDown)
+					}
+				} else if(e.type == EventType.KeyDown) {
 					m_extrudeKeyDown = true;
+				}
 			}
 
 			//Update matrices and snap
@@ -504,10 +520,11 @@ public class PolyMeshEditor : Editor {
 			var plane = new Plane(-polyMesh.transform.forward, polyMesh.transform.position);
 			var ray = Camera.current.ScreenPointToRay(m_screenMousePosition);
 			float hit;
-			if(plane.Raycast(ray, out hit))
+			if(plane.Raycast(ray, out hit)) {
 				m_mousePosition = m_worldToLocal.MultiplyPoint(ray.GetPoint(hit));
-			else
+			} else {
 				return;
+			}
 
 			//Update nearest line and split position
 			m_nearestLine = NearestLine(out m_splitPosition);
@@ -691,7 +708,7 @@ public class PolyMeshEditor : Editor {
 	/// <param name="recordUndo">If set to <c>true</c> record undo.</param>
 	private void UpdatePoly(bool sizeChanged, bool recordUndo) {
 		if(recordUndo) {
-			//RecordUndo();
+			RecordUndo();
 		}
 
 		if(sizeChanged) {
@@ -727,20 +744,21 @@ public class PolyMeshEditor : Editor {
 		if(doSnap) {
 			if(globalSnap) {
 				m_keyPoints[index] = Snap(polyMesh.keyPoints[index] + amount);
-				if(moveCurve)
+				if(moveCurve) {
 					m_curvePoints[index] = Snap(polyMesh.curvePoints[index] + amount);
-			}
-			else {
+				}
+			} else {
 				amount = Snap(amount);
 				m_keyPoints[index] = polyMesh.keyPoints[index] + amount;
-				if(moveCurve)
+				if(moveCurve) {
 					m_curvePoints[index] = polyMesh.curvePoints[index] + amount;
+				}
 			}
-		}
-		else {
+		} else {
 			m_keyPoints[index] = polyMesh.keyPoints[index] + amount;
-			if(moveCurve)
+			if(moveCurve) {
 				m_curvePoints[index] = polyMesh.curvePoints[index] + amount;
+			}
 		}
 	}
 
@@ -752,13 +770,14 @@ public class PolyMeshEditor : Editor {
 	private void MoveCurvePoint(int index, Vector3 amount) {
 		m_isCurve[index] = true;
 		if(doSnap) {
-			if(globalSnap)
+			if(globalSnap) {
 				m_curvePoints[index] = Snap(polyMesh.curvePoints[index] + amount);
-			else
+			} else {
 				m_curvePoints[index] = polyMesh.curvePoints[index] + amount;
-		}
-		else
+			}
+		} else {
 			m_curvePoints[index] = polyMesh.curvePoints[index] + amount;
+		}
 	}
 
 	/// <summary>
@@ -766,8 +785,9 @@ public class PolyMeshEditor : Editor {
 	/// </summary>
 	/// <param name="amount">Amount.</param>
 	private void MoveSelected(Vector3 amount) {
-		foreach(var i in m_selectedIndices)
+		foreach(var i in m_selectedIndices) {
 			MoveKeyPoint(i, amount);
+		}
 	}
 
 	/// <summary>

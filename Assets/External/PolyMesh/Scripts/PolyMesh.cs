@@ -286,6 +286,22 @@ public class PolyMesh : MonoBehaviour {
 	// MESH EDITING METHODS													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Forces the creation of a new mesh.
+	/// </summary>
+	public void RebuildMesh() {
+		// Clear mesh references from both mesh filter and collider
+		MeshFilter meshFilter = GetComponent<MeshFilter>();
+		if(meshFilter.sharedMesh != null) meshFilter.sharedMesh = null;
+
+		if(meshCollider != null) {
+			if(meshCollider.sharedMesh != null) meshCollider.sharedMesh = null;
+		}
+
+		// Build the mesh from scratch
+		BuildMesh();
+	}
+
+	/// <summary>
 	/// Builds the mesh.
 	/// </summary>
 	public void BuildMesh() {
