@@ -31,9 +31,13 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private ScrollRect m_outputScroll = null;
 	[SerializeField] private Text m_outputText = null;
 
+
+
 	// Internal
 	private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();
+
+    private RequestNetwork requestNetwork;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -49,7 +53,16 @@ public class CPServerTab : MonoBehaviour {
 		// Clear console upon awakening
 		m_startTimestamp = DateTime.UtcNow;
 		OnClearConsoleButton();
-	}
+
+        //RequestNetworkOnline.CreateInstance();
+        requestNetwork = new RequestNetworkOnline();
+
+    }
+
+    private void Update()
+    {
+        requestNetwork.Update();
+    }
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
@@ -123,7 +136,9 @@ public class CPServerTab : MonoBehaviour {
 		// Good luck!
 		Debug.Log("Button 1 pressed with params " + paramString + " - TODO!!");
 		Output("Button 1 pressed with params " + paramString);
-	}
+
+        requestNetwork.Login();
+    }
 
 	/// <summary>
 	/// Generic button callback.
