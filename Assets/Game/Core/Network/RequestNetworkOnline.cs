@@ -47,26 +47,26 @@ public class RequestNetworkOnline : RequestNetwork
 	
 	
 	// Use this for initialization
-	private RequestNetworkOnline () 
+	public RequestNetworkOnline () 
 	{
 		m_uid = "";
 		m_i_uid = 0;
 		m_token = "";
 		
 		// Get servers and its names from file instead of this
-		serverRoots.Add( "Prod", "sandstorm.ubi.com");
-		serverRoots.Add( "Stage", "sandstorm-stage.ubi.com");
-        serverRoots.Add("Testing", "52.91.124.78:8080");
+		//serverRoots.Add( "Prod", "sandstorm.ubi.com");
+		//serverRoots.Add( "Stage", "sandstorm-stage.ubi.com");
+        //serverRoots.Add("Testing", "52.91.124.78:8080");
         //serverRoots.Add( "Old_Dev", "bcn-dev-sandstorm.ubi.com");
-        serverRoots.Add( "Dev", "bcn-mb-dev-sandstorm.ubisoft.org");
-		serverRoots.Add( "Integration", "bcn-integration-sandstorm.ubi.com");
-		serverRoots.Add( "Local", "sandstorm.local");
+        //serverRoots.Add( "Dev", "bcn-mb-dev-sandstorm.ubisoft.org");
+		//serverRoots.Add( "Integration", "bcn-integration-sandstorm.ubi.com");
+		//serverRoots.Add( "Local", "sandstorm.local");
 		serverRoots.Add( "Nacho", "10.44.4.34:8080");
-		serverRoots.Add( "Manel", "10.44.4.54:8080");
-        serverRoots.Add( "Alfonso", "10.44.4.63:8080");
+		//serverRoots.Add( "Manel", "10.44.4.54:8080");
+        //serverRoots.Add( "Alfonso", "10.44.4.63:8080");
 
         // string targetEnvironment = obtainServerToUseFromTargetEnvironment (BuildSettings.TARGET_ENVIRONMENT);
-		string targetEnvironment = "";
+		string targetEnvironment = "Nacho";
 		SetServer( targetEnvironment );
 		
 		crypto = new AESEncryptionVault(ENCRYPT_PASSWORD);
@@ -150,7 +150,7 @@ public class RequestNetworkOnline : RequestNetwork
 		string host = "";
 		if (serverRoots.ContainsKey(serverId))
 			host = serverRoots[serverId];
-		m_serverUrl = "http://" + host + "/sandstorm";				
+		m_serverUrl = "http://" + host + "/dragon";				
 
 		server = new Server (m_serverUrl, m_clientVersion, m_clientBuild);
 	}
@@ -683,7 +683,7 @@ public class RequestNetworkOnline : RequestNetwork
 		server.SendCommand ("/api/popup/view", form.data);
 	}
 
-	public override void NotifyCustomizerPopupAction_accept(long code)
+    public override void NotifyCustomizerPopupAction_accept(long code)
 	{
 		WWWForm form = new WWWForm();
 		form.AddField("code", ""+code);
@@ -1052,7 +1052,5 @@ public class RequestNetworkOnline : RequestNetwork
 	
 	}
 
-    // ----------------------------------------------------------------------- //
-
-
+    // ----------------------------------------------------------------------- //   
 }
