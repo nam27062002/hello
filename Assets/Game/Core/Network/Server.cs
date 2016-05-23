@@ -191,9 +191,9 @@ public class Server
 
 					mWaittingCommandResponse = true;
 
-					// command.sentAt = InstanceManager.RequestNetwork.GetServerTime();
+					 //command.sentAt = InstanceManager.RequestNetwork.GetServerTime();
 
-					// InstanceManager.Instance.RequestWWW (command.url, command.data, command.headers, OnResquestWWWResponse, command);
+				     NetworkUtils.Instance.RequestWWW (command.url, command.data, command.headers, /*OnRequestWWWResponse*/null, command);
 				}
 				while (flushAllCommandsNow && commandsStack.Count > 0);
 			}
