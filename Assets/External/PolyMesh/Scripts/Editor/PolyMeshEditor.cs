@@ -195,11 +195,18 @@ public class PolyMeshEditor : Editor {
 			} EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal(); {
-				if(GUILayout.Button("Rebuild Mesh")) {
+				// [AOC] Hardcode Hack to make buttons respect indentation and have the same size
+				int numItems = 2;
+				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth, 10f));
+				rect.width -= rect.x + numItems * 4f;	// Remove indentation and (hardcoded) spacing between items
+
+				GUILayout.Space(rect.x);
+
+				if(GUILayout.Button("Rebuild Mesh", GUILayout.Width(rect.width/numItems))) {
 					polyMesh.RebuildMesh();
 				}
 
-				if(GUILayout.Button("Save Mesh to Library")) {
+				if(GUILayout.Button("Save Mesh to Library", GUILayout.Width(rect.width/numItems))) {
 					PolyMesh pM = target as PolyMesh;
 					GameObject root = PrefabUtility.FindPrefabRoot(pM.gameObject);
 					Object parentObject = PrefabUtility.GetPrefabParent(root);
@@ -212,13 +219,20 @@ public class PolyMeshEditor : Editor {
 			} EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal(); {
-				if(GUILayout.Button("Make Mesh Unique")) {
+				// [AOC] Hardcode Hack to make buttons respect indentation and have the same size
+				int numItems = 2;
+				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth, 10f));
+				rect.width -= rect.x + numItems * 4f;	// Remove indentation and (hardcoded) spacing between items
+
+				GUILayout.Space(rect.x);
+
+				if(GUILayout.Button("Update Mesh", GUILayout.Width(rect.width/numItems))) {
 					RecordUndo();
-					polyMesh.GetComponent<MeshFilter>().mesh = null;
 					polyMesh.BuildMesh();
 				}
 
-				if(GUILayout.Button("Invert Triangles")) {
+				if(GUILayout.Button("Invert Triangles", GUILayout.Width(rect.width/numItems))) {
+					RecordUndo();
 					polyMesh.InvertPoints();
 					polyMesh.BuildMesh();
 				}
