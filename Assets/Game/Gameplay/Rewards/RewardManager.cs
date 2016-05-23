@@ -62,8 +62,8 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_pc; }
 	}
 
-	[SerializeField] private long m_xp = 0;
-	public static long xp {
+	[SerializeField] private float m_xp = 0;
+	public static float xp {
 		get { return instance.m_xp; }
 	}
 
