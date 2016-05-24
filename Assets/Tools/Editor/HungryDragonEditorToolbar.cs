@@ -65,6 +65,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	}
 
 	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Although singletons shouldn't be destroyed, Unity may want to destroy the window when reloading the layout
+		m_instance = null;
+	}
+
+	/// <summary>
 	/// Creates custom GUI styles if not already done.
 	/// Must only be called from the OnGUI() method.
 	/// </summary>
