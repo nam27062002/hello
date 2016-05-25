@@ -19,7 +19,15 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] private bool m_alwaysActive = false;
 	[SerializeField] private bool m_activeOnStart = false;
 	[SerializeField] private float m_enableTime;
+	public float enableTime {
+		get { return m_enableTime; }
+		set { m_enableTime = value; }
+	}
 	[SerializeField] private float m_disableTime;
+	public float disableTime {
+		get { return m_disableTime; }
+		set { m_disableTime = value; }
+	}
 
 	[Header("Respawn")]
 	[SerializeField] private Range m_spawnTime = new Range(60f, 120f);
@@ -46,6 +54,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 	private bool m_readyToBeDisabled;
 
 	private GameCameraController m_camera;
+
+	// Level editing stuff
+	private bool m_showSpawnerInEditor = true;
+	public bool showSpawnerInEditor {
+		get { return m_showSpawnerInEditor; }
+		set { m_showSpawnerInEditor = value; }
+	}
 	
 	//-----------------------------------------------
 	// Methods
@@ -261,14 +276,17 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	void OnDrawGizmos() {
-		// Draw spawn area
-		GetArea().DrawGizmo();
+		// Only if editor allows it
+		if(showSpawnerInEditor) {
+			// Draw spawn area
+			GetArea().DrawGizmo();
 
-		// Draw icon! - only in editor!
-		#if UNITY_EDITOR
-		// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
-		Gizmos.DrawIcon(transform.position, this.m_entityPrefab.name, true);
-		#endif
+			// Draw icon! - only in editor!
+			#if UNITY_EDITOR
+				// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
+				Gizmos.DrawIcon(transform.position, "Spawners/" + this.m_entityPrefab.name, true);
+			#endif
+		}
 	}
 
 	virtual protected Vector3 RandomStartDisplacement()
