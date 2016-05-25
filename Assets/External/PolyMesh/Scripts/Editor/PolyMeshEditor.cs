@@ -1587,36 +1587,34 @@ public class PolyMeshEditor : Editor {
 	/// <summary>
 	/// Context menu addition to create a new polymesh object.
 	/// </summary>
+	/// <param name="_command">The command that triggered the callback.</param>
 	[MenuItem("GameObject/Hungry Dragon/Collision PolyMesh (transparent)", false, 10)]	// http://docs.unity3d.com/ScriptReference/MenuItem.html
-	private static GameObject CreatePolyMeshTransparent() {
+	private static GameObject CreatePolyMeshTransparent(MenuCommand _command) {
 		// Create a new game object with all the required components
-		GameObject obj = new GameObject("CollisionPolyMesh", typeof(MeshFilter));
+		// Place the new object as child of the currently selected object (default Unity's behaviour)
+		// Use our own EditorUtils!!
+		GameObject obj = EditorUtils.CreateGameObject("CollisionPolyMesh", EditorUtils.GetContextObject(_command));
+		obj.AddComponent<MeshFilter>();
 		PolyMesh polyMesh = obj.AddComponent<PolyMesh>();
 
 		// Initialize the new polymesh with a basic shape
 		CreateSquare(polyMesh, 4f);
 
-		// Place the new object as child of the currently selected object (default Unity's behaviour)
-		GameObjectUtility.SetParentAndAlign(obj, Selection.activeGameObject);
-
 		// [AOC] In this particular case, we want collisions to be on the "Ground" layed, so make sure it's done
 		obj.SetLayerRecursively("Ground");
 
-		// Register object for undo.
-		Undo.RegisterCreatedObjectUndo(obj, "New PolyMesh Object");
-
-		// Select new object and return! ^_^
-		Selection.activeObject = obj;
+		// Done!
 		return obj;
 	}
 
 	/// <summary>
 	/// Context menu addition to create a new polymesh object.
 	/// </summary>
+	/// <param name="_command">The command that triggered the callback.</param>
 	[MenuItem("GameObject/Hungry Dragon/Collision PolyMesh (solid)", false, 10)]	// http://docs.unity3d.com/ScriptReference/MenuItem.html
-	private static GameObject CreatePolyMeshSolid() {
+	private static GameObject CreatePolyMeshSolid(MenuCommand _command) {
 		// Use the transparent constructor
-		GameObject obj = CreatePolyMeshTransparent();
+		GameObject obj = CreatePolyMeshTransparent(_command);
 
 		// Add and initialize the MeshRenderer component
 		MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
