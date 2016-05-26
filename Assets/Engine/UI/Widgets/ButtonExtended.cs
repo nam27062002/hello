@@ -66,8 +66,7 @@ public class ButtonExtended : Button {
 		targetColor = targetColor * this.colors.colorMultiplier;
 
 		// Iterate all children graphics and apply the same color transition
-		Transform root = targetGraphic.transform.parent != null ? targetGraphic.transform.parent : targetGraphic.transform;
-		Graphic[] graphics = root.GetComponentsInChildren<Graphic>();
+		Graphic[] graphics = targetGraphic.transform.GetComponentsInChildren<Graphic>();
 		for(int i = 0; i < graphics.Length; i++) {
 			graphics[i].CrossFadeColor(targetColor, (!_instant) ? this.colors.fadeDuration : 0f, true, true);
 		}
