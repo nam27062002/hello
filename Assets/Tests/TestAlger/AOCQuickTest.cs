@@ -53,7 +53,7 @@ public class AOCQuickTest : MonoBehaviour {
 		// Load and pose the dragon - will override any existing dragon
 		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
 		if(dragonLoader != null) {
-			dragonLoader.LoadDragonPreview("dragon_crocodile");
+			dragonLoader.LoadDragon("dragon_crocodile");
 			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
 		}
 	}
@@ -70,7 +70,7 @@ public class AOCQuickTest : MonoBehaviour {
 		// Load and pose the dragon - will override any existing dragon
 		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
 		if(dragonLoader != null) {
-			dragonLoader.LoadDragonPreview("dragon_crocodile");
+			dragonLoader.LoadDragon("dragon_crocodile");
 			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
 		}
 	}
@@ -82,7 +82,7 @@ public class AOCQuickTest : MonoBehaviour {
 		// Load and pose the dragon - will override any existing dragon
 		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
 		if(dragonLoader != null) {
-			dragonLoader.LoadDragonPreview("dragon_crocodile");
+			dragonLoader.LoadDragon("dragon_crocodile");
 			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
 		}
 	}
