@@ -1,9 +1,12 @@
-﻿namespace AI {
+﻿using System;
+
+namespace AI {
 	public abstract class MachineComponent {
 
-		protected IPilot m_pilot;
+		protected Machine m_machine;
+		protected Pilot m_pilot;
 
-		public void AttachPilot(IPilot _pilot) {
+		public void AttachPilot(Pilot _pilot) {
 			m_pilot = _pilot;
 		}
 
