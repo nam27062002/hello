@@ -24,6 +24,9 @@ public class FireNode : MonoBehaviour {
 	private float m_resistance;
 	private float m_timer;
 
+	private Vector3 m_fireSpriteScale;
+	private Vector3 m_fireSpriteDestinationScale;
+
 	private GameObject m_fireSprite;
 	private GameCameraController m_camera;
 
@@ -65,6 +68,7 @@ public class FireNode : MonoBehaviour {
 		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
 		m_lastBreathDirection = Vector3.up;
+		m_fireSpriteScale = Vector3.zero;
 	}
 
 	public void UpdateLogic() {
@@ -77,12 +81,15 @@ public class FireNode : MonoBehaviour {
 			{
 				//check if we have to render the particle
 				if (m_fireSprite != null) {
+					m_fireSprite.transform.localScale = m_fireSpriteScale;
 					if (!m_camera.IsInsideActivationMaxArea(transform.position)) {
 						StopFire();
 					}
 				} else if (m_camera.IsInsideActivationMaxArea(transform.position)) {
 					StartFire();		
 				}
+
+				m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, m_fireSpriteDestinationScale, Time.smoothDeltaTime * 1.5f);
 
 				//burn near nodes and fuel them
 				if (m_timer > 0) {
@@ -147,11 +154,12 @@ public class FireNode : MonoBehaviour {
 	private void StartFire() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("PF_BuildingFire");
+			m_fireSprite = PoolManager.GetInstance("FireSprite");
 
 			m_fireSprite.transform.position = transform.position;
-			m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);
-			/*m_fireSprite.transform.localRotation = transform.localRotation;
+			m_fireSprite.transform.localScale = m_fireSpriteScale;
+			m_fireSpriteDestinationScale = transform.localScale * Random.Range( 0.55f, 1.45f);
+			m_fireSprite.transform.localRotation = transform.localRotation;
 
 			if (Random.Range(0,100) > 50) {
 				m_fireSprite.transform.Rotate(Vector3.up, 180, Space.Self);
@@ -161,9 +169,9 @@ public class FireNode : MonoBehaviour {
 					p.z = -p.z;
 					transform.localPosition = p;
 				}
-			}*/
-			m_fireSprite.GetComponent<DisableInSeconds>().enabled = false;
-			m_fireSprite.GetComponent<ParticleSystem>().Play();
+			}
+
+			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(1f, 2f));
 		}
 	}
 
@@ -179,8 +187,8 @@ public class FireNode : MonoBehaviour {
 	private void StopFire() {
 		FirePropagationManager.RemoveBurning( transform );		
 		if (m_fireSprite != null) {
-			m_fireSprite.GetComponent<DisableInSeconds>().activeTime = 0f;
-			m_fireSprite.GetComponent<DisableInSeconds>().enabled = true;
+			m_fireSprite.SetActive(false);
+			PoolManager.ReturnInstance( m_fireSprite );
 		}
 		m_fireSprite = null;
 	}
@@ -206,11 +214,5 @@ public class FireNode : MonoBehaviour {
 	void OnDrawGizmosSelected() {
 		Gizmos.color = Color.magenta;
 		Gizmos.DrawSphere(transform.position, 0.25f);
-
-		FindNeighbours();
-		Gizmos.color = Color.yellow;
-		for (int i = 0; i < m_neighbours.Count; i++) {
-			Gizmos.DrawSphere(m_neighbours[i].transform.position, 0.25f);
-		}
 	}
 }
