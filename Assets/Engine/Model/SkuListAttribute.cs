@@ -23,6 +23,7 @@ public class SkuListAttribute : ListAttribute {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	public DefinitionsCategory m_category = DefinitionsCategory.UNKNOWN;
+	private bool m_allowNullValue = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -43,6 +44,11 @@ public class SkuListAttribute : ListAttribute {
 	public override void ValidateOptions() {
 		// Get sku list
 		List<string> skus = DefinitionsManager.GetSkuList(m_category);
+
+		// Add the empty option if required
+		if(m_allowNullValue) {
+			skus.Insert(0, "");
+		}
 
 		// Convert to object array
 		m_options = skus.Cast<string, object>().ToArray();
