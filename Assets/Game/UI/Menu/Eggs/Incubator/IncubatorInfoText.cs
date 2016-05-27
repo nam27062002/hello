@@ -44,9 +44,7 @@ public class IncubatorInfoText : MonoBehaviour {
 		m_anim = GetComponent<ShowHideAnimator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
-		Messenger.AddListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
-		Messenger.AddListener<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, OnEggAddedToInventory);
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
@@ -57,8 +55,7 @@ public class IncubatorInfoText : MonoBehaviour {
 		Refresh();
 
 		// Setup initial visibility
-		// Only when incubator is empty
-		m_anim.Set(EggManager.isIncubatorAvailable, false);
+		m_anim.ForceSet(!EggManager.isInventoryFull, false);
 	}
 
 	/// <summary>
@@ -66,24 +63,19 @@ public class IncubatorInfoText : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
-		Messenger.RemoveListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
-		Messenger.RemoveListener<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, OnEggAddedToInventory);
+		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
 	/// Refresh this slot with the latest data from the manager.
 	/// </summary>
 	public void Refresh() {
-		// Skip if incubator is not empty
-		if(!EggManager.isIncubatorAvailable) return;
+		// Set text
+		// [AOC] Optionally set different text for different states of the incubator
+		m_text.Localize("TID_INCUBATOR_EMPTY_INVENTORY_MESSAGE");
 
-		// Different texts if inventory is empty or not
-		if(EggManager.isInventoryEmpty) {
-			m_text.Localize("TID_INCUBATOR_EMPTY_INVENTORY_MESSAGE");
-		} else {
-			m_text.Localize("TID_INCUBATOR_EMPTY_NEST_MESSAGE");
-		}
+		// Set visibility
+		m_anim.Set(!EggManager.isInventoryFull);
 	}
 
 	//------------------------------------------------------------------//
@@ -93,27 +85,7 @@ public class IncubatorInfoText : MonoBehaviour {
 	/// An egg has been added to the incubator.
 	/// </summary>
 	/// <param name="_egg">The egg.</param>
-	private void OnEggIncubationStarted(Egg _egg) {
-		// Hide!
-		m_anim.Hide();
-	}
-
-	/// <summary>
-	/// The egg on the incubator has been collected.
-	/// </summary>
-	private void OnIncubatorCleared() {
-		// Show and refresh data
-		Refresh();
-		m_anim.Show();
-	}
-
-	/// <summary>
-	/// An egg has been added to the inventory.
-	/// </summary>
-	/// <param name="_egg">The egg.</param>
-	/// <param name="_slotIdx">The slot where the egg has been added.</param>
-	private void OnEggAddedToInventory(Egg _egg, int _slotIdx) {
-		// Refresh! Message might change
+	private void OnEggStateChanged(Egg _egg, Egg.State _from, Egg.State _to) {
 		Refresh();
 	}
 }

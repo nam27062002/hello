@@ -4,24 +4,24 @@
 // Created by Alger Ortín Castellví on 15/02/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
-//----------------------------------------------------------------------//
-// INCLUDES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-//----------------------------------------------------------------------//
-// CLASSES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 /// <summary>
 /// Single Egg object.
 /// </summary>
 [Serializable]
 public class Egg {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
 	public enum State {
 		INIT,		// Init state
 		STORED,		// Egg is in storage, waiting for incubation
@@ -47,11 +47,12 @@ public class Egg {
 		public State state = State.INIT;
 		public string rewardSku = "";	// [AOC] CHECK!! Probably no need to persist the reward, since it's instantly consumed
 		public bool isNew = true;
+		public DateTime incubationEndTimestamp = DateTime.UtcNow;
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
 	// Data
 	private DefinitionNode m_def = null;
 	public DefinitionNode def {
@@ -81,9 +82,19 @@ public class Egg {
 		set { m_isNew = value; }
 	}
 
-	//------------------------------------------------------------------//
-	// FACTORY METHODS													//
-	//------------------------------------------------------------------//
+	// Incubation management
+	[SerializeField] private DateTime m_incubationEndTimestamp;
+	public DateTime incubationEndTimestamp { get { return m_incubationEndTimestamp; }}
+	public DateTime incubationStartTimestamp { get { return incubationEndTimestamp - incubationDuration; }}
+	public TimeSpan incubationDuration { get { return new TimeSpan(0, 0, isIncubating ? (int)(def.GetAsFloat("incubationMinutes") * 60f) : 0); }}
+	public TimeSpan incubationElapsed { get { return DateTime.UtcNow - incubationStartTimestamp; }}
+	public TimeSpan incubationRemaining { get { return incubationEndTimestamp - DateTime.UtcNow; }}
+	public float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
+	public bool isIncubating { get { return state == Egg.State.INCUBATING; }}
+
+	//------------------------------------------------------------------------//
+	// FACTORY METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Create an egg by its sku.
 	/// </summary>
@@ -189,9 +200,9 @@ public class Egg {
 		return null;
 	}
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Default constructor.
 	/// Private, use factory methods to create new eggs.
@@ -206,13 +217,64 @@ public class Egg {
 	/// </summary>
 	/// <param name="_newState">The state to go to.</param>
 	public void ChangeState(State _newState) {
-		// [AOC] TODO!! Perform specific actions when changing state?
-		//				Check state changes restrictions.
+		// [AOC] TODO!! Check state changes restrictions.
+		// Perform actions before leaving a state
+		switch(m_state) {
+			// Incubating
+			case State.INCUBATING: {
+				// Dispatch game event
+				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, this);
+			} break;
+		}
+
+		// Change state
 		State oldState = m_state;
 		m_state = _newState;
 
+		// Perfirn actions upon entering a new state
+		switch(m_state) {
+			// Incubating
+			case State.INCUBATING: {
+				// Reset incubation timer
+				float incubationMinutes = def.GetAsFloat("incubationMinutes");
+				m_incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
+
+				// Dispatch game event
+				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
+			} break;
+		}
+
 		// Broadcast game event
 		Messenger.Broadcast<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, this, oldState, _newState);
+	}
+
+	/// <summary>
+	/// Compute the cost in PC to skip the incubation timer (only if an egg is incubating).
+	/// </summary>
+	/// <returns>The cost in PC of skipping the incubation timer. 0 if no egg is incubating or incubation has finished.</returns>
+	public int GetIncubationSkipCostPC() {
+		// If egg is not incubating, return 0.
+		if(!isIncubating) return 0;
+
+		// Skip is free during the tutorial
+		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) return 0;
+
+		// Just use standard time/pc formula
+		return GameSettings.ComputePCForTime(incubationRemaining);
+	}
+
+	/// <summary>
+	/// Skip the incubation timer, provided the egg is incubating and timer hasn't already finished.
+	/// </summary>
+	/// <returns><c>true</c>, if incubation was skiped, <c>false</c> otherwise.</returns>
+	public bool SkipIncubation() {
+		// Skip if there is no egg incubating
+		if(!isIncubating) return false;
+
+		// Incubation done!
+		ChangeState(Egg.State.READY);
+
+		return true;
 	}
 
 	/// <summary>
@@ -265,6 +327,14 @@ public class Egg {
 			} break;
 		}
 
+		// Remove it from the inventory (if appliable)
+		EggManager.RemoveEggFromInventory(this);
+
+		// If tutorial wasn't completed, do it now
+		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) {
+			UserProfile.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
+		}
+
 		// Save persistence
 		PersistenceManager.Save();
 
@@ -295,9 +365,9 @@ public class Egg {
 		return newEgg;
 	}
 
-	//------------------------------------------------------------------//
-	// PERSISTENCE														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// PERSISTENCE															  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Load state from a persistence object.
 	/// </summary>
@@ -315,6 +385,9 @@ public class Egg {
 
 		// Reward
 		m_rewardDef = DefinitionsManager.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data.rewardSku);
+
+		// Incubating timestamp
+		m_incubationEndTimestamp = _data.incubationEndTimestamp;
 	}
 
 	/// <summary>
@@ -336,6 +409,9 @@ public class Egg {
 		if(m_rewardDef != null) {
 			data.rewardSku = m_rewardDef.sku;
 		}
+
+		// Incubating timestamp
+		data.incubationEndTimestamp = m_incubationEndTimestamp;
 
 		return data;
 	}

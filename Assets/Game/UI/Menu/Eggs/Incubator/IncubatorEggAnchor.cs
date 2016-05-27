@@ -27,15 +27,18 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private float m_snapDistance = 2f;
-	public float snapDistance {
-		get { return m_snapDistance; }
-		set { m_snapDistance = Mathf.Max(0f, value); }
+	[SerializeField] [Range(0, 2)] private int m_slotIdx = 0;	// Change range if EggManager.INVENTORY_SIZE changes
+	[SerializeField] private GameObject m_emptySlotView = null;
+
+	// Internal
+	private EggController m_eggView = null;
+	public EggController eggView {
+		get { return m_eggView; }
 	}
 
-	private EggController m_attachedEgg = null;
-	public EggController attachedEgg {
-		get { return m_attachedEgg; }
+	// Properties
+	public Egg targetEgg {
+		get { return EggManager.inventory[m_slotIdx]; }
 	}
 
 	//------------------------------------------------------------------//
@@ -45,15 +48,11 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// If there is an egg in the incubator, load it and anchor it
-		if(EggManager.incubatingEgg != null) {
-			EggController newEgg = EggManager.incubatingEgg.CreateView();
-			newEgg.transform.SetParent(transform, false);
-			AttachEgg(newEgg);
-		}
+		// Initialize by forcing a refresh
+		Refresh();
 
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
@@ -61,21 +60,15 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.EGG_INCUBATOR_CLEARED, OnIncubatorCleared);
+		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
 	/// Draw scene gizmos for this object.
 	/// </summary>
 	private void OnDrawGizmos() {
-		if(m_snapDistance >= 0f) {
-			Gizmos.color = Colors.WithAlpha(Colors.orange, 0.5f);
-			Gizmos.DrawSphere(transform.position, m_snapDistance);
-		}
-
 		Gizmos.color = Colors.orange;
 		Gizmos.DrawSphere(transform.position, 1f);
-
 		Gizmos.color = Colors.white;
 	}
 
@@ -83,53 +76,56 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Attachs the given egg view to this anchor.
-	/// If another egg view was already attached, it will be destroyed.
-	/// Nothing will happen if the given egg is <c>null</c>.
+	/// Refresh this slot with the latest data from the manager.
 	/// </summary>
-	/// <param name="_egg">The egg to be attached to this anchor.</param>
-	public void AttachEgg(EggController _egg) {
-		// Check params
-		if(_egg == null) return;
+	public void Refresh() {
+		// Background
+		m_emptySlotView.SetActive(targetEgg == null);
 
-		// If there is an egg already attached, destroy it
-		DeattachEgg(true);
-
-		// Put egg into position
-		_egg.transform.position = this.transform.position;
-
-		// Store reference
-		m_attachedEgg = _egg;
+		// Egg preview
+		LoadEggPreview(targetEgg);
 	}
 
 	/// <summary>
-	/// Deattachs the current attached egg from the anchor.
-	/// Optionally destroy it as well.
-	/// Nothing will happen if there is no egg attached.
+	/// Loads/Unloads the egg preview.
 	/// </summary>
-	/// <param name="_destroy">Whether to destroy the attached egg or not.</param>
-	public void DeattachEgg(bool _destroy) {
-		if(m_attachedEgg == null) return;
+	/// <param name="_newEgg">The data of the egg to be loaded. Set to <c>null</c> to destroy current preview.</param>
+	private void LoadEggPreview(Egg _newEgg) {
+		// 3 theoretical cases:
+		// a) No egg was loaded but slot is filled
+		// b) An egg was loaded but slot is empty
+		// c) The slot is filled with a different egg than the loaded one (shouldn't happen, but add it just in case)
 
-		// Destroy?
-		if(_destroy) {
-			GameObject.Destroy(m_attachedEgg.gameObject);
+		// Skip if already loaded
+		if(m_eggView != null && m_eggView.eggData == _newEgg) return;
+
+		// Unload current view if any
+		if(m_eggView != null) {
+			GameObject.Destroy(m_eggView.gameObject);
+			m_eggView = null;
 		}
 
-		// Clear reference
-		m_attachedEgg = null;
+		// Load new view if any
+		if(_newEgg != null) {
+			m_eggView = _newEgg.CreateView();
+			m_eggView.transform.SetParent(this.transform, false);
+		}
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// The incubator has been cleared, destroy ourselves.
-	/// We should only receive this event if we're actually the incubating egg.
+	/// An egg has been added to the incubator.
 	/// </summary>
-	private void OnIncubatorCleared() {
-		// Destroy attached egg (if any)
-		DeattachEgg(true);
+	/// <param name="_egg">The egg.</param>
+	private void OnEggStateChanged(Egg _egg, Egg.State _from, Egg.State _to) {
+		// Does it match our egg?
+		if(_egg == EggManager.inventory[m_slotIdx]) {
+			// Refresh view
+			// [AOC] TODO!! Trigger different FX depending on state
+			Refresh();
+		}
 	}
 }
 

@@ -32,12 +32,27 @@ public class IncubatorSlot : MonoBehaviour {
 		get { return m_slotIdx; }
 	}
 
-	// Scene references
-	private GameObject m_3dView = null;
-	private GameObject m_emptySlotImage = null;
-	private Text m_text = null;
-	private EggController m_eggView = null;
-	private UINotification m_newNotification = null;
+	// External references
+	[Space]
+	[SerializeField] private Slider m_incubationTimeSlider = null;
+	[SerializeField] private Text m_incubationTimeText = null;
+	[SerializeField] private Text m_skipCostText = null;
+	[SerializeField] private UINotification m_newNotification = null;
+
+	// Show/Hide elements
+	[Space]
+	[SerializeField] private ShowHideAnimator m_emptySlotAnim = null;
+	[SerializeField] private ShowHideAnimator m_pendingIncubationAnim = null;
+	[SerializeField] private ShowHideAnimator m_incubatingAnim = null;
+	[SerializeField] private ShowHideAnimator m_readyAnim = null;
+
+	// Internal logic
+	private int m_previousCostPC = -1;
+
+	// Properties
+	public Egg targetEgg {
+		get { return EggManager.inventory[m_slotIdx]; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -46,11 +61,7 @@ public class IncubatorSlot : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Get scene references
-		m_3dView = this.FindObjectRecursive("View3D");
-		m_emptySlotImage = this.FindObjectRecursive("EmptySlot");
-		m_text = this.FindComponentRecursive<Text>("Text");
-		m_newNotification = this.FindComponentRecursive<UINotification>();
+		// Notification hidden at start
 		m_newNotification.Hide(false);
 	}
 
@@ -59,7 +70,7 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Perform a first refresh
-		Refresh();
+		//Refresh();
 	}
 
 	/// <summary>
@@ -67,10 +78,10 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, OnEggAddedToInventory);
-		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
-		Messenger.AddListener<EggController>(GameEvents.EGG_DRAG_STARTED, OnEggDragStarted);
-		Messenger.AddListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+
+		// Make sure we're updated
+		Refresh();
 	}
 
 	/// <summary>
@@ -78,114 +89,115 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, OnEggAddedToInventory);
-		Messenger.RemoveListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
-		Messenger.RemoveListener<EggController>(GameEvents.EGG_DRAG_STARTED, OnEggDragStarted);
-		Messenger.RemoveListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
+		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+	}
+
+	/// <summary>
+	/// Update loop.
+	/// </summary>
+	private void Update() {
+		// Skip time and cost
+		if(targetEgg != null && targetEgg.state == Egg.State.INCUBATING) {
+			// Timer bar
+			m_incubationTimeSlider.normalizedValue = targetEgg.incubationProgress;
+
+			// Timer text
+			m_incubationTimeText.text = TimeUtils.FormatTime(targetEgg.incubationRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
+
+			// Skip PC cost - only when changed
+			int costPC = targetEgg.GetIncubationSkipCostPC();
+			if(costPC != m_previousCostPC) {
+				// Update control var
+				m_previousCostPC = costPC;
+
+				// If cost is 0, use the "free" word instead
+				if(costPC == 0) {
+					m_skipCostText.text = Localization.Localize("TID_GEN_EXCLAMATION_EXPRESSION", Localization.Localize("TID_GEN_FREE"));
+				} else {
+					m_skipCostText.text = StringUtils.FormatNumber(costPC);
+				}
+			}
+		}
 	}
 
 	/// <summary>
 	/// Refresh this slot with the latest data from the manager.
 	/// </summary>
 	public void Refresh() {
-		// Aux vars
-		Egg targetEgg = EggManager.inventory[slotIdx];
-
-		// Background
-		m_emptySlotImage.SetActive(targetEgg == null);
-
-		// Text
-		m_text.gameObject.SetActive(targetEgg == null);
+		Debug.Log("Refreshing slot " + slotIdx + ": " + (targetEgg != null ? targetEgg.state.ToString() : "EMPTY"));
 
 		// New notification
 		m_newNotification.Set(targetEgg != null && targetEgg.isNew);
 
-		// Egg preview
-		LoadEggPreview(targetEgg);
-	}
-
-	/// <summary>
-	/// Loads/Unloads the egg preview.
-	/// </summary>
-	/// <param name="_newEgg">The data of the egg to be loaded. Set to <c>null</c> to destroy current preview.</param>
-	private void LoadEggPreview(Egg _newEgg) {
-		// 3 theoretical cases:
-		// a) No egg was loaded but slot is filled
-		// b) An egg was loaded but slot is empty
-		// c) The slot is filled with a different egg than the loaded one (shouldn't happen, but add it just in case)
-
-		// Skip if already loaded
-		if(m_eggView != null && m_eggView.eggData == _newEgg) return;
-
-		// Unload current view if any
-		if(m_eggView != null) {
-			GameObject.Destroy(m_eggView.gameObject);
-			m_eggView = null;
-		}
-
-		// Load new view if any
-		if(_newEgg != null) {
-			m_eggView = _newEgg.CreateView();
-			m_eggView.transform.SetParent(m_3dView.transform, false);
-			m_eggView.gameObject.SetLayerRecursively("3dOverUI");
-		}
+		// Show/Hide elements based on egg state
+		//m_emptySlotAnim.Set(targetEgg == null);
+		m_emptySlotAnim.Set(false);	// [AOC] Never show (for now)
+		m_pendingIncubationAnim.Set(targetEgg != null && targetEgg.state == Egg.State.STORED && EggManager.incubatingEgg == null);	// Pending incubation is a bit more tricky: only allow if there is no other egg already incubating
+		m_incubatingAnim.Set(targetEgg != null && targetEgg.state == Egg.State.INCUBATING);
+		m_readyAnim.Set(targetEgg != null && targetEgg.state == Egg.State.READY);
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// An egg has been added to the inventory.
-	/// </summary>
-	/// <param name="_newEgg">The egg added to the inventory.</param>
-	/// <param name="_slotIdx">The inventory slot that has been updated.</param>
-	private void OnEggAddedToInventory(Egg _newEgg, int _slotIdx) {
-		// If slot index is the same as this one, refresh view
-		if(_slotIdx == m_slotIdx) Refresh();
-	}
-
-	/// <summary>
 	/// An egg has been added to the incubator.
 	/// </summary>
 	/// <param name="_egg">The egg.</param>
-	private void OnEggIncubationStarted(Egg _egg) {
+	private void OnEggStateChanged(Egg _egg, Egg.State _from, Egg.State _to) {
 		// Does it match our egg?
-		if(m_eggView != null && m_eggView.eggData == _egg) {
-			// Lose preview reference (it has been moved to the incubator)
-			m_eggView = null;
-
+		// Refresh as well when any egg has started/finished incubating
+		if(_egg == targetEgg || _to == Egg.State.INCUBATING || _from == Egg.State.INCUBATING) {
 			// Refresh view
+			// [AOC] TODO!! Trigger different FX depending on state
 			Refresh();
 		}
 	}
 
 	/// <summary>
-	/// An egg view is being dragged.
+	/// The start incubation button has been pressed.
 	/// </summary>
-	/// <param name="_egg">The target egg view.</param>
-	private void OnEggDragStarted(EggController _egg) {
-		// Does it match our egg?
-		if(m_eggView == _egg) {
-			// Refresh
-			Refresh();
+	public void OnStartIncubationButton() {
+		// Just in case
+		if(targetEgg == null) return;
 
-			// Show empty slot placeholder
-			m_emptySlotImage.SetActive(true);
+		// Just do it
+		targetEgg.ChangeState(Egg.State.INCUBATING);
+	}
+
+	/// <summary>
+	/// The skip button has been pressed.
+	/// </summary>
+	public void OnSkipButton() {
+		// Just in case
+		if(targetEgg == null) return;
+
+		// Resources check
+		long pricePC = (long)targetEgg.GetIncubationSkipCostPC();
+		if(UserProfile.pc >= pricePC) {
+			// Instantly finish current incubation
+			if(targetEgg.SkipIncubation()) {
+				UserProfile.AddPC(-pricePC);
+				PersistenceManager.Save();
+			}
+		} else {
+			// Open PC shop popup
+			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+
+			// Currency popup / Resources flow disabled for now
+			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
 	/// <summary>
-	/// An egg view has stop being dragged.
+	/// The button has been pressed.
 	/// </summary>
-	/// <param name="_egg">The target egg view.</param>
-	private void OnEggDragEnded(EggController _egg) {
-		// Does it match our egg?
-		if(m_eggView == _egg) {
-			// Refresh
-			Refresh();
-
-			// Hide empty slot placeholder
-			m_emptySlotImage.SetActive(false);
+	public void OnOpenButton() {
+		// Incubator screen will take care of it
+		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+		IncubatorScreenController incubatorScreen = screensController.GetScreen((int)MenuScreens.INCUBATOR).GetComponent<IncubatorScreenController>();
+		if(incubatorScreen != null) {
+			incubatorScreen.StartOpenEggFlow(targetEgg);
 		}
 	}
 }
