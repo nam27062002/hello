@@ -304,6 +304,20 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Same as Set() but overriding current state.
+	/// </summary>
+	/// <param name="_visible">Whether to show or hide the object.</param>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	public void ForceSet(bool _visible, bool _animate = true) {
+		// Easy
+		if(_visible) {
+			ForceShow(_animate);
+		} else {
+			ForceHide(_animate);
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
