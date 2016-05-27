@@ -22,16 +22,16 @@ namespace AI {
 		private static int s_groundMask;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		public MachineSensor(Machine _machine) {
-			m_machine = _machine;
+		public MachineSensor() {}
 
+		public override void Init() {
 			//TODO: Get dragon. Right now we'll search for a enemy machine in the game
 			m_enemy = GameObject.Find("enemy").GetComponent<Machine>();
 
 			m_senseTimer = m_senseDelay.GetRandom();
 			m_enemyRadiusSqr = 0;
 
-			s_groundMask = 1 << LayerMask.NameToLayer("Ground");
+			s_groundMask = 1 << LayerMask.NameToLayer("Ground");			
 		}
 
 		public override void Update() {

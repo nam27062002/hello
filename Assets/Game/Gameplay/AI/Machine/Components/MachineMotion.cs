@@ -12,9 +12,9 @@ namespace AI {
 		private Quaternion m_targetRotation;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		public MachineMotion(Machine _machine) {
-			m_machine = _machine;
+		public MachineMotion() {}
 
+		public override void Init() {
 			m_position = m_machine.transform.position;
 			m_rotation = m_machine.transform.rotation;
 			m_targetRotation = m_rotation;

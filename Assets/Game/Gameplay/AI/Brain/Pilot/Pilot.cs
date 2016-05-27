@@ -95,6 +95,7 @@ namespace AI {
 							v *= (m_avoidDistanceAttenuation * m_avoidDistanceAttenuation) / distSqr;
 						}
 						flee = v;
+						flee.z = 0;
 
 						Debug.DrawLine(transform.position, transform.position + flee, Color.red);
 					}
@@ -115,10 +116,11 @@ namespace AI {
 					m_impulse = seek + flee;
 				}
 
-				m_impulse = Vector3.ClampMagnitude(m_impulse, m_speed);
+				m_direction = m_impulse.normalized;
+				m_impulse = m_direction * seek.magnitude;//mVector3.ClampMagnitude(m_impulse, m_speed);
 
 				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
-				m_direction = m_impulse.normalized;
+
 			}
 		}
 

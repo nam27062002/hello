@@ -26,8 +26,8 @@ namespace AI {
 		private Pilot m_pilot = null;
 		private bool[] m_signals;
 
-		private MachineMotion m_motion;
-		[SerializeField] private MachineSensor m_sensor;
+		private MachineMotion m_motion = new MachineMotion();
+		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		public Vector3 position { get { return transform.position; } }
 		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
@@ -49,19 +49,19 @@ namespace AI {
 
 			m_pilot = GetComponent<Pilot>();
 
-			m_motion = new MachineMotion(this);
+			m_motion.AttacheMachine(this);
 			m_motion.AttachPilot(m_pilot);
+			m_motion.Init();
 
-			m_sensor = new MachineSensor(this);
+			m_sensor.AttacheMachine(this);
 			m_sensor.AttachPilot(m_pilot);
+			m_sensor.Init();
 		}
 		
 		// Update is called once per frame
 		void Update() {
-
 			m_motion.Update();
 			m_sensor.Update();
-
 		}
 
 		public void SetSignal(Signal _signal, bool _activated) {
