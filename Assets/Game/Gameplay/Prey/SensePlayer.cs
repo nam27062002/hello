@@ -122,6 +122,8 @@ public class SensePlayer : MonoBehaviour {
 
 					if (m_distanceSqr < m_sensorMaxRadius * m_sensorMaxRadius) {
 						// check if the dragon is inside the sense zone
+						m_isInsideMaxArea = true;
+
 						if (m_distanceSqr < m_sensorMinRadius * m_sensorMinRadius) {
 							// Check if this entity can see the player
 							if (sensorAngle == 360) {
@@ -147,24 +149,22 @@ public class SensePlayer : MonoBehaviour {
 									m_isInsideMinArea = false;
 								}
 							}
-							if( m_isInsideMinArea )
-							{
-								// Check line cast
-								if (Physics.Linecast( sensorPosition, m_dragonTarget.position, s_groundMask))
-								{
-									m_isInsideMinArea = false;
-									m_alert = false;
-								}
-							}
-
 						} else {
 							m_isInsideMinArea = false;
 						}
-						m_isInsideMaxArea = true;
 					} else {
 						m_alert = false;
 						m_isInsideMinArea = false;
 						m_isInsideMaxArea = false;
+					}
+
+					if (m_isInsideMinArea || m_isInsideMaxArea) {
+						// Check line cast
+						if (Physics.Linecast(sensorPosition, m_dragonTarget.position, s_groundMask)) {
+							m_alert = false;
+							m_isInsideMinArea = false;
+							m_isInsideMaxArea = false;
+						}
 					}
 
 					// if Slow Power up and affects this type of prey
