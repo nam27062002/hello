@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace AI {
 	public class Machine : MonoBehaviour, IMachine {
@@ -15,7 +15,7 @@ namespace AI {
 			Panic,		// this machine is unable to perform actions
 			Burning, 	// a fire is touching this machine
 			Chewing,	// something is chewing this machine
-			Destroyed,	//  
+			Destroyed,	// 
 			Count
 		};
 
@@ -27,6 +27,7 @@ namespace AI {
 		private bool[] m_signals;
 
 		private MachineMotion m_motion = new MachineMotion();
+		private MachineFlock m_flock = new MachineFlock();
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		public Vector3 position { get { return transform.position; } }
@@ -70,6 +71,14 @@ namespace AI {
 
 		public bool GetSignal(Signal _signal) {
 			return m_signals[(int)_signal];
+		}
+
+		public void SetFlock(List<IMachine> _flock) {
+			m_flock.flock = _flock;
+		}
+
+		public List<IMachine> GetFlock() {
+			return m_flock.flock;
 		}
 
 		public void Bite() {}

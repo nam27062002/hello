@@ -67,18 +67,19 @@ namespace AI {
 
 								isInsideMinArea = angle >= sensorAngleFrom || angle <= sensorAngleTo;
 							}
-
-							if (isInsideMinArea) {
-								// Check line cast
-								if (Physics.Linecast(sensorPosition, m_enemy.transform.position, s_groundMask)) {
-									isInsideMinArea = false;
-								}
-							}
 						}
 						isInsideMaxArea = true;
 					} 
 
 					m_senseTimer = m_senseDelay.GetRandom();
+				}
+			}
+
+			if (isInsideMinArea || isInsideMaxArea) {
+				// Check line cast
+				if (Physics.Linecast(sensorPosition, m_enemy.transform.position, s_groundMask)) {
+					isInsideMinArea = false;
+					isInsideMaxArea = false;
 				}
 			}
 
