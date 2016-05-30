@@ -12,5 +12,7 @@ namespace AI {
 			m_flock = new List<IMachine>();
 		}
 
+		public override void Init() {}
+		public override void Update() {}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿namespace AI {
-	interface IMachine {
+	public interface IMachine {
 		// Internal connections
 		void SetSignal(Machine.Signal _signal, bool _activated);
 		bool GetSignal(Machine.Signal _signal);
