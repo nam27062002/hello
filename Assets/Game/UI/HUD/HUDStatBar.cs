@@ -30,19 +30,17 @@ public class HUDStatBar : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Exposed setup
 	[SerializeField] private Type m_type = Type.Health;
+	[SerializeField] private float m_maxScreenSize = 1300f;
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
 	private Slider m_bar;
 	private Slider m_baseBar;
 	private Text m_valueTxt;
 	private GameObject m_icon;
 	private List<GameObject> m_extraIcons = null;
-	private CanvasScaler m_scaler;
 	private CanvasGroup m_canvasGroup;
 	private float m_timer = 0;
 	private float m_timerDuration = 0;
@@ -57,14 +55,13 @@ public class HUDStatBar : MonoBehaviour {
 		// Get external references
 		// m_bar = GetComponentInChildren<Slider>();
 		// m_baseBar;
-		m_scaler = GetComponentInParent<CanvasScaler>();
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		Transform child;
 		child = transform.FindChild("Slider");
 		if ( child != null )
 			m_bar = child.GetComponent<Slider>();
 		
-		child = transform.FindChild("Slider/BaseSlider");
+		child = transform.FindChild("BaseSlider");
 		if ( child != null )
 			m_baseBar = child.GetComponent<Slider>();
 
@@ -126,29 +123,35 @@ public class HUDStatBar : MonoBehaviour {
 		// Only if player is alive
 		if (InstanceManager.player != null) 
 		{
+			// Aux vars
+			float targetBaseValue = GetValue();
+			float targetValue = Mathf.Min(targetBaseValue, GetMaxValue());
+
 			// Bar value
 			m_bar.minValue = 0f;
-			m_bar.maxValue = GetMaxValue();
+			m_bar.maxValue = GetBaseValue();	// GetMaxValue()	// [AOC] Changed to make both bars work on the same scale for easier layouting
 			if ( m_instantSet )
 			{
-				m_bar.value	= GetValue();
+				m_bar.value	= targetValue;
 				m_instantSet = false;
 			}
 			else
 			{
-				float value = GetValue();
-				if ( value > m_bar.value )
-					m_bar.value = Mathf.Lerp( m_bar.value, GetValue(), Time.deltaTime );
+				// If going up, animate, otherwise instant set
+				if ( targetValue > m_bar.value )
+					m_bar.value = Mathf.Lerp( m_bar.value, targetValue, Time.deltaTime );
 				else 
-					m_bar.value = value;
+					m_bar.value = targetValue;
 			}
 
+			// Base bar
 			if ( m_baseBar != null )
 			{
 				m_baseBar.minValue = 0f;
 				m_baseBar.maxValue = GetBaseValue();
-				m_baseBar.value = m_bar.value;
+				m_baseBar.value = targetBaseValue;
 			}
+
 			// Text
 			if (m_valueTxt != null) {
 				m_valueTxt.text = String.Format("{0}/{1}",
@@ -183,8 +186,8 @@ public class HUDStatBar : MonoBehaviour {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.healthMax;
 			case Type.Energy:	return InstanceManager.player.energyMax;
-			case Type.Fury:		return 1;
-			case Type.SuperFury:return 1;
+			case Type.Fury:		return 1;	// [AOC] Furt powerup not yet implemented
+			case Type.SuperFury:return 1;	// [AOC] Furt powerup not yet implemented
 		}
 		return 0;
 	}
@@ -194,8 +197,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			case Type.Health: 	return InstanceManager.player.healthBase;
 			case Type.Energy:	return InstanceManager.player.energyBase;
-			case Type.Fury:		return 1;
-			case Type.SuperFury:return 1;
+			case Type.Fury:		return 1;	// [AOC] Furt powerup not yet implemented
+			case Type.SuperFury:return 1;	// [AOC] Furt powerup not yet implemented
 		}
 		return 0;
 	}
@@ -217,19 +220,6 @@ public class HUDStatBar : MonoBehaviour {
 			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
 		}
 		return 0.01f;
-	}
-
-	public float GetMaxScreenSize()
-	{
-		switch (m_type) 
-		{
-			case Type.Health: 	return m_scaler.referenceResolution.x * 0.65f;
-			case Type.Energy:	return m_scaler.referenceResolution.x * 0.65f;
-			case Type.Fury:		return m_scaler.referenceResolution.x * 0.4f;
-			case Type.SuperFury:return m_scaler.referenceResolution.x * 0.4f;
-		}
-
-		return m_scaler.referenceResolution.x * 0.8f;
 	}
 
 	void OnPlayerKo()
@@ -303,44 +293,46 @@ public class HUDStatBar : MonoBehaviour {
 			case Type.Energy:
 			case Type.Health:
 			{
-				RectTransform rectTransform;
-				Vector2 size;
-
-				rectTransform = m_bar.GetComponent<RectTransform>();
-				size = rectTransform.sizeDelta;
-				float fraction = Mathf.Clamp01(GetMaxValue() * GetSizePerUnit());
-				size.x = fraction * GetMaxScreenSize();
+				RectTransform rectTransform = this.transform as RectTransform;
+				Vector2 size = rectTransform.sizeDelta;
+				float fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
+				size.x = fraction * m_maxScreenSize;
 				rectTransform.sizeDelta = size;
 
+				// [AOC] Both bars are now anchored to parent and automatically adopt the new size
+				/*
 				if ( m_baseBar != null )
 				{
 					rectTransform = m_baseBar.GetComponent<RectTransform>();
 					size = rectTransform.sizeDelta;
 					fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
-					size.x = fraction * GetMaxScreenSize();
+					size.x = fraction * m_maxScreenSize;
 					rectTransform.sizeDelta = size;
 				}
+				*/
 			}break;
+
 			case Type.Fury:
 			case Type.SuperFury:
 			{
-				RectTransform rectTransform;
-				Vector2 size;
-				rectTransform = m_bar.GetComponent<RectTransform>();
-				size = rectTransform.sizeDelta;
+				// [AOC] Furt powerup not yet implemented
+				RectTransform rectTransform = this.transform as RectTransform;
+				Vector2 size = rectTransform.sizeDelta;
 				float fraction = GetMaxValue();
-				size.x = fraction * GetMaxScreenSize();
+				size.x = fraction * m_maxScreenSize;
 				rectTransform.sizeDelta = size;
 
-
+				// [AOC] Both bars are now anchored to parent and automatically adopt the new size
+				/*
 				if ( m_baseBar != null )
 				{
 					rectTransform = m_baseBar.GetComponent<RectTransform>();
 					size = rectTransform.sizeDelta;
 					fraction = GetBaseValue();
-					size.x = fraction * GetMaxScreenSize();
+					size.x = fraction * m_maxScreenSize;
 					rectTransform.sizeDelta = size;
 				}
+				*/
 
 			}break;
 		}
