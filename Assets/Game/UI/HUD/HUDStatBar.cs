@@ -127,35 +127,43 @@ public class HUDStatBar : MonoBehaviour {
 			float targetBaseValue = GetBaseValue();
 			float targetExtraValue = GetExtraValue();
 			float targetValue = GetValue();
+			float targetValueStep = 0f;
 
-			//Extra bar
+			if (m_baseBar != null) {
+				m_baseBar.minValue = 0f;
+				m_baseBar.maxValue = targetExtraValue;
+				targetValueStep = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
+			}
+
 			if (m_extraBar != null) {
 				m_extraBar.minValue = 0f;
 				m_extraBar.maxValue = targetExtraValue; // this is the max value with all the bonus
+				targetValueStep = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
+			}
 
+			//Extra bar
+			if (m_extraBar != null) {
 				if (m_instantSet) {
 					m_extraBar.value = targetValue;
 					m_instantSet = false;
 				} else {
 					// If going up, animate, otherwise instant set
-					if (targetValue > m_extraBar.value) m_extraBar.value = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
+					if (targetValue > m_extraBar.value) m_extraBar.value = targetValueStep;
 					else 								m_extraBar.value = targetValue;
 				}
 			}
 
 			//Base bar
 			if (m_baseBar != null) {
-				m_baseBar.minValue = 0f;
-				m_baseBar.maxValue = targetExtraValue;
-
 				targetValue = Mathf.Min(targetValue, targetBaseValue);
+				targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
 
 				if (m_instantSet) {
 					m_baseBar.value = targetValue;
 					m_instantSet = false;
 				} else {
 					// If going up, animate, otherwise instant set
-					if (targetValue > m_baseBar.value) m_baseBar.value = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
+					if (targetValue > m_baseBar.value) m_baseBar.value = targetValueStep;
 					else 								m_baseBar.value = targetValue;
 				}
 			}
