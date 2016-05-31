@@ -40,11 +40,14 @@ public class HUDStatBar : MonoBehaviour {
 	private Slider m_baseBar;
 	private Text m_valueTxt;
 	private GameObject m_icon;
+	private GameObject m_iconAnimated = null;
 	private List<GameObject> m_extraIcons = null;
 	private CanvasGroup m_canvasGroup;
 	private float m_timer = 0;
 	private float m_timerDuration = 0;
 	private bool m_instantSet;
+	private ParticleSystem m_particles;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -67,12 +70,18 @@ public class HUDStatBar : MonoBehaviour {
 
 		m_valueTxt = gameObject.FindComponentRecursive<Text>("TextValue");
 
+		m_particles = gameObject.FindComponentRecursive<ParticleSystem>();
+		if (m_particles != null)
+			m_particles.Stop();
+
+
 		child = transform.FindChild("Icon");
 		if ( child )
 		{
 			m_icon = child.gameObject;
 			m_extraIcons = new List<GameObject>();
 		}
+
 		m_instantSet = true;
 	}
 
@@ -100,6 +109,11 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		}
+
+		if (m_type == Type.Energy)
+		{
+			Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+		}
 	}
 
 	void OnDestroy()
@@ -108,6 +122,10 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
 			Messenger.RemoveListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+		}
+		else if (m_type == Type.Energy)
+		{
+			Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
 		}
 		else if ( m_type == Type.SuperFury )
 		{
@@ -165,6 +183,16 @@ public class HUDStatBar : MonoBehaviour {
 					// If going up, animate, otherwise instant set
 					if (targetValue > m_baseBar.value) m_baseBar.value = targetValueStep;
 					else 								m_baseBar.value = targetValue;
+				}
+			}
+
+			if (m_type == Type.SuperFury || m_type == Type.Fury) {
+				if (m_particles != null) {
+					if (Math.Abs(targetValue - targetValueStep) > 0.001f) {
+						m_particles.Play();
+					} else  {
+						m_particles.Stop();
+					}
 				}
 			}
 
@@ -273,30 +301,21 @@ public class HUDStatBar : MonoBehaviour {
 						extraRt.localScale = rt.localScale;
 						// extraRt.offsetMax.y = 0;
 
+						Animator anim = extraIcon.GetComponent<Animator>();
+						if (anim) {
+							anim.enabled = false;
+						}
+
 						m_extraIcons.Add( extraIcon );
 
 
 					}
-					/*
-					if ( showAnimations )
-					{
-						bool wasActive = m_extraIcons[ i ].activeSelf;
-						bool shouldBeActive = i < remainingLives;
-						if ( wasActive && !shouldBeActive )	// if was active and now it's not we lose a life -> show particle breaking the icon
-						{
-							
-						}
-						else if ( !wasActive && shouldBeActive ) // Wasn't active and now it is so we won a life
-						{
-								
-						}
+				}
+				if (showAnimations) {
+					Animator anim = m_extraIcons[remainingLives].GetComponent<Animator>();
+					if (anim) {
+						anim.enabled = true;
 					}
-					else
-					*/
-					{
-						m_extraIcons[ i ].SetActive( i < remainingLives );
-					}
-					
 				}
 			}break;
 		}
@@ -379,6 +398,17 @@ public class HUDStatBar : MonoBehaviour {
 			}
 		}
 		 
+		/*if (m_particles != null) {
+			if (_active) m_particles.Play();
+			else 		 m_particles.Stop();
+		}*/
+	}
+
+	void OnBoostToggled(bool _active) {
+		if (m_particles != null) {
+			if (_active) m_particles.Play();
+			else 		 m_particles.Stop();
+		}
 	}
 
 }
