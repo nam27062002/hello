@@ -40,6 +40,7 @@ public class HUDStatBar : MonoBehaviour {
 	private Slider m_baseBar;
 	private Text m_valueTxt;
 	private GameObject m_icon;
+	private GameObject m_iconAnimated = null;
 	private List<GameObject> m_extraIcons = null;
 	private CanvasGroup m_canvasGroup;
 	private float m_timer = 0;
@@ -73,12 +74,14 @@ public class HUDStatBar : MonoBehaviour {
 		if (m_particles != null)
 			m_particles.Stop();
 
+
 		child = transform.FindChild("Icon");
 		if ( child )
 		{
 			m_icon = child.gameObject;
 			m_extraIcons = new List<GameObject>();
 		}
+
 		m_instantSet = true;
 	}
 
@@ -298,30 +301,21 @@ public class HUDStatBar : MonoBehaviour {
 						extraRt.localScale = rt.localScale;
 						// extraRt.offsetMax.y = 0;
 
+						Animator anim = extraIcon.GetComponent<Animator>();
+						if (anim) {
+							anim.enabled = false;
+						}
+
 						m_extraIcons.Add( extraIcon );
 
 
 					}
-					/*
-					if ( showAnimations )
-					{
-						bool wasActive = m_extraIcons[ i ].activeSelf;
-						bool shouldBeActive = i < remainingLives;
-						if ( wasActive && !shouldBeActive )	// if was active and now it's not we lose a life -> show particle breaking the icon
-						{
-							
-						}
-						else if ( !wasActive && shouldBeActive ) // Wasn't active and now it is so we won a life
-						{
-								
-						}
+				}
+				if (showAnimations) {
+					Animator anim = m_extraIcons[remainingLives].GetComponent<Animator>();
+					if (anim) {
+						anim.enabled = true;
 					}
-					else
-					*/
-					{
-						m_extraIcons[ i ].SetActive( i < remainingLives );
-					}
-					
 				}
 			}break;
 		}
