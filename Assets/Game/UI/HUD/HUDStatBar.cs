@@ -48,6 +48,8 @@ public class HUDStatBar : MonoBehaviour {
 	private bool m_instantSet;
 	private ParticleSystem m_particles;
 
+	private bool m_ready = false; // patch for particles!
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -83,6 +85,7 @@ public class HUDStatBar : MonoBehaviour {
 		}
 
 		m_instantSet = true;
+		m_ready = false;
 	}
 
 	IEnumerator Start()
@@ -114,6 +117,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
 		}
+
+		m_ready = true;
 	}
 
 	void OnDestroy()
@@ -138,90 +143,92 @@ public class HUDStatBar : MonoBehaviour {
 	/// Keep values updated
 	/// </summary>
 	private void Update() {
-		// Only if player is alive
-		if (InstanceManager.player != null) 
-		{
-			// Aux vars
-			float targetBaseValue = GetBaseValue();
-			float targetExtraValue = GetExtraValue();
-			float targetValue = GetValue();
-			float targetValueStep = 0f;
+		if (m_ready) {
+			// Only if player is alive
+			if (InstanceManager.player != null) 
+			{
+				// Aux vars
+				float targetBaseValue = GetBaseValue();
+				float targetExtraValue = GetExtraValue();
+				float targetValue = GetValue();
+				float targetValueStep = 0f;
 
-			if (m_baseBar != null) {
-				m_baseBar.minValue = 0f;
-				m_baseBar.maxValue = targetExtraValue;
-				targetValueStep = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
-			}
-
-			if (m_extraBar != null) {
-				m_extraBar.minValue = 0f;
-				m_extraBar.maxValue = targetExtraValue; // this is the max value with all the bonus
-				targetValueStep = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
-			}
-
-			//Extra bar
-			if (m_extraBar != null) {
-				if (m_instantSet) {
-					m_extraBar.value = targetValue;
-					m_instantSet = false;
-				} else {
-					// If going up, animate, otherwise instant set
-					if (targetValue > m_extraBar.value) m_extraBar.value = targetValueStep;
-					else 								m_extraBar.value = targetValue;
+				if (m_baseBar != null) {
+					m_baseBar.minValue = 0f;
+					m_baseBar.maxValue = targetExtraValue;
+					targetValueStep = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
 				}
-			}
 
-			//Base bar
-			if (m_baseBar != null) {
-				targetValue = Mathf.Min(targetValue, targetBaseValue);
-				targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
-
-				if (m_instantSet) {
-					m_baseBar.value = targetValue;
-					m_instantSet = false;
-				} else {
-					// If going up, animate, otherwise instant set
-					if (targetValue > m_baseBar.value) m_baseBar.value = targetValueStep;
-					else 								m_baseBar.value = targetValue;
+				if (m_extraBar != null) {
+					m_extraBar.minValue = 0f;
+					m_extraBar.maxValue = targetExtraValue; // this is the max value with all the bonus
+					targetValueStep = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
 				}
-			}
 
-			if (m_type == Type.SuperFury || m_type == Type.Fury) {
-				if (m_particles != null) {
-					if (Math.Abs(targetValue - targetValueStep) > 0.001f) {
-						m_particles.Play();
-					} else  {
-						m_particles.Stop();
+				//Extra bar
+				if (m_extraBar != null) {
+					if (m_instantSet) {
+						m_extraBar.value = targetValue;
+						m_instantSet = false;
+					} else {
+						// If going up, animate, otherwise instant set
+						if (targetValue > m_extraBar.value) m_extraBar.value = targetValueStep;
+						else 								m_extraBar.value = targetValue;
 					}
 				}
+
+				//Base bar
+				if (m_baseBar != null) {
+					targetValue = Mathf.Min(targetValue, targetBaseValue);
+					targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
+
+					if (m_instantSet) {
+						m_baseBar.value = targetValue;
+						m_instantSet = false;
+					} else {
+						// If going up, animate, otherwise instant set
+						if (targetValue > m_baseBar.value) m_baseBar.value = targetValueStep;
+						else 								m_baseBar.value = targetValue;
+					}
+				}
+
+				if (m_type == Type.SuperFury || m_type == Type.Fury) {
+					if (m_particles != null) {
+						if (Math.Abs(targetValue - targetValueStep) > 0.001f) {
+							m_particles.Play();
+						} else  {
+							m_particles.Stop();
+						}
+					}
+				}
+
+				// Text
+				if (m_valueTxt != null) {
+					m_valueTxt.text = String.Format("{0}/{1}",
+					                                StringUtils.FormatNumber(m_extraBar.value, 0),
+					                                StringUtils.FormatNumber(m_extraBar.maxValue, 0));
+				}
 			}
 
-			// Text
-			if (m_valueTxt != null) {
-				m_valueTxt.text = String.Format("{0}/{1}",
-				                                StringUtils.FormatNumber(m_extraBar.value, 0),
-				                                StringUtils.FormatNumber(m_extraBar.maxValue, 0));
-			}
-		}
-
-		if ( m_type == Type.SuperFury )
-		{
-			m_timer -= Time.deltaTime;
-			if ( m_timer <= 0 )
+			if ( m_type == Type.SuperFury )
 			{
-				m_canvasGroup.alpha = 0;
-			}
-			else if ( m_timer <= 1 ) 
-			{
-				m_canvasGroup.alpha = m_timer;
-			}
-			else if ( m_timer >= (m_timerDuration -1 ))
-			{
-				m_canvasGroup.alpha = 1.0f - (m_timer - ( m_timerDuration - 1));
-			}
-			else
-			{
-				m_canvasGroup.alpha = 1;
+				m_timer -= Time.deltaTime;
+				if ( m_timer <= 0 )
+				{
+					m_canvasGroup.alpha = 0;
+				}
+				else if ( m_timer <= 1 ) 
+				{
+					m_canvasGroup.alpha = m_timer;
+				}
+				else if ( m_timer >= (m_timerDuration -1 ))
+				{
+					m_canvasGroup.alpha = 1.0f - (m_timer - ( m_timerDuration - 1));
+				}
+				else
+				{
+					m_canvasGroup.alpha = 1;
+				}
 			}
 		}
 	}
