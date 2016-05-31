@@ -36,7 +36,7 @@ public class HUDStatBar : MonoBehaviour {
 	[SerializeField] private Type m_type = Type.Health;
 	[SerializeField] private float m_maxScreenSize = 1300f;
 
-	private Slider m_bar;
+	private Slider m_extraBar;
 	private Slider m_baseBar;
 	private Text m_valueTxt;
 	private GameObject m_icon;
@@ -57,9 +57,9 @@ public class HUDStatBar : MonoBehaviour {
 		// m_baseBar;
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		Transform child;
-		child = transform.FindChild("Slider");
+		child = transform.FindChild("ExtraSlider");
 		if ( child != null )
-			m_bar = child.GetComponent<Slider>();
+			m_extraBar = child.GetComponent<Slider>();
 		
 		child = transform.FindChild("BaseSlider");
 		if ( child != null )
@@ -124,39 +124,47 @@ public class HUDStatBar : MonoBehaviour {
 		if (InstanceManager.player != null) 
 		{
 			// Aux vars
-			float targetBaseValue = GetValue();
-			float targetValue = Mathf.Min(targetBaseValue, GetMaxValue());
+			float targetBaseValue = GetBaseValue();
+			float targetExtraValue = GetExtraValue();
+			float targetValue = GetValue();
 
-			// Bar value
-			m_bar.minValue = 0f;
-			m_bar.maxValue = GetBaseValue();	// GetMaxValue()	// [AOC] Changed to make both bars work on the same scale for easier layouting
-			if ( m_instantSet )
-			{
-				m_bar.value	= targetValue;
-				m_instantSet = false;
-			}
-			else
-			{
-				// If going up, animate, otherwise instant set
-				if ( targetValue > m_bar.value )
-					m_bar.value = Mathf.Lerp( m_bar.value, targetValue, Time.deltaTime );
-				else 
-					m_bar.value = targetValue;
+			//Extra bar
+			if (m_extraBar != null) {
+				m_extraBar.minValue = 0f;
+				m_extraBar.maxValue = targetExtraValue; // this is the max value with all the bonus
+
+				if (m_instantSet) {
+					m_extraBar.value = targetValue;
+					m_instantSet = false;
+				} else {
+					// If going up, animate, otherwise instant set
+					if (targetValue > m_extraBar.value) m_extraBar.value = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
+					else 								m_extraBar.value = targetValue;
+				}
 			}
 
-			// Base bar
-			if ( m_baseBar != null )
-			{
+			//Base bar
+			if (m_baseBar != null) {
 				m_baseBar.minValue = 0f;
-				m_baseBar.maxValue = GetBaseValue();
-				m_baseBar.value = targetBaseValue;
+				m_baseBar.maxValue = targetExtraValue;
+
+				targetValue = Mathf.Min(targetValue, targetBaseValue);
+
+				if (m_instantSet) {
+					m_baseBar.value = targetValue;
+					m_instantSet = false;
+				} else {
+					// If going up, animate, otherwise instant set
+					if (targetValue > m_baseBar.value) m_baseBar.value = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
+					else 								m_baseBar.value = targetValue;
+				}
 			}
 
 			// Text
 			if (m_valueTxt != null) {
 				m_valueTxt.text = String.Format("{0}/{1}",
-				                                StringUtils.FormatNumber(m_bar.value, 0),
-				                                StringUtils.FormatNumber(m_bar.maxValue, 0));
+				                                StringUtils.FormatNumber(m_extraBar.value, 0),
+				                                StringUtils.FormatNumber(m_extraBar.maxValue, 0));
 			}
 		}
 
@@ -182,7 +190,7 @@ public class HUDStatBar : MonoBehaviour {
 		}
 	}
 
-	private float GetMaxValue() {
+	private float GetExtraValue() {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.healthMax;
 			case Type.Energy:	return InstanceManager.player.energyMax;
@@ -318,7 +326,7 @@ public class HUDStatBar : MonoBehaviour {
 				// [AOC] Furt powerup not yet implemented
 				RectTransform rectTransform = this.transform as RectTransform;
 				Vector2 size = rectTransform.sizeDelta;
-				float fraction = GetMaxValue();
+				float fraction = GetExtraValue();
 				size.x = fraction * m_maxScreenSize;
 				rectTransform.sizeDelta = size;
 
