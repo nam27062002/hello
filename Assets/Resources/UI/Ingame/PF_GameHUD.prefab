@@ -1061,8 +1061,9 @@ GameObject:
   m_Component:
   - 224: {fileID: 22420430}
   - 114: {fileID: 11406716}
+  - 114: {fileID: 11402736}
   m_Layer: 5
-  m_Name: HorizontalLayout
+  m_Name: NeedBiggerShark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1338,7 +1339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &160470
 GameObject:
   m_ObjectHideFlags: 1
@@ -2808,6 +2809,23 @@ MonoBehaviour:
   optionalRotationMode: 0
   optionalScrambleMode: 0
   optionalString: 
+--- !u!114 &11402736
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 150382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_animator: {fileID: 0}
+  m_tweenType: 7
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 27
+  m_tweenDelay: 0
 --- !u!114 &11403200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5950,7 +5968,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_type: 2
-  m_maxScreenSize: 1300
+  m_maxScreenSize: 600
 --- !u!114 &11440162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9958,7 +9976,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_type: 3
-  m_maxScreenSize: 1300
+  m_maxScreenSize: 500
 --- !u!114 &11497408
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10089,7 +10107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_needBiggerSharkDuration: 1
   m_survivalBonusDuration: 2
-  m_needBiggerSharkObject: {fileID: 186766}
+  m_needBiggerDragonObject: {fileID: 150382}
   m_survivalUpdatedObject: {fileID: 158672}
 --- !u!114 &11498212
 MonoBehaviour:
