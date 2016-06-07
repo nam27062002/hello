@@ -34,13 +34,15 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	// STATICS																  //
 	//------------------------------------------------------------------------//
 	// Windows instance
-	private static HungryDragonEditorToolbar m_instance = null;
+	//private static HungryDragonEditorToolbar m_instance = null;
 	public static HungryDragonEditorToolbar instance {
 		get {
-			if(m_instance == null) {
+			/*if(m_instance == null) {
 				m_instance = (HungryDragonEditorToolbar)EditorWindow.GetWindow(typeof(HungryDragonEditorToolbar), false, "Hungry Dragon Toolbar", true);
 			}
 			return m_instance;
+			*/
+			return (HungryDragonEditorToolbar)EditorWindow.GetWindow(typeof(HungryDragonEditorToolbar), false, "Hungry Dragon Toolbar", true);
 		}
 	}
 
@@ -69,7 +71,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	/// </summary>
 	private void OnDestroy() {
 		// Although singletons shouldn't be destroyed, Unity may want to destroy the window when reloading the layout
-		m_instance = null;
+		//m_instance = null;
 	}
 
 	/// <summary>
