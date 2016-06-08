@@ -68,7 +68,7 @@ public class Server
 		errorCodesWithRetry.Add (502);		// 503: Bad Gateway
 		errorCodesWithRetry.Add (404);		// 404: Not Found
 
-		NetworkManager.SharedInstance.Initialise(serverUrl, ENCRYPT_PASSWORD, clientVersion);
+		NetworkManager.instance.Initialise(serverUrl, ENCRYPT_PASSWORD, clientVersion);
 	}
 
 
@@ -191,9 +191,9 @@ public class Server
 
 					mWaittingCommandResponse = true;
 
-					// command.sentAt = InstanceManager.RequestNetwork.GetServerTime();
+					 //command.sentAt = InstanceManager.RequestNetwork.GetServerTime();
 
-					// InstanceManager.Instance.RequestWWW (command.url, command.data, command.headers, OnResquestWWWResponse, command);
+				     NetworkUtils.Instance.RequestWWW (command.url, command.data, command.headers, /*OnRequestWWWResponse*/null, command);
 				}
 				while (flushAllCommandsNow && commandsStack.Count > 0);
 			}

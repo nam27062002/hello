@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Animations;
 using System;
 using System.Collections.Generic;
 
@@ -26,17 +27,22 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	private static readonly float BUTTON_SIZE = 25f;
 	private static readonly float SEPARATOR_SIZE = 10f;
 
+	private static readonly int NUM_BUTTONS = 7;		// Update as needed
+	private static readonly int NUM_SEPARATORS = 1;		// Update as needed
+
 	//------------------------------------------------------------------------//
 	// STATICS																  //
 	//------------------------------------------------------------------------//
 	// Windows instance
-	private static HungryDragonEditorToolbar m_instance = null;
+	//private static HungryDragonEditorToolbar m_instance = null;
 	public static HungryDragonEditorToolbar instance {
 		get {
-			if(m_instance == null) {
+			/*if(m_instance == null) {
 				m_instance = (HungryDragonEditorToolbar)EditorWindow.GetWindow(typeof(HungryDragonEditorToolbar), false, "Hungry Dragon Toolbar", true);
 			}
 			return m_instance;
+			*/
+			return (HungryDragonEditorToolbar)EditorWindow.GetWindow(typeof(HungryDragonEditorToolbar), false, "Hungry Dragon Toolbar", true);
 		}
 	}
 
@@ -53,13 +59,19 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	public static void ShowWindow() {
 		// Setup window
 		instance.titleContent = new GUIContent("Hungry Dragon Toolbar");
-		int numButtons = 7;		// Update as needed
-		int numSeparators = 1;	// Update as needed
-		instance.minSize = new Vector2(2 * MARGIN + BUTTON_SIZE * numButtons + SEPARATOR_SIZE * numSeparators, EditorStyles.toolbarButton.lineHeight + 2 * MARGIN + 5f);	// Enough room for all the buttons + spacings in a single row
+		instance.minSize = new Vector2(2 * MARGIN + BUTTON_SIZE * NUM_BUTTONS + SEPARATOR_SIZE * NUM_SEPARATORS, EditorStyles.toolbarButton.lineHeight + 2 * MARGIN + 5f);	// Enough room for all the buttons + spacings in a single row
 		instance.maxSize = new Vector2(float.PositiveInfinity, instance.minSize.y);	// Fixed height
 
 		// Show it
 		instance.ShowTab();
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Although singletons shouldn't be destroyed, Unity may want to destroy the window when reloading the layout
+		//m_instance = null;
 	}
 
 	/// <summary>
@@ -87,27 +99,27 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// Add scene buttons
 			// Loading
-			if(GUILayout.Button("L", EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+			if(GUILayout.Button(new GUIContent("L", "Loading Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.OpenScene1();
 			}
 
 			// Menu
-			if(GUILayout.Button("M", EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+			if(GUILayout.Button(new GUIContent("M", "Menu Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.OpenScene2();
 			}
 
 			// Game
-			if(GUILayout.Button("G", EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+			if(GUILayout.Button(new GUIContent("G", "Game Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.OpenScene3();
 			}
 
 			// Level Editor
-			if(GUILayout.Button("LE", EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+			if(GUILayout.Button(new GUIContent("LE", "Level Editor"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.OpenScene4();
 			}
 
 			// Popups
-			if(GUILayout.Button("P", EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+			if(GUILayout.Button(new GUIContent("P", "Popups Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.OpenScene5();
 			}
 
@@ -117,7 +129,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			// Some more dummy buttons
 			for(int i = 0; i < 2; i++) {
 				// Button
-				if(GUILayout.Button(i.ToString(), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				if(GUILayout.Button(new GUIContent(i.ToString(), "Dummy button " + i), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 					Debug.Log("Dummy button " + i + " pressed!");
 				}
 			}
@@ -128,5 +140,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 		// Bottom margin
 		GUILayout.Space(MARGIN);
+	}
+
+	/// <summary>
+	/// OnInspectorUpdate is called at 10 frames per second to give the inspector a chance to update.
+	/// Called less times as if it was OnGUI/Update
+	/// </summary>
+	public void OnInspectorUpdate() {
+		// Force repainting to update with current selection
+		Repaint();
 	}
 }

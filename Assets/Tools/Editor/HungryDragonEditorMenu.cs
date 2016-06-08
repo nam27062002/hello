@@ -4,30 +4,30 @@
 // Created by Alger Ortín Castellví on 30/10/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
-//----------------------------------------------------------------------//
-// INCLUDES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-//----------------------------------------------------------------------//
-// CLASSES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 /// <summary>
 /// Setup of the Hungry Dragon menu entry in the Unity Editor menu, giving fast access to several tools.
 /// </summary>
 [InitializeOnLoad]	// To call the constructor upon Unity initialization
 public class HungryDragonEditorMenu {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
 	private static readonly string DEFINITIONS_FOLDER = "Assets/Resources/Definitions/";
 	private static readonly string SINGLETONS_FOLDER = "Assets/Resources/Singletons/";
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Constructor.
 	/// </summary>
@@ -47,9 +47,9 @@ public class HungryDragonEditorMenu {
 		}*/
 	}
 
-	//------------------------------------------------------------------//
-	// MENU SETUP														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// MENU SETUP															  //
+	//------------------------------------------------------------------------//
 	//--------------------------------------------------- CONTENT ----------------------------------------------------//
 	[MenuItem("Hungry Dragon/Content/Game Settings", false, 0)]
 	public static void ShowSettings() { OpenFile("GameSettings.asset", SINGLETONS_FOLDER); }
@@ -59,43 +59,69 @@ public class HungryDragonEditorMenu {
 
 	//---------------------------------------------------- TOOLS -----------------------------------------------------//
 	/// <summary>
-	/// Simple content viewer.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 0)]
-	public static void ShowRulesReader() {
-		RulesReaderEditorWindow.ShowWindow(); 
-	}
-
-	/// <summary>
-	/// Regenerate the icon for all the spawners in the scene.
-	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons", false, 1)]
-	public static void GenerateSpawnerIcons() {
-		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
-	}
-
-	/// <summary>
 	/// Saves all assets to disk. Useful to make sure changes in scriptable object instances are stored.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 2)]
+	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 0)]
 	public static void SaveAssets() {
 		AssetDatabase.SaveAssets();
 	}
 
 	/// <summary>
-	/// Custom tools for the dragon selection menu.
+	/// Simple content viewer.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Dragon Menu Tools", false, 3)]
-	public static void DragonMenuTools() {
-		DragonMenuToolsEditorWindow.ShowWindow();
+	[MenuItem("Hungry Dragon/Tools/Rules Reader", false, 1)]
+	public static void ShowRulesReader() {
+		RulesReaderEditorWindow.ShowWindow(); 
+	}
+
+	/// <summary>
+	/// Custom toolbar for the project.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 50)]
+	public static void HungryDragonToolbar() {
+		HungryDragonEditorToolbar.ShowWindow();
 	}
 
 	/// <summary>
 	/// Custom tools for the dragon selection menu.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 4)]
-	public static void HungryDragonToolbar() {
-		HungryDragonEditorToolbar.ShowWindow();
+	[MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 100)]
+	public static void DragonMenuTools() {
+		DragonMenuToolsEditorWindow.ShowWindow();
+	}
+
+	/// <summary>
+	/// Regenerate the icon for the selected entity prefab.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 150)]
+	public static void GenerateSpawnerIconsSelected() {
+		// Show error message if nothing is selected
+		if(Selection.gameObjects.Length == 0) {
+			EditorUtility.DisplayDialog("Error", "No prefab is selected.", "Ok");
+			return;
+		}
+
+		// Pick selected prefab adn check that it's valid
+		for(int i = 0; i < Selection.gameObjects.Length; i++) {
+			// Check that prefab corresponds to an entity
+			GameObject entityPrefab = Selection.gameObjects[i];
+			if(entityPrefab.GetComponent<Entity>() == null) {
+				EditorUtility.DisplayDialog("Error", "Selected prefab " + entityPrefab.name + " doesn't have the Entity component.", "Skip It");
+				continue;
+			}
+
+			// Generate icon for the selected prefab
+			SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite);
+		}
+	}
+
+	/// <summary>
+	/// Regenerate the icon for all the spawners in the scene.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 151)]
+	public static void GenerateSpawnerIconsAll() {
+		//SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();
+		SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);
 	}
 
 	//--------------------------------------------------- OTHERS -----------------------------------------------------//
@@ -156,9 +182,22 @@ public class HungryDragonEditorMenu {
 	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 52)]
 	public static void OpenScene5() { OpenScene("Assets/Tests/SC_Popups.unity"); }
 
-	//------------------------------------------------------------------//
-	// INTERNAL UTILS													//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONTEXT MENU SETUP													  //
+	// Use the "Assets/" prefix to show the option in the Project's view 	  //
+	// context menu															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Regenerate the icon for the selected entity prefab.
+	/// </summary>
+	[MenuItem("Assets/Hungry Dragon/Generate Spawner Icons", false, 0)]
+	public static void ContextGenerateSpawnerIcons(MenuCommand _command) {
+		GenerateSpawnerIconsSelected();
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL UTILS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Open and select a file (scriptable object, prefab).
 	/// </summary>

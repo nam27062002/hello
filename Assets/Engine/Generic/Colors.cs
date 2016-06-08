@@ -231,4 +231,20 @@ public static class Colors {
 	public static Vector3 RGB(this Color _source) {
 		return new Vector3(_source.r, _source.g, _source.b);
 	}
+
+	/// <summary>
+	/// Divides two colors together. Each component is divided separately.
+	/// </summary>
+	/// <returns>The resulting color.</returns>
+	/// <param name="_source">Source color.</param>
+	/// <param name="_divisor">Divisor color.</param>
+	public static Color DivideBy(this Color _source, Color _divisor) {
+		// Safe division
+		return new Color(
+			_divisor.r == 0f ? 0f : _source.r/_divisor.r,
+			_divisor.g == 0f ? 0f : _source.g/_divisor.g,
+			_divisor.b == 0f ? 0f : _source.b/_divisor.b,
+			_divisor.a == 0f ? 0f : _source.a/_divisor.a
+		);
+	}
 }

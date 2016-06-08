@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -115,7 +116,6 @@ public class SpawnerIconGeneratorEditor : Editor {
 			}
 
             // Generate icon for this spawner
-            Debug.Log("generating icon for spawner " + spawners[i].gameObject.name);
 			GenerateIcon(generator, spawners[i]);
 		}
 	}
@@ -171,4 +171,66 @@ public class SpawnerIconGeneratorEditor : Editor {
 		}*/
         EditorUtils.SetObjectIcon(_sp.gameObject, EditorUtils.ObjectIcon.LABEL_ORANGE);
     }
+
+	/// <summary>
+	/// Create an icon for the given prefab and store it under the "Gizmos/Spawners" folder
+	/// with the name of the prefab. If an icon with that name already exists, it will be
+	/// overwritten.
+	/// </summary>
+	/// <param name="_entityPrefab">The prefab whose icon we want to create.</param>
+	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
+	public static void GenerateIcon(GameObject _entityPrefab, Color _backgroundColor) {
+		// Generate a new texture
+		Texture2D tex = AssetPreview.GetAssetPreview(_entityPrefab);
+		if(tex != null) {
+			// Create a copy, we don't want to modify the source
+			tex = Instantiate<Texture2D>(tex);
+
+			// Remove ugly grey background
+			Color toReplace = tex.GetPixel(0, 0);	// [AOC] Assume first pixel will always be background - happy assumption
+			Color replacement = _backgroundColor;
+			if(toReplace != replacement) {
+				Color[] pixels = tex.GetPixels();
+				for(int j = 0; j < pixels.Length; j++) {
+					if(pixels[j] == toReplace) {
+						pixels[j] = replacement;
+					}
+				}
+				tex.SetPixels(pixels);
+				tex.Apply();
+			}
+
+			// Save to file (replace any existing)
+			// [AOC] We must save it to a file in order to persist between sessions, otherwise the icon will be reseted once the scene is closed
+			byte[] bytes = tex.EncodeToPNG();
+			string iconFilePath = Application.dataPath + "/Gizmos/Spawners/" + _entityPrefab.name + ".png";
+			System.IO.File.WriteAllBytes(iconFilePath, bytes);
+
+			// Import newly created png to assets database (so we have a GUID and all)
+			iconFilePath = iconFilePath.Replace(Application.dataPath, "Assets");
+			AssetDatabase.ImportAsset(iconFilePath);
+
+			// Setup import settings
+			TextureImporter importer = TextureImporter.GetAtPath(iconFilePath) as TextureImporter;
+			if(importer != null) {
+				importer.alphaIsTransparency = true;
+				AssetDatabase.ImportAsset(iconFilePath, ImportAssetOptions.ForceUpdate);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Creates icons for all the entity prefabs stored under the Resources/Game/Entities folder.
+	/// New icons will be stored under the Gizmos/ folder (as per Unity rules).
+	/// Existing icons will be overwritten.
+	/// </summary>
+	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
+	public static void GenerateSpawnerIconsInResources(Color _backgroundColor) {
+		// Load all prefabs under the Entites folder
+		List<GameObject> entityPrefabs = ResourcesExt.LoadRecursively("Game/Entities");
+		for(int i = 0; i < entityPrefabs.Count; i++) {
+			// Just create an icon for each prefab
+			GenerateIcon(entityPrefabs[i], _backgroundColor);
+		}
+	}
 }

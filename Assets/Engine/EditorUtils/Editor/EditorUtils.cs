@@ -8,6 +8,8 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System;
 using System.Reflection;
 using System.IO;
@@ -64,6 +66,98 @@ public static class EditorUtils {
 	//------------------------------------------------------------------//
 	// GameObject Icons
 	private static GUIContent[] s_objectIcons;
+
+	//------------------------------------------------------------------//
+	// GAME OBJECT UTILS												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Given a menu command, get the game object where it was triggered or, if not valid,
+	/// optionally the current selected object.
+	/// </summary>
+	/// <returns>The target game object.</returns>
+	/// <param name="_command">The menu command to be checked.</param>
+	/// <param name="_defaultToSelected">If the object couldn't be picked from the menu command, pick it from the current selection?</param>
+	public static GameObject GetContextObject(MenuCommand _command, bool _defaultToSelected = true) {
+		// Try command
+		if(_command != null) return _command.context as GameObject;
+
+		// Default to selected object
+		if(_defaultToSelected) return Selection.activeGameObject;
+
+		// No valid option found
+		return null;
+	}
+
+	/// <summary>
+	/// Create a new GameObject in the scene hierarchy.
+	/// </summary>
+	/// <returns>The newly created object.</returns>
+	/// <param name="_name">The name to give to the new object.</param>
+	/// <param name="_parent">The parent where the new object should be attached. If <c>null</c>, the object will be created at the hierarchy's root.</param>
+	public static GameObject CreateGameObject(string _name, GameObject _parent) {
+		// Create the object
+		GameObject newObj = new GameObject(_name);
+
+		// Put into hierarchy
+		Undo.RegisterCreatedObjectUndo(newObj, "Create " + _name);
+		if(_parent != null) {
+			Undo.SetTransformParent(newObj.transform, _parent.transform, "Parent " + _name);
+			GameObjectUtility.SetParentAndAlign(newObj, _parent);
+		}
+
+		// Focus new object and return
+		FocusObject(newObj, true, true, false);
+		return newObj;
+	}
+
+	/// <summary>
+	/// Create a new GameObject in the scene hierarchy - special case for UI objects.
+	/// </summary>
+	/// <returns>The newly created object.</returns>
+	/// <param name="_name">The name to give to the new object.</param>
+	/// <param name="_parent">The parent where the new object should be attached. If <c>null</c>, the object will be created at the hierarchy's root.</param>
+	public static GameObject CreateUIGameObject(string _name, GameObject _parent) {
+		// If no parent is given or the parent hierarchy has no canvas attached, create a new canvas and use it as a parent instead
+		Canvas canvas = (_parent != null) ? _parent.GetComponentInParent<Canvas>() : null;
+		if(canvas == null) {
+			// Try to use any canvas on the scene..
+			canvas = UnityEngine.Object.FindObjectOfType<Canvas>();
+			if(canvas != null && canvas.gameObject.activeInHierarchy) {
+				_parent = canvas.gameObject;
+			}
+
+			// No canvas in the scene at all? Then create a new one.
+			else {
+				// Create a new canvas
+				GameObject canvasObj = CreateGameObject("Canvas", _parent);
+				canvasObj.layer = LayerMask.NameToLayer("UI");
+				canvas = canvasObj.AddComponent<Canvas>();
+				canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+				canvasObj.AddComponent<CanvasScaler>();
+				canvasObj.AddComponent<GraphicRaycaster>();
+				_parent = canvasObj;
+
+				// If there is no event system, create one as well
+				EventSystem esys = UnityEngine.Object.FindObjectOfType<EventSystem>();
+				if(esys == null) {
+					GameObject esysObj = CreateGameObject("EventSystem", null);
+					esysObj.AddComponent<EventSystem>();
+					esysObj.AddComponent<StandaloneInputModule>();
+					esysObj.AddComponent<TouchInputModule>();
+				}
+			}
+		}
+
+		// Use standard GameObject creator
+		GameObject newObj = CreateGameObject(_name, _parent);
+
+		// Since it's a UI object, set layer and add the RectTransform component
+		RectTransform rectTransform = newObj.AddComponent<RectTransform>();
+		rectTransform.sizeDelta = Vector2.one * 100f;	// Default size
+
+		// Done!
+		return newObj;
+	}
 
 	//------------------------------------------------------------------//
 	// OBJECT ICONS														//
@@ -176,7 +270,20 @@ public static class EditorUtils {
 	public static void FocusObject(UnityEngine.Object _obj, bool _select = true, bool _focusScene = true, bool _ping = true) {
 		if(_select || _focusScene || _ping) Selection.activeObject = _obj;	// In order to ping/frame the object, it must be selected first
 		if(_ping) EditorGUIUtility.PingObject(_obj);
-		if(_focusScene) SceneView.FrameLastActiveSceneView();
+		if(_focusScene) {
+			// Find the best scene view
+			SceneView sceneView = SceneView.lastActiveSceneView;
+			if(sceneView == null && SceneView.sceneViews.Count > 0) {
+				sceneView = SceneView.sceneViews[0] as SceneView;
+			}
+
+			// If a SceneView couldn't be found, skip focusing
+			if(sceneView != null && sceneView.camera != null) {
+				// [AOC] The framing changes the camera zooming, which results quite annoying - use LookAt method instead ^______^
+				//sceneView.FrameSelected();
+				sceneView.LookAt(Selection.activeGameObject.transform.position);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//

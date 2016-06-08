@@ -23,13 +23,11 @@ public class ResultsScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_dragonNameText = null;
 
 	[Separator]
-	[SerializeField] private GameObject m_nextDragonGroup = null;
+	[SerializeField] private ResultsScreenCarousel m_carousel = null;
 
 	// Internal
 	private int m_levelAnimCount = 0;
 	private Tween m_xpBarTween = null;
-
-	private UIScene3D m_nextDragonScene3D = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -37,19 +35,18 @@ public class ResultsScreenController : MonoBehaviour {
 
 	void Awake() {
 		// Check required fields
-		DebugUtils.Assert(m_timeLabel != null, "Required field not initialized!");
-		DebugUtils.Assert(m_scoreAnimator != null, "Required field not initialized!");
-		DebugUtils.Assert(m_coinsAnimator != null, "Required field not initialized!");
-		DebugUtils.Assert(m_bonusCoinsAnimator != null, "Required field not initialized!");
+		Debug.Assert(m_timeLabel != null, "Required field not initialized!");
+		Debug.Assert(m_scoreAnimator != null, "Required field not initialized!");
+		Debug.Assert(m_coinsAnimator != null, "Required field not initialized!");
+		Debug.Assert(m_bonusCoinsAnimator != null, "Required field not initialized!");
 
-		DebugUtils.Assert(m_highScoreLabel != null, "Required field not initialized!");
-		DebugUtils.Assert(m_newHighScoreDeco != null, "Required field not initialized!");
+		Debug.Assert(m_highScoreLabel != null, "Required field not initialized!");
+		Debug.Assert(m_newHighScoreDeco != null, "Required field not initialized!");
 
-		DebugUtils.Assert(m_levelBar != null, "Required field not initialized!");
-		DebugUtils.Assert(m_levelText != null, "Required field not initialized!");
-		DebugUtils.Assert(m_dragonNameText != null, "Required field not initialized!");
-
-		DebugUtils.Assert(m_nextDragonGroup != null, "Required field not initialized!");
+		Debug.Assert(m_levelBar != null, "Required field not initialized!");
+		Debug.Assert(m_levelText != null, "Required field not initialized!");
+		Debug.Assert(m_dragonNameText != null, "Required field not initialized!");
+		Debug.Assert(m_carousel != null, "Required field not initialized!");
 	}
 
 	/// <summary>
@@ -76,12 +73,6 @@ public class ResultsScreenController : MonoBehaviour {
 		if(m_xpBarTween != null) {
 			m_xpBarTween.Kill(false);
 			m_xpBarTween = null;
-		}
-
-		// Destroy next dragon 3D scene
-		if(m_nextDragonScene3D != null) {
-			UIScene3DManager.Remove(m_nextDragonScene3D);
-			m_nextDragonScene3D = null;
 		}
 	}
 
@@ -119,22 +110,8 @@ public class ResultsScreenController : MonoBehaviour {
 		m_levelText.Localize("TID_LEVEL_ABBR", StringUtils.FormatNumber(m_levelAnimCount + 1));
 		LaunchXPBarAnim();
 
-		// Next dragon unlock bar - animate!
-		// Don't show if next dragon is already unlocked or if the dragon we played with was already maxed
-		bool show = RewardManager.dragonInitialUnlockProgress < 1f && DragonManager.nextDragon != null;
-		m_nextDragonGroup.SetActive(show);
-		if(show) {
-			Slider nextDragonBar = m_nextDragonGroup.GetComponentInChildren<Slider>();
-			if(nextDragonBar) {
-				// Initialize bar
-				nextDragonBar.minValue = 0;
-				nextDragonBar.maxValue = 1;
-				nextDragonBar.value = RewardManager.dragonInitialUnlockProgress;
-
-				// Program animation
-				LaunchNextDragonBarAnim(nextDragonBar);
-			}
-		}
+		// Hide carousel
+		m_carousel.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -170,7 +147,12 @@ public class ResultsScreenController : MonoBehaviour {
 		.OnComplete(
 			() => {
 				// Was it the target level? We're done!
-				if(isTargetLevel) return;
+				if(isTargetLevel) {
+					// Now we can start the carousel!
+					m_carousel.gameObject.SetActive(true);
+					m_carousel.StartCarousel();
+					return;
+				}
 
 				// Not the target level, increase level counter and restart animation!
 				m_levelAnimCount++;
@@ -189,60 +171,7 @@ public class ResultsScreenController : MonoBehaviour {
 		);
 	}
 
-	/// <summary>
-	/// Launchs the animation of the "unlock next dragon" bar
-	/// </summary>
-	/// <param name="_bar">The bar to be animated.</param>
-	private void LaunchNextDragonBarAnim(Slider _bar) {
-		// Aux vars
-		float targetDelta = DragonManager.currentDragon.progression.progressByXp;
 
-		// Launch the tween!
-		DOTween.To(
-			// Getter function
-			() => { 
-				return _bar.value; 
-			}, 
-
-			// Setter function
-			(_newValue) => {
-				_bar.value = _newValue;
-			},
-
-			// Value and speed
-			targetDelta, 0.5f
-		)
-
-		// Other setup parameters
-			.SetSpeedBased(true)
-			.SetEase(Ease.InOutCubic)
-
-			// What to do once the anim has finished?
-			.OnComplete(
-				() => {
-					// If we reached max delta, a dragon has been unlocked!
-					if(targetDelta >= 1f) {
-						// Show unlock animation
-						float delay = 0f;
-						float speedMult = 1f;	// To easily adjust timings
-						Image lockIcon = m_nextDragonGroup.FindComponentRecursive<Image>("IconLockPLACEHOLDER");
-
-						// Lock scale up
-						lockIcon.transform.DOScale(2f, 1.0f * speedMult).SetDelay(delay).SetEase(Ease.OutExpo);
-
-						// Lock fade out (halfway through the scale up anim)
-						delay += 0.75f * speedMult;
-						lockIcon.DOFade(0f, 0.25f * speedMult).SetDelay(delay)
-							.OnComplete(() => {
-								// Reset icon for next time
-								lockIcon.color = Color.white; 
-								lockIcon.transform.localScale = Vector3.one;
-								lockIcon.gameObject.SetActive(false);
-							});
-					}
-				}
-			);
-	}
 
 	/// <summary>
 	/// Go back to menu!

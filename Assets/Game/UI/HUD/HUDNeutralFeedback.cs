@@ -26,7 +26,7 @@ public class HUDNeutralFeedback : MonoBehaviour {
 	[SerializeField] private float m_survivalBonusDuration = 1f;	// Seconds
 
 	// External refs
-	public GameObject m_needBiggerSharkObject;
+	public GameObject m_needBiggerDragonObject;
 	public GameObject m_survivalUpdatedObject;
 
 	enum ShowingEvent
@@ -38,7 +38,9 @@ public class HUDNeutralFeedback : MonoBehaviour {
 
 	ShowingEvent m_showingEvent = ShowingEvent.NONE;
 
-	private Text m_biggerSharkText = null;
+	private Text m_biggerDragon_NeedText = null;
+	private Text m_biggerDragon_DragonText = null;
+	private Image m_biggerDragonIcon = null;
 	private ShowHideAnimator m_biggerSharkAnim;
 	private ShowHideAnimator m_survivalBonusAnim;
 
@@ -53,8 +55,10 @@ public class HUDNeutralFeedback : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external refs
-		m_biggerSharkAnim = m_needBiggerSharkObject.GetComponent<ShowHideAnimator>();
-		m_biggerSharkText = m_needBiggerSharkObject.GetComponentInChildren<Text>();
+		m_biggerSharkAnim = m_needBiggerDragonObject.GetComponent<ShowHideAnimator>();
+		m_biggerDragon_NeedText = m_needBiggerDragonObject.transform.FindChild("Needtext").GetComponent<Text>();
+		m_biggerDragon_DragonText = m_needBiggerDragonObject.transform.FindChild("Dragontext").GetComponent<Text>();
+		m_biggerDragonIcon = m_needBiggerDragonObject.GetComponentInChildren<Image>();
 
 		m_survivalBonusAnim = m_survivalUpdatedObject.GetComponent<ShowHideAnimator>();
 	}
@@ -123,8 +127,9 @@ public class HUDNeutralFeedback : MonoBehaviour {
 	private void ShowBiggerDragon(DragonTier _requiredTier)
 	{
 		// Init text!
-		if(_requiredTier == DragonTier.COUNT) {
+		/*if(_requiredTier == DragonTier.COUNT) {
 			m_biggerSharkText.text = Localization.Localize("TID_FEEDBACK_NEED_BIGGER_DRAGON");
+			m_biggerSharkIcon.enabled = false
 		} else {
 			// [AOC] TEMP!! While we don't use tier icons, use different text colors per tier
 			string colorCode = "";
@@ -143,6 +148,24 @@ public class HUDNeutralFeedback : MonoBehaviour {
 				replacement = "<color=" + colorCode + ">" + replacement + "</color>";
 			}
 			m_biggerSharkText.text = Localization.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", replacement);
+		}*/
+
+		// TODO: we'll add all the icons into a font and we'll print the icons as a character.
+		if(_requiredTier == DragonTier.COUNT) {
+			m_biggerDragonIcon.enabled = false;
+		} else {
+			m_biggerDragonIcon.enabled = true;
+
+			string path = "UI/Menu/Graphics/tiers/";
+			switch(_requiredTier) {
+				case DragonTier.TIER_0: path += "icon_xs";	break;
+				case DragonTier.TIER_1: path += "icon_s";	break;
+				case DragonTier.TIER_2: path += "icon_m";	break;
+				case DragonTier.TIER_3: path += "icon_l";	break;
+				case DragonTier.TIER_4: path += "icon_xl";	break;
+			}
+
+			m_biggerDragonIcon.sprite = Resources.Load<Sprite>(path);
 		}
 
 		// Play the anim!

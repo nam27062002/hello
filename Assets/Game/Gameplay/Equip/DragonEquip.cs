@@ -93,6 +93,17 @@ public class DragonEquip : MonoBehaviour {
 		bodyMat  = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_body");
 		wingsMat = Resources.Load<Material>("Game/Equipable/Skins/" + m_dragonSku + "/" + _name + "_wings");
 
+		// [AOC] HACK!! Older dragons still don't have the proper materials ----
+		// 		 To be removed
+		if(m_dragonSku != "dragon_baby") {
+			Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
+			Material[] materials = renderer.materials;
+			if(materials.Length > 0) materials[0] = bodyMat;
+			if(materials.Length > 1) materials[1] = wingsMat;
+			renderer.materials = materials;
+		}
+		// ---------------------------------------------------------------------
+
 		Transform view = transform.FindChild("view");
 		if ( view != null )
 		{

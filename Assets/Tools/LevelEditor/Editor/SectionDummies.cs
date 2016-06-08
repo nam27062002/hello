@@ -135,7 +135,7 @@ namespace LevelEditor {
 		private void AddNewDummy() {
 			// Check all required parameters
 			// First of all check that we have a selected group to add the preview to
-			Group targetGroup = LevelEditorWindow.instance.sectionGroups.selectedGroup;
+			Group targetGroup = null;/*LevelEditorWindow.instance.sectionGroups.selectedGroup;*/
 			if(targetGroup == null) {
 				LevelEditorWindow.instance.ShowNotification(new GUIContent("A group must be selected first!"));
 				return;
@@ -180,7 +180,7 @@ namespace LevelEditor {
 		/// </summary>
 		private void CreateDragonPreview() {
 			// First of all check that we have a selected group to add the preview to
-			Group targetGroup = LevelEditorWindow.instance.sectionGroups.selectedGroup;
+			Group targetGroup = null;/*LevelEditorWindow.instance.sectionGroups.selectedGroup;*/
 			if(targetGroup == null) {
 				LevelEditorWindow.instance.ShowNotification(new GUIContent("A group must be selected first!"));
 				return;

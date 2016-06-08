@@ -34,7 +34,6 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 		if (m_enabled) {
 			for (int i = 0; i < m_spawners.Count; i++) {
 				m_spawners[i].UpdateTimers();
-				m_spawners[i].Respawn();
 				m_spawners[i].UpdateLogic();
 			}
 		}

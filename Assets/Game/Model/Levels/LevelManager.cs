@@ -108,9 +108,10 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 
 	public static void SetArtSceneActive( string _sku )
 	{
+		#if !UNITY_EDITOR_OSX
 		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
 		Scene scene = SceneManager.GetSceneByName(def.GetAsString("artScene"));
 		SceneManager.SetActiveScene(scene);
-
+		#endif
 	}
 }
