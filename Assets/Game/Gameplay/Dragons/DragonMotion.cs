@@ -57,6 +57,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonControl			m_controls;
 	DragonAnimationEvents 	m_animationEventController;
 	SphereCollider 			m_groundCollider;
+	DragonEatBehaviour		m_eatBehaviour;
 
 
 	// Movement control
@@ -212,6 +213,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_rbody = GetComponent<Rigidbody>();
 		m_groundCollider = GetComponentInChildren<SphereCollider>();
+		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_height = 10f;
 
 		m_targetSpeedMultiplier = 1;
@@ -400,8 +402,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{		
 		float dt = Time.deltaTime;
 		Vector3 dir = m_desiredDirection;
-		// if(m_isPlayingAttackAnim && m_targetTransform != null && m_mouthPoint!= null)	// but if we're biting something, try to track the thing we're biting
+		//if(m_isPlayingAttackAnim && m_targetTransform != null && m_mouthPoint!= null)	// but if we're biting something, try to track the thing we're biting
 		//	dir = (m_targetTransform.position - m_mouthPoint.position);
+		if (m_eatBehaviour.GetAttackTarget() != null)
+		{
+			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
+			dir.Normalize();
+		}
+
 				
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
 
