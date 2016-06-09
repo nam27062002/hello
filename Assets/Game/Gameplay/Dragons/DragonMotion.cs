@@ -421,7 +421,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		float desiredBendY = Mathf.Clamp(localDir.y*2.0f, -1.0f, 1.0f);		// max Y bend is about 45 degrees, so *2.
 		// float currentBendY = m_animControlFish.paramBodyBendY;
 		m_currentBendY = Util.MoveTowardsWithDamping(m_currentBendY, desiredBendY, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("BendBodyY", m_currentBendX);
+		m_animator.SetFloat("BendBodyY", m_currentBendY);
 
 		// update 'body bending' boolean parameter, we use this in the anim state machine
 		// to notify things like straight swim variations that they should break out and return
