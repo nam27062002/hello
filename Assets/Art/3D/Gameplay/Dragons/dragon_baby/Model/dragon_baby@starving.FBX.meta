@@ -37,7 +37,7 @@ ModelImporter:
     400026: Dragon_Tongue_01
     400028: Dragon_Tongue_02
     400030: Dragon_Tongue_03
-    7400000: Take 001
+    7400000: starving
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -59,7 +59,67 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: starving
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Dragon_Hip
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01/Dragon_Tongue_02
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01/Dragon_Tongue_02/Dragon_Tongue_03
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Down_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Up_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_EyeLead_
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Neck1/Dragon_Neck2/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Up_EyeLead
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
