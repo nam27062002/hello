@@ -9,10 +9,23 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public AudioSource m_eatBigSound;
 	public AudioSource m_wingsWindSound;
 	public AudioSource m_wingsStrongFlap;
+	protected Animator m_animator;
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
+		m_animator = GetComponent<Animator>();
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+	}
+
+	private void OnLevelUp(DragonData _data) 
+	{
+		m_animator.SetTrigger("LevelUp");
 	}
 
 	public void OnAttackEvent() {
