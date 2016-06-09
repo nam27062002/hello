@@ -270,6 +270,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
+					m_animator.SetBool("swim", false);
 					m_animator.SetBool("fly down", false);
 				}break;
 				case State.OutterSpace:
@@ -318,7 +319,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					m_animator.SetBool("fly down", true);
+					if ( m_canMoveInsideWater )
+					{
+						m_animator.SetBool("fly", false);
+						m_animator.SetBool("swim", true);
+					}
+					else
+					{
+						m_animator.SetBool("fly down", true);
+					}
 				}break;
 				case State.OutterSpace:
 				{
