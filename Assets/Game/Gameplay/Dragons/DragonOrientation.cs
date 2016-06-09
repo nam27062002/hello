@@ -37,9 +37,6 @@ public class DragonOrientation : Orientation {
 	
 		if(m_state == State.PLAYING) {
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * m_turningSpeed);
-
-			float angle = Quaternion.Angle(m_rotation, m_targetRotation);
-
 		} else if(m_state == State.DYING) {
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, 0.1f);
 			m_targetRotation *= Quaternion.AngleAxis(200f * Time.deltaTime, Vector3.down);

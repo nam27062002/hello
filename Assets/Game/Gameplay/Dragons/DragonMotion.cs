@@ -63,7 +63,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Movement control
 	private Vector3 m_impulse;
 	private Vector3 m_direction;
-	private Vector3 m_desiredDirection;
+	private Quaternion m_desiredRotation;
 	private Vector3 m_angularVelocity;
 	private float m_targetSpeedMultiplier;
 	public float targetSpeedMultiplier
@@ -401,13 +401,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void UpdateBodyBending()
 	{		
 		float dt = Time.deltaTime;
-		Vector3 dir = m_desiredDirection;
+		Vector3 dir = m_desiredRotation * Vector3.right;
 		//if(m_isPlayingAttackAnim && m_targetTransform != null && m_mouthPoint!= null)	// but if we're biting something, try to track the thing we're biting
 		//	dir = (m_targetTransform.position - m_mouthPoint.position);
 		if (m_eatBehaviour.GetAttackTarget() != null)
 		{
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
-			dir.Normalize();
 		}
 
 				
@@ -508,7 +507,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// </summary>
 	private void UpdateMovement() {
 		Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier); 
-		m_desiredDirection = impulse;
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
 			float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
@@ -519,7 +517,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// m_orientation.SetDirection(m_direction);
 		} else {
 			ChangeState(State.Idle);
-			m_desiredDirection = m_direction;
 		}
 
 		m_rbody.velocity = m_impulse;
@@ -621,16 +618,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			Quaternion qPitch = Quaternion.Euler(0.0f, 0.0f, pitch);
 			Quaternion qYaw = Quaternion.Euler(0.0f, yaw, 0.0f);
 			Quaternion qTwist = Quaternion.Euler(twist, 0.0f, 0.0f);
-			Quaternion qDesired = qPitch * qYaw * qTwist;
-			Vector3 eulerRot = qDesired.eulerAngles;		
+			m_desiredRotation = qPitch * qYaw * qTwist;
+			Vector3 eulerRot = m_desiredRotation.eulerAngles;		
 			if (dir.y > 0.25f) {
 				eulerRot.z = Mathf.Min(40f, eulerRot.z);
 			} else if (dir.y < -0.25f) {
 				eulerRot.z = Mathf.Max(300f, eulerRot.z);
 			}
-			qDesired = Quaternion.Euler(eulerRot);
+			m_desiredRotation = Quaternion.Euler(eulerRot);
 
-			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(transform.rotation, qDesired, blendRate);
+			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(transform.rotation, m_desiredRotation, blendRate);
 		}
 		else
 		{
