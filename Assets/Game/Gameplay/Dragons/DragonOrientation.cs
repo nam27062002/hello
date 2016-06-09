@@ -19,9 +19,6 @@ public class DragonOrientation : Orientation {
 	private float angle;
 	private float timer;
 
-	private bool m_turningRight;
-	private bool m_turningLeft;
-
 	private State m_state;
 
 	// Use this for initialization
@@ -42,16 +39,6 @@ public class DragonOrientation : Orientation {
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * m_turningSpeed);
 
 			float angle = Quaternion.Angle(m_rotation, m_targetRotation);
-			if (m_turningRight) {
-				// change direction
-				m_turningRight = angle > 60f;
-			} else if (m_turningLeft) {
-				// change direction
-				m_turningLeft = angle > 60f;
-			}
-			
-			m_animator.SetBool("turn right", m_turningRight);
-			m_animator.SetBool("turn left", m_turningLeft);
 
 		} else if(m_state == State.DYING) {
 			m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, 0.1f);
@@ -85,14 +72,6 @@ public class DragonOrientation : Orientation {
 			eulerRot.z = Mathf.Max(300f, eulerRot.z);
 		}
 		m_targetRotation = Quaternion.Euler(eulerRot);
-
-		if (m_direction.x >= 0f && dir.x < 0f) {
-			m_turningRight = true;
-			m_turningLeft = false;
-		} else if (m_direction.x < 0f && dir.x >= 0f) {
-			m_turningLeft = true;
-			m_turningRight = false;
-		}
 
 		m_direction = dir;
 	}
