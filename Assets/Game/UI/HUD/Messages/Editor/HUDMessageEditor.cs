@@ -27,8 +27,11 @@ public class HUDMessageEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Store a reference of interesting properties for faster access
+	SerializedProperty m_typeProp = null;
 	SerializedProperty m_hideModeProp = null;
 	SerializedProperty m_idleDurationProp = null;
+
+	SerializedProperty m_boostReminderTriggerTimeProp = null;
 
 	SerializedProperty m_onShowProp = null;
 	SerializedProperty m_onHideProp = null;
@@ -41,8 +44,12 @@ public class HUDMessageEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Store a reference of interesting properties for faster access
+		m_typeProp = serializedObject.FindProperty("m_type");
 		m_hideModeProp = serializedObject.FindProperty("m_hideMode");
 		m_idleDurationProp = serializedObject.FindProperty("m_idleDuration");
+
+		m_boostReminderTriggerTimeProp = serializedObject.FindProperty("m_boostReminderTriggerTime");
+
 		m_onShowProp = serializedObject.FindProperty("OnShow");
 		m_onHideProp = serializedObject.FindProperty("OnHide");
 	}
@@ -52,8 +59,12 @@ public class HUDMessageEditor : Editor {
 	/// </summary>
 	private void OnDisable() {
 		// Clear references to properties
+		m_typeProp = null;
 		m_hideModeProp = null;
 		m_idleDurationProp = null;
+
+		m_boostReminderTriggerTimeProp = null;
+
 		m_onShowProp = null;
 		m_onHideProp = null;
 	}
@@ -78,7 +89,17 @@ public class HUDMessageEditor : Editor {
 			EditorGUILayout.PropertyField(m_idleDurationProp);
 		}
 
+		// Custom properties based on type
+		// Add here any types requiring extra setup
+		switch((HUDMessage.Type)m_typeProp.enumValueIndex) {
+			case HUDMessage.Type.BOOST_REMINDER: {
+				EditorGUILayoutExt.Separator();
+				EditorGUILayout.PropertyField(m_boostReminderTriggerTimeProp);
+			} break;
+		}
+
 		// Events
+		EditorGUILayoutExt.Separator();
 		EditorGUILayout.PropertyField(m_onShowProp);
 		EditorGUILayout.PropertyField(m_onHideProp);
 

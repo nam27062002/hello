@@ -83,6 +83,10 @@ public class HUDMessage : MonoBehaviour {
 	[HideInInspector]
 	[SerializeField] private float m_idleDuration = 1f;	// Only applies for TIMER hide mode
 
+	// Custom exposed setup for specific types - editor will decide when to show them
+	[HideInInspector]
+	[SerializeField] private float m_boostReminderTriggerTime = 30f;
+
 	// Events
 	[Space]
 	[HideInInspector] public HUDMessageEvent OnShow = new HUDMessageEvent();
@@ -104,6 +108,9 @@ public class HUDMessage : MonoBehaviour {
 			}
 		}
 	}
+
+	// Custom internal vars for specific types
+	private float m_timeSinceLastBoostReminder = 0f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -138,7 +145,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		/*TODO!!*/;		break;
+			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 		}
 	}
 
@@ -156,7 +163,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		/*TODO!!*/;		break;
+			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 		}
 	}
 
@@ -175,6 +182,20 @@ public class HUDMessage : MonoBehaviour {
 					Hide();
 				}
 			}
+		}
+
+		// Custom actions depending on message type
+		switch(m_type) {
+			case Type.BOOST_REMINDER: {
+				// [AOC] Check!! Only during the first X games? Or for the first tier?
+				if(m_timeSinceLastBoostReminder < m_boostReminderTriggerTime) {
+					m_timeSinceLastBoostReminder += Time.deltaTime;
+					if(m_timeSinceLastBoostReminder >= m_boostReminderTriggerTime) {
+						// Show feedback!
+						Show();
+					}
+				}
+			} break;
 		}
 	}
 
@@ -245,6 +266,14 @@ public class HUDMessage : MonoBehaviour {
 
 		// Notify
 		OnHide.Invoke(this);
+
+		// Custom actions depending on message type
+		switch(m_type) {
+			case Type.BOOST_REMINDER: {
+				// Reset timer
+				m_timeSinceLastBoostReminder = 0f;
+			} break;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -325,5 +354,22 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_chest">The chest that has been collected.</param>
 	private void OnChestCollected(Chest _chest) {
 		Show();
+	}
+
+	/// <summary>
+	/// The player has started/stopped boosting.
+	/// </summary>
+	/// <param name="_toggled">Whether the boost was turned on or off.</param>
+	private void OnBoostToggled(bool _toggled) {
+		// Make sure we're hidden
+		Hide();
+
+		// Disable timer while boosting
+		// Reset timer when stopping
+		if(_toggled) {
+			m_timeSinceLastBoostReminder = m_boostReminderTriggerTime;	// This will stop updating the timer
+		} else {
+			m_timeSinceLastBoostReminder = 0f;
+		}
 	}
 }
