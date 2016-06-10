@@ -20,12 +20,24 @@ using System;
 [RequireComponent(typeof(Animator))]
 public class HUDMultiplier : MonoBehaviour {
 	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	private static readonly string COMBO_SFX_PATH = "audio/sfx/UI/ComboFX/hsx_ui_combo_%U0";
+
+	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
+	// Exposed setup
 	[SerializeField] private Text m_text = null;
 	[SerializeField] private Text m_maskText = null;
 	[SerializeField] private Image m_progressFill = null;
+	[SerializeField] private ParticleSystem m_changePS = null;
+
+	// Other external references
 	private Animator m_anim = null;
+
+	// Internal logic
+	private int m_comboSFXIdx = 0;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -35,6 +47,7 @@ public class HUDMultiplier : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		m_anim = GetComponent<Animator>();
+		m_changePS.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -103,12 +116,27 @@ public class HUDMultiplier : MonoBehaviour {
 		if(m_anim != null) {
 			// If it's the default multiplier, fade out
 			if(_newMultiplier == RewardManager.defaultScoreMultiplier) {
+				// Make sure "in" trigger is consumed
 				m_anim.ResetTrigger("in");
 				m_anim.SetTrigger("out");
+
+				// Reset combo index
+				m_comboSFXIdx = 0;
 			} else {
+				// Make sure "out" trigger is consumed
 				m_anim.ResetTrigger("out");
 				m_anim.SetTrigger("in");
 				m_anim.SetTrigger("changed");
+
+				// Trigger particle effect as well
+				m_changePS.gameObject.SetActive(true);
+				m_changePS.Stop();
+				m_changePS.Play();
+
+				// And sound! ^^
+				m_comboSFXIdx = Mathf.Min(m_comboSFXIdx + 1, 10);	// Increase combo index! Max combo audio available sounds.
+				string audioPath = COMBO_SFX_PATH.Replace("%U0", m_comboSFXIdx.ToString());
+				AudioManager.instance.PlayClip(audioPath);
 			}
 		}
 	}
