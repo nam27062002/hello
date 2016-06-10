@@ -42,6 +42,7 @@ GameObject:
   - 222: {fileID: 22296774}
   - 114: {fileID: 11429130}
   - 95: {fileID: 9547288}
+  - 114: {fileID: 11457682}
   m_Layer: 5
   m_Name: Animation_Bubbles_2
   m_TagString: Untagged
@@ -645,6 +646,7 @@ GameObject:
   - 222: {fileID: 22245228}
   - 114: {fileID: 11401900}
   - 95: {fileID: 9566296}
+  - 114: {fileID: 11402418}
   m_Layer: 5
   m_Name: Animation_Bubbles
   m_TagString: Untagged
@@ -2096,6 +2098,7 @@ GameObject:
   - 222: {fileID: 22216446}
   - 114: {fileID: 11470806}
   - 95: {fileID: 9516692}
+  - 114: {fileID: 11415120}
   m_Layer: 5
   m_Name: Animation_Bubbles_3
   m_TagString: Untagged
@@ -2517,6 +2520,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11402418
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecd31d809c7874772aab4efd37e0f21e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_delayRandomInterval:
+    min: 2
+    max: 5
 --- !u!114 &11402804
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3090,6 +3107,20 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &11415120
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecd31d809c7874772aab4efd37e0f21e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_delayRandomInterval:
+    min: 2
+    max: 5
 --- !u!114 &11415222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4893,6 +4924,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11457682
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 102050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecd31d809c7874772aab4efd37e0f21e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_delayRandomInterval:
+    min: 2
+    max: 5
 --- !u!114 &11457790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9547,7 +9592,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -77.7, y: -4.7}
+  m_AnchoredPosition: {x: -75, y: -4.3}
   m_SizeDelta: {x: 71, y: 43}
   m_Pivot: {x: 1, y: 0}
 --- !u!224 &22492174

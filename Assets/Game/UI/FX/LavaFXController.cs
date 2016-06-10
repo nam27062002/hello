@@ -40,10 +40,12 @@ public class LavaFXController : MonoBehaviour {
 		// Get external references
 		m_anim = GetComponent<Animator>();
 		Debug.Assert(m_anim != null, "Required component missing!");
+	}
 
-		// Subscribe to events
-
-
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
 		// Launch an initial delay
 		StartCoroutine(TriggerAfterDelay(m_delayRandomInterval.GetRandom(), "start"));
 	}
