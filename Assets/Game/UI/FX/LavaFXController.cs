@@ -25,10 +25,11 @@ public class LavaFXController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private Range m_delayRandomInterval = new Range(0f, 1f);
+	[SerializeField] private Range m_delayRandomInterval = new Range(2f, 5f);
 
 	// Internal
 	private Animator m_anim = null;
+	private float m_timer = 0f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -47,36 +48,25 @@ public class LavaFXController : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Launch an initial delay
-		StartCoroutine(TriggerAfterDelay(m_delayRandomInterval.GetRandom(), "start"));
+		m_timer = m_delayRandomInterval.GetRandom();
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Enables this game object after a given delay.
+	/// Called every frame.
 	/// </summary>
-	/// <returns>Coroutine standard return.</returns>
-	/// <param name="_delay">The delay, in seconds.</param>
-	/// <param name="_trigger">The trigger to be sent to the animator.</param>
-	private IEnumerator TriggerAfterDelay(float _delay, string _trigger) {
-		// Wait for delay
-		yield return new WaitForSeconds(_delay);
+	private void Update() {
+		// Update timer
+		if(m_timer > 0f) {
+			m_timer -= Time.deltaTime;
+			if(m_timer <= 0f) {
+				// Timer finished! Launch animation and program next one
+				m_anim.SetTrigger("start");
 
-		// Launch animation and program next one
-		if(m_anim != null) {
-			// Launch trigger
-			m_anim.SetTrigger(_trigger);
-
-			// Program next anim
-			// Take in account anim's duration
-			float animLength = m_anim.GetCurrentAnimatorStateInfo(0).length;
-			Debug.Log(animLength);
-			StartCoroutine(TriggerAfterDelay(animLength + m_delayRandomInterval.GetRandom(), _trigger));
+				// Program next anim trigger
+				// Take in account anim's duration
+				float animLength = m_anim.GetCurrentAnimatorStateInfo(0).length;
+				m_timer = animLength + m_delayRandomInterval.GetRandom();
+			}
 		}
 	}
-
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 }
