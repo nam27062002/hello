@@ -1,4 +1,4 @@
-﻿// AOCQuickTest.cs
+// AOCQuickTest.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on DD/MM/2015.
@@ -34,7 +34,6 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -50,12 +49,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	void Start() {
-		// Load and pose the dragon - will override any existing dragon
-		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-		if(dragonLoader != null) {
-			dragonLoader.LoadDragon("dragon_crocodile");
-			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
-		}
+		
 	}
 	
 	/// <summary>
@@ -65,26 +59,11 @@ public class AOCQuickTest : MonoBehaviour {
 		
 	}
 
-	IEnumerator DelayedDragonLoad() {
-		yield return new WaitForSeconds(5);
-		// Load and pose the dragon - will override any existing dragon
-		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-		if(dragonLoader != null) {
-			dragonLoader.LoadDragon("dragon_crocodile");
-			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
-		}
-	}
-
 	/// <summary>
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		// Load and pose the dragon - will override any existing dragon
-		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
-		if(dragonLoader != null) {
-			dragonLoader.LoadDragon("dragon_crocodile");
-			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
-		}
+		
 	}
 
 	/// <summary>

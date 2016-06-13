@@ -271,6 +271,7 @@ public abstract class AttackBehaviour : Initializable {
 
 					m_motion.Stop();
 					m_timer = 0;
+					m_attackCount = 0;
 					break;
 				case State.BeingHeld:
 				{

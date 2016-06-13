@@ -109,10 +109,10 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	public static void SetArtSceneActive( string _sku )
 	{
 		// [AOC] For some reason, the lightning settings of the Art scene makes the OSX Editor to crash
-		if(Application.platform == RuntimePlatform.OSXEditor) return;
-
+		#if !UNITY_EDITOR_OSX
 		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
 		Scene scene = SceneManager.GetSceneByName(def.GetAsString("artScene"));
 		SceneManager.SetActiveScene(scene);
+		#endif
 	}
 }

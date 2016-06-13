@@ -32,16 +32,22 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected EdibleBehaviour m_holdingPrey = null;
 	protected Transform m_holdTransform = null;
 
+	protected Transform m_attackTarget = null;
+	protected float m_attackTimer = 0;
+
+
 	private Transform m_suction;
 	private Transform m_mouth;
+	public Transform mouth
+	{
+		get{ return m_mouth; }
+	}
 	private Transform m_head;
 	protected Animator m_animator;
 
 	protected MotionInterface m_motion;
 
 	private List<GameObject> m_bloodEmitter;
-
-	bool m_almostEat = false;
 
 	public List<string> m_burpSounds = new List<string>();
 	// public AudioSource m_burpAudio;
@@ -128,31 +134,55 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update() 
 	{
-		if ( m_noAttackTime > 0 )
+		if (m_prey.Count > 0)
 		{
-			m_noAttackTime -= Time.deltaTime;
+			Chew();
 		}
 
-		// if not holding
-		if (m_holdingPrey == null && m_noAttackTime <= 0)
+		if ( m_attackTarget != null )
 		{
-			FindSomethingToEat( m_prey.Count <= 0 && m_canHold);
+			m_attackTimer -= Time.deltaTime;
+			if ( m_attackTimer <= 0 )
+			{
+				// Bite kill!
+				FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
+				m_attackTarget = null;
+
+				if ( m_holdingPrey == null && m_prey.Count <= 0 )
+				{
+					m_animator.SetBool("eat", false);
+				}
+
+				if (m_holdingPrey == null)
+					TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+			}
 		}
 		else
 		{
-			if ( m_holdingPrey != null )
-				UpdateHoldingPrey();	
-		}
+			if ( m_noAttackTime > 0 )
+			{
+				m_noAttackTime -= Time.deltaTime;
+			}
 
-		if (m_prey.Count > 0) 
-		{	
-			Chew();
+			if ( m_holdingPrey != null )
+			{
+				UpdateHoldingPrey();
+			}
+			else 
+			{
+				if (m_noAttackTime <= 0)	// no attack time y no estoy intentando comerme algo? y si ya estoy comiendo? empiezo un nuevo bite?
+					TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+				
+			}
 		}
 
 		UpdateBlood();
 
-		m_animator.SetBool("almostEat", m_almostEat);
-		m_almostEat = false;
+	}
+
+	public Transform GetAttackTarget()
+	{
+		return m_attackTarget;
 	}
 
 	protected void Burp()
@@ -162,10 +192,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 			string name = m_burpSounds[ Random.Range( 0, m_burpSounds.Count ) ];
 			AudioManager.instance.PlayClip(name);
 		}
-	}
-
-	public void AlmostEat(EdibleBehaviour _prey) {
-		m_almostEat = true;
 	}
 
 	private void Eat(EdibleBehaviour _prey) {
@@ -291,6 +317,38 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private void Swallow(EdibleBehaviour _prey) {
 		_prey.OnSwallow( m_mouth );
+	}
+
+	private void TargetSomethingToEat()
+	{
+		float eatDistance = m_eatDistance * transform.localScale.x ;
+		if (DebugSettings.eatDistancePowerUp) {
+			eatDistance *= 2;
+		}
+		eatDistance *= 2;
+
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
+		for (int e = 0; e < preys.Length; e++) {
+			Entity entity = preys[e];
+			if (entity.isEdible) 
+			{
+				if (entity.edibleFromTier <= m_tier || ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )) 	// if we find a prey we can eat
+				{
+					// Start bite attempt
+					Vector3 heading = (entity.transform.position - m_mouth.position);
+					float dot = Vector3.Dot(heading, m_motion.direction);
+					if ( dot > 0)
+					{
+						m_attackTarget = entity.transform;
+						m_attackTimer = 0.2f;
+
+						// Start attack animation
+						m_animator.SetBool("eat", true);
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	private void FindSomethingToEat( bool _canHold = true ) 

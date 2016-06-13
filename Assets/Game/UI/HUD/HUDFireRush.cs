@@ -62,4 +62,8 @@ public class HUDFireRush : MonoBehaviour {
 			DOTween.Restart("fireRushIn");
 		}
 	}
+
+	public void TEST_FIRE_RUSH_FX() {
+		DOTween.Restart("fireRushIn");
+	}
 }

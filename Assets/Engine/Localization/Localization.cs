@@ -262,10 +262,10 @@ public static class Localization
 
 		string val;
 		if (m_dictionary.TryGetValue(key, out val)) {
-			// [AOC] If translation is empty (probably not yet translated), return tid instead
+			// [AOC] If translation is empty (probably not yet translated), return tid instead (with a mark)
 			if(string.IsNullOrEmpty(val)) {
 				Debug.LogWarning(key + " not yet translated to current language (" + languageSku + ")");
-				return key;
+				return "#" + key;
 			}
 			return val;
 		}
