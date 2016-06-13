@@ -42,7 +42,9 @@ public class HUDMessage : MonoBehaviour {
 		NEED_BIGGER_DRAGON,
 		MISSION_COMPLETED,
 		CHEST_FOUND,
-		BOOST_REMINDER
+		BOOST_REMINDER,
+		FIRE_RUSH,
+		MEGA_FIRE_RUSH
 	}
 
 	// How to react with consecutive triggers
@@ -146,6 +148,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
+			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 		}
 	}
 
@@ -164,6 +168,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
+			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 		}
 	}
 
@@ -371,5 +377,15 @@ public class HUDMessage : MonoBehaviour {
 		} else {
 			m_timeSinceLastBoostReminder = 0f;
 		}
+	}
+
+	/// <summary>
+	/// Fire rush has been toggled.
+	/// </summary>
+	/// <param name="_active">Whether the fury rush has been activated or not.</param>
+	/// <param name="_type">The type of fire rush that was toggled.</param>
+	private void OnFireRushToggled(bool _active, DragonBreathBehaviour.Type _type) {
+		// Just trigger the animation
+		if(_active) Show();
 	}
 }
