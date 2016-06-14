@@ -111,8 +111,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Transform m_head;
 	private Transform m_cameraLookAt;
 	private Transform m_transform;
-	private float m_currentBendX;
-	private float m_currentBendY;
+
+	private Vector2 m_currentFrontBend;
+	private Vector2 m_currentBackBend;
 
 	// Parabolic movement
 	private float m_parabolicMovementValue = 10;
@@ -219,8 +220,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_targetSpeedMultiplier = 1;
 
 		m_transform = transform;
-		m_currentBendX = 0;
-		m_currentBendY = 0;
+		m_currentFrontBend = Vector2.zero;
+		m_currentBackBend = Vector2.zero;
 	}
 
 	/// <summary>
@@ -411,39 +412,43 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{		
 		float dt = Time.deltaTime;
 		Vector3 dir = m_desiredRotation * Vector3.right;
-		//if(m_isPlayingAttackAnim && m_targetTransform != null && m_mouthPoint!= null)	// but if we're biting something, try to track the thing we're biting
-		//	dir = (m_targetTransform.position - m_mouthPoint.position);
+		float backMultiplier = 1;
+
+		if (targetSpeedMultiplier > 1)// if boost active
+		{
+			backMultiplier = 0.35f;
+		}
+
 		if (m_eatBehaviour.GetAttackTarget() != null)
 		{
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
+			backMultiplier = 0.35f;
 		}
 
-				
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
 
 		float blendRate = 3.0f;	// todo: blend @ slower rate when stopped?
 		float blendDampingRange = 0.2f;
 
-		float newBendX = 0.0f;
-		float newBendY = 0.0f;
-
 
 		float desiredBendX = Mathf.Clamp(-localDir.z*3.0f, -1.0f, 1.0f);	// max X bend is about 30 degrees, so *3
-		// float currentBendX = m_animControlFish.paramBodyBendX;
-		m_currentBendX = Util.MoveTowardsWithDamping(m_currentBendX, desiredBendX, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("BendBodyX", m_currentBendX);
-		
+		m_currentFrontBend.x = Util.MoveTowardsWithDamping(m_currentFrontBend.x, desiredBendX, blendRate*dt, blendDampingRange);
+		m_animator.SetFloat("BendFrontX", m_currentFrontBend.x);
+		m_currentBackBend.x = Util.MoveTowardsWithDamping(m_currentBackBend.x, desiredBendX * backMultiplier, blendRate*dt, blendDampingRange);
+		m_animator.SetFloat("BendBackX", m_currentBackBend.x);
+
 
 		float desiredBendY = Mathf.Clamp(localDir.y*2.0f, -1.0f, 1.0f);		// max Y bend is about 45 degrees, so *2.
-		// float currentBendY = m_animControlFish.paramBodyBendY;
-		m_currentBendY = Util.MoveTowardsWithDamping(m_currentBendY, desiredBendY, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("BendBodyY", m_currentBendY);
+		m_currentFrontBend.y = Util.MoveTowardsWithDamping(m_currentFrontBend.y, desiredBendY, blendRate*dt, blendDampingRange);
+		m_animator.SetFloat("BendFrontY", m_currentFrontBend.y);
+		m_currentBackBend.y = Util.MoveTowardsWithDamping(m_currentBackBend.y, desiredBendY * backMultiplier, blendRate*dt, blendDampingRange);
+		m_animator.SetFloat("BendBackY", m_currentBackBend.y);
 
 		// update 'body bending' boolean parameter, we use this in the anim state machine
 		// to notify things like straight swim variations that they should break out and return
 		// to normal directional swim
 		float m_isBendingThreshold = 0.1f;
-		float maxBend = Mathf.Max(Mathf.Abs(newBendX), Mathf.Abs(newBendY));
+		float maxBend = Mathf.Max(Mathf.Abs(m_currentFrontBend.x), Mathf.Abs(m_currentFrontBend.y));
 		bool isBending = (maxBend > m_isBendingThreshold);
 		m_animator.SetBool("Bend", isBending);
 		
