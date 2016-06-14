@@ -282,6 +282,20 @@ public class HUDMessage : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Helper method to control particle systems from animations.
+	/// </summary>
+	/// <param name="_psName">The name of the particle system to be restarted.</param>
+	private void RestartParticleSystem(string _psName) {
+		// Get target particle system
+		ParticleSystem ps = this.FindComponentRecursive<ParticleSystem>(_psName);
+		if(ps == null) return;
+
+		// Restart effect
+		ps.Stop();
+		ps.Play();
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------///// <summary>
