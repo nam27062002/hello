@@ -304,8 +304,8 @@ public class HUDStatBar : MonoBehaviour {
 						RectTransform rt = m_icon.GetComponent<RectTransform>();
 
 						extraRt.sizeDelta = rt.sizeDelta;
-						extraRt.localPosition = rt.position + Vector3.right * (rt.rect.width * 0.2f * (m_extraIcons.Count + 1));
 						extraRt.localScale = rt.localScale;
+						extraRt.localPosition = rt.localPosition + Vector3.right * (rt.rect.width * 0.2f * (m_extraIcons.Count + 1));
 						// extraRt.offsetMax.y = 0;
 
 						Animator anim = extraIcon.GetComponent<Animator>();

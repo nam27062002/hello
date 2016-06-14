@@ -76,6 +76,20 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_scoreMultipliers[0]; }
 	}
 
+	// Progress to the next multiplier
+	public static float scoreMultiplierProgress {
+		get { 
+			// Skip last multiplier!
+			if(instance.m_currentScoreMultiplier < instance.m_scoreMultipliers.Length - 1) {
+				return Mathf.InverseLerp(
+					(float)currentScoreMultiplier.requiredKillStreak, 
+					(float)instance.m_scoreMultipliers[instance.m_currentScoreMultiplier + 1].requiredKillStreak, 
+					(float)instance.m_scoreMultiplierStreak);
+			}
+			return 0f;
+		}
+	}
+
 	// Time to end the current killing streak
 	[SerializeField] private float m_scoreMultiplierTimer = -1;
 	public static float scoreMultiplierTimer {
