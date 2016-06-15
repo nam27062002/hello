@@ -160,7 +160,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
 				m_attackTarget = null;
 
-				if ( m_holdingPrey == null && m_prey.Count <= 0 )
+				if ( m_prey.Count <= 0 )
 				{
 					m_animator.SetBool("eat", false);
 				}
@@ -262,7 +262,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		_prey.OnHoldBy(this);
 		m_holdingPrey = _prey;
 		m_holdPreyTimer = m_holdDuration;
-		m_animator.SetBool("eat", true);
+		m_animator.SetBool("eatHold", true);
 
 	}
 
@@ -321,7 +321,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		m_holdingPrey = null;
 		m_noAttackTime = m_holdStunTime;
-		m_animator.SetBool("eat", false);
+		m_animator.SetBool("eatHold", false);
 
 		// Set back default speed
 		m_animator.SetFloat("eatingSpeed", 1);
