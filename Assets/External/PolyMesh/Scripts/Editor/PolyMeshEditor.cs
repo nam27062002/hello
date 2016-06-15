@@ -165,6 +165,66 @@ public class PolyMeshEditor : Editor {
 			}
 		}
 
+		// Scale fixer (single polymesh)
+		/*if(GUILayout.Button("Fix Scale", GUILayout.Height(40f))) {
+			// Scale mesh keypoints so they keep the position when the mesh has scale 1
+			Vector3 fixScaleFactor = polyMesh.transform.localScale;
+			for(int i = 0; i < m_keyPoints.Count; i++) {
+				// For some reason scaling directly the list entry doesn't work :/
+				Vector3 v = m_keyPoints[i];
+				v.Scale(fixScaleFactor);
+				m_keyPoints[i] = v;
+			}
+			UpdatePoly(false, true);
+
+			// Set the mesh scale to 1
+			RecordUndo();
+			polyMesh.transform.localScale = Vector3.one;
+		}
+
+		// Scale fixer (all scene polymeshes)
+		if(GUILayout.Button("Fix scales on all scene!", GUILayout.Height(40f))) {
+			// Aux vars
+			Vector3 v;
+
+			// Find all polymeshes in the scene
+			PolyMesh[] polymeshes = GameObject.FindObjectsOfType<PolyMesh>();
+			foreach(PolyMesh p in polymeshes) {
+				// Skip if mesh scale is already 1
+				if(p.transform.localScale == Vector3.one) continue;
+				Debug.Log("Fixing " + p.name + "...");
+
+				// Undo
+				RecordUndo(p);
+
+				// Scale mesh keypoints so they keep the position when the mesh has scale 1
+				Vector3 fixScaleFactor = p.transform.localScale;
+				for(int i = 0; i < p.keyPoints.Count; i++) {
+					// Fix keypoint
+					// For some reason scaling directly the list entry doesn't work :/
+					v = p.keyPoints[i];
+					v.Scale(fixScaleFactor);
+					p.keyPoints[i] = v;
+				}
+
+				// Special case for curve meshes
+				for(int i = 0; i < p.keyPoints.Count; i++) {
+					if(!p.isCurve[i]) {
+						p.curvePoints[i] = Vector3.Lerp(p.keyPoints[i], p.keyPoints[(i + 1) % p.keyPoints.Count], 0.5f);
+					}
+				}
+
+				// Rebuild mesh!
+				p.BuildMesh();
+
+				// Reset mesh scale to 1
+				RecordUndo(p);
+				p.transform.localScale = Vector3.one;
+
+				Debug.Log("Done!");
+			}
+		}*/
+
 		EditorGUILayoutExt.Separator();
 
 		// Mesh settings
@@ -570,20 +630,26 @@ public class PolyMeshEditor : Editor {
 	/// <summary>
 	/// Records the undo.
 	/// </summary>
-	private void RecordUndo() {
+	private void RecordUndo(Object _target = null) {
+		// [AOC] Use default target if none specified
+		if(_target == null) _target = target;
+
 #if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
-		Undo.RecordObject(target, "PolyMesh Changed");
+		Undo.RecordObject(_target, "PolyMesh Changed");
 #else
-		Undo.RegisterUndo(target, "PolyMesh Changed");
+		Undo.RegisterUndo(_target, "PolyMesh Changed");
 #endif
 	}
 
 	/// <summary>
 	/// Records the deep undo.
 	/// </summary>
-	private void RecordDeepUndo() {
+	private void RecordDeepUndo(Object _target = null) {
+		// [AOC] Use default target if none specified
+		if(_target == null) _target = target;
+
 #if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
-		Undo.RegisterFullObjectHierarchyUndo(target, "PolyMesh Changed");
+		Undo.RegisterFullObjectHierarchyUndo(_target, "PolyMesh Changed");
 #else
 		Undo.RegisterSceneUndo("PolyMesh Changed");
 #endif
