@@ -324,7 +324,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_animator.SetBool("eatHold", false);
 
 		// Set back default speed
-		m_animator.SetFloat("eatingSpeed", 1);
+
+		// Check if boosting!!
+		if (m_boost.IsBoostActive())
+		{
+			m_animator.SetFloat("eatingSpeed", m_boost.boostMultiplier);
+		}
+		else
+		{
+			m_animator.SetFloat("eatingSpeed", 1);
+		}
 	}
 
 	private void Swallow(EdibleBehaviour _prey) {
