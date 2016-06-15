@@ -11,6 +11,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public AudioSource m_wingsStrongFlap;
 	protected Animator m_animator;
 
+
+	public delegate void OnEatEvent();
+	public OnEatEvent onEatEvent; 
+
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
@@ -75,7 +79,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	public void EatEvent()
+	public void EatStartEvent()
 	{
 		if ( m_eatSound != null )
 		{
@@ -84,13 +88,19 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	public void EatBigEvent()
+	public void EatBigStartEvent()
 	{
 		if ( m_eatBigSound != null )
 		{
 			m_eatBigSound.pitch = Random.Range( 0.75f, 1.25f);
 			m_eatBigSound.Play();
 		}
+	}
+
+	public void EatEvent()
+	{
+		if (onEatEvent != null)
+			onEatEvent();
 	}
 
 

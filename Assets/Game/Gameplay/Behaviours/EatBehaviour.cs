@@ -79,6 +79,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private const float m_angleSpeedMultiplier = 1.2f;
 	private const float m_speedRadiusMultiplier = 0.1f;
 
+	protected bool m_waitJawsEvent = false;
 
 	//-----------------------------------------------
 	// Methods
@@ -154,7 +155,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_attackTarget != null )
 		{
 			m_attackTimer -= Time.deltaTime;
-			if ( m_attackTimer <= 0 )
+			if ( m_attackTimer <= 0 && !m_waitJawsEvent)
 			{
 				// Bite kill!
 				FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
@@ -190,6 +191,21 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		UpdateBlood();
 
+	}
+
+	public void OnJawsClose()
+	{
+		// Bite kill!
+		FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
+		m_attackTarget = null;
+
+		if ( m_prey.Count <= 0 )
+		{
+			m_animator.SetBool("eat", false);
+		}
+
+		if (m_holdingPrey == null)
+			TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 	}
 
 	public Transform GetAttackTarget()
