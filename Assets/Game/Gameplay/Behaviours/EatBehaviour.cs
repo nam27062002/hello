@@ -359,7 +359,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 					if ( dot > 0)
 					{
 						// Check arc
-						if (MathUtils.TestCircleVsArc( m_mouth.position, arcAngle, eatingDistance, m_motion.direction, entity.circleArea.center, entity.circleArea.radius))
+						Vector3 circleCenter = entity.circleArea.center;
+						circleCenter.z = 0;
+						if (MathUtils.TestCircleVsArc( m_mouth.position, arcAngle, eatingDistance, m_motion.direction, circleCenter, entity.circleArea.radius))
 						{
 							m_attackTarget = entity.transform;
 							m_attackTimer = 0.2f;
