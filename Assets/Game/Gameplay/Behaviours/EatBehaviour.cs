@@ -75,7 +75,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private const float m_maxAngularSpeed = 12;
 	private const float m_minArcAngle = 60;
 	private const float m_maxArcAngle = 180;
-	private const float m_eatDetectionRadiusMultiplier = 2;
+	private const float m_eatDetectionRadiusMultiplier = 4;
 	private const float m_angleSpeedMultiplier = 1.2f;
 	private const float m_speedRadiusMultiplier = 0.1f;
 
@@ -333,35 +333,38 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private void TargetSomethingToEat()
 	{
-		float eatingDistance = m_eatDistance * transform.localScale.x ;
+		float arcRadius = m_eatDistance * transform.localScale.x ;
 		if (DebugSettings.eatDistancePowerUp) {
-			eatingDistance *= 2;
+			arcRadius *= 2;
 		}
 
 		float speed = m_motion.velocity.magnitude;
 		float angularSpeed = m_motion.angularVelocity.magnitude;
 
-		eatingDistance *= m_eatDetectionRadiusMultiplier;
-		eatingDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatingDistance, eatingDistance * m_angleSpeedMultiplier);
-		eatingDistance = eatingDistance + speed * m_speedRadiusMultiplier;
-		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
+		float eatRadius = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, arcRadius, arcRadius * m_angleSpeedMultiplier);
+		arcRadius = eatRadius * m_eatDetectionRadiusMultiplier;
+		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
 
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatingDistance);
-		for (int e = 0; e < preys.Length; e++) {
+		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
+		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * eatRadius);
+
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(arcOrigin, arcRadius);
+		for (int e = 0; e < preys.Length; e++) 
+		{
 			Entity entity = preys[e];
 			if (entity.isEdible) 
 			{
 				if (entity.edibleFromTier <= m_tier || ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )) 	// if we find a prey we can eat
 				{
 					// Start bite attempt
-					Vector3 heading = (entity.transform.position - m_mouth.position);
+					Vector3 heading = (entity.transform.position - arcOrigin);
 					float dot = Vector3.Dot(heading, m_motion.direction);
 					if ( dot > 0)
 					{
 						// Check arc
 						Vector3 circleCenter = entity.circleArea.center;
 						circleCenter.z = 0;
-						if (MathUtils.TestCircleVsArc( m_mouth.position, arcAngle, eatingDistance, m_motion.direction, circleCenter, entity.circleArea.radius))
+						if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, m_motion.direction, circleCenter, entity.circleArea.radius))
 						{
 							m_attackTarget = entity.transform;
 							m_attackTimer = 0.2f;
@@ -382,6 +385,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (DebugSettings.eatDistancePowerUp) {
 			eatDistance *= 2;
 		}
+
+		float angularSpeed = m_motion.angularVelocity.magnitude;
+		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
 		EdibleBehaviour preyToHold = null;
 		List<EdibleBehaviour> preysToEat = new List<EdibleBehaviour>();
@@ -515,36 +521,37 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_motion == null )
 			return;
 
-		// Eating Distance
-		float eatingDistance = m_eatDistance * transform.localScale.x;
-		if (DebugSettings.eatDistancePowerUp) {
-			eatingDistance *= 2;
-		}
-		Gizmos.color = Color.white;
-		Gizmos.DrawWireSphere(m_suction.position, eatingDistance);
-
-
 		float speed = m_motion.velocity.magnitude;
 		float angularSpeed = m_motion.angularVelocity.magnitude;
 
+		// Eating Distance
+		float eatRadius = m_eatDistance * transform.localScale.x;
+		if (DebugSettings.eatDistancePowerUp) {
+			eatRadius *= 2;
+		}
+		eatRadius = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatRadius, eatRadius * m_angleSpeedMultiplier);
+
+		Gizmos.color = Color.white;
+		Gizmos.DrawWireSphere(m_suction.position, eatRadius);
+
 		// Eat Detect Distance
-		eatingDistance *= m_eatDetectionRadiusMultiplier;
-		eatingDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatingDistance, eatingDistance * m_angleSpeedMultiplier);
-		eatingDistance = eatingDistance + speed * m_speedRadiusMultiplier;
+		float arcRadius = eatRadius * m_eatDetectionRadiusMultiplier;
+		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
 
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
+		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * eatRadius);
 
 		// Draw Arc
 		Gizmos.color = Color.yellow;
-		Gizmos.DrawWireSphere(m_suction.position, eatingDistance);
+		Gizmos.DrawWireSphere(arcOrigin, arcRadius);
 		Gizmos.color = Color.red;
-		Debug.DrawLine(m_suction.position, m_suction.position + (Vector3)(m_motion.direction * eatingDistance));
+		Debug.DrawLine(arcOrigin, arcOrigin + (Vector3)(m_motion.direction * arcRadius));
 
 		Vector2 dUp = m_motion.direction.RotateDegrees(arcAngle/2.0f);
-		Debug.DrawLine( m_suction.position, m_suction.position + (Vector3)(dUp * eatingDistance) );
+		Debug.DrawLine( arcOrigin, arcOrigin + (Vector3)(dUp * arcRadius) );
 		Vector2 dDown = m_motion.direction.RotateDegrees(-arcAngle/2.0f);
-		Debug.DrawLine( m_suction.position, m_suction.position + (Vector3)(dDown * eatingDistance) );
+		Debug.DrawLine( arcOrigin, arcOrigin + (Vector3)(dDown * arcRadius) );
 
 	}
 }
