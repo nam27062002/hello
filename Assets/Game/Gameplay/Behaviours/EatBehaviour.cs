@@ -68,6 +68,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected float m_holdDuration;
 
 	protected DragonBoostBehaviour m_boost;
+
+	// Arc detection values
+
+	private const float m_minAngularSpeed = 0;
+	private const float m_maxAngularSpeed = 12;
+	private const float m_minArcAngle = 60;
+	private const float m_maxArcAngle = 180;
+	private const float m_eatDetectionRadiusMultiplier = 2;
+	private const float m_angleSpeedMultiplier = 1.2f;
+	private const float m_speedRadiusMultiplier = 0.1f;
+
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -321,13 +333,20 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private void TargetSomethingToEat()
 	{
-		float eatDistance = m_eatDistance * transform.localScale.x ;
+		float eatingDistance = m_eatDistance * transform.localScale.x ;
 		if (DebugSettings.eatDistancePowerUp) {
-			eatDistance *= 2;
+			eatingDistance *= 2;
 		}
-		eatDistance *= 2;
 
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
+		float speed = m_motion.velocity.magnitude;
+		float angularSpeed = m_motion.angularVelocity.magnitude;
+
+		eatingDistance *= m_eatDetectionRadiusMultiplier;
+		eatingDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatingDistance, eatingDistance * m_angleSpeedMultiplier);
+		eatingDistance = eatingDistance + speed * m_speedRadiusMultiplier;
+		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
+
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatingDistance);
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
 			if (entity.isEdible) 
@@ -339,11 +358,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 					float dot = Vector3.Dot(heading, m_motion.direction);
 					if ( dot > 0)
 					{
-						m_attackTarget = entity.transform;
-						m_attackTimer = 0.2f;
+						// Check arc
+						if (MathUtils.TestCircleVsArc( m_mouth.position, arcAngle, eatingDistance, m_motion.direction, entity.circleArea.center, entity.circleArea.radius))
+						{
+							m_attackTarget = entity.transform;
+							m_attackTimer = 0.2f;
 
-						// Start attack animation
-						m_animator.SetBool("eat", true);
+							// Start attack animation
+							m_animator.SetBool("eat", true);
+						}
 					}
 					break;
 				}
@@ -487,7 +510,39 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (m_suction == null) {
 			GetMouth();
 		}
+		if ( m_motion == null )
+			return;
 
-		Gizmos.DrawWireSphere(m_suction.position, m_eatDistance * transform.localScale.x);
+		// Eating Distance
+		float eatingDistance = m_eatDistance * transform.localScale.x;
+		if (DebugSettings.eatDistancePowerUp) {
+			eatingDistance *= 2;
+		}
+		Gizmos.color = Color.white;
+		Gizmos.DrawWireSphere(m_suction.position, eatingDistance);
+
+
+		float speed = m_motion.velocity.magnitude;
+		float angularSpeed = m_motion.angularVelocity.magnitude;
+
+		// Eat Detect Distance
+		eatingDistance *= m_eatDetectionRadiusMultiplier;
+		eatingDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatingDistance, eatingDistance * m_angleSpeedMultiplier);
+		eatingDistance = eatingDistance + speed * m_speedRadiusMultiplier;
+
+		// Eating arc
+		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
+
+		// Draw Arc
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawWireSphere(m_suction.position, eatingDistance);
+		Gizmos.color = Color.red;
+		Debug.DrawLine(m_suction.position, m_suction.position + (Vector3)(m_motion.direction * eatingDistance));
+
+		Vector2 dUp = m_motion.direction.RotateDegrees(arcAngle/2.0f);
+		Debug.DrawLine( m_suction.position, m_suction.position + (Vector3)(dUp * eatingDistance) );
+		Vector2 dDown = m_motion.direction.RotateDegrees(-arcAngle/2.0f);
+		Debug.DrawLine( m_suction.position, m_suction.position + (Vector3)(dDown * eatingDistance) );
+
 	}
 }

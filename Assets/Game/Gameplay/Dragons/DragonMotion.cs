@@ -728,7 +728,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public Vector2 velocity {
 		get { return m_rbody.velocity; }
 	}
-	
+
+	public Vector2 angularVelocity{
+		get  { return m_rbody.angularVelocity; }
+	}
+
 	// current speed
 	public float maxSpeed {
 		get { return m_speedValue * m_currentSpeedMultiplier; }
