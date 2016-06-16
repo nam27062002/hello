@@ -61,14 +61,14 @@ SubShader {
 				fixed4 col = tex2D(_MainTex, i.texcoord);
 
 				fixed burnedFactor = tex2D(_BurnMask, i.texcoord).r - _BurnLevel;
-				if (burnedFactor <= -0.5)
+				if (burnedFactor <= -0.7)
 				{
-					fixed delta = 1 - (burnedFactor+0.5) / -0.5f;
+					fixed delta = 1 - (burnedFactor+0.7) / -0.3f;
 					col = col * fixed4( delta, 0, 0, 1 );	
 				}
 				else if ( burnedFactor < 0 )
 				{
-					fixed delta = 1 - burnedFactor / -0.5f;
+					fixed delta = 1 - burnedFactor / -0.7f;
 					col = col * fixed4( 1, delta, delta, 1 );
 				}
 

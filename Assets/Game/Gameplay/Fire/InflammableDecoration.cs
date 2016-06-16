@@ -152,7 +152,7 @@ public class InflammableDecoration : Initializable {
 				}
 
 				// Crumble and dissolve time
-				m_timer.Start(5f);
+				m_timer.Start(m_fireNodes[0].burningTime + m_fireNodes[0].burningTime * 0.4f);
 				// m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
 				SwitchViewToDissolve();
