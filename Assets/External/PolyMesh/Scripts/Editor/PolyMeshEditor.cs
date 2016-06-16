@@ -553,8 +553,15 @@ public class PolyMeshEditor : Editor {
 					case KeyCode.Q:
 					case KeyCode.W:
 					case KeyCode.E:
-					case KeyCode.R:
+					case KeyCode.R: {
 						return;
+					} break;
+
+					// [AOC] Clear selection upon pressing escape to allow selection another object
+					case KeyCode.Escape: {
+						Selection.activeGameObject = null;
+						return;
+					} break;
 				}
 			}
 
