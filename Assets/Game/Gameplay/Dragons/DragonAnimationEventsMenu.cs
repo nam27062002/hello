@@ -11,12 +11,15 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 	{
 	}
 
+	public void EatStartEvent()
+	{
+	}
+
+	public void EatStartBigEvent()
+	{
+	}
+
 	public void EatEvent()
 	{
 	}
-
-	public void EatBigEvent()
-	{
-	}
-
 }
