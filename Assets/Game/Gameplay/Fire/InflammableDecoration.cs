@@ -68,7 +68,7 @@ public class InflammableDecoration : Initializable {
 		{
 			m_originalMaterials[ renderers[i] ] = renderers[i].materials;
 		}
-		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
+		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/RedBurnToAshes") as Material);
 		m_ashMaterial.renderQueue = 3000;// Force transparent
 	}
 
@@ -103,7 +103,7 @@ public class InflammableDecoration : Initializable {
 		if (m_burned) 
 		{
 			// Advance dissolve!
-			m_ashMaterial.SetFloat("_AshLevel", m_timer.GetDelta());
+			m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
 
 			if ( m_timer.Finished() )
 			{
@@ -152,7 +152,7 @@ public class InflammableDecoration : Initializable {
 				}
 
 				// Crumble and dissolve time
-				m_timer.Start(2f);
+				m_timer.Start(5f);
 				// m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
 				SwitchViewToDissolve();
@@ -190,12 +190,12 @@ public class InflammableDecoration : Initializable {
 			Material[] materials = renderers[i].materials;
 			for (int m = 0; m < materials.Length; m++) 
 			{
-				m_ashMaterial.SetTexture("_AlphaMask", materials[m].mainTexture);
+				m_ashMaterial.SetTexture("_MainTex", materials[m].mainTexture);
 				materials[m] = m_ashMaterial;
 			}
 			renderers[i].materials = materials;
 		}
-		m_ashMaterial.SetFloat("_AshLevel", 0);
+		m_ashMaterial.SetFloat("_BurnLevel", 0);
 
 		if (!string.IsNullOrEmpty( m_ashesAsset)) 
 		{
