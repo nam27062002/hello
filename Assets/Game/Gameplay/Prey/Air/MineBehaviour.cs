@@ -64,7 +64,8 @@ public class MineBehaviour : Initializable {
 					// Random rotation within range
 					explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
 				}
-
+				SpawnBehaviour sp = GetComponent<SpawnBehaviour>();
+				sp.EatOrBurn();
 				gameObject.SetActive(false);
 			}
 		}
