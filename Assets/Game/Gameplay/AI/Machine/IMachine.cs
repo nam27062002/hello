@@ -1,14 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace AI {
 	public interface IMachine {
+		//
+		Vector3 position { get; }
+		Vector3 direction { get; }
+
 		// Internal connections
 		void SetSignal(Machine.Signal _signal, bool _activated);
 		bool GetSignal(Machine.Signal _signal);
 
-		// Flocking -> move to another interface?
-		void			SetFlock(List<IMachine> _flock);
-		List<IMachine> 	GetFlock();
+		// Group membership -> for collective behaviours
+		void	EnterGroup(ref Group _group);
+		Group 	GetGroup();
+		void	LeaveGroup();
 
 		// External interactions
 		void Bite();

@@ -1,23 +1,21 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public class MachineSpawner : MonoBehaviour {
 
 	public GameObject machine;
 	public int spawns;
 
-	List<AI.IMachine> flock;
+	AI.Group flock;
 
 	// Use this for initialization
 	void Start () {
+		flock = new AI.Group();
 	
 		for (int i = 0; i < spawns; i++) {
 			GameObject go = GameObject.Instantiate(machine);
-			//flock.Add(go);
-		}
-
-		for (int i = 9; i < flock.Count; i++) {
-			//flock[i].SetFlock(flock);
+			go.transform.position = Random.insideUnitSphere;
+			AI.Machine m = go.GetComponent<AI.Machine>();
+			m.EnterGroup(ref flock);
 		}
 	}
 }

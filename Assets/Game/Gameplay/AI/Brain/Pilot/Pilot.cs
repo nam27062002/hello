@@ -31,6 +31,7 @@ namespace AI {
 		protected float m_speed;
 		public float speed { get { return m_speed; } }
 
+		private Vector3 m_externalImpulse;
 		protected Vector3 m_impulse;
 		public Vector3 impulse { get { return m_impulse; } }
 
@@ -71,6 +72,10 @@ namespace AI {
 
 		public void Pursuit(bool _enable) {
 			m_actions[(int)Action.Pursuit] = _enable;
+		}
+
+		public void AddImpulse(Vector3 _externalImpulse) {
+			m_externalImpulse += _externalImpulse;
 		}
 
 		protected virtual void Update() {
@@ -116,12 +121,15 @@ namespace AI {
 					m_impulse = seek + flee;
 				}
 
+				m_impulse += m_externalImpulse;
+
 				m_direction = m_impulse.normalized;
 				m_impulse = m_direction * seek.magnitude;//mVector3.ClampMagnitude(m_impulse, m_speed);
 
 				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
-
 			}
+
+			m_externalImpulse = Vector3.zero;
 		}
 
 		void OnDrawGizmos() {

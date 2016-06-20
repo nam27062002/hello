@@ -36,8 +36,8 @@ namespace AI {
 					Vector3 right = Vector3.Cross(m_direction, Vector3.up);
 					Vector3 up = Vector3.Cross(right, m_direction);
 
-					Quaternion rotation = Quaternion.AngleAxis(270f, up) * Quaternion.LookRotation(m_direction - (new Vector3(0,0,0.01f)), up); // Little hack to force the rotation to face user, 
-					Vector3 eulerRotation = rotation.eulerAngles;																				// if the machine move always in the same Z
+					Quaternion rotation = Quaternion.AngleAxis(270f, up) * Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
+					Vector3 eulerRotation = rotation.eulerAngles;																	   			// if the machine move always in the same Z
 					if (m_direction.y > 0) 		eulerRotation.z = Mathf.Min(40f, eulerRotation.z);
 					else if (m_direction.y < 0)	eulerRotation.z = Mathf.Max(320f, eulerRotation.z);
 					m_targetRotation = Quaternion.Euler(eulerRotation);	

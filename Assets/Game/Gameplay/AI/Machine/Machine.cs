@@ -26,8 +26,9 @@ namespace AI {
 		private Pilot m_pilot = null;
 		private bool[] m_signals;
 
+		private Group m_group; // this will be a reference
+
 		private MachineMotion m_motion = new MachineMotion();
-		private MachineFlock m_flock = new MachineFlock();
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		public Vector3 position { get { return transform.position; } }
@@ -45,7 +46,7 @@ namespace AI {
 		//---------------------------------------------------------------------------------
 
 		// Use this for initialization
-		void Start() {
+		void Awake() {
 			m_signals = new bool[(int)Signal.Count];
 
 			m_pilot = GetComponent<Pilot>();
@@ -73,14 +74,30 @@ namespace AI {
 			return m_signals[(int)_signal];
 		}
 
-		public void SetFlock(List<IMachine> _flock) {
-			m_flock.flock = _flock;
+		// Group membership -> for collective behaviours
+		public void	EnterGroup(ref Group _group) {
+			if (m_group != _group) {
+				if (m_group != null) {
+					LeaveGroup();
+				}
+
+				m_group = _group;
+				m_group.Enter(this);
+			}
 		}
 
-		public List<IMachine> GetFlock() {
-			return m_flock.flock;
+		public Group GetGroup() {
+			return m_group;
 		}
 
+		public void LeaveGroup() {
+			if (m_group != null) {
+				m_group.Leave(this);
+				m_group = null;
+			}
+		}
+
+		// External interactions
 		public void Bite() {}
 		public void BiteAndHold() {}
 		public void Burn() {}
