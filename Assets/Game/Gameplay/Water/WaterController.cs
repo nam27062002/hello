@@ -61,9 +61,9 @@ public class WaterController : MonoBehaviour {
 			float waterY = transform.position.y;
 			pos.y = waterY;
 
-			if (yVelocity > 10f) 	 ParticleManager.Spawn("PF_WaterSplash_L", pos);
-			else if (yVelocity > 5f) ParticleManager.Spawn("PF_WaterSplash_M", pos);
-			else  					 ParticleManager.Spawn("PF_WaterSplash_S", pos);
+			if (yVelocity > 10f) 	 ParticleManager.Spawn("PS_Dive", pos, "Water/");
+			else if (yVelocity > 5f) ParticleManager.Spawn("PS_Dive", pos, "Water/");
+			else  					 ParticleManager.Spawn("PS_Dive", pos, "Water/");
 		}
 	}
 }
