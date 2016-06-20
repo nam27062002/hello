@@ -12,7 +12,7 @@ Shader "Shader Forge/sh_part_additive_clip" {
     }
     SubShader {
         Tags {
-            "Queue"="AlphaTest"
+            "Queue"="Transparent"
             "RenderType"="TransparentCutout"
         }
         Pass {
