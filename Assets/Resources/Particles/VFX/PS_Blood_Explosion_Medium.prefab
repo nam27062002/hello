@@ -27,6 +27,8 @@ GameObject:
   - 4: {fileID: 421312}
   - 198: {fileID: 19883232}
   - 199: {fileID: 19998866}
+  - 114: {fileID: 11472400}
+  - 114: {fileID: 11476520}
   m_Layer: 8
   m_Name: PS_Blood_Explosion_Medium
   m_TagString: Untagged
@@ -60,7 +62,7 @@ Transform:
   m_LocalRotation: {x: 0.28470853, y: -0.6472566, z: 0.6472566, w: 0.28470853}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -132.5135, z: 0}
   m_Children: []
   m_Father: {fileID: 421312}
   m_RootOrder: 1
@@ -92,6 +94,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 421312}
   m_RootOrder: 0
+--- !u!114 &11472400
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 115664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 1.2
+  m_returnTo: 1
+--- !u!114 &11476520
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 115664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c15c2bdf3e8b542bbbdb40897f30a54f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_offset: {x: 0, y: 0, z: 0}
+  m_follow: {fileID: 0}
 --- !u!198 &19864168
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -140,7 +168,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   scalingMode: 1
   InitialModule:
     serializedVersion: 2
@@ -1579,7 +1607,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   scalingMode: 1
   InitialModule:
     serializedVersion: 2
@@ -3038,7 +3066,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   scalingMode: 1
   InitialModule:
     serializedVersion: 2

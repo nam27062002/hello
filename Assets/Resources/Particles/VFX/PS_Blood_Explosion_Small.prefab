@@ -10,6 +10,8 @@ GameObject:
   - 4: {fileID: 484114}
   - 198: {fileID: 19879746}
   - 199: {fileID: 19966716}
+  - 114: {fileID: 11440642}
+  - 114: {fileID: 11466562}
   m_Layer: 8
   m_Name: PS_Blood_Explosion_Small
   m_TagString: Untagged
@@ -30,6 +32,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11440642
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 158342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 1.2
+  m_returnTo: 1
+--- !u!114 &11466562
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 158342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c15c2bdf3e8b542bbbdb40897f30a54f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_offset: {x: 0, y: 0, z: 0}
+  m_follow: {fileID: 0}
 --- !u!198 &19879746
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -78,7 +106,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   scalingMode: 1
   InitialModule:
     serializedVersion: 2
