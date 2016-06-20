@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 419864}
   - 198: {fileID: 19857566}
   - 199: {fileID: 19900136}
+  - 114: {fileID: 11443432}
   m_Layer: 8
   m_Name: PS_Blood_Explosion_Large
   m_TagString: Untagged
@@ -88,10 +89,23 @@ Transform:
   m_LocalRotation: {x: 0.28470853, y: -0.6472566, z: 0.6472566, w: 0.28470853}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -132.5135, z: 0}
   m_Children: []
   m_Father: {fileID: 419864}
   m_RootOrder: 1
+--- !u!114 &11443432
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 1.2
+  m_returnTo: 1
 --- !u!198 &19834328
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -140,7 +154,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   scalingMode: 1
   InitialModule:
     serializedVersion: 2
@@ -1599,7 +1613,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   scalingMode: 1
   InitialModule:
     serializedVersion: 2
@@ -3038,7 +3052,7 @@ ParticleSystem:
   looping: 0
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   scalingMode: 1
   InitialModule:
     serializedVersion: 2

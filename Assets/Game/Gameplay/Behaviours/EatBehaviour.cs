@@ -288,7 +288,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			Vector3 bloodPos = m_mouth.position;
 			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("bloodchurn-large", bloodPos));
+			m_bloodEmitter.Add(ParticleManager.Spawn("VFX/PS_Blood_Explosion_Medium", bloodPos));
 			m_holdingBlood = 0.5f;
 		}
 		else
