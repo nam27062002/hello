@@ -25,6 +25,12 @@ public class Builder : MonoBehaviour
 		"Assets/Game/Scenes/Levels/Art/ART_PlayTest_01.unity",
 		"Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
 		"Assets/Game/Scenes/Levels/Spawners/SP_PlayTest_01.unity",
+
+		// Final proposal scene
+		"Assets/Game/Scenes/Levels/Art/ART_FinalProposal.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_FinalProposal.unity",
+		"Assets/Game/Scenes/Levels/Spawners/SP_FinalProposal.unity",
+
 	};
 
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
