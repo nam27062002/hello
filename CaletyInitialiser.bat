@@ -42,15 +42,15 @@ setlocal EnableDelayedExpansion
 @goto finish
 
 :notFound
-@echo No Calety was found. Now GIT is going to checkout the Calety framework. This could last some minutes. Please wait...
+@REM @echo No Calety was found. Now GIT is going to checkout the Calety framework. This could last some minutes. Please wait...
 
-@git clone git@bcn-mb-git.ubisoft.org:tools/calety.git ./../../calety
+@REM @git clone git@bcn-mb-git.ubisoft.org:tools/calety.git ./../../calety
 
-@goto finish
+@goto finishNoCalety
 
 :finish
 
-@echo Forcing Runeguard branch ...
+@echo Forcing Game Project branch ...
 
 @SET CurrentFolder=%CD%
 
@@ -99,3 +99,6 @@ MKLINK /d Plugins ..\..\..\..\calety\Calety\UnityProject\Assets\CaletyExternalPl
 @cd ..
 
 @echo Done. Thanks for using Calety.
+
+:finishNoCalety
+

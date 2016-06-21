@@ -19,14 +19,14 @@ createSymbolicLinks ()
 
     strCurrentFolder=$(pwd)
 
-    cd ./../../calety
+    cd $1/calety
     git checkout develop
     git pull
     cd $strCurrentFolder
 
     cd Assets
 
-    strPathToCaletyCS=./../../../calety/Calety/UnityProject/Assets/Calety
+    strPathToCaletyCS=$1/../calety/Calety/UnityProject/Assets/Calety
 
     if [ ! -L "Calety" ]; then
         ln -s $strPathToCaletyCS
@@ -34,7 +34,7 @@ createSymbolicLinks ()
 
     cd Editor
 
-    strPathToCaletyEditorCS=./../../../../calety/Calety/UnityProject/Assets/Editor/Calety
+    strPathToCaletyEditorCS=$1/../../calety/Calety/UnityProject/Assets/Editor/Calety
 
     if [ ! -L "Calety" ]; then
         ln -s $strPathToCaletyEditorCS
@@ -54,7 +54,7 @@ createSymbolicLinks ()
 
     cd CaletyExternalPlugins
 
-    strPathToCaletyPlugins=./../../../../calety/Calety/UnityProject/Assets/CaletyExternalPlugins/Plugins
+    strPathToCaletyPlugins=$1/../../calety/Calety/UnityProject/Assets/CaletyExternalPlugins/Plugins
 
     if [ ! -L "Plugins" ]; then
         ln -s $strPathToCaletyPlugins Plugins
@@ -75,25 +75,27 @@ searchForCalety ()
     maxTries=10
 
     for ((x=0; x<=maxTries; x++)); do
-        strPathToCaletySDK="${strPathToCaletySDK}/.."
-        strPathToSearch="${strPathToCaletySDK}${strPrefixToFind}"
-
         if [ -e "${strPathToSearch}" ]
         then
-            createSymbolicLinks
+            createSymbolicLinks $strPathToCaletySDK
 
             break
         fi
 
         if [ $x = $maxTries ]
         then
-            echo "No Calety was found. Now GIT is going to checkout the Calety framework. This could last some minutes. Please wait..."
-            echo
+            #echo "No Calety was found. Now GIT is going to checkout the Calety framework. This could last some minutes. Please wait..."
+            #echo
 
-            git clone git@bcn-mb-git.ubisoft.org:tools/calety.git ./../../calety
+            #git clone git@bcn-mb-git.ubisoft.org:tools/calety.git ./../../calety
 
-            createSymbolicLinks
+            #createSymbolicLinks
+
+            break
         fi
+
+        strPathToCaletySDK="${strPathToCaletySDK}/.."
+        strPathToSearch="${strPathToCaletySDK}${strPrefixToFind}"
     done
 }
 
