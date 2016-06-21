@@ -103,6 +103,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 			onEatEvent();
 	}
 
+	// To remove when we delete all old dragons
+	public void EatBigEvent()
+	{
+
+	}
+
 
 	public void OnInsideWater()
 	{

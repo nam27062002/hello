@@ -761,7 +761,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( m_bubbles != null )
 			m_bubbles.Play();
 		m_animationEventController.OnInsideWater();
-		m_particleController.OnInsideWater();
+		if ( m_particleController != null )
+			m_particleController.OnInsideWater();
 		ChangeState(State.InsideWater);
 	}
 
@@ -774,7 +775,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if (m_animator )
 			m_animator.SetBool("boost", false);
 		m_animationEventController.OnExitWater();
-		m_particleController.OnExitWater();
+		if (m_particleController != null)
+			m_particleController.OnExitWater();
 		StartCoroutine( EndWaterCoroutine() );
 	}
 
