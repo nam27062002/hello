@@ -15,20 +15,26 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public delegate void OnEatEvent();
 	public OnEatEvent onEatEvent; 
 
+	private bool m_eventsRegistered = false;
+
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
 		m_animator = GetComponent<Animator>();
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		if (m_eventsRegistered)
+		{
+			Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+			Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		}
 	}
 
 	private void OnLevelUp(DragonData _data) 
@@ -101,6 +107,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if (onEatEvent != null)
 			onEatEvent();
+	}
+
+	// To remove when we delete all old dragons
+	public void EatBigEvent()
+	{
+
 	}
 
 
