@@ -87,12 +87,13 @@ namespace PopupEditor {
 		/// The linked button has been clicked.
 		/// </summary>
 		private void OnClick() {
-			if(m_popup == null) {
+			/*if(m_popup == null) {
 				m_popup = PopupManager.OpenPopupInstant(m_popupPath);
 			} else {
 				m_popup.Close(true);
 				m_popup = null;
-			}
+			}*/
+			m_popup = PopupManager.OpenPopupInstant(m_popupPath);
 		}
 
 		/// <summary>

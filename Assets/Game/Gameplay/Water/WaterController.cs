@@ -15,7 +15,9 @@ public class WaterController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {	
+	void Update () {
+		if(m_player == null) return;
+
 		bool activeTrail = false;
 		Vector3 pos = m_player.transform.position;
 		Vector3 waterPos = transform.position;

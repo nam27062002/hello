@@ -17,7 +17,6 @@ using UnityEngine.UI;
 /// See http://answers.unity3d.com/questions/956402/convert-ui-image-size-and-position-to-camera-viewp.html
 /// </summary>
 [ExecuteInEditMode]
-[RequireComponent(typeof(Camera))]
 public class AdjustCameraViewportToRectTransform : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -26,35 +25,35 @@ public class AdjustCameraViewportToRectTransform : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	private Camera m_cam = null;
-	private Canvas m_transformParentCanvas = null;
+	// Exposed
+	[SerializeField] private Camera m_camera = null;
+	public Camera targetCamera {
+		get { return m_camera; }
+		set { m_camera = value; }
+	}
+
 	[SerializeField] private RectTransform m_rectTransform = null;
-	
+	public RectTransform targetRectTransform {
+		get { return m_rectTransform; }
+		set { 
+			m_rectTransform = value; 
+			m_transformParentCanvas = null;	// Force recapturing the parent canvas
+		}
+	}
+
+	// Internal
+	private Canvas m_transformParentCanvas = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// First update.
-	/// </summary>
-	private void Start() {
-		// Check required fields
-		Debug.Assert(m_rectTransform != null, "Required field!");
-
-		// Find the canvas containing the reference transform
-		m_transformParentCanvas = m_rectTransform.GetComponentInParent<Canvas>();
-		Debug.Assert(m_transformParentCanvas != null, "The reference rect transform must be within a UI Canvas.");
-
-		// Get the reference to the camera
-		m_cam = GetComponent<Camera>();
-	}
-
 	/// <summary>
 	/// Called every frame
 	/// </summary>
 	private void Update() {
 		// Make sure we have required references
-		if(m_cam == null) return;
-
+		if(!isActiveAndEnabled) return;
+		if(m_camera == null) return;
 		if(m_rectTransform == null) return;
 
 		if(m_transformParentCanvas == null) {
@@ -96,11 +95,12 @@ public class AdjustCameraViewportToRectTransform : MonoBehaviour {
 		}
 
 		// Apply to camera viewport!
-		m_cam.pixelRect = new Rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y);
+		m_camera.pixelRect = new Rect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y);
 	}
 
 	private void OnDrawGizmos() {
 		if(m_rectTransform == null) return;
+
 		Vector3[] corners = new Vector3[4];	// left-bot, left-top, right-top, right-bot
 		m_rectTransform.GetWorldCorners(corners);
 
