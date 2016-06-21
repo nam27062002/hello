@@ -56,6 +56,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonHealthBehaviour	m_health;
 	DragonControl			m_controls;
 	DragonAnimationEvents 	m_animationEventController;
+	DragonParticleController m_particleController;
 	SphereCollider 			m_groundCollider;
 	DragonEatBehaviour		m_eatBehaviour;
 
@@ -136,8 +137,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_waterMovementModifier = 0;
 
-	private Vector3 m_forbiddenDirection;
-	private float m_forbiddenValue;
 
 
 	//------------------------------------------------------------------//
@@ -192,7 +191,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
-
+		m_particleController = GetComponentInChildren<DragonParticleController>();
 		Transform sensors	= transform.FindChild("sensors").transform; 
 		m_sensor.top 		= sensors.FindChild("TopSensor").transform;
 		m_sensor.bottom		= sensors.FindChild("BottomSensor").transform;
@@ -240,9 +239,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		if (m_state == State.None)
 			ChangeState(State.Fly);
-
-		m_forbiddenDirection = Vector3.zero;
-		m_forbiddenValue = 0;
 
 		// Set to base
 		m_speedValue = m_dragon.data.speedSkill.value;
@@ -765,6 +761,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( m_bubbles != null )
 			m_bubbles.Play();
 		m_animationEventController.OnInsideWater();
+		m_particleController.OnInsideWater();
 		ChangeState(State.InsideWater);
 	}
 
@@ -777,6 +774,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if (m_animator )
 			m_animator.SetBool("boost", false);
 		m_animationEventController.OnExitWater();
+		m_particleController.OnExitWater();
 		StartCoroutine( EndWaterCoroutine() );
 	}
 
