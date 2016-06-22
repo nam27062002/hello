@@ -26,13 +26,13 @@ setlocal EnableDelayedExpansion
 @SET maxTries=10
 
 @for /l %%x in (1, 1, !maxTries!) do @(
-	@SET strPathToCaletySDK=!strPathToCaletySDK!/..
-	@SET strPathToSearch=!strPathToCaletySDK!!strPrefixToFind!
-	
 	@if exist !strPathToSearch! @(
 		@SET Calety=!strPathToSearch!
 		@goto found
 	)
+	
+	@SET strPathToCaletySDK=!strPathToCaletySDK!/..
+	@SET strPathToSearch=!strPathToCaletySDK!!strPrefixToFind!
 	
 	@IF %%x == !maxTries! @(goto notFound)
 )
@@ -54,7 +54,7 @@ setlocal EnableDelayedExpansion
 
 @SET CurrentFolder=%CD%
 
-@cd ..\..\calety
+@cd %strPathToCaletySDK%\calety
 
 REM @git checkout develop
 
@@ -67,13 +67,13 @@ REM @git pull
 @cd Assets
 
 @IF NOT EXIST Calety (
-MKLINK /d Calety ..\..\..\calety\Calety\UnityProject\Assets\Calety
+MKLINK /d Calety %strPathToCaletySDK%\..\calety\Calety\UnityProject\Assets\Calety
 )
 
 cd Editor
 
 @IF NOT EXIST Calety (
-MKLINK /d Calety ..\..\..\..\calety\Calety\UnityProject\Assets\Editor\Calety
+MKLINK /d Calety %strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\Editor\Calety
 )
 
 cd ..
@@ -92,7 +92,7 @@ cd ..
 cd CaletyExternalPlugins
 
 @IF NOT EXIST Plugins (
-MKLINK /d Plugins ..\..\..\..\calety\Calety\UnityProject\Assets\CaletyExternalPlugins\Plugins
+MKLINK /d Plugins %strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\CaletyExternalPlugins\Plugins
 )
 
 @cd ..
