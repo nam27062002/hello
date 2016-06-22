@@ -15,7 +15,9 @@ public class WaterController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {	
+	void Update () {
+		if(m_player == null) return;
+
 		bool activeTrail = false;
 		Vector3 pos = m_player.transform.position;
 		Vector3 waterPos = transform.position;
@@ -32,7 +34,7 @@ public class WaterController : MonoBehaviour {
 		}
 
 		if (activeTrail && m_waterTrail == null) {
-			m_waterTrail = ParticleManager.Spawn("PF_WaterTrail", pos);
+			m_waterTrail = ParticleManager.Spawn("PS_Skimming", pos, "Water/");
 			if ( m_waterTrail != null )
 			{
 				m_waterTrail.GetComponent<ParticleSystem>().loop = true;
@@ -61,9 +63,9 @@ public class WaterController : MonoBehaviour {
 			float waterY = transform.position.y;
 			pos.y = waterY;
 
-			if (yVelocity > 10f) 	 ParticleManager.Spawn("PF_WaterSplash_L", pos);
-			else if (yVelocity > 5f) ParticleManager.Spawn("PF_WaterSplash_M", pos);
-			else  					 ParticleManager.Spawn("PF_WaterSplash_S", pos);
+			if (yVelocity > 10f) 	 ParticleManager.Spawn("PS_Dive", pos, "Water/");
+			else if (yVelocity > 5f) ParticleManager.Spawn("PS_Dive", pos, "Water/");
+			else  					 ParticleManager.Spawn("PS_Dive", pos, "Water/");
 		}
 	}
 }

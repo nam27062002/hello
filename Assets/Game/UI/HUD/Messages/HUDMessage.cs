@@ -400,6 +400,13 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_type">The type of fire rush that was toggled.</param>
 	private void OnFireRushToggled(bool _active, DragonBreathBehaviour.Type _type) {
 		// Just trigger the animation
-		if(_active) Show();
+		if(_active) {
+			// Only trigger with the right type!
+			if(m_type == Type.FIRE_RUSH && _type == DragonBreathBehaviour.Type.Standard) {
+				Show();
+			} else if(m_type == Type.MEGA_FIRE_RUSH && _type == DragonBreathBehaviour.Type.Super) {
+				Show();
+			}
+		}
 	}
 }

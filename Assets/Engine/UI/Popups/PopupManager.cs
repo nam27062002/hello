@@ -33,10 +33,10 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	// Use our own canvas for practicity.
 	[SerializeField] private Canvas m_canvas = null;
 
-	// Queues
-	private Queue<ResourceRequest> m_loadingQueue = new Queue<ResourceRequest>();
-	private List<PopupController> m_openedPopups = new List<PopupController>();
-	private List<PopupController> m_closedPopups = new List<PopupController>();
+	// Queues - Expose just for debug purposes
+	[SerializeField] private Queue<ResourceRequest> m_loadingQueue = new Queue<ResourceRequest>();
+	[SerializeField] private List<PopupController> m_openedPopups = new List<PopupController>();
+	[SerializeField] private List<PopupController> m_closedPopups = new List<PopupController>();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

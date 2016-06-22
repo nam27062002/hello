@@ -18,6 +18,11 @@ public class FireNode : MonoBehaviour {
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerSecond = 6f;
 
+	public float burningTime
+	{
+		get{ return m_burningTime; }
+	}
+
 	private List<FireNode> m_neighbours;
 	private State m_state;
 
@@ -118,7 +123,7 @@ public class FireNode : MonoBehaviour {
 	}
 
 	public bool IsBurned() {
-		return m_state > State.Damaged && m_timer < m_burningTime * 0.5f;
+		return m_state > State.Damaged;//  && m_timer < m_burningTime * 0.5f;
 	}
 
 	public bool IsDamaged() {

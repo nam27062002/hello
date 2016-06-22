@@ -24,6 +24,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private float m_energyDrain = 0f;	// energy per second
 	private float m_energyRefill = 1f;	// energy per second
 	private float m_energyRequiredToBoost = 0.2f;	// Percent of total energy
+	private float m_boostMultiplier;
+	public float boostMultiplier
+	{
+		get { return m_boostMultiplier; }
+	}
+
 
 	//-----------------------------------------------
 	// Methods
@@ -41,6 +47,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// Cache content data
 		m_energyDrain = m_dragon.data.def.GetAsFloat("energyDrain");
 		m_energyRefill = m_dragon.data.def.GetAsFloat("energyRefillRate");
+		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 		m_energyRequiredToBoost = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
 
@@ -101,10 +108,14 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private void StartBoost() 
 	{
 		m_active = true;
-		m_motion.targetSpeedMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
+		m_motion.targetSpeedMultiplier = m_boostMultiplier;
 		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
+		{
 			m_animator.SetBool("boost", true);
+			// speed up eating
+			m_animator.SetFloat("eatingSpeed", m_boostMultiplier);
+		}
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, true);
 	}
 
@@ -114,7 +125,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_motion.targetSpeedMultiplier = 1;
 		// DeactivateTrails();
 		if (m_animator && m_animator.isInitialized && !m_insideWater)
+		{
 			m_animator.SetBool("boost", false);
+			// set eating speed as normal
+			m_animator.SetFloat("eatingSpeed", 1);
+		}
 
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);
 	}
