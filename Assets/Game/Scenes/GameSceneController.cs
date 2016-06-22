@@ -118,6 +118,13 @@ public class GameSceneController : GameSceneControllerBase {
 		// Skip if paused
 		if(m_paused) return;
 
+		// [AOC] Editor utility: open pause popup
+		#if UNITY_EDITOR
+		if(Input.GetKeyDown(KeyCode.P)) {
+			PopupManager.OpenPopupInstant(PopupPause.PATH);
+		}
+		#endif
+
 		// Different actions based on current state
 		switch(m_state) {
 			// During loading, wait until level is loaded
