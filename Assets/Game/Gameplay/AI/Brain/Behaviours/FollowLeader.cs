@@ -16,8 +16,10 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
+				m_pilot.SetSpeed(1f); //TODO
+
 				IMachine leader = m_machine.GetGroup().leader;
-				m_pilot.GoTo(leader.position - leader.direction * 0.125f); //TODO: serialize this!
+				m_pilot.GoTo(leader.position - leader.direction * 0f); //TODO: serialize this!
 			}
 		}
 	}

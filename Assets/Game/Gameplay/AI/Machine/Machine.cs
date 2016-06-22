@@ -15,6 +15,11 @@ namespace AI {
 		private MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
+		[SerializeField] private bool m_isAnEater = false;
+		private MachineEater m_eater = new MachineEater();
+		private MachineEdible m_edible = new MachineEdible();
+
+
 		public Vector3 position { get { return transform.position; } }
 		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
 		public Machine enemy { 
@@ -46,7 +51,7 @@ namespace AI {
 			m_signals.Add(Signals.Destroyed.name, 	new Signals.Destroyed());
 
 			foreach(Signal s in m_signals.Values) {
-				s.pilot = m_pilot;
+				s.machine = this;
 			}
 
 			m_motion.AttacheMachine(this);
@@ -56,12 +61,40 @@ namespace AI {
 			m_sensor.AttacheMachine(this);
 			m_sensor.AttachPilot(m_pilot);
 			m_sensor.Init();
+
+			m_edible.AttacheMachine(this);
+			m_edible.AttachPilot(m_pilot);
+			m_edible.Init();
+
+			m_eater.AttacheMachine(this);
+			m_eater.AttachPilot(m_pilot);
+			m_eater.Init();
+
+			if (m_isAnEater) {
+				SetSignal(Signals.Hungry.name, true);
+			}
+		}
+
+		public void OnTrigger(string _trigger) {
+			if (m_pilot != null) {
+				m_pilot.OnTrigger(_trigger);
+			}
+
+			if (Signals.Destroyed.OnDestroyed == _trigger) {
+				m_pilot.enabled = false;
+				m_group.Leave(this);
+				GameObject.Destroy(gameObject);
+			}
 		}
 		
 		// Update is called once per frame
 		void Update() {
 			m_motion.Update();
 			m_sensor.Update();
+
+			if (m_isAnEater) {
+				m_eater.Update();
+			}
 		}
 
 		public void SetSignal(string _signal, bool _activated) {
@@ -96,7 +129,13 @@ namespace AI {
 		}
 
 		// External interactions
-		public void Bite() {}
+		public void Bite() {
+			if (m_edible != null) {
+				m_edible.Bite();
+			}
+		}
+
+
 		public void BiteAndHold() {}
 		public void Burn() {}
 	}

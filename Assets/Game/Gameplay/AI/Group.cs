@@ -26,11 +26,13 @@ namespace AI {
 				m_members.Remove(_member);
 				_member.SetSignal(Signals.Leader.name, false);
 
-				if (count == 1) {
+				if (count == 0) {
 					m_leader = -1;
-				} else if (m_leader == index) {					
+				} else if (m_leader == index) {
 					m_leader = count - 1;
 					m_members[m_leader].SetSignal(Signals.Leader.name, true);
+				} else if (m_leader > index) {
+					m_leader--;
 				}
 			}
 		}

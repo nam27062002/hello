@@ -5,13 +5,13 @@ namespace AI {
 		private bool m_value;
 		public bool value { get { return m_value; } }
 
-		private Pilot m_pilot;
-		public Pilot pilot { set { m_pilot = value; } }
+		private Machine m_machine;
+		public Machine machine { set { m_machine = value; } }
 
 		public void Set(bool _value) {
 			if (m_value != _value) {
-				if (_value) m_pilot.OnTrigger(OnEnabled());
-				else 		m_pilot.OnTrigger(OnDisabled());
+				if (_value) m_machine.OnTrigger(OnEnabled());
+				else 		m_machine.OnTrigger(OnDisabled());
 						
 				m_value = _value;
 			}
@@ -26,10 +26,10 @@ namespace AI {
 			public static string name = "Leader";
 
 			[StateTransitionTrigger]
-			private static string OnLeaderPromoted = "onLeaderPromoted";
+			public static string OnLeaderPromoted = "onLeaderPromoted";
 
 			[StateTransitionTrigger]
-			private static string OnLeaderDemoted = "onLeaderDemoted";
+			public static string OnLeaderDemoted = "onLeaderDemoted";
 
 			protected override string OnEnabled() { return OnLeaderPromoted; }
 			protected override string OnDisabled() { return OnLeaderDemoted; }
@@ -40,10 +40,10 @@ namespace AI {
 			public static string name = "Hungry";
 
 			[StateTransitionTrigger]
-			private static string OnIsHungry = "onIsHungry";
+			public static string OnIsHungry = "onIsHungry";
 
 			[StateTransitionTrigger]
-			private static string OnNotHungry = "onNotHungry";
+			public static string OnNotHungry = "onNotHungry";
 
 			protected override string OnEnabled() { return OnIsHungry; }
 			protected override string OnDisabled() { return OnNotHungry; }
@@ -54,10 +54,10 @@ namespace AI {
 			public static string name = "Alert";
 
 			[StateTransitionTrigger]
-			private static string OnAlert = "onAlert";
+			public static string OnAlert = "onAlert";
 
 			[StateTransitionTrigger]
-			private static string OnIgnoreAll = "onIgnoreAll";
+			public static string OnIgnoreAll = "onIgnoreAll";
 
 			protected override string OnEnabled() { return OnAlert; }
 			protected override string OnDisabled() { return OnIgnoreAll; }
@@ -68,10 +68,10 @@ namespace AI {
 			public static string name = "Warning";
 
 			[StateTransitionTrigger]
-			private static string OnWarning = "onWarning";
+			public static string OnWarning = "onWarning";
 
 			[StateTransitionTrigger]
-			private static string OnCalm = "onCalm";
+			public static string OnCalm = "onCalm";
 
 			protected override string OnEnabled() { return OnWarning; }
 			protected override string OnDisabled() { return OnCalm; }
@@ -82,10 +82,10 @@ namespace AI {
 			public static string name = "Danger";
 
 			[StateTransitionTrigger]
-			private static string OnDanger = "onDanger";
+			public static string OnDanger = "onDanger";
 
 			[StateTransitionTrigger]
-			private static string OnSafe = "onSafe";
+			public static string OnSafe = "onSafe";
 
 			protected override string OnEnabled() { return OnDanger; }
 			protected override string OnDisabled() { return OnSafe; }
@@ -96,10 +96,10 @@ namespace AI {
 			public static string name = "Panic";
 
 			[StateTransitionTrigger]
-			private static string OnPanic = "onPanic";
+			public static string OnPanic = "onPanic";
 
 			[StateTransitionTrigger]
-			private static string OnRecoverFromPanic = "onRecoverFromPanic";
+			public static string OnRecoverFromPanic = "onRecoverFromPanic";
 
 			protected override string OnEnabled() { return OnPanic; }
 			protected override string OnDisabled() { return OnRecoverFromPanic; }
@@ -110,7 +110,7 @@ namespace AI {
 			public static string name = "Burning";
 
 			[StateTransitionTrigger]
-			private static string OnBurning = "onBurning";
+			public static string OnBurning = "onBurning";
 
 			protected override string OnEnabled() { return OnBurning; }
 		}
@@ -120,7 +120,7 @@ namespace AI {
 			public static string name = "Chewing";
 
 			[StateTransitionTrigger]
-			private static string OnChewing = "onChewing";
+			public static string OnChewing = "onChewing";
 
 			protected override string OnEnabled() { return OnChewing; }
 		}
@@ -129,7 +129,7 @@ namespace AI {
 			public static string name = "Destroyed";
 
 			[StateTransitionTrigger]
-			private static string OnDestroyed = "onDestroyed";
+			public static string OnDestroyed = "onDestroyed";
 
 			protected override string OnEnabled() { return OnDestroyed; }
 		}
