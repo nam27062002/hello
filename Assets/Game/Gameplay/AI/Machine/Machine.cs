@@ -2,29 +2,13 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class Machine : MonoBehaviour, IMachine {
-		/**************/
-		/*			  */
-		/**************/
-		public enum Signal {
-			Leader = 0,
-			Hungry, 	// this machine is hungry and it'll search for preys using the Eater machine component
-			Alert,  	// this machine will use it's sensor to detect the player. Later we can extend this to detect all king of enemies
-			Warning, 	// enemy detected nearby
-			Danger, 	// enemy is too close
-			Panic,		// this machine is unable to perform actions
-			Burning, 	// a fire is touching this machine
-			Chewing,	// something is chewing this machine
-			Destroyed,	// 
-			Count
-		};
-
+	public class Machine : MonoBehaviour, IMachine {		
 		/**************/
 		/*			  */
 		/**************/
 
 		private Pilot m_pilot = null;
-		private bool[] m_signals;
+		private Dictionary<string, Signal> m_signals;
 
 		private Group m_group; // this will be a reference
 
@@ -35,7 +19,7 @@ namespace AI {
 		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
 		public Machine enemy { 
 			get {
-				if (m_sensor != null && (m_signals[(int)Signal.Warning] || m_signals[(int)Signal.Danger])) {
+				if (m_sensor != null && (GetSignal(Signals.Warning.name) || GetSignal(Signals.Danger.name))) {
 					return m_sensor.enemy;
 				} else {
 					return null;
@@ -47,9 +31,23 @@ namespace AI {
 
 		// Use this for initialization
 		void Awake() {
-			m_signals = new bool[(int)Signal.Count];
-
 			m_pilot = GetComponent<Pilot>();
+
+			m_signals = new Dictionary<string, Signal>();
+
+			m_signals.Add(Signals.Leader.name, 		new Signals.Leader());
+			m_signals.Add(Signals.Hungry.name, 		new Signals.Hungry());
+			m_signals.Add(Signals.Alert.name, 		new Signals.Alert());
+			m_signals.Add(Signals.Warning.name, 	new Signals.Warning());
+			m_signals.Add(Signals.Danger.name, 		new Signals.Danger());
+			m_signals.Add(Signals.Panic.name, 		new Signals.Panic());
+			m_signals.Add(Signals.Burning.name, 	new Signals.Burning());
+			m_signals.Add(Signals.Chewing.name, 	new Signals.Chewing());
+			m_signals.Add(Signals.Destroyed.name, 	new Signals.Destroyed());
+
+			foreach(Signal s in m_signals.Values) {
+				s.pilot = m_pilot;
+			}
 
 			m_motion.AttacheMachine(this);
 			m_motion.AttachPilot(m_pilot);
@@ -66,12 +64,12 @@ namespace AI {
 			m_sensor.Update();
 		}
 
-		public void SetSignal(Signal _signal, bool _activated) {
-			m_signals[(int)_signal] = _activated;
+		public void SetSignal(string _signal, bool _activated) {
+			m_signals[_signal].Set(_activated);
 		}
 
-		public bool GetSignal(Signal _signal) {
-			return m_signals[(int)_signal];
+		public bool GetSignal(string _signal) {
+			return m_signals[_signal].value;
 		}
 
 		// Group membership -> for collective behaviours

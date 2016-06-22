@@ -21,6 +21,9 @@ namespace AI {
 		//----------------------------------------------------------------------------------------------------------------
 
 		[SerializeField] private float m_avoidDistanceAttenuation = 2f;
+		[SerializeField] private AISM.StateMachine m_brainResource;
+
+		private AISM.StateMachine m_brain;
 
 		protected Machine m_machine;
 
@@ -42,7 +45,7 @@ namespace AI {
 
 		//----------------------------------------------------------------------------------------------------------------
 
-		void Start() {
+		void Awake() {
 			m_speed = 0;
 			m_impulse = Vector3.zero;
 
@@ -52,10 +55,20 @@ namespace AI {
 			m_machine = GetComponent<Machine>();
 
 			m_perpendicularAvoid = false;
+
+			// braaiiiinnn~
+			if (m_brainResource != null) {
+				m_brain = Object.Instantiate(m_brainResource) as AISM.StateMachine;
+				m_brain.Initialise(gameObject, true);
+			}
 		}
 
 		public bool IsActionPressed(Pilot.Action _action) {
 			return false;
+		}
+
+		public void OnTrigger(string _trigger) {
+			if (m_brain) m_brain.Transition(_trigger);
 		}
 
 		public void SetSpeed(float _speed) {
@@ -79,6 +92,10 @@ namespace AI {
 		}
 
 		protected virtual void Update() {
+			// state machine updates
+			if (m_brain != null) 
+				m_brain.Update();
+
 			// calculate impulse to reach our target
 			m_impulse = Vector3.zero;
 
@@ -86,7 +103,7 @@ namespace AI {
 				Vector3 seek = Vector3.zero;
 				Vector3 flee = Vector3.zero;
 
-				Vector3 v = m_target - transform.position;
+				Vector3 v = m_target - transform.position;	
 				Util.MoveTowardsVector3WithDamping(ref seek, ref v, m_speed, 32f * Time.deltaTime);
 				Debug.DrawLine(transform.position, transform.position + seek, Color.green);
 
@@ -124,7 +141,7 @@ namespace AI {
 				m_impulse += m_externalImpulse;
 
 				m_direction = m_impulse.normalized;
-				m_impulse = m_direction * seek.magnitude;//mVector3.ClampMagnitude(m_impulse, m_speed);
+				m_impulse = m_direction * seek.magnitude;
 
 				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
 			}

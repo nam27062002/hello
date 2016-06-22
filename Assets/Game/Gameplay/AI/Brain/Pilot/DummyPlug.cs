@@ -17,11 +17,11 @@ namespace AI {
 		void LateUpdate() {
 			SetSpeed(m_editorSpeed);
 
-			m_machine.SetSignal(Machine.Signal.Alert, true);
-			Avoid(m_machine.GetSignal(Machine.Signal.Warning));
+			m_machine.SetSignal(Signals.Alert.name, true);
+			Avoid(m_machine.GetSignal(Signals.Warning.name));
 
 			// flocking
-			if (m_machine.GetSignal(Machine.Signal.Leader)) {
+			if (m_machine.GetSignal(Signals.Leader.name)) {
 				float m = (transform.position - m_target).sqrMagnitude;
 
 				if (m < m_distanceDelta) {

@@ -38,7 +38,7 @@ namespace AI {
 			bool isInsideMinArea = false;
 			bool isInsideMaxArea = false;
 
-			if (m_enemy != null && m_machine.GetSignal(Machine.Signal.Alert)) {
+			if (m_enemy != null && m_machine.GetSignal(Signals.Alert.name)) {
 
 				m_senseTimer -= Time.deltaTime;
 				if (m_senseTimer <= 0) {
@@ -83,8 +83,8 @@ namespace AI {
 				}
 			}
 
-			m_machine.SetSignal(Machine.Signal.Warning, isInsideMaxArea);
-			m_machine.SetSignal(Machine.Signal.Danger, isInsideMinArea);
+			m_machine.SetSignal(Signals.Warning.name, isInsideMaxArea);
+			m_machine.SetSignal(Signals.Danger.name, isInsideMinArea);
 		}
 
 		void OnDrawGizmosSelected() {
