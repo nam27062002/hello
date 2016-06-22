@@ -1,7 +1,7 @@
 // Shader created with Shader Forge v1.25 
 // Shader Forge (c) Neat Corporation / Joachim Holmer - http://www.acegikmo.com/shaderforge/
 // Note: Manually altering this data may prevent you from opening it in Shader Forge
-/*SF_DATA;ver:1.25;sub:START;pass:START;ps:flbk:,iptp:0,cusa:False,bamd:0,lico:1,lgpr:1,limd:0,spmd:1,trmd:0,grmd:0,uamb:True,mssp:True,bkdf:False,hqlp:False,rprd:False,enco:False,rmgx:True,rpth:0,vtps:0,hqsc:True,nrmq:1,nrsp:0,vomd:0,spxs:False,tesm:0,olmd:1,culm:0,bsrc:3,bdst:7,dpts:2,wrdp:False,dith:0,rfrpo:True,rfrpn:Refraction,coma:15,ufog:True,aust:True,igpj:True,qofs:0,qpre:3,rntp:2,fgom:False,fgoc:True,fgod:False,fgor:False,fgmd:0,fgcr:1,fgcg:1,fgcb:1,fgca:1,fgde:0.01,fgrn:0,fgrf:300,stcl:False,stva:128,stmr:255,stmw:255,stcp:6,stps:0,stfa:0,stfz:0,ofsf:0,ofsu:0,f2p0:False,fnsp:True,fnfb:True;n:type:ShaderForge.SFN_Final,id:4795,x:32953,y:32712,varname:node_4795,prsc:2|normal-6074-RGB,emission-2668-OUT,alpha-6285-A,clip-2110-OUT;n:type:ShaderForge.SFN_Tex2d,id:6074,x:32315,y:33003,ptovrint:False,ptlb:MainTex,ptin:_MainTex,varname:_MainTex,prsc:2,glob:False,taghide:False,taghdr:False,tagprd:False,tagnsco:False,tagnrm:False,tex:0255f300b1d4cf245874f5a591c18ad5,ntxv:0,isnm:False;n:type:ShaderForge.SFN_VertexColor,id:6285,x:32315,y:32808,varname:node_6285,prsc:2;n:type:ShaderForge.SFN_Multiply,id:2668,x:32560,y:32808,varname:node_2668,prsc:2|A-6285-RGB,B-6074-G;n:type:ShaderForge.SFN_Multiply,id:2110,x:32577,y:32981,varname:node_2110,prsc:2|A-6285-A,B-6074-G;proporder:6074;pass:END;sub:END;*/
+/*SF_DATA;ver:1.25;sub:START;pass:START;ps:flbk:,iptp:0,cusa:False,bamd:0,lico:1,lgpr:1,limd:0,spmd:1,trmd:0,grmd:0,uamb:True,mssp:True,bkdf:False,hqlp:False,rprd:False,enco:False,rmgx:True,rpth:0,vtps:0,hqsc:True,nrmq:1,nrsp:0,vomd:0,spxs:False,tesm:0,olmd:1,culm:0,bsrc:3,bdst:7,dpts:2,wrdp:False,dith:0,rfrpo:True,rfrpn:Refraction,coma:15,ufog:True,aust:True,igpj:True,qofs:0,qpre:3,rntp:2,fgom:False,fgoc:True,fgod:False,fgor:False,fgmd:0,fgcr:1,fgcg:1,fgcb:1,fgca:1,fgde:0.01,fgrn:0,fgrf:300,stcl:False,stva:128,stmr:255,stmw:255,stcp:6,stps:0,stfa:0,stfz:0,ofsf:0,ofsu:0,f2p0:False,fnsp:True,fnfb:True;n:type:ShaderForge.SFN_Final,id:4795,x:32953,y:32712,varname:node_4795,prsc:2|emission-2668-OUT,alpha-6285-A,clip-2110-OUT;n:type:ShaderForge.SFN_Tex2d,id:6074,x:32239,y:33025,ptovrint:False,ptlb:MainTex,ptin:_MainTex,varname:_MainTex,prsc:2,glob:False,taghide:False,taghdr:False,tagprd:False,tagnsco:False,tagnrm:False,tex:0255f300b1d4cf245874f5a591c18ad5,ntxv:0,isnm:False;n:type:ShaderForge.SFN_VertexColor,id:6285,x:32232,y:32770,varname:node_6285,prsc:2;n:type:ShaderForge.SFN_Multiply,id:2668,x:32560,y:32808,varname:node_2668,prsc:2|A-6285-RGB,B-6074-G;n:type:ShaderForge.SFN_Multiply,id:2110,x:32591,y:33013,varname:node_2110,prsc:2|A-6285-A,B-6074-G;proporder:6074;pass:END;sub:END;*/
 
 Shader "Shader Forge/sh_part_blood" {
     Properties {
@@ -34,37 +34,25 @@ Shader "Shader Forge/sh_part_blood" {
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
             struct VertexInput {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float4 tangent : TANGENT;
                 float2 texcoord0 : TEXCOORD0;
                 float4 vertexColor : COLOR;
             };
             struct VertexOutput {
                 float4 pos : SV_POSITION;
                 float2 uv0 : TEXCOORD0;
-                float3 normalDir : TEXCOORD1;
-                float3 tangentDir : TEXCOORD2;
-                float3 bitangentDir : TEXCOORD3;
                 float4 vertexColor : COLOR;
-                UNITY_FOG_COORDS(4)
+                UNITY_FOG_COORDS(1)
             };
             VertexOutput vert (VertexInput v) {
                 VertexOutput o = (VertexOutput)0;
                 o.uv0 = v.texcoord0;
                 o.vertexColor = v.vertexColor;
-                o.normalDir = UnityObjectToWorldNormal(v.normal);
-                o.tangentDir = normalize( mul( _Object2World, float4( v.tangent.xyz, 0.0 ) ).xyz );
-                o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
                 UNITY_TRANSFER_FOG(o,o.pos);
                 return o;
             }
             float4 frag(VertexOutput i) : COLOR {
-                i.normalDir = normalize(i.normalDir);
-                float3x3 tangentTransform = float3x3( i.tangentDir, i.bitangentDir, i.normalDir);
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
-                float3 normalLocal = _MainTex_var.rgb;
-                float3 normalDirection = normalize(mul( normalLocal, tangentTransform )); // Perturbed normals
                 clip((i.vertexColor.a*_MainTex_var.g) - 0.5);
 ////// Lighting:
 ////// Emissive:
