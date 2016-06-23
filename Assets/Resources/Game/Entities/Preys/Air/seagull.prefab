@@ -592,7 +592,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_vulnerable: 0
-  m_onEatenParticles: []
+  m_onEatenParticles:
+  - PF_feathers_3D
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
 --- !u!114 &11405894
@@ -622,7 +623,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_destroyOnBurn: 0
   m_checkFireTime: 0.01
-  m_maxHealth: 1
   m_ashesAsset: PF_Ash_Seagull
   m_dissolveTime: 1
   m_explosionPrefab: {fileID: 0}
@@ -704,6 +704,7 @@ MonoBehaviour:
   m_fleeAround: 0
   m_canBeAfraid: 0
   m_canPanic: 0
+  m_limitRunTime: 0
   m_runningTimeRange:
     min: 2
     max: 4
@@ -768,6 +769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b9c1d6c6d4e60bff02ac7bbd65fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_hasTurnAnimations: 0
   m_faceDirection: 1
   m_faceLeftAngleY: 180
   m_faceRightAngleY: 0
