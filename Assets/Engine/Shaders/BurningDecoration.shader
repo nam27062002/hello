@@ -3,7 +3,7 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Hungry Dragon/Burnable Decoration" {
+Shader "Hungry Dragon/Burning Decoration" {
 Properties {
 	_MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
 

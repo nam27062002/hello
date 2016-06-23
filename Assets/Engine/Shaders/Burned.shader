@@ -3,7 +3,7 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Custom/Burned" {
+Shader "Hungry Dragon/Burned" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_SpeedX("Fire Speed X", float) = 0
