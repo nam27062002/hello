@@ -89,7 +89,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 				if(m_timer.IsFinished()) {
 					// Yes! Start scrolling
 					m_state = State.RUNNING;
-					m_timer.Start(m_duration);
+					m_timer.Start(m_duration * 1000);
 				}
 			} break;
 
@@ -98,7 +98,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 				if(m_timer.IsFinished()) {
 					// Yes! Pause before going back
 					m_state = State.BACK_DELAY;
-					m_timer.Start(m_backDuration);
+					m_timer.Start(m_backDuration * 1000);
 				} else {
 					// Timer not finished, scroll
 					m_scroller.delta = m_timer.GetDelta(m_ease);
@@ -110,7 +110,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 				if(m_timer.IsFinished()) {
 					// Yes! Start scroll back animation
 					m_state = State.BACK;
-					m_timer.Start(m_backDuration);
+					m_timer.Start(m_backDuration * 1000);
 				}
 			} break;
 
@@ -153,7 +153,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			m_scroller.delta = 0f;
 
 			// Start timer
-			m_timer.Start(m_delay);
+			m_timer.Start(m_delay * 1000);
 
 			// Toggle state!
 			m_state = State.DELAY;
