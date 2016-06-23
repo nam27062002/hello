@@ -32,7 +32,7 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 		get { return m_selectedIdx; }
 	}
 
-	private List<DefinitionNode> m_sortedDefs = null;
+	private List<DefinitionNode> m_sortedDefs = new List<DefinitionNode>();
 	public List<DefinitionNode> sortedDefs {
 		get { return m_sortedDefs; }
 	}

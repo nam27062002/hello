@@ -41,7 +41,7 @@ public class LoadingSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
-
+		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!");
 		DebugUtils.Assert(m_loadingBar != null, "Required component!");
@@ -62,7 +62,7 @@ public class LoadingSceneController : SceneController {
 		// Content and persistence
 		//DefinitionsManager.CreateInstance();
 
-		ContentManager.InitContent();
+
 		UserProfile.CreateInstance();
 
 		// Game
