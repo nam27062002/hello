@@ -89,7 +89,7 @@ public class MenuLevelScroller3D : MonoBehaviour {
 	/// <param name="_dir">In which direction to animate.</param>
 	public void FocusLevel(string _sku, AnimDir _dir) {
 		// Find out target index and get its path follower
-		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, _sku);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, _sku);
 		if(def == null) return;
 		int targetIdx = def.GetAsInt("order");
 

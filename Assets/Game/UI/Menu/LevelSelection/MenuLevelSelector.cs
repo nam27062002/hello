@@ -55,8 +55,8 @@ public class MenuLevelSelector : MonoBehaviour, IBeginDragHandler, IDragHandler 
 		Debug.Assert(m_scroller != null, "Required scroller not found!");
 
 		// Store a reference to all level defs sorted
-		m_sortedDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.LEVELS);
-		DefinitionsManager.SortByProperty(ref m_sortedDefs, "order", DefinitionsManager.SortType.NUMERIC);
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS, ref m_sortedDefs);
+		DefinitionsManager.SharedInstance.SortByProperty(ref m_sortedDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
 		// Figure out initial index
 		string selectedSku = sceneController.selectedLevel;

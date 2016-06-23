@@ -89,7 +89,7 @@ public class HUDRevive : MonoBehaviour {
 	void Update() {
 		if(!m_timer.IsStopped()) {
 			m_timerText.Localize(m_timerText.tid, StringUtils.FormatNumber(Mathf.CeilToInt(m_timer.GetTimeLeft())));
-			if(m_timer.Finished()) {
+			if(m_timer.IsFinished()) {
 				m_timer.Stop();
 				m_animator.Hide();
 				Messenger.Broadcast(GameEvents.PLAYER_DIED);

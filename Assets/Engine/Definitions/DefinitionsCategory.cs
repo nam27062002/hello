@@ -21,51 +21,52 @@ using System.Text;
 /// <summary>
 /// Custom definitions categories
 /// </summary>
-public enum DefinitionsCategory {
-	UNKNOWN,
+public class DefinitionsCategory 
+{
+	public const string UNKNOWN = "UNKNOWN";
 
 	// General
-	LOCALIZATION,
-	SETTINGS,		// Contains several xml files with different signatures: gameSettings, dragonSettings...
+	public const string LOCALIZATION = "LOCALIZATION";
+	public const string SETTINGS = "SETTINGS";		// Contains several xml files with different signatures: gameSettings, dragonSettings...
 
 	// Progression
-	LEVELS,
-	MISSIONS,
-	MISSION_TYPES,
-	MISSION_DIFFICULTIES,
+	public const string LEVELS = "LEVELS";
+	public const string MISSIONS = "MISSIONS";
+	public const string MISSION_TYPES = "MISSION_TYPES";
+	public const string MISSION_DIFFICULTIES = "MISSION_DIFFICULTIES";
 
 	// Dragons
-	DRAGONS,
-	DRAGON_TIERS,
-	DRAGON_SKILLS,	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
+	public const string DRAGONS = "DRAGONS";
+	public const string DRAGON_TIERS = "DRAGON_TIERS";
+	public const string DRAGON_SKILLS = "DRAGON_SKILLS";	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
 
 	// Entities
-	ENTITIES,
-	ENTITY_CATEGORIES,
+	public const string ENTITIES = "ENTITIES";
+	public const string ENTITY_CATEGORIES = "ENTITY_CATEGORIES";
 
 	// Game
-	SCORE_MULTIPLIERS,
-	SURVIVAL_BONUS,
+	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";
+	public const string SURVIVAL_BONUS = "SURVIVAL_BONUS";
 
 	// Metagame
-	EGGS,
-	EGG_REWARDS,
-	CHEST_REWARDS,
+	public const string EGGS = "EGGS";
+	public const string EGG_REWARDS = "EGG_REWARDS";
+	public const string CHEST_REWARDS = "CHEST_REWARDS";
 
 	// Disguises
-	DISGUISES,
-	DISGUISES_EQUIP,
-	DISGUISES_POWERUPS,
+	public const string DISGUISES = "DISGUISES";
+	public const string DISGUISES_EQUIP = "DISGUISES_EQUIP";
+	public const string DISGUISES_POWERUPS = "DISGUISES_POWERUPS";
 
 	// Fire properties
-	FIRE_SPAWN_EFFECTS,
-	FIRE_DECORATION_EFFECTS,
+	public const string FIRE_SPAWN_EFFECTS = "FIRE_SPAWN_EFFECTS";
+	public const string FIRE_DECORATION_EFFECTS = "FIRE_DECORATION_EFFECTS";
 
 	// Hold Prey
-	HOLD_PREY_TIER,
+	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";
 
 	// Power Ups
-	POWERUPS,
+	public const string POWERUPS = "POWERUPS";
 
 };
     

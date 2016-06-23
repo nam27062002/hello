@@ -105,7 +105,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected void SetupHoldParametersForTier( string tierSku)
 	{
-		DefinitionNode def = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.HOLD_PREY_TIER, "tier", tierSku);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.HOLD_PREY_TIER, "tier", tierSku);
 
 		if ( def != null)
 		{

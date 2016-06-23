@@ -105,7 +105,7 @@ public class InflammableDecoration : Initializable {
 			// Advance dissolve!
 			m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
 
-			if ( m_timer.Finished() )
+			if ( m_timer.IsFinished() )
 			{
 				m_view.SetActive(false);
 				m_autoSpawner.Respawn();

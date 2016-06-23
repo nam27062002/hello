@@ -56,9 +56,9 @@ setlocal EnableDelayedExpansion
 
 @cd %strPathToCaletySDK%\calety
 
-REM @git checkout develop
+@REM @git checkout develop
 
-REM @git pull
+@REM @git pull
 
 @cd %CurrentFolder%
 

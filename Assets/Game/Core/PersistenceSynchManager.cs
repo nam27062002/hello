@@ -46,14 +46,14 @@ public class PersistenceSynchManager : MonoBehaviour
 	void Start () 
 	{
 		ExternalPlatformManager.instance.OnLogin += OnExternalLogin;
-		RequestNetwork.instance.onAuthResponse += OnAuthResponse;
+		//RequestNetwork.instance.onAuthResponse += OnAuthResponse;
 
 	}
 
 	void OnDestroy()
 	{
 		ExternalPlatformManager.instance.OnLogin -= OnExternalLogin;
-		RequestNetwork.instance.onAuthResponse -= OnAuthResponse;
+		//RequestNetwork.instance.onAuthResponse -= OnAuthResponse;
 	}
 	
 	void OnExternalLogin()
@@ -61,7 +61,7 @@ public class PersistenceSynchManager : MonoBehaviour
 		// Try to sync save data
 		string id = ExternalPlatformManager.instance.GetId();
 		// RequestNetwork -> ask for Persistence
-		RequestNetwork.instance.Authenticate( "server", "sufix", "platformId", "_platformUserName");
+		//RequestNetwork.instance.Authenticate( "server", "sufix", "platformId", "_platformUserName");
 	}
 
 	void OnAuthResponse( JSONNode result )

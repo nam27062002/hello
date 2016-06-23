@@ -78,7 +78,7 @@ public class IncubatorTutorial : MonoBehaviour {
 
 			case State.DELAY: {
 				// Timer finished?
-				if(m_timer.Finished()) 
+				if(m_timer.IsFinished()) 
 				{
 					// Yes! Start scrolling
 					m_state = State.RUNNING;
