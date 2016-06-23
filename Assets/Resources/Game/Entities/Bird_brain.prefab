@@ -160,7 +160,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 493130}
   - 114: {fileID: 11490640}
-  - 114: {fileID: 11486760}
+  - 114: {fileID: 11436898}
   m_Layer: 0
   m_Name: Bird_brain
   m_TagString: Untagged
@@ -456,6 +456,19 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11436898
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
+  m_avoidDistanceAttenuation: 2
 --- !u!114 &11451748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -473,19 +486,6 @@ MonoBehaviour:
   m_glidingTime:
     min: 0.5
     max: 1
---- !u!114 &11486760
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 172582}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01854acb7fbee41338552202a8f010b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_avoidDistanceAttenuation: 2
-  m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
 --- !u!114 &11490640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -506,6 +506,7 @@ MonoBehaviour:
     m_senseDelay:
       min: 0
       max: 0
+  m_isAnEater: 0
 --- !u!137 &13791510
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

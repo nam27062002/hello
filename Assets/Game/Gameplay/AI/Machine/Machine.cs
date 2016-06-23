@@ -12,7 +12,7 @@ namespace AI {
 
 		private Group m_group; // this will be a reference
 
-		private MachineMotion m_motion = new MachineMotion();
+		[SerializeField] private MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		[SerializeField] private bool m_isAnEater = false;

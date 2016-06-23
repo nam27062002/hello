@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace AI {
-	public class AIPilot : Pilot {
+	public abstract class AIPilot : Pilot {
 
 		[SerializeField] private AISM.StateMachine m_brainResource;
 		private AISM.StateMachine m_brain;
@@ -23,8 +23,6 @@ namespace AI {
 			// state machine updates
 			if (m_brain != null) 
 				m_brain.Update();
-
-			base.Update();
 		}
 	}
 }
