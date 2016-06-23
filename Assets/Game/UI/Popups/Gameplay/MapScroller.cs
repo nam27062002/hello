@@ -26,6 +26,8 @@ public class MapScroller : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private ScrollRect m_scrollRect = null;
+	[SerializeField] [Range(0, 1f)] private float m_zoomSpeed = 0.5f;
+	[SerializeField] private float m_minZoom = 20f;
 
 	// Internal references
 	private Camera m_camera = null;
@@ -79,6 +81,10 @@ public class MapScroller : MonoBehaviour {
 		// Refresh sizes
 		RefreshCameraSize();
 
+		// Move camera to current dragon's position
+		// Set initial scroll position based on camera's current position
+		ScrollToWorldPos(m_camera.transform.position);
+
 		// Detect scroll events
 		m_scrollRect.onValueChanged.AddListener(OnScrollChanged);
 	}
@@ -98,7 +104,62 @@ public class MapScroller : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		// Detect zoom
+		if(m_zoomSpeed > 0f) {
+			// Aux vars
+			bool zoomChanged = false;
 
+			// In editor, use mouse wheel
+			#if UNITY_EDITOR
+			// If mouse wheel has been scrolled
+			if(Input.mouseScrollDelta.sqrMagnitude > Mathf.Epsilon) {
+				// Change orthographic size based on mouse wheel
+				m_camera.orthographicSize += Input.mouseScrollDelta.y * m_zoomSpeed;
+
+				// Mark dirty
+				zoomChanged = true;
+			}
+
+			// In device, use pinch gesture
+			// From https://unity3d.com/learn/tutorials/topics/mobile-touch/pinch-zoom
+			#else
+			// If there are two touches on the device...
+			if(Input.touchCount == 2) {
+				// Store both touches.
+				Touch touchZero = Input.GetTouch(0);
+				Touch touchOne = Input.GetTouch(1);
+
+				// Find the position in the previous frame of each touch.
+				Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+				Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+				// Find the magnitude of the vector (the distance) between the touches in each frame.
+				float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+				float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+				// Find the difference in the distances between each frame.
+				float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+				// ... change the orthographic size based on the change in distance between the touches.
+				m_camera.orthographicSize += deltaMagnitudeDiff * m_zoomSpeed;
+				
+				// Mark dirty
+				zoomChanged = true;
+			}
+			#endif
+
+			// Perform some common stuff if zoom was changed
+			if(zoomChanged) {
+				// Make sure the orthographic size is within limits
+				m_camera.orthographicSize = Mathf.Clamp(m_camera.orthographicSize, m_minZoom, m_levelMapData.mapCameraBounds.height/2f);	// orthographicSize is half the viewport's height!
+
+				// Refresh scroll rect's sizes to match new camera viewport
+				RefreshCameraSize();
+
+				// Update camera position so it doesn't go out of bounds
+				ScrollToWorldPos(m_camera.transform.position);
+			}
+		}
 	}
 
 	/// <summary>
@@ -147,22 +208,28 @@ public class MapScroller : MonoBehaviour {
 		m_cameraHalfSize = cameraSize/2f;
 		m_contentSize = new Vector2(viewportSize.x/cameraSize.x * cameraLimits.x, viewportSize.y/cameraSize.y * cameraLimits.y);
 		m_scrollRect.content.sizeDelta = m_contentSize;
+	}
 
-		// Set initial scroll position based on camera's current position
+	/// <summary>
+	/// Move map to a given world position.
+	/// No animation, snapped to limits.
+	/// </summary>
+	/// <param name="_pos">The position to scroll to (in world coords).</param>
+	private void ScrollToWorldPos(Vector3 _pos) {
 		// Ideally the ScrollRect will already snap to edges
 		// Scroll position is the top-left corner of the content rectangle, take in consideration camera size to make the maths
 		m_scrollRect.horizontalNormalizedPosition = Mathf.InverseLerp(
 			m_levelMapData.mapCameraBounds.xMin + m_cameraHalfSize.x, 
 			m_levelMapData.mapCameraBounds.xMax - m_cameraHalfSize.x, 
-			m_camera.transform.position.x
+			_pos.x
 		);
 		m_scrollRect.verticalNormalizedPosition = Mathf.InverseLerp(
 			m_levelMapData.mapCameraBounds.yMin + m_cameraHalfSize.y, 
 			m_levelMapData.mapCameraBounds.yMax - m_cameraHalfSize.y, 
-			m_camera.transform.position.y
+			_pos.y
 		);
 
-		// Apply the snapped position back to the camera
+		// Update camera position to match scroll rect's
 		UpdateCameraPosition();
 	}
 

@@ -45,4 +45,22 @@ public class AOCQuickTestEditor : Editor {
 
 		EditorGUILayout.Space();
 	}
+
+	[MenuItem("Hungry Dragon/AOC/Clear Map Layer")]
+	public static void ClearMapLayer() {
+		// Convert all objects in the map layer to the default layer
+		int mapLayerIdx = LayerMask.NameToLayer("Map");
+		int defaultLayerIdx = LayerMask.NameToLayer("Default");
+		int mapAndGameLayerIdx = LayerMask.NameToLayer("MapAndGame");
+		GameObject[] objs = Resources.FindObjectsOfTypeAll<GameObject>();
+		foreach(GameObject go in objs) {
+			if(go.layer == mapLayerIdx) {
+				if(go.GetComponent<Collider>() != null) {
+					go.layer = mapAndGameLayerIdx;
+				} else {
+					go.layer = defaultLayerIdx;
+				}
+			}
+		}
+	}
 }
