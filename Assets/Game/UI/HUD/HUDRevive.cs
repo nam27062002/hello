@@ -88,7 +88,7 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	void Update() {
 		if(!m_timer.IsStopped()) {
-			m_timerText.Localize(m_timerText.tid, StringUtils.FormatNumber(Mathf.CeilToInt(m_timer.GetTimeLeft() / 1000.0f)));
+            m_timerText.Localize(m_timerText.tid, StringUtils.FormatNumber(Mathf.CeilToInt((float)m_timer.GetTimeLeft() / 1000.0f)));
 			if(m_timer.IsFinished()) {
 				m_timer.Stop();
 				m_animator.Hide();
