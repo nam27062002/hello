@@ -31,7 +31,7 @@ setlocal EnableDelayedExpansion
 		@goto found
 	)
 	
-	@SET strPathToCaletySDK=!strPathToCaletySDK!/..
+	@SET strPathToCaletySDK=!strPathToCaletySDK!\..
 	@SET strPathToSearch=!strPathToCaletySDK!!strPrefixToFind!
 	
 	@IF %%x == !maxTries! @(goto notFound)
