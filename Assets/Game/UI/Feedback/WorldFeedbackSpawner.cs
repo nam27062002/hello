@@ -21,20 +21,13 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	[Serializable]
-	public struct ScoreFeedbackDef {
-		public GameObject prefab;
-		public uint scoreThreshold;		// Score required to display this feedback
-	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed
 	[Separator("Feedback Prefabs")]
-	//[SerializeField] private GameObject m_scoreFeedbackPrefab = null;
-	[SerializeField] private List<ScoreFeedbackDef> m_scoreFeedbacks = new List<ScoreFeedbackDef>();
-	[Space]
+	[SerializeField] private GameObject m_scoreFeedbackPrefab = null;
 	[SerializeField] private GameObject m_coinsFeedbackPrefab = null;
 	[SerializeField] private GameObject m_pcFeedbackPrefab = null;
 	[SerializeField] private GameObject m_killFeedbackPrefab = null;
@@ -51,32 +44,20 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		// [AOC] Optionally check missing fields
-		// Sort score feedbacks by threshold
-		m_scoreFeedbacks.Sort((x, y) => {
-			return x.scoreThreshold.CompareTo(y.scoreThreshold);
-		});
-	}
-
-	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
 		// Create the pools
-		for(int i = 0; i < m_scoreFeedbacks.Count; i++) {
-			if(m_scoreFeedbacks[i].prefab != null) {
-				// Must be created within the canvas
-				// No more than 5 simultaneous messages on screen!
-				// Use container if defined to keep hierarchy clean
-				Transform parent = this.transform;
-				if(m_scoreFeedbackContainer != null) {
-					parent = m_scoreFeedbackContainer.transform;
-				}
-				PoolManager.CreatePool(m_scoreFeedbacks[i].prefab, parent, 15);
+		// No more than X simultaneous messages on screen!
+		// Use container if defined to keep hierarchy clean
+
+		if(m_scoreFeedbackPrefab != null) {
+			// Must be created within the canvas
+			Transform parent = this.transform;
+			if(m_scoreFeedbackContainer != null) {
+				parent = m_scoreFeedbackContainer.transform;
 			}
+			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, 15);
 		}
 
 		if(m_coinsFeedbackPrefab != null) {
@@ -88,9 +69,6 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		}
 
 		if(m_killFeedbackPrefab != null) {
-			// Must be created within the canvas
-			// No more than 5 simultaneous messages on screen!
-			// Use container if defined to keep hierarchy clean
 			Transform parent = this.transform;
 			if(m_killFeedbackContainer != null) {
 				parent = m_killFeedbackContainer.transform;
@@ -220,25 +198,18 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// Show different feedback for different reward types
 		// Score
 		if(_reward.score > 0) {
-			// Find out which score threshold matches the score
-			// Easy to find using a revers loop since they're sorted from lower to higher
-			GameObject targetPrefab = null;
-			for(int i = m_scoreFeedbacks.Count - 1; i >= 0; i--) {
-				if(_reward.score > m_scoreFeedbacks[i].scoreThreshold) {
-					targetPrefab = m_scoreFeedbacks[i].prefab;
-					break;
-				}
-			}
-
-			// Show score!
-			if(targetPrefab != null) {
+			// Get a score feedback instance and initialize it with the target reward
+			if(m_scoreFeedbackPrefab != null) {
 				// Get an instance from the pool
-				GameObject obj = PoolManager.GetInstance(targetPrefab.name);
-				WorldFeedbackController scoreFeedback = obj.GetComponent<WorldFeedbackController>();
+				GameObject obj = PoolManager.GetInstance(m_scoreFeedbackPrefab.name);
 
-				// Format text and spawn!
-				string text = "+" + StringUtils.FormatNumber(_reward.score);
-				scoreFeedback.Spawn(text, worldPos);
+				// Initialize score component
+				ScoreFeedback scoreFeedback = obj.GetComponent<ScoreFeedback>();
+				scoreFeedback.SetScore(_reward.score);
+
+				// Spawn
+				WorldFeedbackController controller = obj.GetComponent<WorldFeedbackController>();
+				controller.Spawn(worldPos);
 			}
 		}
 
