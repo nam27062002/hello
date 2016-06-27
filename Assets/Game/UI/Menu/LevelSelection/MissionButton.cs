@@ -107,7 +107,7 @@ public class MissionButton : MonoBehaviour {
 			// Special icon when mission is not active
 			string iconPath = "";
 			if(m_mission.state != Mission.State.ACTIVE) {
-				DefinitionNode unknownTypeDef = DefinitionsManager.GetDefinition(DefinitionsCategory.MISSION_TYPES, "unknown");
+				DefinitionNode unknownTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, "unknown");
 				iconPath = unknownTypeDef.GetAsString("icon");
 			} else {
 				iconPath = m_mission.typeDef.GetAsString("icon");

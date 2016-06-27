@@ -78,11 +78,11 @@ public class IncubatorTutorial : MonoBehaviour {
 
 			case State.DELAY: {
 				// Timer finished?
-				if(m_timer.Finished()) 
+				if(m_timer.IsFinished()) 
 				{
 					// Yes! Start scrolling
 					m_state = State.RUNNING;
-					m_timer.Start(m_duration);
+					m_timer.Start(m_duration * 1000);
 
 					if ( m_finger == null )
 					{
@@ -125,7 +125,7 @@ public class IncubatorTutorial : MonoBehaviour {
 		if(m_state == State.IDLE) 
 		{
 			// Start timer
-			m_timer.Start(m_delay);
+			m_timer.Start(m_delay * 1000);
 
 			// Toggle state!
 			m_state = State.DELAY;

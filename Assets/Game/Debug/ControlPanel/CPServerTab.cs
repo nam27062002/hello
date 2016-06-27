@@ -37,7 +37,7 @@ public class CPServerTab : MonoBehaviour {
 	private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();
 
-    private RequestNetwork requestNetwork;
+    //private RequestNetwork requestNetwork;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,13 +55,13 @@ public class CPServerTab : MonoBehaviour {
 		OnClearConsoleButton();
 
         //RequestNetworkOnline.CreateInstance();
-        requestNetwork = new RequestNetworkOnline();
+        //requestNetwork = new RequestNetworkOnline();
 
     }
 
     private void Update()
     {
-        requestNetwork.Update();
+        //requestNetwork.Update();
     }
 
 	//------------------------------------------------------------------------//
@@ -137,7 +137,7 @@ public class CPServerTab : MonoBehaviour {
 		Debug.Log("Button 1 pressed with params " + paramString + " - TODO!!");
 		Output("Button 1 pressed with params " + paramString);
 
-        requestNetwork.Login();
+        //requestNetwork.Login();
     }
 
 	/// <summary>

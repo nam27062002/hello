@@ -46,8 +46,8 @@ public class PopupSettings : MonoBehaviour {
 
 		// Cache language definitions and init with selected language
 		// [AOC] TODO!! Exclude languages marked to be excluded based on platform
-		m_languageDefs = DefinitionsManager.GetDefinitionsByVariable(DefinitionsCategory.LOCALIZATION, "iOS", "true");
-		DefinitionsManager.SortByProperty(ref m_languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
+		m_languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.LOCALIZATION, "iOS", "true");
+		DefinitionsManager.SharedInstance.SortByProperty(ref m_languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
 		// Find current language
 		for(int i = 0; i < m_languageDefs.Count; i++) {
@@ -81,7 +81,7 @@ public class PopupSettings : MonoBehaviour {
 
 		// Change localization!
 		Localization.SetLanguage(m_languageDefs[m_selectedIdx].sku, true);
-
+		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
 		// Update text!
 		RefreshText();
 	}
@@ -96,7 +96,7 @@ public class PopupSettings : MonoBehaviour {
 
 		// Change localization!
 		Localization.SetLanguage(m_languageDefs[m_selectedIdx].sku, true);
-
+		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
 		// Update text!
 		RefreshText();
 	}

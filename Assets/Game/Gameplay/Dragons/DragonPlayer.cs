@@ -110,7 +110,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.energySkill.value;
-		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
 		m_healthWarningThreshold = def.GetAsFloat("healthWarningThreshold");
 		m_healthCriticalThreshold = def.GetAsFloat("healthCriticalThreshold");
 

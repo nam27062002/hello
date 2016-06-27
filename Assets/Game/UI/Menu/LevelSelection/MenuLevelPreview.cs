@@ -33,7 +33,7 @@ public class MenuLevelPreview : MonoBehaviour {
 	private DefinitionNode m_def = null;
 	public DefinitionNode def {
 		get {
-			if(m_def == null) m_def = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, sku);
+			if(m_def == null) m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, sku);
 			return m_def;
 		}
 	}

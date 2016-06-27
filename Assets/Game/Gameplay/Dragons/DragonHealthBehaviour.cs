@@ -53,7 +53,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_sessionStartHealthDrainModifier = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainModifier");// 0.5
 
 		// Global setting values
-		DefinitionNode settings = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		DefinitionNode settings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
 		m_healthCriticalLimit = settings.GetAsFloat("healthCriticalThreshold");	// 0.08
 		m_criticalHealthModifier = settings.GetAsFloat("healthCriticalModifier");	// 0.2
 		m_starvingLimit = settings.GetAsFloat("healthWarningThreshold");	// 0.20

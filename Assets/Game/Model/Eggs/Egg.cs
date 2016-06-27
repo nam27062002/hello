@@ -91,10 +91,10 @@ public class Egg {
 	/// <param name="_eggSku">The sku of the egg in the EGGS definitions category.</param>
 	public static Egg CreateFromSku(string _eggSku) {
 		// Egg can't be created if definitions are not loaded
-		Debug.Assert(DefinitionsManager.ready, "Definitions not yet loaded!");
+		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
 
 		// Find and validate definition
-		DefinitionNode eggDef = DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, _eggSku);
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _eggSku);
 
 		// Create and return new egg
 		return CreateFromDef(eggDef);
@@ -109,10 +109,10 @@ public class Egg {
 	/// <param name="_dragonSku">The sku of the dragon the new egg should be associated to.</param>
 	public static Egg CreateByDragon(string _dragonSku) {
 		// Egg can't be created if definitions are not loaded
-		Debug.Assert(DefinitionsManager.ready, "Definitions not yet loaded!");
+		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
 
 		// Find an egg definition associated to the given dragon sku
-		DefinitionNode eggDef = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", _dragonSku);
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", _dragonSku);
 
 		// Create and return new egg
 		return CreateFromDef(eggDef);
@@ -169,7 +169,8 @@ public class Egg {
 	/// <param name="_onlyOwnedDragons">Whether to restrict the random selection to eggs related to owned dragons only.</param>
 	public static DefinitionNode GetRandomDef(bool _onlyOwnedDragons = true) {
 		// Get all egg definitions
-		List<DefinitionNode> eggDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.EGGS);
+		List<DefinitionNode> eggDefs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.EGGS, ref eggDefs);
 
 		// Filter those whose linked dragon is not valid
 		// If required, select only those whose dragon is owned
@@ -304,17 +305,17 @@ public class Egg {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SaveData _data) {
 		// Check requirements
-		Debug.Assert(DefinitionsManager.ready, "Definitions not yet loaded!");
+		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
 
 		// Def
-		m_def = DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, _data.sku);
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _data.sku);
 
 		// State
 		m_state = _data.state;
 		m_isNew = _data.isNew;
 
 		// Reward
-		m_rewardDef = DefinitionsManager.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data.rewardSku);
+		m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data.rewardSku);
 	}
 
 	/// <summary>

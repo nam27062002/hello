@@ -58,14 +58,12 @@ public class GameCameraController : MonoBehaviour {
 	private float m_interestLerp = 0;
 	private Vector3 m_interestPosition = Vector3.zero;
 	private bool m_furyOn = false;
-	private DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
 	private bool m_slowMotionOn;
 	private bool m_slowMoJustStarted;
 	private bool m_boostOn;
 	private Camera m_camera;
 
 	// Positioning
-	private Vector3 m_forward = Vector3.right;
 	private float m_forwardOffset = 0;
 
 
@@ -74,10 +72,6 @@ public class GameCameraController : MonoBehaviour {
 	private float m_shakeDuration = 0f;
 	private float m_shakeTimer = 0f;
 
-	// Aux vars for in-game tuning
-	private float m_nearStart;
-	private float m_farStart;
-
 	// Camera bounds
 	private Bounds m_frustum = new Bounds();
 	private Bounds m_activationMin = new Bounds();
@@ -85,8 +79,6 @@ public class GameCameraController : MonoBehaviour {
 	private Bounds m_deactivation = new Bounds();
 
 	private Transform m_transform;
-	Vector3 m_lastScreenPosition;
-	Vector3 m_lerpAxis = Vector3.zero;
 
 	enum State
 	{
@@ -94,7 +86,7 @@ public class GameCameraController : MonoBehaviour {
 		PLAY
 	};
 	State m_state = State.INTRO;
-
+	Vector3 m_dampedPosition;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -162,9 +154,6 @@ public class GameCameraController : MonoBehaviour {
 		m_slowMoJustStarted = false;
 		m_boostOn = false;
 
-		m_nearStart = Camera.main.nearClipPlane;
-		m_farStart = Camera.main.farClipPlane;
-
 		defaultZoom = InstanceManager.player.data.def.GetAsFloat("cameraDefaultZoom");
 		farZoom = InstanceManager.player.data.def.GetAsFloat("cameraFarZoom");
 		m_currentZoom = m_defaultZoom * 2;
@@ -186,10 +175,9 @@ public class GameCameraController : MonoBehaviour {
 		Vector3 pos = spawnPointObj.transform.position;
 		pos.z = -m_currentZoom;
 		transform.position = pos;
+		m_dampedPosition = pos;
 
 		m_camera = GetComponent<Camera>();
-		m_lastScreenPosition = -Vector3.one * 1000;
-		m_lerpAxis = Vector3.zero;
 
 		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
 		{
@@ -240,37 +228,24 @@ public class GameCameraController : MonoBehaviour {
 						m_interestLerp = Mathf.Max( m_interestLerp, 0);
 					}
 
-					targetPos = Vector3.Lerp(m_dragonMotion.cameraLookAt.position, m_dragonMotion.cameraLookAt.position + m_interestPosition, m_interestLerp);
+					targetPos = Vector3.Lerp(m_dragonMotion.transform.position, m_dragonMotion.transform.position + m_interestPosition, m_interestLerp);
 
 
 					Vector3 dragonVelocity = m_dragonMotion.velocity;
 					Vector3 dragonDirection = dragonVelocity.normalized;
 
-					m_forward = Vector3.Lerp( m_forward, dragonDirection, Time.deltaTime);
-
-					bool cameraMovementNewVersion = DebugSettings.newCameraSystem;
-					cameraMovementNewVersion = true;
-					float lerpoValue = 0;
-					if ( cameraMovementNewVersion )
-					{
-						float speedModifier = 5;
-						lerpoValue = m_dragonMotion.lastSpeed * speedModifier * Time.deltaTime;
-					}
+					
 
 					// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
 					if (m_furyOn)
 					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f) + lerpoValue, Time.deltaTime );
-					}
-					else if ( m_boostOn )
-					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue + 1, Time.deltaTime );
+						m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f), Time.deltaTime );
 					}
 					else
 					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue, Time.deltaTime );
+						m_forwardOffset = Mathf.Lerp( m_forwardOffset, 0, Time.deltaTime );
 					}
-					targetPos = targetPos + m_forward * m_forwardOffset;
+					targetPos = targetPos + dragonDirection * m_forwardOffset;
 
 					// Clamp X to defined limits
 					targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
@@ -292,47 +267,20 @@ public class GameCameraController : MonoBehaviour {
 					}
 					targetPos.z = -m_currentZoom;
 
+					float dampFactor = 0.9f;
+					m_dampedPosition = Damping( m_dampedPosition, targetPos, Time.deltaTime, dampFactor);
 
-					if (cameraMovementNewVersion)
-					{
-						// if pixels difference from targetPos to newPos is bigger than a region we smooth transition
-						Vector3 realTarget = targetPos;
-						realTarget.z = m_dragonMotion.cameraLookAt.position.z;
+					float m = ( targetPos - m_dampedPosition ).magnitude * 0.5f;
+					// float multiplierFactor = (1 / ( 1 + Mathf.Pow(2,-(m-2)))) * 1.5f;
+					float multiplierFactor = (1 / ( 1 + Mathf.Pow(2f,-((m))))) * 1.375f;
+					// float multiplierFactor = (1 / ( 1 + Mathf.Pow(2,-(m-2)))) * 1.375f;
 
-						// Only move if necessary
-						Vector3 screenPos = m_camera.WorldToScreenPoint( realTarget );
-						float halfRange = 0.1f;
-						if ( screenPos.x  > Screen.width * (0.5f + halfRange ))
-						{
-							m_lerpAxis.x = 1;
-						}
-						else if ( screenPos.x  < Screen.width * (0.5f - halfRange) )
-						{
-							m_lerpAxis.x = -1;
-						}
+					newPos = m_dampedPosition + (( targetPos - m_dampedPosition ) * multiplierFactor);
 
-						if ( screenPos.y > Screen.height * (0.5f + halfRange))
-						{
-							m_lerpAxis.y = 1;
-						}
-						else if ( screenPos.y < Screen.height * (0.5f - halfRange) )
-						{
-							m_lerpAxis.y = -1;
-						}
 
-						// to lerp you need the same axis
-						if ( m_lerpAxis.x * ( targetPos.x - newPos.x ) < 0)	// Worng axis movement
-							targetPos.x = newPos.x;
-
-						if ( m_lerpAxis.y * ( targetPos.y - newPos.y ) < 0)	// Worng axis movement
-							targetPos.y = newPos.y;
-						newPos = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 5.0f );
-					}
-					else
-					{
-						newPos = Vector3.Lerp(transform.position, targetPos, 0.9f );
-						newPos.z = targetPos.z;
-					}
+					// FACTOR = función sigmoide  = 1 / (1+e^-x)
+					// Desplazar y ajustar alturas (1/(1+e^-(x-2))*2
+				
 				}
 			}break;
 		}
@@ -343,6 +291,11 @@ public class GameCameraController : MonoBehaviour {
 		transform.position = newPos;
 
 		UpdateFrustumBounds();
+	}
+
+	Vector3 Damping( Vector3 src, Vector3 dst, float dt, float factor)
+	{
+		return ((src * factor) + (dst * dt)) / (factor + dt);
 	}
 
 	private Vector3 UpdateByShake( Vector3 position)
@@ -473,7 +426,6 @@ public class GameCameraController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private void OnFury(bool _enabled, DragonBreathBehaviour.Type _type) {
 		m_furyOn = _enabled;
-		m_furyType = _type;
 	}
 
 	private void OnSlowMotion( bool _enabled)

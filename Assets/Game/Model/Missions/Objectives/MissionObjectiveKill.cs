@@ -81,7 +81,7 @@ public class MissionObjectiveKill : MissionObjective {
 			}
 
 			// Add type name
-			DefinitionNode targetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, m_targets[0]);
+			DefinitionNode targetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_targets[0]);
 			if(targetDef != null) {
 				typeStr = targetDef.GetLocalized("tidName");
 			} else {

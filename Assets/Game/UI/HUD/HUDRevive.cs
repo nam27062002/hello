@@ -88,8 +88,8 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	void Update() {
 		if(!m_timer.IsStopped()) {
-			m_timerText.Localize(m_timerText.tid, StringUtils.FormatNumber(Mathf.CeilToInt(m_timer.GetTimeLeft())));
-			if(m_timer.Finished()) {
+            m_timerText.Localize(m_timerText.tid, StringUtils.FormatNumber(Mathf.CeilToInt((float)m_timer.GetTimeLeft() / 1000.0f)));
+			if(m_timer.IsFinished()) {
 				m_timer.Stop();
 				m_animator.Hide();
 				Messenger.Broadcast(GameEvents.PLAYER_DIED);
@@ -195,7 +195,7 @@ public class HUDRevive : MonoBehaviour {
 		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UserProfile.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
 
 		// Reset timer and control vars
-		m_timer.Start(m_reviveAvailableSecs);
+		m_timer.Start(m_reviveAvailableSecs * 1000);
 		m_allowCurrencyPopup = true;
 
 		// Show!

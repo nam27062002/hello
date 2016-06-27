@@ -614,6 +614,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		float len = dir.magnitude;
 		// m_rotBlendRate is param
 		float blendRate = m_rotBlendRate;
+		if ( m_targetSpeedMultiplier > 1 )
+			blendRate *= 2;
 		float slowRange = 0.05f;
 		if(len < slowRange)
 			blendRate *= (len/slowRange);

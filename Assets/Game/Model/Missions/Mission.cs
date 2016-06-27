@@ -101,7 +101,7 @@ public class Mission {
 		m_def = _def;
 
 		// Get the type definition as well
-		m_typeDef = DefinitionsManager.GetDefinition(DefinitionsCategory.MISSION_TYPES, m_def.GetAsString("typeSku"));
+		m_typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, m_def.GetAsString("typeSku"));
 
 		// Destroy current objective (if any)
 		if(m_objective != null) {

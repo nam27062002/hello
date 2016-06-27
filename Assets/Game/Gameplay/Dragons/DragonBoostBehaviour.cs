@@ -48,7 +48,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_energyDrain = m_dragon.data.def.GetAsFloat("energyDrain");
 		m_energyRefill = m_dragon.data.def.GetAsFloat("energyRefillRate");
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
-		m_energyRequiredToBoost = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
+		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
 
 		for( int i = 0; i<m_trails.Count; i++ )
@@ -93,7 +93,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 		if (m_active) {
 			// Don't drain energy if cheat is enabled
-			if(!Debug.isDebugBuild || !DebugSettings.infiniteBoost) {
+			if(!UnityEngine.Debug.isDebugBuild || !DebugSettings.infiniteBoost) {
 				m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain);
 				if (m_dragon.energy <= 0f) {
 					StopBoost();
