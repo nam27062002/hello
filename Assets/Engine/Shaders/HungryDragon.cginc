@@ -1,11 +1,11 @@
 #ifndef HUNGRYDRAGON_CG_INCLUDED
 #define HUNGRYDRAGON_CG_INCLUDED
 
-#include "UnityShaderVariables.cginc"
+#define HG_FOG_COORDS(idx) float fogCoord : TEXCOORD##idx;
 
-#define HG_TRANSFER_FOG(o,worldPos) o.fogCoord = (worldPos.z) * unity_FogParams.z + unity_FogParams.w
+#define HG_TRANSFER_FOG(o,worldPos,start,end) o.fogCoord = (worldPos.z-start)/(end-start);
 
-#define HG_APPLY_FOG(cood,col) col.rgb = lerp( unity_FogColor.rgb,(col).rgb, max(saturate(cood.fogCoord),unity_FogColor.a) ); 
+#define HG_APPLY_FOG(cood,col,fogColor) col.rgb = lerp( (col).rgb,(fogColor).rgb,min(saturate(cood.fogCoord),fogColor.a) ); 
 
 #endif // HUNGRYDRAGON_CG_INCLUDED
-  
+    

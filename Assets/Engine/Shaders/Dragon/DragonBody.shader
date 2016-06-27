@@ -1,7 +1,7 @@
 // Custom Dragon Shader.
 // - Detail Texture. R: Inner Light value. G: Spec value.
 
-Shader "Hungry Dragon/Dragon" {
+Shader "Hungry Dragon/Dragon/Body" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular, b->noise

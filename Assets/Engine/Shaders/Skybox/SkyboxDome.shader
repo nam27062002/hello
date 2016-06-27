@@ -1,19 +1,17 @@
 ﻿// - Unlit
 // - Scroll 2 layers /w Multiplicative op
 
-Shader "Hungry Dragon/Skybox Dome" {
+Shader "Hungry Dragon/Skybox/Dome Skybox" {
 Properties {
 	_MainTex ("Base layer (RGB)", 2D) = "white" {}
 	_DetailTex ("2nd layer (RGB)", 2D) = "white" {}
 	_ScrollX ("Base layer Scroll speed X", Float) = 1.0
-	_ScrollY ("Base layer Scroll speed Y", Float) = 0.0
 	_Scroll2X ("2nd layer Scroll speed X", Float) = 1.0
-	_Scroll2Y ("2nd layer Scroll speed Y", Float) = 0.0
 	_AMultiplier ("Layer Multiplier", Float) = 0.5
 }
 
 SubShader {
-	Tags { "Queue"="Skybox" "RenderType"="Opaque" }
+	Tags { "Queue"="Background" "RenderType"="Opaque" }
 	
 	Lighting Off Fog { Mode Off }
 	ZWrite Off
