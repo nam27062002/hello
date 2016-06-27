@@ -3,7 +3,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Unlit/Lightmap And Recieve Shadow (On Line Decorations)" 
+Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)" 
 {
 	Properties 
 	{
