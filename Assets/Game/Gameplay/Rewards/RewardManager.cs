@@ -196,8 +196,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void InitFromDef() {
 		// Init score multipliers
-		List<DefinitionNode> defs = DefinitionsManager.GetDefinitions(DefinitionsCategory.SCORE_MULTIPLIERS);
-		DefinitionsManager.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.SCORE_MULTIPLIERS, ref defs);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		m_scoreMultipliers = new ScoreMultiplier[defs.Count];
 		ScoreMultiplier newMult;
 		List<DefinitionNode> feedbackDefs;
@@ -378,7 +379,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	private void ParseSurvivalBonus( string tier )
 	{
-		DefinitionNode def = DefinitionsManager.GetDefinitionByVariable( DefinitionsCategory.SURVIVAL_BONUS , "tier", tier);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable( DefinitionsCategory.SURVIVAL_BONUS , "tier", tier);
 
 		List<int> minutes = def.GetAsList<int>("minutes");
 		List<int> coins = def.GetAsList<int>("coins");

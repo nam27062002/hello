@@ -78,7 +78,8 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void Awake() {
 		// Initialize internal values from content
-		List<DefinitionNode> difficultyDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.MISSION_DIFFICULTIES);
+		List<DefinitionNode> difficultyDefs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSION_DIFFICULTIES, ref difficultyDefs);
 		for(int i = 0; i < difficultyDefs.Count; i++) {
 			int difficultyIdx = difficultyDefs[i].Get<int>("index");
 
@@ -142,7 +143,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <returns>The definition of a mission with the given sku. <c>null</c> if not found.</returns>
 	/// <param name="_sku">The sku of the wanted definition.</param>
 	public static DefinitionNode GetDef(string _sku) {
-		return DefinitionsManager.GetDefinition(DefinitionsCategory.MISSIONS, _sku);
+		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSIONS, _sku);
 	}
 
 	/// <summary>
@@ -152,7 +153,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// <param name="_difficulty">The difficulty whose definition we want.</param>
 	public static DefinitionNode GetDifficultyDef(Mission.Difficulty _difficulty) {
 		// Int representation of the difficulty should match the "index" field of the definition
-		return DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.MISSION_DIFFICULTIES, "index", ((int)(_difficulty)).ToString());
+		return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_DIFFICULTIES, "index", ((int)(_difficulty)).ToString());
 	}
 
 	/// <summary>
@@ -257,7 +258,8 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		int idx = m_generationIdx[(int)_difficulty];
 		bool loopAllowed = true;	// Allow only one loop through all the definitions - just a security check
 		DefinitionNode def = null;
-		List<DefinitionNode> defsList = DefinitionsManager.GetDefinitions(DefinitionsCategory.MISSIONS);	// [AOC] Order is not trustable, but we don't care since this is temporal
+		List<DefinitionNode> defsList = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSIONS, ref defsList);	// [AOC] Order is not trustable, but we don't care since this is temporal
 		for( ; ; idx++) {
 			// If reached the last definition but still haven't looped, do it now
 			// Otherwise it means there are no definitions for the requested difficulty, throw an exception

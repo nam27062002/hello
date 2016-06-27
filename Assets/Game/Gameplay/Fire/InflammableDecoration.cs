@@ -105,7 +105,7 @@ public class InflammableDecoration : Initializable {
 			// Advance dissolve!
 			m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
 
-			if ( m_timer.Finished() )
+			if ( m_timer.IsFinished() )
 			{
 				m_view.SetActive(false);
 				m_autoSpawner.Respawn();
@@ -152,7 +152,8 @@ public class InflammableDecoration : Initializable {
 				}
 
 				// Crumble and dissolve time
-				m_timer.Start(m_fireNodes[0].burningTime + m_fireNodes[0].burningTime * 0.4f);
+				float seconds = m_fireNodes[0].burningTime + m_fireNodes[0].burningTime * 0.4f;
+				m_timer.Start( seconds * 1000 );
 				// m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
 				SwitchViewToDissolve();

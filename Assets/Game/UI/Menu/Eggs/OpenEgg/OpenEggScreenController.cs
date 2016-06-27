@@ -348,7 +348,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(rewardType) {
 			case "suit": {
 				// Get disguise def
-				DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
+				DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
 
 				// Disguise rarity
 				m_rewardRarity.InitFromRarity(disguiseDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
@@ -407,7 +407,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);
 
 				// Instantiate dragon view
-				DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, m_egg.eggData.def.GetAsString("dragonSku"));
+				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_egg.eggData.def.GetAsString("dragonSku"));
 				if(dragonDef != null) {
 					// Create instance
 					GameObject prefab = Resources.Load<GameObject>(dragonDef.GetAsString("menuPrefab"));
@@ -449,15 +449,15 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardPowers.GetComponent<ShowHideAnimator>().Show(false);
 
 			// Aux vars
-			DefinitionNode disguiseDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
+			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
 			int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
 
 			// Initialize with actual powers data
-			DefinitionNode powerSetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, disguiseDef.GetAsString("powerupSet"));
+			DefinitionNode powerSetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, disguiseDef.GetAsString("powerupSet"));
 			for(int i = 0; i < 3; i++) {
 				// Get def
 				string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
-				DefinitionNode powerDef = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
+				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
 				// Get and initialize power button
 				DisguisePowerIcon powerIcon = m_rewardPowers.FindComponentRecursive<DisguisePowerIcon>("Power" + (i+1).ToString());

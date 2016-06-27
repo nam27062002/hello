@@ -69,10 +69,10 @@ public class DragonEquip : MonoBehaviour {
 	}
 	
 	private void EquipDisguise(string _disguise) {		
-		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, _disguise);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _disguise);
 
 		if (def != null) {
-			def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_EQUIP, def.GetAsString("equipSet"));
+			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_EQUIP, def.GetAsString("equipSet"));
 		}
 
 		if (def != null)  {

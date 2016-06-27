@@ -70,7 +70,8 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		// Create a dragon data object for every known dragon definition
 		m_dragonsBySku = new Dictionary<string, DragonData>();
 		DragonData newDragonData = null;
-		List<DefinitionNode> defs = DefinitionsManager.GetDefinitions(DefinitionsCategory.DRAGONS);
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
 		for(int i = 0; i < defs.Count; i++) {
 			newDragonData = new DragonData();
 			newDragonData.Init(defs[i]);
@@ -78,7 +79,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		}
 
 		// Initialize ordered list
-		DefinitionsManager.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		m_dragonsByOrder = new List<DragonData>();
 		for(int i = 0; i < defs.Count; i++) {
 			m_dragonsByOrder.Add(m_dragonsBySku[defs[i].sku]);
@@ -204,7 +205,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 			// If not initialized, initialize with default values
 			if(_data[i] == null) {
 				_data[i] = new DragonData.SaveData();
-				_data[i].sku = DefinitionsManager.GetSkuList(DefinitionsCategory.DRAGONS)[i];	// This is risky, order of the SaveData does not necessary match order of the definitions - shouldn't happen though
+				_data[i].sku = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS)[i];	// This is risky, order of the SaveData does not necessary match order of the definitions - shouldn't happen though
 			}
 			GetDragonData(_data[i].sku).Load(_data[i]);
 		}

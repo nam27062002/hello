@@ -104,11 +104,11 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
 
 		// Get egg corresponding to target dragon
-		m_eggDef = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", m_dragonSku);
+		m_eggDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", m_dragonSku);
 
 		// get disguises levels of the current dragon
-		List<DefinitionNode> defList = DefinitionsManager.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonSku);
-		DefinitionsManager.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
+		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonSku);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
 		// Load disguise icons for this dragon
 		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/" + m_dragonSku);
@@ -272,11 +272,11 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		} else {
 			// Init powers
-			DefinitionNode powerSetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, _pill.powerUpSet);
+			DefinitionNode powerSetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, _pill.powerUpSet);
 			for(int i = 0; i < 3; i++) {
 				// Get def
 				string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
-				DefinitionNode powerDef = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
+				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
 				// Refresh data
 				bool locked = (i >= _pill.level);

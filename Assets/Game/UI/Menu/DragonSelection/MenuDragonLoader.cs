@@ -21,7 +21,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Load dragon prefab
 		string path = "UI/Menu/Dragons/" + m_dragonMenuPrefab;
 		if(!string.IsNullOrEmpty(_dragonSku)) {
-			DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
+			DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
 			if(dragonDef == null) {
 				Debug.LogError("Couldn't find definition for dragon with sku " + _dragonSku);
 				return;

@@ -41,7 +41,7 @@ public class LoadingSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
-
+		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!");
 		DebugUtils.Assert(m_loadingBar != null, "Required component!");
@@ -60,7 +60,9 @@ public class LoadingSceneController : SceneController {
 		//		 Do it now so we have it under control
 		//		 Add all the new created singletons
 		// Content and persistence
-		DefinitionsManager.CreateInstance();
+		//DefinitionsManager.CreateInstance();
+
+
 		UserProfile.CreateInstance();
 
 		// Game

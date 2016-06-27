@@ -52,10 +52,10 @@ public class PopupAdRevive : MonoBehaviour {
 	private void Update() {
 		if(m_adRunning) {
 			// Refresh text
-			m_timerText.Localize("TID_GAME_REVIVE_AD_ENDS_IN", StringUtils.FormatNumber(Mathf.CeilToInt(m_timer.GetTimeLeft())));
+            m_timerText.Localize("TID_GAME_REVIVE_AD_ENDS_IN", StringUtils.FormatNumber(Mathf.CeilToInt((float)m_timer.GetTimeLeft())));
 
 			// Once timer finished, auto-close the popup and stop refreshing
-			if(m_timer.Finished()) {
+			if(m_timer.IsFinished()) {
 				m_adRunning = false;
 				GetComponent<PopupController>().Close(true);
 			}

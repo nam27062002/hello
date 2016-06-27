@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -74,7 +76,9 @@ public class HUDMessagesTest : MonoBehaviour {
 
 			case 4:	{
 				Mission m = new Mission();
-				m.InitFromDefinition(DefinitionsManager.GetDefinitions(DefinitionsCategory.MISSIONS).GetRandomValue());
+				List<DefinitionNode> missions = new List<DefinitionNode>();
+				DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSIONS, ref missions);
+				m.InitFromDefinition(missions.GetRandomValue());
 				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
 			} break;
 

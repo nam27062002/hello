@@ -68,7 +68,7 @@ public class PopupEggShopPill : MonoBehaviour {
 	private void Start() {
 		// Initialize from the given egg sku
 		if (m_eggDef == null && m_eggSku != "") {
-			InitFromDef(DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, m_eggSku));
+			InitFromDef(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_eggSku));
 		}
 	}
 

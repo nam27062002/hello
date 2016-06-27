@@ -64,8 +64,9 @@ public class PopupEggShop : MonoBehaviour {
 		// Create all the Egg pills and add them inside the scroll
 
 		// Get the the content
-		List<DefinitionNode> defList = DefinitionsManager.GetDefinitions(DefinitionsCategory.EGGS);
-		DefinitionsManager.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
+		List<DefinitionNode> defList = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.EGGS, ref defList);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
 		for (int i = 0; i < defList.Count; i++) {
 			GameObject pill = GameObject.Instantiate<GameObject>(m_pillPrefab);
@@ -202,7 +203,7 @@ public class PopupEggShop : MonoBehaviour {
 		// Refresh info with the pill data
 		DefinitionNode eggDef = m_pills[m_selectedPill].eggDef;
 		if(eggDef == null) return;	// Could happen if pills haven't already been initialized
-		DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, eggDef.GetAsString("dragonSku"));
+		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, eggDef.GetAsString("dragonSku"));
 		if(dragonDef == null) return;
 
 		// Rewards text
