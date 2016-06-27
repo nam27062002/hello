@@ -32,7 +32,6 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	[SerializeField] private GameObject m_pcFeedbackPrefab = null;
 	[SerializeField] private GameObject m_killFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockBonusFeedbackPrefab = null;
-	[SerializeField] private GameObject m_flockScoreFeedbackPrefab = null;
 	[SerializeField] private GameObject m_escapedFeedbackPrefab = null;
 
 	[Separator("Container References")]
@@ -82,14 +81,6 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 				parent = m_scoreFeedbackContainer.transform;
 			}
 			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, 2);
-		}
-
-		if(m_flockScoreFeedbackPrefab != null) {
-			Transform parent = this.transform;
-			if(m_scoreFeedbackContainer != null) {
-				parent = m_scoreFeedbackContainer.transform;
-			}
-			PoolManager.CreatePool(m_flockScoreFeedbackPrefab, parent, 2);
 		}
 
 		if ( m_escapedFeedbackPrefab != null )
@@ -262,17 +253,11 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_entity">Entity.</param>
 	/// <param name="_reawrd">Reawrd.</param>
 	private void OnFlockEaten(Transform _entity, Reward _reward) {		
+		// Spawn flock feedback bonus, score will be displayed as any other score feedback
 		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name);
 		if (flockBonus != null) {
 			string text = Localization.Localize("TID_FEEDBACK_FLOCK_BONUS");
 			WorldFeedbackController worldFeedback = flockBonus.GetComponent<WorldFeedbackController>();
-			worldFeedback.Spawn(text, _entity.position);
-		}
-
-		GameObject flockScore = PoolManager.GetInstance(m_flockScoreFeedbackPrefab.name);
-		if (flockScore != null) {
-			string text = "" + _reward.score;
-			WorldFeedbackController worldFeedback = flockScore.GetComponent<WorldFeedbackController>();
 			worldFeedback.Spawn(text, _entity.position);
 		}
 	}
