@@ -39,6 +39,17 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 	[SerializeField] private List<PopupController> m_closedPopups = new List<PopupController>();
 
 	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
+	public static int openPopupsCount {
+		get { return instance.m_openedPopups.Count; }
+	}
+
+	public static int loadingPopupsCount {
+		get { return instance.m_loadingQueue.Count; }
+	}
+
+	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
