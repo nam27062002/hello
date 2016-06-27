@@ -96,9 +96,11 @@ public class Builder : MonoBehaviour
 	[MenuItem ("Build/Increase Internal Version Number")]
 	private static void IncreaseInternalVersionNumber()
 	{
-		GameSettings.internalVersion.patch++;
-		EditorUtility.SetDirty( GameSettings.instance);
-		AssetDatabase.SaveAssets();
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		if(settingsInstance != null)
+		{
+			settingsInstance.IncreaseAllMinorVersionNumber();
+		}
 	}
 	
 	[MenuItem ("Build/Increase Android Version Code")]
