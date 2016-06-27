@@ -41,6 +41,8 @@
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
 
+				float specular : TEXCOORD2;
+
 				float3 tangentWorld : TEXCOORD3;  
 		        float3 normalWorld : TEXCOORD4;
 		        float3 binormalWorld : TEXCOORD5;
@@ -49,7 +51,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			uniform float4 _MainTex_TexelSize;
-
+			uniform float _Specular;
 			uniform float _BumpStrength;
 
 			float4 _FogColor;
@@ -63,6 +65,19 @@
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
 				o.normal = UnityObjectToWorldNormal(v.normal);
+
+				// Half View - See: Blinn-Phong
+				o.specular = 0;
+				if ( _Specular > 0)
+				{
+					float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
+					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+					float3 halfDir = normalize(lightDirection + viewDirection);
+					o.specular = pow(max(dot( o.normal, halfDir), 0), _Specular);
+				}
+
+
+
 
 				// To calculate tangent world
 	            float4x4 modelMatrix = _Object2World;
@@ -95,7 +110,7 @@
 
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 
-     			col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col;
+     			col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + i.specular * _LightColor0;
 
 				// apply fog
 				HG_APPLY_FOG(i, col, _FogColor);	// Fog
