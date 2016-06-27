@@ -64,7 +64,6 @@ public class GameCameraController : MonoBehaviour {
 	private Camera m_camera;
 
 	// Positioning
-	private Vector3 m_forward = Vector3.right;
 	private float m_forwardOffset = 0;
 
 
@@ -235,30 +234,18 @@ public class GameCameraController : MonoBehaviour {
 					Vector3 dragonVelocity = m_dragonMotion.velocity;
 					Vector3 dragonDirection = dragonVelocity.normalized;
 
-					float relativeSpeed = dragonVelocity.magnitude / m_dragonMotion.absoluteMaxSpeed;
-					// m_forward = Vector3.Lerp( m_forward, dragonDirection, Time.deltaTime);
-
-					float lerpoValue = 0;
-					float speedModifier = 5;
-					lerpoValue = m_dragonMotion.lastSpeed * speedModifier * Time.deltaTime;
 					
 
 					// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
-					/*
 					if (m_furyOn)
 					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f) + lerpoValue, Time.deltaTime );
-					}
-					else if ( m_boostOn )
-					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue + 1, Time.deltaTime );
+						m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f), Time.deltaTime );
 					}
 					else
 					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, lerpoValue, Time.deltaTime );
+						m_forwardOffset = Mathf.Lerp( m_forwardOffset, 0, Time.deltaTime );
 					}
-					targetPos = targetPos + m_forward * m_forwardOffset;
-					*/
+					targetPos = targetPos + dragonDirection * m_forwardOffset;
 
 					// Clamp X to defined limits
 					targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
