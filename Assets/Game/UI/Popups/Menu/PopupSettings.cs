@@ -24,6 +24,8 @@ public class PopupSettings : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public static readonly string PATH = "UI/Popups/Settings/PF_PopupSettings";
 
+    public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -51,7 +53,7 @@ public class PopupSettings : MonoBehaviour {
 
 		// Find current language
 		for(int i = 0; i < m_languageDefs.Count; i++) {
-			if(m_languageDefs[i].sku == Localization.languageSku) {
+            if(m_languageDefs[i].sku == LocalizationManager.SharedInstance.GetCurrentLanguageSKU ()) {
 				m_selectedIdx = i;
 				break;
 			}
@@ -80,7 +82,11 @@ public class PopupSettings : MonoBehaviour {
 		if(m_selectedIdx < 0) m_selectedIdx = m_languageDefs.Count - 1;
 
 		// Change localization!
-		Localization.SetLanguage(m_languageDefs[m_selectedIdx].sku, true);
+        if (LocalizationManager.SharedInstance.SetLanguage (m_languageDefs [m_selectedIdx].sku))
+        {
+            PlayerPrefs.SetString(KEY_SETTINGS_LANGUAGE, m_languageDefs [m_selectedIdx].sku);
+        }
+
 		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
 		// Update text!
 		RefreshText();
@@ -95,7 +101,11 @@ public class PopupSettings : MonoBehaviour {
 		if(m_selectedIdx >= m_languageDefs.Count) m_selectedIdx = 0;
 
 		// Change localization!
-		Localization.SetLanguage(m_languageDefs[m_selectedIdx].sku, true);
+        if (LocalizationManager.SharedInstance.SetLanguage (m_languageDefs [m_selectedIdx].sku))
+        {
+            PlayerPrefs.SetString(KEY_SETTINGS_LANGUAGE, m_languageDefs [m_selectedIdx].sku);
+        }
+
 		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
 		// Update text!
 		RefreshText();

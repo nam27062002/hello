@@ -115,7 +115,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		m_levelUpButton.interactable = skillData.CanUnlockNextLevel();
 		Text buttonText = m_levelUpButton.FindComponentRecursive<Text>("Text");
 		if(skillData.level == skillData.lastLevel) {
-			buttonText.text = Localization.Localize("TID_MAX");
+            buttonText.text = LocalizationManager.SharedInstance.Localize("TID_MAX");
 		} else {
 			buttonText.text = StringUtils.FormatNumber(skillData.nextLevelUnlockPrice);
 		}
@@ -137,7 +137,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		} else {
 			// Perform transaction
 			UserProfile.AddCoins(-skillData.nextLevelUnlockPrice);

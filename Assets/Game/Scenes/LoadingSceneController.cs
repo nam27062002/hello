@@ -96,11 +96,23 @@ public class LoadingSceneController : SceneController {
 		PersistenceManager.Load();
 
 		// Initialize localization
-		Localization.SetSavedLanguage();
+		SetSavedLanguage();
 
 		// [AOC] TODO!! Figure out the proper way/place to do this
 		PrecacheFonts();
 	}
+
+    public static void SetSavedLanguage()
+    {
+        string strLanguageSku = PlayerPrefs.GetString(PopupSettings.KEY_SETTINGS_LANGUAGE);
+
+        if (string.IsNullOrEmpty(strLanguageSku))
+        {
+            strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
+        }
+
+        LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
+    }
 	
 	/// <summary>
 	/// Called every frame.

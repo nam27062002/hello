@@ -169,7 +169,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if (obj != null) 
 		{
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-			worldFeedback.Spawn( Localization.Get( tid ) , _entity.position);
+            worldFeedback.Spawn( LocalizationManager.SharedInstance.Get( tid ) , _entity.position);
 		}
 	}
 	
@@ -256,7 +256,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// Spawn flock feedback bonus, score will be displayed as any other score feedback
 		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name);
 		if (flockBonus != null) {
-			string text = Localization.Localize("TID_FEEDBACK_FLOCK_BONUS");
+            string text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_FLOCK_BONUS");
 			WorldFeedbackController worldFeedback = flockBonus.GetComponent<WorldFeedbackController>();
 			worldFeedback.Spawn(text, _entity.position);
 		}

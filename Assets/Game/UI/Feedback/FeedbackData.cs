@@ -89,7 +89,7 @@ public class FeedbackData {
 			if(UnityEngine.Random.Range(0f, 1f) < m_probabilities[typeIdx]) {
 				// Pick a random one, localize and return it
 				string feedbackTid = m_feedbacks[typeIdx].data[UnityEngine.Random.Range(0, m_feedbacks[typeIdx].data.Count)];
-				return Localization.Localize(feedbackTid);
+                return LocalizationManager.SharedInstance.Localize(feedbackTid);
 			}
 		}
 		return "";

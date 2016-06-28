@@ -64,7 +64,53 @@ public class ContentManager
 		List<string> kRulesListToCalculateCRC = new List<string>();
 		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, ref kRulesListToCalculateCRC );
 		m_ready = true;
+
 		// Warn all other managers and definition consumers
 		Messenger.Broadcast(EngineEvents.DEFINITIONS_LOADED);
+
+
+
+        LocalizationManager.LanguageItemData[] kLanguagesData = null;
+        Dictionary <string, DefinitionNode> kLanguagesSKUs = DefinitionsManager.SharedInstance.GetDefinitions (DefinitionsCategory.LOCALIZATION);
+        if (kLanguagesSKUs.Count > 0)
+        {
+            kLanguagesData = new LocalizationManager.LanguageItemData[kLanguagesSKUs.Count];
+
+            int iSKUIdx = 0;
+
+            foreach(KeyValuePair<string, DefinitionNode> kEntry in kLanguagesSKUs)
+            {
+                kLanguagesData[iSKUIdx] = new LocalizationManager.LanguageItemData();
+
+                kLanguagesData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
+
+                int iOrder = 0;
+                if (int.TryParse(kEntry.Value.Get("order"), out iOrder))
+                {
+                    kLanguagesData[iSKUIdx].m_iOrder = iOrder;
+                }
+
+                kLanguagesData[iSKUIdx].m_strISOCode  = kEntry.Value.Get("isoCode");
+
+                bool bInAndroid = false;
+                if (bool.TryParse(kEntry.Value.Get("android"), out bInAndroid))
+                {
+                    kLanguagesData[iSKUIdx].m_bInAndroid = bInAndroid;
+                }
+
+                bool bInIOS = false;
+                if (bool.TryParse(kEntry.Value.Get("iOS"), out bInIOS))
+                {
+                    kLanguagesData[iSKUIdx].m_bInIOS = bInIOS;
+                }
+                    
+                kLanguagesData[iSKUIdx].m_strLanguageFile = kEntry.Value.Get("txtFilename");
+                kLanguagesData[iSKUIdx].m_strLanguageTID = kEntry.Value.Get("tidName");
+
+                iSKUIdx++;
+            }
+        }
+
+        LocalizationManager.SharedInstance.Initialise (ref kLanguagesData, "lang_english", "Localization");
 	}
 }
