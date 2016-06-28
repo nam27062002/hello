@@ -20,8 +20,8 @@ createSymbolicLinks ()
     strCurrentFolder=$(pwd)
 
     cd $1/calety
-    git checkout develop
-    git pull
+    #git checkout develop
+    #git pull
     cd $strCurrentFolder
 
     cd Assets
