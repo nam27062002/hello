@@ -39,10 +39,6 @@ public class AmbientManager : MonoBehaviour
 	Color m_horizonColor = Color.white;
 	float m_horizonHeigth;
 	Color m_groundColor = Color.white;
-		// Fog
-	Color m_fogColor;
-	float m_fogStart;
-	float m_fogEnd;
 		// Light
 	Vector3 m_lightAngles;
 	float m_flaresIntensity;
@@ -60,10 +56,6 @@ public class AmbientManager : MonoBehaviour
 	Color m_targetHorizonColor = Color.white;
 	float m_targetHorizonHeight;
 	Color m_targetGroundColor = Color.white;
-		// Fog
-	Color m_targetFogColor;
-	float m_targetFogStart;
-	float m_targetFogEnd;
 		// Light
 	Vector3 m_targetLightAngles;
 	float m_targetFlaresIntensity;
@@ -133,9 +125,6 @@ public class AmbientManager : MonoBehaviour
 				m_sunSize = m_targetSunSize;
 				m_skyColor = m_targetSkyColor;
 				m_groundColor = m_targetGroundColor;
-				m_fogColor = m_targetFogColor;
-				m_fogStart = m_targetFogStart;
-				m_fogEnd = m_targetFogEnd;
 				m_lightAngles = m_targetLightAngles;
 				m_flaresIntensity = m_targetFlaresIntensity;
 				m_rainIntensity = m_targetRainIntensity;
@@ -181,10 +170,6 @@ public class AmbientManager : MonoBehaviour
 			m_horizonColor = Color.Lerp( m_horizonColor, m_targetHorizonColor, lerpValue);
 			m_horizonHeigth = Mathf.Lerp( m_horizonHeigth, m_targetHorizonHeight, lerpValue );
 			m_groundColor = Color.Lerp( m_groundColor, m_targetGroundColor, lerpValue);
-				// Fog
-			m_fogColor = Color.Lerp( m_fogColor, m_targetFogColor, lerpValue);
-			m_fogStart = Mathf.Lerp( m_fogStart, m_targetFogStart, lerpValue);
-			m_fogEnd = Mathf.Lerp( m_fogEnd, m_targetFogEnd, lerpValue);
 				// Light
 			m_lightAngles = Vector3.Lerp( m_lightAngles, m_targetLightAngles, lightDirLerp );
 			m_flaresIntensity = Mathf.Lerp( m_flaresIntensity, m_targetFlaresIntensity, lightDirLerp);
@@ -354,10 +339,6 @@ public class AmbientManager : MonoBehaviour
 		m_targetHorizonColor = emptyColor;
 		m_targetHorizonHeight = 0;
 		m_targetGroundColor = emptyColor;
-		// Fog
-		m_targetFogColor = emptyColor;
-		m_targetFogStart = 0;
-		m_targetFogEnd = 0;
 		// Light
 		m_targetLightAngles = Vector3.zero;
 		m_targetFlaresIntensity = 0;
@@ -379,10 +360,6 @@ public class AmbientManager : MonoBehaviour
 				m_targetHorizonColor += node.m_horizonColor * nodeResult.m_weight;
 				m_targetHorizonHeight += node.m_horizonHeight * nodeResult.m_weight;
 				m_targetGroundColor += node.m_groundColor * nodeResult.m_weight;
-					// Fog
-				m_targetFogColor += node.m_fogColor * nodeResult.m_weight;
-				m_targetFogStart += node.m_fogStart * nodeResult.m_weight;
-				m_targetFogEnd += node.m_fogEnd * nodeResult.m_weight;
 					
 					// Rain
 				m_targetRainIntensity += node.m_rainIntensity * nodeResult.m_weight;
@@ -417,12 +394,6 @@ public class AmbientManager : MonoBehaviour
 		m.SetFloat("_HorizonHeight", m_horizonHeigth);
 		m.SetColor("_GroundColor", m_groundColor);
 
-
-		RenderSettings.fog = true;
-		RenderSettings.fogColor = m_fogColor;
-		RenderSettings.fogStartDistance = m_fogStart;
-		RenderSettings.fogEndDistance = m_fogEnd;
-
 		if ( m_sunLight != null)
 		{
 			Quaternion rot = m_sunLight.transform.rotation;
@@ -450,11 +421,6 @@ public class AmbientManager : MonoBehaviour
 		m_targetHorizonColor = node.m_horizonColor;
 		m_targetHorizonHeight = node.m_horizonHeight;
 		m_targetGroundColor = node.m_groundColor;
-
-			// Fog
-		m_targetFogColor = node.m_fogColor;
-		m_targetFogStart = node.m_fogStart;
-		m_targetFogEnd = node.m_fogEnd;
 			// Light
 		m_targetLightAngles = node.transform.rotation.eulerAngles;
 		m_targetFlaresIntensity = node.m_flaresIntensity;

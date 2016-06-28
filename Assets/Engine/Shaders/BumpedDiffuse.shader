@@ -39,6 +39,8 @@
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
 
+				float3 vLight : TEXCOORD2;
+
 				float3 halfDir : VECTOR;
 				float3 tangentWorld : TEXCOORD3;  
 		        float3 normalWorld : TEXCOORD4;
@@ -63,6 +65,7 @@
 				fixed3 worldPos = mul(_Object2World, v.vertex);
 				HG_TRANSFER_FOG(o, worldPos, _FogStart, _FogEnd);	// Fog
 				o.normal = UnityObjectToWorldNormal(v.normal);
+				o.vLight = ShadeSH9(float4(o.normal, 1.0));
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
@@ -104,7 +107,8 @@
      			if (_Specular > 0)
      				specular = pow(max(dot( normalDirection, i.halfDir), 0), _Specular);
 
-     			col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
+     			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
+     			col = (diffuse + fixed4(i.vLight,1)) * col + specular * _LightColor0;
 
 				// apply fog
 				HG_APPLY_FOG(i, col, _FogColor);	// Fog
