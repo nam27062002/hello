@@ -7,7 +7,9 @@ namespace AI {
 
 		private Vector3 m_normal;
 
-		void Start() {
+		protected override void Start() {
+			base.Start();
+
 			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 			m_normal = Vector3.up;
 		}
@@ -20,10 +22,17 @@ namespace AI {
 			if (m_speed > 0) {
 				m_target.y = transform.position.y;
 
-				Vector3 ground = GetGroundDirection();
+				//m_direction = GetGroundDirection();
+
 				Vector3 v = m_target - transform.position;	
 				Util.MoveTowardsVector3WithDamping(ref m_impulse, ref v, m_speed, 32f * Time.deltaTime);
 				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
+
+				if (m_impulse.x >= 0) {
+					m_direction = Vector3.right;
+				} else {
+					m_direction = Vector3.left;
+				}
 			}
 		}
 
@@ -38,7 +47,7 @@ namespace AI {
 			bool hasLeftHit = Physics.Linecast(leftSensor, leftSensor + distance, out leftHit, m_groundMask);
 			bool hasRightHit = Physics.Linecast(rightSensor, rightSensor + distance, out rightHit, m_groundMask);
 
-			if (m_direction.x >= 0) {
+			if (m_impulse.x >= 0) {
 				if (hasLeftHit && hasRightHit) {
 					return (rightHit.point - leftHit.point).normalized;
 				}

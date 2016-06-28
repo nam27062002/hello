@@ -7,9 +7,7 @@ namespace AI {
 		[SerializeField] private AISM.StateMachine m_brainResource;
 		private AISM.StateMachine m_brain;
 
-		protected override void Awake() {
-			base.Awake();
-
+		protected virtual void Start() {			
 			// braaiiiinnn ~ ~ ~ ~ ~
 			m_brain = Object.Instantiate(m_brainResource) as AISM.StateMachine;
 			m_brain.Initialise(gameObject, true);

@@ -15,10 +15,12 @@ namespace AI {
 			private float m_xLimitMin;
 			private float m_xLimitMax;
 
-			private float m_timer;
-
 			private Pilot m_pilot;
 			private Machine m_machine;
+
+			private bool m_checkGoToRest;
+
+			private float m_walkSpeed = 1.5f;
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<Pilot>();
@@ -29,27 +31,36 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_target = Vector3.zero;
-				m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
-				m_timer = Random.Range(10f, 35f);
-				m_pilot.SetSpeed(1);
+				if (oldState.name != "flee") {
+					m_target = Vector3.zero;
+					m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
+				}
+				m_pilot.SetSpeed(m_walkSpeed);
+				m_checkGoToRest = true;
 			}
 
 			protected override void OnUpdate() {
 				float m = Mathf.Abs(m_machine.position.x - m_target.x);
 
-				if (m < 0.1f) {
-					m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
+				if (m < m_walkSpeed) {
+					if (m_checkGoToRest) {
+						bool goToRest = Random.Range(0f, 100f) < 25f;
+						if (goToRest) {
+							// don't check again for "idle" and get let the entity get closer to the current target
+							m_checkGoToRest = false;
+						} else {
+							// this entity won't rest now, let's go to another location
+							m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
+						}
+					} else {
+						// we'll slown down and go to rest
+						if (m < m_walkSpeed * 0.25f) {
+							Transition(OnRest);
+						}
+					}
 				}
 
 				m_pilot.GoTo(m_target);
-
-				if (m_timer > 0f) {
-					m_timer -= Time.deltaTime;
-					if (m_timer <= 0f) {
-						Transition(OnRest);
-					}
-				}
 			}
 		}
 	}

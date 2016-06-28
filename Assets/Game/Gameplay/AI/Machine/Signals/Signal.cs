@@ -60,7 +60,8 @@ namespace AI {
 			public static string OnIgnoreAll = "onIgnoreAll";
 
 			protected override string OnEnabled() { return OnAlert; }
-			protected override string OnDisabled() { return OnIgnoreAll; }
+			protected override string OnDisabled() { return 
+				OnIgnoreAll; }
 		}
 
 		// enemy detected nearby

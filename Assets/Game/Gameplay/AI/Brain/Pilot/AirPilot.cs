@@ -11,7 +11,9 @@ namespace AI {
 		private bool m_perpendicularAvoid;
 
 
-		void Start() {
+		protected override void Start() {
+			base.Start();
+
 			m_perpendicularAvoid = false;
 		}
 

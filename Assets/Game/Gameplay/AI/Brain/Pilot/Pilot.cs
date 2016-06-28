@@ -8,10 +8,12 @@ namespace AI {
 		//TODO: tornar a crear la interficie??
 		public enum Action {
 			Boost = 0,
+			Attack,
 			Bite,
 			Fire,
 			Avoid,
 			Pursuit,
+			Scared,
 
 			Count
 		}
@@ -41,6 +43,7 @@ namespace AI {
 		protected virtual void Awake() {
 			m_speed = 0;
 			m_impulse = Vector3.zero;
+			m_direction = Vector3.right;
 
 			m_target = transform.position;
 
@@ -49,7 +52,15 @@ namespace AI {
 		}
 
 		public bool IsActionPressed(Pilot.Action _action) {
-			return false;
+			return m_actions[(int)_action];
+		}
+
+		public void PressAction(Pilot.Action _action) {
+			m_actions[(int)_action] = true;
+		}
+
+		public void ReleaseAction(Pilot.Action _action) {
+			m_actions[(int)_action] = false;
 		}
 
 		public virtual void OnTrigger(string _trigger) {}
@@ -58,8 +69,16 @@ namespace AI {
 			m_speed = _speed;
 		}
 
+		public void SetDirection(Vector3 _dir) {
+			m_direction = _dir;
+		}
+
 		public void GoTo(Vector3 _target) {
 			m_target = _target;
+		}
+
+		public void Scared(bool _enable) {
+			m_actions[(int)Action.Scared] = _enable;
 		}
 
 		public void Avoid(bool _enable) {

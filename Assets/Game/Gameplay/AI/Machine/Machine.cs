@@ -8,6 +8,8 @@ namespace AI {
 		/**************/
 
 		private Pilot m_pilot = null;
+		private ViewControl m_viewControl;
+
 		private Dictionary<string, Signal> m_signals;
 
 		private Group m_group; // this will be a reference
@@ -37,6 +39,7 @@ namespace AI {
 		// Use this for initialization
 		void Awake() {
 			m_pilot = GetComponent<Pilot>();
+			m_viewControl = GetComponent<ViewControl>();
 
 			m_signals = new Dictionary<string, Signal>();
 
@@ -56,18 +59,22 @@ namespace AI {
 
 			m_motion.AttacheMachine(this);
 			m_motion.AttachPilot(m_pilot);
+			m_motion.AttachViewControl(m_viewControl);
 			m_motion.Init();
 
 			m_sensor.AttacheMachine(this);
 			m_sensor.AttachPilot(m_pilot);
+			m_sensor.AttachViewControl(m_viewControl);
 			m_sensor.Init();
 
 			m_edible.AttacheMachine(this);
 			m_edible.AttachPilot(m_pilot);
+			m_edible.AttachViewControl(m_viewControl);
 			m_edible.Init();
 
 			m_eater.AttacheMachine(this);
 			m_eater.AttachPilot(m_pilot);
+			m_eater.AttachViewControl(m_viewControl);
 			m_eater.Init();
 
 			if (m_isAnEater) {
@@ -82,7 +89,7 @@ namespace AI {
 
 			if (Signals.Destroyed.OnDestroyed == _trigger) {
 				m_pilot.enabled = false;
-				m_group.Leave(this);
+				if (m_group != null) m_group.Leave(this);
 				GameObject.Destroy(gameObject);
 			}
 		}

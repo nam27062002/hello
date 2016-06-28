@@ -161,6 +161,7 @@ GameObject:
   - 4: {fileID: 493130}
   - 114: {fileID: 11490640}
   - 114: {fileID: 11436898}
+  - 114: {fileID: 11456762}
   m_Layer: 0
   m_Name: Bird_brain
   m_TagString: Untagged
@@ -486,6 +487,17 @@ MonoBehaviour:
   m_glidingTime:
     min: 0.5
     max: 1
+--- !u!114 &11456762
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11490640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -497,6 +509,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_motion:
+    m_stickToGround: 0
+    m_faceDirection: 1
   m_sensor:
     m_minRadius: 3
     m_maxRadius: 5
