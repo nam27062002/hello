@@ -41,6 +41,9 @@ public class SkuListAttribute : ListAttribute {
 	/// Make sure the options array is updated.
 	/// </summary>
 	public override void ValidateOptions() {
+		// If definitions are not loaded, do it now
+		if(!ContentManager.ready) ContentManager.InitContent();
+
 		// Get sku list
 		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(m_category);
 

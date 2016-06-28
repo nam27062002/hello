@@ -113,8 +113,11 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-		// Check missions in cooldown to be unlocked
 		for(int i = 0; i < m_missions.Length; i++) {
+			// Only initialized missions
+			if(m_missions[i] == null) continue;
+
+			// Check missions in cooldown to be unlocked
 			if(m_missions[i].state == Mission.State.COOLDOWN) {
 				// Has enough time passed for this mission's difficulty?
 				if((DateTime.UtcNow - m_missions[i].cooldownStartTimestamp).TotalMinutes >= m_cooldownPerDifficulty[i]) {
