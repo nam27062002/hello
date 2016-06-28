@@ -5,11 +5,6 @@
 		_MainTex ("Texture", 2D) = "white" {}
 		_Specular( "Specular", float ) = 1
 		_BumpStrength("Bump Strength", float) = 3
-
-		// FOG
-		_FogColor ("Fog Color", Color) = (0,0,0,0)
-		_FogStart( "Fog Start", float ) = 0
-		_FogEnd( "Fog End", float ) = 100
 	}
 	SubShader
 	{
@@ -35,7 +30,6 @@
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
-				HG_FOG_COORDS(1)
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
 
@@ -53,9 +47,6 @@
 			uniform float _Specular;
 			uniform float _BumpStrength;
 
-			float4 _FogColor;
-			float _FogStart;
-			float _FogEnd;
 			
 			v2f vert (appdata v)
 			{
@@ -63,7 +54,6 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				fixed3 worldPos = mul(_Object2World, v.vertex);
-				HG_TRANSFER_FOG(o, worldPos, _FogStart, _FogEnd);	// Fog
 				o.normal = UnityObjectToWorldNormal(v.normal);
 				o.vLight = ShadeSH9(float4(o.normal, 1.0));
 
@@ -110,8 +100,6 @@
      			// col = (diffuse + fixed4(UNITY_LIGHTMODEL_AMBIENT.rgb,1)) * col + specular * _LightColor0;
      			col = (diffuse + fixed4(i.vLight,1)) * col + specular * _LightColor0;
 
-				// apply fog
-				HG_APPLY_FOG(i, col, _FogColor);	// Fog
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;
 			}

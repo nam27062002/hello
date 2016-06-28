@@ -26,7 +26,6 @@ SubShader {
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile_fog
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"
@@ -44,7 +43,6 @@ SubShader {
 				half2 texcoord : TEXCOORD0;
 				// float3 normal : NORMAL;
 				float3 halfDir : VECTOR;
-				HG_FOG_COORDS(1)
 
 				float3 tangentWorld : TEXCOORD2;  
 		        float3 normalWorld : TEXCOORD3;
@@ -83,8 +81,6 @@ SubShader {
 				o.halfDir = normalize(lightDirection + viewDirection);
 
 				o.posWorld = mul( _Object2World, v.vertex ).xyz;
-
-	            // HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
 
 	            // To calculate tangent world
 	            float4x4 modelMatrix = _Object2World;
@@ -127,8 +123,6 @@ SubShader {
 
 				// fixed4 col = (diffuse + fixed4(pointLights + (UNITY_LIGHTMODEL_AMBIENT.rgb),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate;
 				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-
-				// HG_APPLY_FOG(i, col, _FogColor);	// Fog
 				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
