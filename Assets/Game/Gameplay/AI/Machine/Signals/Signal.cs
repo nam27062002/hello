@@ -1,7 +1,7 @@
 ﻿using AISM;
 
 namespace AI {
-	public abstract class Signal {			
+	public abstract class Signal {
 		private bool m_value;
 		public bool value { get { return m_value; } }
 
@@ -12,7 +12,7 @@ namespace AI {
 			if (m_value != _value) {
 				if (_value) m_machine.OnTrigger(OnEnabled());
 				else 		m_machine.OnTrigger(OnDisabled());
-						
+
 				m_value = _value;
 			}
 		}

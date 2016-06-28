@@ -32,6 +32,10 @@ public class ViewControl : MonoBehaviour {
 	}
 	//
 
+	public void Aim(float _blendFactor) {
+		m_animator.SetFloat("aim", _blendFactor);
+	}
+
 	public void Move(float _speed) {
 		if (_speed > 0.01f) {
 			// 0- walk  1- run, blending in between

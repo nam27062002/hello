@@ -9,6 +9,7 @@ namespace AI {
 		public enum Action {
 			Boost = 0,
 			Attack,
+			Aim,
 			Bite,
 			Fire,
 			Avoid,
