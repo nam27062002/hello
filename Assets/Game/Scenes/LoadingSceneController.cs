@@ -60,35 +60,34 @@ public class LoadingSceneController : SceneController {
 		//		 Do it now so we have it under control
 		//		 Add all the new created singletons
 		// Content and persistence
-		//DefinitionsManager.CreateInstance();
+		//DefinitionsManager.CreateInstance(true);
 
-
-		UserProfile.CreateInstance();
+		UserProfile.CreateInstance(true);
 
 		// Game
-		DragonManager.CreateInstance();
-		LevelManager.CreateInstance();
-		MissionManager.CreateInstance();
-		ChestManager.CreateInstance();
-		RewardManager.CreateInstance();
-		EggManager.CreateInstance();
+		DragonManager.CreateInstance(true);
+		LevelManager.CreateInstance(true);
+		MissionManager.CreateInstance(true);
+		ChestManager.CreateInstance(true);
+		RewardManager.CreateInstance(true);
+		EggManager.CreateInstance(true);
 		EggManager.InitFromDefinitions();
-		Wardrobe.CreateInstance();
+		Wardrobe.CreateInstance(true);
 		Wardrobe.InitFromDefinitions();
 
 		// Settings and setup
-		GameSettings.CreateInstance();
+		GameSettings.CreateInstance(true);
 
 		// Tech
-		GameSceneManager.CreateInstance();
-		FlowManager.CreateInstance();
-		PoolManager.CreateInstance();
-		ParticleManager.CreateInstance();
-		PopupManager.CreateInstance();
-		InstanceManager.CreateInstance();
+		GameSceneManager.CreateInstance(true);
+		FlowManager.CreateInstance(true);
+		PoolManager.CreateInstance(true);
+		ParticleManager.CreateInstance(true);
+		PopupManager.CreateInstance(true);
+		InstanceManager.CreateInstance(true);
 
 		// Social
-		ExternalPlatformManager.CreateInstance();
+		ExternalPlatformManager.CreateInstance(true);
 		ExternalPlatformManager.instance.Init();
 
 		// Load persistence
