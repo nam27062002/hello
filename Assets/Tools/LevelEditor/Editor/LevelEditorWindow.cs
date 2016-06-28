@@ -83,7 +83,6 @@ namespace LevelEditor {
 		public void OnEnable() {
 			// Make sure we have the latest definitions loaded
 			ContentManager.InitContent();
-
 			// We must detect when application goes to play mode and back, so subscribe to the event
 			EditorApplication.playmodeStateChanged += OnPlayModeChanged;
 
@@ -176,6 +175,8 @@ namespace LevelEditor {
 		/// Update the inspector window.
 		/// </summary>
 		public void OnGUI() {
+			if (!ContentManager.m_ready)
+				return;
 			// Initialize styles - must be done during the OnGUI call
 			if(m_styles == null) {
 				InitStyles();
