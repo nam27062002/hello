@@ -104,8 +104,10 @@ namespace AI {
 					float angle = angleSide;
 
 					if (absAim >= 0.6f) {
-						angle = (((absAim - 0.6f) / (1f - 0.6f)) * (180f - angleSide)) + angleSide;
+						angle = (((absAim - 0.6f) / (1f - 0.6f)) * (90f - angleSide)) + angleSide;
 					}
+
+					Debug.Log(aim + "  -  " + angle);
 
 					// face target
 					m_targetRotation = Quaternion.Euler(0, angle, 0);
