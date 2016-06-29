@@ -7,6 +7,7 @@ namespace AI {
 		/*			  */
 		/**************/
 
+		private Entity m_entity = null;
 		private Pilot m_pilot = null;
 		private ViewControl m_viewControl;
 
@@ -17,14 +18,12 @@ namespace AI {
 		[SerializeField] private MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
-		[SerializeField] private bool m_isAnEater = false;
-		private MachineEater m_eater = new MachineEater();
 		private MachineEdible m_edible = new MachineEdible();
 
 
 		public Vector3 position { get { return transform.position; } }
 		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Machine enemy { 
+		public Transform enemy { 
 			get {
 				if (m_sensor != null && (GetSignal(Signals.Warning.name) || GetSignal(Signals.Danger.name))) {
 					return m_sensor.enemy;
@@ -38,6 +37,7 @@ namespace AI {
 
 		// Use this for initialization
 		void Awake() {
+			m_entity = GetComponent<Entity>();
 			m_pilot = GetComponent<Pilot>();
 			m_viewControl = GetComponent<ViewControl>();
 
@@ -56,30 +56,17 @@ namespace AI {
 			foreach(Signal s in m_signals.Values) {
 				s.machine = this;
 			}
+		}
 
-			m_motion.AttacheMachine(this);
-			m_motion.AttachPilot(m_pilot);
-			m_motion.AttachViewControl(m_viewControl);
+		void Start() {
+			m_motion.Attach(this, m_entity, m_pilot, m_viewControl);
 			m_motion.Init();
 
-			m_sensor.AttacheMachine(this);
-			m_sensor.AttachPilot(m_pilot);
-			m_sensor.AttachViewControl(m_viewControl);
+			m_sensor.Attach(this, m_entity, m_pilot, m_viewControl);
 			m_sensor.Init();
 
-			m_edible.AttacheMachine(this);
-			m_edible.AttachPilot(m_pilot);
-			m_edible.AttachViewControl(m_viewControl);
+			m_edible.Attach(this, m_entity, m_pilot, m_viewControl);
 			m_edible.Init();
-
-			m_eater.AttacheMachine(this);
-			m_eater.AttachPilot(m_pilot);
-			m_eater.AttachViewControl(m_viewControl);
-			m_eater.Init();
-
-			if (m_isAnEater) {
-				SetSignal(Signals.Hungry.name, true);
-			}
 		}
 
 		public void OnTrigger(string _trigger) {
@@ -98,10 +85,6 @@ namespace AI {
 		void Update() {
 			m_motion.Update();
 			m_sensor.Update();
-
-			if (m_isAnEater) {
-				m_eater.Update();
-			}
 		}
 
 		public void SetSignal(string _signal, bool _activated) {
@@ -135,15 +118,46 @@ namespace AI {
 			}
 		}
 
+
 		// External interactions
+		public void ReceiveDamage(float _damage) {
+			m_entity.Damage(_damage);
+		}
+
+		public bool IsDead() {
+			return m_entity.health <= 0 || m_signals[Signals.Destroyed.name].value;
+		}
+
+		public float biteResistance { get { return m_edible.biteResistance; }}
+
 		public void Bite() {
 			if (m_edible != null) {
 				m_edible.Bite();
 			}
 		}
 
+		public void BeingSwallowed(Transform _transform) {
+			if (m_edible != null) {
+				m_edible.BeingSwallowed(_transform);
+			}
+		}
 
-		public void BiteAndHold() {}
-		public void Burn() {}
+		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
+
+		public void BiteAndHold() {
+			if (m_edible != null) {
+				m_edible.BiteAndHold();
+			}
+		}
+
+		public void ReleaseHold() {
+			if (m_edible != null) {
+				m_edible.ReleaseHold();
+			}
+		}
+
+		public void Burn(float _damage, Transform _transform) {
+			
+		}
 	}
 }

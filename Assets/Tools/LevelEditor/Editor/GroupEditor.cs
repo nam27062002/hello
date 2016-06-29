@@ -100,7 +100,7 @@ namespace LevelEditor {
 
 			// Decos
 			// Find all items that contain a prey stats script
-			Entity[] decosStats = targetGroup.GetComponentsInChildren<Entity>();
+			Entity_Old[] decosStats = targetGroup.GetComponentsInChildren<Entity_Old>();
 			for(int i = 0; i < decosStats.Length; i++) {
 				m_decosReward[0] = m_decosReward[0] + decosStats[i].reward;
 			}
@@ -113,7 +113,7 @@ namespace LevelEditor {
 				if(spawners[i].m_entityPrefab == null) continue;
 
 				// Get spawned prefab's stats
-				Entity entityStats = spawners[i].m_entityPrefab.GetComponent<Entity>();
+				Entity_Old entityStats = spawners[i].m_entityPrefab.GetComponent<Entity_Old>();
 				if(entityStats == null) continue;
 
 				// Add to total reward taking in account spawning amounts

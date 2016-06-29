@@ -1,14 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class ViewControl : MonoBehaviour {
 
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
 
+	[SeparatorAttribute]
+	[SerializeField] private List<string> m_onEatenParticles = new List<string>();
+
+
 	private Animator m_animator;
 
 	private bool m_scared;
+	private bool m_panic; //bite and hold state
 	private bool m_attack;
 
 
@@ -17,6 +22,7 @@ public class ViewControl : MonoBehaviour {
 		m_animator = transform.FindComponentRecursive<Animator>();
 
 		m_scared = false;
+		m_panic = false;
 		m_attack = false;
 	}
 	//
@@ -32,11 +38,42 @@ public class ViewControl : MonoBehaviour {
 	}
 	//
 
+
+	//Particles
+	public void SpawnEatenParticlesAt(Transform _transform) {
+		if (m_onEatenParticles.Count <= 0) {
+			GameObject go = ParticleManager.Spawn("PS_Blood_Explosion_Small", transform.position + (Vector3.back * 10), "Blood/");
+			if (go != null) {
+				FollowTransform ft = go.GetComponent<FollowTransform>();
+				if (ft != null) {
+					ft.m_follow = _transform;
+					ft.m_offset = Vector3.back * 10;
+				}
+			}
+		} else {
+			for( int i = 0; i < m_onEatenParticles.Count; i++) {
+				if (!string.IsNullOrEmpty(m_onEatenParticles[i])) {
+					GameObject go = ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
+					if (go != null)	{
+						FollowTransform ft = go.GetComponent<FollowTransform>();
+						if (ft != null)
+							ft.m_follow = _transform;
+					}
+				}
+			}
+		}
+	}
+
+
+	// Animations
 	public void Aim(float _blendFactor) {
 		m_animator.SetFloat("aim", _blendFactor);
 	}
 
 	public void Move(float _speed) {
+		if (m_panic)
+			return;
+
 		if (_speed > 0.01f) {
 			// 0- walk  1- run, blending in between
 			float blendFactor = 0f;
@@ -62,13 +99,26 @@ public class ViewControl : MonoBehaviour {
 	}
 
 	public void Scared(bool _scared) {
+		if (m_panic)
+			return;
+		
 		if (m_scared != _scared) {
 			m_scared = _scared;
 			m_animator.SetBool("scared", _scared);
 		}
 	}
 
+	public void Panic(bool _panic) {
+		if (m_panic != _panic) {
+			m_panic = _panic;
+			m_animator.SetBool("hold", _panic);
+		}
+	}
+
 	public void Attack() {
+		if (m_panic)
+			return;
+		
 		if (!m_attack) {
 			m_attack = true;
 			m_animator.SetBool("attack", true);
@@ -76,6 +126,9 @@ public class ViewControl : MonoBehaviour {
 	}
 
 	public void StopAttack() {
+		if (m_panic)
+			return;
+		
 		if (m_attack) {
 			m_attack = false;
 			m_animator.SetBool("attack", false);

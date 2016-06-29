@@ -20,7 +20,7 @@ public class InflammableDecoration : Initializable {
 	private Dictionary<Renderer, Material[]>  m_originalMaterials = new Dictionary<Renderer, Material[]>();
 	private Material m_ashMaterial;
 	public string m_ashesAsset;
-	private Entity m_entity;
+	private Entity_Old m_entity;
 	public string sku
 	{
 		get{ return m_entity.sku; }
@@ -36,7 +36,7 @@ public class InflammableDecoration : Initializable {
 			yield return null;
 		}
 
-		m_entity = GetComponent<Entity>();
+		m_entity = GetComponent<Entity_Old>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;

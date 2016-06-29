@@ -43,7 +43,7 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 			Entity e = m_entities[i];
 			if (e != null) {
 				float distSqr = Vector2.SqrMagnitude((Vector2)e.transform.position - _center);
-				if (distSqr <= _radius * _radius && e.edibleFromTier <= _tier) {
+				if (distSqr <= _radius * _radius && e.IsEdible(_tier)) {
 					if (distSqr <= minDistSqr) {
 						minDistSqr = distSqr;
 						nearestEntity = e;

@@ -70,6 +70,10 @@ namespace AI {
 			}
 
 			private void StartAttack() {
+				if (m_machine.enemy == null) {
+					Transition(OnOutOfRange);
+				}
+
 				m_pilot.PressAction(Pilot.Action.Attack);
 
 				Vector3 dir = Vector3.zero;

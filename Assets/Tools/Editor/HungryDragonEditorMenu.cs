@@ -105,7 +105,7 @@ public class HungryDragonEditorMenu {
 		for(int i = 0; i < Selection.gameObjects.Length; i++) {
 			// Check that prefab corresponds to an entity
 			GameObject entityPrefab = Selection.gameObjects[i];
-			if(entityPrefab.GetComponent<Entity>() == null) {
+			if(entityPrefab.GetComponent<Entity_Old>() == null) {
 				EditorUtility.DisplayDialog("Error", "Selected prefab " + entityPrefab.name + " doesn't have the Entity component.", "Skip It");
 				continue;
 			}

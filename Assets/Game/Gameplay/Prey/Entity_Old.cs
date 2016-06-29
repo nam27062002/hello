@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.Serialization;
 
-public class Entity : Initializable {
+public class Entity_Old : Initializable {
 
 
 	//-----------------------------------------------

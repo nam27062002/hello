@@ -32,7 +32,7 @@ namespace AI {
 				Debug.DrawLine(transform.position, transform.position + seek, Color.green);
 
 				if (m_actions[(int)Action.Avoid]) {
-					Machine enemy = m_machine.enemy;
+					Transform enemy = m_machine.enemy;
 					if (enemy != null) {
 						v = transform.position - enemy.position;
 						float distSqr = v.sqrMagnitude;

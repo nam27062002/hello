@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Entity))]
+[RequireComponent(typeof(Entity_Old))]
 public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	// Constants
@@ -41,7 +41,7 @@ public class InflammableBehaviour : Initializable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private Entity m_entity;
+	private Entity_Old m_entity;
 
 	public string sku
 	{
@@ -65,7 +65,7 @@ public class InflammableBehaviour : Initializable {
 			PoolManager.CreatePool(m_explosionPrefab, 5, false);
 		}
 
-		m_entity = GetComponent<Entity>();
+		m_entity = GetComponent<Entity_Old>();
 
 		m_timer = m_checkFireTime;
 
@@ -178,7 +178,7 @@ public class InflammableBehaviour : Initializable {
 			m_entity.Damage( _damage );
 
 			if (m_entity.health <= 0) {
-				EntityManager.instance.Unregister(m_entity);
+				//EntityManager.instance.Unregister(m_entity);
 
 				//
 

@@ -21,10 +21,10 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				Machine enemy = m_machine.enemy;
+				Transform enemy = m_machine.enemy;
 
 				if (enemy) {
-					m_pilot.GoTo(enemy.transform.position);
+					m_pilot.GoTo(enemy.position);
 				}
 			}
 		}

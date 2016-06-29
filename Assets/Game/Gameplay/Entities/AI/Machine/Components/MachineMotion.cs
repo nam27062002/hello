@@ -34,8 +34,14 @@ namespace AI {
 		}
 
 		public override void Update() {
-			if (m_pilot != null) {
+			if (m_machine.GetSignal(Signals.Panic.name)) {
+				m_viewControl.Panic(true);
+				return;
+			} else {
+				m_viewControl.Panic(false);
+			}
 
+			if (m_pilot != null) {
 				m_direction = m_pilot.direction;
 
 				UpdateAttack();
@@ -85,7 +91,7 @@ namespace AI {
 
 		private void UpdateAim() {
 			if (m_pilot.IsActionPressed(Pilot.Action.Aim)) {
-				Machine target = m_machine.enemy;
+				Transform target = m_machine.enemy;
 				if (target != null) {
 					Vector3 targetDir = target.position - m_eye.position;
 
@@ -106,8 +112,6 @@ namespace AI {
 					if (absAim >= 0.6f) {
 						angle = (((absAim - 0.6f) / (1f - 0.6f)) * (90f - angleSide)) + angleSide;
 					}
-
-					Debug.Log(aim + "  -  " + angle);
 
 					// face target
 					m_targetRotation = Quaternion.Euler(0, angle, 0);

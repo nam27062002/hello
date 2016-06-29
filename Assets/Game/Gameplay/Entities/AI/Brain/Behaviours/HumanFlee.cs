@@ -38,7 +38,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				Machine enemy = m_machine.enemy;
+				Transform enemy = m_machine.enemy;
 
 				if (m_allowtargetChangeTimer <= 0f) {
 					if (enemy) {
