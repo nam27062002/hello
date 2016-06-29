@@ -13,8 +13,6 @@ Properties {
 	_InnerLightColor ("Inner Light Color", Color) = (1,1,1,1)
 
 	_SpecExponent ("Specular Exponent", float) = 1
-
-	_BumpStrength("Bump Strength", float) = 3
 }
 
 SubShader {
@@ -64,7 +62,6 @@ SubShader {
 			uniform float4 _InnerLightColor;
 
 			uniform float _SpecExponent;
-			uniform float _BumpStrength;
 
 			v2f vert (appdata_t v)
 			{
