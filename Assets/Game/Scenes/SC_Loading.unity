@@ -138,12 +138,12 @@ MonoBehaviour:
   m_boldSize: 0.5
   m_outline: 1
   m_outlineQuality: 0
-  m_outlineSize: 4
-  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_outlineSize: 2
+  m_outlineColor: {r: 0.21176471, g: 0.14509805, b: 0.15686275, a: 1}
   m_shadow: 1
-  m_shadowAngle: 315
-  m_shadowSize: 4
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_shadowAngle: 280
+  m_shadowSize: 2
+  m_shadowColor: {r: 0.21176471, g: 0.14509805, b: 0.15686275, a: 1}
 --- !u!114 &91138018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,7 +494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.24264705, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.43137258, g: 0.41176474, b: 0.39607847, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -576,7 +576,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
---- !u!1001 &1435152163
+--- !u!1001 &1181876567
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -625,7 +625,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 543.21
       objectReference: {fileID: 0}
     - target: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_SizeDelta.y
@@ -655,6 +655,10 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 11435892, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 22489242, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
       propertyPath: m_AnchorMax.x
       value: 0.316
@@ -663,18 +667,6 @@ Prefab:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 11435682, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
-      propertyPath: m_Value
-      value: .316000015
-      objectReference: {fileID: 0}
-    - target: {fileID: 11435892, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
-      propertyPath: m_Color.g
-      value: .478654921
-      objectReference: {fileID: 0}
-    - target: {fileID: 11435892, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
-      propertyPath: m_Color.b
-      value: .478654921
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
   m_IsPrefabParent: 0
@@ -682,78 +674,13 @@ Prefab:
 RectTransform:
   m_PrefabParentObject: {fileID: 22412944, guid: 9f2bf6f435e0e4fcbae8c17497f1875a,
     type: 2}
-  m_PrefabInternal: {fileID: 1435152163}
+  m_PrefabInternal: {fileID: 1181876567}
 --- !u!114 &1435152165 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 11435682, guid: 9f2bf6f435e0e4fcbae8c17497f1875a,
     type: 2}
-  m_PrefabInternal: {fileID: 1435152163}
+  m_PrefabInternal: {fileID: 1181876567}
   m_Script: {fileID: -113659843, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
---- !u!114 &1435152166 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 11435892, guid: 9f2bf6f435e0e4fcbae8c17497f1875a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1435152163}
-  m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
---- !u!1 &1435152167 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 176676, guid: 9f2bf6f435e0e4fcbae8c17497f1875a, type: 2}
-  m_PrefabInternal: {fileID: 1435152163}
---- !u!114 &1435152168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1435152167}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7f66075c4416486e953cc996363cd51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fillImage: {fileID: 1435152166}
-  colorGradient:
-    key0:
-      serializedVersion: 2
-      rgba: 4285887950
-    key1:
-      serializedVersion: 2
-      rgba: 4283746510
-    key2:
-      serializedVersion: 2
-      rgba: 7720584
-    key3:
-      serializedVersion: 2
-      rgba: 0
-    key4:
-      serializedVersion: 2
-      rgba: 0
-    key5:
-      serializedVersion: 2
-      rgba: 0
-    key6:
-      serializedVersion: 2
-      rgba: 0
-    key7:
-      serializedVersion: 2
-      rgba: 0
-    ctime0: 0
-    ctime1: 32768
-    ctime2: 65535
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_NumColorKeys: 3
-    m_NumAlphaKeys: 2
 --- !u!1 &1552655654
 GameObject:
   m_ObjectHideFlags: 0

@@ -62,8 +62,8 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 	protected void Awake() {
 		// Start disabled
 		m_panel.gameObject.SetActive(false);
-		m_toggleButton.gameObject.SetActive( Debug.isDebugBuild );
-		m_fpsCounter.gameObject.SetActive( Debug.isDebugBuild );
+		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
+		m_fpsCounter.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
 		m_activateTimer = 0;
 	}
 
@@ -173,8 +173,9 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 	}
 
 	public void OnUnlockCasablancaLevels(bool _value) {
-		List<DefinitionNode> levels = DefinitionsManager.GetDefinitions(DefinitionsCategory.LEVELS);
-		DefinitionsManager.SortByProperty(ref levels, "order", DefinitionsManager.SortType.NUMERIC);
+		List<DefinitionNode> levels= new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS, ref levels);
+		DefinitionsManager.SharedInstance.SortByProperty(ref levels, "order", DefinitionsManager.SortType.NUMERIC);
 
 		for (int i = 1; i < levels.Count; i++) {
 			if (_value) {

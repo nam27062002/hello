@@ -9,10 +9,42 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public AudioSource m_eatBigSound;
 	public AudioSource m_wingsWindSound;
 	public AudioSource m_wingsStrongFlap;
+	protected Animator m_animator;
+
+
+	public delegate void OnEatEvent();
+	public OnEatEvent onEatEvent; 
+
+	private bool m_eventsRegistered = false;
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_bostBehaviour = transform.parent.GetComponent<DragonBoostBehaviour>();
+		m_animator = GetComponent<Animator>();
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		m_eventsRegistered = true;
+		// m_animator.SetBool( "starving", true);
+
+	}
+
+	void OnDestroy()
+	{
+		if (m_eventsRegistered)
+		{
+			Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+			Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
+		}
+	}
+
+	private void OnLevelUp(DragonData _data) 
+	{
+		m_animator.SetTrigger("LevelUp");
+	}
+
+	private void OnStarving( bool starving)
+	{
+		m_animator.SetBool( "starving", starving);
 	}
 
 	public void OnAttackEvent() {
@@ -53,7 +85,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	public void EatEvent()
+	public void EatStartEvent()
 	{
 		if ( m_eatSound != null )
 		{
@@ -62,13 +94,25 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	public void EatBigEvent()
+	public void EatBigStartEvent()
 	{
 		if ( m_eatBigSound != null )
 		{
 			m_eatBigSound.pitch = Random.Range( 0.75f, 1.25f);
 			m_eatBigSound.Play();
 		}
+	}
+
+	public void EatEvent()
+	{
+		if (onEatEvent != null)
+			onEatEvent();
+	}
+
+	// To remove when we delete all old dragons
+	public void EatBigEvent()
+	{
+
 	}
 
 

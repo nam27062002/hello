@@ -70,18 +70,26 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// <param name="_text">The text to be displayed.</param>
 	/// <param name="_worldPos">The reference world position to follow.</param>
 	public void Spawn(string _text, Vector3 _worldPos) {
-		// Store params
-		m_targetWorldPos = _worldPos;
-
 		// Init text
 		m_text.text = _text;
+
+		// Use base method
+		Spawn(_worldPos);
+	}
+
+	/// <summary>
+	/// Start the animation without changing the displayed text.
+	/// </summary>
+	/// <param name="_worldPos">The reference world position to follow.</param>
+	public void Spawn(Vector3 _worldPos) {
+		// Store target world pos
+		m_targetWorldPos = _worldPos;
 
 		// Move to initial position, activate object and start animation
 		ApplyPosOffset();
 		gameObject.SetActive(true);
 		m_anim.SetTrigger("start");
 	}
-
 
 	/// <summary>
 	/// Make sure the feedback is positioned relative to the reference world position.

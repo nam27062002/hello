@@ -126,4 +126,29 @@ public class MathUtils {
 		// c) outside limits
 		return false;
 	}
+
+
+
+	/**
+	 * Tests intersection between a circle and a segment of another circle, given arc length.
+	 * This is only approximate.
+	 * Note: Ensure the arcCentreLine is a normalised vector
+	 */
+	public static bool TestCircleVsArc(Vector3 arcCentre, float arcAngle, float arcRadius, Vector3 arcCentreLine, Vector3 circleCentre, float circleRadius)
+	{
+		Vector3 disp = circleCentre - arcCentre;
+		if(disp.sqrMagnitude <= (arcRadius + circleRadius) * (arcRadius + circleRadius))
+		{
+			Vector3 perp = disp.normalized * circleRadius;
+			perp = new Vector3(-perp.y, perp.x, 0);
+
+			// get points at the sides of the circle
+			Vector3 p1 = circleCentre + perp;
+			Vector3 p2 = circleCentre - perp;
+
+			float cosa = Mathf.Cos(arcAngle/2.0f * Mathf.Deg2Rad);
+			return Vector3.Dot(arcCentreLine, (p1 - arcCentre).normalized) >= cosa || Vector3.Dot(arcCentreLine, (p2 - arcCentre).normalized) >= cosa;
+		}
+		return false;
+	}
 }

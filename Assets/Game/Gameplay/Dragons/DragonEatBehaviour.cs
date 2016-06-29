@@ -20,13 +20,27 @@ public class DragonEatBehaviour : EatBehaviour {
 
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
+
+		DragonAnimationEvents animEvents = GetComponentInChildren<DragonAnimationEvents>();
+		if ( animEvents != null )
+		{
+			animEvents.onEatEvent += onEatEvent;
+			m_waitJawsEvent = false;
+		}
+	}
+
+	void onEatEvent()
+	{
+		OnJawsClose();
 	}
 
 	void OnDestroy() {
 		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	void OnEntityEaten( Transform t, Reward reward )
@@ -42,6 +56,12 @@ public class DragonEatBehaviour : EatBehaviour {
 		}
 
 		m_dragon.AddEnergy(reward.energy);
+	}
+
+	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
+	{
+		if (toogle)
+			m_attackTarget = null;
 	}
 
 	void OnMultiplierLost()

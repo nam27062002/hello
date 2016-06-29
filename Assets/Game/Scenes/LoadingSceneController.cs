@@ -41,7 +41,7 @@ public class LoadingSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
-
+		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!");
 		DebugUtils.Assert(m_loadingBar != null, "Required component!");
@@ -60,33 +60,34 @@ public class LoadingSceneController : SceneController {
 		//		 Do it now so we have it under control
 		//		 Add all the new created singletons
 		// Content and persistence
-		DefinitionsManager.CreateInstance();
-		UserProfile.CreateInstance();
+		//DefinitionsManager.CreateInstance(true);
+
+		UserProfile.CreateInstance(true);
 
 		// Game
-		DragonManager.CreateInstance();
-		LevelManager.CreateInstance();
-		MissionManager.CreateInstance();
-		ChestManager.CreateInstance();
-		RewardManager.CreateInstance();
-		EggManager.CreateInstance();
+		DragonManager.CreateInstance(true);
+		LevelManager.CreateInstance(true);
+		MissionManager.CreateInstance(true);
+		ChestManager.CreateInstance(true);
+		RewardManager.CreateInstance(true);
+		EggManager.CreateInstance(true);
 		EggManager.InitFromDefinitions();
-		Wardrobe.CreateInstance();
+		Wardrobe.CreateInstance(true);
 		Wardrobe.InitFromDefinitions();
 
 		// Settings and setup
-		GameSettings.CreateInstance();
+		GameSettings.CreateInstance(true);
 
 		// Tech
-		GameSceneManager.CreateInstance();
-		FlowManager.CreateInstance();
-		PoolManager.CreateInstance();
-		ParticleManager.CreateInstance();
-		PopupManager.CreateInstance();
-		InstanceManager.CreateInstance();
+		GameSceneManager.CreateInstance(true);
+		FlowManager.CreateInstance(true);
+		PoolManager.CreateInstance(true);
+		ParticleManager.CreateInstance(true);
+		PopupManager.CreateInstance(true);
+		InstanceManager.CreateInstance(true);
 
 		// Social
-		ExternalPlatformManager.CreateInstance();
+		ExternalPlatformManager.CreateInstance(true);
 		ExternalPlatformManager.instance.Init();
 
 		// Load persistence
@@ -94,11 +95,23 @@ public class LoadingSceneController : SceneController {
 		PersistenceManager.Load();
 
 		// Initialize localization
-		Localization.SetSavedLanguage();
+		SetSavedLanguage();
 
 		// [AOC] TODO!! Figure out the proper way/place to do this
 		PrecacheFonts();
 	}
+
+    public static void SetSavedLanguage()
+    {
+        string strLanguageSku = PlayerPrefs.GetString(PopupSettings.KEY_SETTINGS_LANGUAGE);
+
+        if (string.IsNullOrEmpty(strLanguageSku))
+        {
+            strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
+        }
+
+        LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
+    }
 	
 	/// <summary>
 	/// Called every frame.

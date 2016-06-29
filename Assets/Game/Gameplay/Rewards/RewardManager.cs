@@ -76,6 +76,20 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_scoreMultipliers[0]; }
 	}
 
+	// Progress to the next multiplier
+	public static float scoreMultiplierProgress {
+		get { 
+			// Skip last multiplier!
+			if(instance.m_currentScoreMultiplier < instance.m_scoreMultipliers.Length - 1) {
+				return Mathf.InverseLerp(
+					(float)currentScoreMultiplier.requiredKillStreak, 
+					(float)instance.m_scoreMultipliers[instance.m_currentScoreMultiplier + 1].requiredKillStreak, 
+					(float)instance.m_scoreMultiplierStreak);
+			}
+			return 0f;
+		}
+	}
+
 	// Time to end the current killing streak
 	[SerializeField] private float m_scoreMultiplierTimer = -1;
 	public static float scoreMultiplierTimer {
@@ -182,8 +196,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void InitFromDef() {
 		// Init score multipliers
-		List<DefinitionNode> defs = DefinitionsManager.GetDefinitions(DefinitionsCategory.SCORE_MULTIPLIERS);
-		DefinitionsManager.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.SCORE_MULTIPLIERS, ref defs);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		m_scoreMultipliers = new ScoreMultiplier[defs.Count];
 		ScoreMultiplier newMult;
 		List<DefinitionNode> feedbackDefs;
@@ -364,7 +379,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	private void ParseSurvivalBonus( string tier )
 	{
-		DefinitionNode def = DefinitionsManager.GetDefinitionByVariable( DefinitionsCategory.SURVIVAL_BONUS , "tier", tier);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable( DefinitionsCategory.SURVIVAL_BONUS , "tier", tier);
 
 		List<int> minutes = def.GetAsList<int>("minutes");
 		List<int> coins = def.GetAsList<int>("coins");

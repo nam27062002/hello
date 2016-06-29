@@ -63,7 +63,7 @@ public class MenuLevelButton : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get level def
-		m_levelDef = DefinitionsManager.GetDefinition(DefinitionsCategory.LEVELS, m_levelSku);
+		m_levelDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, m_levelSku);
 
 		// Set name and description
 		m_titleText.Localize(m_levelDef.GetAsString("tidName"));

@@ -110,7 +110,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.energySkill.value;
-		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
 		m_healthWarningThreshold = def.GetAsFloat("healthWarningThreshold");
 		m_healthCriticalThreshold = def.GetAsFloat("healthCriticalThreshold");
 
@@ -219,12 +219,19 @@ public class DragonPlayer : MonoBehaviour {
 		}
 
 		// Check for starvation
-		if(wasStarving != IsStarving()) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, IsStarving());
+		bool isStarving = IsStarving();
+		if(wasStarving != isStarving) {
+			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
 		}
 
-		if ( wasCritical != IsCritical() ){
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, IsCritical());
+		bool isCritical = IsCritical();
+		if(wasCritical != isCritical) {
+			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
+
+			// Special case: if we're leaving the critical stat but we're still starving, toggle starving mode
+			if(!isCritical && isStarving) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+			}
 		}
 	}
 

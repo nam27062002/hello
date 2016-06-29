@@ -64,8 +64,9 @@ public class PopupEggShop : MonoBehaviour {
 		// Create all the Egg pills and add them inside the scroll
 
 		// Get the the content
-		List<DefinitionNode> defList = DefinitionsManager.GetDefinitions(DefinitionsCategory.EGGS);
-		DefinitionsManager.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
+		List<DefinitionNode> defList = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.EGGS, ref defList);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
 		for (int i = 0; i < defList.Count; i++) {
 			GameObject pill = GameObject.Instantiate<GameObject>(m_pillPrefab);
@@ -202,14 +203,14 @@ public class PopupEggShop : MonoBehaviour {
 		// Refresh info with the pill data
 		DefinitionNode eggDef = m_pills[m_selectedPill].eggDef;
 		if(eggDef == null) return;	// Could happen if pills haven't already been initialized
-		DefinitionNode dragonDef = DefinitionsManager.GetDefinition(DefinitionsCategory.DRAGONS, eggDef.GetAsString("dragonSku"));
+		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, eggDef.GetAsString("dragonSku"));
 		if(dragonDef == null) return;
 
 		// Rewards text
 		StringBuilder sb = new StringBuilder();
-		sb.AppendLine(Localization.Localize("TID_EGG_SHOP_REWARDS_DISGUISE", dragonDef.GetLocalized("tidName")));
-		sb.AppendLine(Localization.Localize("TID_EGG_SHOP_REWARDS_PET"));
-		sb.AppendLine(Localization.Localize("TID_EGG_SHOP_REWARDS_SPECIAL_DRAGON"));
+        sb.AppendLine(LocalizationManager.SharedInstance.Localize("TID_EGG_SHOP_REWARDS_DISGUISE", dragonDef.GetLocalized("tidName")));
+        sb.AppendLine(LocalizationManager.SharedInstance.Localize("TID_EGG_SHOP_REWARDS_PET"));
+        sb.AppendLine(LocalizationManager.SharedInstance.Localize("TID_EGG_SHOP_REWARDS_SPECIAL_DRAGON"));
 		m_rewardsText.text = sb.ToString();
 
 		// Price
@@ -229,7 +230,7 @@ public class PopupEggShop : MonoBehaviour {
 		DragonData requiredDragon = DragonManager.GetDragonData(dragonSku);
 		if(!requiredDragon.isOwned) {
 			// Show feedback and return
-			string text = Localization.Localize("TID_EGG_SHOP_DRAGON_REQUIRED", requiredDragon.def.GetLocalized("tidName"));
+            string text = LocalizationManager.SharedInstance.Localize("TID_EGG_SHOP_DRAGON_REQUIRED", requiredDragon.def.GetLocalized("tidName"));
 			UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch(text, new Vector2(0.5f, 0.5f), (RectTransform)this.transform);
 			textObj.GetComponent<Text>().color = Colors.red;
 			return;
@@ -260,7 +261,7 @@ public class PopupEggShop : MonoBehaviour {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
@@ -269,7 +270,7 @@ public class PopupEggShop : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// [AOC] TODO!!
-		UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.5f), (RectTransform)this.transform);
+        UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.5f), (RectTransform)this.transform);
 		textObj.GetComponent<Text>().color = Colors.white;
 	}
 

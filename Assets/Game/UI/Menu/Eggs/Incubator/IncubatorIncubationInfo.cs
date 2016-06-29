@@ -104,7 +104,7 @@ public class IncubatorIncubationInfo : MonoBehaviour {
 
 			// If cost is 0, use the "free" word instead
 			if(costPC == 0) {
-				m_skipPCText.text = Localization.Localize("TID_GEN_EXCLAMATION_EXPRESSION", Localization.Localize("TID_GEN_FREE"));
+                m_skipPCText.text = LocalizationManager.SharedInstance.Localize("TID_GEN_EXCLAMATION_EXPRESSION", LocalizationManager.SharedInstance.Localize("TID_GEN_FREE"));
 			} else {
 				m_skipPCText.text = StringUtils.FormatNumber(costPC);
 			}
@@ -153,7 +153,7 @@ public class IncubatorIncubationInfo : MonoBehaviour {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 }

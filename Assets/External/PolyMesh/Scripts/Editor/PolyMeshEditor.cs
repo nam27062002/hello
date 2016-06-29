@@ -165,6 +165,66 @@ public class PolyMeshEditor : Editor {
 			}
 		}
 
+		// Scale fixer (single polymesh)
+		/*if(GUILayout.Button("Fix Scale", GUILayout.Height(40f))) {
+			// Scale mesh keypoints so they keep the position when the mesh has scale 1
+			Vector3 fixScaleFactor = polyMesh.transform.localScale;
+			for(int i = 0; i < m_keyPoints.Count; i++) {
+				// For some reason scaling directly the list entry doesn't work :/
+				Vector3 v = m_keyPoints[i];
+				v.Scale(fixScaleFactor);
+				m_keyPoints[i] = v;
+			}
+			UpdatePoly(false, true);
+
+			// Set the mesh scale to 1
+			RecordUndo();
+			polyMesh.transform.localScale = Vector3.one;
+		}
+
+		// Scale fixer (all scene polymeshes)
+		if(GUILayout.Button("Fix scales on all scene!", GUILayout.Height(40f))) {
+			// Aux vars
+			Vector3 v;
+
+			// Find all polymeshes in the scene
+			PolyMesh[] polymeshes = GameObject.FindObjectsOfType<PolyMesh>();
+			foreach(PolyMesh p in polymeshes) {
+				// Skip if mesh scale is already 1
+				if(p.transform.localScale == Vector3.one) continue;
+				Debug.Log("Fixing " + p.name + "...");
+
+				// Undo
+				RecordUndo(p);
+
+				// Scale mesh keypoints so they keep the position when the mesh has scale 1
+				Vector3 fixScaleFactor = p.transform.localScale;
+				for(int i = 0; i < p.keyPoints.Count; i++) {
+					// Fix keypoint
+					// For some reason scaling directly the list entry doesn't work :/
+					v = p.keyPoints[i];
+					v.Scale(fixScaleFactor);
+					p.keyPoints[i] = v;
+				}
+
+				// Special case for curve meshes
+				for(int i = 0; i < p.keyPoints.Count; i++) {
+					if(!p.isCurve[i]) {
+						p.curvePoints[i] = Vector3.Lerp(p.keyPoints[i], p.keyPoints[(i + 1) % p.keyPoints.Count], 0.5f);
+					}
+				}
+
+				// Rebuild mesh!
+				p.BuildMesh();
+
+				// Reset mesh scale to 1
+				RecordUndo(p);
+				p.transform.localScale = Vector3.one;
+
+				Debug.Log("Done!");
+			}
+		}*/
+
 		EditorGUILayoutExt.Separator();
 
 		// Mesh settings
@@ -493,8 +553,15 @@ public class PolyMeshEditor : Editor {
 					case KeyCode.Q:
 					case KeyCode.W:
 					case KeyCode.E:
-					case KeyCode.R:
+					case KeyCode.R: {
 						return;
+					} break;
+
+					// [AOC] Clear selection upon pressing escape to allow selection another object
+					case KeyCode.Escape: {
+						Selection.activeGameObject = null;
+						return;
+					} break;
 				}
 			}
 
@@ -570,20 +637,26 @@ public class PolyMeshEditor : Editor {
 	/// <summary>
 	/// Records the undo.
 	/// </summary>
-	private void RecordUndo() {
+	private void RecordUndo(Object _target = null) {
+		// [AOC] Use default target if none specified
+		if(_target == null) _target = target;
+
 #if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
-		Undo.RecordObject(target, "PolyMesh Changed");
+		Undo.RecordObject(_target, "PolyMesh Changed");
 #else
-		Undo.RegisterUndo(target, "PolyMesh Changed");
+		Undo.RegisterUndo(_target, "PolyMesh Changed");
 #endif
 	}
 
 	/// <summary>
 	/// Records the deep undo.
 	/// </summary>
-	private void RecordDeepUndo() {
+	private void RecordDeepUndo(Object _target = null) {
+		// [AOC] Use default target if none specified
+		if(_target == null) _target = target;
+
 #if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
-		Undo.RegisterFullObjectHierarchyUndo(target, "PolyMesh Changed");
+		Undo.RegisterFullObjectHierarchyUndo(_target, "PolyMesh Changed");
 #else
 		Undo.RegisterSceneUndo("PolyMesh Changed");
 #endif
@@ -1587,36 +1660,34 @@ public class PolyMeshEditor : Editor {
 	/// <summary>
 	/// Context menu addition to create a new polymesh object.
 	/// </summary>
+	/// <param name="_command">The command that triggered the callback.</param>
 	[MenuItem("GameObject/Hungry Dragon/Collision PolyMesh (transparent)", false, 10)]	// http://docs.unity3d.com/ScriptReference/MenuItem.html
-	private static GameObject CreatePolyMeshTransparent() {
+	private static GameObject CreatePolyMeshTransparent(MenuCommand _command) {
 		// Create a new game object with all the required components
-		GameObject obj = new GameObject("CollisionPolyMesh", typeof(MeshFilter));
+		// Place the new object as child of the currently selected object (default Unity's behaviour)
+		// Use our own EditorUtils!!
+		GameObject obj = EditorUtils.CreateGameObject("CollisionPolyMesh", EditorUtils.GetContextObject(_command));
+		obj.AddComponent<MeshFilter>();
 		PolyMesh polyMesh = obj.AddComponent<PolyMesh>();
 
 		// Initialize the new polymesh with a basic shape
 		CreateSquare(polyMesh, 4f);
 
-		// Place the new object as child of the currently selected object (default Unity's behaviour)
-		GameObjectUtility.SetParentAndAlign(obj, Selection.activeGameObject);
-
 		// [AOC] In this particular case, we want collisions to be on the "Ground" layed, so make sure it's done
 		obj.SetLayerRecursively("Ground");
 
-		// Register object for undo.
-		Undo.RegisterCreatedObjectUndo(obj, "New PolyMesh Object");
-
-		// Select new object and return! ^_^
-		Selection.activeObject = obj;
+		// Done!
 		return obj;
 	}
 
 	/// <summary>
 	/// Context menu addition to create a new polymesh object.
 	/// </summary>
+	/// <param name="_command">The command that triggered the callback.</param>
 	[MenuItem("GameObject/Hungry Dragon/Collision PolyMesh (solid)", false, 10)]	// http://docs.unity3d.com/ScriptReference/MenuItem.html
-	private static GameObject CreatePolyMeshSolid() {
+	private static GameObject CreatePolyMeshSolid(MenuCommand _command) {
 		// Use the transparent constructor
-		GameObject obj = CreatePolyMeshTransparent();
+		GameObject obj = CreatePolyMeshTransparent(_command);
 
 		// Add and initialize the MeshRenderer component
 		MeshRenderer renderer = obj.AddComponent<MeshRenderer>();

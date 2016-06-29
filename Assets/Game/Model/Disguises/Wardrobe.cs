@@ -49,7 +49,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
 	public static void InitFromDefinitions() {
-		List<string> skus = DefinitionsManager.GetSkuList(DefinitionsCategory.DISGUISES);
+		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DISGUISES);
 
 		instance.m_disguises = new Dictionary<string, int>();
 		for (int i = 0; i < skus.Count; i++) {
@@ -60,7 +60,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 	}
 
 	public static string GetRandomDisguise(string _dragonSku, string _rarity) {
-		List<DefinitionNode> defs = DefinitionsManager.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
 		List<string> disguises = new List<string>();
 		disguises.Shuffle<string>(Time.renderedFrameCount);
 
@@ -80,8 +80,9 @@ public class Wardrobe : Singleton<Wardrobe> {
 		return "";
 	}
 
+
 	public static int GetDisguiseValue(string _sku) {
-		return DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, _sku).GetAsInt("value");
+		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _sku).GetAsInt("value");
 	}
 
 	public static int GetDisguiseLevel(string _sku) {

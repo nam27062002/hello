@@ -83,6 +83,7 @@ public class PreyMotion : Initializable, MotionInterface {
 	public Vector2 position 		{ get { return m_position; } set { m_position = value; } }
 	public Vector2 direction 		{ get { return m_direction; } set { m_direction = value.normalized; m_orientation.SetDirection(m_direction); } }
 	public Vector2 velocity			{ get { return m_velocity; } set { m_velocity = value; } }
+	public Vector2 angularVelocity	{ get { return Vector2.zero;} }
 	public float   maxSpeed			{ get { return m_currentMaxSpeed; } }
 	public float   speed			{ get { return m_currentSpeed; } }
 	public float   slowingRadius	{ get { return m_slowingRadius; } }

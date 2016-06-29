@@ -66,7 +66,7 @@ public class MissionObjectiveKill : MissionObjective {
 
 		// Any type
 		if(m_targets.Length == 0) {
-			typeStr = Localization.Localize("TID_MISSION_OBJECTIVE_GENERIC_ENEMIES");
+            typeStr = LocalizationManager.SharedInstance.Localize("TID_MISSION_OBJECTIVE_GENERIC_ENEMIES");
 		}
 
 		// Next types
@@ -74,14 +74,14 @@ public class MissionObjectiveKill : MissionObjective {
 			// Comma separated list except the first and last one in the list
 			if(i > 0) {
 				if(i == m_targets.Length - 1) {
-					typeStr += Localization.Localize("TID_GEN_LIST_SEPARATOR_OR");
+                    typeStr += LocalizationManager.SharedInstance.Localize("TID_GEN_LIST_SEPARATOR_OR");
 				} else {
-					typeStr += Localization.Localize("TID_GEN_LIST_SEPARATOR");
+                    typeStr += LocalizationManager.SharedInstance.Localize("TID_GEN_LIST_SEPARATOR");
 				}
 			}
 
 			// Add type name
-			DefinitionNode targetDef = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, m_targets[0]);
+			DefinitionNode targetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_targets[0]);
 			if(targetDef != null) {
 				typeStr = targetDef.GetLocalized("tidName");
 			} else {
@@ -90,7 +90,7 @@ public class MissionObjectiveKill : MissionObjective {
 		}
 
 		// Compose full text and return
-		return Localization.Localize(GetDescriptionTID(), GetTargetValueFormatted(), typeStr);
+        return LocalizationManager.SharedInstance.Localize(GetDescriptionTID(), GetTargetValueFormatted(), typeStr);
 	}
 
 	//------------------------------------------------------------------//
