@@ -3,7 +3,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)" 
+Shader "Hungry Dragon/Lightmap And VertexColor (Background)" 
 {
 	Properties 
 	{
@@ -39,14 +39,15 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					#if LIGHTMAP_ON
 					float4 texcoord1 : TEXCOORD1;
 					#endif
+					float4 color : COLOR;
 				}; 
 
 				struct v2f {
 					float4 vertex : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
-					LIGHTING_COORDS(2,3)
 					float2 lmap : TEXCOORD4; 
+					float4 color : COLOR;
 				};
 
 				sampler2D _MainTex;
@@ -62,19 +63,16 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 					HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
-					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
+					o.color = v.color;
 					return o;
 				}
 				
 				fixed4 frag (v2f i) : SV_Target
 				{
-					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
-
-					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
-					col *= attenuation;
+					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
@@ -82,49 +80,45 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					#endif
 
 					HG_APPLY_FOG(i, col, _FogColor);	// Fog
-
-
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-
-					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
 				}
 			ENDCG
 		}
 		// Pass to render object as a shadow caster
-		Pass {
-			Name "ShadowCaster"
-			Tags { "LightMode" = "ShadowCaster" }
-
-			Fog {Mode Off}
-			ZWrite On ZTest LEqual Cull Off
-			Offset 1, 1
-
-			CGPROGRAM
-				#pragma vertex vert
-				#pragma fragment frag
-				#pragma multi_compile_shadowcaster
-				#pragma fragmentoption ARB_precision_hint_fastest
-
-				#include "UnityCG.cginc"
-				#include "AutoLight.cginc"
-
-				struct v2f { 
-					V2F_SHADOW_CASTER;
-				};
-
-				v2f vert (appdata_base v)
-				{
-					v2f o;
-					TRANSFER_SHADOW_CASTER(o)
-					return o;
-				}
-
-				float4 frag (v2f i) : COLOR
-				{
-					SHADOW_CASTER_FRAGMENT(i)
-				}
-			ENDCG
-		} //Pass
+//		Pass {
+//			Name "ShadowCaster"
+//			Tags { "LightMode" = "ShadowCaster" }
+//
+//			Fog {Mode Off}
+//			ZWrite On ZTest LEqual Cull Off
+//			Offset 1, 1
+//
+//			CGPROGRAM
+//				#pragma vertex vert
+//				#pragma fragment frag
+//				#pragma multi_compile_shadowcaster
+//				#pragma fragmentoption ARB_precision_hint_fastest
+//
+//				#include "UnityCG.cginc"
+//				#include "AutoLight.cginc"
+//
+//				struct v2f { 
+//					V2F_SHADOW_CASTER;
+//				};
+//
+//				v2f vert (appdata_base v)
+//				{
+//					v2f o;
+//					TRANSFER_SHADOW_CASTER(o)
+//					return o;
+//				}
+//
+//				float4 frag (v2f i) : COLOR
+//				{
+//					SHADOW_CASTER_FRAGMENT(i)
+//				}
+//			ENDCG
+//		} //Pass
 	}
 }

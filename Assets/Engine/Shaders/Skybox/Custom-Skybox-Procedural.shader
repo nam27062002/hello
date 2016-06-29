@@ -1,4 +1,4 @@
-Shader "Custom/Skybox/Procedural" {
+Shader "Hungry Dragon/Skybox/Procedural" {
 Properties {
 	_SunSize ("Sun size", Range(0,1)) = 0.04
 	_SkyColor ("Sky Color", Color) = (.5, .5, .5, 1)
