@@ -41,7 +41,7 @@ SubShader {
 				half2 texcoord : TEXCOORD0;
 				// float3 normal : NORMAL;
 				float3 halfDir : VECTOR;
-
+				float3 vLight : TEXCOORD1;
 				float3 tangentWorld : TEXCOORD2;  
 		        float3 normalWorld : TEXCOORD3;
 		        float3 binormalWorld : TEXCOORD4;
@@ -70,13 +70,15 @@ SubShader {
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
 				// Normal
-				// o.normal = UnityObjectToWorldNormal(v.normal);
+				float3 normal = UnityObjectToWorldNormal(v.normal);
+
+				// Light Probes
+				o.vLight = ShadeSH9(float4(normal, 1.0));
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
 				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 				o.halfDir = normalize(lightDirection + viewDirection);
-
 				o.posWorld = mul( _Object2World, v.vertex ).xyz;
 
 	            // To calculate tangent world
@@ -118,8 +120,8 @@ SubShader {
 				// Specular
 				float specularLight = pow(max(dot( normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
 
-				// fixed4 col = (diffuse + fixed4(pointLights + (UNITY_LIGHTMODEL_AMBIENT.rgb),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate;
-				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
+				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
+				fixed4 col = (diffuse + fixed4(pointLights + i.vLight,1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
