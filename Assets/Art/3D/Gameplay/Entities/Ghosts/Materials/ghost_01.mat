@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ghost_01
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_Shader: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -45,6 +45,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -53,13 +60,6 @@ Material:
       data:
         first:
           name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -125,6 +125,10 @@ Material:
         second: 0
       data:
         first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
           name: _Mode
         second: 0
       data:
@@ -133,20 +137,16 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
-          name: _BumpStrength
-        second: 3
-      data:
-        first:
           name: _Specular
-        second: 1
+        second: 0
       data:
         first:
           name: _SpecIntensity
         second: 0.5
+      data:
+        first:
+          name: _BumpStrength
+        second: 3
     m_Colors:
       data:
         first:

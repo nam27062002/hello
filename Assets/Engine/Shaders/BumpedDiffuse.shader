@@ -31,7 +31,7 @@
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
-				float3 normal : NORMAL;
+				// float3 normal : NORMAL;
 
 				float3 vLight : TEXCOORD2;
 
@@ -54,8 +54,8 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				fixed3 worldPos = mul(_Object2World, v.vertex);
-				o.normal = UnityObjectToWorldNormal(v.normal);
-				o.vLight = ShadeSH9(float4(o.normal, 1.0));
+				float3 normal = UnityObjectToWorldNormal(v.normal);
+				o.vLight = ShadeSH9(float4(normal, 1.0));
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);

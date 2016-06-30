@@ -20,6 +20,7 @@ SubShader {
 	ZWrite On
 	Blend SrcAlpha OneMinusSrcAlpha 
 	Cull Back
+	ColorMask RGBA
 	
 	Pass {
 		CGPROGRAM
@@ -121,7 +122,6 @@ SubShader {
 
 				// fixed4 col = (diffuse + fixed4(pointLights + (UNITY_LIGHTMODEL_AMBIENT.rgb),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate;
 				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 
 
