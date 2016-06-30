@@ -20,11 +20,6 @@ public class AmbientNode : MonoBehaviour
 	public float m_horizonHeight;
 	public Color m_groundColor = Color.white;
 
-	public Color m_fogColor = Color.white;
-
-	public float m_fogStart = 140;
-	public float m_fogEnd = 750;
-
 	[Range (0,2)]
 	public float m_flaresIntensity = 1;
 

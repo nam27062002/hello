@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: GlassRefractive
-  m_Shader: {fileID: 4800000, guid: 762650129c5ff4174b7001850132f323, type: 3}
+  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -36,6 +36,14 @@ Material:
         second: 1
       data:
         first:
+          name: _FogStart
+        second: 0
+      data:
+        first:
+          name: _FogEnd
+        second: 100
+      data:
+        first:
           name: _BumpAmt
         second: 128
     m_Colors:
@@ -47,6 +55,10 @@ Material:
         first:
           name: _SpecColor
         second: {r: 0.9819277, g: 0.96385545, b: 1, a: 1}
+      data:
+        first:
+          name: _FogColor
+        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1002 &2100001
 EditorExtensionImpl:
   serializedVersion: 6

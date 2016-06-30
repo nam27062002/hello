@@ -1,4 +1,4 @@
- Shader "Custom/WaterShader"
+ Shader "Hungry Dragon/WaterShader"
  {
 	Properties 
 	{
