@@ -397,17 +397,14 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	// First version to check burn/explode flags. This should be cached? or only consulted once?
 
-	public bool CanBurn( InflammableBehaviour _inflammable)
-	{
-		if ( m_spawnEffects != null )
-		{
-			return m_spawnEffects.GetAsBool( _inflammable.sku , false);
+	public bool CanBurn(Entity _entity) {
+		if (m_spawnEffects != null ) {
+			return m_spawnEffects.GetAsBool( _entity.sku , false);
 		}
 		return false;
 	}
 
-	public bool CanBurn( InflammableDecoration _decoration )
-	{
+	public bool CanBurn(InflammableDecoration _decoration) {
 		if ( m_decorationEffects != null )
 		{
 			string param = m_decorationEffects.Get( _decoration.sku, "" );

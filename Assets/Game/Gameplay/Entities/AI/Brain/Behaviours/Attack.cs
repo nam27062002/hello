@@ -72,22 +72,21 @@ namespace AI {
 			private void StartAttack() {
 				if (m_machine.enemy == null) {
 					Transition(OnOutOfRange);
+				} else {
+					m_pilot.PressAction(Pilot.Action.Attack);
+
+					Vector3 dir = Vector3.zero;
+					dir.x = m_machine.enemy.position.x - m_machine.position.x;
+					m_pilot.SetDirection(dir.normalized);
+
+					m_onAttachProjectileEventDone = false;
+					m_onDamageEventDone = false;
+					m_onAttackEndEventDone = false;
+					m_attacksLeft--;
+
+					m_timer = m_attackDelay;
 				}
-
-				m_pilot.PressAction(Pilot.Action.Attack);
-
-				Vector3 dir = Vector3.zero;
-				dir.x = m_machine.enemy.position.x - m_machine.position.x;
-				m_pilot.SetDirection(dir.normalized);
-
-				m_onAttachProjectileEventDone = false;
-				m_onDamageEventDone = false;
-				m_onAttackEndEventDone = false;
-				m_attacksLeft--;
-
-				m_timer = m_attackDelay;
 			}
-
 
 			private void OnAttachProjectile() {
 				if (!m_onAttachProjectileEventDone) {

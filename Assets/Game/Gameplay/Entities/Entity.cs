@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Serialization;
 
-public class Entity : MonoBehaviour {
+public class Entity : MonoBehaviour, Spawnable {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -54,7 +54,6 @@ public class Entity : MonoBehaviour {
 	private bool m_givePC = false;
 
 
-
 	/************/
 	void Awake() {
 		// [AOC] Obtain the definition and initialize important data
@@ -96,8 +95,6 @@ public class Entity : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		m_bounds = GetComponentInChildren<CircleArea2D>();
-
-		Spawn();
 	}
 
 	void OnEnable() {
@@ -119,6 +116,11 @@ public class Entity : MonoBehaviour {
 		//TODO: move texture and shader change to View Control!
 
 		m_health = m_maxHealth;
+	}
+
+	public void Disable(bool _destroyed) {
+		m_spawner.RemoveEntity(gameObject, _destroyed);
+		gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -175,5 +177,8 @@ public class Entity : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		// check camera to destroy this entity if it is outside view area
+		// if (out of screen) {
+		//		Disable(false);
+		// }
 	}
 }

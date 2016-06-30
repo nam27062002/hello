@@ -6,15 +6,13 @@ namespace AI {
 		protected Entity m_entity;
 		protected Machine m_machine;
 		protected Pilot m_pilot;
-		protected ViewControl m_viewControl;
 
 		public abstract void Init();
 
-		public void Attach(Machine _machine, Entity _entity, Pilot _pilot, ViewControl _viewControl) {
+		public void Attach(Machine _machine, Entity _entity, Pilot _pilot) {
 			m_entity = _entity;
 			m_pilot = _pilot;
 			m_machine = _machine;
-			m_viewControl = _viewControl;
 		}
 
 		public abstract void Update();

@@ -13,6 +13,7 @@ namespace AI {
 		private Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
 
+		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
 
 		private Quaternion m_rotation;
@@ -24,6 +25,7 @@ namespace AI {
 		public override void Init() {
 			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 
+			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");
 
 			m_position = m_machine.transform.position;
@@ -35,10 +37,10 @@ namespace AI {
 
 		public override void Update() {
 			if (m_machine.GetSignal(Signals.Panic.name)) {
-				m_viewControl.Panic(true);
+				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Burning.name));
 				return;
 			} else {
-				m_viewControl.Panic(false);
+				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Burning.name));
 			}
 
 			if (m_pilot != null) {

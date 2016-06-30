@@ -11,11 +11,14 @@ namespace AI {
 		private List<Transform> m_holdPreyPoints = new List<Transform>();
 		public List<Transform> holdPreyPoints { get{ return m_holdPreyPoints; } }
 
+		private ViewControl m_viewControl;
 
 
 		public MachineEdible() {}
 
 		public override void Init() {
+			m_viewControl = m_machine.GetComponent<ViewControl>();
+
 			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
 
 			HoldPreyPoint[] holdPoints = m_machine.transform.GetComponentsInChildren<HoldPreyPoint>();

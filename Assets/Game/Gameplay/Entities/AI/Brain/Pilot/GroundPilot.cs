@@ -7,9 +7,7 @@ namespace AI {
 
 		private Vector3 m_normal;
 
-		protected override void Start() {
-			base.Start();
-
+		protected virtual void Start() {
 			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
 			m_normal = Vector3.up;
 		}

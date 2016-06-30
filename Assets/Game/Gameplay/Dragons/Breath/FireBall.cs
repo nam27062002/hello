@@ -64,18 +64,21 @@ public class FireBall : MonoBehaviour
 
 	void Explode()
 	{
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D( m_area.center, m_area.radius * 3);
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
 		for (int i = 0; i < preys.Length; i++) 
 		{
-			AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
-			if (machine != null) {
-				bool burned = machine.Burn(m_damage, transform);
-				/*
-				if (!burned){
-					// Show I cannot burn this entity!
+			//if (CanBurn(preys[i]) || m_type == Type.Super) 
+			{
+				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+				if (machine != null) {
+					machine.Burn(m_damage, transform);
 				}
-				*/
 			}
+			/*
+			if (!burned){
+				// Show I cannot burn this entity!
+			}
+			*/
 		}
 
 		ParticleManager.Spawn("PF_Explosion", transform.position);

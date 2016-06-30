@@ -2,14 +2,16 @@
 using System.Collections;
 
 namespace AI {
-	public abstract class AIPilot : Pilot {
+	public abstract class AIPilot : Pilot, Spawnable {
 
 		[SerializeField] private AISM.StateMachine m_brainResource;
 		private AISM.StateMachine m_brain;
 
-		protected virtual void Start() {			
+		public void Spawn() {
 			// braaiiiinnn ~ ~ ~ ~ ~
-			m_brain = Object.Instantiate(m_brainResource) as AISM.StateMachine;
+			if (m_brain == null) {
+				m_brain = Object.Instantiate(m_brainResource) as AISM.StateMachine;
+			}
 			m_brain.Initialise(gameObject, true);
 		}
 

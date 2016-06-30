@@ -20,6 +20,6 @@ namespace AI {
 		void Bite();
 		void BeingSwallowed(Transform _transform);
 		void BiteAndHold();
-		void Burn(float _damage, Transform _transform);
+		bool Burn(float _damage, Transform _transform);
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public abstract class Initializable : MonoBehaviour {
-		
+	
 	protected AreaBounds m_area;
 	public AreaBounds area { get { return m_area; } }
 

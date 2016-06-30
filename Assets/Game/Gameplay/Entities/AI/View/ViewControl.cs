@@ -1,31 +1,61 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class ViewControl : MonoBehaviour {
+public class ViewControl : MonoBehaviour, Spawnable {
 
+
+	//-----------------------------------------------
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
 
 	[SeparatorAttribute]
 	[SerializeField] private List<string> m_onEatenParticles = new List<string>();
 
+	[SeparatorAttribute]
+	[SerializeField] private bool m_explosive = false; // this will explode when burning
 
+
+	//-----------------------------------------------
 	private Animator m_animator;
+	private Material m_materialGold;
+	private Dictionary<int, Material[]> m_materials;
 
 	private bool m_scared;
 	private bool m_panic; //bite and hold state
 	private bool m_attack;
 
 
+	//-----------------------------------------------
 	// Use this for initialization
 	void Start () {
 		m_animator = transform.FindComponentRecursive<Animator>();
 
+		m_materialGold = Resources.Load ("Game/Assets/Materials/Gold") as Material;
+
+		// keep the original materials, sometimes it will become Gold!
+		m_materials = new Dictionary<int, Material[]>(); 
+		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) {
+			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
+		}
+	}
+	//
+
+	public void Spawn() {
 		m_scared = false;
 		m_panic = false;
 		m_attack = false;
+
+		m_animator.speed = 1f;
+
+		// Restore materials
+		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) {
+			if (m_materials.ContainsKey(renderers[i].GetInstanceID())) {
+				renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
+			}
+		}
 	}
-	//
 
 
 	// Queries
@@ -108,10 +138,17 @@ public class ViewControl : MonoBehaviour {
 		}
 	}
 
-	public void Panic(bool _panic) {
+	public void Panic(bool _panic, bool _burning) {
 		if (m_panic != _panic) {
 			m_panic = _panic;
-			m_animator.SetBool("hold", _panic);
+
+			if (_burning) {
+				// lets buuurn!!!
+				// will we have a special animation when burning?
+				m_animator.speed = 0f;
+			} else {
+				m_animator.SetBool("hold", _panic);
+			}
 		}
 	}
 

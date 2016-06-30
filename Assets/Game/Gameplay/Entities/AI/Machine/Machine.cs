@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class Machine : MonoBehaviour, IMachine {		
+	public class Machine : MonoBehaviour, IMachine, Spawnable {		
 		/**************/
 		/*			  */
 		/**************/
 
 		private Entity m_entity = null;
 		private Pilot m_pilot = null;
-		private ViewControl m_viewControl;
 
 		private Dictionary<string, Signal> m_signals;
 
@@ -19,6 +18,7 @@ namespace AI {
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		private MachineEdible m_edible = new MachineEdible();
+		private MachineInflammable m_inflammable = new MachineInflammable();
 
 
 		public Vector3 position { get { return transform.position; } }
@@ -39,7 +39,6 @@ namespace AI {
 		void Awake() {
 			m_entity = GetComponent<Entity>();
 			m_pilot = GetComponent<Pilot>();
-			m_viewControl = GetComponent<ViewControl>();
 
 			m_signals = new Dictionary<string, Signal>();
 
@@ -58,15 +57,18 @@ namespace AI {
 			}
 		}
 
-		void Start() {
-			m_motion.Attach(this, m_entity, m_pilot, m_viewControl);
+		public void Spawn() {
+			m_motion.Attach(this, m_entity, m_pilot);
 			m_motion.Init();
 
-			m_sensor.Attach(this, m_entity, m_pilot, m_viewControl);
+			m_sensor.Attach(this, m_entity, m_pilot);
 			m_sensor.Init();
 
-			m_edible.Attach(this, m_entity, m_pilot, m_viewControl);
+			m_edible.Attach(this, m_entity, m_pilot);
 			m_edible.Init();
+
+			m_inflammable.Attach(this, m_entity, m_pilot);
+			m_inflammable.Init();
 		}
 
 		public void OnTrigger(string _trigger) {
@@ -77,7 +79,7 @@ namespace AI {
 			if (Signals.Destroyed.OnDestroyed == _trigger) {
 				m_pilot.enabled = false;
 				if (m_group != null) m_group.Leave(this);
-				GameObject.Destroy(gameObject);
+				m_entity.Disable(true);
 			}
 		}
 		
@@ -85,6 +87,7 @@ namespace AI {
 		void Update() {
 			m_motion.Update();
 			m_sensor.Update();
+			m_inflammable.Update();
 		}
 
 		public void SetSignal(string _signal, bool _activated) {
@@ -156,8 +159,17 @@ namespace AI {
 			}
 		}
 
-		public void Burn(float _damage, Transform _transform) {
-			
+		public bool Burn(float _damage, Transform _transform) {
+			if (m_inflammable != null) {
+				if (!GetSignal(Signals.Burning.name)) {
+					ReceiveDamage(_damage);
+					if (m_entity.health <= 0) {
+						m_inflammable.Burn(_transform);
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 	}
 }

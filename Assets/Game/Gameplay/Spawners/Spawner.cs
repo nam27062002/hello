@@ -225,27 +225,31 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		ExtendedSpawn();
 
-		if (m_groupController) {
+		if (m_groupController) {			
 			for (int i = 0; i < m_entities.Length; i++) {
 				if (m_entities[i] != null) {
-					EntityGroupBehaviour groupBehaviour = m_entities[i].GetComponent<EntityGroupBehaviour>();
-					if (groupBehaviour != null) {
-						groupBehaviour.AttachGroup(m_groupController);
-					}
+					AI.Machine m = m_entities[i].GetComponent<AI.Machine>();
+					m.EnterGroup(ref m_groupController.flock);
 				}
 			}
 		}
 
 		for (int i = 0; i < m_entitySpawned; i++) {			
-			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
+			Entity entity = m_entities[i].GetComponent<Entity>();
+
 			Vector3 pos = transform.position;
-			if (i > 0) 
-			{
+			if (i > 0) {
 				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
 			}
 
-			spawn.Spawn(this, i, pos, m_area);
-			spawn.transform.localScale = Vector3.one * m_scale.GetRandom();
+			Spawnable[] components = entity.GetComponents<Spawnable>();
+			foreach (Spawnable component in components) {
+				component.Spawn();
+			}
+			//entity.Spawn(/*spawner: this*/);
+
+			entity.transform.position = pos;
+			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
 		}
 
 		// Disable this spawner after a number of spawns
