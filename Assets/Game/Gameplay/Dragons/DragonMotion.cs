@@ -137,7 +137,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_waterMovementModifier = 0;
 
-
+	public static float s_velocityBlendRate = 40;
+	public static float s_velocityUpBlendRate = 20;
+	public static float s_velocityDownBlendRate = 60;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -291,8 +293,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Idle:
 					m_animator.SetBool("fly", false);
 
-					m_impulse = Vector3.zero;
-					m_rbody.velocity = m_impulse;
+					// m_impulse = Vector3.zero;
+					// m_rbody.velocity = m_impulse;
 					if (m_direction.x < 0)	m_direction = Vector3.left;
 					else 					m_direction = Vector3.right;
 					RotateToDirection( m_direction );
@@ -519,13 +521,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier); 
 		if (impulse != Vector3.zero) {
 			// accelerate the dragon
-			float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
+			float speedUp = (m_state == State.Fly_Down)? 1.25f : 1f;
 			m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
 			ComputeFinalImpulse(impulse);
 			RotateToDirection( m_impulse );
-			// m_orientation.SetDirection(m_direction);
 		} else {
+			ComputeImpulseToZero();
 			ChangeState(State.Idle);
 		}
 
@@ -583,18 +585,32 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private void FlyAwayFromGround() {
 
+		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
 		if (m_height < 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
-			Vector3 oldDirection = m_direction;
+			
 			Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
-
 			ComputeFinalImpulse(impulse);	
-			m_direction = oldDirection;
 			m_rbody.velocity = m_impulse;
-		} else {
-			m_rbody.velocity = Vector3.zero;
 		}
-		RotateToDirection(m_direction);
+		else 
+		{
+			ComputeImpulseToZero();
+		}
+
+		if ( oldDirection.x > 0 )
+		{
+			m_direction = Vector3.right;	
+		}
+		else
+		{
+			m_direction = Vector3.left;
+		}
+
+		m_rbody.velocity = m_impulse;
+		RotateToDirection(m_direction, true);
+
+		m_desiredRotation = m_transform.rotation;
 	}
 
 	private void ComputeFinalImpulse(Vector3 _impulse) {
@@ -604,18 +620,38 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
 			// m_impulse.Normalize();
 
-			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
+			// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
+			float maxDampingScale = Util.m_defaultMaxDampingScale;
+			// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, 10 * Time.deltaTime, 8.0f);
+			m_impulse.x = Util.MoveTowardsWithDamping(m_impulse.x, _impulse.x, s_velocityBlendRate * Time.deltaTime, 8.0f, maxDampingScale);
+			if ( _impulse.y > m_impulse.y )
+				m_impulse.y = Util.MoveTowardsWithDamping(m_impulse.y, _impulse.y, (s_velocityUpBlendRate) * Time.deltaTime, 8.0f, maxDampingScale);
+			else
+				m_impulse.y = Util.MoveTowardsWithDamping(m_impulse.y, _impulse.y, (s_velocityDownBlendRate) * Time.deltaTime, 8.0f, maxDampingScale);
+
 			m_direction = m_impulse.normalized;
 		}			
 	}
 
-	protected virtual void RotateToDirection(Vector3 dir)
+	private void ComputeImpulseToZero()
+	{
+		// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
+		Vector3 zero = Vector3.zero;
+		Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref zero, s_velocityBlendRate * 0.5f * Time.deltaTime, 8.0f);
+
+		m_direction = m_impulse.normalized;
+	}
+
+	protected virtual void RotateToDirection(Vector3 dir, bool slowly = false)
 	{
 		float len = dir.magnitude;
 		// m_rotBlendRate is param
 		float blendRate = m_rotBlendRate;
 		if ( m_targetSpeedMultiplier > 1 )
 			blendRate *= 2;
+
+		if ( slowly )
+			blendRate = m_rotBlendRate * 0.2f;
 		float slowRange = 0.05f;
 		if(len < slowRange)
 			blendRate *= (len/slowRange);
