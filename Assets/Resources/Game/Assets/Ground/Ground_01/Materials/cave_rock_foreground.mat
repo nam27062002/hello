@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: cave_rock_02_mat
-  m_Shader: {fileID: 4800000, guid: c4ca9c8014af1422bb0b5f7de3761109, type: 3}
+  m_Name: cave_rock_foreground
+  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -20,8 +20,8 @@ Material:
           name: _MainTex
         second:
           m_Texture: {fileID: 2800000, guid: 302138a72be66734a9727370f228256d, type: 3}
-          m_Scale: {x: 1.8, y: 1.08}
-          m_Offset: {x: 0, y: 0}
+          m_Scale: {x: 5.4, y: 3.63}
+          m_Offset: {x: 2.74, y: 0.15}
       data:
         first:
           name: _BumpMap
@@ -45,13 +45,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -60,6 +53,13 @@ Material:
       data:
         first:
           name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -93,6 +93,14 @@ Material:
         second: 0.5
       data:
         first:
+          name: _FogStart
+        second: 0
+      data:
+        first:
+          name: _FogEnd
+        second: 100
+      data:
+        first:
           name: _Parallax
         second: 0.02
       data:
@@ -121,15 +129,15 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
         second: 0
     m_Colors:
       data:
@@ -140,6 +148,10 @@ Material:
         first:
           name: _Color
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _FogColor
+        second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
           name: _EmissionColorUI
