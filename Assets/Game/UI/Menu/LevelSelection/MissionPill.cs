@@ -239,7 +239,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActivationPending() {
 		// Info text
-		m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = Localization.Localize("TID_MISSIONS_ACTIVATION_PENDING");
+        m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = LocalizationManager.SharedInstance.Localize("TID_MISSIONS_ACTIVATION_PENDING");
 
 		// Cooldown remaining time
 		m_cooldownText.text = "";
@@ -318,7 +318,7 @@ public class MissionPill : MonoBehaviour {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
@@ -341,7 +341,7 @@ public class MissionPill : MonoBehaviour {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 

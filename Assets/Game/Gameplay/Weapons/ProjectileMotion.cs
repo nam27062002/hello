@@ -114,6 +114,14 @@ public class ProjectileMotion : Initializable, MotionInterface
 		}
 	}
 
+	public Vector2 angularVelocity
+	{
+		get
+		{
+			return Vector2.zero;
+		}
+	}
+
 	public float maxSpeed 
 	{ 
 		get

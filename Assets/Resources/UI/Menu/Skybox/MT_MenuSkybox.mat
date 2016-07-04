@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_MenuSkybox
-  m_Shader: {fileID: 4800000, guid: 016348e32b0f247e4a55bdb027f98831, type: 3}
+  m_Shader: {fileID: 104, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 1000
@@ -139,6 +139,10 @@ Material:
         second: 1
       data:
         first:
+          name: _SunSize
+        second: 0.04
+      data:
+        first:
           name: _Parallax
         second: 0.02
       data:
@@ -179,6 +183,10 @@ Material:
         second: 0
       data:
         first:
+          name: _HorizonHeight
+        second: 1
+      data:
+        first:
           name: _Rotation
         second: 0
     m_Colors:
@@ -192,8 +200,24 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
+          name: _GroundColor
+        second: {r: 0.369, g: 0.349, b: 0.341, a: 1}
+      data:
+        first:
+          name: _SkyColor
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      data:
+        first:
           name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SunPos
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
       data:
         first:
           name: _Tint

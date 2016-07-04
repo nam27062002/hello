@@ -282,6 +282,20 @@ public class HUDMessage : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Helper method to control particle systems from animations.
+	/// </summary>
+	/// <param name="_psName">The name of the particle system to be restarted.</param>
+	private void RestartParticleSystem(string _psName) {
+		// Get target particle system
+		ParticleSystem ps = this.FindComponentRecursive<ParticleSystem>(_psName);
+		if(ps == null) return;
+
+		// Restart effect
+		ps.Stop();
+		ps.Play();
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------///// <summary>
@@ -386,6 +400,13 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_type">The type of fire rush that was toggled.</param>
 	private void OnFireRushToggled(bool _active, DragonBreathBehaviour.Type _type) {
 		// Just trigger the animation
-		if(_active) Show();
+		if(_active) {
+			// Only trigger with the right type!
+			if(m_type == Type.FIRE_RUSH && _type == DragonBreathBehaviour.Type.Standard) {
+				Show();
+			} else if(m_type == Type.MEGA_FIRE_RUSH && _type == DragonBreathBehaviour.Type.Super) {
+				Show();
+			}
+		}
 	}
 }

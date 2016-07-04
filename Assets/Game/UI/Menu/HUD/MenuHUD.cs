@@ -43,6 +43,6 @@ public class MenuHUD : MonoBehaviour {
 		popup.GetComponent<PopupCurrencyShop>().closeAfterPurchase = false;*/
 
 		// Currency popup / Resources flow disabled for now
-		UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.33f), this.transform as RectTransform);
+        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), new Vector2(0.5f, 0.33f), this.transform as RectTransform);
 	}
 }

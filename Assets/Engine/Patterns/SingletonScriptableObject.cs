@@ -80,7 +80,8 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 	/// <summary>
 	/// Create the singleton instance if not created.
 	/// </summary>
-	public static void CreateInstance() {
+	/// <param name="_force">If <c>true</c>, re-create instance.</param>
+	public static void CreateInstance(bool _force = false) {
 		// Avoid re-creating the instance while the application is quitting
 		if(m_state == ISingleton.EState.APPLICATION_QUITTING && Application.isPlaying) {
 			Debug.LogWarning("[SingletonScriptableObject] Instance '" + typeof(T) + "' already destroyed on application quit. Won't create again - returning null.");
@@ -89,6 +90,11 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 		
 		// Make sure that only one thread is doing this!
 		lock(m_threadLock) {
+			// If forced, destroy existing instance
+			if(_force && m_instance != null) {
+				DestroyInstance();
+			}
+
 			// Is the static instance created?
 			if(m_instance == null) {
 				// If instance creation is locked, throw a warning

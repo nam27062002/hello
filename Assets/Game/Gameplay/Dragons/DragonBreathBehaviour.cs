@@ -111,7 +111,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void Awake()
 	{
-		DefinitionNode settings = DefinitionsManager.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		DefinitionNode settings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
 		m_superFuryMax = settings.GetAsFloat("superfuryMax", 8);
 		m_superFuryDurationModifier = settings.GetAsFloat("superFuryDurationModifier", 1.2f);
 		m_superFuryCoinsMultiplier = settings.GetAsFloat("superFuryCoinsMultiplier", 1.2f);
@@ -132,8 +132,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 
 		// From dragon tier get burning possibilities
-		m_spawnEffects = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "tier", m_dragon.data.tierDef.sku);
-		m_decorationEffects = DefinitionsManager.GetDefinitionByVariable(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "tier", m_dragon.data.tierDef.sku);
+		m_spawnEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "tier", m_dragon.data.tierDef.sku);
+		m_decorationEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "tier", m_dragon.data.tierDef.sku);
 
 		// Init content cache
 		m_furyBase = m_dragon.data.def.GetAsFloat("furyMax");
@@ -214,7 +214,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void Update() {
 		// Cheat for infinite fire
-		bool cheating = (Debug.isDebugBuild && (DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+		bool cheating = ( UnityEngine.Debug.isDebugBuild && (DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
 
 		if (m_isFuryOn) 

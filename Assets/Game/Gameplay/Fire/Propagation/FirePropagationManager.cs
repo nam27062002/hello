@@ -41,6 +41,8 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	}
 
 	void Update() {
+		if(m_breath == null) return;
+
 		//check if this intersecs with dragon breath
 		if ( m_breath.IsFuryOn() )
 		{

@@ -23,6 +23,18 @@ public class DragonEatBehaviour : EatBehaviour {
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
+
+		DragonAnimationEvents animEvents = GetComponentInChildren<DragonAnimationEvents>();
+		if ( animEvents != null )
+		{
+			animEvents.onEatEvent += onEatEvent;
+			m_waitJawsEvent = false;
+		}
+	}
+
+	void onEatEvent()
+	{
+		OnJawsClose();
 	}
 
 	void OnDestroy() {

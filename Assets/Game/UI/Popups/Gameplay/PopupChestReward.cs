@@ -113,7 +113,7 @@ public class PopupChestReward : MonoBehaviour {
 			} break;
 
 			case ChestManager.RewardType.EGG: {
-				DefinitionNode eggDef = DefinitionsManager.GetDefinition(DefinitionsCategory.EGGS, ChestManager.rewardSku);
+				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, ChestManager.rewardSku);
 				GameObject rewardObj = this.FindObjectRecursive("RewardEgg");
 				rewardObj.SetActive(true);
 				rewardObj.FindComponentRecursive<Localizer>("TextReward").Localize("TID_CHEST_REWARD_EGG", eggDef.GetLocalized("tidName"));

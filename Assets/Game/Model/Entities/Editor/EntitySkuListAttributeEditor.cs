@@ -51,11 +51,14 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 		// Obtain the attribute
 		EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
 
+		// If definitions are not loaded, do it now
+		if(!ContentManager.ready) ContentManager.InitContent();
+
 		// Get the definitions and sort them by category
-		List<string> categorySkus = DefinitionsManager.GetSkuList(DefinitionsCategory.ENTITY_CATEGORIES);
+		List<string> categorySkus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.ENTITY_CATEGORIES);
 		Dictionary<string, List<DefinitionNode>> defsByCategory = new Dictionary<string, List<DefinitionNode>>();
 		for(int i = 0; i < categorySkus.Count; i++) {
-			defsByCategory.Add(categorySkus[i], DefinitionsManager.GetDefinitionsByVariable(DefinitionsCategory.ENTITIES, "category", categorySkus[i]));
+			defsByCategory.Add(categorySkus[i], DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.ENTITIES, "category", categorySkus[i]));
 		}
 
 		// Create the skus list

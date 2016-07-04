@@ -17,10 +17,10 @@ public class DragonPowerUp : MonoBehaviour {
 		string disguise = Wardrobe.GetEquipedDisguise(dragonSku);
 		int level = Wardrobe.GetDisguiseLevel(disguise);
 
-		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
 
 		if (def != null) {
-			def = DefinitionsManager.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, def.GetAsString("powerupSet"));
+			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, def.GetAsString("powerupSet"));
 
 			for( int i = 0; i<level;i++ )
 			{
@@ -34,7 +34,7 @@ public class DragonPowerUp : MonoBehaviour {
 	void SetPowerUp( string powerUpSku )
 	{
 		DragonPlayer player = GetComponent<DragonPlayer>();
-		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
 		if ( def != null )
 		{
@@ -107,7 +107,7 @@ public class DragonPowerUp : MonoBehaviour {
 	/// </summary>
 	public static string GetDescription(string _powerSku) {
 		// Get definition
-		DefinitionNode def = DefinitionsManager.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
 		if(def == null) return "";
 
 		// Every power type has a different format
@@ -158,7 +158,7 @@ public class DragonPowerUp : MonoBehaviour {
 			case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
-				DefinitionNode entityDef = DefinitionsManager.GetDefinition(DefinitionsCategory.ENTITIES, def.GetAsString("param1"));
+				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, def.GetAsString("param1"));
 				return def.GetLocalized("tidDesc", entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(def.GetAsFloat("param2"), 0), Colors.skyBlue.ToHexString("#"), Colors.lime.ToHexString("#"));
 			} break;
 

@@ -22,7 +22,7 @@ public class SkuListAttribute : ListAttribute {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public DefinitionsCategory m_category = DefinitionsCategory.UNKNOWN;
+	public string m_category = DefinitionsCategory.UNKNOWN;
 	private bool m_allowNullValue = true;
 
 	//------------------------------------------------------------------//
@@ -33,7 +33,7 @@ public class SkuListAttribute : ListAttribute {
 	/// </summary>
 	/// <param name="_category">The type of definition to be parsed.</param>
 	/// <param name="_allowNullValue">If set to <c>true</c>, the "NONE" option will be available.</param>
-	public SkuListAttribute(DefinitionsCategory _category, bool _allowNullValue = true) {
+	public SkuListAttribute(string _category, bool _allowNullValue = true) {
 		m_category = _category;
 		ValidateOptions();
 	}
@@ -42,8 +42,11 @@ public class SkuListAttribute : ListAttribute {
 	/// Make sure the options array is updated.
 	/// </summary>
 	public override void ValidateOptions() {
+		// If definitions are not loaded, do it now
+		if(!ContentManager.ready) ContentManager.InitContent();
+
 		// Get sku list
-		List<string> skus = DefinitionsManager.GetSkuList(m_category);
+		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(m_category);
 
 		// Add the empty option if required
 		if(m_allowNullValue) {

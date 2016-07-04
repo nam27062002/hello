@@ -138,12 +138,15 @@ public class EdibleBehaviour : Initializable {
 		// Particles
 		if ( m_onEatenParticles.Count <= 0 )
 		{
-			GameObject go = ParticleManager.Spawn("bloodchurn-large", transform.position);
+			GameObject go = ParticleManager.Spawn("PS_Blood_Explosion_Small", transform.position + (Vector3.back * 10), "Blood/");
 			if ( go != null)
 			{
 				FollowTransform ft = go.GetComponent<FollowTransform>();
 				if ( ft != null )
+				{
 					ft.m_follow = _transform;
+					ft.m_offset = Vector3.back * 10;
+				}
 			}
 		}
 		else

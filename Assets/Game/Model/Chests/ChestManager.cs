@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -62,8 +63,9 @@ public class ChestManager : Singleton<ChestManager> {
 	public ChestManager() {
 		// Initialize probability set from definitions
 		m_rewardDropRate = new ProbabilitySet();
-		List<DefinitionNode> rewardDefs = DefinitionsManager.GetDefinitions(DefinitionsCategory.CHEST_REWARDS);
-		DefinitionsManager.SortByProperty(ref rewardDefs, "index", DefinitionsManager.SortType.NUMERIC);	// Make sure it matches the enum
+		List<DefinitionNode> rewardDefs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.CHEST_REWARDS, ref rewardDefs);
+		DefinitionsManager.SharedInstance.SortByProperty(ref rewardDefs, "index", DefinitionsManager.SortType.NUMERIC);	// Make sure it matches the enum
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			m_rewardDropRate.AddElement(rewardDefs[i].sku);
 			m_rewardDropRate.SetProbability(i, rewardDefs[i].Get<float>("dropRate"), false);
@@ -146,7 +148,7 @@ public class ChestManager : Singleton<ChestManager> {
 			case RewardType.COINS: {
 				// [AOC] Formula defined in the chestsRewards table
 				// A(LN(MaxDragon) +1)/B
-				DefinitionNode rewardDef = DefinitionsManager.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "coins");
+				DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "coins");
 				float A = rewardDef.Get<float>("factorA");
 				float B = rewardDef.Get<float>("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
@@ -160,7 +162,7 @@ public class ChestManager : Singleton<ChestManager> {
 			case RewardType.PC: {
 				// [AOC] Formula defined in the chestsRewards table
 				// A(LN(MaxDragon) +1)/B
-				DefinitionNode rewardDef = DefinitionsManager.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "pc");
+				DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "pc");
 				float A = rewardDef.Get<float>("factorA");
 				float B = rewardDef.Get<float>("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
