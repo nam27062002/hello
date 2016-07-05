@@ -83,6 +83,7 @@ public class PersistenceProfileEditor : ExtendedPropertyDrawer {
 /// <summary>
 /// Custom editor for the persistence manager SaveData object.
 /// </summary>
+/*
 [CustomPropertyDrawer(typeof(PersistenceManager.SaveData))]
 public class PersistenceManagerSaveDataEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
@@ -142,6 +143,7 @@ public class PersistenceManagerSaveDataEditor : ExtendedPropertyDrawer {
 		return _pos.height;
 	}
 }
+*/
 
 /// <summary>
 /// Custom editor for the DragonData SaveData object.

@@ -212,42 +212,43 @@ public class Mission {
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public void Load(SaveData _data) {
+	public void Load(SimpleJSON.JSONNode _data) {
 		// Read values from persistence object
-		InitFromDefinition(MissionManager.GetDef(_data.sku));
+		InitFromDefinition(MissionManager.GetDef(_data["sku"]));
 
 		// Restore state
-		m_state = _data.state;
+		m_state = (State)_data["state"].AsInt;
 
 		// Restore objective
-		if(m_objective != null) {
-			m_objective.currentValue = _data.currentValue;
+		if(m_objective != null) 
+		{
+			m_objective.currentValue = _data["currentValue"].AsFloat;
 			m_objective.enabled = (m_state == State.ACTIVE);
 		}
 
 		// Restore cooldown timestamp
-		m_cooldownStartTimestamp = _data.cooldownStartTimestamp;
+		m_cooldownStartTimestamp = DateTime.Parse( _data["cooldownStartTimestamp"]);
 	}
 	
 	/// <summary>
-	/// Create and return a persistence save data object initialized with the data.
+	/// Create and return a persistence save data json initialized with the data.
 	/// </summary>
-	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SaveData Save() {
+	/// <returns>A new data json to be stored to persistence by the PersistenceManager.</returns>
+	public SimpleJSON.JSONNode Save() {
 		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
 		
 		// Mission sku
-		if(m_def != null) data.sku = m_def.sku;
+		if(m_def != null) data.Add("sku", m_def.sku);
 
 		// State
-		data.state = m_state;
+		data.Add("state",((int)m_state).ToString());
 
 		// Objective progress
-		if(m_objective != null) data.currentValue = m_objective.currentValue;
+		if(m_objective != null) data.Add("currentValue", m_objective.currentValue.ToString());
 
 		// Cooldown timestamp
-		data.cooldownStartTimestamp = m_cooldownStartTimestamp;
+		data.Add("cooldownStartTimestamp", m_cooldownStartTimestamp.ToString());
 		
 		return data;
 	}

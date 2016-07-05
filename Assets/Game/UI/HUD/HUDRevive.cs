@@ -137,9 +137,9 @@ public class HUDRevive : MonoBehaviour {
 		// Perform transaction
 		// If not enough funds, pause timer and open PC shop popup
 		long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
-		if(UserProfile.pc >= costPC) {
+		if(UsersManager.currentUser.pc >= costPC) {
 			// Perform transaction
-			UserProfile.AddPC(-costPC);
+			UsersManager.currentUser.AddPC(-costPC);
 			PersistenceManager.Save();
 
 			// Do it!
@@ -192,7 +192,7 @@ public class HUDRevive : MonoBehaviour {
 			m_pcText.text = StringUtils.FormatNumber((m_freeReviveCount + m_paidReviveCount) + 1);	// [AOC] TODO!! Actual revive cost formula
 
 		// Free revive available?
-		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UserProfile.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
+		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
 
 		// Reset timer and control vars
 		m_timer.Start(m_reviveAvailableSecs * 1000);

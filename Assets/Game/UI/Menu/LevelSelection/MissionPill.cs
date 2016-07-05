@@ -308,9 +308,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Make sure we have enough PC to remove the mission
 		int costPC = m_mission.removeCostPC;
-		if(UserProfile.pc >= costPC) {
+		if(UsersManager.currentUser.pc >= costPC) {
 			// Do it!
-			UserProfile.AddPC(-costPC);
+			UsersManager.currentUser.AddPC(-costPC);
 			MissionManager.RemoveMission(m_missionDifficulty);
 			PersistenceManager.Save();
 		} else {
@@ -331,9 +331,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Make sure we have enough PC to remove the mission
 		int costPC = m_mission.skipCostPC;
-		if(UserProfile.pc >= costPC) {
+		if(UsersManager.currentUser.pc >= costPC) {
 			// Do it!
-			UserProfile.AddPC(-costPC);
+			UsersManager.currentUser.AddPC(-costPC);
 			MissionManager.SkipMission(m_missionDifficulty);
 			PersistenceManager.Save();
 		} else {

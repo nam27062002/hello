@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using SimpleJSON;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -19,7 +20,8 @@ using System;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class UserProfile : SingletonMonoBehaviour<UserProfile> {
+public class UserProfile
+{
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -54,57 +56,57 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
 	[Separator("Economy")]
 	[SerializeField] private long m_coins;
-	public static long coins {
-		get { return instance.m_coins; }
+	public long coins {
+		get { return m_coins; }
 	}
 	
 	[SerializeField] private long m_pc;
-	public static long pc { 
-		get { return instance.m_pc; }
+	public  long pc { 
+		get { return m_pc; }
 	}
 
 	[Separator("Game Settings")]
 	[SerializeField] private string m_currentDragon = "";
-	public static string currentDragon {
-		get { return instance.m_currentDragon; }
-		set { instance.m_currentDragon = value; }
+	public string currentDragon {
+		get { return m_currentDragon; }
+		set { m_currentDragon = value; }
 	}
 
 	[SerializeField] /*[SkuList(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
-	public static string currentLevel {
-		get { return instance.m_currentLevel; }
-		set { instance.m_currentLevel = value; }
+	public string currentLevel {
+		get { return m_currentLevel; }
+		set { m_currentLevel = value; }
 	}
 
 	[SerializeField] private TutorialStep m_tutorialStep;
-	public static TutorialStep tutorialStep { 
-		get { return instance.m_tutorialStep; }
-		set { instance.m_tutorialStep = value; }
+	public TutorialStep tutorialStep { 
+		get { return m_tutorialStep; }
+		set { m_tutorialStep = value; }
 	}
 
 	[SerializeField] private bool m_furyUsed = false;
-	public static bool furyUsed {
-		get { return instance.m_furyUsed; }
-		set { instance.m_furyUsed = value; }
+	public bool furyUsed {
+		get { return m_furyUsed; }
+		set { m_furyUsed = value; }
 	}
 
 	[Separator("Game Stats")]
 	[SerializeField] private int m_gamesPlayed = 0;
-	public static int gamesPlayed {
-		get { return instance.m_gamesPlayed; }
-		set { instance.m_gamesPlayed = value; }
+	public int gamesPlayed {
+		get { return m_gamesPlayed; }
+		set { m_gamesPlayed = value; }
 	}
 
 	[SerializeField] private long m_highScore = 0;
-	public static long highScore {
-		get { return instance.m_highScore; }
-		set { instance.m_highScore = value; }
+	public long highScore {
+		get { return m_highScore; }
+		set { m_highScore = value; }
 	}
 	
 	[SerializeField] private int m_superFuryProgression = 0;
-	public static int superFuryProgression {
-		get { return instance.m_superFuryProgression; }
-		set { instance.m_superFuryProgression = value; }
+	public int superFuryProgression {
+		get { return m_superFuryProgression; }
+		set { m_superFuryProgression = value; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -118,10 +120,10 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// Add coins.
 	/// </summary>
 	/// <param name="_amount">Amount to add. Negative to subtract.</param>
-	public static void AddCoins(long _amount) {
+	public void AddCoins(long _amount) {
 		// Skip checks for now
 		// Compute new value and dispatch event
-		instance.m_coins += _amount;
+		m_coins += _amount;
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_COINS_CHANGED, coins - _amount, coins);
 	}
 	
@@ -129,10 +131,10 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// Add PC.
 	/// </summary>
 	/// <param name="_iAmount">Amount to add. Negative to subtract.</param>
-	public static void AddPC(long _iAmount) {
+	public void AddPC(long _iAmount) {
 		// Skip checks for now
 		// Compute new value and dispatch event
-		instance.m_pc += _iAmount;
+		m_pc += _iAmount;
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _iAmount, pc);
 	}
 
@@ -145,11 +147,11 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// </summary>
 	/// <returns><c>true</c> if <paramref name="_step"/> is marked as completed in this profile; otherwise, <c>false</c>.</returns>
 	/// <param name="_step">The tutorial step to be checked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be tested).</param>
-	public static bool IsTutorialStepCompleted(TutorialStep _step) {
+	public bool IsTutorialStepCompleted(TutorialStep _step) {
 		// Special case for NONE: ignore
 		if(_step == TutorialStep.INIT) return true;
 
-		return (instance.m_tutorialStep & _step) != 0;
+		return (m_tutorialStep & _step) != 0;
 	}
 
 	/// <summary>
@@ -157,14 +159,14 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// </summary>
 	/// <param name="_step">The tutorial step to be marked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be marked).</param>
 	/// <param name="_completed">Whether to mark it as completed or uncompleted.</param>
-	public static void SetTutorialStepCompleted(TutorialStep _step, bool _completed = true) {
+	public void SetTutorialStepCompleted(TutorialStep _step, bool _completed = true) {
 		// Special case for NONE: ignore
 		if(_step == TutorialStep.INIT) return;
 
 		if(_completed) {
-			instance.m_tutorialStep |= _step;
+			m_tutorialStep |= _step;
 		} else {
-			instance.m_tutorialStep &= ~_step;
+			m_tutorialStep &= ~_step;
 		}
 	}
 
@@ -172,29 +174,29 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Load state from a persistence object.
+	/// Load state from a json object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SaveData _data) {
+	public void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
 		// Economy
-		instance.m_coins = _data.coins;
-		instance.m_pc = _data.pc;
+		m_coins = _data["sc"].AsInt;
+		m_pc = _data["pc"].AsInt;
 
 		// Game settings
-		instance.m_currentDragon = _data.currentDragon;
-		instance.m_currentLevel = _data.currentLevel;
-		instance.m_tutorialStep = _data.tutorialStep;
-		instance.m_furyUsed = _data.furyUsed;
+		m_currentDragon = _data["currentDragon"];
+		m_currentLevel = _data["currentLevel"];
+		m_tutorialStep = ( TutorialStep )_data["tutorialStep"].AsInt;
+		m_furyUsed = _data["furyUsed"].AsBool;
 
 		// Game stats
-		instance.m_gamesPlayed = _data.gamesPlayed;
-		instance.m_highScore = _data.highScore;
-		instance.m_superFuryProgression = _data.superFuryProgression;
+		m_gamesPlayed = _data["gamesPlayed"].AsInt;
+		m_highScore = _data["highScore"].AsInt;
+		m_superFuryProgression = _data["superFuryProgression"].AsInt;
 
 		// Some cheats override profile settings - will be saved with the next Save()
 		if(Prefs.GetBool("skipTutorialCheat")) {
-			instance.m_tutorialStep = TutorialStep.ALL;
+			m_tutorialStep = TutorialStep.ALL;
 			Prefs.SetBool("skipTutorialCheat", false);
 		}
 	}
@@ -203,25 +205,25 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SaveData Save() {
+	public SimpleJSON.JSONClass Save() {
 		// Create new object
-		SaveData data = new SaveData();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// Initialize it
 		// Economy
-		data.coins = instance.m_coins;
-		data.pc = instance.m_pc;
+		data.Add( "sc", m_coins.ToString());
+		data.Add( "pc", m_pc.ToString());
 
 		// Game settings
-		data.currentDragon = instance.m_currentDragon;
-		data.currentLevel = instance.m_currentLevel;
-		data.tutorialStep = instance.m_tutorialStep;
-		data.furyUsed = instance.m_furyUsed;
+		data.Add("currentDragon",m_currentDragon);
+		data.Add("currentLevel",m_currentLevel);
+		data.Add("tutorialStep",((int)m_tutorialStep).ToString());
+		data.Add("furyUsed", m_furyUsed.ToString());
 
 		// Game stats
-		data.gamesPlayed = instance.m_gamesPlayed;
-		data.highScore = instance.m_highScore;
-		data.superFuryProgression = instance.m_superFuryProgression;
+		data.Add("gamesPlayed",m_gamesPlayed.ToString());
+		data.Add("highScore",m_highScore.ToString());
+		data.Add("superFuryProgression",m_superFuryProgression.ToString());
 
 		// Return it
 		return data;

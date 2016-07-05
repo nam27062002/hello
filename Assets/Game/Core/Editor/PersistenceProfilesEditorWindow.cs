@@ -388,6 +388,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		else {
 			// Use the temp PersistenceProfile object to display the data of the selected savegame
 			if(m_saveGameTempProfile) {
+				// MALH:TODO
 				m_saveGameTempProfile.data = PersistenceManager.LoadToObject(m_selectedSavegame);
 
 				// Create a serialized object for the temp profile we just created

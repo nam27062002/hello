@@ -90,7 +90,7 @@ public class ChestManager : Singleton<ChestManager> {
 			// [AOC] CHECK!! We might need to filter by dragon tier (different heights, etc.)
 			// Don't enable chest during the first run
 			GameObject chestObj = null;
-			if(UserProfile.gamesPlayed > 0) { 
+			if(UsersManager.currentUser.gamesPlayed > 0) { 
 				chestObj = chests.GetRandomValue();
 				instance.m_selectedChest = chestObj.GetComponent<Chest>();
 			}
@@ -126,7 +126,7 @@ public class ChestManager : Singleton<ChestManager> {
 	public static void GenerateReward() {
 		// First of all, select reward type
 		// Special case: force egg reward for the first chest found
-		if(UserProfile.IsTutorialStepCompleted(TutorialStep.CHEST_REWARD)) {
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CHEST_REWARD)) {
 			// Tutorial completed, get random reward
 			instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
 
@@ -139,7 +139,7 @@ public class ChestManager : Singleton<ChestManager> {
 			instance.m_rewardType = RewardType.EGG;
 
 			// Complete tutorial
-			UserProfile.SetTutorialStepCompleted(TutorialStep.CHEST_REWARD);
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CHEST_REWARD);
 			PersistenceManager.Save();
 		}
 
@@ -196,11 +196,11 @@ public class ChestManager : Singleton<ChestManager> {
 		// Depends on reward type
 		switch(instance.m_rewardType) {
 			case RewardType.COINS: {
-				UserProfile.AddCoins(instance.m_rewardAmount);
+				UsersManager.currentUser.AddCoins(instance.m_rewardAmount);
 			} break;
 
 			case RewardType.PC: {
-				UserProfile.AddPC(instance.m_rewardAmount);
+				UsersManager.currentUser.AddPC(instance.m_rewardAmount);
 			} break;
 
 			case RewardType.BOOSTER: {

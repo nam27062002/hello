@@ -130,18 +130,21 @@ public class Wardrobe : Singleton<Wardrobe> {
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Load state from a persistence object.
+	/// Load state from a json object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SaveData _data) {
-		int disguisesLength = _data.disguises.Length;
+	public static void Load(SimpleJSON.JSONNode _data) 
+	{
+		SimpleJSON.JSONArray diguisesArr = _data["disguises"].AsArray;
+		int disguisesLength = diguisesArr.Count;
 		for (int i = 0; i < disguisesLength; i++) {
-			instance.m_disguises[_data.disguises[i].disguise] = _data.disguises[i].level;
+			instance.m_disguises[ diguisesArr[i]["disguise"] ] = diguisesArr[i]["level"].AsInt;
 		}
 
-		int equipedLength = _data.equiped.Length;
+		SimpleJSON.JSONArray equipedArr = _data["equiped"].AsArray;
+		int equipedLength = equipedArr.Count;
 		for (int k = 0; k < equipedLength; k++) {
-			instance.m_equiped[_data.equiped[k].dragon] = _data.equiped[k].disguise;
+			instance.m_equiped[ equipedArr[k]["dragon"] ] = equipedArr[k]["disguise"];
 		}
 	}
 
@@ -149,40 +152,41 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SaveData Save() {
-		SaveData data = new SaveData();
+	public static SimpleJSON.JSONNode Save() {
+		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
 
-		List<DisguiseLevel> saveDisguises = new List<DisguiseLevel>();
+		SimpleJSON.JSONArray diguisesArr = new SimpleJSON.JSONArray();
 		if(instance.m_disguises != null) {
 			foreach (KeyValuePair<string, int> pair in instance.m_disguises) {
-				if (pair.Value > 0) {
-					DisguiseLevel dl = new DisguiseLevel();
+				if (pair.Value > 0) 
+				{
+					SimpleJSON.JSONNode dl = new SimpleJSON.JSONNode();
 
-					dl.disguise = pair.Key;
-					dl.level = pair.Value;
+					dl.Add("disguise", pair.Key.ToString());
+					dl.Add("level", pair.Value.ToString());
 
-					saveDisguises.Add(dl);
+					diguisesArr.Add(dl);
 				}
 			}
 		}
-		data.disguises = saveDisguises.ToArray();
+		data["disguises"] = diguisesArr;
 
-		if(instance.m_equiped != null) {
-			int k = 0;
-			data.equiped = new DragonDisguise[instance.m_equiped.Count];
-			foreach (KeyValuePair<string, string> pair in instance.m_equiped) {
-				DragonDisguise dd = new DragonDisguise();
+		SimpleJSON.JSONArray equipedArr = new SimpleJSON.JSONArray();
+		if(instance.m_equiped != null) 
+		{
+			foreach (KeyValuePair<string, string> pair in instance.m_equiped) 
+			{
+				SimpleJSON.JSONNode dd = new SimpleJSON.JSONNode();
 
-				dd.dragon = pair.Key;
-				dd.disguise = pair.Value;
+				dd.Add("dragon",pair.Key);
+				dd.Add("disguise", pair.Value);
 
-				data.equiped[k] = dd;
-
-				k++;
+				equipedArr.Add(dd);
 			}
-		} else {
-			data.equiped = new DragonDisguise[0];
-		}
+		} 
+		 
+		data.Add("equiped",equipedArr);
+		
 
 		return data;
 	}

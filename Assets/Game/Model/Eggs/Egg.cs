@@ -119,16 +119,16 @@ public class Egg {
 	}
 
 	/// <summary>
-	/// Create and initialize an egg with a given persistence data object.
+	/// Create and initialize an egg with a given persistence json.
 	/// </summary>
 	/// <returns>The newly created egg. Null if the egg couldn't be created.</returns>
-	/// <param name="_data">The persistence data to be used to initialize the new egg.</param>
-	public static Egg CreateFromSaveData(SaveData _data) {
+	/// <param name="_data">The json data to be used to initialize the new egg.</param>
+	public static Egg CreateFromSaveData(SimpleJSON.JSONNode _data) {
 		// Check params
 		if(_data == null) return null;
 
 		// Create a new egg using the persistence data sku
-		Egg newEgg = CreateFromSku(_data.sku);
+		Egg newEgg = CreateFromSku(_data["sku"]);
 
 		// Load persistence object into the new egg and return it
 		if(newEgg != null) {
@@ -252,7 +252,7 @@ public class Egg {
 					if(!leveled) {
 						// Give coins
 						m_rewardData.coins = (long)Wardrobe.GetDisguiseValue(disguise);
-						UserProfile.AddCoins(m_rewardData.coins);
+						UsersManager.currentUser.AddCoins(m_rewardData.coins);
 					}
 				}
 			} break;
@@ -300,42 +300,43 @@ public class Egg {
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Load state from a persistence object.
+	/// Load state from a json object.
 	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public void Load(SaveData _data) {
+	/// <param name="_data">The json loaded from persistence.</param>
+	public void Load(SimpleJSON.JSONNode _data) {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
 
 		// Def
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _data.sku);
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _data["sku"]);
 
 		// State
-		m_state = _data.state;
-		m_isNew = _data.isNew;
+		m_state = (State)_data["state"].AsInt;
+		m_isNew = _data["isNew"].AsBool;
 
 		// Reward
-		m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data.rewardSku);
+		m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]);
 	}
 
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SaveData Save() {
+	public SimpleJSON.JSONNode Save() {
 		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
 
 		// Egg sku
-		data.sku = m_def.sku;
+		data.Add("sku",m_def.sku);
 
 		// State
-		data.state = m_state;
-		data.isNew = m_isNew;
+		data.Add("state", ((int)m_state).ToString());
+		data.Add("isNew",m_isNew.ToString());
 
 		// Reward
-		if(m_rewardDef != null) {
-			data.rewardSku = m_rewardDef.sku;
+		if(m_rewardDef != null) 
+		{
+			data.Add("rewardSku", m_rewardDef.sku);
 		}
 
 		return data;

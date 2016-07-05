@@ -239,55 +239,64 @@ public class DragonData {
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public void Load(SaveData _data) {
+	public void Load(SimpleJSON.JSONNode _data) {
 		// Make sure the persistence object corresponds to this dragon
-		if(!DebugUtils.Assert(_data.sku == def.sku, "Attempting to load persistence data corresponding to a different dragon ID, aborting")) {
+		string sku = _data["sku"];
+		if(!DebugUtils.Assert(sku.Equals(def.sku), "Attempting to load persistence data corresponding to a different dragon ID, aborting")) {
 			return;
 		}
 
 		// Just read values from persistence object
-		m_owned = _data.owned;
-		progression.Load(_data.xp, _data.level);
+		m_owned = _data["owned"].AsBool;
+
+		progression.Load(_data["xp"].AsFloat, _data["level"].AsInt);
 
 		// Skills
-		m_speedSkill.Load(_data.speedSkillLevel);
-		m_energySkill.Load(_data.boostSkillLevel);
-		m_fireSkill.Load(_data.fireSkillLevel);
+		m_speedSkill.Load(_data["speedSkillLevel"].AsInt);
+		m_energySkill.Load(_data["boostSkillLevel"].AsInt);
+		m_fireSkill.Load(_data["fireSkillLevel"].AsInt);
 
 		// Equip
-		for (int i = 0; i < _data.equip.Length; i++) {
-			string[] tmp = _data.equip[i].Split(':');
-			Equipable.AttachPoint point = (Equipable.AttachPoint)Enum.Parse(typeof(Equipable.AttachPoint), tmp[0]);
-			m_equip.Add(point, tmp[1]);
+		m_equip.Clear();
+		if ( _data.ContainsKey("equip") )
+		{
+			SimpleJSON.JSONArray equip = _data["equip"].AsArray;
+			for (int i = 0; i < equip.Count; i++) {
+				string[] tmp = equip[i].ToString().Split(':');
+				Equipable.AttachPoint point = (Equipable.AttachPoint)Enum.Parse(typeof(Equipable.AttachPoint), tmp[0]);
+				m_equip.Add(point, tmp[1]);
+			}
 		}
+
 	}
 	
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SaveData Save() {
+	public SimpleJSON.JSONNode Save() 
+	{
 		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		data.sku = def.sku;
-		data.owned = m_owned;
-		data.xp = progression.xp;
-		data.level = progression.level;
+		data.Add("sku", def.sku);
+		data.Add("owned", m_owned.ToString());
+		data.Add("xp", progression.xp.ToString());
+		data.Add("level", progression.level.ToString());
 		
-		data.speedSkillLevel = m_speedSkill.level;
-		data.boostSkillLevel = m_energySkill.level;
-		data.fireSkillLevel = m_fireSkill.level;
-		
-		data.equip = new string[m_equip.Count];
-		int count = 0;
+		data.Add("speedSkillLevel", m_speedSkill.level.ToString());
+		data.Add("boostSkillLevel", m_energySkill.level.ToString());
+		data.Add("fireSkillLevel", m_fireSkill.level.ToString());
+
+		SimpleJSON.JSONArray equip = new SimpleJSON.JSONArray();
 		foreach (Equipable.AttachPoint key in m_equip.Keys) {
 			string tmp = key + ":" + m_equip[key];
-			data.equip[count] = tmp;
-			count++;
+			equip.Add( tmp );
 		}
+		data.Add("equip", equip);
 
 		return data;
+
 	}
 
 	public static string TierToSku( DragonTier _tier)

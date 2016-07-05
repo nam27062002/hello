@@ -67,7 +67,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Show menu HUD, except if the dragon selection tutorial hasn't yet been completed
-		if(UserProfile.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceShow(false);
 		}
 

@@ -73,8 +73,8 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 		long priceCoins = data.def.GetAsLong("unlockPriceCoins");
-		if(UserProfile.coins >= priceCoins) {
-			UserProfile.AddCoins(-priceCoins);
+		if(UsersManager.currentUser.coins >= priceCoins) {
+			UsersManager.currentUser.AddCoins(-priceCoins);
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {

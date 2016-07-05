@@ -189,7 +189,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 			Mission m = GetMission((Mission.Difficulty)i);
 			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				// Give reward
-				UserProfile.AddCoins(m.rewardCoins);
+				UsersManager.currentUser.AddCoins(m.rewardCoins);
 
 				// Generate new mission
 				m = instance.GenerateNewMission((Mission.Difficulty)i);
@@ -324,23 +324,33 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SaveData _data) {
+	public static void Load(SimpleJSON.JSONNode _data) {
+		
 		// Load generation index BEFORE missions, in case new missions have to be generated
-		instance.m_generationIdx = _data.generationIdx;
+		SimpleJSON.JSONArray array = _data["generationIdx"].AsArray;
+		instance.m_generationIdx = new int[ array.Count ];
+		for( int i =0 ; i<array.Count; i++ )
+			instance.m_generationIdx[i] = array[i].AsInt;
 
 		// Load missions
-		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
+		SimpleJSON.JSONArray activeMissions = _data["activeMissions"].AsArray;
+		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) 
+		{
 			// If there is no data for this mission, generate a new one
-			if(i >= _data.activeMissions.Length || _data.activeMissions[i] == null || _data.activeMissions[i].sku == "") {
+			if(i >= activeMissions.Count || activeMissions[i] == null || activeMissions[i]["sku"] == "") 
+			{
 				instance.GenerateNewMission((Mission.Difficulty)i);
-			} else {
+			} 
+			else 
+			{
 				// If the mission was not created, create an empty one now and load its data from persistence
-				if(instance.m_missions[i] == null) {
+				if(instance.m_missions[i] == null) 
+				{
 					instance.m_missions[i] = new Mission();
 				}
 				
 				// Load data into the target mission
-				instance.m_missions[i].Load(_data.activeMissions[i]);
+				instance.m_missions[i].Load(activeMissions[i]);
 			}
 		}
 	}
@@ -349,17 +359,23 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SaveData Save() {
+	public static SimpleJSON.JSONNode Save() {
 		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
 		
 		// Missions
+		SimpleJSON.JSONArray missions = new SimpleJSON.JSONArray();
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
-			data.activeMissions[i] = GetMission((Mission.Difficulty)i).Save();
+			missions.Add (GetMission((Mission.Difficulty)i).Save());
 		}
-		
+		data.Add("activeMissions", missions);
+
 		// Generation Index
- 		data.generationIdx = instance.m_generationIdx;
+		SimpleJSON.JSONArray idxs = new SimpleJSON.JSONArray();
+		for( int i = 0; i<instance.m_generationIdx.Length; i++ )
+			idxs.Add( instance.m_generationIdx[i].ToString() );
+
+ 		data.Add("generationIdx", idxs);
 		
 		return data;
 	}

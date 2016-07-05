@@ -30,7 +30,7 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 	//------------------------------------------------------------------//
 	// Shortcut to get the data of the currently selected level
 	public static DefinitionNode currentLevelDef {
-		get { return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, UserProfile.currentLevel); }
+		get { return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, UsersManager.currentUser.currentLevel); }
 	}
 
 	//------------------------------------------------------------------//

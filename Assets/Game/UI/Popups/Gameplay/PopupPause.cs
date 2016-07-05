@@ -66,7 +66,7 @@ public class PopupPause : MonoBehaviour {
 		}
 
 		// Hide the tabs during the first run (tutorial)
-		if(UserProfile.gamesPlayed < 1 && SceneManager.GetActiveScene().name != "SC_Popups") {
+		if(UsersManager.currentUser.gamesPlayed < 1 && SceneManager.GetActiveScene().name != "SC_Popups") {
 			// Get the tab system component
 			TabSystem tabs = GetComponent<TabSystem>();
 			if(tabs != null) {

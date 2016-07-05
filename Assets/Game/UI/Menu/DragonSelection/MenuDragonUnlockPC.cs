@@ -77,8 +77,8 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 		long pricePC = data.def.GetAsLong("unlockPricePC");
-		if(UserProfile.pc >= pricePC) {
-			UserProfile.AddPC(-pricePC);
+		if(UsersManager.currentUser.pc >= pricePC) {
+			UsersManager.currentUser.AddPC(-pricePC);
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {

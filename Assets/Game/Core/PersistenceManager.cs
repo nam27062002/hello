@@ -27,6 +27,10 @@ public static class PersistenceManager {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+
+	const string TAG = "PersistenceManager";
+
+	/*
 	/// <summary>
 	/// Auxiliar private serializable class to save/load a game state to persistence.
 	/// </summary>
@@ -53,6 +57,7 @@ public static class PersistenceManager {
 			}
 		}
 	}
+	*/
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -96,65 +101,78 @@ public static class PersistenceManager {
 	/// <param name="_profileName">The name of the profile to be loaded.</param>
 	public static void Load(string _profileName = "") {
 		// Load the persistence object for the given profile
-		PersistenceManager.SaveData data = LoadToObject(_profileName);
+		SimpleJSON.JSONClass data = LoadToObject(_profileName);
 
 		// Load from the object we just read
 		LoadFromObject(data);
 	}
 
 	/// <summary>
-	/// Load the game persistence from a given object into the game managers.
+	/// Load the game persistence from a given JSON into the game managers.
 	/// Can be used to load debug profiles (probably require a game restart).
 	/// </summary>
-	/// <param name="_data">The data object to be loaded.</param>
-	public static void LoadFromObject(PersistenceManager.SaveData _data) {
+	/// <param name="_data">The JSON object to be loaded.</param>
+	public static void LoadFromObject(SimpleJSON.JSONClass _data) {
 		// Make sure given object is valid
 		if(_data == null) return;
 
 		// Restore loaded values
 		// Order is relevant!
 		// Last save timestamp
-		m_saveTimestamp = _data.timestamp;
-		
+		/*
+		if ( _data.ContainsKey("timestamp") )
+			m_saveTimestamp = DateTime.Parse( _data["timestamp"] );
+		else 
+			m_saveTimestamp = DateTime.Now;
+		*/
 		// User profile
-		UserProfile.Load(_data.profile);
-		
+		if ( _data.ContainsKey("userProfile") )
+			UsersManager.currentUser.Load( _data["userProfile"] );
+		else
+			Debug.TaggedLog(TAG, "No userProfile on object");
+		// UserProfile.Load(_data.profile);
+
 		// Dragons data
-		DragonManager.Load(_data.dragons);
+		if ( _data.ContainsKey("dragons") )
+			DragonManager.Load(_data["dragons"]);
+		else
+			Debug.TaggedLog(TAG, "No dragons on object");
 
 		// Missions
-		MissionManager.Load(_data.missions);
+		if ( _data.ContainsKey("missions") )
+			MissionManager.Load(_data["missions"]);
+		else
+			Debug.TaggedLog(TAG, "No missions on object");
 
 		// Eggs
-		EggManager.Load(_data.eggs);
+		if ( _data.ContainsKey("eggs") )
+			EggManager.Load(_data["eggs"]);
+		else
+			Debug.TaggedLog(TAG, "No eggs on object");
 
 		// Disguises
-		Wardrobe.Load(_data.wardrobe);
+		if ( _data.ContainsKey("wardrobe") )
+			Wardrobe.Load(_data["wardrobe"]);
+		else
+			Debug.TaggedLog(TAG, "No wardrobe on object");
+
 	}
 
 	/// <summary>
-	/// Load the game persistence for a specific profile into a new persistence object.
+	/// Load the game persistence for a specific profile into a new JSON object.
 	/// </summary>
-	/// <returns>The to object where the data is loaded, <c>null</c> if an error ocurred.</returns>
+	/// <returns>The to JSON where the data is loaded, <c>null</c> if an error ocurred.</returns>
 	/// <param name="_profileName">The name of the profile to be loaded.</param>
-	public static PersistenceManager.SaveData LoadToObject(string _profileName = "") {
+	public static SimpleJSON.JSONClass LoadToObject(string _profileName = "") {
 		// From https://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
-		PersistenceManager.SaveData data = null;
+		SimpleJSON.JSONClass data = null;
 		string path = GetPersistenceFilePath(_profileName);
-		if(File.Exists(path)) {
-			// Open the file
-			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Open(path, FileMode.Open);
-			
-			// Load the data object
-			try {
-				// Read file content and close it
-				data = (PersistenceManager.SaveData)bf.Deserialize(file);
-				file.Close();
-			} catch(Exception e) {
-				Debug.Log("An error has occurred when loading persistence, deleting saved data" + e);
-				File.Delete(path);
-			}
+		if(File.Exists(path)) 
+		{
+			StreamReader sr = new StreamReader( path );
+			string profileJSONStr = sr.ReadToEnd();
+			sr.Close();
+			data = SimpleJSON.JSON.Parse( profileJSONStr ) as SimpleJSON.JSONClass;
 		} else {
 			// No saved games found for the given profile, try to load the profile data
 			CheckProfileName(ref _profileName);
@@ -176,23 +194,24 @@ public static class PersistenceManager {
 	/// <param name="_profileName">The name of the profile to be saved.</param>
 	public static void Save(string _profileName = "") {
 		// Create a temp data object and fill it
-		PersistenceManager.SaveData data = new PersistenceManager.SaveData();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// User profile
-		data.profile = UserProfile.Save();
+		data.Add("userProfile",UsersManager.instance.m_currentUser.Save());
+
 
 		// Dragons data
-		data.dragons = DragonManager.Save();
+		data.Add("dragons", DragonManager.Save());
 
 		// Missions
-		data.missions = MissionManager.Save();
+		data.Add("missions", MissionManager.Save());
 
 		// Eggs
-		data.eggs = EggManager.Save();
+		data.Add("eggs", EggManager.Save());
 
 		// Disguises
-		data.wardrobe = Wardrobe.Save();
-		
+		data.Add("wardrobe", Wardrobe.Save());
+
 		// Save the object we just created
 		SaveFromObject(_profileName, data);
 	}
@@ -202,19 +221,14 @@ public static class PersistenceManager {
 	/// </summary>
 	/// <param name="_profileName">The name of the profile to be saved.</param>
 	/// <param name="_data">The data object to be saved.</param>
-	public static void SaveFromObject(string _profileName, PersistenceManager.SaveData _data) {
+	public static void SaveFromObject(string _profileName, SimpleJSON.JSONClass _data) 
+	{
 		// From https://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
 		// Open the file
 		string path = GetPersistenceFilePath(_profileName);
-		BinaryFormatter bf = new BinaryFormatter();
-		FileStream file = File.Create(path);
 
-		// Timestamp
-		_data.timestamp = DateTime.UtcNow;
-
-		// Save and close the file
-		bf.Serialize(file, _data);
-		file.Close();
+		_data.Add("timestamp", DateTime.UtcNow.ToString());
+		System.IO.File.WriteAllText( path , _data.ToString() );
 	}
 
 	/// <summary>
@@ -222,13 +236,14 @@ public static class PersistenceManager {
 	/// The game should be reloaded afterwards.
 	/// </summary>
 	/// <param name="_profileName">The name of the profile to be cleared.</param>
-	public static void Clear(string _profileName = "") {
+	public static void Clear(string _profileName = "") 
+	{
 		// Delete persistence file
 		string path = GetPersistenceFilePath(_profileName);
 		File.Delete(path);
 
 		// Create a new save file with the default data from the profile
-		PersistenceManager.SaveData data = GetDefaultDataFromProfile(_profileName);
+		SimpleJSON.JSONClass data = GetDefaultDataFromProfile(_profileName);
 		if (data != null) {
 			SaveFromObject(_profileName, data);
 		}
@@ -241,10 +256,10 @@ public static class PersistenceManager {
 	/// Given the name of a profile, obtain the full path of its associated persistence file.
 	/// </summary>
 	/// <param name="_profileName">The name of the profile whose path we want.</param>
-	public static string GetPersistenceFilePath(string _profileName = "") {
+	private static string GetPersistenceFilePath(string _profileName = "") {
 		// If not defined, return active profile
 		CheckProfileName(ref _profileName);
-		return saveDir + "/" + _profileName + ".dat";
+		return saveDir + "/" + _profileName + ".json";
 	}
 
 	/// <summary>
@@ -280,12 +295,14 @@ public static class PersistenceManager {
 	/// </summary>
 	/// <returns>The data from profile.</returns>
 	/// <param name="_profileName">The name of the profile to be loaded.</param>
-	public static PersistenceManager.SaveData GetDefaultDataFromProfile(string _profileName = "") {
+	public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "") 
+	{
 		// Load data from prefab
 		CheckProfileName(ref _profileName);
-		GameObject profilePrefab = Resources.Load<GameObject>(PersistenceProfile.RESOURCES_FOLDER + _profileName);
-		if(profilePrefab != null) {
-			return profilePrefab.GetComponent<PersistenceProfile>().data;
+		TextAsset defaultProfile = Resources.Load<TextAsset>(PersistenceProfile.RESOURCES_FOLDER + _profileName);
+		if(defaultProfile != null) 
+		{
+			return SimpleJSON.JSON.Parse( defaultProfile.text ) as SimpleJSON.JSONClass;
 		}
 
 		return null;

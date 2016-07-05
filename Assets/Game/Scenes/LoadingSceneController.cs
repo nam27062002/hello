@@ -62,7 +62,7 @@ public class LoadingSceneController : SceneController {
 		// Content and persistence
 		//DefinitionsManager.CreateInstance(true);
 
-		UserProfile.CreateInstance(true);
+		UsersManager.CreateInstance();
 
 		// Game
 		DragonManager.CreateInstance(true);

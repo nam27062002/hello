@@ -256,9 +256,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public static void ApplyRewardsToProfile() {
 		// Just do it :)
-		UserProfile.AddCoins(instance.m_coins);
-		UserProfile.AddCoins(instance.CalculateSurvivalBonus());
-		UserProfile.AddPC(instance.m_pc);
+		UsersManager.currentUser.AddCoins(instance.m_coins);
+		UsersManager.currentUser.AddCoins(instance.CalculateSurvivalBonus());
+		UsersManager.currentUser.AddPC(instance.m_pc);
 	}
 
 	//------------------------------------------------------------------//
@@ -476,10 +476,10 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	private void OnGameEnded()
 	{
 		// Check final score and mark if its a new HighScore
-		if ( m_score > UserProfile.highScore )
+		if ( m_score > UsersManager.currentUser.highScore )
 		{
 			m_isHighScore = true;
-			UserProfile.highScore = m_score;
+			UsersManager.currentUser.highScore = m_score;
 			PersistenceManager.Save();
 		}
 		else

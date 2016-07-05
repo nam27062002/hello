@@ -39,7 +39,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 
 	// Shortcut to get the data of the currently selected dragon
 	public static DragonData currentDragon {
-		get { return GetDragonData(UserProfile.currentDragon); }
+		get { return GetDragonData(UsersManager.currentUser.currentDragon); }
 	}
 
 	// Shortcut to get the data of the dragon following the currently selected
@@ -49,7 +49,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 			// [AOC] We could use the "order" field, but I don't trust it to be always consistent with the dragons list, so just search by sku
 			for(int i = 0; i < instance.m_dragonsByOrder.Count - 1; i++) {	// [AOC] Skip last dragon (since it doesn't have a "next" dragon)
 				// Is it the current dragon?
-				if(instance.m_dragonsByOrder[i].def.sku == UserProfile.currentDragon) {
+				if(instance.m_dragonsByOrder[i].def.sku == UsersManager.currentUser.currentDragon) {
 					// Yes! Return next dragon
 					return instance.m_dragonsByOrder[i + 1];	// [AOC] Should be safe since we're excluding last dragon from the loop
 				}
@@ -199,28 +199,30 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(DragonData.SaveData[] _data) {
+	public static void Load(SimpleJSON.JSONNode _data) 
+	{
 		// We don't trust array order, so do it by sku
-		for(int i = 0; i < _data.Length; i++) {
-			// If not initialized, initialize with default values
-			if(_data[i] == null) {
-				_data[i] = new DragonData.SaveData();
-				_data[i].sku = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS)[i];	// This is risky, order of the SaveData does not necessary match order of the definitions - shouldn't happen though
-			}
-			GetDragonData(_data[i].sku).Load(_data[i]);
+		SimpleJSON.JSONArray dragons = _data as SimpleJSON.JSONArray;
+		for( int i = 0; i<dragons.Count; i++ )
+		{
+			GetDragonData(dragons[i]["sku"]).Load( dragons[i] );
 		}
 	}
 	
 	/// <summary>
-	/// Create and return a persistence save data object initialized with the data.
+	/// Create and return a persistence save data json initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static DragonData.SaveData[] Save() {
+	public static SimpleJSON.JSONNode Save() 
+	{
+		SimpleJSON.JSONArray array = new SimpleJSON.JSONArray();
 		// Create new object, initialize and return it
 		List<DragonData.SaveData> data = new List<DragonData.SaveData>();
-		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
-			data.Add(kvp.Value.Save());
+		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) 
+		{
+			array.Add( kvp.Value.Save() );
 		}
-		return data.ToArray();
+		return array;
+
 	}
 }

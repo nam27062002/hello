@@ -67,7 +67,7 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
 	public static void Restart() {
 		// Delete key singletons that must be reloaded
 		DragonManager.DestroyInstance();
-		UserProfile.DestroyInstance();
+		UsersManager.DestroyInstance();
 		InstanceManager.DestroyInstance();
 		GameVars.DestroyInstance();
 		PoolManager.Clear(true);
