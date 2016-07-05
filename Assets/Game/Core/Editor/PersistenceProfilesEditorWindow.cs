@@ -54,7 +54,6 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 	// View management
 	private Vector2 m_viewScrollPos = Vector2.zero;
-	private PersistenceProfile m_saveGameTempProfile = null;
 
 	// Custom styles
 	private GUIStyle m_selectionGridStyle = null;
@@ -74,9 +73,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		// Reset indentation
 		EditorGUI.indentLevel = 0;
 
-		// Load all profiles in the resources folder and the list of savegames
-		// [AOC] Probably it's not optimal to do this every time, but we want to detect any change performed directly on the inspector
-		ReloadData();
+
 
 		// 2 columns: Profile list and Profile editor
 		EditorGUILayout.BeginHorizontal(); {
@@ -252,26 +249,19 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// <summary>
 	/// Window has gotten focus.
 	/// </summary>
-	private void OnFocus() {
-		// If not done, create a temp object to hold the save games displayed
-		if(m_saveGameTempProfile == null) {
-			GameObject obj = new GameObject("TEMP");
-			obj.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave;	// We don't want the scene to get dirty
-			m_saveGameTempProfile = obj.AddComponent<PersistenceProfile>();
-		}
+	private void OnFocus() 
+	{
+		// Load all profiles in the resources folder and the list of savegames
+		// [AOC] Probably it's not optimal to do this every time, but we want to detect any change performed directly on the inspector
+		ReloadData();
 	}
 
 	/// <summary>
 	/// Window has lost focus.
 	/// </summary>
-	private void OnLostFocus() {
-		// Clear the created temp object
-		// As a consequence any selected savegame won't be visible while the window doesn't have the focus, but we need to
-		// make sure that the temp object we have created is always deleted.
-		if(m_saveGameTempProfile != null) {
-			DestroyImmediate(m_saveGameTempProfile.gameObject);
-			m_saveGameTempProfile = null;
-		}
+	private void OnLostFocus() 
+	{
+
 	}
 
 	//------------------------------------------------------------------//
@@ -345,8 +335,12 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		// If not deleted, draw profile content
 		else {
 			// Create a serialized object for this profile
-			SimpleJSON.JSONNode profile =  m_profilePrefabs[m_selectedProfile];
-
+			SimpleJSON.JSONClass profile =  m_profilePrefabs[m_selectedProfile];
+			if (ShowSaveDataInfo( ref profile ))
+			{
+				m_profilePrefabs[m_selectedProfile] = profile;
+				PersistenceManager.SaveFromObject( m_selectedSavegame, profile);
+			}
 			// MALH: TODO
 			/*
 			// Find the Profile object and draw it
@@ -390,27 +384,14 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		}
 
 		// If not cleared, draw content
-		else {
-			// Use the temp PersistenceProfile object to display the data of the selected savegame
-			if(m_saveGameTempProfile) {
-				// MALH:TODO
-				m_saveGameTempProfile.data = PersistenceManager.LoadToObject(m_selectedSavegame);
-				/*
-				// Create a serialized object for the temp profile we just created
-				SerializedObject target = new SerializedObject(m_saveGameTempProfile);
-				
-				// Find the Profile object and draw it
-				SerializedProperty p = target.FindProperty("m_data");
-				EditorGUILayout.PropertyField(p, true);
-				
-				// Save changes
-				target.ApplyModifiedProperties();
-
-				// Update persistence
-				PersistenceManager.SaveFromObject(m_selectedSavegame, m_saveGameTempProfile.data);
-				m_saveGameTempProfile.data = null;
-				*/
+		else 
+		{
+			SimpleJSON.JSONClass data = PersistenceManager.LoadToObject(m_selectedSavegame);
+			if (ShowSaveDataInfo( ref data ))
+			{
+				PersistenceManager.SaveFromObject( m_selectedSavegame, data);
 			}
+
 		}
 	}
 
@@ -484,8 +465,21 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		}
 
 		// Store new profile to the resources folder
-		SimpleJSON.JSONClass newSaveData = new SimpleJSON.JSONClass();
-		
+		SimpleJSON.JSONClass newSaveData = null;
+		try
+		{
+			newSaveData = PersistenceManager.LoadToObject(PersistenceProfile.DEFAULT_PROFILE);
+		}
+		catch( System.Exception )
+		{
+			
+		}
+		if ( newSaveData == null )
+			newSaveData = new SimpleJSON.JSONClass();
+
+		string resourcesFolder = Application.dataPath + "/Resources/" + PersistenceProfile.RESOURCES_FOLDER;
+		File.WriteAllText( resourcesFolder + "/" + _name + ".json", newSaveData.ToString());
+
 		// Add it to the dictionary
 		m_profilePrefabs.Add(_name, newSaveData);
 
@@ -521,4 +515,39 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		m_viewScrollPos = Vector2.zero;	// Reset scroll view
 		GUI.FocusControl("");	// Lose focus on the name textfield
 	}
+
+
+
+
+	private bool ShowSaveDataInfo( ref SimpleJSON.JSONClass _data )
+	{
+		bool ret = false;
+
+		string value = _data.ToString("");
+
+		// SC
+		string result = GUILayout.TextArea( value );
+		if ( !result.Equals(value) )
+		{
+			try
+			{
+				SimpleJSON.JSONClass parsed = SimpleJSON.JSONNode.Parse( result) as SimpleJSON.JSONClass;
+				if(parsed != null)
+				{
+					_data = parsed;
+					ret = true;
+				}
+			}
+			catch( System.Exception e )
+			{
+				Debug.Log( "Cannot parse json result" );
+			}
+		}
+
+
+
+
+		return ret;
+	}
+
 }

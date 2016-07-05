@@ -243,12 +243,16 @@ public static class PersistenceManager {
 		FileInfo[] files = dirInfo.GetFiles();
 
 		// Strip filename from full file path
-		string[] fileNames = new string[files.Length];
-		for(int i = 0; i < files.Length; i++) {
-			fileNames[i] = Path.GetFileNameWithoutExtension(files[i].Name);
+		List<string> fileNames = new List<string>();
+		for(int i = 0; i < files.Length; i++) 
+		{
+			if ( files[i].Name.EndsWith("json") )
+			{
+				fileNames.Add(Path.GetFileNameWithoutExtension(files[i].Name));
+			}
 		}
 
-		return fileNames;
+		return fileNames.ToArray();
 	}
 
 	/// <summary>
