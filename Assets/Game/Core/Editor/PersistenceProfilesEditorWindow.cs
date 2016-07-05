@@ -330,6 +330,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		if(delete) 
 		{
 			DeleteCurrentProfile();
+			ReloadData();
 		}
 			
 		// If not deleted, draw profile content
