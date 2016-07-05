@@ -48,6 +48,7 @@ namespace AI {
 			m_signals.Add(Signals.Warning.name, 	new Signals.Warning());
 			m_signals.Add(Signals.Danger.name, 		new Signals.Danger());
 			m_signals.Add(Signals.Panic.name, 		new Signals.Panic());
+			m_signals.Add(Signals.BackToHome.name,	new Signals.BackToHome());
 			m_signals.Add(Signals.Burning.name, 	new Signals.Burning());
 			m_signals.Add(Signals.Chewing.name, 	new Signals.Chewing());
 			m_signals.Add(Signals.Destroyed.name, 	new Signals.Destroyed());
@@ -57,7 +58,7 @@ namespace AI {
 			}
 		}
 
-		public void Spawn() {
+		public void Spawn(Spawner _spawner) {
 			m_motion.Attach(this, m_entity, m_pilot);
 			m_motion.Init();
 

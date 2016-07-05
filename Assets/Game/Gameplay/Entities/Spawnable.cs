@@ -1,3 +1,3 @@
 ﻿public interface Spawnable {
-	void Spawn();
+	void Spawn(Spawner _spawner);
 }

@@ -6,7 +6,13 @@ namespace AI {
 	namespace Behaviour {		
 		[CreateAssetMenu(menuName = "Behaviour/Pursuit")]
 		public class Pursuit : StateComponent {
-			
+
+			[StateTransitionTrigger]
+			private static string OnEnemyInRange = "onEnemyInRange";
+
+			[StateTransitionTrigger]
+			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
+
 			private Pilot m_pilot;
 			private Machine m_machine;
 
@@ -24,7 +30,13 @@ namespace AI {
 				Transform enemy = m_machine.enemy;
 
 				if (enemy) {
-					m_pilot.GoTo(enemy.position);
+					if (m_machine.GetSignal(Signals.Danger.name)) {
+						Transition(OnEnemyInRange);
+					} else {
+						m_pilot.GoTo(enemy.position);
+					}
+				} else {
+					Transition(OnEnemyOutOfSight);
 				}
 			}
 		}

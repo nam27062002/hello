@@ -13,23 +13,29 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyInRange = "onEnemyInRange";
 
-			private float m_shutdownSensorTime = 10f;//TODO
+			private float m_shutdownSensorTime;
 
 			private float m_timer;
 
-			private Pilot m_pilot;
 			private Machine m_machine;
 
 			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<Pilot>();
 				m_machine	= _go.GetComponent<Machine>();
 				m_machine.SetSignal(Signals.Alert.name, true);
 
 				m_timer = 0f;
+				m_shutdownSensorTime = 0f;
 			}
 
+			// The first element in _param must contain the amount of time without detecting an enemy
 			protected override void OnEnter(State _oldState, object[] _param) {
-				if (m_shutdownSensorTime > 0f && _oldState != null && _oldState.name.Contains("Attack")) {
+				if (_param != null && _param.Length > 0) {
+					m_shutdownSensorTime = (float)_param[0];
+				} else {
+					m_shutdownSensorTime = 0f;
+				}
+
+				if (m_shutdownSensorTime > 0f) {
 					m_timer = m_shutdownSensorTime;
 					m_machine.SetSignal(Signals.Alert.name, false);
 				} else {

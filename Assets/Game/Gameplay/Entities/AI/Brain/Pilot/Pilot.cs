@@ -3,8 +3,7 @@ using System.Collections;
 
 namespace AI {
 	public abstract class Pilot : MonoBehaviour {
-
-
+		
 		//TODO: tornar a crear la interficie??
 		public enum Action {
 			Boost = 0,
@@ -21,6 +20,22 @@ namespace AI {
 
 		//----------------------------------------------------------------------------------------------------------------
 
+		protected Bounds m_area;
+		public Bounds area { get { return m_area; } }
+
+		protected GuideFunction m_guideFunction;
+		public GuideFunction guideFunction { 
+			get { return m_guideFunction; } 
+			set { 
+				m_guideFunction = value; 	
+				if (m_guideFunction != null) {
+					m_area = m_guideFunction.GetBounds();
+				}
+			} 
+		}
+
+		protected Vector3 m_homePosition;
+		public Vector3 homePosition { get { return m_homePosition; } }
 
 		protected Machine m_machine;
 
@@ -77,7 +92,7 @@ namespace AI {
 		public void GoTo(Vector3 _target) {
 			m_target = _target;
 		}
-
+			
 		public void Scared(bool _enable) {
 			m_actions[(int)Action.Scared] = _enable;
 		}

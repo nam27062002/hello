@@ -25,14 +25,14 @@ namespace AI {
 				Vector3 seek = Vector3.zero;
 				Vector3 flee = Vector3.zero;
 
-				Vector3 v = m_target - transform.position;	
+				Vector3 v = m_target - m_machine.position;	
 				Util.MoveTowardsVector3WithDamping(ref seek, ref v, m_speed, 32f * Time.deltaTime);
-				Debug.DrawLine(transform.position, transform.position + seek, Color.green);
+				Debug.DrawLine(m_machine.position, m_machine.position + seek, Color.green);
 
 				if (m_actions[(int)Action.Avoid]) {
 					Transform enemy = m_machine.enemy;
 					if (enemy != null) {
-						v = transform.position - enemy.position;
+						v = m_machine.position - enemy.position;
 						float distSqr = v.sqrMagnitude;
 						if (distSqr > 0) {
 							v.Normalize();
@@ -41,7 +41,7 @@ namespace AI {
 						flee = v;
 						flee.z = 0;
 
-						Debug.DrawLine(transform.position, transform.position + flee, Color.red);
+						Debug.DrawLine(m_machine.position, m_machine.position + flee, Color.red);
 					}
 				}
 
@@ -65,7 +65,7 @@ namespace AI {
 				m_direction = m_impulse.normalized;
 				m_impulse = m_direction * seek.magnitude;
 
-				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
+				Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
 			}
 
 			m_externalImpulse = Vector3.zero;

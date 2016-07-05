@@ -106,6 +106,20 @@ namespace AI {
 			protected override string OnDisabled() { return OnRecoverFromPanic; }
 		}
 
+		// this machine is retreating back to home position
+		public class BackToHome : Signal {
+			public static string name = "BackToHome";
+
+			[StateTransitionTrigger]
+			public static string OnOutsideArea = "onOutsideArea";
+
+			[StateTransitionTrigger]
+			public static string OnBackAtHome = "onBackAtHome";
+
+			protected override string OnEnabled() { return OnOutsideArea; }
+			protected override string OnDisabled() { return OnBackAtHome; }
+		}
+
 		// a fire is touching this machine
 		public class Burning : Signal {
 			public static string name = "Burning";

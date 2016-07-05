@@ -50,6 +50,8 @@ public class Entity : MonoBehaviour, Spawnable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
+	private Spawner m_spawner;
+
 	private bool m_isGolden = false;
 	private bool m_givePC = false;
 
@@ -106,7 +108,9 @@ public class Entity : MonoBehaviour, Spawnable {
 			EntityManager.instance.Unregister(this);
 	}
 
-	public void Spawn() {
+	public void Spawn(Spawner _spawner) {
+		m_spawner = _spawner;
+
 		DragonTier tier = InstanceManager.player.data.tier;
 		m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
 

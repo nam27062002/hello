@@ -27,7 +27,7 @@ public class ViewControl : MonoBehaviour, Spawnable {
 
 	//-----------------------------------------------
 	// Use this for initialization
-	void Start () {
+	void Awake() {
 		m_animator = transform.FindComponentRecursive<Animator>();
 
 		m_materialGold = Resources.Load ("Game/Assets/Materials/Gold") as Material;
@@ -41,7 +41,7 @@ public class ViewControl : MonoBehaviour, Spawnable {
 	}
 	//
 
-	public void Spawn() {
+	public void Spawn(Spawner _spawner) {
 		m_scared = false;
 		m_panic = false;
 		m_attack = false;

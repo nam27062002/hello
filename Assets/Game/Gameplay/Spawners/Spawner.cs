@@ -38,7 +38,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 	// Attributes
 	//-----------------------------------------------
 	protected AreaBounds m_area;
+	public AreaBounds area { get { return m_area; } }
+
 	protected EntityGroupController m_groupController;
+	protected GuideFunction m_guideFunction;
 
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
@@ -79,6 +82,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 		if (m_groupController) {
 			m_groupController.Init(m_quantity.max);
 		}
+
+		m_guideFunction = GetComponent<GuideFunction>();
 
 		SpawnerManager.instance.Register(this);
 
@@ -225,6 +230,30 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		ExtendedSpawn();
 
+		for (int i = 0; i < m_entitySpawned; i++) {			
+			Entity entity = m_entities[i].GetComponent<Entity>();
+			AI.Pilot pilot = m_entities[i].GetComponent<AI.Pilot>();
+			pilot.guideFunction = m_guideFunction;
+
+			Vector3 pos = transform.position;
+			if (m_guideFunction != null) {
+				m_guideFunction.ResetTime();
+				pos = m_guideFunction.NextPositionAtSpeed(0);
+			}
+
+			if (i > 0) {
+				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+			}
+
+			entity.transform.position = pos;
+			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
+
+			Spawnable[] components = entity.GetComponents<Spawnable>();
+			foreach (Spawnable component in components) {
+				component.Spawn(this);
+			}
+		}
+
 		if (m_groupController) {			
 			for (int i = 0; i < m_entities.Length; i++) {
 				if (m_entities[i] != null) {
@@ -232,24 +261,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 					m.EnterGroup(ref m_groupController.flock);
 				}
 			}
-		}
-
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			Entity entity = m_entities[i].GetComponent<Entity>();
-
-			Vector3 pos = transform.position;
-			if (i > 0) {
-				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
-			}
-
-			Spawnable[] components = entity.GetComponents<Spawnable>();
-			foreach (Spawnable component in components) {
-				component.Spawn();
-			}
-			//entity.Spawn(/*spawner: this*/);
-
-			entity.transform.position = pos;
-			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
 		}
 
 		// Disable this spawner after a number of spawns

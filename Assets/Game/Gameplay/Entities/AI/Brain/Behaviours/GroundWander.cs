@@ -26,8 +26,8 @@ namespace AI {
 				m_pilot 	= _go.GetComponent<Pilot>();
 				m_machine	= _go.GetComponent<Machine>();
 
-				m_xLimitMin = m_machine.position.x - 20f;
-				m_xLimitMax = m_machine.position.x + 20f;
+				m_xLimitMin = m_pilot.area.min.x;
+				m_xLimitMax = m_pilot.area.max.x;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {

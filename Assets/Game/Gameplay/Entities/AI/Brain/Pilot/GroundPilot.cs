@@ -5,11 +5,14 @@ namespace AI {
 	public class GroundPilot : AIPilot {
 		protected static int m_groundMask;
 
-		private Vector3 m_normal;
-
 		protected virtual void Start() {
 			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
-			m_normal = Vector3.up;
+
+			// set home position at ground
+			RaycastHit groundHit;
+			if (Physics.Linecast(m_homePosition, m_homePosition + Vector3.down * 5f, out groundHit, m_groundMask)) {
+				m_homePosition.y = groundHit.point.y;
+			}
 		}
 
 		protected override void Update() {
@@ -33,7 +36,7 @@ namespace AI {
 				}
 			}
 		}
-
+		/*
 		private Vector3 GetGroundDirection() {			
 			Vector3 distance = Vector3.down * 15f;
 			Vector3 leftSensor  = transform.position - Vector3.right * 0.5f;
@@ -56,6 +59,11 @@ namespace AI {
 				}
 				return Vector3.left;
 			}
+		}*/
+
+		void OnDrawGizmosSelected() {
+			Gizmos.color = Color.white;
+			Gizmos.DrawWireSphere(m_homePosition, 0.5f);
 		}
 	}
 }

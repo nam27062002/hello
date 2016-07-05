@@ -25,17 +25,25 @@ namespace AI {
 			protected Machine m_machine;
 			private PreyAnimationEvents m_animEvents;
 
+			private object[] m_transitionParam;
+
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 		= _go.GetComponent<Pilot>();
 				m_machine		= _go.GetComponent<Machine>();
 				m_animEvents 	= _go.FindComponentRecursive<PreyAnimationEvents>();
 				m_machine.SetSignal(Signals.Alert.name, true);
+
+				m_transitionParam = new object[1];
+				m_transitionParam[0] = 10f; // retreat time
+
+				m_attacksLeft = 3;
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_pilot.SetSpeed(0);
-				m_attacksLeft = 3;
+				if (m_attacksLeft <= 0)
+					m_attacksLeft = 3;
 				m_attackDelay = 2f;
 				m_timer = 0f;
 
@@ -121,7 +129,7 @@ namespace AI {
 							Transition(OnOutOfRange);
 						}
 					} else {
-						Transition(OnMaxAttacks);
+						Transition(OnMaxAttacks, m_transitionParam);
 					}
 				}
 			}
