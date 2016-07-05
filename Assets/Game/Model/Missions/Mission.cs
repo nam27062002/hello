@@ -236,7 +236,7 @@ public class Mission {
 	/// <returns>A new data json to be stored to persistence by the PersistenceManager.</returns>
 	public SimpleJSON.JSONNode Save() {
 		// Create new object, initialize and return it
-		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		
 		// Mission sku
 		if(m_def != null) data.Add("sku", m_def.sku);

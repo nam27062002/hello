@@ -217,7 +217,6 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	{
 		SimpleJSON.JSONArray array = new SimpleJSON.JSONArray();
 		// Create new object, initialize and return it
-		List<DragonData.SaveData> data = new List<DragonData.SaveData>();
 		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) 
 		{
 			array.Add( kvp.Value.Save() );

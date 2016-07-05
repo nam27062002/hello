@@ -335,7 +335,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public static SimpleJSON.JSONNode Save() {
 		// Create new object, initialize and return it
-		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// Inventory
 		SimpleJSON.JSONArray inventoryArray = new SimpleJSON.JSONArray();

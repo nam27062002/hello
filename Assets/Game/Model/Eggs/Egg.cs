@@ -324,7 +324,7 @@ public class Egg {
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public SimpleJSON.JSONNode Save() {
 		// Create new object, initialize and return it
-		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// Egg sku
 		data.Add("sku",m_def.sku);

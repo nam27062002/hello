@@ -153,14 +153,14 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public static SimpleJSON.JSONNode Save() {
-		SimpleJSON.JSONNode data = new SimpleJSON.JSONNode();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		SimpleJSON.JSONArray diguisesArr = new SimpleJSON.JSONArray();
 		if(instance.m_disguises != null) {
 			foreach (KeyValuePair<string, int> pair in instance.m_disguises) {
 				if (pair.Value > 0) 
 				{
-					SimpleJSON.JSONNode dl = new SimpleJSON.JSONNode();
+					SimpleJSON.JSONClass dl = new SimpleJSON.JSONClass();
 
 					dl.Add("disguise", pair.Key.ToString());
 					dl.Add("level", pair.Value.ToString());
@@ -176,7 +176,7 @@ public class Wardrobe : Singleton<Wardrobe> {
 		{
 			foreach (KeyValuePair<string, string> pair in instance.m_equiped) 
 			{
-				SimpleJSON.JSONNode dd = new SimpleJSON.JSONNode();
+				SimpleJSON.JSONClass dd = new SimpleJSON.JSONClass();
 
 				dd.Add("dragon",pair.Key);
 				dd.Add("disguise", pair.Value);
