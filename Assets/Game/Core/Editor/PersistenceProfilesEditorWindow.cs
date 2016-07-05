@@ -49,7 +49,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 	// Savegames management
 	public static string m_selectedSavegame = "";	// Static to keep it between window openings
-	private string[] m_saveGames = null;
+	private Dictionary<string, SimpleJSON.JSONClass> m_saveGames = new Dictionary<string,SimpleJSON.JSONClass>();
 	private Vector2 m_savegameListScrollPos = Vector2.zero;
 
 	// View management
@@ -96,13 +96,19 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 						m_newProfileName = EditorGUILayout.TextField(m_newProfileName);
 						
 						// Button
-						if(GUILayout.Button("Add Profile")) {
+						if(GUILayout.Button("Add Profile")) 
+						{
 							// Create a new profile with the name at the textfield
 							SimpleJSON.JSONClass newProfilePrefab = CreateNewProfile(m_newProfileName);
 							
 							// Was it successfully created?
 							if(newProfilePrefab != null) 
 							{
+								m_profilePrefabs[ m_newProfileName ] = newProfilePrefab;
+
+								PersistenceManager.SaveFromObject( m_newProfileName, newProfilePrefab);
+								m_saveGames[ m_newProfileName ] = newProfilePrefab;	
+
 								// Yes!!
 								ResetSelection();
 								m_selectedProfile = m_newProfileName;	// Make it the selected one
@@ -191,13 +197,16 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 						m_savegameListScrollPos = EditorGUILayout.BeginScrollView(m_savegameListScrollPos); {
 							// Save games list
 							// Generate labels and find selected index
-							string[] labels = new string[m_saveGames.Length];
+							string[] labels = new string[m_saveGames.Count];
 							int currentSelectionIdx = -1;
-							for(int i = 0; i < m_saveGames.Length; i++) {
-								labels[i] = m_saveGames[i];
+							int i = 0;
+							foreach( string key in m_saveGames.Keys)
+							{
+								labels[i] = key;
 								if(labels[i] == m_selectedSavegame) {
 									currentSelectionIdx = i;
 								}
+								i++;
 							}
 							
 							// Detect selection change
@@ -329,8 +338,11 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		GUI.enabled = true;
 		if(delete) 
 		{
+			string saveToRemove = m_selectedProfile;
+			m_profilePrefabs.Remove( saveToRemove );
 			DeleteCurrentProfile();
-			ReloadData();
+			PersistenceManager.Clear(saveToRemove);
+			m_saveGames.Remove(saveToRemove);
 		}
 			
 		// If not deleted, draw profile content
@@ -340,17 +352,8 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 			if (ShowSaveDataInfo( ref profile ))
 			{
 				m_profilePrefabs[m_selectedProfile] = profile;
-				PersistenceManager.SaveFromObject( m_selectedSavegame, profile);
+				SaveProfile( m_selectedProfile, profile);
 			}
-			// MALH: TODO
-			/*
-			// Find the Profile object and draw it
-			SerializedProperty p = target.FindProperty("m_data");
-			EditorGUILayout.PropertyField(p, true);
-
-			// Save changes
-			target.ApplyModifiedProperties();
-			*/
 		}
 	}
 
@@ -380,16 +383,19 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		}
 
 		// Clear button
-		if(GUILayout.Button("Reset to Profile")) {
-			PersistenceManager.Clear(m_selectedSavegame);
+		if(GUILayout.Button("Reset to Profile")) 
+		{
+			m_saveGames[ m_selectedSavegame ] = m_profilePrefabs[ m_selectedSavegame ];
+			PersistenceManager.SaveFromObject( m_selectedSavegame, m_saveGames[ m_selectedSavegame ]);
 		}
 
 		// If not cleared, draw content
 		else 
 		{
-			SimpleJSON.JSONClass data = PersistenceManager.LoadToObject(m_selectedSavegame);
+			SimpleJSON.JSONClass data = m_saveGames[ m_selectedSavegame ];
 			if (ShowSaveDataInfo( ref data ))
 			{
+				m_saveGames[ m_selectedSavegame ] = data;
 				PersistenceManager.SaveFromObject( m_selectedSavegame, data);
 			}
 
@@ -425,26 +431,33 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		}
 
 		// Get save games list
-		m_saveGames = PersistenceManager.GetSavedGamesList();
+		m_saveGames.Clear();
+		string[] saveGameNames = PersistenceManager.GetSavedGamesList();
 		
 		// Make sure we still have exactly one savegame for each profile
 		// Make sure current selection is still valid
 		// a) Check for savegames to be deleted
-		for(int i = 0; i < m_saveGames.Length; i++) {
-			if(!m_profilePrefabs.ContainsKey(m_saveGames[i])) {
-				PersistenceManager.Clear(m_saveGames[i]);
+		for(int i = 0; i < saveGameNames.Length; i++) 
+		{
+			if(!m_profilePrefabs.ContainsKey(saveGameNames[i])) 
+			{
+				PersistenceManager.Clear(saveGameNames[i]);
+			}
+			else
+			{	
+				m_saveGames[ saveGameNames[i] ] = PersistenceManager.LoadToObject( saveGameNames[i]);	
 			}
 		}
 
 		// b) Check for profiles needing a new savegame
-		foreach(string key in m_profilePrefabs.Keys) {
-			if(!PersistenceManager.HasSavedGame(key)) {
-				CreateNewSavegame(key,m_profilePrefabs[key]);
+		foreach(string key in m_profilePrefabs.Keys) 
+		{
+			if(!PersistenceManager.HasSavedGame(key)) 
+			{
+				PersistenceManager.SaveFromObject( key, m_profilePrefabs[ key ] );
 			}
 		}
 
-		// Update savegames list
-		m_saveGames = PersistenceManager.GetSavedGamesList();
 	}
 
 	/// <summary>
@@ -478,13 +491,18 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		if ( newSaveData == null )
 			newSaveData = new SimpleJSON.JSONClass();
 
-		string resourcesFolder = Application.dataPath + "/Resources/" + PersistenceProfile.RESOURCES_FOLDER;
-		File.WriteAllText( resourcesFolder + "/" + _name + ".json", newSaveData.ToString());
+		SaveProfile( _name, newSaveData );
 
 		// Add it to the dictionary
 		m_profilePrefabs.Add(_name, newSaveData);
 
 		return newSaveData;
+	}
+
+	private void SaveProfile( string _name, SimpleJSON.JSONClass _saveData)
+	{
+		string resourcesFolder = Application.dataPath + "/Resources/" + PersistenceProfile.RESOURCES_FOLDER;
+		File.WriteAllText( resourcesFolder + "/" + _name + ".json", _saveData.ToString());
 	}
 
 	/// <summary>
