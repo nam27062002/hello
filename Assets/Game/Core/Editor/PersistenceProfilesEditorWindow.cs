@@ -43,7 +43,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 	// Profiles management
 	public static string m_selectedProfile = "";	// Static to keep it between window openings
-	private Dictionary<string, GameObject> m_profilePrefabs = new Dictionary<string, GameObject>();
+	private Dictionary<string, SimpleJSON.JSONClass> m_profilePrefabs = new Dictionary<string, SimpleJSON.JSONClass>();
 	public string m_newProfileName = "";
 	private Vector2 m_profileListScrollPos = Vector2.zero;
 
@@ -101,10 +101,11 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 						// Button
 						if(GUILayout.Button("Add Profile")) {
 							// Create a new profile with the name at the textfield
-							GameObject newProfilePrefab = CreateNewProfile(m_newProfileName);
+							SimpleJSON.JSONClass newProfilePrefab = CreateNewProfile(m_newProfileName);
 							
 							// Was it successfully created?
-							if(newProfilePrefab != null) {
+							if(newProfilePrefab != null) 
+							{
 								// Yes!!
 								ResetSelection();
 								m_selectedProfile = m_newProfileName;	// Make it the selected one
@@ -157,9 +158,11 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 					string[] labels = new string[m_profilePrefabs.Count];
 					int currentIdx = -1;
 					int i = 0;
-					foreach(string key in m_profilePrefabs.Keys) {
+					foreach(string key in m_profilePrefabs.Keys) 
+					{
 						labels[i] = key;
-						if(key == PersistenceManager.activeProfile) {
+						if(key == PersistenceManager.activeProfile) 
+						{
 							currentIdx = i;
 						}
 						i++;
@@ -168,7 +171,8 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 					// Detect selection change
 					GUI.changed = false;
 					int newIdx = EditorGUILayout.Popup(currentIdx, labels);
-					if(GUI.changed) {
+					if(GUI.changed) 
+					{
 						// Store new selected profile as active one
 						PersistenceManager.activeProfile = labels[newIdx];
 					}
@@ -324,33 +328,34 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		GUILayout.Label(m_selectedProfile + " Profile", m_titleLabelStyle);
 		GUILayout.Space(10f);
 
-		// Get the actual profile object
-		PersistenceProfile profile = m_profilePrefabs[m_selectedProfile].GetComponent<PersistenceProfile>();
-
 		// Make active button
 		if(GUILayout.Button("Make Active")) {
 			PersistenceManager.activeProfile = m_selectedProfile;	// Savegames and profiles have the same name
 		}
 
 		// Delete button - only if allowed
-		GUI.enabled = profile.canBeDeleted;
+		GUI.enabled = true;
 		bool delete = GUILayout.Button("Delete Profile");
 		GUI.enabled = true;
-		if(delete) {
+		if(delete) 
+		{
 			DeleteCurrentProfile();
 		}
 			
 		// If not deleted, draw profile content
 		else {
 			// Create a serialized object for this profile
-			SerializedObject target = new SerializedObject(m_profilePrefabs[m_selectedProfile].GetComponent<PersistenceProfile>());
+			SimpleJSON.JSONNode profile =  m_profilePrefabs[m_selectedProfile];
 
+			// MALH: TODO
+			/*
 			// Find the Profile object and draw it
 			SerializedProperty p = target.FindProperty("m_data");
 			EditorGUILayout.PropertyField(p, true);
 
 			// Save changes
 			target.ApplyModifiedProperties();
+			*/
 		}
 	}
 
@@ -390,7 +395,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 			if(m_saveGameTempProfile) {
 				// MALH:TODO
 				m_saveGameTempProfile.data = PersistenceManager.LoadToObject(m_selectedSavegame);
-
+				/*
 				// Create a serialized object for the temp profile we just created
 				SerializedObject target = new SerializedObject(m_saveGameTempProfile);
 				
@@ -404,6 +409,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 				// Update persistence
 				PersistenceManager.SaveFromObject(m_selectedSavegame, m_saveGameTempProfile.data);
 				m_saveGameTempProfile.data = null;
+				*/
 			}
 		}
 	}
@@ -415,12 +421,14 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// </summary>
 	private void ReloadData() {
 		// Load all gameobjects in the target resources folder
-		GameObject[] prefabs = Resources.LoadAll<GameObject>(PersistenceProfile.RESOURCES_FOLDER);
+		TextAsset[] prefabs = Resources.LoadAll<TextAsset>(PersistenceProfile.RESOURCES_FOLDER);
 
 		// Use a dictionary for easier access
 		m_profilePrefabs.Clear();
-		for(int i = 0; i < prefabs.Length; i++) {
-			m_profilePrefabs.Add(prefabs[i].name, prefabs[i]);
+		for(int i = 0; i < prefabs.Length; i++) 
+		{
+			SimpleJSON.JSONClass json = SimpleJSON.JSONNode.Parse( prefabs[i].text ) as SimpleJSON.JSONClass;
+			m_profilePrefabs.Add(prefabs[i].name, json );
 		}
 
 		// If the default profile doesn't exist, create it immediately
@@ -449,7 +457,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		// b) Check for profiles needing a new savegame
 		foreach(string key in m_profilePrefabs.Keys) {
 			if(!PersistenceManager.HasSavedGame(key)) {
-				CreateNewSavegame(m_profilePrefabs[key].GetComponent<PersistenceProfile>());
+				CreateNewSavegame(key,m_profilePrefabs[key]);
 			}
 		}
 
@@ -462,7 +470,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// </summary>
 	/// <returns>A reference to the newly created profile prefab, null if it couldn't be created.</returns>
 	/// <param name="_name">The name to give to the new profile.</param>
-	private GameObject CreateNewProfile(string _name) {
+	private SimpleJSON.JSONClass CreateNewProfile(string _name) {
 		// Check that the given name is valid
 		if(_name == "") {
 			EditorUtility.DisplayDialog("Empty profile name", "Please enter a valid name for the new profile", "Ok");
@@ -474,24 +482,14 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 			EditorUtility.DisplayDialog("Profile already exists", "Another profile with this name already exists.\nPlease choos a different name.", "Ok");
 			return null;
 		}
-		
-		// Everything ok, create new profile
-		// Create a new game object and add a persistence profile component
-		GameObject newProfileObj = new GameObject();
-		newProfileObj.AddComponent<PersistenceProfile>();
-		
-		// Set profile name
-		newProfileObj.name = _name;
 
 		// Store new profile to the resources folder
-		GameObject newPrefab = PrefabUtility.CreatePrefab("Assets/Resources/" + PersistenceProfile.RESOURCES_FOLDER + _name + ".prefab", newProfileObj);
+		SimpleJSON.JSONClass newSaveData = new SimpleJSON.JSONClass();
 		
 		// Add it to the dictionary
-		m_profilePrefabs.Add(_name, newPrefab);
+		m_profilePrefabs.Add(_name, newSaveData);
 
-		// Destroy temp reference object and return prefab reference
-		DestroyImmediate(newProfileObj);
-		return newPrefab;
+		return newSaveData;
 	}
 
 	/// <summary>
@@ -499,7 +497,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// </summary>
 	private void DeleteCurrentProfile() {
 		// Should be simple
-		AssetDatabase.MoveAssetToTrash("Assets/Resources/" + PersistenceProfile.RESOURCES_FOLDER + m_selectedProfile + ".prefab");
+		AssetDatabase.MoveAssetToTrash("Assets/Resources/" + PersistenceProfile.RESOURCES_FOLDER + m_selectedProfile + ".json");
 		ResetSelection();
 	}
 
@@ -507,9 +505,11 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// Creates a new savegame for the given persistence profile. If one already exists, it will be overwritten.
 	/// The newly created savegame will be initialized with the profile data.
 	/// </summary>
+	/// <param name="_name">The profile to which we want to create a new savegame.</param>
 	/// <param name="_profile">The profile to which we want to create a new savegame.</param>
-	private void CreateNewSavegame(PersistenceProfile _profile) {
-		PersistenceManager.SaveFromObject(_profile.gameObject.name, _profile.data);
+	private void CreateNewSavegame(string _name, SimpleJSON.JSONClass _profile) 
+	{
+		PersistenceManager.SaveFromObject(_name, _profile);
 	}
 
 	/// <summary>

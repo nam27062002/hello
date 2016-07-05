@@ -24,15 +24,6 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Auxiliar serializable class to save/load to persistence.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		// Only dynamic data is relevant
-		public Mission.SaveData[] activeMissions = new Mission.SaveData[(int)Mission.Difficulty.COUNT];
-		public int[] generationIdx = new int[(int)Mission.Difficulty.COUNT];
-	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//

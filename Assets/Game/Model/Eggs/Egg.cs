@@ -38,17 +38,6 @@ public class Egg {
 		public long coins;		// Coins to be given instead of the reward. Only if bigger than 0.
 	}
 
-	/// <summary>
-	/// Auxiliar class for persistence load/save.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		public string sku = "";
-		public State state = State.INIT;
-		public string rewardSku = "";	// [AOC] CHECK!! Probably no need to persist the reward, since it's instantly consumed
-		public bool isNew = true;
-	}
-
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//

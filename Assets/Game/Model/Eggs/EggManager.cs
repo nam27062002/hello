@@ -24,16 +24,6 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	public static readonly int INVENTORY_SIZE = 3;
 
-	/// <summary>
-	/// Auxiliar class for persistence load/save.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		public Egg.SaveData[] inventory = new Egg.SaveData[INVENTORY_SIZE];
-		public Egg.SaveData incubatingEgg = null;
-		public DateTime incubationEndTimestamp = DateTime.UtcNow;
-	}
-
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//

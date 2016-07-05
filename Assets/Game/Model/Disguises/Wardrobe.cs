@@ -24,15 +24,6 @@ public class Wardrobe : Singleton<Wardrobe> {
 		public int level;
 	}
 
-	/// <summary>
-	/// Auxiliar class for persistence load/save.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		public DisguiseLevel[] disguises = new DisguiseLevel[0];
-		public DragonDisguise[] equiped = new DragonDisguise[0];
-	}
-
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//

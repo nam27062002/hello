@@ -23,22 +23,6 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Auxiliar serializable class to save/load to persistence.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		// Only dynamic data is relevant
-		public string sku;
-		public float xp = 0;
-		public int level = 0;
-		public int biteSkillLevel = 0;
-		public int speedSkillLevel = 0;
-		public int boostSkillLevel = 0;
-		public int fireSkillLevel = 0;
-		public bool owned = false;
-		public string[] equip;
-	}
 
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
 	public enum LockState {

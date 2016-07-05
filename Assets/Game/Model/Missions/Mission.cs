@@ -21,16 +21,6 @@ public class Mission {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Auxiliar serializable class to save/load to persistence.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		public string sku = "";		// Mission def's sku
-		public State state = State.ACTIVE;
-		public float currentValue = 0f;	// Objective's current value - only relevant for long-term missions, but save it always anyway
-		public DateTime cooldownStartTimestamp = new DateTime();
-	}
 
 	/// <summary>
 	/// Missions shall be grouped by difficulty.

@@ -25,25 +25,6 @@ public class UserProfile
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Auxiliar serializable class to save/load to persistence.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		// Add here any required data
-		public long coins = 0;
-		public long pc = 0;
-		public string currentDragon = "";	// sku
-		/*[SkuList(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
-		[EnumMask] public TutorialStep tutorialStep = TutorialStep.INIT;
-
-		public bool furyUsed = false;
-
-		// Game stats
-		public int gamesPlayed = 0;
-		public long highScore = 0;
-		public int superFuryProgression = 0;
-	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //

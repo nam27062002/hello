@@ -30,21 +30,21 @@ public class PersistenceProfileEditor : ExtendedPropertyDrawer {
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
 		// We will just display a dropdown list with all the existing profiles plus an extra option to open the profile editing window
-		GameObject[] profilePrefabs = Resources.LoadAll<GameObject>(PersistenceProfile.RESOURCES_FOLDER);
+		TextAsset[] profiles = Resources.LoadAll<TextAsset>(PersistenceProfile.RESOURCES_FOLDER);
 
 		// Get current selection
 		PersistenceProfile currentSelectedPrefab = _property.objectReferenceValue as PersistenceProfile;
 
 		// Compose the list
 		// CONVENTION: option 0 is "None", option N-1 is "Profile Manager"
-		string[] labels = new string[profilePrefabs.Length + 2];	// Extra option to open the editor window and to select none
+		string[] labels = new string[profiles.Length + 2];	// Extra option to open the editor window and to select none
 		int currentSelectedIdx = 0;	// We will look to the previously selected profile during the loop, if not found default to none
-		for(int i = 0; i < profilePrefabs.Length; i++) {
+		for(int i = 0; i < profiles.Length; i++) {
 			// Init label (1 index offset, first option is special)
-			labels[i+1] = profilePrefabs[i].name;
+			labels[i+1] = profiles[i].name;
 
 			// Is it the current value?
-			if(currentSelectedPrefab != null && currentSelectedPrefab.gameObject.name == profilePrefabs[i].name) {
+			if(currentSelectedPrefab != null && currentSelectedPrefab.gameObject.name == profiles[i].name) {
 				currentSelectedIdx = i + 1;
 			}
 		}
@@ -75,7 +75,7 @@ public class PersistenceProfileEditor : ExtendedPropertyDrawer {
 		// c) Different profile than the current one
 		else if(newSelection != currentSelectedIdx) {
 			// Store the new profile
-			_property.objectReferenceValue = profilePrefabs[newSelection - 1];	// Remember we have a +1 offset
+			_property.objectReferenceValue = profiles[newSelection - 1];	// Remember we have a +1 offset
 		}
 	}
 }
@@ -148,6 +148,7 @@ public class PersistenceManagerSaveDataEditor : ExtendedPropertyDrawer {
 /// <summary>
 /// Custom editor for the DragonData SaveData object.
 /// </summary>
+/*
 [CustomPropertyDrawer(typeof(DragonData.SaveData))]
 public class DragonDataSaveDataEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
@@ -199,3 +200,4 @@ public class DragonDataSaveDataEditor : ExtendedPropertyDrawer {
 		}
 	}
 }
+*/

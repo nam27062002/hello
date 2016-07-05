@@ -30,35 +30,6 @@ public static class PersistenceManager {
 
 	const string TAG = "PersistenceManager";
 
-	/*
-	/// <summary>
-	/// Auxiliar private serializable class to save/load a game state to persistence.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		// Add here any required data
-		public DateTime timestamp = DateTime.UtcNow;
-		public UserProfile.SaveData profile = new UserProfile.SaveData();
-		public DragonData.SaveData[] dragons = null;
-		public MissionManager.SaveData missions = new MissionManager.SaveData();
-		public EggManager.SaveData eggs = new EggManager.SaveData();
-		public Wardrobe.SaveData wardrobe = new Wardrobe.SaveData();
-
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public SaveData() {
-			// Dragons persistence requires a special initialization
-			List<string> dragonSkus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS);
-			dragons = new DragonData.SaveData[dragonSkus.Count];
-			for(int i = 0; i < dragonSkus.Count; i++) {
-				dragons[i] = new DragonData.SaveData();
-				dragons[i].sku = dragonSkus[i];
-			}
-		}
-	}
-	*/
-
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
