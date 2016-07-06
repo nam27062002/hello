@@ -153,13 +153,13 @@ public class GameServerManager :  MonoBehaviour
 			Debug.TaggedLog(tag, "onGamePlayActionProcessed : " + strAction);
 			switch( strAction )	
 			{
-				case GameServerManager.TEST_ACTION:
-				{
-					Debug.TaggedLog(tag, strResponseData);
-				}break;
 				case GameServerManager.GET_UNIVERSE:
 				{
 					Debug.TaggedLog(tag, strResponseData);
+				}break;
+				case GameServerManager.SET_UNIVERSE:
+				{
+
 				}break;
 			}
 		} 
@@ -168,14 +168,34 @@ public class GameServerManager :  MonoBehaviour
 		public override void onGamePlayActionFailed (string strAction, int iErrorStatus)
 		{
 			Debug.TaggedLog(tag, "onGamePlayActionFailed");
+			switch( strAction )
+			{
+				case GameServerManager.GET_UNIVERSE:
+				{
+				}break;
+				case GameServerManager.SET_UNIVERSE:
+				{
+				}break;
+			}
 		} 
+
+
+		// Treat Game Play Actions Response
+		void onRecieveUniverse( string serverUniverse )
+		{
+			// Load universe and compare with current to check solutions
+			SimpleJSON.JSONClass serverSave = SimpleJSON.JSONNode.Parse( serverUniverse )  as SimpleJSON.JSONClass;
+			if ( serverSave != null )
+			{
+				// Use event?		
+			}
+		}
     }
 
 	/// End Listener //////////////////////////////////////////////////////////
 #endregion
 
 #region action_names
-	private const string TEST_ACTION = "test";
 	private const string GET_UNIVERSE = "universe/get";
 	private const string SET_UNIVERSE = "universe/set";
 #endregion
@@ -196,6 +216,7 @@ public class GameServerManager :  MonoBehaviour
 	{
 		
 	}
+
 
 	public void PrepareServerConfig()
     {
@@ -277,10 +298,13 @@ public class GameServerManager :  MonoBehaviour
 	public void LoginToServer ()
     {
 		PrepareServerConfig();
-		if (!m_delegate.m_waitingLoginResponse)
-		{
-			m_delegate.m_waitingLoginResponse = true;
-        	GameSessionManager.SharedInstance.LogInToServer ();
+		if ( !m_delegate.m_logged )
+    	{
+			if (!m_delegate.m_waitingLoginResponse)
+			{
+				m_delegate.m_waitingLoginResponse = true;
+	        	GameSessionManager.SharedInstance.LogInToServer ();
+	        }
         }
     }
 
@@ -289,21 +313,14 @@ public class GameServerManager :  MonoBehaviour
     	return m_delegate.m_logged;
     }
 
-    public void SendTestAction()
-    {
-		JSONClass body = new JSONClass ();
-        body ["test"] = new JSONData (true);
-		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.TEST_ACTION, body, false);
-    }
-
     public void GetUniverse()
     {
 		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.GET_UNIVERSE);
     }
 
-    public void SetUniverse()
+    public void SetUniverse( SimpleJSON.JSONClass universe )
     {
-		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.GET_UNIVERSE);
+		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.SET_UNIVERSE, universe);
     }
 
 }
