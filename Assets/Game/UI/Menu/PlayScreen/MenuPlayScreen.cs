@@ -34,24 +34,17 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void Awake() 
 	{
-		ExternalPlatformManager.instance.OnLogin += OnExternalLogin;
-		ExternalPlatformManager.instance.OnLoginError += OnExternalLoginError;
-
 		// Check if external connected to hide m_ConnectionButton;
-		if (ExternalPlatformManager.instance.loginState != ExternalPlatformManager.State.NOT_LOGGED)
 		{
 			// Hide connecting button
-			m_connectButton.SetActive(false);
+			if (m_connectButton)
+				m_connectButton.SetActive(false);
 		}
 	}
 
 	void OnDestroy()
 	{
-		if (ExternalPlatformManager.instance != null)
-		{
-			ExternalPlatformManager.instance.OnLogin -= OnExternalLogin;
-			ExternalPlatformManager.instance.OnLoginError -= OnExternalLoginError;
-		}
+		
 	}
 
 	/// <summary>
@@ -82,7 +75,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	public void OnConnectBtn()
 	{
 		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid 
-		ExternalPlatformManager.instance.Login();
+
 	}
 
 	public void OnExternalLogin()

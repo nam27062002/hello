@@ -87,8 +87,7 @@ public class LoadingSceneController : SceneController {
 		InstanceManager.CreateInstance(true);
 
 		// Social
-		ExternalPlatformManager.CreateInstance(true);
-		ExternalPlatformManager.instance.Init();
+		SocialPlatformManager.SharedInstance.Init();
 
 		// Load persistence
 		PersistenceManager.Init();

@@ -33,6 +33,7 @@ public class GameServerManager :  MonoBehaviour
 
 		public bool m_logged = false;
 		public bool m_waitingLoginResponse = false;
+		public SimpleJSON.JSONClass m_lastRecievedUniverse = null;
 
 		// Triggers when user was succesfully logged into our server
 		public override void onLogInToServer()
@@ -45,9 +46,6 @@ public class GameServerManager :  MonoBehaviour
 				m_logged = true;
 				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
 			}
-
-			// Ask for universe?
-			GameServerManager.SharedInstance.GetUniverse();
 		} 
 		// Triggers when logout from our server is called
 		public override void onLogOutFromServer()
@@ -156,6 +154,7 @@ public class GameServerManager :  MonoBehaviour
 				case GameServerManager.GET_UNIVERSE:
 				{
 					Debug.TaggedLog(tag, strResponseData);
+					onRecieveUniverse( strResponseData );
 				}break;
 				case GameServerManager.SET_UNIVERSE:
 				{
@@ -187,7 +186,8 @@ public class GameServerManager :  MonoBehaviour
 			SimpleJSON.JSONClass serverSave = SimpleJSON.JSONNode.Parse( serverUniverse )  as SimpleJSON.JSONClass;
 			if ( serverSave != null )
 			{
-				// Use event?		
+				m_lastRecievedUniverse = serverSave;
+				// Use event? New Game Data from server?
 			}
 		}
     }
@@ -313,6 +313,16 @@ public class GameServerManager :  MonoBehaviour
     	return m_delegate.m_logged;
     }
 
+    public SimpleJSON.JSONClass GetLastRecievedUniverse()
+    {
+    	return m_delegate.m_lastRecievedUniverse;
+    }
+
+    public void CleanLastRecievedUniverse()
+    {
+    	m_delegate.m_lastRecievedUniverse = null;
+    }
+
     public void GetUniverse()
     {
 		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.GET_UNIVERSE);
@@ -322,5 +332,6 @@ public class GameServerManager :  MonoBehaviour
     {
 		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.SET_UNIVERSE, universe);
     }
+
 
 }

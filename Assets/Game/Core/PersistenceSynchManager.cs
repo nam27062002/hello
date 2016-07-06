@@ -45,21 +45,21 @@ public class PersistenceSynchManager : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		ExternalPlatformManager.instance.OnLogin += OnExternalLogin;
+		// ExternalPlatformManager.instance.OnLogin += OnExternalLogin;
 		//RequestNetwork.instance.onAuthResponse += OnAuthResponse;
 
 	}
 
 	void OnDestroy()
 	{
-		ExternalPlatformManager.instance.OnLogin -= OnExternalLogin;
+		// ExternalPlatformManager.instance.OnLogin -= OnExternalLogin;
 		//RequestNetwork.instance.onAuthResponse -= OnAuthResponse;
 	}
 	
 	void OnExternalLogin()
 	{
 		// Try to sync save data
-		string id = ExternalPlatformManager.instance.GetId();
+		// string id = ExternalPlatformManager.instance.GetId();
 		// RequestNetwork -> ask for Persistence
 		//RequestNetwork.instance.Authenticate( "server", "sufix", "platformId", "_platformUserName");
 	}
