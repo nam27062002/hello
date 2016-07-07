@@ -9,6 +9,7 @@ namespace AI
 	{
 		[SerializeField]
 		State[] m_states = new State[]{};
+		public State[] states { get { return m_states; }}
 
 		[System.Serializable]
 		public class TransitionData { public int to; public string id; public int from; }

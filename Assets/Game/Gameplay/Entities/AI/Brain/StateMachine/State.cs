@@ -11,6 +11,7 @@ namespace AI
 
 		[SerializeField]
 		StateComponent[] m_componentAssets = new StateComponent[]{};
+		public StateComponent[] componentAssets { get { return m_componentAssets; }}
 		
 		StateComponent[] m_componentInstances = null;
 
