@@ -9,11 +9,11 @@ namespace AI {
 
 			private Vector3 m_target;
 
-			private Pilot m_pilot;
+			private AIPilot m_pilot;
 			private Machine m_machine;
 
 			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<Pilot>();
+				m_pilot 	= _go.GetComponent<AIPilot>();
 				m_machine	= _go.GetComponent<Machine>();
 
 				m_target = m_machine.position;

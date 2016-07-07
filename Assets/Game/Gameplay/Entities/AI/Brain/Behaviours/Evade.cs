@@ -16,15 +16,25 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_machine.SetSignal(Signals.Alert.name, true);				
+				m_machine.SetSignal(Signals.Alert.name, true);
+				m_pilot.SetBoostSpeed(20f);
 			}
 
 			protected override void OnExit(State newState) {
 				m_machine.SetSignal(Signals.Alert.name, false);
+				m_pilot.Avoid(false);
+				m_pilot.ReleaseAction(Pilot.Action.Boost);
 			}
 
 			protected override void OnUpdate() {
-				m_pilot.Avoid(m_machine.GetSignal(Signals.Warning.name));
+				bool avoid = m_machine.GetSignal(Signals.Warning.name);
+				m_pilot.Avoid(avoid);
+
+				if (avoid) {
+					m_pilot.PressAction(Pilot.Action.Boost);
+				} else {
+					m_pilot.ReleaseAction(Pilot.Action.Boost);
+				}
 			}
 		}
 	}

@@ -7,11 +7,11 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/FollowLeader")]
 		public class FollowLeader : StateComponent {
 
-			private Pilot m_pilot;
+			private AIPilot m_pilot;
 			private Machine m_machine;
 
 			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<Pilot>();
+				m_pilot 	= _go.GetComponent<AIPilot>();
 				m_machine	= _go.GetComponent<Machine>();
 			}
 

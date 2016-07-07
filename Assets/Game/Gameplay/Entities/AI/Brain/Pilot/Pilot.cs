@@ -23,8 +23,8 @@ namespace AI {
 		protected Bounds m_area;
 		public Bounds area { get { return m_area; } }
 
-		protected GuideFunction m_guideFunction;
-		public GuideFunction guideFunction { 
+		protected IGuideFunction m_guideFunction;
+		public IGuideFunction guideFunction { 
 			get { return m_guideFunction; } 
 			set { 
 				m_guideFunction = value; 	
@@ -34,17 +34,21 @@ namespace AI {
 			} 
 		}
 
-		protected Vector3 m_homePosition;
-		public Vector3 homePosition { get { return m_homePosition; } }
-
 		protected Machine m_machine;
 
 		protected bool[] m_actions;
 
-		protected Vector3 m_target;
+		private float m_speed;
+		private float m_boostSpeed;
+		public float speed {
+			get { 
+				if (IsActionPressed(Action.Boost)) {
+					return m_boostSpeed;
+				} else {
+					return m_speed;
+				}
+			} }
 
-		protected float m_speed;
-		public float speed { get { return m_speed; } }
 
 		protected Vector3 m_externalImpulse;
 		protected Vector3 m_impulse;
@@ -58,10 +62,9 @@ namespace AI {
 
 		protected virtual void Awake() {
 			m_speed = 0;
+			m_boostSpeed = 0;
 			m_impulse = Vector3.zero;
 			m_direction = Vector3.right;
-
-			m_target = transform.position;
 
 			m_actions = new bool[(int)Action.Count];
 			m_machine = GetComponent<Machine>();
@@ -85,14 +88,14 @@ namespace AI {
 			m_speed = _speed;
 		}
 
+		public void SetBoostSpeed(float _boostSpeed) {
+			m_boostSpeed = _boostSpeed;
+		}
+
 		public void SetDirection(Vector3 _dir) {
 			m_direction = _dir;
 		}
-
-		public void GoTo(Vector3 _target) {
-			m_target = _target;
-		}
-			
+					
 		public void Scared(bool _enable) {
 			m_actions[(int)Action.Scared] = _enable;
 		}
@@ -107,11 +110,6 @@ namespace AI {
 
 		public void AddImpulse(Vector3 _externalImpulse) {
 			m_externalImpulse += _externalImpulse;
-		}
-
-		void OnDrawGizmos() {
-			Gizmos.color = Color.white;
-			Gizmos.DrawSphere(m_target, 0.25f);
 		}
 	}
 }

@@ -7,9 +7,16 @@ namespace AI {
 		[SerializeField] private AISM.StateMachine m_brainResource;
 		private AISM.StateMachine m_brain;
 
+		protected Vector3 m_homePosition;
+		public Vector3 homePosition { get { return m_homePosition; } }
+
+		protected Vector3 m_target;
+
 		public void Spawn(Spawner _spawner) {
 			m_area = _spawner.area.bounds;
 			m_homePosition = _spawner.transform.position;
+
+			m_target = transform.position;
 
 			// braaiiiinnn ~ ~ ~ ~ ~
 			if (m_brain == null) {
@@ -22,6 +29,10 @@ namespace AI {
 			m_brain.Transition(_trigger);
 		}
 
+		public void GoTo(Vector3 _target) {
+			m_target = _target;
+		}
+
 		protected virtual void Update() {
 			// state machine updates
 			if (m_brain != null) {
@@ -32,6 +43,11 @@ namespace AI {
 			if (!m_area.Contains(transform.position)) {
 				m_machine.SetSignal(Signals.BackToHome.name, true);
 			}
+		}
+
+		void OnDrawGizmos() {
+			Gizmos.color = Color.white;
+			Gizmos.DrawSphere(m_target, 0.25f);
 		}
 	}
 }

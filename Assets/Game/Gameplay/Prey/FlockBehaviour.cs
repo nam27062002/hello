@@ -30,7 +30,7 @@ public class FlockBehaviour : MonoBehaviour {
 	{
 		if ( m_flock != null )
 		{
-			return m_flock.GetTarget();
+			return m_flock.NextPositionAtSpeed(0f);
 		}
 		else
 		{

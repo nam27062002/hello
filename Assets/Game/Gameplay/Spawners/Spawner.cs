@@ -41,7 +41,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	public AreaBounds area { get { return m_area; } }
 
 	protected EntityGroupController m_groupController;
-	protected GuideFunction m_guideFunction;
+	protected IGuideFunction m_guideFunction;
 
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
@@ -83,7 +83,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			m_groupController.Init(m_quantity.max);
 		}
 
-		m_guideFunction = GetComponent<GuideFunction>();
+		m_guideFunction = GetComponent<IGuideFunction>();
 
 		SpawnerManager.instance.Register(this);
 
@@ -248,9 +248,12 @@ public class Spawner : MonoBehaviour, ISpawner {
 			entity.transform.position = pos;
 			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
 
+			entity.Spawn(this); // lets spawn Entity component first
 			Spawnable[] components = entity.GetComponents<Spawnable>();
 			foreach (Spawnable component in components) {
-				component.Spawn(this);
+				if (component != entity) {
+					component.Spawn(this);
+				}
 			}
 		}
 

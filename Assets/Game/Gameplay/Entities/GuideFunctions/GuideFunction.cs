@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-public class GuideFunction : MonoBehaviour {
+public class GuideFunction : MonoBehaviour, IGuideFunction {
 	
 	//http://www.artbylogic.com/parametricart/spirograph/spirograph.htm
 	public enum FunctionType{

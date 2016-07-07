@@ -15,7 +15,7 @@ namespace AI {
 			private float m_xLimitMin;
 			private float m_xLimitMax;
 
-			private Pilot m_pilot;
+			private AIPilot m_pilot;
 			private Machine m_machine;
 
 			private bool m_checkGoToRest;
@@ -23,7 +23,7 @@ namespace AI {
 			private float m_walkSpeed = 1.5f;
 
 			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<Pilot>();
+				m_pilot 	= _go.GetComponent<AIPilot>();
 				m_machine	= _go.GetComponent<Machine>();
 
 				m_xLimitMin = m_pilot.area.min.x;

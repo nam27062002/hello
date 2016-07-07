@@ -9,17 +9,23 @@ namespace AI {
 
 		private Entity m_entity = null;
 		private Pilot m_pilot = null;
+		private ViewControl m_viewControl = null;
+		private Collider m_collider = null;
 
 		private Dictionary<string, Signal> m_signals;
 
 		private Group m_group; // this will be a reference
 
+		[SeparatorAttribute]
+		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
 		[SerializeField] private MachineMotion m_motion = new MachineMotion();
+
+		[SeparatorAttribute]
+		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		private MachineEdible m_edible = new MachineEdible();
 		private MachineInflammable m_inflammable = new MachineInflammable();
-
 
 		public Vector3 position { get { return transform.position; } }
 		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
@@ -39,6 +45,8 @@ namespace AI {
 		void Awake() {
 			m_entity = GetComponent<Entity>();
 			m_pilot = GetComponent<Pilot>();
+			m_viewControl = GetComponent<ViewControl>();
+			m_collider = GetComponent<Collider>();
 
 			m_signals = new Dictionary<string, Signal>();
 
@@ -70,6 +78,8 @@ namespace AI {
 
 			m_inflammable.Attach(this, m_entity, m_pilot);
 			m_inflammable.Init();
+
+			if (m_collider != null) m_collider.enabled = true;
 		}
 
 		public void OnTrigger(string _trigger) {
@@ -78,16 +88,22 @@ namespace AI {
 			}
 
 			if (Signals.Destroyed.OnDestroyed == _trigger) {
+				m_viewControl.Die(m_signals[Signals.Chewing.name].value);
 				m_pilot.enabled = false;
+				if (m_collider != null) m_collider.enabled = false;
 				if (m_group != null) m_group.Leave(this);
 				m_entity.Disable(true);
 			}
 		}
+
+		void OnCollisionEnter(Collision _collision) {
+			OnTrigger(Signals.Collided.OnCollisionEnter);
+		}
 		
 		// Update is called once per frame
 		void Update() {
-			m_motion.Update();
-			m_sensor.Update();
+			if (m_enableMotion) m_motion.Update();
+			if (m_enableSensor) m_sensor.Update();
 			m_inflammable.Update();
 		}
 

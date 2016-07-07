@@ -10,8 +10,13 @@ namespace AI {
 
 		public void Set(bool _value) {
 			if (m_value != _value) {
-				if (_value) m_machine.OnTrigger(OnEnabled());
-				else 		m_machine.OnTrigger(OnDisabled());
+				if (_value) {
+					string e = OnEnabled();
+					if (e != "") m_machine.OnTrigger(e);
+				} else {
+					string e = OnDisabled();
+					if (e != "") m_machine.OnTrigger(e);
+				}
 
 				m_value = _value;
 			}
@@ -118,6 +123,16 @@ namespace AI {
 
 			protected override string OnEnabled() { return OnOutsideArea; }
 			protected override string OnDisabled() { return OnBackAtHome; }
+		}
+
+		// 
+		public class Collided : Signal {
+			public static string name = "Collided";
+
+			[StateTransitionTrigger]
+			public static string OnCollisionEnter = "onCollisionEnter";
+
+			protected override string OnEnabled() { return OnCollisionEnter; }
 		}
 
 		// a fire is touching this machine

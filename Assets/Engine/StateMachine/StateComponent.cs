@@ -2,12 +2,14 @@ using UnityEngine;
 
 namespace AISM
 {
+	public abstract class StateComponentData {}
+
 	public class StateComponent : ScriptableObject
 	{
 		[SerializeField]
 		bool m_sharedBetweenStates;
 
-		bool m_initialised = false;
+		bool m_initialised  = false;
 
 		protected StateMachine m_stateMachine;
 		State m_state;
@@ -47,6 +49,8 @@ namespace AISM
 			OnUpdate();
 		}
 
+		public virtual StateComponentData CreateData() { return null; }
+
 		protected void Transition(string transitionID, params object[] param)
 		{
 			m_stateMachine.Transition(transitionID, state, param);
@@ -57,6 +61,7 @@ namespace AISM
 		protected virtual void OnEnter(State _oldState, object[] _param){}
 		protected virtual void OnExit(State _newState){}
 		protected virtual void OnUpdate(){}
+
 
 	#if UNITY_EDITOR
 		public virtual void OnGUI(){}

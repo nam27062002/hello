@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 1522824675}
+  m_SkyboxMaterial: {fileID: 1562894185}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -219,16 +219,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_guideFunction: 1
-  m_innerRadius: 7.15
-  m_outterRadius: -11.92
-  m_targetDistance: 4.81
-  m_depthAmplitude: 1.4
-  m_depthFrequency: 1.06
-  m_scale: {x: 1.5, y: 0.75, z: 1}
+  m_innerRadius: 8.94
+  m_outterRadius: -13
+  m_targetDistance: 9.22
+  m_depthAmplitude: 1.82
+  m_depthFrequency: 2
+  m_scale: {x: 1.67, y: 1.03, z: 1}
   m_rotation: {x: 90, y: 0, z: 0}
   m_forcePreview: 1
   m_previewStep: 0.03
-  m_previewMaxTime: 17.77
+  m_previewMaxTime: 43.5
 --- !u!114 &525614496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -468,7 +468,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
---- !u!21 &1522824675
+--- !u!21 &1562894185
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -837,3 +837,86 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
+--- !u!1 &2061088735
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2061088739}
+  - 114: {fileID: 2061088738}
+  - 114: {fileID: 2061088737}
+  - 114: {fileID: 2061088736}
+  m_Layer: 0
+  m_Name: Spawner Mines
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2061088736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2061088735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 0.68449116
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &2061088737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2061088735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2061088738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2061088735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: {fileID: 176872, guid: 587c6f5a8433643a893db74e61e2646c, type: 2}
+  m_quantity:
+    min: 1
+    max: 1
+  m_scale:
+    min: 1
+    max: 1
+  m_flockBonus: 0
+  m_alwaysActive: 0
+  m_activeOnStart: 1
+  m_enableTime: 0
+  m_disableTime: 0
+  m_spawnTime:
+    min: 0
+    max: 0
+  m_maxSpawns: 0
+--- !u!4 &2061088739
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2061088735}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10, y: 9, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7

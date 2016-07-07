@@ -1,21 +1,29 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class ViewControl : MonoBehaviour, Spawnable {
 
+	[Serializable]
+	public class ParticleData {
+		public string name = "";
+		public string path = "";
+		public Vector3 offset = Vector3.zero;
+	}
 
 	//-----------------------------------------------
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
 
 	[SeparatorAttribute]
-	[SerializeField] private List<string> m_onEatenParticles = new List<string>();
+	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
 
 	[SeparatorAttribute]
-	[SerializeField] private bool m_explosive = false; // this will explode when burning
+	[SerializeField] private ParticleData m_explosionParticles; // this will explode when burning
 
 
 	//-----------------------------------------------
+	private Entity m_entity;
 	private Animator m_animator;
 	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
@@ -28,15 +36,25 @@ public class ViewControl : MonoBehaviour, Spawnable {
 	//-----------------------------------------------
 	// Use this for initialization
 	void Awake() {
+		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
 
-		m_materialGold = Resources.Load ("Game/Assets/Materials/Gold") as Material;
+		m_materialGold = Resources.Load("Game/Assets/Materials/Gold") as Material;
 
 		// keep the original materials, sometimes it will become Gold!
 		m_materials = new Dictionary<int, Material[]>(); 
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
 			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
+		}
+
+		// particle management
+		if (m_onEatenParticles.Count <= 0) {
+			// if this entity doesn't have any particles attached, set the standard blood particle
+			ParticleData data = new ParticleData();
+			data.name = "PS_Blood_Explosion_Small";
+			data.path = "Blood/";
+			data.offset = Vector3.back * 10f;
 		}
 	}
 	//
@@ -51,8 +69,16 @@ public class ViewControl : MonoBehaviour, Spawnable {
 		// Restore materials
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
-			if (m_materials.ContainsKey(renderers[i].GetInstanceID())) {
-				renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
+			if (m_entity.isGolden) {				
+				Material[] materials = renderers[i].materials;
+				for (int m = 0; m < materials.Length; m++) {
+					if (!materials[m].shader.name.EndsWith("Additive"))
+						materials[m] = m_materialGold;
+				}
+				renderers[i].materials = materials;
+			} else {
+				if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
+					renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 			}
 		}
 	}
@@ -71,23 +97,15 @@ public class ViewControl : MonoBehaviour, Spawnable {
 
 	//Particles
 	public void SpawnEatenParticlesAt(Transform _transform) {
-		if (m_onEatenParticles.Count <= 0) {
-			GameObject go = ParticleManager.Spawn("PS_Blood_Explosion_Small", transform.position + (Vector3.back * 10), "Blood/");
-			if (go != null) {
-				FollowTransform ft = go.GetComponent<FollowTransform>();
-				if (ft != null) {
-					ft.m_follow = _transform;
-					ft.m_offset = Vector3.back * 10;
-				}
-			}
-		} else {
-			for( int i = 0; i < m_onEatenParticles.Count; i++) {
-				if (!string.IsNullOrEmpty(m_onEatenParticles[i])) {
-					GameObject go = ParticleManager.Spawn(m_onEatenParticles[i], transform.position);
-					if (go != null)	{
-						FollowTransform ft = go.GetComponent<FollowTransform>();
-						if (ft != null)
-							ft.m_follow = _transform;
+		for( int i = 0; i < m_onEatenParticles.Count; i++) {
+			ParticleData data = m_onEatenParticles[i];
+			if (!string.IsNullOrEmpty(data.name)) {
+				GameObject go = ParticleManager.Spawn(data.name, transform.position + data.offset, data.path);
+				if (go != null)	{
+					FollowTransform ft = go.GetComponent<FollowTransform>();
+					if (ft != null) {
+						ft.m_follow = _transform;
+						ft.m_offset = data.offset;
 					}
 				}
 			}
@@ -169,6 +187,12 @@ public class ViewControl : MonoBehaviour, Spawnable {
 		if (m_attack) {
 			m_attack = false;
 			m_animator.SetBool("attack", false);
+		}
+	}
+
+	public void Die(bool _eaten = false) {
+		if (m_explosionParticles.name != "") {
+			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
 	}
 }

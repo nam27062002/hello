@@ -46,13 +46,15 @@ public class Entity : MonoBehaviour, Spawnable {
 	public float health { get { return m_health; } set { m_health = value; } }
 
 
+	private bool m_isGolden = false;
+	public bool isGolden { get { return m_isGolden; } }
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
 	private Spawner m_spawner;
 
-	private bool m_isGolden = false;
+
 	private bool m_givePC = false;
 
 

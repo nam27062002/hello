@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-public class FlockController : MonoBehaviour {
+public class FlockController : MonoBehaviour, IGuideFunction {
 	
 	//http://www.artbylogic.com/parametricart/spirograph/spirograph.htm
 	public enum GuideFunction{
@@ -65,16 +65,26 @@ public class FlockController : MonoBehaviour {
 		}
 		m_target = transform.position;	
 
-		m_timer = Random.Range(0f, Mathf.PI * 2f);
-		m_secondaryTimer = Random.Range(0f, Mathf.PI * 2f);
+		ResetTime();
 	}
 
-	public Vector2 GetTarget() {
+	public Bounds GetBounds() {
+		return m_area.bounds;
+	}
+
+	public void ResetTime() {
+		m_timer = Random.Range(0f, Mathf.PI * 2f);
+		m_secondaryTimer = Random.Range(0f, Mathf.PI * 2f);
+		UpdateFunction(m_timer, m_secondaryTimer);
+	}
+
+	public Vector3 NextPositionAtSpeed(float _speed) {
+		UpdateLogic();
 		return m_target;
 	}
 
 	// Update is called once per frame
-	public void UpdateLogic() {	
+	private void UpdateLogic() {	
 		// Control flocking
 		// Move target for follow behaviour
 		if (m_area != null) {

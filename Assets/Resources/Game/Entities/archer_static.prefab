@@ -1057,7 +1057,10 @@ MonoBehaviour:
   m_walkSpeed: 1
   m_runSpeed: 1
   m_onEatenParticles: []
-  m_explosive: 0
+  m_explosionParticles:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
 --- !u!114 &11429734
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1092,9 +1095,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_enableMotion: 1
   m_motion:
     m_stickToGround: 1
     m_faceDirection: 0
+  m_enableSensor: 1
   m_sensor:
     m_minRadius: 6
     m_maxRadius: 12
