@@ -4,9 +4,19 @@ using AISM;
 
 namespace AI {
 	namespace Behaviour {		
+		[System.Serializable]
+		public class AttackMeleeData : AttackData {
+			public float m_damage = 5f;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Attack Melee")]
 		public class AttackMelee : Attack {
 			private MeleeWeapon m_meleeWeapon;
+
+
+			public override StateComponentData CreateData() {
+				return new AttackMeleeData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				base.OnInitialise(_go);

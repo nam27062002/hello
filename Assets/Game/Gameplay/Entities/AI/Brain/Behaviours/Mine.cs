@@ -3,7 +3,13 @@ using System.Collections;
 using AISM;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {
+		[System.Serializable]
+		public class MineData : StateComponentData {
+			public float m_amplitude;
+			public float m_frequency;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Mine")]
 		public class Mine : StateComponent {
 			[SerializeField] private float m_amplitude = 0f;
@@ -14,6 +20,10 @@ namespace AI {
 
 			private AIPilot m_pilot;
 			private Machine m_machine;
+
+			public override StateComponentData CreateData() {
+				return new MineData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<AIPilot>();

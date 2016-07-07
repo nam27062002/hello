@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace AISM
 {
+	[System.Serializable]
 	public abstract class StateComponentData {}
 
 	public class StateComponent : ScriptableObject

@@ -3,10 +3,15 @@ using System.Collections;
 using AISM;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {
+		[System.Serializable]
+		public class IdleData : StateComponentData {
+			public Range speed = new Range(2f, 4f);
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Idle")]
 		public class Idle : StateComponent {
-
+			
 			[StateTransitionTrigger]
 			private static string OnMove = "onMove";
 
@@ -14,6 +19,10 @@ namespace AI {
 
 			private Pilot m_pilot;
 			private Machine m_machine;
+
+			public override StateComponentData CreateData() {
+				return new IdleData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<Pilot>();

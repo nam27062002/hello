@@ -3,7 +3,7 @@ using System.Collections;
 using AISM;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {	
 		[CreateAssetMenu(menuName = "Behaviour/Attack Tactics")]
 		public class AttackTactics : StateComponent {
 

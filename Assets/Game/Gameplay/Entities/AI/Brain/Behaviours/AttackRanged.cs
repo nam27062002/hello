@@ -3,7 +3,15 @@ using System.Collections;
 using AISM;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {	
+		[System.Serializable]
+		public class AttackRangedData : AttackData {
+			public string m_projectileName = "";
+			public string m_projectileSpawnTransformName = "";
+
+			public float m_damage = 5f;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Attack Ranged")]
 		public class AttackRanged: Attack {
 
@@ -13,6 +21,11 @@ namespace AI {
 			private GameObject m_projectile;
 			private Transform m_projectileSpawnPoint;
 
+
+
+			public override StateComponentData CreateData() {
+				return new AttackRangedData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				base.OnInitialise(_go);

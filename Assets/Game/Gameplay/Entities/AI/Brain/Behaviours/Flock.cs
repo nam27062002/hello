@@ -4,8 +4,9 @@ using AISM;
 
 namespace AI {
 	namespace Behaviour {		
-		public class FlockData {
-			public float m_changeLeaderTime = 5f;
+		[System.Serializable]
+		public class FlockData : StateComponentData {
+			public float m_changeLeaderTime;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Flock")]
@@ -18,6 +19,11 @@ namespace AI {
 			private Machine m_machine;
 
 			private float m_timer;
+
+
+			public override StateComponentData CreateData() {
+				return new FlockData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<Pilot>();

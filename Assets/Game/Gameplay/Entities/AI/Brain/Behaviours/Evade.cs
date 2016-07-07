@@ -3,12 +3,22 @@ using System.Collections;
 using AISM;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {
+		[System.Serializable]
+		public class EvadeData : StateComponentData {
+			public float boostSpeed = 5f;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Evade")]
 		public class Evade : StateComponent {
 
 			private Pilot m_pilot;
 			private Machine m_machine;
+
+
+			public override StateComponentData CreateData() {
+				return new EvadeData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<Pilot>();

@@ -3,7 +3,12 @@ using System.Collections;
 using AISM;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {
+		[System.Serializable]
+		public class WanderData : StateComponentData {
+			public float speed;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Wander")]
 		public class Wander : StateComponent {
 
@@ -11,6 +16,10 @@ namespace AI {
 
 			private AIPilot m_pilot;
 			private Machine m_machine;
+
+			public override StateComponentData CreateData() {
+				return new WanderData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<AIPilot>();

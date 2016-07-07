@@ -4,11 +4,21 @@ using AISM;
 
 namespace AI {
 	namespace Behaviour {
+		[System.Serializable]
+		public class FollowLeaderData : StateComponentData {
+			public float speed = 1f;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/FollowLeader")]
 		public class FollowLeader : StateComponent {
 
 			private AIPilot m_pilot;
 			private Machine m_machine;
+
+
+			public override StateComponentData CreateData() {
+				return new FollowLeaderData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<AIPilot>();

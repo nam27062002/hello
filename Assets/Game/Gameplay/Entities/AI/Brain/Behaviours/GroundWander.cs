@@ -4,6 +4,12 @@ using AISM;
 
 namespace AI {
 	namespace Behaviour {		
+		[System.Serializable]
+		public class GroundWanderData : StateComponentData {
+			public float speed = 1.5f;
+			public float idleChance = 0.25f;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Ground Wander")]
 		public class GroundWander : StateComponent {
 
@@ -21,6 +27,11 @@ namespace AI {
 			private bool m_checkGoToRest;
 
 			private float m_walkSpeed = 1.5f;
+
+
+			public override StateComponentData CreateData() {
+				return new GroundWanderData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<AIPilot>();
@@ -44,7 +55,7 @@ namespace AI {
 
 				if (m < m_walkSpeed) {
 					if (m_checkGoToRest) {
-						bool goToRest = Random.Range(0f, 100f) < 25f;
+						bool goToRest = Random.Range(0f, 1f) < 0.25f;
 						if (goToRest) {
 							// don't check again for "idle" and get let the entity get closer to the current target
 							m_checkGoToRest = false;

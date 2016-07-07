@@ -4,8 +4,14 @@ using AISM;
 
 namespace AI {
 	namespace Behaviour {		
-		public abstract class Attack : StateComponent {
+		[System.Serializable]
+		public abstract class AttackData : StateComponentData {
+			public int consecutiveAttacks = 3;
+			public float attackDelay = 0f;
+			public float retreatTime = 0f;
+		}
 
+		public abstract class Attack : StateComponent {
 			[StateTransitionTrigger]
 			private static string OnMaxAttacks = "onMaxAttacks";
 

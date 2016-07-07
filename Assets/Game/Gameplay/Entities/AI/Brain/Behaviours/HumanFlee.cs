@@ -4,6 +4,12 @@ using AISM;
 
 namespace AI {
 	namespace Behaviour {		
+		[System.Serializable]
+		public class HumanFleeData : StateComponentData {
+			public float speed = 1f;
+			public float checkDragonPositionTime = 2f;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Human Flee")]
 		public class HumanFlee : StateComponent {
 			private Vector3 m_target;
@@ -11,10 +17,14 @@ namespace AI {
 			private float m_xLimitMin;
 			private float m_xLimitMax;
 
-			private float m_allowtargetChangeTimer;
+			private float m_allowTargetChangeTimer;
 
 			private AIPilot m_pilot;
 			private Machine m_machine;
+
+			public override StateComponentData CreateData() {
+				return new HumanFleeData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_pilot 	= _go.GetComponent<AIPilot>();
@@ -30,7 +40,7 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.SetSpeed(3f);	
 
-				m_allowtargetChangeTimer = 0f;
+				m_allowTargetChangeTimer = 0f;
 			}
 
 			protected override void OnExit(State newState) {
@@ -40,7 +50,7 @@ namespace AI {
 			protected override void OnUpdate() {
 				Transform enemy = m_machine.enemy;
 
-				if (m_allowtargetChangeTimer <= 0f) {
+				if (m_allowTargetChangeTimer <= 0f) {
 					if (enemy) {
 						m_target = Vector3.zero;
 						if (enemy.position.x < m_machine.position.x) {
@@ -49,9 +59,9 @@ namespace AI {
 							m_target.x = m_xLimitMin;
 						}
 					}
-					m_allowtargetChangeTimer = 2f;
+					m_allowTargetChangeTimer = 2f;
 				} else {
-					m_allowtargetChangeTimer -= Time.deltaTime;
+					m_allowTargetChangeTimer -= Time.deltaTime;
 				}
 
 				float m = Mathf.Abs(m_machine.position.x - m_target.x);

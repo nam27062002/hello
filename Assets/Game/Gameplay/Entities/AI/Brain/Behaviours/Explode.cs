@@ -4,11 +4,21 @@ using AISM;
 
 namespace AI {
 	namespace Behaviour {		
+		[System.Serializable]
+		public class ExplodeData : StateComponentData {
+			public float m_damage = 5f;
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Explode")]
 		public class Explode : StateComponent {
 			[SerializeField] private float m_damage = 5f;
 
 			private Machine m_machine;
+
+
+			public override StateComponentData CreateData() {
+				return new ExplodeData();
+			}
 
 			protected override void OnInitialise(GameObject _go) {
 				m_machine	= _go.GetComponent<Machine>();
