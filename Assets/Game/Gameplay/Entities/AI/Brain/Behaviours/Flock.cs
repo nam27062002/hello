@@ -22,7 +22,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_timer = m_changeLeaderTime;
+				m_timer = 0f;
 			}
 
 			protected override void OnUpdate() {

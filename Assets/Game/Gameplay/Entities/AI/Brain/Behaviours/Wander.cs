@@ -22,12 +22,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				if (m_pilot.guideFunction != null) {
-					m_target = m_pilot.guideFunction.NextPositionAtSpeed(0f);					
-				} else {						
-					m_target = Random.insideUnitSphere * 10f;
-					m_target.z = 0;
-				} 
+				m_target = m_machine.position;
 			}
 
 			protected override void OnUpdate() {
@@ -42,9 +37,8 @@ namespace AI {
 						m_target = Random.insideUnitSphere * 10f;
 						m_target.z = 0;
 					} 
+					m_pilot.GoTo(m_target);
 				}
-
-				m_pilot.GoTo(m_target);
 			}
 		}
 	}

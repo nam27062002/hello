@@ -51,7 +51,9 @@ namespace AI {
 			m_target = _target;
 		}
 
-		protected virtual void Update() {
+		protected override void Update() {
+			base.Update();
+
 			// state machine updates
 			if (m_brain != null) {
 				m_brain.Update();
