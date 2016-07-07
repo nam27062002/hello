@@ -137,9 +137,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_waterMovementModifier = 0;
 
-	public static float s_velocityBlendRate = 40;
-	public static float s_velocityUpBlendRate = 20;
-	public static float s_velocityDownBlendRate = 60;
+	public static float s_velocityBlendRate = 256;
+	public static float s_velocityUpBlendRate = 230;
+	public static float s_velocityDownBlendRate = 256;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
