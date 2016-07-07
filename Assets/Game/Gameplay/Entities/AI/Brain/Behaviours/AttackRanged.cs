@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {	
@@ -27,8 +26,8 @@ namespace AI {
 				return new AttackRangedData();
 			}
 
-			protected override void OnInitialise(GameObject _go) {
-				base.OnInitialise(_go);
+			protected override void OnInitialise() {
+				base.OnInitialise();
 
 				m_projectileSpawnPoint = m_machine.FindTransformRecursive(m_projectileSpawnTransformName);
 			

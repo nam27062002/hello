@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {		
@@ -15,19 +14,11 @@ namespace AI {
 			//TODO: serialize
 			public float m_changeLeaderTime = 5f;
 
-			private Pilot m_pilot;
-			private Machine m_machine;
-
 			private float m_timer;
 
 
 			public override StateComponentData CreateData() {
 				return new FlockData();
-			}
-
-			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<Pilot>();
-				m_machine	= _go.GetComponent<Machine>();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {		
@@ -18,9 +17,9 @@ namespace AI {
 				return new AttackMeleeData();
 			}
 
-			protected override void OnInitialise(GameObject _go) {
-				base.OnInitialise(_go);
-				m_meleeWeapon	= _go.FindComponentRecursive<MeleeWeapon>();
+			protected override void OnInitialise() {
+				base.OnInitialise();
+				m_meleeWeapon = m_machine.FindComponentRecursive<MeleeWeapon>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {

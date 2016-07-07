@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace AISM
+namespace AI
 {
 	[System.Serializable]
 	public sealed class State

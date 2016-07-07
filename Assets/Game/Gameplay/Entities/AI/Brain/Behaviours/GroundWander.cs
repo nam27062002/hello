@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {		
@@ -21,9 +20,6 @@ namespace AI {
 			private float m_xLimitMin;
 			private float m_xLimitMax;
 
-			private AIPilot m_pilot;
-			private Machine m_machine;
-
 			private bool m_checkGoToRest;
 
 			private float m_walkSpeed = 1.5f;
@@ -33,10 +29,7 @@ namespace AI {
 				return new GroundWanderData();
 			}
 
-			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<AIPilot>();
-				m_machine	= _go.GetComponent<Machine>();
-
+			protected override void OnInitialise() {
 				m_xLimitMin = m_pilot.area.min.x;
 				m_xLimitMax = m_pilot.area.max.x;
 			}

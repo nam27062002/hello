@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AISM
+namespace AI
 {
 	[System.Serializable]
 	public abstract class StateComponentData {}
@@ -13,8 +13,10 @@ namespace AISM
 		bool m_initialised  = false;
 
 		protected StateMachine m_stateMachine;
-		State m_state;
+		protected AIPilot m_pilot;
+		protected Machine m_machine;
 
+		State m_state;
 		public State state { get { return m_sharedBetweenStates ? m_stateMachine.current : m_state; } }
 		public bool sharedBetweenStates { get { return m_sharedBetweenStates; } }
 
@@ -23,9 +25,12 @@ namespace AISM
 			if (!m_initialised)
 			{
 				m_stateMachine = _stateMachine;
+				m_pilot 	= m_stateMachine.gameObject.GetComponent<AIPilot>();
+				m_machine	= m_stateMachine.gameObject.GetComponent<Machine>();
+
 				m_state = _state;
 
-				OnInitialise(m_stateMachine.gameObject);
+				OnInitialise();
 				m_initialised = true;
 			}
 		}
@@ -57,7 +62,7 @@ namespace AISM
 			m_stateMachine.Transition(transitionID, state, param);
 		}
 
-		protected virtual void OnInitialise(GameObject _go){}
+		protected virtual void OnInitialise(){}
 		protected virtual void OnRemove(){}
 		protected virtual void OnEnter(State _oldState, object[] _param){}
 		protected virtual void OnExit(State _newState){}

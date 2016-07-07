@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace AISM
+namespace AI
 {
 	[CreateAssetMenu(menuName = "State Machine")]
 	public class StateMachine : ScriptableObject

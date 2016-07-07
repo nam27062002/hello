@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {		
@@ -13,15 +12,9 @@ namespace AI {
 		public class Explode : StateComponent {
 			[SerializeField] private float m_damage = 5f;
 
-			private Machine m_machine;
-
 
 			public override StateComponentData CreateData() {
 				return new ExplodeData();
-			}
-
-			protected override void OnInitialise(GameObject _go) {
-				m_machine	= _go.GetComponent<Machine>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {

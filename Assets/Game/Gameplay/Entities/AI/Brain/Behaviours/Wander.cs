@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {
@@ -14,17 +13,11 @@ namespace AI {
 
 			private Vector3 m_target;
 
-			private AIPilot m_pilot;
-			private Machine m_machine;
-
 			public override StateComponentData CreateData() {
 				return new WanderData();
 			}
 
-			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<AIPilot>();
-				m_machine	= _go.GetComponent<Machine>();
-
+			protected override void OnInitialise() {
 				m_target = m_machine.position;
 			}
 

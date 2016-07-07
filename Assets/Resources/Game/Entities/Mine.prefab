@@ -130,7 +130,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 448250}
   - 114: {fileID: 11444748}
-  - 114: {fileID: 11480940}
+  - 114: {fileID: 11416030}
   - 114: {fileID: 11466336}
   - 114: {fileID: 11483128}
   - 135: {fileID: 13525966}
@@ -343,6 +343,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11416030
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_brainResource: {fileID: 11400000, guid: 01e097987dda34dae88639be166bccba, type: 2}
 --- !u!114 &11444748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -380,21 +392,6 @@ MonoBehaviour:
     m_senseDelay:
       min: 0.25
       max: 1.25
---- !u!114 &11480940
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 176872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1e57478aafd544d4aae53163a322928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damage: 5
-  m_amplitude: 2
-  m_frequency: 1
-  m_rotationSpeed: {x: 0, y: 0, z: 0}
 --- !u!114 &11483128
 MonoBehaviour:
   m_ObjectHideFlags: 1

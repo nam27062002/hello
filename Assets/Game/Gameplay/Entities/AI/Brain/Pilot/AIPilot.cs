@@ -4,8 +4,8 @@ using System.Collections;
 namespace AI {
 	public abstract class AIPilot : Pilot, Spawnable {
 
-		[SerializeField] private AISM.StateMachine m_brainResource;
-		private AISM.StateMachine m_brain;
+		[SerializeField] private StateMachine m_brainResource;
+		private StateMachine m_brain;
 
 		protected Vector3 m_homePosition;
 		public Vector3 homePosition { get { return m_homePosition; } }
@@ -20,7 +20,7 @@ namespace AI {
 
 			// braaiiiinnn ~ ~ ~ ~ ~
 			if (m_brain == null) {
-				m_brain = Object.Instantiate(m_brainResource) as AISM.StateMachine;
+				m_brain = Object.Instantiate(m_brainResource) as StateMachine;
 			}
 			m_brain.Initialise(gameObject, true);
 		}

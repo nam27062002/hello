@@ -1,6 +1,4 @@
-﻿using AISM;
-
-namespace AI {
+﻿namespace AI {
 	public abstract class Signal {
 		private bool m_value;
 		public bool value { get { return m_value; } }

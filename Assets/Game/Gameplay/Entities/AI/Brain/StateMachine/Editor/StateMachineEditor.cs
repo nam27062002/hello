@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-namespace AISM
+namespace AI
 {
 	public static class StateMachineEditor
 	{

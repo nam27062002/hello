@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {		
@@ -27,17 +26,13 @@ namespace AI {
 
 			private float m_timer;
 
-			protected Pilot m_pilot;
-			protected Machine m_machine;
 			private PreyAnimationEvents m_animEvents;
 
 			private object[] m_transitionParam;
 
 
-			protected override void OnInitialise(GameObject _go) {
-				m_pilot 		= _go.GetComponent<Pilot>();
-				m_machine		= _go.GetComponent<Machine>();
-				m_animEvents 	= _go.FindComponentRecursive<PreyAnimationEvents>();
+			protected override void OnInitialise() {
+				m_animEvents 	= m_machine.FindComponentRecursive<PreyAnimationEvents>();
 				m_machine.SetSignal(Signals.Alert.name, true);
 
 				m_transitionParam = new object[1];

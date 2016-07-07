@@ -1,21 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {		
 		[CreateAssetMenu(menuName = "Behaviour/Home")]
 		public class Home : StateComponent {		
-
-			private AIPilot m_pilot;
-			private Machine m_machine;
-
 			private bool m_alertRestoreValue;
 
-			protected override void OnInitialise(GameObject _go) {
-				m_pilot 	= _go.GetComponent<AIPilot>();
-				m_machine	= _go.GetComponent<Machine>();
-			}
+
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);

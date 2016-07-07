@@ -1,6 +1,6 @@
 using System;
 
-namespace AISM
+namespace AI
 {
 	public class StateTransitionTrigger : Attribute
 	{

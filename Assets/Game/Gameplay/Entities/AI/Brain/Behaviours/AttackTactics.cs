@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using AISM;
 
 namespace AI {
 	namespace Behaviour {	
@@ -17,12 +16,8 @@ namespace AI {
 
 			private float m_timer;
 
-			private Machine m_machine;
 
-			protected override void OnInitialise(GameObject _go) {
-				m_machine	= _go.GetComponent<Machine>();
-				m_machine.SetSignal(Signals.Alert.name, true);
-
+			protected override void OnInitialise() {
 				m_timer = 0f;
 				m_shutdownSensorTime = 0f;
 			}
