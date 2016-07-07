@@ -59,6 +59,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	// Other data
 	private string m_dragonSku;
+	private Wardrobe m_wardrobe;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -87,6 +88,8 @@ public class DisguisesScreenController : MonoBehaviour {
 		for(int i = 0; i < m_powers.Length; i++) {
 			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
 		}
+
+		m_wardrobe = UsersManager.currentUser.wardrobe;
 	}
 
 	/// <summary>
@@ -121,7 +124,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Find out initial disguise
 		// Dragon's current disguise by default, but can be overriden by setting the previewDisguise property before opening the screen
-		string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
+		string currentDisguise = m_wardrobe.GetEquipedDisguise(m_dragonSku);
 		if (m_previewDisguise != "") {
 			currentDisguise = m_previewDisguise;
 			m_previewDisguise = "";
@@ -141,7 +144,7 @@ public class DisguisesScreenController : MonoBehaviour {
 					DefinitionNode def = defList[i - 1];
 
 					Sprite spr = GetFromCollection(ref icons, def.GetAsString("icon"));
-					int level = Wardrobe.GetDisguiseLevel(def.sku);
+					int level = m_wardrobe.GetDisguiseLevel(def.sku);
 					m_pills[i].Load(def, level, spr);
 
 					// Is it the initial pill?
@@ -203,11 +206,15 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		// Restore equipped disguise
+		bool newEquip = false;
 		if(m_equippedPill != null) {
-			Wardrobe.Equip(m_dragonSku, m_equippedPill.sku);
+			newEquip = m_wardrobe.Equip(m_dragonSku, m_equippedPill.sku);
 		} else {
-			Wardrobe.Equip(m_dragonSku, "default");
+			newEquip = m_wardrobe.Equip(m_dragonSku, "default");
 		}
+
+		if(newEquip)
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
 		PersistenceManager.Save();
 	}
 
@@ -294,7 +301,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill.Select(true);
 
 		// Apply selected disguise to dragon preview and animate
-		Wardrobe.Equip(m_dragonSku, m_selectedPill.sku);
+		bool newEquip = m_wardrobe.Equip(m_dragonSku, m_selectedPill.sku);
+		if (newEquip)
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
 		m_previewAnchor.GetComponent<ShowHideAnimator>().ForceHide(false);
 		m_previewAnchor.GetComponent<ShowHideAnimator>().Show();
 

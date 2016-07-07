@@ -187,6 +187,10 @@ public class GameServerManager :  MonoBehaviour
 			if ( serverSave != null )
 			{
 				m_lastRecievedUniverse = serverSave;
+				// Check what to do
+				// if we can merge automatically then do it
+				// else show something to the user?
+
 				// Use event? New Game Data from server?
 			}
 		}
@@ -202,14 +206,34 @@ public class GameServerManager :  MonoBehaviour
 
 
 	private bool m_configured = false;
+	private bool m_saveDataRecovered = false;	// Tells if we recovered the save data from the server and merged with the local savedata
+	public bool saveDataRecovered
+	{
+		get{ return m_saveDataRecovered; }
+		set { m_saveDataRecovered = value; }
+	}
+	private bool m_mergedWithSocial = false;	// Tells if social already merged
+	public bool mergedWithSocial
+	{
+		get{ return m_mergedWithSocial; }
+		set { m_mergedWithSocial = value; }
+	}
+
+	// Game Login and Save Data Flow ////////////////////////////////
+	// Try To Login -> Get Universe -> Resolve Current Universe / Server Universe -> Set m_saveDataRecovered = true -> *
+	// Try To Login On Social Platform -> *
+	// * At this point on both flows we can try to merge account -> once merged Set m_mergedWithSocial = true
+
+	// Notes: 
+	// 		- if we ever Logout from Social Platform and Login Again -> *
+	//		- 
+	////////////////////////////////////////////////////////////////
+
 	private GameSessionDelegate m_delegate;
-
-
-
 
 	void Awake()
 	{
-		
+		PrepareServerConfig();
 	}
 
 	void OnDestroy()
@@ -334,4 +358,36 @@ public class GameServerManager :  MonoBehaviour
     }
 
 
+    public void MergeSocialAccount()
+    {
+    	if ( SocialPlatformManager.SharedInstance.IsLoggedIn() )
+    	{
+			string platform = SocialPlatformManager.SharedInstance.GetPlatformName();
+			string userId = SocialPlatformManager.SharedInstance.GetUserId();
+			string userName = SocialPlatformManager.SharedInstance.GetUserName();
+			string token = SocialPlatformManager.SharedInstance.GetToken();
+
+			GameSessionManager.SharedInstance.MergeGameAccounts	( platform, userId, userName, token);
+    	}
+    	else
+    	{
+    		Debug.LogError("Cannot Merge With Social if not logged in");
+    	}
+
+	}
+
+
+	/// <summary>
+	/// Tries the merge save datas. If true
+	/// </summary>
+	/// <returns><c>true</c>, if merge save datas was tryed, <c>false</c> otherwise.</returns>
+	/// <param name="saveData1">Save data1.</param>
+	/// <param name="saveData2">Save data2.</param>
+	/*
+	public bool TryMergeSaveDatas( SimpleJSON.JSONClass saveData1, SimpleJSON.JSONClass saveData2)
+	{
+		
+
+	}
+	*/
 }

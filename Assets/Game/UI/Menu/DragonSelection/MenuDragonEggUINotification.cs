@@ -43,7 +43,8 @@ public class MenuDragonEggUINotification : MonoBehaviour {
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
-	private void OnEnable() {
+	private void OnEnable() 
+	{
 		// Refresh each time the component is enabled
 		Refresh();
 	}
@@ -56,11 +57,12 @@ public class MenuDragonEggUINotification : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Notification visible if any of the eggs in the inventory are marked as new
-		if(m_notification != null) {
+		if(m_notification != null) 
+		{
 			bool newEggs = false;
 			for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) {
 				// Does this slot have an egg, and is it new?
-				if(EggManager.inventory[i] != null && EggManager.inventory[i].isNew) {
+				if(EggManager.inventory != null && EggManager.inventory[i] != null && EggManager.inventory[i].isNew) {
 					// Break loop!
 					newEggs = true;
 					break;

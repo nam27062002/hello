@@ -72,8 +72,6 @@ public class LoadingSceneController : SceneController {
 		RewardManager.CreateInstance(true);
 		EggManager.CreateInstance(true);
 		EggManager.InitFromDefinitions();
-		Wardrobe.CreateInstance(true);
-		Wardrobe.InitFromDefinitions();
 
 		// Settings and setup
 		GameSettings.CreateInstance(true);

@@ -97,35 +97,11 @@ public static class PersistenceManager {
 			m_saveTimestamp = DateTime.Now;
 		*/
 		// User profile
-		if ( _data.ContainsKey("userProfile") )
-			UsersManager.currentUser.Load( _data["userProfile"] );
-		else
-			Debug.TaggedLog(TAG, "No userProfile on object");
-		// UserProfile.Load(_data.profile);
+		UsersManager.currentUser.Load( _data );
 
-		// Dragons data
-		if ( _data.ContainsKey("dragons") )
-			DragonManager.Load(_data["dragons"]);
-		else
-			Debug.TaggedLog(TAG, "No dragons on object");
-
-		// Missions
-		if ( _data.ContainsKey("missions") )
-			MissionManager.Load(_data["missions"]);
-		else
-			Debug.TaggedLog(TAG, "No missions on object");
-
-		// Eggs
-		if ( _data.ContainsKey("eggs") )
-			EggManager.Load(_data["eggs"]);
-		else
-			Debug.TaggedLog(TAG, "No eggs on object");
-
-		// Disguises
-		if ( _data.ContainsKey("wardrobe") )
-			Wardrobe.Load(_data["wardrobe"]);
-		else
-			Debug.TaggedLog(TAG, "No wardrobe on object");
+		DragonManager.SetupUser( UsersManager.currentUser );
+		EggManager.SetupUser( UsersManager.currentUser );
+		MissionManager.SetupUser( UsersManager.currentUser );
 
 	}
 
@@ -164,24 +140,9 @@ public static class PersistenceManager {
 	/// </summary>
 	/// <param name="_profileName">The name of the profile to be saved.</param>
 	public static void Save(string _profileName = "") {
-		// Create a temp data object and fill it
-		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// User profile
-		data.Add("userProfile",UsersManager.instance.m_currentUser.Save());
-
-
-		// Dragons data
-		data.Add("dragons", DragonManager.Save());
-
-		// Missions
-		data.Add("missions", MissionManager.Save());
-
-		// Eggs
-		data.Add("eggs", EggManager.Save());
-
-		// Disguises
-		data.Add("wardrobe", Wardrobe.Save());
+		SimpleJSON.JSONClass data = UsersManager.currentUser.Save();
 
 		// Save the object we just created
 		SaveFromObject(_profileName, data);

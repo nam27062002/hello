@@ -37,6 +37,7 @@ public class SocialPlatformManager : MonoBehaviour
 		public override void onLogInCompleted()
 		{
 			Debug.TaggedLog(TAG, "onLogInCompleted");
+			m_manager.OnSocialPlatformLogin();
 		}
 
 		public override void onLogInFailed()
@@ -75,22 +76,29 @@ public class SocialPlatformManager : MonoBehaviour
 	}
 	//////////////////////////////////////////////////////////////////////////
 
-	// Delegates //////////////////////////////////////////////////////
+	// Social Platform Response //////////////////////////////////////////////
+
+	void OnSocialPlatformLogin()
+	{
+		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+	// Delegate /////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////////////
 
 	// Members //////////////////////////////////////////////////////
 
-	GameFacebookListener m_delegate;
+	GameFacebookListener m_facebookDelegate;
 
 	public enum UsingPlatform
 	{
 		FACEBOOK,
 		WEIBO
 	};
-	UsingPlatform m_platform;
-
-	bool m_useFacebook = true;
+	UsingPlatform m_platform = UsingPlatform.FACEBOOK;
 
 	public void Init()
 	{
@@ -98,8 +106,8 @@ public class SocialPlatformManager : MonoBehaviour
 		{
 			case UsingPlatform.FACEBOOK:
 			{
-				m_delegate = new GameFacebookListener( this );
-				FacebookManager.SharedInstance.SetFacebookListener( m_delegate );
+				m_facebookDelegate = new GameFacebookListener( this );
+				FacebookManager.SharedInstance.SetFacebookListener( m_facebookDelegate );
 				FacebookManager.SharedInstance.Initialise();
 			}break;
 		}
@@ -118,18 +126,20 @@ public class SocialPlatformManager : MonoBehaviour
 
 	public bool IsLoggedIn()
 	{
+		bool ret = false;
 		switch(m_platform)
 		{
 			case UsingPlatform.FACEBOOK:
 			{
-				return FacebookManager.SharedInstance.IsLoggedIn();
+				ret = FacebookManager.SharedInstance.IsLoggedIn();
 			}break;
 		}
-		return false;
+		return ret;
 	}
 
 	public string GetSocialIconPath()
 	{
+		string ret = "";
 		switch( m_platform )
 		{
 			case UsingPlatform.FACEBOOK:
@@ -141,7 +151,77 @@ public class SocialPlatformManager : MonoBehaviour
 				
 			}break;
 		}
-		return "";
+		return ret;
+	}
+
+	public string GetPlatformName()
+	{
+		string ret = "editor";
+		switch( m_platform )
+		{
+			case UsingPlatform.FACEBOOK:
+			{
+				ret = "facebook";
+			}break;
+			case UsingPlatform.WEIBO:
+			{
+				ret = "weibo";
+			}break;
+		}
+		return ret;
+	}
+
+	public string GetToken()
+	{
+		string ret = "";
+		switch( m_platform )
+		{
+			case UsingPlatform.FACEBOOK:
+			{
+				Facebook.Unity.AccessToken aToken = Facebook.Unity.AccessToken.CurrentAccessToken;
+				ret = aToken.TokenString;
+			}break;
+			case UsingPlatform.WEIBO:
+			{
+				
+			}break;
+		}
+		return ret;
+	}
+
+	public string GetUserId()
+	{
+		string ret = "";
+		switch( m_platform )
+		{
+			case UsingPlatform.FACEBOOK:
+			{
+				Facebook.Unity.AccessToken aToken = Facebook.Unity.AccessToken.CurrentAccessToken;
+				ret = aToken.UserId;
+			}break;
+			case UsingPlatform.WEIBO:
+			{
+				
+			}break;
+		}
+		return ret;
+	}
+
+	public string GetUserName()
+	{
+		string ret = "";
+		switch( m_platform )
+		{
+			case UsingPlatform.FACEBOOK:
+			{
+				ret = FacebookManager.SharedInstance.UserName;
+			}break;
+			case UsingPlatform.WEIBO:
+			{
+				
+			}break;
+		}
+		return ret;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

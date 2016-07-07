@@ -235,12 +235,12 @@ public class Egg {
 					m_rewardData.value = disguise;
 
 					// Level up the disguise
-					bool leveled = Wardrobe.LevelUpDisguise(disguise);
+					bool leveled = UsersManager.currentUser.wardrobe.LevelUpDisguise(disguise);
 
 					// If the disguise is max leveled, give coins instead
 					if(!leveled) {
 						// Give coins
-						m_rewardData.coins = (long)Wardrobe.GetDisguiseValue(disguise);
+						m_rewardData.coins = (long)UsersManager.currentUser.wardrobe.GetDisguiseValue(disguise);
 						UsersManager.currentUser.AddCoins(m_rewardData.coins);
 					}
 				}
@@ -304,7 +304,10 @@ public class Egg {
 		m_isNew = _data["isNew"].AsBool;
 
 		// Reward
-		m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]);
+		if ( _data.ContainsKey("rewardSku") )
+			m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]);
+		else
+			m_rewardDef = null;
 	}
 
 	/// <summary>

@@ -354,7 +354,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_rewardRarity.InitFromRarity(disguiseDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
 
 				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
-				int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
+				int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(disguiseDef.sku);
 				if(rewardData.coins > 0) {
 					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", disguiseDef.GetLocalized("tidName"), StringUtils.FormatNumber(rewardData.coins));
 				} else if(disguiseLevel == 1) {
@@ -450,7 +450,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 			// Aux vars
 			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
-			int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
+			int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(disguiseDef.sku);
 
 			// Initialize with actual powers data
 			DefinitionNode powerSetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, disguiseDef.GetAsString("powerupSet"));

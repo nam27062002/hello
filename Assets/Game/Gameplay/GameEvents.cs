@@ -88,4 +88,7 @@ public enum GameEvents {
 
 	// GameServerManager events
 	LOGGED,						// params: bool
+
+	// Social Platform Manager Events
+	SOCIAL_LOGGED,				// params: bool
 }

@@ -10,7 +10,8 @@
 using UnityEngine;
 using System;
 using SimpleJSON;
-
+using System.Collections;
+using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -90,6 +91,46 @@ public class UserProfile
 		set { m_superFuryProgression = value; }
 	}
 
+	// Dragon Data
+	private Dictionary<string,DragonData> m_dragonsBySku;	// Owned Dragons by Sku
+	public Dictionary<string,DragonData> dragonsBySku
+	{
+		get{ return m_dragonsBySku; }
+	}
+
+	// Egg Data
+	private Egg[] m_eggsInventory;
+	public Egg[] eggsInventory
+	{
+		get {return m_eggsInventory;}
+	}
+	private Egg m_incubatingEgg;
+	public Egg incubatingEgg
+	{
+		get{ return m_incubatingEgg;}
+		set{ m_incubatingEgg = value;}
+	}
+
+	private DateTime m_incubationEndTimestamp;
+	public DateTime incubationEndTimestamp
+	{
+		get{ return m_incubationEndTimestamp; }
+		set{ m_incubationEndTimestamp = value; }
+	}
+
+	// DISGUISES
+	Wardrobe m_wardrobe;
+	public Wardrobe wardrobe
+	{
+		get{ return m_wardrobe; }
+	}
+
+	UserMissions m_userMissions;
+	public UserMissions userMissions
+	{
+		get{ return m_userMissions; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -97,6 +138,28 @@ public class UserProfile
 	//------------------------------------------------------------------------//
 	// PUBLIC STATIC METHODS												  //
 	//------------------------------------------------------------------------//
+
+	public UserProfile()
+	{
+		m_dragonsBySku = new Dictionary<string, DragonData>();
+		DragonData newDragonData = null;
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+		for(int i = 0; i < defs.Count; i++) {
+			newDragonData = new DragonData();
+			newDragonData.Init(defs[i]);
+			m_dragonsBySku[defs[i].sku] = newDragonData;
+		}
+
+
+		m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
+		m_incubatingEgg = null;
+
+		m_wardrobe = new Wardrobe();
+		m_userMissions = new UserMissions();
+	}
+
+
 	/// <summary>
 	/// Add coins.
 	/// </summary>
@@ -161,25 +224,86 @@ public class UserProfile
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
 		// Economy
-		m_coins = _data["sc"].AsInt;
-		m_pc = _data["pc"].AsInt;
+		SimpleJSON.JSONNode profile = _data["userProfile"];
+
+		m_coins = profile["sc"].AsInt;
+		m_pc = profile["pc"].AsInt;
 
 		// Game settings
-		m_currentDragon = _data["currentDragon"];
-		m_currentLevel = _data["currentLevel"];
-		m_tutorialStep = ( TutorialStep )_data["tutorialStep"].AsInt;
-		m_furyUsed = _data["furyUsed"].AsBool;
+		m_currentDragon = profile["currentDragon"];
+		m_currentLevel = profile["currentLevel"];
+		m_tutorialStep = ( TutorialStep )profile["tutorialStep"].AsInt;
+		m_furyUsed = profile["furyUsed"].AsBool;
 
 		// Game stats
-		m_gamesPlayed = _data["gamesPlayed"].AsInt;
-		m_highScore = _data["highScore"].AsInt;
-		m_superFuryProgression = _data["superFuryProgression"].AsInt;
+		m_gamesPlayed = profile["gamesPlayed"].AsInt;
+		m_highScore = profile["highScore"].AsInt;
+		m_superFuryProgression = profile["superFuryProgression"].AsInt;
 
 		// Some cheats override profile settings - will be saved with the next Save()
 		if(Prefs.GetBool("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
 			Prefs.SetBool("skipTutorialCheat", false);
 		}
+
+		if ( _data.ContainsKey("dragons") )
+		{
+			SimpleJSON.JSONArray dragons = _data["dragons"] as SimpleJSON.JSONArray;
+			for( int i = 0; i<dragons.Count; i++ )
+			{
+				string sku = dragons[i]["sku"];
+				m_dragonsBySku[sku].Load(dragons[i]);
+			}
+		}
+
+		if ( _data.ContainsKey("eggs") )
+			LoadEggData(_data["eggs"] as SimpleJSON.JSONClass);
+
+		m_wardrobe.InitFromDefinitions();
+		if ( _data.ContainsKey("wardrobe") )
+			m_wardrobe.Load( _data["wardrobe"] );
+
+		if ( _data.ContainsKey("missions") )
+		{
+			m_userMissions.Load( _data["missions"] );
+			m_userMissions.ownedDragons = GetNumOwnedDragons();
+		}
+	}
+
+	private void LoadEggData( SimpleJSON.JSONClass _data )
+	{
+	// Inventory
+		SimpleJSON.JSONArray inventoryArray = _data["inventory"].AsArray;
+		for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) 
+		{
+			// In case INVENTORY_SIZE changes (if persisted is bigger, just ignore remaining data, if lower fill new slots with null)
+			if(i < inventoryArray.Count) 
+			{
+				// Either create new egg, delete egg or update existing egg
+				if(m_eggsInventory[i] == null && inventoryArray[i] != null) {			// Create new egg?
+					m_eggsInventory[i] = Egg.CreateFromSaveData(inventoryArray[i]);
+				} else if(m_eggsInventory[i] != null && inventoryArray[i] == null) {	// Delete egg?
+					m_eggsInventory[i] = null;
+				} else if(m_eggsInventory[i] != null && inventoryArray[i] != null) {	// Update egg?
+					m_eggsInventory[i].Load(inventoryArray[i]);
+				}
+			} else {
+				m_eggsInventory[i] = null;
+			}
+		}
+
+		// Incubator - same 3 cases
+		bool dataIncubatingEgg = _data.ContainsKey("incubatingEgg");
+		if(m_incubatingEgg == null && dataIncubatingEgg) {			// Create new egg?
+			m_incubatingEgg = Egg.CreateFromSaveData(_data["incubatingEgg"]);
+		} else if(m_incubatingEgg != null && !dataIncubatingEgg) {	// Delete egg?
+			m_incubatingEgg = null;
+		} else if(m_incubatingEgg != null && dataIncubatingEgg) {	// Update egg?
+			m_incubatingEgg.Load(_data["incubatingEgg"]);
+		}
+
+		// Incubator timer
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
 	}
 
 	/// <summary>
@@ -190,24 +314,79 @@ public class UserProfile
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		// Initialize it
+		// PROFILE
+		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
 		// Economy
-		data.Add( "sc", m_coins.ToString());
-		data.Add( "pc", m_pc.ToString());
+		profile.Add( "sc", m_coins.ToString());
+		profile.Add( "pc", m_pc.ToString());
 
 		// Game settings
-		data.Add("currentDragon",m_currentDragon);
-		data.Add("currentLevel",m_currentLevel);
-		data.Add("tutorialStep",((int)m_tutorialStep).ToString());
-		data.Add("furyUsed", m_furyUsed.ToString());
+		profile.Add("currentDragon",m_currentDragon);
+		profile.Add("currentLevel",m_currentLevel);
+		profile.Add("tutorialStep",((int)m_tutorialStep).ToString());
+		profile.Add("furyUsed", m_furyUsed.ToString());
 
 		// Game stats
-		data.Add("gamesPlayed",m_gamesPlayed.ToString());
-		data.Add("highScore",m_highScore.ToString());
-		data.Add("superFuryProgression",m_superFuryProgression.ToString());
+		profile.Add("gamesPlayed",m_gamesPlayed.ToString());
+		profile.Add("highScore",m_highScore.ToString());
+		profile.Add("superFuryProgression",m_superFuryProgression.ToString());
+		data.Add("userProfile", profile);
 
+		// DRAGONS
+		SimpleJSON.JSONArray dragons = new SimpleJSON.JSONArray();
+		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
+		{
+			DragonData dragonData = pair.Value;
+			if ( dragonData.isOwned || !dragonData.isLocked )
+				dragons.Add( dragonData.Save() );
+		}
+		data.Add( "dragons", dragons );
+
+		data.Add("eggs", SaveEggData());
+		data.Add("wardrobe", m_wardrobe.Save());
+		data.Add("missions", m_userMissions.Save());
 		// Return it
 		return data;
 	}
+
+	private SimpleJSON.JSONClass SaveEggData()
+	{
+		// Create new object, initialize and return it
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Inventory
+		SimpleJSON.JSONArray inventoryArray = new SimpleJSON.JSONArray();
+		for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) 
+		{
+			if(m_eggsInventory[i] != null) 
+			{
+				inventoryArray.Add(m_eggsInventory[i].Save());
+			}
+		}
+		data.Add("inventory", inventoryArray);
+
+		// Incubator
+		if(m_incubatingEgg != null) 
+		{
+			data.Add("incubatingEgg", m_incubatingEgg.Save());
+		}
+
+		// Incubator timer
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString());;
+
+		return data;
+	}
+
+	public int GetNumOwnedDragons()
+	{
+		int ret = 0;
+		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
+		{
+			if ( pair.Value.isOwned )
+				ret++;
+		}
+		return 0;
+	}
+
 }
 

@@ -25,6 +25,8 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	UserProfile m_user;
+
 	// The data
 	// We will keep it in a dictionary, but have lists with commonly used sorting ways
 	private Dictionary<string, DragonData> m_dragonsBySku = null;
@@ -39,7 +41,7 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 
 	// Shortcut to get the data of the currently selected dragon
 	public static DragonData currentDragon {
-		get { return GetDragonData(UsersManager.currentUser.currentDragon); }
+		get { return GetDragonData(instance.m_user.currentDragon); }
 	}
 
 	// Shortcut to get the data of the dragon following the currently selected
@@ -68,22 +70,8 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	protected void Awake() {
 		// Create a dragon data object for every known dragon definition
-		m_dragonsBySku = new Dictionary<string, DragonData>();
-		DragonData newDragonData = null;
-		List<DefinitionNode> defs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
-		for(int i = 0; i < defs.Count; i++) {
-			newDragonData = new DragonData();
-			newDragonData.Init(defs[i]);
-			m_dragonsBySku[defs[i].sku] = newDragonData;
-		}
-
-		// Initialize ordered list
-		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		m_dragonsBySku = null;
 		m_dragonsByOrder = new List<DragonData>();
-		for(int i = 0; i < defs.Count; i++) {
-			m_dragonsByOrder.Add(m_dragonsBySku[defs[i].sku]);
-		}
 	}
 
 	//------------------------------------------------------------------//
@@ -128,7 +116,8 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	public static List<DragonData> GetDragonsByLockState(DragonData.LockState _lockState) {
 		// Iterate the dragons list looking for those belonging to the target tier
 		List<DragonData> list = new List<DragonData>();
-		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
+		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) 
+		{
 			// Does this dragon match the required lockstate?
 			if(kvp.Value.lockState == _lockState || _lockState == DragonData.LockState.ANY) {
 				// Yes!! Add it to the list
@@ -192,36 +181,19 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		playerObj.name = GameSettings.playerName;
 	}
 
-	//------------------------------------------------------------------//
-	// PERSISTENCE														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Load state from a persistence object.
-	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SimpleJSON.JSONNode _data) 
+	public static void SetupUser( UserProfile user)
 	{
-		// We don't trust array order, so do it by sku
-		SimpleJSON.JSONArray dragons = _data as SimpleJSON.JSONArray;
-		for( int i = 0; i<dragons.Count; i++ )
-		{
-			GetDragonData(dragons[i]["sku"]).Load( dragons[i] );
-		}
-	}
-	
-	/// <summary>
-	/// Create and return a persistence save data json initialized with the data.
-	/// </summary>
-	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SimpleJSON.JSONNode Save() 
-	{
-		SimpleJSON.JSONArray array = new SimpleJSON.JSONArray();
-		// Create new object, initialize and return it
-		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) 
-		{
-			array.Add( kvp.Value.Save() );
-		}
-		return array;
+		instance.m_user = user;
+		instance.m_dragonsBySku = user.dragonsBySku;
 
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+
+		// Initialize ordered list
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		instance.m_dragonsByOrder.Clear();
+		for(int i = 0; i < defs.Count; i++) {
+			instance.m_dragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
+		}
 	}
 }

@@ -3,7 +3,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Wardrobe : Singleton<Wardrobe> {
+public class Wardrobe 
+{
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -11,19 +12,6 @@ public class Wardrobe : Singleton<Wardrobe> {
 	public static readonly string ITEM_PATH = "Game/Equipable/Items/";
 
 	public static readonly int MAX_LEVEL = 3;
-
-	[Serializable]
-	public class DragonDisguise {
-		public string dragon;
-		public string disguise;
-	}
-
-	[Serializable]
-	public class DisguiseLevel {
-		public string disguise;
-		public int level;
-	}
-
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -39,15 +27,16 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
-	public static void InitFromDefinitions() {
+	public void InitFromDefinitions() 
+	{
 		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DISGUISES);
 
-		instance.m_disguises = new Dictionary<string, int>();
+		m_disguises = new Dictionary<string, int>();
 		for (int i = 0; i < skus.Count; i++) {
-			instance.m_disguises.Add(skus[i], 0);
+			m_disguises.Add(skus[i], 0);
 		}
 
-		instance.m_equiped = new Dictionary<string, string>();
+		m_equiped = new Dictionary<string, string>();
 	}
 
 	public static string GetRandomDisguise(string _dragonSku, string _rarity) {
@@ -72,19 +61,19 @@ public class Wardrobe : Singleton<Wardrobe> {
 	}
 
 
-	public static int GetDisguiseValue(string _sku) {
+	public int GetDisguiseValue(string _sku) {
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _sku).GetAsInt("value");
 	}
 
-	public static int GetDisguiseLevel(string _sku) {
-		if ( instance.m_disguises != null && instance.m_disguises.ContainsKey(_sku))
-			return instance.m_disguises[_sku];
+	public int GetDisguiseLevel(string _sku) {
+		if ( m_disguises != null && m_disguises.ContainsKey(_sku))
+			return m_disguises[_sku];
 		return -1;
 	}
 
-	public static bool LevelUpDisguise(string _sku) {
-		if (instance.m_disguises[_sku] < MAX_LEVEL) {
-			instance.m_disguises[_sku]++;
+	public bool LevelUpDisguise(string _sku) {
+		if (m_disguises[_sku] < MAX_LEVEL) {
+			m_disguises[_sku]++;
 			return true;
 		}
 
@@ -96,23 +85,25 @@ public class Wardrobe : Singleton<Wardrobe> {
 	// EQUIP															//
 	//------------------------------------------------------------------//
 
-	public static void Equip(string _dragonSku, string _disguiseSku) {
+	public bool Equip(string _dragonSku, string _disguiseSku) {
 		string oldDisguise = "";
 
-		if (instance.m_equiped.ContainsKey(_dragonSku)) {
-			oldDisguise = instance.m_equiped[_dragonSku];
+		if (m_equiped.ContainsKey(_dragonSku)) {
+			oldDisguise = m_equiped[_dragonSku];
 		}
 
-		instance.m_equiped[_dragonSku] = _disguiseSku;
+		m_equiped[_dragonSku] = _disguiseSku;
 
-		if (oldDisguise != _disguiseSku) {
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, _dragonSku);
+		if (oldDisguise != _disguiseSku) 
+		{
+			return true;
 		}
+		return false;
 	}
 
-	public static string GetEquipedDisguise(string _dragonSku) {
-		if (instance.m_equiped != null && instance.m_equiped.ContainsKey(_dragonSku)) {
-			return instance.m_equiped[_dragonSku];
+	public string GetEquipedDisguise(string _dragonSku) {
+		if (m_equiped != null && m_equiped.ContainsKey(_dragonSku)) {
+			return m_equiped[_dragonSku];
 		}
 		return "";
 	}
@@ -124,18 +115,18 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// Load state from a json object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SimpleJSON.JSONNode _data) 
+	public void Load(SimpleJSON.JSONNode _data) 
 	{
 		SimpleJSON.JSONArray diguisesArr = _data["disguises"].AsArray;
 		int disguisesLength = diguisesArr.Count;
 		for (int i = 0; i < disguisesLength; i++) {
-			instance.m_disguises[ diguisesArr[i]["disguise"] ] = diguisesArr[i]["level"].AsInt;
+			m_disguises[ diguisesArr[i]["disguise"] ] = diguisesArr[i]["level"].AsInt;
 		}
 
 		SimpleJSON.JSONArray equipedArr = _data["equiped"].AsArray;
 		int equipedLength = equipedArr.Count;
 		for (int k = 0; k < equipedLength; k++) {
-			instance.m_equiped[ equipedArr[k]["dragon"] ] = equipedArr[k]["disguise"];
+			m_equiped[ equipedArr[k]["dragon"] ] = equipedArr[k]["disguise"];
 		}
 	}
 
@@ -143,12 +134,12 @@ public class Wardrobe : Singleton<Wardrobe> {
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SimpleJSON.JSONNode Save() {
+	public SimpleJSON.JSONNode Save() {
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		SimpleJSON.JSONArray diguisesArr = new SimpleJSON.JSONArray();
-		if(instance.m_disguises != null) {
-			foreach (KeyValuePair<string, int> pair in instance.m_disguises) {
+		if(m_disguises != null) {
+			foreach (KeyValuePair<string, int> pair in m_disguises) {
 				if (pair.Value > 0) 
 				{
 					SimpleJSON.JSONClass dl = new SimpleJSON.JSONClass();
@@ -163,9 +154,9 @@ public class Wardrobe : Singleton<Wardrobe> {
 		data["disguises"] = diguisesArr;
 
 		SimpleJSON.JSONArray equipedArr = new SimpleJSON.JSONArray();
-		if(instance.m_equiped != null) 
+		if(m_equiped != null) 
 		{
-			foreach (KeyValuePair<string, string> pair in instance.m_equiped) 
+			foreach (KeyValuePair<string, string> pair in m_equiped) 
 			{
 				SimpleJSON.JSONClass dd = new SimpleJSON.JSONClass();
 

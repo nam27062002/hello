@@ -31,9 +31,12 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	[SerializeField] private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
 
 	// Inventory
-	[SerializeField] private Egg[] m_inventory = new Egg[INVENTORY_SIZE];
 	public static Egg[] inventory {
-		get { return instance.m_inventory; }
+		get { 
+			if ( instance.m_user != null )
+				return instance.m_user.eggsInventory; 
+			return null;
+		}
 	}
 
 	public static bool isInventoryEmpty {
@@ -54,14 +57,13 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		}
 	}
 
+	UserProfile m_user;
 	// Incubator
-	[SerializeField] private Egg m_incubatingEgg = null;
 	public static Egg incubatingEgg {
-		get { return instance.m_incubatingEgg; }
+		get { return instance.m_user.incubatingEgg; }
 	}
 
-	[SerializeField] private DateTime m_incubationEndTimestamp;
-	public static DateTime incubationEndTimestamp { get { return instance.m_incubationEndTimestamp; }}
+	public static DateTime incubationEndTimestamp { get { return instance.m_user.incubationEndTimestamp; }}
 	public static DateTime incubationStartTimestamp { get { return incubationEndTimestamp - incubationDuration; }}
 	public static TimeSpan incubationDuration { get { return new TimeSpan(0, 0, isIncubating ? (int)(incubatingEgg.def.GetAsFloat("incubationMinutes") * 60f) : 0); }}
 	public static TimeSpan incubationElapsed { get { return DateTime.UtcNow - incubationStartTimestamp; }}
@@ -73,7 +75,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	}
 
 	public static bool isIncubating {
-		get { return incubatingEgg != null && incubatingEgg.state == Egg.State.INCUBATING; }
+		get { return instance.m_user != null && incubatingEgg != null && incubatingEgg.state == Egg.State.INCUBATING; }
 	}
 
 	public static bool isReadyForCollection {
@@ -136,12 +138,12 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public void Update() {
 		// Check for incubator deadline
 		if(isIncubating) {
-			if(DateTime.UtcNow >= m_incubationEndTimestamp) {
+			if(DateTime.UtcNow >= incubationEndTimestamp) {
 				// Incubation done!
-				m_incubatingEgg.ChangeState(Egg.State.READY);
+				incubatingEgg.ChangeState(Egg.State.READY);
 
 				// Dispatch game event
-				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, m_incubatingEgg);
+				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, incubatingEgg);
 			}
 		}
 	}
@@ -158,9 +160,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public static int AddEggToInventory(Egg _newEgg) {
 		for(int i = 0; i < INVENTORY_SIZE; i++) {
 			// Is the slot empty?
-			if(instance.m_inventory[i] == null) {
+			if(instance.m_user.eggsInventory[i] == null) {
 				// Yes!! Store egg
-				instance.m_inventory[i] = _newEgg;
+				instance.m_user.eggsInventory[i] = _newEgg;
 				_newEgg.ChangeState(Egg.State.STORED);
 
 				// Dispatch game event
@@ -190,17 +192,17 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		if(inventory.IndexOf(_targetEgg) < 0) return false;
 
 		// Move egg
-		instance.m_incubatingEgg = _targetEgg;
+		instance.m_user.incubatingEgg = _targetEgg;
 
 		// If required, empty inventory slot
 		int slotIdx = inventory.IndexOf(_targetEgg);
 		if(slotIdx >= 0) {
-			instance.m_inventory[slotIdx] = null;
+			instance.m_user.eggsInventory[slotIdx] = null;
 		}
 
 		// Reset incubation timer
 		float incubationMinutes = _targetEgg.def.GetAsFloat("incubationMinutes");
-		instance.m_incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
+		instance.m_user.incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
 
 		// Change egg logic state
 		_targetEgg.ChangeState(Egg.State.INCUBATING);
@@ -235,10 +237,10 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		if(!isIncubating) return false;
 
 		// Incubation done!
-		instance.m_incubatingEgg.ChangeState(Egg.State.READY);
+		instance.m_user.incubatingEgg.ChangeState(Egg.State.READY);
 
 		// Dispatch game event
-		Messenger.Broadcast(GameEvents.EGG_INCUBATION_ENDED, instance.m_incubatingEgg);
+		Messenger.Broadcast(GameEvents.EGG_INCUBATION_ENDED, instance.m_user.incubatingEgg);
 
 		return true;
 	}
@@ -260,11 +262,12 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	/// An egg has been collected.
 	/// </summary>
 	/// <param name="_egg">Egg.</param>
-	private void OnEggCollected(Egg _egg) {
+	private void OnEggCollected(Egg _egg) 
+	{
 		// If it's the one in the incubator, clear incubator
 		if(_egg == incubatingEgg) {
 			// Clear incubator
-			m_incubatingEgg = null;
+			m_user.incubatingEgg = null;
 
 			// Notify game
 			Messenger.Broadcast(GameEvents.EGG_INCUBATOR_CLEARED);
@@ -277,75 +280,15 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// PERSISTENCE														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Load state from a json object.
-	/// </summary>
-	/// <param name="_data">The json loaded from persistence.</param>
-	public static void Load(SimpleJSON.JSONNode _data) {
-		// Inventory
-		SimpleJSON.JSONArray inventoryArray = _data["inventory"].AsArray;
-		for(int i = 0; i < INVENTORY_SIZE; i++) 
-		{
-			// In case INVENTORY_SIZE changes (if persisted is bigger, just ignore remaining data, if lower fill new slots with null)
-			if(i < inventoryArray.Count) 
-			{
-				// Either create new egg, delete egg or update existing egg
-				if(inventory[i] == null && inventoryArray[i] != null) {			// Create new egg?
-					instance.m_inventory[i] = Egg.CreateFromSaveData(inventoryArray[i]);
-				} else if(inventory[i] != null && inventoryArray[i] == null) {	// Delete egg?
-					instance.m_inventory[i] = null;
-				} else if(inventory[i] != null && inventoryArray[i] != null) {	// Update egg?
-					instance.m_inventory[i].Load(inventoryArray[i]);
-				}
-			} else {
-				instance.m_inventory[i] = null;
-			}
-		}
-
-		// Incubator - same 3 cases
-		bool dataIncubatingEgg = _data.ContainsKey("incubatingEgg");
-		if(incubatingEgg == null && dataIncubatingEgg) {			// Create new egg?
-			instance.m_incubatingEgg = Egg.CreateFromSaveData(_data["incubatingEgg"]);
-		} else if(incubatingEgg != null && !dataIncubatingEgg) {	// Delete egg?
-			instance.m_incubatingEgg = null;
-		} else if(incubatingEgg != null && dataIncubatingEgg) {	// Update egg?
-			instance.m_incubatingEgg.Load(_data["incubatingEgg"]);
-		}
-
-		// Incubator timer
-		instance.m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
+	public static bool IsReady()
+	{
+		return instance.m_user != null;
 	}
 
-	/// <summary>
-	/// Create and return a persistence save data object initialized with the data.
-	/// </summary>
-	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SimpleJSON.JSONNode Save() {
-		// Create new object, initialize and return it
-		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+	public static void SetupUser( UserProfile user)
+	{
+		instance.m_user = user;
+	} 
 
-		// Inventory
-		SimpleJSON.JSONArray inventoryArray = new SimpleJSON.JSONArray();
-		for(int i = 0; i < INVENTORY_SIZE; i++) {
-			if(inventory[i] != null) 
-			{
-				inventoryArray.Add(inventory[i].Save());
-			}
-		}
-		data.Add("inventory", inventoryArray);
 
-		// Incubator
-		if(incubatingEgg != null) 
-		{
-			data.Add("incubatingEgg", incubatingEgg.Save());
-		}
-
-		// Incubator timer
-		data.Add("incubationEndTimestamp", instance.m_incubationEndTimestamp.ToString());;
-
-		return data;
-	}
 }
