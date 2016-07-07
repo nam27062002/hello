@@ -7,8 +7,6 @@ namespace AI {
 		public class Home : StateComponent {		
 			private bool m_alertRestoreValue;
 
-
-
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);
 				m_machine.SetSignal(Signals.Alert.name, false);

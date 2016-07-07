@@ -101,7 +101,7 @@ namespace AI
 
 		public void Transition(string id, object[] param = null)
 		{
-			Transition(id, null, param);
+			Transition(id, m_current, param);
 		}
 
 		public void Transition(string id, State from, object[] param = null)

@@ -4,7 +4,6 @@ using System.Collections;
 namespace AI {
 	public abstract class Pilot : MonoBehaviour {
 		
-		//TODO: tornar a crear la interficie??
 		public enum Action {
 			Boost = 0,
 			Attack,
@@ -40,15 +39,8 @@ namespace AI {
 
 		private float m_speed;
 		private float m_boostSpeed;
-		public float speed {
-			get { 
-				if (IsActionPressed(Action.Boost)) {
-					return m_boostSpeed;
-				} else {
-					return m_speed;
-				}
-			} }
-
+		private float m_currentSpeed;
+		public float speed { get { return m_currentSpeed; } }
 
 		protected Vector3 m_externalImpulse;
 		protected Vector3 m_impulse;
@@ -110,6 +102,14 @@ namespace AI {
 
 		public void AddImpulse(Vector3 _externalImpulse) {
 			m_externalImpulse += _externalImpulse;
+		}
+
+		protected virtual void Update() {			
+			if (IsActionPressed(Action.Boost)) {
+				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, 0.125f);
+			} else {
+				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_speed, 0.125f);
+			}
 		}
 	}
 }

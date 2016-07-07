@@ -59,6 +59,8 @@ namespace AI
 			m_mainTransitionFoldout = EditorGUILayout.Foldout(m_mainTransitionFoldout, "Transitions");
 			if(m_mainTransitionFoldout)
 			{				
+				string[] machineTransitionsTriggers = GetAllFieldsWithAttributeRecursive(typeof(AI.Signal), typeof(StateTransitionTrigger));
+
 				EditorGUI.indentLevel++;
 
 				for(int i = 0; i < states.Length; i++)
@@ -76,7 +78,13 @@ namespace AI
 
 							for(int j = 0; j < list.Count; j++)
 							{
-								DisplayTransition(list[j], GetStateTransitions(states[i]), stateNames);
+								string[] stateTransitionsTriggers = GetStateTransitions(states[i]);
+
+								string[] allTransitionsTriggers = new string[stateTransitionsTriggers.Length + machineTransitionsTriggers.Length];
+								stateTransitionsTriggers.CopyTo(allTransitionsTriggers, 0);
+								machineTransitionsTriggers.CopyTo(allTransitionsTriggers, stateTransitionsTriggers.Length);
+
+								DisplayTransition(list[j], allTransitionsTriggers, stateNames);
 							}
 						}
 						if(size != currentSize)
