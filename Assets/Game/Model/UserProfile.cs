@@ -402,5 +402,30 @@ public class UserProfile
 		return 0;
 	}
 
+	public void UniserverSetted()
+	{
+		m_saveCounter++;
+	}
+
+	public string GetEquipedDisguise( string _dragonSku )
+	{
+		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
+			return m_dragonsBySku[ _dragonSku ].diguise;
+		return "";
+	}
+
+	public bool EquipDisguise( string _dragonSku, string _disguiseSku)
+	{
+		bool ret = false;
+		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
+		{
+			if ( m_dragonsBySku[_dragonSku].diguise != _disguiseSku )
+			{
+				ret = true;
+				m_dragonsBySku[_dragonSku].diguise = _disguiseSku;
+			}
+		}
+		return ret;
+	}
 }
 

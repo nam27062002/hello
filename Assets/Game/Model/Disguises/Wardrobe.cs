@@ -17,7 +17,6 @@ public class Wardrobe
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	private Dictionary<string, int> m_disguises;
-	private Dictionary<string, string> m_equiped;
 
 
 	//------------------------------------------------------------------//
@@ -35,8 +34,6 @@ public class Wardrobe
 		for (int i = 0; i < skus.Count; i++) {
 			m_disguises.Add(skus[i], 0);
 		}
-
-		m_equiped = new Dictionary<string, string>();
 	}
 
 	public static string GetRandomDisguise(string _dragonSku, string _rarity) {
@@ -82,33 +79,6 @@ public class Wardrobe
 
 
 	//------------------------------------------------------------------//
-	// EQUIP															//
-	//------------------------------------------------------------------//
-
-	public bool Equip(string _dragonSku, string _disguiseSku) {
-		string oldDisguise = "";
-
-		if (m_equiped.ContainsKey(_dragonSku)) {
-			oldDisguise = m_equiped[_dragonSku];
-		}
-
-		m_equiped[_dragonSku] = _disguiseSku;
-
-		if (oldDisguise != _disguiseSku) 
-		{
-			return true;
-		}
-		return false;
-	}
-
-	public string GetEquipedDisguise(string _dragonSku) {
-		if (m_equiped != null && m_equiped.ContainsKey(_dragonSku)) {
-			return m_equiped[_dragonSku];
-		}
-		return "";
-	}
-
-	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
 	/// <summary>
@@ -121,12 +91,6 @@ public class Wardrobe
 		int disguisesLength = diguisesArr.Count;
 		for (int i = 0; i < disguisesLength; i++) {
 			m_disguises[ diguisesArr[i]["disguise"] ] = diguisesArr[i]["level"].AsInt;
-		}
-
-		SimpleJSON.JSONArray equipedArr = _data["equiped"].AsArray;
-		int equipedLength = equipedArr.Count;
-		for (int k = 0; k < equipedLength; k++) {
-			m_equiped[ equipedArr[k]["dragon"] ] = equipedArr[k]["disguise"];
 		}
 	}
 
@@ -152,23 +116,6 @@ public class Wardrobe
 			}
 		}
 		data["disguises"] = diguisesArr;
-
-		SimpleJSON.JSONArray equipedArr = new SimpleJSON.JSONArray();
-		if(m_equiped != null) 
-		{
-			foreach (KeyValuePair<string, string> pair in m_equiped) 
-			{
-				SimpleJSON.JSONClass dd = new SimpleJSON.JSONClass();
-
-				dd.Add("dragon",pair.Key);
-				dd.Add("disguise", pair.Value);
-
-				equipedArr.Add(dd);
-			}
-		} 
-		 
-		data.Add("equiped",equipedArr);
-		
 
 		return data;
 	}

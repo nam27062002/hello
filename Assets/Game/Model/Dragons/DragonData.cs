@@ -72,9 +72,17 @@ public class DragonData {
 	[SerializeField] private DragonSkill m_fireSkill = null;
 	public DragonSkill fireSkill { get { return m_fireSkill; }}
 
-	// Items
-	[SerializeField] private Dictionary<Equipable.AttachPoint, string> m_equip;
-	public Dictionary<Equipable.AttachPoint, string> equip { get { return m_equip; } }
+	// Pets
+	[SerializeField] private List<string> m_pets;
+	public List<string> pets { get { return m_pets; } }
+
+	// Disguise
+	[SerializeField] private string m_disguise;
+	public string diguise 
+	{ 
+		get { return m_disguise; } 
+		set { m_disguise = value; } 
+	}
 
 	// Debug
 	private float m_scaleOffset = 0;
@@ -104,7 +112,8 @@ public class DragonData {
 		m_fireSkill = new DragonSkill(this, "fire");
 
 		// Items
-		m_equip = new Dictionary<Equipable.AttachPoint, string>();
+		m_pets = new List<string>();
+		m_disguise = "";
 
 		// Other values
 		m_scaleOffset = 0;
@@ -148,20 +157,6 @@ public class DragonData {
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
-	}
-
-	/// <summary>
-	/// Equip an item
-	/// </summary>
-	public void Equip(Equipable.AttachPoint _point, string _sku) {
-		m_equip.Add(_point, _sku);
-	}
-
-	/// <summary>
-	/// Unequip an item
-	/// </summary>
-	public void Unequip(Equipable.AttachPoint _point) {
-		m_equip.Remove(_point);
 	}
 
 	/// <summary>
@@ -240,15 +235,20 @@ public class DragonData {
 		m_energySkill.Load(_data["boostSkillLevel"].AsInt);
 		m_fireSkill.Load(_data["fireSkillLevel"].AsInt);
 
-		// Equip
-		m_equip.Clear();
-		if ( _data.ContainsKey("equip") )
+		// Disguise
+		if ( _data.ContainsKey("disguise") )
+			m_disguise = _data["disguise"];
+		else
+			m_disguise = "";
+
+		// Pets
+		m_pets.Clear();
+		if ( _data.ContainsKey("pets") )
 		{
-			SimpleJSON.JSONArray equip = _data["equip"].AsArray;
-			for (int i = 0; i < equip.Count; i++) {
-				string[] tmp = equip[i].ToString().Split(':');
-				Equipable.AttachPoint point = (Equipable.AttachPoint)Enum.Parse(typeof(Equipable.AttachPoint), tmp[0]);
-				m_equip.Add(point, tmp[1]);
+			SimpleJSON.JSONArray equip = _data["pets"].AsArray;
+			for (int i = 0; i < equip.Count; i++) 
+			{
+				m_pets.Add( equip[i] );
 			}
 		}
 
@@ -272,12 +272,15 @@ public class DragonData {
 		data.Add("boostSkillLevel", m_energySkill.level.ToString());
 		data.Add("fireSkillLevel", m_fireSkill.level.ToString());
 
-		SimpleJSON.JSONArray equip = new SimpleJSON.JSONArray();
-		foreach (Equipable.AttachPoint key in m_equip.Keys) {
-			string tmp = key + ":" + m_equip[key];
-			equip.Add( tmp );
+		data.Add("disgguise", m_disguise);
+
+
+		SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
+		for( int i = 0; i<m_pets.Count; i++ )
+		{
+			pets.Add( m_pets[i] );
 		}
-		data.Add("equip", equip);
+		data.Add("pets", pets);
 
 		return data;
 

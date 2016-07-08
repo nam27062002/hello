@@ -124,7 +124,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Find out initial disguise
 		// Dragon's current disguise by default, but can be overriden by setting the previewDisguise property before opening the screen
-		string currentDisguise = m_wardrobe.GetEquipedDisguise(m_dragonSku);
+		string currentDisguise = UsersManager.currentUser.GetEquipedDisguise(m_dragonSku);
 		if (m_previewDisguise != "") {
 			currentDisguise = m_previewDisguise;
 			m_previewDisguise = "";
@@ -208,9 +208,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Restore equipped disguise
 		bool newEquip = false;
 		if(m_equippedPill != null) {
-			newEquip = m_wardrobe.Equip(m_dragonSku, m_equippedPill.sku);
+			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, m_equippedPill.sku);
 		} else {
-			newEquip = m_wardrobe.Equip(m_dragonSku, "default");
+			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, "default");
 		}
 
 		if(newEquip)
@@ -301,7 +301,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill.Select(true);
 
 		// Apply selected disguise to dragon preview and animate
-		bool newEquip = m_wardrobe.Equip(m_dragonSku, m_selectedPill.sku);
+		bool newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, m_selectedPill.sku);
 		if (newEquip)
 			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
 		m_previewAnchor.GetComponent<ShowHideAnimator>().ForceHide(false);

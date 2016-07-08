@@ -14,7 +14,7 @@ public class DragonPowerUp : MonoBehaviour {
 			dragonSku = preview.sku;
 		}
 
-		string disguise = UsersManager.currentUser.wardrobe.GetEquipedDisguise(dragonSku);
+		string disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
 		int level = UsersManager.currentUser.wardrobe.GetDisguiseLevel(disguise);
 
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
