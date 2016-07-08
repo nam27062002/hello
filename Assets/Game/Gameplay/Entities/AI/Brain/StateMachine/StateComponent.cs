@@ -1,9 +1,25 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace AI
 {
 	[System.Serializable]
-	public abstract class StateComponentData {}
+	public abstract class StateComponentData {
+		/// <summary>
+		/// Serialize the object into a dictionary with the format <fieldName, value>.
+		/// </summary>
+		public Dictionary<string, object> Serialize() {
+			return TypeUtil.GetData(this);
+		}
+
+		/// <summary>
+		/// Initialize the object with a dictionary with the format <fieldName, value>.
+		/// </summary>
+		/// <param name="_data">The serialized data with the format <fieldName, value>.</param>
+		public void Deserialize(Dictionary<string, object> _data) {
+			TypeUtil.ApplyData(this, _data, "", "");
+		}
+	}
 
 	public class StateComponent : ScriptableObject
 	{

@@ -43,14 +43,18 @@ public class AIPilotEditor : Editor {
 		// Get target object
 		m_targetAIPilot = target as AIPilot;
 
-		// Validate stored data
-		ValidateData();
+		// Laod and validate stored data
+		Load();
+		m_targetAIPilot.ValidateComponentsData();
 	}
 
 	/// <summary>
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
+		// Save target object
+		Save();
+
 		// Clear target object
 		m_targetAIPilot = null;
 	}
@@ -63,7 +67,13 @@ public class AIPilotEditor : Editor {
 		serializedObject.Update();
 
 		// Default inspector
+		EditorGUI.BeginChangeCheck();
 		DrawDefaultInspector();
+
+		// If there have been changes, validate required component data
+		if(EditorGUI.EndChangeCheck()) {
+			m_targetAIPilot.ValidateComponentsData();
+		}
 
 		// Draw the data list!
 		Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
@@ -111,55 +121,18 @@ public class AIPilotEditor : Editor {
 	// INTERNAL UTILS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Make sure the target AI Pilot has exactly one data per type component.
-	/// Will add data objects when missing and remove them when component not 
-	/// found in any state of the state machine (brain).
+	/// Perform all the required operations to load the object's data.
 	/// </summary>
-	private void ValidateData() {
-		// Iterate all components in all states of the state machine
-		// If a data object for that component type doesn't exist, add it
-		HashSet<string> validComponentNames = new HashSet<string>();	// Store component names for later usage
-		foreach(State state in m_targetAIPilot.brainResource.states) {
-			foreach(StateComponent component in state.componentAssets) {
-				// If this component data type has already been checked, skip it
-				string typeName = component.GetType().AssemblyQualifiedName;
-				if(validComponentNames.Add(typeName)) {		// Returns true if the value was not already in the hash
-					// Check whether we have a data object for this component type
-					// Inefficient, but since it's an editor code, we don't care
-					bool found = false;
-					foreach(AIPilot.StateComponentDataKVP kvp in m_targetAIPilot.componentsData) {
-						if(kvp.typeName == typeName) {
-							// Special case!! If data is null, it may be because this component type didn't have data up until now
-							// Force brute create a new data object (it will still be null if component's requirements haven't changed)
-							if(kvp.data == null) {
-								kvp.data = component.CreateData();
-							}
-							found = true;
-							break;
-						}
-					}
+	private void Load() {
+		m_targetAIPilot.LoadFromJson();
+	}
 
-					// If data wasn't found, create one and add it to the pilot
-					if(!found) {
-						AIPilot.StateComponentDataKVP newKvp = new AIPilot.StateComponentDataKVP();
-						newKvp.typeName = typeName;
-						newKvp.data = component.CreateData();	// [AOC] CreateData() will create the proper data object for this specific component type. Can be null!
-						m_targetAIPilot.componentsData.Add(newKvp);	
-					}
-				}
-			}
-		}
-
-		// Iterate all data objects.
-		// If the component type linked to a data object is not found on the state machine, delete it
-		// Reverse iteration since we'll be deleting items from the same list we're iterating
-		for(int i = m_targetAIPilot.componentsData.Count - 1; i >= 0; i--) {
-			// Is it a valid component?
-			if(!validComponentNames.Contains(m_targetAIPilot.componentsData[i].typeName)) {
-				// No, delete its data object
-				m_targetAIPilot.componentsData.RemoveAt(i);
-			}
-		}
+	/// <summary>
+	/// Perform all the required operations to properly save the object's data.
+	/// </summary>
+	private void Save() {
+		m_targetAIPilot.SaveToJson();
+		EditorUtility.SetDirty(m_targetAIPilot);	// Set dirty required so when assets database is refreshed, this asset is saved as well
 	}
 
 	/// <summary>

@@ -34,6 +34,7 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	public GameObject m_entityPrefab = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,7 +64,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		
+		GameObject.Instantiate(m_entityPrefab);
 	}
 
 	/// <summary>
