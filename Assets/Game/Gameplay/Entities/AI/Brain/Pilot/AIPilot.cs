@@ -97,7 +97,7 @@ namespace AI {
 		//		 so we must manage serialization of the state component data on our own.
 		// See http://docs.unity3d.com/Manual/script-Serialization.html
 		// See HSX's GameData class
-		[SerializeField] private string m_serializedJson = "[]";
+		[SerializeField][HideInInspector] private string m_serializedJson = "[]";
 
 		/// <summary>
 		/// Gets the data linked to the target component type.
@@ -237,6 +237,7 @@ namespace AI {
 			//		 Copied from HSX
 
 			// Parse the JSON
+			if(string.IsNullOrEmpty(m_serializedJson)) m_serializedJson = "[]";	// [AOC] Make sure it's a valid json string
 			List<object> serializedDatas = FGOLMiniJSON.Json.Deserialize(m_serializedJson) as List<object>;
 
 			// Clear components data list
