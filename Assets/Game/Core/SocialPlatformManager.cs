@@ -43,10 +43,12 @@ public class SocialPlatformManager : MonoBehaviour
 		public override void onLogInFailed()
 		{
 			Debug.TaggedLog(TAG, "onLogInFailed");
+			m_manager.OnSocialPlatformLoginFailed();
 		}
 		
 		public override void onLogOut()
 		{
+			m_manager.OnSocialPlatformLogOut();
 			Debug.TaggedLog(TAG, "onLogOut");
 		}
 		
@@ -79,6 +81,16 @@ public class SocialPlatformManager : MonoBehaviour
 	// Social Platform Response //////////////////////////////////////////////
 
 	void OnSocialPlatformLogin()
+	{
+		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
+	}
+
+	void OnSocialPlatformLoginFailed()
+	{
+		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
+	}
+
+	void OnSocialPlatformLogOut()
 	{
 		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
 	}

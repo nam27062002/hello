@@ -25,7 +25,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	public GameObject m_connectButton;
-	
+	private UnityEngine.UI.Button m_connectButtonComponent;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -34,17 +34,20 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void Awake() 
 	{
-		// Check if external connected to hide m_ConnectionButton;
-		{
-			// Hide connecting button
-			if (m_connectButton)
-				m_connectButton.SetActive(false);
-		}
+		m_connectButtonComponent =  m_connectButton.GetComponent<UnityEngine.UI.Button>();
+		Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLoginEvent);
+		Messenger.Broadcast(GameEvents.GOOD_PLACE_TO_SYNCH);
 	}
 
 	void OnDestroy()
 	{
-		
+		Messenger.Broadcast(GameEvents.NO_SYNCHING);
+		Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLoginEvent);
+	}
+
+	void OnSocialLoginEvent( bool loged )
+	{
+		SocialPlatformButtonUpdate();
 	}
 
 	/// <summary>
@@ -56,6 +59,7 @@ public class MenuPlayScreen : MonoBehaviour {
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
 
 		// Check Facebook/Weibo Connect visibility
+		SocialPlatformButtonUpdate();
 	}
 
 	/// <summary>
@@ -79,7 +83,6 @@ public class MenuPlayScreen : MonoBehaviour {
 	{
 		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid login multiple times
 		SocialPlatformManager.SharedInstance.Login();
-
 	}
 
 	public void OnExternalLogin()
@@ -97,7 +100,17 @@ public class MenuPlayScreen : MonoBehaviour {
 	{
 		if (SocialPlatformManager.SharedInstance.IsLoggedIn() )
 		{
-			// Hide?
+			m_connectButton.SetActive(false);
+		}
+		else if ( false )
+		{
+			m_connectButton.SetActive(true);
+			m_connectButtonComponent.interactable = false;
+		}
+		else
+		{
+			m_connectButton.SetActive(true);
+			m_connectButtonComponent.interactable = true;
 		}
 	}
 

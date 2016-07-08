@@ -13,6 +13,7 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 		Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogin);
 		Messenger.AddListener(GameEvents.GOOD_PLACE_TO_SYNCH, OnTrySynch);
 		Messenger.AddListener(GameEvents.NO_SYNCHING, OnNoSynch);
+		Messenger.AddListener(GameEvents.NEW_SAVE_DATA_FROM_SERVER, OnNewSaveDataFromServer);
 	}
 
 	void Destroy()
@@ -21,6 +22,7 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 		Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogin);
 		Messenger.RemoveListener(GameEvents.GOOD_PLACE_TO_SYNCH, OnTrySynch);
 		Messenger.RemoveListener(GameEvents.NO_SYNCHING, OnNoSynch);
+		Messenger.RemoveListener(GameEvents.NEW_SAVE_DATA_FROM_SERVER, OnNewSaveDataFromServer);
 	}
 
 	void OnTrySynch()
@@ -32,6 +34,11 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 	void OnNoSynch()
 	{
 		m_allowSynchProcess = false;
+	}
+
+	void OnNewSaveDataFromServer()
+	{
+		m_continueSynchProcess = true;
 	}
 
 	void OnLogin( bool logged )
@@ -103,6 +110,8 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 			if ( UsersManager.currentUser.saveCounter < serverData.saveCounter )
 			{
 				// Information on server is newer -> I should get it or merge
+				Messenger.Broadcast(GameEvents.MERGE_SERVER_SAVE_DATA);
+				// Now we wait for the result
 			}
 			else
 			{

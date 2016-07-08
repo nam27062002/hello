@@ -210,11 +210,7 @@ public class GameServerManager :  MonoBehaviour
 			if ( serverSave != null )
 			{
 				m_lastRecievedUniverse = serverSave;
-				// Check what to do
-				// if we can merge automatically then do it
-				// else show something to the user?
-
-				// Use event? New Game Data from server?
+				Messenger.Broadcast(GameEvents.NEW_SAVE_DATA_FROM_SERVER);
 			}
 		}
 
