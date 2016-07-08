@@ -17,6 +17,7 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
 
+			private PursuitData m_data;
 
 
 			public override StateComponentData CreateData() {
@@ -24,11 +25,13 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
+				m_data = (PursuitData)m_pilot.GetComponentData<Pursuit>();
+
 				m_machine.SetSignal(Signals.Alert.name, true);
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.SetSpeed(3f); // run speed
+				m_pilot.SetSpeed(m_data.speed);
 			}
 
 			protected override void OnUpdate() {

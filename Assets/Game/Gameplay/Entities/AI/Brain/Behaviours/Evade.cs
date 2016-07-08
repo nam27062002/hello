@@ -11,16 +11,21 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Evade")]
 		public class Evade : StateComponent {
 
+			private EvadeData m_data;
 			private bool m_alertRestoreValue;
 
 			public override StateComponentData CreateData() {
 				return new EvadeData();
 			}
 
+			protected override void OnInitialise() {
+				m_data = (EvadeData)m_pilot.GetComponentData<Evade>();
+			}
+
 			protected override void OnEnter(State oldState, object[] param) {
 				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);
 				m_machine.SetSignal(Signals.Alert.name, true);
-				m_pilot.SetBoostSpeed(20f);
+				m_pilot.SetBoostSpeed(m_data.boostSpeed);
 			}
 
 			protected override void OnExit(State newState) {

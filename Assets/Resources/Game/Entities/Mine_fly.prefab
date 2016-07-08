@@ -130,13 +130,13 @@ GameObject:
   m_Component:
   - 4: {fileID: 448250}
   - 114: {fileID: 11444748}
-  - 114: {fileID: 11416030}
   - 114: {fileID: 11466336}
+  - 114: {fileID: 11467890}
   - 114: {fileID: 11483128}
   - 135: {fileID: 13525966}
   - 114: {fileID: 11492426}
   m_Layer: 11
-  m_Name: Mine
+  m_Name: Mine_fly
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -212,7 +212,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100614}
-  m_LocalRotation: {x: -0.19993678, y: 0.7512296, z: -0.44276285, w: 0.44681126}
+  m_LocalRotation: {x: -0.19993679, y: 0.75122964, z: -0.44276288, w: 0.4468113}
   m_LocalPosition: {x: 0.41354483, y: 0.43405345, z: 0.30855474}
   m_LocalScale: {x: 1.0000001, y: 1.0000004, z: 1.0000002}
   m_LocalEulerAnglesHint: {x: 29.115099, y: 103.816696, z: -52.8191}
@@ -343,20 +343,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11416030
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 176872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: 01e097987dda34dae88639be166bccba, type: 2}
-  componentsData: []
-  m_serializedJson: 
 --- !u!114 &11444748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -380,10 +366,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 0
+  m_enableMotion: 1
   m_motion:
     m_stickToGround: 0
-    m_faceDirection: 1
+    m_faceDirection: 0
   m_enableSensor: 0
   m_sensor:
     m_minRadius: 0
@@ -394,6 +380,21 @@ MonoBehaviour:
     m_senseDelay:
       min: 0.25
       max: 1.25
+--- !u!114 &11467890
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_brainResource: {fileID: 11400000, guid: 91d304c73d1dd42ca947fb91474a6252, type: 2}
+  componentsData: []
+  m_serializedJson: 
+  m_avoidDistanceAttenuation: 0
 --- !u!114 &11483128
 MonoBehaviour:
   m_ObjectHideFlags: 1

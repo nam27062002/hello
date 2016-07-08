@@ -15,6 +15,8 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnRest = "onRest";
 
+			private GroundWanderData m_data;
+
 			private Vector3 m_target;
 
 			private float m_xLimitMin;
@@ -22,7 +24,6 @@ namespace AI {
 
 			private bool m_checkGoToRest;
 
-			private float m_walkSpeed = 1.5f;
 
 
 			public override StateComponentData CreateData() {
@@ -30,6 +31,8 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
+				m_data = (GroundWanderData)m_pilot.GetComponentData<GroundWander>();
+
 				m_xLimitMin = m_pilot.area.min.x;
 				m_xLimitMax = m_pilot.area.max.x;
 			}
@@ -39,16 +42,16 @@ namespace AI {
 					m_target = Vector3.zero;
 					m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
 				}
-				m_pilot.SetSpeed(m_walkSpeed);
+				m_pilot.SetSpeed(m_data.speed);
 				m_checkGoToRest = true;
 			}
 
 			protected override void OnUpdate() {
 				float m = Mathf.Abs(m_machine.position.x - m_target.x);
 
-				if (m < m_walkSpeed) {
+				if (m < m_data.speed) {
 					if (m_checkGoToRest) {
-						bool goToRest = Random.Range(0f, 1f) < 0.25f;
+						bool goToRest = Random.Range(0f, 1f) < m_data.idleChance;
 						if (goToRest) {
 							// don't check again for "idle" and get let the entity get closer to the current target
 							m_checkGoToRest = false;
@@ -58,7 +61,7 @@ namespace AI {
 						}
 					} else {
 						// we'll slown down and go to rest
-						if (m < m_walkSpeed * 0.25f) {
+						if (m < m_data.speed * 0.25f) {
 							Transition(OnRest);
 						}
 					}

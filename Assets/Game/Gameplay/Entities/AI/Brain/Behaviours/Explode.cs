@@ -10,11 +10,16 @@ namespace AI {
 
 		[CreateAssetMenu(menuName = "Behaviour/Explode")]
 		public class Explode : StateComponent {
-			[SerializeField] private float m_damage = 5f;
+
+			private ExplodeData m_data;
 
 
 			public override StateComponentData CreateData() {
 				return new ExplodeData();
+			}
+
+			protected override void OnInitialise() {
+				m_data = (ExplodeData)m_pilot.GetComponentData<Explode>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
@@ -23,7 +28,7 @@ namespace AI {
 				if (dragon.HasMineShield()) {
 					dragon.LoseMineShield();
 				} else {
-					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, m_machine.transform);
+					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.m_damage, m_machine.transform);
 				}
 
 				m_machine.SetSignal(Signals.Destroyed.name, true);

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 namespace AI {
-	public abstract class AIPilot : Pilot, Spawnable, ISerializationCallbackReceiver {
+	public abstract class AIPilot : Pilot, ISpawnable, ISerializationCallbackReceiver {
 		//--------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											  //
 		//--------------------------------------------------------------------//

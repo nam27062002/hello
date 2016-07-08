@@ -32,8 +32,9 @@ public class PathSpawner : Spawner {
 	}
 
 	override protected AreaBounds GetArea() {
-		m_path = GetComponent<PathController>();
-		return m_path.bounds;
+		//m_path = GetComponent<PathController>();
+		//return m_path.bounds;
+		return null;
 	}
 
 	// On spawn we move a little all the entities

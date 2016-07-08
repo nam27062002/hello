@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class Machine : MonoBehaviour, IMachine, Spawnable {		
+	public class Machine : MonoBehaviour, IMachine, ISpawnable {		
 		/**************/
 		/*			  */
 		/**************/

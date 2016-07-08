@@ -2,14 +2,15 @@
 using System.Collections;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {
 		[System.Serializable]
 		public class AttackMeleeData : AttackData {
-			public float m_damage = 5f;
+			public float damage = 5f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack Melee")]
 		public class AttackMelee : Attack {
+		
 			private MeleeWeapon m_meleeWeapon;
 
 
@@ -18,13 +19,15 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				base.OnInitialise();
+				m_data = (AttackMeleeData)m_pilot.GetComponentData<AttackMelee>();
 				m_meleeWeapon = m_machine.FindComponentRecursive<MeleeWeapon>();
+
+				base.OnInitialise();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				base.OnEnter(_oldState, _param);
-				m_meleeWeapon.damage = 5f; // TODO
+				m_meleeWeapon.damage = ((AttackMeleeData)m_data).damage;
 				m_meleeWeapon.enabled = false;
 			}
 
@@ -33,12 +36,12 @@ namespace AI {
 				m_meleeWeapon.enabled = false;
 			}
 
-			private void OnAnimDealDamageExtended() {				
+			private void OnAnimDealDamageExtended() {
 				m_meleeWeapon.enabled = true;
 			}
 
 			protected override void OnAnimEndExtended() {
-				m_meleeWeapon.enabled = false;	
+				m_meleeWeapon.enabled = false;
 			}
 		}
 	}
