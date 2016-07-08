@@ -91,4 +91,8 @@ public enum GameEvents {
 
 	// Social Platform Manager Events
 	SOCIAL_LOGGED,				// params: bool
+
+	// Syncing events
+	GOOD_PLACE_TO_SYNCH,
+	NO_SYNCHING,
 }

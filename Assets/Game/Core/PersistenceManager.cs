@@ -144,6 +144,11 @@ public static class PersistenceManager {
 		// User profile
 		SimpleJSON.JSONClass data = UsersManager.currentUser.Save();
 
+		if ( GameServerManager.SharedInstance.saveDataRecovered )	// If we are in peace with the save data in the server
+		{
+			GameServerManager.SharedInstance.SetUniverse( data );
+		}
+
 		// Save the object we just created
 		SaveFromObject(_profileName, data);
 	}

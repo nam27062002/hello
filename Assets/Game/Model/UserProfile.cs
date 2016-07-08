@@ -34,6 +34,14 @@ public class UserProfile
 	//------------------------------------------------------------------------//
 	// PROPERTIES															  //
 	//------------------------------------------------------------------------//
+
+	private int m_saveCounter = 0;
+	public int saveCounter
+	{
+		get{ return m_saveCounter; }
+		set{ m_saveCounter = value; }
+	}
+
 	// Set default values in the inspector, use static methods to set them from code
 	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
 	[Separator("Economy")]
@@ -224,7 +232,13 @@ public class UserProfile
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
 		// Economy
+		Debug.Log( _data.ToString() );
 		SimpleJSON.JSONNode profile = _data["userProfile"];
+
+		if ( profile.ContainsKey("saveCounter") )
+			m_saveCounter = profile["saveCounter"].AsInt;
+		else
+			m_saveCounter = 0;
 
 		m_coins = profile["sc"].AsInt;
 		m_pc = profile["pc"].AsInt;

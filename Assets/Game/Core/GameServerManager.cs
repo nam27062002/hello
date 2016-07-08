@@ -32,8 +32,14 @@ public class GameServerManager :  MonoBehaviour
 		const string tag = "GameSessionDelegate";
 
 		public bool m_logged = false;
+
+		// WAITING FLAGS
 		public bool m_waitingLoginResponse = false;
+		public bool m_waitingGetUniverse = false;
+		public bool m_waitingMergeResponse = false;
+
 		public SimpleJSON.JSONClass m_lastRecievedUniverse = null;
+		public int m_saveDataCounter = 0;
 
 		// Triggers when user was succesfully logged into our server
 		public override void onLogInToServer()
@@ -82,18 +88,21 @@ public class GameServerManager :  MonoBehaviour
 		// There are merge conflicts and asks to show the merging popup
 		public override void onMergeShowPopupNeeded()
 		{
+			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
 		} 
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
 		public override void onMergeSucceeded()
 		{
+			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeSucceeded");
 		} 
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
 		public override void onMergeFailed()
 		{
+			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeFailed");
 		} 
 
@@ -154,11 +163,12 @@ public class GameServerManager :  MonoBehaviour
 				case GameServerManager.GET_UNIVERSE:
 				{
 					Debug.TaggedLog(tag, strResponseData);
-					onRecieveUniverse( strResponseData );
+					onGetUniverse( strResponseData );
 				}break;
 				case GameServerManager.SET_UNIVERSE:
 				{
-
+					m_saveDataCounter--;
+					UsersManager.currentUser.saveCounter++; 
 				}break;
 			}
 		} 
@@ -171,17 +181,30 @@ public class GameServerManager :  MonoBehaviour
 			{
 				case GameServerManager.GET_UNIVERSE:
 				{
+					onGetUniverseError( iErrorStatus );
 				}break;
 				case GameServerManager.SET_UNIVERSE:
 				{
+					// Reason?
+					// If cannot connect?
+						// -> m_saveDataCounter = 0;
+					// If server has new version -> I shouldn't be setting Universe!!
 				}break;
 			}
 		} 
 
 
-		// Treat Game Play Actions Response
-		void onRecieveUniverse( string serverUniverse )
+		void ResetWaitingFlags()
 		{
+			m_waitingLoginResponse = false;
+			m_waitingGetUniverse = false;
+			m_waitingMergeResponse = false;
+		}
+
+		// Treat Game Play Actions Response
+		void onGetUniverse( string serverUniverse )
+		{
+			m_waitingGetUniverse = false;
 			// Load universe and compare with current to check solutions
 			SimpleJSON.JSONClass serverSave = SimpleJSON.JSONNode.Parse( serverUniverse )  as SimpleJSON.JSONClass;
 			if ( serverSave != null )
@@ -193,6 +216,12 @@ public class GameServerManager :  MonoBehaviour
 
 				// Use event? New Game Data from server?
 			}
+		}
+
+		void onGetUniverseError( int errorStatus )
+		{
+			m_waitingGetUniverse = false;
+
 		}
     }
 
@@ -206,6 +235,7 @@ public class GameServerManager :  MonoBehaviour
 
 
 	private bool m_configured = false;
+
 	private bool m_saveDataRecovered = false;	// Tells if we recovered the save data from the server and merged with the local savedata
 	public bool saveDataRecovered
 	{
@@ -349,12 +379,21 @@ public class GameServerManager :  MonoBehaviour
 
     public void GetUniverse()
     {
-		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.GET_UNIVERSE);
+    	if (!m_delegate.m_waitingGetUniverse)
+    	{
+    		m_delegate.m_waitingGetUniverse = true;
+			GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.GET_UNIVERSE);
+		}
     }
 
     public void SetUniverse( SimpleJSON.JSONClass universe )
     {
-		GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.SET_UNIVERSE, universe);
+		if ( m_saveDataRecovered )
+		{
+			m_delegate.m_saveDataCounter++;
+			universe["userProfile"]["saveCounter"] = universe["userProfile"]["saveCounter"] + m_delegate.m_saveDataCounter;
+			GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.SET_UNIVERSE, universe);
+		}
     }
 
 
@@ -362,12 +401,15 @@ public class GameServerManager :  MonoBehaviour
     {
     	if ( SocialPlatformManager.SharedInstance.IsLoggedIn() )
     	{
-			string platform = SocialPlatformManager.SharedInstance.GetPlatformName();
-			string userId = SocialPlatformManager.SharedInstance.GetUserId();
-			string userName = SocialPlatformManager.SharedInstance.GetUserName();
-			string token = SocialPlatformManager.SharedInstance.GetToken();
-
-			GameSessionManager.SharedInstance.MergeGameAccounts	( platform, userId, userName, token);
+    		if (!m_delegate.m_waitingMergeResponse)
+    		{
+				string platform = SocialPlatformManager.SharedInstance.GetPlatformName();
+				string userId = SocialPlatformManager.SharedInstance.GetUserId();
+				string userName = SocialPlatformManager.SharedInstance.GetUserName();
+				string token = SocialPlatformManager.SharedInstance.GetToken();
+				m_delegate.m_waitingMergeResponse = true;
+				GameSessionManager.SharedInstance.MergeGameAccounts	( platform, userId, userName, token);
+			}
     	}
     	else
     	{

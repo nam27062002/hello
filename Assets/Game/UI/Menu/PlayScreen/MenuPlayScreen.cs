@@ -50,9 +50,12 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	private void OnEnable() 
+	{
 		// Hide menu HUD
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
+
+		// Check Facebook/Weibo Connect visibility
 	}
 
 	/// <summary>
@@ -74,7 +77,8 @@ public class MenuPlayScreen : MonoBehaviour {
 
 	public void OnConnectBtn()
 	{
-		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid 
+		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid login multiple times
+		SocialPlatformManager.SharedInstance.Login();
 
 	}
 
@@ -87,6 +91,14 @@ public class MenuPlayScreen : MonoBehaviour {
 	public void OnExternalLoginError()
 	{
 		//TODO(miguel) : Enable connection button
+	}
+
+	void SocialPlatformButtonUpdate()
+	{
+		if (SocialPlatformManager.SharedInstance.IsLoggedIn() )
+		{
+			// Hide?
+		}
 	}
 
 	//------------------------------------------------------------------//
