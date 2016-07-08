@@ -63,6 +63,7 @@ public class HungryDragonEditorMenu {
 	/// </summary>
 	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 0)]
 	public static void SaveAssets() {
+		AssetDatabase.Refresh();
 		AssetDatabase.SaveAssets();
 	}
 
