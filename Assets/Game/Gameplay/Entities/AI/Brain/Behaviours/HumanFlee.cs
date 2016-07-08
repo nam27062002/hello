@@ -11,6 +11,9 @@ namespace AI {
 
 		[CreateAssetMenu(menuName = "Behaviour/Human Flee")]
 		public class HumanFlee : StateComponent {
+
+			private HumanFleeData m_data;
+
 			private Vector3 m_target;
 
 			private float m_xLimitMin;
@@ -23,16 +26,18 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
+				m_data = (HumanFleeData)m_pilot.GetComponentData<HumanFlee>();
+
 				m_machine.SetSignal(Signals.Alert.name, true);
 
-				m_xLimitMin = m_machine.position.x - 20f;
-				m_xLimitMax = m_machine.position.x + 20f;
+				m_xLimitMin = m_pilot.area.min.x;
+				m_xLimitMax = m_pilot.area.max.x;
 
 				m_target = m_machine.position;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.SetSpeed(3f);	
+				m_pilot.SetSpeed(m_data.speed);	
 
 				m_allowTargetChangeTimer = 0f;
 			}
@@ -53,7 +58,7 @@ namespace AI {
 							m_target.x = m_xLimitMin;
 						}
 					}
-					m_allowTargetChangeTimer = 2f;
+					m_allowTargetChangeTimer = m_data.checkDragonPositionTime;
 				} else {
 					m_allowTargetChangeTimer -= Time.deltaTime;
 				}

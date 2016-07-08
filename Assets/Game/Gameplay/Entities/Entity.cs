@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Serialization;
 
-public class Entity : MonoBehaviour, Spawnable {
+public class Entity : MonoBehaviour, ISpawnable {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------

@@ -249,8 +249,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
 
 			entity.Spawn(this); // lets spawn Entity component first
-			Spawnable[] components = entity.GetComponents<Spawnable>();
-			foreach (Spawnable component in components) {
+			ISpawnable[] components = entity.GetComponents<ISpawnable>();
+			foreach (ISpawnable component in components) {
 				if (component != entity) {
 					component.Spawn(this);
 				}

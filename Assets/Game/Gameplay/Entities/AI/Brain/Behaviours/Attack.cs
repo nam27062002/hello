@@ -17,12 +17,14 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnOutOfRange = "onOutOfRange";
 
+
+			protected AttackData m_data;
+
 			private bool m_onAttachProjectileEventDone;
 			private bool m_onDamageEventDone;
 			private bool m_onAttackEndEventDone;
 
 			private int m_attacksLeft;
-			private float m_attackDelay;
 
 			private float m_timer;
 
@@ -36,16 +38,15 @@ namespace AI {
 				m_machine.SetSignal(Signals.Alert.name, true);
 
 				m_transitionParam = new object[1];
-				m_transitionParam[0] = 10f; // retreat time
+				m_transitionParam[0] = m_data.retreatTime; // retreat time
 
-				m_attacksLeft = 3;
+				m_attacksLeft = m_data.consecutiveAttacks;
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_pilot.SetSpeed(0);
 				if (m_attacksLeft <= 0)
-					m_attacksLeft = 3;
-				m_attackDelay = 2f;
+					m_attacksLeft =  m_data.consecutiveAttacks;
 				m_timer = 0f;
 
 				m_animEvents.onAttachProjectile += new PreyAnimationEvents.OnAttachprojectile(OnAttachProjectile);
@@ -66,12 +67,9 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				//add time between attacks?
-
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0) {
 					m_timer = 0;
-
 					if (m_onAttackEndEventDone) {
 						StartAttack();
 					}
@@ -93,7 +91,7 @@ namespace AI {
 					m_onAttackEndEventDone = false;
 					m_attacksLeft--;
 
-					m_timer = m_attackDelay;
+					m_timer = m_data.attackDelay;
 				}
 			}
 
@@ -126,7 +124,7 @@ namespace AI {
 					}
 
 					if (m_attacksLeft > 0) {
-						if (!m_machine.GetSignal(Signals.Danger.name)) {							
+						if (!m_machine.GetSignal(Signals.Danger.name)) {		
 							Transition(OnOutOfRange);
 						}
 					} else {

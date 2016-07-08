@@ -5,7 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class IdleData : StateComponentData {
-			public Range speed = new Range(2f, 4f);
+			public Range restTime = new Range(2f, 4f);
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Idle")]
@@ -14,14 +14,21 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnMove = "onMove";
 
+
+			private IdleData m_data;
+
 			private float m_timer;
 
 			public override StateComponentData CreateData() {
 				return new IdleData();
 			}
 
+			protected override void OnInitialise() {
+				m_data = (IdleData)m_pilot.GetComponentData<Idle>();
+			}
+
 			protected override void OnEnter(State oldState, object[] param) {
-				m_timer = Random.Range(2f, 4f);
+				m_timer = m_data.restTime.GetRandom();
 				m_pilot.SetSpeed(0);
 			}
 

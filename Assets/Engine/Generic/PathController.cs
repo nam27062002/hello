@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class PathController : MonoBehaviour {
+public class PathController : MonoBehaviour, IGuideFunction {
 
 	[SerializeField] private bool m_circular = true;
 	public bool circular { get { return m_circular; } }
@@ -16,16 +16,14 @@ public class PathController : MonoBehaviour {
 	private int m_index;
 	private int m_direction;
 
+	private int m_start;
 	private int m_leftmostNode;
 	private int m_rightmostNode;
 	
 	private RectAreaBounds m_bounds = new RectAreaBounds(Vector3.zero, Vector3.zero);
-	public RectAreaBounds bounds { get { UpdateBounds(); return m_bounds; } }
+
 
 	void Awake() {
-		m_index = 0;
-		m_direction = 1;
-
 		m_leftmostNode = 0;
 		m_rightmostNode = 0;
 		for (int i = 1; i < m_points.Count; i++) {
@@ -37,30 +35,25 @@ public class PathController : MonoBehaviour {
 				m_rightmostNode = i;
 			}
 		}
+
+		m_start = GetIndexNearestTo(Vector3.zero);
+
+		m_index = m_start;
+		m_direction = 1;
 	}
 
-	private void UpdateBounds() {
-		Vector3 min = Vector3.zero;
-		Vector3 max = Vector3.zero;
+	public Bounds GetBounds() {
+		UpdateBounds();
+		return m_bounds.bounds;
+	}
 
-		if (m_points.Count >= 2f) {
-			min = m_points[0];
-			max = m_points[0];
+	public void ResetTime() {
+		m_index = m_start;
+		m_direction = 1;
+	}
 
-			for (int i = 1; i < m_points.Count; i++) {
-				Vector3 point = m_points[i];
-
-				if (min.x > point.x) min.x = point.x;
-				if (min.y > point.y) min.y = point.y;
-				if (min.z > point.z) min.z = point.z;
-
-				if (max.x < point.x) max.x = point.x;
-				if (max.y < point.y) max.y = point.y;
-				if (max.z < point.z) max.z = point.z;
-			}
-		}
-		
-		m_bounds.SetMinMax(min + transform.position - Vector3.one * radius, max + transform.position + Vector3.one * radius);
+	public Vector3 NextPositionAtSpeed(float _speed) {
+		return GetNext();
 	}
 	
 	public Vector3 GetRandom() {		
@@ -72,17 +65,7 @@ public class PathController : MonoBehaviour {
 	}
 
 	public Vector3 GetNearestTo(Vector3 _point) {
-		float minD = 999999f;
-
-		m_index = 0;
-		for (int i = 0; i < m_points.Count; i++) {
-			float d = (m_points[i] - _point).sqrMagnitude;
-			if (d < minD) {
-				minD = d;
-				m_index = i;
-			}
-		}
-
+		m_index = GetIndexNearestTo(_point - transform.position);
 		return m_points[m_index] + transform.position;
 	}
 
@@ -117,5 +100,44 @@ public class PathController : MonoBehaviour {
 
 	public void ChangeDirection() {
 		m_direction *= -1;
+	}
+
+	private int GetIndexNearestTo(Vector3 _point) {
+		float minD = 999999f;
+
+		int index = 0;
+		for (int i = 0; i < m_points.Count; i++) {
+			float d = (m_points[i] - _point).sqrMagnitude;
+			if (d < minD) {
+				minD = d;
+				index = i;
+			}
+		}
+
+		return index;
+	}
+
+	private void UpdateBounds() {
+		Vector3 min = Vector3.zero;
+		Vector3 max = Vector3.zero;
+
+		if (m_points.Count >= 2f) {
+			min = m_points[0];
+			max = m_points[0];
+
+			for (int i = 1; i < m_points.Count; i++) {
+				Vector3 point = m_points[i];
+
+				if (min.x > point.x) min.x = point.x;
+				if (min.y > point.y) min.y = point.y;
+				if (min.z > point.z) min.z = point.z;
+
+				if (max.x < point.x) max.x = point.x;
+				if (max.y < point.y) max.y = point.y;
+				if (max.z < point.z) max.z = point.z;
+			}
+		}
+
+		m_bounds.SetMinMax(min + transform.position - Vector3.one * radius, max + transform.position + Vector3.one * radius);
 	}
 }

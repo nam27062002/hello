@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ViewControl : MonoBehaviour, Spawnable {
+public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[Serializable]
 	public class ParticleData {
@@ -38,6 +38,7 @@ public class ViewControl : MonoBehaviour, Spawnable {
 	void Awake() {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
+		m_animator.logWarnings = false;
 
 		m_materialGold = Resources.Load("Game/Assets/Materials/Gold") as Material;
 

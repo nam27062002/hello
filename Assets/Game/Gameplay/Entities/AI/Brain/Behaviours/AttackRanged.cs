@@ -5,21 +5,17 @@ namespace AI {
 	namespace Behaviour {	
 		[System.Serializable]
 		public class AttackRangedData : AttackData {
-			public string m_projectileName = "";
-			public string m_projectileSpawnTransformName = "";
+			public string projectileName = "";
+			public string projectileSpawnTransformName = "";
 
-			public float m_damage = 5f;
+			public float damage = 5f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack Ranged")]
 		public class AttackRanged: Attack {
-
-			private string m_projectileName = "PF_Arrow";
-			private string m_projectileSpawnTransformName = "Human_R_Weapon_01";
-
+			
 			private GameObject m_projectile;
 			private Transform m_projectileSpawnPoint;
-
 
 
 			public override StateComponentData CreateData() {
@@ -27,13 +23,16 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				base.OnInitialise();
+				m_data = (AttackRangedData)m_pilot.GetComponentData<AttackRanged>();
 
-				m_projectileSpawnPoint = m_machine.FindTransformRecursive(m_projectileSpawnTransformName);
+				m_projectileSpawnPoint = m_machine.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
 				// create a projectile from resources (by name) and save it into pool
-				GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_projectileName);
+				GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + ((AttackRangedData)m_data).projectileName);
 				PoolManager.CreatePool(projectilePrefab, 2, true);
+
+
+				base.OnInitialise();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
@@ -53,7 +52,7 @@ namespace AI {
 
 			protected override void OnAttachProjectileExtended() {	
 				if (m_projectile == null) {
-					m_projectile = PoolManager.GetInstance(m_projectileName);
+					m_projectile = PoolManager.GetInstance(((AttackRangedData)m_data).projectileName);
 
 					if (m_projectile != null) {
 						ProjectileBehaviour projectile = m_projectile.GetComponent<ProjectileBehaviour>();
@@ -67,7 +66,7 @@ namespace AI {
 			protected override void OnAnimDealDamageExtended() {
 				if (m_projectile != null) {					
 					ProjectileBehaviour projectile = m_projectile.GetComponent<ProjectileBehaviour>();
-					projectile.Shoot(m_projectileSpawnPoint, 5f);
+					projectile.Shoot(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage);
 					m_projectile = null;
 				}
 			}
