@@ -359,6 +359,7 @@ public class UserProfile
 
 		// PROFILE
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
+		profile.Add("saveCounter", m_saveCounter.ToString());
 		// Economy
 		profile.Add( "sc", m_coins.ToString());
 		profile.Add( "pc", m_pc.ToString());

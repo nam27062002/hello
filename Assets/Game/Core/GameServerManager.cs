@@ -386,9 +386,9 @@ public class GameServerManager :  MonoBehaviour
     {
 		// if ( m_saveDataRecovered )
 		{
-			m_delegate.m_saveDataCounter++;
-			universe["userProfile"]["saveCounter"] = universe["userProfile"]["saveCounter"] + m_delegate.m_saveDataCounter;
+			universe["userProfile"]["saveCounter"] = (universe["userProfile"]["saveCounter"].AsInt + m_delegate.m_saveDataCounter).ToString();
 			GameSessionManager.SharedInstance.SendGamePlayActionInJSON (GameServerManager.SET_UNIVERSE, universe);
+			m_delegate.m_saveDataCounter++;
 		}
     }
 

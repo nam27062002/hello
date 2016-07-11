@@ -40,9 +40,9 @@ public class PopupMerge : MonoBehaviour
 	public void OnUseLeftOption()
 	{
 		UsersManager.currentUser.saveCounter = Mathf.Max( UsersManager.currentUser.saveCounter, m_otherData.saveCounter );
-		PersistenceManager.Save();
 		GameServerManager.SharedInstance.CleanLastRecievedUniverse();
-
+		GameServerManager.SharedInstance.saveDataRecovered = true;
+		PersistenceManager.Save();
 		m_controller.Close(true);
 	}
 
@@ -50,11 +50,11 @@ public class PopupMerge : MonoBehaviour
 	{
 		// Here we have problems because we need to reload
 		UsersManager.currentUser.Load( GameServerManager.SharedInstance.GetLastRecievedUniverse() );
-		PersistenceManager.Save();
 		GameServerManager.SharedInstance.CleanLastRecievedUniverse();
+		GameServerManager.SharedInstance.saveDataRecovered = true;
+		PersistenceManager.Save();
+		m_controller.Close(true);
 
 		// Reload? Can we do something to avoid reloading?
-
-		m_controller.Close(true);
 	}
 }
