@@ -384,7 +384,7 @@ public class GameServerManager :  MonoBehaviour
 
     public void SetUniverse( SimpleJSON.JSONClass universe )
     {
-		if ( m_saveDataRecovered )
+		// if ( m_saveDataRecovered )
 		{
 			m_delegate.m_saveDataCounter++;
 			universe["userProfile"]["saveCounter"] = universe["userProfile"]["saveCounter"] + m_delegate.m_saveDataCounter;
