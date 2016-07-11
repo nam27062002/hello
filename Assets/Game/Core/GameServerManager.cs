@@ -277,53 +277,13 @@ public class GameServerManager :  MonoBehaviour
 	        // Init server game details
 	        ServerManager.ServerConfig kServerConfig = new ServerManager.ServerConfig();
 
-
-	        // Dev
-	        // {
-			kServerConfig.m_strServerURL = "bcn-dev-dragon01";
-	        kServerConfig.m_strServerPort = "8080";
-	        kServerConfig.m_strServerDomain = "dragon";
-			kServerConfig.m_strClientVersion = "1.0";
-	        kServerConfig.m_eBuildEnvironment = CaletyConstants.eBuildEnvironments.BUILD_DEV;
-	        // }
-
 	        if (settingsInstance != null) 
 	        {
-				switch( settingsInstance.m_iBuildEnvironmentSelected )
-				{
-					case (int)CaletyConstants.eBuildEnvironments.BUILD_LOCAL:
-					{
-						kServerConfig.m_strServerURL = settingsInstance.m_strLocalServerURL;
-		                kServerConfig.m_strServerPort = settingsInstance.m_strLocalServerPort;
-		                kServerConfig.m_strServerDomain = settingsInstance.m_strLocalServerDomain;
-		                kServerConfig.m_eBuildEnvironment = CaletyConstants.eBuildEnvironments.BUILD_LOCAL;	
-					}break;
-					case (int)CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION:
-					{
-						kServerConfig.m_strServerURL = "bcn-int-dragon01";
-		                kServerConfig.m_strServerPort = "8080";
-		                kServerConfig.m_strServerDomain = "dragon";
-		                kServerConfig.m_eBuildEnvironment = CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION;
-					}break;
-					case (int)CaletyConstants.eBuildEnvironments.BUILD_STAGE:
-					{
-						kServerConfig.m_strServerURL = "bcn-stage-dragon01";
-		                kServerConfig.m_strServerPort = "8080";
-		                kServerConfig.m_strServerDomain = "dragon";
-		                kServerConfig.m_eBuildEnvironment = CaletyConstants.eBuildEnvironments.BUILD_STAGE;
-					}break;
-					case (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
-					{
-						kServerConfig.m_strServerURL = "bcn-production-dragon01";
-		                kServerConfig.m_strServerPort = "8080";
-		                kServerConfig.m_strServerDomain = "dragon";
-		                kServerConfig.m_eBuildEnvironment = CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION;
-					}break;
-					case (int)CaletyConstants.eBuildEnvironments.BUILD_DEV:
-					{
-						// already set up
-					}break;
-				}
+                kServerConfig.m_strServerURL = settingsInstance.m_strLocalServerURL[settingsInstance.m_iBuildEnvironmentSelected];
+                kServerConfig.m_strServerPort = settingsInstance.m_strLocalServerPort[settingsInstance.m_iBuildEnvironmentSelected];
+                kServerConfig.m_strServerDomain = settingsInstance.m_strLocalServerDomain[settingsInstance.m_iBuildEnvironmentSelected];
+                kServerConfig.m_eBuildEnvironment = (CaletyConstants.eBuildEnvironments)settingsInstance.m_iBuildEnvironmentSelected;
+
 	            kServerConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion ();
 	        }
 
