@@ -32,6 +32,7 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.SetSpeed(m_data.speed);
+				m_pilot.SlowDown(true);
 			}
 
 			protected override void OnUpdate() {

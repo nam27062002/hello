@@ -4,8 +4,9 @@ using System.Collections.Generic;
 namespace AI {
 	public interface IMachine {
 		//
-		Vector3 position { get; }
-		Vector3 direction { get; }
+		Vector3 position 	{ get; }
+		Vector3 target		{ get; }
+		Vector3 direction 	{ get; }
 
 		// Internal connections
 		void SetSignal(string _signal, bool _activated);

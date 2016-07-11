@@ -429,7 +429,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 				if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
 				{
 					AI.Machine machine = entity.GetComponent<AI.Machine>();
-					preysToEat.Add(machine);
+					if (machine.GetSignal(AI.Signals.Chewing.name) == false) {
+						preysToEat.Add(machine);
+					}
 				}
 			}
 			else if (entity.CanBeHolded(m_tier))

@@ -30,10 +30,12 @@ namespace AI {
 				m_pilot.SetSpeed(m_data.speed);
 				m_pilot.SetBoostSpeed(m_data.speed);
 				m_target = m_machine.position;
+				m_pilot.PressAction(Pilot.Action.Avoid);
 			}
 
 			protected override void OnExit(State newState) {
 				m_pilot.ReleaseAction(Pilot.Action.Boost);
+				m_pilot.ReleaseAction(Pilot.Action.Avoid);
 			}
 
 			protected override void OnUpdate() {
@@ -45,19 +47,15 @@ namespace AI {
 					m_pilot.ReleaseAction(Pilot.Action.Boost);
 				}
 
-				float m = (m_machine.position - m_target).sqrMagnitude;
-				if (m < m_data.speed * m_data.speed) {
-					Transform enemy = m_machine.enemy;
-					if (enemy != null) {
-						Vector3 moveAway = m_machine.position - enemy.position;
-						moveAway.z = 0f; // lets keep the current Z
-						moveAway.Normalize();
-						moveAway *= m_data.boostSpeed;
+				Transform enemy = m_machine.enemy;
+				if (enemy != null) {
+					
+					Vector3 moveAway = m_machine.position - enemy.position;
+					moveAway.z = 0f; // lets keep the current Z
+					moveAway.Normalize();
+					moveAway *= m_data.boostSpeed;
 
-						m_target = m_machine.position + moveAway;
-
-						m_pilot.GoTo(m_target);
-					}
+					m_pilot.AddImpulse(moveAway);
 				}
 			}
 		}

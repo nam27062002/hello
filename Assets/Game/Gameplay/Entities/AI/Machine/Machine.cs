@@ -7,6 +7,22 @@ namespace AI {
 		/*			  */
 		/**************/
 
+		[SeparatorAttribute]
+		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
+		[SerializeField] private MachineMotion m_motion = new MachineMotion();
+
+		[SeparatorAttribute]
+		[SerializeField] private bool m_enableSensor = true;
+		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
+
+		[SeparatorAttribute("Sounds")]
+		[SerializeField][Range(0f, 100f)] private float m_onSpawnSoundProbability = 40.0f;
+		[SerializeField] private List<string> m_onSpawnSounds = new List<string>();
+
+		[SerializeField][Range(0f, 100f)] private float m_onEatenSoundProbability = 50.0f;
+		[SerializeField] private List<string> m_onEatenSounds = new List<string>();
+
+
 		private Entity m_entity = null;
 		private Pilot m_pilot = null;
 		private ViewControl m_viewControl = null;
@@ -16,18 +32,17 @@ namespace AI {
 
 		private Group m_group; // this will be a reference
 
-		[SeparatorAttribute]
-		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
-		[SerializeField] private MachineMotion m_motion = new MachineMotion();
-
-		[SeparatorAttribute]
-		[SerializeField] private bool m_enableSensor = true;
-		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		private MachineEdible m_edible = new MachineEdible();
 		private MachineInflammable m_inflammable = new MachineInflammable();
 
+
+		private bool m_willPlaySpawnSound;
+		private bool m_willPlayEatenSound;
+
+
 		public Vector3 position { get { return transform.position; } }
+		public Vector3 target	{ get { return m_pilot.target; } }
 		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
 		public Transform enemy { 
 			get {
@@ -66,6 +81,13 @@ namespace AI {
 			}
 		}
 
+		void OnDisable() {
+			LeaveGroup();
+			foreach(KeyValuePair<string, Signal> p in m_signals) {
+				p.Value.Init();
+			}
+		}
+
 		public void Spawn(Spawner _spawner) {
 			m_motion.Attach(this, m_entity, m_pilot);
 			m_motion.Init();
@@ -80,6 +102,9 @@ namespace AI {
 			m_inflammable.Init();
 
 			if (m_collider != null) m_collider.enabled = true;
+
+			m_willPlaySpawnSound = m_onSpawnSounds.Count > 0 && Random.Range(0, 100f) < m_onSpawnSoundProbability;
+			m_willPlayEatenSound = m_onEatenSounds.Count > 0 && Random.Range(0, 100f) < m_onEatenSoundProbability;
 		}
 
 		public void OnTrigger(string _trigger) {
@@ -89,9 +114,7 @@ namespace AI {
 
 			if (Signals.Destroyed.OnDestroyed == _trigger) {
 				m_viewControl.Die(m_signals[Signals.Chewing.name].value);
-				m_pilot.enabled = false;
 				if (m_collider != null) m_collider.enabled = false;
-				if (m_group != null) m_group.Leave(this);
 				m_entity.Disable(true);
 			}
 		}
@@ -102,6 +125,13 @@ namespace AI {
 		
 		// Update is called once per frame
 		void Update() {
+			if (m_willPlaySpawnSound) {
+				if (m_entity.isOnScreen) {
+					PlaySound(m_onSpawnSounds[Random.Range(0, m_onSpawnSounds.Count)]);
+					m_willPlaySpawnSound = false;
+				}
+			}
+
 			if (m_enableMotion) m_motion.Update();
 			if (m_enableSensor) m_sensor.Update();
 			m_inflammable.Update();
@@ -138,6 +168,9 @@ namespace AI {
 			}
 		}
 
+		private void PlaySound(string _clip) {
+			AudioManager.instance.PlayClip(_clip);
+		}
 
 		// External interactions
 		public void ReceiveDamage(float _damage) {
@@ -158,6 +191,13 @@ namespace AI {
 
 		public void BeingSwallowed(Transform _transform) {
 			if (m_edible != null) {
+				if (m_willPlayEatenSound) {
+					if (m_entity.isOnScreen) {
+						PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
+						m_willPlayEatenSound = false;
+					}
+				}
+
 				m_edible.BeingSwallowed(_transform);
 			}
 		}

@@ -22,7 +22,7 @@ namespace AI {
 			private float m_xLimitMin;
 			private float m_xLimitMax;
 
-			private bool m_checkGoToRest;
+			private bool m_goToIdle;
 
 
 
@@ -43,27 +43,20 @@ namespace AI {
 					m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
 				}
 				m_pilot.SetSpeed(m_data.speed);
-				m_checkGoToRest = true;
+				m_pilot.SlowDown(false);
+				m_goToIdle = false;
 			}
 
 			protected override void OnUpdate() {
 				float m = Mathf.Abs(m_machine.position.x - m_target.x);
 
-				if (m < m_data.speed) {
-					if (m_checkGoToRest) {
-						bool goToRest = Random.Range(0f, 1f) < m_data.idleChance;
-						if (goToRest) {
-							// don't check again for "idle" and get let the entity get closer to the current target
-							m_checkGoToRest = false;
-						} else {
-							// this entity won't rest now, let's go to another location
-							m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
-						}
+				if (m < 1f) {
+					if (m_goToIdle) {
+						Transition(OnRest);
 					} else {
-						// we'll slown down and go to rest
-						if (m < m_data.speed * 0.25f) {
-							Transition(OnRest);
-						}
+						m_goToIdle = Random.Range(0f, 1f) < m_data.idleChance; // it will stop at next target
+						m_pilot.SlowDown(m_goToIdle);
+						m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
 					}
 				}
 

@@ -6,6 +6,10 @@
 		private Machine m_machine;
 		public Machine machine { set { m_machine = value; } }
 
+		public void Init() {
+			m_value = false;
+		}
+
 		public void Set(bool _value) {
 			if (m_value != _value) {
 				if (_value) {

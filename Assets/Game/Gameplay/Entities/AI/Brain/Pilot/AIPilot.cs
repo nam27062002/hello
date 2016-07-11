@@ -27,6 +27,9 @@ namespace AI {
 		public Vector3 homePosition { get { return m_homePosition; } }
 
 		protected Vector3 m_target;
+		public override Vector3 target { get { return m_target; } }
+
+		protected bool m_slowDown;
 
 		//--------------------------------------------------------------------//
 		// METHODS															  //
@@ -36,6 +39,7 @@ namespace AI {
 			m_homePosition = _spawner.transform.position;
 
 			m_target = transform.position;
+			m_slowDown = false;
 
 			// braaiiiinnn ~ ~ ~ ~ ~
 			if (m_brain == null) {
@@ -50,6 +54,10 @@ namespace AI {
 
 		public void GoTo(Vector3 _target) {
 			m_target = _target;
+		}
+
+		public void SlowDown(bool _value) {
+			m_slowDown = _value;
 		}
 
 		protected override void Update() {

@@ -20,13 +20,17 @@ namespace AI {
 
 			m_impulse = Vector3.zero;
 
-			if (speed > 0) {
+			if (speed > 0.01f) {
 				m_target.y = transform.position.y;
 
 				//m_direction = GetGroundDirection();
 
 				Vector3 v = m_target - transform.position;	
-				Util.MoveTowardsVector3WithDamping(ref m_impulse, ref v, speed, 32f * Time.deltaTime);
+				if (m_slowDown) {
+					Util.MoveTowardsVector3WithDamping(ref m_impulse, ref v, speed, 32f * Time.deltaTime);
+				} else {
+					m_impulse = v.normalized * speed;
+				}
 				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
 
 				if (m_impulse.x >= 0) {

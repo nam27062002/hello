@@ -37,7 +37,7 @@ namespace AI {
 
 		protected bool[] m_actions;
 
-		private float m_speed;
+		protected float m_speed;
 		private float m_boostSpeed;
 		private float m_currentSpeed;
 		public float speed { get { return m_currentSpeed; } }
@@ -49,6 +49,7 @@ namespace AI {
 		protected Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
 
+		public virtual Vector3 target { get { return transform.position; } }
 
 		//----------------------------------------------------------------------------------------------------------------
 

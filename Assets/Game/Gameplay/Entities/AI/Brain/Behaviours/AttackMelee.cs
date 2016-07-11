@@ -36,7 +36,7 @@ namespace AI {
 				m_meleeWeapon.enabled = false;
 			}
 
-			private void OnAnimDealDamageExtended() {
+			protected override void OnAnimDealDamageExtended() {
 				m_meleeWeapon.enabled = true;
 			}
 

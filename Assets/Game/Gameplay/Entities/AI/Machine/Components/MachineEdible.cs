@@ -31,9 +31,7 @@ namespace AI {
 
 		public void Bite() {
 			m_machine.SetSignal(Signals.Panic.name, true);
-			Debug.Log(m_machine.name + " : I've been bitten!! >_<");
-
-			//TODO: play sound
+			m_machine.SetSignal(Signals.Chewing.name, true);
 		}
 
 		public void BeingSwallowed(Transform _transform) {			

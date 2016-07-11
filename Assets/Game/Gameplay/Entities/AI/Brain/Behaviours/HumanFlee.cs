@@ -44,6 +44,7 @@ namespace AI {
 
 			protected override void OnExit(State newState) {
 				m_pilot.Scared(false);
+				m_pilot.SlowDown(false);
 			}
 
 			protected override void OnUpdate() {
@@ -64,7 +65,7 @@ namespace AI {
 				}
 
 				float m = Mathf.Abs(m_machine.position.x - m_target.x);
-				if (m < 3f * 0.25f) {
+				if (m < 1f) {
 					m_pilot.SetSpeed(0f);
 
 					Vector3 dir = Vector3.zero;

@@ -6,6 +6,7 @@ namespace AI {
 		[System.Serializable]
 		public class FollowLeaderData : StateComponentData {
 			public float speed = 1f;
+			public float followAheadFactor = 0f;
 			public Range frequencyOffset = new Range(0f, 1f);
 		}
 
@@ -34,7 +35,7 @@ namespace AI {
 				m_pilot.SetSpeed(m_data.speed);
 
 				IMachine leader = m_machine.GetGroup().leader;
-				Vector3 target = leader.position - leader.direction * 0f;
+				Vector3 target = leader.target - leader.direction * m_data.followAheadFactor;
 
 				m_time += Time.smoothDeltaTime;
 				target.y += Mathf.Cos(m_frequencyOffset + m_time);

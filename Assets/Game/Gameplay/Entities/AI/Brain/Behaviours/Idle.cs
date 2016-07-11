@@ -33,9 +33,11 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				m_timer -= Time.deltaTime;
-				if (m_timer <= 0f) {
-					Transition(OnMove);
+				if (m_data.restTime.max > 0f) { 
+					m_timer -= Time.deltaTime;
+					if (m_timer <= 0f) {
+						Transition(OnMove);
+					}
 				}
 			}
 		}

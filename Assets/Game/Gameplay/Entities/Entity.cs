@@ -45,17 +45,24 @@ public class Entity : MonoBehaviour, ISpawnable {
 	private float m_health;
 	public float health { get { return m_health; } set { m_health = value; } }
 
-
 	private bool m_isGolden = false;
 	public bool isGolden { get { return m_isGolden; } }
+
+	private bool m_isOnScreen = false;
+	public bool isOnScreen { get { return m_isOnScreen; } }
+
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
 	private Spawner m_spawner;
 
+	private float m_checkOnScreenTimer = 0;
 
 	private bool m_givePC = false;
+
+	private GameCameraController m_camera;
+
 
 
 	/************/
@@ -98,6 +105,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 
 	// Use this for initialization
 	void Start () {
+		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
 		m_bounds = GetComponentInChildren<CircleArea2D>();
 	}
 
@@ -119,7 +127,8 @@ public class Entity : MonoBehaviour, ISpawnable {
 		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
 		m_givePC = (Random.Range(0f, 1f) <= pcChance);
 
-		//TODO: move texture and shader change to View Control!
+		m_isOnScreen = false;
+		m_checkOnScreenTimer = 0;
 
 		m_health = m_maxHealth;
 	}
@@ -182,9 +191,19 @@ public class Entity : MonoBehaviour, ISpawnable {
 
 	// Update is called once per frame
 	void Update () {
+		m_checkOnScreenTimer -= Time.deltaTime;
+		if (m_checkOnScreenTimer <= 0) {	
+			m_isOnScreen = m_camera.IsInsideActivationMinArea(transform.position);
+			m_checkOnScreenTimer = 0.5f;
+		}
+	}
+
+	void LateUpdate() {
 		// check camera to destroy this entity if it is outside view area
-		// if (out of screen) {
-		//		Disable(false);
-		// }
+		if (m_camera.IsInsideDeactivationArea(transform.position)) {
+			if (m_spawner) {
+				Disable(false);
+			}
+		}
 	}
 }

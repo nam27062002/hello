@@ -21,12 +21,17 @@ namespace AI {
 			// calculate impulse to reach our target
 			m_impulse = Vector3.zero;
 
-			if (speed > 0) {
+			if (speed > 0.01f) {
 				Vector3 seek = Vector3.zero;
 				Vector3 flee = Vector3.zero;
 
 				Vector3 v = m_target - m_machine.position;
-				Util.MoveTowardsVector3WithDamping(ref seek, ref v, speed, 32f * Time.deltaTime);
+
+				if (m_slowDown) { // this machine will slow down its movement when arriving to its detination
+					Util.MoveTowardsVector3WithDamping(ref seek, ref v, m_speed, 32f * Time.deltaTime);
+				} else {
+					seek = v.normalized * m_speed;
+				}
 				Debug.DrawLine(m_machine.position, m_machine.position + seek, Color.green);
 
 				if (m_actions[(int)Action.Avoid]) {
