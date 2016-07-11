@@ -247,8 +247,14 @@ public class UserProfile
 		m_pc = profile["pc"].AsInt;
 
 		// Game settings
-		m_currentDragon = profile["currentDragon"];
-		m_currentLevel = profile["currentLevel"];
+		if ( profile.ContainsKey("currentDragon") )
+			m_currentDragon = profile["currentDragon"];
+		else
+			m_currentDragon = "";
+		if ( profile.ContainsKey("currentLevel") )
+			m_currentLevel = profile["currentLevel"];
+		else
+			m_currentLevel = "";
 		m_tutorialStep = ( TutorialStep )profile["tutorialStep"].AsInt;
 		m_furyUsed = profile["furyUsed"].AsBool;
 
@@ -292,8 +298,8 @@ public class UserProfile
 		}
 		
 		m_wardrobe.InitFromDefinitions();
-		if ( _data.ContainsKey("wardrobe") )
-			m_wardrobe.Load( _data["wardrobe"] );
+		if ( _data.ContainsKey("disguises") )
+			m_wardrobe.Load( _data["disguises"] );
 
 		if ( _data.ContainsKey("missions") )
 		{
@@ -380,7 +386,7 @@ public class UserProfile
 		data.Add( "dragons", dragons );
 
 		data.Add("eggs", SaveEggData());
-		data.Add("wardrobe", m_wardrobe.Save());
+		data.Add("disguises", m_wardrobe.Save());
 		data.Add("missions", m_userMissions.Save());
 		// Return it
 		return data;

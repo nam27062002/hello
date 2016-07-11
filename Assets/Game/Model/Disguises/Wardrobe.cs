@@ -91,7 +91,7 @@ public class Wardrobe
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) 
 	{
-		SimpleJSON.JSONArray diguisesArr = _data["disguises"].AsArray;
+		SimpleJSON.JSONArray diguisesArr = _data.AsArray;
 		int disguisesLength = diguisesArr.Count;
 		for (int i = 0; i < disguisesLength; i++) {
 			m_disguises[ diguisesArr[i]["disguise"] ] = diguisesArr[i]["level"].AsInt;
@@ -102,9 +102,8 @@ public class Wardrobe
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SimpleJSON.JSONNode Save() {
-		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-
+	public SimpleJSON.JSONNode Save() 
+	{
 		SimpleJSON.JSONArray diguisesArr = new SimpleJSON.JSONArray();
 		if(m_disguises != null) {
 			foreach (KeyValuePair<string, int> pair in m_disguises) {
@@ -119,8 +118,6 @@ public class Wardrobe
 				}
 			}
 		}
-		data["disguises"] = diguisesArr;
-
-		return data;
+		return diguisesArr;
 	}
 }

@@ -4,8 +4,8 @@ using System.Collections;
 public class SaveDataPill : MonoBehaviour 
 {
 
-	UnityEngine.UI.Text m_softCurrency;
-	UnityEngine.UI.Text m_hardCurrency;
+	public UnityEngine.UI.Text m_softCurrency;
+	public UnityEngine.UI.Text m_hardCurrency;
 	UserProfile m_user;
 
 	public void Setup( UserProfile user )
