@@ -205,6 +205,7 @@ public class GameCameraController : MonoBehaviour {
 			{	
 				m_currentZoom = Mathf.Lerp( m_currentZoom, m_defaultZoom, Time.deltaTime);
 				newPos.z = -m_currentZoom;
+				m_dampedPosition = newPos;
 			}break;
 			case State.PLAY:
 			{
