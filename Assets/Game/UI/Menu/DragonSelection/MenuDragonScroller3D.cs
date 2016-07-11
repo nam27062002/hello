@@ -90,10 +90,8 @@ public class MenuDragonScroller3D : MonoBehaviour {
 		Debug.Assert(m_lookAtPath != null, "Required field");
 
 		// Find and store dragon preview references
-		string currentSelectedDragon = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
 		MenuDragonPreview[] dragonPreviews = GetComponentsInChildren<MenuDragonPreview>();
 		for(int i = 0; i < dragonPreviews.Length; i++) {
-			Debug.Log("Find preview of dragon " + i + "(" + dragonPreviews[i].sku + ")");
 			// Add it into the map
 			m_dragonPreviews[dragonPreviews[i].sku] = dragonPreviews[i];
 		}
@@ -197,7 +195,25 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// <returns>The dragon preview object.</returns>
 	/// <param name="_sku">The sku of the dragon whose preview we want.</param>
 	public MenuDragonPreview GetDragonPreview(string _sku) {
-		return m_dragonPreviews[_sku];
+		// Try to get it from the dictionary
+		MenuDragonPreview ret = null;
+		m_dragonPreviews.TryGetValue(_sku, out ret);
+
+		// If not found on the dictionary, try to find it in the hierarchy
+		if(ret == null) {
+			// We have need to check all the dragons anyway, so update them all
+			MenuDragonPreview[] dragonPreviews = GetComponentsInChildren<MenuDragonPreview>();
+			for(int i = 0; i < dragonPreviews.Length; i++) {
+				// Add it into the map
+				m_dragonPreviews[dragonPreviews[i].sku] = dragonPreviews[i];
+
+				// Is it the one we're looking for?
+				if(dragonPreviews[i].sku == _sku) {
+					ret = dragonPreviews[i];
+				}
+			}
+		}
+		return ret;
 	}
 
 	//------------------------------------------------------------------//
