@@ -117,7 +117,9 @@ public class DisguisePowerIcon : MonoBehaviour {
 			powerTooltip.SetLocked(m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
 
 			// Set arrow offset to make it point to this icon
-			powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
+			//powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
+			// [AOC] With the new layout, set tooltip's position to spawn from the same icon's Y.
+			powerTooltip.transform.SetPosY(this.transform.position.y);
 		}
 	}
 }

@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -90,13 +91,82 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Use internal initializer
+		//Initialize();
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		/*Canvas canvas = GetComponentInParent<Canvas>();
+		Vector3 viewportPos = canvas.worldCamera.WorldToViewportPoint(m_dragonUIPos.position);
+
+		Camera camera = InstanceManager.GetSceneController<MenuSceneController>().screensController.camera;
+		viewportPos.z = m_depth;
+		m_previewAnchor.position = camera.ViewportToWorldPoint(viewportPos);
+		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;*/
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Use internal finalizer
+		Finalize();
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Destroy Egg 3D scene
+		if(m_eggPreviewScene != null) {
+			UIScene3DManager.Remove(m_eggPreviewScene);
+			m_eggPreviewScene = null;
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Trigger all animators needed to display the pets screen.
+	/// </summary>
+	public void Show() {
+		// The list
+		this.GetComponent<ShowHideAnimator>().Show();
+
+		// Make sure the screen is properly initialized
+		Initialize();
+	}
+
+	/// <summary>
+	/// Trigger all animators needed to hide the pets screen.
+	/// </summary>
+	public void Hide() {
+		// The list
+		this.GetComponent<ShowHideAnimator>().Hide();
+
+		// Make sure the screen is properly finalized
+		Finalize();
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Setup the screen with the data of the currently selected dragon.
+	/// </summary>
+	private void Initialize() {
 		// Get target dragon
 		m_dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
 
 		// Find the 3D dragon preview
 		MenuScreenScene scene = InstanceManager.GetSceneController<MenuSceneController>().screensController.GetScene((int)MenuScreens.DISGUISES);
 		if(scene != null) {
-			m_previewAnchor = scene.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku).transform;
+			MenuDragonPreview preview = scene.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku);
+			if(preview != null) m_previewAnchor = preview.transform;
 			//m_dragonRotationArrowsPos = scene.transform.FindChild("Arrows");
 		}
 
@@ -178,22 +248,9 @@ public class DisguisesScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Called every frame.
+	/// Perform all required actions when leaving the screen.
 	/// </summary>
-	private void Update() {
-		/*Canvas canvas = GetComponentInParent<Canvas>();
-		Vector3 viewportPos = canvas.worldCamera.WorldToViewportPoint(m_dragonUIPos.position);
-
-		Camera camera = InstanceManager.GetSceneController<MenuSceneController>().screensController.camera;
-		viewportPos.z = m_depth;
-		m_previewAnchor.position = camera.ViewportToWorldPoint(viewportPos);
-		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;*/
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
+	private void Finalize() {
 		// Restore equipped disguise
 		if(m_equippedPill != null) {
 			Wardrobe.Equip(m_dragonSku, m_equippedPill.sku);
@@ -201,51 +258,13 @@ public class DisguisesScreenController : MonoBehaviour {
 			Wardrobe.Equip(m_dragonSku, "default");
 		}
 		PersistenceManager.Save();
-	}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		// Destroy Egg 3D scene
-		if(m_eggPreviewScene != null) {
-			UIScene3DManager.Remove(m_eggPreviewScene);
-			m_eggPreviewScene = null;
-		}
-	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Trigger all animators needed to display the pets screen.
-	/// </summary>
-	public void Show() {
-		// The list
-		this.GetComponent<ShowHideAnimator>().Show();
-
-		// The powerups
-		for(int i = 0; i < m_powerAnims.Length; i++) {
-			m_powerAnims[i].Show();
-		}
-	}
-
-	/// <summary>
-	/// Trigger all animators needed to hide the pets screen.
-	/// </summary>
-	public void Hide() {
-		// The list
-		this.GetComponent<ShowHideAnimator>().Hide();
-
-		// The powerups
+		// Hide all powerups
 		for(int i = 0; i < m_powerAnims.Length; i++) {
 			m_powerAnims[i].Hide();
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// INTERNAL METHODS														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Given an array of sprites, get the first one with a target name.
 	/// </summary>
@@ -273,7 +292,8 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Skip if pill is already the selected one
 		if(m_selectedPill == _pill) return;
 
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+		// SFX - not during the intialization
+		if(m_selectedPill != null) AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Update and Show/Hide title
 		/*ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
@@ -315,9 +335,13 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill.Select(true);
 
 		// Apply selected disguise to dragon preview and animate
+		string oldDisguiseSku = Wardrobe.GetEquipedDisguise(m_dragonSku);
 		Wardrobe.Equip(m_dragonSku, m_selectedPill.sku);
-		m_previewAnchor.GetComponent<ShowHideAnimator>().ForceHide(false);
-		m_previewAnchor.GetComponent<ShowHideAnimator>().Show();
+		if(oldDisguiseSku != m_selectedPill.sku) {
+			// Only animate if disguise has actually changed
+			DOTween.Kill("DisguiseEquippedAnim", true);	// Kill any existing tween
+			if(m_previewAnchor != null) m_previewAnchor.DOScale(Vector3.zero, 1f).From().SetId("DisguiseEquippedAnim").SetEase(Ease.OutElastic);
+		}
 
 		// If selected disguise is equippable, do it
 		if(m_selectedPill != m_equippedPill && m_selectedPill.level > 0) {
