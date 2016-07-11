@@ -21,7 +21,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	//------------------------------------------------------------------//
 	public enum Mode {
 		CURRENT_DRAGON,		// Automatically loads and updates CURRENT dragon (UserProfile.currentDragon)
-		SELECTED_DRAGON,	// Automatically loads and updatse SELECTED dragon (MenuSceneController.selectedDragon)
+		SELECTED_DRAGON,	// Automatically loads and updates SELECTED dragon (MenuSceneController.selectedDragon)
 		MANUAL				// Manual control via the LoadDragon() method and the exposed m_dragonSku parameter
 	}
 	
@@ -66,8 +66,14 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// Initialiation.
 	/// </summary>
 	private void Awake() {
+		// Try to find out already instantiated previews of the dragon
+		MenuDragonPreview preview = this.GetComponentInChildren<MenuDragonPreview>();
+		if(preview != null) {
+			m_dragonInstance = preview.gameObject;
+		}
+
 		// If this object has any children, consider first one the dragon preview placeholder
-		if(transform.childCount > 0) {
+		else if(transform.childCount > 0) {
 			m_dragonInstance = transform.GetChild(0).gameObject;
 		}
 	}
@@ -76,8 +82,8 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// The component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Initialize loaded dragon
-		RefreshDragon();
+		// Initialize loaded dragon (unless using MANUAL mode)
+		if(m_mode != Mode.MANUAL) RefreshDragon();
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_CONFIRMED, OnDragonConfirmed);
