@@ -214,6 +214,17 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
+	public void ResetLoadedData()
+	{	
+		m_owned = false;
+		m_progression.Load(0,0);
+		m_speedSkill.Load(0);
+		m_energySkill.Load(0);
+		m_fireSkill.Load(0);
+		m_disguise = "";
+		m_pets.Clear();
+	}
+
 	/// <summary>
 	/// Load state from a persistence object.
 	/// </summary>

@@ -225,12 +225,15 @@ public class UserProfile
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
+
 	/// <summary>
 	/// Load state from a json object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
+
+
 		// Economy
 		Debug.Log( _data.ToString() );
 		SimpleJSON.JSONNode profile = _data["userProfile"];
@@ -269,10 +272,25 @@ public class UserProfile
 				m_dragonsBySku[sku].Load(dragons[i]);
 			}
 		}
+		else
+		{
+			// Clean Dragon Data
+			foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+				pair.Value.ResetLoadedData();
+		}
 
 		if ( _data.ContainsKey("eggs") )
+		{
 			LoadEggData(_data["eggs"] as SimpleJSON.JSONClass);
-
+		}
+		else
+		{
+			// Clean Eggs Data
+			for( int i = 0; i<EggManager.INVENTORY_SIZE; i++ )
+				eggsInventory[i] = null;
+			m_incubatingEgg = null;
+		}
+		
 		m_wardrobe.InitFromDefinitions();
 		if ( _data.ContainsKey("wardrobe") )
 			m_wardrobe.Load( _data["wardrobe"] );
@@ -281,6 +299,11 @@ public class UserProfile
 		{
 			m_userMissions.Load( _data["missions"] );
 			m_userMissions.ownedDragons = GetNumOwnedDragons();
+		}
+		else
+		{
+			// Clean missions
+			m_userMissions.ClearAllMissions();
 		}
 	}
 

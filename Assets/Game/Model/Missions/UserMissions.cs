@@ -236,6 +236,12 @@ public class UserMissions
 		}
 	}
 
+	public void ClearAllMissions()
+	{
+		for( int i = 0; i<(int)Mission.Difficulty.COUNT; i++ )
+			ClearMission( (Mission.Difficulty)i );
+	}
+
 	public void UnlockByDragonsNumber()
 	{
 		for(int i = 0; i < m_missions.Length; i++) {

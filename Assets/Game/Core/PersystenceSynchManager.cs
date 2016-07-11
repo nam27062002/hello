@@ -105,21 +105,41 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 			return;
 		if ( GameServerManager.SharedInstance.GetLastRecievedUniverse() != null )	// If I have recieved a universe
 		{
+			
 			UserProfile serverData = new UserProfile();
-			serverData.Load(GameServerManager.SharedInstance.GetLastRecievedUniverse());
-			if ( UsersManager.currentUser.saveCounter < serverData.saveCounter )
+
+			try
 			{
-				// Information on server is newer -> I should get it or merge
-				Messenger.Broadcast(GameEvents.MERGE_SERVER_SAVE_DATA);
-				// Now we wait for the result
+				serverData.Load(GameServerManager.SharedInstance.GetLastRecievedUniverse());
+			}
+			catch( System.Exception e)
+			{
+				// Save Data not valid!
+				serverData = null;
+			}
+
+			if ( serverData != null )
+			{
+				if ( UsersManager.currentUser.saveCounter < serverData.saveCounter )
+				{
+					// Information on server is newer -> I should get it or merge
+					Messenger.Broadcast(GameEvents.MERGE_SERVER_SAVE_DATA);
+					// Now we wait for the result
+				}
+				else
+				{
+					GameServerManager.SharedInstance.CleanLastRecievedUniverse();
+					GameServerManager.SharedInstance.saveDataRecovered = true;
+					// Lets continue Synch Process
+					m_continueSynchProcess = true;
+				}
 			}
 			else
 			{
 				GameServerManager.SharedInstance.CleanLastRecievedUniverse();
-				GameServerManager.SharedInstance.saveDataRecovered = true;
-				// Lets continue Synch Process
-				m_continueSynchProcess = true;
+				GameServerManager.SharedInstance.saveDataRecovered = false;	// Maybe we need to ask again for the save data?
 			}
+			
 		}
 	}
 

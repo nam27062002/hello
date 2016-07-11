@@ -22,6 +22,11 @@ public class Wardrobe
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	public Wardrobe()
+	{
+		m_disguises = new Dictionary<string, int>();
+	}
+
 	/// <summary>
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.
@@ -29,8 +34,7 @@ public class Wardrobe
 	public void InitFromDefinitions() 
 	{
 		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DISGUISES);
-
-		m_disguises = new Dictionary<string, int>();
+		m_disguises.Clear();
 		for (int i = 0; i < skus.Count; i++) {
 			m_disguises.Add(skus[i], 0);
 		}

@@ -12,11 +12,10 @@ public class PopupMerge : MonoBehaviour
 
 	PopupController m_controller;
 
-	UserProfile otherData;
+	UserProfile m_otherData;
 
-	protected void Awake () 
+	PopupMerge()
 	{
-		m_controller = GetComponent<PopupController>();
 		Messenger.AddListener(GameEvents.MERGE_SERVER_SAVE_DATA, onMergeSaveData);
 	}
 
@@ -28,12 +27,31 @@ public class PopupMerge : MonoBehaviour
 
 	void onMergeSaveData()
 	{
+		m_controller = GetComponent<PopupController>();
 		m_leftPill.Setup( UsersManager.currentUser );
 
-		otherData = new UserProfile();
-		otherData.Load(GameServerManager.SharedInstance.GetLastRecievedUniverse());
-		m_rightPill.Setup( otherData );
+		m_otherData = new UserProfile();
+		m_otherData.Load(GameServerManager.SharedInstance.GetLastRecievedUniverse());
+		m_rightPill.Setup( m_otherData );
 
 		m_controller.Open();
+	}
+
+	public void OnUseLeftOption()
+	{
+		UsersManager.currentUser.saveCounter = Mathf.Max( UsersManager.currentUser.saveCounter, m_otherData.saveCounter );
+		PersistenceManager.Save();
+		GameServerManager.SharedInstance.CleanLastRecievedUniverse();
+	}
+
+	public void OnUseRightOption()
+	{
+		// Here we have problems because we need to reload
+		UsersManager.currentUser.Load( GameServerManager.SharedInstance.GetLastRecievedUniverse() );
+		PersistenceManager.Save();
+		GameServerManager.SharedInstance.CleanLastRecievedUniverse();
+
+		// Reload? Can we do something to avoid reloading?
+
 	}
 }
