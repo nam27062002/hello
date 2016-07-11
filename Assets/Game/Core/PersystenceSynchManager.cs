@@ -120,6 +120,8 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 
 			if ( serverData != null )
 			{
+				// Resolve Conflict!
+
 				if ( UsersManager.currentUser.saveCounter < serverData.saveCounter )
 				{
 					// Information on server is newer -> I should get it or merge

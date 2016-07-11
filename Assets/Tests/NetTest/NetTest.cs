@@ -89,7 +89,7 @@ public class NetTest : MonoBehaviour
 	private void CheckShowMerge()
 	{
 		// If we are logged in both platgorms and we already merged our local account with the save data
-		if ( GameServerManager.SharedInstance.IsLogged() && GameServerManager.SharedInstance.saveDataRecovered && SocialPlatformManager.SharedInstance.IsLoggedIn() )
+		if ( GameServerManager.SharedInstance.IsLogged() /*&& GameServerManager.SharedInstance.saveDataRecovered*/ && SocialPlatformManager.SharedInstance.IsLoggedIn() )
 		{
 			m_mergeLayout.SetActive(true);
 		}
