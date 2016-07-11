@@ -283,7 +283,7 @@ public class DragonData {
 		data.Add("boostSkillLevel", m_energySkill.level.ToString());
 		data.Add("fireSkillLevel", m_fireSkill.level.ToString());
 
-		data.Add("disgguise", m_disguise);
+		data.Add("disguise", m_disguise);
 
 
 		SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
