@@ -62,7 +62,18 @@ public class MenuLevelScroller3D : MonoBehaviour {
 		// Get all level previews
 		// Sort them by order as defined in their definition
 		m_levels.AddRange(GetComponentsInChildren<MenuLevelPreview>(true));
-		m_levels.Sort((_x, _y) => _x.def.GetAsInt("order").CompareTo(_y.def.GetAsInt("order")));
+		m_levels.Sort((_x, _y) => {
+			if(_x.def == null) {
+				if(_y.def == null) {
+					return 0;	// Same oreder
+				} else {
+					return 1;	// Y goes first
+				}
+			} else if(_y.def == null) {
+				return -1;		// X goes first
+			}
+			return _x.def.GetAsInt("order").CompareTo(_y.def.GetAsInt("order"));
+		});
 	}
 
 	/// <summary>

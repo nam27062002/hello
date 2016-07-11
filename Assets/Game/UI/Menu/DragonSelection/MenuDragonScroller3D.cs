@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -74,6 +75,9 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	// Internal references
 	private MenuScreensController m_menuScreensController = null;
 
+	// Dragon previews
+	private Dictionary<string, MenuDragonPreview> m_dragonPreviews = new Dictionary<string, MenuDragonPreview>();
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -84,6 +88,15 @@ public class MenuDragonScroller3D : MonoBehaviour {
 		// Check required fields
 		Debug.Assert(m_cameraPath != null, "Required field");
 		Debug.Assert(m_lookAtPath != null, "Required field");
+
+		// Find and store dragon preview references
+		string currentSelectedDragon = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		MenuDragonPreview[] dragonPreviews = GetComponentsInChildren<MenuDragonPreview>();
+		for(int i = 0; i < dragonPreviews.Length; i++) {
+			Debug.Log("Find preview of dragon " + i + "(" + dragonPreviews[i].sku + ")");
+			// Add it into the map
+			m_dragonPreviews[dragonPreviews[i].sku] = dragonPreviews[i];
+		}
 	}
 
 	/// <summary>
@@ -176,6 +189,15 @@ public class MenuDragonScroller3D : MonoBehaviour {
 			if(m_cameraPath != null) m_cameraPath.snapPoint = menuOrder;
 			if(m_lookAtPath != null) m_lookAtPath.snapPoint = menuOrder;
 		}
+	}
+
+	/// <summary>
+	/// Get the 3D preview of a specific dragon.
+	/// </summary>
+	/// <returns>The dragon preview object.</returns>
+	/// <param name="_sku">The sku of the dragon whose preview we want.</param>
+	public MenuDragonPreview GetDragonPreview(string _sku) {
+		return m_dragonPreviews[_sku];
 	}
 
 	//------------------------------------------------------------------//

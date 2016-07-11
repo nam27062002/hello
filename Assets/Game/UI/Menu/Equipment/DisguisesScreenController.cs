@@ -23,7 +23,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// References
 	[Separator("References")]
-	[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
+	//[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
 	[SerializeField] private DisguisePowerIcon[] m_powers;
 	[SerializeField] private RectTransform m_layout;
 
@@ -32,9 +32,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private GameObject m_buyButton;
 
 	// Preview
-	[Separator("Preview")]
-	[SerializeField] private RectTransform m_dragonUIPos;
-	[SerializeField] private float m_depth = 25f;
 	private Transform m_previewAnchor;
 	private Transform m_dragonRotationArrowsPos;
 
@@ -76,7 +73,6 @@ public class DisguisesScreenController : MonoBehaviour {
 			pill.transform.localScale = Vector3.one;
 
 			m_pills[i] = pill.GetComponent<DisguisePill>();
-
 			m_pills[i].OnPillClicked.AddListener(OnPillClicked);
 		}
 
@@ -86,6 +82,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Store some references
 		for(int i = 0; i < m_powers.Length; i++) {
 			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
+			Debug.Log("power anim for " + i + ": " + (m_powerAnims[i] == null ? "NULL" : m_powerAnims[i].ToString()));
 		}
 	}
 
@@ -93,15 +90,15 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// find the 3D dragon position
-		GameObject disguiseScene = GameObject.Find("PF_MenuDisguisesScene");
-		if (disguiseScene != null) {
-			m_previewAnchor = disguiseScene.transform.FindChild("CurrentDragon");
-			m_dragonRotationArrowsPos = disguiseScene.transform.FindChild("Arrows");
-		}
-
 		// Get target dragon
 		m_dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+
+		// Find the 3D dragon preview
+		MenuScreenScene scene = InstanceManager.GetSceneController<MenuSceneController>().screensController.GetScene((int)MenuScreens.DISGUISES);
+		if(scene != null) {
+			m_previewAnchor = scene.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku).transform;
+			//m_dragonRotationArrowsPos = scene.transform.FindChild("Arrows");
+		}
 
 		// Get egg corresponding to target dragon
 		m_eggDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", m_dragonSku);
@@ -114,7 +111,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/" + m_dragonSku);
 
 		// Hide all the info
-		m_disguiseTitle.GetComponent<ShowHideAnimator>().ForceHide(false);
+		//m_disguiseTitle.GetComponent<ShowHideAnimator>().ForceHide(false);
 		for(int i = 0; i < m_powerAnims.Length; i++) {
 			m_powerAnims[i].ForceHide(false);
 		}
@@ -184,24 +181,19 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-		Canvas canvas = GetComponentInParent<Canvas>();
+		/*Canvas canvas = GetComponentInParent<Canvas>();
 		Vector3 viewportPos = canvas.worldCamera.WorldToViewportPoint(m_dragonUIPos.position);
 
 		Camera camera = InstanceManager.GetSceneController<MenuSceneController>().screensController.camera;
 		viewportPos.z = m_depth;
 		m_previewAnchor.position = camera.ViewportToWorldPoint(viewportPos);
-		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;
+		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;*/
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Hide preview
-		if (m_previewAnchor != null) {
-			m_previewAnchor.gameObject.SetActive(false);
-		}
-
 		// Restore equipped disguise
 		if(m_equippedPill != null) {
 			Wardrobe.Equip(m_dragonSku, m_equippedPill.sku);
@@ -219,6 +211,35 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(m_eggPreviewScene != null) {
 			UIScene3DManager.Remove(m_eggPreviewScene);
 			m_eggPreviewScene = null;
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Trigger all animators needed to display the pets screen.
+	/// </summary>
+	public void Show() {
+		// The list
+		this.GetComponent<ShowHideAnimator>().Show();
+
+		// The powerups
+		for(int i = 0; i < m_powerAnims.Length; i++) {
+			m_powerAnims[i].Show();
+		}
+	}
+
+	/// <summary>
+	/// Trigger all animators needed to hide the pets screen.
+	/// </summary>
+	public void Hide() {
+		// The list
+		this.GetComponent<ShowHideAnimator>().Hide();
+
+		// The powerups
+		for(int i = 0; i < m_powerAnims.Length; i++) {
+			m_powerAnims[i].Hide();
 		}
 	}
 
@@ -255,10 +276,10 @@ public class DisguisesScreenController : MonoBehaviour {
 		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Update and Show/Hide title
-		ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
+		/*ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
 		titleAnimator.Hide(false);
 		titleAnimator.Set(_pill != null);
-		m_disguiseTitle.InitFromDefinition(_pill.def);
+		m_disguiseTitle.InitFromDefinition(_pill.def);*/
 
 		// Remove highlight from previously selected pill
 		if(m_selectedPill != null) m_selectedPill.Select(false);
@@ -316,22 +337,8 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Buy button has been pressed.
 	/// </summary>
 	public void OnBuy() {
-		/*PopupController popup = PopupManager.OpenPopupInstant(PopupEggShop.PATH);
-		popup.GetComponent<PopupEggShop>().SetInitialEgg(m_dragonSku);
-		popup.GetComponent<PopupEggShop>().SetVisibleEggs(new string[] { m_dragonSku });*/
-
+		// SFX
 		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
-
-		// Can the egg be purchased? It should be, we can't open the disguises screen for dragons we don't yet own! Check it just in case
-		// Dragon must be owned
-		DragonData requiredDragon = DragonManager.GetDragonData(m_dragonSku);
-		if(!requiredDragon.isOwned) {
-			// Show feedback and return
-            string text = LocalizationManager.SharedInstance.Localize("TID_EGG_SHOP_DRAGON_REQUIRED", requiredDragon.def.GetLocalized("tidName"));
-			UIFeedbackText textObj = UIFeedbackText.CreateAndLaunch(text, new Vector2(0.5f, 0.5f), (RectTransform)this.transform);
-			textObj.GetComponent<Text>().color = Colors.red;
-			return;
-		}
 
 		// Get price and start purchase flow
 		long pricePC = m_eggDef.GetAsLong("pricePC");
