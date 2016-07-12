@@ -174,6 +174,12 @@ public class PolyMeshEditor : Editor {
 			}
 		}
 
+		// Duplicate
+		if(GUILayout.Button("Duplicate", GUILayout.Height(40f))) {
+			PolyMesh newPolyMesh = DuplicateMesh(polyMesh);
+			EditorUtils.FocusObject(newPolyMesh.gameObject, true, false, true);
+		}
+
 		// Scale fixer (single polymesh)
 		/*if(GUILayout.Button("Fix Scale", GUILayout.Height(40f))) {
 			// Scale mesh keypoints so they keep the position when the mesh has scale 1
@@ -411,13 +417,68 @@ public class PolyMeshEditor : Editor {
 		if(mergeObjects = EditorGUILayout.Foldout(mergeObjects, "Merge")) {
 			// Indent in
 			EditorGUI.indentLevel++;
-
 			polyMesh.mergeObject = (GameObject)EditorGUILayout.ObjectField(polyMesh.mergeObject, typeof(GameObject), true);
-			polyMesh.startPoint = EditorGUILayout.IntField("myStartPoint", polyMesh.startPoint);
-			polyMesh.endPoint = EditorGUILayout.IntField("myEndPoint", polyMesh.endPoint);
+			polyMesh.mergeStartPoint = EditorGUILayout.IntField("myStartPoint", polyMesh.mergeStartPoint);
+			polyMesh.mergeEndPoint = EditorGUILayout.IntField("myEndPoint", polyMesh.mergeEndPoint);
 			if(GUILayout.Button("Merge")) {
 				//MergeMeshes(polyMesh.mergeObject.GetComponent<PolyMesh>().keyPoints);
 				polyMesh.MergeMeshes();
+			}
+
+			// Indent back out
+			EditorGUI.indentLevel--;
+			EditorGUILayoutExt.Separator();
+		}
+
+		// Split section
+		if(splitSection = EditorGUILayout.Foldout(splitSection, "Split")) {
+			// Indent in
+			EditorGUI.indentLevel++;
+
+			// Point indexes
+			// First point
+			EditorGUI.BeginChangeCheck();
+			int splitPoint0 = EditorGUILayout.IntField("Point 0", m_selectedIndices.Count > 0 ? m_selectedIndices[0] : -1);
+			if(EditorGUI.EndChangeCheck()) {
+				// Make sure it's a valid point
+				if(splitPoint0 >= 0 && splitPoint0 < m_keyPoints.Count) {
+					// Make it the first in the selection
+					if(m_selectedIndices.Count > 0) {
+						m_selectedIndices[0] = splitPoint0;
+					} else {
+						m_selectedIndices.Add(splitPoint0);
+					}
+
+					// Clear the rest of selected points
+					if(m_selectedIndices.Count > 2) m_selectedIndices.RemoveRange(2, m_selectedIndices.Count - 2);
+				}
+			}
+
+			// Second point
+			EditorGUI.BeginChangeCheck();
+			int splitPoint1 = EditorGUILayout.IntField("Point 1", m_selectedIndices.Count > 1 ? m_selectedIndices[1] : -1);
+			if(EditorGUI.EndChangeCheck()) {
+				// Make sure it's a valid point
+				if(splitPoint1 >= 0 && splitPoint1 < m_keyPoints.Count) {
+					// Make it the second in the selection
+					if(m_selectedIndices.Count > 1) {
+						m_selectedIndices[1] = splitPoint1;
+					} else if(m_selectedIndices.Count == 1) {
+						m_selectedIndices.Add(splitPoint1);
+					} else if(m_selectedIndices.Count == 0) {
+						m_selectedIndices.Add(0);	// Add a point first
+						m_selectedIndices.Add(splitPoint1);
+					}
+
+					// Clear the rest of selected points
+					if(m_selectedIndices.Count > 2) m_selectedIndices.RemoveRange(2, m_selectedIndices.Count - 2);
+				}
+			}
+
+			// Do it!
+			if(GUILayout.Button("Split Mesh")) {
+				// Don't check anything, the split method will show an error if some of the parameters are not good
+				TrySplitMesh(false);
 			}
 
 			// Indent back out
@@ -487,6 +548,12 @@ public class PolyMeshEditor : Editor {
 
 				EditorGUILayout.Space();
 				extrudeKey = (KeyCode)EditorGUILayout.EnumPopup("Extrude", extrudeKey);
+				splitMeshKey = (KeyCode)EditorGUILayout.EnumPopup("Split Mesh", splitMeshKey);
+
+				EditorGUILayout.Space();
+				string controlKeyName = (Application.platform == RuntimePlatform.OSXEditor ? "Command" : "Control");
+				EditorGUILayout.Popup("Add to selection", 0, new string[] { controlKeyName });
+				EditorGUILayout.Popup("Snap to grid", 0, new string[] { "Alt" });
 
 				EditorGUI.indentLevel--;
 			} EditorGUILayout.EndVertical();
@@ -739,6 +806,9 @@ public class PolyMeshEditor : Editor {
 			case State.HOVER: {
 				DrawNearestLineAndSplit();
 
+				// [AOC] Select a point by single-clicking on it
+				TrySelectPoint(); // Don't return! Allow select + drag a point at the same frame ^^
+
 				if((Tools.current == Tool.Move || Tools.current == Tool.Rect) && TryDragSelected())		return State.DRAG_SELECTED;
 				if(Tools.current == Tool.Rotate && TryRotateSelected())									return State.ROTATE_SELECTED;
 				if(Tools.current == Tool.Scale && TryScaleSelected())									return State.SCALE_SELECTED;
@@ -747,6 +817,9 @@ public class PolyMeshEditor : Editor {
 				if(TrySelectAll()) 		return State.HOVER;
 				if(TrySplitLine()) 		return State.HOVER;
 				if(TryDeleteSelected())	return State.HOVER;
+
+				// [AOC] Split mesh by key
+				if(TrySplitMesh(true)) 	return State.HOVER;
 
 				//if(TryHoverCurvePoint(out dragIndex) && TryDragCurvePoint(dragIndex))	return State.Drag;
 				if(TryHoverKeyPoint(out m_dragIndex) && TryDragKeyPoint(m_dragIndex)) 		return State.DRAG;
@@ -996,8 +1069,8 @@ public class PolyMeshEditor : Editor {
 	/// <param name="points">Points.</param>
 	public void MergeMeshes(List<Vector3> points) {
 		if(polyMesh.mergeObject) {	
-			int myStartPoint = polyMesh.startPoint; //selectedIndices[0];
-			int myEndPoint = polyMesh.endPoint; //selectedIndices[1];
+			int myStartPoint = polyMesh.mergeStartPoint; //selectedIndices[0];
+			int myEndPoint = polyMesh.mergeEndPoint; //selectedIndices[1];
 			
 			int otherStartPoint = 0;
 			int otherEndPoint = 0;
@@ -1492,6 +1565,94 @@ public class PolyMeshEditor : Editor {
 	}
 
 	/// <summary>
+	/// Split a mesh into two, dividing through the selected non-consecutive points.
+	/// </summary>
+	/// <returns><c>true</c> if the mesh was successfully split, <c>false</c> otherwise.</returns>
+	/// <param name="_checkKey">Whether to check the assigned key press.</param>
+	private bool TrySplitMesh(bool _checkKey) {
+		// Key check
+		if(_checkKey && !KeyPressed(splitMeshKey)) {
+			return false;
+		}
+
+		// Exactly 2 points are needed
+		if(m_selectedIndices.Count < 2) {
+			EditorUtility.DisplayDialog("Not enough points selected!", "In order to perform the split mesh operation, select exactly 2 non-consecutive points of the poly that will be used to split the mesh in two.", "Understood");
+			return false;
+		}
+
+		if(m_selectedIndices.Count > 2) {
+			EditorUtility.DisplayDialog("Too many points selected!", "In order to perform the split mesh operation, select exactly 2 non-consecutive points of the poly that will be used to split the mesh in two.", "Understood");
+			return false;
+		}
+
+		// Points must be non-consecutive
+		if(Mathf.Abs(m_selectedIndices[1] - m_selectedIndices[0]) == 1) {
+			EditorUtility.DisplayDialog("Invalid points!", "In order to perform the split mesh operation, select exactly 2 non-consecutive points of the poly that will be used to split the mesh in two.", "Understood");
+			return false;
+		}
+
+		// All checks passed, do it!
+		// Create a duplicate of the whole game object
+		PolyMesh newPolyMesh = DuplicateMesh(polyMesh);
+
+		// Delete the unwanted points from both meshes
+		// Make sure we get both selected points sorted
+		List<int> selected = new List<int>(m_selectedIndices);
+		selected.Sort();
+
+		// Pick the first set of points and update mesh (the new polymesh)
+		RecordUndo(newPolyMesh);
+		newPolyMesh.keyPoints = new List<Vector3>(m_keyPoints.GetRange(selected[0], selected[1] - selected[0] + 1));	// Include both selected points!
+		newPolyMesh.isCurve = new List<bool>(m_isCurve.GetRange(selected[0], selected[1] - selected[0] + 1));
+		for(int i = 0; i < newPolyMesh.keyPoints.Count; i++) {
+			// [AOC] Is this right?? From UpdatePoly()
+			if(newPolyMesh.isCurve[i]) {
+				newPolyMesh.curvePoints[i] = Vector3.zero;
+			} else {
+				newPolyMesh.curvePoints[i] = Vector3.Lerp(newPolyMesh.keyPoints[i], newPolyMesh.keyPoints[(i + 1) % newPolyMesh.keyPoints.Count], 0.5f);
+			}
+		}
+		if(m_liveMode) {
+			newPolyMesh.BuildMesh();
+		}
+
+		// Pick the second set of points and update mesh (this polymesh)
+		m_keyPoints.RemoveRange(selected[0] + 1, selected[1] - selected[0] - 1);	// Keep both selected points!
+		m_isCurve.RemoveRange(selected[0] + 1, selected[1] - selected[0] - 1);
+		m_curvePoints.RemoveRange(selected[0] + 1, selected[1] - selected[0] - 1);
+		UpdatePoly(true, true);
+
+		// Clear selection
+		m_selectedIndices.Clear();
+
+		// Select the newly created mesh
+		EditorUtils.FocusObject(newPolyMesh.gameObject, true, false, true);
+
+		return true;
+	}
+
+	/// <summary>
+	/// Try to select a single point by clicking on it.
+	/// </summary>
+	/// <returns><c>true</c> if a point was selected, <c>false</c> otherwise.</returns>
+	private bool TrySelectPoint() {
+		int index = NearestPoint(m_keyPoints);
+		if(index >= 0 && IsHovering(m_keyPoints[index])) {
+			if(e.type == EventType.MouseDown) {
+				// If the point was already selected, return false so we can proceed to detect point dragging
+				if(m_selectedIndices.Contains(index)) return false;
+
+				// Otherwise select the point
+				if(!control) m_selectedIndices.Clear();
+				m_selectedIndices.Add(index);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/// <summary>
 	/// Determines whether this instance is hovering the specified point.
 	/// </summary>
 	/// <returns><c>true</c> if this instance is hovering the specified point; otherwise, <c>false</c>.</returns>
@@ -1612,7 +1773,7 @@ public class PolyMeshEditor : Editor {
 	}
 
 	private bool doSnap {
-		get { return autoSnap ? !control : control; }
+		get { return autoSnap ? !e.alt : e.alt; }
 	}
 
 	// Foldable groups
@@ -1639,6 +1800,11 @@ public class PolyMeshEditor : Editor {
 	private static bool mergeObjects {
 		get { return EditorPrefs.GetBool("PolyMeshEditor_mergeObjects", false); }
 		set { EditorPrefs.SetBool("PolyMeshEditor_mergeObjects", value); }
+	}
+
+	private static bool splitSection {
+		get { return EditorPrefs.GetBool("PolyMeshEditor_splitSection", false); }
+		set { EditorPrefs.SetBool("PolyMeshEditor_splitSection", value); }
 	}
 
 	// Snapping
@@ -1683,6 +1849,11 @@ public class PolyMeshEditor : Editor {
 		set { EditorPrefs.SetInt("PolyMeshEditor_extrudeKey", (int)value); }
 	}
 
+	public KeyCode splitMeshKey {
+		get { return (KeyCode)EditorPrefs.GetInt("PolyMeshEditor_splitMeshKey", (int)KeyCode.P); }
+		set { EditorPrefs.SetInt("PolyMeshEditor_splitMeshKey", (int)value); }
+	}
+
 	// Other settings
 	private static bool hideWireframe {
 		get { return EditorPrefs.GetBool("PolyMeshEditor_hideWireframe", true); }
@@ -1706,7 +1877,7 @@ public class PolyMeshEditor : Editor {
 		// Create a new game object with all the required components
 		// Place the new object as child of the currently selected object (default Unity's behaviour)
 		// Use our own EditorUtils!!
-		GameObject obj = EditorUtils.CreateGameObject("CollisionPolyMesh", EditorUtils.GetContextObject(_command));
+		GameObject obj = EditorUtils.CreateGameObject("CollisionPolyMesh", EditorUtils.GetContextObject(_command), false);
 		obj.AddComponent<MeshFilter>();
 		PolyMesh polyMesh = obj.AddComponent<PolyMesh>();
 
@@ -1757,6 +1928,75 @@ public class PolyMeshEditor : Editor {
 		});
 		polyMesh.isCurve.AddRange(new bool[] { false, false, false, false });
 		polyMesh.BuildMesh();
+	}
+
+	/// <summary>
+	/// Create a duplicate of the given polymesh.
+	/// </summary>
+	/// <returns>The new polymesh object.</returns>
+	/// <param name="_polyMesh">The polymesh to be duplicated.</param>
+	private static PolyMesh DuplicateMesh(PolyMesh _polyMesh) {
+		// Security checks
+		if(_polyMesh == null) return null;
+
+		// Use game object creation menu static methods
+		// Solid or transparent?
+		bool transparent = (_polyMesh.GetComponent<MeshRenderer>() == null);
+		GameObject newObj = null;
+		GameObject parentObj = (_polyMesh.transform.parent != null) ? _polyMesh.transform.parent.gameObject : null;
+		MenuCommand cmd = new MenuCommand(parentObj);	// Create it on the currently selected object
+		if(transparent) {
+			newObj = CreatePolyMeshTransparent(cmd);
+		} else {
+			newObj = CreatePolyMeshSolid(cmd);
+		}
+
+		// Move next to the source
+		newObj.transform.SetSiblingIndex(_polyMesh.transform.GetSiblingIndex() + 1);
+
+		// Copy the name and other game object properties
+		newObj.name = _polyMesh.name;
+		newObj.transform.position = _polyMesh.transform.position;
+		newObj.transform.rotation = _polyMesh.transform.rotation;
+		newObj.transform.localScale = _polyMesh.transform.localScale;
+		newObj.SetActive(_polyMesh.gameObject.activeSelf);
+		newObj.isStatic = _polyMesh.gameObject.isStatic;
+		newObj.layer = _polyMesh.gameObject.layer;
+		newObj.tag = _polyMesh.gameObject.tag;
+
+		// Clone the points
+		PolyMesh newPolyMesh = newObj.GetComponent<PolyMesh>();
+		newPolyMesh.keyPoints.Clear();
+		newPolyMesh.keyPoints.AddRange(_polyMesh.keyPoints);
+		newPolyMesh.curvePoints.Clear();
+		newPolyMesh.curvePoints.AddRange(_polyMesh.curvePoints);
+		newPolyMesh.isCurve.Clear();
+		newPolyMesh.isCurve.AddRange(_polyMesh.isCurve);
+
+		// Clone other properties
+		newPolyMesh.buildColliderEdges = _polyMesh.buildColliderEdges;
+		newPolyMesh.buildColliderFront = _polyMesh.buildColliderFront;
+		newPolyMesh.colliderDepth = _polyMesh.colliderDepth;
+		newPolyMesh.curveDetail = _polyMesh.curveDetail;
+		newPolyMesh.mergeEndPoint = _polyMesh.mergeEndPoint;
+		newPolyMesh.pinkMeshOffset = _polyMesh.pinkMeshOffset;
+		newPolyMesh.showNormals = _polyMesh.showNormals;
+		newPolyMesh.showOutline = _polyMesh.showOutline;
+		newPolyMesh.mergeStartPoint = _polyMesh.mergeStartPoint;
+		newPolyMesh.uvPosition = _polyMesh.uvPosition;
+		newPolyMesh.uvRotation = _polyMesh.uvRotation;
+		newPolyMesh.uvScale = _polyMesh.uvScale;
+
+		// Rebuild the mesh
+		newPolyMesh.RebuildMesh();
+
+		// Clone material
+		if(!transparent) {
+			newPolyMesh.GetComponent<MeshRenderer>().sharedMaterial = _polyMesh.GetComponent<MeshRenderer>().sharedMaterial;
+		}
+
+		// Done!
+		return newPolyMesh;
 	}
 
 	//------------------------------------------------------------------------//
