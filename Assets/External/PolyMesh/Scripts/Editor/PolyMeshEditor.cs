@@ -19,7 +19,7 @@ using System.Reflection;
 /// Custom editor for the PolyMesh class.
 /// </summary>
 [CustomEditor(typeof(PolyMesh))]
-//[CanEditMultipleObjects]
+[CanEditMultipleObjects]
 public class PolyMeshEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -68,6 +68,7 @@ public class PolyMeshEditor : Editor {
 	private float m_resizeScale;
 
 	private bool m_liveMode = true;
+	private bool m_multiEditing = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -76,6 +77,9 @@ public class PolyMeshEditor : Editor {
 	/// Inspector opened.
 	/// </summary>
 	private void OnEnable() {
+		// Multi editing?
+		m_multiEditing = targets.Length > 1;
+
 		// Show wireframe if autoEdit is true
 		if(autoEdit) {
 			HideWireframe(hideWireframe);
@@ -111,11 +115,16 @@ public class PolyMeshEditor : Editor {
 	//------------------------------------------------------------------------//
 	// INSPECTOR GUI														  //
 	//------------------------------------------------------------------------//
-	#region Inspector GUI
 	/// <summary>
 	/// Raises the inspector GU event.
 	/// </summary>
 	public override void OnInspectorGUI() {
+		// Special subset of features when multi-editing
+		if(targets.Length > 1) {
+			OnInspectorGUIMulti();
+			return;
+		}
+
 		// Check required params
 		if(target == null) {
 			EditorGUILayout.HelpBox("Invalid target, an error has occurred.", MessageType.Error);
@@ -489,17 +498,60 @@ public class PolyMeshEditor : Editor {
 
 		//serializedObject.ApplyModifiedProperties ();
 	}
-	#endregion
+
+	/// <summary>
+	/// Special subset of features when multi-editing
+	/// </summary>
+	private void OnInspectorGUIMulti() {
+		// Info
+		EditorGUILayout.HelpBox("Only a small subset of features are supported when editing multiple objects.\nAsk the developers if you would like a feature to be supported in multi-editing mode.", MessageType.Info);
+
+		// Add/Remove renderer component
+		EditorGUILayout.BeginHorizontal(GUILayout.Height(40f)); {
+			// Add renderer
+			if(GUILayout.Button("Add Renderer", GUILayout.ExpandHeight(true))) {
+				PolyMesh p = null;
+				MeshRenderer renderer = null;
+				for(int i = 0; i < targets.Length; i++) {
+					// Add renderer if not already added
+					p = targets[i] as PolyMesh;
+					renderer = p.GetComponent<MeshRenderer>();
+					if(renderer == null) {
+						renderer = p.gameObject.AddComponent<MeshRenderer>();
+						renderer.material = AssetDatabase.LoadAssetAtPath<Material>("Assets/" + DEFAULT_MATERIAL_PATH + ".mat");
+					}
+				}
+			}
+
+			// Remove renderer
+			if(GUILayout.Button("Remove Renderer", GUILayout.ExpandHeight(true))) {
+				PolyMesh p = null;
+				MeshRenderer renderer = null;
+				for(int i = 0; i < targets.Length; i++) {
+					// Remove renderer (if any)
+					p = targets[i] as PolyMesh;
+					renderer = p.GetComponent<MeshRenderer>();
+					if(renderer != null) {
+						DestroyImmediate(renderer);
+						renderer = null;
+					}
+				}
+			}
+		} EditorGUILayout.EndHorizontal();
+	}
 
 	//------------------------------------------------------------------------//
 	// SCENE GUI															  //
 	//------------------------------------------------------------------------//
-	#region Scene GUI
 	/// <summary>
 	/// Raises the scene GU event.
 	/// </summary>
 	private void OnSceneGUI() {
+		// Skip if no valid target
 		if(target == null) return;
+
+		// Skip for multiedit
+		if(m_multiEditing) return;
 
 		// Toggle editing - ignore if autoEdit
 		if(KeyPressed(editKey) && !autoEdit) {
@@ -661,12 +713,10 @@ public class PolyMeshEditor : Editor {
 		Undo.RegisterSceneUndo("PolyMesh Changed");
 #endif
 	}
-	#endregion
 
 	//------------------------------------------------------------------------//
 	// STATE CONTROL METHODS												  //
 	//------------------------------------------------------------------------//
-	#region State Control Metods
 	/// <summary>
 	/// Sets the state.
 	/// </summary>
@@ -1010,12 +1060,10 @@ public class PolyMeshEditor : Editor {
 			}
 		}
 	}
-	#endregion
 
 	//------------------------------------------------------------------------//
 	// DRAWING METHODS														  //
 	//------------------------------------------------------------------------//
-	#region Drawing Methods
 	/// <summary>
 	/// Draws the axis.
 	/// </summary>
@@ -1079,12 +1127,10 @@ public class PolyMeshEditor : Editor {
 			Handles.DotCap(0, m_splitPosition, Quaternion.identity, HandleUtility.GetHandleSize(m_splitPosition) * 0.03f);
 		}
 	}
-	#endregion
 
 	//------------------------------------------------------------------------//
 	// MESH EDITING METHODS													  //
 	//------------------------------------------------------------------------//
-	#region Mesh Editing Methods
 	/// <summary>
 	/// Tries the hover key point.
 	/// </summary>
@@ -1453,12 +1499,10 @@ public class PolyMeshEditor : Editor {
 	private bool IsHovering(Vector3 point) {
 		return Vector3.Distance(m_mousePosition, point) < HandleUtility.GetHandleSize(point) * CLICK_RADIUS;
 	}
-	#endregion
 
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
 	//------------------------------------------------------------------------//
-	#region Internal Utils
 	/// <summary>
 	/// Nearests the point.
 	/// </summary>
@@ -1551,12 +1595,10 @@ public class PolyMeshEditor : Editor {
 			center += polyMesh.keyPoints[i];
 		return center / m_selectedIndices.Count;
 	}
-	#endregion
 
 	//------------------------------------------------------------------------//
 	// PROPERTIES															  //
 	//------------------------------------------------------------------------//
-	#region Properties
 	private PolyMesh polyMesh {
 		get { return (PolyMesh)target; }
 	}
@@ -1651,12 +1693,10 @@ public class PolyMeshEditor : Editor {
 		get { return EditorPrefs.GetBool("PolyMeshEditor_autoEdit", true); }
 		set { EditorPrefs.SetBool("PolyMeshEditor_autoEdit", value); }
 	}
-	#endregion
 
 	//------------------------------------------------------------------------//
 	// MENU ITEMS															  //
 	//------------------------------------------------------------------------//
-	#region Menu Items
 	/// <summary>
 	/// Context menu addition to create a new polymesh object.
 	/// </summary>
@@ -1718,7 +1758,6 @@ public class PolyMeshEditor : Editor {
 		polyMesh.isCurve.AddRange(new bool[] { false, false, false, false });
 		polyMesh.BuildMesh();
 	}
-	#endregion
 
 	//------------------------------------------------------------------------//
 	// PUBLIC UTILS															  //
