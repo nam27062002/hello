@@ -26,6 +26,11 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_target = m_machine.position;
+
+				if (m_pilot.guideFunction != null) {
+					m_pilot.guideFunction.ResetTime();
+				}
+
 				m_pilot.SlowDown(false); // this wander state doesn't have an idle check
 			}
 

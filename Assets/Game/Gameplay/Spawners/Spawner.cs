@@ -130,6 +130,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+		bool found = false;
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] == _entity) 
 			{
@@ -139,26 +140,29 @@ public class Spawner : MonoBehaviour, ISpawner {
 					m_entitiesKilled++;
 				}
 				m_entityAlive--;
+				found = true;
 			}
 		}
 
-		// all the entities are dead
-		if (m_entityAlive == 0) {
-			m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
+		if (found) {
+			// all the entities are dead
+			if (m_entityAlive == 0) {
+				m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
 
-			if (m_allEntitiesKilledByPlayer) {
-				// check if player has destroyed all the flock
-				if (m_flockBonus > 0) {
-					Reward reward = new Reward();
-					reward.score = (int)(m_flockBonus * m_entitiesKilled);
-					Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
+				if (m_allEntitiesKilledByPlayer) {
+					// check if player has destroyed all the flock
+					if (m_flockBonus > 0) {
+						Reward reward = new Reward();
+						reward.score = (int)(m_flockBonus * m_entitiesKilled);
+						Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
+					}
+				} else {
+					m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
 				}
-			} else {
-				m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
-			}
 
-			if (m_readyToBeDisabled) {
-				SpawnerManager.instance.Unregister(this);
+				if (m_readyToBeDisabled) {
+					SpawnerManager.instance.Unregister(this);
+				}
 			}
 		}
 	}

@@ -35,7 +35,6 @@ namespace AI {
 		// METHODS															  //
 		//--------------------------------------------------------------------//
 		public void Spawn(Spawner _spawner) {
-			m_area = _spawner.area.bounds;
 			m_homePosition = _spawner.transform.position;
 
 			m_target = transform.position;

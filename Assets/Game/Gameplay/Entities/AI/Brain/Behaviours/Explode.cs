@@ -5,7 +5,7 @@ namespace AI {
 	namespace Behaviour {		
 		[System.Serializable]
 		public class ExplodeData : StateComponentData {
-			public float m_damage = 5f;
+			public float damage = 5f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Explode")]
@@ -28,7 +28,7 @@ namespace AI {
 				if (dragon.HasMineShield()) {
 					dragon.LoseMineShield();
 				} else {
-					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.m_damage, m_machine.transform);
+					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, m_machine.transform);
 				}
 
 				m_machine.SetSignal(Signals.Destroyed.name, true);

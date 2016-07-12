@@ -56,7 +56,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 			case FunctionType.Epitrochoid:	rDiff = Mathf.Abs(m_outterRadius + m_innerRadius); break;
 		}
 
-		Vector3 max = new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  m_depthAmplitude);
+		Vector3 max = (new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  m_depthAmplitude)) + Vector3.one;
 
 		bounds.min = transform.position + m_centerOffset + Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, -max);
 		bounds.max = transform.position + m_centerOffset + Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale,  max);

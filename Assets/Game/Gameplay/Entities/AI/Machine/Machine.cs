@@ -65,16 +65,17 @@ namespace AI {
 
 			m_signals = new Dictionary<string, Signal>();
 
-			m_signals.Add(Signals.Leader.name, 		new Signals.Leader());
-			m_signals.Add(Signals.Hungry.name, 		new Signals.Hungry());
-			m_signals.Add(Signals.Alert.name, 		new Signals.Alert());
-			m_signals.Add(Signals.Warning.name, 	new Signals.Warning());
-			m_signals.Add(Signals.Danger.name, 		new Signals.Danger());
-			m_signals.Add(Signals.Panic.name, 		new Signals.Panic());
-			m_signals.Add(Signals.BackToHome.name,	new Signals.BackToHome());
-			m_signals.Add(Signals.Burning.name, 	new Signals.Burning());
-			m_signals.Add(Signals.Chewing.name, 	new Signals.Chewing());
-			m_signals.Add(Signals.Destroyed.name, 	new Signals.Destroyed());
+			m_signals.Add(Signals.Leader.name, 			new Signals.Leader());
+			m_signals.Add(Signals.Hungry.name, 			new Signals.Hungry());
+			m_signals.Add(Signals.Alert.name, 			new Signals.Alert());
+			m_signals.Add(Signals.Warning.name, 		new Signals.Warning());
+			m_signals.Add(Signals.Danger.name, 			new Signals.Danger());
+			m_signals.Add(Signals.Panic.name, 			new Signals.Panic());
+			m_signals.Add(Signals.BackToHome.name,		new Signals.BackToHome());
+			m_signals.Add(Signals.Burning.name, 		new Signals.Burning());
+			m_signals.Add(Signals.Chewing.name, 		new Signals.Chewing());
+			m_signals.Add(Signals.Destroyed.name, 		new Signals.Destroyed());
+			m_signals.Add(Signals.CollisionTrigger.name,new Signals.CollisionTrigger());
 
 			foreach(Signal s in m_signals.Values) {
 				s.machine = this;
@@ -119,10 +120,22 @@ namespace AI {
 			}
 		}
 
+		// Physics Collisions and Triggers
+
 		void OnCollisionEnter(Collision _collision) {
 			OnTrigger(Signals.Collided.OnCollisionEnter);
 		}
-		
+
+
+		void OnTriggerEnter(Collider _other) {
+			SetSignal(Signals.CollisionTrigger.name, true);
+		}
+
+		void OnTriggerExit(Collider _other) {
+			SetSignal(Signals.CollisionTrigger.name, false);
+		}
+		//
+
 		// Update is called once per frame
 		void Update() {
 			if (m_willPlaySpawnSound) {

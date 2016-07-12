@@ -139,7 +139,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if(_entity == null) return;
 
 		// Get the feedback data from the source entity
-		Entity_Old entity = _entity.GetComponent<Entity_Old>();
+		Entity entity = _entity.GetComponent<Entity>();
 		if(entity == null) return;
 
 		// Check that there's actually some text to be spawned

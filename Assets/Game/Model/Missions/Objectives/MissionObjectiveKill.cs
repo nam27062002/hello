@@ -107,7 +107,7 @@ public class MissionObjectiveKill : MissionObjective {
 			currentValue++;
 		} else {
 			// Is it one of the target types?
-			Entity_Old prey = _entity.GetComponent<Entity_Old>();
+			Entity prey = _entity.GetComponent<Entity>();
 			if(prey != null) {
 				for(int i = 0; i < m_targets.Length; i++) {
 					if(m_targets[i] == prey.sku) {

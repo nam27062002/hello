@@ -137,6 +137,11 @@
 			protected override string OnEnabled() { return OnCollisionEnter; }
 		}
 
+		public class CollisionTrigger : Signal {
+			public static string name = "CollisionTrigger";
+		}
+		//
+
 		// a fire is touching this machine
 		public class Burning : Signal {
 			public static string name = "Burning";
