@@ -26,7 +26,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_timer = 0f;
+				m_timer = m_data.changeLeaderTime;
 			}
 
 			protected override void OnUpdate() {
