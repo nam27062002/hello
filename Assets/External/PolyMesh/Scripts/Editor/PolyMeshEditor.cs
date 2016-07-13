@@ -8,9 +8,11 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -70,6 +72,11 @@ public class PolyMeshEditor : Editor {
 	private bool m_liveMode = true;
 	private bool m_multiEditing = false;
 
+	private string m_prefsPrefixGlobal = "PolyMeshEditor.";
+	private string m_prefsPrefixPerScene = "PolyMeshEditor.";
+
+	private List<Vector3> m_concavityList = new List<Vector3>();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -97,6 +104,15 @@ public class PolyMeshEditor : Editor {
 				}
 			}
 		#endif
+
+		// Initialize prefix
+		m_prefsPrefixPerScene = m_prefsPrefixGlobal + polyMesh.gameObject.scene.name + ".";
+
+		// Initialize concavity list
+		// We can't directly convert from Json to List<Vector3>, we must do some tricks in between using Linq
+		string serializedList = EditorPrefs.GetString(m_prefsPrefixPerScene + "concavity.list", CaletyMiniJSON.Json.Serialize(new List<Vector3>()));
+		List<object> objList = CaletyMiniJSON.Json.Deserialize(serializedList) as List<object>;
+		m_concavityList = objList.Select((_obj) => { return VectorExt.ParseVector3(_obj as string); }).ToList();	// [AOC] Linq conversion function. Since we can't directly convert from object to Vector3, we must parse the json string
 	}
 
 	/// <summary>
@@ -284,7 +300,7 @@ public class PolyMeshEditor : Editor {
 				if(GUILayout.Button("Save Mesh to Library", GUILayout.Width(rect.width/numItems))) {
 					PolyMesh pM = target as PolyMesh;
 					GameObject root = PrefabUtility.FindPrefabRoot(pM.gameObject);
-					Object parentObject = PrefabUtility.GetPrefabParent(root);
+					UnityEngine.Object parentObject = PrefabUtility.GetPrefabParent(root);
 					string path = AssetDatabase.GetAssetPath(parentObject);
 					path = path.Replace(".prefab", "_ColliderMesh.asset");
 					UnityEngine.Debug.Log("path: " + path);
@@ -486,6 +502,93 @@ public class PolyMeshEditor : Editor {
 			EditorGUILayoutExt.Separator();
 		}
 
+		// Debug Tools
+		if(debugTools = EditorGUILayout.Foldout(debugTools, "Debug Tools")) {
+			// Indent in
+			EditorGUI.indentLevel++;
+
+			// Aux vars
+
+			// Concavity list (cached)
+			EditorGUILayout.LabelField("Concavity Count", m_concavityList.Count.ToString(), EditorStyles.textField);
+
+			// Last check timestamp
+			string serializedTimestamp = EditorPrefs.GetString(m_prefsPrefixPerScene + "concavity.timestamp" , "1900-01-01 00:00:00");
+			DateTime lastCheck = DateTime.ParseExact(serializedTimestamp, "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+			EditorGUILayout.LabelField("Last Check", lastCheck.ToString());
+
+			// Threshold
+			float threshold = EditorPrefs.GetFloat(m_prefsPrefixGlobal + "concavity.threshold", 90f);	// Degrees, [0..180]
+			threshold = EditorGUILayout.Slider("Threshold", threshold, 180, 0);
+			EditorPrefs.SetFloat(m_prefsPrefixGlobal + "concavity.threshold", threshold);
+
+			// Do it!
+			// Might take a while, so use a button to manually select when to do it
+			if(GUILayout.Button("Detect Concavities!")) {
+				// Reset vars
+				bool canceled = false;
+				m_concavityList.Clear();
+
+				// Get all the polymeshes on the scene and process them one by one
+				PolyMesh[] allPolyMeshes = GameObject.FindObjectsOfType<PolyMesh>();
+				for(int i = 0; i < allPolyMeshes.Length; i++) {
+					// Show progress bar
+					if(EditorUtility.DisplayCancelableProgressBar("Detecting concavities...", i + "/" + allPolyMeshes.Length + " PolyMeshes processed.", (float)i/(float)allPolyMeshes.Length)) {
+						// Canceled by the user
+						canceled = true;
+						break;
+					}
+
+					// Do it!
+					PolyMesh p = allPolyMeshes[i];
+					List<int> concavities = DetectConcavities(p, threshold);
+
+					// Add all points to total list
+					for(int j = 0; j < concavities.Count; j++) {
+						// [AOC] The position we actually want to highlight on the scene is j+1, which is the vertex forming the convex angle
+						int idx = (concavities[j] + 1) % p.keyPoints.Count;
+
+						// We have to apply the polymesh transformation to have it in world coords!
+						Vector3 pos = p.keyPoints[idx];
+						pos = p.transform.TransformPoint(pos);
+
+						// Done ^^
+						m_concavityList.Add(pos);
+					}
+				}
+
+				// Hide progress bar
+				EditorUtility.ClearProgressBar();
+
+				// Save results
+				if(!canceled) {
+					// Update timestamp
+					lastCheck = DateTime.Now;
+					serializedTimestamp = lastCheck.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+					EditorPrefs.SetString(m_prefsPrefixPerScene + "concavity.timestamp", serializedTimestamp);
+
+					// Store list!
+					string serializedList = CaletyMiniJSON.Json.Serialize(m_concavityList);
+					EditorPrefs.SetString(m_prefsPrefixPerScene + "concavity.list", serializedList);
+				}
+			}
+
+			// Marker Size
+			EditorGUILayout.Space();
+			float markerSize = EditorPrefs.GetFloat(m_prefsPrefixGlobal + "concavity.markerSize", 1f);
+			markerSize = EditorGUILayout.Slider("Marker Size", markerSize, 0.5f, 10f);
+			EditorPrefs.SetFloat(m_prefsPrefixGlobal + "concavity.markerSize", markerSize);
+
+			// Marker color
+			Color markerColor = Prefs.GetColor(m_prefsPrefixGlobal + "concavity.markerColor", Colors.WithAlpha(Colors.green, 0.5f));
+			markerColor = EditorGUILayout.ColorField("Marker Color", markerColor);
+			Prefs.SetColor(m_prefsPrefixGlobal + "concavity.markerColor", markerColor);
+
+			// Indent back out
+			EditorGUI.indentLevel--;
+			EditorGUILayoutExt.Separator();
+		}
+
 		// Editor settings
 		if(editorSettings = EditorGUILayout.Foldout(editorSettings, "Editor Settings")) {
 			// Indent in
@@ -619,6 +722,15 @@ public class PolyMeshEditor : Editor {
 
 		// Skip for multiedit
 		if(m_multiEditing) return;
+
+		// [AOC] Draw known concavities
+		Handles.matrix = Matrix4x4.identity;
+		Handles.color = Prefs.GetColor(m_prefsPrefixGlobal + "concavity.markerColor", Colors.WithAlpha(Colors.green, 0.5f));
+		float concavityMarkerSize = Prefs.GetFloat(m_prefsPrefixGlobal + "concavity.markerSize", 1f);
+		for(int i = 0; i < m_concavityList.Count; i++) {
+			//Handles.SphereCap(0, m_concavityList[i], Quaternion.identity, concavityMarkerSize);
+			Handles.CubeCap(0, m_concavityList[i], Quaternion.identity, concavityMarkerSize);
+		}
 
 		// Toggle editing - ignore if autoEdit
 		if(KeyPressed(editKey) && !autoEdit) {
@@ -756,7 +868,7 @@ public class PolyMeshEditor : Editor {
 	/// <summary>
 	/// Records the undo.
 	/// </summary>
-	private void RecordUndo(Object _target = null) {
+	private void RecordUndo(UnityEngine.Object _target = null) {
 		// [AOC] Use default target if none specified
 		if(_target == null) _target = target;
 
@@ -770,7 +882,7 @@ public class PolyMeshEditor : Editor {
 	/// <summary>
 	/// Records the deep undo.
 	/// </summary>
-	private void RecordDeepUndo(Object _target = null) {
+	private void RecordDeepUndo(UnityEngine.Object _target = null) {
 		// [AOC] Use default target if none specified
 		if(_target == null) _target = target;
 
@@ -1308,7 +1420,7 @@ public class PolyMeshEditor : Editor {
 	/// </summary>
 	/// <returns><c>true</c>, if box select was tryed, <c>false</c> otherwise.</returns>
 	private bool TryBoxSelect() {
-		if(e.type == EventType.MouseDown) {
+		if(e.type == EventType.MouseDown && !e.alt) {
 			m_clickPosition = m_mousePosition;
 			return true;
 		}
@@ -1757,6 +1869,42 @@ public class PolyMeshEditor : Editor {
 		return center / m_selectedIndices.Count;
 	}
 
+	/// <summary>
+	/// Detect all concave angles in the given polymesh.
+	/// </summary>
+	/// <returns>The list of keypoint indices that are considered concave.</returns>
+	/// <param name="_p">The polymesh to be treated.</param>
+	/// <param name="_threshold">Angle threshold to consider it concave [0..180].</param>
+	private List<int> DetectConcavities(PolyMesh _p, float _threshold) {
+		// Create return list
+		List<int> concavities = new List<int>();
+
+		// Process polymesh
+		// http://stackoverflow.com/questions/507933/find-the-number-of-internal-angles-of-a-polygon-bigger-than-180%C2%BA
+		for(int i = 0; i < _p.keyPoints.Count; i++) {
+			// Find out the angle between the two segments within this point and the following 2
+			Vector3 p0 = _p.keyPoints[i];
+			Vector3 p1 = _p.keyPoints[(i+1) % _p.keyPoints.Count];
+			Vector3 p2 = _p.keyPoints[(i+2) % _p.keyPoints.Count];
+
+			Vector2 v0 = p1 - p0;
+			Vector2 v1 = p1 - p2;
+
+			// If cross is negative, we have found a concavity!
+			float cross = (v0.x * v1.y) - (v1.x * v0.y);
+			if(cross < 0) {
+				// Check angle threshold - we're looking for angles smaller than threshold!
+				float angle = Mathf.Acos(Vector3.Dot(v0.normalized, v1.normalized)) * Mathf.Rad2Deg;
+				if(angle < _threshold) {
+					// We have a match! Add it to the list
+					concavities.Add(i);
+				}
+			}
+		}
+
+		return concavities;
+	}
+
 	//------------------------------------------------------------------------//
 	// PROPERTIES															  //
 	//------------------------------------------------------------------------//
@@ -1805,6 +1953,11 @@ public class PolyMeshEditor : Editor {
 	private static bool splitSection {
 		get { return EditorPrefs.GetBool("PolyMeshEditor_splitSection", false); }
 		set { EditorPrefs.SetBool("PolyMeshEditor_splitSection", value); }
+	}
+
+	private static bool debugTools {
+		get { return EditorPrefs.GetBool("PolyMeshEditor_debugTools", false); }
+		set { EditorPrefs.SetBool("PolyMeshEditor_debugTools", value); }
 	}
 
 	// Snapping
