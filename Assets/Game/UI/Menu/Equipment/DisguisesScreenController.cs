@@ -24,7 +24,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// References
 	[Separator("References")]
-	//[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
+	[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
 	[SerializeField] private DisguisePowerIcon[] m_powers;
 	[SerializeField] private RectTransform m_layout;
 
@@ -181,7 +181,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/" + m_dragonSku);
 
 		// Hide all the info
-		//m_disguiseTitle.GetComponent<ShowHideAnimator>().ForceHide(false);
+		m_disguiseTitle.GetComponent<ShowHideAnimator>().ForceHide(false);
 		for(int i = 0; i < m_powerAnims.Length; i++) {
 			m_powerAnims[i].ForceHide(false);
 		}
@@ -296,10 +296,10 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(m_selectedPill != null) AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Update and Show/Hide title
-		/*ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
+		ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
 		titleAnimator.Hide(false);
 		titleAnimator.Set(_pill != null);
-		m_disguiseTitle.InitFromDefinition(_pill.def);*/
+		m_disguiseTitle.InitFromDefinition(_pill.def);
 
 		// Remove highlight from previously selected pill
 		if(m_selectedPill != null) m_selectedPill.Select(false);

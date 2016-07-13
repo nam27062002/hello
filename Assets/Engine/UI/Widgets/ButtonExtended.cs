@@ -13,7 +13,8 @@ using UnityEngine.UI;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Extension of the default Unity UI Button with extra functionality
+/// Extension of the default Unity UI Button with extra functionality.
+/// - Recursive tint on all children (when using Color Tint as transition method)
 /// </summary>
 [AddComponentMenu("UI/Button Extended", 30)]
 public class ButtonExtended : Button {
@@ -24,6 +25,7 @@ public class ButtonExtended : Button {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
