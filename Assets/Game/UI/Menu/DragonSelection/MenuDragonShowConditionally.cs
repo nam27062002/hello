@@ -86,15 +86,6 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
-	/// <summary>
-	/// Changes dragon selected to the given one.
-	/// </summary>
-	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
-	public void SetSelectedDragon(string _sku) {
-		// Notify game
-		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _sku);
-	}
-
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//

@@ -1,4 +1,4 @@
-﻿// DragonSelectionTutorial.cs
+// DragonSelectionTutorial.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 19/04/2016.
@@ -53,7 +53,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	{
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
-		Messenger.AddListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
+		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
 	}
 
 	/// <summary>
@@ -63,7 +63,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events.
 		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
-		Messenger.RemoveListener<EggController>(GameEvents.EGG_DRAG_ENDED, OnEggDragEnded);
+		Messenger.RemoveListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
 	}
 
 	/// <summary>
@@ -165,21 +165,23 @@ public class IncubatorTutorial : MonoBehaviour {
 			return;
 		}
 
-		// If the tutorial wasn't completed, the incubator is not busy and we have an egg at the first slot of the inventory, launch the tutorial now
+		// If the tutorial wasn't completed, and we have an egg at the first slot of the inventory that is not yet incubating, launch the tutorial now
 		Egg targetEgg = EggManager.inventory[0];
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR) && EggManager.incubatingEgg == null && targetEgg != null)
-		{
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR) && targetEgg != null && !targetEgg.isIncubating) {
 			StartTutorial();
 		}
 	}
 
-	private void OnEggDragEnded(EggController _egg) 
-	{
-		// if incubating end tutorial
-		if(EggManager.incubatingEgg != null)
-		{
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR);
-			StopTutorial();
-		}	
+	/// <summary>
+	/// An egg has started incubating.
+	/// </summary>
+	/// <param name="_egg">The target egg.</param>
+	private void OnEggIncubationStarted(Egg _egg) {
+		// Ignore if tutorial wasn't started
+		if(m_state == State.IDLE) return;
+
+		// End tutorial
+		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR);
+		StopTutorial();
 	}
 }

@@ -94,6 +94,63 @@ public class MenuDragonScroller3DEditor : Editor {
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
+
+		// Debug camera section
+		EditorGUILayout.Space();
+		EditorGUILayoutExt.Separator(new SeparatorAttribute("Debug Utils"));
+		PathFollower posPath = targetMenuDragonScroller3D.FindComponentRecursive<PathFollower>("PosPath");
+		PathFollower lookAtPath = targetMenuDragonScroller3D.FindComponentRecursive<PathFollower>("LookAtPath");
+		CameraSnapPoint camSnapPoint = targetMenuDragonScroller3D.FindComponentRecursive<CameraSnapPoint>();
+		GameObject menuCameraObj = GameObject.Find("Camera3D");
+		if(posPath == null || lookAtPath == null) {
+			EditorGUILayout.HelpBox("Either the PosPath or the LookAtPath followers couldn't be found.", MessageType.Error);
+		} else if(camSnapPoint == null) {
+			EditorGUILayout.HelpBox("Camera snap point couldn't be found.", MessageType.Error);
+		} else if(menuCameraObj == null || menuCameraObj.GetComponent<Camera>() == null) {
+			EditorGUILayout.HelpBox("Menu camera couldn't be found.", MessageType.Error);
+		} else {
+			// Aux vars
+			float debugDelta = EditorPrefs.GetFloat("MenuDragonScroller3D.debugDelta", 0f);
+			int debugSnapPoint = EditorPrefs.GetInt("MenuDragonScroller3D.debugSnapPoint", 0);
+
+			// By delta
+			EditorGUI.BeginChangeCheck();
+			debugDelta = EditorGUILayout.Slider("Camera Preview Delta", debugDelta, 0f, 1f);
+			if(EditorGUI.EndChangeCheck()) {
+				// Set new delta
+				posPath.delta = debugDelta;
+				lookAtPath.delta = debugDelta;
+
+				// Apply to camera
+				camSnapPoint.Apply(menuCameraObj.GetComponent<Camera>());
+
+				// Update matching snap point
+				debugSnapPoint = posPath.snapPoint;
+
+				// Store to prefs
+				EditorPrefs.SetFloat("MenuDragonScroller3D.debugDelta", debugDelta);
+				EditorPrefs.SetInt("MenuDragonScroller3D.debugSnapPoint", debugSnapPoint);
+			}
+
+			// By snap point
+			EditorGUI.BeginChangeCheck();
+			debugSnapPoint = EditorGUILayout.IntSlider("Camera Preview Point", debugSnapPoint, 0, posPath.path.pointCount - 1);
+			if(EditorGUI.EndChangeCheck()) {
+				// Set new snap point
+				posPath.snapPoint = debugSnapPoint;
+				lookAtPath.snapPoint = debugSnapPoint;
+
+				// Apply to camera
+				camSnapPoint.Apply(menuCameraObj.GetComponent<Camera>());
+
+				// Update matching delta
+				debugDelta = posPath.delta;
+
+				// Store to prefs
+				EditorPrefs.SetInt("MenuDragonScroller3D.debugSnapPoint", debugSnapPoint);
+				EditorPrefs.SetFloat("MenuDragonScroller3D.debugDelta", debugDelta);
+			}
+		}
 	}
 
 	/// <summary>

@@ -91,7 +91,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		// Load and pose the dragon - will override any existing dragon
 		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
 		if(dragonLoader != null) {
-			dragonLoader.LoadDragonPreview(nextDragonData.def.sku);
+			dragonLoader.LoadDragon(nextDragonData.def.sku);
 			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
 		}
 

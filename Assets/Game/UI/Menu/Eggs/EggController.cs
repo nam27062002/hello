@@ -16,9 +16,8 @@ using UnityEngine.UI;
 /// <summary>
 /// Main control of a single egg prefab in the menu.
 /// </summary>
-[RequireComponent(typeof(IncubatorEggBehaviour))]
-[RequireComponent(typeof(OpenEggBehaviour))]
-[RequireComponent(typeof(ReadyEggBehaviour))]
+//[RequireComponent(typeof(OpenEggBehaviour))]
+//[RequireComponent(typeof(ReadyEggBehaviour))]
 public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -35,11 +34,6 @@ public class EggController : MonoBehaviour {
 	}
 
 	// Egg behaviours
-	private IncubatorEggBehaviour m_incubatorBehaviour = null;
-	public IncubatorEggBehaviour incubatorBehaviour {
-		get { return m_incubatorBehaviour; }
-	}
-
 	private OpenEggBehaviour m_openBehaviour = null;
 	public OpenEggBehaviour openBehaviour {
 		get { return m_openBehaviour; }
@@ -61,7 +55,6 @@ public class EggController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_incubatorBehaviour = GetComponent<IncubatorEggBehaviour>();
 		m_openBehaviour = GetComponent<OpenEggBehaviour>();
 		m_readyBehaviour = GetComponent<ReadyEggBehaviour>();
 		m_animator = GetComponentInChildren<Animator>();
@@ -105,7 +98,6 @@ public class EggController : MonoBehaviour {
 		if(m_eggData == null) return;
 
 		// Enable/disable behaviours based on current egg's state
-		m_incubatorBehaviour.enabled = (m_eggData.state == Egg.State.STORED);
 		m_openBehaviour.enabled = (m_eggData.state == Egg.State.OPENING);
 		m_readyBehaviour.enabled = (m_eggData.state == Egg.State.READY);
 

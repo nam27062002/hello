@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using DG.Tweening;
 
 //----------------------------------------------------------------------//
@@ -39,7 +40,9 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		SCALE,
 
-		CUSTOM
+		CUSTOM,
+
+		ANIMATOR
 	}
 
 	protected enum State {
@@ -48,24 +51,41 @@ public class ShowHideAnimator : MonoBehaviour {
 		HIDDEN
 	}
 
+	[System.Serializable]
+	public class ShowHideAnimatorEvent : UnityEvent<ShowHideAnimator> { }
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Config
-	// References
-	[Comment("Optional, must have triggers \"show\" and \"hide\"")]
-	[Separator("Animator", 20f)]
-	[SerializeField] protected Animator m_animator = null;
+	// Animation type
+	// For tweens, defines the "show" direction; "hide" will be the reversed tween. 
+	// For CUSTOM, add as many DOTweenAnimation components as desired to the target object and put them in the show() and hide() arrays.
+	// For animators, just link the animator to be used. Must have a "show" and "hide" triggers.
+	[SerializeField] protected TweenType m_tweenType = TweenType.NONE;
+	public TweenType tweenType { get { return m_tweenType; }}
 
+	// Config
 	// Tween params
 	// All tween-related parameters will be ignored if an animator is defined.
 	// Feel free to add new tween types or extra parameters
-	[Separator("Tween Setup", 20f)]
-	[SerializeField] protected TweenType m_tweenType = TweenType.NONE;	// Define the "show" direction. "hide" will be the reversed tween. To use CUSTOM, add as many DOTweenAnimation components as desired to the target object with the id's "show" and "hide".
 	[SerializeField] protected float m_tweenDuration = 0.25f;
 	[SerializeField] protected float m_tweenValue = 1f;					// Use it to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).
 	[SerializeField] protected Ease m_tweenEase = Ease.OutBack;
 	[SerializeField] protected float m_tweenDelay = 0f;
+
+	// Custom tweens
+	[SerializeField] protected DOTweenAnimation[] m_showTweens = new DOTweenAnimation[0];
+	[SerializeField] protected DOTweenAnimation[] m_hideTweens = new DOTweenAnimation[0];
+
+	// Animator param
+	[Comment("Must have triggers \"show\" and \"hide\"")]
+	[SerializeField] protected Animator m_animator = null;
+
+	// Events
+	public ShowHideAnimatorEvent OnShowPreAnimation = new ShowHideAnimatorEvent();
+	public ShowHideAnimatorEvent OnShowPostAnimation = new ShowHideAnimatorEvent();
+	public ShowHideAnimatorEvent OnHidePreAnimation = new ShowHideAnimatorEvent();
+	public ShowHideAnimatorEvent OnHidePostAnimation = new ShowHideAnimatorEvent();
 
 	// Internal references
 	protected CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
@@ -170,31 +190,51 @@ public class ShowHideAnimator : MonoBehaviour {
 		// If dirty, re-create the tween (will be destroyed if not needed)
 		if(m_isDirty) RecreateTween();
 
+		// Broadcast pre-animation event
+		OnShowPreAnimation.Invoke(this);
+
 		// If not using animations, put sequence to the end point and return
 		if(!_animate) {
 			if(m_sequence != null) m_sequence.Goto(1f);
+
+			// Immediately broadcast post-animation event
+			OnShowPostAnimation.Invoke(this);
 			return;
 		}
 
-		// If using an animator, let it do all the work
-		if(m_animator != null) {
-			// Just activate the right trigger
-			m_animator.SetTrigger("show");
-			return;
-		}
+		// Perform different actions depending on the selected animation type
+		switch(m_tweenType) {
+			case TweenType.ANIMATOR: {
+				// If using an animator, let it do all the work
+				if(m_animator != null) {
+					// Just activate the right trigger
+					m_animator.SetTrigger("show");
+				}
+			} break;
 
-		// If tween type is set to NONE, nothing else to do
-		if(m_tweenType == TweenType.NONE) return;
+			case TweenType.NONE: {
+				// Nothing else to do, Immediately broadcast post-animation event
+				OnShowPostAnimation.Invoke(this);
+			} break;
 
-		// If using custom tween animators, just let the tween engine manage it
-		if(m_tweenType == TweenType.CUSTOM) {
-			DOTween.Restart(gameObject, "show");
-			return;
-		}
+			case TweenType.CUSTOM: {
+				// Stop all running hide animators
+				for(int i = 0; i < m_hideTweens.Length; i++) {
+					m_hideTweens[i].DOPause();
+				}
 
-		// Using tweens, play the sequence in the proper direction
-		if(m_sequence != null) {
-			m_sequence.PlayForward();		// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
+				// If using custom tween animators, restart all the animators in the show array
+				for(int i = 0; i < m_showTweens.Length; i++) {
+					m_showTweens[i].DORestart();
+				}
+			} break;
+
+			default: {
+				// Using tweens, play the sequence in the proper direction
+				if(m_sequence != null) {
+					m_sequence.PlayForward();		// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
+				}
+			} break;
 		}
 	}
 
@@ -229,6 +269,9 @@ public class ShowHideAnimator : MonoBehaviour {
 			if(m_sequence != null) m_sequence.Goto(1f);
 		}
 
+		// Broadcast pre-animation event
+		OnHidePreAnimation.Invoke(this);
+
 		// If not using animations, put sequence to the start point and instantly disable the object
 		if(!_animate) {
 			if(m_sequence != null) {
@@ -237,7 +280,48 @@ public class ShowHideAnimator : MonoBehaviour {
 			} else {
 				gameObject.SetActive(false);
 			}
+
+			// Immediately broadcast post-animation event
+			OnHidePostAnimation.Invoke(this);
 			return;
+		}
+
+		// Perform different actions depending on the selected animation type
+		switch(m_tweenType) {
+			case TweenType.ANIMATOR: {
+				// If using an animator, let it do all the work
+				if(m_animator != null) {
+					// Just activate the right trigger
+					m_animator.SetTrigger("hide");
+				}
+			} break;
+
+			case TweenType.NONE: {
+				// If tween type is set to NONE, just disable the object
+				gameObject.SetActive(false);
+
+				// Immediately broadcast post-animation event
+				OnHidePostAnimation.Invoke(this);
+			} break;
+
+			case TweenType.CUSTOM: {
+				// Stop all running hide animators
+				for(int i = 0; i < m_showTweens.Length; i++) {
+					m_showTweens[i].DOPause();
+				}
+
+				// If using custom tween animators, restart all the animators in the hide event
+				for(int i = 0; i < m_hideTweens.Length; i++) {
+					m_hideTweens[i].DORestart();
+				}
+			} break;
+
+			default: {
+				// Using tweens, play the sequence in the proper direction
+				if(m_sequence != null) {
+					m_sequence.PlayForward();		// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
+				}
+			} break;
 		}
 
 		// If using an animator, let it do all the work
@@ -304,6 +388,20 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Same as Set() but overriding current state.
+	/// </summary>
+	/// <param name="_visible">Whether to show or hide the object.</param>
+	/// <param name="_animate">Whether to use animations or not.</param>
+	public void ForceSet(bool _visible, bool _animate = true) {
+		// Easy
+		if(_visible) {
+			ForceShow(_animate);
+		} else {
+			ForceHide(_animate);
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
@@ -329,9 +427,33 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// If animator is defined, we won't use tweens
 		if(m_animator != null) return;
+		
+		// If using no animation at all, we're done
+		if(m_tweenType == TweenType.NONE) return;
 
-		// If using custom or none types, we won't use the sequence
-		if(m_tweenType == TweenType.NONE || m_tweenType == TweenType.CUSTOM) return;
+		// If using a custom set of tweens, add listeners to them and return
+		if(m_tweenType == TweenType.CUSTOM) {
+			// Register both show and hide callbacks to the OnComplete event
+			for(int i = 0; i < m_showTweens.Length; i++) {
+				// Remove+Add to make sure it's added only once
+				m_showTweens[i].onComplete.RemoveListener(OnShowTweenCompleted);
+				m_showTweens[i].onComplete.AddListener(OnShowTweenCompleted);
+
+				// Some extra setup
+				m_showTweens[i].autoKill = false;
+				m_showTweens[i].autoPlay = false;
+			}
+
+			for(int i = 0; i < m_hideTweens.Length; i++) {
+				// Remove+Add to make sure it's added only once
+				m_hideTweens[i].onComplete.RemoveListener(OnHideTweenCompleted);
+				m_hideTweens[i].onComplete.AddListener(OnHideTweenCompleted);
+
+				// Some extra setup
+				m_hideTweens[i].autoKill = false;
+				m_hideTweens[i].autoPlay = false;
+			}
+		}
 
 		// If the object doesn't have a canvas group, add it to be able to fade it in/out - all tween types will use it
 		if(m_canvasGroup == null) {
@@ -341,7 +463,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Create new sequence
 		m_sequence = DOTween.Sequence()
 			.SetAutoKill(false)
-			.OnStepComplete(() => { OnTweenCompleted(); });
+			.OnStepComplete(() => { OnSequenceCompleted(); });
 
 		// Shared parameters
 		TweenParams sharedParams = new TweenParams()
@@ -395,12 +517,58 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Either a show or a hide animation has finished.
 	/// Won't be called when animation is interrupted.
 	/// </summary>
-	protected virtual void OnTweenCompleted() {
-		// Optionally disable object after the hide animation has finished
-		if(!visible) {
+	protected virtual void OnSequenceCompleted() {
+		// Which animation has finished?
+		if(visible) {
+			// Show animation, broadcast event
+			OnShowPostAnimation.Invoke(this);
+		} else {
+			// Hide animation, broadcast event
+			OnHidePostAnimation.Invoke(this);
+
+			// Optionally disable object after the hide animation has finished
 			if(m_disableAfterHide) {
 				gameObject.SetActive(false);
 			}
+		}
+	}
+
+	/// <summary>
+	/// A tween from the CUSTOM tweens array has finished.
+	/// </summary>
+	private void OnShowTweenCompleted() {
+		// Check all hide tweens, if all of them are completed, process end of animation
+		for(int i = 0; i < m_showTweens.Length; i++) {
+			// If it's active, no need to keep checking
+			if(m_showTweens[i].isActive) {
+				return;
+			}
+		}
+
+		// No more active tweens!
+		// Broadcast event
+		OnShowPostAnimation.Invoke(this);
+	}
+
+	/// <summary>
+	/// A tween from the CUSTOM tweens array has finished.
+	/// </summary>
+	private void OnHideTweenCompleted() {
+		// Check all hide tweens, if all of them are completed, process end of animation
+		for(int i = 0; i < m_hideTweens.Length; i++) {
+			// If it's active, no need to keep checking
+			if(m_hideTweens[i].isActive) {
+				return;
+			}
+		}
+
+		// No more active tweens!
+		// Broadcast event
+		OnHidePostAnimation.Invoke(this);
+
+		// Optionally disable object after the hide animation has finished
+		if(m_disableAfterHide) {
+			gameObject.SetActive(false);
 		}
 	}
 }

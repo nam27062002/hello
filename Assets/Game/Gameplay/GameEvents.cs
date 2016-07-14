@@ -1,4 +1,4 @@
-﻿// GameEvents.cs
+// GameEvents.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 24/08/2015.
@@ -78,13 +78,9 @@ public enum GameEvents {
 
 	// Egg management events
 	EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
-	EGG_ADDED_TO_INVENTORY,		// params: Egg _egg, int _slotIdx
 	EGG_INCUBATION_STARTED,		// params: Egg _egg
 	EGG_INCUBATION_ENDED,		// params: Egg _egg
 	EGG_COLLECTED,				// params: Egg _egg				// [AOC] Triggered when any egg is collected, whether it is the one in the incubator or one purchased from the shop
-	EGG_INCUBATOR_CLEARED,		// no params					// [AOC] Triggered when the egg in the incubator is collected. Use this whenever possible rather than EGG_COLLECTED
-	EGG_DRAG_STARTED,			// params: EggController _egg
-	EGG_DRAG_ENDED,				// params: EggController _egg
 
 	// GameServerManager events
 	LOGGED,						// params: bool

@@ -1,27 +1,27 @@
-﻿// Egg.cs
+// Egg.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/02/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
-//----------------------------------------------------------------------//
-// INCLUDES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-//----------------------------------------------------------------------//
-// CLASSES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 /// <summary>
 /// Single Egg object.
 /// </summary>
 [Serializable]
 public class Egg {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
 	public enum State {
 		INIT,		// Init state
 		STORED,		// Egg is in storage, waiting for incubation
@@ -34,13 +34,13 @@ public class Egg {
 
 	public struct EggReward {
 		public string type;		// Reward type, matches rewardDefinitions "type" property.
-		public string value;	// Typically a sku: disguiseSku, petSku, specialDragonSku.
+		public string value;	// Typically a sku: disguiseSku, petSku
 		public long coins;		// Coins to be given instead of the reward. Only if bigger than 0.
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
 	// Data
 	private DefinitionNode m_def = null;
 	public DefinitionNode def {
@@ -70,9 +70,19 @@ public class Egg {
 		set { m_isNew = value; }
 	}
 
-	//------------------------------------------------------------------//
-	// FACTORY METHODS													//
-	//------------------------------------------------------------------//
+	// Incubation management
+	[SerializeField] private DateTime m_incubationEndTimestamp;
+	public DateTime incubationEndTimestamp { get { return m_incubationEndTimestamp; }}
+	public DateTime incubationStartTimestamp { get { return incubationEndTimestamp - incubationDuration; }}
+	public TimeSpan incubationDuration { get { return new TimeSpan(0, 0, isIncubating ? (int)(def.GetAsFloat("incubationMinutes") * 60f) : 0); }}
+	public TimeSpan incubationElapsed { get { return DateTime.UtcNow - incubationStartTimestamp; }}
+	public TimeSpan incubationRemaining { get { return incubationEndTimestamp - DateTime.UtcNow; }}
+	public float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
+	public bool isIncubating { get { return state == Egg.State.INCUBATING; }}
+
+	//------------------------------------------------------------------------//
+	// FACTORY METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Create an egg by its sku.
 	/// </summary>
@@ -96,6 +106,7 @@ public class Egg {
 	/// </summary>
 	/// <returns>The new egg. Null if the egg couldn't be created.</returns>
 	/// <param name="_dragonSku">The sku of the dragon the new egg should be associated to.</param>
+	[System.Obsolete("Eggs no longer depend on dragon type")]
 	public static Egg CreateByDragon(string _dragonSku) {
 		// Egg can't be created if definitions are not loaded
 		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
@@ -166,9 +177,16 @@ public class Egg {
 		List<DefinitionNode> selectedDefs = new List<DefinitionNode>(eggDefs.Capacity);
 		DragonData dragonData = null;
 		for(int i = 0; i < eggDefs.Count; i++) {
-			dragonData = DragonManager.GetDragonData(eggDefs[i].Get("dragonSku"));
-			if(dragonData == null) continue;
-			if(_onlyOwnedDragons && !dragonData.isOwned) continue;
+			// [AOC] Eggs without a dragonSku assigned are valid for all dragons
+			string dragonSku = eggDefs[i].GetAsString("dragonSku");
+			if(_onlyOwnedDragons && !string.IsNullOrEmpty(dragonSku)) {
+				// Do we own the targeted dragon?
+				dragonData = DragonManager.GetDragonData(dragonSku);
+				if(dragonData == null) continue;
+				if(!dragonData.isOwned) continue;
+			}
+
+			// Egg def is valid, add it to the candidates list
 			selectedDefs.Add(eggDefs[i]);
 		}
 
@@ -179,9 +197,9 @@ public class Egg {
 		return null;
 	}
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Default constructor.
 	/// Private, use factory methods to create new eggs.
@@ -196,13 +214,68 @@ public class Egg {
 	/// </summary>
 	/// <param name="_newState">The state to go to.</param>
 	public void ChangeState(State _newState) {
-		// [AOC] TODO!! Perform specific actions when changing state?
-		//				Check state changes restrictions.
+		// [AOC] TODO!! Check state changes restrictions.
+		// Perform actions before leaving a state
+		switch(m_state) {
+			// Incubating
+			case State.INCUBATING: {
+				// Dispatch game event
+				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, this);
+			} break;
+		}
+
+		// Change state
 		State oldState = m_state;
 		m_state = _newState;
 
+		// Perfirn actions upon entering a new state
+		switch(m_state) {
+			// Incubating
+			case State.INCUBATING: {
+				// Reset incubation timer
+				float incubationMinutes = def.GetAsFloat("incubationMinutes");
+				m_incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
+
+				// Dispatch game event
+				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
+			} break;
+		}
+
 		// Broadcast game event
 		Messenger.Broadcast<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, this, oldState, _newState);
+
+		// Save persistence
+		// [AOC] A bit of an overkill, try to improve it on the future
+		PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Compute the cost in PC to skip the incubation timer (only if an egg is incubating).
+	/// </summary>
+	/// <returns>The cost in PC of skipping the incubation timer. 0 if no egg is incubating or incubation has finished.</returns>
+	public int GetIncubationSkipCostPC() {
+		// If egg is not incubating, return 0.
+		if(!isIncubating) return 0;
+
+		// Skip is free during the tutorial
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) return 0;
+
+		// Just use standard time/pc formula
+		return GameSettings.ComputePCForTime(incubationRemaining);
+	}
+
+	/// <summary>
+	/// Skip the incubation timer, provided the egg is incubating and timer hasn't already finished.
+	/// </summary>
+	/// <returns><c>true</c>, if incubation was skiped, <c>false</c> otherwise.</returns>
+	public bool SkipIncubation() {
+		// Skip if there is no egg incubating
+		if(!isIncubating) return false;
+
+		// Incubation done!
+		ChangeState(Egg.State.READY);
+
+		return true;
 	}
 
 	/// <summary>
@@ -221,10 +294,20 @@ public class Egg {
 		// Apply the reward
 		switch(m_rewardData.type) {
 			case "suit": {
+				// Pick a random dragon to give the disguise to
+				string dragonSku = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).GetRandomValue();
+
 				// Get a random disguise of the target rarity
 				string rarity = rewardDef.sku;
 				rarity = rarity.Replace("suit_", "");
-				string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);
+				//string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);		// [AOC] Deprecated!! Eggs no longer belong to a single dragon
+				string disguise = Wardrobe.GetRandomDisguise(dragonSku, rarity);
+
+				// [AOC] TEMP!! While we have no content, if no disguise was found of the given dragon and rarity, try again with dragon_crocodile which has placeholder content for all rarities
+				if(disguise.Equals("")) {
+					dragonSku = "dragon_crocodile";
+					disguise = Wardrobe.GetRandomDisguise(dragonSku, rarity);
+				}
 
 				// Initialize reward data based on obtained disguise
 				if(disguise.Equals("")) {
@@ -249,17 +332,21 @@ public class Egg {
 			case "pet": {
 				// [AOC] TODO!!
 			} break;
+		}
 
-			case "dragon": {
-				// [AOC] TODO!!
-			} break;
+		// Change state
+		ChangeState(State.COLLECTED);
+
+		// Remove it from the inventory (if appliable)
+		EggManager.RemoveEggFromInventory(this);
+
+		// If tutorial wasn't completed, do it now
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) {
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
 		}
 
 		// Save persistence
 		PersistenceManager.Save();
-
-		// Change state
-		ChangeState(State.COLLECTED);
 
 		// Notify game
 		Messenger.Broadcast<Egg>(GameEvents.EGG_COLLECTED, this);
@@ -285,9 +372,9 @@ public class Egg {
 		return newEgg;
 	}
 
-	//------------------------------------------------------------------//
-	// PERSISTENCE														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// PERSISTENCE															  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Load state from a json object.
 	/// </summary>
@@ -308,6 +395,9 @@ public class Egg {
 			m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]);
 		else
 			m_rewardDef = null;
+
+		// Incubating timestamp
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
 	}
 
 	/// <summary>
@@ -330,6 +420,9 @@ public class Egg {
 		{
 			data.Add("rewardSku", m_rewardDef.sku);
 		}
+
+		// Incubating timestamp
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString());
 
 		return data;
 	}
