@@ -385,7 +385,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		for (int e = 0; e < preys.Length; e++) 
 		{
 			Entity entity = preys[e];
-			if (entity.IsEdible(m_tier) || entity.CanBeHolded(m_tier)) 
+			if (entity.IsEdible())
 			{
 				// Start bite attempt
 				Vector3 heading = (entity.transform.position - arcOrigin);
@@ -412,6 +412,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private void FindSomethingToEat( bool _canHold = true ) 
 	{
 		float eatDistance = m_eatDistance * transform.localScale.x;
+		if (m_boost.IsBoostActive()) {
+			eatDistance *= 2f;
+		}
 		if (DebugSettings.eatDistancePowerUp) {
 			eatDistance *= 2;
 		}
@@ -429,7 +432,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
 				{
 					AI.Machine machine = entity.GetComponent<AI.Machine>();
-					if (machine.GetSignal(AI.Signals.Chewing.name) == false) {
+					if (!machine.IsDead()) {
 						preysToEat.Add(machine);
 					}
 				}
@@ -462,6 +465,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private void Chew() {
 		bool empty = true;
+
 		for (int i = 0; i < m_prey.Count; i++) {
 			if (m_prey[i].prey != null) {
 				PreyData prey = m_prey[i];

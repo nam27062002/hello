@@ -449,6 +449,8 @@ MonoBehaviour:
     m_stickToGround: 0
     m_faceDirection: 0
     m_orientationSpeed: 2
+    m_faceLeftAngleY: 180
+    m_faceRightAngleY: 0
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 1
@@ -498,8 +500,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 0e3bdc1cc93264da3855853b38bffd68, type: 2}
+  m_speedFactorRange:
+    min: 0.75
+    max: 1.25
   m_serializedJson: '[{"speed":4,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":8,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"damage":6,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false},{"changeLeaderTime":0,"separation":1.25,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
+  m_avoidCollisions: 1
 --- !u!114 &11450964
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -134,6 +134,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 	}
 
 	public void Disable(bool _destroyed) {
+		m_health = 0f;
 		m_spawner.RemoveEntity(gameObject, _destroyed);
 		gameObject.SetActive(false);
 	}
@@ -163,6 +164,10 @@ public class Entity : MonoBehaviour, ISpawnable {
 
 	public void Damage(float damage)  {
 		m_health -= damage;
+	}
+
+	public bool IsEdible() {
+		return m_isEdible;
 	}
 
 	public bool IsEdible(DragonTier _tier) {

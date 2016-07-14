@@ -27,7 +27,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.SetSpeed(m_data.speed);
+				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SetBoostSpeed(m_data.speed);
 				m_target = m_machine.position;
 				m_pilot.PressAction(Pilot.Action.Avoid);

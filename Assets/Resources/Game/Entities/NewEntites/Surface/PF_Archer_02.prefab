@@ -1073,6 +1073,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 2658ae5ddcd9c41e59779c17b4252252, type: 2}
+  m_speedFactorRange:
+    min: 0.75
+    max: 1.25
   m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"consecutiveAttacks":4,"attackDelay":0,"retreatTime":20,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false}]'
 --- !u!114 &11436934
 MonoBehaviour:
@@ -1089,6 +1092,9 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 1
     m_faceDirection: 0
+    m_orientationSpeed: 2
+    m_faceLeftAngleY: 180
+    m_faceRightAngleY: 0
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 14

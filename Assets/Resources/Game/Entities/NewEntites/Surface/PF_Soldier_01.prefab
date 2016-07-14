@@ -1186,6 +1186,9 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 1
     m_faceDirection: 0
+    m_orientationSpeed: 2
+    m_faceLeftAngleY: 180
+    m_faceRightAngleY: 0
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 6
@@ -1255,6 +1258,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 1bc6a6f8f3bad4cb59a9ab4625e5fd20, type: 2}
+  m_speedFactorRange:
+    min: 0.75
+    max: 1.25
   m_serializedJson: '[{"speed":2,"idleChance":0.25,"dataType":"AI.Behaviour.GroundWanderData","componentType":"AI.Behaviour.GroundWander","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"speed":6.5,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"damage":22,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":6.5,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false}]'
 --- !u!137 &13791830
 SkinnedMeshRenderer:

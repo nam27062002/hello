@@ -39,8 +39,6 @@ namespace AI {
 			m_position = m_machine.transform.position;
 			m_rotation = m_machine.transform.rotation;
 			m_targetRotation = m_rotation;
-
-			m_direction = Vector3.right;
 		}
 
 		public override void Update() {
@@ -155,19 +153,19 @@ namespace AI {
 		}
 
 		private Quaternion LimitRotation(Quaternion _quat) {
-
-			return _quat;
-
-
-			Vector3 euler = _quat.eulerAngles;
-
-			if (m_direction.x >= 0) {
-				euler.y = m_faceRightAngleY;
+			if (m_faceDirection) {
+				return _quat;
 			} else {
-				euler.y = m_faceLeftAngleY;
-			}
+				Vector3 euler = _quat.eulerAngles;
 
-			return Quaternion.Euler(euler);
+				if (m_direction.x >= 0) {
+					euler.y = m_faceRightAngleY;
+				} else {
+					euler.y = m_faceLeftAngleY;
+				}
+
+				return Quaternion.Euler(euler);
+			}
 		}
 
 		private void CheckCollisions() {

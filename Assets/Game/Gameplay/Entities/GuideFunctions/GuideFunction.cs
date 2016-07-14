@@ -47,21 +47,16 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	public Bounds GetBounds() {
-		Bounds bounds = new Bounds();
-
+	public AreaBounds GetBounds() {
 		float rDiff = 0f;
 		switch (m_guideFunction) {
 			case FunctionType.Hypotrochoid:	rDiff = Mathf.Abs(m_outterRadius - m_innerRadius); break;
 			case FunctionType.Epitrochoid:	rDiff = Mathf.Abs(m_outterRadius + m_innerRadius); break;
 		}
 
-		Vector3 max = (new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  m_depthAmplitude)) + Vector3.one;
+		Vector3 size = ((new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  m_depthAmplitude)) + Vector3.one) * 2f;
 
-		bounds.min = transform.position + m_centerOffset + Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, -max);
-		bounds.max = transform.position + m_centerOffset + Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale,  max);
-
-		return bounds;
+		return new RectAreaBounds(transform.position + m_centerOffset, Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, size));
 	}
 
 	public void ResetTime() {
@@ -135,8 +130,8 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 		}
 
 		//
-		Bounds bounds = GetBounds();
+		AreaBounds bounds = GetBounds();
 		Gizmos.color = Color.red;
-		Gizmos.DrawWireCube(bounds.center, bounds.size);
+		Gizmos.DrawWireCube(bounds.center, bounds.bounds.size);
 	}
 }

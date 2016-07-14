@@ -19,8 +19,8 @@ namespace AI {
 
 		//----------------------------------------------------------------------------------------------------------------
 
-		protected Bounds m_area;
-		public Bounds area { get { return m_area; } }
+		protected AreaBounds m_area;
+		public AreaBounds area { get { return m_area; } }
 
 		protected IGuideFunction m_guideFunction;
 		public IGuideFunction guideFunction { 
@@ -37,11 +37,20 @@ namespace AI {
 
 		protected bool[] m_actions;
 
-		protected float m_speed;
+		// speed and leerping between values, trying to achieve smooth speed changes
+		protected virtual float speedFactor { get { return 1f; } }
+
+		private float m_moveSpeed;
+		public float moveSpeed { get { return m_moveSpeed * speedFactor; } }
+		
 		private float m_boostSpeed;
+		public float boostSpeed { get { return m_boostSpeed * speedFactor; } }
+
 		private float m_currentSpeed;
 		public float speed { get { return m_currentSpeed; } }
 
+
+		//
 		protected Vector3 m_externalImpulse;
 		protected Vector3 m_impulse;
 		public Vector3 impulse { get { return m_impulse; } }
@@ -54,8 +63,11 @@ namespace AI {
 		//----------------------------------------------------------------------------------------------------------------
 
 		protected virtual void Awake() {
-			m_speed = 0;
+			m_moveSpeed = 0;
 			m_boostSpeed = 0;
+
+			m_currentSpeed = 0;
+
 			m_impulse = Vector3.zero;
 			m_direction = Vector3.right;
 
@@ -77,8 +89,8 @@ namespace AI {
 
 		public virtual void OnTrigger(string _trigger) {}
 
-		public void SetSpeed(float _speed) {
-			m_speed = _speed;
+		public void SetMoveSpeed(float _speed) {
+			m_moveSpeed = _speed;
 		}
 
 		public void SetBoostSpeed(float _boostSpeed) {
@@ -105,11 +117,11 @@ namespace AI {
 			m_externalImpulse += _externalImpulse;
 		}
 
-		protected virtual void Update() {			
+		protected virtual void Update() {
 			if (IsActionPressed(Action.Boost)) {
-				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, 0.125f);
+				m_currentSpeed = m_boostSpeed;
 			} else {
-				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_speed, 0.125f);
+				m_currentSpeed = m_moveSpeed;
 			}
 		}
 	}

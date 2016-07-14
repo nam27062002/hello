@@ -763,6 +763,9 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 1
     m_faceDirection: 0
+    m_orientationSpeed: 2
+    m_faceLeftAngleY: 180
+    m_faceRightAngleY: 0
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 5
@@ -815,6 +818,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: e0f492e5d96984a19ba60a7cbd04cf12, type: 2}
+  m_speedFactorRange:
+    min: 0.75
+    max: 1.25
   m_serializedJson: '[{"restTime":{"min":0,"max":0},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","componentType":"AI.Behaviour.HumanFlee","editorFolded":false}]'
 --- !u!114 &11485410
 MonoBehaviour:

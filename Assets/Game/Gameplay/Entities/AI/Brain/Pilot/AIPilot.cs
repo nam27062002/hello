@@ -15,11 +15,17 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 namespace AI {
 	public abstract class AIPilot : Pilot, ISpawnable, ISerializationCallbackReceiver {
+		protected static int m_groundMask;
+
 		//--------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											  //
 		//--------------------------------------------------------------------//
 		[SerializeField] private StateMachine m_brainResource;
 		public StateMachine brainResource { get { return m_brainResource; }}
+
+		[SerializeField] private Range m_speedFactorRange = new Range(1f, 1f);
+		private float m_speedFactor;
+		protected override float speedFactor { get { return m_speedFactor; } }
 
 		private StateMachine m_brain;
 
@@ -34,8 +40,19 @@ namespace AI {
 		//--------------------------------------------------------------------//
 		// METHODS															  //
 		//--------------------------------------------------------------------//
-		public void Spawn(Spawner _spawner) {
+		public virtual void Spawn(Spawner _spawner) {
+			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+
+			m_area = _spawner.area;
 			m_homePosition = _spawner.transform.position;
+
+			if (UnityEngine.Random.Range(0f, 1f) < 0.5f) {
+				m_direction = Vector2.right;
+			} else {
+				m_direction = Vector2.left;
+			}
+
+			m_speedFactor = m_speedFactorRange.GetRandom();
 
 			m_target = transform.position;
 			m_slowDown = false;

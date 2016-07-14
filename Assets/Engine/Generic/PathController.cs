@@ -22,7 +22,6 @@ public class PathController : MonoBehaviour, IGuideFunction {
 	
 	private RectAreaBounds m_bounds = new RectAreaBounds(Vector3.zero, Vector3.zero);
 
-
 	void Awake() {
 		m_leftmostNode = 0;
 		m_rightmostNode = 0;
@@ -42,9 +41,9 @@ public class PathController : MonoBehaviour, IGuideFunction {
 		m_direction = 1;
 	}
 
-	public Bounds GetBounds() {
+	public AreaBounds GetBounds() {
 		UpdateBounds();
-		return m_bounds.bounds;
+		return m_bounds;
 	}
 
 	public void ResetTime() {

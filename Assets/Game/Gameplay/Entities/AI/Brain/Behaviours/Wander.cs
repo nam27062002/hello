@@ -26,19 +26,14 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_target = m_machine.position;
-
-				if (m_pilot.guideFunction != null) {
-					m_pilot.guideFunction.ResetTime();
-				}
-
 				m_pilot.SlowDown(false); // this wander state doesn't have an idle check
 			}
 
 			protected override void OnUpdate() {
-				m_pilot.SetSpeed(m_data.speed); //TODO
+				m_pilot.SetMoveSpeed(m_data.speed); //TODO
 
 				float m = (m_machine.position - m_target).sqrMagnitude;
-				float d = 2f;//m_data.speed * Time.smoothDeltaTime;
+				float d = Mathf.Min(2f, m_data.speed);// * Time.smoothDeltaTime;
 
 				if (m_pilot.guideFunction != null) {					
 					if (m < d * d) {
@@ -46,7 +41,7 @@ namespace AI {
 					}
 				} else {
 					if (m < d * d) { 
-						m_target = Random.insideUnitSphere * 10f;
+						m_target = m_pilot.area.RandomInside();
 						m_target.z = 0;
 					} 
 				}

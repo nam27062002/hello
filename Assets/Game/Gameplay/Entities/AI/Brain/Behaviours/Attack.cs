@@ -44,7 +44,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				m_pilot.SetSpeed(0);
+				m_pilot.SetMoveSpeed(0);
 				if (m_attacksLeft <= 0)
 					m_attacksLeft =  m_data.consecutiveAttacks;
 				m_timer = 0f;

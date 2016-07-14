@@ -4,6 +4,7 @@ using System.Collections;
 
 public class FlockController : MonoBehaviour, IGuideFunction {
 	
+
 	//http://www.artbylogic.com/parametricart/spirograph/spirograph.htm
 	public enum GuideFunction{
 		Basic,
@@ -16,6 +17,7 @@ public class FlockController : MonoBehaviour, IGuideFunction {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
+	[CommentAttribute("\tDEPRECATED\n instead, use Spawner plus EntityGroupController.\n")]
 	[SerializeField] private float m_amountSecsInPast = 0.25f;
 
 	[SeparatorAttribute]
@@ -68,8 +70,8 @@ public class FlockController : MonoBehaviour, IGuideFunction {
 		ResetTime();
 	}
 
-	public Bounds GetBounds() {
-		return m_area.bounds;
+	public AreaBounds GetBounds() {
+		return m_area;
 	}
 
 	public void ResetTime() {

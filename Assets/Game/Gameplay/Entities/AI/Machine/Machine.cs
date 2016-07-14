@@ -82,11 +82,14 @@ namespace AI {
 			}
 		}
 
-		void OnDisable() {
-			LeaveGroup();
+		void OnEnable() {
 			foreach(KeyValuePair<string, Signal> p in m_signals) {
 				p.Value.Init();
 			}
+		}
+
+		void OnDisable() {
+			LeaveGroup();
 		}
 
 		public void Spawn(Spawner _spawner) {
@@ -138,16 +141,18 @@ namespace AI {
 
 		// Update is called once per frame
 		void Update() {
-			if (m_willPlaySpawnSound) {
-				if (m_entity.isOnScreen) {
-					PlaySound(m_onSpawnSounds[Random.Range(0, m_onSpawnSounds.Count)]);
-					m_willPlaySpawnSound = false;
+			if (!IsDead()) {
+				if (m_willPlaySpawnSound) {
+					if (m_entity.isOnScreen) {
+						PlaySound(m_onSpawnSounds[Random.Range(0, m_onSpawnSounds.Count)]);
+						m_willPlaySpawnSound = false;
+					}
 				}
-			}
 
-			if (m_enableMotion) m_motion.Update();
-			if (m_enableSensor) m_sensor.Update();
-			m_inflammable.Update();
+				if (m_enableMotion) m_motion.Update();
+				if (m_enableSensor) m_sensor.Update();
+				m_inflammable.Update();
+			}
 		}
 
 		public void SetSignal(string _signal, bool _activated) {
@@ -187,7 +192,9 @@ namespace AI {
 
 		// External interactions
 		public void ReceiveDamage(float _damage) {
-			m_entity.Damage(_damage);
+			if (!IsDead()) {
+				m_entity.Damage(_damage);
+			}
 		}
 
 		public bool IsDead() {
@@ -197,13 +204,13 @@ namespace AI {
 		public float biteResistance { get { return m_edible.biteResistance; }}
 
 		public void Bite() {
-			if (m_edible != null) {
+			if (m_edible != null && !IsDead()) {
 				m_edible.Bite();
 			}
 		}
 
 		public void BeingSwallowed(Transform _transform) {
-			if (m_edible != null) {
+			if (m_edible != null && !IsDead()) {
 				if (m_willPlayEatenSound) {
 					if (m_entity.isOnScreen) {
 						PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
@@ -218,19 +225,19 @@ namespace AI {
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
 		public void BiteAndHold() {
-			if (m_edible != null) {
+			if (m_edible != null && !IsDead()) {
 				m_edible.BiteAndHold();
 			}
 		}
 
 		public void ReleaseHold() {
-			if (m_edible != null) {
+			if (m_edible != null && !IsDead()) {
 				m_edible.ReleaseHold();
 			}
 		}
 
 		public bool Burn(float _damage, Transform _transform) {
-			if (m_inflammable != null) {
+			if (m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Burning.name)) {
 					ReceiveDamage(_damage);
 					if (m_entity.health <= 0) {

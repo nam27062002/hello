@@ -30,7 +30,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	[Header("Respawn")]
-	[SerializeField] private Range m_spawnTime = new Range(60f, 120f);
+	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private int m_maxSpawns;
 	
 
@@ -38,7 +38,15 @@ public class Spawner : MonoBehaviour, ISpawner {
 	// Attributes
 	//-----------------------------------------------
 	protected AreaBounds m_area;
-	public AreaBounds area { get { return m_area; } }
+	public AreaBounds area { 
+		get { 
+			if (m_guideFunction != null) {
+				return m_guideFunction.GetBounds();
+			} else {
+				return m_area;
+			}
+		} 
+	}
 
 	protected EntityGroupController m_groupController;
 	protected IGuideFunction m_guideFunction;
@@ -293,7 +301,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			return area.bounds;
 		} else {
 			// spawner for static objects with a fixed position
-			return new CircleAreaBounds(transform.position, 0);
+			return new CircleAreaBounds(transform.position, 1f);
 		}
 	}
 

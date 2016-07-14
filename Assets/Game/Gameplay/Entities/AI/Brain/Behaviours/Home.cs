@@ -24,7 +24,7 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);
 				m_machine.SetSignal(Signals.Alert.name, false);
-				m_pilot.SetSpeed(m_data.speed);
+				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.GoTo(m_pilot.homePosition);
 			}
 

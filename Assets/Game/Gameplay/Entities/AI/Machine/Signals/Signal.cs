@@ -1,4 +1,5 @@
 ﻿namespace AI {
+	[System.Serializable]
 	public abstract class Signal {
 		private bool m_value;
 		public bool value { get { return m_value; } }

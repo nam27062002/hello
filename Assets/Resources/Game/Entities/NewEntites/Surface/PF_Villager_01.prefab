@@ -908,6 +908,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
+  m_speedFactorRange:
+    min: 0.75
+    max: 1.25
   m_serializedJson: '[{"speed":1.5,"idleChance":0.25,"dataType":"AI.Behaviour.GroundWanderData","componentType":"AI.Behaviour.GroundWander","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"speed":1,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","componentType":"AI.Behaviour.HumanFlee","editorFolded":false}]'
 --- !u!114 &11449904
 MonoBehaviour:
@@ -967,6 +970,9 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 1
     m_faceDirection: 0
+    m_orientationSpeed: 2
+    m_faceLeftAngleY: 180
+    m_faceRightAngleY: 0
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 4

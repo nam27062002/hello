@@ -32,6 +32,9 @@ namespace AI {
 		public void Bite() {
 			m_machine.SetSignal(Signals.Panic.name, true);
 			m_machine.SetSignal(Signals.Chewing.name, true);
+
+			if (EntityManager.instance != null)
+				EntityManager.instance.Unregister(m_entity);
 		}
 
 		public void BeingSwallowed(Transform _transform) {			

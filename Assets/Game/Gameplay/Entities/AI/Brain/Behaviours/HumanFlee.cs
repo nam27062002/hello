@@ -30,14 +30,14 @@ namespace AI {
 
 				m_machine.SetSignal(Signals.Alert.name, true);
 
-				m_xLimitMin = m_pilot.area.min.x;
-				m_xLimitMax = m_pilot.area.max.x;
+				m_xLimitMin = m_pilot.area.bounds.min.x;
+				m_xLimitMax = m_pilot.area.bounds.max.x;
 
 				m_target = m_machine.position;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.SetSpeed(m_data.speed);	
+				m_pilot.SetMoveSpeed(m_data.speed);	
 
 				m_allowTargetChangeTimer = 0f;
 			}
@@ -66,13 +66,13 @@ namespace AI {
 
 				float m = Mathf.Abs(m_machine.position.x - m_target.x);
 				if (m < 1f) {
-					m_pilot.SetSpeed(0f);
+					m_pilot.SetMoveSpeed(0f);
 
 					Vector3 dir = Vector3.zero;
 					dir.x = m_machine.position.x - m_target.x;
 					m_pilot.SetDirection(dir.normalized);
 				} else {
-					m_pilot.SetSpeed(3f);
+					m_pilot.SetMoveSpeed(3f);
 				}
 			
 				m_pilot.Scared(m_machine.GetSignal(Signals.Danger.name));

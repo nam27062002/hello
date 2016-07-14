@@ -33,8 +33,8 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = (GroundWanderData)m_pilot.GetComponentData<GroundWander>();
 
-				m_xLimitMin = m_pilot.area.min.x;
-				m_xLimitMax = m_pilot.area.max.x;
+				m_xLimitMin = m_pilot.area.bounds.min.x;
+				m_xLimitMax = m_pilot.area.bounds.max.x;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -42,7 +42,7 @@ namespace AI {
 					m_target = Vector3.zero;
 					m_target.x = Random.Range(m_xLimitMin, m_xLimitMax);
 				}
-				m_pilot.SetSpeed(m_data.speed);
+				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SlowDown(false);
 				m_goToIdle = false;
 			}

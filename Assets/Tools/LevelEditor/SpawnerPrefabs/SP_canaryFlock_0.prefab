@@ -9,10 +9,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 494148}
   - 114: {fileID: 11461888}
-  - 114: {fileID: 11413478}
-  - 114: {fileID: 11485884}
   - 114: {fileID: 11478514}
-  - 114: {fileID: 11409874}
+  - 114: {fileID: 11499208}
+  - 114: {fileID: 11451096}
   m_Layer: 0
   m_Name: SP_canaryFlock_0
   m_TagString: Untagged
@@ -27,13 +26,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 194974}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 130.52, y: -29.73, z: 0}
+  m_LocalPosition: {x: 36.54, y: 6.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11409874
+--- !u!114 &11451096
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -41,33 +40,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 194974}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.05168152, y: 0.06123352}
-  size: {x: 24.675537, y: 2.9295263}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11413478
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 194974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1aacd4a6157b43dfb51dc936d9e9f7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_amountSecsInPast: 0.25
-  m_guideFunction: 3
-  m_guideSpeed: 1
-  m_secondaryGuideSpeed: 0
-  m_sensePlayer: 0
-  m_innerRadius: 10
-  m_outterRadius: 20
-  m_targetDistance: 5
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
+  m_entityPrefab: {fileID: 129198, guid: a4eff6e74d84441dfbc77831b1559d0c, type: 2}
+  m_quantity:
+    min: 3
+    max: 3
+  m_scale:
+    min: 0.9
+    max: 1.1
+  m_flockBonus: 25
+  m_alwaysActive: 0
+  m_activeOnStart: 0
+  m_enableTime: 0
+  m_disableTime: 0
+  m_spawnTime:
+    min: 40
+    max: 45
+  m_maxSpawns: 0
 --- !u!114 &11461888
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -93,7 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11485884
+--- !u!114 &11499208
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -101,25 +92,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 194974}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e41b79b4192e24dd2add814a1be140ca, type: 3}
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 129198, guid: a4eff6e74d84441dfbc77831b1559d0c, type: 2}
-  m_quantity:
-    min: 3
-    max: 3
-  m_scale:
-    min: 0.9
-    max: 1.1
-  m_flockBonus: 25
-  m_alwaysActive: 0
-  m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
-  m_spawnTime:
-    min: 40
-    max: 45
-  m_maxSpawns: 0
+  m_guideFunction: 0
+  m_innerRadius: 8
+  m_outterRadius: 16
+  m_targetDistance: 3.4
+  m_depthAmplitude: 1
+  m_depthFrequency: 3
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 90, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -29,7 +29,7 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_timer = m_data.restTime.GetRandom();
-				m_pilot.SetSpeed(0);
+				m_pilot.SetMoveSpeed(0);
 			}
 
 			protected override void OnUpdate() {

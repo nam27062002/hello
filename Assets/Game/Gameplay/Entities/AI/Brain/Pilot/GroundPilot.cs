@@ -5,8 +5,8 @@ namespace AI {
 	public class GroundPilot : AIPilot {
 		protected static int m_groundMask;
 
-		protected virtual void Start() {
-			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		public override void Spawn(Spawner _spawner) {
+			base.Spawn(_spawner);
 
 			// set home position at ground
 			RaycastHit groundHit;
