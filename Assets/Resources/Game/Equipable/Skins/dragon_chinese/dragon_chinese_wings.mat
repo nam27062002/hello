@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_chinese_wings
-  m_Shader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: fe667cdf59c41409d8c355c76af3643d, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 3000
   stringTagMap:
     RenderType: Transparent
   m_SavedProperties:
@@ -33,20 +33,6 @@ Material:
       data:
         first:
           name: _DetailNormalMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _BurnMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailTex
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -93,6 +79,20 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BurnMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -110,18 +110,6 @@ Material:
         first:
           name: PixelSnap
         second: 0
-      data:
-        first:
-          name: _BurnLevel
-        second: 0
-      data:
-        first:
-          name: _InnerLightAdd
-        second: 0
-      data:
-        first:
-          name: _SpecExponent
-        second: 1
       data:
         first:
           name: _Parallax
@@ -162,6 +150,18 @@ Material:
         first:
           name: _EmissionScaleUI
         second: 0
+      data:
+        first:
+          name: _InnerLightAdd
+        second: 0
+      data:
+        first:
+          name: _SpecExponent
+        second: 1
+      data:
+        first:
+          name: _BurnLevel
+        second: 0
     m_Colors:
       data:
         first:
@@ -173,6 +173,10 @@ Material:
         second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
       data:
         first:
+          name: _EmissionColorUI
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
           name: _ColorMultiply
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
@@ -182,8 +186,4 @@ Material:
       data:
         first:
           name: _InnerLightColor
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
