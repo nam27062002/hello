@@ -1,4 +1,4 @@
-﻿// AOCQuickTest.cs
+// AOCQuickTest.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on DD/MM/2015.

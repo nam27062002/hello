@@ -13,7 +13,8 @@ using UnityEngine.UI;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Extension of the default Unity UI Button with extra functionality
+/// Extension of the default Unity UI Button with extra functionality.
+/// - Recursive tint on all children (when using Color Tint as transition method)
 /// </summary>
 [AddComponentMenu("UI/Button Extended", 30)]
 public class ButtonExtended : Button {
@@ -24,6 +25,7 @@ public class ButtonExtended : Button {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,8 +68,7 @@ public class ButtonExtended : Button {
 		targetColor = targetColor * this.colors.colorMultiplier;
 
 		// Iterate all children graphics and apply the same color transition
-		Transform root = targetGraphic.transform.parent != null ? targetGraphic.transform.parent : targetGraphic.transform;
-		Graphic[] graphics = root.GetComponentsInChildren<Graphic>();
+		Graphic[] graphics = targetGraphic.transform.GetComponentsInChildren<Graphic>();
 		for(int i = 0; i < graphics.Length; i++) {
 			graphics[i].CrossFadeColor(targetColor, (!_instant) ? this.colors.fadeDuration : 0f, true, true);
 		}

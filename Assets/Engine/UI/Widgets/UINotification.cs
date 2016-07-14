@@ -119,7 +119,7 @@ public class UINotification : ShowHideAnimator {
 	/// Either a show or a hide animation has finished.
 	/// Won't be called when animation is interrupted.
 	/// </summary>
-	protected override void OnTweenCompleted() {
+	protected override void OnSequenceCompleted() {
 		// Either start or stop the idle animation
 		if(visible) {
 			// Show animation has finished
@@ -130,6 +130,6 @@ public class UINotification : ShowHideAnimator {
 		}
 
 		// Call parent
-		base.OnTweenCompleted();
+		base.OnSequenceCompleted();
 	}
 }

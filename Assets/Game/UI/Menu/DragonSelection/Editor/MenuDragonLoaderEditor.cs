@@ -11,7 +11,7 @@ public class MenuDragonLoaderEditor : Editor {
 		DrawDefaultInspector();
 
 		if (GUILayout.Button("Load Dragon Preview")) {
-			((MenuDragonLoader)target).LoadDragonPreview();
+			((MenuDragonLoader)target).RefreshDragon();
 		}
 	}
 }

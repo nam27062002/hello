@@ -44,7 +44,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// <summary>
 	/// First update
 	/// </summary>
-	private void Start() {
+	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		
@@ -55,7 +55,7 @@ public class MenuDragonLevelBar : MonoBehaviour {
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	private void OnDestroy() {
+	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
