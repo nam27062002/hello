@@ -15,7 +15,7 @@ public class DragonEquip : MonoBehaviour {
 			m_dragonSku = preview.sku;
 		}
 
-		EquipDisguise(Wardrobe.GetEquipedDisguise(m_dragonSku));
+		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 
 		/* TODO: refractor full equip function
 		 Dictionary<Equipable.AttachPoint, string> equip = dragon.data.equip;
@@ -64,7 +64,7 @@ public class DragonEquip : MonoBehaviour {
 
 	private void OnDisguiseChanged(string _sku) {
 		if (m_dragonSku == _sku) {
-			EquipDisguise(Wardrobe.GetEquipedDisguise(m_dragonSku));
+			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 		}
 	}
 	

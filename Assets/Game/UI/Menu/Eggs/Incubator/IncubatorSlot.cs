@@ -172,10 +172,10 @@ public class IncubatorSlot : MonoBehaviour {
 
 		// Resources check
 		long pricePC = (long)targetEgg.GetIncubationSkipCostPC();
-		if(UserProfile.pc >= pricePC) {
+		if(UsersManager.currentUser.pc >= pricePC) {
 			// Instantly finish current incubation
 			if(targetEgg.SkipIncubation()) {
-				UserProfile.AddPC(-pricePC);
+				UsersManager.currentUser.AddPC(-pricePC);
 				PersistenceManager.Save();
 			}
 		} else {

@@ -452,18 +452,21 @@ public static class GameObjectExt {
 		// Use Unity methods if inactives not required
 		if(_includeInactive) {
 			// Traverse whole hierarchy
-			GameObject[] rootObjs = SceneManager.GetActiveScene().GetRootGameObjects();
-			for(int i = 0; i < rootObjs.Length; i++) {
-				// Check name?
-				T searchResult = null;
-				if(string.IsNullOrEmpty(_name)) {
-					searchResult = rootObjs[i].FindComponentRecursive<T>();
-				} else {
-					searchResult = rootObjs[i].FindComponentRecursive<T>(_name);
-				}
+			for(int i = 0; i < SceneManager.sceneCount; i++) {
+				// Traverse scene i
+				GameObject[] rootObjs = SceneManager.GetSceneAt(i).GetRootGameObjects();
+				for(int j = 0; j < rootObjs.Length; j++) {
+					// Check name?
+					T searchResult = null;
+					if(string.IsNullOrEmpty(_name)) {
+						searchResult = rootObjs[j].FindComponentRecursive<T>();
+					} else {
+						searchResult = rootObjs[j].FindComponentRecursive<T>(_name);
+					}
 
-				// If found, return! Otherwise check the next root object
-				if(searchResult != null) return searchResult;
+					// If found, return! Otherwise check the next root object
+					if(searchResult != null) return searchResult;
+				}
 			}
 		} else {
 			// Filter by name?

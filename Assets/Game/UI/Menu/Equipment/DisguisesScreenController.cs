@@ -1,4 +1,4 @@
-﻿// DisguisesScreenController.cs
+// DisguisesScreenController.cs
 // Hungry Dragon
 // 
 // Created by Marc Saña Forrellach on DD/MM/2016.
@@ -49,6 +49,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	// Other data
 	private string m_dragonSku;
+	private Wardrobe m_wardrobe;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -76,6 +77,8 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
 			Debug.Log("power anim for " + i + ": " + (m_powerAnims[i] == null ? "NULL" : m_powerAnims[i].ToString()));
 		}
+
+		m_wardrobe = UsersManager.currentUser.wardrobe;
 	}
 
 	/// <summary>
@@ -166,7 +169,8 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Find out initial disguise
 		// Dragon's current disguise by default, but can be overriden by setting the previewDisguise property before opening the screen
-		string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
+		//string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
+		string currentDisguise = UsersManager.currentUser.GetEquipedDisguise(m_dragonSku);
 		if(m_previewDisguise != "") {
 			currentDisguise = m_previewDisguise;
 			m_previewDisguise = "";
@@ -206,7 +210,7 @@ public class DisguisesScreenController : MonoBehaviour {
 					DefinitionNode def = defList[i - 1];
 
 					Sprite spr = GetFromCollection(ref icons, def.GetAsString("icon"));
-					int level = Wardrobe.GetDisguiseLevel(def.sku);
+					int level = m_wardrobe.GetDisguiseLevel(def.sku);
 					m_pills[i].Load(def, level, spr);
 
 					// Is it the initial pill?
@@ -233,10 +237,15 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// </summary>
 	private void Finalize() {
 		// Restore equipped disguise
+		bool newEquip = false;
 		if(m_equippedPill != null) {
-			Wardrobe.Equip(m_dragonSku, m_equippedPill.sku);
+			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, m_equippedPill.sku);
 		} else {
-			Wardrobe.Equip(m_dragonSku, "default");
+			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, "default");
+		}
+
+		if(newEquip) {
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
 		}
 		PersistenceManager.Save();
 
@@ -319,12 +328,13 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill.Select(true);
 
 		// Apply selected disguise to dragon preview and animate
-		string oldDisguiseSku = Wardrobe.GetEquipedDisguise(m_dragonSku);
-		Wardrobe.Equip(m_dragonSku, m_selectedPill.sku);
-		if(oldDisguiseSku != m_selectedPill.sku) {
+		if(UsersManager.currentUser.EquipDisguise(m_dragonSku, m_selectedPill.sku)) {
 			// Only animate if disguise has actually changed
 			DOTween.Kill("DisguiseEquippedAnim", true);	// Kill any existing tween
 			if(m_previewAnchor != null) m_previewAnchor.DOScale(Vector3.zero, 1f).From().SetId("DisguiseEquippedAnim").SetEase(Ease.OutElastic);
+
+			// Notify game
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
 		}
 
 		// If selected disguise is equippable, do it

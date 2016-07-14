@@ -25,7 +25,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	public GameObject m_connectButton;
-	
+	private UnityEngine.UI.Button m_connectButtonComponent;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -34,32 +34,32 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void Awake() 
 	{
-		ExternalPlatformManager.instance.OnLogin += OnExternalLogin;
-		ExternalPlatformManager.instance.OnLoginError += OnExternalLoginError;
-
-		// Check if external connected to hide m_ConnectionButton;
-		if (ExternalPlatformManager.instance.loginState != ExternalPlatformManager.State.NOT_LOGGED)
-		{
-			// Hide connecting button
-			m_connectButton.SetActive(false);
-		}
+		m_connectButtonComponent =  m_connectButton.GetComponent<UnityEngine.UI.Button>();
+		Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLoginEvent);
+		Messenger.Broadcast(GameEvents.GOOD_PLACE_TO_SYNCH);
 	}
 
 	void OnDestroy()
 	{
-		if (ExternalPlatformManager.instance != null)
-		{
-			ExternalPlatformManager.instance.OnLogin -= OnExternalLogin;
-			ExternalPlatformManager.instance.OnLoginError -= OnExternalLoginError;
-		}
+		Messenger.Broadcast(GameEvents.NO_SYNCHING);
+		Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLoginEvent);
+	}
+
+	void OnSocialLoginEvent( bool loged )
+	{
+		SocialPlatformButtonUpdate();
 	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	private void OnEnable() 
+	{
 		// Hide menu HUD
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
+
+		// Check Facebook/Weibo Connect visibility
+		SocialPlatformButtonUpdate();
 	}
 
 	/// <summary>
@@ -67,7 +67,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Show menu HUD, except if the dragon selection tutorial hasn't yet been completed
-		if(UserProfile.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
 			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceShow(false);
 		}
 
@@ -81,8 +81,8 @@ public class MenuPlayScreen : MonoBehaviour {
 
 	public void OnConnectBtn()
 	{
-		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid 
-		ExternalPlatformManager.instance.Login();
+		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid login multiple times
+		SocialPlatformManager.SharedInstance.Login();
 	}
 
 	public void OnExternalLogin()
@@ -94,6 +94,24 @@ public class MenuPlayScreen : MonoBehaviour {
 	public void OnExternalLoginError()
 	{
 		//TODO(miguel) : Enable connection button
+	}
+
+	void SocialPlatformButtonUpdate()
+	{
+		if (SocialPlatformManager.SharedInstance.IsLoggedIn() )
+		{
+			m_connectButton.SetActive(false);
+		}
+		else if ( false )
+		{
+			m_connectButton.SetActive(true);
+			m_connectButtonComponent.interactable = false;
+		}
+		else
+		{
+			m_connectButton.SetActive(true);
+			m_connectButtonComponent.interactable = true;
+		}
 	}
 
 	//------------------------------------------------------------------//

@@ -195,9 +195,9 @@ public class EquipmentScreenController : MonoBehaviour {
 
 		// Get price and start purchase flow
 		long pricePC = m_eggDef.GetAsLong("pricePC");
-		if(UserProfile.pc >= pricePC) {
+		if(UsersManager.currentUser.pc >= pricePC) {
 			// Perform transaction
-			UserProfile.AddPC(-pricePC);
+			UsersManager.currentUser.AddPC(-pricePC);
 			PersistenceManager.Save();
 
 			// Create a new egg instance

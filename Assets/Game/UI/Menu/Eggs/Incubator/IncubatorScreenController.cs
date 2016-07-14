@@ -112,9 +112,9 @@ public class IncubatorScreenController : MonoBehaviour {
 		// Get price and start purchase flow
 		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, "egg_dragon_titan");	// [AOC] TODO!! Single egg def
 		long pricePC = eggDef.GetAsLong("pricePC");
-		if(UserProfile.pc >= pricePC) {
+		if(UsersManager.currentUser.pc >= pricePC) {
 			// Perform transaction
-			UserProfile.AddPC(-pricePC);
+			UsersManager.currentUser.AddPC(-pricePC);
 			PersistenceManager.Save();
 
 			// Create a new egg instance

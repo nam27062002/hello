@@ -73,7 +73,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	public void OnAddCoins() {
 		// Just do it
-		UserProfile.AddCoins(m_coinsAmount);
+		UsersManager.currentUser.AddCoins(m_coinsAmount);
 		PersistenceManager.Save();
 
 		// Close popup?
@@ -85,7 +85,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	public void OnAddPC() {
 		// Just do it
-		UserProfile.AddPC(m_pcAmount);
+		UsersManager.currentUser.AddPC(m_pcAmount);
 		PersistenceManager.Save();
 
 		// Close popup?

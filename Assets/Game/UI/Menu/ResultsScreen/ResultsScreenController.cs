@@ -88,7 +88,7 @@ public class ResultsScreenController : MonoBehaviour {
 		m_coinsAnimator.SetValue(0, (int)(RewardManager.coins + survivalBonus));
 		m_bonusCoinsAnimator.SetValue(0, RewardManager.instance.CalculateSurvivalBonus()); //TODO: get bouns coins from Reward Manager
 
-		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(UserProfile.highScore));
+		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(UsersManager.currentUser.highScore));
 
 		m_newHighScoreDeco.SetActive(RewardManager.isHighScore);
 
@@ -178,7 +178,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void GoToMenu() {
 		// Update global stats
-		UserProfile.gamesPlayed = UserProfile.gamesPlayed + 1;
+		UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 
 		// Apply rewards to user profile
 		RewardManager.ApplyRewardsToProfile();

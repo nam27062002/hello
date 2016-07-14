@@ -36,7 +36,7 @@ namespace LevelEditor {
 		/// </summary>
 		override protected void Awake() {
 			ContentManager.InitContent();
-
+			PersistenceManager.Load();
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
 			InstanceManager.player.playable = false;

@@ -70,7 +70,7 @@ public class MenuLevelButton : MonoBehaviour {
 		m_titleDesc.Localize(m_levelDef.GetAsString("tidDesc"));
 
 		// Unfold if current level
-		bool isCurrentLevel = (m_levelSku == UserProfile.currentLevel);
+		bool isCurrentLevel = (m_levelSku == UsersManager.currentUser.currentLevel);
 		ShowInfo(isCurrentLevel);
 
 		// Show player pointer if current level

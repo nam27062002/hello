@@ -230,8 +230,8 @@ public class PolyMesh : MonoBehaviour {
 	public float pinkMeshOffset = 0f;
 	
 	public GameObject mergeObject;
-	public int startPoint;
-	public int endPoint;
+	public int mergeStartPoint;
+	public int mergeEndPoint;
 
 	//public MeshCollider meshCollider;		// [AOC] We will have the collider to the same object containing the polymesh, for clarity and keeping the hierarchy clean
 	private MeshCollider m_meshCollider = null;
@@ -511,8 +511,8 @@ public class PolyMesh : MonoBehaviour {
 		if(mergeObject) {
 			List<Vector3> points = mergeObject.GetComponent<PolyMesh>().keyPoints;
 			
-			int myStartPoint = startPoint; //selectedIndices[0];
-			int myEndPoint = endPoint; //selectedIndices[1];
+			int myStartPoint = mergeStartPoint; //selectedIndices[0];
+			int myEndPoint = mergeEndPoint; //selectedIndices[1];
 			
 			int otherStartPoint = 0;
 			int otherEndPoint = 0;

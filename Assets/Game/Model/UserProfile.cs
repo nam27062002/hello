@@ -9,7 +9,9 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
-
+using SimpleJSON;
+using System.Collections;
+using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -19,29 +21,11 @@ using System;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class UserProfile : SingletonMonoBehaviour<UserProfile> {
+public class UserProfile
+{
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Auxiliar serializable class to save/load to persistence.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		// Add here any required data
-		public long coins = 0;
-		public long pc = 0;
-		public string currentDragon = "";	// sku
-		/*[SkuList(Definitions.Category.LEVELS)]*/ public string currentLevel = "";	// sku	// [AOC] Attribute causes problems on the PersistenceProfile custom editor
-		[EnumMask] public TutorialStep tutorialStep = TutorialStep.INIT;
-
-		public bool furyUsed = false;
-
-		// Game stats
-		public int gamesPlayed = 0;
-		public long highScore = 0;
-		public int superFuryProgression = 0;
-	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
@@ -50,61 +34,109 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	//------------------------------------------------------------------------//
 	// PROPERTIES															  //
 	//------------------------------------------------------------------------//
+
+	private int m_saveCounter = 0;
+	public int saveCounter
+	{
+		get{ return m_saveCounter; }
+		set{ m_saveCounter = value; }
+	}
+
 	// Set default values in the inspector, use static methods to set them from code
 	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
 	[Separator("Economy")]
 	[SerializeField] private long m_coins;
-	public static long coins {
-		get { return instance.m_coins; }
+	public long coins {
+		get { return m_coins; }
 	}
 	
 	[SerializeField] private long m_pc;
-	public static long pc { 
-		get { return instance.m_pc; }
+	public  long pc { 
+		get { return m_pc; }
 	}
 
 	[Separator("Game Settings")]
 	[SerializeField] private string m_currentDragon = "";
-	public static string currentDragon {
-		get { return instance.m_currentDragon; }
-		set { instance.m_currentDragon = value; }
+	public string currentDragon {
+		get { return m_currentDragon; }
+		set { m_currentDragon = value; }
 	}
 
 	[SerializeField] /*[SkuList(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
-	public static string currentLevel {
-		get { return instance.m_currentLevel; }
-		set { instance.m_currentLevel = value; }
+	public string currentLevel {
+		get { return m_currentLevel; }
+		set { m_currentLevel = value; }
 	}
 
 	[SerializeField] private TutorialStep m_tutorialStep;
-	public static TutorialStep tutorialStep { 
-		get { return instance.m_tutorialStep; }
-		set { instance.m_tutorialStep = value; }
+	public TutorialStep tutorialStep { 
+		get { return m_tutorialStep; }
+		set { m_tutorialStep = value; }
 	}
 
 	[SerializeField] private bool m_furyUsed = false;
-	public static bool furyUsed {
-		get { return instance.m_furyUsed; }
-		set { instance.m_furyUsed = value; }
+	public bool furyUsed {
+		get { return m_furyUsed; }
+		set { m_furyUsed = value; }
 	}
 
 	[Separator("Game Stats")]
 	[SerializeField] private int m_gamesPlayed = 0;
-	public static int gamesPlayed {
-		get { return instance.m_gamesPlayed; }
-		set { instance.m_gamesPlayed = value; }
+	public int gamesPlayed {
+		get { return m_gamesPlayed; }
+		set { m_gamesPlayed = value; }
 	}
 
 	[SerializeField] private long m_highScore = 0;
-	public static long highScore {
-		get { return instance.m_highScore; }
-		set { instance.m_highScore = value; }
+	public long highScore {
+		get { return m_highScore; }
+		set { m_highScore = value; }
 	}
 	
 	[SerializeField] private int m_superFuryProgression = 0;
-	public static int superFuryProgression {
-		get { return instance.m_superFuryProgression; }
-		set { instance.m_superFuryProgression = value; }
+	public int superFuryProgression {
+		get { return m_superFuryProgression; }
+		set { m_superFuryProgression = value; }
+	}
+
+	// Dragon Data
+	private Dictionary<string,DragonData> m_dragonsBySku;	// Owned Dragons by Sku
+	public Dictionary<string,DragonData> dragonsBySku
+	{
+		get{ return m_dragonsBySku; }
+	}
+
+	// Egg Data
+	private Egg[] m_eggsInventory;
+	public Egg[] eggsInventory
+	{
+		get {return m_eggsInventory;}
+	}
+	private Egg m_incubatingEgg;
+	public Egg incubatingEgg
+	{
+		get{ return m_incubatingEgg;}
+		set{ m_incubatingEgg = value;}
+	}
+
+	private DateTime m_incubationEndTimestamp;
+	public DateTime incubationEndTimestamp
+	{
+		get{ return m_incubationEndTimestamp; }
+		set{ m_incubationEndTimestamp = value; }
+	}
+
+	// DISGUISES
+	Wardrobe m_wardrobe;
+	public Wardrobe wardrobe
+	{
+		get{ return m_wardrobe; }
+	}
+
+	UserMissions m_userMissions;
+	public UserMissions userMissions
+	{
+		get{ return m_userMissions; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -114,14 +146,36 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	//------------------------------------------------------------------------//
 	// PUBLIC STATIC METHODS												  //
 	//------------------------------------------------------------------------//
+
+	public UserProfile()
+	{
+		m_dragonsBySku = new Dictionary<string, DragonData>();
+		DragonData newDragonData = null;
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+		for(int i = 0; i < defs.Count; i++) {
+			newDragonData = new DragonData();
+			newDragonData.Init(defs[i]);
+			m_dragonsBySku[defs[i].sku] = newDragonData;
+		}
+
+
+		m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
+		m_incubatingEgg = null;
+
+		m_wardrobe = new Wardrobe();
+		m_userMissions = new UserMissions();
+	}
+
+
 	/// <summary>
 	/// Add coins.
 	/// </summary>
 	/// <param name="_amount">Amount to add. Negative to subtract.</param>
-	public static void AddCoins(long _amount) {
+	public void AddCoins(long _amount) {
 		// Skip checks for now
 		// Compute new value and dispatch event
-		instance.m_coins += _amount;
+		m_coins += _amount;
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_COINS_CHANGED, coins - _amount, coins);
 	}
 	
@@ -129,10 +183,10 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// Add PC.
 	/// </summary>
 	/// <param name="_iAmount">Amount to add. Negative to subtract.</param>
-	public static void AddPC(long _iAmount) {
+	public void AddPC(long _iAmount) {
 		// Skip checks for now
 		// Compute new value and dispatch event
-		instance.m_pc += _iAmount;
+		m_pc += _iAmount;
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _iAmount, pc);
 	}
 
@@ -145,11 +199,11 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// </summary>
 	/// <returns><c>true</c> if <paramref name="_step"/> is marked as completed in this profile; otherwise, <c>false</c>.</returns>
 	/// <param name="_step">The tutorial step to be checked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be tested).</param>
-	public static bool IsTutorialStepCompleted(TutorialStep _step) {
+	public bool IsTutorialStepCompleted(TutorialStep _step) {
 		// Special case for NONE: ignore
 		if(_step == TutorialStep.INIT) return true;
 
-		return (instance.m_tutorialStep & _step) != 0;
+		return (m_tutorialStep & _step) != 0;
 	}
 
 	/// <summary>
@@ -157,74 +211,251 @@ public class UserProfile : SingletonMonoBehaviour<UserProfile> {
 	/// </summary>
 	/// <param name="_step">The tutorial step to be marked. Can also be a composition of steps (e.g. (TutorialStep.STEP_1 | TutorialStep.STEP_2), in which case all steps will be marked).</param>
 	/// <param name="_completed">Whether to mark it as completed or uncompleted.</param>
-	public static void SetTutorialStepCompleted(TutorialStep _step, bool _completed = true) {
+	public void SetTutorialStepCompleted(TutorialStep _step, bool _completed = true) {
 		// Special case for NONE: ignore
 		if(_step == TutorialStep.INIT) return;
 
 		if(_completed) {
-			instance.m_tutorialStep |= _step;
+			m_tutorialStep |= _step;
 		} else {
-			instance.m_tutorialStep &= ~_step;
+			m_tutorialStep &= ~_step;
 		}
 	}
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
+
 	/// <summary>
-	/// Load state from a persistence object.
+	/// Load state from a json object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SaveData _data) {
+	public void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
+
+
 		// Economy
-		instance.m_coins = _data.coins;
-		instance.m_pc = _data.pc;
+		Debug.Log( _data.ToString() );
+		SimpleJSON.JSONNode profile = _data["userProfile"];
+
+		if ( profile.ContainsKey("saveCounter") )
+			m_saveCounter = profile["saveCounter"].AsInt;
+		else
+			m_saveCounter = 0;
+
+		m_coins = profile["sc"].AsInt;
+		m_pc = profile["pc"].AsInt;
 
 		// Game settings
-		instance.m_currentDragon = _data.currentDragon;
-		instance.m_currentLevel = _data.currentLevel;
-		instance.m_tutorialStep = _data.tutorialStep;
-		instance.m_furyUsed = _data.furyUsed;
+		if ( profile.ContainsKey("currentDragon") )
+			m_currentDragon = profile["currentDragon"];
+		else
+			m_currentDragon = "";
+		if ( profile.ContainsKey("currentLevel") )
+			m_currentLevel = profile["currentLevel"];
+		else
+			m_currentLevel = "";
+		m_tutorialStep = ( TutorialStep )profile["tutorialStep"].AsInt;
+		m_furyUsed = profile["furyUsed"].AsBool;
 
 		// Game stats
-		instance.m_gamesPlayed = _data.gamesPlayed;
-		instance.m_highScore = _data.highScore;
-		instance.m_superFuryProgression = _data.superFuryProgression;
+		m_gamesPlayed = profile["gamesPlayed"].AsInt;
+		m_highScore = profile["highScore"].AsInt;
+		m_superFuryProgression = profile["superFuryProgression"].AsInt;
 
 		// Some cheats override profile settings - will be saved with the next Save()
 		if(Prefs.GetBool("skipTutorialCheat")) {
-			instance.m_tutorialStep = TutorialStep.ALL;
+			m_tutorialStep = TutorialStep.ALL;
 			Prefs.SetBool("skipTutorialCheat", false);
 		}
+
+		if ( _data.ContainsKey("dragons") )
+		{
+			SimpleJSON.JSONArray dragons = _data["dragons"] as SimpleJSON.JSONArray;
+			for( int i = 0; i<dragons.Count; i++ )
+			{
+				string sku = dragons[i]["sku"];
+				m_dragonsBySku[sku].Load(dragons[i]);
+			}
+		}
+		else
+		{
+			// Clean Dragon Data
+			foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+				pair.Value.ResetLoadedData();
+		}
+
+		if ( _data.ContainsKey("eggs") )
+		{
+			LoadEggData(_data["eggs"] as SimpleJSON.JSONClass);
+		}
+		else
+		{
+			// Clean Eggs Data
+			for( int i = 0; i<EggManager.INVENTORY_SIZE; i++ )
+				eggsInventory[i] = null;
+			m_incubatingEgg = null;
+		}
+		
+		m_wardrobe.InitFromDefinitions();
+		if ( _data.ContainsKey("disguises") )
+			m_wardrobe.Load( _data["disguises"] );
+
+		if ( _data.ContainsKey("missions") )
+		{
+			m_userMissions.Load( _data["missions"] );
+			m_userMissions.ownedDragons = GetNumOwnedDragons();
+		}
+		else
+		{
+			// Clean missions
+			m_userMissions.ClearAllMissions();
+		}
+	}
+
+	private void LoadEggData( SimpleJSON.JSONClass _data )
+	{
+	// Inventory
+		SimpleJSON.JSONArray inventoryArray = _data["inventory"].AsArray;
+		for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) 
+		{
+			// In case INVENTORY_SIZE changes (if persisted is bigger, just ignore remaining data, if lower fill new slots with null)
+			if(i < inventoryArray.Count) 
+			{
+				// Either create new egg, delete egg or update existing egg
+				if(m_eggsInventory[i] == null && inventoryArray[i] != null) {			// Create new egg?
+					m_eggsInventory[i] = Egg.CreateFromSaveData(inventoryArray[i]);
+				} else if(m_eggsInventory[i] != null && inventoryArray[i] == null) {	// Delete egg?
+					m_eggsInventory[i] = null;
+				} else if(m_eggsInventory[i] != null && inventoryArray[i] != null) {	// Update egg?
+					m_eggsInventory[i].Load(inventoryArray[i]);
+				}
+			} else {
+				m_eggsInventory[i] = null;
+			}
+		}
+
+		// Incubator - same 3 cases
+		bool dataIncubatingEgg = _data.ContainsKey("incubatingEgg");
+		if(m_incubatingEgg == null && dataIncubatingEgg) {			// Create new egg?
+			m_incubatingEgg = Egg.CreateFromSaveData(_data["incubatingEgg"]);
+		} else if(m_incubatingEgg != null && !dataIncubatingEgg) {	// Delete egg?
+			m_incubatingEgg = null;
+		} else if(m_incubatingEgg != null && dataIncubatingEgg) {	// Update egg?
+			m_incubatingEgg.Load(_data["incubatingEgg"]);
+		}
+
+		// Incubator timer
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
 	}
 
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SaveData Save() {
+	public SimpleJSON.JSONClass Save() {
 		// Create new object
-		SaveData data = new SaveData();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		// Initialize it
+		// PROFILE
+		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
+		profile.Add("saveCounter", m_saveCounter.ToString());
 		// Economy
-		data.coins = instance.m_coins;
-		data.pc = instance.m_pc;
+		profile.Add( "sc", m_coins.ToString());
+		profile.Add( "pc", m_pc.ToString());
 
 		// Game settings
-		data.currentDragon = instance.m_currentDragon;
-		data.currentLevel = instance.m_currentLevel;
-		data.tutorialStep = instance.m_tutorialStep;
-		data.furyUsed = instance.m_furyUsed;
+		profile.Add("currentDragon",m_currentDragon);
+		profile.Add("currentLevel",m_currentLevel);
+		profile.Add("tutorialStep",((int)m_tutorialStep).ToString());
+		profile.Add("furyUsed", m_furyUsed.ToString());
 
 		// Game stats
-		data.gamesPlayed = instance.m_gamesPlayed;
-		data.highScore = instance.m_highScore;
-		data.superFuryProgression = instance.m_superFuryProgression;
+		profile.Add("gamesPlayed",m_gamesPlayed.ToString());
+		profile.Add("highScore",m_highScore.ToString());
+		profile.Add("superFuryProgression",m_superFuryProgression.ToString());
+		data.Add("userProfile", profile);
 
+		// DRAGONS
+		SimpleJSON.JSONArray dragons = new SimpleJSON.JSONArray();
+		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
+		{
+			DragonData dragonData = pair.Value;
+			if ( dragonData.isOwned || !dragonData.isLocked )
+				dragons.Add( dragonData.Save() );
+		}
+		data.Add( "dragons", dragons );
+
+		data.Add("eggs", SaveEggData());
+		data.Add("disguises", m_wardrobe.Save());
+		data.Add("missions", m_userMissions.Save());
 		// Return it
 		return data;
+	}
+
+	private SimpleJSON.JSONClass SaveEggData()
+	{
+		// Create new object, initialize and return it
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Inventory
+		SimpleJSON.JSONArray inventoryArray = new SimpleJSON.JSONArray();
+		for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) 
+		{
+			if(m_eggsInventory[i] != null) 
+			{
+				inventoryArray.Add(m_eggsInventory[i].Save());
+			}
+		}
+		data.Add("inventory", inventoryArray);
+
+		// Incubator
+		if(m_incubatingEgg != null) 
+		{
+			data.Add("incubatingEgg", m_incubatingEgg.Save());
+		}
+
+		// Incubator timer
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString());;
+
+		return data;
+	}
+
+	public int GetNumOwnedDragons()
+	{
+		int ret = 0;
+		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
+		{
+			if ( pair.Value.isOwned )
+				ret++;
+		}
+		return 0;
+	}
+
+	public void UniserverSetted()
+	{
+		m_saveCounter++;
+	}
+
+	public string GetEquipedDisguise( string _dragonSku )
+	{
+		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
+			return m_dragonsBySku[ _dragonSku ].diguise;
+		return "";
+	}
+
+	public bool EquipDisguise( string _dragonSku, string _disguiseSku)
+	{
+		bool ret = false;
+		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
+		{
+			if ( m_dragonsBySku[_dragonSku].diguise != _disguiseSku )
+			{
+				ret = true;
+				m_dragonsBySku[_dragonSku].diguise = _disguiseSku;
+			}
+		}
+		return ret;
 	}
 }
 

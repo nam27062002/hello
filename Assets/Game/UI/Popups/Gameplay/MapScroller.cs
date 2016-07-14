@@ -49,15 +49,21 @@ public class MapScroller : MonoBehaviour {
 		Debug.Assert(m_scrollRect != null, "Required field not initialized!");
 
 		// Get map camera and data from the scene
-		// [AOC] This is super-expensive, but we only do it once per level so we should be able to afford it
-		GameObject mapDataObj = GameObject.FindGameObjectWithTag("MapCamera");
-		Debug.Assert(mapDataObj != null, "No object with the tag \"MapCamera\" could be found in the current scene");
+		// [AOC] Brute force the Map Object search, since designers/artists love to leave it disabled
+		//       This is super-expensive, but we only do it once per level so we should be able to afford it
+		m_levelMapData = GameObjectExt.FindComponent<LevelMapData>(true);
+		Debug.Assert(m_levelMapData != null, "The loaded level doesn't contain a LevelMapData object, map scroller can't be initialized.");
 
-		m_camera = mapDataObj.GetComponent<Camera>();
-		Debug.Assert(m_camera != null, "The object tagged \"MapCamera\" doesn't have a Camera component");
+		// Make sure parent object is enabled
+		Debug.Log(m_levelMapData);
+		Debug.Log(m_levelMapData.transform);
+		Debug.Log(m_levelMapData.transform.parent);
+		Debug.Log(m_levelMapData.transform.parent.gameObject);
+		m_levelMapData.transform.parent.gameObject.SetActive(true);
 
-		m_levelMapData = mapDataObj.GetComponent<LevelMapData>();
-		Debug.Assert(m_levelMapData != null, "The object tagged \"MapCamera\" doesn't have a LevelMapData component");
+		// Extract camera from it
+		m_camera = m_levelMapData.GetComponent<Camera>();
+		Debug.Assert(m_camera != null, "The object holding the LevelMapData doesn't have a Camera component");
 	}
 
 	/// <summary>

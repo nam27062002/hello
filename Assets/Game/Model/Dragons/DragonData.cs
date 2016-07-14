@@ -23,22 +23,6 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Auxiliar serializable class to save/load to persistence.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		// Only dynamic data is relevant
-		public string sku;
-		public float xp = 0;
-		public int level = 0;
-		public int biteSkillLevel = 0;
-		public int speedSkillLevel = 0;
-		public int boostSkillLevel = 0;
-		public int fireSkillLevel = 0;
-		public bool owned = false;
-		public string[] equip;
-	}
 
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
 	public enum LockState {
@@ -88,9 +72,17 @@ public class DragonData {
 	[SerializeField] private DragonSkill m_fireSkill = null;
 	public DragonSkill fireSkill { get { return m_fireSkill; }}
 
-	// Items
-	[SerializeField] private Dictionary<Equipable.AttachPoint, string> m_equip;
-	public Dictionary<Equipable.AttachPoint, string> equip { get { return m_equip; } }
+	// Pets
+	[SerializeField] private List<string> m_pets;
+	public List<string> pets { get { return m_pets; } }
+
+	// Disguise
+	[SerializeField] private string m_disguise;
+	public string diguise 
+	{ 
+		get { return m_disguise; } 
+		set { m_disguise = value; } 
+	}
 
 	// Debug
 	private float m_scaleOffset = 0;
@@ -120,7 +112,8 @@ public class DragonData {
 		m_fireSkill = new DragonSkill(this, "fire");
 
 		// Items
-		m_equip = new Dictionary<Equipable.AttachPoint, string>();
+		m_pets = new List<string>();
+		m_disguise = "";
 
 		// Other values
 		m_scaleOffset = 0;
@@ -164,20 +157,6 @@ public class DragonData {
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
-	}
-
-	/// <summary>
-	/// Equip an item
-	/// </summary>
-	public void Equip(Equipable.AttachPoint _point, string _sku) {
-		m_equip.Add(_point, _sku);
-	}
-
-	/// <summary>
-	/// Unequip an item
-	/// </summary>
-	public void Unequip(Equipable.AttachPoint _point) {
-		m_equip.Remove(_point);
 	}
 
 	/// <summary>
@@ -235,59 +214,87 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
+	public void ResetLoadedData()
+	{	
+		m_owned = false;
+		m_progression.Load(0,0);
+		m_speedSkill.Load(0);
+		m_energySkill.Load(0);
+		m_fireSkill.Load(0);
+		m_disguise = "";
+		m_pets.Clear();
+	}
+
 	/// <summary>
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	public void Load(SaveData _data) {
+	public void Load(SimpleJSON.JSONNode _data) {
 		// Make sure the persistence object corresponds to this dragon
-		if(!DebugUtils.Assert(_data.sku == def.sku, "Attempting to load persistence data corresponding to a different dragon ID, aborting")) {
+		string sku = _data["sku"];
+		if(!DebugUtils.Assert(sku.Equals(def.sku), "Attempting to load persistence data corresponding to a different dragon ID, aborting")) {
 			return;
 		}
 
 		// Just read values from persistence object
-		m_owned = _data.owned;
-		progression.Load(_data.xp, _data.level);
+		m_owned = _data["owned"].AsBool;
+
+		progression.Load(_data["xp"].AsFloat, _data["level"].AsInt);
 
 		// Skills
-		m_speedSkill.Load(_data.speedSkillLevel);
-		m_energySkill.Load(_data.boostSkillLevel);
-		m_fireSkill.Load(_data.fireSkillLevel);
+		m_speedSkill.Load(_data["speedSkillLevel"].AsInt);
+		m_energySkill.Load(_data["boostSkillLevel"].AsInt);
+		m_fireSkill.Load(_data["fireSkillLevel"].AsInt);
 
-		// Equip
-		for (int i = 0; i < _data.equip.Length; i++) {
-			string[] tmp = _data.equip[i].Split(':');
-			Equipable.AttachPoint point = (Equipable.AttachPoint)Enum.Parse(typeof(Equipable.AttachPoint), tmp[0]);
-			m_equip.Add(point, tmp[1]);
+		// Disguise
+		if ( _data.ContainsKey("disguise") )
+			m_disguise = _data["disguise"];
+		else
+			m_disguise = "";
+
+		// Pets
+		m_pets.Clear();
+		if ( _data.ContainsKey("pets") )
+		{
+			SimpleJSON.JSONArray equip = _data["pets"].AsArray;
+			for (int i = 0; i < equip.Count; i++) 
+			{
+				m_pets.Add( equip[i] );
+			}
 		}
+
 	}
 	
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SaveData Save() {
+	public SimpleJSON.JSONNode Save() 
+	{
 		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		data.sku = def.sku;
-		data.owned = m_owned;
-		data.xp = progression.xp;
-		data.level = progression.level;
+		data.Add("sku", def.sku);
+		data.Add("owned", m_owned.ToString());
+		data.Add("xp", progression.xp.ToString());
+		data.Add("level", progression.level.ToString());
 		
-		data.speedSkillLevel = m_speedSkill.level;
-		data.boostSkillLevel = m_energySkill.level;
-		data.fireSkillLevel = m_fireSkill.level;
-		
-		data.equip = new string[m_equip.Count];
-		int count = 0;
-		foreach (Equipable.AttachPoint key in m_equip.Keys) {
-			string tmp = key + ":" + m_equip[key];
-			data.equip[count] = tmp;
-			count++;
+		data.Add("speedSkillLevel", m_speedSkill.level.ToString());
+		data.Add("boostSkillLevel", m_energySkill.level.ToString());
+		data.Add("fireSkillLevel", m_fireSkill.level.ToString());
+
+		data.Add("disguise", m_disguise);
+
+
+		SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
+		for( int i = 0; i<m_pets.Count; i++ )
+		{
+			pets.Add( m_pets[i] );
 		}
+		data.Add("pets", pets);
 
 		return data;
+
 	}
 
 	public static string TierToSku( DragonTier _tier)

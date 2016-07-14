@@ -100,7 +100,7 @@ public class GameSceneController : GameSceneControllerBase {
 		base.Awake();
 
 		// Load the dragon
-		DragonManager.LoadDragon(UserProfile.currentDragon);
+		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
 	}
 
 	/// <summary>
@@ -300,22 +300,22 @@ public class GameSceneController : GameSceneControllerBase {
 		switch(_newState) {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
-				m_levelLoadingTask = LevelManager.LoadLevel(UserProfile.currentLevel);
+				m_levelLoadingTask = LevelManager.LoadLevel(UsersManager.currentUser.currentLevel);
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
 
 				// Check whether the tutorial popup must be displayed
-				if(!UserProfile.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
+				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
 					// Open popup
 					PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
-					UserProfile.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
 					PersistenceManager.Save();
 				}
 			} break;
 
 			case EStates.COUNTDOWN: {
-				LevelManager.SetArtSceneActive(UserProfile.currentLevel);
+				LevelManager.SetArtSceneActive(UsersManager.currentUser.currentLevel);
 				// Start countdown timer
 				m_timer = COUNTDOWN;
 

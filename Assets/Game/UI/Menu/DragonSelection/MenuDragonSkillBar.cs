@@ -132,7 +132,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Enough resources?
-		if(UserProfile.coins < skillData.nextLevelUnlockPrice) {
+		if(UsersManager.currentUser.coins < skillData.nextLevelUnlockPrice) {
 			// Show currency shop
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
@@ -140,7 +140,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
             UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		} else {
 			// Perform transaction
-			UserProfile.AddCoins(-skillData.nextLevelUnlockPrice);
+			UsersManager.currentUser.AddCoins(-skillData.nextLevelUnlockPrice);
 
 			// Do it! ^_^
 			skillData.UnlockNextLevel();

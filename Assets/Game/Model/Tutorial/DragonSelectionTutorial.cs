@@ -124,7 +124,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_scroller.SnapTo(0);
 
 					// Update tutorial flag and save persistence
-					UserProfile.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
+					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
 					PersistenceManager.Save();
 				} else {
 					// Timer not finished, scroll
@@ -197,7 +197,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		}
 
 		// If the tutorial wasn't completed, launch it now
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
 			StartTutorial();
 		}
 	}

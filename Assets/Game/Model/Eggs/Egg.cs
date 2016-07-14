@@ -1,4 +1,4 @@
-﻿// Egg.cs
+// Egg.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/02/2016.
@@ -36,18 +36,6 @@ public class Egg {
 		public string type;		// Reward type, matches rewardDefinitions "type" property.
 		public string value;	// Typically a sku: disguiseSku, petSku
 		public long coins;		// Coins to be given instead of the reward. Only if bigger than 0.
-	}
-
-	/// <summary>
-	/// Auxiliar class for persistence load/save.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		public string sku = "";
-		public State state = State.INIT;
-		public string rewardSku = "";	// [AOC] CHECK!! Probably no need to persist the reward, since it's instantly consumed
-		public bool isNew = true;
-		public DateTime incubationEndTimestamp = DateTime.UtcNow;
 	}
 
 	//------------------------------------------------------------------------//
@@ -131,16 +119,16 @@ public class Egg {
 	}
 
 	/// <summary>
-	/// Create and initialize an egg with a given persistence data object.
+	/// Create and initialize an egg with a given persistence json.
 	/// </summary>
 	/// <returns>The newly created egg. Null if the egg couldn't be created.</returns>
-	/// <param name="_data">The persistence data to be used to initialize the new egg.</param>
-	public static Egg CreateFromSaveData(SaveData _data) {
+	/// <param name="_data">The json data to be used to initialize the new egg.</param>
+	public static Egg CreateFromSaveData(SimpleJSON.JSONNode _data) {
 		// Check params
 		if(_data == null) return null;
 
 		// Create a new egg using the persistence data sku
-		Egg newEgg = CreateFromSku(_data.sku);
+		Egg newEgg = CreateFromSku(_data["sku"]);
 
 		// Load persistence object into the new egg and return it
 		if(newEgg != null) {
@@ -255,6 +243,10 @@ public class Egg {
 
 		// Broadcast game event
 		Messenger.Broadcast<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, this, oldState, _newState);
+
+		// Save persistence
+		// [AOC] A bit of an overkill, try to improve it on the future
+		PersistenceManager.Save();
 	}
 
 	/// <summary>
@@ -266,7 +258,7 @@ public class Egg {
 		if(!isIncubating) return 0;
 
 		// Skip is free during the tutorial
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) return 0;
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) return 0;
 
 		// Just use standard time/pc formula
 		return GameSettings.ComputePCForTime(incubationRemaining);
@@ -326,13 +318,13 @@ public class Egg {
 					m_rewardData.value = disguise;
 
 					// Level up the disguise
-					bool leveled = Wardrobe.LevelUpDisguise(disguise);
+					bool leveled = UsersManager.currentUser.wardrobe.LevelUpDisguise(disguise);
 
 					// If the disguise is max leveled, give coins instead
 					if(!leveled) {
 						// Give coins
-						m_rewardData.coins = (long)Wardrobe.GetDisguiseValue(disguise);
-						UserProfile.AddCoins(m_rewardData.coins);
+						m_rewardData.coins = (long)UsersManager.currentUser.wardrobe.GetDisguiseValue(disguise);
+						UsersManager.currentUser.AddCoins(m_rewardData.coins);
 					}
 				}
 			} break;
@@ -349,8 +341,8 @@ public class Egg {
 		EggManager.RemoveEggFromInventory(this);
 
 		// If tutorial wasn't completed, do it now
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) {
-			UserProfile.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) {
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
 		}
 
 		// Save persistence
@@ -384,49 +376,53 @@ public class Egg {
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Load state from a persistence object.
+	/// Load state from a json object.
 	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public void Load(SaveData _data) {
+	/// <param name="_data">The json loaded from persistence.</param>
+	public void Load(SimpleJSON.JSONNode _data) {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
 
 		// Def
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _data.sku);
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _data["sku"]);
 
 		// State
-		m_state = _data.state;
-		m_isNew = _data.isNew;
+		m_state = (State)_data["state"].AsInt;
+		m_isNew = _data["isNew"].AsBool;
 
 		// Reward
-		m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data.rewardSku);
+		if ( _data.ContainsKey("rewardSku") )
+			m_rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, _data["rewardSku"]);
+		else
+			m_rewardDef = null;
 
 		// Incubating timestamp
-		m_incubationEndTimestamp = _data.incubationEndTimestamp;
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
 	}
 
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SaveData Save() {
+	public SimpleJSON.JSONNode Save() {
 		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// Egg sku
-		data.sku = m_def.sku;
+		data.Add("sku",m_def.sku);
 
 		// State
-		data.state = m_state;
-		data.isNew = m_isNew;
+		data.Add("state", ((int)m_state).ToString());
+		data.Add("isNew",m_isNew.ToString());
 
 		// Reward
-		if(m_rewardDef != null) {
-			data.rewardSku = m_rewardDef.sku;
+		if(m_rewardDef != null) 
+		{
+			data.Add("rewardSku", m_rewardDef.sku);
 		}
 
 		// Incubating timestamp
-		data.incubationEndTimestamp = m_incubationEndTimestamp;
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString());
 
 		return data;
 	}

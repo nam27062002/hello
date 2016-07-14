@@ -100,7 +100,7 @@ public class MissionObjective {
 		if(!enabled) return;
 
 		// Skip during first game session (tutorial)
-		if(UserProfile.gamesPlayed < 1) return;
+		if(UsersManager.currentUser.gamesPlayed < 1) return;
 
 		// Skip if already completed
 		if(isCompleted) return;

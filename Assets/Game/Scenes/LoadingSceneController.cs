@@ -62,7 +62,7 @@ public class LoadingSceneController : SceneController {
 		// Content and persistence
 		//DefinitionsManager.CreateInstance(true);
 
-		UserProfile.CreateInstance(true);
+		UsersManager.CreateInstance();
 
 		// Game
 		DragonManager.CreateInstance(true);
@@ -72,8 +72,6 @@ public class LoadingSceneController : SceneController {
 		RewardManager.CreateInstance(true);
 		EggManager.CreateInstance(true);
 		EggManager.InitFromDefinitions();
-		Wardrobe.CreateInstance(true);
-		Wardrobe.InitFromDefinitions();
 
 		// Settings and setup
 		GameSettings.CreateInstance(true);
@@ -87,12 +85,13 @@ public class LoadingSceneController : SceneController {
 		InstanceManager.CreateInstance(true);
 
 		// Social
-		ExternalPlatformManager.CreateInstance(true);
-		ExternalPlatformManager.instance.Init();
+		SocialPlatformManager.SharedInstance.Init();
 
 		// Load persistence
 		PersistenceManager.Init();
 		PersistenceManager.Load();
+		GameServerManager.SharedInstance.LoginToServer();
+		PersystenceSynchManager.CreateInstance(true);
 
 		// Initialize localization
 		SetSavedLanguage();

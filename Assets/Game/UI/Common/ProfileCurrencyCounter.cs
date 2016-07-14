@@ -80,11 +80,11 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	private void UpdateText() {
 		switch(m_type) {
 			case Type.COINS: {
-				m_text.text = StringUtils.FormatNumber(UserProfile.coins);
+				m_text.text = StringUtils.FormatNumber(UsersManager.currentUser.coins);
 			} break;
 
 			case Type.PC: {
-				m_text.text = StringUtils.FormatNumber(UserProfile.pc);
+				m_text.text = StringUtils.FormatNumber(UsersManager.currentUser.pc);
 			} break;
 		}
 	}

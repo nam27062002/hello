@@ -1,4 +1,4 @@
-﻿// DragonSelectionTutorial.cs
+// DragonSelectionTutorial.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 19/04/2016.
@@ -167,7 +167,7 @@ public class IncubatorTutorial : MonoBehaviour {
 
 		// If the tutorial wasn't completed, and we have an egg at the first slot of the inventory that is not yet incubating, launch the tutorial now
 		Egg targetEgg = EggManager.inventory[0];
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR) && targetEgg != null && !targetEgg.isIncubating) {
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR) && targetEgg != null && !targetEgg.isIncubating) {
 			StartTutorial();
 		}
 	}
@@ -181,7 +181,7 @@ public class IncubatorTutorial : MonoBehaviour {
 		if(m_state == State.IDLE) return;
 
 		// End tutorial
-		UserProfile.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR);
+		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR);
 		StopTutorial();
 	}
 }

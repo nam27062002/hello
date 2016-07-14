@@ -24,14 +24,6 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	public static readonly int INVENTORY_SIZE = 3;
 
-	/// <summary>
-	/// Auxiliar class for persistence load/save.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		public Egg.SaveData[] inventory = new Egg.SaveData[INVENTORY_SIZE];
-	}
-
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -39,9 +31,12 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	[SerializeField] private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
 
 	// Inventory
-	[SerializeField] private Egg[] m_inventory = new Egg[INVENTORY_SIZE];
 	public static Egg[] inventory {
-		get { return instance.m_inventory; }
+		get { 
+			if ( instance.m_user != null )
+				return instance.m_user.eggsInventory; 
+			return null;
+		}
 	}
 
 	public static bool isInventoryEmpty {
@@ -62,6 +57,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		}
 	}
 
+	// Incubator
 	public static Egg incubatingEgg {
 		get {
 			for(int i = 0; i < INVENTORY_SIZE; i++) {
@@ -70,6 +66,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 			return null;
 		}
 	}
+
+	// Internal
+	UserProfile m_user;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -145,9 +144,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public static int AddEggToInventory(Egg _newEgg) {
 		for(int i = 0; i < INVENTORY_SIZE; i++) {
 			// Is the slot empty?
-			if(instance.m_inventory[i] == null) {
+			if(instance.m_user.eggsInventory[i] == null) {
 				// Yes!! Store egg
-				instance.m_inventory[i] = _newEgg;
+				instance.m_user.eggsInventory[i] = _newEgg;
 				_newEgg.ChangeState(Egg.State.STORED);
 
 				// Return slot idnex
@@ -172,9 +171,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		// Find the slot the egg is in
 		for(int i = 0; i < INVENTORY_SIZE; i++) {
 			// Is this the slot?
-			if(instance.m_inventory[i] == _egg) {
+			if(inventory[i] == _egg) {
 				// Yes!! Remove the egg and return slot idnex
-				instance.m_inventory[i] = null;
+				inventory[i] = null;
 				return i;
 			}
 		}
@@ -200,44 +199,14 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Load state from a persistence object.
-	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SaveData _data) {
-		// Inventory
-		for(int i = 0; i < INVENTORY_SIZE; i++) {
-			// In case INVENTORY_SIZE changes (if persisted is bigger, just ignore remaining data, if lower fill new slots with null)
-			if(i < _data.inventory.Length) {
-				// Either create new egg, delete egg or update existing egg
-				if(inventory[i] == null && _data.inventory[i] != null) {			// Create new egg?
-					instance.m_inventory[i] = Egg.CreateFromSaveData(_data.inventory[i]);
-				} else if(inventory[i] != null && _data.inventory[i] == null) {	// Delete egg?
-					instance.m_inventory[i] = null;
-				} else if(inventory[i] != null && _data.inventory[i] != null) {	// Update egg?
-					instance.m_inventory[i].Load(_data.inventory[i]);
-				}
-			} else {
-				instance.m_inventory[i] = null;
-			}
-		}
+	public static bool IsReady()
+	{
+		return instance.m_user != null;
 	}
 
-	/// <summary>
-	/// Create and return a persistence save data object initialized with the data.
-	/// </summary>
-	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SaveData Save() {
-		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+	public static void SetupUser( UserProfile user)
+	{
+		instance.m_user = user;
+	} 
 
-		// Inventory
-		for(int i = 0; i < INVENTORY_SIZE; i++) {
-			if(inventory[i] != null) {
-				data.inventory[i] = inventory[i].Save();
-			}
-		}
-
-		return data;
-	}
 }
