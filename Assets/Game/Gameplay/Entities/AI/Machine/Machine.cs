@@ -209,31 +209,25 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform) {
-			if (m_edible != null && !IsDead()) {
-				if (m_willPlayEatenSound) {
-					if (m_entity.isOnScreen) {
-						PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
-						m_willPlayEatenSound = false;
-					}
+		public void BeingSwallowed(Transform _transform) {			
+			if (m_willPlayEatenSound) {
+				if (m_entity.isOnScreen) {
+					PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
+					m_willPlayEatenSound = false;
 				}
-
-				m_edible.BeingSwallowed(_transform);
 			}
+
+			m_edible.BeingSwallowed(_transform);
 		}
 
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
 		public void BiteAndHold() {
-			if (m_edible != null && !IsDead()) {
-				m_edible.BiteAndHold();
-			}
+			m_edible.BiteAndHold();
 		}
 
 		public void ReleaseHold() {
-			if (m_edible != null && !IsDead()) {
-				m_edible.ReleaseHold();
-			}
+			m_edible.ReleaseHold();
 		}
 
 		public bool Burn(float _damage, Transform _transform) {

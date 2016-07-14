@@ -335,7 +335,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 				// release prey
 				// Escaped Event
 				Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
-				m_holdingPrey.ReleaseHold();
 				EndHold();
 			}	
 		}
@@ -343,7 +342,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	virtual protected void EndHold()
 	{
+		m_holdingPrey.ReleaseHold();
 		m_holdingPrey = null;
+
 		m_noAttackTime = m_holdStunTime;
 		m_animator.SetBool("eatHold", false);
 
