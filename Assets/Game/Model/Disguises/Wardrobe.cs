@@ -62,19 +62,16 @@ public class Wardrobe : Singleton<Wardrobe> {
 	public static string GetRandomDisguise(string _dragonSku, string _rarity) {
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
 		List<string> disguises = new List<string>();
-		disguises.Shuffle<string>(Time.renderedFrameCount);
 
 		for (int i = 0; i < defs.Count; i++) {
 			if (defs[i].GetAsString("rarity") == _rarity) {
 				disguises.Add(defs[i].sku);
 			}
 		}
-
+			
 		if (disguises.Count > 0) {
-			int individualChance = 100 / disguises.Count;
-			int index = UnityEngine.Random.Range(0, 100) / individualChance;
-
-			return disguises[index];
+			disguises.Shuffle<string>(Time.renderedFrameCount);
+			return disguises.GetRandomValue();
 		}
 
 		return "";

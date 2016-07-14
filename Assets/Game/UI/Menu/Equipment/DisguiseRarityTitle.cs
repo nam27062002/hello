@@ -72,12 +72,12 @@ public class DisguiseRarityTitle : MonoBehaviour {
 
 			// Set text
 			if(match) {
-				Localizer localizer = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<Localizer>();
-				if(localizer != null) {
+				Text text = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<Text>();
+				if(text != null) {
 					if(_disguiseDef == null) {
-						localizer.Localize("TID_DISGUISE_DEFAULT_NAME");
+						text.text = LocalizationManager.SharedInstance.Localize("TID_DISGUISE_DEFAULT_NAME");
 					} else {
-						localizer.Localize(_disguiseDef.Get("tidName"));
+						text.text = _disguiseDef.GetLocalized("tidName");
 					}
 				}
 			}

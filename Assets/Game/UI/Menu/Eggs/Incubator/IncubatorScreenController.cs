@@ -24,6 +24,7 @@ public class IncubatorScreenController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	[SerializeField] private Button m_buyButton = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -34,6 +35,10 @@ public class IncubatorScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+
+		// Price
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, "egg_dragon_titan");	// [AOC] TODO!! Single egg def
+		m_buyButton.FindComponentRecursive<Text>("TextCost").text = StringUtils.FormatNumber(eggDef.GetAsInt("pricePC"));
 	}
 
 	/// <summary>
@@ -61,6 +66,7 @@ public class IncubatorScreenController : MonoBehaviour {
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		IncubatorScreenScene incubatorScene = screensController.GetScene((int)MenuScreens.INCUBATOR) as IncubatorScreenScene;
 		for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) {
+			if(EggManager.inventory[i] == null) continue;
 			if(EggManager.inventory[i].state == Egg.State.READY) {
 				eggView = incubatorScene.eggAnchors[i].eggView;
 				break;
@@ -93,6 +99,39 @@ public class IncubatorScreenController : MonoBehaviour {
 					EggManager.inventory[i].isNew = false;
 				}
 			}
+		}
+	}
+
+	/// <summary>
+	/// Buy egg button has been pressed.
+	/// </summary>
+	public void OnBuyEgg() {
+		// SFX
+		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
+		// Get price and start purchase flow
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, "egg_dragon_titan");	// [AOC] TODO!! Single egg def
+		long pricePC = eggDef.GetAsLong("pricePC");
+		if(UserProfile.pc >= pricePC) {
+			// Perform transaction
+			UserProfile.AddPC(-pricePC);
+			PersistenceManager.Save();
+
+			// Create a new egg instance
+			Egg purchasedEgg = Egg.CreateFromDef(eggDef);
+			purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
+
+			// Go to OPEN_EGG screen and start flow
+			MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+			OpenEggScreenController openEggScreen = screensController.GetScreen((int)MenuScreens.OPEN_EGG).GetComponent<OpenEggScreenController>();
+			screensController.GoToScreen((int)MenuScreens.OPEN_EGG);
+			openEggScreen.StartFlow(purchasedEgg);
+		} else {
+			// Open PC shop popup
+			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+
+			// Currency popup / Resources flow disabled for now
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 }

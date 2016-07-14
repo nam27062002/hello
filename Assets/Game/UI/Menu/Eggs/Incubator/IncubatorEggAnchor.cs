@@ -80,7 +80,7 @@ public class IncubatorEggAnchor : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Background
-		m_emptySlotView.SetActive(targetEgg == null);
+		m_emptySlotView.SetActive(targetEgg == null || targetEgg.state == Egg.State.COLLECTED);
 
 		// Egg preview
 		LoadEggPreview(targetEgg);

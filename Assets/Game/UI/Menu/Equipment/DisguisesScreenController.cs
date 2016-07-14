@@ -28,10 +28,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private DisguisePowerIcon[] m_powers;
 	[SerializeField] private RectTransform m_layout;
 
-	// Buttons
-	[Separator("Buttons")]
-	[SerializeField] private GameObject m_buyButton;
-
 	// Preview
 	private Transform m_previewAnchor;
 	private Transform m_dragonRotationArrowsPos;
@@ -50,10 +46,6 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	// Powers
 	private ShowHideAnimator[] m_powerAnims = new ShowHideAnimator[3];
-
-	// Buy button
-	private DefinitionNode m_eggDef = null;	// Egg matching dragon sku
-	private EggUIScene3D m_eggPreviewScene = null;	// Container holding the preview scene (camera, egg, decos, etc.)
 
 	// Other data
 	private string m_dragonSku;
@@ -78,7 +70,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		m_dragonSku = "";
-		m_eggDef = null;
 
 		// Store some references
 		for(int i = 0; i < m_powers.Length; i++) {
@@ -91,8 +82,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Use internal initializer
-		//Initialize();
+		
 	}
 
 	/// <summary>
@@ -120,11 +110,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// Destroy Egg 3D scene
-		if(m_eggPreviewScene != null) {
-			UIScene3DManager.Remove(m_eggPreviewScene);
-			m_eggPreviewScene = null;
-		}
+		
 	}
 
 	//------------------------------------------------------------------------//
@@ -159,19 +145,39 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Setup the screen with the data of the currently selected dragon.
 	/// </summary>
 	private void Initialize() {
+		// Aux vars
+		MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
+		MenuDragonScreenController screenController = sceneController.GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
+		MenuScreenScene scene = sceneController.screensController.GetScene((int)MenuScreens.EQUIPMENT);
+
 		// Get target dragon
-		m_dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		// If we have a disguise preview set, select the dragon for that disguise first
+		if(m_previewDisguise != "") {
+			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_previewDisguise);
+			if(disguiseDef != null) {
+				screenController.dragonSelector.SetSelectedDragon(disguiseDef.Get("dragonSku"));
+				screenController.dragonScroller3D.FocusDragon(disguiseDef.Get("dragonSku"), false);
+			} else {
+				// Invalid disguise sku!
+				m_previewDisguise = "";
+			}
+		}
+		m_dragonSku = sceneController.selectedDragon;
+
+		// Find out initial disguise
+		// Dragon's current disguise by default, but can be overriden by setting the previewDisguise property before opening the screen
+		string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
+		if(m_previewDisguise != "") {
+			currentDisguise = m_previewDisguise;
+			m_previewDisguise = "";
+		}
 
 		// Find the 3D dragon preview
-		MenuScreenScene scene = InstanceManager.GetSceneController<MenuSceneController>().screensController.GetScene((int)MenuScreens.DISGUISES);
 		if(scene != null) {
 			MenuDragonPreview preview = scene.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku);
 			if(preview != null) m_previewAnchor = preview.transform;
 			//m_dragonRotationArrowsPos = scene.transform.FindChild("Arrows");
 		}
-
-		// Get egg corresponding to target dragon
-		m_eggDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", m_dragonSku);
 
 		// get disguises levels of the current dragon
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonSku);
@@ -184,14 +190,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_disguiseTitle.GetComponent<ShowHideAnimator>().ForceHide(false);
 		for(int i = 0; i < m_powerAnims.Length; i++) {
 			m_powerAnims[i].ForceHide(false);
-		}
-
-		// Find out initial disguise
-		// Dragon's current disguise by default, but can be overriden by setting the previewDisguise property before opening the screen
-		string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
-		if (m_previewDisguise != "") {
-			currentDisguise = m_previewDisguise;
-			m_previewDisguise = "";
 		}
 
 		// Initialize pills
@@ -228,23 +226,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Force a first refresh
 		// This will initialize both the equipped and selected pills as well
 		OnPillClicked(initialPill);
-
-		// Initialize buy button
-		if(m_eggDef != null) {
-			// Price
-			m_buyButton.FindComponentRecursive<Text>("TextPrice").text = StringUtils.FormatNumber(m_eggDef.GetAsInt("pricePC"));
-
-			// If the 3D preview scene was not created, do it now and link it to the raw image
-			if(m_eggPreviewScene == null) {
-				RawImage eggPreviewArea = m_buyButton.GetComponentInChildren<RawImage>();
-				m_eggPreviewScene = EggUIScene3D.CreateEmpty();
-				m_eggPreviewScene.InitRawImage(ref eggPreviewArea);
-			}
-
-			// Initialize with the target egg
-			// The scene will take care of everything
-			m_eggPreviewScene.SetEgg(Egg.CreateFromDef(m_eggDef));
-		}
 	}
 
 	/// <summary>
@@ -263,6 +244,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		for(int i = 0; i < m_powerAnims.Length; i++) {
 			m_powerAnims[i].Hide();
 		}
+
+		// Hide rarity
+		m_disguiseTitle.GetComponent<ShowHideAnimator>().Hide();
 	}
 
 	/// <summary>
@@ -354,38 +338,6 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_selectedPill.Use(true);
 			m_equippedPill = m_selectedPill;
 			PersistenceManager.Save();
-		}
-	}
-
-	/// <summary>
-	/// Buy button has been pressed.
-	/// </summary>
-	public void OnBuy() {
-		// SFX
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
-
-		// Get price and start purchase flow
-		long pricePC = m_eggDef.GetAsLong("pricePC");
-		if(UserProfile.pc >= pricePC) {
-			// Perform transaction
-			UserProfile.AddPC(-pricePC);
-			PersistenceManager.Save();
-
-			// Create a new egg instance
-			Egg purchasedEgg = Egg.CreateFromDef(m_eggDef);
-			purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
-
-			// Go to OPEN_EGG screen and start flow
-			MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-			OpenEggScreenController openEggScreen = screensController.GetScreen((int)MenuScreens.OPEN_EGG).GetComponent<OpenEggScreenController>();
-			screensController.GoToScreen((int)MenuScreens.OPEN_EGG);
-			openEggScreen.StartFlow(purchasedEgg);
-		} else {
-			// Open PC shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 }

@@ -23,7 +23,7 @@ public enum MenuScreens {
 	LEVEL_SELECTION,
 	INCUBATOR,
 	OPEN_EGG,
-	DISGUISES,
+	EQUIPMENT,
 
 	COUNT
 };

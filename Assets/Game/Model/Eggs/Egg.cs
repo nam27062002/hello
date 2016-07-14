@@ -34,7 +34,7 @@ public class Egg {
 
 	public struct EggReward {
 		public string type;		// Reward type, matches rewardDefinitions "type" property.
-		public string value;	// Typically a sku: disguiseSku, petSku, specialDragonSku.
+		public string value;	// Typically a sku: disguiseSku, petSku
 		public long coins;		// Coins to be given instead of the reward. Only if bigger than 0.
 	}
 
@@ -118,6 +118,7 @@ public class Egg {
 	/// </summary>
 	/// <returns>The new egg. Null if the egg couldn't be created.</returns>
 	/// <param name="_dragonSku">The sku of the dragon the new egg should be associated to.</param>
+	[System.Obsolete("Eggs no longer depend on dragon type")]
 	public static Egg CreateByDragon(string _dragonSku) {
 		// Egg can't be created if definitions are not loaded
 		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
@@ -188,9 +189,16 @@ public class Egg {
 		List<DefinitionNode> selectedDefs = new List<DefinitionNode>(eggDefs.Capacity);
 		DragonData dragonData = null;
 		for(int i = 0; i < eggDefs.Count; i++) {
-			dragonData = DragonManager.GetDragonData(eggDefs[i].Get("dragonSku"));
-			if(dragonData == null) continue;
-			if(_onlyOwnedDragons && !dragonData.isOwned) continue;
+			// [AOC] Eggs without a dragonSku assigned are valid for all dragons
+			string dragonSku = eggDefs[i].GetAsString("dragonSku");
+			if(_onlyOwnedDragons && !string.IsNullOrEmpty(dragonSku)) {
+				// Do we own the targeted dragon?
+				dragonData = DragonManager.GetDragonData(dragonSku);
+				if(dragonData == null) continue;
+				if(!dragonData.isOwned) continue;
+			}
+
+			// Egg def is valid, add it to the candidates list
 			selectedDefs.Add(eggDefs[i]);
 		}
 
@@ -294,10 +302,20 @@ public class Egg {
 		// Apply the reward
 		switch(m_rewardData.type) {
 			case "suit": {
+				// Pick a random dragon to give the disguise to
+				string dragonSku = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).GetRandomValue();
+
 				// Get a random disguise of the target rarity
 				string rarity = rewardDef.sku;
 				rarity = rarity.Replace("suit_", "");
-				string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);
+				//string disguise = Wardrobe.GetRandomDisguise(m_def.GetAsString("dragonSku"), rarity);		// [AOC] Deprecated!! Eggs no longer belong to a single dragon
+				string disguise = Wardrobe.GetRandomDisguise(dragonSku, rarity);
+
+				// [AOC] TEMP!! While we have no content, if no disguise was found of the given dragon and rarity, try again with dragon_crocodile which has placeholder content for all rarities
+				if(disguise.Equals("")) {
+					dragonSku = "dragon_crocodile";
+					disguise = Wardrobe.GetRandomDisguise(dragonSku, rarity);
+				}
 
 				// Initialize reward data based on obtained disguise
 				if(disguise.Equals("")) {
@@ -322,11 +340,10 @@ public class Egg {
 			case "pet": {
 				// [AOC] TODO!!
 			} break;
-
-			case "dragon": {
-				// [AOC] TODO!!
-			} break;
 		}
+
+		// Change state
+		ChangeState(State.COLLECTED);
 
 		// Remove it from the inventory (if appliable)
 		EggManager.RemoveEggFromInventory(this);
@@ -338,9 +355,6 @@ public class Egg {
 
 		// Save persistence
 		PersistenceManager.Save();
-
-		// Change state
-		ChangeState(State.COLLECTED);
 
 		// Notify game
 		Messenger.Broadcast<Egg>(GameEvents.EGG_COLLECTED, this);

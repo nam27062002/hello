@@ -51,7 +51,16 @@ public class MenuDragonLoader : MonoBehaviour {
 	[Space]
 	[List("idle", "fly_idle")]
 	[SerializeField] private string m_initialAnim = "idle";
+	public string initialAnim {
+		get { return m_initialAnim; }
+		set { m_initialAnim = value; }
+	}
+
 	[SerializeField] private bool m_resetDragonScale = true;
+	public bool resetDragonScale {
+		get { return m_resetDragonScale; }
+		set { m_resetDragonScale = value; }
+	}
 
 	// Internal
 	private GameObject m_dragonInstance = null;
@@ -102,6 +111,21 @@ public class MenuDragonLoader : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Configure the loader with a specific setup.
+	/// Doesn't update the current view, if any.
+	/// Use either LoadDragon() or RefreshDragon() for that.
+	/// </summary>
+	/// <param name="_mode">Dragon loading mode.</param>
+	/// <param name="_initialAnim">Initial dragon animation.</param>
+	/// <param name="_resetScale">Whether to respect dragon's prefab original scale or reset it.</param>
+	public void Setup(Mode _mode, string _initialAnim, bool _resetScale) {
+		// Store new setup
+		m_mode = _mode;
+		m_initialAnim = _initialAnim;
+		m_resetDragonScale = _resetScale;
+	}
+
 	/// <summary>
 	/// Load the dragon with the given sku.
 	/// </summary>

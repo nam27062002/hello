@@ -124,14 +124,12 @@ public class IncubatorSlot : MonoBehaviour {
 	/// Refresh this slot with the latest data from the manager.
 	/// </summary>
 	public void Refresh() {
-		Debug.Log("Refreshing slot " + slotIdx + ": " + (targetEgg != null ? targetEgg.state.ToString() : "EMPTY"));
-
 		// New notification
 		m_newNotification.Set(targetEgg != null && targetEgg.isNew);
 
 		// Show/Hide elements based on egg state
 		//m_emptySlotAnim.Set(targetEgg == null);
-		m_emptySlotAnim.Set(false);	// [AOC] Never show (for now)
+		m_emptySlotAnim.Set(false);	// Never show for now
 		m_pendingIncubationAnim.Set(targetEgg != null && targetEgg.state == Egg.State.STORED && EggManager.incubatingEgg == null);	// Pending incubation is a bit more tricky: only allow if there is no other egg already incubating
 		m_incubatingAnim.Set(targetEgg != null && targetEgg.state == Egg.State.INCUBATING);
 		m_readyAnim.Set(targetEgg != null && targetEgg.state == Egg.State.READY);

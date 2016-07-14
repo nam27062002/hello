@@ -587,7 +587,6 @@ GameObject:
   - 222: {fileID: 22221766}
   - 114: {fileID: 11466358}
   - 114: {fileID: 11454996}
-  - 114: {fileID: 11458416}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -924,7 +923,6 @@ GameObject:
   - 222: {fileID: 22290244}
   - 114: {fileID: 11409962}
   - 114: {fileID: 11479412}
-  - 114: {fileID: 11468834}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1188,7 +1186,6 @@ GameObject:
   - 222: {fileID: 22258840}
   - 114: {fileID: 11408398}
   - 114: {fileID: 11419006}
-  - 114: {fileID: 11485816}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -3566,20 +3563,6 @@ MonoBehaviour:
   m_shadowAngle: 274
   m_shadowSize: 2
   m_shadowColor: {r: 1, g: 0.87843144, b: 0.5921569, a: 1}
---- !u!114 &11458416
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 142286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &11458654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3992,20 +3975,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
---- !u!114 &11468834
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &11469328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4542,7 +4511,6 @@ MonoBehaviour:
   - {fileID: 11485536}
   - {fileID: 11470580}
   m_layout: {fileID: 22440140}
-  m_buyButton: {fileID: 153508}
 --- !u!114 &11485536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4557,20 +4525,6 @@ MonoBehaviour:
   m_powerIcon: {fileID: 11472296}
   m_lockIcon: {fileID: 192546}
   m_tooltipArrowOffset: 0.5
---- !u!114 &11485816
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 195350}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &11486772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4857,7 +4811,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 11402328}
         m_MethodName: OnBuy
         m_Mode: 1
         m_Arguments:

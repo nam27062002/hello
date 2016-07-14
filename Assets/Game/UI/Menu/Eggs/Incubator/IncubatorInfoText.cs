@@ -72,7 +72,11 @@ public class IncubatorInfoText : MonoBehaviour {
 	public void Refresh() {
 		// Set text
 		// [AOC] Optionally set different text for different states of the incubator
-		m_text.Localize("TID_INCUBATOR_EMPTY_INVENTORY_MESSAGE");
+		if(EggManager.isInventoryFull) {
+			m_text.Localize("TID_INCUBATOR_FULL_NEST_MESSAGE");
+		} else {
+			m_text.Localize("TID_INCUBATOR_EMPTY_INVENTORY_MESSAGE");
+		}
 
 		// Set visibility
 		m_anim.Set(!EggManager.isInventoryFull);

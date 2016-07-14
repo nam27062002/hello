@@ -568,7 +568,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &168678
 GameObject:
   m_ObjectHideFlags: 1
@@ -580,7 +580,6 @@ GameObject:
   - 222: {fileID: 22263086}
   - 114: {fileID: 11476982}
   - 114: {fileID: 11453276}
-  - 114: {fileID: 11420892}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -761,7 +760,6 @@ GameObject:
   - 222: {fileID: 22213900}
   - 114: {fileID: 11401230}
   - 114: {fileID: 11434602}
-  - 114: {fileID: 11471048}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -896,7 +894,6 @@ GameObject:
   - 222: {fileID: 22230444}
   - 114: {fileID: 11495134}
   - 114: {fileID: 11443254}
-  - 114: {fileID: 11400120}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1141,20 +1138,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11400120
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 195294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &11401230
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1187,7 +1170,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: comonnn
+  m_Text: comonnnn
 --- !u!114 &11401546
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1227,8 +1210,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnSkipMission
+      - m_Target: {fileID: 11422350}
+        m_MethodName: OnBuyButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1586,20 +1569,6 @@ MonoBehaviour:
   m_shadowAngle: 274
   m_shadowSize: 3
   m_shadowColor: {r: 0.69803923, g: 0.65882355, b: 0.6156863, a: 1}
---- !u!114 &11420892
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 168678}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &11422202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1647,7 +1616,7 @@ MonoBehaviour:
   m_tapInfoText: {fileID: 11498908}
   m_actionButtonsAnimator: {fileID: 11451026}
   m_instantOpenButton: {fileID: 11408420}
-  m_callToActionButton: {fileID: 0}
+  m_callToActionButton: {fileID: 11459028}
   m_buyButton: {fileID: 11401546}
   m_backButton: {fileID: 11440854}
   m_rewardInfo: {fileID: 147154}
@@ -3079,20 +3048,6 @@ MonoBehaviour:
   m_shadowAngle: 280
   m_shadowSize: 2
   m_shadowColor: {r: 1, g: 0.7137255, b: 0.05882353, a: 1}
---- !u!114 &11471048
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 186364}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &11472330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4733,7 +4688,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 444.25, y: 200}
+  m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22447082
 RectTransform:
@@ -4955,10 +4910,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 22446858}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 222.125, y: -90}
-  m_SizeDelta: {x: 344.25, y: 75}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22462908
 RectTransform:

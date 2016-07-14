@@ -339,6 +339,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Aux vars
 		Egg.EggReward rewardData = m_egg.eggData.rewardData;
 		DefinitionNode rewardDef = m_egg.eggData.rewardDef;
+		DefinitionNode rewardedItemDef = null;	// [AOC] Will be initialized with either a suit or a pet definition
 		string rewardType = m_egg.eggData.rewardData.type;
 
 		// Activate info container
@@ -348,38 +349,33 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(rewardType) {
 			case "suit": {
 				// Get disguise def
-				DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
+				rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
 
 				// Disguise rarity
-				m_rewardRarity.InitFromRarity(disguiseDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
+				m_rewardRarity.InitFromRarity(rewardedItemDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
 
 				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
-				int disguiseLevel = Wardrobe.GetDisguiseLevel(disguiseDef.sku);
+				int disguiseLevel = Wardrobe.GetDisguiseLevel(rewardedItemDef.sku);
 				if(rewardData.coins > 0) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", disguiseDef.GetLocalized("tidName"), StringUtils.FormatNumber(rewardData.coins));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", rewardedItemDef.GetLocalized("tidName"), StringUtils.FormatNumber(rewardData.coins));
 				} else if(disguiseLevel == 1) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", disguiseDef.GetLocalized("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", rewardedItemDef.GetLocalized("tidName"));
 				} else {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", disguiseDef.GetLocalized("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", rewardedItemDef.GetLocalized("tidName"));
 				}
 			} break;
 
 			case "pet": {
+				// Pet def
+				// [AOC] TODO!!
+				//rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, rewardData.value);
+
 				// Pet rarity
 				string rarity = rewardDef.sku.Replace("pet_", "");
 				m_rewardRarity.InitFromRarity(rarity, rewardDef.GetLocalized("tidName"));
 
 				// [AOC] TODO!!
 				//m_rewardDescText.Localize("TID_EGG_REWARD_PET", rewardDef.sku);
-				m_rewardDescText.Localize("TID_GEN_COMING_SOON");
-			} break;
-
-			case "dragon": {
-				// Rarity
-				m_rewardRarity.InitFromRarity("epic", rewardDef.GetLocalized("tidName"));
-
-				// [AOC] TODO!!
-				//m_rewardDescText.Localize("TID_EGG_REWARD_DRAGON", rewardDef.sku);
 				m_rewardDescText.Localize("TID_GEN_COMING_SOON");
 			} break;
 		}
@@ -398,49 +394,53 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Create a fake reward view
 		switch(rewardType) {
-			case "dragon":
-			case "pet":
-			case "suit": {
-				// Initialize reward view
-				// Attach it to the anchor and reset transformation
+			case "pet": {
+				// Show a 3D preview of the pet
+				// [AOC] TODO!! Show a random dragon for now
 				m_rewardView = new GameObject("RewardView");
-				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);
+				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
 
-				// Instantiate dragon view
-				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_egg.eggData.def.GetAsString("dragonSku"));
-				if(dragonDef != null) {
-					// Create instance
-					GameObject prefab = Resources.Load<GameObject>(dragonDef.GetAsString("menuPrefab"));
-					GameObject dragonObj = GameObject.Instantiate<GameObject>(prefab);
+				// Use a MenuDragonLoader to simplify things
+				MenuDragonLoader loader = m_rewardView.AddComponent<MenuDragonLoader>();
+				loader.Setup(MenuDragonLoader.Mode.MANUAL, "fly_idle", true);
+				loader.LoadDragon(DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).GetRandomValue());
 
-					// Attach it to the reward view and reset transformation
-					// The anchor is setup to display all dragons at scale 1
-					// [AOC] TODO!! Add some scale factor more or less proportional to content scale factor
-					dragonObj.transform.SetParentAndReset(m_rewardView.transform);
+				// Make it smaller since it's a pet
+				float scale = 0.4f;
+				m_rewardView.transform.localScale = Vector3.one * scale;
 
-					// Launch fly animation
-					dragonObj.GetComponentInChildren<Animator>().SetTrigger("fly_idle");
-
-					// If it's a suit, apply it
-					if(rewardType == "suit") {
-						dragonObj.GetComponent<DragonEquip>().PreviewDisguise(rewardData.value);
-					}
-
-					// Animate it
-					dragonObj.transform.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
-					dragonObj.transform.DOLocalRotate(dragonObj.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
-				}
-
-				// If the reward is being replaced by coins, show it
-				if(rewardData.coins > 0) {
-					// Create instance
-					GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
-					GameObject coinsObj = GameObject.Instantiate<GameObject>(prefab);
-
-					// Attach it to the reward view and reset transformation
-					coinsObj.transform.SetParent(m_rewardView.transform, false);
-				}
+				// Animate it
+				m_rewardView.transform.DOScale(0f, scale * 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
+				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
 			} break;
+				
+			case "suit": {
+				// Show a 3D preview of the suit
+				m_rewardView = new GameObject("RewardView");
+				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
+
+				// Use a MenuDragonLoader to simplify things
+				MenuDragonLoader loader = m_rewardView.AddComponent<MenuDragonLoader>();
+				loader.Setup(MenuDragonLoader.Mode.MANUAL, "fly_idle", true);
+				loader.LoadDragon(rewardedItemDef.GetAsString("dragonSku"));
+
+				// Apply suit
+				loader.dragonInstance.GetComponent<DragonEquip>().PreviewDisguise(rewardData.value);
+
+				// Animate it
+				m_rewardView.transform.DOScale(0f, 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
+				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
+			} break;
+		}
+
+		// If the reward is being replaced by coins, show it (works for both pets and suits)
+		if(rewardData.coins > 0) {
+			// Create instance
+			GameObject prefab = Resources.Load<GameObject>("UI/Metagame/Rewards/PF_CoinsReward");
+			GameObject coinsObj = GameObject.Instantiate<GameObject>(prefab);
+
+			// Attach it to the reward view and reset transformation
+			coinsObj.transform.SetParent(m_rewardView.transform, false);
 		}
 
 		// If reward is a disguise, initialize and show powers
@@ -570,18 +570,22 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+
 		// Depending on opened egg's reward, perform different actions
 		switch(m_egg.eggData.rewardData.type) {
 			case "suit": {
-				NavigationScreen disguiseScreen = screensController.GetScreen((int)MenuScreens.DISGUISES);				
-				disguiseScreen.FindComponentRecursive<DisguisesScreenController>().previewDisguise = m_egg.eggData.rewardData.value;
-				screensController.GoToScreen((int)MenuScreens.DISGUISES);
+				// Go to the disguises screen
+				NavigationScreen equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT);
+				equipmentScreen.GetComponent<EquipmentScreenController>().ShowDisguises();
+				equipmentScreen.FindComponentRecursive<DisguisesScreenController>().previewDisguise = m_egg.eggData.rewardData.value;
+				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
 			} break;
 
-			case "pet":
-			case "dragon": {
-				// [AOC] TODO!!	Go to pets/special dragons screen
-                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"), m_callToActionButton.transform as RectTransform, Vector2.zero, this.transform as RectTransform);
+			case "pet": {
+				// [AOC] TODO!!	Go to pets screen
+				NavigationScreen equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT);
+				equipmentScreen.GetComponent<EquipmentScreenController>().ShowPets();
+				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
 			} break;
 		}
 	}
