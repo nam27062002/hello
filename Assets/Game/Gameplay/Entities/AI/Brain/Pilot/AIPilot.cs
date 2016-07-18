@@ -41,7 +41,7 @@ namespace AI {
 		// METHODS															  //
 		//--------------------------------------------------------------------//
 		public virtual void Spawn(Spawner _spawner) {
-			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
 			m_area = _spawner.area;
 			m_homePosition = _spawner.transform.position;

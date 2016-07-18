@@ -49,7 +49,7 @@ public class DragonGrab : MonoBehaviour
 
 			RaycastHit ground;
 			float flyHeight = 0;
-			if (Physics.Linecast(transform.position, transform.position + Vector3.down * 10000f, out ground, 1 << LayerMask.NameToLayer("Ground"))) {
+			if (Physics.Linecast(transform.position, transform.position + Vector3.down * 10000f, out ground, LayerMask.GetMask("Ground", "GroundVisible"))) {
 
 				flyHeight =  transform.position.y - ground.point.y;
 			}

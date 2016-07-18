@@ -59,7 +59,7 @@ public class SensePlayer : MonoBehaviour {
 
 	void Awake() {
 		m_motion = GetComponent<PreyMotion>();
-		s_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 	}
 
 	void Start() {

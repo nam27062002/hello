@@ -30,7 +30,7 @@ namespace AI {
 			m_senseTimer = m_senseDelay.GetRandom();
 			m_enemyRadiusSqr = 0;
 
-			s_groundMask = 1 << LayerMask.NameToLayer("Ground");			
+			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
 
 		public override void Update() {

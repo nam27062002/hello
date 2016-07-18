@@ -71,8 +71,8 @@ public class FireBreath : DragonBreathBehaviour {
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_superFlameUpParticle), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameLight), 1, false);
 
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground") | 1 << LayerMask.NameToLayer("Water");
-		m_noPlayerMask = ~(1 << LayerMask.NameToLayer("Player"));
+		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
+		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;

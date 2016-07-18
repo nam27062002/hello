@@ -31,7 +31,7 @@ namespace AI {
 		public MachineMotion() {}
 
 		public override void Init() {
-			m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");

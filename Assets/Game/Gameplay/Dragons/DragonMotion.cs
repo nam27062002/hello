@@ -185,7 +185,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
 		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();

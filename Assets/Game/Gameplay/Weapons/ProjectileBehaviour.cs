@@ -127,7 +127,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 		if (m_hasBeenShot) {
 			if (!m_edible.isBeingEaten && _other.tag == "Player")  {
 				Explode(true);
-			} else if (_other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
 				Explode(false);
 			}
 		}
