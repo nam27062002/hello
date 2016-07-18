@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_EggOrange
+  m_Name: MT_EggStandard
   m_Shader: {fileID: 4800000, guid: 752de70dd3618402daea83508ee5cdd5, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
@@ -19,7 +19,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: af9cd07db8231334ebc7cbf4840359d7, type: 3}
+          m_Texture: {fileID: 2800000, guid: a802e650568f344cf825b82570fdaf7d, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -45,6 +45,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -59,13 +66,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _DetailAlbedoMap
         second:
           m_Texture: {fileID: 0}
@@ -74,20 +74,6 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _ToonShade
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailTex
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -108,7 +94,7 @@ Material:
       data:
         first:
           name: _Shininess
-        second: 0.44
+        second: 0.5
       data:
         first:
           name: _Parallax
@@ -120,7 +106,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: 0.654
+        second: 0.5
       data:
         first:
           name: _BumpScale
@@ -139,6 +125,10 @@ Material:
         second: 0
       data:
         first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
           name: _Mode
         second: 0
       data:
@@ -147,19 +137,7 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _SpecIntensity
-        second: 0.267
-      data:
-        first:
-          name: _InnerLightAdd
-        second: 0
-      data:
-        first:
-          name: _SpecExponent
         second: 1
     m_Colors:
       data:
@@ -177,7 +155,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0.61612576, g: 0.75, b: 0.50735295, a: 1}
+        second: {r: 0.66176474, g: 0.59558827, b: 0.49632356, a: 1}
       data:
         first:
           name: _EmissionColorUI
@@ -185,16 +163,4 @@ Material:
       data:
         first:
           name: _AmbientColor
-        second: {r: 0.7205882, g: 0.7205882, b: 0.7205882, a: 1}
-      data:
-        first:
-          name: _ColorMultiply
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _ColorAdd
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _InnerLightColor
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: 0.7058824, g: 0.7058824, b: 0.7058824, a: 1}

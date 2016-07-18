@@ -22,6 +22,8 @@ public class Egg {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public static readonly string SKU_STANDARD_EGG = "egg_standard";
+
 	public enum State {
 		INIT,		// Init state
 		STORED,		// Egg is in storage, waiting for incubation
@@ -100,25 +102,6 @@ public class Egg {
 	}
 
 	/// <summary>
-	/// Create and initialize an egg associated to a specific dragon.
-	/// Will look through the known egg definitions looking for the first one to match
-	/// the given dragon.
-	/// </summary>
-	/// <returns>The new egg. Null if the egg couldn't be created.</returns>
-	/// <param name="_dragonSku">The sku of the dragon the new egg should be associated to.</param>
-	[System.Obsolete("Eggs no longer depend on dragon type")]
-	public static Egg CreateByDragon(string _dragonSku) {
-		// Egg can't be created if definitions are not loaded
-		Debug.Assert(ContentManager.ready, "Definitions not yet loaded!");
-
-		// Find an egg definition associated to the given dragon sku
-		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", _dragonSku);
-
-		// Create and return new egg
-		return CreateFromDef(eggDef);
-	}
-
-	/// <summary>
 	/// Create and initialize an egg with a given persistence json.
 	/// </summary>
 	/// <returns>The newly created egg. Null if the egg couldn't be created.</returns>
@@ -150,51 +133,6 @@ public class Egg {
 		Egg newEgg = new Egg();
 		newEgg.m_def = _def;
 		return newEgg;
-	}
-
-	/// <summary>
-	/// Create an egg using a random definition picked from the EGGS category.
-	/// </summary>
-	/// <returns>The newly created egg. Null if no definition could be picked.</returns>
-	/// <param name="_onlyOwnedDragons">Whether to restrict the random selection to eggs related to owned dragons only.</param>
-	public static Egg CreateRandom(bool _onlyOwnedDragons = true) {
-		// Use random def getter
-		return CreateFromDef(GetRandomDef(_onlyOwnedDragons));
-	}
-
-	/// <summary>
-	/// Get a random definition picked from the EGGS category.
-	/// </summary>
-	/// <returns>The randomly selected definition. Null if no definition could be picked.</returns>
-	/// <param name="_onlyOwnedDragons">Whether to restrict the random selection to eggs related to owned dragons only.</param>
-	public static DefinitionNode GetRandomDef(bool _onlyOwnedDragons = true) {
-		// Get all egg definitions
-		List<DefinitionNode> eggDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.EGGS, ref eggDefs);
-
-		// Filter those whose linked dragon is not valid
-		// If required, select only those whose dragon is owned
-		List<DefinitionNode> selectedDefs = new List<DefinitionNode>(eggDefs.Capacity);
-		DragonData dragonData = null;
-		for(int i = 0; i < eggDefs.Count; i++) {
-			// [AOC] Eggs without a dragonSku assigned are valid for all dragons
-			string dragonSku = eggDefs[i].GetAsString("dragonSku");
-			if(_onlyOwnedDragons && !string.IsNullOrEmpty(dragonSku)) {
-				// Do we own the targeted dragon?
-				dragonData = DragonManager.GetDragonData(dragonSku);
-				if(dragonData == null) continue;
-				if(!dragonData.isOwned) continue;
-			}
-
-			// Egg def is valid, add it to the candidates list
-			selectedDefs.Add(eggDefs[i]);
-		}
-
-		// Pick a random egg from the definitions set
-		if(selectedDefs.Count > 0) {
-			return selectedDefs.GetRandomValue();
-		}
-		return null;
 	}
 
 	//------------------------------------------------------------------------//

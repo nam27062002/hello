@@ -180,7 +180,7 @@ public class ChestManager : Singleton<ChestManager> {
 
 			case RewardType.EGG: {
 				instance.m_rewardAmount = 1;
-				instance.m_rewardSku = Egg.GetRandomDef(true).sku;
+				instance.m_rewardSku = Egg.SKU_STANDARD_EGG;	// [AOC] We only have one egg for now
 			} break;
 		}
 	}
