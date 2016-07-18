@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Entity))]
+[RequireComponent(typeof(Entity_Old))]
 public class EdibleBehaviour : Initializable {
 
 	public enum EatenFrom {
@@ -16,7 +16,7 @@ public class EdibleBehaviour : Initializable {
 	//-----------------------------------------------
 	[SerializeField] private EatenFrom m_vulnerable = EatenFrom.All;
 
-	private Entity m_entity;
+	private Entity_Old m_entity;
 	private PreyMotion m_motion;
 	private Animator m_animator;
 	private bool m_isBeingEaten;
@@ -61,7 +61,7 @@ public class EdibleBehaviour : Initializable {
 
 	void Start() {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_entity = GetComponent<Entity>();
+		m_entity = GetComponent<Entity_Old>();
 		m_motion = GetComponent<PreyMotion>();
 	}
 
@@ -99,7 +99,7 @@ public class EdibleBehaviour : Initializable {
 		m_isBeingEaten = true;
 		OnEatBehaviours(false);
 
-		EntityManager.instance.Unregister(GetComponent<Entity>());
+		//EntityManager.instance.Unregister(GetComponent<Entity_Old>());
 	}
 
 	public void OnEat() {
@@ -107,7 +107,7 @@ public class EdibleBehaviour : Initializable {
 		OnEatBehaviours(false);
 
 		TryOnEatSound();
-		EntityManager.instance.Unregister(GetComponent<Entity>());
+		//EntityManager.instance.Unregister(GetComponent<Entity_Old>());
 	}
 
 	private void TryOnEatSound()

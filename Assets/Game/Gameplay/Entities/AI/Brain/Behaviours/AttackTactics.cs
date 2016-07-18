@@ -1,0 +1,57 @@
+﻿using UnityEngine;
+using System.Collections;
+
+namespace AI {
+	namespace Behaviour {	
+		[CreateAssetMenu(menuName = "Behaviour/Attack Tactics")]
+		public class AttackTactics : StateComponent {
+
+			[StateTransitionTrigger]
+			private static string OnEnemyInSight = "onEnemyInSight";
+
+			[StateTransitionTrigger]
+			private static string OnEnemyInRange = "onEnemyInRange";
+
+			private float m_shutdownSensorTime;
+
+			private float m_timer;
+
+
+			protected override void OnInitialise() {
+				m_timer = 0f;
+				m_shutdownSensorTime = 0f;
+			}
+
+			// The first element in _param must contain the amount of time without detecting an enemy
+			protected override void OnEnter(State _oldState, object[] _param) {
+				if (_param != null && _param.Length > 0) {
+					m_shutdownSensorTime = (float)_param[0];
+				} else {
+					m_shutdownSensorTime = 0f;
+				}
+
+				if (m_shutdownSensorTime > 0f) {
+					m_timer = m_shutdownSensorTime;
+					m_machine.SetSignal(Signals.Alert.name, false);
+				} else {
+					m_machine.SetSignal(Signals.Alert.name, true);
+				}
+			}
+
+			protected override void OnUpdate() {
+				if (m_timer > 0f) {
+					m_timer -= Time.deltaTime;
+					if (m_timer <= 0f) {
+						m_machine.SetSignal(Signals.Alert.name, true);
+					}
+				} else {
+					if (m_machine.GetSignal(Signals.Danger.name)) {
+						Transition(OnEnemyInRange);
+					} else if (m_machine.GetSignal(Signals.Warning.name)) {
+						Transition(OnEnemyInSight);
+					}
+				}
+			}
+		}
+	}
+}

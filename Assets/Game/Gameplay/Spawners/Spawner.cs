@@ -30,7 +30,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	[Header("Respawn")]
-	[SerializeField] private Range m_spawnTime = new Range(60f, 120f);
+	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private int m_maxSpawns;
 	
 
@@ -38,7 +38,18 @@ public class Spawner : MonoBehaviour, ISpawner {
 	// Attributes
 	//-----------------------------------------------
 	protected AreaBounds m_area;
+	public AreaBounds area { 
+		get { 
+			if (m_guideFunction != null) {
+				return m_guideFunction.GetBounds();
+			} else {
+				return m_area;
+			}
+		} 
+	}
+
 	protected EntityGroupController m_groupController;
+	protected IGuideFunction m_guideFunction;
 
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
@@ -79,6 +90,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 		if (m_groupController) {
 			m_groupController.Init(m_quantity.max);
 		}
+
+		m_guideFunction = GetComponent<IGuideFunction>();
 
 		SpawnerManager.instance.Register(this);
 
@@ -125,6 +138,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+		bool found = false;
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] == _entity) 
 			{
@@ -134,26 +148,29 @@ public class Spawner : MonoBehaviour, ISpawner {
 					m_entitiesKilled++;
 				}
 				m_entityAlive--;
+				found = true;
 			}
 		}
 
-		// all the entities are dead
-		if (m_entityAlive == 0) {
-			m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
+		if (found) {
+			// all the entities are dead
+			if (m_entityAlive == 0) {
+				m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
 
-			if (m_allEntitiesKilledByPlayer) {
-				// check if player has destroyed all the flock
-				if (m_flockBonus > 0) {
-					Reward reward = new Reward();
-					reward.score = (int)(m_flockBonus * m_entitiesKilled);
-					Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
+				if (m_allEntitiesKilledByPlayer) {
+					// check if player has destroyed all the flock
+					if (m_flockBonus > 0) {
+						Reward reward = new Reward();
+						reward.score = (int)(m_flockBonus * m_entitiesKilled);
+						Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
+					}
+				} else {
+					m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
 				}
-			} else {
-				m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
-			}
 
-			if (m_readyToBeDisabled) {
-				SpawnerManager.instance.Unregister(this);
+				if (m_readyToBeDisabled) {
+					SpawnerManager.instance.Unregister(this);
+				}
 			}
 		}
 	}
@@ -225,27 +242,40 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		ExtendedSpawn();
 
-		if (m_groupController) {
-			for (int i = 0; i < m_entities.Length; i++) {
-				if (m_entities[i] != null) {
-					EntityGroupBehaviour groupBehaviour = m_entities[i].GetComponent<EntityGroupBehaviour>();
-					if (groupBehaviour != null) {
-						groupBehaviour.AttachGroup(m_groupController);
-					}
+		for (int i = 0; i < m_entitySpawned; i++) {			
+			Entity entity = m_entities[i].GetComponent<Entity>();
+			AI.Pilot pilot = m_entities[i].GetComponent<AI.Pilot>();
+			pilot.guideFunction = m_guideFunction;
+
+			Vector3 pos = transform.position;
+			if (m_guideFunction != null) {
+				m_guideFunction.ResetTime();
+				pos = m_guideFunction.NextPositionAtSpeed(0);
+			}
+
+			if (i > 0) {
+				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+			}
+
+			entity.transform.position = pos;
+			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
+
+			entity.Spawn(this); // lets spawn Entity component first
+			ISpawnable[] components = entity.GetComponents<ISpawnable>();
+			foreach (ISpawnable component in components) {
+				if (component != entity) {
+					component.Spawn(this);
 				}
 			}
 		}
 
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			SpawnBehaviour spawn = m_entities[i].GetComponent<SpawnBehaviour>();
-			Vector3 pos = transform.position;
-			if (i > 0) 
-			{
-				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
+		if (m_groupController) {			
+			for (int i = 0; i < m_entities.Length; i++) {
+				if (m_entities[i] != null) {
+					AI.Machine m = m_entities[i].GetComponent<AI.Machine>();
+					m.EnterGroup(ref m_groupController.flock);
+				}
 			}
-
-			spawn.Spawn(this, i, pos, m_area);
-			spawn.transform.localScale = Vector3.one * m_scale.GetRandom();
 		}
 
 		// Disable this spawner after a number of spawns
@@ -271,7 +301,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			return area.bounds;
 		} else {
 			// spawner for static objects with a fixed position
-			return new CircleAreaBounds(transform.position, 0);
+			return new CircleAreaBounds(transform.position, 1f);
 		}
 	}
 

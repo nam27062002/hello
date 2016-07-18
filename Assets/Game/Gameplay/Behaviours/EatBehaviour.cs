@@ -7,7 +7,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		public float eatingAnimationTimer;
 		public Transform startParent;
 		public Vector3 startScale;
-		public EdibleBehaviour prey;
+		public AI.Machine prey;
 	};
 
 	//-----------------------------------------------
@@ -29,7 +29,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_eatingTime;
 	protected bool m_slowedDown;
 	private float m_holdPreyTimer = 0;
-	protected EdibleBehaviour m_holdingPrey = null;
+	protected AI.Machine m_holdingPrey = null;
 	protected Transform m_holdTransform = null;
 
 	protected Transform m_attackTarget = null;
@@ -222,9 +222,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	private void Eat(EdibleBehaviour _prey) {
+	private void Eat(AI.Machine _prey) {
 		
-		_prey.OnEat();
+		_prey.Bite();
 
 		// Yes!! Eat it!!
 		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _prey.biteResistance);
@@ -257,7 +257,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		*/
 	}
 
-	virtual protected void StartHold(EdibleBehaviour _prey) 
+	virtual protected void StartHold(AI.Machine _prey) 
 	{
 		// look for closer hold point
 		float distance = float.MaxValue;
@@ -275,7 +275,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_holdTransform == null )
 			m_holdTransform = _prey.transform;
 
-		_prey.OnHoldBy(this);
+		//_prey.OnHoldBy(this);
+		_prey.BiteAndHold();
+
 		m_holdingPrey = _prey;
 		m_holdPreyTimer = m_holdDuration;
 		m_animator.SetBool("eatHold", true);
@@ -312,10 +314,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 			m_animator.SetFloat("eatingSpeed", 1);
 		}
 
-		m_holdingPrey.HoldingDamage( damage * Time.deltaTime);
-		if ( m_holdingPrey.isDead() )
+		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
+		if (m_holdingPrey.IsDead())
 		{
-			m_holdingPrey.OnSwallow( m_mouth , true);
+			m_holdingPrey.BeingSwallowed(m_mouth);//( m_mouth , true);
 
 			Vector3 bloodPos = m_mouth.position;
 			bloodPos.z = -50f;
@@ -333,7 +335,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 				// release prey
 				// Escaped Event
 				Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
-				m_holdingPrey.ReleaseHold();
 				EndHold();
 			}	
 		}
@@ -341,7 +342,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	virtual protected void EndHold()
 	{
+		m_holdingPrey.ReleaseHold();
 		m_holdingPrey = null;
+
 		m_noAttackTime = m_holdStunTime;
 		m_animator.SetBool("eatHold", false);
 
@@ -358,8 +361,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	private void Swallow(EdibleBehaviour _prey) {
-		_prey.OnSwallow( m_mouth );
+	private void Swallow(AI.Machine _prey) {
+		_prey.BeingSwallowed(m_mouth);//( m_mouth );
 	}
 
 	private void TargetSomethingToEat()
@@ -383,29 +386,26 @@ public abstract class EatBehaviour : MonoBehaviour {
 		for (int e = 0; e < preys.Length; e++) 
 		{
 			Entity entity = preys[e];
-			if (entity.isEdible) 
+			if (entity.IsEdible())
 			{
-				if (entity.edibleFromTier <= m_tier || ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )) 	// if we find a prey we can eat
+				// Start bite attempt
+				Vector3 heading = (entity.transform.position - arcOrigin);
+				float dot = Vector3.Dot(heading, m_motion.direction);
+				if ( dot > 0)
 				{
-					// Start bite attempt
-					Vector3 heading = (entity.transform.position - arcOrigin);
-					float dot = Vector3.Dot(heading, m_motion.direction);
-					if ( dot > 0)
+					// Check arc
+					Vector3 circleCenter = entity.circleArea.center;
+					circleCenter.z = 0;
+					if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, m_motion.direction, circleCenter, entity.circleArea.radius))
 					{
-						// Check arc
-						Vector3 circleCenter = entity.circleArea.center;
-						circleCenter.z = 0;
-						if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, m_motion.direction, circleCenter, entity.circleArea.radius))
-						{
-							m_attackTarget = entity.transform;
-							m_attackTimer = 0.2f;
+						m_attackTarget = entity.transform;
+						m_attackTimer = 0.2f;
 
-							// Start attack animation
-							m_animator.SetBool("eat", true);
-						}
+						// Start attack animation
+						m_animator.SetBool("eat", true);
 					}
-					break;
 				}
+				break;
 			}
 		}
 	}
@@ -413,6 +413,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private void FindSomethingToEat( bool _canHold = true ) 
 	{
 		float eatDistance = m_eatDistance * transform.localScale.x;
+		if (m_boost.IsBoostActive()) {
+			eatDistance *= 2f;
+		}
 		if (DebugSettings.eatDistancePowerUp) {
 			eatDistance *= 2;
 		}
@@ -420,40 +423,33 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float angularSpeed = m_motion.angularVelocity.magnitude;
 		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
-		EdibleBehaviour preyToHold = null;
-		List<EdibleBehaviour> preysToEat = new List<EdibleBehaviour>();
+		AI.Machine preyToHold = null;
+		List<AI.Machine> preysToEat = new List<AI.Machine>();
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
 		for (int e = 0; e < preys.Length; e++) {
 			Entity entity = preys[e];
-			if (entity.isEdible) {
-				if (entity.edibleFromTier <= m_tier) 
+			if (entity.IsEdible(m_tier))
+			{
+				if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
 				{
-					if ( m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
-					{
-						EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-						if (edible.CanBeEaten(m_motion.direction)) 
-						{
-							preysToEat.Add(edible);
-						}
+					AI.Machine machine = entity.GetComponent<AI.Machine>();
+					if (!machine.IsDead()) {
+						preysToEat.Add(machine);
 					}
 				}
-				else if ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )
+			}
+			else if (entity.CanBeHolded(m_tier))
+			{
+				if (_canHold)
 				{
-					if (_canHold)
-					{
-						EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-						if (edible.CanBeEaten(m_motion.direction)) 
-						{
-							preyToHold = edible;
-							break;
-						}
-					}
+					AI.Machine machine = entity.GetComponent<AI.Machine>();
+					preyToHold = machine;
 				}
-				else 
-				{
-					if ( m_isPlayer )
-						Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
-				}
+			}
+			else 
+			{
+				if (m_isPlayer)
+					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
 			}
 		}
 
@@ -470,6 +466,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private void Chew() {
 		bool empty = true;
+
 		for (int i = 0; i < m_prey.Count; i++) {
 			if (m_prey[i].prey != null) {
 				PreyData prey = m_prey[i];
