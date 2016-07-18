@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class FogManager : SingletonMonoBehaviour<FogManager>
 {
 	private FogNode[] m_fogNodes;
@@ -34,25 +35,20 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 	FogNodeResult[] m_resultNodes = new FogNodeResult[NODES_TO_TAKE_INTO_ACCOUNT];
 	private bool m_ready = false;
 
-	void Awake()
-	{
-		/*
-		RenderSettings.fog = true;
-		RenderSettings.fogColor = m_fogColor;
-		RenderSettings.fogStartDistance = m_fogStart;
-		RenderSettings.fogEndDistance = m_fogEnd;
-		*/
-		RenderSettings.fogMode = FogMode.Linear;
-
-		// Search all Fog Nodes
-
-	}
-
 	void Start()
 	{
 		// Find all ambient nodes
 		m_fogNodes = FindObjectsOfType(typeof(FogNode)) as FogNode[];
 		m_ready = true;
+	}
+
+	void Update()
+	{
+		if ( !Application.isPlaying )	
+		{
+			m_fogNodes = FindObjectsOfType(typeof(FogNode)) as FogNode[];
+			m_ready = true;	
+		}
 	}
 
 	public bool IsReady()
@@ -72,7 +68,10 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 
 		for( int i = 0; i<m_fogNodes.Length; i++ )
 		{
-			float magnitude = (position - m_fogNodes[i].transform.position).sqrMagnitude;
+			Vector2 pos = (Vector2)position;
+			Vector2 nodePos = (Vector2)m_fogNodes[i].transform.position;
+			// float magnitude = (position - m_fogNodes[i].transform.position).sqrMagnitude;
+			float magnitude = (pos - nodePos).sqrMagnitude;
 			// find empty or farthest
 			int selectedIndex = -1;
 			float farthestValue;
@@ -103,7 +102,6 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 		// Now set the weigth
 			// Total Distance
 		float totalDistance = 0;
-		float totalLightDistance = 0;
 		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
 		{
 			if ( m_resultNodes[i].m_node != null )
@@ -114,7 +112,6 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 
 			// Inverse Values
 		float totalWeight = 0;
-		float totalLightWeight = 0;
 		for( int i = 0; i<NODES_TO_TAKE_INTO_ACCOUNT; i++ )
 		{
 			if ( m_resultNodes[i].m_node != null )
@@ -139,8 +136,31 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 		return result;
 	}
 
+	bool m_drawGizmos = false;
+	void OnDrawGizmos()
+	{
+		m_drawGizmos = false;
+		// Check if fog node selected
+		for( int i = 0; i<m_fogNodes.Length; i++ )
+		{
+			if (UnityEditor.Selection.Contains( m_fogNodes[i].gameObject ) )
+			{
+				DrawGizmos();
+				break;
+			}
+		}
+			
+	}
 
+	void OnDrawGizmosSelected()
+	{
+		DrawGizmos();
+	}
 
-
+	void DrawGizmos()
+	{
+		for( int i = 0; i<m_fogNodes.Length; i++ )
+			m_fogNodes[i].CustomGuizmoDraw();
+	}
 
 }

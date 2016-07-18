@@ -1,37 +1,54 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class FogSetter : MonoBehaviour 
 {
 	Material[] m_materials;
 
-	public bool m_onlyOnce;
+	public bool m_onlyOnce = true;
 	public float m_updateInterval = 1;
 	float m_timer = 0;
 	FogManager m_fogManager;
 	// Use this for initialization
 	void Start () 
 	{
-		Renderer rend = GetComponent<Renderer>();
-		m_materials = rend.materials;
-		m_fogManager = FindObjectOfType<FogManager>();
+		Init();
 	}
 
 	void Update()
 	{
 		m_timer -= Time.deltaTime;
-		if ( m_timer <= 0 && m_fogManager.IsReady())
+		if ( m_fogManager == null && !Application.isPlaying )
+		{
+			Init();
+		}
+
+		if ( m_timer <= 0 && m_fogManager != null && m_fogManager.IsReady())
 		{
 			UpdateFog();
-			if ( m_onlyOnce )
+			if ( Application.isPlaying )
 			{
-				enabled = false;
-			}
-			else
-			{
-				m_timer = m_updateInterval;
+				if ( m_onlyOnce)
+				{
+					enabled = false;
+				}
+				else
+				{
+					m_timer = m_updateInterval;
+				}
 			}
 		}
+	}
+
+	void Init()
+	{
+		Renderer rend = GetComponent<Renderer>();
+		if ( Application.isPlaying )
+			m_materials = rend.materials;
+		else
+			m_materials = rend.sharedMaterials;
+		m_fogManager = FindObjectOfType<FogManager>();
 	}
 	
 	void UpdateFog()
