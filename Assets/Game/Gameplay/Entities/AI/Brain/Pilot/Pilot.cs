@@ -1,0 +1,128 @@
+﻿using UnityEngine;
+using System.Collections;
+
+namespace AI {
+	public abstract class Pilot : MonoBehaviour {
+		
+		public enum Action {
+			Boost = 0,
+			Attack,
+			Aim,
+			Bite,
+			Fire,
+			Avoid,
+			Pursuit,
+			Scared,
+
+			Count
+		}
+
+		//----------------------------------------------------------------------------------------------------------------
+
+		protected AreaBounds m_area;
+		public AreaBounds area { get { return m_area; } }
+
+		protected IGuideFunction m_guideFunction;
+		public IGuideFunction guideFunction { 
+			get { return m_guideFunction; } 
+			set { 
+				m_guideFunction = value; 	
+				if (m_guideFunction != null) {
+					m_area = m_guideFunction.GetBounds();
+				}
+			} 
+		}
+
+		protected Machine m_machine;
+
+		protected bool[] m_actions;
+
+		// speed and leerping between values, trying to achieve smooth speed changes
+		protected virtual float speedFactor { get { return 1f; } }
+
+		private float m_moveSpeed;
+		public float moveSpeed { get { return m_moveSpeed * speedFactor; } }
+		
+		private float m_boostSpeed;
+		public float boostSpeed { get { return m_boostSpeed * speedFactor; } }
+
+		private float m_currentSpeed;
+		public float speed { get { return m_currentSpeed; } }
+
+
+		//
+		protected Vector3 m_externalImpulse;
+		protected Vector3 m_impulse;
+		public Vector3 impulse { get { return m_impulse; } }
+
+		protected Vector3 m_direction;
+		public Vector3 direction { get { return m_direction; } }
+
+		public virtual Vector3 target { get { return transform.position; } }
+
+		//----------------------------------------------------------------------------------------------------------------
+
+		protected virtual void Awake() {
+			m_moveSpeed = 0;
+			m_boostSpeed = 0;
+
+			m_currentSpeed = 0;
+
+			m_impulse = Vector3.zero;
+			m_direction = Vector3.right;
+
+			m_actions = new bool[(int)Action.Count];
+			m_machine = GetComponent<Machine>();
+		}
+
+		public bool IsActionPressed(Pilot.Action _action) {
+			return m_actions[(int)_action];
+		}
+
+		public void PressAction(Pilot.Action _action) {
+			m_actions[(int)_action] = true;
+		}
+
+		public void ReleaseAction(Pilot.Action _action) {
+			m_actions[(int)_action] = false;
+		}
+
+		public virtual void OnTrigger(string _trigger) {}
+
+		public void SetMoveSpeed(float _speed) {
+			m_moveSpeed = _speed;
+		}
+
+		public void SetBoostSpeed(float _boostSpeed) {
+			m_boostSpeed = _boostSpeed;
+		}
+
+		public void SetDirection(Vector3 _dir) {
+			m_direction = _dir;
+		}
+					
+		public void Scared(bool _enable) {
+			m_actions[(int)Action.Scared] = _enable;
+		}
+
+		public void Avoid(bool _enable) {
+			m_actions[(int)Action.Avoid] = _enable;
+		}
+
+		public void Pursuit(bool _enable) {
+			m_actions[(int)Action.Pursuit] = _enable;
+		}
+
+		public void AddImpulse(Vector3 _externalImpulse) {
+			m_externalImpulse += _externalImpulse;
+		}
+
+		protected virtual void Update() {
+			if (IsActionPressed(Action.Boost)) {
+				m_currentSpeed = m_boostSpeed;
+			} else {
+				m_currentSpeed = m_moveSpeed;
+			}
+		}
+	}
+}

@@ -35,8 +35,10 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 
 	private static void CreatePool(string _id, string _path) {
 		GameObject prefab = (GameObject)Resources.Load("Particles/" + _path + _id);
-		Pool pool = new Pool(prefab, instance.transform, 10, false, true);
-		instance.m_particles.Add(_id, pool);
+		if (prefab != null) {
+			Pool pool = new Pool(prefab, instance.transform, 10, false, true);
+			instance.m_particles.Add(_id, pool);
+		}
 	}
 
 	public static void Clear() {

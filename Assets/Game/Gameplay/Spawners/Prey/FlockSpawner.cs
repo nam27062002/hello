@@ -20,7 +20,7 @@ public class FlockSpawner : Spawner
 
 	override protected void ExtendedUpdateLogic() {
 		if (m_flockController) {
-			m_flockController.UpdateLogic();
+			m_flockController.NextPositionAtSpeed(0f);
 		}
 	}
 

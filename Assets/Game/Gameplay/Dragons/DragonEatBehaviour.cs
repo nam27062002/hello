@@ -89,7 +89,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_eatingBoosts.Add( entitySku, value);
 	}
 
-	override protected void StartHold(EdibleBehaviour _prey) 
+	override protected void StartHold(AI.Machine _prey) 
 	{
 		base.StartHold(_prey);
 		// TODO (miguel) this has to be adapted to the pet

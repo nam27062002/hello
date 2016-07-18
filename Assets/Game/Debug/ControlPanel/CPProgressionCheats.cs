@@ -141,7 +141,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(!CheckScene()) return;
 
 		// Add it to the inventory
-		int slotIdx = EggManager.AddEggToInventory(Egg.CreateRandom(true));
+		int slotIdx = EggManager.AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));
 
 		// If successful, save persistence
 		if(slotIdx >= 0) PersistenceManager.Save();

@@ -78,7 +78,7 @@ public class EquipmentScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Get egg corresponding to target dragon
 		string dragonSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
-		m_eggDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.EGGS, "dragonSku", dragonSku);
+		m_eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_STANDARD_EGG);
 
 		// Initialize buy button
 		if(m_eggDef != null) {

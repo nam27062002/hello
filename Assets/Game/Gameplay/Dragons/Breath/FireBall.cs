@@ -31,15 +31,7 @@ public class FireBall : MonoBehaviour
 		{
 			transform.position += m_direction * m_speed * Time.deltaTime;
 			Entity[] preys = EntityManager.instance.GetEntitiesInRange2D( m_area.center, m_area.radius);
-			/*
-			for (int i = 0; i < preys.Length; i++) {
-				InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
-				if (entity != null) 
-				{
-					entity.Burn(m_damage * Time.deltaTime, transform);
-				}
-			}
-			*/
+
 			if ( preys.Length > 0 )
 				Explode();
 		}
@@ -60,10 +52,8 @@ public class FireBall : MonoBehaviour
 	void OnCollisionEnter( Collision _collision )
 	{
 		// if the collision is ground -> Explode!!
-		if ( _collision.gameObject.layer == LayerMask.NameToLayer("Ground") || _collision.gameObject.layer == LayerMask.NameToLayer("Water") )
-		{
+		if (_collision.gameObject.layer == LayerMask.NameToLayer("Ground") || _collision.gameObject.layer == LayerMask.NameToLayer("Water"))
 			Explode();
-		}
 	}
 
 	void OnTriggerEnter( Collider _other)
@@ -74,21 +64,21 @@ public class FireBall : MonoBehaviour
 
 	void Explode()
 	{
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D( m_area.center, m_area.radius * 3);
+		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
 		for (int i = 0; i < preys.Length; i++) 
 		{
-			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
-			if (entity != null) 
+			//if (CanBurn(preys[i]) || m_type == Type.Super) 
 			{
-				if (m_breath.CanBurn( entity ) || m_breath.type == DragonBreathBehaviour.Type.Super)
-				{
-					entity.Burn(m_damage, transform);
-				}
-				else
-				{
-					// Show I cannot burn this entity!
+				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+				if (machine != null) {
+					machine.Burn(m_damage, transform);
 				}
 			}
+			/*
+			if (!burned){
+				// Show I cannot burn this entity!
+			}
+			*/
 		}
 
 		ParticleManager.Spawn("PF_Explosion", transform.position);
