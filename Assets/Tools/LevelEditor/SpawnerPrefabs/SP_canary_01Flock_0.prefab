@@ -9,10 +9,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 465822}
   - 114: {fileID: 11480652}
-  - 114: {fileID: 11404820}
-  - 114: {fileID: 11402946}
   - 114: {fileID: 11422820}
-  - 114: {fileID: 11433708}
+  - 114: {fileID: 11478128}
+  - 114: {fileID: 11416102}
   m_Layer: 0
   m_Name: SP_canary_01Flock_0
   m_TagString: Untagged
@@ -27,13 +26,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184836}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 140.99724, y: 59.4903, z: 0}
+  m_LocalPosition: {x: 36.37, y: 18.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11402946
+--- !u!114 &11416102
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -41,10 +40,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 184836}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e41b79b4192e24dd2add814a1be140ca, type: 3}
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 127370, guid: c04f834aba6d280489cdb4d6ea587cdf, type: 2}
+  m_entityPrefab: {fileID: 159356, guid: b06ee040eb3834954905e3f7c770e6e6, type: 2}
   m_quantity:
     min: 6
     max: 6
@@ -60,27 +59,6 @@ MonoBehaviour:
     min: 40
     max: 45
   m_maxSpawns: 0
---- !u!114 &11404820
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 184836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1aacd4a6157b43dfb51dc936d9e9f7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_amountSecsInPast: 0.25
-  m_guideFunction: 1
-  m_guideSpeed: 1.3
-  m_secondaryGuideSpeed: 1.3
-  m_sensePlayer: 0
-  m_innerRadius: 2.5
-  m_outterRadius: 3.5
-  m_targetDistance: 1
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
 --- !u!114 &11422820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -92,7 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11433708
+--- !u!114 &11478128
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -100,12 +78,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 184836}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 5
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  m_guideFunction: 0
+  m_innerRadius: 2.5
+  m_outterRadius: 3.5
+  m_targetDistance: 1
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
 --- !u!114 &11480652
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -305,22 +305,17 @@ public class FireBreath : DragonBreathBehaviour {
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
 		for (int i = 0; i < preys.Length; i++) 
 		{
-			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
-			if (entity != null) 
+			Entity prey = preys[i];
+			if ((prey.circleArea != null && Overlaps(prey.circleArea)) || IsInsideArea(prey.transform.position)) 
 			{
-				Entity prey = preys[i];
-				if ((prey.circleArea != null && Overlaps(prey.circleArea)) || IsInsideArea(entity.transform.position)) 
-				{
-					// Check if I can burn it
-					if (CanBurn( entity ) || m_type == Type.Super)
-					{
-						entity.Burn(damage * Time.deltaTime, transform);
+				if (CanBurn(prey) || m_type == Type.Super) {
+					AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+					if (machine != null) {
+						machine.Burn(damage * Time.deltaTime, transform);
 					}
-					else
-					{
-						// Show message saying I cannot burn it
-						Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT);
-					}
+				} else {
+					// Show message saying I cannot burn it
+					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT);
 				}
 			}
 		}

@@ -26,13 +26,13 @@ public class SpawnBehaviour : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		EntityManager.instance.Register(GetComponent<Entity>());
+		//EntityManager.instance.Register(GetComponent<Entity_Old>());
 		m_wasEatenOrBurned = false;
 	}
 
 	void OnDisable() {
-		if (EntityManager.instance != null)
-			EntityManager.instance.Unregister(GetComponent<Entity>());
+		//if (EntityManager.instance != null)
+			//EntityManager.instance.Unregister(GetComponent<Entity_Old>());
 
 		if (m_spawner) {
 			m_spawner.RemoveEntity(gameObject, m_wasEatenOrBurned);

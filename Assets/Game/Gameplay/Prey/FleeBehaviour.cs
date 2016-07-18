@@ -42,7 +42,7 @@ public class FleeBehaviour : Initializable {
 	public List<string> m_afraidSounds = new List<string>();
 
 	// dirty and fast implementation of sound for running away groups
-	private Entity m_entity;
+	private Entity_Old m_entity;
 	static Dictionary<string, int> m_runningAway = new Dictionary<string,int>();
 
 	// Use this for initialization
@@ -51,7 +51,7 @@ public class FleeBehaviour : Initializable {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_sensor = GetComponent<SensePlayer>();
 		m_flock = GetComponent<FlockBehaviour>();
-		m_entity = GetComponent<Entity>();
+		m_entity = GetComponent<Entity_Old>();
 	}
 
 	void Start() {

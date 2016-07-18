@@ -182,21 +182,20 @@ public class FireLightning : DragonBreathBehaviour {
 			m_rays[i].Draw(p1,p2);
 
 		// Look entities to damage!
-		Entity[] preys = EntityManager.instance.GetEntitiesIn( (Vector2)m_mouthTransform.position, (Vector2)m_dir, m_maxAmplitude, m_actualLength);
+		Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_dir, m_maxAmplitude, m_actualLength);
 		for (int i = 0; i < preys.Length; i++) 
 		{
-			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
-			if (entity != null) 
-			{
-				if ( CanBurn( entity ) || m_type == Type.Super )
-				{
-					entity.Burn(damage * Time.deltaTime, transform);
-				}
-				else
-				{
-					// Show Message "I cannot burn this!"
+			if (CanBurn(preys[i]) || m_type == Type.Super) {
+				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+				if (machine != null) {					
+					machine.Burn(damage * Time.deltaTime, transform);					
 				}
 			}
+			/*
+			if (!burned){
+				// Show I cannot burn this entity!
+			}
+			*/	
 		}
 
 		m_bounds2D.center = m_mouthTransform.position;
