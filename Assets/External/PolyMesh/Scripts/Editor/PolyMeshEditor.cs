@@ -266,15 +266,15 @@ public class PolyMeshEditor : Editor {
 			var pinkOffset = EditorGUILayout.FloatField("PinkMesh z Offset", polyMesh.pinkMeshOffset);
 			var showNormals = EditorGUILayout.Toggle("Display Normals", polyMesh.showNormals);
 			var showOutline = EditorGUILayout.Toggle("Display Outline", polyMesh.showOutline);
-			var curveDetail = EditorGUILayout.Slider("Curve Detail", polyMesh.curveDetail, 0.01f, 1f);
-			curveDetail = Mathf.Clamp(curveDetail, 0.01f, 1f);
+			//var curveDetail = EditorGUILayout.Slider("Curve Detail", polyMesh.curveDetail, 0.01f, 1f);	// [AOC] Curve meshes disabled
+			//curveDetail = Mathf.Clamp(curveDetail, 0.01f, 1f);
 
 			if(GUI.changed) {
 				RecordUndo();
 				polyMesh.pinkMeshOffset = pinkOffset;
 				polyMesh.showNormals = showNormals;
 				polyMesh.showOutline = showOutline;
-				polyMesh.curveDetail = curveDetail;
+				//polyMesh.curveDetail = curveDetail;
 			}
 
 			// Buttons
@@ -326,6 +326,21 @@ public class PolyMeshEditor : Editor {
 					RecordUndo();
 					polyMesh.InvertPoints();
 					polyMesh.BuildMesh();
+				}
+			} EditorGUILayout.EndHorizontal();
+
+			// Re-center game object
+			EditorGUILayout.BeginHorizontal(); {
+				// [AOC] Hardcode Hack to make buttons respect indentation and have the same size
+				int numItems = 1;
+				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth, 10f));
+				rect.width -= rect.x + numItems * 4f;	// Remove indentation and (hardcoded) spacing between items
+
+				GUILayout.Space(rect.x);
+
+				if(GUILayout.Button(new GUIContent("Re-Center GameObject", "Set the position of the game object to match the mesh's geometric center"), GUILayout.Width(rect.width/numItems))) {
+					RecordUndo();
+					ReCenterGameObject(polyMesh);
 				}
 			} EditorGUILayout.EndHorizontal();
 
@@ -1735,6 +1750,10 @@ public class PolyMeshEditor : Editor {
 		m_curvePoints.RemoveRange(selected[0] + 1, selected[1] - selected[0] - 1);
 		UpdatePoly(true, true);
 
+		// Recenter both meshes
+		ReCenterGameObject(polyMesh);
+		ReCenterGameObject(newPolyMesh);
+
 		// Clear selection
 		m_selectedIndices.Clear();
 
@@ -1771,6 +1790,31 @@ public class PolyMeshEditor : Editor {
 	/// <param name="point">Point.</param>
 	private bool IsHovering(Vector3 point) {
 		return Vector3.Distance(m_mousePosition, point) < HandleUtility.GetHandleSize(point) * CLICK_RADIUS;
+	}
+
+	/// <summary>
+	/// Change the mesh's points so the object's position matches the mesh's geometrical center.
+	/// </summary>
+	/// <param name="_target">The mesh to be re-centered.</param>
+	void ReCenterGameObject(PolyMesh _target) {
+		// Compute geometrical center among all of the mesh's points
+		Vector3 center = Vector3.zero;
+		for(int i = 0; i < _target.keyPoints.Count; i++) {
+			center += _target.keyPoints[i];
+		}
+		center /= _target.keyPoints.Count;
+
+		// Center is in local coords, so matches the offset we must apply to both object's position and all keypoints
+		// Apply to keypoints
+		for(int i = 0; i < _target.keyPoints.Count; i++) {
+			_target.keyPoints[i] -= center;
+		}
+
+		// Rebuild the mesh
+		_target.BuildMesh();
+
+		// Change object's position
+		_target.transform.localPosition += center;
 	}
 
 	//------------------------------------------------------------------------//
