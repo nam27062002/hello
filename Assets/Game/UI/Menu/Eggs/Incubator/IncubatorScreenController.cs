@@ -37,7 +37,7 @@ public class IncubatorScreenController : MonoBehaviour {
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 
 		// Price
-		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, "egg_dragon_titan");	// [AOC] TODO!! Single egg def
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_STANDARD_EGG);
 		m_buyButton.FindComponentRecursive<Text>("TextCost").text = StringUtils.FormatNumber(eggDef.GetAsInt("pricePC"));
 	}
 
@@ -110,7 +110,7 @@ public class IncubatorScreenController : MonoBehaviour {
 		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Get price and start purchase flow
-		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, "egg_dragon_titan");	// [AOC] TODO!! Single egg def
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_STANDARD_EGG);
 		long pricePC = eggDef.GetAsLong("pricePC");
 		if(UsersManager.currentUser.pc >= pricePC) {
 			// Perform transaction
