@@ -191,9 +191,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	public void Die(bool _eaten = false) {
+	public void Die(bool _eaten = false) 
+	{
 		if (m_explosionParticles.name != "") {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
+	}
+
+	public void Burn()
+	{
+		m_animator.enabled = false;
 	}
 }

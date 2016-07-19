@@ -148,7 +148,7 @@
 			public static string name = "Burning";
 
 			[StateTransitionTrigger]
-			public static string OnBurning = "onBurning";
+			public const string OnBurning = "onBurning";
 
 			protected override string OnEnabled() { return OnBurning; }
 		}
@@ -167,7 +167,7 @@
 			public static string name = "Destroyed";
 
 			[StateTransitionTrigger]
-			public static string OnDestroyed = "onDestroyed";
+			public const string OnDestroyed = "onDestroyed";
 
 			protected override string OnEnabled() { return OnDestroyed; }
 		}
