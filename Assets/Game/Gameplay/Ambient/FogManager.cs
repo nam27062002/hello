@@ -141,6 +141,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 	{
 		m_drawGizmos = false;
 		// Check if fog node selected
+		if ( m_fogNodes != null )
 		for( int i = 0; i<m_fogNodes.Length; i++ )
 		{
 			if (UnityEditor.Selection.Contains( m_fogNodes[i].gameObject ) )
