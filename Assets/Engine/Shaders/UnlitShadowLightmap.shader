@@ -75,7 +75,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
-
+					 
 					#if LIGHTMAP_ON
 					fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 					col.rgb *= lm;
@@ -93,5 +93,4 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 		}
 
 	}
-	Fallback "Mobile/VertexLit"
 }
