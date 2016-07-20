@@ -140,6 +140,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 	void OnDrawGizmos()
 	{
 		m_drawGizmos = false;
+#if UNITY_EDITOR
 		// Check if fog node selected
 		if ( m_fogNodes != null )
 		for( int i = 0; i<m_fogNodes.Length; i++ )
@@ -150,7 +151,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 				break;
 			}
 		}
-			
+#endif			
 	}
 
 	void OnDrawGizmosSelected()
