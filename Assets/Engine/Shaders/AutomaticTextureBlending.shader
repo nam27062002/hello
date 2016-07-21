@@ -3,7 +3,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow" 
+Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow" 
 {
 	Properties 
 	{
@@ -27,7 +27,6 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
 							
 				#include "UnityCG.cginc"
@@ -37,7 +36,7 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 texcoord : TEXCOORD0;
-					float4 color : COLOR;
+					float3 normal : NORMAL;
 					#if LIGHTMAP_ON
 					float4 texcoord1 : TEXCOORD1;
 					#endif
@@ -46,10 +45,10 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 				struct v2f {
 					float4 vertex : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
-					float4 color : COLOR;
 					HG_FOG_COORDS(1)
 					LIGHTING_COORDS(2,3)
 					float2 lmap : TEXCOORD4; 
+					float blendValue : TEXCOORD5;
 				};
 
 				sampler2D _MainTex;
@@ -65,7 +64,10 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-					o.color = v.color;
+
+					o.blendValue = 1 - dot(mul ( float4(v.normal,0), _World2Object ).xyz, float3(0,1,0));
+					o.blendValue = (o.blendValue * 2) - 1;
+
 					HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
@@ -74,12 +76,13 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 
 					return o;
 				}
-				
+				 
 				fixed4 frag (v2f i) : SV_Target
-				{
+				{  
 					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 					fixed4 col2 = tex2D(_SecondTexture, i.texcoord);	// Color
-					float l = saturate( col.a + ( (i.color.r * 2) - 1 ) );
+
+					float l = saturate( col.a + i.blendValue );
 					col = lerp( col2, col, l);
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
