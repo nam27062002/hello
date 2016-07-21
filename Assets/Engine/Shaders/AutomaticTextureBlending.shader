@@ -43,12 +43,13 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 				}; 
 
 				struct v2f {
-					float4 vertex : SV_POSITION;
+					float4 vertex : SV_POSITION; 
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
 					LIGHTING_COORDS(2,3)
 					float2 lmap : TEXCOORD4; 
 					float blendValue : TEXCOORD5;
+					HG_DARKEN(6)
 				};
 
 				sampler2D _MainTex;
@@ -65,10 +66,14 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
+
 					o.blendValue = 1 - dot(mul ( float4(v.normal,0), _World2Object ).xyz, float3(0,1,0));
 					o.blendValue = (o.blendValue * 2) - 1;
 
-					HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
+					float3 worldPos = mul(_Object2World, v.vertex);
+					HG_TRANSFER_FOG(o, worldPos, _FogStart, _FogEnd);	// Fog
+					HG_TRANSFER_DARKEN(o, worldPos);
+
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
@@ -94,8 +99,8 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					#endif
 
 					HG_APPLY_FOG(i, col, _FogColor);	// Fog
-
-
+					HG_APPLY_DARKEN( i, col );
+					 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 					return col;
 				}
