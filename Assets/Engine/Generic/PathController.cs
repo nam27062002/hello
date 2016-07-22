@@ -139,4 +139,12 @@ public class PathController : MonoBehaviour, IGuideFunction {
 
 		m_bounds.SetMinMax(min + transform.position - Vector3.one * radius, max + transform.position + Vector3.one * radius);
 	}
+
+	//-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	private void OnDrawGizmosSelected() {
+		AreaBounds bounds = GetBounds();
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireCube(bounds.center, bounds.bounds.size);
+	}
 }
