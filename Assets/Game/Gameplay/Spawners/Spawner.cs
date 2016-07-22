@@ -236,8 +236,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 		if(m_readyToBeDisabled) return false;
 
 		// Check start conditions
-		bool startThresholdOk = (m_activationTime.min >= 0 && _time > m_activationTime.min)	// We have an activation time (>= 0) and we've reached the threshold
-							 || (m_activationXP.min >= 0 && _xp > m_activationXP.min);		// We have a minimum activation XP (>= 0) and we have earned enough XP
+		bool startThresholdOk = (m_activationTime.min >= 0 && _time >= m_activationTime.min)	// We have an activation time (>= 0) and we've reached the threshold
+							 || (m_activationXP.min >= 0 && _xp >= m_activationXP.min);		// We have a minimum activation XP (>= 0) and we have earned enough XP
 
 		// If start conditions aren't met, we can't spawn, no need to check anything else
 		if(!startThresholdOk) {
@@ -338,6 +338,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 			// spawner for static objects with a fixed position
 			return new CircleAreaBounds(transform.position, 1f);
 		}
+	}
+
+	void OnValidate() {
+		// Make sure activation thresholds are valid!
+		if(m_activationTime.min < 0 && m_activationXP.min < 0) m_activationTime.min = 0;
 	}
 
 	void OnDrawGizmos() {
