@@ -7,7 +7,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
-	[Header("Entity")]
+	[Separator("Entity")]
 	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
 	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
@@ -15,21 +15,23 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[CommentAttribute("Amount of points obtained after killing the whole flock. Points are multiplied by the amount of entities spawned.")]
 	[SerializeField] private int m_flockBonus = 0;
 
-	[Header("Activation")]
-	[SerializeField] private bool m_alwaysActive = false;
+	[Separator("Activation")]
+	[Tooltip("For the spawners that must spawn even when the dragon is not near (i.e. the spawners around the start area)")]
 	[SerializeField] private bool m_activeOnStart = false;
-	[SerializeField] private float m_enableTime;
-	public float enableTime {
-		get { return m_enableTime; }
-		set { m_enableTime = value; }
-	}
-	[SerializeField] private float m_disableTime;
-	public float disableTime {
-		get { return m_disableTime; }
-		set { m_disableTime = value; }
-	}
 
-	[Header("Respawn")]
+	[Tooltip("Meant for background spawners, will ignore respawn settings and activation triggers.")]
+	[SerializeField] private bool m_alwaysActive = false;
+	public bool alwaysActive { get { return m_alwaysActive; }}
+
+	[HideInInspector] [Tooltip("Total seconds of gameplay.\n-1 to not take a value into account.")]
+	[SerializeField] private Range m_activationTime = new Range(-1, -1);
+	public Range activationTime { get { return m_activationTime; }}
+
+	[HideInInspector] [Tooltip("XP acquired during the game session.\n-1 to not take a value into account")]
+	[SerializeField] private Range m_activationXP = new Range(-1, -1);
+	public Range activationXP { get { return m_activationXP; }}
+
+	[Separator("Respawn")]
 	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
 	[SerializeField] private int m_maxSpawns;
 	
@@ -57,8 +59,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	private bool m_allEntitiesKilledByPlayer;
 	protected GameObject[] m_entities; // list of alive entities
 
-	private float m_enableTimer;
-	private float m_disableTimer;
+	private float m_activationTimer;
 	private float m_respawnTimer;
 	private uint m_respawnCount;
 
@@ -99,8 +100,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	public void Initialize() {
-		m_enableTimer = m_enableTime;
-		m_disableTimer = m_disableTime;
+		m_activationTimer = 0;
 
 		m_respawnTimer = 0;
 		m_respawnCount = 0;
@@ -112,6 +112,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_allEntitiesKilledByPlayer = false;
 
 		m_readyToBeDisabled = false;
+
+		// [AOC] Safecheck: If both start conditions are set to -1 (they shouldn't, wrong content), switch initial time to 0 so everything works ok
+		if(m_activationXP.min < 0 && m_activationTime.min < 0) m_activationTime.min = 0;
 
 		if (m_activeOnStart) {
 			Spawn();
@@ -176,42 +179,39 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 		
 	public void UpdateTimers() {		
+		// Ignore all logic for always active spawners
 		if (m_alwaysActive) {
 			if (m_entityAlive == 0) {
 				Spawn();
 			}
-		} else {
-			// A spawner can have a delay time before it can spawn things
-			if (m_enableTimer > 0) {
-				m_enableTimer -= Time.deltaTime;
-				if (m_enableTimer <= 0) {
-					m_enableTimer = 0;
-				}
-			} else {
-				// re-spawn logic
-				if (m_entityAlive == 0) {
-					if (m_readyToBeDisabled) {
-						SpawnerManager.instance.Unregister(this);
+		}
+
+		// Rest of the spawners
+		else {
+			// Update timer
+			m_activationTimer += Time.deltaTime;
+
+			// If we can spawn, do it
+			if(CanSpawn(m_activationTimer, RewardManager.xp)) {
+				// If we don't have any entity alive, proceed
+				if(m_entityAlive == 0) {
+					// Respawn on cooldown?
+					if(m_respawnTimer > 0) {
+						m_respawnTimer -= Time.deltaTime;
+						if(m_respawnTimer <= 0) m_respawnTimer = 0;
 					} else {
-						if (m_respawnTimer > 0) {
-							m_respawnTimer -= Time.deltaTime;
-							if (m_respawnTimer <= 0) {
-								m_respawnTimer = 0;
-							}
-						} else {
-							if (m_camera != null && m_camera.IsInsideActivationArea(transform.position)) {
-								Spawn();
-							}
+						// Check activation area
+						if(m_camera != null && m_camera.IsInsideActivationArea(transform.position)) {
+							Spawn();
 						}
 					}
 				}
-				
-				// Check if we have to disable this spawner after few seconds
-				if (m_disableTimer > 0) {
-					m_disableTimer -= Time.deltaTime;
-					if (m_disableTimer <= 0) {
-						m_readyToBeDisabled = true;
-					}
+			}
+
+			// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
+			else if(m_readyToBeDisabled) {
+				if(m_entityAlive == 0) {
+					SpawnerManager.instance.Unregister(this);
 				}
 			}
 		}
@@ -219,6 +219,41 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	public void UpdateLogic() {
 		ExtendedUpdateLogic();
+	}
+
+	/// <summary>
+	/// Check all the required conditions (time, xp) to determine whether this spawner can spawn or not.
+	/// Doesn't check respawn timer nor activation area, only time and xp constraints.
+	/// </summary>
+	/// <returns>Whether this spawner can spawn or not.</returns>
+	/// </returns><param name="_time">Elapsed game time.</param>
+	/// </returns><param name="_xp">Earned xp.</param>
+	public bool CanSpawn(float _time, float _xp) {
+		// If always active, we're done!
+		if(m_alwaysActive) return true;
+
+		// If already ready to be disabled, no need for further checks
+		if(m_readyToBeDisabled) return false;
+
+		// Check start conditions
+		bool startThresholdOk = (m_activationTime.min >= 0 && _time >= m_activationTime.min)	// We have an activation time (>= 0) and we've reached the threshold
+							 || (m_activationXP.min >= 0 && _xp >= m_activationXP.min);		// We have a minimum activation XP (>= 0) and we have earned enough XP
+
+		// If start conditions aren't met, we can't spawn, no need to check anything else
+		if(!startThresholdOk) {
+			return false;
+		}
+
+		// Check end conditions
+		bool endThresholdOk = (m_activationTime.max < 0 || _time < m_activationTime.max)	// Either we don't have an end time (-1) or we haven't yet reached the threshold
+						   && (m_activationXP.max < 0 || _xp < m_activationXP.max);			// Either we don't have a XP limit (-1) or we haven't yet reach it
+
+		// If we've reached either of the end conditions, mark the spawner as ready to disable
+		if(!endThresholdOk && Application.isPlaying) {
+			m_readyToBeDisabled = true;
+		}
+
+		return endThresholdOk;
 	}
 
 	public void Respawn() {
@@ -303,6 +338,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 			// spawner for static objects with a fixed position
 			return new CircleAreaBounds(transform.position, 1f);
 		}
+	}
+
+	void OnValidate() {
+		// Make sure activation thresholds are valid!
+		if(m_activationTime.min < 0 && m_activationXP.min < 0) m_activationTime.min = 0;
 	}
 
 	void OnDrawGizmos() {
