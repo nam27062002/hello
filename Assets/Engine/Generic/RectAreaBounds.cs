@@ -47,8 +47,7 @@ public class RectAreaBounds : AreaBounds {
 		return m_bounds.center + offset;
 	}
 		
-	public bool Contains(Vector3 _point) {		
-		_point.z = m_bounds.center.z;
+	public bool Contains(Vector3 _point) {	
 		return m_bounds.Contains(_point);
 	}
 

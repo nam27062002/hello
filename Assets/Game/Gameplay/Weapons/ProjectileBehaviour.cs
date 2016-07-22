@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 // [RequireComponent(typeof(PreyMotion))]
-public class ProjectileBehaviour : MonoBehaviour {
+public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	[SerializeField] private GameObject m_explosionPrefab = null;
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);

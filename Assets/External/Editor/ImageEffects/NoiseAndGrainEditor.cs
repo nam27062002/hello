@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace UnityStandardAssets.ImageEffects
+namespace UnityStandardAssets
 {
     [CustomEditor (typeof( NoiseAndGrain))]
     class NoiseAndGrainEditor : Editor
