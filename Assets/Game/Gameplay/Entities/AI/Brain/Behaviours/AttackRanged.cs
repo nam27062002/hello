@@ -55,7 +55,7 @@ namespace AI {
 					m_projectile = PoolManager.GetInstance(((AttackRangedData)m_data).projectileName);
 
 					if (m_projectile != null) {
-						ProjectileBehaviour projectile = m_projectile.GetComponent<ProjectileBehaviour>();
+						IProjectile projectile = m_projectile.GetComponent<IProjectile>();
 						projectile.AttachTo(m_projectileSpawnPoint);
 					} else {
 						Debug.LogError("Projectile not available");
@@ -65,7 +65,7 @@ namespace AI {
 
 			protected override void OnAnimDealDamageExtended() {
 				if (m_projectile != null) {					
-					ProjectileBehaviour projectile = m_projectile.GetComponent<ProjectileBehaviour>();
+					IProjectile projectile = m_projectile.GetComponent<IProjectile>();
 					projectile.Shoot(m_projectileSpawnPoint, ((AttackRangedData)m_data).damage);
 					m_projectile = null;
 				}

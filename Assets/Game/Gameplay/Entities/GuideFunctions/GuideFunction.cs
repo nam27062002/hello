@@ -55,8 +55,13 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 		}
 
 		Vector3 size = ((new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  m_depthAmplitude)) + Vector3.one) * 2f;
+		size = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, size);
 
-		return new RectAreaBounds(transform.position + m_centerOffset, Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, size));
+		size.x = Mathf.Abs(size.x);
+		size.y = Mathf.Abs(size.y);
+		size.z = Mathf.Abs(size.z);
+
+		return new RectAreaBounds(transform.position + m_centerOffset, size);
 	}
 
 	public void ResetTime() {

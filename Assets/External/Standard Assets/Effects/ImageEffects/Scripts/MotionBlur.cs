@@ -6,7 +6,7 @@ using UnityEngine;
 // as it is scaled to a smaller resolution.
 // The effect works by accumulating the previous frames in an accumulation
 // texture.
-namespace UnityStandardAssets.ImageEffects
+namespace UnityStandardAssets
 {
     [ExecuteInEditMode]
     [AddComponentMenu("Image Effects/Blur/Motion Blur (Color Accumulation)")]

@@ -27,6 +27,8 @@ namespace AI {
 		private float m_speedFactor;
 		protected override float speedFactor { get { return m_speedFactor; } }
 
+		[SerializeField] private float m_timeBeforeBackHome = 2f;
+
 		private StateMachine m_brain;
 
 		protected Vector3 m_homePosition;
@@ -36,6 +38,9 @@ namespace AI {
 		public override Vector3 target { get { return m_target; } }
 
 		protected bool m_slowDown;
+
+		private bool m_isOutside;
+		private float m_outsideTimer;
 
 		//--------------------------------------------------------------------//
 		// METHODS															  //
@@ -56,6 +61,8 @@ namespace AI {
 
 			m_target = transform.position;
 			m_slowDown = false;
+
+			m_isOutside = false;
 
 			// braaiiiinnn ~ ~ ~ ~ ~
 			if (m_brain == null) {
@@ -83,10 +90,22 @@ namespace AI {
 			if (m_brain != null) {
 				m_brain.Update();
 			}
-			
-			// if this machine is outside his area, go back to home position (if it has this behaviour)
-			if (!m_area.Contains(transform.position)) {
-				m_machine.SetSignal(Signals.BackToHome.name, true);
+
+			if (m_isOutside) {
+				m_outsideTimer -= Time.deltaTime;
+				if (m_outsideTimer <= 0) {
+					if (!m_area.Contains(transform.position)) {
+						m_machine.SetSignal(Signals.BackToHome.name, true);
+					}
+					m_isOutside = false;
+				}
+			} else {			
+				// if this machine is outside his area, go back to home position (if it has this behaviour)
+				if (!m_area.Contains(transform.position)) {
+					// we'll let the unit stay outside a few seconds before triggering the "back to home" state
+					m_isOutside = true;
+					m_outsideTimer = m_timeBeforeBackHome;
+				}
 			}
 		}
 

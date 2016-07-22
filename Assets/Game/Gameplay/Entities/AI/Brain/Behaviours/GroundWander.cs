@@ -15,6 +15,7 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnRest = "onRest";
 
+
 			private GroundWanderData m_data;
 
 			private Vector3 m_target;

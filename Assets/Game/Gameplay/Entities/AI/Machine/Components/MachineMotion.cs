@@ -51,6 +51,7 @@ namespace AI {
 
 			if (m_pilot != null) {
 				m_direction = m_pilot.direction;
+				m_viewControl.NavigationLayer(m_direction.z, m_direction.y);
 
 				UpdateAttack();
 
@@ -139,7 +140,7 @@ namespace AI {
 				Quaternion rotation = Quaternion.AngleAxis(270f, up) * Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
 				Vector3 eulerRotation = rotation.eulerAngles;																	   			  // if the machine move always in the same Z
 				if (m_direction.y > 0) 		eulerRotation.z = Mathf.Min(40f, eulerRotation.z);
-				else if (m_direction.y < 0)	eulerRotation.z = Mathf.Max(320f, eulerRotation.z);
+				else if (m_direction.y < 0)	eulerRotation.z = Mathf.Max(300f, eulerRotation.z);
 				m_targetRotation = Quaternion.Euler(eulerRotation);
 			} else {
 				m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
