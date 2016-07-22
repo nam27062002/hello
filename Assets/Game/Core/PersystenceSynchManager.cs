@@ -121,7 +121,12 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 			if ( serverData != null )
 			{
 				// Resolve Conflict!
+				UsersManager.currentUser.saveCounter = Mathf.Max( UsersManager.currentUser.saveCounter, serverData.saveCounter);
+				GameServerManager.SharedInstance.CleanLastRecievedUniverse();
+				GameServerManager.SharedInstance.saveDataRecovered = true;
+				m_continueSynchProcess = true;
 
+				/*
 				if ( UsersManager.currentUser.saveCounter < serverData.saveCounter )
 				{
 					// Information on server is newer -> I should get it or merge
@@ -135,6 +140,7 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 					// Lets continue Synch Process
 					m_continueSynchProcess = true;
 				}
+				*/
 			}
 			else
 			{

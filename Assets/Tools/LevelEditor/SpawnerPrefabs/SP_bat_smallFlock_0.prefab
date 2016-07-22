@@ -9,8 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 413654}
   - 114: {fileID: 11415666}
-  - 114: {fileID: 11469224}
-  - 114: {fileID: 11471178}
+  - 114: {fileID: 11483310}
   - 114: {fileID: 11451862}
   - 114: {fileID: 11484230}
   m_Layer: 0
@@ -27,7 +26,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112636}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.5, y: 7.9, z: 0}
+  m_LocalPosition: {x: 12.92, y: 24.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -58,7 +57,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11469224
+--- !u!114 &11483310
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -66,45 +65,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 112636}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1aacd4a6157b43dfb51dc936d9e9f7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_amountSecsInPast: 0.25
-  m_guideFunction: 0
-  m_guideSpeed: 2
-  m_secondaryGuideSpeed: 2
-  m_sensePlayer: 0
-  m_innerRadius: 10
-  m_outterRadius: 20
-  m_targetDistance: 5
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
---- !u!114 &11471178
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112636}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e41b79b4192e24dd2add814a1be140ca, type: 3}
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_entityPrefab: {fileID: 188468, guid: 2feddcf5e100f43edb8f018d5efa5786, type: 2}
   m_quantity:
-    min: 14
-    max: 14
+    min: 20
+    max: 20
   m_scale:
-    min: 0.8
+    min: 1
     max: 1
-  m_flockBonus: 25
+  m_flockBonus: 0
   m_alwaysActive: 0
   m_activeOnStart: 0
   m_enableTime: 0
   m_disableTime: 0
   m_spawnTime:
-    min: 40
-    max: 45
+    min: 0
+    max: 0
   m_maxSpawns: 0
 --- !u!114 &11484230
 MonoBehaviour:
@@ -118,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 3.997593
+  radius: 6.701212
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1001 &100100000
 Prefab:

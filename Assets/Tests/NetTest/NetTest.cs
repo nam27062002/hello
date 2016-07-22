@@ -103,4 +103,10 @@ public class NetTest : MonoBehaviour
 	{
 		GameServerManager.SharedInstance.MergeSocialAccount();
 	}
+
+	public void OnResetDeviceInfo()
+	{
+		PersistenceManager.Clear();
+		PlayerPrefs.DeleteAll();
+	}
 }
