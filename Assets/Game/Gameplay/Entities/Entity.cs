@@ -178,15 +178,19 @@ public class Entity : MonoBehaviour, ISpawnable {
 		return m_canBeHolded && (m_holdFromTier <= _tier);
 	}
 
-	public bool IntersectsWith(Vector2 _center, float _radius) {
-		Vector2 source = transform.position;
-
-		if (m_bounds != null) {
-			source = m_bounds.center;
+	public bool IntersectsWith(Vector2 _center, float _radius) 
+	{
+		if (m_bounds != null) 
+		{
+			return m_bounds.Overlaps(_center, _radius);
+		} 
+		else 
+		{
+			// return _r.Contains(transform.position);
+			float sqrMagnitude = (_center - (Vector2)transform.position).sqrMagnitude;
+			return ( sqrMagnitude <= _radius * _radius );
 		}
-
-		float sqrMagnitude = (_center - source).sqrMagnitude;
-		return (sqrMagnitude <= _radius * _radius);
+		return false;
 	}
 
 

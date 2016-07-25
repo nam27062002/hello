@@ -89,8 +89,9 @@ public class MapMarker : MonoBehaviour {
 		transform.localPosition = Vector3.zero;
 
 		// Compensate parent's scale factor (i.e. if parent is a dragon, which scales with level, or if parent has a non-linear scale)
-		Vector3 parentScale = parentTransform.lossyScale;
-		transform.localScale = new Vector3(m_originalScale.x / parentScale.x, m_originalScale.y / parentScale.y, m_originalScale.z / parentScale.z);
+		//Vector3 parentScale = parentTransform.lossyScale;
+		//transform.localScale = new Vector3(m_originalScale.x / parentScale.x, m_originalScale.y / parentScale.y, m_originalScale.z / parentScale.z);
+		transform.localScale = new Vector3(m_originalScale.x, m_originalScale.y, 1f);	// [AOC] Don't like it, plust Z scale should always be 1
 
 		// Apply parent's rotation - only in the XY plane
 		if(m_rotateWithObject) {

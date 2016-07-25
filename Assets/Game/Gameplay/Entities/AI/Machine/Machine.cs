@@ -83,6 +83,7 @@ namespace AI {
 		}
 
 		void OnEnable() {
+			if ( m_signals != null )
 			foreach(KeyValuePair<string, Signal> p in m_signals) {
 				p.Value.Init();
 			}
@@ -116,10 +117,21 @@ namespace AI {
 				m_pilot.OnTrigger(_trigger);
 			}
 
-			if (Signals.Destroyed.OnDestroyed == _trigger) {
-				m_viewControl.Die(m_signals[Signals.Chewing.name].value);
-				if (m_collider != null) m_collider.enabled = false;
-				m_entity.Disable(true);
+
+			switch( _trigger )
+			{
+				case Signals.Destroyed.OnDestroyed:
+				{
+					m_viewControl.Die(m_signals[Signals.Chewing.name].value);
+					if (m_collider != null) m_collider.enabled = false;
+					m_entity.Disable(true);
+				}break;
+				case Signals.Burning.OnBurning:
+				{
+					m_viewControl.Burn();
+					if (m_collider != null) 
+						m_collider.enabled = false;
+				}break;
 			}
 		}
 
@@ -151,8 +163,8 @@ namespace AI {
 
 				if (m_enableMotion) m_motion.Update();
 				if (m_enableSensor) m_sensor.Update();
-				m_inflammable.Update();
 			}
+			m_inflammable.Update();
 		}
 
 		public void SetSignal(string _signal, bool _activated) {
@@ -230,7 +242,7 @@ namespace AI {
 			m_edible.ReleaseHold();
 		}
 
-		public bool Burn(float _damage, Transform _transform) {
+		public virtual bool Burn(float _damage, Transform _transform) {
 			if (m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Burning.name)) {
 					ReceiveDamage(_damage);

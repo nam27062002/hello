@@ -34,18 +34,28 @@ namespace LevelEditor {
 		//--------------------------------------------------------------------//
 		// Prefs
 		private bool simulationEnabled {
-			get { return Prefs.GetBool("LevelEditorSimulationEnabled", true); }
-			set { Prefs.SetBool("LevelEditorSimulationEnabled", value); }
+			get { return Prefs.GetBool("LevelEditor.SimulationEnabled", true); }
+			set { Prefs.SetBool("LevelEditor.SimulationEnabled", value); }
+		}
+
+		private float time {
+			get { return Prefs.GetFloat("LevelEditor.SimulationTime", 0f); }
+			set { Prefs.SetFloat("LevelEditor.SimulationTime", value); }
+		}
+
+		private float timeMax {
+			get { return Prefs.GetFloat("LevelEditor.SimulationTimeMax", 1000f); }
+			set { Prefs.SetFloat("LevelEditor.SimulationTimeMax", Mathf.Max(value, 1f)); }	// Not less than 1
 		}
 
 		private float xp {
-			get { return Prefs.GetFloat("LevelEditorSimulationXp", 0f); }
-			set { Prefs.SetFloat("LevelEditorSimulationXp", value); }
+			get { return Prefs.GetFloat("LevelEditor.SimulationXp", 0f); }
+			set { Prefs.SetFloat("LevelEditor.SimulationXp", value); }
 		}
 
 		private float xpMax {
-			get { return Prefs.GetFloat("LevelEditorSimulationXpMax", 1000f); }
-			set { Prefs.SetFloat("LevelEditorSimulationXpMax", Mathf.Max(value, 1f)); }	// Not less than 1
+			get { return Prefs.GetFloat("LevelEditor.SimulationXpMax", 100000f); }
+			set { Prefs.SetFloat("LevelEditor.SimulationXpMax", Mathf.Max(value, 1f)); }	// Not less than 1
 		}
 
 		// Non-persistent data
@@ -81,12 +91,23 @@ namespace LevelEditor {
 				// Enable simulation?
 				simulationEnabled = EditorGUILayout.ToggleLeft(" Enable Simulation", simulationEnabled);
 
-				// XP slider
+				// Time slider
 				bool wasEnabled = GUI.enabled;
 				GUI.enabled = simulationEnabled;
 				EditorGUILayout.BeginHorizontal(); {
 					// Slider
 					EditorGUILayout.LabelField("Time", GUILayout.Width(40f));
+					time = EditorGUILayout.Slider(time, 0f, timeMax);
+
+					// Max XP
+					EditorGUILayout.LabelField("Max", GUILayout.Width(40f));
+					timeMax = EditorGUILayout.FloatField(timeMax, GUILayout.Width(50f));
+				} EditorGUILayout.EndHorizontal();
+
+				// XP slider
+				EditorGUILayout.BeginHorizontal(); {
+					// Slider
+					EditorGUILayout.LabelField("XP", GUILayout.Width(40f));
 					xp = EditorGUILayout.Slider(xp, 0f, xpMax);
 
 					// Max XP
@@ -125,29 +146,26 @@ namespace LevelEditor {
 		/// Refreshes the scene with the current simulation parameters.
 		/// </summary>
 		private void UpdateSimulation() {
+			// Aux vars (outside the loop)
+			float simTime = time;
+			float simXp = xp;
+
 			// Iterate all spawners in the scene, reset stats
 			m_enemiesCount.Set(0, 0);
 			Spawner[] spawners = Object.FindObjectsOfType<Spawner>();
 			for(int i = 0; i < spawners.Length; i++) {
 				// Show this spawner with the given filters?
+				bool canSpawn = true;
 				spawners[i].showSpawnerInEditor = true;
 
 				// If simulation is disabled, spawner is active for sure
 				if(simulationEnabled) {
-					// Check required xp
-					// Min
-					if(xp < spawners[i].enableTime) {
-						spawners[i].showSpawnerInEditor = false;
-					}
-
-					// Max
-					if((spawners[i].disableTime > 0f) && (xp > spawners[i].disableTime)) {
-						spawners[i].showSpawnerInEditor = false;
-					}
+					canSpawn = spawners[i].CanSpawn(simTime, simXp);
+					spawners[i].showSpawnerInEditor = canSpawn;
 				}
 
 				// If spawner is to be active, update stats
-				if(spawners[i].showSpawnerInEditor) {
+				if(canSpawn) {
 					m_enemiesCount.min += spawners[i].m_quantity.min;
 					m_enemiesCount.max += spawners[i].m_quantity.max;
 				}

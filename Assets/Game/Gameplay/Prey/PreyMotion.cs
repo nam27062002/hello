@@ -99,9 +99,9 @@ public class PreyMotion : Initializable, MotionInterface {
 	
 	void Awake() {
 		m_posZ = m_zOffset.GetRandom();
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
+		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 		m_groundSensor = transform.FindChild("ground_sensor");
-		m_waterMask = 1 << LayerMask.NameToLayer("Water");
+		m_waterMask = LayerMask.GetMask("Water");
 
 		m_orientation = GetComponent<Orientation>();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();

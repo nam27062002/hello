@@ -108,9 +108,9 @@ public class FireLightning : DragonBreathBehaviour {
 		m_headTransform = GetComponent<DragonMotion>().head;
 
 
-		m_fireMask = 1 << LayerMask.NameToLayer("Edible") | 1 << LayerMask.NameToLayer("Burnable");
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground");
-		m_waterMask = 1 << LayerMask.NameToLayer("Water");
+		m_fireMask = LayerMask.GetMask("Edible", "Burnable");
+		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
+		m_waterMask = LayerMask.GetMask("Water");
 
 
 		m_rays[0] = new Lightning(m_segmentWidth, Color.white, m_length/m_segmentLength,m_rayMaterial);

@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace UnityStandardAssets.ImageEffects
+namespace UnityStandardAssets
 {
     [CustomEditor (typeof(DepthOfField))]
     class DepthOfFieldEditor : Editor

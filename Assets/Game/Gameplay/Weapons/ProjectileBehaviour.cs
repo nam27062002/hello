@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 // [RequireComponent(typeof(PreyMotion))]
-public class ProjectileBehaviour : MonoBehaviour {
+public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	[SerializeField] private GameObject m_explosionPrefab = null;
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
@@ -127,7 +127,7 @@ public class ProjectileBehaviour : MonoBehaviour {
 		if (m_hasBeenShot) {
 			if (!m_edible.isBeingEaten && _other.tag == "Player")  {
 				Explode(true);
-			} else if (_other.gameObject.layer == LayerMask.NameToLayer("Ground")) {
+			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
 				Explode(false);
 			}
 		}

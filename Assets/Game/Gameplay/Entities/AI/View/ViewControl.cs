@@ -15,6 +15,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
 
+	[SerializeField] private bool m_hasNavigationLayer = false;
+
 	[SeparatorAttribute]
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
 
@@ -31,6 +33,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_scared;
 	private bool m_panic; //bite and hold state
 	private bool m_attack;
+
+	private float m_desiredBlendX;
+	private float m_desiredBlendY;
+
+	private float m_currentBlendX;
+	private float m_currentBlendY;
 
 
 	//-----------------------------------------------
@@ -84,6 +92,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
+	void Update() {
+		if (m_hasNavigationLayer) {
+			m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
+			m_animator.SetFloat("direction X", m_currentBlendX);
+
+			m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
+			m_animator.SetFloat("direction Y", m_currentBlendY);
+		}
+	}
+
 
 	// Queries
 	public bool canAttack() {
@@ -115,6 +133,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 
 	// Animations
+	public void NavigationLayer(float _z, float _y) {
+		if (m_hasNavigationLayer) {
+			m_desiredBlendX = Mathf.Clamp(-_z * 3f, -1f, 1f);	// max X bend is about 30 degrees, so *3
+			m_desiredBlendY = Mathf.Clamp(_y * 2f, -1f, 1f);	// max Y bend is about 45 degrees, so *2.
+		}
+	}
+
 	public void Aim(float _blendFactor) {
 		m_animator.SetFloat("aim", _blendFactor);
 	}
@@ -191,9 +216,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	public void Die(bool _eaten = false) {
+	public void Die(bool _eaten = false) 
+	{
 		if (m_explosionParticles.name != "") {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
+	}
+
+	public void Burn()
+	{
+		m_animator.enabled = false;
 	}
 }

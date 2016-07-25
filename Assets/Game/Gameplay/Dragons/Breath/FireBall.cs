@@ -52,13 +52,13 @@ public class FireBall : MonoBehaviour
 	void OnCollisionEnter( Collision _collision )
 	{
 		// if the collision is ground -> Explode!!
-		if (_collision.gameObject.layer == LayerMask.NameToLayer("Ground") || _collision.gameObject.layer == LayerMask.NameToLayer("Water"))
+		if(((1 << _collision.gameObject.layer) & LayerMask.GetMask("Ground", "Water", "GroundVisible")) > 0)
 			Explode();
 	}
 
 	void OnTriggerEnter( Collider _other)
 	{
-		if ( _other.gameObject.layer == LayerMask.NameToLayer("Ground") || _other.gameObject.layer == LayerMask.NameToLayer("Water"))
+		if(((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "Water", "GroundVisible")) > 0)
 			Explode();
 	}
 

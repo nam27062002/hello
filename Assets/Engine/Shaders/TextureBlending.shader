@@ -8,7 +8,7 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_SecondTexture ("Second Texture (RGBA)", 2D) = "white" {}
+		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
 
 		// FOG
 		_FogColor ("Fog Color", Color) = (0,0,0,0)
@@ -80,7 +80,7 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 					fixed4 col2 = tex2D(_SecondTexture, i.texcoord);	// Color
 					float l = saturate( col.a + ( (i.color.r * 2) - 1 ) );
-					col = lerp( col, col2, l);
+					col = lerp( col2, col, l);
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
@@ -94,46 +94,9 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 
 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-
-					// col = fixed4(1,1,1,1) * i.fogCoord;
 					return col;
 				}
 			ENDCG
 		}
-		// Pass to render object as a shadow caster
-		Pass {
-			Name "ShadowCaster"
-			Tags { "LightMode" = "ShadowCaster" }
-
-			Fog {Mode Off}
-			ZWrite On ZTest LEqual Cull Off
-			Offset 1, 1
-
-			CGPROGRAM
-				#pragma vertex vert
-				#pragma fragment frag
-				#pragma multi_compile_shadowcaster
-				#pragma fragmentoption ARB_precision_hint_fastest
-
-				#include "UnityCG.cginc"
-				#include "AutoLight.cginc"
-
-				struct v2f { 
-					V2F_SHADOW_CASTER;
-				};
-
-				v2f vert (appdata_base v)
-				{
-					v2f o;
-					TRANSFER_SHADOW_CASTER(o)
-					return o;
-				}
-
-				float4 frag (v2f i) : COLOR
-				{
-					SHADOW_CASTER_FRAGMENT(i)
-				}
-			ENDCG
-		} //Pass
 	}
 }

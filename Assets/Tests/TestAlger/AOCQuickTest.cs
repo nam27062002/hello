@@ -34,6 +34,7 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	public LayerMask m_mask;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,7 +64,22 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		
+		/*int groundWaterMask = LayerMask.GetMask("Ground", "Water");
+		int objMask = gameObject.layer;
+		int mix = (objMask & groundWaterMask);
+		Debug.Log("\n" + Convert.ToString(objMask, 2) + "\n" + Convert.ToString(groundWaterMask, 2) + "\n" + Convert.ToString(mix, 2));*/
+
+		//Debug.Log(Convert.ToString(LayerMask.GetMask("Default"), 2));
+		Debug.Log(Convert.ToString(m_mask.value, 2));
+
+		int objMask = (1 << gameObject.layer);
+		Debug.Log(Convert.ToString(objMask, 2) + ", " + Convert.ToString(gameObject.layer, 2));
+
+		int checkMask = LayerMask.GetMask("Ground", "Water");
+		Debug.Log(Convert.ToString((1 << checkMask), 2) + ", " + Convert.ToString(checkMask, 2));
+
+		int match = (objMask & checkMask);
+		Debug.Log(Convert.ToString(match, 2));
 	}
 
 	/// <summary>

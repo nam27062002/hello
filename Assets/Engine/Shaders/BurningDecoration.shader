@@ -10,6 +10,11 @@ Properties {
 	_BurnLevel( "Burn Level", Range (0, 3)) = 0
 	_BurnMask("Burn Mask", 2D) = "white" {}
 
+	// FOG
+	// _FogColor ("Fog Color", Color) = (0,0,0,0)
+	// _FogStart( "Fog Start", float ) = 0
+	// _FogEnd( "Fog End", float ) = 100
+
 }
 
 SubShader {
@@ -27,7 +32,8 @@ SubShader {
 			#pragma multi_compile_fog
 			
 			#include "UnityCG.cginc"
-			 
+			 // #include "HungryDragon.cginc"
+
 			struct appdata_t {
 				float4 vertex : POSITION;
 				float2 texcoord : TEXCOORD0;
@@ -36,7 +42,7 @@ SubShader {
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
-				UNITY_FOG_COORDS(1)
+				// HG_FOG_COORDS(1)
 			};
 
 			sampler2D _MainTex;
@@ -50,7 +56,7 @@ SubShader {
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-				UNITY_TRANSFER_FOG(o,o.vertex);
+				// HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
 				return o;
 			}
 			
@@ -72,7 +78,7 @@ SubShader {
 					col = col * fixed4( 1, delta, delta, 1 );
 				}
 
-				UNITY_APPLY_FOG(i.fogCoord, col);
+				// HG_APPLY_FOG(i, col, _FogColor);	// Fog
 
 				return col;
 			}
