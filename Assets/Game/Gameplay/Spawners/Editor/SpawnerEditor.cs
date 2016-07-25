@@ -27,11 +27,16 @@ public class SpawnerEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	Spawner m_targetSpawner = null;
+	private Spawner m_targetSpawner = null;
 
 	// Store a reference of interesting properties for faster access
-	SerializedProperty m_activationTimeProp = null;
-	SerializedProperty m_activationXPProp = null;
+	private SerializedProperty m_activationTriggersProp = null;
+	private SerializedProperty m_deactivationTriggersProp = null;
+
+	// Warning messages
+	private bool m_repeatedActivationTriggerTypeError = false;
+	private bool m_repeatedDeactivationTriggerTypeError = false;
+	private bool m_incompatibleValuesError = false;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -44,8 +49,11 @@ public class SpawnerEditor : Editor {
 		m_targetSpawner = target as Spawner;
 
 		// Store a reference of interesting properties for faster access
-		m_activationTimeProp = serializedObject.FindProperty("m_activationTime");
-		m_activationXPProp = serializedObject.FindProperty("m_activationXP");
+		m_activationTriggersProp = serializedObject.FindProperty("m_activationTriggers");
+		m_deactivationTriggersProp = serializedObject.FindProperty("m_deactivationTriggers");
+
+		// Do an initial check for errors
+		CheckForErrors();
 	}
 
 	/// <summary>
@@ -56,8 +64,8 @@ public class SpawnerEditor : Editor {
 		m_targetSpawner = null;
 
 		// Clear properties
-		m_activationTimeProp = null;
-		m_activationXPProp = null;
+		m_activationTriggersProp = null;
+		m_deactivationTriggersProp = null;
 	}
 
 	/// <summary>
@@ -71,6 +79,9 @@ public class SpawnerEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
+		// Aux vars
+		bool checkForErrors = false;
+
 		// Loop through all serialized properties and work with special ones
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
@@ -80,27 +91,50 @@ public class SpawnerEditor : Editor {
 				// Draw the property
 				EditorGUILayout.PropertyField(p);
 
-				// If active, draw activation conditions
+				// If active, draw activation triggers
 				if(!p.boolValue) {
 					// Draw activation properties
-					EditorGUILayout.PropertyField(m_activationTimeProp);
-					EditorGUILayout.PropertyField(m_activationXPProp);
+					EditorGUI.BeginChangeCheck();
+					EditorGUILayout.PropertyField(m_activationTriggersProp, true);
+					EditorGUILayout.PropertyField(m_deactivationTriggersProp, true);
+					if(EditorGUI.EndChangeCheck()) {
+						// Check for wrong setups (once the property changes have been applied!)
+						checkForErrors = true;
+					}
 
-					// If both min values are < 0, show error message
-					if(m_targetSpawner.activationTime.min < 0 && m_targetSpawner.activationXP.min < 0) {
-						EditorGUILayout.HelpBox("Either activation time or activation XP must be at least 0!", MessageType.Error);
+					// Show feedback messages
+					if(m_repeatedActivationTriggerTypeError) {
+						EditorGUILayout.HelpBox("Two or more activation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+					}
+
+					if(m_repeatedDeactivationTriggerTypeError) {
+						EditorGUILayout.HelpBox("Two or more deactivation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+					}
+
+					if(m_incompatibleValuesError) {
+						EditorGUILayout.HelpBox("A deactivation trigger's value is lower than an activation trigger of the same type!\nSpawner will never be active.", MessageType.Error);
 					}
 				}
 			}
 
+			// Ignore both activation triggers (we're showing them manually)
+			else if(p.name == m_activationTriggersProp.name || p.name == m_deactivationTriggersProp.name) {
+				// Do nothing
+			}
+
 			// Default
 			else {
-				EditorGUILayout.PropertyField(p);
+				EditorGUILayout.PropertyField(p, true);
 			}
 		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
+
+		// Check for wrong setups
+		if(checkForErrors) {
+			CheckForErrors();
+		}
 	}
 
 	/// <summary>
@@ -108,5 +142,62 @@ public class SpawnerEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
-	} 
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL UTILS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Checks current values of the activation/deactivation triggers looking for errors.
+	/// Initializes the internal error control vars.
+	/// </summary>
+	private void CheckForErrors() {
+		// Check duplicated activation triggers
+		m_repeatedActivationTriggerTypeError = false;
+		foreach(Spawner.SpawnCondition trigger1 in m_targetSpawner.activationTriggers) {
+			foreach(Spawner.SpawnCondition trigger2 in m_targetSpawner.activationTriggers) {
+				// Start value is higher than end value for the same trigger type
+				if(trigger1 != trigger2
+				&& trigger1.type == trigger2.type) {
+					m_repeatedActivationTriggerTypeError = true;
+					break;	// Only show message once! :D
+				}
+			}
+
+			// Break from outer loop as well
+			if(m_repeatedActivationTriggerTypeError) break;
+		}
+
+		// Check duplicated deactivation triggers
+		m_repeatedDeactivationTriggerTypeError = false;
+		foreach(Spawner.SpawnCondition trigger1 in m_targetSpawner.deactivationTriggers) {
+			foreach(Spawner.SpawnCondition trigger2 in m_targetSpawner.deactivationTriggers) {
+				// Start value is higher than end value for the same trigger type
+				if(trigger1 != trigger2
+				&& trigger1.type == trigger2.type) {
+					m_repeatedDeactivationTriggerTypeError = true;
+					break;	// Only show message once! :D
+				}
+			}
+
+			// Break from outer loop as well
+			if(m_repeatedDeactivationTriggerTypeError) break;
+		}
+
+		// Check incompatible values
+		m_incompatibleValuesError = false;
+		foreach(Spawner.SpawnCondition startTrigger in m_targetSpawner.activationTriggers) {
+			foreach(Spawner.SpawnCondition endTrigger in m_targetSpawner.deactivationTriggers) {
+				// Start value is higher than end value for the same trigger type
+				if(startTrigger.type == endTrigger.type
+				&& startTrigger.value > endTrigger.value) {
+					m_incompatibleValuesError = true;
+					break;	// Only show message once! :D
+				}
+			}
+
+			// Break from outer loop as well
+			if(m_incompatibleValuesError) break;
+		}
+	}
 }
