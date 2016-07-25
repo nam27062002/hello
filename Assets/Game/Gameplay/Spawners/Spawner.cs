@@ -2,7 +2,18 @@ using UnityEngine;
 using System.Collections;
 
 public class Spawner : MonoBehaviour, ISpawner {
+	[System.Serializable]
+	public class SpawnCondition {
+		public enum Type {
+			XP,
+			TIME
+		}
 
+		public Type type = Type.XP;
+
+		[NumericRange(0f)]	// Force positive value
+		public float value = 0f;
+	}
 
 	//-----------------------------------------------
 	// Properties
@@ -23,13 +34,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] private bool m_alwaysActive = false;
 	public bool alwaysActive { get { return m_alwaysActive; }}
 
-	[HideInInspector] [Tooltip("Total seconds of gameplay.\n-1 to not take a value into account.")]
-	[SerializeField] private Range m_activationTime = new Range(-1, -1);
-	public Range activationTime { get { return m_activationTime; }}
+	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
+	[SerializeField] private SpawnCondition[] m_activationTriggers;
+	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
 
-	[HideInInspector] [Tooltip("XP acquired during the game session.\n-1 to not take a value into account")]
-	[SerializeField] private Range m_activationXP = new Range(-1, -1);
-	public Range activationXP { get { return m_activationXP; }}
+	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
+	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
+	public SpawnCondition[] deactivationTriggers { get { return m_deactivationTriggers; }}
 
 	[Separator("Respawn")]
 	[SerializeField] private Range m_spawnTime = new Range(40f, 45f);
@@ -112,9 +123,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_allEntitiesKilledByPlayer = false;
 
 		m_readyToBeDisabled = false;
-
-		// [AOC] Safecheck: If both start conditions are set to -1 (they shouldn't, wrong content), switch initial time to 0 so everything works ok
-		if(m_activationXP.min < 0 && m_activationTime.min < 0) m_activationTime.min = 0;
 
 		if (m_activeOnStart) {
 			Spawn();
@@ -236,24 +244,55 @@ public class Spawner : MonoBehaviour, ISpawner {
 		if(m_readyToBeDisabled) return false;
 
 		// Check start conditions
-		bool startThresholdOk = (m_activationTime.min >= 0 && _time >= m_activationTime.min)	// We have an activation time (>= 0) and we've reached the threshold
-							 || (m_activationXP.min >= 0 && _xp >= m_activationXP.min);		// We have a minimum activation XP (>= 0) and we have earned enough XP
+		bool startConditionsOk = (m_activationTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
+		for(int i = 0; i < m_activationTriggers.Length; i++) {
+			// Is this condition satisfied?
+			switch(m_activationTriggers[i].type) {
+				case SpawnCondition.Type.XP: {
+					startConditionsOk |= (_xp >= m_activationTriggers[i].value);	// We've earned enough xp
+				} break;
+
+				case SpawnCondition.Type.TIME: {
+					startConditionsOk |= (_time >= m_activationTriggers[i].value);	// We've reached the activation time
+				} break;
+			}
+
+			// If one of the conditions has already triggered, no need to keep checking
+			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one, so we would be adding an extra instruction for nothing, so let's keep it commented for now
+			// if(startConditionsOk) break;
+		}
 
 		// If start conditions aren't met, we can't spawn, no need to check anything else
-		if(!startThresholdOk) {
+		if(!startConditionsOk) {
 			return false;
 		}
 
 		// Check end conditions
-		bool endThresholdOk = (m_activationTime.max < 0 || _time < m_activationTime.max)	// Either we don't have an end time (-1) or we haven't yet reached the threshold
-						   && (m_activationXP.max < 0 || _xp < m_activationXP.max);			// Either we don't have a XP limit (-1) or we haven't yet reach it
+		bool endConditionsOk = true;
+		for(int i = 0; i < m_deactivationTriggers.Length; i++) {
+			// Is this condition satisfied?
+			switch(m_deactivationTriggers[i].type) {
+				case SpawnCondition.Type.XP: {
+					endConditionsOk &= (_xp < m_deactivationTriggers[i].value);		// We haven't yet reached the xp limit
+				} break;
+
+				case SpawnCondition.Type.TIME: {
+					endConditionsOk &= (_time < m_deactivationTriggers[i].value);	// We haven't yet reached the time limit
+				} break;
+			}
+
+			// If one of the conditions has already triggered, no need to keep checking
+			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one, so we would be adding an extra instruction for nothing, so let's keep it commented for now
+			// if(!endConditionsOk) break;
+		}
 
 		// If we've reached either of the end conditions, mark the spawner as ready to disable
-		if(!endThresholdOk && Application.isPlaying) {
+		// Only during actual gameplay, not while using the level editor simulator!
+		if(!endConditionsOk && Application.isPlaying) {
 			m_readyToBeDisabled = true;
 		}
 
-		return endThresholdOk;
+		return endConditionsOk;
 	}
 
 	public void Respawn() {
@@ -338,11 +377,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 			// spawner for static objects with a fixed position
 			return new CircleAreaBounds(transform.position, 1f);
 		}
-	}
-
-	void OnValidate() {
-		// Make sure activation thresholds are valid!
-		if(m_activationTime.min < 0 && m_activationXP.min < 0) m_activationTime.min = 0;
 	}
 
 	void OnDrawGizmos() {
