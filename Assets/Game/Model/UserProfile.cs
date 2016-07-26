@@ -34,12 +34,18 @@ public class UserProfile
 	//------------------------------------------------------------------------//
 	// PROPERTIES															  //
 	//------------------------------------------------------------------------//
-
+	// Tech
 	private int m_saveCounter = 0;
 	public int saveCounter
 	{
 		get{ return m_saveCounter; }
 		set{ m_saveCounter = value; }
+	}
+
+	// Last save timestamp
+	private DateTime m_saveTimestamp = DateTime.UtcNow;
+	public DateTime saveTimestamp {
+		get { return m_saveTimestamp; }
 	}
 
 	// Set default values in the inspector, use static methods to set them from code
@@ -232,17 +238,23 @@ public class UserProfile
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
-
-
-		// Economy
-		Debug.Log( _data.ToString() );
+		Debug.Log("Loading UserProfile\n" + _data.ToString());
 		SimpleJSON.JSONNode profile = _data["userProfile"];
 
-		if ( profile.ContainsKey("saveCounter") )
+		// Tech
+		if ( profile.ContainsKey("saveCounter") ) {
 			m_saveCounter = profile["saveCounter"].AsInt;
-		else
+		} else {
 			m_saveCounter = 0;
+		}
+		
+		if( profile.ContainsKey("timestamp") ) {
+			m_saveTimestamp = DateTime.Parse(profile["timestamp"], System.Globalization.CultureInfo.InvariantCulture);
+		} else {
+			m_saveTimestamp = DateTime.Now;
+		}
 
+		// Economy
 		m_coins = profile["sc"].AsInt;
 		m_pc = profile["pc"].AsInt;
 
@@ -346,7 +358,7 @@ public class UserProfile
 		}
 
 		// Incubator timer
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
 	}
 
 	/// <summary>
@@ -354,12 +366,27 @@ public class UserProfile
 	/// </summary>
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public SimpleJSON.JSONClass Save() {
+		// Update timestamp
+		m_saveTimestamp = DateTime.UtcNow;
+
+		// Create and return json
+		return ToJson();
+	}
+
+	/// <summary>
+	/// Create a json with the current data in the profile.
+	/// Similar to Save(), but doesn't update timestamp nor save count.
+	/// </summary>
+	/// <returns>A json representing this profile.</returns>
+	public SimpleJSON.JSONClass ToJson() {
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-
-		// PROFILE
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
+
+		// Tech
 		profile.Add("saveCounter", m_saveCounter.ToString());
+		profile.Add("timestamp", m_saveTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
 		// Economy
 		profile.Add( "sc", m_coins.ToString());
 		profile.Add( "pc", m_pc.ToString());
@@ -389,6 +416,7 @@ public class UserProfile
 		data.Add("eggs", SaveEggData());
 		data.Add("disguises", m_wardrobe.Save());
 		data.Add("missions", m_userMissions.Save());
+
 		// Return it
 		return data;
 	}
@@ -416,7 +444,7 @@ public class UserProfile
 		}
 
 		// Incubator timer
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString());;
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
 		return data;
 	}
@@ -429,7 +457,7 @@ public class UserProfile
 			if ( pair.Value.isOwned )
 				ret++;
 		}
-		return 0;
+		return ret;
 	}
 
 	public void UniserverSetted()
@@ -456,6 +484,14 @@ public class UserProfile
 			}
 		}
 		return ret;
+	}
+
+	/// <summary>
+	/// Return a string representation of this class.
+	/// </summary>
+	/// <returns>A formatted json string representing this class.</returns>
+	public string ToString() {
+		return ToJson().ToString();
 	}
 }
 

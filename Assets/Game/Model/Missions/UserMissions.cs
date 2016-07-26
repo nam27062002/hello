@@ -267,9 +267,15 @@ public class UserMissions
 		
 		// Load generation index BEFORE missions, in case new missions have to be generated
 		SimpleJSON.JSONArray array = _data["generationIdx"].AsArray;
-		m_generationIdx = new int[ array.Count ];
-		for( int i =0 ; i<array.Count; i++ )
-			m_generationIdx[i] = array[i].AsInt;
+		m_generationIdx = new int[(int)Mission.Difficulty.COUNT];
+		for( int i =0 ; i < (int)Mission.Difficulty.COUNT; i++ ) {
+			// If there is no data for this difficulty, put default value
+			if(i >= array.Count) {
+				m_generationIdx[i] = 0;
+			} else {
+				m_generationIdx[i] = array[i].AsInt;
+			}
+		}
 
 		// Load missions
 		SimpleJSON.JSONArray activeMissions = _data["activeMissions"].AsArray;

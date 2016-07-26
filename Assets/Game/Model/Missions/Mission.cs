@@ -217,7 +217,7 @@ public class Mission {
 		}
 
 		// Restore cooldown timestamp
-		m_cooldownStartTimestamp = DateTime.Parse( _data["cooldownStartTimestamp"]);
+		m_cooldownStartTimestamp = DateTime.Parse( _data["cooldownStartTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
 	}
 	
 	/// <summary>
@@ -238,7 +238,7 @@ public class Mission {
 		if(m_objective != null) data.Add("currentValue", m_objective.currentValue.ToString());
 
 		// Cooldown timestamp
-		data.Add("cooldownStartTimestamp", m_cooldownStartTimestamp.ToString());
+		data.Add("cooldownStartTimestamp", m_cooldownStartTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
 		
 		return data;
 	}

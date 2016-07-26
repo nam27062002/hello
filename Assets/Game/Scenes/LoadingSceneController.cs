@@ -91,7 +91,7 @@ public class LoadingSceneController : SceneController {
 		PersistenceManager.Init();
 		PersistenceManager.Load();
 		GameServerManager.SharedInstance.LoginToServer();
-		PersystenceSynchManager.CreateInstance(true);
+		PersistenceSynchManager.CreateInstance(true);
 
 		// Initialize localization
 		SetSavedLanguage();
