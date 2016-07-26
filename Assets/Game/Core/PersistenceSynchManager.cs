@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchManager>
+public class PersistenceSynchManager : SingletonMonoBehaviour<PersistenceSynchManager>
 {
 
 	bool m_allowSynchProcess = true;
@@ -121,13 +121,15 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 			if ( serverData != null )
 			{
 				// Resolve Conflict!
+				/*
+				// For testing
 				UsersManager.currentUser.saveCounter = Mathf.Max( UsersManager.currentUser.saveCounter, serverData.saveCounter);
 				GameServerManager.SharedInstance.CleanLastRecievedUniverse();
 				GameServerManager.SharedInstance.saveDataRecovered = true;
 				m_continueSynchProcess = true;
+				*/
 
-				/*
-				if ( UsersManager.currentUser.saveCounter < serverData.saveCounter )
+				if ( UsersManager.currentUser.saveCounter != serverData.saveCounter )
 				{
 					// Information on server is newer -> I should get it or merge
 					Messenger.Broadcast(GameEvents.MERGE_SERVER_SAVE_DATA);
@@ -140,7 +142,6 @@ public class PersystenceSynchManager : SingletonMonoBehaviour<PersystenceSynchMa
 					// Lets continue Synch Process
 					m_continueSynchProcess = true;
 				}
-				*/
 			}
 			else
 			{
