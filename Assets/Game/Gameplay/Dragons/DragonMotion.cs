@@ -137,9 +137,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_waterMovementModifier = 0;
 
-	public static float s_velocityBlendRate = 256;
-	public static float s_velocityUpBlendRate = 230;
-	public static float s_velocityDownBlendRate = 256;
+	public static float s_dargonAcceleration = 30;
+	public static float s_dragonMass = 1;
+	public static float s_dragonFricction = 2.0f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -460,6 +460,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		switch (m_state) {
 			case State.Idle:
 				FlyAwayFromGround();
+				// UpdateMovement();
 				break;
 
 			case State.Fly:
@@ -517,21 +518,95 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	private void UpdateMovement() {
-		Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier); 
-		if (impulse != Vector3.zero) {
-			// accelerate the dragon
-			float speedUp = (m_state == State.Fly_Down)? 1.25f : 1f;
-			m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
+	private static int movementType = 0;
+	private void UpdateMovement() 
+	{
+		switch( movementType )
+		{
+			case 0:
+			{
+				Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier); 
+				if (impulse != Vector3.zero) {
+					// accelerate the dragon
+					float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
+					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
-			ComputeFinalImpulse(impulse);
-			RotateToDirection( m_impulse );
-		} else {
-			ComputeImpulseToZero();
-			ChangeState(State.Idle);
+					ComputeFinalImpulse(impulse);
+					RotateToDirection( m_impulse );
+					// m_orientation.SetDirection(m_direction);
+				} else {
+					ChangeState(State.Idle);
+				}
+
+			}break;
+			case 1:
+			{
+				Vector3 impulse = m_controls.GetImpulse(1); 
+				if ( impulse != Vector3.zero )
+				{
+					// http://stackoverflow.com/questions/667034/simple-physics-based-movement
+
+					// v_max = a/f
+					// t_max = 5/f
+
+					float gravity = 9.81f / 3.0f;
+					Vector3 acceleration = Vector3.down * gravity * s_dragonMass;	// Gravity
+					acceleration += impulse * s_dargonAcceleration * m_targetSpeedMultiplier * s_dragonMass;	// User Force
+
+					// stroke's Drag
+					m_impulse = m_rbody.velocity;
+
+					float impulseMag = m_impulse.magnitude;
+					m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * s_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+					m_direction = m_impulse.normalized;
+					RotateToDirection( impulse );
+				}
+				else
+				{
+					ComputeImpulseToZero();
+					ChangeState( State.Idle );
+				}
+			}break;
+			case 2:
+			{
+				Vector3 impulse = m_controls.GetImpulse(1); 
+				if (impulse != Vector3.zero) 
+				{
+
+					// accelerate the dragon
+					float sin = impulse.y / Mathf.Sqrt( Mathf.Pow(impulse.y,2) + Mathf.Pow(impulse.x,2) );
+
+					float speedUp = 1.5f + -sin * 0.5f;
+					// float targetMultiplier = m_targetSpeedMultiplier * speedUp * m_speedValue;
+					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
+					impulse = impulse * m_currentSpeedMultiplier * m_speedValue;
+
+					float moveDamp = m_velocityBlendRate;//  + -sin;
+
+					m_impulse = m_rbody.velocity;
+					// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref impulse, moveDamp * Time.deltaTime, 8.0f);
+					// m_impulse = Damping( m_impulse, impulse, moveDamp * Time.deltaTime, 0.9f);
+					float maxDampingScale = Util.m_defaultMaxDampingScale;
+					Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref impulse, moveDamp * Time.deltaTime, 8.0f, maxDampingScale);
+
+					m_direction = m_impulse.normalized;
+					RotateToDirection( m_impulse );
+				} 
+				else 
+				{
+					ComputeImpulseToZero();
+					ChangeState(State.Idle);
+				}
+			}break;
 		}
 
 		m_rbody.velocity = m_impulse;
+	}
+
+
+	Vector3 Damping( Vector3 src, Vector3 dst, float dt, float factor)
+	{
+		return ((src * factor) + (dst * dt)) / (factor + dt);
 	}
 
 	private void UpdateWaterMovement()
@@ -620,24 +695,30 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
 			// m_impulse.Normalize();
 
-			// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
-			float maxDampingScale = Util.m_defaultMaxDampingScale;
-			// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, 10 * Time.deltaTime, 8.0f);
-			m_impulse.x = Util.MoveTowardsWithDamping(m_impulse.x, _impulse.x, s_velocityBlendRate * Time.deltaTime, 8.0f, maxDampingScale);
-			if ( _impulse.y > m_impulse.y )
-				m_impulse.y = Util.MoveTowardsWithDamping(m_impulse.y, _impulse.y, (s_velocityUpBlendRate) * Time.deltaTime, 8.0f, maxDampingScale);
-			else
-				m_impulse.y = Util.MoveTowardsWithDamping(m_impulse.y, _impulse.y, (s_velocityDownBlendRate) * Time.deltaTime, 8.0f, maxDampingScale);
-
+			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
 			m_direction = m_impulse.normalized;
-		}			
+		}
 	}
 
 	private void ComputeImpulseToZero()
 	{
-		// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
-		Vector3 zero = Vector3.zero;
-		Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref zero, s_velocityBlendRate * 0.5f * Time.deltaTime, 8.0f);
+		switch( movementType )
+		{
+			case 0:
+			{
+				m_impulse = Vector3.zero;
+			}break;
+			case 1:
+			{
+				float impulseMag = m_impulse.magnitude;
+				m_impulse += -(m_impulse.normalized * s_dragonFricction * 2 * impulseMag * Time.deltaTime);
+			}break;
+			case 2:
+			{
+				Vector3 zero = Vector3.zero;
+				Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref zero, m_velocityBlendRate * Time.deltaTime, 8.0f);
+			}break;
+		}
 
 		m_direction = m_impulse.normalized;
 	}
@@ -760,7 +841,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 		
 	public Vector2 velocity {
-		get { return m_rbody.velocity; }
+		get { return m_impulse; }
 	}
 
 	public Vector2 angularVelocity{
