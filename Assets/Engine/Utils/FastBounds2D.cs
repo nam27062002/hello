@@ -190,6 +190,13 @@ public class FastBounds2D
 		c.y = (y0+y1)*0.5f;
 		c.z = 0.0f;
 	}
+
+	public void GetSize( out Vector3 s )
+	{
+		s.x = x1 - x0;
+		s.y = y1 - y0;
+		s.z = 0;
+	}
 	
 	//----------------------------------------------------------------------------
 	// Set size, leave centre unchanged
@@ -247,6 +254,11 @@ public class FastBounds2D
 	public bool Intersects(FastBounds2D b)
 	{
 		return !((x1<b.x0) || (y1<b.y0) || (x0>b.x1) || (y0>b.y1));
+	}
+
+	public bool Intersects( Bounds b )
+	{
+		return !((x1<b.min.x) || (y1<b.min.y) || (x0>b.max.x) || (y0>b.max.y));
 	}
 	
 	public bool Contains(Vector3 p)

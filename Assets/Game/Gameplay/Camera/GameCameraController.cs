@@ -52,6 +52,7 @@ public class GameCameraController : MonoBehaviour {
 
 
 	// References
+	private TouchControlsDPad	m_touchControls = null;
 	private DragonMotion m_dragonMotion = null;
 	private DragonBreathBehaviour m_dragonBreath = null;
 	private Transform m_interest = null;
@@ -73,10 +74,10 @@ public class GameCameraController : MonoBehaviour {
 	private float m_shakeTimer = 0f;
 
 	// Camera bounds
-	private Bounds m_frustum = new Bounds();
-	private Bounds m_activationMin = new Bounds();
-	private Bounds m_activationMax = new Bounds();
-	private Bounds m_deactivation = new Bounds();
+	private FastBounds2D m_frustum = new FastBounds2D();
+	private FastBounds2D m_activationMin = new FastBounds2D();
+	private FastBounds2D m_activationMax = new FastBounds2D();
+	private FastBounds2D m_deactivation = new FastBounds2D();
 
 	private Transform m_transform;
 
@@ -87,6 +88,12 @@ public class GameCameraController : MonoBehaviour {
 	};
 	State m_state = State.INTRO;
 	Vector3 m_dampedPosition;
+
+
+
+
+	Vector3 m_position;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -143,6 +150,12 @@ public class GameCameraController : MonoBehaviour {
 			yield return null;
 		}
 
+		GameObject gameInputObj = GameObject.Find("PF_GameInput");
+		if(gameInputObj != null) 
+		{
+			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
+		}
+
 		// Acquire external references
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 		m_dragonBreath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
@@ -176,6 +189,7 @@ public class GameCameraController : MonoBehaviour {
 		pos.z = -m_currentZoom;
 		transform.position = pos;
 		m_dampedPosition = pos;
+		m_position = pos;
 
 		m_camera = GetComponent<Camera>();
 
@@ -197,101 +211,199 @@ public class GameCameraController : MonoBehaviour {
 	private void LateUpdate() 
 	{
 		
-		Vector3 newPos = m_transform.position;
-
 		switch( m_state )
 		{
 			case State.INTRO:
 			{	
 				m_currentZoom = Mathf.Lerp( m_currentZoom, m_defaultZoom, Time.deltaTime);
-				newPos.z = -m_currentZoom;
-				m_dampedPosition = newPos;
+				m_position.z = -m_currentZoom;
+				m_dampedPosition = m_position;
 			}break;
 			case State.PLAY:
 			{
-				// it depends on previous fixed updates
-				if ( m_dragonMotion != null)
-				{
-
-					Vector3 targetPos;
-					// Compute new target position
-					// Is there a danger nearby?
-					/*if(m_interest != null) 
-					{
-						m_interestLerp += Time.deltaTime * 0.5f;
-						m_interestLerp = Mathf.Min( m_interestLerp, 0.25f);
-						m_interestPosition = m_interest.position - m_dragonMotion.cameraLookAt.position;
-					} 
-					else 
-					*/
-					{
-						m_interestLerp -= Time.deltaTime * 0.5f;
-						m_interestLerp = Mathf.Max( m_interestLerp, 0);
-					}
-
-					targetPos = Vector3.Lerp(m_dragonMotion.transform.position, m_dragonMotion.transform.position + m_interestPosition, m_interestLerp);
-
-
-					Vector3 dragonVelocity = m_dragonMotion.velocity;
-					Vector3 dragonDirection = dragonVelocity.normalized;
-
-					
-
-					// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
-					if (m_furyOn)
-					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f), Time.deltaTime );
-					}
-					else
-					{
-						m_forwardOffset = Mathf.Lerp( m_forwardOffset, 0, Time.deltaTime );
-					}
-					targetPos = targetPos + dragonDirection * m_forwardOffset;
-
-					// Clamp X to defined limits
-					targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
-
-
-					// Compute Z, defined by the zoom factor
-					float targetZoom = m_defaultZoom;
-					if ( m_slowMoJustStarted )
-					{
-						targetZoom = m_farZoom;
-						m_currentZoom = targetZoom;
-						m_slowMoJustStarted = false;
-					}
-					else
-					{
-						if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
-							targetZoom = m_farZoom;
-						m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime);
-					}
-					targetPos.z = -m_currentZoom;
-
-					float dampFactor = 0.9f;
-					m_dampedPosition = Damping( m_dampedPosition, targetPos, Time.deltaTime, dampFactor);
-
-					float m = ( targetPos - m_dampedPosition ).magnitude * 0.5f;
-					// float multiplierFactor = (1 / ( 1 + Mathf.Pow(2,-(m-2)))) * 1.5f;
-					float multiplierFactor = (1 / ( 1 + Mathf.Pow(2f,-((m))))) * 1.375f;
-					// float multiplierFactor = (1 / ( 1 + Mathf.Pow(2,-(m-2)))) * 1.375f;
-
-					newPos = m_dampedPosition + (( targetPos - m_dampedPosition ) * multiplierFactor);
-
-
-					// FACTOR = función sigmoide  = 1 / (1+e^-x)
-					// Desplazar y ajustar alturas (1/(1+e^-(x-2))*2
-				
-				}
+				NewVersion();
+				// OldVersion();
 			}break;
 		}
 
-		newPos = UpdateByShake(newPos);
-
+		Vector3 newPos = UpdateByShake(m_position);
 		// DONE! Apply new position
 		transform.position = newPos;
 
 		UpdateFrustumBounds();
+	}
+
+	Vector3 m_trackAheadVector = Vector3.zero;
+	private const float         m_maxTrackAheadScaleX = 0.15f;
+ 	private const float         m_maxTrackAheadScaleY = 0.2f; //JO
+	private const float			m_trackBlendRate = 1.0f;
+	private const float 		m_maxRotationAngleX = 22.5f; //JO 
+    private const float         m_maxRotationAngleY = 20.0f;
+	private bool				m_snap = false;
+	private float               m_rotateLerpTimer = 0.0f;
+	private float 				m_rotateLerpDuration = 1.0f;
+	private float               m_camDelayLerpT = 0.0f;
+	private Vector3             m_trackAheadPos = Vector3.zero;
+	private float 				m_bossInAngleLerp = 0.0f;
+	private float 				m_trackAheadScale = 0.5f;
+
+	private void UpdateTrackAheadVector( Vector3 trackingVelocity)
+   	{
+         float dt = Time.deltaTime;
+         float trackAheadRangeX = m_frustum.w * m_maxTrackAheadScaleX; // todo: have maxTrackAheadScale account for size of target?
+         float trackAheadRangeY = m_frustum.h * m_maxTrackAheadScaleY;
+         float trackBlendRate = trackAheadRangeX * m_trackBlendRate;
+         Vector3 desiredTrackAhead = trackingVelocity;
+         desiredTrackAhead.x *= trackAheadRangeX;
+         desiredTrackAhead.y *= trackAheadRangeY;
+         if(m_snap)
+             m_trackAheadVector = desiredTrackAhead;
+         else
+             Util.MoveTowardsVector3XYWithDamping(ref m_trackAheadVector, ref desiredTrackAhead, trackBlendRate*dt, 1.0f);
+     }
+
+	void UpdateCameraDelayLerp()
+	{
+		// update the camera delay lerp
+		m_rotateLerpTimer += Time.deltaTime;
+		m_camDelayLerpT = m_rotateLerpTimer / m_rotateLerpDuration; // 0 - 1
+		m_camDelayLerpT = Mathf.Clamp01 (m_camDelayLerpT);
+	}
+
+	void UpdateZoom()
+	{
+		m_position.z = -m_currentZoom;
+	}
+	 
+	void UpdateRotation()
+	{
+		if((m_dragonMotion != null))
+		{
+			Vector3 targetTrackAhead = m_trackAheadVector * m_trackAheadScale;
+			Vector3 targetTrackPos =  m_dragonMotion.transform.position + targetTrackAhead;
+			m_trackAheadPos = Vector3.Lerp(m_trackAheadPos, targetTrackPos, m_camDelayLerpT);
+			
+			Vector3 currentPos = m_position;
+			currentPos.z = m_trackAheadPos.z;
+
+			Vector3 lookAtPos = Vector3.Lerp(m_trackAheadPos, currentPos, m_bossInAngleLerp);
+			m_transform.LookAt(lookAtPos);
+
+            // clamp the rotation at a maximum of 30 degrees either way
+            Vector3 rot = m_transform.rotation.eulerAngles;
+			if(rot.y > 180.0f)
+			{
+				rot.y = rot.y - 360.0f;
+			}
+			if(rot.x > 180.0f)
+			{
+				rot.x = rot.x - 360.0f;
+			}
+			rot.y = Mathf.Clamp(rot.y, -m_maxRotationAngleY, m_maxRotationAngleY);
+			rot.x = Mathf.Clamp(rot.x, -m_maxRotationAngleX, m_maxRotationAngleX);
+
+            m_transform.rotation = Quaternion.Euler(rot);
+		}
+
+	}
+
+	void NewVersion()
+	{
+		if ( m_dragonMotion != null )
+		{
+			Vector3 targetPos = m_dragonMotion.transform.position;
+			UpdateTrackAheadVector( m_dragonMotion.velocity.normalized );
+			Vector3 desiredPos = targetPos - m_trackAheadVector;
+			UpdateCameraDelayLerp();
+			m_position = Vector3.Lerp( m_position, desiredPos, m_camDelayLerpT);
+			// have we changed direction in this Update()
+			if(m_touchControls.directionChanged)	
+			{
+				m_rotateLerpTimer = 0.0f;
+			}
+
+			UpdateZoom();
+			UpdateRotation();
+			UpdateFrustumBounds();
+		}
+	}
+
+
+	void OldVersion()
+	{
+		// it depends on previous fixed updates
+		if ( m_dragonMotion != null)
+		{
+
+			Vector3 targetPos;
+			// Compute new target position
+			// Is there a danger nearby?
+			/*if(m_interest != null) 
+			{
+				m_interestLerp += Time.deltaTime * 0.5f;
+				m_interestLerp = Mathf.Min( m_interestLerp, 0.25f);
+				m_interestPosition = m_interest.position - m_dragonMotion.cameraLookAt.position;
+			} 
+			else 
+			*/
+			{
+				m_interestLerp -= Time.deltaTime * 0.5f;
+				m_interestLerp = Mathf.Max( m_interestLerp, 0);
+			}
+
+			targetPos = Vector3.Lerp(m_dragonMotion.transform.position, m_dragonMotion.transform.position + m_interestPosition, m_interestLerp);
+
+
+			Vector3 dragonVelocity = m_dragonMotion.velocity;
+			Vector3 dragonDirection = dragonVelocity.normalized;
+
+			
+
+			// Update forward direction and apply forward offset to look a bit ahead in the direction the dragon is moving
+			if (m_furyOn)
+			{
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, (m_dragonBreath.actualLength * 0.5f), Time.deltaTime );
+			}
+			else
+			{
+				m_forwardOffset = Mathf.Lerp( m_forwardOffset, 0, Time.deltaTime );
+			}
+			targetPos = targetPos + dragonDirection * m_forwardOffset;
+
+			// Clamp X to defined limits
+			targetPos.x = Mathf.Clamp(targetPos.x, m_limitX.min, m_limitX.max);
+
+
+			// Compute Z, defined by the zoom factor
+			float targetZoom = m_defaultZoom;
+			if ( m_slowMoJustStarted )
+			{
+				targetZoom = m_farZoom;
+				m_currentZoom = targetZoom;
+				m_slowMoJustStarted = false;
+			}
+			else
+			{
+				if ( m_interest != null || m_slowMotionOn || m_furyOn || m_boostOn || (m_dragonMotion.state == DragonMotion.State.InsideWater && !m_dragonMotion.canDive))
+					targetZoom = m_farZoom;
+				m_currentZoom = Mathf.Lerp( m_currentZoom, targetZoom, Time.deltaTime);
+			}
+			targetPos.z = -m_currentZoom;
+
+			float dampFactor = 0.9f;
+			m_dampedPosition = Damping( m_dampedPosition, targetPos, Time.deltaTime, dampFactor);
+
+			float m = ( targetPos - m_dampedPosition ).magnitude * 0.5f;
+			// float multiplierFactor = (1 / ( 1 + Mathf.Pow(2,-(m-2)))) * 1.5f;
+			float multiplierFactor = (1 / ( 1 + Mathf.Pow(2f,-((m))))) * 1.375f;
+			// float multiplierFactor = (1 / ( 1 + Mathf.Pow(2,-(m-2)))) * 1.375f;
+
+			m_position = m_dampedPosition + (( targetPos - m_dampedPosition ) * multiplierFactor);
+
+			// FACTOR = función sigmoide  = 1 / (1+e^-x)
+			// Desplazar y ajustar alturas (1/(1+e^-(x-2))*2
+		
+		}
 	}
 
 	Vector3 Damping( Vector3 src, Vector3 dst, float dt, float factor)
@@ -387,6 +499,7 @@ public class GameCameraController : MonoBehaviour {
 		return !m_deactivation.Intersects(_bounds);
 	}
 
+
 	public bool IsInsideFrustrum( Vector3 _point)
 	{
 		_point.z = 0;
@@ -402,24 +515,53 @@ public class GameCameraController : MonoBehaviour {
 	}
 
 	// update camera bounds for Z = 0, this can change with dinamic zoom in/out animations
-	private void UpdateFrustumBounds() {
-		float frustumHeight = 2.0f * Mathf.Abs(transform.position.z) * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
-		float frustumWidth = frustumHeight * Camera.main.aspect;
+	private void UpdateFrustumBounds() 
+	{
+		if ( m_camera == null )
+			return;
 
-		Vector3 center = transform.position;
-		center.z = 0;
+		float z = -m_position.z;
 
-		m_frustum.center = center;
-		m_frustum.size = new Vector3(frustumWidth, frustumHeight, 4f);
+		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 
+		Ray[] cameraRays = new Ray[4];
+		cameraRays[0] = m_camera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));
+		cameraRays[1] = m_camera.ScreenPointToRay(new Vector3(m_camera.pixelWidth, 0.0f, z));
+		cameraRays[2] = m_camera.ScreenPointToRay(new Vector3(m_camera.pixelWidth, m_camera.pixelHeight, z));
+		cameraRays[3] = m_camera.ScreenPointToRay(new Vector3(0.0f, m_camera.pixelHeight, z));
+		
+		// generate two world bounds, one for z=0, one for background spawners
+		Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, 0.0f));
+		Vector3[] pts = new Vector3[4];
+		for(int i=0; i<4; i++)
+		{
+			Vector3? intersect = Util.RayPlaneIntersect(cameraRays[i], plane);
+			if(intersect != null)
+			{
+				pts[i] = (Vector3)intersect;
+				if(i == 0)	// initialize bounds with first point and zero size
+					m_frustum.Set(pts[i].x, pts[i].y, 0.0f, 0.0f);
+				else
+					m_frustum.Encapsulate(ref pts[i]);
+			}
+		}
 
-		m_activationMin.center = center;
-		m_activationMin.size = new Vector3(frustumWidth + m_activationDistance * 2f, frustumHeight + m_activationDistance * 2f, 4f);
 
-		m_activationMax.center = center;
-		m_activationMax.size = new Vector3(frustumWidth + (m_activationDistance + m_activationRange) * 2f, frustumHeight + (m_activationDistance + m_activationRange) * 2f, 4f);
+		float expand = 0;
 
-		m_deactivation.center = center;
-		m_deactivation.size = new Vector3(frustumWidth + m_deactivationDistance * 2f, frustumHeight + m_deactivationDistance * 2f, 4f);
+		m_activationMin.Set( m_frustum );
+		expand = m_activationDistance;
+		m_activationMin.ExpandBy(expand, expand);
+		m_activationMin.ExpandBy(-expand, -expand);
+
+		m_activationMax.Set( m_frustum );
+		expand = m_activationDistance + m_activationRange;
+		m_activationMax.ExpandBy( expand, expand );
+		m_activationMax.ExpandBy( -expand, -expand );
+
+		m_deactivation.Set( m_frustum );
+		expand = m_deactivationDistance;
+		m_deactivation.ExpandBy( expand, expand );
+		m_deactivation.ExpandBy( -expand, -expand );
 	}
 
 	//------------------------------------------------------------------//
@@ -525,16 +667,26 @@ public class GameCameraController : MonoBehaviour {
 		if (!Application.isPlaying) {
 			UpdateFrustumBounds();
 		}
-			
+		Vector3 center;
+		Vector3 size;
+
 		Gizmos.color = Color.yellow;
-		Gizmos.DrawWireCube(m_frustum.center, m_frustum.size);
+		m_frustum.GetCentre( out center );
+		m_frustum.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
 
 		Gizmos.color = Color.cyan;
-		Gizmos.DrawWireCube(m_activationMin.center, m_activationMin.size);
-		Gizmos.DrawWireCube(m_activationMax.center, m_activationMax.size);
+		m_activationMin.GetCentre( out center );
+		m_activationMin.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
+		m_activationMax.GetCentre( out center );
+		m_activationMax.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
 
 		Gizmos.color = Color.magenta;
-		Gizmos.DrawWireCube(m_deactivation.center, m_deactivation.size);
+		m_deactivation.GetCentre( out center );
+		m_deactivation.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
 	}
 }
 
