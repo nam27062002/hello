@@ -45,7 +45,7 @@ public class DragonControlPlayer : DragonControl {
 
 		if (touchControls != null && moving){
 
-			touchControls.CalcSharkDesiredVelocity(desiredVelocity, false);
+			touchControls.CalcSharkDesiredVelocity(desiredVelocity);
 			return new Vector3(touchControls.SharkDesiredVel.x, touchControls.SharkDesiredVel.y, 0f);
 		}else{
 
