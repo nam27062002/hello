@@ -221,8 +221,8 @@ public class GameCameraController : MonoBehaviour {
 			}break;
 			case State.PLAY:
 			{
-				NewVersion();
-				// OldVersion();
+				// NewVersion();
+				OldVersion();
 			}break;
 		}
 
