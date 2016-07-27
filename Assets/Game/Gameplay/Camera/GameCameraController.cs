@@ -254,7 +254,8 @@ public class GameCameraController : MonoBehaviour {
 	private void UpdateTrackAheadVector( Vector3 velocity)
    	{
 		Vector3 trackingVelocity = velocity;
-
+		if ( trackingVelocity.sqrMagnitude > 1 )
+			trackingVelocity.Normalize();
          float dt = Time.deltaTime;
          float trackAheadRangeX = m_frustum.w * m_maxTrackAheadScaleX; // todo: have maxTrackAheadScale account for size of target?
          float trackAheadRangeY = m_frustum.h * m_maxTrackAheadScaleY;
