@@ -218,6 +218,7 @@ public class GameCameraController : MonoBehaviour {
 				m_currentZoom = Mathf.Lerp( m_currentZoom, m_defaultZoom, Time.deltaTime);
 				m_position.z = -m_currentZoom;
 				m_dampedPosition = m_position;
+				m_trackAheadPos = m_position;
 			}break;
 			case State.PLAY:
 			{
@@ -239,7 +240,7 @@ public class GameCameraController : MonoBehaviour {
 	private const float			m_trackBlendRate = 1.0f;
 	private const float 		m_maxRotationAngleX = 22.5f; //JO 
     private const float         m_maxRotationAngleY = 20.0f;
-	private bool				m_snap = false;
+	private bool				m_snap = true;
 	private float               m_rotateLerpTimer = 0.0f;
 	private float 				m_rotateLerpDuration = 1.0f;
 	private float               m_camDelayLerpT = 0.0f;
@@ -247,8 +248,14 @@ public class GameCameraController : MonoBehaviour {
 	private float 				m_bossInAngleLerp = 0.0f;
 	private float 				m_trackAheadScale = 0.5f;
 
-	private void UpdateTrackAheadVector( Vector3 trackingVelocity)
+	private void UpdateTrackAheadVector( Vector3 velocity)
    	{
+		Vector3 trackingVelocity = velocity;
+   		if ( velocity.sqrMagnitude > 1 )
+   		{
+			velocity.Normalize();
+   		}
+
          float dt = Time.deltaTime;
          float trackAheadRangeX = m_frustum.w * m_maxTrackAheadScaleX; // todo: have maxTrackAheadScale account for size of target?
          float trackAheadRangeY = m_frustum.h * m_maxTrackAheadScaleY;
@@ -312,7 +319,7 @@ public class GameCameraController : MonoBehaviour {
 		if ( m_dragonMotion != null )
 		{
 			Vector3 targetPos = m_dragonMotion.transform.position;
-			UpdateTrackAheadVector( m_dragonMotion.velocity.normalized );
+			UpdateTrackAheadVector( m_dragonMotion.velocity );
 			Vector3 desiredPos = targetPos - m_trackAheadVector;
 			UpdateCameraDelayLerp();
 			m_position = Vector3.Lerp( m_position, desiredPos, m_camDelayLerpT);
@@ -325,6 +332,8 @@ public class GameCameraController : MonoBehaviour {
 			UpdateZoom();
 			UpdateRotation();
 			UpdateFrustumBounds();
+
+			m_snap = false;
 		}
 	}
 
