@@ -933,8 +933,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 3
-  m_runSpeed: 8
+  m_walkSpeed: 2
+  m_runSpeed: 5
   m_hasNavigationLayer: 1
   m_animA: 
   m_animB: 
@@ -986,7 +986,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":16,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":10,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false}]'
   m_avoidDistanceAttenuation: 12
   m_avoidCollisions: 1
 --- !u!114 &11486212
@@ -1013,8 +1013,8 @@ MonoBehaviour:
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 5
-    m_maxRadius: 8
+    m_minRadius: 10
+    m_maxRadius: 10
     m_angle: 360
     m_angleOffset: 0
     m_sensorOffset: {x: 0, y: 0, z: 0}
