@@ -50,6 +50,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// No more than X simultaneous messages on screen!
 		// Use container if defined to keep hierarchy clean
 
+		// Score
 		if(m_scoreFeedbackPrefab != null) {
 			// Must be created within the canvas
 			Transform parent = this.transform;
@@ -59,14 +60,19 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, 15);
 		}
 
+		// Coins
 		if(m_coinsFeedbackPrefab != null) {
 			PoolManager.CreatePool(m_coinsFeedbackPrefab, 5);
 		}
 
+		// PC
 		if(m_pcFeedbackPrefab != null) {
-			PoolManager.CreatePool(m_pcFeedbackPrefab, 3);
+			// Use game camera as parent, that way the feedback will be positioned relative to the viewport
+			Camera gameCamera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
+			PoolManager.CreatePool(m_pcFeedbackPrefab, gameCamera.transform, 1, false);
 		}
 
+		// Kill Feedback
 		if(m_killFeedbackPrefab != null) {
 			Transform parent = this.transform;
 			if(m_killFeedbackContainer != null) {
@@ -75,6 +81,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			PoolManager.CreatePool(m_killFeedbackPrefab, parent, 5, false);
 		}
 			
+		// Flock Bonus
 		if(m_flockBonusFeedbackPrefab != null) { 
 			Transform parent = this.transform;
 			if(m_scoreFeedbackContainer != null) {
@@ -83,6 +90,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, 2);
 		}
 
+		// Escape
 		if ( m_escapedFeedbackPrefab != null )
 		{
 			Transform parent = this.transform;
@@ -216,7 +224,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 		// PC
 		if(m_pcFeedbackPrefab != null && _reward.pc > 0) {
-			// [AOC] TODO!!
+			GameObject obj = PoolManager.GetInstance(m_pcFeedbackPrefab.name);
+			obj.SetActive(true);
 		}
 	}
 

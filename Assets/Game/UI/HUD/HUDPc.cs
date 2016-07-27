@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -14,6 +15,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Simple controller to update a textfield with the current amount of PC of the player.
 /// </summary>
+[RequireComponent(typeof(CanvasGroup))]
 public class HUDPc : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -27,6 +29,7 @@ public class HUDPc : MonoBehaviour {
 	[SerializeField] private Image m_icon = null;
 	[SerializeField] private Animator m_anim = null;
 
+	private CanvasGroup m_canvasGroup = null;
 	private float m_timer;
 
 	//------------------------------------------------------------------//
@@ -39,12 +42,16 @@ public class HUDPc : MonoBehaviour {
 		// Check required references
 		DebugUtils.Assert(m_text != null, "Required component!");
 		m_text.text = "";
+
+		m_canvasGroup = GetComponent<CanvasGroup>();
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
+		// Start hidden
+		m_canvasGroup.alpha = 0f;
 		UpdateText();
 	}
 	
@@ -54,9 +61,7 @@ public class HUDPc : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
-
-		m_text.gameObject.SetActive(false);
-		m_icon.gameObject.SetActive(false);
+		Messenger.AddListener(GameEvents.INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
 	}
 	
 	/// <summary>
@@ -65,14 +70,16 @@ public class HUDPc : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener(GameEvents.INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
 	}
 
 	private void Update() {
 		if (m_timer > 0) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0) {
-				m_text.gameObject.SetActive(false);
-				m_icon.gameObject.SetActive(false);
+				// Fade out
+				m_canvasGroup.DOKill(false);
+				m_canvasGroup.DOFade(0f, 2f).SetSpeedBased(true);	// Speed based because we are not necessarily at alpha 1
 				m_timer = 0;
 			}
 		}
@@ -98,14 +105,21 @@ public class HUDPc : MonoBehaviour {
 	/// <param name="_reward">The reward that has been applied.</param>
 	/// <param name="_entity">The entity that triggered the reward. Can be null.</param>
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
-		// We only care about coin rewards
+		// We only care about pc rewards
 		if(_reward.pc > 0) {
-			UpdateText();
-			m_text.gameObject.SetActive(true);
-			m_icon.gameObject.SetActive(true);
-			m_timer = 3f;
-			if(m_anim != null) m_anim.SetTrigger("start");
+			// Fade in
+			m_canvasGroup.DOKill(false);
+			m_canvasGroup.DOFade(1f, 2f).SetSpeedBased(true);	// Speed based because we are not necessarily at alpha 0
+			m_timer = 4f;
 		}
+	}
+
+	/// <summary>
+	/// The PC feedback animation has finished, sync with this.
+	/// </summary>
+	private void OnPCFeedbackEnd() {
+		UpdateText();
+		if(m_anim != null) m_anim.SetTrigger("start");
 	}
 }
 
