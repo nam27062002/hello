@@ -39,6 +39,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					#if LIGHTMAP_ON
 					float4 texcoord1 : TEXCOORD1;
 					#endif
+					float4 color : COLOR;
 				}; 
 
 				struct v2f {
@@ -46,7 +47,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
 					LIGHTING_COORDS(2,3)
-					float2 lmap : TEXCOORD4; 
+					float2 lmap : TEXCOORD4;
+					float4 color : COLOR; 
 				};
 
 				sampler2D _MainTex;
@@ -66,12 +68,13 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
+					o.color = v.color;
 					return o;
 				}
 				
 				fixed4 frag (v2f i) : SV_Target
 				{
-					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
+					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
