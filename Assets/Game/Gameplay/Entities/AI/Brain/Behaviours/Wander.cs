@@ -35,7 +35,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				m_target = m_machine.position;
+				SelectTarget();
 				m_pilot.SlowDown(m_data.alwaysSlowdown); // this wander state doesn't have an idle check
 				m_goToIdle = false;
 			}
@@ -53,16 +53,20 @@ namespace AI {
 						m_goToIdle = Random.Range(0f, 1f) < m_data.idleChance; // it will stop at next target
 						m_pilot.SlowDown(m_data.alwaysSlowdown || m_goToIdle);
 
-						if (m_pilot.guideFunction != null) {					
-							m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_data.speed);					
-						} else {
-							m_target = m_pilot.area.RandomInside();
-							m_target.z = 0;
-						} 
+						SelectTarget();
 					}
 				}
 
 				m_pilot.GoTo(m_target);
+			}
+
+			private void SelectTarget() {
+				if (m_pilot.guideFunction != null) {					
+					m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_data.speed);					
+				} else {
+					m_target = m_pilot.area.RandomInside();
+					m_target.z = 0;
+				} 
 			}
 		}
 	}

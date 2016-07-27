@@ -1072,7 +1072,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"restTime":{"min":4,"max":6},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.SpiderIdle","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"spinneret","damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"facing":-1,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false},{"speed":2.5,"idleChance":0.15,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderPathData","componentType":"AI.Behaviour.WanderPath","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":4,"max":6},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.SpiderIdle","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"spinneret","damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"facing":-1,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":10,"max":20},"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderPathData","componentType":"AI.Behaviour.WanderPath","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -1094,6 +1094,9 @@ MonoBehaviour:
     m_orientationSpeed: 2
     m_faceLeftAngleY: 180
     m_faceRightAngleY: 0
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 10
