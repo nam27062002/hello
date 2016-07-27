@@ -2,18 +2,19 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class DragonBendSettings : MonoBehaviour {
+public class QuickDragonSettings : MonoBehaviour {
 
 	public Slider m_sliderVelocity;
 	public Slider m_sliderUp;
 	public Slider m_sliderDown;
-
+	public Dropdown m_moveTypeDropDown;
 
 	void OnEnable()
 	{
 		m_sliderVelocity.value = DragonMotion.s_dargonAcceleration;
 		m_sliderUp.value = DragonMotion.s_dragonMass;
 		m_sliderDown.value = DragonMotion.s_dragonFricction;
+		m_moveTypeDropDown.value = DragonMotion.movementType;
 		
 	}
 	
@@ -30,5 +31,10 @@ public class DragonBendSettings : MonoBehaviour {
 	public void SetDownBend(float _size) 
 	{
 		DragonMotion.s_dragonFricction = _size;
+	}
+
+	public void SetMoveType(int type)
+	{
+		DragonMotion.movementType = type;
 	}
 }

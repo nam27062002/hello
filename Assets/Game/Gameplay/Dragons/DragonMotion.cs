@@ -518,7 +518,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	private static int movementType = 0;
+	public static int movementType = 1;
 	private void UpdateMovement() 
 	{
 		switch( movementType )
@@ -853,10 +853,28 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		get { return m_speedValue * m_currentSpeedMultiplier; }
 	}
 
-	// max speed with boost but withoung going down
 	public float absoluteMaxSpeed
 	{
-		get { return m_speedValue * m_dragon.data.def.GetAsFloat("boostMultiplier"); }
+		get 
+		{
+			switch( movementType )		
+			{
+				case 0:
+				{
+					return m_speedValue * m_dragon.data.def.GetAsFloat("boostMultiplier") * 1.2f; 		
+				}break;
+				case 1:
+				{
+					return s_dargonAcceleration / s_dragonFricction;
+				}break;
+				case 2:
+				{
+					return m_speedValue * m_dragon.data.def.GetAsFloat("boostMultiplier") * 2f;
+				}break;
+			}
+			return m_speedValue;
+
+		}
 	}
 
 	public void SetSpeedMultiplier(float _value) {
