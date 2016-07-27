@@ -94,5 +94,8 @@ public enum GameEvents {
 	NO_SYNCHING,
 
 	//
-	MERGE_SERVER_SAVE_DATA
+	MERGE_SERVER_SAVE_DATA,
+
+	// UI events
+	INGAME_PC_FEEDBACK_END		// no params
 }

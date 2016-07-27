@@ -48,6 +48,9 @@ public class Entity : MonoBehaviour, ISpawnable {
 	private bool m_isGolden = false;
 	public bool isGolden { get { return m_isGolden; } }
 
+	private bool m_isPC = false;
+	public bool isPC { get { return m_isPC; } }
+
 	private bool m_isOnScreen = false;
 	public bool isOnScreen { get { return m_isOnScreen; } }
 
@@ -58,8 +61,6 @@ public class Entity : MonoBehaviour, ISpawnable {
 	private Spawner m_spawner;
 
 	private float m_checkOnScreenTimer = 0;
-
-	private bool m_givePC = false;
 
 	private GameCameraController m_camera;
 
@@ -123,9 +124,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 
 		DragonTier tier = InstanceManager.player.data.tier;
 		m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
-
-		// [AOC] TODO!! Implement PC shader, implement PC reward feedback
-		m_givePC = (Random.Range(0f, 1f) <= pcChance);
+		m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
 
 		m_isOnScreen = false;
 		m_checkOnScreenTimer = 0;
@@ -155,7 +154,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 		}
 
 		// Give PC?
-		if(!m_givePC) {
+		if(!m_isPC) {
 			newReward.pc = 0;
 		}
 

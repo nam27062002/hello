@@ -26,6 +26,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 284.65207, y: 117.652374, z: -95.72702}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -41,6 +42,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_standaloneScene: 0
+  m_gameCamera: {fileID: 0}
+  m_resultsScreen: {fileID: 0}
 --- !u!114 &11463632
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -54,7 +57,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_toActivateOnAwake:
   - {fileID: 0}
-  m_toDeactivateOnAwake: []
+  m_toDeactivateOnAwake:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -18,8 +18,13 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 		if (system != null) {
 			system.transform.localPosition = Vector3.zero;
 			system.transform.position = _at;
-			system.GetComponent<ParticleSystem>().Clear();
-			system.GetComponent<ParticleSystem>().Play();
+
+			// Restart all particle systems within the instance
+			ParticleSystem[] subsystems = system.GetComponentsInChildren<ParticleSystem>();
+			for(int i = 0; i < subsystems.Length; i++) {
+				subsystems[i].Clear();
+				subsystems[i].Play();
+			}
 		}
 		
 		return system;
@@ -29,8 +34,9 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 	/// Return the instance to the pool
 	/// </summary>
 	public static void ReturnInstance(GameObject go) {
-		if (instance.m_particles.ContainsKey(go.name))
+		if (instance.m_particles.ContainsKey(go.name)) {
 			instance.m_particles[go.name].Return(go);
+		}
 	}
 
 	private static void CreatePool(string _id, string _path) {
