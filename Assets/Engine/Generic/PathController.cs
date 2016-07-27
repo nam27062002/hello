@@ -64,7 +64,7 @@ public class PathController : MonoBehaviour, IGuideFunction {
 	}
 
 	public Vector3 GetNearestTo(Vector3 _point) {
-		m_index = GetIndexNearestTo(_point - transform.position);
+		m_index = _GetIndexNearestTo(_point - transform.position);
 		return m_points[m_index] + transform.position;
 	}
 
@@ -76,6 +76,19 @@ public class PathController : MonoBehaviour, IGuideFunction {
 	public Vector3 GetRightmostPoint() {
 		m_index = m_rightmostNode;
 		return m_points[m_index] + transform.position;
+	}
+
+	public int GetCurrentIndex() {
+		return m_index;
+	}
+
+	public int GetIndexNearestTo(Vector3 _point) {
+		return _GetIndexNearestTo(_point - transform.position);
+	}
+
+	public Vector3 GetNextFrom(int _index) {
+		m_index = _index;
+		return GetNext();
 	}
 
 	public Vector3 GetNext() {
@@ -101,7 +114,15 @@ public class PathController : MonoBehaviour, IGuideFunction {
 		m_direction *= -1;
 	}
 
-	private int GetIndexNearestTo(Vector3 _point) {
+	public void SetDirection(int _dir) {
+		m_direction = _dir;
+	}
+
+	public int GetDirection() {
+		return m_direction;
+	}
+
+	private int _GetIndexNearestTo(Vector3 _point) {
 		float minD = 999999f;
 
 		int index = 0;

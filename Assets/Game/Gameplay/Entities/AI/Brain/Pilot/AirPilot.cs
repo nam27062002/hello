@@ -99,8 +99,10 @@ namespace AI {
 					AvoidCollisions();
 				}
 
-				if (m_impulse != Vector3.zero) {
-					m_direction = m_impulse.normalized;
+				if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
+					if (m_impulse != Vector3.zero) {
+						m_direction = m_impulse.normalized;
+					}
 				}
 
 				float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;

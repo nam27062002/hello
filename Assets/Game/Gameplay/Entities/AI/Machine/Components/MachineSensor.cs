@@ -34,58 +34,57 @@ namespace AI {
 		}
 
 		public override void Update() {
-			bool isInsideMinArea = false;
-			bool isInsideMaxArea = false;
+			if (m_enemy == null || !m_machine.GetSignal(Signals.Alert.name) || m_machine.GetSignal(Signals.Panic.name)) {
+				m_machine.SetSignal(Signals.Warning.name, false);
+				m_machine.SetSignal(Signals.Danger.name, false);
+			} else {
+				m_senseTimer -= Time.deltaTime;
+				if (m_senseTimer <= 0) {
+					bool isInsideMinArea = false;
+					bool isInsideMaxArea = false;
 
-			if (!m_machine.GetSignal(Signals.Panic.name)) {
-				if (m_enemy != null && m_machine.GetSignal(Signals.Alert.name)) {
+					Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
+					float distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
 
-					m_senseTimer -= Time.deltaTime;
-					if (m_senseTimer <= 0) {
+					if (distanceSqr < m_maxRadius * m_maxRadius) {
+						// check if the dragon is inside the sense zone
+						if (distanceSqr < m_minRadius * m_minRadius) {
+							// Check if this entity can see the player
+							if (m_angle == 360) {
+								isInsideMinArea = true;
+							} else {
+								Vector2 direction = (m_machine.direction.x < 0)? Vector2.left : Vector2.right;
+								float angle = Vector2.Angle(direction, vectorToPlayer); // angle between them: from 0 to 180
 
-						Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-						float distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
+								Vector3 cross = Vector3.Cross(m_machine.direction, vectorToPlayer);					
+								if (cross.z > 0) angle = 306 - angle;
 
-						if (distanceSqr < m_maxRadius * m_maxRadius) {
-							// check if the dragon is inside the sense zone
-							if (distanceSqr < m_minRadius * m_minRadius) {
-								// Check if this entity can see the player
-								if (m_angle == 360) {
-									isInsideMinArea = true;
-								} else {
-									Vector2 direction = (m_machine.direction.x < 0)? Vector2.left : Vector2.right;
-									float angle = Vector2.Angle(direction, vectorToPlayer); // angle between them: from 0 to 180
+								float sensorAngleFrom = m_angleOffset - (m_angle * 0.5f);
+								if (sensorAngleFrom < 0) sensorAngleFrom += 360;
 
-									Vector3 cross = Vector3.Cross(m_machine.direction, vectorToPlayer);					
-									if (cross.z > 0) angle = 306 - angle;
+								float sensorAngleTo = m_angleOffset + (m_angle * 0.5f);
+								if (sensorAngleTo > 360) sensorAngleTo -= 360;
 
-									float sensorAngleFrom = m_angleOffset - (m_angle * 0.5f);
-									if (sensorAngleFrom < 0) sensorAngleFrom += 360;
-
-									float sensorAngleTo = m_angleOffset + (m_angle * 0.5f);
-									if (sensorAngleTo > 360) sensorAngleTo -= 360;
-
-									isInsideMinArea = angle >= sensorAngleFrom || angle <= sensorAngleTo;
-								}
+								isInsideMinArea = angle >= sensorAngleFrom || angle <= sensorAngleTo;
 							}
-							isInsideMaxArea = true;
-						} 
+						}
+						isInsideMaxArea = true;
+					} 
 
-						m_senseTimer = m_senseDelay.GetRandom();
+					if (isInsideMinArea || isInsideMaxArea) {
+						// Check line cast
+						if (Physics.Linecast(sensorPosition, m_enemy.position, s_groundMask)) {
+							isInsideMinArea = false;
+							isInsideMaxArea = false;
+						}
 					}
-				}
 
-				if (isInsideMinArea || isInsideMaxArea) {
-					// Check line cast
-					if (Physics.Linecast(sensorPosition, m_enemy.position, s_groundMask)) {
-						isInsideMinArea = false;
-						isInsideMaxArea = false;
-					}
-				}
-			}
+					m_machine.SetSignal(Signals.Warning.name, isInsideMaxArea);
+					m_machine.SetSignal(Signals.Danger.name, isInsideMinArea);
 
-			m_machine.SetSignal(Signals.Warning.name, isInsideMaxArea);
-			m_machine.SetSignal(Signals.Danger.name, isInsideMinArea);
+					m_senseTimer = m_senseDelay.GetRandom();
+				}
+			}				
 		}
 
 		void OnDrawGizmosSelected() {

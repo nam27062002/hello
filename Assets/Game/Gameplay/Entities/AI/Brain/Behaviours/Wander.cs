@@ -7,6 +7,7 @@ namespace AI {
 		public class WanderData : StateComponentData {
 			public float speed;
 			public float idleChance = 0f;
+			public bool alwaysSlowdown = false;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Wander")]
@@ -35,7 +36,7 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_target = m_machine.position;
-				m_pilot.SlowDown(false); // this wander state doesn't have an idle check
+				m_pilot.SlowDown(m_data.alwaysSlowdown); // this wander state doesn't have an idle check
 				m_goToIdle = false;
 			}
 
@@ -50,7 +51,7 @@ namespace AI {
 						Transition(OnRest);
 					} else {
 						m_goToIdle = Random.Range(0f, 1f) < m_data.idleChance; // it will stop at next target
-						m_pilot.SlowDown(m_goToIdle);
+						m_pilot.SlowDown(m_data.alwaysSlowdown || m_goToIdle);
 
 						if (m_pilot.guideFunction != null) {					
 							m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_data.speed);					

@@ -12,12 +12,12 @@ namespace AI {
 		public class Idle : StateComponent {
 			
 			[StateTransitionTrigger]
-			private static string OnMove = "onMove";
+			protected static string OnMove = "onMove";
 
 
-			private IdleData m_data;
+			protected IdleData m_data;
 
-			private float m_timer;
+			protected float m_timer;
 
 			public override StateComponentData CreateData() {
 				return new IdleData();
