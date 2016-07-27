@@ -925,4 +925,31 @@ public static class Util
 			SetLayerRecursively(child.gameObject, newLayer);
 		}
 	}	
+
+	public static Vector3? RayPlaneIntersect(Ray r, Plane p)
+    {
+        float dot = Vector3.Dot(r.direction, p.normal);
+
+        // check that the dot product is ok
+        if(float.IsInfinity(dot) || float.IsNaN(dot))
+        {
+            return null;
+        }
+
+        // intersection of plane Ax+By+Cz+D=0 with ray P + t*v, where P = (x0,y0,z0) and v = (Vx,Vy,Vz)
+        // Solve for t,
+        // t = -(Ax0 + By0+Cz0+D)/(AVx + BVy + CVz) 
+        // or in vector form 
+        // t = -(P.N + D)/(V.N)
+        float dot1 = Vector3.Dot(r.origin, p.normal);
+
+        float t = -(dot1 + p.distance) / dot;
+
+        if(t >= 0)
+        {
+            return r.GetPoint(t);
+        }
+
+        return null;
+    }
 }

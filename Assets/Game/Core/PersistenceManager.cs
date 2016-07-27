@@ -33,12 +33,6 @@ public static class PersistenceManager {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// Last save timestamp
-	private static DateTime m_saveTimestamp = DateTime.UtcNow;
-	public static DateTime saveTimestamp {
-		get { return m_saveTimestamp; }
-	}
-
 	// Path where the data files are stored
 	public static string saveDir {
 		// Hidden file directory of Unity, see https://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
@@ -89,16 +83,11 @@ public static class PersistenceManager {
 
 		// Restore loaded values
 		// Order is relevant!
-		// Last save timestamp
-		/*
-		if ( _data.ContainsKey("timestamp") )
-			m_saveTimestamp = DateTime.Parse( _data["timestamp"] );
-		else 
-			m_saveTimestamp = DateTime.Now;
-		*/
+
 		// User profile
 		UsersManager.currentUser.Load( _data );
 
+		// Managers
 		DragonManager.SetupUser( UsersManager.currentUser );
 		EggManager.SetupUser( UsersManager.currentUser );
 		MissionManager.SetupUser( UsersManager.currentUser );
@@ -163,8 +152,6 @@ public static class PersistenceManager {
 		// From https://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/persistence-data-saving-loading
 		// Open the file
 		string path = GetPersistenceFilePath(_profileName);
-
-		_data.Add("timestamp", DateTime.UtcNow.ToString());
 		System.IO.File.WriteAllText( path , _data.ToString() );
 	}
 

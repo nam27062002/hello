@@ -101,7 +101,7 @@ abstract public class TouchControls : MonoBehaviour {
 	abstract public bool OnTouchPress();
 	abstract public bool OnTouchHeld();
 	abstract public bool OnTouchRelease();
-	abstract public void CalcSharkDesiredVelocity(float speed, bool disableDecceleration = false);
+	abstract public void CalcSharkDesiredVelocity(float speed);
 	
 	virtual public void UpdateTouchControls() 
 	{

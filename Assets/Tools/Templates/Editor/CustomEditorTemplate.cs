@@ -74,7 +74,7 @@ public class MonoBehaviourTemplateEditor : Editor {
 
 		// Show the custom GUI controls
 		// Serialized property:
-		EditorGUILayout.PropertyField(m_myValueProp);	// Serialized fields automatically detect changes and store Undo actions
+		EditorGUILayout.PropertyField(m_myValueProp, true);	// Serialized fields automatically detect changes and store Undo actions
 
 		// Other fields (proper way to do it, for each field)
 		EditorGUI.BeginChangeCheck();
