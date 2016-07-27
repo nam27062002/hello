@@ -11,6 +11,7 @@ namespace AI {
 
 		[SerializeField] private bool m_walkOnWalls = false;
 		[SerializeField] private bool m_faceDirection = true;
+		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
 
 		[SeparatorAttribute]
 		[SerializeField] private float m_orientationSpeed = 2f;
