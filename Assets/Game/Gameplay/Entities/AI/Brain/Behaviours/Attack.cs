@@ -8,6 +8,7 @@ namespace AI {
 			public int consecutiveAttacks = 3;
 			public float attackDelay = 0f;
 			public float retreatTime = 0f;
+			public int facing = 1;
 		}
 
 		public abstract class Attack : StateComponent {
@@ -83,7 +84,11 @@ namespace AI {
 					m_pilot.PressAction(Pilot.Action.Attack);
 
 					Vector3 dir = Vector3.zero;
-					dir.x = m_machine.enemy.position.x - m_machine.position.x;
+					if (m_data.facing > 0) {
+						dir.x = m_machine.enemy.position.x - m_machine.position.x;
+					} else {
+						dir.x = m_machine.position.x - m_machine.enemy.position.x;
+					}
 					m_pilot.SetDirection(dir.normalized);
 
 					m_onAttachProjectileEventDone = false;

@@ -33,10 +33,12 @@ namespace AI {
 				}
 				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
 
-				if (m_impulse.x >= 0) {
-					m_direction = Vector3.right;
-				} else {
-					m_direction = Vector3.left;
+				if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
+					if (m_impulse.x >= 0) {
+						m_direction = Vector3.right;
+					} else {
+						m_direction = Vector3.left;
+					}
 				}
 			}
 		}

@@ -11,11 +11,24 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		public Vector3 offset = Vector3.zero;
 	}
 
+	public enum SpecialAnims {
+		A = 0,
+		B,
+		C,
+
+		Count
+	}
+
 	//-----------------------------------------------
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
 
 	[SerializeField] private bool m_hasNavigationLayer = false;
+
+	[SeparatorAttribute("Special Actions Animations")] // map a special action from the pilot to a specific animation.
+	[SerializeField] private string m_animA = "";
+	[SerializeField] private string m_animB = "";
+	[SerializeField] private string m_animC = "";
 
 	[SeparatorAttribute]
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
@@ -40,9 +53,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private float m_currentBlendX;
 	private float m_currentBlendY;
 
+	private bool[] m_specialAnimations;
+
 
 	//-----------------------------------------------
 	// Use this for initialization
+	//-----------------------------------------------
 	void Awake() {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
@@ -65,10 +81,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			data.path = "Blood/";
 			data.offset = Vector3.back * 10f;
 		}
+
+		m_specialAnimations = new bool[(int)SpecialAnims.Count];
 	}
 	//
 
-	public void Spawn(Spawner _spawner) {
+	public virtual void Spawn(Spawner _spawner) {
 		m_scared = false;
 		m_panic = false;
 		m_attack = false;
@@ -92,7 +110,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	void Update() {
+	protected virtual void Update() {
 		if (m_hasNavigationLayer) {
 			m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
 			m_animator.SetFloat("direction X", m_currentBlendX);
@@ -215,6 +233,23 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animator.SetBool("attack", false);
 		}
 	}
+
+	public void SpecialAnimation(SpecialAnims _anim, bool _value) {
+		if (m_specialAnimations[(int)_anim] != _value) {
+			switch(_anim) {
+				case SpecialAnims.A: m_animator.SetBool(m_animA, _value); break;
+				case SpecialAnims.B: m_animator.SetBool(m_animB, _value); break;
+				case SpecialAnims.C: m_animator.SetBool(m_animC, _value); break;
+			}
+
+			if (_value) OnSpecialAnimationEnter(_anim);
+			else 		OnSpecialAnimationExit(_anim);
+		}
+		m_specialAnimations[(int)_anim] = _value;
+	}
+
+	protected virtual void OnSpecialAnimationEnter(SpecialAnims _anim) {}
+	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {}
 
 	public void Die(bool _eaten = false) 
 	{

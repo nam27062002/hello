@@ -23,6 +23,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] public GameObject m_entityPrefab;
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
 	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
+	[SerializeField] private uint	m_rails = 1;
 	[CommentAttribute("Amount of points obtained after killing the whole flock. Points are multiplied by the amount of entities spawned.")]
 	[SerializeField] private int m_flockBonus = 0;
 
@@ -91,6 +92,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 	// Use this for initialization
 	protected virtual void Start() {
 		m_entities = new GameObject[m_quantity.max];
+
+		if (m_rails == 0) m_rails = 1;
 
 		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
 
@@ -316,9 +319,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		ExtendedSpawn();
 
+		uint rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			Entity entity = m_entities[i].GetComponent<Entity>();
-			AI.Pilot pilot = m_entities[i].GetComponent<AI.Pilot>();
+			AI.AIPilot pilot = m_entities[i].GetComponent<AI.AIPilot>();
 			pilot.guideFunction = m_guideFunction;
 
 			Vector3 pos = transform.position;
@@ -335,20 +339,21 @@ public class Spawner : MonoBehaviour, ISpawner {
 			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
 
 			entity.Spawn(this); // lets spawn Entity component first
+			pilot.Spawn(this);
+
 			ISpawnable[] components = entity.GetComponents<ISpawnable>();
 			foreach (ISpawnable component in components) {
-				if (component != entity) {
+				if (component != entity && component != pilot) {
 					component.Spawn(this);
 				}
 			}
-		}
 
-		if (m_groupController) {			
-			for (int i = 0; i < m_entities.Length; i++) {
-				if (m_entities[i] != null) {
-					AI.Machine m = m_entities[i].GetComponent<AI.Machine>();
-					m.EnterGroup(ref m_groupController.flock);
-				}
+			AI.Machine machine = entity.GetComponent<AI.Machine>();
+			machine.SetRail(rail, m_rails);
+			rail = (rail + 1) % m_rails;
+
+			if (m_groupController) {	
+				machine.EnterGroup(ref m_groupController.flock);
 			}
 		}
 

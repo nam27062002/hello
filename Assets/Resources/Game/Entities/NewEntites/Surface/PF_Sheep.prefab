@@ -762,6 +762,7 @@ MonoBehaviour:
   m_enableMotion: 1
   m_motion:
     m_stickToGround: 1
+    m_walkOnWalls: 0
     m_faceDirection: 0
     m_orientationSpeed: 2
     m_faceLeftAngleY: 180
@@ -821,6 +822,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
+  m_timeBeforeBackHome: 2
   m_serializedJson: '[{"restTime":{"min":0,"max":0},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","componentType":"AI.Behaviour.HumanFlee","editorFolded":false}]'
 --- !u!114 &11485410
 MonoBehaviour:
@@ -835,6 +837,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 2
   m_runSpeed: 5
+  m_hasNavigationLayer: 0
   m_onEatenParticles: []
   m_explosionParticles:
     name: 
