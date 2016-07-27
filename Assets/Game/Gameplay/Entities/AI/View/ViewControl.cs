@@ -55,6 +55,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	private bool[] m_specialAnimations;
 
+	private GameObject m_pcTrail = null;
 
 	//-----------------------------------------------
 	// Use this for initialization
@@ -64,7 +65,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_animator = transform.FindComponentRecursive<Animator>();
 		m_animator.logWarnings = false;
 
-		m_materialGold = Resources.Load("Game/Assets/Materials/Gold") as Material;
+		// Load gold material
+		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
 
 		// keep the original materials, sometimes it will become Gold!
 		m_materials = new Dictionary<int, Material[]>(); 
@@ -106,6 +108,18 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			} else {
 				if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
 					renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
+			}
+		}
+
+		// Show PC Trail?
+		if(m_entity.isPC) {
+			// Get an effect instance from the pool
+			m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards/");
+
+			// Put it in the view's hierarchy so it follows the entity
+			if(m_pcTrail != null) {
+				m_pcTrail.transform.SetParent(m_animator.transform);
+				m_pcTrail.transform.localPosition = Vector3.zero;
 			}
 		}
 	}
@@ -255,6 +269,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	{
 		if (m_explosionParticles.name != "") {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
+		}
+
+		// Stop pc trail effect (if any)
+		if(m_pcTrail != null) {
+			ParticleManager.ReturnInstance(m_pcTrail);
+			m_pcTrail = null;
 		}
 	}
 

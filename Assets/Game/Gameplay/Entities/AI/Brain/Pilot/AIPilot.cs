@@ -101,7 +101,7 @@ namespace AI {
 				}
 			} else {			
 				// if this machine is outside his area, go back to home position (if it has this behaviour)
-				if (!m_area.Contains(transform.position)) {
+				if (m_area != null && !m_area.Contains(transform.position)) {
 					// we'll let the unit stay outside a few seconds before triggering the "back to home" state
 					m_isOutside = true;
 					m_outsideTimer = m_timeBeforeBackHome;

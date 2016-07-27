@@ -69,7 +69,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if(m_pcFeedbackPrefab != null) {
 			// Use game camera as parent, that way the feedback will be positioned relative to the viewport
 			Camera gameCamera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
-			PoolManager.CreatePool(m_pcFeedbackPrefab, gameCamera.transform, 1, false);
+			PoolManager.CreatePool(m_pcFeedbackPrefab, gameCamera.transform, 2, false);
 		}
 
 		// Kill Feedback
