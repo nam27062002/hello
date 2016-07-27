@@ -522,7 +522,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	public static int movementType = 1;
+	public static int movementType = 0;
 	private void UpdateMovement() 
 	{
 		switch( movementType )

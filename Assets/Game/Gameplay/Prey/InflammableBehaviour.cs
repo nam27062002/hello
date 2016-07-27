@@ -219,7 +219,7 @@ public class InflammableBehaviour : Initializable {
 				}
 
 				// Disable colliders if they give us problems
-				if ( GetComponent<MineBehaviour>() != null || GetComponent<CurseAttackBehaviour>() != null )
+				if ( GetComponent<MineBehaviour>() != null || GetComponent<CurseWeaponEffect>() != null )
 				{
 					Collider c = GetComponent<Collider>();
 					if (c != null)
