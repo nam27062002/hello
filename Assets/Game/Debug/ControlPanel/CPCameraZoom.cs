@@ -79,6 +79,19 @@ public class CPCameraZoom : MonoBehaviour {
 
 		// Initialize slider with new scene's camera values
 		m_slider.interactable = (m_camController != null);
-		m_slider.value = 0;	// Initial value
+		if ( m_camController != null )
+		switch( m_zoomType )
+		{
+			case ZoomType.DEFAULT:
+			{
+				m_slider.value = m_camController.defaultZoom;
+			}break;
+			case ZoomType.FAR:
+			{
+				m_slider.value = m_camController.farZoom;
+			}break;
+		}
+
+
 	}
 }
