@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Gem
-  m_Shader: {fileID: 4800000, guid: 752de70dd3618402daea83508ee5cdd5, type: 3}
+  m_Shader: {fileID: 4800000, guid: 0b4002bddac1f2e4585ed70d2f0d218b, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -78,6 +78,13 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MatCap
+        second:
+          m_Texture: {fileID: 2800000, guid: fc83aa10b2d1264459fc18fe1ea152d9, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -95,10 +102,6 @@ Material:
         first:
           name: _Shininess
         second: 0.078125
-      data:
-        first:
-          name: _SpecIntensity
-        second: 0.5
       data:
         first:
           name: _Parallax
@@ -129,16 +132,20 @@ Material:
         second: 0
       data:
         first:
-          name: _EmissionScaleUI
-        second: 0
-      data:
-        first:
           name: _Mode
         second: 0
       data:
         first:
           name: _Metallic
         second: 0
+      data:
+        first:
+          name: _EmissionScaleUI
+        second: 0
+      data:
+        first:
+          name: _SpecIntensity
+        second: 0.5
     m_Colors:
       data:
         first:
@@ -158,9 +165,9 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _AmbientColor
+          name: _EmissionColorUI
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _EmissionColorUI
+          name: _AmbientColor
         second: {r: 1, g: 1, b: 1, a: 1}
