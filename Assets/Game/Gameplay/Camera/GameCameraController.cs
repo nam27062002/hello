@@ -320,11 +320,12 @@ public class GameCameraController : MonoBehaviour {
 		if ( m_dragonMotion != null )
 		{
 			// have we changed direction in this Update()
+			/*
 			if(m_touchControls.directionChanged)	
 			{
 				m_rotateLerpTimer = 0.0f;
 			}
-
+			*/
 			Vector3 targetPos = m_dragonMotion.transform.position;
 			UpdateTrackAheadVector( m_dragonMotion.velocity / m_dragonMotion.absoluteMaxSpeed);
 			Vector3 desiredPos = targetPos - m_trackAheadVector;
