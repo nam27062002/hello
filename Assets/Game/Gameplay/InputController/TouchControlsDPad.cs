@@ -24,7 +24,19 @@ public class TouchControlsDPad : TouchControls {
 	private RectTransform m_dPadRectTransform = null;
 	private RectTransform m_dPadDotRectTransform = null;
 
-	
+	private bool m_disableDecceleration = false;
+	private float m_decelerationMult = 1.0f;
+	private float m_speedDampenMult = 1;
+	private int m_frameCounter = 0;
+	private const int m_numFramesForDirChange = 10;
+	private Vector3 m_prevDiffVector = Vector3.zero;
+	private float m_tolerance = 0.4f;
+	private bool m_directionChanged;
+	public bool directionChanged
+	{
+		get{ return m_directionChanged; }
+	}
+
 	// Use this for initialization
 	override public void Start () 
 	{
@@ -101,7 +113,7 @@ public class TouchControlsDPad : TouchControls {
 		m_diffVec.x = diff.x;
 		m_diffVec.y = diff.y;
 		m_diffVec.z = diff.z;
-		
+
 		m_diffVecNorm.x = diff.x;
 		m_diffVecNorm.y = diff.y;
 		m_diffVecNorm.z = diff.z;
@@ -159,20 +171,29 @@ public class TouchControlsDPad : TouchControls {
 		return true;
 	}
 	
-	override public void CalcSharkDesiredVelocity(float speed, bool disableDecceleration = false)
+	override public void CalcSharkDesiredVelocity(float speed)
 	{
-		float decelerationMult = 1.0f;
+		// normalize the distance of the click in world units away from the shark, by the max click distance
+		m_sharkDesiredVel.x = m_diffVecNorm.x * speed * m_speedDampenMult * m_decelerationMult;
+		m_sharkDesiredVel.y = m_diffVecNorm.y * speed * m_speedDampenMult * m_decelerationMult;
+	}
+
+	override public void UpdateTouchControls() 
+	{
+		base.UpdateTouchControls();
+
+		m_decelerationMult = 1.0f;
 		float radiusCovered = m_diffVec.magnitude;
 
 		if( !m_decelerate )
 		{
-			decelerationMult = 1.0f;
+			m_decelerationMult = 1.0f;
 		}
 		else
 		{
 			// need to get to touch position somehow... slow down to it
 			m_decelerationTimer += Time.deltaTime;
-			if( (m_decelerationTimer >= m_decelerationTimeLimit) || disableDecceleration )
+			if( (m_decelerationTimer >= m_decelerationTimeLimit) || m_disableDecceleration )
 			{
 				m_diffVecNorm.x = 0f;
 				m_diffVecNorm.y = 0f;
@@ -182,18 +203,28 @@ public class TouchControlsDPad : TouchControls {
 			}
 			else
 			{
-				decelerationMult = (m_decelerationTimeLimit - m_decelerationTimer) / m_decelerationTimeLimit;
-				decelerationMult = Mathf.Clamp(decelerationMult, 0.0f, 0.85f);
+				m_decelerationMult = (m_decelerationTimeLimit - m_decelerationTimer) / m_decelerationTimeLimit;
+				m_decelerationMult = Mathf.Clamp(m_decelerationMult, 0.0f, 0.85f);
 			}
 		}
-		
-		// normalize the distance of the click in world units away from the shark, by the max click distance
+
 		float speedDampenMult = 1.0f;
-		speedDampenMult = radiusCovered / m_radiusToCheck;
-		speedDampenMult = Mathf.Clamp(speedDampenMult, 0.0f, 1.0f);
-		
-		m_sharkDesiredVel.x = m_diffVecNorm.x * speed * speedDampenMult * decelerationMult;
-		m_sharkDesiredVel.y = m_diffVecNorm.y * speed * speedDampenMult * decelerationMult;
+		m_speedDampenMult = radiusCovered / m_radiusToCheck;
+		m_speedDampenMult = Mathf.Clamp(speedDampenMult, 0.0f, 1.0f);
+
+		float change2 = (m_diffVecNorm - m_prevDiffVector).sqrMagnitude;
+        if((change2 > (m_tolerance * m_tolerance)) && m_frameCounter >= m_numFramesForDirChange)
+        {
+			m_directionChanged = true;
+            m_frameCounter = 0;
+        }
+        else
+        {
+			m_directionChanged = false;
+            m_frameCounter++;
+        }
+		m_prevDiffVector = m_diffVecNorm;
+
 	}
 	
 	override public void ClearBoost( bool forceDecceleration )
