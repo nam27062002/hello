@@ -2161,6 +2161,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 10
   m_runSpeed: 15
+  m_hasNavigationLayer: 0
+  m_animA: 
+  m_animB: 
+  m_animC: 
   m_onEatenParticles:
   - name: PF_feathers_3D
     path: 
@@ -2224,7 +2228,8 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":10,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":17,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"damage":140,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":4,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false}]'
+  m_timeBeforeBackHome: 2
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":17,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"damage":140,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":4,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false}]'
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!114 &11443234
@@ -2264,10 +2269,14 @@ MonoBehaviour:
   m_enableMotion: 1
   m_motion:
     m_stickToGround: 0
+    m_walkOnWalls: 0
     m_faceDirection: 1
     m_orientationSpeed: 4
     m_faceLeftAngleY: 180
     m_faceRightAngleY: 0
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 2.5

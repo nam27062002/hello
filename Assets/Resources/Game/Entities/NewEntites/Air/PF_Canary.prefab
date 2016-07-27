@@ -406,7 +406,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114680}
-  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
+  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -463,7 +463,8 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.65
     max: 1.15
-  m_serializedJson: '[{"speed":3,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":4,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":2,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":0.65,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
+  m_timeBeforeBackHome: 2
+  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":4,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":2,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":0.65,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!114 &11439040
@@ -479,6 +480,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 4
   m_runSpeed: 4.5
+  m_hasNavigationLayer: 0
+  m_animA: 
+  m_animB: 
+  m_animC: 
   m_onEatenParticles:
   - name: PF_feathers_3D_noblood_yellow
     path: 
@@ -515,10 +520,14 @@ MonoBehaviour:
   m_enableMotion: 1
   m_motion:
     m_stickToGround: 0
+    m_walkOnWalls: 0
     m_faceDirection: 1
     m_orientationSpeed: 2
     m_faceLeftAngleY: 180
     m_faceRightAngleY: 0
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 4

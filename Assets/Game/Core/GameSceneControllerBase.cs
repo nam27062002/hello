@@ -23,19 +23,19 @@ public class GameSceneControllerBase : SceneController {
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// PROPERTIES														//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
+	// Exposed
+	[SerializeField] private Camera m_gameCamera = null;
+	public Camera gameCamera {
+		get { return m_gameCamera; }
+	}
+
 	// Time
 	protected float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
 		get { return m_elapsedSeconds; }
 	}
-
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
