@@ -310,10 +310,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 170304}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 404920}
   - {fileID: 413428}
@@ -464,7 +464,7 @@ MonoBehaviour:
     min: 0.65
     max: 1.15
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":4,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":2,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":0.65,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":4,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":2,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":0.65,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!114 &11439040
@@ -503,8 +503,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.028230578, y: 0.24594021}
-  radius: 0.50606537
+  offset: {x: 0.028230578, y: 0.30077094}
+  radius: 0.42381936
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11475328
 MonoBehaviour:
@@ -523,8 +523,8 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_faceDirection: 1
     m_orientationSpeed: 2
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_faceLeftAngleY: -90
+    m_faceRightAngleY: 90
   m_railSeparation:
     min: 0.5
     max: 1

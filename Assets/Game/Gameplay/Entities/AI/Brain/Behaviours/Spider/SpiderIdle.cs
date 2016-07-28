@@ -106,7 +106,7 @@ namespace AI {
 					case IdleState.Normal:
 						m_target = m_startPosition;
 						m_pilot.SetMoveSpeed(0f);
-						m_pilot.SetDirection(Vector3.back, true);
+						m_pilot.SetDirection(new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-0.5f, -1f)), true);
 						break;
 				}
 

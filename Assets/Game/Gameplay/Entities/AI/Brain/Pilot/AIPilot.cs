@@ -29,6 +29,8 @@ namespace AI {
 
 		[SerializeField] private float m_timeBeforeBackHome = 2f;
 
+		public virtual bool avoidCollisions { get { return false; } set { } }
+
 		private StateMachine m_brain;
 
 		protected Vector3 m_homePosition;

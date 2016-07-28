@@ -12,6 +12,7 @@ namespace AI {
 
 		[SerializeField] private float m_avoidDistanceAttenuation = 2f;
 		[SerializeField] private bool m_avoidCollisions = false;
+		public override bool avoidCollisions { get { return m_avoidCollisions; } set { m_avoidCollisions = value; } }
 
 		private uint m_collisionCheckPool; // each prey will detect collisions at different frames
 		protected float m_collisionAvoidFactor;
