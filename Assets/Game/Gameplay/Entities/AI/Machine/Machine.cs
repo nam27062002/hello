@@ -41,10 +41,10 @@ namespace AI {
 		private bool m_willPlaySpawnSound;
 		private bool m_willPlayEatenSound;
 
-		public Vector3 position { get { if (m_motion != null) return m_motion.position; else return transform.position; } }
+		public Vector3 position { get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } }
 		public Vector3 target	{ get { return m_pilot.target; } }
-		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Vector3 upVector  { get { if (m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		public Vector3 direction { get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
+		public Vector3 upVector  { get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
 
 		public Transform enemy { 
 			get {
