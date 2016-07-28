@@ -328,7 +328,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
 				m_guideFunction.ResetTime();
-				pos = m_guideFunction.NextPositionAtSpeed(0);
 			}
 
 			if (i > 0) {

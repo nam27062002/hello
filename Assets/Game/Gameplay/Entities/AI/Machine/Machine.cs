@@ -188,6 +188,19 @@ namespace AI {
 			}
 		}
 
+		public void FaceDirection(bool _value) {
+			if (m_motion != null) {
+				m_motion.faceDirection = _value;
+			}
+		}
+
+		public bool IsFacingDirection() {
+			if (m_motion != null) {
+				return m_motion.faceDirection;
+			}
+			return false;
+		}
+
 		public void SetRail(uint _rail, uint _total) {
 			if (m_motion != null) {
 				if (_total > 1) {

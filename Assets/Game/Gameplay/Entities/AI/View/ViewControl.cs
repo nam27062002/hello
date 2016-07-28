@@ -118,7 +118,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 			// Put it in the view's hierarchy so it follows the entity
 			if(m_pcTrail != null) {
-				m_pcTrail.transform.SetParent(m_animator.transform);
+				m_pcTrail.transform.SetParent(transform);
 				m_pcTrail.transform.localPosition = Vector3.zero;
 			}
 		}
