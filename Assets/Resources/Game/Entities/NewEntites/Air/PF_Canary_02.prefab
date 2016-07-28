@@ -352,7 +352,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 147232}
-  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
+  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -471,6 +471,9 @@ MonoBehaviour:
   m_walkSpeed: 2
   m_runSpeed: 2.5
   m_hasNavigationLayer: 0
+  m_animA: 
+  m_animB: 
+  m_animC: 
   m_onEatenParticles:
   - name: PF_feathers_3D_noblood_orange
     path: 
@@ -493,10 +496,14 @@ MonoBehaviour:
   m_enableMotion: 1
   m_motion:
     m_stickToGround: 0
+    m_walkOnWalls: 0
     m_faceDirection: 1
     m_orientationSpeed: 2
     m_faceLeftAngleY: 180
     m_faceRightAngleY: 0
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 3
@@ -527,7 +534,7 @@ MonoBehaviour:
     min: 0.65
     max: 1.15
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":6,"idleChance":0,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":10,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":3,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":2.5,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":10,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":3,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":2.5,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2.5
   m_avoidCollisions: 1
 --- !u!114 &11476792

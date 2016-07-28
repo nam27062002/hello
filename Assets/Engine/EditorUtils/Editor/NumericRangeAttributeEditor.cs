@@ -43,7 +43,7 @@ public class NumericRangeAttributeEditor : ExtendedPropertyDrawer {
 				m_pos.height = EditorGUI.GetPropertyHeight(_property);	// Default height for this property
 				float newValue = EditorGUI.FloatField(m_pos, _label, _property.floatValue);
 				if(EditorGUI.EndChangeCheck()) {
-					_property.floatValue = Mathf.Clamp(newValue, targetAttribute.m_min, targetAttribute.m_max);
+					_property.floatValue = Mathf.Clamp(newValue, targetAttribute.floatMin, targetAttribute.floatMax);
 				}
 			} break;
 
@@ -53,7 +53,7 @@ public class NumericRangeAttributeEditor : ExtendedPropertyDrawer {
 				m_pos.height = EditorGUI.GetPropertyHeight(_property);	// Default height for this property
 				int newValue = EditorGUI.IntField(m_pos, _label, _property.intValue);
 				if(EditorGUI.EndChangeCheck()) {
-					_property.intValue = Mathf.Clamp(newValue, (int)targetAttribute.m_min, (int)targetAttribute.m_max);
+					_property.intValue = Mathf.Clamp(newValue, targetAttribute.intMin, targetAttribute.intMax);
 				}
 			} break;
 

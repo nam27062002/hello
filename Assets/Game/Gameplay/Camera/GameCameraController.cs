@@ -93,6 +93,7 @@ public class GameCameraController : MonoBehaviour {
 
 
 	Vector3 m_position;
+	bool m_newCameraSystem = false;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -218,11 +219,14 @@ public class GameCameraController : MonoBehaviour {
 				m_currentZoom = Mathf.Lerp( m_currentZoom, m_defaultZoom, Time.deltaTime);
 				m_position.z = -m_currentZoom;
 				m_dampedPosition = m_position;
+				m_trackAheadPos = m_position;
 			}break;
 			case State.PLAY:
 			{
-				// NewVersion();
-				OldVersion();
+				if ( DebugSettings.newCameraSystem )
+					NewVersion();
+				else
+					OldVersion();
 			}break;
 		}
 
@@ -233,22 +237,25 @@ public class GameCameraController : MonoBehaviour {
 		UpdateFrustumBounds();
 	}
 
-	Vector3 m_trackAheadVector = Vector3.zero;
+	private Vector3 m_trackAheadVector = Vector3.zero;
 	private const float         m_maxTrackAheadScaleX = 0.15f;
  	private const float         m_maxTrackAheadScaleY = 0.2f; //JO
 	private const float			m_trackBlendRate = 1.0f;
 	private const float 		m_maxRotationAngleX = 22.5f; //JO 
     private const float         m_maxRotationAngleY = 20.0f;
-	private bool				m_snap = false;
+	private bool				m_snap = true;
 	private float               m_rotateLerpTimer = 0.0f;
 	private float 				m_rotateLerpDuration = 1.0f;
 	private float               m_camDelayLerpT = 0.0f;
 	private Vector3             m_trackAheadPos = Vector3.zero;
 	private float 				m_bossInAngleLerp = 0.0f;
-	private float 				m_trackAheadScale = 0.5f;
+	private float 				m_trackAheadScale = 1.0f;
 
-	private void UpdateTrackAheadVector( Vector3 trackingVelocity)
+	private void UpdateTrackAheadVector( Vector3 velocity)
    	{
+		Vector3 trackingVelocity = velocity;
+		if ( trackingVelocity.sqrMagnitude > 1 )
+			trackingVelocity.Normalize();
          float dt = Time.deltaTime;
          float trackAheadRangeX = m_frustum.w * m_maxTrackAheadScaleX; // todo: have maxTrackAheadScale account for size of target?
          float trackAheadRangeY = m_frustum.h * m_maxTrackAheadScaleY;
@@ -259,7 +266,8 @@ public class GameCameraController : MonoBehaviour {
          if(m_snap)
              m_trackAheadVector = desiredTrackAhead;
          else
-             Util.MoveTowardsVector3XYWithDamping(ref m_trackAheadVector, ref desiredTrackAhead, trackBlendRate*dt, 1.0f);
+			Util.MoveTowardsVector3XYWithDamping(ref m_trackAheadVector, ref desiredTrackAhead,trackBlendRate*dt, 1.0f);
+		
      }
 
 	void UpdateCameraDelayLerp()
@@ -272,6 +280,7 @@ public class GameCameraController : MonoBehaviour {
 
 	void UpdateZoom()
 	{
+		m_currentZoom = Mathf.Lerp( m_currentZoom, m_defaultZoom, Time.deltaTime);
 		m_position.z = -m_currentZoom;
 	}
 	 
@@ -282,7 +291,6 @@ public class GameCameraController : MonoBehaviour {
 			Vector3 targetTrackAhead = m_trackAheadVector * m_trackAheadScale;
 			Vector3 targetTrackPos =  m_dragonMotion.transform.position + targetTrackAhead;
 			m_trackAheadPos = Vector3.Lerp(m_trackAheadPos, targetTrackPos, m_camDelayLerpT);
-			
 			Vector3 currentPos = m_position;
 			currentPos.z = m_trackAheadPos.z;
 
@@ -311,20 +319,25 @@ public class GameCameraController : MonoBehaviour {
 	{
 		if ( m_dragonMotion != null )
 		{
-			Vector3 targetPos = m_dragonMotion.transform.position;
-			UpdateTrackAheadVector( m_dragonMotion.velocity.normalized );
-			Vector3 desiredPos = targetPos - m_trackAheadVector;
-			UpdateCameraDelayLerp();
-			m_position = Vector3.Lerp( m_position, desiredPos, m_camDelayLerpT);
 			// have we changed direction in this Update()
+			/*
 			if(m_touchControls.directionChanged)	
 			{
 				m_rotateLerpTimer = 0.0f;
 			}
+			*/
+			Vector3 targetPos = m_dragonMotion.transform.position;
+			UpdateTrackAheadVector( m_dragonMotion.velocity / m_dragonMotion.absoluteMaxSpeed);
+			Vector3 desiredPos = targetPos - m_trackAheadVector;
+			UpdateCameraDelayLerp();
+			m_position = Vector3.Lerp( m_position, desiredPos, m_camDelayLerpT);
 
-			UpdateZoom();
 			UpdateRotation();
+			UpdateZoom();
 			UpdateFrustumBounds();
+
+
+			m_snap = false;
 		}
 	}
 

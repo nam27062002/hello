@@ -415,10 +415,14 @@ MonoBehaviour:
   m_enableMotion: 1
   m_motion:
     m_stickToGround: 0
+    m_walkOnWalls: 0
     m_faceDirection: 1
     m_orientationSpeed: 2
     m_faceLeftAngleY: 180
     m_faceRightAngleY: 0
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 2
@@ -448,7 +452,8 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":6,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":8.5,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":20,"separation":5,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":6,"followAheadFactor":2,"frequencyOffset":{"min":2,"max":10},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
+  m_timeBeforeBackHome: 2
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":8.5,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":20,"separation":5,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":6,"followAheadFactor":2,"frequencyOffset":{"min":2,"max":10},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
   m_avoidDistanceAttenuation: 6
   m_avoidCollisions: 1
 --- !u!114 &11451964
@@ -476,6 +481,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 2
   m_runSpeed: 6
+  m_hasNavigationLayer: 0
+  m_animA: 
+  m_animB: 
+  m_animC: 
   m_onEatenParticles:
   - name: PF_feathers_3D_noblood_blue
     path: 

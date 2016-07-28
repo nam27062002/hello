@@ -21,14 +21,14 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 		m_isDragonHit = false;
 
-		m_effect.CollisionEnter += OnCollisionEnter;
+		m_effect.CollisionEnter += OnCollisionEnterAOC;	// [AOC] Can't be called OnCollisionEnter since there is already a message with this name!
 	}
 
 	void OnDisable() {
-		PoolManager.ReturnInstance(gameObject);
+		
 	}
 
-	public void OnCollisionEnter(object _o, CollisionInfo _collision) {
+	public void OnCollisionEnterAOC(object _o, CollisionInfo _collision) {
 		m_isDragonHit = true;
 		m_timer = m_damageDelay;
 	}
@@ -44,7 +44,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 				}
 			}
 			if (!m_effect.gameObject.activeInHierarchy) {
-				gameObject.SetActive(false);
+				PoolManager.ReturnInstance(gameObject);
 			}
 		}
 	}

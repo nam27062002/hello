@@ -92,6 +92,7 @@ public class Pool {
 		if ( m_notFreeObjects.Contains(go) )
 		{
 			m_notFreeObjects.Remove( go );
+			go.transform.SetParent(m_containerObj.transform);		// Return particle system to pool's hierarchy
 			go.SetActive( false );
 			m_freeObjects.Enqueue( go );
 		}

@@ -22,6 +22,8 @@ namespace AI {
 				m_data = (AttackMeleeData)m_pilot.GetComponentData<AttackMelee>();
 				m_meleeWeapon = m_machine.FindComponentRecursive<MeleeWeapon>();
 
+				m_meleeWeapon.enabled = false;
+
 				base.OnInitialise();
 			}
 

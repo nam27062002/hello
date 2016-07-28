@@ -13,6 +13,9 @@ namespace AI {
 			Avoid,
 			Pursuit,
 			Scared,
+			Button_A, // "buttons" to manage
+			Button_B, // the specila actions 
+			Button_C, // of the current machine
 
 			Count
 		}
@@ -56,6 +59,7 @@ namespace AI {
 		public Vector3 impulse { get { return m_impulse; } }
 
 		protected Vector3 m_direction;
+		protected bool m_directionForced;
 		public Vector3 direction { get { return m_direction; } }
 
 		public virtual Vector3 target { get { return transform.position; } }
@@ -70,6 +74,7 @@ namespace AI {
 
 			m_impulse = Vector3.zero;
 			m_direction = Vector3.right;
+			m_directionForced = false;
 
 			m_actions = new bool[(int)Action.Count];
 			m_machine = GetComponent<Machine>();
@@ -97,8 +102,9 @@ namespace AI {
 			m_boostSpeed = _boostSpeed;
 		}
 
-		public void SetDirection(Vector3 _dir) {
+		public void SetDirection(Vector3 _dir, bool _force = false) {
 			m_direction = _dir;
+			m_directionForced = _force;
 		}
 					
 		public void Scared(bool _enable) {

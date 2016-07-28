@@ -7,16 +7,27 @@ namespace AI {
 		protected static int m_groundMask;
 
 		[SerializeField] private bool m_stickToGround = false;
+		public bool stickToGround { get { return m_stickToGround; } set { m_stickToGround = value; } }
+
+		[SerializeField] private bool m_walkOnWalls = false;
+		[SerializeField] private bool m_faceDirection = true;
+		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
 
 		[SeparatorAttribute]
-		[SerializeField] private bool m_faceDirection = true;
 		[SerializeField] private float m_orientationSpeed = 2f;
 		[SerializeField] private float m_faceLeftAngleY = 180f;
 		[SerializeField] private float m_faceRightAngleY = 0f;
 
-
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		private Vector3 m_position;
+		public Vector3 position { get { return m_position; } }
+
+		private float m_zOffset; // if we use different rails for machines
+		public float zOffset { set { m_zOffset = value; } }
+
+		private Vector3 m_upVector;
+		public Vector3 upVector { get { return m_upVector; } set { m_upVector = value;} }
+
 		private Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
 
@@ -39,6 +50,10 @@ namespace AI {
 			m_position = m_machine.transform.position;
 			m_rotation = m_machine.transform.rotation;
 			m_targetRotation = m_rotation;
+
+			if (m_walkOnWalls) m_stickToGround = true;
+
+			m_upVector = Vector3.up;
 		}
 
 		public override void Update() {
@@ -56,13 +71,9 @@ namespace AI {
 				UpdateAttack();
 
 				if (m_pilot.speed > 0.01f) {
-					UpdateMovement();
+					m_position += m_pilot.impulse * Time.deltaTime;
+					m_viewControl.Move(m_pilot.impulse.magnitude);
 				} else {
-					// keep the entity facing left or right when not moving
-					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
-					m_targetRotation = Quaternion.AngleAxis(270f, Vector3.up) * Quaternion.LookRotation(m_direction, Vector3.up);
-					m_targetRotation = LimitRotation(m_targetRotation);
-
 					m_viewControl.Move(0f);
 				}
 
@@ -71,7 +82,12 @@ namespace AI {
 				if (m_stickToGround) {
 					CheckCollisions();
 				}
-				m_machine.transform.position = m_position;
+
+				UpdateOrientation();
+
+				Vector3 pos = m_position;
+				pos.z += m_zOffset;
+				m_machine.transform.position = pos;
 
 				//Aiming!!
 				if (m_eye != null) {
@@ -79,7 +95,7 @@ namespace AI {
 				}
 
 				// machine should face the same direction it is moving
-				m_rotation = Quaternion.Lerp(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * 120f);
 				m_machine.transform.rotation = m_rotation;
 			}
 		}
@@ -132,11 +148,15 @@ namespace AI {
 			}
 		}
 
-		private void UpdateMovement() {	
-			Vector3 right = Vector3.Cross(m_direction, Vector3.up);
-			Vector3 up = Vector3.Cross(right, m_direction);
+		private void UpdateOrientation() {	
+			if (m_walkOnWalls) {
+				if (m_direction != Vector3.zero) {
+					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
+				}
+			} else if (m_faceDirection && m_pilot.speed > 0.01f) {
+				Vector3 right = Vector3.Cross(m_direction, m_upVector);
+				Vector3 up = Vector3.Cross(right, m_direction);
 
-			if (m_faceDirection) {
 				Quaternion rotation = Quaternion.AngleAxis(270f, up) * Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
 				Vector3 eulerRotation = rotation.eulerAngles;																	   			  // if the machine move always in the same Z
 				if (m_direction.y > 0) 		eulerRotation.z = Mathf.Min(40f, eulerRotation.z);
@@ -144,14 +164,12 @@ namespace AI {
 				m_targetRotation = Quaternion.Euler(eulerRotation);
 			} else {
 				m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
-				m_targetRotation = Quaternion.AngleAxis(270f, Vector3.up) * Quaternion.LookRotation(m_direction, Vector3.up);
+				m_targetRotation = Quaternion.AngleAxis(270f, m_upVector) * Quaternion.LookRotation(m_direction, m_upVector);
 				m_targetRotation = LimitRotation(m_targetRotation);
 			}
 
-			m_position += m_pilot.impulse * Time.deltaTime;
-
-			m_viewControl.Move(m_pilot.impulse.magnitude);
 		}
+
 
 		private Quaternion LimitRotation(Quaternion _quat) {
 			if (m_faceDirection) {
@@ -159,9 +177,9 @@ namespace AI {
 			} else {
 				Vector3 euler = _quat.eulerAngles;
 
-				if (m_direction.x >= 0) {
+				if (m_direction.x > 0.1) {
 					euler.y = m_faceRightAngleY;
-				} else {
+				} else if (m_direction.x < -0.1) {
 					euler.y = m_faceLeftAngleY;
 				}
 
@@ -171,12 +189,56 @@ namespace AI {
 
 		private void CheckCollisions() {
 			// teleport to ground
-			RaycastHit ground;
-			Vector3 testPosition = m_position + Vector3.up * 1f;
+			Vector3 normal = Vector3.up;
+			Vector3 up = m_upVector;
 
-			if (Physics.Linecast(testPosition, testPosition + Vector3.down * 15f, out ground, m_groundMask)) {
-				m_position.y = ground.point.y;
+			Vector3 start = m_position + (up * 3f);
+			Vector3 end = m_position - (up * 3f);
+
+			RaycastHit hit;
+			bool hasHit = Linecast(start, end, true, out hit);
+			Debug.DrawLine(start, end, Color.black);
+
+			if (m_walkOnWalls) {
+				if (!hasHit) {
+					start = m_position - (up * 3f);
+					end = m_position + (up * 3f);
+					hasHit = Linecast(start, end, true, out hit);
+				}
+
+				if (hasHit) {
+					normal = hit.normal;
+				}
+
+				// check forward to find change on the ground beforehand
+				RaycastHit hitForward;
+				start = m_position + m_direction + (normal * 3f);
+				end = m_position + m_direction - (normal * 3f);
+
+				Debug.DrawLine(start, end, Color.magenta);
+				if (hasHit && Linecast(start, end, false, out hitForward)) {
+					normal = (normal * 0.25f) + (hitForward.normal * 0.75f);
+					m_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
+				}
 			}
+
+			m_upVector = normal.normalized;
+			Debug.DrawLine(m_position, m_position + m_upVector, Color.cyan);
+		}
+
+		private bool Linecast(Vector3 _start, Vector3 _end, bool _updatePosition, out RaycastHit _hit) {
+			if (Physics.Linecast(_start, _end, out _hit, m_groundMask)) {
+				if (_updatePosition) {/*
+					m_position.x = _hit.point.x;
+					m_position.y = _hit.point.y;
+					*/
+					m_position.x = Mathf.Lerp(m_position.x, _hit.point.x, Time.deltaTime * 8f);
+					m_position.y = Mathf.Lerp(m_position.y, _hit.point.y, Time.deltaTime * 8f);
+
+				}
+				return true;
+			}
+			return false;
 		}
 	}
 }

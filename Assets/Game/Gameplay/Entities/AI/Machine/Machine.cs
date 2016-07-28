@@ -10,6 +10,7 @@ namespace AI {
 		[SeparatorAttribute]
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
 		[SerializeField] private MachineMotion m_motion = new MachineMotion();
+		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
 
 		[SeparatorAttribute]
 		[SerializeField] private bool m_enableSensor = true;
@@ -40,10 +41,11 @@ namespace AI {
 		private bool m_willPlaySpawnSound;
 		private bool m_willPlayEatenSound;
 
-
-		public Vector3 position { get { return transform.position; } }
+		public Vector3 position { get { if (m_motion != null) return m_motion.position; else return transform.position; } }
 		public Vector3 target	{ get { return m_pilot.target; } }
 		public Vector3 direction { get { if (m_motion != null) return m_motion.direction; else return Vector3.zero; } }
+		public Vector3 upVector  { get { if (m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+
 		public Transform enemy { 
 			get {
 				if (m_sensor != null && (GetSignal(Signals.Warning.name) || GetSignal(Signals.Danger.name))) {
@@ -163,6 +165,11 @@ namespace AI {
 
 				if (m_enableMotion) m_motion.Update();
 				if (m_enableSensor) m_sensor.Update();
+
+				//forward special actions
+				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
+				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
+				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
 			}
 			m_inflammable.Update();
 		}
@@ -173,6 +180,36 @@ namespace AI {
 
 		public bool GetSignal(string _signal) {
 			return m_signals[_signal].value;
+		}
+
+		public void StickToCollisions(bool _value) {
+			if (m_motion != null) {
+				m_motion.stickToGround = _value;
+			}
+		}
+
+		public void FaceDirection(bool _value) {
+			if (m_motion != null) {
+				m_motion.faceDirection = _value;
+			}
+		}
+
+		public bool IsFacingDirection() {
+			if (m_motion != null) {
+				return m_motion.faceDirection;
+			}
+			return false;
+		}
+
+		public void SetRail(uint _rail, uint _total) {
+			if (m_motion != null) {
+				if (_total > 1) {
+					float railSeparation = m_railSeparation.GetRandom();
+					m_motion.zOffset = (_rail * railSeparation) - (railSeparation * (_total / 2));
+				} else {
+					m_motion.zOffset = 0f;
+				}
+			}
 		}
 
 		// Group membership -> for collective behaviours
