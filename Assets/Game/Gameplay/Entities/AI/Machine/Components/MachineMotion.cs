@@ -15,8 +15,9 @@ namespace AI {
 
 		[SeparatorAttribute]
 		[SerializeField] private float m_orientationSpeed = 2f;
-		[SerializeField] private float m_faceLeftAngleY = 180f;
-		[SerializeField] private float m_faceRightAngleY = 0f;
+		[SerializeField] private bool m_limitAngle = false;
+		[SerializeField] private float m_faceLeftAngleY = -90f;
+		[SerializeField] private float m_faceRightAngleY = 90f;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		private Vector3 m_position;
@@ -80,7 +81,10 @@ namespace AI {
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 
 				if (m_stickToGround) {
-					CheckCollisions();
+					bool isOnCollider = CheckCollisions();
+					if (!isOnCollider) {
+						m_position.y -= 9.5f * Time.deltaTime;
+					}
 				}
 
 				UpdateOrientation();
@@ -129,14 +133,14 @@ namespace AI {
 					//for testing purpose, it'll go from 90 to 270 degrees and back. Aim value 1 is 180 degrees of rotation
 					float absAim = Mathf.Abs(aim);
 
-					float angleSide = 0f;
+					float angleSide = 90f;
 					if (targetDir.x < 0) {
-						angleSide = 180f;
+						angleSide = 270f;
 					}
 					float angle = angleSide;
 
 					if (absAim >= 0.6f) {
-						angle = (((absAim - 0.6f) / (1f - 0.6f)) * (90f - angleSide)) + angleSide;
+						angle = (((absAim - 0.6f) / (1f - 0.6f)) * (180f - angleSide)) + angleSide;
 					}
 
 					// face target
@@ -157,17 +161,18 @@ namespace AI {
 				Vector3 right = Vector3.Cross(m_direction, m_upVector);
 				Vector3 up = Vector3.Cross(right, m_direction);
 
-				Quaternion rotation = Quaternion.AngleAxis(270f, up) * Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
-				Vector3 eulerRotation = rotation.eulerAngles;																	   			  // if the machine move always in the same Z
+				Quaternion rotation = Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
+				Vector3 eulerRotation = rotation.eulerAngles;												 // if the machine move always in the same Z
 				if (m_direction.y > 0) 		eulerRotation.z = Mathf.Min(40f, eulerRotation.z);
 				else if (m_direction.y < 0)	eulerRotation.z = Mathf.Max(300f, eulerRotation.z);
 				m_targetRotation = Quaternion.Euler(eulerRotation);
 			} else {
-				m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
-				m_targetRotation = Quaternion.AngleAxis(270f, m_upVector) * Quaternion.LookRotation(m_direction, m_upVector);
-				m_targetRotation = LimitRotation(m_targetRotation);
+				if (m_pilot.speed > 0.01f) {
+					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
+				}
+				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
+				if (m_limitAngle) m_targetRotation = LimitRotation(m_targetRotation);
 			}
-
 		}
 
 
@@ -177,9 +182,9 @@ namespace AI {
 			} else {
 				Vector3 euler = _quat.eulerAngles;
 
-				if (m_direction.x > 0.1) {
+				if (euler.y > m_faceRightAngleY) {
 					euler.y = m_faceRightAngleY;
-				} else if (m_direction.x < -0.1) {
+				} else if (euler.y < m_faceLeftAngleY) {
 					euler.y = m_faceLeftAngleY;
 				}
 
@@ -187,7 +192,7 @@ namespace AI {
 			}
 		}
 
-		private void CheckCollisions() {
+		private bool CheckCollisions() {
 			// teleport to ground
 			Vector3 normal = Vector3.up;
 			Vector3 up = m_upVector;
@@ -224,6 +229,8 @@ namespace AI {
 
 			m_upVector = normal.normalized;
 			Debug.DrawLine(m_position, m_position + m_upVector, Color.cyan);
+
+			return hasHit;
 		}
 
 		private bool Linecast(Vector3 _start, Vector3 _end, bool _updatePosition, out RaycastHit _hit) {

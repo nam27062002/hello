@@ -10,7 +10,7 @@ namespace AI {
 
 			// set home position at ground
 			RaycastHit groundHit;
-			if (Physics.Linecast(m_homePosition, m_homePosition + Vector3.down * 5f, out groundHit, m_groundMask)) {
+			if (Physics.Linecast(m_homePosition, m_homePosition + Vector3.down * 15f, out groundHit, m_groundMask)) {
 				m_homePosition.y = groundHit.point.y;
 			}
 		}

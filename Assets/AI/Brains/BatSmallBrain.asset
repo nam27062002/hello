@@ -17,5 +17,15 @@ MonoBehaviour:
     - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
     - {fileID: 11400000, guid: cdc2a30fcd81a46a88bcf06ba5b18f47, type: 2}
     - {fileID: 11400000, guid: 3e3d3d36ab0174e08807e4ff6fc8d3c7, type: 2}
-  m_transitionData: []
-  m_firstState: 0
+  - m_name: Idle
+    m_componentAssets:
+    - {fileID: 11400000, guid: f02e71317c5fd45319c279bb3716b071, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  m_transitionData:
+  - to: 0
+    id: onMove
+    from: 1
+  - to: 0
+    id: onEnemyInSight
+    from: 1
+  m_firstState: 1

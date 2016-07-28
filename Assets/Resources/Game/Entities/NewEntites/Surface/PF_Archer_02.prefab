@@ -782,10 +782,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163444}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 459856}
   - {fileID: 444106}
@@ -853,7 +853,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 137544}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.722971, y: 0.79256916, z: 0}
+  m_LocalPosition: {x: 17.61, y: 0.79256916, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1081,7 +1081,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"consecutiveAttacks":4,"attackDelay":0,"retreatTime":20,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":8,"consecutiveAttacks":40,"attackDelay":0,"retreatTime":20,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false}]'
 --- !u!114 &11436934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1099,8 +1099,8 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_faceDirection: 0
     m_orientationSpeed: 2
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_faceLeftAngleY: -90
+    m_faceRightAngleY: 90
   m_railSeparation:
     min: 0.5
     max: 1

@@ -26,7 +26,7 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);
-				m_faceDirectionRestoreValue = m_machine.IsFacingDirection();
+				//m_faceDirectionRestoreValue = m_machine.IsFacingDirection();
 
 				m_machine.SetSignal(Signals.Alert.name, true);
 				m_pilot.SetBoostSpeed(m_data.boostSpeed);
@@ -34,7 +34,7 @@ namespace AI {
 
 			protected override void OnExit(State newState) {
 				m_machine.SetSignal(Signals.Alert.name, m_alertRestoreValue);
-				m_machine.FaceDirection(m_faceDirectionRestoreValue);
+				//m_machine.FaceDirection(m_faceDirectionRestoreValue);
 
 				m_pilot.Avoid(false);
 				m_pilot.ReleaseAction(Pilot.Action.Boost);
@@ -46,10 +46,10 @@ namespace AI {
 
 				if (avoid) {
 					m_pilot.PressAction(Pilot.Action.Boost);
-					m_machine.FaceDirection(m_data.faceDirectionOnBoost);
+					//m_machine.FaceDirection(m_data.faceDirectionOnBoost);
 				} else {
 					m_pilot.ReleaseAction(Pilot.Action.Boost);
-					m_machine.FaceDirection(m_faceDirectionRestoreValue);
+					//m_machine.FaceDirection(m_faceDirectionRestoreValue);
 				}
 			}
 		}
