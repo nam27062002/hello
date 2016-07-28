@@ -25,7 +25,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 	}
 
 	void OnDisable() {
-		PoolManager.ReturnInstance(gameObject);
+		
 	}
 
 	public void OnCollisionEnterAOC(object _o, CollisionInfo _collision) {
@@ -44,7 +44,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 				}
 			}
 			if (!m_effect.gameObject.activeInHierarchy) {
-				gameObject.SetActive(false);
+				PoolManager.ReturnInstance(gameObject);
 			}
 		}
 	}

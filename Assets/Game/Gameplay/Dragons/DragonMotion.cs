@@ -178,6 +178,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private const float m_introDuration = 3;
 	private Vector3 m_destination;
 	private Transform m_holdPreyTransform = null;
+
+	private float m_boostMultiplier;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -223,6 +225,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_transform = transform;
 		m_currentFrontBend = Vector2.zero;
 		m_currentBackBend = Vector2.zero;
+
+		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 	}
 
 	/// <summary>
@@ -518,7 +522,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	public static int movementType = 1;
+	public static int movementType = 0;
 	private void UpdateMovement() 
 	{
 		switch( movementType )
@@ -861,15 +865,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				case 0:
 				{
-					return m_speedValue * m_dragon.data.def.GetAsFloat("boostMultiplier") * 1.2f; 		
+					return m_speedValue * m_boostMultiplier * 1.2f; 		
 				}break;
 				case 1:
 				{
-					return s_dargonAcceleration / s_dragonFricction;
+					return s_dargonAcceleration * m_boostMultiplier / s_dragonFricction;
 				}break;
 				case 2:
 				{
-					return m_speedValue * m_dragon.data.def.GetAsFloat("boostMultiplier") * 2f;
+					return m_speedValue * m_boostMultiplier * 2f;
 				}break;
 			}
 			return m_speedValue;
