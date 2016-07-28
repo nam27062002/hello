@@ -51,7 +51,7 @@ public class HUDPc : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Start hidden
-		m_canvasGroup.alpha = 0f;
+		m_canvasGroup.alpha = 0f
 		UpdateText();
 	}
 	
