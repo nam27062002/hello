@@ -73,6 +73,12 @@ namespace AI {
 			m_brain.Initialise(gameObject, true);
 		}
 
+		void OnDisable() {
+			if (m_brain != null) {
+				m_brain.Reset();
+			}
+		}
+
 		public override void OnTrigger(string _trigger) {
 			m_brain.Transition(_trigger);
 		}

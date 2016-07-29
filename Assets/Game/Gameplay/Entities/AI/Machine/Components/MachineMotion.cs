@@ -117,7 +117,8 @@ namespace AI {
 				}
 
 				// machine should face the same direction it is moving
-				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * 120f);
+				//m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * 120f);
+				m_rotation = Quaternion.Slerp(m_rotation, m_targetRotation, Time.deltaTime * 2f);
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 				m_machine.transform.rotation = m_rotation;
 			}
