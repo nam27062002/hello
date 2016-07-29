@@ -13,7 +13,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 		public float m_fogEnd;
 		public void Reset()
 		{
-			m_fogColor = Color.black;
+			m_fogColor = Color.clear;
 			m_fogStart = 0;
 			m_fogEnd = 0;
 		}

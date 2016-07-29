@@ -20,7 +20,7 @@ Material:
           name: _MainTex
         second:
           m_Texture: {fileID: 2800000, guid: 4bdff993be86b9b4688bd0049126c05b, type: 3}
-          m_Scale: {x: 50, y: 50}
+          m_Scale: {x: 100, y: 100}
           m_Offset: {x: -24.5, y: -24.5}
       data:
         first:
@@ -32,13 +32,6 @@ Material:
       data:
         first:
           name: _DetailNormalMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _SecondTexture
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -85,6 +78,13 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _SecondTexture
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -98,14 +98,6 @@ Material:
         first:
           name: _Cutoff
         second: 0.5
-      data:
-        first:
-          name: _FogStart
-        second: 0
-      data:
-        first:
-          name: _FogEnd
-        second: 100
       data:
         first:
           name: _Parallax
@@ -142,6 +134,14 @@ Material:
         first:
           name: _Metallic
         second: 0
+      data:
+        first:
+          name: _FogStart
+        second: 0
+      data:
+        first:
+          name: _FogEnd
+        second: 258.36
     m_Colors:
       data:
         first:
@@ -154,4 +154,4 @@ Material:
       data:
         first:
           name: _FogColor
-        second: {r: 0, g: 0, b: 0, a: 0}
+        second: {r: 0.4852941, g: 0.7231235, b: 1, a: 2}
