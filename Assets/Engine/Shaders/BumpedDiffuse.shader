@@ -1,4 +1,7 @@
-﻿Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
+Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 {
 	Properties
 	{
@@ -55,7 +58,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				fixed3 worldPos = mul(_Object2World, v.vertex);
+				fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 				float3 normal = UnityObjectToWorldNormal(v.normal);
 				o.vLight = ShadeSH9(float4(normal, 1.0));
 
@@ -65,8 +68,8 @@
 				o.halfDir = normalize(lightDirection + viewDirection);
 
 				// To calculate tangent world
-	            float4x4 modelMatrix = _Object2World;
-     			float4x4 modelMatrixInverse = _World2Object; 
+	            float4x4 modelMatrix = unity_ObjectToWorld;
+     			float4x4 modelMatrixInverse = unity_WorldToObject; 
 	            o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
      			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
      			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity

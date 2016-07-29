@@ -1,3 +1,6 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
 // Custom Dragon Shader.
 // - Detail Texture. R: Inner Light value. G: Spec value.
 
@@ -75,15 +78,15 @@ SubShader {
 				// o.normal = UnityObjectToWorldNormal(v.normal);
 
 				// Half View - See: Blinn-Phong
-				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
+				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
 				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 				o.halfDir = normalize(lightDirection + viewDirection);
 
-				o.posWorld = mul( _Object2World, v.vertex ).xyz;
+				o.posWorld = mul( unity_ObjectToWorld, v.vertex ).xyz;
 
 	            // To calculate tangent world
-	            float4x4 modelMatrix = _Object2World;
-     			float4x4 modelMatrixInverse = _World2Object; 
+	            float4x4 modelMatrix = unity_ObjectToWorld;
+     			float4x4 modelMatrixInverse = unity_WorldToObject; 
 	            o.tangentWorld = normalize( mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
      			o.normalWorld = normalize(mul(float4(v.normal, 0.0), modelMatrixInverse).xyz);
      			o.binormalWorld = normalize( cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
