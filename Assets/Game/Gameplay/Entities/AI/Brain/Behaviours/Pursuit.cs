@@ -27,7 +27,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = (PursuitData)m_pilot.GetComponentData<Pursuit>();
 
-				m_machine.SetSignal(Signals.Alert.name, true);
+				m_machine.SetSignal(Signals.Type.Alert, true);
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -39,7 +39,7 @@ namespace AI {
 				Transform enemy = m_machine.enemy;
 
 				if (enemy) {
-					if (m_machine.GetSignal(Signals.Danger.name)) {
+					if (m_machine.GetSignal(Signals.Type.Danger)) {
 						Transition(OnEnemyInRange);
 					} else {
 						m_pilot.GoTo(enemy.position);

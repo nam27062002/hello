@@ -97,7 +97,7 @@ namespace AI {
 				m_outsideTimer -= Time.deltaTime;
 				if (m_outsideTimer <= 0) {
 					if (!m_area.Contains(transform.position)) {
-						m_machine.SetSignal(Signals.BackToHome.name, true);
+						m_machine.SetSignal(Signals.Type.BackToHome, true);
 					}
 					m_isOutside = false;
 				}

@@ -32,9 +32,9 @@ namespace AI {
 
 				if (m_shutdownSensorTime > 0f) {
 					m_timer = m_shutdownSensorTime;
-					m_machine.SetSignal(Signals.Alert.name, false);
+					m_machine.SetSignal(Signals.Type.Alert, false);
 				} else {
-					m_machine.SetSignal(Signals.Alert.name, true);
+					m_machine.SetSignal(Signals.Type.Alert, true);
 				}
 			}
 
@@ -42,12 +42,12 @@ namespace AI {
 				if (m_timer > 0f) {
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0f) {
-						m_machine.SetSignal(Signals.Alert.name, true);
+						m_machine.SetSignal(Signals.Type.Alert, true);
 					}
 				} else {
-					if (m_machine.GetSignal(Signals.Danger.name)) {
+					if (m_machine.GetSignal(Signals.Type.Danger)) {
 						Transition(OnEnemyInRange);
-					} else if (m_machine.GetSignal(Signals.Warning.name)) {
+					} else if (m_machine.GetSignal(Signals.Type.Warning)) {
 						Transition(OnEnemyInSight);
 					}
 				}

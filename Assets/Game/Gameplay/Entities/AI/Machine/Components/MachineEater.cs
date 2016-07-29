@@ -10,7 +10,7 @@ namespace AI {
 		public override void Init() {}
 
 		public override void Update() {
-			if (m_machine.GetSignal(Signals.Hungry.name)) {
+			if (m_machine.GetSignal(Signals.Type.Hungry)) {
 				IMachine machine = GetEdible(0.25f);
 				if (machine != null) {
 					machine.Bite();

@@ -34,9 +34,9 @@ namespace AI {
 		}
 
 		public override void Update() {
-			if (m_enemy == null || !m_machine.GetSignal(Signals.Alert.name) || m_machine.GetSignal(Signals.Panic.name)) {
-				m_machine.SetSignal(Signals.Warning.name, false);
-				m_machine.SetSignal(Signals.Danger.name, false);
+			if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.Panic)) {
+				m_machine.SetSignal(Signals.Type.Warning, false);
+				m_machine.SetSignal(Signals.Type.Danger, false);
 			} else {
 				m_senseTimer -= Time.deltaTime;
 				if (m_senseTimer <= 0) {
@@ -79,8 +79,8 @@ namespace AI {
 						}
 					}
 
-					m_machine.SetSignal(Signals.Warning.name, isInsideMaxArea);
-					m_machine.SetSignal(Signals.Danger.name, isInsideMinArea);
+					m_machine.SetSignal(Signals.Type.Warning, isInsideMaxArea);
+					m_machine.SetSignal(Signals.Type.Danger, isInsideMinArea);
 
 					m_senseTimer = m_senseDelay.GetRandom();
 				}

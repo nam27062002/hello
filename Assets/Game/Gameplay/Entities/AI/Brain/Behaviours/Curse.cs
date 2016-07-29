@@ -34,7 +34,7 @@ namespace AI {
 					}
 				}
 
-				if (m_machine.GetSignal(Signals.CollisionTrigger.name)) {
+				if (m_machine.GetSignal(Signals.Type.CollisionTrigger)) {
 					if (m_timer <= 0f) {
 						m_dragon.Curse(m_data.damage, m_data.duration);
 						m_timer = 1.0f;

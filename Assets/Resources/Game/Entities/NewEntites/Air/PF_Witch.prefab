@@ -1391,8 +1391,12 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_faceDirection: 1
+    m_defaultUpVector: 0
     m_orientationSpeed: 4
+    m_faceDirection: 1
+    m_facePlayer: 0
+    m_limitVerticalRotation: 1
+    m_limitHorizontalRotation: 0
     m_faceLeftAngleY: -90
     m_faceRightAngleY: 90
   m_railSeparation:
@@ -1462,7 +1466,7 @@ MonoBehaviour:
     min: 0.9
     max: 1.4
   m_timeBeforeBackHome: 1
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":15,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":1,"attackDelay":10,"retreatTime":0,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":15,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":1,"attackDelay":10,"retreatTime":0,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false}]'
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!137 &13726440

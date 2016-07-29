@@ -647,7 +647,7 @@ MonoBehaviour:
     min: 0.9
     max: 1.4
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":15,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"damage":16,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":15,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"damage":16,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false}]'
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!114 &11422592
@@ -739,8 +739,12 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_faceDirection: 0
+    m_defaultUpVector: 0
     m_orientationSpeed: 4
+    m_faceDirection: 0
+    m_facePlayer: 0
+    m_limitVerticalRotation: 0
+    m_limitHorizontalRotation: 0
     m_faceLeftAngleY: -90
     m_faceRightAngleY: 90
   m_railSeparation:
