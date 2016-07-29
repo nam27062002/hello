@@ -28,7 +28,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = (HumanFleeData)m_pilot.GetComponentData<HumanFlee>();
 
-				m_machine.SetSignal(Signals.Alert.name, true);
+				m_machine.SetSignal(Signals.Type.Alert, true);
 
 				m_xLimitMin = m_pilot.area.bounds.min.x;
 				m_xLimitMax = m_pilot.area.bounds.max.x;
@@ -75,7 +75,7 @@ namespace AI {
 					m_pilot.SetMoveSpeed(3f);
 				}
 			
-				m_pilot.Scared(m_machine.GetSignal(Signals.Danger.name));
+				m_pilot.Scared(m_machine.GetSignal(Signals.Type.Danger));
 				m_pilot.GoTo(m_target);
 			}
 		}

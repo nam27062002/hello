@@ -30,8 +30,8 @@ namespace AI {
 		}
 
 		public void Bite() {
-			m_machine.SetSignal(Signals.Panic.name, true);
-			m_machine.SetSignal(Signals.Chewing.name, true);
+			m_machine.SetSignal(Signals.Type.Panic, true);
+			m_machine.SetSignal(Signals.Type.Chewing, true);
 
 			if (EntityManager.instance != null)
 				EntityManager.instance.Unregister(m_entity);
@@ -46,15 +46,15 @@ namespace AI {
 
 			m_viewControl.SpawnEatenParticlesAt(_transform);
 
-			m_machine.SetSignal(Signals.Destroyed.name, true);
+			m_machine.SetSignal(Signals.Type.Destroyed, true);
 		}
 
 		public void BiteAndHold() {
-			m_machine.SetSignal(Signals.Panic.name, true);
+			m_machine.SetSignal(Signals.Type.Panic, true);
 		}
 
 		public void ReleaseHold() {
-			m_machine.SetSignal(Signals.Panic.name, false);
+			m_machine.SetSignal(Signals.Type.Panic, false);
 		}
 
 		public override void Update() {}

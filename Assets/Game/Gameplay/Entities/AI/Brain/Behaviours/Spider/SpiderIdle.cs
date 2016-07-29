@@ -86,7 +86,7 @@ namespace AI {
 						m_machine.StickToCollisions(false);
 						m_machine.upVector = Vector3.up;
 
-						m_target = m_machine.position + Vector3.down * 4f;
+						m_target = m_machine.position + Vector3.down * Random.Range(2f, 6f);
 						m_pilot.SetMoveSpeed(2.5f);
 						m_pilot.GoTo(m_target);
 						m_pilot.SetDirection(Vector3.down, true);

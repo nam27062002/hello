@@ -9,6 +9,7 @@ namespace AI {
 			public float attackDelay = 0f;
 			public float retreatTime = 0f;
 			public int facing = 1;
+			public bool faceEnemy = false;
 		}
 
 		public abstract class Attack : StateComponent {
@@ -36,7 +37,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_animEvents 	= m_machine.FindComponentRecursive<PreyAnimationEvents>();
-				m_machine.SetSignal(Signals.Alert.name, true);
+				m_machine.SetSignal(Signals.Type.Alert, true);
 
 				m_transitionParam = new object[1];
 				m_transitionParam[0] = m_data.retreatTime; // retreat time
@@ -85,9 +86,16 @@ namespace AI {
 
 					Vector3 dir = Vector3.zero;
 					if (m_data.facing > 0) {
-						dir.x = m_machine.enemy.position.x - m_machine.position.x;
+						dir = m_machine.enemy.position - m_machine.position;
 					} else {
-						dir.x = m_machine.position.x - m_machine.enemy.position.x;
+						dir = m_machine.position - m_machine.enemy.position;
+					}
+
+					if (m_data.faceEnemy) {						
+						dir.z = 0;
+					} else {
+						dir.y = 0;
+						dir.z = 0;
 					}
 					m_pilot.SetDirection(dir.normalized);
 
@@ -129,7 +137,7 @@ namespace AI {
 					}
 
 					if (m_attacksLeft > 0) {
-						if (!m_machine.GetSignal(Signals.Danger.name)) {		
+						if (!m_machine.GetSignal(Signals.Type.Danger)) {		
 							Transition(OnOutOfRange);
 						}
 					} else {

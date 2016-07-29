@@ -74,8 +74,8 @@ namespace AI {
 
 		public void Burn(Transform _transform) {
 			// raise flags
-			m_machine.SetSignal(Signals.Burning.name, true);
-			m_machine.SetSignal(Signals.Panic.name, true);
+			m_machine.SetSignal(Signals.Type.Burning, true);
+			m_machine.SetSignal(Signals.Type.Panic, true);
 
 			// change materials
 			for (int i = 0; i < m_renderers.Length; i++) {
@@ -118,7 +118,7 @@ namespace AI {
 
 				case State.Ashes:
 					if (m_timer <= 0f) {
-						m_machine.SetSignal(Signals.Destroyed.name, true);
+						m_machine.SetSignal(Signals.Type.Destroyed, true);
 					} else {
 						float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime)));
 						for (int i = 0; i < m_ashMaterials.Count; i++) {

@@ -31,7 +31,7 @@ namespace AI {
 					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, m_machine.transform);
 				}
 
-				m_machine.SetSignal(Signals.Destroyed.name, true);
+				m_machine.SetSignal(Signals.Type.Destroyed, true);
 			}
 		}
 	}

@@ -23,7 +23,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = (FleeData)m_pilot.GetComponentData<Flee>();
 
-				m_machine.SetSignal(Signals.Alert.name, true);
+				m_machine.SetSignal(Signals.Type.Alert, true);
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -39,7 +39,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				bool boost = m_machine.GetSignal(Signals.Danger.name);
+				bool boost = m_machine.GetSignal(Signals.Type.Danger);
 
 				if (boost) {
 					m_pilot.PressAction(Pilot.Action.Boost);

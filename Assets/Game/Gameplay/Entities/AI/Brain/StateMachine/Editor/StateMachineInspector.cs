@@ -59,7 +59,7 @@ namespace AI
 			m_mainTransitionFoldout = EditorGUILayout.Foldout(m_mainTransitionFoldout, "Transitions");
 			if(m_mainTransitionFoldout)
 			{				
-				string[] machineTransitionsTriggers = GetAllFieldsWithAttributeRecursive(typeof(AI.Signal), typeof(StateTransitionTrigger));
+				string[] machineTransitionsTriggers = GetAllFieldsWithAttributeRecursive(typeof(AI.SignalTriggers), typeof(StateTransitionTrigger));
 
 				EditorGUI.indentLevel++;
 
@@ -117,7 +117,7 @@ namespace AI
 			{				
 				EditorGUI.indentLevel++;
 
-				string[] machineTransitionsTriggers = GetAllFieldsWithAttributeRecursive(typeof(AI.Signal), typeof(StateTransitionTrigger));
+				string[] machineTransitionsTriggers = GetAllFieldsWithAttributeRecursive(typeof(AI.SignalTriggers), typeof(StateTransitionTrigger));
 
 				int currentSize = anyStateTransitions.Count;
 				int size = EditorGUILayout.IntField("Size", currentSize);
