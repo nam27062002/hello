@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 // Unlit shader, with shadows
 // - no lighting
 // - can receive shadows
@@ -66,7 +68,7 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 					o.color = v.color;
-					HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
+					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd);	// Fog
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap

@@ -1,4 +1,6 @@
-﻿// @see http://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+// @see http://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
 Shader "LevelEditor/LevelEditorGroundPieceShader" {
 	//--------------------------------------------------------------//
 	// EXPOSED PROPERTIES						//
@@ -49,9 +51,9 @@ Shader "LevelEditor/LevelEditorGroundPieceShader" {
 				Vertex2Fragment v2f;
 				v2f.position = mul(UNITY_MATRIX_MVP, _v.vertex);
 				
-				float4 vertexWorldPos = mul(_Object2World, _v.vertex);
+				float4 vertexWorldPos = mul(unity_ObjectToWorld, _v.vertex);
 				float3 cameraVector = _WorldSpaceCameraPos - vertexWorldPos;
-				float3 worldNormal = mul(_Object2World, float4(_v.normal, 0));
+				float3 worldNormal = mul(unity_ObjectToWorld, float4(_v.normal, 0));
 				float delta = dot(worldNormal, normalize(cameraVector));	// Default diffuse lambert formula
 				
 				v2f.customColor.xyz = _Color * delta;
