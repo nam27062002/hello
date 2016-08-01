@@ -137,9 +137,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_waterMovementModifier = 0;
 
-	public static float s_dargonAcceleration = 30;
-	public static float s_dragonMass = 1;
-	public static float s_dragonFricction = 2.0f;
+	public static float s_dargonAcceleration = 20;
+	public static float s_dragonMass = 10;
+	public static float s_dragonFricction = 15.0f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -522,7 +522,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	public static int movementType = 0;
+	public static int movementType = 1;
 	private void UpdateMovement() 
 	{
 		switch( movementType )
@@ -857,6 +857,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		get { return m_speedValue * m_currentSpeedMultiplier; }
 	}
 
+		public float howFast
+	{
+		get{ 
+			float f =m_impulse.magnitude / absoluteMaxSpeed;
+			return Mathf.Clamp01(f);
+		}
+	}
+
 	public float absoluteMaxSpeed
 	{
 		get 
@@ -869,7 +877,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case 1:
 				{
-					return s_dargonAcceleration * m_boostMultiplier / s_dragonFricction;
+					return (s_dargonAcceleration * m_boostMultiplier / s_dragonFricction) * s_dragonMass;
 				}break;
 				case 2:
 				{
