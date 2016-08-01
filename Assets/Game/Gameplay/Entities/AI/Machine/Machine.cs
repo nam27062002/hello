@@ -295,5 +295,12 @@ namespace AI {
 			}
 			return false;
 		}
+
+		// Debug
+		void OnDrawGizmosSelected() {
+			if (m_sensor != null) {
+				m_sensor.OnDrawGizmosSelected(transform);
+			}
+		}
 	}
 }

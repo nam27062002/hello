@@ -87,11 +87,23 @@ namespace AI {
 			}				
 		}
 
-		void OnDrawGizmosSelected() {
+		// Debug
+		public override void OnDrawGizmosSelected(Transform _go) {
+			Vector3 pos = _go.position + m_sensorOffset;
+
 			Gizmos.color = Color.red;
-			Gizmos.DrawWireSphere(sensorPosition, m_minRadius);
+			Gizmos.DrawWireSphere(pos, m_minRadius);
 			Gizmos.color = Color.white;
-			Gizmos.DrawWireSphere(sensorPosition, m_maxRadius);
+			Gizmos.DrawWireSphere(pos, m_maxRadius);
+
+			float fromAngle = (-m_angle * 0.5f) + m_angleOffset;
+			float toAngle = (m_angle * 0.5f) + m_angleOffset;
+			Vector3 from = Vector3.right.RotateXYDegrees(fromAngle);
+			Vector3 to = Vector3.right.RotateXYDegrees(toAngle);
+
+			Gizmos.color = Color.red;
+			Gizmos.DrawLine(pos, pos + to * m_minRadius);
+			Gizmos.DrawLine(pos, pos + from * m_minRadius);
 		}
 	}
 }

@@ -1396,7 +1396,7 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_defaultUpVector: 0
     m_orientationSpeed: 4
-    m_faceDirection: 1
+    m_faceDirection: 0
     m_facePlayer: 1
     m_limitVerticalRotation: 1
     m_limitHorizontalRotation: 0
@@ -1408,10 +1408,10 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_minRadius: 6
-    m_maxRadius: 10
-    m_angle: 90
-    m_angleOffset: 315
-    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_maxRadius: 6
+    m_angle: 360
+    m_angleOffset: 360
+    m_sensorOffset: {x: 3.73, y: 0, z: 0}
     m_senseDelay:
       min: 0
       max: 0
@@ -1442,8 +1442,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 10
-  m_runSpeed: 15
+  m_walkSpeed: 0.1
+  m_runSpeed: 8
   m_hasNavigationLayer: 1
   m_hasRotationLayer: 0
   m_animA: 
@@ -1465,13 +1465,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: 38936cd4203104e6b945b73f0365d060, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
   m_speedFactorRange:
     min: 0.9
     max: 1.4
   m_timeBeforeBackHome: 1
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":15,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":1,"attackDelay":10,"retreatTime":0,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 3.5
+  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":1,"attackDelay":5,"retreatTime":0,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false},{"boostSpeed":5,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!137 &13726440
 SkinnedMeshRenderer:
