@@ -1029,6 +1029,7 @@ MonoBehaviour:
   m_walkSpeed: 2.5
   m_runSpeed: 2.5
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 1
   m_animA: hang
   m_animB: 
   m_animC: 
@@ -1127,7 +1128,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"restTime":{"min":4,"max":6},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.SpiderIdle","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"damage":25,"consecutiveAttacks":200,"attackDelay":10,"retreatTime":5,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":10,"max":20},"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderPathData","componentType":"AI.Behaviour.WanderPath","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":4,"max":6},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.SpiderIdle","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"damage":25,"consecutiveAttacks":200,"attackDelay":10,"retreatTime":5,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":10,"max":20},"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderPathData","componentType":"AI.Behaviour.WanderPath","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -1145,8 +1146,12 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 1
     m_walkOnWalls: 1
-    m_faceDirection: 0
+    m_defaultUpVector: 0
     m_orientationSpeed: 2
+    m_faceDirection: 0
+    m_facePlayer: 0
+    m_limitVerticalRotation: 0
+    m_limitHorizontalRotation: 0
     m_faceLeftAngleY: -90
     m_faceRightAngleY: 90
   m_railSeparation:

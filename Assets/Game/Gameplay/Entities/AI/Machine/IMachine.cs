@@ -9,8 +9,8 @@ namespace AI {
 		Vector3 direction 	{ get; }
 
 		// Internal connections
-		void SetSignal(string _signal, bool _activated);
-		bool GetSignal(string _signal);
+		void SetSignal(Signals.Type _signal, bool _activated);
+		bool GetSignal(Signals.Type _signal);
 
 		// Group membership -> for collective behaviours
 		void	EnterGroup(ref Group _group);

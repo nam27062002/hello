@@ -29,7 +29,7 @@ namespace AI {
 		private ViewControl m_viewControl = null;
 		private Collider m_collider = null;
 
-		private Dictionary<string, Signal> m_signals;
+		private Signals m_signals;
 
 		private Group m_group; // this will be a reference
 
@@ -48,7 +48,7 @@ namespace AI {
 
 		public Transform enemy { 
 			get {
-				if (m_sensor != null && (GetSignal(Signals.Warning.name) || GetSignal(Signals.Danger.name))) {
+				if (m_sensor != null && (GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {
 					return m_sensor.enemy;
 				} else {
 					return null;
@@ -65,30 +65,42 @@ namespace AI {
 			m_viewControl = GetComponent<ViewControl>();
 			m_collider = GetComponent<Collider>();
 
-			m_signals = new Dictionary<string, Signal>();
 
-			m_signals.Add(Signals.Leader.name, 			new Signals.Leader());
-			m_signals.Add(Signals.Hungry.name, 			new Signals.Hungry());
-			m_signals.Add(Signals.Alert.name, 			new Signals.Alert());
-			m_signals.Add(Signals.Warning.name, 		new Signals.Warning());
-			m_signals.Add(Signals.Danger.name, 			new Signals.Danger());
-			m_signals.Add(Signals.Panic.name, 			new Signals.Panic());
-			m_signals.Add(Signals.BackToHome.name,		new Signals.BackToHome());
-			m_signals.Add(Signals.Burning.name, 		new Signals.Burning());
-			m_signals.Add(Signals.Chewing.name, 		new Signals.Chewing());
-			m_signals.Add(Signals.Destroyed.name, 		new Signals.Destroyed());
-			m_signals.Add(Signals.CollisionTrigger.name,new Signals.CollisionTrigger());
+			m_signals = new Signals(this);
 
-			foreach(Signal s in m_signals.Values) {
-				s.machine = this;
-			}
+			m_signals.SetOnEnableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderPromoted);
+			m_signals.SetOnDisableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderDemoted);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Hungry, SignalTriggers.OnIsHungry);	
+			m_signals.SetOnDisableTrigger(Signals.Type.Hungry, SignalTriggers.OnNotHungry);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Alert, SignalTriggers.OnAlert);
+			m_signals.SetOnDisableTrigger(Signals.Type.Alert, SignalTriggers.OnIgnoreAll);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Warning, SignalTriggers.OnWarning);	
+			m_signals.SetOnDisableTrigger(Signals.Type.Warning, SignalTriggers.OnCalm);		
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.OnDanger);
+			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.OnSafe);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
+			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.BackToHome, SignalTriggers.OnOutsideArea);
+			m_signals.SetOnDisableTrigger(Signals.Type.BackToHome, SignalTriggers.OnBackAtHome);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.CollisionTrigger, SignalTriggers.OnCollisionEnter);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.OnBurning);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Chewing, SignalTriggers.OnChewing);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.OnDestroyed);
 		}
 
 		void OnEnable() {
-			if ( m_signals != null )
-			foreach(KeyValuePair<string, Signal> p in m_signals) {
-				p.Value.Init();
-			}
+			if (m_signals != null)
+				m_signals.Init();
 		}
 
 		void OnDisable() {
@@ -119,37 +131,29 @@ namespace AI {
 				m_pilot.OnTrigger(_trigger);
 			}
 
-
-			switch( _trigger )
-			{
-				case Signals.Destroyed.OnDestroyed:
-				{
-					m_viewControl.Die(m_signals[Signals.Chewing.name].value);
+			if (_trigger == SignalTriggers.OnDestroyed) {
+					m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing));
 					if (m_collider != null) m_collider.enabled = false;
 					m_entity.Disable(true);
-				}break;
-				case Signals.Burning.OnBurning:
-				{
+			} else if (_trigger == SignalTriggers.OnBurning) {
 					m_viewControl.Burn();
-					if (m_collider != null) 
-						m_collider.enabled = false;
-				}break;
+					if (m_collider != null) m_collider.enabled = false;
 			}
 		}
 
 		// Physics Collisions and Triggers
 
 		void OnCollisionEnter(Collision _collision) {
-			OnTrigger(Signals.Collided.OnCollisionEnter);
+			OnTrigger(SignalTriggers.OnCollisionEnter);
 		}
 
 
 		void OnTriggerEnter(Collider _other) {
-			SetSignal(Signals.CollisionTrigger.name, true);
+			SetSignal(Signals.Type.CollisionTrigger, true);
 		}
 
 		void OnTriggerExit(Collider _other) {
-			SetSignal(Signals.CollisionTrigger.name, false);
+			SetSignal(Signals.Type.CollisionTrigger, false);
 		}
 		//
 
@@ -174,12 +178,12 @@ namespace AI {
 			m_inflammable.Update();
 		}
 
-		public void SetSignal(string _signal, bool _activated) {
-			m_signals[_signal].Set(_activated);
+		public void SetSignal(Signals.Type _signal, bool _activated) {
+			m_signals.SetValue(_signal, _activated);
 		}
 
-		public bool GetSignal(string _signal) {
-			return m_signals[_signal].value;
+		public bool GetSignal(Signals.Type _signal) {
+			return m_signals.GetValue(_signal);
 		}
 
 		public void StickToCollisions(bool _value) {
@@ -247,7 +251,7 @@ namespace AI {
 		}
 
 		public bool IsDead() {
-			return m_entity.health <= 0 || m_signals[Signals.Destroyed.name].value;
+			return m_entity.health <= 0 || m_signals.GetValue(Signals.Type.Destroyed);
 		}
 
 		public float biteResistance { get { return m_edible.biteResistance; }}
@@ -281,7 +285,7 @@ namespace AI {
 
 		public virtual bool Burn(float _damage, Transform _transform) {
 			if (m_inflammable != null && !IsDead()) {
-				if (!GetSignal(Signals.Burning.name)) {
+				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(_damage);
 					if (m_entity.health <= 0) {
 						m_inflammable.Burn(_transform);

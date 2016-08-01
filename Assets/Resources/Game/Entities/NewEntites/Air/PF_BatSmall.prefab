@@ -476,8 +476,12 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_faceDirection: 0
+    m_defaultUpVector: 0
     m_orientationSpeed: 2
+    m_faceDirection: 0
+    m_facePlayer: 0
+    m_limitVerticalRotation: 0
+    m_limitHorizontalRotation: 0
     m_faceLeftAngleY: -90
     m_faceRightAngleY: 90
   m_railSeparation:
@@ -522,9 +526,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 5
-  m_runSpeed: 8
+  m_walkSpeed: 0.001
+  m_runSpeed: 2
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 

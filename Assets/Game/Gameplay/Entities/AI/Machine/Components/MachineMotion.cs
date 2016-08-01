@@ -6,16 +6,27 @@ namespace AI {
 	public class MachineMotion : MachineComponent {
 		protected static int m_groundMask;
 
+		private enum UpVector {
+			Up = 0,
+			Down,
+			Right,
+			Left,
+			Forward,
+			Back
+		};
+
 		[SerializeField] private bool m_stickToGround = false;
 		public bool stickToGround { get { return m_stickToGround; } set { m_stickToGround = value; } }
-
 		[SerializeField] private bool m_walkOnWalls = false;
-		[SerializeField] private bool m_faceDirection = true;
-		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
 
 		[SeparatorAttribute]
+		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
 		[SerializeField] private float m_orientationSpeed = 2f;
-		[SerializeField] private bool m_limitAngle = false;
+		[SerializeField] private bool m_faceDirection = true;
+		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
+		[SerializeField] private bool m_facePlayer = false;
+		[SerializeField] private bool m_limitVerticalRotation = false;
+		[SerializeField] private bool m_limitHorizontalRotation = false;
 		[SerializeField] private float m_faceLeftAngleY = -90f;
 		[SerializeField] private float m_faceRightAngleY = 90f;
 
@@ -54,15 +65,22 @@ namespace AI {
 
 			if (m_walkOnWalls) m_stickToGround = true;
 
-			m_upVector = Vector3.up;
+			switch (m_defaultUpVector) {
+				case UpVector.Up: 		m_upVector = Vector3.up; 		break;
+				case UpVector.Down: 	m_upVector = Vector3.down; 		break;
+				case UpVector.Right: 	m_upVector = Vector3.right; 	break;
+				case UpVector.Left: 	m_upVector = Vector3.left; 		break;
+				case UpVector.Forward: 	m_upVector = Vector3.forward; 	break;
+				case UpVector.Back: 	m_upVector = Vector3.back;		break;
+			}
 		}
 
 		public override void Update() {
-			if (m_machine.GetSignal(Signals.Panic.name)) {
-				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Burning.name));
+			if (m_machine.GetSignal(Signals.Type.Panic)) {
+				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Type.Burning));
 				return;
 			} else {
-				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Burning.name));
+				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
 
 			if (m_pilot != null) {
@@ -99,7 +117,9 @@ namespace AI {
 				}
 
 				// machine should face the same direction it is moving
-				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * 120f);
+				//m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * 120f);
+				m_rotation = Quaternion.Slerp(m_rotation, m_targetRotation, Time.deltaTime * 2f);
+				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 				m_machine.transform.rotation = m_rotation;
 			}
 		}
@@ -158,20 +178,26 @@ namespace AI {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
 			} else if (m_faceDirection && m_pilot.speed > 0.01f) {
-				Vector3 right = Vector3.Cross(m_direction, m_upVector);
-				Vector3 up = Vector3.Cross(right, m_direction);
+				if (m_facePlayer) {
+					Vector3 right = Vector3.Cross(m_direction, m_upVector);
+					Vector3 up = Vector3.Cross(right, m_direction);
+					m_targetRotation = Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
+				} else {
+					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
+				}
 
-				Quaternion rotation = Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
-				Vector3 eulerRotation = rotation.eulerAngles;												 // if the machine move always in the same Z
-				if (m_direction.y > 0) 		eulerRotation.z = Mathf.Min(40f, eulerRotation.z);
-				else if (m_direction.y < 0)	eulerRotation.z = Mathf.Max(300f, eulerRotation.z);
-				m_targetRotation = Quaternion.Euler(eulerRotation);
+				if (m_limitVerticalRotation) {
+					Vector3 eulerRotation = m_targetRotation.eulerAngles;	// if the machine move always in the same Z
+					if (m_direction.y > 0) 		eulerRotation.z = Mathf.Min(40f, eulerRotation.z);
+					else if (m_direction.y < 0)	eulerRotation.z = Mathf.Max(300f, eulerRotation.z);
+					m_targetRotation = Quaternion.Euler(eulerRotation);
+				}
 			} else {
 				if (m_pilot.speed > 0.01f) {
 					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
 				}
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
-				if (m_limitAngle) m_targetRotation = LimitRotation(m_targetRotation);
+				if (m_limitHorizontalRotation) m_targetRotation = LimitRotation(m_targetRotation);
 			}
 		}
 

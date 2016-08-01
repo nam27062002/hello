@@ -25,15 +25,15 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);
+				m_alertRestoreValue = m_machine.GetSignal(Signals.Type.Alert);
 				//m_faceDirectionRestoreValue = m_machine.IsFacingDirection();
 
-				m_machine.SetSignal(Signals.Alert.name, true);
+				m_machine.SetSignal(Signals.Type.Alert, true);
 				m_pilot.SetBoostSpeed(m_data.boostSpeed);
 			}
 
 			protected override void OnExit(State newState) {
-				m_machine.SetSignal(Signals.Alert.name, m_alertRestoreValue);
+				m_machine.SetSignal(Signals.Type.Alert, m_alertRestoreValue);
 				//m_machine.FaceDirection(m_faceDirectionRestoreValue);
 
 				m_pilot.Avoid(false);
@@ -41,7 +41,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				bool avoid = m_machine.GetSignal(Signals.Warning.name);
+				bool avoid = m_machine.GetSignal(Signals.Type.Warning);
 				m_pilot.Avoid(avoid);
 
 				if (avoid) {

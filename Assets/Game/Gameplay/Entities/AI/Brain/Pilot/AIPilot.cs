@@ -73,6 +73,12 @@ namespace AI {
 			m_brain.Initialise(gameObject, true);
 		}
 
+		void OnDisable() {
+			if (m_brain != null) {
+				m_brain.Reset();
+			}
+		}
+
 		public override void OnTrigger(string _trigger) {
 			m_brain.Transition(_trigger);
 		}
@@ -97,7 +103,7 @@ namespace AI {
 				m_outsideTimer -= Time.deltaTime;
 				if (m_outsideTimer <= 0) {
 					if (!m_area.Contains(transform.position)) {
-						m_machine.SetSignal(Signals.BackToHome.name, true);
+						m_machine.SetSignal(Signals.Type.BackToHome, true);
 					}
 					m_isOutside = false;
 				}

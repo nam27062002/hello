@@ -24,6 +24,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private float m_runSpeed = 1f;
 
 	[SerializeField] private bool m_hasNavigationLayer = false;
+	[SerializeField] private bool m_hasRotationLayer = false;
 
 	[SeparatorAttribute("Special Actions Animations")] // map a special action from the pilot to a specific animation.
 	[SerializeField] private string m_animA = "";
@@ -169,6 +170,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_hasNavigationLayer) {
 			m_desiredBlendX = Mathf.Clamp(-_z * 3f, -1f, 1f);	// max X bend is about 30 degrees, so *3
 			m_desiredBlendY = Mathf.Clamp(_y * 2f, -1f, 1f);	// max Y bend is about 45 degrees, so *2.
+		}
+	}
+
+	public void RotationLayer(ref Quaternion _from, ref Quaternion _to) {
+		if (m_hasRotationLayer) {
+			float angle = Quaternion.Angle(_from, _to);
+			m_animator.SetBool("rotate left", angle < 0);
+			m_animator.SetBool("rotate right", angle > 0);
 		}
 	}
 

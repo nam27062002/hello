@@ -445,6 +445,7 @@ MonoBehaviour:
   m_walkSpeed: 6
   m_runSpeed: 10
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -497,8 +498,12 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_faceDirection: 1
+    m_defaultUpVector: 0
     m_orientationSpeed: 2
+    m_faceDirection: 1
+    m_facePlayer: 1
+    m_limitVerticalRotation: 1
+    m_limitHorizontalRotation: 0
     m_faceLeftAngleY: -90
     m_faceRightAngleY: 90
   m_railSeparation:
@@ -563,17 +568,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: de5cff992f1244b9089de5fe5db0c597, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -583,6 +591,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: b37809ea188a0492995660d77c542ac5, type: 3}
   m_Bones:
   - {fileID: 452784}
