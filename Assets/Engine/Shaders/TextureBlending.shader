@@ -81,8 +81,8 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 				{
 					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 					fixed4 col2 = tex2D(_SecondTexture, i.texcoord);	// Color
-					float l = saturate( col.a + ( (i.color.r * 2) - 1 ) );
-					col = lerp( col2, col, l);
+					float l = saturate( col.a + ( (i.color.g * 2) - 1 ) );
+					col = lerp( col2, col, l) * i.color.r;
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
