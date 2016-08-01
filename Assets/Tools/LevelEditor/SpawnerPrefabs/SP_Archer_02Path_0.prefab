@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 477156}
   - 114: {fileID: 11415552}
   - 114: {fileID: 11424336}
-  - 114: {fileID: 11457176}
+  - 114: {fileID: 114000011877715884}
   m_Layer: 0
   m_Name: SP_Archer_02Path_0
   m_TagString: Untagged
@@ -61,33 +61,6 @@ MonoBehaviour:
   m_points:
   - {x: -1, y: 0, z: 0}
   - {x: 1, y: 0, z: 0}
---- !u!114 &11457176
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 187276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4449de16e7d2e465897e9964ea5f0a8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 137544, guid: 0481ff4e4621340899d67e445abc704e, type: 2}
-  m_quantity:
-    min: 1
-    max: 1
-  m_scale:
-    min: 1
-    max: 1
-  m_flockBonus: 0
-  m_alwaysActive: 0
-  m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
-  m_spawnTime:
-    min: 40
-    max: 45
-  m_maxSpawns: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -99,3 +72,31 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 187276}
   m_IsPrefabParent: 1
+--- !u!114 &114000011877715884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 187276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: {fileID: 137544, guid: 0481ff4e4621340899d67e445abc704e, type: 2}
+  m_quantity:
+    min: 1
+    max: 1
+  m_scale:
+    min: 1
+    max: 1
+  m_rails: 1
+  m_flockBonus: 0
+  m_activeOnStart: 0
+  m_alwaysActive: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
+  m_spawnTime:
+    min: 40
+    max: 45
+  m_maxSpawns: 0
