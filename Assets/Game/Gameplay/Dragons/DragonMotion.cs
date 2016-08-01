@@ -29,7 +29,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Fly_Down,
 		Stunned,
 		InsideWater,
-		OutterSpace,
+		OuterSpace,
 		Intro,
 		HoldingPrey,
 		None,
@@ -118,8 +118,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// Parabolic movement
 	private float m_parabolicMovementValue = 10;
-
-	public ParticleSystem m_bubbles;
 
 	private bool m_canMoveInsideWater = false;
 	public bool canDive
@@ -276,7 +274,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.SetBool("swim", false);
 					m_animator.SetBool("fly down", false);
 				}break;
-				case State.OutterSpace:
+				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", false);
 				}break;
@@ -332,7 +330,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						m_animator.SetBool("fly down", true);
 					}
 				}break;
-				case State.OutterSpace:
+				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
 				}break;
@@ -482,7 +480,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					UpdateParabolicMovement( m_parabolicMovementValue);
 				}
 			}break;
-			case State.OutterSpace:
+			case State.OuterSpace:
 				UpdateParabolicMovement( -m_parabolicMovementValue);
 				break;
 			case State.Intro:
@@ -899,25 +897,31 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void StartWaterMovement()
 	{
 		m_waterMovementModifier = 0;
-		if ( m_bubbles != null )
-			m_bubbles.Play();
+
+		// Trigger animation
 		m_animationEventController.OnInsideWater();
+
+		// Trigger particles
 		if ( m_particleController != null )
-			m_particleController.OnInsideWater();
+			m_particleController.OnEnterWater();
+
+		// Change state
 		ChangeState(State.InsideWater);
 	}
 
 	public void EndWaterMovement()
 	{
-		// Wait a second 
-		// Disable Bubbles
-		if ( m_bubbles != null )
-			m_bubbles.Stop();
 		if (m_animator )
 			m_animator.SetBool("boost", false);
+
+		// Trigger animation
 		m_animationEventController.OnExitWater();
+
+		// Trigger particles
 		if (m_particleController != null)
 			m_particleController.OnExitWater();
+
+		// Wait a second
 		StartCoroutine( EndWaterCoroutine() );
 	}
 
@@ -929,14 +933,29 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartSpaceMovement()
 	{
-		m_animationEventController.OnOutterSpace();
-		ChangeState(State.OutterSpace);
+		// Trigger animation
+		m_animationEventController.OnEnterOuterSpace();
+
+		// Trigger particles (min. speed required)
+		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= 7.5f) {	// [AOC] HARDCODED!!
+			m_particleController.OnEnterOuterSpace();
+		}
+
+		// Change state
+		ChangeState(State.OuterSpace);
 	}
 
 	public void EndSpaceMovement()
 	{
+		// Trigger animation
+		m_animationEventController.OnExitOuterSpace();
+
+		// Trigger particles (min. speed required)
+		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= 7.5f) {	// [AOC] HARDCODED!!
+			m_particleController.OnExitOuterSpace();
+		}
+
 		// Wait a second 
-		m_animationEventController.OnReturnFromOutterSpace();
 		StartCoroutine( EndSpaceCoroutine() );
 	}
 
@@ -1011,7 +1030,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}
 				m_impulse.x = -m_impulse.x;
 			}break;
-			case State.OutterSpace:
+			case State.OuterSpace:
 			{
 				if ( m_impulse.y > 0 )
 				{

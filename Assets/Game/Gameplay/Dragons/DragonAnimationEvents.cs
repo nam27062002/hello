@@ -136,7 +136,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_wingsStrongFlap.mute = false;
 	}
 
-	public void OnOutterSpace()
+	public void OnEnterOuterSpace()
 	{
 		if (m_wingsWindSound != null)
 			m_wingsWindSound.mute = true;
@@ -146,7 +146,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_wingsStrongFlap.mute = true;
 	}
 
-	public void OnReturnFromOutterSpace()
+	public void OnExitOuterSpace()
 	{
 		if (m_wingsWindSound != null)
 			m_wingsWindSound.mute = false;
