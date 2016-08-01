@@ -123,8 +123,8 @@ float4 texturePS(outVertexData IN)	: COLOR
 
 	float4 col = tex2D(ColorSampler, IN.UV.xy);	// Color
 	float4 col2 = tex2D(SecondSampler, IN.UV.xy);	// Color
-	float l = saturate( col.a + ( (IN.color.r * 2) - 1 ) );
-	col = lerp( col2, col, l);
+	float l = saturate( col.a + ( (IN.color.g * 2) - 1 ) );
+	col = lerp( col2, col, l) * IN.color.r;
 	return col;
 }
 
