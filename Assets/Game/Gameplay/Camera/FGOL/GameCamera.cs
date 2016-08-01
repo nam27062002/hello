@@ -171,6 +171,7 @@ public class GameCamera : MonoBehaviour
 	
 	void Awake()
 	{
+	return;
 		m_transform = transform;
 		m_unityCamera = GetComponent<Camera>();
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
