@@ -69,8 +69,8 @@ namespace AI {
 			// braaiiiinnn ~ ~ ~ ~ ~
 			if (m_brain == null) {
 				m_brain = UnityEngine.Object.Instantiate(m_brainResource) as StateMachine;
+				m_brain.Initialise(gameObject, true);
 			}
-			m_brain.Initialise(gameObject, true);
 		}
 
 		void OnDisable() {

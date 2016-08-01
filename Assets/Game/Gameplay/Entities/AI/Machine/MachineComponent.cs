@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace AI {
 	public abstract class MachineComponent {
@@ -16,5 +17,9 @@ namespace AI {
 		}
 
 		public abstract void Update();
+
+
+		// Debug
+		public virtual void OnDrawGizmosSelected(Transform _go) {}
 	}
 }

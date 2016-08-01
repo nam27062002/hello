@@ -1,50 +1,48 @@
 fileFormatVersion: 2
-guid: f32639d7dac4b4a7398e83a30d35d0e1
-timeCreated: 1459939064
+guid: 0e9093207f0ce4759a7f03e6c3d76551
+timeCreated: 1460737454
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Canary
-    100002: //RootNode
-    100004: Canary_
-    100006: Canary_Body
-    100008: Canary_Hair
-    100010: Canary_Head
-    100012: Canary_LArm_1
-    100014: Canary_LArm_2
-    100016: Canary_LArm_3
-    100018: Canary_Legs
-    100020: Canary_RArm_1
-    100022: Canary_RArm_2
-    100024: Canary_RArm_3
-    100026: Canary_Tail_1
-    400000: Canary
-    400002: //RootNode
-    400004: Canary_
-    400006: Canary_Body
-    400008: Canary_Hair
-    400010: Canary_Head
-    400012: Canary_LArm_1
-    400014: Canary_LArm_2
-    400016: Canary_LArm_3
-    400018: Canary_Legs
-    400020: Canary_RArm_1
-    400022: Canary_RArm_2
-    400024: Canary_RArm_3
-    400026: Canary_Tail_1
-    4300000: Canary
-    7400000: Glid
+    100000: //RootNode
+    100002: Starling_Body
+    100004: Starling_Head
+    100006: Starling_LArm_1
+    100008: Starling_LArm_2
+    100010: Starling_LArm_3
+    100012: Starling_Legs
+    100014: Starling_RArm_1
+    100016: Starling_RArm_2
+    100018: Starling_RArm_3
+    100020: Starling_Tail_1
+    100022: Starling_Tail_2
+    100024: Starling_Tail_3
+    100026: Particle View 001
+    400000: //RootNode
+    400002: Starling_Body
+    400004: Starling_Head
+    400006: Starling_LArm_1
+    400008: Starling_LArm_2
+    400010: Starling_LArm_3
+    400012: Starling_Legs
+    400014: Starling_RArm_1
+    400016: Starling_RArm_2
+    400018: Starling_RArm_3
+    400020: Starling_Tail_1
+    400022: Starling_Tail_2
+    400024: Starling_Tail_3
+    400026: Particle View 001
+    7400000: Flying
     9500000: //RootNode
-    13700000: Canary
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
@@ -59,10 +57,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Glid
+      name: Flying
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 62
+      firstFrame: 8
+      lastFrame: 54
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -85,31 +83,33 @@ ModelImporter:
       transformMask:
       - path: 
         weight: 1
-      - path: Canary_Body
+      - path: Starling_Body
         weight: 1
-      - path: Canary_Body/Canary_Head
+      - path: Starling_Body/Starling_Head
         weight: 1
-      - path: Canary_Body/Canary_Head/Canary_Hair
+      - path: Starling_Body/Starling_LArm_1
         weight: 1
-      - path: Canary_Body/Canary_LArm_1
+      - path: Starling_Body/Starling_LArm_1/Starling_LArm_2
         weight: 1
-      - path: Canary_Body/Canary_LArm_1/Canary_LArm_2
+      - path: Starling_Body/Starling_LArm_1/Starling_LArm_2/Starling_LArm_3
         weight: 1
-      - path: Canary_Body/Canary_LArm_1/Canary_LArm_2/Canary_LArm_3
+      - path: Starling_Body/Starling_Legs
         weight: 1
-      - path: Canary_Body/Canary_Legs
+      - path: Starling_Body/Starling_RArm_1
         weight: 1
-      - path: Canary_Body/Canary_RArm_1
+      - path: Starling_Body/Starling_RArm_1/Starling_RArm_2
         weight: 1
-      - path: Canary_Body/Canary_RArm_1/Canary_RArm_2
+      - path: Starling_Body/Starling_RArm_1/Starling_RArm_2/Starling_RArm_3
         weight: 1
-      - path: Canary_Body/Canary_RArm_1/Canary_RArm_2/Canary_RArm_3
+      - path: Starling_Body/Starling_Tail_1
         weight: 1
-      - path: Canary_Body/Canary_Tail_1
+      - path: Starling_Body/Starling_Tail_1/Starling_Tail_2
+        weight: 1
+      - path: Starling_Body/Starling_Tail_1/Starling_Tail_2/Starling_Tail_3
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 8
     isReadable: 1
   meshes:
     lODScreenPercentages: []
