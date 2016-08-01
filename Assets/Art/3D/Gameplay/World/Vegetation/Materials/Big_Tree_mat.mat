@@ -20,7 +20,7 @@ Material:
           name: _MainTex
         second:
           m_Texture: {fileID: 2800000, guid: 4bdff993be86b9b4688bd0049126c05b, type: 3}
-          m_Scale: {x: 100, y: 100}
+          m_Scale: {x: 70, y: 100}
           m_Offset: {x: -24.5, y: -24.5}
       data:
         first:
@@ -45,13 +45,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _DetailMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -60,6 +53,13 @@ Material:
       data:
         first:
           name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -100,6 +100,14 @@ Material:
         second: 0.5
       data:
         first:
+          name: _FogStart
+        second: 0
+      data:
+        first:
+          name: _FogEnd
+        second: 258.36
+      data:
+        first:
           name: _Parallax
         second: 0.02
       data:
@@ -134,14 +142,6 @@ Material:
         first:
           name: _Metallic
         second: 0
-      data:
-        first:
-          name: _FogStart
-        second: 0
-      data:
-        first:
-          name: _FogEnd
-        second: 258.36
     m_Colors:
       data:
         first:
@@ -154,4 +154,4 @@ Material:
       data:
         first:
           name: _FogColor
-        second: {r: 0.4852941, g: 0.7231235, b: 1, a: 2}
+        second: {r: 0.4852941, g: 0.7231235, b: 1, a: 1}
