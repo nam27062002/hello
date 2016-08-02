@@ -165,6 +165,21 @@ public class GameCamera : MonoBehaviour
 	public SlowmoDeathTrigger slowmoDeathTrigger { get { return m_slowmoDeathTrigger; } }
 	// public PostProcessEffectsManager postProcessEffectsManager { get { return m_postProcessEffectsManager; } }
 
+
+	// Camera setup values used on control panel
+	private float m_lastSize = 0;
+	public float lastSize
+	{
+		get{ return m_lastSize; }
+	}
+	private float m_lastFrameWidthModifier = 0;
+	public float lastFrameWidthModifier
+	{
+		get{ return m_lastFrameWidthModifier; } 
+	}
+
+
+
 	enum BossCamMode
 	{
 		NoBoss,
@@ -227,6 +242,8 @@ public class GameCamera : MonoBehaviour
 #if !PRODUCTION
 	    // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
 #endif
+
+		InstanceManager.gameCamera = this;
 	}
 
 	IEnumerator Start() 
@@ -247,6 +264,11 @@ public class GameCamera : MonoBehaviour
 
 	}
 
+	void OnDestroy()
+	{
+		InstanceManager.gameCamera = null;
+	}
+
     public void SetTargetObject(GameObject obj, bool snap = true)
  	{
 		if (obj == null )
@@ -264,15 +286,8 @@ public class GameCamera : MonoBehaviour
 		if(pi != null)
 		{
 			float size = pi.data.def.GetAsFloat("defaultSize");
-
-			float sizeIncrementRatio = (size - m_standardSizeSmallest) / (m_standardSizeLargest - m_standardSizeSmallest); // 0 -1
-			sizeIncrementRatio = Mathf.Clamp01(sizeIncrementRatio);
-
-			m_frameWidthIncrement = Mathf.Lerp(0.0f, m_frameWidthIncrementMax, sizeIncrementRatio);
-			//Debug.Log("FRAME WIDTH INCREMENT = " + m_frameWidthIncrement);
-
-			// Apply the entity camera modifer after lerping the increment.
-			m_frameWidthIncrement += pi.data.def.GetAsFloat("cameraFrameWidthModifier");
+			float cameraFrameWidthModifier = pi.data.def.GetAsFloat("cameraFrameWidthModifier");
+			SetFrameWidthIncrement( size, cameraFrameWidthModifier );
 		}
 		else
 		{
@@ -309,7 +324,21 @@ public class GameCamera : MonoBehaviour
 			UpdateValues();
 		}
 	}
-	
+
+	public void SetFrameWidthIncrement( float size, float cameraFrameWidthModifier )
+	{
+		m_lastSize = size;
+		m_lastFrameWidthModifier = cameraFrameWidthModifier;
+
+		float sizeIncrementRatio = (size - m_standardSizeSmallest) / (m_standardSizeLargest - m_standardSizeSmallest); // 0 -1
+		sizeIncrementRatio = Mathf.Clamp01(sizeIncrementRatio);
+
+		m_frameWidthIncrement = Mathf.Lerp(0.0f, m_frameWidthIncrementMax, sizeIncrementRatio);
+
+		// Apply the entity camera modifer after lerping the increment.
+		m_frameWidthIncrement += cameraFrameWidthModifier;
+	}
+
 	public bool IsTarget(GameObject obj)
 	{
 		return (m_targetObject == obj);
