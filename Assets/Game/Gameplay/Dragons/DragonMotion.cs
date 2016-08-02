@@ -135,9 +135,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_waterMovementModifier = 0;
 
-	public static float s_dargonAcceleration = 20;
-	public static float s_dragonMass = 10;
-	public static float s_dragonFricction = 15.0f;
+	public float m_dargonAcceleration = 20;
+	public float m_dragonMass = 10;
+	public float m_dragonFricction = 15.0f;
+	public float m_dragonGravityModifier = 0.3f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -225,6 +226,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_currentBackBend = Vector2.zero;
 
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
+
+		// Movement Setup
+		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
+		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
+		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
+		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
 	}
 
 	/// <summary>
@@ -551,15 +558,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					// v_max = a/f
 					// t_max = 5/f
 
-					float gravity = 9.81f / 3.0f;
-					Vector3 acceleration = Vector3.down * gravity * s_dragonMass;	// Gravity
-					acceleration += impulse * s_dargonAcceleration * m_targetSpeedMultiplier * s_dragonMass;	// User Force
+					float gravity = 9.81f * m_dragonGravityModifier;
+					Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+					acceleration += impulse * m_dargonAcceleration * m_targetSpeedMultiplier * m_dragonMass;	// User Force
 
 					// stroke's Drag
 					m_impulse = m_rbody.velocity;
 
 					float impulseMag = m_impulse.magnitude;
-					m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * s_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+					m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
 					m_direction = m_impulse.normalized;
 					RotateToDirection( impulse );
 				}
@@ -713,7 +720,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case 1:
 			{
 				float impulseMag = m_impulse.magnitude;
-				m_impulse += -(m_impulse.normalized * s_dragonFricction * 2 * impulseMag * Time.deltaTime);
+				m_impulse += -(m_impulse.normalized * m_dragonFricction * 2 * impulseMag * Time.deltaTime);
 			}break;
 			case 2:
 			{
@@ -875,7 +882,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case 1:
 				{
-					return (s_dargonAcceleration * m_boostMultiplier / s_dragonFricction) * s_dragonMass;
+					return (m_dargonAcceleration * m_boostMultiplier / m_dragonFricction) * m_dragonMass;
 				}break;
 				case 2:
 				{

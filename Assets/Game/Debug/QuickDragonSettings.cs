@@ -8,33 +8,42 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderUp;
 	public Slider m_sliderDown;
 	public Dropdown m_moveTypeDropDown;
+	private DragonMotion m_motion;
 
 	void OnEnable()
 	{
-		m_sliderVelocity.value = DragonMotion.s_dargonAcceleration;
-		m_sliderUp.value = DragonMotion.s_dragonMass;
-		m_sliderDown.value = DragonMotion.s_dragonFricction;
-		m_moveTypeDropDown.value = DragonMotion.movementType;
-		
+		if ( InstanceManager.player != null )
+		{
+			m_motion = InstanceManager.player.GetComponent<DragonMotion>();
+
+			m_sliderVelocity.value = m_motion.m_dargonAcceleration;
+			m_sliderUp.value = m_motion.m_dragonMass;
+			m_sliderDown.value = m_motion.m_dragonFricction;
+			m_moveTypeDropDown.value = DragonMotion.movementType;
+		}		
 	}
 	
 	public void SetVelocityBend(float _size) 
 	{
-		DragonMotion.s_dargonAcceleration = _size;
+		if ( m_motion != null )
+			m_motion.m_dargonAcceleration = _size;
 	}
 
 	public void SetUpBend(float _size) 
 	{
-		DragonMotion.s_dragonMass = _size;
+		if ( m_motion != null )
+			m_motion.m_dragonMass = _size;
 	}
 
 	public void SetDownBend(float _size) 
 	{
-		DragonMotion.s_dragonFricction = _size;
+		if ( m_motion != null )
+			m_motion.m_dragonFricction = _size;
 	}
 
 	public void SetMoveType(int type)
 	{
-		DragonMotion.movementType = type;
+		if ( m_motion != null )
+			DragonMotion.movementType = type;
 	}
 }

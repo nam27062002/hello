@@ -260,13 +260,10 @@ public class GameCamera : MonoBehaviour
 
 		// if we have a prefab instance, work out which entity we are, get our 'defaultSize',
 		// compare it to the standard size (BlackTip?), apply that ratio to the frame width increment
-		// TODO (MALH) : Recover this
-		/*
-		EntityInstance pi = obj.GetComponent<EntityInstance>();
+		DragonPlayer pi = obj.GetComponent<DragonPlayer>();
 		if(pi != null)
 		{
-			EntityData data = GameDataManager.Instance.gameDB.GetItem<EntityData>(pi.entityKey);
-			float size = data.defaultSize;
+			float size = pi.data.def.GetAsFloat("defaultSize");
 
 			float sizeIncrementRatio = (size - m_standardSizeSmallest) / (m_standardSizeLargest - m_standardSizeSmallest); // 0 -1
 			sizeIncrementRatio = Mathf.Clamp01(sizeIncrementRatio);
@@ -275,20 +272,12 @@ public class GameCamera : MonoBehaviour
 			//Debug.Log("FRAME WIDTH INCREMENT = " + m_frameWidthIncrement);
 
 			// Apply the entity camera modifer after lerping the increment.
-			m_frameWidthIncrement += data.cameraFrameWidthModifier;
+			m_frameWidthIncrement += pi.data.def.GetAsFloat("cameraFrameWidthModifier");
 		}
 		else
 		{
 			m_frameWidthIncrement = 0.0f;
 		}
-		*/
-		float sizeIncrementRatio = (10f - m_standardSizeSmallest) / (m_standardSizeLargest - m_standardSizeSmallest); // 0 -1
-		sizeIncrementRatio = Mathf.Clamp01(sizeIncrementRatio);
-
-		m_frameWidthIncrement = Mathf.Lerp(0.0f, m_frameWidthIncrementMax, sizeIncrementRatio);
-
-
-
 
 		m_snap = snap;
 
