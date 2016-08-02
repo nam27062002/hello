@@ -242,6 +242,8 @@ public class GameCamera : MonoBehaviour
 #if !PRODUCTION
 	    // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
 #endif
+
+		InstanceManager.gameCamera = this;
 	}
 
 	IEnumerator Start() 
@@ -260,6 +262,11 @@ public class GameCamera : MonoBehaviour
 		SetTargetObject( InstanceManager.player.gameObject );
 
 
+	}
+
+	void OnDestroy()
+	{
+		InstanceManager.gameCamera = null;
 	}
 
     public void SetTargetObject(GameObject obj, bool snap = true)

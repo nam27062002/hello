@@ -39,16 +39,13 @@ public class BossCameraAffector : MonoBehaviour
 	// Private Variables:
 	//--------------------------------------------------------
 
-	// private SpawnedObject m_spawnedObject = null;	// TODO (MALH) : Recover this
-	private FastBounds2D m_bounds = null; // this is the bounds that the camera will try to frame, we grab a reference to the one used for culling
+	private Entity m_spawnedObject = null;
 	private bool m_firstTime = true;
 	private bool m_notified;
 
 	//--------------------------------------------------------
 	// Public Properties:
 	//--------------------------------------------------------
-
-	public FastBounds2D bounds { get { return m_bounds; } }
 	public bool permanentlyDisabled	{ get; private set; }
 
 	//--------------------------------------------------------
@@ -60,11 +57,14 @@ public class BossCameraAffector : MonoBehaviour
 		// initialize the property.
 		permanentlyDisabled = false;
 		// disable this if the performances of the current device are not enough.
-		// if(DeviceQualityManager.devicePerformanceRating < m_minPerformanceRatingToUse)	// TODO (MALH) : Recover this
+		// TODO (MALH) : Recover this
+		/*
+		if(DeviceQualityManager.devicePerformanceRating < m_minPerformanceRatingToUse)	
 		{
 			enabled = false;
 			permanentlyDisabled = true;
 		}
+		*/
 	}
 
 	protected void OnDisable()
@@ -100,15 +100,13 @@ public class BossCameraAffector : MonoBehaviour
 		switch(detectType)
 		{
 			case DetectType.onscreen:
-			// TODO (MALH) : Recover this
-			/*
 				if(m_spawnedObject != null)
 				{
 					if(m_spawnedObject.isOnScreen)
 					{
 						if(!m_notified)
 						{
-							GameInfo.gameCamera.NotifyBoss(this);
+							InstanceManager.gameCamera.NotifyBoss(this);
 							m_notified = true;
 						}						
 					}
@@ -116,13 +114,12 @@ public class BossCameraAffector : MonoBehaviour
 					{
 						if(m_notified)
 						{
-							GameInfo.gameCamera.RemoveBoss(this);
+							InstanceManager.gameCamera.RemoveBoss(this);
 							m_notified = false;
 						}
 					}
 
 				}
-					*/
 				break;
 		}
 	}
@@ -136,9 +133,8 @@ public class BossCameraAffector : MonoBehaviour
 		if(detectType == DetectType.onscreen)
 		{
 			// TODO (MALH) : Recover this
-			/*
 			// relying on existence of SpawnedObject for now, use it to grab bounds
-			SpawnedObject sp = GetComponent<SpawnedObject>();
+			Entity sp = GetComponent<Entity>();
 			if(sp == null)
 			{
 				enabled = false;
@@ -146,10 +142,7 @@ public class BossCameraAffector : MonoBehaviour
 			else
 			{
 				m_spawnedObject = sp;
-				m_bounds = sp.cullingBounds;
-				Assert.Fatal(m_bounds != null);
 			}
-			*/
 		}
 	}
 
@@ -159,14 +152,12 @@ public class BossCameraAffector : MonoBehaviour
 		if(enabled && m_notified)
 		{
 			// TODO (MALH) : Recover this
-			/*
 			// make this check because it could happen that some entities (like treasure chests) could be destroyed/disabled
 			// before to enter in the level, so, before the camera to be instantiated.
-			if(GameInfo.gameCamera != null)
+			if(InstanceManager.gameCamera != null)
 			{
-				GameInfo.gameCamera.RemoveBoss(this);
+				InstanceManager.gameCamera.RemoveBoss(this);
 			}
-			*/
 			m_notified = false;
 		}
 	}
