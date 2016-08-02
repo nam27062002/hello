@@ -1394,24 +1394,25 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 8
     m_defaultUpVector: 0
-    m_orientationSpeed: 4
-    m_faceDirection: 0
+    m_orientationSpeed: 60
+    m_faceDirection: 1
     m_facePlayer: 1
-    m_limitVerticalRotation: 1
     m_limitHorizontalRotation: 0
-    m_faceLeftAngleY: -90
-    m_faceRightAngleY: 90
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 340
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 6
-    m_maxRadius: 6
-    m_angle: 360
-    m_angleOffset: 360
-    m_sensorOffset: {x: 3.73, y: 0, z: 0}
+    m_minRadius: 4
+    m_maxRadius: 4
+    m_sensorOffset: {x: 0, y: 0, z: 3}
     m_senseDelay:
       min: 0
       max: 0
@@ -1443,7 +1444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 0.1
-  m_runSpeed: 8
+  m_runSpeed: 6
   m_hasNavigationLayer: 1
   m_hasRotationLayer: 0
   m_animA: 
@@ -1470,7 +1471,7 @@ MonoBehaviour:
     min: 0.9
     max: 1.4
   m_timeBeforeBackHome: 1
-  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":1,"attackDelay":5,"retreatTime":0,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false},{"boostSpeed":5,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false}]'
+  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":2,"attackDelay":5,"retreatTime":5,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false}]'
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!137 &13726440

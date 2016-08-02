@@ -18,17 +18,22 @@ namespace AI {
 		[SerializeField] private bool m_stickToGround = false;
 		public bool stickToGround { get { return m_stickToGround; } set { m_stickToGround = value; } }
 		[SerializeField] private bool m_walkOnWalls = false;
+		[SerializeField] private float m_mass = 1f;
 
 		[SeparatorAttribute]
 		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
-		[SerializeField] private float m_orientationSpeed = 2f;
+		[SerializeField] private float m_orientationSpeed = 120f;
 		[SerializeField] private bool m_faceDirection = true;
 		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
-		[SerializeField] private bool m_facePlayer = false;
-		[SerializeField] private bool m_limitVerticalRotation = false;
+		[SerializeField][HideInInspector] private bool m_facePlayer = false;
+
 		[SerializeField] private bool m_limitHorizontalRotation = false;
-		[SerializeField] private float m_faceLeftAngleY = -90f;
-		[SerializeField] private float m_faceRightAngleY = 90f;
+		[SerializeField][HideInInspector] private float m_faceLeftAngle = -90f;
+		[SerializeField][HideInInspector] private float m_faceRightAngle = 90f;
+	
+		[SerializeField] private bool m_limitVerticalRotation = false;
+		[SerializeField][HideInInspector] private float m_faceUpAngle = 320f;
+		[SerializeField][HideInInspector] private float m_faceDownAngle = 40f;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		private Vector3 m_position;
@@ -42,6 +47,8 @@ namespace AI {
 
 		private Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
+
+		private Vector3 m_velocity;
 
 		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
@@ -73,6 +80,11 @@ namespace AI {
 				case UpVector.Forward: 	m_upVector = Vector3.forward; 	break;
 				case UpVector.Back: 	m_upVector = Vector3.back;		break;
 			}
+
+			m_velocity = Vector3.zero;
+			if (m_mass < 0f) {
+				m_mass = 0f;
+			}
 		}
 
 		public override void Update() {
@@ -84,14 +96,18 @@ namespace AI {
 			}
 
 			if (m_pilot != null) {
+				Vector3 impulse = (m_pilot.impulse - m_velocity);
+				impulse /= m_mass; //mass
+				m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
 				m_direction = m_pilot.direction;
+
 				m_viewControl.NavigationLayer(m_direction.z, m_direction.y);
 
 				UpdateAttack();
 
+				m_position += m_velocity * Time.deltaTime;
 				if (m_pilot.speed > 0.01f) {
-					m_position += m_pilot.impulse * Time.deltaTime;
-					m_viewControl.Move(m_pilot.impulse.magnitude);
+					m_viewControl.Move(m_pilot.impulse.magnitude); //???
 				} else {
 					m_viewControl.Move(0f);
 				}
@@ -117,8 +133,8 @@ namespace AI {
 				}
 
 				// machine should face the same direction it is moving
-				//m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * 120f);
-				m_rotation = Quaternion.Slerp(m_rotation, m_targetRotation, Time.deltaTime * 2f);
+				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 				m_machine.transform.rotation = m_rotation;
 			}
@@ -177,7 +193,7 @@ namespace AI {
 				if (m_direction != Vector3.zero) {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
-			} else if (m_faceDirection && m_pilot.speed > 0.01f) {
+			} else if (m_faceDirection && m_pilot.speed > 0.01f) {				
 				if (m_facePlayer) {
 					Vector3 right = Vector3.Cross(m_direction, m_upVector);
 					Vector3 up = Vector3.Cross(right, m_direction);
@@ -185,37 +201,40 @@ namespace AI {
 				} else {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
-
-				if (m_limitVerticalRotation) {
-					Vector3 eulerRotation = m_targetRotation.eulerAngles;	// if the machine move always in the same Z
-					if (m_direction.y > 0) 		eulerRotation.z = Mathf.Min(40f, eulerRotation.z);
-					else if (m_direction.y < 0)	eulerRotation.z = Mathf.Max(300f, eulerRotation.z);
-					m_targetRotation = Quaternion.Euler(eulerRotation);
-				}
 			} else {
 				if (m_pilot.speed > 0.01f) {
 					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
 				}
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
-				if (m_limitHorizontalRotation) m_targetRotation = LimitRotation(m_targetRotation);
+
+			}
+
+			if (m_limitHorizontalRotation || m_limitVerticalRotation) {
+				m_targetRotation = LimitRotation(m_targetRotation);
 			}
 		}
 
 
 		private Quaternion LimitRotation(Quaternion _quat) {
-			if (m_faceDirection) {
-				return _quat;
-			} else {
-				Vector3 euler = _quat.eulerAngles;
+			Vector3 euler = _quat.eulerAngles;
 
-				if (euler.y > m_faceRightAngleY) {
-					euler.y = m_faceRightAngleY;
-				} else if (euler.y < m_faceLeftAngleY) {
-					euler.y = m_faceLeftAngleY;
+			if (m_limitHorizontalRotation) {
+				if (euler.y > m_faceRightAngle) {
+					euler.y = m_faceRightAngle;
+				} else if (euler.y < m_faceLeftAngle) {
+					euler.y = m_faceLeftAngle;
 				}
-
-				return Quaternion.Euler(euler);
 			}
+
+			if (m_limitVerticalRotation) {					
+				if (m_direction.y > 0.25f) {
+					euler.x = Mathf.Max(m_faceUpAngle, euler.x);
+				} else if (m_direction.y < -0.25f) {
+					euler.x = Mathf.Min(m_faceDownAngle, euler.x);
+				}
+			}
+
+			return Quaternion.Euler(euler);
 		}
 
 		private bool CheckCollisions() {

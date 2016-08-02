@@ -6,13 +6,10 @@ namespace AI {
 		/**************/
 		/*			  */
 		/**************/
-
-		[SeparatorAttribute]
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
 		[SerializeField] private MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
 
-		[SeparatorAttribute]
 		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 

@@ -1073,7 +1073,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"restTime":{"min":4,"max":8},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.SpiderIdle","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":10,"max":60},"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderPathData","componentType":"AI.Behaviour.WanderPath","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":10,"max":20},"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderPathData","componentType":"AI.Behaviour.WanderPath","editorFolded":false},{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"restTime":{"min":4,"max":6},"dataType":"AI.Behaviour.SpiderIdleData","componentType":"AI.Behaviour.SpiderIdle","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -1091,23 +1091,24 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 1
     m_walkOnWalls: 1
+    m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 2
+    m_orientationSpeed: 120
     m_faceDirection: 0
     m_facePlayer: 0
-    m_limitVerticalRotation: 0
     m_limitHorizontalRotation: 0
-    m_faceLeftAngleY: -90
-    m_faceRightAngleY: 90
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 0
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
-  m_enableSensor: 0
+  m_enableSensor: 1
   m_sensor:
     m_minRadius: 4
     m_maxRadius: 4
-    m_angle: 360
-    m_angleOffset: 0
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0.25
@@ -1125,17 +1126,20 @@ LineRenderer:
   m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1164,6 +1168,9 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 9a9885734fd484b7db9c1d9c38a0fd49, type: 2}
   - {fileID: 2100000, guid: df07362988b0b4bd283dd4a308956692, type: 2}
@@ -1171,13 +1178,13 @@ SkinnedMeshRenderer:
   - {fileID: 2100000, guid: cbf6d2cf196ed469998b9552ef59a251, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1187,6 +1194,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 6946b7a38ea2547b7ae2fab0d8cadabe, type: 3}
   m_Bones:
   - {fileID: 474664}

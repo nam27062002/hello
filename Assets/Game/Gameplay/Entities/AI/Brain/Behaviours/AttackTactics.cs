@@ -13,7 +13,6 @@ namespace AI {
 			private static string OnEnemyInRange = "onEnemyInRange";
 
 			private float m_shutdownSensorTime;
-
 			private float m_timer;
 
 
@@ -32,18 +31,16 @@ namespace AI {
 
 				if (m_shutdownSensorTime > 0f) {
 					m_timer = m_shutdownSensorTime;
-					m_machine.SetSignal(Signals.Type.Alert, false);
 				} else {
-					m_machine.SetSignal(Signals.Type.Alert, true);
+					m_timer = 0f;
 				}
+
+				m_machine.SetSignal(Signals.Type.Alert, true);
 			}
 
 			protected override void OnUpdate() {
 				if (m_timer > 0f) {
 					m_timer -= Time.deltaTime;
-					if (m_timer <= 0f) {
-						m_machine.SetSignal(Signals.Type.Alert, true);
-					}
 				} else {
 					if (m_machine.GetSignal(Signals.Type.Danger)) {
 						Transition(OnEnemyInRange);

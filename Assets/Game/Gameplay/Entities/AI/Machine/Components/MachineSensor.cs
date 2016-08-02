@@ -7,10 +7,10 @@ namespace AI {
 
 		[SerializeField] private float m_minRadius;
 		[SerializeField] private float m_maxRadius;
-		[SerializeField][Range(45,360)] private float m_angle;
-		[SerializeField][Range(0,360)] private float m_angleOffset;
+		//[SerializeField][Range(45,360)] private float m_angle;
+		//[SerializeField][Range(0,360)] private float m_angleOffset;
 		[SerializeField] private Vector3 m_sensorOffset = Vector3.zero;
-		private Vector3 sensorPosition { get { return m_machine.transform.position + m_sensorOffset; } }
+		private Vector3 sensorPosition { get { return m_machine.transform.position + (m_machine.transform.rotation * m_sensorOffset); } }
 		[SerializeField] private Range m_senseDelay = new Range(0.25f, 1.25f);
 
 		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
@@ -49,8 +49,10 @@ namespace AI {
 					if (distanceSqr < m_maxRadius * m_maxRadius) {
 						// check if the dragon is inside the sense zone
 						if (distanceSqr < m_minRadius * m_minRadius) {
+							isInsideMinArea = true;
+
 							// Check if this entity can see the player
-							if (m_angle == 360) {
+							/*if (m_angle == 360) {
 								isInsideMinArea = true;
 							} else {
 								Vector2 direction = (m_machine.direction.x < 0)? Vector2.left : Vector2.right;
@@ -66,7 +68,7 @@ namespace AI {
 								if (sensorAngleTo > 360) sensorAngleTo -= 360;
 
 								isInsideMinArea = angle >= sensorAngleFrom || angle <= sensorAngleTo;
-							}
+							}*/
 						}
 						isInsideMaxArea = true;
 					} 
@@ -89,21 +91,21 @@ namespace AI {
 
 		// Debug
 		public override void OnDrawGizmosSelected(Transform _go) {
-			Vector3 pos = _go.position + m_sensorOffset;
+			Vector3 pos = _go.position + (_go.rotation * m_sensorOffset);
 
 			Gizmos.color = Color.red;
 			Gizmos.DrawWireSphere(pos, m_minRadius);
 			Gizmos.color = Color.white;
 			Gizmos.DrawWireSphere(pos, m_maxRadius);
 
-			float fromAngle = (-m_angle * 0.5f) + m_angleOffset;
+			/*float fromAngle = (-m_angle * 0.5f) + m_angleOffset;
 			float toAngle = (m_angle * 0.5f) + m_angleOffset;
-			Vector3 from = Vector3.right.RotateXYDegrees(fromAngle);
-			Vector3 to = Vector3.right.RotateXYDegrees(toAngle);
+			Vector3 from = Vector3.back.RotateXYDegrees(fromAngle);
+			Vector3 to = Vector3.back.RotateXYDegrees(toAngle);
 
 			Gizmos.color = Color.red;
 			Gizmos.DrawLine(pos, pos + to * m_minRadius);
-			Gizmos.DrawLine(pos, pos + from * m_minRadius);
+			Gizmos.DrawLine(pos, pos + from * m_minRadius);*/
 		}
 	}
 }
