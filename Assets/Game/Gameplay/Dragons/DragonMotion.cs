@@ -117,7 +117,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector2 m_currentBackBend;
 
 	// Parabolic movement
-	private float m_parabolicMovementValue = 10;
+	[Header("Parabolic Movement")]
+	[SerializeField] private float m_parabolicMovementValue = 10;
+	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
+	[SerializeField] private float m_outerSpaceRecoveryTime = 0.5f;
 
 	private bool m_canMoveInsideWater = false;
 	public bool canDive
@@ -945,7 +948,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_animationEventController.OnEnterOuterSpace();
 
 		// Trigger particles (min. speed required)
-		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= 7.5f) {	// [AOC] HARDCODED!!
+		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
 			m_particleController.OnEnterOuterSpace();
 		}
 
@@ -959,7 +962,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_animationEventController.OnExitOuterSpace();
 
 		// Trigger particles (min. speed required)
-		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= 7.5f) {	// [AOC] HARDCODED!!
+		if(m_particleController != null && Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed) {
 			m_particleController.OnExitOuterSpace();
 		}
 
@@ -969,7 +972,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	IEnumerator EndSpaceCoroutine()
 	{
-		yield return new WaitForSeconds(0.1f);
+		// The faster we go, the longer it takes for the player to recover control
+		/*float relativeImpulseY = Mathf.InverseLerp(1f, 15f, m_impulse.y);
+		float delay = Mathf.Lerp(0.1f, 0.75f, relativeImpulseY);*/
+		yield return new WaitForSeconds(m_outerSpaceRecoveryTime);
 		ChangeState( State.Fly_Down);
 	} 
 
@@ -1038,14 +1044,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}
 				m_impulse.x = -m_impulse.x;
 			}break;
-			case State.OuterSpace:
-			{
-				if ( m_impulse.y > 0 )
-				{
-					m_impulse.y = 0;		
+
+			case State.OuterSpace: {
+				// Move down
+				if(m_impulse.y > 0) {
+					//m_impulse.y = 0;
+					m_impulse.y = -1f;
 				}
-				m_impulse.x = -m_impulse.x;
-			}break;
+
+				// Smooth bounce effect on X
+				m_impulse.x = -m_impulse.x * 0.05f;
+			} break;
+
 			default:
 			{
 			}break;
