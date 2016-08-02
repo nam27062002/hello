@@ -8,7 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 439684}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Propeller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23,7 +23,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 470746}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Front_Buton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 451384}
   - 95: {fileID: 9599312}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 476840}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Back_Buton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,7 +69,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 495566}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - 114: {fileID: 11442140}
   - 135: {fileID: 13596940}
   - 114: {fileID: 11433034}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: PF_Mine_small_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 485020}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Rbuton_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 485108}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Lbuton_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 487134}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Lbuton_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 443322}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Rbuton_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166,7 +166,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 460288}
   - 137: {fileID: 13799596}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mines_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +299,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 182268}
-  m_LocalRotation: {x: -0.19993678, y: 0.7512296, z: -0.44276285, w: 0.44681126}
+  m_LocalRotation: {x: -0.19993679, y: 0.75122964, z: -0.44276288, w: 0.4468113}
   m_LocalPosition: {x: 0.41354483, y: 0.43405345, z: 0.30855474}
   m_LocalScale: {x: 1.0000001, y: 1.0000004, z: 1.0000002}
   m_LocalEulerAnglesHint: {x: 29.115099, y: 103.816696, z: -52.8191}
@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
+  m_enableMotion: 0
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
@@ -389,7 +389,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_minRadius: 0
     m_maxRadius: 0
@@ -457,7 +457,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 146638}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.6
