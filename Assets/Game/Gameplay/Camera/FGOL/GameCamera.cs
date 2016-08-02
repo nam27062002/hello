@@ -181,7 +181,6 @@ public class GameCamera : MonoBehaviour
 	
 	void Awake()
 	{
-	return;
 		m_transform = transform;
 		m_unityCamera = GetComponent<Camera>();
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
@@ -210,7 +209,8 @@ public class GameCamera : MonoBehaviour
 
 		m_posFrom = m_posTo = m_transform.position;
 
-		UpdateValues();
+		if ( DebugSettings.newCameraSystem )
+			UpdateValues();
 		m_hasInitialized = true;
 		
 		// If an attempt was made to assign the target object before this Awake()
@@ -243,6 +243,8 @@ public class GameCamera : MonoBehaviour
 		}
 
 		SetTargetObject( InstanceManager.player.gameObject );
+
+		enabled = DebugSettings.newCameraSystem;
 	}
 
     public void SetTargetObject(GameObject obj, bool snap = true)
@@ -391,6 +393,13 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
+
+		if ( !DebugSettings.newCameraSystem )
+		{
+			GetComponent<GameCameraController>().enabled = true;
+			enabled = false;
+		}
+
 #if UNITY_EDITOR
 		float prevZ = transform.position.z;
 #endif
@@ -986,25 +995,29 @@ public class GameCamera : MonoBehaviour
 		if (!Application.isPlaying) {
 			UpdateValues();
 		}
-		Vector3 center;
-		Vector3 size;
 
-		Gizmos.color = Color.yellow;
-		m_screenWorldBounds.GetCentre( out center );
-		m_screenWorldBounds.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
+		if ( enabled )
+		{
+			Vector3 center;
+			Vector3 size;
 
-		Gizmos.color = Color.cyan;
-		m_activationMin.GetCentre( out center );
-		m_activationMin.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
-		m_activationMax.GetCentre( out center );
-		m_activationMax.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
+			Gizmos.color = Color.yellow;
+			m_screenWorldBounds.GetCentre( out center );
+			m_screenWorldBounds.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
 
-		Gizmos.color = Color.magenta;
-		m_deactivation.GetCentre( out center );
-		m_deactivation.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
+			Gizmos.color = Color.cyan;
+			m_activationMin.GetCentre( out center );
+			m_activationMin.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+			m_activationMax.GetCentre( out center );
+			m_activationMax.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+
+			Gizmos.color = Color.magenta;
+			m_deactivation.GetCentre( out center );
+			m_deactivation.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+		}
 	}
 }
