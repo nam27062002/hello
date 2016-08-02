@@ -168,6 +168,7 @@ Transform:
   m_LocalRotation: {x: 0.9845555, y: -0.09202918, z: -0.14533326, w: 0.032548275}
   m_LocalPosition: {x: 76.4, y: -63.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 8
@@ -180,6 +181,7 @@ Transform:
   m_LocalRotation: {x: 0.99155533, y: -0.09900658, z: 0.06617357, w: 0.05135061}
   m_LocalPosition: {x: -470.1, y: 187.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 5
@@ -192,6 +194,7 @@ Transform:
   m_LocalRotation: {x: 0.9890528, y: -0.09364729, z: -0.111341566, w: 0.024657588}
   m_LocalPosition: {x: 250, y: 244, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 7
@@ -204,6 +207,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 493518}
   - {fileID: 470720}
@@ -225,6 +229,7 @@ Transform:
   m_LocalRotation: {x: 0.99155533, y: -0.09900658, z: 0.06617357, w: 0.05135061}
   m_LocalPosition: {x: -365.9, y: 142.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 6
@@ -237,6 +242,7 @@ Transform:
   m_LocalRotation: {x: 0.99155533, y: -0.09900658, z: 0.06617357, w: 0.05135061}
   m_LocalPosition: {x: -494.8, y: 122.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 3
@@ -249,6 +255,7 @@ Transform:
   m_LocalRotation: {x: 0.99155533, y: -0.09900658, z: 0.06617357, w: 0.05135061}
   m_LocalPosition: {x: -494.8, y: 73.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 1
@@ -261,6 +268,7 @@ Transform:
   m_LocalRotation: {x: 0.99155533, y: -0.09900658, z: 0.06617357, w: 0.05135061}
   m_LocalPosition: {x: -370.3, y: 73.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 4
@@ -273,6 +281,7 @@ Transform:
   m_LocalRotation: {x: 0.99155533, y: -0.09900658, z: 0.06617357, w: 0.05135061}
   m_LocalPosition: {x: -439.7, y: 73.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 2
@@ -285,6 +294,7 @@ Transform:
   m_LocalRotation: {x: 0.99155533, y: -0.09900658, z: 0.06617357, w: 0.05135061}
   m_LocalPosition: {x: -578.3, y: 73.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 437324}
   m_RootOrder: 0
@@ -303,12 +313,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.08
   m_atmosphereThickness: 2.2
-  m_skyTint: {r: 0.42352942, g: 0.6745098, b: 0.9705882, a: 1}
-  m_ground: {r: 0.3254902, g: 0.1882353, b: 0.6784314, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.2784314, g: 0.2627451, b: 0.28627452, a: 1}
-  m_fogStart: 200
-  m_fogEnd: 700
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 1
   m_rainIntensity: 0
 --- !u!114 &11404594
@@ -326,12 +334,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.03
   m_atmosphereThickness: 0.6
-  m_skyTint: {r: 0.42352942, g: 0.6745098, b: 0.9705882, a: 1}
-  m_ground: {r: 0.83769464, g: 0.8610163, b: 0.89705884, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.5019608, g: 0.5411765, b: 0.7294118, a: 1}
-  m_fogStart: 200
-  m_fogEnd: 700
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 1
   m_rainIntensity: 0
 --- !u!114 &11405834
@@ -349,12 +355,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.04
   m_atmosphereThickness: 2.68
-  m_skyTint: {r: 0.42352942, g: 0.6745098, b: 0.9705882, a: 1}
-  m_ground: {r: 1, g: 1, b: 1, a: 1}
-  m_exposure: 0.99
-  m_fogColor: {r: 0.21891037, g: 0.20750435, b: 0.2794118, a: 1}
-  m_fogStart: 10
-  m_fogEnd: 70
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 0
   m_rainIntensity: 0
 --- !u!114 &11445900
@@ -372,12 +376,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.02
   m_atmosphereThickness: 0.69
-  m_skyTint: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  m_ground: {r: 0.6627451, g: 0.7058824, b: 0.77254903, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.45490196, g: 0.5137255, b: 0.59607846, a: 1}
-  m_fogStart: -100
-  m_fogEnd: 250
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 0
   m_rainIntensity: 100
 --- !u!114 &11446374
@@ -395,12 +397,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.03
   m_atmosphereThickness: 0.6
-  m_skyTint: {r: 0.42352942, g: 0.6745098, b: 0.9705882, a: 1}
-  m_ground: {r: 0.83769464, g: 0.8610163, b: 0.89705884, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.5019608, g: 0.5411765, b: 0.7294118, a: 1}
-  m_fogStart: 200
-  m_fogEnd: 700
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 1
   m_rainIntensity: 0
 --- !u!114 &11459330
@@ -418,12 +418,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.02
   m_atmosphereThickness: 0.69
-  m_skyTint: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  m_ground: {r: 0.6627451, g: 0.7058824, b: 0.77254903, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.45490196, g: 0.5137255, b: 0.59607846, a: 1}
-  m_fogStart: -100
-  m_fogEnd: 250
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 0
   m_rainIntensity: 100
 --- !u!114 &11463564
@@ -441,12 +439,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.03
   m_atmosphereThickness: 0.6
-  m_skyTint: {r: 0.42352942, g: 0.6745098, b: 0.9705882, a: 1}
-  m_ground: {r: 0.83769464, g: 0.8610163, b: 0.89705884, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.5019608, g: 0.5411765, b: 0.7294118, a: 1}
-  m_fogStart: 200
-  m_fogEnd: 700
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 1
   m_rainIntensity: 0
 --- !u!114 &11490350
@@ -464,12 +460,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.01
   m_atmosphereThickness: 0.69
-  m_skyTint: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  m_ground: {r: 0.6627451, g: 0.7058824, b: 0.77254903, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.45490196, g: 0.5137255, b: 0.59607846, a: 1}
-  m_fogStart: -100
-  m_fogEnd: 250
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 0
   m_rainIntensity: 100
 --- !u!114 &11492928
@@ -487,12 +481,10 @@ MonoBehaviour:
   m_ambientIntensity: 1
   m_sunSize: 0.02
   m_atmosphereThickness: 0.69
-  m_skyTint: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  m_ground: {r: 0.6627451, g: 0.7058824, b: 0.77254903, a: 1}
-  m_exposure: 1.11
-  m_fogColor: {r: 0.45490196, g: 0.5137255, b: 0.59607846, a: 1}
-  m_fogStart: -100
-  m_fogEnd: 250
+  m_skyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonColor: {r: 1, g: 1, b: 1, a: 1}
+  m_horizonHeight: 0
+  m_groundColor: {r: 1, g: 1, b: 1, a: 1}
   m_flaresIntensity: 0
   m_rainIntensity: 100
 --- !u!1001 &100100000
