@@ -85,6 +85,12 @@ public class GameCamera : MonoBehaviour
     private float m_trackAheadScale = 1.5f;
     [SerializeField]
     private TrackAheadMode m_trackAheadMode;
+	[Separator("Entity management")]
+	[SerializeField] private float m_activationDistance = 10f;
+	[SerializeField] private float m_activationRange = 5f;
+	[SerializeField] private float m_deactivationDistance = 20f;
+
+
     
     // Camera rotation look at shark 
 	private float               m_rotateLerpTimer = 0.0f;
@@ -102,6 +108,10 @@ public class GameCamera : MonoBehaviour
 	private float				m_fov = m_defaultFOV;						// Vertical FOV in degrees
 	private FastBounds2D		m_screenWorldBounds = new FastBounds2D();	// 2D bounds of the camera view at the z=0 plane
 	private FastBounds2D		m_backgroundWorldBounds = new FastBounds2D();	// same, at Z for background spawners
+
+	private FastBounds2D 		m_activationMin = new FastBounds2D();
+	private FastBounds2D 		m_activationMax = new FastBounds2D();
+	private FastBounds2D 		m_deactivation = new FastBounds2D();
 	
 	private int					m_pixelWidth = 640;
 	private int					m_pixelHeight = 480;
@@ -845,6 +855,24 @@ public class GameCamera : MonoBehaviour
 			DebugDraw.DrawLine(pts[3], pts[0]);
 			#endif
 		}
+
+
+		float expand = 0;
+
+		m_activationMin.Set( m_screenWorldBounds );
+		expand = m_activationDistance;
+		m_activationMin.ExpandBy(expand, expand);
+		m_activationMin.ExpandBy(-expand, -expand);
+
+		m_activationMax.Set( m_screenWorldBounds );
+		expand = m_activationDistance + m_activationRange;
+		m_activationMax.ExpandBy( expand, expand );
+		m_activationMax.ExpandBy( -expand, -expand );
+
+		m_deactivation.Set( m_screenWorldBounds );
+		expand = m_deactivationDistance;
+		m_deactivation.ExpandBy( expand, expand );
+		m_deactivation.ExpandBy( -expand, -expand );
 	}
 	
 	// On-screen tests.  In Hungry Dragons, these were static for performance.
@@ -864,6 +892,77 @@ public class GameCamera : MonoBehaviour
 		return m_screenWorldBounds.Contains(x, y);
 	}
 
+
+	// Same tests from Dragon Camera
+	public bool IsInsideActivationMinArea(Vector3 _point) {
+		_point.z = 0;
+		return m_activationMin.Contains(_point);
+	}
+
+	public bool IsInsideActivationMinArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return m_activationMin.Intersects(_bounds);
+	}
+
+	public bool IsInsideActivationMaxArea(Vector3 _point) {
+		_point.z = 0;
+		return m_activationMax.Contains(_point);
+	}
+
+	public bool IsInsideActivationMaxArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return m_activationMax.Intersects(_bounds);
+	}
+
+	public bool IsInsideActivationArea(Vector3 _point) {
+		_point.z = 0;
+		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
+	}
+
+	public bool IsInsideActivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
+	}
+
+	public bool IsInsideDeactivationArea(Vector3 _point) {
+		_point.z = 0;
+		return !m_deactivation.Contains(_point);
+	}
+
+	public bool IsInsideDeactivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_deactivation.Intersects(_bounds);
+	}
+
+
+	public bool IsInsideFrustrum( Vector3 _point)
+	{
+		_point.z = 0;
+		return m_screenWorldBounds.Contains(_point);
+	}
+
+	public bool IsInsideFrustrum( Bounds _bounds)
+	{
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return m_screenWorldBounds.Intersects(_bounds);
+	}
+
+
+
+
+
+
+
 	public void NotifySlowmoActivation(bool active, float frameWidthDecrement = 0f)
 	{
 		if(active)
@@ -875,5 +974,37 @@ public class GameCamera : MonoBehaviour
 			m_frameWidthDecrement = 0f;
 		}
 		m_hasSlowmo = active;
+	}
+
+
+
+
+	//------------------------------------------------------------------//
+	// Debug															//
+	//------------------------------------------------------------------//
+	void OnDrawGizmos() {
+		if (!Application.isPlaying) {
+			UpdateValues();
+		}
+		Vector3 center;
+		Vector3 size;
+
+		Gizmos.color = Color.yellow;
+		m_screenWorldBounds.GetCentre( out center );
+		m_screenWorldBounds.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
+
+		Gizmos.color = Color.cyan;
+		m_activationMin.GetCentre( out center );
+		m_activationMin.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
+		m_activationMax.GetCentre( out center );
+		m_activationMax.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
+
+		Gizmos.color = Color.magenta;
+		m_deactivation.GetCentre( out center );
+		m_deactivation.GetSize(out size);
+		Gizmos.DrawWireCube(center, size);
 	}
 }
