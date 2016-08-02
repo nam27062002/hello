@@ -223,7 +223,7 @@ public class GameCamera : MonoBehaviour
 
         m_expOne = Mathf.Exp(1.0f);
 		m_bossCamMode = BossCamMode.NoBoss;
-
+		enabled = DebugSettings.newCameraSystem;
 #if !PRODUCTION
 	    // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
 #endif
@@ -244,7 +244,7 @@ public class GameCamera : MonoBehaviour
 
 		SetTargetObject( InstanceManager.player.gameObject );
 
-		enabled = DebugSettings.newCameraSystem;
+
 	}
 
     public void SetTargetObject(GameObject obj, bool snap = true)
@@ -822,7 +822,12 @@ public class GameCamera : MonoBehaviour
 
             m_transform.rotation = Quaternion.Euler(rot);
 		}
-		
+		UpdateBounds();	
+	
+	}
+
+	void UpdateBounds()
+	{
 		m_unityCamera.fieldOfView = m_fov;
 		
 		float z = -m_position.z;
@@ -992,8 +997,11 @@ public class GameCamera : MonoBehaviour
 	// Debug															//
 	//------------------------------------------------------------------//
 	void OnDrawGizmos() {
-		if (!Application.isPlaying) {
-			UpdateValues();
+		if (!Application.isPlaying) 
+		{
+			if (m_unityCamera == null )
+				m_unityCamera = GetComponent<Camera>();
+			UpdateBounds();
 		}
 
 		if ( enabled )

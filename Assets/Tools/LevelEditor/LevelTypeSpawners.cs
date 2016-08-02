@@ -71,10 +71,13 @@ namespace LevelEditor {
 
 			if ( DebugSettings.newCameraSystem )
 			{
-				GameCamera camera = Camera.main.GetComponent<GameCamera>();
-				if (camera != null && spawnPointObj != null) 
+				if ( Camera.main != null )
 				{
-					camera.transform.position = spawnPointObj.transform.position;
+					GameCamera camera = Camera.main.GetComponent<GameCamera>();
+					if (camera != null && spawnPointObj != null) 
+					{
+						camera.transform.position = spawnPointObj.transform.position;
+					}
 				}
 			}
 			else
