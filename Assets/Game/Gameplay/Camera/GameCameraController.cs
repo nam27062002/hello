@@ -135,6 +135,7 @@ public class GameCameraController : MonoBehaviour {
 	private void Awake() {
 		m_transform = transform;
 		m_state = State.INTRO;
+		enabled = !DebugSettings.newCameraSystem;
 	}
 
 	/// <summary>
@@ -195,7 +196,7 @@ public class GameCameraController : MonoBehaviour {
 			m_state = State.PLAY;
 		}
 
-		enabled = !DebugSettings.newCameraSystem;
+
 	}
 
 	private void CountDownEnded()
