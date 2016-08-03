@@ -80,19 +80,17 @@ namespace AI {
 				float fleeMagnitude = flee.magnitude;
 
 				if (dot <= DOT_START) {
-					if (Mathf.Abs(seekMagnitude - fleeMagnitude) < 0.01f) {
-						m_perpendicularAvoid = true;
-					}
+					m_perpendicularAvoid = true;
 				} else if (dot > DOT_END) {
 					m_perpendicularAvoid = false;
 				}
 
 				if (m_perpendicularAvoid) {
 					m_impulse.Set(-flee.y, flee.x, flee.z);
-					m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 				} else {
 					m_impulse = seek + flee;
 				}
+				m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 
 				m_impulse += m_externalImpulse;
 
