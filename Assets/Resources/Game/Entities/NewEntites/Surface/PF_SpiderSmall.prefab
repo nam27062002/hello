@@ -1073,7 +1073,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"speed":2,"timeToIdle":{"min":10,"max":20},"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderPathData","editorFolded":false}]'
+  m_serializedJson: '[{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -1105,7 +1105,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_minRadius: 4
     m_maxRadius: 4
