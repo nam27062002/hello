@@ -30,7 +30,7 @@ namespace AI {
 			NextCollisionCheckID++;
 		}
 
-		public override void Spawn(Spawner _spawner) {
+		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			m_collisionAvoidFactor = 0f;

@@ -10,7 +10,7 @@ namespace AI {
 		//[SerializeField][Range(45,360)] private float m_angle;
 		//[SerializeField][Range(0,360)] private float m_angleOffset;
 		[SerializeField] private Vector3 m_sensorOffset = Vector3.zero;
-		private Vector3 sensorPosition { get { return m_machine.transform.position + (m_machine.transform.rotation * m_sensorOffset); } }
+		private Vector3 sensorPosition { get { return m_pilot.transform.position + (m_pilot.transform.rotation * m_sensorOffset); } }
 		[SerializeField] private Range m_senseDelay = new Range(0.25f, 1.25f);
 
 		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component

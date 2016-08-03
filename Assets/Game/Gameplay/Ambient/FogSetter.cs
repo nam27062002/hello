@@ -7,6 +7,7 @@ public class FogSetter : MonoBehaviour
 	Material[] m_materials;
 
 	public bool m_onlyOnce = true;
+	public bool m_onEnable = false;
 	public float m_updateInterval = 1;
 	float m_timer = 0;
 	FogManager m_fogManager;
@@ -14,6 +15,16 @@ public class FogSetter : MonoBehaviour
 	void Start () 
 	{
 		Init();
+	}
+
+	void OnEnable()
+	{
+		if ( m_onEnable )
+		{
+			UpdateFog();
+			if ( m_onlyOnce )
+				enabled = false;
+		}
 	}
 
 	void Update()
@@ -53,15 +64,18 @@ public class FogSetter : MonoBehaviour
 	
 	void UpdateFog()
 	{
-		FogManager.FogResult res = m_fogManager.GetFog( transform.position);
-
-		for( int i = 0; i<m_materials.Length; i++ )
+		if (m_fogManager != null )
 		{
-			Material mat = m_materials[i];
+			FogManager.FogResult res = m_fogManager.GetFog( transform.position);
 
-			mat.SetColor("_FogColor", res.m_fogColor);
-			mat.SetFloat("_FogStart", res.m_fogStart);
-			mat.SetFloat("_FogEnd", res.m_fogEnd);
+			for( int i = 0; i<m_materials.Length; i++ )
+			{
+				Material mat = m_materials[i];
+
+				mat.SetColor("_FogColor", res.m_fogColor);
+				mat.SetFloat("_FogStart", res.m_fogStart);
+				mat.SetFloat("_FogEnd", res.m_fogEnd);
+			}
 		}
 	}
 }

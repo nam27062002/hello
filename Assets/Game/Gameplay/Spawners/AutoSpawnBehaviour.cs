@@ -29,6 +29,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	private Bounds m_bounds; // view bounds
 
+	public AreaBounds area{ get {return null;} }
+
 	private GameCameraController m_camera;
 	
 	//-----------------------------------------------
@@ -87,4 +89,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		}
 		m_state = State.Idle;
 	}
+
+	public void RemoveEntity(GameObject _entity, bool _killedByPlayer){}
 }

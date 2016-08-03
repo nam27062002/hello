@@ -64,11 +64,11 @@ namespace AI {
 		public override void Init() {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
-			m_viewControl = m_machine.GetComponent<ViewControl>();
-			m_eye = m_machine.transform.FindChild("eye");
+			m_viewControl = m_pilot.GetComponent<ViewControl>();
+			m_eye = m_pilot.transform.FindChild("eye");
 
-			m_position = m_machine.transform.position;
-			m_rotation = m_machine.transform.rotation;
+			m_position = m_pilot.transform.position;
+			m_rotation = m_pilot.transform.rotation;
 			m_targetRotation = m_rotation;
 
 			if (m_walkOnWalls) m_stickToGround = true;
@@ -129,7 +129,7 @@ namespace AI {
 
 				Vector3 pos = m_position;
 				pos.z += m_zOffset;
-				m_machine.transform.position = pos;
+				m_pilot.transform.position = pos;
 
 				//Aiming!!
 				if (m_eye != null) {
@@ -140,7 +140,7 @@ namespace AI {
 				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
 
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
-				m_machine.transform.rotation = m_rotation;
+				m_pilot.transform.rotation = m_rotation;
 			}
 		}
 

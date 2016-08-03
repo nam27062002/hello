@@ -17,11 +17,11 @@ namespace AI {
 		public MachineEdible() {}
 
 		public override void Init() {
-			m_viewControl = m_machine.GetComponent<ViewControl>();
+			m_viewControl = m_pilot.GetComponent<ViewControl>();
 
 			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
 
-			HoldPreyPoint[] holdPoints = m_machine.transform.GetComponentsInChildren<HoldPreyPoint>();
+			HoldPreyPoint[] holdPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
 			if (holdPoints != null) {
 				for (int i = 0;i<holdPoints.Length; i++) {
 					m_holdPreyPoints.Add(holdPoints[i].transform);
@@ -42,7 +42,7 @@ namespace AI {
 			Reward reward = m_entity.GetOnKillReward(false);
 
 			// Dispatch global event
-			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_machine.transform, reward);
+			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);
 
 			m_viewControl.SpawnEatenParticlesAt(_transform);
 

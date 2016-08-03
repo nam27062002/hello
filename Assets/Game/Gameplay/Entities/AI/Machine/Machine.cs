@@ -104,7 +104,7 @@ namespace AI {
 			LeaveGroup();
 		}
 
-		public void Spawn(Spawner _spawner) {
+		public void Spawn(ISpawner _spawner) {
 			m_motion.Attach(this, m_entity, m_pilot);
 			m_motion.Init();
 

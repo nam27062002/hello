@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ViewControl : MonoBehaviour, ISpawnable {
+public class ViewControlBg : MonoBehaviour, ISpawnable {
 
 	[Serializable]
 	public class ParticleData {
@@ -31,18 +31,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
-	[SeparatorAttribute]
-	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
-
-	[SeparatorAttribute]
-	[SerializeField] private ParticleData m_explosionParticles; // this will explode when burning
 
 
 	//-----------------------------------------------
-	private Entity m_entity;
 	private Animator m_animator;
-	private Material m_materialGold;
-	private Dictionary<int, Material[]> m_materials;
 
 	private bool m_scared;
 	private bool m_panic; //bite and hold state
@@ -56,34 +48,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	private bool[] m_specialAnimations;
 
-	private GameObject m_pcTrail = null;
-
 	//-----------------------------------------------
 	// Use this for initialization
 	//-----------------------------------------------
 	void Awake() {
-		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
 		m_animator.logWarnings = false;
-
-		// Load gold material
-		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
-
-		// keep the original materials, sometimes it will become Gold!
-		m_materials = new Dictionary<int, Material[]>(); 
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			m_materials[renderers[i].GetInstanceID()] = renderers[i].materials;
-		}
-
-		// particle management
-		if (m_onEatenParticles.Count <= 0) {
-			// if this entity doesn't have any particles attached, set the standard blood particle
-			ParticleData data = new ParticleData();
-			data.name = "PS_Blood_Explosion_Small";
-			data.path = "Blood/";
-			data.offset = Vector3.back * 10f;
-		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
 	}
@@ -95,34 +65,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_attack = false;
 
 		m_animator.speed = 1f;
-
-		// Restore materials
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			if (m_entity.isGolden) {				
-				Material[] materials = renderers[i].materials;
-				for (int m = 0; m < materials.Length; m++) {
-					if (!materials[m].shader.name.EndsWith("Additive"))
-						materials[m] = m_materialGold;
-				}
-				renderers[i].materials = materials;
-			} else {
-				if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
-					renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
-			}
-		}
-
-		// Show PC Trail?
-		if(m_entity.isPC) {
-			// Get an effect instance from the pool
-			m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards/");
-
-			// Put it in the view's hierarchy so it follows the entity
-			if(m_pcTrail != null) {
-				m_pcTrail.transform.SetParent(transform);
-				m_pcTrail.transform.localPosition = Vector3.zero;
-			}
-		}
 	}
 
 	protected virtual void Update() {
@@ -147,22 +89,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	//
 
 
-	//Particles
-	public void SpawnEatenParticlesAt(Transform _transform) {
-		for( int i = 0; i < m_onEatenParticles.Count; i++) {
-			ParticleData data = m_onEatenParticles[i];
-			if (!string.IsNullOrEmpty(data.name)) {
-				GameObject go = ParticleManager.Spawn(data.name, transform.position + data.offset, data.path);
-				if (go != null)	{
-					FollowTransform ft = go.GetComponent<FollowTransform>();
-					if (ft != null) {
-						ft.m_follow = _transform;
-						ft.m_offset = data.offset;
-					}
-				}
-			}
-		}
-	}
 
 
 	// Animations
@@ -277,15 +203,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void Die(bool _eaten = false) 
 	{
-		if (m_explosionParticles.name != "") {
-			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
-		}
-
-		// Stop pc trail effect (if any)
-		if(m_pcTrail != null) {
-			ParticleManager.ReturnInstance(m_pcTrail);
-			m_pcTrail = null;
-		}
 	}
 
 	public void Burn()
