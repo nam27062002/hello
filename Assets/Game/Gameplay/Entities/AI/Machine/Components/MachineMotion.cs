@@ -49,6 +49,7 @@ namespace AI {
 		public Vector3 direction { get { return m_direction; } }
 
 		private Vector3 m_velocity;
+		private Vector3 m_gravity;
 
 		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
@@ -82,6 +83,7 @@ namespace AI {
 			}
 
 			m_velocity = Vector3.zero;
+			m_gravity = Vector3.zero;
 			if (m_mass < 0f) {
 				m_mass = 0f;
 			}
@@ -105,7 +107,7 @@ namespace AI {
 
 				UpdateAttack();
 
-				m_position += m_velocity * Time.deltaTime;
+				m_position += (m_velocity + m_gravity) * Time.deltaTime;
 				if (m_pilot.speed > 0.01f) {
 					m_viewControl.Move(m_pilot.impulse.magnitude); //???
 				} else {
@@ -117,7 +119,9 @@ namespace AI {
 				if (m_stickToGround) {
 					bool isOnCollider = CheckCollisions();
 					if (!isOnCollider) {
-						m_position.y -= 9.5f * Time.deltaTime;
+						m_gravity.y -= Time.fixedTime * Time.fixedTime * 9.8f;
+					} else {
+						m_gravity = Vector3.zero;
 					}
 				}
 
