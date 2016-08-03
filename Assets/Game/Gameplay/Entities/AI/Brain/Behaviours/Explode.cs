@@ -31,6 +31,15 @@ namespace AI {
 					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, m_machine.transform);
 				}
 
+				DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();
+
+				Vector3 knockBack = dragonMotion.transform.position - m_machine.position;
+				knockBack.Normalize();
+
+				knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_data.damage, 2f));
+
+				dragonMotion.AddForce(knockBack);
+
 				m_machine.SetSignal(Signals.Type.Destroyed, true);
 			}
 		}

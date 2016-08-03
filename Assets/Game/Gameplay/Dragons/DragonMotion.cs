@@ -269,6 +269,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 
 				case State.Stunned:
+					m_impulse = Vector3.zero;
 					m_stunnedTimer = 0;
 					break;
 				case State.InsideWater:
@@ -314,7 +315,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 
 				case State.Stunned:
-					m_impulse = Vector3.zero;
 					m_rbody.velocity = m_impulse;
 					m_stunnedTimer = m_stunnedTime;
 					m_currentSpeedMultiplier = 0.5f;
@@ -808,9 +808,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void Stop() {
 		m_rbody.velocity = Vector3.zero;
 	}
-
+		
 	public void AddForce(Vector3 _force) {
-
+		m_impulse = _force;
 		ChangeState(State.Stunned);
 	}
 
