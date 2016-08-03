@@ -29,7 +29,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackRangedData>();
 
-				m_projectileSpawnPoint = m_machine.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
+				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
 				// create a projectile from resources (by name) and save it into pool
 				GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + ((AttackRangedData)m_data).projectileName);

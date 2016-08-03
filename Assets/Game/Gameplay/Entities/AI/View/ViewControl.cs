@@ -166,10 +166,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 
 	// Animations
-	public void NavigationLayer(float _z, float _y) {
+	public void NavigationLayer(Vector3 _dir) {
 		if (m_hasNavigationLayer) {
-			m_desiredBlendX = Mathf.Clamp(-_z * 3f, -1f, 1f);	// max X bend is about 30 degrees, so *3
-			m_desiredBlendY = Mathf.Clamp(_y * 2f, -1f, 1f);	// max Y bend is about 45 degrees, so *2.
+			Vector3 localDir = transform.InverseTransformDirection(_dir);	// todo: replace with direction to target if trying to bite, or during bite?
+			m_desiredBlendX = Mathf.Clamp(-localDir.z * 3f, -1f, 1f);	// max X bend is about 30 degrees, so *3
+			m_desiredBlendY = Mathf.Clamp(localDir.y * 2f, -1f, 1f);	// max Y bend is about 45 degrees, so *2.
 		}
 	}
 

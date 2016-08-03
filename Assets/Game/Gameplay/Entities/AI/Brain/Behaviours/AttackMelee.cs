@@ -24,7 +24,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackMeleeData>();
-				m_meleeWeapon = m_machine.FindComponentRecursive<MeleeWeapon>();
+				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
 
 				m_meleeWeapon.enabled = false;
 

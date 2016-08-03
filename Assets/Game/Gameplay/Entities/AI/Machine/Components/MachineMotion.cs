@@ -103,7 +103,7 @@ namespace AI {
 				m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
 				m_direction = m_pilot.direction;
 
-				m_viewControl.NavigationLayer(m_direction.z, m_direction.y);
+				m_viewControl.NavigationLayer(m_pilot.impulse);
 
 				UpdateAttack();
 

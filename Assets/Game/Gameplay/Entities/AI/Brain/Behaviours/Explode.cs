@@ -32,7 +32,7 @@ namespace AI {
 				if (dragon.HasMineShield()) {
 					dragon.LoseMineShield();
 				} else {
-					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, m_machine.transform);
+					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, m_pilot.transform);
 				}
 
 				DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();

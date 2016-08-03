@@ -36,7 +36,7 @@ namespace AI {
 
 
 			protected override void OnInitialise() {
-				m_animEvents 	= m_machine.FindComponentRecursive<PreyAnimationEvents>();
+				m_animEvents 	= m_pilot.FindComponentRecursive<PreyAnimationEvents>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
 
 				m_transitionParam = new object[1];
