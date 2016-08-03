@@ -32,7 +32,10 @@ namespace AI {
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		private Vector3 m_position;
-		public Vector3 position { get { return m_position; } }
+		public Vector3 position { 
+			get { return m_position; } 
+			set { m_position = value; } 
+		}
 
 		private float m_zOffset; // if we use different rails for machines
 		public float zOffset { set { m_zOffset = value; } }

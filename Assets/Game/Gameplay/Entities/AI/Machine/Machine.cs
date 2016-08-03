@@ -275,11 +275,14 @@ namespace AI {
 
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
-		public void BiteAndHold() {
+		public void BiteAndHold() 
+		{
 			m_edible.BiteAndHold();
 		}
 
-		public void ReleaseHold() {
+		public void ReleaseHold() 
+		{
+			m_motion.position = transform.position;
 			m_edible.ReleaseHold();
 		}
 
