@@ -29,8 +29,12 @@ namespace AI {
 				return new SpiderIdleData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(SpiderIdleData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (SpiderIdleData)m_pilot.GetComponentData<SpiderIdle>();
+				m_data = m_pilot.GetComponentData<SpiderIdleData>();
 			}
 
 			protected override void OnEnter(AI.State oldState, object[] param) {

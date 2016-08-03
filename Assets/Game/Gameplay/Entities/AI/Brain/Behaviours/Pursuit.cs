@@ -24,8 +24,12 @@ namespace AI {
 				return new PursuitData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(PursuitData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (PursuitData)m_pilot.GetComponentData<Pursuit>();
+				m_data = m_pilot.GetComponentData<PursuitData>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
 			}

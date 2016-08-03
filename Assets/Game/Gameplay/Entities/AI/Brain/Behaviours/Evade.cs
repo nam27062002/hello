@@ -20,8 +20,12 @@ namespace AI {
 				return new EvadeData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(EvadeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (EvadeData)m_pilot.GetComponentData<Evade>();
+				m_data = m_pilot.GetComponentData<EvadeData>();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {

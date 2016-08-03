@@ -72,6 +72,7 @@ namespace AI
 		}
 
 		public virtual StateComponentData CreateData() { return null; }
+		public virtual System.Type GetDataType() { return null; }
 
 		protected void Transition(string transitionID, params object[] param)
 		{

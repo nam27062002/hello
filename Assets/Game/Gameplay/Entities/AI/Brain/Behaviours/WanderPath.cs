@@ -33,13 +33,17 @@ namespace AI {
 				return new WanderPathData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(WanderPathData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (WanderPathData)m_pilot.GetComponentData<WanderPath>();
-				m_target = m_machine.transform.position;
+				m_data = m_pilot.GetComponentData<WanderPathData>();
+				m_target = m_machine.position;
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				m_target = m_machine.transform.position;
+				m_target = m_machine.position;
 				m_pilot.SlowDown(m_data.alwaysSlowdown); // this wander state doesn't have an idle check
 				m_timer = m_data.timeToIdle.GetRandom();
 
@@ -50,7 +54,7 @@ namespace AI {
 
 				m_path = (PathController)m_pilot.guideFunction;
 				m_path.SetDirection(m_pathDirection);
-				m_currentNode = m_path.GetIndexNearestTo(m_machine.transform.position);
+				m_currentNode = m_path.GetIndexNearestTo(m_machine.position);
 				m_target = m_path.GetNextFrom(m_currentNode);
 				m_currentNode = m_path.GetCurrentIndex();
 				m_pathDirection = m_path.GetDirection();
