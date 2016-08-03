@@ -52,7 +52,9 @@ namespace AI {
 				float m = (m_machine.position - m_target).sqrMagnitude;
 				float d = Mathf.Min(2f, m_data.speed);// * Time.smoothDeltaTime;
 
-				if (m < d * d) {
+				m_timer -= Time.deltaTime;
+
+				if (m_timer < 0 || m < d * d) {
 					if (m_goToIdle) {
 						Transition(OnRest);
 					} else {

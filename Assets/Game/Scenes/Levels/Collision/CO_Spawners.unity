@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 859878376}
+  m_SkyboxMaterial: {fileID: 506503228}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -620,6 +620,158 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 369824142}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!21 &506503228
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Skybox
+  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 1000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+    - first:
+        name: _BumpMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailAlbedoMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailMask
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailNormalMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _EmissionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MainTex
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MetallicGlossMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _OcclusionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ParallaxMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - first:
+        name: _AtmosphereThickness
+      second: 0.68999904
+    - first:
+        name: _BumpScale
+      second: 1
+    - first:
+        name: _Cutoff
+      second: 0.5
+    - first:
+        name: _DetailNormalMapScale
+      second: 1
+    - first:
+        name: _DstBlend
+      second: 0
+    - first:
+        name: _EmissionScaleUI
+      second: 0
+    - first:
+        name: _Exposure
+      second: 1.1099983
+    - first:
+        name: _Glossiness
+      second: 0.5
+    - first:
+        name: _HorizonHeight
+      second: 0.009999999
+    - first:
+        name: _Metallic
+      second: 0
+    - first:
+        name: _Mode
+      second: 0
+    - first:
+        name: _OcclusionStrength
+      second: 1
+    - first:
+        name: _Parallax
+      second: 0.02
+    - first:
+        name: _SrcBlend
+      second: 1
+    - first:
+        name: _SunSize
+      second: 0
+    - first:
+        name: _UVSec
+      second: 0
+    - first:
+        name: _ZWrite
+      second: 1
+    m_Colors:
+    - first:
+        name: _AddColor
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _EmissionColor
+      second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _GroundColor
+      second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
+    - first:
+        name: _HorizonColor
+      second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
+    - first:
+        name: _SkyColor
+      second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
+    - first:
+        name: _SkyTint
+      second: {r: 0, g: 0.5862069, b: 1, a: 1}
+    - first:
+        name: _SunColor
+      second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
+    - first:
+        name: _SunPos
+      second: {r: 1, g: 0, b: 0, a: 0}
 --- !u!1 &536502211
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,8 +1204,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyPoints:
-  - {x: 13.353512, y: 3.9541502, z: 0}
-  - {x: 15.325085, y: -4.0917, z: 0}
+  - {x: 3.9385262, y: 3.8506885, z: 0}
+  - {x: 4.2768297, y: 3.2174604, z: 0}
+  - {x: 6.023173, y: -3.573292, z: 0}
+  - {x: 5.910099, y: -4.195162, z: 0}
+  - {x: 5.513033, y: -4.54558, z: 0}
   - {x: -14.687319, y: -4.5452805, z: 0}
   - {x: -15.325291, y: -4.3276734, z: 0}
   - {x: -15.691891, y: -4.0917015, z: 0}
@@ -1063,9 +1218,13 @@ MonoBehaviour:
   - {x: -15.005197, y: 3.4265373, z: 0}
   - {x: -14.591478, y: 3.9541492, z: 0}
   - {x: -13.91073, y: 4.126025, z: 0}
+  - {x: 3.2138805, y: 4.0204554, z: 0}
   curvePoints:
-  - {x: 14.339298, y: -0.06877494, z: 0}
-  - {x: 0.31888294, y: -4.31849, z: 0}
+  - {x: 4.107678, y: 3.5340743, z: 0}
+  - {x: 5.1500015, y: -0.17791581, z: 0}
+  - {x: 5.9666357, y: -3.8842268, z: 0}
+  - {x: 5.711566, y: -4.370371, z: 0}
+  - {x: -4.587143, y: -4.54543, z: 0}
   - {x: -15.006305, y: -4.4364767, z: 0}
   - {x: -15.508591, y: -4.209687, z: 0}
   - {x: -15.829374, y: -3.7934117, z: 0}
@@ -1074,8 +1233,9 @@ MonoBehaviour:
   - {x: -15.155439, y: 3.209976, z: 0}
   - {x: -14.798338, y: 3.6903434, z: 0}
   - {x: -14.251104, y: 4.040087, z: 0}
-  - {x: -0.27860928, y: 4.0400877, z: 0}
-  isCurve: 0000000000000000000000
+  - {x: -5.348425, y: 4.0732403, z: 0}
+  - {x: 3.5762033, y: 3.935572, z: 0}
+  isCurve: 000000000000000000000000000000
   curveDetail: 0.1
   colliderDepth: 10
   buildColliderEdges: 1
@@ -1109,158 +1269,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 845741246}
   m_Mesh: {fileID: 1543109130}
---- !u!21 &859878376
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Skybox
-  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 1000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-    - first:
-        name: _BumpMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - first:
-        name: _AtmosphereThickness
-      second: 0.68999904
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
-        name: _Exposure
-      second: 1.1099983
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _HorizonHeight
-      second: 0.009999999
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _SunSize
-      second: 0
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _ZWrite
-      second: 1
-    m_Colors:
-    - first:
-        name: _AddColor
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _GroundColor
-      second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
-    - first:
-        name: _HorizonColor
-      second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
-    - first:
-        name: _SkyColor
-      second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
-    - first:
-        name: _SkyTint
-      second: {r: 0, g: 0.5862069, b: 1, a: 1}
-    - first:
-        name: _SunColor
-      second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
-    - first:
-        name: _SunPos
-      second: {r: 1, g: 0, b: 0, a: 0}
 --- !u!1 &1063565618
 GameObject:
   m_ObjectHideFlags: 0
@@ -1510,7 +1518,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: a03004b89ebc446b8bbf04a2f161e791, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: a03004b89ebc446b8bbf04a2f161e791, type: 3}
       propertyPath: m_Layer
@@ -1655,13 +1663,13 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 27
+    indexCount: 39
     topology: 0
     firstVertex: 0
-    vertexCount: 11
+    vertexCount: 15
     localAABB:
-      m_Center: {x: -0.3344035, y: -0.20962763, z: 0}
-      m_Extent: {x: 15.659489, y: 4.335653, z: 0}
+      m_Center: {x: -4.985359, y: -0.20977736, z: 0}
+      m_Extent: {x: 11.008533, y: 4.3358026, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -1674,11 +1682,11 @@ Mesh:
   m_IsReadable: 1
   m_KeepVertices: 1
   m_KeepIndices: 1
-  m_IndexBuffer: 05000900010001000300050005000700090009000000010001000200030003000400050005000600070007000800090009000a000000
+  m_IndexBuffer: 01000500090009000d00010001000300050005000700090009000b000d000d000000010001000200030003000400050005000600070007000800090009000a000b000b000c000d000d000e000000
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 11
-    m_VertexCount: 11
+    m_VertexCount: 15
     m_Channels:
     - stream: 0
       offset: 0
@@ -1712,8 +1720,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 352
-    _typelessdata: fca75541cc107d40000000000000000000000000000080bffca75541cc107d408c33754135ef82c0000000000000000000000000ffff7fbf8c33754135ef82c042ff6ac1f07291c0000000000000000000000000000080bf42ff6ac1f07291c0643475c14d7c8ac0000000000000000000000000000080bf643475c14d7c8ac0fc117bc138ef82c0000000000000000000000000000080bffc117bc138ef82c03f787fc114b05fc0000000000000000000000000000080bf3f787fc114b05fc0fbe67fc1270e38c0000000000000000000000000000080bffbe67fc1270e38c013e474c11b943f40000000000000000000000000000080bf13e474c11b943f40491570c1634c5b40000000000000000000000000000080bf491570c1634c5b40b27669c1c8107d40000000000000000000000000ffff7fbfb27669c1c8107d405a925ec166088440000000000000000000000000000080bf5a925ec166088440
+    m_DataSize: 480
+    _typelessdata: d0107c40ae717640000000000000000000000000000080bfd0107c40ae717640cadb8840dfea4d40000000000000000000000000000080bfcadb8840dfea4d40d5bdc040d1b064c0000000000000000000000000000080bfd5bdc040d1b064c0881fbd40c43e86c0000000000000000000000000000080bf881fbd40c43e86c0c46ab040647591c0000000000000000000000000000080bfc46ab040647591c042ff6ac1f07291c0000000000000000000000000000080bf42ff6ac1f07291c0643475c14d7c8ac0000000000000000000000000000080bf643475c14d7c8ac0fc117bc138ef82c0000000000000000000000000000080bffc117bc138ef82c03f787fc114b05fc0000000000000000000000000000080bf3f787fc114b05fc0fbe67fc1270e38c0000000000000000000000000000080bffbe67fc1270e38c013e474c11b943f40000000000000000000000000000080bf13e474c11b943f40491570c1634c5b40000000000000000000000000ffff7fbf491570c1634c5b40b27669c1c8107d40000000000000000000000000000080bfb27669c1c8107d405a925ec166088440000000000000000000000000000080bf5a925ec16608844038b04d4092a78040000000000000000000000000000080bf38b04d4092a78040
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -1767,8 +1775,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -0.3344035, y: -0.20962763, z: 0}
-    m_Extent: {x: 15.659489, y: 4.335653, z: 0}
+    m_Center: {x: -4.985359, y: -0.20977736, z: 0}
+    m_Extent: {x: 11.008533, y: 4.3358026, z: 0}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -2035,6 +2043,48 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1771536908}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1773447458
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -23.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 4.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 417306, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 743c397487ebd774ca8db9dd725f5107, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1822059889
 GameObject:
   m_ObjectHideFlags: 0
@@ -2469,13 +2519,13 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 66
+    indexCount: 90
     topology: 0
     firstVertex: 0
-    vertexCount: 22
+    vertexCount: 30
     localAABB:
-      m_Center: {x: -0.3344035, y: -0.20962763, z: 0}
-      m_Extent: {x: 15.659489, y: 4.335653, z: 5}
+      m_Center: {x: -4.985359, y: -0.20977736, z: 0}
+      m_Extent: {x: 11.008533, y: 4.3358026, z: 5}
   m_Shapes:
     vertices: []
     shapes: []
@@ -2488,11 +2538,11 @@ Mesh:
   m_IsReadable: 1
   m_KeepVertices: 1
   m_KeepIndices: 1
-  m_IndexBuffer: 00000200010002000300010002000400030004000500030004000600050006000700050006000800070008000900070008000a0009000a000b0009000a000c000b000c000d000b000c000e000d000e000f000d000e0010000f00100011000f00100012001100120013001100120014001300140015001300140000001500000001001500
+  m_IndexBuffer: 00000200010002000300010002000400030004000500030004000600050006000700050006000800070008000900070008000a0009000a000b0009000a000c000b000c000d000b000c000e000d000e000f000d000e0010000f00100011000f0010001200110012001300110012001400130014001500130014001600150016001700150016001800170018001900170018001a0019001a001b0019001a001c001b001c001d001b001c0000001d00000001001d00
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 3
-    m_VertexCount: 22
+    m_VertexCount: 30
     m_Channels:
     - stream: 0
       offset: 0
@@ -2526,8 +2576,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 528
-    _typelessdata: fca75541cc107d400000a0402c67163e3d397d3f00000000fca75541cc107d400000a0c02b9fec3e6005633f000000008c33754135ef82c00000a040ce2d093fb12458bf000000008c33754135ef82c00000a0c0ad131c3e46027dbf0000000042ff6ac1f07291c00000a04093393a3cc5fb7fbf0000000042ff6ac1f07291c00000a0c00fe1193afdff7fbf00000000643475c14d7c8ac00000a040d4abc1be86fa6cbf00000000643475c14d7c8ac00000a0c0e807e6be4eb564bf00000000fc117bc138ef82c00000a040ae333abf1aaf2fbf00000000fc117bc138ef82c00000a0c0fa7d57bf21330abf000000003f787fc114b05fc00000a04010f073bf984f9bbe000000003f787fc114b05fc00000a0c047fb7bbf0eb934be00000000fbe67fc1270e38c00000a040b9fc7ebfa2feb53d00000000fbe67fc1270e38c00000a0c0c37c7ebf334ede3d0000000013e474c11b943f400000a040c19a7dbfe5c10b3e0000000013e474c11b943f400000a0c0966f7bbfe17f403e00000000491570c1634c5b400000a040b1f74ebfa9aa163f00000000491570c1634c5b400000a0c0b2074cbf0b9f1a3f00000000b27669c1c8107d400000a040079121bf5a93463f00000000b27669c1c8107d400000a0c04f9ae1beebce653f000000005a925ec1660884400000a040a2bec4bbd2fe7f3f000000005a925ec1660884400000a0c091054c3bafff7f3f00000000
+    m_DataSize: 720
+    _typelessdata: d0107c40ae7176400000a04069baf43ebcdc603f00000000d0107c40ae7176400000a0c0833c373f59c6323f00000000cadb8840dfea4d400000a040af27753ffa71933e00000000cadb8840dfea4d400000a0c02f2e773f003c853e00000000d5bdc040d1b064c00000a040000c793f84096d3e00000000d5bdc040d1b064c00000a0c080897b3f3d5f3e3e00000000881fbd40c43e86c00000a0408d6d6e3f906bbabe00000000881fbd40c43e86c00000a0c0791d533f3dcc10bf00000000c46ab040647591c00000a0401199083d8ddb7fbf00000000c46ab040647591c00000a0c09c7a0c3c97fd7fbf0000000042ff6ac1f07291c00000a040463aaebb13ff7fbf0000000042ff6ac1f07291c00000a0c0fd16a6bc87f27fbf00000000643475c14d7c8ac00000a040d4abc1be86fa6cbf00000000643475c14d7c8ac00000a0c0e807e6be4eb564bf00000000fc117bc138ef82c00000a040ae333abf1aaf2fbf00000000fc117bc138ef82c00000a0c0fa7d57bf21330abf000000003f787fc114b05fc00000a04010f073bf984f9bbe000000003f787fc114b05fc00000a0c047fb7bbf0eb934be00000000fbe67fc1270e38c00000a040b9fc7ebfa2feb53d00000000fbe67fc1270e38c00000a0c0c37c7ebf334ede3d0000000013e474c11b943f400000a040c19a7dbfe5c10b3e0000000013e474c11b943f400000a0c0966f7bbfe17f403e00000000491570c1634c5b400000a040b1f74ebfa9aa163f00000000491570c1634c5b400000a0c0b2074cbf0b9f1a3f00000000b27669c1c8107d400000a040079121bf5a93463f00000000b27669c1c8107d400000a0c04f9ae1beebce653f000000005a925ec1660884400000a040891453bc90fa7f3f000000005a925ec1660884400000a0c08155933af6ff7f3f0000000038b04d4092a780400000a040336e323c1dfc7f3f0000000038b04d4092a780400000a0c09241c43c30ed7f3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -2581,8 +2631,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -0.3344035, y: -0.20962763, z: 0}
-    m_Extent: {x: 15.659489, y: 4.335653, z: 5}
+    m_Center: {x: -4.985359, y: -0.20977736, z: 0}
+    m_Extent: {x: 11.008533, y: 4.3358026, z: 5}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
