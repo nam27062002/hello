@@ -17,8 +17,13 @@ namespace AI {
 			public override StateComponentData CreateData() {
 				return new HomeData();
 			}
+
+			public override System.Type GetDataType() {
+				return typeof(HomeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (HomeData)m_pilot.GetComponentData<Home>();
+				m_data = m_pilot.GetComponentData<HomeData>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {

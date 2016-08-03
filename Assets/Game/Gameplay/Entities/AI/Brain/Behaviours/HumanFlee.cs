@@ -25,8 +25,12 @@ namespace AI {
 				return new HumanFleeData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(HumanFleeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (HumanFleeData)m_pilot.GetComponentData<HumanFlee>();
+				m_data = m_pilot.GetComponentData<HumanFleeData>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
 

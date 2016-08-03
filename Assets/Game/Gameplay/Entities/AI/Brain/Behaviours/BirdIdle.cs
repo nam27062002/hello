@@ -36,9 +36,13 @@ namespace AI {
 				return new BirdIdleData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(BirdIdleData);
+			}
+
 			protected override void OnInitialise() {
 				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
-				m_data = (BirdIdleData)m_pilot.GetComponentData<BirdIdle>();
+				m_data = m_pilot.GetComponentData<BirdIdleData>();
 
 				m_avoidCollisionsRestoreValue = m_pilot.avoidCollisions;
 			}

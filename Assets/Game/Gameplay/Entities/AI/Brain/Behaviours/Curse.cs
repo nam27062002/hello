@@ -20,8 +20,12 @@ namespace AI {
 				return new CurseData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(CurseData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (CurseData)m_pilot.GetComponentData<Curse>();
+				m_data = m_pilot.GetComponentData<CurseData>();
 				m_dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 				m_timer = 0;
 			}

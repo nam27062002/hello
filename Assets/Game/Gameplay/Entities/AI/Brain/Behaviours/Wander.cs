@@ -31,8 +31,12 @@ namespace AI {
 				return new WanderData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(WanderData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (WanderData)m_pilot.GetComponentData<Wander>();
+				m_data = m_pilot.GetComponentData<WanderData>();
 				m_target = m_machine.position;
 			}
 

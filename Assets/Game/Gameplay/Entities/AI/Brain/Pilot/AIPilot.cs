@@ -131,10 +131,10 @@ namespace AI {
 		/// </summary>
 		[System.Serializable]
 		public sealed class StateComponentDataKVP {
-			// [AOC] Since Unity doesn't serialize System.Type, use the Type.FullName to compare component types
-			//		 Type of the StateComponent, not the StateComponentData!!!
+			// [AOC] Since Unity doesn't serialize System.Type, use the Type.FullName to compare component data types
+			//		 Type of the StateComponentData
 			public string typeName = "";
-			public StateComponentData data;		// Can be null!!
+			public StateComponentData data;
 			public bool folded = false;			// [AOC] For the editor
 		}
 
@@ -155,14 +155,14 @@ namespace AI {
 		/// </summary>
 		/// <returns>The component data linked to the requested component type. <c>null</c> if there is no data for the given type.</returns>
 		/// <typeparam name="T">Type of the state component whose data we want.</typeparam>
-		public StateComponentData GetComponentData<T>() where T : StateComponent {
-			// Iterate the components data list looking for the target component
+		public T GetComponentData<T>() where T : StateComponentData {
+			// Iterate the components data list looking for the target data type
 			// Since Unity doesn't serialize System.Type, use the Type.FullName to compare types
 			string typeName = typeof(T).FullName;
 			for(int i = 0; i < m_componentsData.Count; i++) {
-				// Is it the target component type?
+				// Is it the target component data type?
 				if(m_componentsData[i].typeName == typeName) {
-					return m_componentsData[i].data;
+					return (T)m_componentsData[i].data;
 				}
 			}
 			return null;
@@ -183,12 +183,16 @@ namespace AI {
 
 			// Iterate all components in all states of the state machine
 			// If a data object for that component type doesn't exist, add it
-			HashSet<string> validComponentNames = new HashSet<string>();	// Store component names for later usage
+			HashSet<string> validatedDataTypes = new HashSet<string>();	// Store component names for later usage
 			foreach(State state in brainResource.states) {
 				foreach(StateComponent component in state.componentAssets) {
+					// If this component doesn't require a data object, skip it
+					System.Type dataType = component.GetDataType();
+					if(dataType == null) continue;
+
 					// If this component data type has already been checked, skip it
-					string typeName = component.GetType().FullName;
-					if(validComponentNames.Add(typeName)) {		// Returns true if the value was not already in the hash
+					string typeName = component.GetDataType().FullName;
+					if(validatedDataTypes.Add(typeName)) {		// Returns true if the value was not already in the hash
 						// Check whether we have a data object for this component type
 						// Inefficient, but since it's an editor code, we don't care
 						StateComponentDataKVP kvp = m_componentsData.Find(x => x.typeName == typeName);
@@ -197,26 +201,20 @@ namespace AI {
 						if(kvp == null) {
 							kvp = new StateComponentDataKVP();
 							kvp.typeName = typeName;
-							kvp.data = component.CreateData();	// [AOC] CreateData() will create the proper data object for this specific component type. Can be null!
+							kvp.data = component.CreateData();	// [AOC] CreateData() will create the proper data object for this specific component type
 							m_componentsData.Add(kvp);	
-						}
-
-						// Special case!! If data is null, it may be because this component type didn't have data up until now
-						// Force brute create a new data object (it will still be null if component's requirements haven't changed)
-						else if(kvp.data == null) {
-							kvp.data = component.CreateData();
 						}
 					}
 				}
 			}
 
 			// Iterate all data objects.
-			// If the component type linked to a data object is not found on the state machine, delete it
+			// If a data type is no longer required by any of the components on the state machine, delete it
 			// Reverse iteration since we'll be deleting items from the same list we're iterating
 			for(int i = m_componentsData.Count - 1; i >= 0; i--) {
-				// Is it a valid component?
-				if(!validComponentNames.Contains(m_componentsData[i].typeName)) {
-					// No, delete its data object
+				// Is it a validated data type?
+				if(!validatedDataTypes.Contains(m_componentsData[i].typeName)) {
+					// No, delete it
 					m_componentsData.RemoveAt(i);
 				}
 			}
@@ -259,17 +257,10 @@ namespace AI {
 				Dictionary<string, object> data;
 
 				// Add data structure fields
-				// Special treatment if the component has no data object attached
-				if(m_componentsData[i].data == null) {
-					data = new Dictionary<string, object>();
-					// Don't add the dataType field, that way we will know that this component type doesn't have a data object attach to it
-				} else {
-					data = m_componentsData[i].data.Serialize();
-					data.Add("dataType", m_componentsData[i].data.GetType());
-				}
+				data = m_componentsData[i].data.Serialize();
+				data.Add("dataType", m_componentsData[i].typeName);
 
 				// Add extra info fields
-				data.Add("componentType", m_componentsData[i].typeName);
 				data.Add("editorFolded", m_componentsData[i].folded);
 
 				// Store it to the list
@@ -301,16 +292,12 @@ namespace AI {
 				Dictionary<string, object> data = serializedDatas[i] as Dictionary<string, object>;
 
 				// Create and initialize the data object
-				// [AOC] Beware! A component doesn't necessarily need a data object, so check first whether the serialized dictionary contains the "dataType" field
-				if(data.ContainsKey("dataType")) {
-					// Data type found, create a new data object and initialize it
-					Type dataType = Type.GetType(data["dataType"] as string);
-					newKvp.data = (StateComponentData)Activator.CreateInstance(dataType);
-					newKvp.data.Deserialize(data);
-				}
+				newKvp.typeName = data["dataType"] as string;
+				Type dataType = Type.GetType(newKvp.typeName);
+				newKvp.data = (StateComponentData)Activator.CreateInstance(dataType);
+				newKvp.data.Deserialize(data);
 
 				// Add other custom values
-				newKvp.typeName = data["componentType"] as string;
 				newKvp.folded = (bool)data["editorFolded"];
 
 				// Store into the components data list

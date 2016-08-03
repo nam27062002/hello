@@ -31,8 +31,12 @@ namespace AI {
 				return new GroundWanderData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(GroundWanderData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (GroundWanderData)m_pilot.GetComponentData<GroundWander>();
+				m_data = m_pilot.GetComponentData<GroundWanderData>();
 
 				m_xLimitMin = m_pilot.area.bounds.min.x;
 				m_xLimitMax = m_pilot.area.bounds.max.x;

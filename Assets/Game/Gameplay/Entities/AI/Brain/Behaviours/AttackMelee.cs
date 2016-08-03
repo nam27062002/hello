@@ -18,8 +18,12 @@ namespace AI {
 				return new AttackMeleeData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(AttackMeleeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (AttackMeleeData)m_pilot.GetComponentData<AttackMelee>();
+				m_data = m_pilot.GetComponentData<AttackMeleeData>();
 				m_meleeWeapon = m_machine.FindComponentRecursive<MeleeWeapon>();
 
 				m_meleeWeapon.enabled = false;
