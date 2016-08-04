@@ -17,7 +17,7 @@ namespace AI {
 		public MachineEdible() {}
 
 		public override void Init() {
-			m_viewControl = m_pilot.GetComponent<ViewControl>();
+			m_viewControl = m_machine.GetComponent<ViewControl>();
 
 			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
 
