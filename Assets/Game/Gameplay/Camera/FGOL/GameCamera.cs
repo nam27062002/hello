@@ -862,8 +862,7 @@ public class GameCamera : MonoBehaviour
 		{
 			bool bg = (j==1);
 			
-			// Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.Instance.BackgroundLayerZ : 0.0f));
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? 45 : 0.0f));
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BackgroundLayerZ : 0.0f));
 			Vector3[] pts = new Vector3[4];
 			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_screenWorldBounds;
 			
@@ -964,15 +963,12 @@ public class GameCamera : MonoBehaviour
 	}
 
 	public bool IsInsideBackgroundActivationArea(Vector3 _point) {
-		_point.z = 0;
-		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
+		return m_backgroundWorldBounds.Contains(_point);
 	}
 
-	public bool IsInsideBackgroundActivationArea(Bounds _bounds) {
-		Vector3 center = _bounds.center;
-		center.z = 0;
-		_bounds.center = center;
-		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
+	public bool IsInsideBackgroundActivationArea(Bounds _bounds) 
+	{
+		return m_backgroundWorldBounds.Intersects(_bounds);
 	}
 
 	public bool IsInsideDeactivationArea(Vector3 _point) {
@@ -988,14 +984,10 @@ public class GameCamera : MonoBehaviour
 	}
 
 	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
-		_point.z = 0;
 		return !m_backgroundWorldBounds.Contains(_point);
 	}
 
 	public bool IsInsideBackgroundDeactivationArea(Bounds _bounds) {
-		Vector3 center = _bounds.center;
-		center.z = 0;
-		_bounds.center = center;
 		return !m_backgroundWorldBounds.Intersects(_bounds);
 	}
 
