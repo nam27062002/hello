@@ -38,7 +38,7 @@ namespace AI {
 		public override void Init() {
 			// Renderers And Materials
 			if (m_renderers == null) {
-				m_renderers = m_pilot.GetComponentsInChildren<Renderer>();
+				m_renderers = m_machine.GetComponentsInChildren<Renderer>();
 
 				if (m_renderers.Length > 0) {
 					for(int i = 0; i < m_renderers.Length; i++) {
@@ -92,7 +92,7 @@ namespace AI {
 
 			// reward
 			Reward reward = m_entity.GetOnKillReward(true);
-			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_pilot.transform, reward);
+			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);
 
 			//
 			m_nextState = State.Burned;

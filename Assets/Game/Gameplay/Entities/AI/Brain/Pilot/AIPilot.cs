@@ -70,13 +70,12 @@ namespace AI {
 			if (m_brain == null) {
 				m_brain = UnityEngine.Object.Instantiate(m_brainResource) as StateMachine;
 				m_brain.Initialise(gameObject, true);
+			} else {
+				m_brain.Reset();
 			}
 		}
 
 		void OnDisable() {
-			if (m_brain != null) {
-				m_brain.Reset();
-			}
 		}
 
 		public override void OnTrigger(string _trigger) {

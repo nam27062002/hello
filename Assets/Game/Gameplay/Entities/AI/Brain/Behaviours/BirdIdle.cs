@@ -7,6 +7,7 @@ namespace AI {
 		public class BirdIdleData : StateComponentData {
 			public float speed = 0f;
 			public bool restUpsideDown = false;
+			public bool teleport = false;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Bird Idle")]
@@ -47,9 +48,7 @@ namespace AI {
 				m_avoidCollisionsRestoreValue = m_pilot.avoidCollisions;
 			}
 
-			protected override void OnEnter(State _oldState, object[] _param) {
-				m_idleState = IdleState.GoToRestPoint;
-
+			protected override void OnEnter(State _oldState, object[] _param) {				
 				//let's find a rest position
 				RaycastHit hit;
 				Vector3 start = m_pilot.area.RandomInside();
@@ -69,9 +68,19 @@ namespace AI {
 					m_direction = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-0.5f, -1f));
 					m_direction.Normalize();
 
-					m_pilot.SetMoveSpeed(m_data.speed);
-					m_pilot.SlowDown(true);
-					m_pilot.GoTo(m_restPoint);
+					if (m_data.teleport) {
+						m_machine.position = m_restPoint;
+						m_pilot.SetMoveSpeed(0);
+						m_pilot.SetDirection(m_direction);
+
+						m_idleState = IdleState.Rest;
+					} else {
+						m_pilot.SetMoveSpeed(m_data.speed);
+						m_pilot.SlowDown(true);
+						m_pilot.GoTo(m_restPoint);
+
+						m_idleState = IdleState.GoToRestPoint;
+					}
 				} else {
 					Transition(OnMove);
 				}
