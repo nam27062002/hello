@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
+public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> 
+{
+
+	public const float BackgroundLayerZ = 45;
 
 	private List<ISpawner> m_spawners;
 	private bool m_enabled = false;
