@@ -504,6 +504,18 @@ public class GameCameraController : MonoBehaviour {
 		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
 	}
 
+	public bool IsInsideBackgroundActivationArea(Vector3 _point) {
+		_point.z = 0;
+		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundActivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
+	}
+
 	public bool IsInsideDeactivationArea(Vector3 _point) {
 		_point.z = 0;
 		return !m_deactivation.Contains(_point);
@@ -516,6 +528,18 @@ public class GameCameraController : MonoBehaviour {
 		return !m_deactivation.Intersects(_bounds);
 	}
 
+
+	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
+		_point.z = 0;
+		return !m_deactivation.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundDeactivationArea(Bounds _bounds) {
+		Vector3 center = _bounds.center;
+		center.z = 0;
+		_bounds.center = center;
+		return !m_deactivation.Intersects(_bounds);
+	}
 
 	public bool IsInsideFrustrum( Vector3 _point)
 	{
