@@ -15,12 +15,14 @@ public class ContainerSpawner : MonoBehaviour
 	// Area to check if I have to recontruct/reinitialize the container
 	protected AreaBounds m_area;		
 	private GameCameraController m_camera;
+	private GameCamera m_newCamera;
 	private float m_timer;
 
 	// Use this for initialization
 	void Start() 
 	{
-		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+		m_camera = Camera.main.GetComponent<GameCameraController>();
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_area = GetArea();
 		// Search all spawners
 		m_spawners = GetComponentsInChildren<Spawner>();
@@ -39,7 +41,18 @@ public class ContainerSpawner : MonoBehaviour
 	{
 		if ( !m_container.enabled || !m_container.isActiveAndEnabled )	// Check container state is broken
 		{
-			if (m_camera.IsInsideDeactivationArea(transform.position))
+			bool isInsideDeactivationArea = false;
+			if ( DebugSettings.newCameraSystem )
+			{
+				isInsideDeactivationArea = m_newCamera.IsInsideDeactivationArea(transform.position);
+			}
+			else
+			{
+				isInsideDeactivationArea = m_camera.IsInsideDeactivationArea(transform.position);
+			}
+
+
+			if (isInsideDeactivationArea)
 			{
 				if (m_timer > 0) 
 				{
