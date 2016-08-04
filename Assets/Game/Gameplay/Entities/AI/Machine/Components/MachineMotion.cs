@@ -114,6 +114,7 @@ namespace AI {
 					m_viewControl.Move(0f);
 				}
 
+				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 
 				if (m_stickToGround) {
