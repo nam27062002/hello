@@ -34,6 +34,7 @@ public class FireNode : MonoBehaviour {
 
 	private GameObject m_fireSprite;
 	private GameCameraController m_camera;
+	private GameCamera m_newCamera;
 
 	private Reward m_reward;
 
@@ -47,7 +48,8 @@ public class FireNode : MonoBehaviour {
 	void Start () {
 		FirePropagationManager.Insert(this);
 
-		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+		m_camera = Camera.main.GetComponent<GameCameraController>();
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_reward = new Reward();
 		m_reward.coins = 0;
 		m_reward.origin = "firenode";
@@ -85,13 +87,29 @@ public class FireNode : MonoBehaviour {
 			case State.Burning:
 			{
 				//check if we have to render the particle
-				if (m_fireSprite != null) {
+
+				bool isInsideActivationMaxArea = false;
+				if ( DebugSettings.newCameraSystem )
+				{
+					isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(transform.position);
+				}
+				else
+				{
+					isInsideActivationMaxArea = m_camera.IsInsideActivationMaxArea(transform.position);
+				}
+
+				if (m_fireSprite != null) 
+				{
 					m_fireSprite.transform.localScale = m_fireSpriteScale;
-					if (!m_camera.IsInsideActivationMaxArea(transform.position)) {
+
+					if (!isInsideActivationMaxArea) 
+					{
 						StopFire();
 					}
-				} else if (m_camera.IsInsideActivationMaxArea(transform.position)) {
-					StartFire();		
+				} 
+				else if (isInsideActivationMaxArea) 
+				{
+					StartFire();
 				}
 
 				m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, m_fireSpriteDestinationScale, Time.smoothDeltaTime * 1.5f);

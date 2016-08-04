@@ -58,12 +58,12 @@ public class Entity : MonoBehaviour, ISpawnable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private ISpawner m_spawner;
+	private Spawner m_spawner;
 
 	private float m_checkOnScreenTimer = 0;
 
 	private GameCameraController m_camera;
-
+	private GameCamera m_newCamera;
 
 
 	/************/
@@ -105,8 +105,11 @@ public class Entity : MonoBehaviour, ISpawnable {
 	}
 
 	// Use this for initialization
-	void Start () {
-		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+	void Start () 
+	{
+		m_camera = Camera.main.GetComponent<GameCameraController>();
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
+
 		m_bounds = GetComponentInChildren<CircleArea2D>();
 	}
 
@@ -119,7 +122,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 			EntityManager.instance.Unregister(this);
 	}
 
-	public void Spawn(ISpawner _spawner) {
+	public void Spawn(Spawner _spawner) {
 		m_spawner = _spawner;
 
 		DragonTier tier = InstanceManager.player.data.tier;
@@ -200,16 +203,28 @@ public class Entity : MonoBehaviour, ISpawnable {
 	// Update is called once per frame
 	void Update () {
 		m_checkOnScreenTimer -= Time.deltaTime;
-		if (m_checkOnScreenTimer <= 0) {	
-			m_isOnScreen = m_camera.IsInsideActivationMinArea(transform.position);
+		if (m_checkOnScreenTimer <= 0) 
+		{	
+			if ( DebugSettings.newCameraSystem )	
+			{
+				m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
+			}
+			else
+			{
+				m_isOnScreen = m_camera.IsInsideActivationMinArea(transform.position);
+			}
 			m_checkOnScreenTimer = 0.5f;
 		}
 	}
 
 	void LateUpdate() {
 		// check camera to destroy this entity if it is outside view area
-		if (m_camera.IsInsideDeactivationArea(transform.position)) {
-			if (m_spawner != null) {
+		if (
+			(DebugSettings.newCameraSystem && m_newCamera.IsInsideDeactivationArea(transform.position)) || 
+			(!DebugSettings.newCameraSystem && m_camera.IsInsideDeactivationArea(transform.position))
+		) 
+		{
+			if (m_spawner) {
 				Disable(false);
 			}
 		}

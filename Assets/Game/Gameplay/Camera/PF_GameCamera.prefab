@@ -20,6 +20,7 @@ GameObject:
   - 82: {fileID: 8288288}
   - 82: {fileID: 8279618}
   - 114: {fileID: 11447402}
+  - 114: {fileID: 114000011327172364}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -37,7 +38,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: -25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children: []
+  m_Children:
+  - {fileID: 4000011292646294}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!20 &2055932
@@ -49,7 +51,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.64705884, g: 1, b: 1, a: 1}
+  m_BackGroundColor: {r: 0.19215687, g: 0.46666667, b: 0.67058825, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -426,3 +428,109 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 101152}
   m_IsPrefabParent: 1
+--- !u!1 &1000013049849812
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011292646294}
+  - 114: {fileID: 114000011098854082}
+  - 114: {fileID: 114000010427000824}
+  - 114: {fileID: 114000010868137718}
+  m_Layer: 0
+  m_Name: SlowMoController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4000011292646294
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013049849812}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 481130}
+  m_RootOrder: 0
+--- !u!114 &114000010427000824
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013049849812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f67839fe126e427591bc2587e294863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_showDebugMessages: 1
+  m_timescaleToApply: 0.4
+  m_enableZoomIn: 1
+  m_zoomValue: 12
+  m_minDuration: 2
+  m_maxDuration: 3
+  m_minAllowedDistanceBelowWaterLine: 4
+  m_maxAllowedDistanceAboveWaterLine: 5
+  m_absMinVelocityAllowed: 1
+  m_absMinYVelocityAllowed: 3
+  m_onlyAscendingDirection: 1
+  m_triggerWhileInGR: 0
+--- !u!114 &114000010868137718
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013049849812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d44fae7c72104c5d980656b3a3f9a5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_showDebugMessages: 0
+  m_timescaleToApply: 0.3
+  m_enableZoomIn: 0
+  m_zoomValue: 10
+  m_duration: 3
+--- !u!114 &114000011098854082
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013049849812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6451b000ca5c149f199d5bc330982f41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_showDebugMessages: 1
+  m_cooldown: 10
+--- !u!114 &114000011327172364
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 986eb6be0250d4dc9b502b6e22c64302, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_maxLookUpOffset: 0
+  m_maxLookDownOffset: 5
+  m_waterHeightLookUpMin: -15
+  m_waterHeightLookUpMax: -12
+  m_waterHeightLookDownMin: -3
+  m_waterHeightLookDownMax: 15
+  m_rotateLerpDuration: 1
+  m_trackAheadScale: 0.5
+  m_trackAheadMode: 0
+  m_activationDistance: 5
+  m_activationRange: 3
+  m_deactivationDistance: 25
