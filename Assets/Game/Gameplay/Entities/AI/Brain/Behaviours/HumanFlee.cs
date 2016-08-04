@@ -75,8 +75,6 @@ namespace AI {
 					Vector3 dir = Vector3.zero;
 					dir.x = m_machine.position.x - m_target.x;
 					m_pilot.SetDirection(dir.normalized);
-				} else {
-					m_pilot.SetMoveSpeed(3f);
 				}
 			
 				m_pilot.Scared(m_machine.GetSignal(Signals.Type.Danger));
