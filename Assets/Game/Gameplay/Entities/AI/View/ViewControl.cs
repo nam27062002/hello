@@ -20,9 +20,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 	//-----------------------------------------------
+	[SeparatorAttribute("Animation playback speed")]
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
+	[SerializeField] private float m_minPlaybakSpeed = 1f;
+	[SerializeField] private float m_maxPlaybakSpeed = 1.5f;
+	[SerializeField] private bool m_onBoostMaxPlaybackSpeed = false;
 
+
+	[SeparatorAttribute("Animation blending")]
 	[SerializeField] private bool m_hasNavigationLayer = false;
 	[SerializeField] private bool m_hasRotationLayer = false;
 
@@ -44,6 +50,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
 
+	private bool m_boost;
 	private bool m_scared;
 	private bool m_panic; //bite and hold state
 	private bool m_attack;
@@ -90,6 +97,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	//
 
 	public virtual void Spawn(ISpawner _spawner) {
+		m_boost = false;
 		m_scared = false;
 		m_panic = false;
 		m_attack = false;
@@ -197,12 +205,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 			if (_speed <= m_walkSpeed) {
 				blendFactor = 0f;
-				animSpeedFactor = Mathf.Max(0.5f, _speed / m_walkSpeed);
+				animSpeedFactor = Mathf.Max(m_minPlaybakSpeed, _speed / m_walkSpeed);
 			} else if (_speed >= m_runSpeed) {
 				blendFactor = 1f;
-				animSpeedFactor = Mathf.Min(1.5f, _speed / m_runSpeed);
+				animSpeedFactor = Mathf.Min(m_maxPlaybakSpeed, _speed / m_runSpeed);
 			} else {
 				blendFactor = 0f + (_speed - m_walkSpeed) * ((1f - 0f) / (m_runSpeed - m_walkSpeed));
+			}
+
+			if (m_boost && m_onBoostMaxPlaybackSpeed) {
+				animSpeedFactor = m_maxPlaybakSpeed;
 			}
 
 			m_animator.SetFloat("speed", blendFactor);
@@ -211,6 +223,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		} else {
 			m_animator.SetBool("move", false);
 			m_animator.speed = 1f;
+		}
+	}
+
+	public void Boost(bool _boost) {
+		if (m_panic)
+			return;
+
+		if (m_boost != _boost) {
+			m_boost = _boost;
 		}
 	}
 

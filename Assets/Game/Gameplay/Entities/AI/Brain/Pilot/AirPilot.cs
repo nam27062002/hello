@@ -57,7 +57,7 @@ namespace AI {
 				}
 				Debug.DrawLine(m_machine.position, m_machine.position + seek, Color.green);
 
-				if (m_actions[(int)Action.Avoid]) {
+				if (IsActionPressed(Action.Avoid)) {
 					Transform enemy = m_machine.enemy;
 					if (enemy != null) {
 						v = m_machine.position - enemy.position;
@@ -92,11 +92,12 @@ namespace AI {
 				}
 				m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 
-				m_impulse += m_externalImpulse;
-
 				if (m_avoidCollisions) {
 					AvoidCollisions();
+					m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 				}
+
+				m_impulse += m_externalImpulse;
 
 				if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
 					if (m_impulse != Vector3.zero) {

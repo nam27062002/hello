@@ -326,7 +326,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159356}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -28.887838, y: 66.92654, z: 0.26953125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -444,13 +444,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 4
   m_runSpeed: 8
+  m_minPlaybakSpeed: 0.5
+  m_maxPlaybakSpeed: 2
+  m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
   m_onEatenParticles:
-  - name: PF_feathers_3D_noblood_white
+  - name: PF_feathers_3D_noblood_green
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_explosionParticles:

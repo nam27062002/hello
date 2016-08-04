@@ -479,12 +479,12 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 120
-    m_faceDirection: 1
+    m_faceDirection: 0
     m_facePlayer: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
+    m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_railSeparation:
@@ -527,8 +527,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 0.001
+  m_walkSpeed: 2
   m_runSpeed: 2
+  m_minPlaybakSpeed: 2
+  m_maxPlaybakSpeed: 2
+  m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 
