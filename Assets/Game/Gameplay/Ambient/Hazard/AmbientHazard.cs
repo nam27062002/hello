@@ -35,7 +35,7 @@ public class AmbientHazard : MonoBehaviour {
 	public enum CollisionShape {
 		SPHERE = 0,
 		CUBOID,
-		CONE,
+		//CONE,
 		CUSTOM
 	}
 
@@ -271,8 +271,7 @@ public class AmbientHazard : MonoBehaviour {
 				if(m_particlesObj != null) {
 					// As children of ourselves
 					// Particle system should already be created to match the zero position
-					m_particlesObj.transform.SetParent(this.transform);
-					m_particlesObj.transform.localPosition = Vector3.zero;
+					m_particlesObj.transform.SetParentAndReset(this.transform);
 
 					// Particles are automatically started when spawned from the pool
 					// Stop them if hazard is not active
@@ -323,6 +322,9 @@ public class AmbientHazard : MonoBehaviour {
 				// Reset timer
 				m_stateTimer = 0f;
 				m_stateTargetTime = m_activationDelay;
+
+				// Start particles!
+				ActivateParticles(true);
 			} break;
 
 			case State.ACTIVE: {

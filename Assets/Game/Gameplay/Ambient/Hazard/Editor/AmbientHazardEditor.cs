@@ -116,7 +116,7 @@ public class AmbientHazardEditor : Editor {
 					if(noColliderError) collisionShapeChanged = true;
 
 					// If it's a cone, expose extra setup
-					if(p.enumValueIndex == (int)AmbientHazard.CollisionShape.CONE) {
+					/*if(p.enumValueIndex == (int)AmbientHazard.CollisionShape.CONE) {
 						// Indent in to draw the shape settings and detect changes
 						EditorGUI.indentLevel++;
 						EditorGUI.BeginChangeCheck();
@@ -141,7 +141,7 @@ public class AmbientHazardEditor : Editor {
 
 						// Indent back out
 						EditorGUI.indentLevel--;
-					}
+					}*/
 				}
 			}
 
@@ -210,12 +210,12 @@ public class AmbientHazardEditor : Editor {
 
 				case AmbientHazard.CollisionShape.CUBOID: {
 					BoxCollider bc = targetHazard.gameObject.AddComponent<BoxCollider>();
-					bc.size = new Vector3(1f, 2f, 1f);	// Default size
+					bc.size = new Vector3(1f, 6f, 1f);	// Default size
 					bc.center = new Vector3(bc.center.x, bc.size.y/2f, bc.center.z);	// Default position
 					newCollider = bc;
 				} break;
 
-				case AmbientHazard.CollisionShape.CONE: {
+				/*case AmbientHazard.CollisionShape.CONE: {
 					// Create mesh collider
 					MeshCollider mc = targetHazard.gameObject.AddComponent<MeshCollider>();
 					mc.convex = true;
@@ -223,7 +223,7 @@ public class AmbientHazardEditor : Editor {
 
 					// Force an update of the shape
 					UpdateConeCollider();
-				} break;
+				} break;*/
 			}
 
 			// Shared setup
@@ -238,7 +238,8 @@ public class AmbientHazardEditor : Editor {
 	/// </summary>
 	private void UpdateConeCollider() {
 		// Skip if selected shape is not conic
-		if((AmbientHazard.CollisionShape)m_collisionShapeProp.enumValueIndex != AmbientHazard.CollisionShape.CONE) return;
+		//if((AmbientHazard.CollisionShape)m_collisionShapeProp.enumValueIndex != AmbientHazard.CollisionShape.CONE) return;
+		return;
 
 		// Support multi-selection!
 		for(int i = 0; i < serializedObject.targetObjects.Length; i++) {

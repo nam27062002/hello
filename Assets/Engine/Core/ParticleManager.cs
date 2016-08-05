@@ -22,7 +22,6 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 				if(!_folderPath.EndsWith("/")) _folderPath = _folderPath + "/";
 			}
 			GameObject prefab = (GameObject)Resources.Load("Particles/" + _folderPath + _prefabName);
-			Debug.Log("Loading particle system from " + "Particles/" + _folderPath + _prefabName + ": " + (prefab != null).ToString());
 			CreatePool(prefab);
 		}
 
