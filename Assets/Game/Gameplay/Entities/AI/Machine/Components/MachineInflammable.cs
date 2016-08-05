@@ -135,7 +135,7 @@ namespace AI {
 		private void ChangeState() {
 			if (m_state == State.Burned) {
 				if (m_ashesAsset.Length > 0) {					
-					GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_renderers[0].transform.position, "Ashes/");
+					GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_renderers[0].transform.position, "Ashes");
 					if (particle) {
 						particle.transform.rotation = m_renderers[0].transform.rotation;
 						particle.transform.localScale = m_renderers[0].transform.localScale;

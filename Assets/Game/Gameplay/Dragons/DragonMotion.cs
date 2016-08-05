@@ -920,9 +920,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 
 	public void OnImpact(Vector3 _origin, float _damage, float _intensity, DamageDealer_OLD _source) {
-		
 		// m_dragon.AddLife(-_damage);
-		m_health.ReceiveDamage( _damage , null, false);
+		m_health.ReceiveDamage( _damage, DamageType.NORMAL , null, false);
 	}
 
 	public void StartWaterMovement()

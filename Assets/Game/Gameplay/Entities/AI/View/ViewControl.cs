@@ -115,7 +115,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		// Show PC Trail?
 		if(m_entity.isPC) {
 			// Get an effect instance from the pool
-			m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards/");
+			m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards");
 
 			// Put it in the view's hierarchy so it follows the entity
 			if(m_pcTrail != null) {

@@ -26,7 +26,7 @@ public class AttackPassiveBehaviour : MonoBehaviour {
 		if (m_timer <= 0 && _other.tag == "Player") {
 			DragonHealthBehaviour dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 			if (dragon != null) {
-				dragon.ReceiveDamage(m_damage);
+				dragon.ReceiveDamage(m_damage, DamageType.NORMAL);
 				m_timer = m_attackDelay;
 			}
 		}

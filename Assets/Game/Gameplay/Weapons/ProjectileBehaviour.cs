@@ -147,7 +147,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		}
 
 		if (_hitDragon) {
-			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage);
+			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
 		}
 
 		gameObject.SetActive(false);

@@ -290,7 +290,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			Vector3 bloodPos = m_mouth.position;
 			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood/"));
+			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
 			m_holdingBlood = 0.5f;
 		}
 		else
@@ -321,7 +321,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 			Vector3 bloodPos = m_mouth.position;
 			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood/"));
+			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
 			m_holdingBlood = 0.5f;
 
 			EndHold();
