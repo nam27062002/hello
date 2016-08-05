@@ -8,11 +8,11 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 458018}
-  - 114: {fileID: 11455198}
   - 114: {fileID: 11469952}
   - 114: {fileID: 11481650}
   - 114: {fileID: 11451598}
   - 114: {fileID: 11485410}
+  - 114: {fileID: 11455198}
   m_Layer: 8
   m_Name: PF_Sheep_01
   m_TagString: Untagged
@@ -112,12 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b50cf50e7834c5397a1f060efb7791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: e0f492e5d96984a19ba60a7cbd04cf12, type: 2}
+  m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_speedFactorRange:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"restTime":{"min":0,"max":0},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":5,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
 --- !u!114 &11485410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 2
+  m_walkSpeed: 3
   m_runSpeed: 5
   m_minPlaybakSpeed: 0.5
   m_maxPlaybakSpeed: 1.5
