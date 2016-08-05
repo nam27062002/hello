@@ -28,12 +28,12 @@ public class DragonGrab : MonoBehaviour
 
 	void OnEnable()
 	{
-		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
 
 	void OnDisable()
 	{
-		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
 
 	// Update is called once per frame
@@ -82,7 +82,7 @@ public class DragonGrab : MonoBehaviour
 		return false;
 	}
 
-	void OnDamageReceived( float damage, Transform origin )
+	void OnDamageReceived( float damage, DamageType _type, Transform origin )
 	{
 		if ( IsGrabbing() )
 			Drop();

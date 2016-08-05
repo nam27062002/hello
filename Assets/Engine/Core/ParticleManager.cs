@@ -17,14 +17,23 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 	public static GameObject Spawn(string _prefabName, Vector3 _at = default(Vector3), string _folderPath = "") {
 		// If we don't have a pool with the given ID, create it
 		if(!instance.m_particlePools.ContainsKey(_prefabName)) {
-			GameObject prefab = (GameObject)Resources.Load("Particles/" + _folderPath + "/" + _prefabName);
+			// [AOC] Small hack for retrocompatibility
+			if(!string.IsNullOrEmpty(_folderPath)) {
+				if(!_folderPath.EndsWith("/")) _folderPath = _folderPath + "/";
+			}
+			GameObject prefab = (GameObject)Resources.Load("Particles/" + _folderPath + _prefabName);
+			Debug.Log("Loading particle system from " + "Particles/" + _folderPath + _prefabName + ": " + (prefab != null).ToString());
 			CreatePool(prefab);
 		}
 
 		// Get a new system from the pool, spawn it and return it
-		GameObject system = instance.m_particlePools[_prefabName].Get();
-		SpawnSystem(system, _at);
-		return system;
+		if(instance.m_particlePools.ContainsKey(_prefabName)) {
+			GameObject system = instance.m_particlePools[_prefabName].Get();
+			SpawnSystem(system, _at);
+			return system;
+		}
+
+		return null;
 	}
 
 	/// <summary>
