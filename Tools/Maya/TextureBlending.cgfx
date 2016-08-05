@@ -55,6 +55,8 @@ sampler2D ColorSampler = sampler_state
 	Texture = <ColorTex>;
   	MagFilter = Linear;
   	MinFilter = LinearMipmapLinear;
+		WrapS = Repeat;
+		WrapT = Repeat;
 };
 
 
@@ -69,7 +71,14 @@ sampler2D SecondSampler = sampler_state
 	Texture = <SecondTex>;
   	MagFilter = Linear;
   	MinFilter = LinearMipmapLinear;
+		WrapS = Repeat;
+		WrapT = Repeat;
 };
+
+uniform float4 _diffuseTileOffset
+<
+	string UIName 	= "Shader UV Tile / Offset";
+> = { 1.0f, 1.0f, 0.0f, 0.0f};
 
 /****************************************************/
 /********** CG SHADER FUNCTIONS *********************/
@@ -106,9 +115,10 @@ struct outVertexData {
 outVertexData textureVS(appdata IN)
 {
 	outVertexData OUT;
-	float4 Po = float4(IN.Position.xyz,1.0);	
+	float4 Po = float4(IN.Position.xyz,1.0);
 	OUT.HPosition = mul(WorldViewProjXf, Po);
-	OUT.UV = IN.UV.xy;
+	// OUT.UV = IN.UV.xy;
+	OUT.UV = IN.UV * _diffuseTileOffset.xy + _diffuseTileOffset.zw;
 	OUT.color = IN.VertColor;
 	return OUT;
 }
