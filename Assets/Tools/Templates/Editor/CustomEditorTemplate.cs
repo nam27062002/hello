@@ -22,16 +22,12 @@ public class MonoBehaviourTemplateEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static GUIStyle s_customStyle = null;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
 	MonoBehaviourTemplate m_targetMonoBehaviourTemplate = null;
-
-	// Store a reference of interesting properties for faster access
-	SerializedProperty m_myValueProp = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -42,9 +38,6 @@ public class MonoBehaviourTemplateEditor : Editor {
 	private void OnEnable() {
 		// Get target object
 		m_targetMonoBehaviourTemplate = target as MonoBehaviourTemplate;
-
-		// Store a reference of interesting properties for faster access
-		m_myValueProp = serializedObject.FindProperty("m_myValue");
 	}
 
 	/// <summary>
@@ -59,12 +52,6 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// Draw the inspector.
 	/// </summary>
 	public override void OnInspectorGUI() {
-		// Initialize custom styles if not done
-		InitStyles();
-
-		// Default inspector
-		DrawDefaultInspector();
-
 		// Instead of modifying script variables directly, it's advantageous to use the SerializedObject and 
 		// SerializedProperty system to edit them, since this automatically handles private fields, multi-object 
 		// editing, undo, and prefab overrides.
@@ -72,25 +59,26 @@ public class MonoBehaviourTemplateEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
-		// Show the custom GUI controls
-		// Serialized property:
-		EditorGUILayout.PropertyField(m_myValueProp, true);	// Serialized fields automatically detect changes and store Undo actions
+		// Loop through all serialized properties and work with special ones
+		SerializedProperty p = serializedObject.GetIterator();
+		p.Next(true);	// To get first element
+		do {
+			// Properties requiring special treatment
+			if(p.name == "m_propertyRequiringSpecialTreatment") {
+				// Draw the property
+				EditorGUILayout.PropertyField(p);
 
-		// Other fields (proper way to do it, for each field)
-		EditorGUI.BeginChangeCheck();
-		string newName = EditorGUILayout.TextField("Name", target.name);
-		if(EditorGUI.EndChangeCheck()) {
-			Undo.RecordObject(target, "MonoBehaviourTemplate - name");
-			target.name = newName;
-		}
+				// Example on working with multiple selection
+				if(!p.hasMultipleDifferentValues) {
+					// Do something different
+				}
+			}
 
-		// Show a progress bar only if all the objects have the same value:
-		if(!m_myValueProp.hasMultipleDifferentValues) {
-			// Get a rect for the progress bar using the same margins as a textfield:
-			Rect rect = GUILayoutUtility.GetRect(18, 18, "TextField");
-			EditorGUI.ProgressBar(rect, m_myValueProp.intValue / 100f, "MyValue");
-			EditorGUILayout.Space();
-		}
+			// Default property display
+			else {
+				EditorGUILayout.PropertyField(p, true);
+			}
+		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
@@ -101,17 +89,5 @@ public class MonoBehaviourTemplateEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
-	}
-
-	/// <summary>
-	/// Init custom styles if not done.
-	/// Should only be done during the OnGUI/OnSceneGUI calls.
-	/// </summary>
-	private void InitStyles() {
-		// Do it for every custom style
-		if(s_customStyle == null) {
-			s_customStyle = new GUIStyle(EditorStyles.textField);
-			s_customStyle.normal.textColor = Colors.darkGray;
-		}
 	}
 }
