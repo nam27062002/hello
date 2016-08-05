@@ -10,8 +10,8 @@ GameObject:
   - 4: {fileID: 494148}
   - 114: {fileID: 11461888}
   - 114: {fileID: 11478514}
-  - 114: {fileID: 11499208}
   - 114: {fileID: 11451096}
+  - 114: {fileID: 114000012676547556}
   m_Layer: 0
   m_Name: SP_canaryFlock_0
   m_TagString: Untagged
@@ -48,16 +48,17 @@ MonoBehaviour:
     min: 3
     max: 3
   m_scale:
-    min: 0.9
-    max: 1.1
+    min: 1.7
+    max: 1.9
+  m_rails: 1
   m_flockBonus: 25
-  m_alwaysActive: 0
   m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
+  m_alwaysActive: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
   m_spawnTime:
-    min: 40
-    max: 45
+    min: 0
+    max: 0
   m_maxSpawns: 0
 --- !u!114 &11461888
 MonoBehaviour:
@@ -84,28 +85,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11499208
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 194974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_guideFunction: 0
-  m_innerRadius: 8
-  m_outterRadius: 16
-  m_targetDistance: 3.4
-  m_depthAmplitude: 1
-  m_depthFrequency: 3
-  m_scale: {x: 1, y: 1, z: 1}
-  m_rotation: {x: 90, y: 0, z: 0}
-  m_forcePreview: 0
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -117,3 +96,19 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 194974}
   m_IsPrefabParent: 1
+--- !u!114 &114000012676547556
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}
