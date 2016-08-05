@@ -73,7 +73,6 @@ namespace AI {
 					m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_data.speed);					
 				} else {
 					m_target = m_pilot.area.RandomInside();
-					m_target.z = 0f;
 				} 
 
 				if (m_data.speed > 0f) {

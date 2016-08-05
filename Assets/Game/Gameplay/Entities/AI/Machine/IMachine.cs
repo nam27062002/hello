@@ -33,5 +33,8 @@ namespace AI {
 		void BeingSwallowed(Transform _transform);
 		void BiteAndHold();
 		bool Burn(float _damage, Transform _transform);
+
+
+		void SetRail(uint _rail, uint _total);
 	}
 }

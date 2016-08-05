@@ -10,7 +10,7 @@ public class EntityBg : MonoBehaviour, ISpawnable
 
 	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
-
+	private ISpawner m_spawner;
 
 	/************/
 
@@ -28,11 +28,14 @@ public class EntityBg : MonoBehaviour, ISpawnable
 
 	public void Disable(bool _destroyed) 
 	{
+		if ( m_spawner != null )
+			m_spawner.RemoveEntity(gameObject, _destroyed);
 		gameObject.SetActive(false);
 	}
 
 	public void Spawn(ISpawner _spawner) 
 	{
+		m_spawner = _spawner;
 	}
 
 	/*****************/

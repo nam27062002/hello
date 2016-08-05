@@ -104,31 +104,34 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 		m_animator.speed = 1f;
 
-		// Restore materials
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			if (m_entity.isGolden) {				
-				Material[] materials = renderers[i].materials;
-				for (int m = 0; m < materials.Length; m++) {
-					if (!materials[m].shader.name.EndsWith("Additive"))
-						materials[m] = m_materialGold;
+		if ( m_entity != null )
+		{
+			// Restore materials
+			Renderer[] renderers = GetComponentsInChildren<Renderer>();
+			for (int i = 0; i < renderers.Length; i++) {
+				if (m_entity.isGolden) {				
+					Material[] materials = renderers[i].materials;
+					for (int m = 0; m < materials.Length; m++) {
+						if (!materials[m].shader.name.EndsWith("Additive"))
+							materials[m] = m_materialGold;
+					}
+					renderers[i].materials = materials;
+				} else {
+					if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
+						renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 				}
-				renderers[i].materials = materials;
-			} else {
-				if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
-					renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 			}
-		}
 
-		// Show PC Trail?
-		if(m_entity.isPC) {
-			// Get an effect instance from the pool
-			m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards/");
+			// Show PC Trail?
+			if(m_entity.isPC) {
+				// Get an effect instance from the pool
+				m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards/");
 
-			// Put it in the view's hierarchy so it follows the entity
-			if(m_pcTrail != null) {
-				m_pcTrail.transform.SetParent(transform);
-				m_pcTrail.transform.localPosition = Vector3.zero;
+				// Put it in the view's hierarchy so it follows the entity
+				if(m_pcTrail != null) {
+					m_pcTrail.transform.SetParent(transform);
+					m_pcTrail.transform.localPosition = Vector3.zero;
+				}
 			}
 		}
 	}

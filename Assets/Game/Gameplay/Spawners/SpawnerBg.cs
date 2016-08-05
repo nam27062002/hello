@@ -31,10 +31,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	[Tooltip("For the spawners that must spawn even when the dragon is not near (i.e. the spawners around the start area)")]
 	[SerializeField] private bool m_activeOnStart = false;
 
-	[Tooltip("Meant for background spawners, will ignore respawn settings and activation triggers.")]
-	[SerializeField] private bool m_alwaysActive = false;
-	public bool alwaysActive { get { return m_alwaysActive; }}
-
 	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
 	[SerializeField] private SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
@@ -71,7 +67,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	private bool m_allEntitiesKilledByPlayer;
 	protected GameObject[] m_entities; // list of alive entities
 
-	private float m_activationTimer;
 	private float m_respawnTimer;
 	private uint m_respawnCount;
 
@@ -116,7 +111,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	}
 
 	public void Initialize() {
-		m_activationTimer = 0;
 
 		m_respawnTimer = 0;
 		m_respawnCount = 0;
@@ -192,121 +186,32 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	}
 		
 	public void UpdateTimers() {		
-		// Ignore all logic for always active spawners
-		if (m_alwaysActive) {
-			if (m_entityAlive == 0) {
-				Spawn();
+		
+		// If we don't have any entity alive, proceed
+		if(m_entityAlive == 0) {
+			// Respawn on cooldown?
+
+			// Check activation area
+			if ( DebugSettings.newCameraSystem )
+			{
+				if(m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
+					Spawn();
+				}
 			}
-		}
-
-		// Rest of the spawners
-		else {
-			// Update timer
-			m_activationTimer += Time.deltaTime;
-
-			// If we can spawn, do it
-			if(CanSpawn(m_activationTimer, RewardManager.xp)) {
-				// If we don't have any entity alive, proceed
-				if(m_entityAlive == 0) {
-					// Respawn on cooldown?
-					if(m_respawnTimer > 0) {
-						m_respawnTimer -= Time.deltaTime;
-						if(m_respawnTimer <= 0) m_respawnTimer = 0;
-					} else {
-						// Check activation area
-						if ( DebugSettings.newCameraSystem )
-						{
-							if(m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
-								Spawn();
-							}
-						}
-						else
-						{
-							if(m_camera != null && m_camera.IsInsideBackgroundActivationArea(transform.position)) {
-								Spawn();
-							}
-						}
-					}
+			else
+			{
+				if(m_camera != null && m_camera.IsInsideBackgroundActivationArea(transform.position)) {
+					Spawn();
 				}
 			}
 
-			// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
-			else if(m_readyToBeDisabled) {
-				if(m_entityAlive == 0) {
-					SpawnerManager.instance.Unregister(this);
-				}
-			}
 		}
+
+
 	}
 
 	public void UpdateLogic() {
 		ExtendedUpdateLogic();
-	}
-
-	/// <summary>
-	/// Check all the required conditions (time, xp) to determine whether this spawner can spawn or not.
-	/// Doesn't check respawn timer nor activation area, only time and xp constraints.
-	/// </summary>
-	/// <returns>Whether this spawner can spawn or not.</returns>
-	/// </returns><param name="_time">Elapsed game time.</param>
-	/// </returns><param name="_xp">Earned xp.</param>
-	public bool CanSpawn(float _time, float _xp) {
-		// If always active, we're done!
-		if(m_alwaysActive) return true;
-
-		// If already ready to be disabled, no need for further checks
-		if(m_readyToBeDisabled) return false;
-
-		// Check start conditions
-		bool startConditionsOk = (m_activationTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
-		for(int i = 0; i < m_activationTriggers.Length; i++) {
-			// Is this condition satisfied?
-			switch(m_activationTriggers[i].type) {
-				case SpawnCondition.Type.XP: {
-					startConditionsOk |= (_xp >= m_activationTriggers[i].value);	// We've earned enough xp
-				} break;
-
-				case SpawnCondition.Type.TIME: {
-					startConditionsOk |= (_time >= m_activationTriggers[i].value);	// We've reached the activation time
-				} break;
-			}
-
-			// If one of the conditions has already triggered, no need to keep checking
-			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one, so we would be adding an extra instruction for nothing, so let's keep it commented for now
-			// if(startConditionsOk) break;
-		}
-
-		// If start conditions aren't met, we can't spawn, no need to check anything else
-		if(!startConditionsOk) {
-			return false;
-		}
-
-		// Check end conditions
-		bool endConditionsOk = true;
-		for(int i = 0; i < m_deactivationTriggers.Length; i++) {
-			// Is this condition satisfied?
-			switch(m_deactivationTriggers[i].type) {
-				case SpawnCondition.Type.XP: {
-					endConditionsOk &= (_xp < m_deactivationTriggers[i].value);		// We haven't yet reached the xp limit
-				} break;
-
-				case SpawnCondition.Type.TIME: {
-					endConditionsOk &= (_time < m_deactivationTriggers[i].value);	// We haven't yet reached the time limit
-				} break;
-			}
-
-			// If one of the conditions has already triggered, no need to keep checking
-			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one, so we would be adding an extra instruction for nothing, so let's keep it commented for now
-			// if(!endConditionsOk) break;
-		}
-
-		// If we've reached either of the end conditions, mark the spawner as ready to disable
-		// Only during actual gameplay, not while using the level editor simulator!
-		if(!endConditionsOk && Application.isPlaying) {
-			m_readyToBeDisabled = true;
-		}
-
-		return endConditionsOk;
 	}
 
 	public void Respawn() {
@@ -356,7 +261,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 				}
 			}
 
-			AI.Machine machine = pilot.GetComponent<AI.Machine>();
+			AI.IMachine machine = pilot.GetComponent<AI.IMachine>();
 			machine.SetRail(rail, m_rails);
 			rail = (rail + 1) % m_rails;
 
