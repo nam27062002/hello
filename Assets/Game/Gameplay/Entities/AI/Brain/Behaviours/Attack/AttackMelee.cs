@@ -8,7 +8,7 @@ namespace AI {
 			public float damage = 5f;
 		}
 
-		[CreateAssetMenu(menuName = "Behaviour/Attack Melee")]
+		[CreateAssetMenu(menuName = "Behaviour/Attack/Melee")]
 		public class AttackMelee : Attack {
 		
 			private MeleeWeapon m_meleeWeapon;

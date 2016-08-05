@@ -6,9 +6,11 @@ namespace AI {
 		[System.Serializable]
 		public class PursuitData : StateComponentData {
 			public float speed;
+			public float arrivalRadius = 1f;
+			public string attackPoint;
 		}
 
-		[CreateAssetMenu(menuName = "Behaviour/Pursuit")]
+		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit")]
 		public class Pursuit : StateComponent {
 
 			[StateTransitionTrigger]
@@ -17,7 +19,8 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
 
-			private PursuitData m_data;
+			protected PursuitData m_data;
+			protected Transform m_target;
 
 
 			public override StateComponentData CreateData() {
@@ -32,21 +35,27 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<PursuitData>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
+
+				m_target = null;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SlowDown(true);
+
+				m_target = m_machine.enemy.FindTransformRecursive(m_data.attackPoint);
+				if (m_target == null) {
+					m_target = m_machine.enemy;
+				}
 			}
 
-			protected override void OnUpdate() {
-				Transform enemy = m_machine.enemy;
-
-				if (enemy) {
-					if (m_machine.GetSignal(Signals.Type.Danger)) {
+			protected override void OnUpdate() {				
+				if (m_machine.enemy != null) {
+					float m = (m_machine.position - m_target.position).sqrMagnitude;
+					if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
 						Transition(OnEnemyInRange);
 					} else {
-						m_pilot.GoTo(enemy.position);
+						m_pilot.GoTo(m_target.position);
 					}
 				} else {
 					Transition(OnEnemyOutOfSight);

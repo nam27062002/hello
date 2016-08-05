@@ -30,6 +30,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	[SeparatorAttribute]
 	[SerializeField] private Vector3 m_scale = Vector3.one;
 	[SerializeField] private Vector3 m_rotation = Vector3.zero;
+	[SerializeField] private Vector3 m_boundsScale = Vector3.zero;
 
 	[SeparatorAttribute]
 	[SerializeField] private bool m_forcePreview = false;
@@ -55,6 +56,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 		}
 
 		Vector3 size = ((new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  m_depthAmplitude)) + Vector3.one) * 2f;
+		size += m_boundsScale;
 		size = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, size);
 
 		size.x = Mathf.Abs(size.x);

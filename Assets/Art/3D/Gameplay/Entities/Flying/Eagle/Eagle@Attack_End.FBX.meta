@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 798563c62840a42e28f583abf71300f6
-timeCreated: 1463753462
+guid: 11a6bc69117c7434a90e1e084a451104
+timeCreated: 1470320294
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
@@ -17,10 +17,11 @@ ModelImporter:
     100018: Eagle_Legs_Digit_1
     100020: Eagle_Legs_Digit_2
     100022: Eagle_Legs_Palms
-    100024: Eagle_RArm_1
-    100026: Eagle_RArm_2
-    100028: Eagle_RArm_3
-    100030: Eagle_Tail_1
+    100024: Eagle_Legs_Platform
+    100026: Eagle_RArm_1
+    100028: Eagle_RArm_2
+    100030: Eagle_RArm_3
+    100032: Eagle_Tail_1
     400000: //RootNode
     400002: Eagle_Body
     400004: Eagle_Head
@@ -33,20 +34,21 @@ ModelImporter:
     400018: Eagle_Legs_Digit_1
     400020: Eagle_Legs_Digit_2
     400022: Eagle_Legs_Palms
-    400024: Eagle_RArm_1
-    400026: Eagle_RArm_2
-    400028: Eagle_RArm_3
-    400030: Eagle_Tail_1
-    7400000: Attack
+    400024: Eagle_Legs_Platform
+    400026: Eagle_RArm_1
+    400028: Eagle_RArm_2
+    400030: Eagle_RArm_3
+    400032: Eagle_Tail_1
+    7400000: Attack_End
     9500000: //RootNode
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
@@ -61,17 +63,17 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Attack
+      name: Attack_End
       takeName: Take 001
-      firstFrame: 15
-      lastFrame: 40
+      firstFrame: 43
+      lastFrame: 59
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -84,14 +86,14 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.29502854
+      - time: 0
         functionName: AttackDealDamage
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5875653
+      - time: 0.92151177
         functionName: AttackEnd
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -131,9 +133,11 @@ ModelImporter:
         weight: 1
       - path: Eagle_Body/Eagle_Tail_1
         weight: 1
+      - path: Eagle_Legs_Platform
+        weight: 1
       maskType: 0
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 14
+      additiveReferencePoseFrame: 43
     isReadable: 1
   meshes:
     lODScreenPercentages: []

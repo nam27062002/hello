@@ -11,7 +11,7 @@ namespace AI {
 			public float damage = 5f;
 		}
 
-		[CreateAssetMenu(menuName = "Behaviour/Attack Ranged")]
+		[CreateAssetMenu(menuName = "Behaviour/Attack/Ranged")]
 		public class AttackRanged: Attack {
 			
 			private GameObject m_projectile;

@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace AI {
 	namespace Behaviour {	
-		[CreateAssetMenu(menuName = "Behaviour/Attack Tactics")]
+		[CreateAssetMenu(menuName = "Behaviour/Attack/Tactics")]
 		public class AttackTactics : StateComponent {
 
 			[StateTransitionTrigger]
