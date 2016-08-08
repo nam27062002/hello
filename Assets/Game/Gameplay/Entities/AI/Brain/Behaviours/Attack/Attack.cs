@@ -8,8 +8,9 @@ namespace AI {
 			public int consecutiveAttacks = 3;
 			public float attackDelay = 0f;
 			public float retreatTime = 0f;
+			public bool faceEnemy = true;
+			public bool faceEnemyY = false;
 			public int facing = 1;
-			public bool faceEnemy = false;
 		}
 
 		public abstract class Attack : StateComponent {
@@ -84,20 +85,22 @@ namespace AI {
 				} else {
 					m_pilot.PressAction(Pilot.Action.Attack);
 
-					Vector3 dir = Vector3.zero;
-					if (m_data.facing > 0) {
-						dir = m_machine.enemy.position - m_machine.position;
-					} else {
-						dir = m_machine.position - m_machine.enemy.position;
-					}
+					if (m_data.faceEnemy) {
+						Vector3 dir = Vector3.zero;
+						if (m_data.facing > 0) {
+							dir = m_machine.enemy.position - m_machine.position;
+						} else {
+							dir = m_machine.position - m_machine.enemy.position;
+						}
 
-					if (m_data.faceEnemy) {						
-						dir.z = 0;
-					} else {
-						dir.y = 0;
-						dir.z = 0;
+						if (m_data.faceEnemyY) {						
+							dir.z = 0;
+						} else {
+							dir.y = 0;
+							dir.z = 0;
+						}
+						m_pilot.SetDirection(dir.normalized);
 					}
-					m_pilot.SetDirection(dir.normalized);
 
 					m_onAttachProjectileEventDone = false;
 					m_onDamageEventDone = false;

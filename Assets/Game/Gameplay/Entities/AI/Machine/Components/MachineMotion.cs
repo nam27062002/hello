@@ -206,6 +206,15 @@ namespace AI {
 				} else {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
+
+				float angle = 0f;
+				if (m_direction.x > 0)			angle = Vector3.Angle(Vector3.right, m_direction);
+				else if (m_direction.x < 0)		angle = Vector3.Angle(Vector3.left, m_direction);
+
+				angle = Mathf.Min(45f, angle);
+
+				m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
+
 			} else {
 				if (m_pilot.speed > 0.01f) {
 					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;

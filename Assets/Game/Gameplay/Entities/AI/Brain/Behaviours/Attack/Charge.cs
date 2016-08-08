@@ -15,6 +15,7 @@ namespace AI {
 			private float m_elapsedTime;
 
 
+
 			public override StateComponentData CreateData() {
 				return new ChargeData();
 			}
