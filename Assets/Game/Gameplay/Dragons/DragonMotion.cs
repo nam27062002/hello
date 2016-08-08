@@ -418,14 +418,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		if ( m_holdPrey != null )
 		{
-			Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPrey.transform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
-			m_holdPrey.transform.position = deltaPosition;
+			Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
+			m_holdPrey.transform.position = m_holdPrey.transform.position + (deltaPosition - m_holdPreyTransform.position);
 		}
 				
 		m_animator.SetFloat("height", m_height);
 
-		// m_animator.SetFloat("BendBodyX", m_angularVelocity.x);
-		// m_animator.SetFloat("BendBodyY", m_angularVelocity.y);
 		UpdateBodyBending();
 	}
 
