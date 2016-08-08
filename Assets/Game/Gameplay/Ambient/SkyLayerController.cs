@@ -33,6 +33,15 @@ public class SkyLayerController : MonoBehaviour
 			m_offset.x = m_playerTransform.transform.position.x / m_MoveProportion;
 			m_offset.y = m_playerTransform.transform.position.y / m_MoveProportion;
 			m_material.SetTextureOffset( "_DetailTex", m_offset);
+
+			if ( m_playerTransform.transform.position.y > 50 )
+			{
+				m_material.SetColor( "_Color", Color.white * (1.0f - ((m_playerTransform.transform.position.y - 50) / 200.0f)) );
+			}
+			else
+			{
+				m_material.SetColor( "_Color", Color.white);	
+			}
 		}
 	}
 }
