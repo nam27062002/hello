@@ -123,7 +123,7 @@ public class InflammableBehaviour : Initializable {
 						// Particles
 						if (m_ashesAsset.Length > 0) {
 							Renderer renderer = GetComponentInChildren<Renderer>();	
-							GameObject particle = ParticleManager.Spawn(m_ashesAsset, renderer.transform.position, "Ashes/");
+							GameObject particle = ParticleManager.Spawn(m_ashesAsset, renderer.transform.position, "Ashes");
 							if (particle) {
 								particle.transform.rotation = renderer.transform.rotation;
 								particle.transform.localScale = renderer.transform.localScale;

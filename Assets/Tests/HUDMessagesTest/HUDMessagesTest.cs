@@ -71,7 +71,7 @@ public class HUDMessagesTest : MonoBehaviour {
 		switch(_type) {
 			case 0:		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, null);		break;
 			case 1:		Messenger.Broadcast(GameEvents.SURVIVAL_BONUS_ACHIEVED);				break;
-			case 2:		Messenger.Broadcast(GameEvents.PLAYER_CURSED);							break;
+			case 2:		Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, 10f, DamageType.CURSE, null);	break;
 			case 3:		Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, (DragonTier)UnityEngine.Random.Range((int)DragonTier.TIER_1, (int)DragonTier.COUNT));	break;
 
 			case 4:	{

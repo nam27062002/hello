@@ -10,7 +10,7 @@ public class CurseWeaponEffect : MonoBehaviour {
 		if (_other.tag == "Player") {
 			DragonHealthBehaviour dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 			if (dragon != null) {
-				dragon.Curse(m_damage, m_duration);
+				dragon.ReceiveDamageOverTime(m_damage, m_duration, DamageType.CURSE);
 			}
 		}
 	}

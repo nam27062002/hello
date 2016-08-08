@@ -2,7 +2,15 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class DragonHealthBehaviour : MonoBehaviour {
-
+	//-----------------------------------------------
+	// Constants
+	//-----------------------------------------------
+	// DOT == Damage Over Time
+	private class DOT {
+		public float dps = 0f;
+		public DamageType type = DamageType.NONE;
+		public float timer = 0f;
+	}
 
 	//-----------------------------------------------
 	// Attributes
@@ -19,9 +27,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Damage Multiplier for buffs
 	private float m_damageMultiplier;
 
-	// Curse
-	private float m_curseTimer;
-	private float m_curseDPS;
+	// Damage over time
+	private List<DOT> m_dots = new List<DOT>();
 
 	// On session start modifiers
 	private float m_sessionStartHealthDrainTime;
@@ -32,7 +39,6 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private float m_criticalHealthModifier;
 	private float m_starvingLimit;
 	private float m_starvingHealthModifier;
-
 
 	private int m_damageAnimState;
 
@@ -59,10 +65,6 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_starvingLimit = settings.GetAsFloat("healthWarningThreshold");	// 0.20
 		m_starvingHealthModifier = settings.GetAsFloat("healthWarningModifier");	// 0.5
 
-		// Curse initialization
-		m_curseTimer = 0;
-		m_curseDPS = 0;
-
 		//
 		m_damageAnimState = Animator.StringToHash("Damage");
 	}
@@ -70,15 +72,22 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update() 
 	{
-		
+		// Apply health drain
 		float drain = GetModifiedDamageForCurrentHealth( m_healthDrainPerSecond, true);
 		m_dragon.AddLife(-drain * Time.deltaTime);
 
-		if ( m_curseTimer > 0 )
-		{
-			m_curseTimer -= Time.deltaTime;
-			float curse =  GetModifiedDamageForCurrentHealth( m_curseDPS );
-			m_dragon.AddLife( -curse * Time.deltaTime );
+		// Apply damage over time
+		// Reverse iterating since we will be removing them from the list when expired
+		for(int i = m_dots.Count - 1; i >= 0; i--) {
+			// Apply damage
+			float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
+			ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, null, false);		// No hit animation!
+
+			// Update timer and check for dot finish
+			m_dots[i].timer -= Time.deltaTime;
+			if(m_dots[i].timer <= 0) {
+				m_dots.RemoveAt(i);
+			}
 		}
 	}
 
@@ -86,29 +95,58 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		return m_dragon.IsAlive();
 	}
 
-	public bool IsCursed()
-	{
-		return m_curseTimer > 0;
+	public bool HasDOT() {
+		return m_dots.Count > 0;
 	}
 
-	public void ReceiveDamage(float _value, Transform _source = null, bool hitAnimation = true) 
-	{
-		if (enabled) {
-			if (hitAnimation)
-				PlayHitAnimation();
-			
-			float damage = GetModifiedDamageForCurrentHealth( _value );
+	public bool HasDOT(DamageType _type) {
+		// Use Exists() + Linq to look for a dot of the target type
+		return m_dots.Exists((_dot) => { return _dot.type == _type; });
+	}
+
+	/// <summary>
+	/// Inflict instant damage to the dragon.
+	/// </summary>
+	/// <param name="_amount">The total amount of damage to be applied. Will be modified based on dragon's current health percentage.</param>
+	/// <param name="_type">Type of damage to be applied.</param> 
+	/// <param name="_source">The source of the damage, optional.</param> 
+	/// <param name="_hitAnimation">Whether to trigger the hit animation or not.</param>
+	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true) {
+		if(enabled) {
+			// Play animation?
+			if(_hitAnimation) PlayHitAnimation();
+
+			// Apply damage
+			float damage = GetModifiedDamageForCurrentHealth(_amount);
 			m_dragon.AddLife(-damage);
-			Messenger.Broadcast<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _value, _source);
+
+			// Notify game
+			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
 		}
 	}
 
-	public void Curse( float _damage, float _duration )
-	{
-		m_curseTimer = _duration;
-		m_curseDPS = _damage;
+	/// <summary>
+	/// Start receiving a DOT.
+	/// </summary>
+	/// <param name="_dps">Damage per second to be applied.</param>
+	/// <param name="_duration">Total duration.</param>
+	/// <param name="_type">Type of damage to be applied. If a DOT of a different type is being applied, type will be override.</param> 
+	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
+	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, bool _reset = true) {
+		// Clear current dots?
+		if(_reset) {
+			m_dots.Clear();
+		}
+
+		// Store new dot's values, dot will be applied during the update call
+		DOT newDot = new DOT();
+		newDot.dps = _dps;
+		newDot.timer = _duration;
+		newDot.type = _type;
+		m_dots.Add(newDot);
+
+		// Do feedback animation
 		PlayHitAnimation();
-		Messenger.Broadcast(GameEvents.PLAYER_CURSED);
 	}
 
 

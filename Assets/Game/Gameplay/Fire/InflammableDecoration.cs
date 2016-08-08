@@ -200,7 +200,7 @@ public class InflammableDecoration : Initializable {
 
 		if (!string.IsNullOrEmpty( m_ashesAsset)) 
 		{
-			GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_view.transform.position, "Ashes/");
+			GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_view.transform.position, "Ashes");
 			if (particle) 
 			{
 				particle.transform.rotation = m_view.transform.rotation;

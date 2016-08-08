@@ -143,7 +143,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.SURVIVAL_BONUS:		Messenger.AddListener(GameEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_STARVING:		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnToggleMessage);			break;
 			case Type.HEALTH_CRITICAL:		Messenger.AddListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnToggleMessage);			break;
-			case Type.CURSED:				Messenger.AddListener(GameEvents.PLAYER_CURSED, OnStandardMessage);							break;
+			case Type.CURSED:				Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
@@ -163,7 +163,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.SURVIVAL_BONUS:		Messenger.RemoveListener(GameEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_STARVING:		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnToggleMessage);			break;
 			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnToggleMessage);			break;
-			case Type.CURSED:				Messenger.RemoveListener(GameEvents.PLAYER_CURSED, OnStandardMessage);							break;
+			case Type.CURSED:				Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
@@ -407,6 +407,19 @@ public class HUDMessage : MonoBehaviour {
 			} else if(m_type == Type.MEGA_FIRE_RUSH && _type == DragonBreathBehaviour.Type.Super) {
 				Show();
 			}
+		}
+	}
+
+	/// <summary>
+	/// The player has received some damage.
+	/// </summary>
+	/// <param name="_damage">Amount of damage.</param>
+	/// <param name="_type">Type of damage.</param>
+	/// <param name="_source">Source of the damage (optional).</param>
+	private void OnDamageReceived(float _damage, DamageType _type, Transform _source) {
+		// For now we're only interested in the type
+		if(_type == DamageType.CURSE) {
+			Show();
 		}
 	}
 }

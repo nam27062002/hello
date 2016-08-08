@@ -28,7 +28,7 @@ namespace AI {
 				if (dragon.HasMineShield()) {
 					dragon.LoseMineShield();
 				} else {
-					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, m_machine.transform);
+					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
 				}
 
 				m_machine.SetSignal(Signals.Type.Destroyed, true);

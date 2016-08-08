@@ -43,7 +43,7 @@ public class HUDDamageMessage : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
 	
 	/// <summary>
@@ -51,7 +51,7 @@ public class HUDDamageMessage : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
 
 	//------------------------------------------------------------------//
@@ -61,8 +61,9 @@ public class HUDDamageMessage : MonoBehaviour {
 	/// The player has received some damage.
 	/// </summary>
 	/// <param name="_amount">The amount of damage received.</param>
+	/// <param name="_type">The type of damage received.</param>
 	/// <param name="_source">Optionally, the source of the damage.</param>
-	private void OnDamageReceived(float _amount, Transform _source) {
+	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) {
 		// Nothing to do if source is not known
 		if(_source == null) return;
 
