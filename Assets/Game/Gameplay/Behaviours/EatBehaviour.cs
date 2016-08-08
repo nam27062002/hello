@@ -196,16 +196,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public void OnJawsClose()
 	{
 		// Bite kill!
-		FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
-		m_attackTarget = null;
-
-		if ( m_prey.Count <= 0 )
+		if ( m_holdingPrey == null )
 		{
-			m_animator.SetBool("eat", false);
-		}
+			FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
+			m_attackTarget = null;
 
-		if (m_holdingPrey == null)
+			if ( m_prey.Count <= 0 )
+			{
+				m_animator.SetBool("eat", false);
+			}
+
 			TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+		}
 	}
 
 	public Transform GetAttackTarget()

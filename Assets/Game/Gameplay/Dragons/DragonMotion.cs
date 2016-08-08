@@ -179,6 +179,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_introTimer;
 	private const float m_introDuration = 3;
 	private Vector3 m_destination;
+	private Transform m_preyPreviousTransformParent;
 	private AI.Machine m_holdPrey = null;
 	private Transform m_holdPreyTransform = null;
 
@@ -998,12 +999,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartHoldPreyMovement( AI.Machine prey, Transform _holdPreyTransform )
 	{
+		m_preyPreviousTransformParent = prey.transform.parent;
+		prey.transform.parent = m_tongue;
 		m_holdPrey = prey;
 		m_holdPreyTransform = _holdPreyTransform;
 	}
 
 	public void EndHoldMovement()
 	{
+		m_holdPrey.transform.parent = m_preyPreviousTransformParent;
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
 	}
