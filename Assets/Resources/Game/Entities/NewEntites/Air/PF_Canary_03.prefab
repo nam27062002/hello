@@ -393,7 +393,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 194316}
-  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
+  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -445,7 +445,7 @@ MonoBehaviour:
   m_walkSpeed: 6
   m_runSpeed: 10
   m_minPlaybakSpeed: 0.5
-  m_maxPlaybakSpeed: 2
+  m_maxPlaybakSpeed: 10
   m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
@@ -501,7 +501,7 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_mass: 1
+    m_mass: 3
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 1
@@ -517,10 +517,8 @@ MonoBehaviour:
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 3
-    m_maxRadius: 3.5
-    m_senseAbove: 1
-    m_senseBelow: 1
+    m_minRadius: 2.5
+    m_maxRadius: 4
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0
@@ -562,8 +560,8 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":9,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":6.5,"followAheadFactor":0.5,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 4
+  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":11,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":5,"separation":0.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":7,"followAheadFactor":0.5,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 9
   m_avoidCollisions: 1
 --- !u!137 &13761280
 SkinnedMeshRenderer:

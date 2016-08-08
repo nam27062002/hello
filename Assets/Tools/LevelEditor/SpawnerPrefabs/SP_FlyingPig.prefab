@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 447832}
   - 114: {fileID: 11451506}
   - 114: {fileID: 11448584}
-  - 114: {fileID: 11471782}
+  - 114: {fileID: 114000011743134776}
   m_Layer: 0
   m_Name: SP_FlyingPig
   m_TagString: Untagged
@@ -73,20 +73,6 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!114 &11471782
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 177470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0.034355164, y: 0.034381866}
-  size: {x: 6.1981964, y: 5.510564}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -98,3 +84,19 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 177470}
   m_IsPrefabParent: 1
+--- !u!114 &114000011743134776
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 177470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}
