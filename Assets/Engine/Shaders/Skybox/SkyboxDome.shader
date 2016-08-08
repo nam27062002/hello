@@ -5,9 +5,7 @@ Shader "Hungry Dragon/Skybox/Dome Skybox" {
 Properties {
 	_MainTex ("Base layer (RGB)", 2D) = "white" {}
 	_DetailTex ("2nd layer (RGB)", 2D) = "white" {}
-	_ScrollX ("Base layer Scroll speed X", Float) = 1.0
 	_Scroll2X ("2nd layer Scroll speed X", Float) = 1.0
-	_AMultiplier ("Layer Multiplier", Float) = 0.5
 }
 
 SubShader {
@@ -46,7 +44,6 @@ SubShader {
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex) + frac(float2(_ScrollX, 0) * _Time);
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex) + frac(float2(_Scroll2X, 0) * _Time);
-		o.color = fixed4(_AMultiplier, _AMultiplier, _AMultiplier, _AMultiplier);
 
 		return o;
 	}
@@ -64,7 +61,10 @@ SubShader {
 			fixed4 tex = tex2D (_MainTex, i.uv);
 			fixed4 tex2 = tex2D (_DetailTex, i.uv2);
 			
-			o = (tex * tex2) * i.color;
+			// o = (tex + tex2);
+			fixed4 one = fixed4(1,1,1,1);
+			o = one - (one-tex) * (one-tex2);
+
 			
 			return o;
 		}
