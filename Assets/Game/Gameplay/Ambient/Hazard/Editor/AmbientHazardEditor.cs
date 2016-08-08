@@ -91,8 +91,43 @@ public class AmbientHazardEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
+			// State timers - irrelevant if always active
+			if(p.name == "m_initialState") {
+				// Show "always active" checkbox based on "active duration" property
+				SerializedProperty activeDurationProp = serializedObject.FindProperty("m_activeDuration");
+				bool alwaysActive = activeDurationProp.floatValue < 0f;
+
+				EditorGUI.BeginChangeCheck();
+				alwaysActive = EditorGUILayout.ToggleLeft(" Always Active", alwaysActive);
+
+				// If checked, store negative value to the "active duration" property
+				if(EditorGUI.EndChangeCheck()) {
+					if(alwaysActive) {
+						activeDurationProp.floatValue = -1;
+						p.enumValueIndex = (int)AmbientHazard.State.ACTIVATING;
+					} else {
+						activeDurationProp.floatValue = 5;	// Default value
+						p.enumValueIndex = (int)AmbientHazard.State.IDLE;
+					}
+				}
+
+				// Show related properties, indented and enabled/disabled based on alwaysActive flag
+				GUI.enabled = !alwaysActive;
+				EditorGUI.indentLevel++;
+
+				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_initialState"));
+				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_initialDelay"));
+				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_idleDuration"));
+				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_activationDuration"));
+				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_activeDuration"));
+
+				// Restore indentation and enabled
+				GUI.enabled = true;
+				EditorGUI.indentLevel--;
+			}
+
 			// Group all the collision edition stuff together
-			if(p.name == m_collisionShapeProp.name) {
+			else if(p.name == m_collisionShapeProp.name) {
 				// Draw the shape property and detect changes
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(p);
@@ -149,7 +184,11 @@ public class AmbientHazardEditor : Editor {
 			else if(p.name == m_coneOriginProp.name 
 				 || p.name == m_coneRotationProp.name 
 				 || p.name == m_coneLengthProp.name 
-				 || p.name == m_coneArcProp.name) {
+				 || p.name == m_coneArcProp.name
+				 || p.name == "m_initialDelay"
+				 || p.name == "m_idleDuration"
+				 || p.name == "m_activationDuration"
+				 || p.name == "m_activeDuration") {
 				// Do nothing
 			}
 

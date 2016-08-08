@@ -26,7 +26,8 @@ public class AmbientHazard : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private enum State {
+	public enum State {
+		INITIAL_DELAY,	// One-time only state
 		IDLE,
 		ACTIVATING,
 		ACTIVE
@@ -54,7 +55,7 @@ public class AmbientHazard : MonoBehaviour {
 	[SerializeField] private float m_damageMultiplier = 1f;
 	[Tooltip("Duration of the poison effect")]
 	[SerializeField] private float m_damageDuration = 0.5f;
-	[Tooltip("How hard the hazard knocks back the player on contact")]
+	[Tooltip("How hard the hazard knocks back the player on contact.\nDisable the \"trigger\" flag on the collider in order to use knockback.")]
 	[SerializeField] private float m_knockBackIntensity = 0f;
 
 	[Separator("Behaviour Setup")]
@@ -62,12 +63,15 @@ public class AmbientHazard : MonoBehaviour {
 	[SerializeField] private float m_visualActivationRadius = 60f;
 	[Tooltip("Initial state of the hazard upon activation")]
 	[SerializeField] private State m_initialState = State.IDLE;
+	[Tooltip("One time only delay at the start of the game. Use it to sync sequences of hazards.")]
+	[SerializeField] private float m_initialDelay = 0f;
+	[Header("State Durations")]
 	[Tooltip("The cooldown between activations")]
-	[SerializeField] private float m_idleDuration = 0f;
-	[Tooltip("Time between starting the activation effect and the moment we actually start dealing damage")]
-	[SerializeField] private float m_activationDelay = 0f;
+	[SerializeField] private float m_idleDuration = 5f;
+	[Tooltip("Time between starting the activation effect and the moment we actually start dealing damage.\nUse it to sync with the animation/VFX.")]
+	[SerializeField] private float m_activationDuration = 1f;
 	[Tooltip("The time the hazard is active.\nNegative value for continuous activity.")]
-	[SerializeField] private float m_activeDuration = -1f;
+	[SerializeField] private float m_activeDuration = 5f;
 
 	// References
 	[Separator("References")]
@@ -143,8 +147,12 @@ public class AmbientHazard : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		// Set initial logic state
-		SetState(m_initialState);
+		// Always start with the initial delay state, provided there is some initial delay. Otherwise go straight to the initial state.
+		if(m_initialDelay > 0f) {
+			SetState(State.INITIAL_DELAY);
+		} else {
+			SetState(m_initialState);
+		}
 
 		// Visibility logic
 		if(m_visualActivationRadius <= 0f) {
@@ -177,6 +185,11 @@ public class AmbientHazard : MonoBehaviour {
 			if(m_stateTimer >= m_stateTargetTime) {
 				// Timer up! Different actions based on state
 				switch(m_state) {
+					case State.INITIAL_DELAY: {
+						// Move to initial state
+						SetState(m_initialState);
+					} break;
+
 					case State.IDLE: {
 						SetState(State.ACTIVATING);
 					} break;
@@ -232,6 +245,9 @@ public class AmbientHazard : MonoBehaviour {
 
 		// Validate some parameters
 		m_idleDuration = Mathf.Max(0f, m_idleDuration);
+
+		// Initial state can't be INITIAL_DELAY, this is an internal state
+		if(m_initialState == State.INITIAL_DELAY) m_initialState = State.IDLE;
 	}
 
 	#if UNITY_EDITOR
@@ -294,6 +310,14 @@ public class AmbientHazard : MonoBehaviour {
 	private void SetState(State _newState) {
 		// Different actions based on state
 		switch(_newState) {
+			case State.INITIAL_DELAY: {
+				// Same as IDLE state, but with a different timer
+				SetState(State.IDLE);
+
+				// Change target time
+				m_stateTargetTime = m_initialDelay;
+			} break;
+
 			case State.IDLE: {
 				// Stop particles
 				ActivateParticles(false);
@@ -321,7 +345,7 @@ public class AmbientHazard : MonoBehaviour {
 
 				// Reset timer
 				m_stateTimer = 0f;
-				m_stateTargetTime = m_activationDelay;
+				m_stateTargetTime = m_activationDuration;
 
 				// Start particles!
 				ActivateParticles(true);
@@ -369,8 +393,9 @@ public class AmbientHazard : MonoBehaviour {
 	/// </summary>
 	/// <param name="_collision">Collision information.</param>
 	private void OnCollisionEnter(Collision _collision) {
+		// Is it the player?
 		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collision.gameObject == player.gameObject) {
+		if(player != null && _collision.collider.tag == "Player") {
 			// Apply initial damage
 			if(dragonHealthBehaviour != null) {
 				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, DamageType.POISON, true);	// Resetting all current DOTs
@@ -400,7 +425,7 @@ public class AmbientHazard : MonoBehaviour {
 	private void OnTriggerStay(Collider _collider) {
 		// Is it the player?
 		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collider.gameObject == player.gameObject) {
+		if(player != null && _collider.tag == "Player") {
 			// Reset dot timer
 			if(dragonHealthBehaviour != null) {
 				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, DamageType.POISON, true);	// Resetting all current DOTs
