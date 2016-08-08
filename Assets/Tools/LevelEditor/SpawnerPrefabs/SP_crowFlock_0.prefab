@@ -10,8 +10,8 @@ GameObject:
   - 4: {fileID: 466290}
   - 114: {fileID: 11434038}
   - 114: {fileID: 11410184}
-  - 114: {fileID: 11406332}
   - 114: {fileID: 11444354}
+  - 114: {fileID: 114000010025256360}
   m_Layer: 0
   m_Name: SP_crowFlock_0
   m_TagString: Untagged
@@ -32,28 +32,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11406332
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_guideFunction: 0
-  m_innerRadius: 2.78
-  m_outterRadius: 1.37
-  m_targetDistance: 2.87
-  m_depthAmplitude: 0.55
-  m_depthFrequency: 12.6
-  m_scale: {x: 1, y: 1, z: 1}
-  m_rotation: {x: 0, y: 0, z: 0}
-  m_forcePreview: 0
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
 --- !u!114 &11410184
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -97,14 +75,15 @@ MonoBehaviour:
   m_scale:
     min: 1
     max: 1
+  m_rails: 1
   m_flockBonus: 25
-  m_alwaysActive: 0
   m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
+  m_alwaysActive: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
   m_spawnTime:
-    min: 40
-    max: 45
+    min: 0
+    max: 0
   m_maxSpawns: 0
 --- !u!1001 &100100000
 Prefab:
@@ -117,3 +96,19 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 128360}
   m_IsPrefabParent: 1
+--- !u!114 &114000010025256360
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 128360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}
