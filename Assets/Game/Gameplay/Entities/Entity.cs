@@ -58,7 +58,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	private Spawner m_spawner;
+	private ISpawner m_spawner;
 
 	private float m_checkOnScreenTimer = 0;
 
@@ -122,7 +122,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 			EntityManager.instance.Unregister(this);
 	}
 
-	public void Spawn(Spawner _spawner) {
+	public void Spawn(ISpawner _spawner) {
 		m_spawner = _spawner;
 
 		DragonTier tier = InstanceManager.player.data.tier;
@@ -224,7 +224,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 			(!DebugSettings.newCameraSystem && m_camera != null && m_camera.IsInsideDeactivationArea(transform.position))
 		) 
 		{
-			if (m_spawner) {
+			if (m_spawner != null) {
 				Disable(false);
 			}
 		}

@@ -10,8 +10,7 @@ GameObject:
   - 4: {fileID: 416572}
   - 114: {fileID: 11462184}
   - 114: {fileID: 11484492}
-  - 114: {fileID: 11493010}
-  - 114: {fileID: 11496866}
+  - 114: {fileID: 114000010812324944}
   m_Layer: 0
   m_Name: SP_Ghost_01Path_0
   m_TagString: Untagged
@@ -62,47 +61,6 @@ MonoBehaviour:
   m_points:
   - {x: -2.3680878, y: 1.7254562, z: 0}
   - {x: 2.1147919, y: -1.6696472, z: 0}
---- !u!114 &11493010
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 154690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4449de16e7d2e465897e9964ea5f0a8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 138364, guid: 38977848f70e14854bbd816c158f8cbe, type: 2}
-  m_quantity:
-    min: 1
-    max: 1
-  m_scale:
-    min: 1
-    max: 1
-  m_flockBonus: 0
-  m_alwaysActive: 0
-  m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
-  m_spawnTime:
-    min: 40
-    max: 45
-  m_maxSpawns: 0
---- !u!114 &11496866
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 154690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 5
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -114,3 +72,31 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 154690}
   m_IsPrefabParent: 1
+--- !u!114 &114000010812324944
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: {fileID: 138364, guid: 38977848f70e14854bbd816c158f8cbe, type: 2}
+  m_quantity:
+    min: 1
+    max: 1
+  m_scale:
+    min: 1
+    max: 1
+  m_rails: 1
+  m_flockBonus: 0
+  m_activeOnStart: 0
+  m_alwaysActive: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
+  m_spawnTime:
+    min: 0
+    max: 0
+  m_maxSpawns: 0

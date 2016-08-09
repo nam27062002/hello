@@ -474,14 +474,17 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 2
+    m_orientationSpeed: 120
     m_faceDirection: 1
     m_facePlayer: 1
-    m_limitVerticalRotation: 1
     m_limitHorizontalRotation: 0
-    m_faceLeftAngleY: -90
-    m_faceRightAngleY: 90
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
@@ -489,8 +492,6 @@ MonoBehaviour:
   m_sensor:
     m_minRadius: 4
     m_maxRadius: 8
-    m_angle: 360
-    m_angleOffset: 0
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0
@@ -541,7 +542,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":14,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":2,"separation":1.75,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":4,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
+  m_serializedJson: '[{"speed":4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":14,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":2,"separation":1.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":4,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 10
   m_avoidCollisions: 1
 --- !u!114 &11468462
@@ -557,6 +558,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 4
   m_runSpeed: 14
+  m_minPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 

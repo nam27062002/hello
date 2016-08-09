@@ -21,8 +21,12 @@ namespace AI {
 				return new FlockData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(FlockData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (FlockData)m_pilot.GetComponentData<Flock>();
+				m_data = m_pilot.GetComponentData<FlockData>();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {

@@ -33,8 +33,12 @@ namespace AI {
 				return new WanderPathData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(WanderPathData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (WanderPathData)m_pilot.GetComponentData<WanderPath>();
+				m_data = m_pilot.GetComponentData<WanderPathData>();
 				m_target = m_machine.position;
 			}
 

@@ -720,14 +720,14 @@ public class GameCamera : MonoBehaviour
 		float trackAheadRangeY = m_screenWorldBounds.h * m_maxTrackAheadScaleY;
 		float trackBlendRate = trackAheadRangeX * m_trackBlendRate;
 		Vector3 desiredTrackAhead = machine.velocity / machine.absoluteMaxSpeed;
-		UnityEngine.Debug.Log(desiredTrackAhead);
+		// UnityEngine.Debug.Log(desiredTrackAhead);
 		desiredTrackAhead.x *= trackAheadRangeX;
 		desiredTrackAhead.y *= trackAheadRangeY;
 		if(m_snap)
 			m_trackAheadVector = desiredTrackAhead;
 		else
 			Util.MoveTowardsVector3XYWithDamping(ref m_trackAheadVector, ref desiredTrackAhead, trackBlendRate*dt, 1.0f);
-		UnityEngine.Debug.Log("Ahead Vector" + m_trackAheadVector);
+		// UnityEngine.Debug.Log("Ahead Vector" + m_trackAheadVector);
 	}
 	
 	// Zooming in and out is done by specifying the desired width of the frame, i.e. how wide is the visible frame in metres at the z=0 plane?
@@ -862,8 +862,7 @@ public class GameCamera : MonoBehaviour
 		{
 			bool bg = (j==1);
 			
-			// Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.Instance.BackgroundLayerZ : 0.0f));
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? 45 : 0.0f));
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BackgroundLayerZ : 0.0f));
 			Vector3[] pts = new Vector3[4];
 			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_screenWorldBounds;
 			
@@ -938,6 +937,7 @@ public class GameCamera : MonoBehaviour
 		return m_activationMin.Intersects(_bounds);
 	}
 
+
 	public bool IsInsideActivationMaxArea(Vector3 _point) {
 		_point.z = 0;
 		return m_activationMax.Contains(_point);
@@ -962,6 +962,15 @@ public class GameCamera : MonoBehaviour
 		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
 	}
 
+	public bool IsInsideBackgroundActivationArea(Vector3 _point) {
+		return m_backgroundWorldBounds.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundActivationArea(Bounds _bounds) 
+	{
+		return m_backgroundWorldBounds.Intersects(_bounds);
+	}
+
 	public bool IsInsideDeactivationArea(Vector3 _point) {
 		_point.z = 0;
 		return !m_deactivation.Contains(_point);
@@ -972,6 +981,14 @@ public class GameCamera : MonoBehaviour
 		center.z = 0;
 		_bounds.center = center;
 		return !m_deactivation.Intersects(_bounds);
+	}
+
+	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
+		return !m_backgroundWorldBounds.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundDeactivationArea(Bounds _bounds) {
+		return !m_backgroundWorldBounds.Intersects(_bounds);
 	}
 
 

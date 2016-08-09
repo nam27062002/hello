@@ -5,12 +5,12 @@ namespace AI {
 	public abstract class MachineComponent {
 
 		protected Entity m_entity;
-		protected Machine m_machine;
+		protected IMachine m_machine;
 		protected Pilot m_pilot;
 
 		public abstract void Init();
 
-		public void Attach(Machine _machine, Entity _entity, Pilot _pilot) {
+		public void Attach(IMachine _machine, Entity _entity, Pilot _pilot) {
 			m_entity = _entity;
 			m_pilot = _pilot;
 			m_machine = _machine;

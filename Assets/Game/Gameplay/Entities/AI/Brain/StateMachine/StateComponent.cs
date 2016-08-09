@@ -30,7 +30,7 @@ namespace AI
 
 		protected StateMachine m_stateMachine;
 		protected AIPilot m_pilot;
-		protected Machine m_machine;
+		protected IMachine m_machine;
 
 		State m_state;
 		public State state { get { return m_sharedBetweenStates ? m_stateMachine.current : m_state; } }
@@ -42,7 +42,7 @@ namespace AI
 			{
 				m_stateMachine = _stateMachine;
 				m_pilot 	= m_stateMachine.gameObject.GetComponent<AIPilot>();
-				m_machine	= m_stateMachine.gameObject.GetComponent<Machine>();
+				m_machine	= m_stateMachine.gameObject.GetComponent<IMachine>();
 
 				m_state = _state;
 
@@ -72,6 +72,7 @@ namespace AI
 		}
 
 		public virtual StateComponentData CreateData() { return null; }
+		public virtual System.Type GetDataType() { return null; }
 
 		protected void Transition(string transitionID, params object[] param)
 		{
