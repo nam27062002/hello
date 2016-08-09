@@ -6,6 +6,7 @@ Properties {
 	_MainTex ("Base layer (RGB)", 2D) = "white" {}
 	_DetailTex ("2nd layer (RGB)", 2D) = "white" {}
 	_Scroll2X ("2nd layer Scroll speed X", Float) = 1.0
+	_Color("Color", Color) = (1,1,1,1)
 }
 
 SubShader {
@@ -25,10 +26,10 @@ SubShader {
 
 	float4 _MainTex_ST;
 	float4 _DetailTex_ST;
-	
-	float _ScrollX;
+
 	float _Scroll2X;
-	float _AMultiplier;
+
+	float4 _Color;
 	
 	struct v2f {
 		float4 pos : SV_POSITION;
@@ -42,7 +43,7 @@ SubShader {
 	{
 		v2f o;
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex) + frac(float2(_ScrollX, 0) * _Time);
+		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex);
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex) + frac(float2(_Scroll2X, 0) * _Time);
 
 		return o;
@@ -65,6 +66,7 @@ SubShader {
 			fixed4 one = fixed4(1,1,1,1);
 			o = one - (one-tex) * (one-tex2);
 
+			o = o * _Color;
 			
 			return o;
 		}
