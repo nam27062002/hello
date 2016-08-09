@@ -218,6 +218,7 @@ namespace AI
 
 			System.Type[] types = TypeUtil.GetInheritedOfType(type);
 
+			fields.AddRange(GetAllFieldsWithAttribute(type, attrType));
 			for (int i = 0; i < types.Length; i++) {
 				fields.AddRange(GetAllFieldsWithAttribute(types[i], attrType));
 			}

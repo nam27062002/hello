@@ -18,8 +18,12 @@ namespace AI {
 				return new ExplodeData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(ExplodeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (ExplodeData)m_pilot.GetComponentData<Explode>();
+				m_data = m_pilot.GetComponentData<ExplodeData>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
@@ -30,6 +34,15 @@ namespace AI {
 				} else {
 					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
 				}
+
+				DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();
+
+				Vector3 knockBack = dragonMotion.transform.position - m_machine.position;
+				knockBack.Normalize();
+
+				knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_data.damage, 2f));
+
+				dragonMotion.AddForce(knockBack);
 
 				m_machine.SetSignal(Signals.Type.Destroyed, true);
 			}

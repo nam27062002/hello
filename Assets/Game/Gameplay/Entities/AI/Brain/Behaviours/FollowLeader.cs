@@ -24,8 +24,12 @@ namespace AI {
 				return new FollowLeaderData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(FollowLeaderData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (FollowLeaderData)m_pilot.GetComponentData<FollowLeader>();
+				m_data = m_pilot.GetComponentData<FollowLeaderData>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {

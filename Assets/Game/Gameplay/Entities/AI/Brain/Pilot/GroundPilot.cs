@@ -5,7 +5,7 @@ namespace AI {
 	public class GroundPilot : AIPilot {
 		protected static int m_groundMask;
 
-		public override void Spawn(Spawner _spawner) {
+		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			// set home position at ground

@@ -19,6 +19,8 @@
 		[StateTransitionTrigger] public static string OnBurning 			= "onBurning";
 		[StateTransitionTrigger] public static string OnChewing 			= "onChewing";
 		[StateTransitionTrigger] public static string OnDestroyed 			= "onDestroyed";
+		[StateTransitionTrigger] public static string OnFallDown 			= "onFallDown";
+		[StateTransitionTrigger] public static string OnGround				= "OnGround";
 	}
 
 	public class Signals {
@@ -35,6 +37,7 @@
 	        Chewing, 
 	        Destroyed, 
 	        CollisionTrigger,
+			FallDown,
 
 			Count
 		}

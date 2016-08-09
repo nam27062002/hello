@@ -87,8 +87,8 @@ GameObject:
   - 114: {fileID: 11485456}
   - 114: {fileID: 11476168}
   - 114: {fileID: 11494722}
-  - 114: {fileID: 11426416}
   - 114: {fileID: 11446116}
+  - 114: {fileID: 11426416}
   m_Layer: 0
   m_Name: PF_Owl
   m_TagString: Untagged
@@ -411,13 +411,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
+  m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_speedFactorRange:
     min: 0.9
     max: 1.35
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":5.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":0,"separation":2,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":5.5,"followAheadFactor":1,"frequencyOffset":{"min":1,"max":10},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 8
+  m_serializedJson: '[{"speed":5.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 25
   m_avoidCollisions: 1
 --- !u!114 &11446116
 MonoBehaviour:
@@ -432,7 +432,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 5.5
   m_runSpeed: 10
+  m_minPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -485,23 +489,26 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 4
     m_defaultUpVector: 0
-    m_orientationSpeed: 2
-    m_faceDirection: 0
+    m_orientationSpeed: 120
+    m_faceDirection: 1
     m_facePlayer: 0
-    m_limitVerticalRotation: 0
     m_limitHorizontalRotation: 0
-    m_faceLeftAngleY: -90
-    m_faceRightAngleY: 90
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 350
+    m_faceDownAngle: 10
   m_railSeparation:
     min: 0.5
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 6
+    m_minRadius: 7
     m_maxRadius: 14
-    m_angle: 360
-    m_angleOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0
@@ -520,17 +527,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: cc60e499082db4fda89032d326db96a8, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -540,6 +550,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 49d538633149e421d8ccb6acaf0279be, type: 3}
   m_Bones:
   - {fileID: 473872}

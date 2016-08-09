@@ -5,7 +5,7 @@ public class SkyLayerController : MonoBehaviour
 {
 
 	public float m_MoveProportion = 1000.0f;
-	public float m_scrollSpeed = 0.1f;
+	// public float m_scrollSpeed = 0.1f;
 
 	public float m_minYDark = 50;
 	public float m_maxYDark = 200;
@@ -34,7 +34,7 @@ public class SkyLayerController : MonoBehaviour
 		if ( m_playerTransform )
 		{
 			Vector3 pos = m_playerTransform.transform.position;
-			m_material.SetFloat("_Scroll2X", m_scrollSpeed);
+			// m_material.SetFloat("_Scroll2X", m_scrollSpeed);
 			m_offset.x = pos.x / m_MoveProportion;
 			m_offset.y = pos.y / m_MoveProportion;
 			m_material.SetTextureOffset( "_DetailTex", m_offset);

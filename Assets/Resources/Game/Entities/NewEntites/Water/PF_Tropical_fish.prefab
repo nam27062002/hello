@@ -126,7 +126,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":4,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":1.5,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":-5,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":15,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":-5,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!114 &11439040
@@ -143,6 +143,7 @@ MonoBehaviour:
   m_walkSpeed: 4
   m_runSpeed: 4.5
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -183,10 +184,17 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_faceDirection: 1
+    m_mass: 1
+    m_defaultUpVector: 0
     m_orientationSpeed: 2
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_faceDirection: 1
+    m_facePlayer: 0
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 0
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
@@ -194,8 +202,6 @@ MonoBehaviour:
   m_sensor:
     m_minRadius: 4
     m_maxRadius: 4.5
-    m_angle: 360
-    m_angleOffset: 0
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0
@@ -225,17 +231,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 326ebe22c2a8f4b89a02a9dec6cbf685, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -245,6 +254,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 1
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 164f1c6f0b7f14eeba2d5332ee19c43a, type: 3}
   m_Bones: []
   m_BlendShapeWeights: []

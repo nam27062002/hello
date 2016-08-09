@@ -30,7 +30,7 @@ namespace AI {
 			NextCollisionCheckID++;
 		}
 
-		public override void Spawn(Spawner _spawner) {
+		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			m_collisionAvoidFactor = 0f;
@@ -57,7 +57,7 @@ namespace AI {
 				}
 				Debug.DrawLine(m_machine.position, m_machine.position + seek, Color.green);
 
-				if (m_actions[(int)Action.Avoid]) {
+				if (IsActionPressed(Action.Avoid)) {
 					Transform enemy = m_machine.enemy;
 					if (enemy != null) {
 						v = m_machine.position - enemy.position;
@@ -80,25 +80,24 @@ namespace AI {
 				float fleeMagnitude = flee.magnitude;
 
 				if (dot <= DOT_START) {
-					if (Mathf.Abs(seekMagnitude - fleeMagnitude) < 0.01f) {
-						m_perpendicularAvoid = true;
-					}
+					m_perpendicularAvoid = true;
 				} else if (dot > DOT_END) {
 					m_perpendicularAvoid = false;
 				}
 
 				if (m_perpendicularAvoid) {
 					m_impulse.Set(-flee.y, flee.x, flee.z);
-					m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 				} else {
 					m_impulse = seek + flee;
 				}
-
-				m_impulse += m_externalImpulse;
+				m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 
 				if (m_avoidCollisions) {
 					AvoidCollisions();
+					m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 				}
+
+				m_impulse += m_externalImpulse;
 
 				if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
 					if (m_impulse != Vector3.zero) {

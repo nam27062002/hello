@@ -36,7 +36,7 @@ namespace AI {
 			} 
 		}
 
-		protected Machine m_machine;
+		protected IMachine m_machine;
 
 		protected bool[] m_actions;
 
@@ -77,7 +77,7 @@ namespace AI {
 			m_directionForced = false;
 
 			m_actions = new bool[(int)Action.Count];
-			m_machine = GetComponent<Machine>();
+			m_machine = GetComponent<IMachine>();
 		}
 
 		public bool IsActionPressed(Pilot.Action _action) {
