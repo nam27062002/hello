@@ -207,11 +207,11 @@ public class Entity : MonoBehaviour, ISpawnable {
 		{	
 			if ( DebugSettings.newCameraSystem )	
 			{
-				m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
+				if(m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
 			}
 			else
 			{
-				m_isOnScreen = m_camera.IsInsideActivationMinArea(transform.position);
+				if(m_camera != null) m_isOnScreen = m_camera.IsInsideActivationMinArea(transform.position);
 			}
 			m_checkOnScreenTimer = 0.5f;
 		}
@@ -220,8 +220,8 @@ public class Entity : MonoBehaviour, ISpawnable {
 	void LateUpdate() {
 		// check camera to destroy this entity if it is outside view area
 		if (
-			(DebugSettings.newCameraSystem && m_newCamera.IsInsideDeactivationArea(transform.position)) || 
-			(!DebugSettings.newCameraSystem && m_camera.IsInsideDeactivationArea(transform.position))
+			(DebugSettings.newCameraSystem && m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) || 
+			(!DebugSettings.newCameraSystem && m_camera != null && m_camera.IsInsideDeactivationArea(transform.position))
 		) 
 		{
 			if (m_spawner) {

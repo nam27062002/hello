@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pumpking_lamps_M
+  m_Name: MT_PumpkinLampRope
   m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
@@ -48,8 +48,8 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 0385d7f0de3f5e94fa99427bbd67f1ee, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 4bdff993be86b9b4688bd0049126c05b, type: 3}
+        m_Scale: {x: 0.25, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
@@ -69,12 +69,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _SecondTexture
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -90,12 +84,6 @@ Material:
       second: 1
     - first:
         name: _DstBlend
-      second: 0
-    - first:
-        name: _FogEnd
-      second: 100
-    - first:
-        name: _FogStart
       second: 0
     - first:
         name: _GlossMapScale
@@ -143,6 +131,3 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _FogColor
-      second: {r: 0, g: 0, b: 0, a: 0}
