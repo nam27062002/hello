@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: pumpking_lamps_M
-  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
+  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -80,6 +80,9 @@ Material:
         name: _BumpScale
       second: 1
     - first:
+        name: _BumpStrength
+      second: 3
+    - first:
         name: _Cutoff
       second: 0.5
     - first:
@@ -117,6 +120,9 @@ Material:
       second: 0.02
     - first:
         name: _SmoothnessTextureChannel
+      second: 0
+    - first:
+        name: _Specular
       second: 0
     - first:
         name: _SpecularHighlights
