@@ -21,8 +21,12 @@ namespace AI {
 				return new FlockData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(FlockData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (FlockData)m_pilot.GetComponentData<Flock>();
+				m_data = m_pilot.GetComponentData<FlockData>();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -34,7 +38,7 @@ namespace AI {
 
 				// Every few seconds we change the leader of this flock
 				if (group.count > 1) {
-					if (m_data.changeLeaderTime > 0f && m_machine.GetSignal(Signals.Leader.name)) {
+					if (m_data.changeLeaderTime > 0f && m_machine.GetSignal(Signals.Type.Leader)) {
 						m_timer -= Time.deltaTime;
 						if (m_timer <= 0) {
 							m_timer = m_data.changeLeaderTime;

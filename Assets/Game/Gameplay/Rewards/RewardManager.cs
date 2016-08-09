@@ -149,7 +149,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -162,7 +162,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -460,8 +460,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// The player has received damage.
 	/// </summary>
 	/// <param name="_amount">The amount of damage received.</param>
+	/// <param name="_type">The type of damage received.</param>
 	/// <param name="_source">The source of the damage.</param>
-	private void OnDamageReceived(float _amount, Transform _source) {
+	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) {
 		// Break current streak
 		if (m_currentScoreMultiplier != 0)
 		{

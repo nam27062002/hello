@@ -29,15 +29,19 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	private Bounds m_bounds; // view bounds
 
+	public AreaBounds area{ get {return null;} }
+
 	private GameCameraController m_camera;
-	
+	private GameCamera m_newCamera;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	void Start() {
 		SpawnerManager.instance.Register(this);
 
-		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+		m_camera = Camera.main.GetComponent<GameCameraController>();
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
 
 		GameObject viewBurned = transform.FindChild("view_burned").gameObject;
 		Collider collider = GetComponent<Collider>();
@@ -64,7 +68,17 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 					m_timer = 0;
 				}
 			} else {
-				if (m_camera.IsInsideActivationArea(m_bounds)) {
+				bool isInsideActivationArea = false;
+				if ( DebugSettings.newCameraSystem )
+				{
+					isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
+				}
+				else
+				{
+					isInsideActivationArea = m_camera.IsInsideActivationArea(m_bounds);
+				}
+				if (isInsideActivationArea) 
+				{
 					Spawn();
 				}
 			}
@@ -87,4 +101,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		}
 		m_state = State.Idle;
 	}
+
+	public void RemoveEntity(GameObject _entity, bool _killedByPlayer){}
 }

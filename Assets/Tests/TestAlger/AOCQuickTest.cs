@@ -35,6 +35,7 @@ public class AOCQuickTest : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	public LayerMask m_mask;
+	[SerializeField] private TestClass m_testClass = new TestClass();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -64,22 +65,24 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		/*int groundWaterMask = LayerMask.GetMask("Ground", "Water");
-		int objMask = gameObject.layer;
-		int mix = (objMask & groundWaterMask);
-		Debug.Log("\n" + Convert.ToString(objMask, 2) + "\n" + Convert.ToString(groundWaterMask, 2) + "\n" + Convert.ToString(mix, 2));*/
+		float d = 1000f;
+		float t = 0f;
+		for(t = 0f; t <= 1000f; t += 1f) {
+			float tr = t/d;
+			float dr = 1f;
 
-		//Debug.Log(Convert.ToString(LayerMask.GetMask("Default"), 2));
-		Debug.Log(Convert.ToString(m_mask.value, 2));
+			float p = d * 0.3f;
+			float s = p / 4f;
 
-		int objMask = (1 << gameObject.layer);
-		Debug.Log(Convert.ToString(objMask, 2) + ", " + Convert.ToString(gameObject.layer, 2));
+			float f1 = Mathf.Pow(2f, -10f * tr);
+			//Debug.Log("\t" + f1);
+			float f2 =  Mathf.Sin((tr * dr - s) * (2f * Mathf.PI) / p);
+			//Debug.Log("\t" + f2);
+			//float delta = (Mathf.Pow(2f, -10f * t) * Mathf.Sin((t * d - s) * (2f * Mathf.PI) / p) + 1.0f);
+			float delta = (f1 * f2 + 1f);
 
-		int checkMask = LayerMask.GetMask("Ground", "Water");
-		Debug.Log(Convert.ToString((1 << checkMask), 2) + ", " + Convert.ToString(checkMask, 2));
-
-		int match = (objMask & checkMask);
-		Debug.Log(Convert.ToString(match, 2));
+			Debug.Log(t + "/" + d + " -> " + delta);
+		}
 	}
 
 	/// <summary>
@@ -88,4 +91,10 @@ public class AOCQuickTest : MonoBehaviour {
 	private void OnDrawGizmos() {
 		
 	}
+}
+
+[System.Serializable]
+public class TestClass {
+	[SerializeField] private float f1 = 0f;
+	[SerializeField] private float f2 = 10f;
 }

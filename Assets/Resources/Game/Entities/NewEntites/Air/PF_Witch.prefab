@@ -788,7 +788,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 119530}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.1, y: 0.62, z: 0.26953125}
+  m_LocalPosition: {x: 13.71, y: 0.62, z: 0.26953125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -802,10 +802,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 177306}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: -0.31, y: -0.81, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.31, y: -0.643, z: -0.533}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 456898}
   - {fileID: 485402}
@@ -921,7 +921,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 134434}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.42, y: 0.1, z: -0.5162}
+  m_LocalPosition: {x: 0.206, y: 0.267, z: 0.197}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -1298,17 +1298,20 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1391,20 +1394,27 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 8
+    m_defaultUpVector: 0
+    m_orientationSpeed: 60
     m_faceDirection: 1
-    m_orientationSpeed: 4
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_facePlayer: 1
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 340
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 6
-    m_maxRadius: 10
-    m_angle: 90
-    m_angleOffset: 315
-    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_minRadius: 4.5
+    m_maxRadius: 4.5
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 3}
     m_senseDelay:
       min: 0
       max: 0
@@ -1423,7 +1433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: hawk
+  m_sku: witch
 --- !u!114 &11483728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1435,9 +1445,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 10
-  m_runSpeed: 15
-  m_hasNavigationLayer: 0
+  m_walkSpeed: 0.1
+  m_runSpeed: 6
+  m_minPlaybakSpeed: 0.5
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 0
+  m_hasNavigationLayer: 1
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -1457,13 +1471,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: 38936cd4203104e6b945b73f0365d060, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
   m_speedFactorRange:
     min: 0.9
     max: 1.4
   m_timeBeforeBackHome: 1
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":15,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","componentType":"AI.Behaviour.Idle","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":1,"attackDelay":10,"retreatTime":0,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","componentType":"AI.Behaviour.AttackRanged","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 3.5
+  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":13,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":4,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!137 &13726440
 SkinnedMeshRenderer:
@@ -1474,17 +1488,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: e9bd89c61bd2c42e99e92f2b4a53e303, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1494,6 +1511,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300002, guid: 7fdeeba0d0cd94faa865a16cde3ff800, type: 3}
   m_Bones:
   - {fileID: 431852}
@@ -1541,17 +1559,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: e9bd89c61bd2c42e99e92f2b4a53e303, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1561,6 +1582,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 7fdeeba0d0cd94faa865a16cde3ff800, type: 3}
   m_Bones:
   - {fileID: 406902}

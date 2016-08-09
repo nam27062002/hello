@@ -5,12 +5,12 @@ namespace AI {
 	public class GroundPilot : AIPilot {
 		protected static int m_groundMask;
 
-		public override void Spawn(Spawner _spawner) {
+		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			// set home position at ground
 			RaycastHit groundHit;
-			if (Physics.Linecast(m_homePosition, m_homePosition + Vector3.down * 5f, out groundHit, m_groundMask)) {
+			if (Physics.Linecast(m_homePosition, m_homePosition + Vector3.down * 15f, out groundHit, m_groundMask)) {
 				m_homePosition.y = groundHit.point.y;
 			}
 		}

@@ -1,4 +1,6 @@
-﻿Shader "Hungry Dragon/Unlit Transparent Custom Fog (Background entities & Clouds)"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "Hungry Dragon/Unlit Transparent Custom Fog (Background entities & Clouds)"
 {
 	Properties
 	{
@@ -11,9 +13,11 @@
 	}
 	SubShader
 	{
+		Tags {  "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+
 		Pass
 		{
-			Tags { "RenderType"="Transparent" "LightMode" = "ForwardBase"}
+			Tags {  "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
 			Blend SrcAlpha OneMinusSrcAlpha 
 			ZWrite off
 			CGPROGRAM
@@ -51,7 +55,7 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				// float3 normal = UnityObjectToWorldNormal(v.normal);
-				HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
+				HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
 				return o;
 			} 
 			

@@ -29,6 +29,8 @@ MonoBehaviour:
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
+  - m_name: Fall down
+    m_componentAssets: []
   m_transitionData:
   - to: 1
     id: onRest
@@ -65,5 +67,11 @@ MonoBehaviour:
     from: -1
   - to: 1
     id: onBackAtHome
+    from: -1
+  - to: 5
+    id: onFallDown
+    from: -1
+  - to: 4
+    id: OnGround
     from: -1
   m_firstState: 1

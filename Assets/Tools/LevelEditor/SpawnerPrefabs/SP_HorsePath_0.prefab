@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 433160}
   - 114: {fileID: 11434966}
   - 114: {fileID: 11424622}
-  - 114: {fileID: 11441838}
+  - 114: {fileID: 114000013542127144}
   m_Layer: 0
   m_Name: SP_HorsePath_0
   m_TagString: Untagged
@@ -64,33 +64,6 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!114 &11441838
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 172408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4449de16e7d2e465897e9964ea5f0a8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 128698, guid: 5715094aa37bd4441b54968c547c98f5, type: 2}
-  m_quantity:
-    min: 1
-    max: 1
-  m_scale:
-    min: 0.8
-    max: 0.8
-  m_flockBonus: 0
-  m_alwaysActive: 0
-  m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
-  m_spawnTime:
-    min: 40
-    max: 45
-  m_maxSpawns: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -102,3 +75,31 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 172408}
   m_IsPrefabParent: 1
+--- !u!114 &114000013542127144
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefab: {fileID: 128698, guid: 5715094aa37bd4441b54968c547c98f5, type: 2}
+  m_quantity:
+    min: 1
+    max: 1
+  m_scale:
+    min: 1
+    max: 1
+  m_rails: 1
+  m_flockBonus: 0
+  m_activeOnStart: 0
+  m_alwaysActive: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
+  m_spawnTime:
+    min: 0
+    max: 0
+  m_maxSpawns: 0

@@ -6,6 +6,7 @@ namespace AI {
 		[System.Serializable]
 		public class EvadeData : StateComponentData {
 			public float boostSpeed = 5f;
+			public bool faceDirectionOnBoost = false;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Evade")]
@@ -13,35 +14,46 @@ namespace AI {
 
 			private EvadeData m_data;
 			private bool m_alertRestoreValue;
+			private bool m_faceDirectionRestoreValue;
 
 			public override StateComponentData CreateData() {
 				return new EvadeData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(EvadeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (EvadeData)m_pilot.GetComponentData<Evade>();
+				m_data = m_pilot.GetComponentData<EvadeData>();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);
-				m_machine.SetSignal(Signals.Alert.name, true);
+				m_alertRestoreValue = m_machine.GetSignal(Signals.Type.Alert);
+				//m_faceDirectionRestoreValue = m_machine.IsFacingDirection();
+
+				m_machine.SetSignal(Signals.Type.Alert, true);
 				m_pilot.SetBoostSpeed(m_data.boostSpeed);
 			}
 
 			protected override void OnExit(State newState) {
-				m_machine.SetSignal(Signals.Alert.name, m_alertRestoreValue);
+				m_machine.SetSignal(Signals.Type.Alert, m_alertRestoreValue);
+				//m_machine.FaceDirection(m_faceDirectionRestoreValue);
+
 				m_pilot.Avoid(false);
 				m_pilot.ReleaseAction(Pilot.Action.Boost);
 			}
 
 			protected override void OnUpdate() {
-				bool avoid = m_machine.GetSignal(Signals.Warning.name);
+				bool avoid = m_machine.GetSignal(Signals.Type.Warning);
 				m_pilot.Avoid(avoid);
 
 				if (avoid) {
 					m_pilot.PressAction(Pilot.Action.Boost);
+					//m_machine.FaceDirection(m_data.faceDirectionOnBoost);
 				} else {
 					m_pilot.ReleaseAction(Pilot.Action.Boost);
+					//m_machine.FaceDirection(m_faceDirectionRestoreValue);
 				}
 			}
 		}

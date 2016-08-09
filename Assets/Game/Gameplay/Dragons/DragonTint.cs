@@ -63,16 +63,16 @@ public class DragonTint : MonoBehaviour
 
 	void OnEnable() 
 	{
-		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
 
 	void OnDisable() 
 	{
 		// Unsubscribe from external events
-		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 	}
 
-	private void OnDamageReceived(float _amount, Transform _source) 
+	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) 
 	{
 		m_damageTimer = m_damageTotalTime;
 	}
@@ -92,7 +92,7 @@ public class DragonTint : MonoBehaviour
 
 		// Other color
 		Color otherColor = Color.black;
-		if ( m_health.IsCursed() )
+		if ( m_health.HasDOT() )
 		{
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_curseColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;

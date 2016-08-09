@@ -7,7 +7,8 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	//http://www.artbylogic.com/parametricart/spirograph/spirograph.htm
 	public enum FunctionType{
 		Hypotrochoid,
-		Epitrochoid
+		Epitrochoid,
+		Spiral
 	};
 
 	// more equations
@@ -30,6 +31,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	[SeparatorAttribute]
 	[SerializeField] private Vector3 m_scale = Vector3.one;
 	[SerializeField] private Vector3 m_rotation = Vector3.zero;
+	[SerializeField] private Vector3 m_boundsScale = Vector3.zero;
 
 	[SeparatorAttribute]
 	[SerializeField] private bool m_forcePreview = false;
@@ -49,19 +51,25 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	//-----------------------------------------------
 	public AreaBounds GetBounds() {
 		float rDiff = 0f;
+		float depth = m_depthAmplitude;
+		Vector3 center = Vector3.zero;
+
 		switch (m_guideFunction) {
-			case FunctionType.Hypotrochoid:	rDiff = Mathf.Abs(m_outterRadius - m_innerRadius); break;
-			case FunctionType.Epitrochoid:	rDiff = Mathf.Abs(m_outterRadius + m_innerRadius); break;
+			case FunctionType.Hypotrochoid:	rDiff = Mathf.Abs(m_outterRadius - m_innerRadius); 	break;
+			case FunctionType.Epitrochoid:	rDiff = Mathf.Abs(m_outterRadius + m_innerRadius); 	break;
+			case FunctionType.Spiral:		depth = m_targetDistance * 0.5f; center.z += depth; break;
 		}
 
-		Vector3 size = ((new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  m_depthAmplitude)) + Vector3.one) * 2f;
+		Vector3 size = ((new Vector3(rDiff + m_targetDistance,  rDiff + m_targetDistance,  depth)) + Vector3.one) * 2f;
+		size += m_boundsScale;
 		size = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, size);
+		center = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, center);
 
 		size.x = Mathf.Abs(size.x);
 		size.y = Mathf.Abs(size.y);
 		size.z = Mathf.Abs(size.z);
 
-		return new RectAreaBounds(transform.position + m_centerOffset, size);
+		return new RectAreaBounds(transform.position + m_centerOffset + center, size);
 	}
 
 	public void ResetTime() {
@@ -72,11 +80,14 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 
 	public Vector3 NextPositionAtSpeed(float _speed) {
 		m_time += _speed * Time.deltaTime;
-		UpdateFunction(m_time);
+		if (UpdateFunction(m_time)) {
+			m_time = 0f;
+		}
 		return m_target + transform.position + m_centerOffset;
 	}
 
-	private void UpdateFunction(float _t) {
+	private bool UpdateFunction(float _t) {
+		bool resetTime = false;
 		switch (m_guideFunction) {
 			case FunctionType.Hypotrochoid:
 				UpdateHypotrochoid(_t);
@@ -85,9 +96,14 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 			case FunctionType.Epitrochoid:
 				UpdateEpitrochoid(_t);
 				break;
+
+			case FunctionType.Spiral:
+				resetTime = UpdateSpiral(_t);
+				break;
 		}
 
 		m_target = Quaternion.Euler(m_rotation) * Vector3.Scale(m_scale, m_target);
+		return resetTime;
 	}
 
 	private void UpdateHypotrochoid(float _a) {
@@ -110,6 +126,24 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 		m_target.z += m_depthAmplitude * Mathf.Cos(m_depthFrequency * _a);
 	}
 
+	private bool UpdateSpiral(float _a) {
+		//x(t) = at cos(t), y(t) = at sin(t), 
+		Vector3 oldTarget = m_target;
+
+		m_target = Vector3.zero;
+		m_target.x = m_outterRadius * _a * Mathf.Cos(_a);
+		m_target.y = m_innerRadius  * _a * Mathf.Sin(_a);
+		m_target.z = (m_depthAmplitude * _a) + Mathf.Cos(m_depthFrequency * _a);
+			
+		if (Mathf.Abs(m_outterRadius * _a) 	 > m_targetDistance ||
+			Mathf.Abs(m_innerRadius * _a) 	 > m_targetDistance || 
+			Mathf.Abs(m_depthAmplitude * _a) > m_targetDistance) {
+			return true;
+		}
+
+		return false;
+	}
+
 	//-------------------------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------
 	private void OnDrawGizmosSelected() {
@@ -127,7 +161,9 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 
 			Gizmos.color = Color.white;
 			for (time = step; time < maxTime; time += step) {
-				UpdateFunction(time);
+				if (UpdateFunction(time)) {
+					break;
+				}
 				Vector3 target = m_target + transform.position + m_centerOffset;
 				Gizmos.DrawLine(lastTarget, target);
 				lastTarget = target;

@@ -15,7 +15,7 @@ namespace AI {
 
 			if (m_leader < 0) {
 				m_leader = 0;
-				m_members[0].SetSignal(Signals.Leader.name, true);
+				m_members[0].SetSignal(Signals.Type.Leader, true);
 			}
 		}
 
@@ -24,13 +24,13 @@ namespace AI {
 
 			if (index >= 0) { // found
 				m_members.Remove(_member);
-				_member.SetSignal(Signals.Leader.name, false);
+				_member.SetSignal(Signals.Type.Leader, false);
 
 				if (count == 0) {
 					m_leader = -1;
 				} else if (m_leader == index) {
 					m_leader = count - 1;
-					m_members[m_leader].SetSignal(Signals.Leader.name, true);
+					m_members[m_leader].SetSignal(Signals.Type.Leader, true);
 				} else if (m_leader > index) {
 					m_leader--;
 				}
@@ -38,9 +38,9 @@ namespace AI {
 		}
 
 		public void ChangeLeader() {
-			m_members[m_leader].SetSignal(Signals.Leader.name, false);
+			m_members[m_leader].SetSignal(Signals.Type.Leader, false);
 			m_leader = (m_leader + 1) % count;
-			m_members[m_leader].SetSignal(Signals.Leader.name, true);
+			m_members[m_leader].SetSignal(Signals.Type.Leader, true);
 		}
 
 		public IMachine leader {

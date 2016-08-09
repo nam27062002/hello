@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 // Unlit shader, with shadows
 // - no lighting
 // - can receive shadows
@@ -28,7 +30,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				#pragma fragment frag
 				#pragma multi_compile_fog
 				#pragma multi_compile_fwdbase
-							
+
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
@@ -39,6 +41,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					#if LIGHTMAP_ON
 					float4 texcoord1 : TEXCOORD1;
 					#endif
+					float4 color : COLOR;
 				}; 
 
 				struct v2f {
@@ -46,7 +49,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
 					LIGHTING_COORDS(2,3)
-					float2 lmap : TEXCOORD4; 
+					float2 lmap : TEXCOORD4;
+					float4 color : COLOR; 
 				};
 
 				sampler2D _MainTex;
@@ -61,17 +65,18 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-					HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
+					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 					#endif
+					o.color = v.color;
 					return o;
 				}
 				
 				fixed4 frag (v2f i) : SV_Target
 				{
-					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
+					fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;	// Color
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;

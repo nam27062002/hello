@@ -25,7 +25,7 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 	}
 
 	void OnDisable() {
-		PoolManager.ReturnInstance(gameObject);
+		
 	}
 
 	public void OnCollisionEnterAOC(object _o, CollisionInfo _collision) {
@@ -39,12 +39,12 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 			if (m_isDragonHit) {
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0) {
-					InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform, true);
+					InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL, transform, true);
 					m_isDragonHit = false;
 				}
 			}
 			if (!m_effect.gameObject.activeInHierarchy) {
-				gameObject.SetActive(false);
+				PoolManager.ReturnInstance(gameObject);
 			}
 		}
 	}

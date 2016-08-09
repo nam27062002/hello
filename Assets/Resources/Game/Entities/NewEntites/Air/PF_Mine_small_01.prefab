@@ -8,7 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 439684}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Propeller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23,7 +23,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 470746}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Front_Buton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 451384}
   - 95: {fileID: 9599312}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 476840}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Back_Buton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,7 +69,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 495566}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,12 +85,12 @@ GameObject:
   m_Component:
   - 4: {fileID: 486778}
   - 114: {fileID: 11452834}
-  - 114: {fileID: 11409608}
   - 114: {fileID: 11410096}
   - 114: {fileID: 11442140}
+  - 114: {fileID: 114000011212942158}
   - 135: {fileID: 13596940}
-  - 114: {fileID: 11433034}
-  m_Layer: 11
+  - 114: {fileID: 114000010995971012}
+  m_Layer: 16
   m_Name: PF_Mine_small_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 485020}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Rbuton_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 485108}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Lbuton_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 487134}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Lbuton_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 443322}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mine_Rbuton_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166,7 +166,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 460288}
   - 137: {fileID: 13799596}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Mines_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -343,23 +343,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11409608
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 146638}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: 01e097987dda34dae88639be166bccba, type: 2}
-  m_speedFactorRange:
-    min: 1
-    max: 1
-  m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"amplitude":0.4,"frequency":1.5,"dataType":"AI.Behaviour.MineData","componentType":"AI.Behaviour.Mine","editorFolded":false},{"damage":30,"dataType":"AI.Behaviour.ExplodeData","componentType":"AI.Behaviour.Explode","editorFolded":false}]'
 --- !u!114 &11410096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -371,14 +354,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 0
+  m_enableMotion: 1
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_faceDirection: 0
-    m_orientationSpeed: 2
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 120
+    m_faceDirection: 1
+    m_facePlayer: 0
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
@@ -386,8 +376,8 @@ MonoBehaviour:
   m_sensor:
     m_minRadius: 0
     m_maxRadius: 0
-    m_angle: 0
-    m_angleOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0.25
@@ -396,20 +386,6 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0
   m_onEatenSounds: []
---- !u!114 &11433034
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 146638}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 0.9865938
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11442140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -423,7 +399,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 0
   m_runSpeed: 0
+  m_minPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -451,7 +431,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 146638}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.6
@@ -465,17 +445,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 6e3ecf1a22c6e44fe8c0b2ebbf6ebaba, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -485,6 +468,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 16b8ca593a4924cac828962a3d7e32ef, type: 3}
   m_Bones:
   - {fileID: 495566}
@@ -512,3 +496,36 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 146638}
   m_IsPrefabParent: 1
+--- !u!114 &114000010995971012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 146638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 5
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &114000011212942158
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 146638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_brainResource: {fileID: 11400000, guid: 91d304c73d1dd42ca947fb91474a6252, type: 2}
+  m_speedFactorRange:
+    min: 1
+    max: 1
+  m_timeBeforeBackHome: 2
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":5,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 2
+  m_avoidCollisions: 0

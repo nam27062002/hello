@@ -320,7 +320,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 158028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.072, y: 0.383, z: 0.26953125}
+  m_LocalPosition: {x: 9.93, y: 5.95, z: 0.26953125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -333,10 +333,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 171738}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 426528}
   - {fileID: 460420}
@@ -474,10 +474,17 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 120
     m_faceDirection: 1
-    m_orientationSpeed: 2
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_facePlayer: 1
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
@@ -485,8 +492,6 @@ MonoBehaviour:
   m_sensor:
     m_minRadius: 4
     m_maxRadius: 8
-    m_angle: 360
-    m_angleOffset: 0
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0
@@ -518,7 +523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.028230578, y: 0.24594021}
+  offset: {x: -0.0036726892, y: 0.29524565}
   radius: 0.50606537
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11443674
@@ -537,7 +542,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":14,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":2,"separation":1.75,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":4,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
+  m_serializedJson: '[{"speed":4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":14,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":2,"separation":1.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":4,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 10
   m_avoidCollisions: 1
 --- !u!114 &11468462
@@ -553,7 +558,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 4
   m_runSpeed: 14
+  m_minPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -591,17 +600,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 9e075901453fb45d0bc59eef05dcb27d, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -611,6 +623,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 53fe7763a145045dda51f3682e0043cd, type: 3}
   m_Bones:
   - {fileID: 460420}

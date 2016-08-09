@@ -17,26 +17,31 @@ namespace AI {
 			public override StateComponentData CreateData() {
 				return new HomeData();
 			}
+
+			public override System.Type GetDataType() {
+				return typeof(HomeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (HomeData)m_pilot.GetComponentData<Home>();
+				m_data = m_pilot.GetComponentData<HomeData>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				m_alertRestoreValue = m_machine.GetSignal(Signals.Alert.name);
-				m_machine.SetSignal(Signals.Alert.name, false);
+				m_alertRestoreValue = m_machine.GetSignal(Signals.Type.Alert);
+				m_machine.SetSignal(Signals.Type.Alert, false);
 				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.GoTo(m_pilot.homePosition);
 			}
 
 			protected override void OnExit(State _newState) {
-				m_machine.SetSignal(Signals.Alert.name, m_alertRestoreValue);
-				m_machine.SetSignal(Signals.BackToHome.name, false);
+				m_machine.SetSignal(Signals.Type.Alert, m_alertRestoreValue);
+				m_machine.SetSignal(Signals.Type.BackToHome, false);
 			}
 
 			protected override void OnUpdate() {
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
 				if (dSqr < 1f) {
-					m_machine.SetSignal(Signals.BackToHome.name, false);
+					m_machine.SetSignal(Signals.Type.BackToHome, false);
 				}
 			}
 		}

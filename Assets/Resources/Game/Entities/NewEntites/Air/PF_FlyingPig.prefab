@@ -519,10 +519,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173938}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: -0.547, y: -0.378, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.326, z: 0.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 458810}
   - {fileID: 499798}
@@ -933,9 +933,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 2
-  m_runSpeed: 5
+  m_walkSpeed: 0.5
+  m_runSpeed: 7
+  m_minPlaybakSpeed: 0.5
+  m_maxPlaybakSpeed: 7
+  m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 1
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -955,7 +959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: starling
+  m_sku: flyingPig
 --- !u!114 &11439290
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -967,7 +971,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.25515375, y: 0.2826748}
+  offset: {x: -0.32100117, y: 0.29145432}
   radius: 0.48507452
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11472354
@@ -986,7 +990,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":10,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 12
   m_avoidCollisions: 1
 --- !u!114 &11486212
@@ -1004,23 +1008,30 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 120
     m_faceDirection: 1
-    m_orientationSpeed: 2
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_facePlayer: 1
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
   m_railSeparation:
     min: 0.5
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 10
-    m_maxRadius: 10
-    m_angle: 360
-    m_angleOffset: 0
+    m_minRadius: 8
+    m_maxRadius: 8
+    m_senseAbove: 1
+    m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
-      min: 1
-      max: 2
+      min: 0
+      max: 0
   m_onSpawnSoundProbability: 0
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0
@@ -1034,17 +1045,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 169f6817552da4b7ea2a103114048205, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1054,6 +1068,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 1c85c7a146ed64de2ae784f60c4f74bf, type: 3}
   m_Bones:
   - {fileID: 443990}

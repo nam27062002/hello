@@ -25,10 +25,14 @@ namespace AI {
 				return new HumanFleeData();
 			}
 
-			protected override void OnInitialise() {
-				m_data = (HumanFleeData)m_pilot.GetComponentData<HumanFlee>();
+			public override System.Type GetDataType() {
+				return typeof(HumanFleeData);
+			}
 
-				m_machine.SetSignal(Signals.Alert.name, true);
+			protected override void OnInitialise() {
+				m_data = m_pilot.GetComponentData<HumanFleeData>();
+
+				m_machine.SetSignal(Signals.Type.Alert, true);
 
 				m_xLimitMin = m_pilot.area.bounds.min.x;
 				m_xLimitMax = m_pilot.area.bounds.max.x;
@@ -71,11 +75,9 @@ namespace AI {
 					Vector3 dir = Vector3.zero;
 					dir.x = m_machine.position.x - m_target.x;
 					m_pilot.SetDirection(dir.normalized);
-				} else {
-					m_pilot.SetMoveSpeed(3f);
 				}
 			
-				m_pilot.Scared(m_machine.GetSignal(Signals.Danger.name));
+				m_pilot.Scared(m_machine.GetSignal(Signals.Type.Danger));
 				m_pilot.GoTo(m_target);
 			}
 		}

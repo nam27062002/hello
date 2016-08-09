@@ -20,8 +20,12 @@ namespace AI {
 				return new CurseData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(CurseData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (CurseData)m_pilot.GetComponentData<Curse>();
+				m_data = m_pilot.GetComponentData<CurseData>();
 				m_dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 				m_timer = 0;
 			}
@@ -34,9 +38,9 @@ namespace AI {
 					}
 				}
 
-				if (m_machine.GetSignal(Signals.CollisionTrigger.name)) {
+				if (m_machine.GetSignal(Signals.Type.CollisionTrigger)) {
 					if (m_timer <= 0f) {
-						m_dragon.Curse(m_data.damage, m_data.duration);
+						m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.CURSE);
 						m_timer = 1.0f;
 					}
 				}

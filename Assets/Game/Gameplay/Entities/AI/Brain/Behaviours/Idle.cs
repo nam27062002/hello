@@ -23,8 +23,12 @@ namespace AI {
 				return new IdleData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(IdleData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (IdleData)m_pilot.GetComponentData<Idle>();
+				m_data = m_pilot.GetComponentData<IdleData>();
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {

@@ -1,4 +1,6 @@
-﻿Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "Hungry Dragon/Bumped Diffuse Transparent (Spawners)"
 {
 	Properties
 	{
@@ -55,7 +57,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				fixed3 worldPos = mul(_Object2World, v.vertex);
+				fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 				o.normal = UnityObjectToWorldNormal(v.normal);
 				o.vLight = ShadeSH9(float4(o.normal, 1.0));
 

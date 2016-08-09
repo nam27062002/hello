@@ -75,6 +75,7 @@ public class GameCameraController : MonoBehaviour {
 
 	// Camera bounds
 	private FastBounds2D m_frustum = new FastBounds2D();
+	private FastBounds2D m_backgroundWorldBounds = new FastBounds2D();
 	private FastBounds2D m_activationMin = new FastBounds2D();
 	private FastBounds2D m_activationMax = new FastBounds2D();
 	private FastBounds2D m_deactivation = new FastBounds2D();
@@ -89,11 +90,7 @@ public class GameCameraController : MonoBehaviour {
 	State m_state = State.INTRO;
 	Vector3 m_dampedPosition;
 
-
-
-
 	Vector3 m_position;
-	bool m_newCameraSystem = false;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -139,6 +136,7 @@ public class GameCameraController : MonoBehaviour {
 	private void Awake() {
 		m_transform = transform;
 		m_state = State.INTRO;
+		enabled = !DebugSettings.newCameraSystem;
 	}
 
 	/// <summary>
@@ -199,6 +197,7 @@ public class GameCameraController : MonoBehaviour {
 			m_state = State.PLAY;
 		}
 
+
 	}
 
 	private void CountDownEnded()
@@ -211,7 +210,13 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	private void LateUpdate() 
 	{
-		
+
+		if ( DebugSettings.newCameraSystem )
+		{
+			GetComponent<GameCamera>().enabled = true;
+			enabled = false;
+		}
+
 		switch( m_state )
 		{
 			case State.INTRO:
@@ -223,9 +228,9 @@ public class GameCameraController : MonoBehaviour {
 			}break;
 			case State.PLAY:
 			{
-				if ( DebugSettings.newCameraSystem )
-					NewVersion();
-				else
+				// if ( DebugSettings.newCameraSystem )
+				//	NewVersion();
+				// else
 					OldVersion();
 			}break;
 		}
@@ -254,7 +259,8 @@ public class GameCameraController : MonoBehaviour {
 	private void UpdateTrackAheadVector( Vector3 velocity)
    	{
 		Vector3 trackingVelocity = velocity;
-
+		if ( trackingVelocity.sqrMagnitude > 1 )
+			trackingVelocity.Normalize();
          float dt = Time.deltaTime;
          float trackAheadRangeX = m_frustum.w * m_maxTrackAheadScaleX; // todo: have maxTrackAheadScale account for size of target?
          float trackAheadRangeY = m_frustum.h * m_maxTrackAheadScaleY;
@@ -319,11 +325,12 @@ public class GameCameraController : MonoBehaviour {
 		if ( m_dragonMotion != null )
 		{
 			// have we changed direction in this Update()
+			/*
 			if(m_touchControls.directionChanged)	
 			{
 				m_rotateLerpTimer = 0.0f;
 			}
-
+			*/
 			Vector3 targetPos = m_dragonMotion.transform.position;
 			UpdateTrackAheadVector( m_dragonMotion.velocity / m_dragonMotion.absoluteMaxSpeed);
 			Vector3 desiredPos = targetPos - m_trackAheadVector;
@@ -498,18 +505,34 @@ public class GameCameraController : MonoBehaviour {
 		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
 	}
 
+	public bool IsInsideBackgroundActivationArea(Vector3 _point) {
+		return m_backgroundWorldBounds.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundActivationArea(Bounds _bounds) {
+		return m_backgroundWorldBounds.Intersects(_bounds);
+	}
+
 	public bool IsInsideDeactivationArea(Vector3 _point) {
 		_point.z = 0;
 		return !m_deactivation.Contains(_point);
 	}
 
 	public bool IsInsideDeactivationArea(Bounds _bounds) {
+		return !m_backgroundWorldBounds.Intersects(_bounds);
+	}
+
+
+	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
+		return !m_backgroundWorldBounds.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundDeactivationArea(Bounds _bounds) {
 		Vector3 center = _bounds.center;
 		center.z = 0;
 		_bounds.center = center;
 		return !m_deactivation.Intersects(_bounds);
 	}
-
 
 	public bool IsInsideFrustrum( Vector3 _point)
 	{
@@ -541,19 +564,33 @@ public class GameCameraController : MonoBehaviour {
 		cameraRays[3] = m_camera.ScreenPointToRay(new Vector3(0.0f, m_camera.pixelHeight, z));
 		
 		// generate two world bounds, one for z=0, one for background spawners
-		Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, 0.0f));
-		Vector3[] pts = new Vector3[4];
-		for(int i=0; i<4; i++)
+		for(int j=0; j<2; j++)
 		{
-			Vector3? intersect = Util.RayPlaneIntersect(cameraRays[i], plane);
-			if(intersect != null)
+			bool bg = (j==1);
+			
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BackgroundLayerZ : 0.0f));
+			Vector3[] pts = new Vector3[4];
+			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_frustum;
+			
+			for(int i=0; i<4; i++)
 			{
-				pts[i] = (Vector3)intersect;
-				if(i == 0)	// initialize bounds with first point and zero size
-					m_frustum.Set(pts[i].x, pts[i].y, 0.0f, 0.0f);
-				else
-					m_frustum.Encapsulate(ref pts[i]);
+				Vector3? intersect = Util.RayPlaneIntersect(cameraRays[i], plane);
+				if(intersect != null)
+				{
+					pts[i] = (Vector3)intersect;
+					if(i == 0)	// initialize bounds with first point and zero size
+						bounds.Set(pts[i].x, pts[i].y, 0.0f, 0.0f);
+					else
+						bounds.Encapsulate(ref pts[i]);
+				}
 			}
+			
+			#if DEBUG_DRAW_BOUNDS
+			DebugDraw.DrawLine(pts[0], pts[1]);
+			DebugDraw.DrawLine(pts[1], pts[2]);
+			DebugDraw.DrawLine(pts[2], pts[3]);
+			DebugDraw.DrawLine(pts[3], pts[0]);
+			#endif
 		}
 
 
@@ -678,26 +715,30 @@ public class GameCameraController : MonoBehaviour {
 		if (!Application.isPlaying) {
 			UpdateFrustumBounds();
 		}
-		Vector3 center;
-		Vector3 size;
 
-		Gizmos.color = Color.yellow;
-		m_frustum.GetCentre( out center );
-		m_frustum.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
+		if ( enabled )
+		{
+			Vector3 center;
+			Vector3 size;
 
-		Gizmos.color = Color.cyan;
-		m_activationMin.GetCentre( out center );
-		m_activationMin.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
-		m_activationMax.GetCentre( out center );
-		m_activationMax.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
+			Gizmos.color = Color.yellow;
+			m_frustum.GetCentre( out center );
+			m_frustum.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
 
-		Gizmos.color = Color.magenta;
-		m_deactivation.GetCentre( out center );
-		m_deactivation.GetSize(out size);
-		Gizmos.DrawWireCube(center, size);
+			Gizmos.color = Color.cyan;
+			m_activationMin.GetCentre( out center );
+			m_activationMin.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+			m_activationMax.GetCentre( out center );
+			m_activationMax.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+
+			Gizmos.color = Color.magenta;
+			m_deactivation.GetCentre( out center );
+			m_deactivation.GetSize(out size);
+			Gizmos.DrawWireCube(center, size);
+		}
 	}
 }
 

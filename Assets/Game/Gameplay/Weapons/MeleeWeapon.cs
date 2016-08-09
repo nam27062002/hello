@@ -22,7 +22,7 @@ public class MeleeWeapon : MonoBehaviour {
 
 	void OnTriggerEnter(Collider _other) {
 		if (_other.tag == "Player") {
-			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage);
+			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
 		}
 	}
 }

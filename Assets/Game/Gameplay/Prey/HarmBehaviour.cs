@@ -33,6 +33,6 @@ public class HarmBehaviour : MonoBehaviour {
 
 	private void Harm()
 	{
-		InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage);
+		InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
 	}
 }

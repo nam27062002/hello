@@ -196,16 +196,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public void OnJawsClose()
 	{
 		// Bite kill!
-		FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
-		m_attackTarget = null;
-
-		if ( m_prey.Count <= 0 )
+		if ( m_holdingPrey == null )
 		{
-			m_animator.SetBool("eat", false);
-		}
+			FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
+			m_attackTarget = null;
 
-		if (m_holdingPrey == null)
+			if ( m_prey.Count <= 0 )
+			{
+				m_animator.SetBool("eat", false);
+			}
+
 			TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+		}
 	}
 
 	public Transform GetAttackTarget()
@@ -290,7 +292,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			Vector3 bloodPos = m_mouth.position;
 			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood/"));
+			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
 			m_holdingBlood = 0.5f;
 		}
 		else
@@ -321,7 +323,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 			Vector3 bloodPos = m_mouth.position;
 			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood/"));
+			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
 			m_holdingBlood = 0.5f;
 
 			EndHold();

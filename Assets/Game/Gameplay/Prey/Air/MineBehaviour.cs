@@ -19,10 +19,12 @@ public class MineBehaviour : Initializable {
 	private DragonHealthBehaviour m_dragon;
 
 	private GameCameraController m_camera;
+	private GameCamera m_newCamera;
 
 	// Use this for initialization
 	void Start() {
-		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+		m_camera = Camera.main.GetComponent<GameCameraController>();
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	
 		PoolManager.CreatePool(m_explosionPrefab, 5, false);
 
@@ -83,7 +85,7 @@ public class MineBehaviour : Initializable {
 				}
 				else
 				{
-					m_dragon.ReceiveDamage(m_damage, this.transform);
+					m_dragon.ReceiveDamage(m_damage, DamageType.NORMAL, this.transform);
 				}
 				motion.AddForce(_collision.impulse.normalized * m_forceStrength);
 				Explode();
@@ -97,7 +99,14 @@ public class MineBehaviour : Initializable {
 		Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
 		renderer.enabled = false;
 
-		m_camera.Shake(0.75f, new Vector3(0.75f, 0.75f, 0));
+		if ( DebugSettings.newCameraSystem )
+		{
+			m_newCamera.SetCameraShake(0.75f);
+		}
+		else
+		{
+			m_camera.Shake(0.75f, new Vector3(0.75f, 0.75f, 0));
+		}
 
 		m_timer = m_delayRange.GetRandom();
 

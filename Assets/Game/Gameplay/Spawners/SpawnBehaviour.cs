@@ -15,6 +15,7 @@ public class SpawnBehaviour : MonoBehaviour {
 	public int index { get { return m_index; } }
 
 	private GameCameraController m_camera;
+	private GameCamera m_newCamera;
 
 	private bool m_wasEatenOrBurned;
 
@@ -22,7 +23,8 @@ public class SpawnBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	void Start() {
-		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+		m_camera = Camera.main.GetComponent<GameCameraController>();
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
 	void OnEnable() {
@@ -46,9 +48,25 @@ public class SpawnBehaviour : MonoBehaviour {
 	}
 
 	void LateUpdate() {
-		if (m_deactivate && m_camera.IsInsideDeactivationArea(transform.position)) {
-			if (m_spawner) {
-				gameObject.SetActive(false);
+		
+		if (m_deactivate) 
+		{
+			bool isInsideDeactivationArea = false;
+			if ( DebugSettings.newCameraSystem )
+			{
+				isInsideDeactivationArea = m_newCamera.IsInsideDeactivationArea(transform.position);
+			}
+			else
+			{
+				isInsideDeactivationArea = m_camera.IsInsideDeactivationArea(transform.position);
+			}
+
+			if ( isInsideDeactivationArea )
+			{
+				if (m_spawner) 
+				{
+					gameObject.SetActive(false);
+				}
 			}
 		}
 	}

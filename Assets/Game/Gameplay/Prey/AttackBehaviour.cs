@@ -195,7 +195,7 @@ public abstract class AttackBehaviour : Initializable {
 								if (m_hasAnimation) {
 									m_animator.SetBool("attack", true);
 								} else {
-									m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, transform);
+									m_dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL, transform);
 									OnAttackEnd();
 								}
 								m_timer = m_attackDelay;

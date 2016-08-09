@@ -94,7 +94,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.StartHold(_prey);
 		// TODO (miguel) this has to be adapted to the pet
 		DragonMotion motion = GetComponent<DragonMotion>();
-		motion.StartHoldPreyMovement( m_holdTransform);
+		motion.StartHoldPreyMovement(m_holdingPrey, m_holdTransform);
 	}
 
 	override protected void EndHold()

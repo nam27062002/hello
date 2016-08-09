@@ -1,4 +1,6 @@
-﻿ Shader "Hungry Dragon/Gold" 
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+ Shader "Hungry Dragon/Gold" 
  {
 	Properties 
 	{
@@ -72,8 +74,8 @@
 
 
 
-				float3 positionW = mul(_Object2World, v.vertex).xyz;
-  				float3 N = mul((float3x3)_Object2World, v.normal);
+				float3 positionW = mul(unity_ObjectToWorld, v.vertex).xyz;
+  				float3 N = mul((float3x3)unity_ObjectToWorld, v.normal);
   				N = normalize(N);
   				float3 I = positionW - _WorldSpaceCameraPos;
   				float3 R = reflect(I,N);

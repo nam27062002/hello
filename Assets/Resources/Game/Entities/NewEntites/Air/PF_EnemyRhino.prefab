@@ -1177,7 +1177,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 117248}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.62, y: 1.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1235,7 +1235,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 164066}
   m_LocalRotation: {x: 0.0000006258487, y: -0.0000004023313, z: 0.9806837, w: 0.19560054}
-  m_LocalPosition: {x: -0.009773493, y: 0.035265207, z: -0.00012571561}
+  m_LocalPosition: {x: -1.338, y: 0.04, z: 1.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0.0001, y: 0.0001, z: 157.4404}
   m_Children: []
@@ -1670,10 +1670,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 106466}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071067}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.353, y: -0.528, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 488592}
   - {fileID: 456798}
@@ -1967,10 +1967,17 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 1
+    m_defaultUpVector: 0
+    m_orientationSpeed: 120
     m_faceDirection: 1
-    m_orientationSpeed: 4
-    m_faceLeftAngleY: 180
-    m_faceRightAngleY: 0
+    m_facePlayer: 1
+    m_limitHorizontalRotation: 0
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 320
+    m_faceDownAngle: 40
   m_railSeparation:
     min: 0.5
     max: 1
@@ -1978,8 +1985,8 @@ MonoBehaviour:
   m_sensor:
     m_minRadius: 2.5
     m_maxRadius: 12
-    m_angle: 360
-    m_angleOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0
@@ -2116,7 +2123,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"componentType":"AI.Behaviour.AttackTactics","editorFolded":false},{"speed":14,"dataType":"AI.Behaviour.PursuitData","componentType":"AI.Behaviour.Pursuit","editorFolded":false},{"damage":30,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3.5,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","componentType":"AI.Behaviour.AttackMelee","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeData","componentType":"AI.Behaviour.Home","editorFolded":false}]'
+  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":14,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":30,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3.5,"facing":1,"faceEnemy":false,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!114 &11492604
@@ -2144,7 +2151,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_walkSpeed: 10
   m_runSpeed: 15
+  m_minPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
@@ -2190,18 +2201,21 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: ed1fadb186bbe47909358b28e69a9029, type: 2}
   - {fileID: 2100000, guid: d0b338fc64f1149f482c74278dc8b7b4, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -2211,6 +2225,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: f17d92565509c448eafab3dbf5e26cf2, type: 3}
   m_Bones:
   - {fileID: 435694}

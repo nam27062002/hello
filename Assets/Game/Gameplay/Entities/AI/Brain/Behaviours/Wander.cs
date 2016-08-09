@@ -21,6 +21,8 @@ namespace AI {
 
 			private Vector3 m_target;
 
+			private float m_timer; // change target when time is over
+
 			private bool m_goToIdle;
 
 
@@ -29,8 +31,12 @@ namespace AI {
 				return new WanderData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(WanderData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (WanderData)m_pilot.GetComponentData<Wander>();
+				m_data = m_pilot.GetComponentData<WanderData>();
 				m_target = m_machine.position;
 			}
 
@@ -46,7 +52,9 @@ namespace AI {
 				float m = (m_machine.position - m_target).sqrMagnitude;
 				float d = Mathf.Min(2f, m_data.speed);// * Time.smoothDeltaTime;
 
-				if (m < d * d) {
+				m_timer -= Time.deltaTime;
+
+				if (m_timer < 0 || m < d * d) {
 					if (m_goToIdle) {
 						Transition(OnRest);
 					} else {
@@ -65,8 +73,13 @@ namespace AI {
 					m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_data.speed);					
 				} else {
 					m_target = m_pilot.area.RandomInside();
-					m_target.z = 0;
 				} 
+
+				if (m_data.speed > 0f) {
+					m_timer = (m_machine.position - m_target).magnitude / m_data.speed;
+				} else {
+					m_timer = 0f;
+				}
 			}
 		}
 	}

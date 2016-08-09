@@ -123,7 +123,7 @@ public class InflammableBehaviour : Initializable {
 						// Particles
 						if (m_ashesAsset.Length > 0) {
 							Renderer renderer = GetComponentInChildren<Renderer>();	
-							GameObject particle = ParticleManager.Spawn(m_ashesAsset, renderer.transform.position, "Ashes/");
+							GameObject particle = ParticleManager.Spawn(m_ashesAsset, renderer.transform.position, "Ashes");
 							if (particle) {
 								particle.transform.rotation = renderer.transform.rotation;
 								particle.transform.localScale = renderer.transform.localScale;
@@ -219,7 +219,7 @@ public class InflammableBehaviour : Initializable {
 				}
 
 				// Disable colliders if they give us problems
-				if ( GetComponent<MineBehaviour>() != null || GetComponent<CurseAttackBehaviour>() != null )
+				if ( GetComponent<MineBehaviour>() != null || GetComponent<CurseWeaponEffect>() != null )
 				{
 					Collider c = GetComponent<Collider>();
 					if (c != null)
@@ -273,9 +273,17 @@ public class InflammableBehaviour : Initializable {
 						// Random rotation within range
 						explosion.transform.Rotate(0, 0, m_rotationRange.GetRandom());
 
-						if (m_shake) {							
-							GameCameraController camera = Camera.main.GetComponent<GameCameraController>();
-							camera.Shake();
+						if (m_shake) {	
+							if ( DebugSettings.newCameraSystem )						
+							{
+								GameCamera camera = Camera.main.GetComponent<GameCamera>();
+								camera.SetCameraShake(0.15f);
+							}
+							else
+							{
+								GameCameraController camera = Camera.main.GetComponent<GameCameraController>();
+								camera.Shake();
+							}
 						}
 
 						if (m_slowMotion) {

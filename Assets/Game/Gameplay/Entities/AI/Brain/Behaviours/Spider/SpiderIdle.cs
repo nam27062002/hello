@@ -3,6 +3,12 @@ using System.Collections;
 
 namespace AI {
 	namespace Behaviour {
+		[System.Serializable]
+		public class SpiderIdleData : IdleData {
+			public Range hangDownChance = new Range(0.5f, 0.75f);
+			public Range hangDownDistance = new Range(2f, 6f);
+		}
+
 		[CreateAssetMenu(menuName = "Behaviour/Spider/Idle")]
 		public class SpiderIdle : AI.Behaviour.Idle {
 
@@ -19,8 +25,16 @@ namespace AI {
 			private IdleState m_idleState;
 
 
+			public override StateComponentData CreateData() {
+				return new SpiderIdleData();
+			}
+
+			public override System.Type GetDataType() {
+				return typeof(SpiderIdleData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (IdleData)m_pilot.GetComponentData<SpiderIdle>();
+				m_data = m_pilot.GetComponentData<SpiderIdleData>();
 			}
 
 			protected override void OnEnter(AI.State oldState, object[] param) {
@@ -29,7 +43,7 @@ namespace AI {
 				m_startPosition = m_machine.position;
 
 				float dot = Vector3.Dot(Vector3.down, m_machine.upVector);
-				if (dot >= 0.6f && dot <= 1f) {
+				if (dot >= 0.6f && dot <= 1f && Random.Range(0f, 1f) <= ((SpiderIdleData)m_data).hangDownChance.GetRandom()) {
 					ChangeState(IdleState.Hang_down);
 				} else {
 					ChangeState(IdleState.Normal);
@@ -86,7 +100,7 @@ namespace AI {
 						m_machine.StickToCollisions(false);
 						m_machine.upVector = Vector3.up;
 
-						m_target = m_machine.position + Vector3.down * 4f;
+						m_target = m_machine.position + Vector3.down * ((SpiderIdleData)m_data).hangDownDistance.GetRandom();
 						m_pilot.SetMoveSpeed(2.5f);
 						m_pilot.GoTo(m_target);
 						m_pilot.SetDirection(Vector3.down, true);
@@ -106,7 +120,7 @@ namespace AI {
 					case IdleState.Normal:
 						m_target = m_startPosition;
 						m_pilot.SetMoveSpeed(0f);
-						m_pilot.SetDirection(Vector3.back, true);
+						m_pilot.SetDirection(new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-0.5f, -1f)), true);
 						break;
 				}
 

@@ -21,7 +21,7 @@ namespace AI {
 
 			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
 
-			HoldPreyPoint[] holdPoints = m_machine.transform.GetComponentsInChildren<HoldPreyPoint>();
+			HoldPreyPoint[] holdPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
 			if (holdPoints != null) {
 				for (int i = 0;i<holdPoints.Length; i++) {
 					m_holdPreyPoints.Add(holdPoints[i].transform);
@@ -30,8 +30,8 @@ namespace AI {
 		}
 
 		public void Bite() {
-			m_machine.SetSignal(Signals.Panic.name, true);
-			m_machine.SetSignal(Signals.Chewing.name, true);
+			m_machine.SetSignal(Signals.Type.Panic, true);
+			m_machine.SetSignal(Signals.Type.Chewing, true);
 
 			if (EntityManager.instance != null)
 				EntityManager.instance.Unregister(m_entity);
@@ -42,19 +42,19 @@ namespace AI {
 			Reward reward = m_entity.GetOnKillReward(false);
 
 			// Dispatch global event
-			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_machine.transform, reward);
+			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);
 
 			m_viewControl.SpawnEatenParticlesAt(_transform);
 
-			m_machine.SetSignal(Signals.Destroyed.name, true);
+			m_machine.SetSignal(Signals.Type.Destroyed, true);
 		}
 
 		public void BiteAndHold() {
-			m_machine.SetSignal(Signals.Panic.name, true);
+			m_machine.SetSignal(Signals.Type.Panic, true);
 		}
 
 		public void ReleaseHold() {
-			m_machine.SetSignal(Signals.Panic.name, false);
+			m_machine.SetSignal(Signals.Type.Panic, false);
 		}
 
 		public override void Update() {}
