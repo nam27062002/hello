@@ -29,13 +29,20 @@ SubShader {
 
 	float _Scroll2X;
 
-	float4 _Color;
+	fixed4 _Color;
+
+	struct appdata
+	{
+		float4 vertex : POSITION;
+		float2 texcoord : TEXCOORD0;
+		// fixed4 color : COLOR;
+	};
 	
 	struct v2f {
 		float4 pos : SV_POSITION;
 		float2 uv : TEXCOORD0;
 		float2 uv2 : TEXCOORD1;
-		fixed4 color : TEXCOORD2;		
+		fixed4 color : TEXCOORD2;
 	};
 
 	
@@ -45,7 +52,7 @@ SubShader {
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex);
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex) + frac(float2(_Scroll2X, 0) * _Time);
-
+		o.color = lerp( fixed4(1,1,1,1), _Color, o.uv.y);
 		return o;
 	}
 	ENDCG
@@ -66,7 +73,7 @@ SubShader {
 			fixed4 one = fixed4(1,1,1,1);
 			o = one - (one-tex) * (one-tex2);
 
-			o = o * _Color;
+			o = o * i.color;
 			
 			return o;
 		}
