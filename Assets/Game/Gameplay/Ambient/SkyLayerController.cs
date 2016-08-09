@@ -9,7 +9,7 @@ public class SkyLayerController : MonoBehaviour
 
 	public float m_minYDark = 50;
 	public float m_maxYDark = 200;
-	public Color darkColor = Color.black;
+	public Color darkColor = new Color(0.1f, 0.0f, 0.3f);
 
 	private Material m_material;
 	private Vector2 m_offset = Vector3.zero;
