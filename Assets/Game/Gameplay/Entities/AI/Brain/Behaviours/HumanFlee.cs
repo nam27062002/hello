@@ -70,7 +70,7 @@ namespace AI {
 
 				float m = Mathf.Abs(m_machine.position.x - m_target.x);
 				if (m < 1f) {
-					m_pilot.SetMoveSpeed(0f);
+					m_pilot.SetMoveSpeed(0f, false);
 
 					Vector3 dir = Vector3.zero;
 					dir.x = m_machine.position.x - m_target.x;

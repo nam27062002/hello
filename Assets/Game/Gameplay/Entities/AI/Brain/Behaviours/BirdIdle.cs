@@ -70,7 +70,7 @@ namespace AI {
 
 					if (m_data.teleport) {
 						m_machine.position = m_restPoint;
-						m_pilot.SetMoveSpeed(0);
+						m_pilot.SetMoveSpeed(0, false);
 						m_pilot.SetDirection(m_direction);
 
 						m_idleState = IdleState.Rest;
@@ -96,7 +96,7 @@ namespace AI {
 					float d = 0.1f;
 
 					if (m < d * d) {
-						m_pilot.SetMoveSpeed(0);
+						m_pilot.SetMoveSpeed(0, false);
 						m_pilot.SetDirection(m_direction);
 						m_idleState = IdleState.Rest;
 					}

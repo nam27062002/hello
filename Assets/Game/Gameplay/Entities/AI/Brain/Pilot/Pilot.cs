@@ -92,10 +92,13 @@ namespace AI {
 			m_actions[(int)_action] = false;
 		}
 
-		public virtual void OnTrigger(string _trigger) {}
+		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
 
-		public void SetMoveSpeed(float _speed) {
+		public void SetMoveSpeed(float _speed, bool _blend = true) {
 			m_moveSpeed = _speed;
+			if (!_blend) {
+				m_currentSpeed = 0;
+			}
 		}
 
 		public void SetBoostSpeed(float _boostSpeed) {

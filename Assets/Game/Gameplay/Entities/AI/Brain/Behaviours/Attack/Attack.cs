@@ -47,7 +47,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				m_pilot.SetMoveSpeed(0);
+				m_pilot.SetMoveSpeed(0, false);
 				if (m_attacksLeft <= 0)
 					m_attacksLeft =  m_data.consecutiveAttacks;
 				m_timer = 0f;
@@ -81,7 +81,7 @@ namespace AI {
 
 			private void StartAttack() {
 				if (m_machine.enemy == null) {
-					Transition(OnOutOfRange);
+					Transition(OnOutOfRange, m_transitionParam);
 				} else {
 					m_pilot.PressAction(Pilot.Action.Attack);
 
@@ -141,7 +141,7 @@ namespace AI {
 
 					if (m_attacksLeft > 0) {
 						if (!m_machine.GetSignal(Signals.Type.Danger)) {		
-							Transition(OnOutOfRange);
+							Transition(OnOutOfRange, m_transitionParam);
 						}
 					} else {
 						Transition(OnMaxAttacks, m_transitionParam);
