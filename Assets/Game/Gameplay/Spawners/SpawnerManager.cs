@@ -41,7 +41,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 	// Detection area
 	private FastBounds2D m_minRect = null;	// From the game camera
 	private FastBounds2D m_maxRect = null;
-	private Rect m_subRect = new Rect();
+	private Rect[] m_subRect = new Rect[4];
 	private List<ISpawner> m_selectedSpawners = new List<ISpawner>();
 
 	//------------------------------------------------------------------------//
@@ -117,40 +117,40 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 
 			// Split it in 4 rectangles that the quadtree can process
 			// 1: top sub-rect
-			m_subRect.Set(
+			m_subRect[0].Set(
 				m_maxRect.x0, 
 				m_maxRect.y0,
 				m_maxRect.w,
 				m_minRect.y0 - m_maxRect.y0
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect, ref m_selectedSpawners);
+			m_spawnersTree.AddItemsInRange(m_subRect[0], ref m_selectedSpawners);
 
 			// 2: right sub-rect
-			m_subRect.Set(
+			m_subRect[1].Set(
 				m_minRect.x1, 
 				m_minRect.y0,
 				m_maxRect.x1 - m_minRect.x1,
 				m_minRect.h
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect, ref m_selectedSpawners);
+			m_spawnersTree.AddItemsInRange(m_subRect[1], ref m_selectedSpawners);
 
 			// 3: bottom sub-rect
-			m_subRect.Set(
+			m_subRect[2].Set(
 				m_maxRect.x0,
 				m_minRect.y1,
 				m_maxRect.w,
 				m_maxRect.y1 - m_minRect.y1
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect, ref m_selectedSpawners);
+			m_spawnersTree.AddItemsInRange(m_subRect[2], ref m_selectedSpawners);
 
 			// 4: left sub-rect
-			m_subRect.Set(
+			m_subRect[3].Set(
 				m_maxRect.x0,
 				m_minRect.y0,
 				m_minRect.x0 - m_maxRect.x0,
 				m_minRect.h
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect, ref m_selectedSpawners);
+			m_spawnersTree.AddItemsInRange(m_subRect[3], ref m_selectedSpawners);
 
 			// Process all selected spawners!
 			for(int i = 0; i < m_selectedSpawners.Count; i++) {
@@ -218,6 +218,15 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 		for(int i = 0; i < m_selectedSpawners.Count; i++) {
 			Gizmos.DrawSphere(m_selectedSpawners[i].transform.position, 0.5f);
 		}
+
+		// Sub-rectangles
+		Gizmos.color = Colors.WithAlpha(Colors.lime, 0.5f);
+		Gizmos.DrawCube(new Vector3(m_subRect[0].center.x, m_subRect[0].center.y, 0f), new Vector3(m_subRect[0].width, m_subRect[0].height, 1f));
+		Gizmos.DrawCube(new Vector3(m_subRect[2].center.x, m_subRect[2].center.y, 0f), new Vector3(m_subRect[2].width, m_subRect[2].height, 1f));
+
+		Gizmos.color = Colors.WithAlpha(Colors.orange, 0.5f);
+		Gizmos.DrawCube(new Vector3(m_subRect[1].center.x, m_subRect[1].center.y, 0f), new Vector3(m_subRect[1].width, m_subRect[1].height, 1f));
+		Gizmos.DrawCube(new Vector3(m_subRect[3].center.x, m_subRect[3].center.y, 0f), new Vector3(m_subRect[3].width, m_subRect[3].height, 1f));
 	}
 
 	//------------------------------------------------------------------------//
@@ -235,8 +244,11 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 
 		// Create and populate QuadTree
 		// Get map bounds!
+		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
 		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
-		Rect bounds = data.mapCameraBounds;
+		if(data != null) {
+			bounds = data.mapCameraBounds;
+		}
 		m_spawnersTree = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
 		for(int i = 0; i < m_spawners.Count; i++) {
 			m_spawnersTree.Insert(m_spawners[i]);
