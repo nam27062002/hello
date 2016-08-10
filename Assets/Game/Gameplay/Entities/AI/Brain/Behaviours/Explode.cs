@@ -28,21 +28,24 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				// explode
-				DragonPlayer dragon = InstanceManager.player;
-				if (dragon.HasMineShield()) {
-					dragon.LoseMineShield();
-				} else {
-					dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
+				if ( _param != null && _param.Length > 0 && ((GameObject) _param[0]).CompareTag("Player"))
+				{
+					DragonPlayer dragon = InstanceManager.player;
+					if (dragon.HasMineShield()) {
+						dragon.LoseMineShield();
+					} else {
+						dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
+					}
+
+					DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();
+
+					Vector3 knockBack = dragonMotion.transform.position - m_machine.position;
+					knockBack.Normalize();
+
+					knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_data.damage, 2f));
+
+					dragonMotion.AddForce(knockBack);
 				}
-
-				DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();
-
-				Vector3 knockBack = dragonMotion.transform.position - m_machine.position;
-				knockBack.Normalize();
-
-				knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_data.damage, 2f));
-
-				dragonMotion.AddForce(knockBack);
 
 				m_machine.SetSignal(Signals.Type.Destroyed, true);
 			}

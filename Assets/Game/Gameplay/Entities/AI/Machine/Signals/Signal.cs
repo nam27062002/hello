@@ -16,6 +16,7 @@
 		[StateTransitionTrigger] public static string OnOutsideArea 		= "onOutsideArea";
 		[StateTransitionTrigger] public static string OnBackAtHome			= "onBackAtHome";
 		[StateTransitionTrigger] public static string OnCollisionEnter 		= "onCollisionEnter";
+		[StateTransitionTrigger] public static string OnTriggerEnter 		= "onTriggerEnter";
 		[StateTransitionTrigger] public static string OnBurning 			= "onBurning";
 		[StateTransitionTrigger] public static string OnChewing 			= "onChewing";
 		[StateTransitionTrigger] public static string OnDestroyed 			= "onDestroyed";
