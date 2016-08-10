@@ -139,7 +139,25 @@ public class GameCameraController : MonoBehaviour {
 	private void Awake() {
 		m_transform = transform;
 		m_state = State.INTRO;
+	}
+
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+
+		// Instantly disable if not enabled in settings
 		enabled = !DebugSettings.newCameraSystem;
+	}
+
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	/// <summary>
@@ -173,14 +191,6 @@ public class GameCameraController : MonoBehaviour {
 		farZoom = InstanceManager.player.data.def.GetAsFloat("cameraFarZoom");
 		m_currentZoom = m_defaultZoom * 2;
 
-		// Register to Fury events
-		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
-
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
-		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-
 		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
 		if(spawnPointObj == null) 
 		{
@@ -199,8 +209,6 @@ public class GameCameraController : MonoBehaviour {
 		{
 			m_state = State.PLAY;
 		}
-
-
 	}
 
 	private void CountDownEnded()
@@ -462,10 +470,7 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() 
 	{
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
-		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		
 	}
 
 	//------------------------------------------------------------------//

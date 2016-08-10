@@ -31,6 +31,8 @@ public class GameSceneControllerBase : SceneController {
 		get { return m_gameCamera; }
 	}
 
+	// Important references
+
 	// Time
 	protected float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
@@ -40,7 +42,6 @@ public class GameSceneControllerBase : SceneController {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-
 	public virtual bool IsLevelLoaded()
 	{
 		return true;

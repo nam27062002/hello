@@ -37,6 +37,7 @@ namespace LevelEditor {
 		override protected void Awake() {
 			ContentManager.InitContent();
 			PersistenceManager.Load();
+
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
 			InstanceManager.player.playable = false;
@@ -60,6 +61,10 @@ namespace LevelEditor {
 			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 			Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
 
+			// Simulate level loaded
+			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+
+			// Rune spawner manager
 			SpawnerManager.instance.EnableSpawners();
 		}
 		
@@ -67,6 +72,9 @@ namespace LevelEditor {
 		/// Component disabled.
 		/// </summary>
 		private void OnDisable() {
+			// Simulate end game
+			Messenger.Broadcast(GameEvents.GAME_ENDED);
+
 			// Unsubscribe from external events
 			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 			Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
