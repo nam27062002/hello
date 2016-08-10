@@ -464,8 +464,8 @@ MonoBehaviour:
     min: 0.65
     max: 1.15
   m_timeBeforeBackHome: 1
-  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":10,"separation":0.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"followAheadFactor":0,"frequencyOffset":{"min":0.65,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 10
+  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":9,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":10,"separation":0.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":1.5,"followAheadFactor":0,"frequencyOffset":{"min":0.65,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 6
   m_avoidCollisions: 1
 --- !u!114 &11439040
 MonoBehaviour:
@@ -479,9 +479,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 4
-  m_runSpeed: 4.5
+  m_runSpeed: 5
   m_minPlaybakSpeed: 0.5
-  m_maxPlaybakSpeed: 2
+  m_maxPlaybakSpeed: 2.5
   m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
@@ -511,9 +511,9 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
-    m_mass: 4
+    m_mass: 5
     m_defaultUpVector: 0
-    m_orientationSpeed: 100
+    m_orientationSpeed: 170
     m_faceDirection: 1
     m_facePlayer: 0
     m_limitHorizontalRotation: 0
@@ -521,20 +521,20 @@ MonoBehaviour:
     m_faceRightAngle: 90
     m_limitVerticalRotation: 1
     m_faceUpAngle: 45
-    m_faceDownAngle: 5
+    m_faceDownAngle: 30
   m_railSeparation:
     min: 0.5
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 1.5
-    m_maxRadius: 5.5
+    m_minRadius: 0.5
+    m_maxRadius: 3.8
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
-      min: 0
-      max: 0
+      min: 0.25
+      max: 0.75
   m_onSpawnSoundProbability: 0
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0

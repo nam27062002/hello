@@ -18,13 +18,13 @@ public class FlockSpawner : Spawner
 		base.Start();
 	}
 
-	override protected void ExtendedUpdateLogic() {
+	/*override protected void ExtendedUpdateLogic() {
 		if (m_flockController) {
 			m_flockController.NextPositionAtSpeed(0f);
 		}
-	}
+	}*/
 
-	override protected void ExtendedSpawn() {
+	/*override protected void ExtendedSpawn() {
 		if (m_flockController) {
 			for (int i = 0; i < m_entities.Length; i++) {
 				if (m_entities[i] != null) {
@@ -35,6 +35,6 @@ public class FlockSpawner : Spawner
 				}
 			}
 		}
-	}
+	}*/
 
 }

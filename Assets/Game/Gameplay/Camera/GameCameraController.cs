@@ -77,8 +77,11 @@ public class GameCameraController : MonoBehaviour {
 	private FastBounds2D m_frustum = new FastBounds2D();
 	private FastBounds2D m_backgroundWorldBounds = new FastBounds2D();
 	private FastBounds2D m_activationMin = new FastBounds2D();
+	public FastBounds2D activationMinRect { get { return m_activationMin; }}
 	private FastBounds2D m_activationMax = new FastBounds2D();
+	public FastBounds2D activationMaxRect { get { return m_activationMax; }}
 	private FastBounds2D m_deactivation = new FastBounds2D();
+	public FastBounds2D deactivationRect { get { return m_deactivation; }}
 
 	private Transform m_transform;
 
@@ -568,7 +571,7 @@ public class GameCameraController : MonoBehaviour {
 		{
 			bool bg = (j==1);
 			
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BackgroundLayerZ : 0.0f));
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));
 			Vector3[] pts = new Vector3[4];
 			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_frustum;
 			

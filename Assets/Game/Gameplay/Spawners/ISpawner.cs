@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public interface ISpawner {
+public interface ISpawner : IQuadTreeItem {
+	string name { get; }
 	void Initialize();
 	void ForceRemoveEntities();
-	void UpdateTimers();
-	void UpdateLogic();
+	void CheckRespawn();
 	void Respawn();
 	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
 

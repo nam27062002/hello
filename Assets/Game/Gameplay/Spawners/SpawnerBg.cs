@@ -185,7 +185,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 		}
 	}
 		
-	public void UpdateTimers() {		
+	public void CheckRespawn() {		
 		
 		// If we don't have any entity alive, proceed
 		if(m_entityAlive == 0) {

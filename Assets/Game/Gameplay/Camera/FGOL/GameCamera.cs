@@ -1,4 +1,4 @@
-﻿//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // GameCamera.cs
 //--------------------------------------------------------------------------------
 // Handles the logic for moving the camera around in-game.
@@ -85,13 +85,13 @@ public class GameCamera : MonoBehaviour
     private float m_trackAheadScale = 1.5f;
     [SerializeField]
     private TrackAheadMode m_trackAheadMode;
+
 	[Separator("Entity management")]
 	[SerializeField] private float m_activationDistance = 10f;
 	[SerializeField] private float m_activationRange = 5f;
 	[SerializeField] private float m_deactivationDistance = 20f;
 
 
-    
     // Camera rotation look at shark 
 	private float               m_rotateLerpTimer = 0.0f;
     private Vector3             m_trackAheadPos = Vector3.zero;
@@ -109,9 +109,13 @@ public class GameCamera : MonoBehaviour
 	private FastBounds2D		m_screenWorldBounds = new FastBounds2D();	// 2D bounds of the camera view at the z=0 plane
 	private FastBounds2D		m_backgroundWorldBounds = new FastBounds2D();	// same, at Z for background spawners
 
+	// Camera bounds (from Dragon)
 	private FastBounds2D 		m_activationMin = new FastBounds2D();
+	public FastBounds2D 		activationMinRect { get { return m_activationMin; }}
 	private FastBounds2D 		m_activationMax = new FastBounds2D();
+	public FastBounds2D 		activationMaxRect { get { return m_activationMax; }}
 	private FastBounds2D 		m_deactivation = new FastBounds2D();
+	public FastBounds2D 		deactivationRect { get { return m_deactivation; }}
 	
 	private int					m_pixelWidth = 640;
 	private int					m_pixelHeight = 480;
@@ -720,14 +724,14 @@ public class GameCamera : MonoBehaviour
 		float trackAheadRangeY = m_screenWorldBounds.h * m_maxTrackAheadScaleY;
 		float trackBlendRate = trackAheadRangeX * m_trackBlendRate;
 		Vector3 desiredTrackAhead = machine.velocity / machine.absoluteMaxSpeed;
-		// UnityEngine.Debug.Log(desiredTrackAhead);
+		//UnityEngine.Debug.Log(desiredTrackAhead);
 		desiredTrackAhead.x *= trackAheadRangeX;
 		desiredTrackAhead.y *= trackAheadRangeY;
 		if(m_snap)
 			m_trackAheadVector = desiredTrackAhead;
 		else
 			Util.MoveTowardsVector3XYWithDamping(ref m_trackAheadVector, ref desiredTrackAhead, trackBlendRate*dt, 1.0f);
-		// UnityEngine.Debug.Log("Ahead Vector" + m_trackAheadVector);
+		//UnityEngine.Debug.Log("Ahead Vector" + m_trackAheadVector);
 	}
 	
 	// Zooming in and out is done by specifying the desired width of the frame, i.e. how wide is the visible frame in metres at the z=0 plane?
@@ -862,7 +866,7 @@ public class GameCamera : MonoBehaviour
 		{
 			bool bg = (j==1);
 			
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BackgroundLayerZ : 0.0f));
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));
 			Vector3[] pts = new Vector3[4];
 			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_screenWorldBounds;
 			
