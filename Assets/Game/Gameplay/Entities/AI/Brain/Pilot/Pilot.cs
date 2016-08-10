@@ -92,7 +92,7 @@ namespace AI {
 			m_actions[(int)_action] = false;
 		}
 
-		public virtual void OnTrigger(string _trigger) {}
+		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
 
 		public void SetMoveSpeed(float _speed) {
 			m_moveSpeed = _speed;

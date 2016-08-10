@@ -93,8 +93,6 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.BackToHome, SignalTriggers.OnOutsideArea);
 			m_signals.SetOnDisableTrigger(Signals.Type.BackToHome, SignalTriggers.OnBackAtHome);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.CollisionTrigger, SignalTriggers.OnCollisionEnter);
-
 			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.OnBurning);
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Chewing, SignalTriggers.OnChewing);
@@ -126,9 +124,9 @@ namespace AI {
 			m_willPlayEatenSound = m_onEatenSounds.Count > 0 && Random.Range(0, 100f) < m_onEatenSoundProbability;
 		}
 
-		public void OnTrigger(string _trigger) {
+		public void OnTrigger(string _trigger, object[] _param = null) {
 			if (m_pilot != null) {
-				m_pilot.OnTrigger(_trigger);
+				m_pilot.OnTrigger(_trigger, _param);
 			}
 
 			if (_trigger == SignalTriggers.OnDestroyed) {
@@ -142,18 +140,15 @@ namespace AI {
 		}
 
 		// Physics Collisions and Triggers
-
 		void OnCollisionEnter(Collision _collision) {
-			OnTrigger(SignalTriggers.OnCollisionEnter);
+			object[] _params = new object[1]{_collision.gameObject};
+			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
 		}
 
 
 		void OnTriggerEnter(Collider _other) {
-			SetSignal(Signals.Type.CollisionTrigger, true);
-		}
-
-		void OnTriggerExit(Collider _other) {
-			SetSignal(Signals.Type.CollisionTrigger, false);
+			object[] _params = new object[1]{_other.gameObject};
+			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
 		}
 		//
 

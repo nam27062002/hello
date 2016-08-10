@@ -78,8 +78,8 @@ namespace AI {
 		void OnDisable() {
 		}
 
-		public override void OnTrigger(string _trigger) {
-			m_brain.Transition(_trigger);
+		public override void OnTrigger(string _trigger, object[] _param = null) {
+			m_brain.Transition(_trigger, _param);
 		}
 
 		public void GoTo(Vector3 _target) {
