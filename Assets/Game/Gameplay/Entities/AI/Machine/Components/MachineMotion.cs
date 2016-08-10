@@ -90,6 +90,10 @@ namespace AI {
 		}
 
 		public override void Update() {
+			if (m_machine.GetSignal(Signals.Type.Biting)) {
+				return;
+			}
+
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Type.Burning));
 				return;
@@ -209,13 +213,21 @@ namespace AI {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
 
-				float angle = 0f;
-				if (m_direction.x > 0)			angle = Vector3.Angle(Vector3.right, m_direction);
-				else if (m_direction.x < 0)		angle = Vector3.Angle(Vector3.left, m_direction);
+				float angle = Vector3.Angle(Vector3.right, m_direction);
 
-				angle = Mathf.Min(35f, angle);
+				if (angle > 10f && angle < 90f) {
+					angle = Mathf.Min(35f, angle);
+				} else if (angle > 90f && angle < 170f) {
+					angle = Mathf.Min(35f, 180f - angle);
+				} else {
+					angle = 0f;
+				}
 
-				m_targetRotation = Quaternion.AngleAxis(-angle, m_direction) * m_targetRotation;
+				if (m_direction.x < 0f && m_direction.z > 0f
+				||  m_direction.x > 0f && m_direction.z < 0f)
+					angle *= -1;
+				
+				m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
 
 			} else {
 				if (m_pilot.speed > 0.01f) {
