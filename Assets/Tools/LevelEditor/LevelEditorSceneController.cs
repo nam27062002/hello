@@ -35,8 +35,10 @@ namespace LevelEditor {
 		/// Initialization.
 		/// </summary>
 		override protected void Awake() {
+			// Initialize some required managers
 			ContentManager.InitContent();
 			PersistenceManager.Load();
+			SpawnerManager.CreateInstance();
 
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
@@ -60,12 +62,6 @@ namespace LevelEditor {
 			// Subscribe to external events
 			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 			Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
-
-			// Simulate level loaded
-			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
-
-			// Rune spawner manager
-			SpawnerManager.instance.EnableSpawners();
 		}
 		
 		/// <summary>
@@ -113,6 +109,12 @@ namespace LevelEditor {
 		/// Do all the necessary stuff to start a game.
 		/// </summary>
 		private void StartGame() {
+			// Simulate level loaded
+			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+
+			// Run spawner manager
+			SpawnerManager.instance.EnableSpawners();
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 
