@@ -71,14 +71,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 	private bool m_allEntitiesKilledByPlayer;
 	protected GameObject[] m_entities; // list of alive entities
 
-	private float m_activationTimer;
-	private float m_respawnTimer;
+	private float m_respawnTime;
 	private uint m_respawnCount;
 
 	private bool m_readyToBeDisabled;
 
-	private GameCameraController m_camera;
-	private GameCamera m_newCamera;
+	// Scene referemces
+	private GameSceneControllerBase m_gameSceneController = null;
 
 	// Level editing stuff
 	private bool m_showSpawnerInEditor = true;
@@ -98,8 +97,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
 
-		m_camera = Camera.main.GetComponent<GameCameraController>();
-		m_newCamera = Camera.main.GetComponent<GameCamera>();
+		// Get external references
+		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
+		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
 		m_area = GetArea();
 
@@ -115,10 +115,12 @@ public class Spawner : MonoBehaviour, ISpawner {
 		gameObject.SetActive(false);
 	}
 
-	public void Initialize() {
-		m_activationTimer = 0;
+	private void OnDestroy() {
+		SpawnerManager.instance.Unregister(this);
+	}
 
-		m_respawnTimer = 0;
+	public void Initialize() {
+		m_respawnTime = -1;
 		m_respawnCount = 0;
 
 		m_entityAlive = 0;
@@ -136,7 +138,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	public void ResetSpawnTimer()
 	{
-		m_respawnTimer = 0;
+		m_respawnTime = -1;
 	}
 
 	public void ForceRemoveEntities() {
@@ -148,7 +150,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 
 		m_entityAlive = 0;
-		m_respawnTimer = 0;
+		m_respawnTime = -1;
 		m_allEntitiesKilledByPlayer = false;
 	}
 
@@ -181,7 +183,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 						Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
 					}
 				} else {
-					m_respawnTimer = 0; // instant respawn, because player didn't kill all the entities
+					m_respawnTime = -1; // instant respawn, because player didn't kill all the entities
 				}
 
 				if (m_readyToBeDisabled) {
@@ -191,7 +193,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 	}
 		
-	public void UpdateTimers() {		
+	public void CheckRespawn() {		
 		// Ignore all logic for always active spawners
 		if (m_alwaysActive) {
 			if (m_entityAlive == 0) {
@@ -201,31 +203,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		// Rest of the spawners
 		else {
-			// Update timer
-			m_activationTimer += Time.deltaTime;
-
 			// If we can spawn, do it
-			if(CanSpawn(m_activationTimer, RewardManager.xp)) {
+			if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				// If we don't have any entity alive, proceed
 				if(m_entityAlive == 0) {
 					// Respawn on cooldown?
-					if(m_respawnTimer > 0) {
-						m_respawnTimer -= Time.deltaTime;
-						if(m_respawnTimer <= 0) m_respawnTimer = 0;
-					} else {
-						// Check activation area
-						if ( DebugSettings.newCameraSystem )
-						{
-							if(m_newCamera != null && m_newCamera.IsInsideActivationArea(transform.position)) {
-								Spawn();
-							}
-						}
-						else
-						{
-							if(m_camera != null && m_camera.IsInsideActivationArea(transform.position)) {
-								Spawn();
-							}
-						}
+					if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
+						// Everything ok! Spawn!
+						Spawn();
 					}
 				}
 			}
@@ -237,10 +222,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 				}
 			}
 		}
-	}
-
-	public void UpdateLogic() {
-		ExtendedUpdateLogic();
 	}
 
 	/// <summary>
@@ -272,7 +253,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 
 			// If one of the conditions has already triggered, no need to keep checking
-			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one, so we would be adding an extra instruction for nothing, so let's keep it commented for now
+			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one and we would be adding an extra instruction for nothing, so let's keep it commented for now
 			// if(startConditionsOk) break;
 		}
 
@@ -296,7 +277,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 
 			// If one of the conditions has already triggered, no need to keep checking
-			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one, so we would be adding an extra instruction for nothing, so let's keep it commented for now
+			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one and we would be adding an extra instruction for nothing, so let's keep it commented for now
 			// if(!endConditionsOk) break;
 		}
 
@@ -333,7 +314,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 		uint rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			Entity entity = m_entities[i].GetComponent<Entity>();
+			Debug.Assert(entity != null, "Entity prefab at spawner " + this.name + " doesn't have a Entity component!");
+
 			AI.AIPilot pilot = m_entities[i].GetComponent<AI.AIPilot>();
+			Debug.Assert(pilot != null, "Entity prefab at spawner " + this.name + " doesn't have a Pilot component!");
 			pilot.guideFunction = m_guideFunction;
 
 			Vector3 pos = transform.position;
@@ -378,11 +362,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		m_allEntitiesKilledByPlayer = false;
 
-		m_respawnTimer = m_spawnTime.GetRandom();
+		// Program the next spawn time
+		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 	}
 
 	protected virtual void ExtendedSpawn() {}
-	protected virtual void ExtendedUpdateLogic() {}
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();

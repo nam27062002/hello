@@ -232,11 +232,6 @@ namespace LevelEditor {
 				sp = newSpawnerObj.AddComponent<PathSpawner>();
 				spawnerName += "Path";
 			}
-			else if ( IsFlockBehaviour( entityPrefab ) )
-			{
-				sp = newSpawnerObj.AddComponent<FlockSpawner>();
-				spawnerName += "Flock";
-			}
 			else
 			{
 				sp = newSpawnerObj.AddComponent<Spawner>();

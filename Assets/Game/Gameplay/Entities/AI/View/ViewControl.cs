@@ -102,6 +102,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_panic = false;
 		m_attack = false;
 
+		m_animator.enabled = true;
 		m_animator.speed = 1f;
 
 		if (m_entity != null) {

@@ -8,11 +8,6 @@ Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_SpeedX("Fire Speed X", float) = 0
 	_SpeedY("Fire Speed Y", float) = 0
-
-	// FOG
-	// _FogColor ("Fog Color", Color) = (0,0,0,0)
-	// _FogStart( "Fog Start", float ) = 0
-	// _FogEnd( "Fog End", float ) = 100
 }
 
 SubShader {

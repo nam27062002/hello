@@ -60,7 +60,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	}
 
-	public void UpdateTimers() {
+	public void CheckRespawn() {
 		if (m_state == State.Respawning) {
 			if (m_timer > 0) {
 				m_timer -= Time.deltaTime;
@@ -83,10 +83,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 				}
 			}
 		}
-	}
-
-	public void UpdateLogic() {
-
 	}
 
 	public void Respawn() {

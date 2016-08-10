@@ -6,7 +6,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	
 	[SerializeField] private float m_checkFireTime = 0.25f;
 
-	private QuadTree m_fireNodes;
+	private QuadTree<FireNode> m_fireNodes;
 	private List<FireNode> m_fireNodesLogic;
 	private AudioSource m_fireNodeAudio;
 	private DragonBreathBehaviour m_breath;
@@ -16,7 +16,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	public List<Transform> m_burningFireNodes = new List<Transform>();
 
 	void Awake() {
-		m_fireNodes = new QuadTree(-600f, -100f, 1000f, 400f);
+		m_fireNodes = new QuadTree<FireNode>(-600f, -100f, 1000f, 400f);
 		m_fireNodesLogic = new List<FireNode>();
 
 		m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
@@ -50,14 +50,13 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 			if (m_timer <= 0) 
 			{
 				m_timer += m_checkFireTime;
-				Transform[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
+				FireNode[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
 
 				for (int i = 0; i < nodes.Length; i++) {
-					Transform node = nodes[i];
-					if (m_breath.IsInsideArea(node.position)) 
+					FireNode fireNode = nodes[i];
+					if (m_breath.IsInsideArea(fireNode.transform.position)) 
 					{
 						// Check if I can burn this fire Node
-						FireNode fireNode = node.GetComponent<FireNode>();
 						if ( fireNode.canBurn || m_breath.type == DragonBreathBehaviour.Type.Super )
 						{
 							fireNode.Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
@@ -77,12 +76,12 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	}
 		
 	public static void Insert(FireNode _fireNode) {
-		instance.m_fireNodes.Insert(_fireNode.transform);
+		instance.m_fireNodes.Insert(_fireNode);
 		instance.m_fireNodesLogic.Add(_fireNode);
 	}
 
 	public static void Remove(FireNode _fireNode) {
-		instance.m_fireNodes.Remove(_fireNode.transform);
+		instance.m_fireNodes.Remove(_fireNode);
 		instance.m_fireNodesLogic.Remove(_fireNode);
 	}
 

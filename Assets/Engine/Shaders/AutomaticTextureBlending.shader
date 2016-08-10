@@ -13,11 +13,6 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
 		_SecondTexture ("Second Texture (RGB)", 2D) = "white" {}
 
-		// FOG
-		_FogColor ("Fog Color", Color) = (0,0,0,0)
-		_FogStart( "Fog Start", float ) = 0
-		_FogEnd( "Fog End", float ) = 100
-
 	}
 
 	SubShader {

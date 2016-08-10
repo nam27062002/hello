@@ -35,6 +35,7 @@
 	        BackToHome,
 	        Burning, 
 	        Chewing, 
+			Biting,
 	        Destroyed, 
 	        CollisionTrigger,
 			FallDown,

@@ -77,8 +77,11 @@ public class GameCameraController : MonoBehaviour {
 	private FastBounds2D m_frustum = new FastBounds2D();
 	private FastBounds2D m_backgroundWorldBounds = new FastBounds2D();
 	private FastBounds2D m_activationMin = new FastBounds2D();
+	public FastBounds2D activationMinRect { get { return m_activationMin; }}
 	private FastBounds2D m_activationMax = new FastBounds2D();
+	public FastBounds2D activationMaxRect { get { return m_activationMax; }}
 	private FastBounds2D m_deactivation = new FastBounds2D();
+	public FastBounds2D deactivationRect { get { return m_deactivation; }}
 
 	private Transform m_transform;
 
@@ -136,7 +139,25 @@ public class GameCameraController : MonoBehaviour {
 	private void Awake() {
 		m_transform = transform;
 		m_state = State.INTRO;
+	}
+
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+
+		// Instantly disable if not enabled in settings
 		enabled = !DebugSettings.newCameraSystem;
+	}
+
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	/// <summary>
@@ -170,14 +191,6 @@ public class GameCameraController : MonoBehaviour {
 		farZoom = InstanceManager.player.data.def.GetAsFloat("cameraFarZoom");
 		m_currentZoom = m_defaultZoom * 2;
 
-		// Register to Fury events
-		//Messenger.Broadcast<bool>(GameEvents.FURY_RUSH_TOGGLED, true);
-
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
-		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-
 		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
 		if(spawnPointObj == null) 
 		{
@@ -196,8 +209,6 @@ public class GameCameraController : MonoBehaviour {
 		{
 			m_state = State.PLAY;
 		}
-
-
 	}
 
 	private void CountDownEnded()
@@ -459,10 +470,7 @@ public class GameCameraController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() 
 	{
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
-		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		
 	}
 
 	//------------------------------------------------------------------//
@@ -568,7 +576,7 @@ public class GameCameraController : MonoBehaviour {
 		{
 			bool bg = (j==1);
 			
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BackgroundLayerZ : 0.0f));
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));
 			Vector3[] pts = new Vector3[4];
 			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_frustum;
 			

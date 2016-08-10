@@ -10,11 +10,6 @@ Properties {
 	_BurnLevel( "Burn Level", Range (0, 3)) = 0
 	_BurnMask("Burn Mask", 2D) = "white" {}
 
-	// FOG
-	// _FogColor ("Fog Color", Color) = (0,0,0,0)
-	// _FogStart( "Fog Start", float ) = 0
-	// _FogEnd( "Fog End", float ) = 100
-
 }
 
 SubShader {
