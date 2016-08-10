@@ -20,9 +20,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 	//-----------------------------------------------
+	[SeparatorAttribute("Animation playback speed")]
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
+	[SerializeField] private float m_minPlaybakSpeed = 1f;
+	[SerializeField] private float m_maxPlaybakSpeed = 1.5f;
+	[SerializeField] private bool m_onBoostMaxPlaybackSpeed = false;
 
+
+	[SeparatorAttribute("Animation blending")]
 	[SerializeField] private bool m_hasNavigationLayer = false;
 	[SerializeField] private bool m_hasRotationLayer = false;
 
@@ -44,6 +50,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private Material m_materialGold;
 	private Dictionary<int, Material[]> m_materials;
 
+	private bool m_boost;
 	private bool m_scared;
 	private bool m_panic; //bite and hold state
 	private bool m_attack;
@@ -89,38 +96,40 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 	//
 
-	public virtual void Spawn(Spawner _spawner) {
+	public virtual void Spawn(ISpawner _spawner) {
+		m_boost = false;
 		m_scared = false;
 		m_panic = false;
 		m_attack = false;
 
 		m_animator.speed = 1f;
 
-		// Restore materials
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			if (m_entity.isGolden) {				
-				Material[] materials = renderers[i].materials;
-				for (int m = 0; m < materials.Length; m++) {
-					if (!materials[m].shader.name.EndsWith("Additive"))
-						materials[m] = m_materialGold;
+		if (m_entity != null) {
+			// Restore materials
+			Renderer[] renderers = GetComponentsInChildren<Renderer>();
+			for (int i = 0; i < renderers.Length; i++) {
+				if (m_entity.isGolden) {				
+					Material[] materials = renderers[i].materials;
+					for (int m = 0; m < materials.Length; m++) {
+						if (!materials[m].shader.name.EndsWith("Additive"))
+							materials[m] = m_materialGold;
+					}
+					renderers[i].materials = materials;
+				} else {
+					if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
+						renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 				}
-				renderers[i].materials = materials;
-			} else {
-				if (m_materials.ContainsKey(renderers[i].GetInstanceID()))
-					renderers[i].materials = m_materials[renderers[i].GetInstanceID()];
 			}
-		}
 
-		// Show PC Trail?
-		if(m_entity.isPC) {
-			// Get an effect instance from the pool
-			m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards");
-
-			// Put it in the view's hierarchy so it follows the entity
-			if(m_pcTrail != null) {
-				m_pcTrail.transform.SetParent(transform);
-				m_pcTrail.transform.localPosition = Vector3.zero;
+			// Show PC Trail?
+			if(m_entity.isPC) {
+				// Get an effect instance from the pool
+				m_pcTrail = ParticleManager.Spawn("PS_EntityPCTrail", Vector3.zero, "Rewards");
+				// Put it in the view's hierarchy so it follows the entity
+				if(m_pcTrail != null) {
+					m_pcTrail.transform.SetParent(transform);
+					m_pcTrail.transform.localPosition = Vector3.zero;
+				}
 			}
 		}
 	}
@@ -166,10 +175,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 
 	// Animations
-	public void NavigationLayer(float _z, float _y) {
+	public void NavigationLayer(Vector3 _dir) {
 		if (m_hasNavigationLayer) {
-			m_desiredBlendX = Mathf.Clamp(-_z * 3f, -1f, 1f);	// max X bend is about 30 degrees, so *3
-			m_desiredBlendY = Mathf.Clamp(_y * 2f, -1f, 1f);	// max Y bend is about 45 degrees, so *2.
+			Vector3 localDir = transform.InverseTransformDirection(_dir);	// todo: replace with direction to target if trying to bite, or during bite?
+			m_desiredBlendX = Mathf.Clamp(localDir.x * 3f, -1f, 1f);	// max X bend is about 30 degrees, so *3
+			m_desiredBlendY = Mathf.Clamp(localDir.y * 2f, -1f, 1f);	// max Y bend is about 45 degrees, so *2.
 		}
 	}
 
@@ -196,12 +206,16 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 			if (_speed <= m_walkSpeed) {
 				blendFactor = 0f;
-				animSpeedFactor = Mathf.Max(0.5f, _speed / m_walkSpeed);
+				animSpeedFactor = Mathf.Max(m_minPlaybakSpeed, _speed / m_walkSpeed);
 			} else if (_speed >= m_runSpeed) {
 				blendFactor = 1f;
-				animSpeedFactor = Mathf.Min(1.5f, _speed / m_runSpeed);
+				animSpeedFactor = Mathf.Min(m_maxPlaybakSpeed, _speed / m_runSpeed);
 			} else {
 				blendFactor = 0f + (_speed - m_walkSpeed) * ((1f - 0f) / (m_runSpeed - m_walkSpeed));
+			}
+
+			if (m_boost && m_onBoostMaxPlaybackSpeed) {
+				animSpeedFactor = m_maxPlaybakSpeed;
 			}
 
 			m_animator.SetFloat("speed", blendFactor);
@@ -210,6 +224,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		} else {
 			m_animator.SetBool("move", false);
 			m_animator.speed = 1f;
+		}
+	}
+
+	public void Boost(bool _boost) {
+		if (m_panic)
+			return;
+
+		if (m_boost != _boost) {
+			m_boost = _boost;
 		}
 	}
 
@@ -274,8 +297,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected virtual void OnSpecialAnimationEnter(SpecialAnims _anim) {}
 	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {}
 
-	public void Die(bool _eaten = false) 
-	{
+	public void Die(bool _eaten = false) {
 		if (m_explosionParticles.name != "") {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
@@ -287,8 +309,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	public void Burn()
-	{
+	public void Burn() {
 		m_animator.enabled = false;
 	}
 }

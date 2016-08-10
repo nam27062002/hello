@@ -55,7 +55,7 @@ Shader "Hungry Dragon/Unlit Transparent Custom Fog (Background entities & Clouds
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				// float3 normal = UnityObjectToWorldNormal(v.normal);
-				HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd);	// Fog
+				HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
 				return o;
 			} 
 			

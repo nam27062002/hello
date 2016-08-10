@@ -74,7 +74,8 @@ public class DragonTint : MonoBehaviour
 
 	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) 
 	{
-		m_damageTimer = m_damageTotalTime;
+		if ( _type == DamageType.NORMAL )
+			m_damageTimer = m_damageTotalTime;
 	}
 	
 	// Update is called once per frame

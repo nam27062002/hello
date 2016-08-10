@@ -326,7 +326,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159356}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -28.887838, y: 66.92654, z: 0.26953125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -442,14 +442,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 4
-  m_runSpeed: 8
+  m_walkSpeed: 0.2
+  m_runSpeed: 10
+  m_minPlaybakSpeed: 0.2
+  m_maxPlaybakSpeed: 3
+  m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
   m_onEatenParticles:
-  - name: PF_feathers_3D_noblood_white
+  - name: PF_feathers_3D_noblood_green
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_explosionParticles:
@@ -502,23 +506,26 @@ MonoBehaviour:
   m_motion:
     m_stickToGround: 0
     m_walkOnWalls: 0
+    m_mass: 3
     m_defaultUpVector: 0
-    m_orientationSpeed: 2
+    m_orientationSpeed: 120
     m_faceDirection: 1
-    m_facePlayer: 1
-    m_limitVerticalRotation: 1
+    m_facePlayer: 0
     m_limitHorizontalRotation: 0
-    m_faceLeftAngleY: -90
-    m_faceRightAngleY: 90
+    m_faceLeftAngle: -90
+    m_faceRightAngle: 90
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 355
+    m_faceDownAngle: 5
   m_railSeparation:
     min: 0.5
     max: 1
   m_enableSensor: 1
   m_sensor:
-    m_minRadius: 4
-    m_maxRadius: 4.5
-    m_angle: 360
-    m_angleOffset: 0
+    m_minRadius: 0
+    m_maxRadius: 8
+    m_senseAbove: 1
+    m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_senseDelay:
       min: 0
@@ -543,8 +550,8 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","componentType":"AI.Behaviour.Wander","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","componentType":"AI.Behaviour.Evade","editorFolded":false},{"changeLeaderTime":15,"separation":2,"dataType":"AI.Behaviour.FlockData","componentType":"AI.Behaviour.Flock","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","componentType":"AI.Behaviour.FollowLeader","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 3
+  m_serializedJson: '[{"speed":2,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":11,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":15,"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":2,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 10
   m_avoidCollisions: 1
 --- !u!114 &11473230
 MonoBehaviour:
@@ -565,19 +572,22 @@ SkinnedMeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 155516}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 9176f5222aa7948898b709ffb9fca480, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -587,6 +597,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: b37809ea188a0492995660d77c542ac5, type: 3}
   m_Bones:
   - {fileID: 415758}

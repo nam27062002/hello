@@ -20,8 +20,12 @@ namespace AI {
 				return new FleeData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(FleeData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (FleeData)m_pilot.GetComponentData<Flee>();
+				m_data = m_pilot.GetComponentData<FleeData>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
 			}

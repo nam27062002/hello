@@ -74,7 +74,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					o.blendValue = (o.blendValue * 2) - 1;
 
 					float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-					HG_TRANSFER_FOG(o, worldPos, _FogStart, _FogEnd);	// Fog
+					HG_TRANSFER_FOG(o, worldPos, _FogStart, _FogEnd, _FogColor);	// Fog
 					HG_TRANSFER_DARKEN(o, worldPos);
 
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows

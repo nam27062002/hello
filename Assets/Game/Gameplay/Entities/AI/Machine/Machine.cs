@@ -6,13 +6,10 @@ namespace AI {
 		/**************/
 		/*			  */
 		/**************/
-
-		[SeparatorAttribute]
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
 		[SerializeField] private MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
 
-		[SeparatorAttribute]
 		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
@@ -41,10 +38,13 @@ namespace AI {
 		private bool m_willPlaySpawnSound;
 		private bool m_willPlayEatenSound;
 
-		public Vector3 position { get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } }
-		public Vector3 target	{ get { return m_pilot.target; } }
-		public Vector3 direction { get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Vector3 upVector  { get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
+									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } 
+								}
+
+		public Vector3 target	 { 	get { return m_pilot.target; } }
+		public Vector3 direction { 	get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
+		public Vector3 upVector  { 	get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
 
 		public Transform enemy { 
 			get {
@@ -65,6 +65,10 @@ namespace AI {
 			m_viewControl = GetComponent<ViewControl>();
 			m_collider = GetComponent<Collider>();
 
+			m_motion.Attach(this, m_entity, m_pilot);
+			m_sensor.Attach(this, m_entity, m_pilot);
+			m_edible.Attach(this, m_entity, m_pilot);
+			m_inflammable.Attach(this, m_entity, m_pilot);
 
 			m_signals = new Signals(this);
 
@@ -96,6 +100,9 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.Chewing, SignalTriggers.OnChewing);
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.OnDestroyed);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.FallDown, SignalTriggers.OnFallDown);
+			m_signals.SetOnDisableTrigger(Signals.Type.FallDown, SignalTriggers.OnGround);
 		}
 
 		void OnEnable() {
@@ -107,17 +114,10 @@ namespace AI {
 			LeaveGroup();
 		}
 
-		public void Spawn(Spawner _spawner) {
-			m_motion.Attach(this, m_entity, m_pilot);
+		public void Spawn(ISpawner _spawner) {
 			m_motion.Init();
-
-			m_sensor.Attach(this, m_entity, m_pilot);
 			m_sensor.Init();
-
-			m_edible.Attach(this, m_entity, m_pilot);
 			m_edible.Init();
-
-			m_inflammable.Attach(this, m_entity, m_pilot);
 			m_inflammable.Init();
 
 			if (m_collider != null) m_collider.enabled = true;

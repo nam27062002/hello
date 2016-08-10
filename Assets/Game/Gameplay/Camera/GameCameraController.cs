@@ -75,6 +75,7 @@ public class GameCameraController : MonoBehaviour {
 
 	// Camera bounds
 	private FastBounds2D m_frustum = new FastBounds2D();
+	private FastBounds2D m_backgroundWorldBounds = new FastBounds2D();
 	private FastBounds2D m_activationMin = new FastBounds2D();
 	public FastBounds2D activationMinRect { get { return m_activationMin; }}
 	private FastBounds2D m_activationMax = new FastBounds2D();
@@ -507,18 +508,34 @@ public class GameCameraController : MonoBehaviour {
 		return !m_activationMin.Intersects(_bounds) && m_activationMax.Intersects(_bounds);
 	}
 
+	public bool IsInsideBackgroundActivationArea(Vector3 _point) {
+		return m_backgroundWorldBounds.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundActivationArea(Bounds _bounds) {
+		return m_backgroundWorldBounds.Intersects(_bounds);
+	}
+
 	public bool IsInsideDeactivationArea(Vector3 _point) {
 		_point.z = 0;
 		return !m_deactivation.Contains(_point);
 	}
 
 	public bool IsInsideDeactivationArea(Bounds _bounds) {
+		return !m_backgroundWorldBounds.Intersects(_bounds);
+	}
+
+
+	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
+		return !m_backgroundWorldBounds.Contains(_point);
+	}
+
+	public bool IsInsideBackgroundDeactivationArea(Bounds _bounds) {
 		Vector3 center = _bounds.center;
 		center.z = 0;
 		_bounds.center = center;
 		return !m_deactivation.Intersects(_bounds);
 	}
-
 
 	public bool IsInsideFrustrum( Vector3 _point)
 	{
@@ -550,19 +567,33 @@ public class GameCameraController : MonoBehaviour {
 		cameraRays[3] = m_camera.ScreenPointToRay(new Vector3(0.0f, m_camera.pixelHeight, z));
 		
 		// generate two world bounds, one for z=0, one for background spawners
-		Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, 0.0f));
-		Vector3[] pts = new Vector3[4];
-		for(int i=0; i<4; i++)
+		for(int j=0; j<2; j++)
 		{
-			Vector3? intersect = Util.RayPlaneIntersect(cameraRays[i], plane);
-			if(intersect != null)
+			bool bg = (j==1);
+			
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));
+			Vector3[] pts = new Vector3[4];
+			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_frustum;
+			
+			for(int i=0; i<4; i++)
 			{
-				pts[i] = (Vector3)intersect;
-				if(i == 0)	// initialize bounds with first point and zero size
-					m_frustum.Set(pts[i].x, pts[i].y, 0.0f, 0.0f);
-				else
-					m_frustum.Encapsulate(ref pts[i]);
+				Vector3? intersect = Util.RayPlaneIntersect(cameraRays[i], plane);
+				if(intersect != null)
+				{
+					pts[i] = (Vector3)intersect;
+					if(i == 0)	// initialize bounds with first point and zero size
+						bounds.Set(pts[i].x, pts[i].y, 0.0f, 0.0f);
+					else
+						bounds.Encapsulate(ref pts[i]);
+				}
 			}
+			
+			#if DEBUG_DRAW_BOUNDS
+			DebugDraw.DrawLine(pts[0], pts[1]);
+			DebugDraw.DrawLine(pts[1], pts[2]);
+			DebugDraw.DrawLine(pts[2], pts[3]);
+			DebugDraw.DrawLine(pts[3], pts[0]);
+			#endif
 		}
 
 

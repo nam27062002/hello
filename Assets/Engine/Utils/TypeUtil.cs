@@ -235,42 +235,44 @@ public static class TypeUtil {
 			}
 
 			object value = field.GetValue(_obj);
-			System.Type valueType = value.GetType();
+			if (value != null) {
+				System.Type valueType = value.GetType();
 
-			if(value is IEnumerable && valueType != typeof(string)) {
-				System.Type listItemType;
-				if(valueType.IsArray) {
-					listItemType = valueType.GetElementType();
-				}
-				else {
-					listItemType = valueType.GetGenericArguments()[0];
-				}
-
-				bool isClassType = listItemType.IsClass && listItemType != typeof(string);
-				bool isGeneric = listItemType.IsGenericType;
-				bool isArray = listItemType.IsArray;
-
-				List<object> list = new List<object>();
-				IEnumerator enumerator = (value as IEnumerable).GetEnumerator();
-				while(enumerator.MoveNext()) {
-					object listItem = enumerator.Current;
-					if(isClassType || isGeneric || isArray) {
-						listItem = GetData(listItem);
+				if(value is IEnumerable && valueType != typeof(string)) {
+					System.Type listItemType;
+					if(valueType.IsArray) {
+						listItemType = valueType.GetElementType();
+					}
+					else {
+						listItemType = valueType.GetGenericArguments()[0];
 					}
 
-					list.Add(listItem);
-				}
-				value = list;
-			}
-			else if(valueType.IsClass && valueType != typeof(string)) {
-				value = GetData(value);
-			}
-			else if(valueType.IsEnum) {
-				// Lets save Enums as integers. May want an option to save as strings?
-				value = (int)value;
-			}
+					bool isClassType = listItemType.IsClass && listItemType != typeof(string);
+					bool isGeneric = listItemType.IsGenericType;
+					bool isArray = listItemType.IsArray;
 
-			data[fieldName] = value;
+					List<object> list = new List<object>();
+					IEnumerator enumerator = (value as IEnumerable).GetEnumerator();
+					while(enumerator.MoveNext()) {
+						object listItem = enumerator.Current;
+						if(isClassType || isGeneric || isArray) {
+							listItem = GetData(listItem);
+						}
+
+						list.Add(listItem);
+					}
+					value = list;
+				}
+				else if(valueType.IsClass && valueType != typeof(string)) {
+					value = GetData(value);
+				}
+				else if(valueType.IsEnum) {
+					// Lets save Enums as integers. May want an option to save as strings?
+					value = (int)value;
+				}
+
+				data[fieldName] = value;
+			}
 		}
 
 		return data;

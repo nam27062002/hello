@@ -23,8 +23,12 @@ namespace AI {
 				return new MineData();
 			}
 
+			public override System.Type GetDataType() {
+				return typeof(MineData);
+			}
+
 			protected override void OnInitialise() {
-				m_data = (MineData)m_pilot.GetComponentData<Mine>();
+				m_data = m_pilot.GetComponentData<MineData>();
 				m_originalPostion = m_machine.position;
 			}
 

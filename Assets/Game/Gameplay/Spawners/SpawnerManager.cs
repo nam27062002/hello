@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
-	private static readonly float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
+	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
+	public const float BACKGROUND_LAYER_Z = 45f;
 
 	private List<ISpawner> m_spawners = null;
 	private QuadTree<ISpawner> m_spawnersTree = null;
