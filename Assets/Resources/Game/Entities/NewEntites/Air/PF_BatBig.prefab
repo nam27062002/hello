@@ -481,12 +481,12 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 120
-    m_faceDirection: 1
+    m_faceDirection: 0
     m_facePlayer: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
+    m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_railSeparation:
@@ -540,13 +540,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: c760dbb27a96d47638f54e858ef575d3, type: 2}
+  m_brainResource: {fileID: 11400000, guid: dad1c7bb0c1fe428095688a1d8608b84, type: 2}
   m_speedFactorRange:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":10,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 2
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":10,"arrivalRadius":1,"attackPoint":"attack_0","dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"speed":6,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"time":5,"retreatTime":5,"dataType":"AI.Behaviour.GrabAndBiteData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
 --- !u!114 &11450964
 MonoBehaviour:
