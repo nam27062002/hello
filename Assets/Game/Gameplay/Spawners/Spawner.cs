@@ -310,7 +310,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 		uint rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			Entity entity = m_entities[i].GetComponent<Entity>();
+			Debug.Assert(entity != null, "Entity prefab at spawner " + this.name + " doesn't have a Entity component!");
+
 			AI.AIPilot pilot = m_entities[i].GetComponent<AI.AIPilot>();
+			Debug.Assert(pilot != null, "Entity prefab at spawner " + this.name + " doesn't have a Pilot component!");
 			pilot.guideFunction = m_guideFunction;
 
 			Vector3 pos = transform.position;
