@@ -1,12 +1,36 @@
+// SpawnerManager.cs
+// Hungry Dragon
+// 
+// Created by Marc Saña Forrellach, Alger Ortín Castellví
+// Copyright (c) 2016 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections.Generic;
 
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
+/// <summary>
+/// Singleton to manage all the spawners in a level in an efficient way.
+/// </summary>
 public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
 	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
 	public const float BACKGROUND_LAYER_Z = 45f;
 
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Spawners collection
 	private List<ISpawner> m_spawners = null;
 	private QuadTree<ISpawner> m_spawnersTree = null;
+
+	// Internal logic
 	private bool m_enabled = false;
 	private float m_updateTimer = 0f;
 
@@ -14,58 +38,42 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 	private GameCameraController m_camera = null;
 	private GameCamera m_newCamera = null;
 
-	// Internal vars
+	// Detection area
 	private FastBounds2D m_minRect = null;	// From the game camera
 	private FastBounds2D m_maxRect = null;
 	private Rect m_subRect = new Rect();
 	private List<ISpawner> m_selectedSpawners = new List<ISpawner>();
 
-	void Awake() {
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Inititalization.
+	/// </summary>
+	private void Awake() {
 		m_spawners = new List<ISpawner>();
-		m_spawnersTree = new QuadTree<ISpawner>(-600f, -100f, 1000f, 400f);		// [AOC] TODO!! Hardcoded values
+
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
-	public void Register(ISpawner _spawner) {
-		m_spawners.Add(_spawner);
-		m_spawnersTree.Insert(_spawner);
-		_spawner.Initialize();
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
-	public void Unregister(ISpawner _spawner) {
-		m_spawners.Remove(_spawner);
-		m_spawnersTree.Remove(_spawner);
-	}
-
-	public void EnableSpawners() {
-		// This is called at the start of the game, so use it for other initializations as well
-
-		// Set flag
-		m_enabled = true;
-
-		// Make sure camera reference is valid
-		// Spawners are only used in the game and level editor scenes, so we can be sure that both game camera and game scene controller will be present
-		Camera gameCamera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
-		m_camera = gameCamera.GetComponent<GameCameraController>();
-		m_newCamera = gameCamera.GetComponent<GameCamera>();
-	}
-
-	public void DisableSpawners() {
-		// This is called at the end of the game, so use it for other finalizations as well
-
-		// Clear spawners
-		m_enabled = false;
-		for (int i = 0; i < m_spawners.Count; i++) {
-			m_spawners[i].ForceRemoveEntities();
-		}
-
-		// Drop camera reference
-		m_camera = null;
-		m_newCamera = null;
-	}
-
-	void Update() {
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
 		// Only if enabled!
 		if(!m_enabled) return;
+		if(m_spawnersTree == null) return;
 
 		// Update timer (optimization to avoid performing the update every frame)
 		// Pre-optimization: ~10% CPU usage, 36-39 FPS
@@ -151,12 +159,103 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 		}
 	}
 
-	public void OnDrawGizmosSelected() {
-		m_spawnersTree.DrawGizmos(Colors.yellow);
+	//------------------------------------------------------------------------//
+	// PUBLIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Add a spawner to the manager.
+	/// </summary>
+	/// <param name="_spawner">The spawner to be added.</param>
+	public void Register(ISpawner _spawner) {
+		m_spawners.Add(_spawner);
+		if(m_spawnersTree != null) m_spawnersTree.Insert(_spawner);
+		_spawner.Initialize();
+	}
 
+	/// <summary>
+	/// Remove a spawner from the manager.
+	/// </summary>
+	/// <param name="_spawner">The spawner to be removed.</param>
+	public void Unregister(ISpawner _spawner) {
+		m_spawners.Remove(_spawner);
+		if(m_spawnersTree != null) m_spawnersTree.Remove(_spawner);
+	}
+
+	/// <summary>
+	/// Enable all spawners in the manager.
+	/// </summary>
+	public void EnableSpawners() {
+		// Set flag
+		m_enabled = true;
+	}
+
+	/// <summary>
+	/// Disable all spawners in the manager.
+	/// </summary>
+	public void DisableSpawners() {
+		// Clear spawners
+		m_enabled = false;
+		for (int i = 0; i < m_spawners.Count; i++) {
+			m_spawners[i].ForceRemoveEntities();
+		}
+		m_selectedSpawners.Clear();
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Draw helper debug stuff.
+	/// </summary>
+	public void OnDrawGizmosSelected() {
+		// Quadtree grid
+		if(m_spawnersTree != null) {
+			m_spawnersTree.DrawGizmos(Colors.yellow);
+		}
+
+		// Selected spawners
 		Gizmos.color = Colors.WithAlpha(Colors.yellow, 1.0f);
 		for(int i = 0; i < m_selectedSpawners.Count; i++) {
 			Gizmos.DrawSphere(m_selectedSpawners[i].transform.position, 0.5f);
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A new level was loaded.
+	/// </summary>
+	private void OnLevelLoaded() {
+		// Make sure camera reference is valid
+		// Spawners are only used in the game and level editor scenes, so we can be sure that both game camera and game scene controller will be present
+		Camera gameCamera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
+		m_camera = gameCamera.GetComponent<GameCameraController>();
+		m_newCamera = gameCamera.GetComponent<GameCamera>();
+
+		// Create and populate QuadTree
+		// Get map bounds!
+		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
+		Rect bounds = data.mapCameraBounds;
+		m_spawnersTree = new QuadTree<ISpawner>(bounds.x, bounds.y, bounds.width, bounds.height);
+		for(int i = 0; i < m_spawners.Count; i++) {
+			m_spawnersTree.Insert(m_spawners[i]);
+		}
+	}
+
+	/// <summary>
+	/// The game has ended.
+	/// </summary>
+	private void OnGameEnded() {
+		// Clear QuadTree
+		m_spawnersTree = null;
+		m_selectedSpawners.Clear();
+
+		// Drop camera references
+		m_camera = null;
+		m_newCamera = null;
+
+		// Make sure manager is disabled
+		m_enabled = false;
 	}
 }

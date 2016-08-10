@@ -115,6 +115,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 		gameObject.SetActive(false);
 	}
 
+	private void OnDestroy() {
+		SpawnerManager.instance.Unregister(this);
+	}
+
 	public void Initialize() {
 		m_respawnTime = -1;
 		m_respawnCount = 0;

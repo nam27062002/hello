@@ -5,8 +5,6 @@ Shader "Hungry Dragon/Skybox/Dome Skybox" {
 Properties {
 	_MainTex ("Base layer (RGB)", 2D) = "white" {}
 	_DetailTex ("2nd layer (RGB)", 2D) = "white" {}
-	_Scroll2X ("2nd layer Scroll speed X", Float) = 1.0
-	_Color("Color", Color) = (1,1,1,1)
 }
 
 SubShader {

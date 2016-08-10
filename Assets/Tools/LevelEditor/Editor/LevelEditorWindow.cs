@@ -83,6 +83,7 @@ namespace LevelEditor {
 		public void OnEnable() {
 			// Make sure we have the latest definitions loaded
 			ContentManager.InitContent();
+
 			// We must detect when application goes to play mode and back, so subscribe to the event
 			EditorApplication.playmodeStateChanged += OnPlayModeChanged;
 
@@ -139,6 +140,9 @@ namespace LevelEditor {
 			// Make sure we have enough room for asset previews
 			AssetPreview.SetPreviewTextureCacheSize(500);	// Increase if problems happen
 
+			// Close any non-editable scenes
+			CloseNonEditableScenes();
+
 			// Store scene name
 			m_sceneName = EditorSceneManager.GetActiveScene().name;
 
@@ -155,6 +159,10 @@ namespace LevelEditor {
 			// If editor scene was not loaded, do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
 			if(!levelEditorScene.isLoaded) {
+				// Close any non-editable scenes
+				CloseNonEditableScenes();
+
+				// Open the scene
 				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
 			}
 		}
@@ -166,6 +174,46 @@ namespace LevelEditor {
 			// Just do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
 			EditorSceneManager.CloseScene(levelEditorScene, true);
+		}
+
+		/// <summary>
+		/// Close any open scene that doesn't have the "Level" component.
+		/// </summary>
+		public void CloseNonEditableScenes() {
+			// Close any "non-editable" open scene (aka no Level object)
+			List<Scene> scenesToRemove = new List<Scene>();
+			for(int i = 0; i < EditorSceneManager.sceneCount; i++) {
+				Scene sc = EditorSceneManager.GetSceneAt(i);
+
+				// Skip if it's the level editor scene!
+				if(sc.path == EDITOR_SCENE_PATH) continue;
+
+				// Look for the Level component at any point in the scene hierarchy
+				Level level = null;
+				foreach(GameObject go in sc.GetRootGameObjects()) {
+					// Does this root object contain a Level component?
+					level = go.FindComponentRecursive<Level>();
+					if(level != null) {
+						break;	// Check next scene
+					}
+				}
+
+				// If the scene didn't contain any Level object, close it
+				if(level == null) {
+					scenesToRemove.Add(sc);
+				}
+			}
+
+			// We always need at least one scene, so if none of the current scenes are valid, open the level editor scene before removing them
+			if(scenesToRemove.Count == EditorSceneManager.sceneCount) {
+				// Open the scene
+				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
+			}
+
+			// Remove non-editable scenes
+			for(int i = 0; i < scenesToRemove.Count; i++) {
+				EditorSceneManager.CloseScene(scenesToRemove[i], true);
+			}
 		}
 
 		//------------------------------------------------------------------//
