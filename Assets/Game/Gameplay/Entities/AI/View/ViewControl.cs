@@ -221,10 +221,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 			m_animator.SetFloat("speed", blendFactor);
 			m_animator.SetBool("move", true);
-			m_animator.speed = animSpeedFactor;
+			m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
 		} else {
 			m_animator.SetBool("move", false);
-			m_animator.speed = 1f;
+			m_animator.speed = Mathf.Lerp(m_animator.speed, 1f, Time.deltaTime * 2f);
 		}
 	}
 

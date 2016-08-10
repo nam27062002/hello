@@ -107,7 +107,7 @@ namespace AI {
 						break;
 
 					case IdleState.Hang_idle:
-						m_pilot.SetMoveSpeed(0f);
+						m_pilot.SetMoveSpeed(0f, false);
 						m_timer = m_data.restTime.GetRandom();
 						break;
 
@@ -119,7 +119,7 @@ namespace AI {
 
 					case IdleState.Normal:
 						m_target = m_startPosition;
-						m_pilot.SetMoveSpeed(0f);
+						m_pilot.SetMoveSpeed(0f, false);
 						m_pilot.SetDirection(new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-0.5f, -1f)), true);
 						break;
 				}

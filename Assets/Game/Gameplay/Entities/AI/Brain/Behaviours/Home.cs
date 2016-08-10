@@ -10,6 +10,11 @@ namespace AI {
 
 		[CreateAssetMenu(menuName = "Behaviour/Home")]
 		public class Home : StateComponent {		
+			
+			[StateTransitionTrigger]
+			private static string OnBackAtHome = "onBackAtHome";
+
+
 			private HomeData m_data;
 			private bool m_alertRestoreValue;
 
@@ -42,6 +47,7 @@ namespace AI {
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
 				if (dSqr < 1f) {
 					m_machine.SetSignal(Signals.Type.BackToHome, false);
+					Transition(OnBackAtHome);
 				}
 			}
 		}
