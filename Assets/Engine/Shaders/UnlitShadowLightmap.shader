@@ -10,16 +10,10 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-
-		// FOG
-		_FogColor ("Fog Color", Color) = (0,0,0,0)
-		_FogStart( "Fog Start", float ) = 0
-		_FogEnd( "Fog End", float ) = 100
-
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" "Queue" = "Geometry"}
 		LOD 100
 		
 		Pass {  

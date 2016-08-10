@@ -5,11 +5,6 @@ Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-
-		// FOG
-		_FogColor ("Fog Color", Color) = (0,0,0,0)
-		_FogStart( "Fog Start", float ) = 0
-		_FogEnd( "Fog End", float ) = 100
 	}
 	SubShader
 	{

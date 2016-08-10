@@ -10,12 +10,6 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Transparent (On Line Decoratio
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-
-		// FOG
-		_FogColor ("Fog Color", Color) = (0,0,0,0)
-		_FogStart( "Fog Start", float ) = 0
-		_FogEnd( "Fog End", float ) = 100
-
 	}
 
 	SubShader {
