@@ -89,16 +89,16 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 
 			//            min.x0                  min.x1
 			//              |                       |
-			//           _______________________________  _ max.y0
-			//          |               1               |
-			// min.y0 _ |_______________________________|
+			//           _______________________________  _ max.y1
+			//          |               2               |
+			// min.y1 _ |_______________________________|
 			//          |   |                       |   |
 			//          |   |                       |   |
-			//          | 4 |                       | 2 |
+			//          | 3 |                       | 1 |
 			//          |   |                       |   |
-			// min.y1 _ |___|_______________________|___|
-			//          |               3               |
-			//          |_______________________________| _ max.y1
+			// min.y0 _ |___|_______________________|___|
+			//          |               0               |
+			//          |_______________________________| _ max.y0
 			//
 			//          |                               |
 			//        max.x0                         max.x1
@@ -116,7 +116,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 			}
 
 			// Split it in 4 rectangles that the quadtree can process
-			// 1: top sub-rect
+			// 1: bottom sub-rect
 			m_subRect[0].Set(
 				m_maxRect.x0, 
 				m_maxRect.y0,
@@ -134,7 +134,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 			);
 			m_spawnersTree.AddItemsInRange(m_subRect[1], ref m_selectedSpawners);
 
-			// 3: bottom sub-rect
+			// 3: top sub-rect
 			m_subRect[2].Set(
 				m_maxRect.x0,
 				m_minRect.y1,
