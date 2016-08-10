@@ -128,9 +128,9 @@ namespace AI {
 
 		protected virtual void Update() {
 			if (IsActionPressed(Action.Boost)) {
-				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime);
+				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * 2f);
 			} else {
-				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime);
+				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime * 2f);
 			}
 		}
 	}
