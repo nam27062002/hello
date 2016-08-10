@@ -101,14 +101,14 @@ namespace AI {
 			if (m_isOutside) {
 				m_outsideTimer -= Time.deltaTime;
 				if (m_outsideTimer <= 0) {
-					if (!m_area.Contains(transform.position)) {
+					if (!m_area.Contains(m_machine.position)) {
 						m_machine.SetSignal(Signals.Type.BackToHome, true);
 					}
 					m_isOutside = false;
 				}
 			} else {			
 				// if this machine is outside his area, go back to home position (if it has this behaviour)
-				if (m_area != null && !m_area.Contains(transform.position)) {
+				if (m_area != null && !m_area.Contains(m_machine.position)) {
 					// we'll let the unit stay outside a few seconds before triggering the "back to home" state
 					m_isOutside = true;
 					m_outsideTimer = m_timeBeforeBackHome;
