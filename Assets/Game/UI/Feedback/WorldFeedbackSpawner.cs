@@ -38,6 +38,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
 	[SerializeField] private GameObject m_killFeedbackContainer = null;
 	[SerializeField] private GameObject m_escapeFeedbackContainer = null;
+	[SerializeField] private GameObject m_3dFeedbackContainer = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -67,9 +68,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 		// PC
 		if(m_pcFeedbackPrefab != null) {
-			// Use game camera as parent, that way the feedback will be positioned relative to the viewport
-			Camera gameCamera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
-			PoolManager.CreatePool(m_pcFeedbackPrefab, gameCamera.transform, 2, false);
+			// Use a dedicated camera as parent, that way the feedback will be positioned relative to the viewport
+			PoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false);
 		}
 
 		// Kill Feedback
