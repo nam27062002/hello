@@ -130,7 +130,12 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	/// <param name="_list">List where the selected items will be added.</param>
 	private void PreOrderInRange(QuadTreeNode<T> _node, Rect _rect, ref List<T> _list) {
 		if (_node.IsLeaf()) {
-			_list.AddRange(_node.items);
+			// Check intersection item by item
+			for(int i = 0; i < _node.items.Count; i++) {
+				if(_rect.Contains(_node.items[i].transform.position)) {
+					_list.Add(_node.items[i]);
+				}
+			}
 		} else {
 			for (int i = 0; i < 4; i++) {
 				if (_node.child[i].Intersects(_rect)) {

@@ -459,12 +459,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
   m_speedFactorRange:
     min: 0.65
     max: 1.15
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":3,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3,"followAheadFactor":0,"frequencyOffset":{"min":0,"max":1},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!137 &13794388
@@ -607,6 +607,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7583070c5fa34c85bd761acfb9a495f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_onlyOnce: 1
-  m_onEnable: 1
-  m_updateInterval: 1
