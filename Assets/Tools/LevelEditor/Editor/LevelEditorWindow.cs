@@ -180,6 +180,9 @@ namespace LevelEditor {
 		/// Close any open scene that doesn't have the "Level" component.
 		/// </summary>
 		public void CloseNonEditableScenes() {
+			// [AOC] DISABLE FOR NOW, LOOKS BUGGY
+			return;
+
 			// Close any "non-editable" open scene (aka no Level object)
 			List<Scene> scenesToRemove = new List<Scene>();
 			for(int i = 0; i < EditorSceneManager.sceneCount; i++) {
