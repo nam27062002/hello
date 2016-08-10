@@ -1,8 +1,9 @@
-﻿
-public interface ISpawner {
+﻿using UnityEngine;
+
+public interface ISpawner : IQuadTreeItem {
+	string name { get; }
 	void Initialize();
 	void ForceRemoveEntities();
-	void UpdateTimers();
-	void UpdateLogic();
+	void CheckRespawn();
 	void Respawn();
 }

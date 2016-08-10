@@ -76,8 +76,11 @@ public class GameCameraController : MonoBehaviour {
 	// Camera bounds
 	private FastBounds2D m_frustum = new FastBounds2D();
 	private FastBounds2D m_activationMin = new FastBounds2D();
+	public FastBounds2D activationMinRect { get { return m_activationMin; }}
 	private FastBounds2D m_activationMax = new FastBounds2D();
+	public FastBounds2D activationMaxRect { get { return m_activationMax; }}
 	private FastBounds2D m_deactivation = new FastBounds2D();
+	public FastBounds2D deactivationRect { get { return m_deactivation; }}
 
 	private Transform m_transform;
 

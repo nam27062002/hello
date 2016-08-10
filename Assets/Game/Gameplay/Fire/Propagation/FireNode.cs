@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class FireNode : MonoBehaviour {
+public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	enum State {
 		Idle,
