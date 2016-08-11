@@ -77,7 +77,7 @@ public static class DebugSettings {
 	}
 
 	public static bool newCameraSystem{
-		get { return Prefs.GetBool(NEW_CAMERA_SYSTEM, false); }
+		get { return Prefs.GetBool(NEW_CAMERA_SYSTEM, true); }	// New camera system by default
 		set { Prefs.SetBool(NEW_CAMERA_SYSTEM, value); }
 	}
 }
