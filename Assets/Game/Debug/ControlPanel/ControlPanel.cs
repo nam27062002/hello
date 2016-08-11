@@ -176,8 +176,8 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 	/// Clear all prefs.
 	/// </summary>
 	public void OnResetPrefs() {
-		// Do it!
-		Prefs.DeleteAll();
+		// Do it - only player prefs!
+		PlayerPrefs.DeleteAll();
 
 		// Refresh control panel
 		// Double toggle! xD

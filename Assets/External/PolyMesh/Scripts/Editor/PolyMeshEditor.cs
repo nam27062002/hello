@@ -590,14 +590,12 @@ public class PolyMeshEditor : Editor {
 
 			// Marker Size
 			EditorGUILayout.Space();
-			float markerSize = EditorPrefs.GetFloat(m_prefsPrefixGlobal + "concavity.markerSize", 1f);
+			float markerSize = Prefs.GetFloatEditor(m_prefsPrefixGlobal + "concavity.markerSize", 1f);
 			markerSize = EditorGUILayout.Slider("Marker Size", markerSize, 0.5f, 10f);
-			EditorPrefs.SetFloat(m_prefsPrefixGlobal + "concavity.markerSize", markerSize);
+			Prefs.SetFloatEditor(m_prefsPrefixGlobal + "concavity.markerSize", markerSize);
 
 			// Marker color
-			Color markerColor = Prefs.GetColor(m_prefsPrefixGlobal + "concavity.markerColor", Colors.WithAlpha(Colors.green, 0.5f));
-			markerColor = EditorGUILayout.ColorField("Marker Color", markerColor);
-			Prefs.SetColor(m_prefsPrefixGlobal + "concavity.markerColor", markerColor);
+			EditorGUILayoutExt.PrefField<Color>("Marker Color", m_prefsPrefixGlobal + "concavity.markerColor", Colors.WithAlpha(Colors.green, 0.5f));
 
 			// Indent back out
 			EditorGUI.indentLevel--;
@@ -740,8 +738,8 @@ public class PolyMeshEditor : Editor {
 
 		// [AOC] Draw known concavities
 		Handles.matrix = Matrix4x4.identity;
-		Handles.color = Prefs.GetColor(m_prefsPrefixGlobal + "concavity.markerColor", Colors.WithAlpha(Colors.green, 0.5f));
-		float concavityMarkerSize = Prefs.GetFloat(m_prefsPrefixGlobal + "concavity.markerSize", 1f);
+		Handles.color = Prefs.GetColorEditor(m_prefsPrefixGlobal + "concavity.markerColor", Colors.WithAlpha(Colors.green, 0.5f));
+		float concavityMarkerSize = Prefs.GetFloatEditor(m_prefsPrefixGlobal + "concavity.markerSize", 1f);
 		for(int i = 0; i < m_concavityList.Count; i++) {
 			//Handles.SphereCap(0, m_concavityList[i], Quaternion.identity, concavityMarkerSize);
 			Handles.CubeCap(0, m_concavityList[i], Quaternion.identity, concavityMarkerSize);
