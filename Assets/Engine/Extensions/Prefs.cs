@@ -52,7 +52,9 @@ public static class Prefs {
 	/// <param name="_value">The value to be stored.</param>
 	public static void Set(string _key, string _value, Mode _mode) {
 		if(_mode == Mode.EDITOR) {
+			#if UNITY_EDITOR
 			EditorPrefs.SetString(_key, _value);
+			#endif
 		} else {
 			PlayerPrefs.SetString(_key, _value);
 		}
@@ -60,7 +62,9 @@ public static class Prefs {
 
 	public static void Set(string _key, int _value, Mode _mode) {
 		if(_mode == Mode.EDITOR) {
+			#if UNITY_EDITOR
 			EditorPrefs.SetInt(_key, _value);
+			#endif
 		} else {
 			PlayerPrefs.SetInt(_key, _value);
 		}
@@ -68,7 +72,9 @@ public static class Prefs {
 
 	public static void Set(string _key, float _value, Mode _mode) {
 		if(_mode == Mode.EDITOR) {
+			#if UNITY_EDITOR
 			EditorPrefs.SetFloat(_key, _value);
+			#endif
 		} else {
 			PlayerPrefs.SetFloat(_key, _value);
 		}
@@ -158,7 +164,11 @@ public static class Prefs {
 	/// <param name="_defaultValue">The value to be returned if property was not found.</param>
 	public static string Get(string _key, string _defaultValue, Mode _mode) {
 		if(_mode == Mode.EDITOR) {
+			#if UNITY_EDITOR
 			return EditorPrefs.GetString(_key, _defaultValue);
+			#else
+			return _defaultValue;
+			#endif
 		} else {
 			return PlayerPrefs.GetString(_key, _defaultValue);
 		}
@@ -166,7 +176,11 @@ public static class Prefs {
 
 	public static int Get(string _key, int _defaultValue, Mode _mode) {
 		if(_mode == Mode.EDITOR) {
+			#if UNITY_EDITOR
 			return EditorPrefs.GetInt(_key, _defaultValue);
+			#else
+			return _defaultValue;
+			#endif
 		} else {
 			return PlayerPrefs.GetInt(_key, _defaultValue);
 		}
@@ -174,7 +188,11 @@ public static class Prefs {
 
 	public static float Get(string _key, float _defaultValue, Mode _mode) {
 		if(_mode == Mode.EDITOR) {
+			#if UNITY_EDITOR
 			return EditorPrefs.GetFloat(_key, _defaultValue);
+			#else
+			return _defaultValue;
+			#endif
 		} else {
 			return PlayerPrefs.GetFloat(_key, _defaultValue);
 		}
