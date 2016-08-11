@@ -206,7 +206,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 				m_animator.SetBool("eat", false);
 			}
 
-			TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+			if ( m_holdingPrey == null )
+				TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 		}
 	}
 
