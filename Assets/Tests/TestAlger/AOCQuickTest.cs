@@ -35,7 +35,6 @@ public class AOCQuickTest : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	public LayerMask m_mask;
-	[SerializeField] private TestClass m_testClass = new TestClass();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -59,6 +58,10 @@ public class AOCQuickTest : MonoBehaviour {
 	/// </summary>
 	void Update() {
 		
+	}
+
+	public void OnRestart() {
+		Debug.Log("RESTART");
 	}
 
 	/// <summary>
@@ -91,10 +94,4 @@ public class AOCQuickTest : MonoBehaviour {
 	private void OnDrawGizmos() {
 		
 	}
-}
-
-[System.Serializable]
-public class TestClass {
-	[SerializeField] private float f1 = 0f;
-	[SerializeField] private float f2 = 10f;
 }

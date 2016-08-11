@@ -37,9 +37,6 @@ public class AOCQuickTestEditor : Editor {
 		// Default
 		DrawDefaultInspector();
 
-		SerializedProperty p = serializedObject.FindProperty("m_testClass");
-		EditorGUILayout.PropertyField(p, true);
-
 		// Test button
 		EditorGUILayout.Space();
 		if(GUILayout.Button("TEST", GUILayout.Height(50))) {

@@ -68,6 +68,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 
 		for( int i = 0; i<m_fogNodes.Length; i++ )
 		{
+			m_fogNodes[i].used = false;
 			Vector2 pos = (Vector2)position;
 			Vector2 nodePos = (Vector2)m_fogNodes[i].transform.position;
 			// float magnitude = (position - m_fogNodes[i].transform.position).sqrMagnitude;
@@ -107,6 +108,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 			if ( m_resultNodes[i].m_node != null )
 			{
 				totalDistance += m_resultNodes[i].m_distance;
+				m_resultNodes[i].m_node.used = true;
 			}
 		}
 
@@ -116,7 +118,8 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 		{
 			if ( m_resultNodes[i].m_node != null )
 			{
-				m_resultNodes[i].m_weight = totalDistance - m_resultNodes[i].m_distance;
+				float w = Mathf.Pow(totalDistance - m_resultNodes[i].m_distance, NODES_TO_TAKE_INTO_ACCOUNT);
+				m_resultNodes[i].m_weight = w;
 				totalWeight += m_resultNodes[i].m_weight;
 			}
 		}
@@ -136,10 +139,8 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 		return result;
 	}
 
-	bool m_drawGizmos = false;
 	void OnDrawGizmos()
 	{
-		m_drawGizmos = false;
 #if UNITY_EDITOR
 		// Check if fog node selected
 		if ( m_fogNodes != null )
@@ -148,9 +149,12 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 			if (UnityEditor.Selection.Contains( m_fogNodes[i].gameObject ) )
 			{
 				DrawGizmos();
-				break;
+				return;
 			}
 		}
+
+		if ( UnityEditor.Selection.activeGameObject != null && UnityEditor.Selection.activeGameObject.GetComponent<FogSetter>() != null )
+			DrawGizmos();
 #endif			
 	}
 
