@@ -21,6 +21,20 @@ using UnityEditor;
 /// </summary>
 public static class Prefs {
 	//------------------------------------------------------------------//
+	// GENERAL METHODS	 												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Removes all keys and values from the preferences. Use with caution.
+	/// </summary>
+	public static void DeleteAll() {
+		#if UNITY_EDITOR
+		EditorPrefs.DeleteAll();
+		#else
+		PlayerPrefs.DeleteAll();
+		#endif
+	}
+
+	//------------------------------------------------------------------//
 	// GENERIC SETTERS	 												//
 	//------------------------------------------------------------------//
 	/// <summary>
