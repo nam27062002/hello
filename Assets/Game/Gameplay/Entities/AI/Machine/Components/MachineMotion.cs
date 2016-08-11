@@ -247,10 +247,14 @@ namespace AI {
 			Vector3 euler = _quat.eulerAngles;
 
 			if (m_limitHorizontalRotation) {
-				if (euler.y > m_faceRightAngle) {
-					euler.y = m_faceRightAngle;
-				} else if (euler.y < m_faceLeftAngle) {
-					euler.y = m_faceLeftAngle;
+				if (m_direction.x < 0f) {
+					if (euler.y < m_faceLeftAngle) {
+						euler.y = m_faceLeftAngle;
+					}
+				} else if (m_direction.x > 0) {
+					if (euler.y > m_faceRightAngle) {
+						euler.y = m_faceRightAngle;
+					}
 				}
 			}
 
