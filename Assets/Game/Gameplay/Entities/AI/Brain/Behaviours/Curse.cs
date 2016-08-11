@@ -38,7 +38,7 @@ namespace AI {
 					}
 				}
 
-				if (m_machine.GetSignal(Signals.Type.CollisionTrigger)) {
+				if (m_machine.GetSignal(Signals.Type.Trigger)) {
 					if (m_timer <= 0f) {
 						m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.CURSE);
 						m_timer = 1.0f;
