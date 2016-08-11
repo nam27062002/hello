@@ -152,7 +152,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 			}
 		}
 
-		if ( UnityEditor.Selection.activeGameObject.GetComponent<FogSetter>() != null )
+		if ( UnityEditor.Selection.activeGameObject != null && UnityEditor.Selection.activeGameObject.GetComponent<FogSetter>() != null )
 			DrawGizmos();
 #endif			
 	}
