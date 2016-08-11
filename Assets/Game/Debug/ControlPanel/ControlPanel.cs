@@ -172,19 +172,16 @@ public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
 		}
 	}
 
-	public void OnUnlockCasablancaLevels(bool _value) {
-		List<DefinitionNode> levels= new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS, ref levels);
-		DefinitionsManager.SharedInstance.SortByProperty(ref levels, "order", DefinitionsManager.SortType.NUMERIC);
+	/// <summary>
+	/// Clear all prefs.
+	/// </summary>
+	public void OnResetPrefs() {
+		// Do it - only player prefs!
+		PlayerPrefs.DeleteAll();
 
-		for (int i = 1; i < levels.Count; i++) {
-			if (_value) {
-				levels[i].SetValue("comingSoon", "false");
-			} else {
-				levels[i].SetValue("comingSoon", "true");
-			}
-		}
-
-		Messenger.Broadcast(GameEvents.DEBUG_UNLOCK_LEVELS);
+		// Refresh control panel
+		// Double toggle! xD
+		Toggle();
+		Toggle();
 	}
 }

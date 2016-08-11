@@ -69,9 +69,9 @@ public class CPListPref : CPPrefBase {
 
 		// Update textfield selecting from the selected type
 		switch(m_type) {
-			case PrefType.INT:		m_text.text = Prefs.GetInt(id, m_intValues[m_selectedIdx]).ToString();		break;
-			case PrefType.FLOAT:	m_text.text = Prefs.GetFloat(id, m_floatValues[m_selectedIdx]).ToString();	break;
-			case PrefType.STRING:	m_text.text = Prefs.GetString(id, m_stringValues[m_selectedIdx]);			break;
+			case PrefType.INT:		m_text.text = Prefs.GetIntPlayer(id, m_intValues[m_selectedIdx]).ToString();		break;
+			case PrefType.FLOAT:	m_text.text = Prefs.GetFloatPlayer(id, m_floatValues[m_selectedIdx]).ToString();	break;
+			case PrefType.STRING:	m_text.text = Prefs.GetStringPlayer(id, m_stringValues[m_selectedIdx]);			break;
 		}
 	}
 
@@ -88,17 +88,17 @@ public class CPListPref : CPPrefBase {
 		switch(m_type) {
 			case PrefType.INT: {
 				m_selectedIdx = m_selectedIdx % m_intValues.Length;
-				Prefs.SetInt(id, m_intValues[m_selectedIdx]);
+				Prefs.SetIntPlayer(id, m_intValues[m_selectedIdx]);
 			} break;
 
 			case PrefType.FLOAT: {
 				m_selectedIdx = m_selectedIdx % m_floatValues.Length;
-				Prefs.SetFloat(id, m_floatValues[m_selectedIdx]);
+				Prefs.SetFloatPlayer(id, m_floatValues[m_selectedIdx]);
 			} break;
 
 			case PrefType.STRING: {
 				m_selectedIdx = m_selectedIdx % m_stringValues.Length;
-				Prefs.SetString(id, m_stringValues[m_selectedIdx]);
+				Prefs.SetStringPlayer(id, m_stringValues[m_selectedIdx]);
 			} break;
 		}
 

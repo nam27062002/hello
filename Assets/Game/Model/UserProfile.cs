@@ -276,9 +276,9 @@ public class UserProfile
 		m_superFuryProgression = profile["superFuryProgression"].AsInt;
 
 		// Some cheats override profile settings - will be saved with the next Save()
-		if(Prefs.GetBool("skipTutorialCheat")) {
+		if(Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
-			Prefs.SetBool("skipTutorialCheat", false);
+			Prefs.SetBoolPlayer("skipTutorialCheat", false);
 		}
 
 		if ( _data.ContainsKey("dragons") )
