@@ -118,7 +118,8 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 		{
 			if ( m_resultNodes[i].m_node != null )
 			{
-				m_resultNodes[i].m_weight = totalDistance - m_resultNodes[i].m_distance;
+				float w = Mathf.Pow(totalDistance - m_resultNodes[i].m_distance, NODES_TO_TAKE_INTO_ACCOUNT);
+				m_resultNodes[i].m_weight = w;
 				totalWeight += m_resultNodes[i].m_weight;
 			}
 		}
