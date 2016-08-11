@@ -64,11 +64,11 @@ namespace AI {
 
 
 		void OnTriggerEnter(Collider _other) {
-			SetSignal(Signals.Type.CollisionTrigger, true);
+			SetSignal(Signals.Type.Trigger, true);
 		}
 
 		void OnTriggerExit(Collider _other) {
-			SetSignal(Signals.Type.CollisionTrigger, false);
+			SetSignal(Signals.Type.Trigger, false);
 		}
 		//
 

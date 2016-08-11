@@ -149,6 +149,11 @@ namespace AI {
 		void OnTriggerEnter(Collider _other) {
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
+			SetSignal(Signals.Type.Trigger, true);
+		}
+
+		void OnTriggerExit(Collider _other) {
+			SetSignal(Signals.Type.Trigger, false);
 		}
 		//
 

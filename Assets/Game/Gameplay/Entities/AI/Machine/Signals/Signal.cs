@@ -38,7 +38,8 @@
 	        Chewing, 
 			Biting,
 	        Destroyed, 
-	        CollisionTrigger,
+	        Collision,
+	        Trigger,
 			FallDown,
 
 			Count
