@@ -34,28 +34,28 @@ namespace LevelEditor {
 		//--------------------------------------------------------------------//
 		// Prefs
 		private bool simulationEnabled {
-			get { return Prefs.GetBool("LevelEditor.SimulationEnabled", true); }
-			set { Prefs.SetBool("LevelEditor.SimulationEnabled", value); }
+			get { return Prefs.GetBoolEditor("LevelEditor.SimulationEnabled", true); }
+			set { Prefs.SetBoolEditor("LevelEditor.SimulationEnabled", value); }
 		}
 
 		private float time {
-			get { return Prefs.GetFloat("LevelEditor.SimulationTime", 0f); }
-			set { Prefs.SetFloat("LevelEditor.SimulationTime", value); }
+			get { return Prefs.GetFloatEditor("LevelEditor.SimulationTime", 0f); }
+			set { Prefs.SetFloatEditor("LevelEditor.SimulationTime", value); }
 		}
 
 		private float timeMax {
-			get { return Prefs.GetFloat("LevelEditor.SimulationTimeMax", 1000f); }
-			set { Prefs.SetFloat("LevelEditor.SimulationTimeMax", Mathf.Max(value, 1f)); }	// Not less than 1
+			get { return Prefs.GetFloatEditor("LevelEditor.SimulationTimeMax", 1000f); }
+			set { Prefs.SetFloatEditor("LevelEditor.SimulationTimeMax", Mathf.Max(value, 1f)); }	// Not less than 1
 		}
 
 		private float xp {
-			get { return Prefs.GetFloat("LevelEditor.SimulationXp", 0f); }
-			set { Prefs.SetFloat("LevelEditor.SimulationXp", value); }
+			get { return Prefs.GetFloatEditor("LevelEditor.SimulationXp", 0f); }
+			set { Prefs.SetFloatEditor("LevelEditor.SimulationXp", value); }
 		}
 
 		private float xpMax {
-			get { return Prefs.GetFloat("LevelEditor.SimulationXpMax", 100000f); }
-			set { Prefs.SetFloat("LevelEditor.SimulationXpMax", Mathf.Max(value, 1f)); }	// Not less than 1
+			get { return Prefs.GetFloatEditor("LevelEditor.SimulationXpMax", 100000f); }
+			set { Prefs.SetFloatEditor("LevelEditor.SimulationXpMax", Mathf.Max(value, 1f)); }	// Not less than 1
 		}
 
 		// Non-persistent data

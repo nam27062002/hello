@@ -29,7 +29,7 @@ public static class DebugSettings {
 	public static readonly string DRAGON_DIVE			 = "DRAGON_DIVE";
 	public static readonly string DRAGON_EAT_DISTANCE_POWER_UP = "DRAGON_EAT_DISTANCE_POWER_UP";
 	public static readonly string DRAGON_SLOW_POWER_UP   = "DRAGON_SLOW_POWER_UP";
-	public static readonly string NEW_CAMERA_SYSTEM   = "NEW_CAMERA_SYSTEM";
+	public static readonly string NEW_CAMERA_SYSTEM      = "NEW_CAMERA_SYSTEM";
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -37,47 +37,47 @@ public static class DebugSettings {
 	// Mainly shortcuts, all settings can be accessed using the Prefs class
 	// Gameplay
 	public static bool invulnerable { 
-		get { return Prefs.GetBool(DRAGON_INVULNERABLE, false); }
-		set { Prefs.SetBool(DRAGON_INVULNERABLE, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_INVULNERABLE, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_INVULNERABLE, value); }
 	}
 
 	public static bool infiniteFire { 
-		get { return Prefs.GetBool(DRAGON_INFINITE_FIRE, false); }
-		set { Prefs.SetBool(DRAGON_INFINITE_FIRE, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_INFINITE_FIRE, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_INFINITE_FIRE, value); }
 	}
 
 	public static bool infiniteSuperFire { 
-		get { return Prefs.GetBool(DRAGON_INFINITE_SUPER_FIRE, false); }
-		set { Prefs.SetBool(DRAGON_INFINITE_SUPER_FIRE, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_INFINITE_SUPER_FIRE, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_INFINITE_SUPER_FIRE, value); }
 	}
 
 	public static bool infiniteBoost {
-		get { return Prefs.GetBool(DRAGON_INFINITE_BOOST, false); }
-		set { Prefs.SetBool(DRAGON_INFINITE_BOOST, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_INFINITE_BOOST, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_INFINITE_BOOST, value); }
 	}
 
 	public static bool eat {
-		get { return Prefs.GetBool(DRAGON_EAT, false); }
-		set { Prefs.SetBool(DRAGON_EAT, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_EAT, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_EAT, value); }
 	}
 
 	public static bool dive {
-		get { return Prefs.GetBool(DRAGON_DIVE, false); }
-		set { Prefs.SetBool(DRAGON_DIVE, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_DIVE, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_DIVE, value); }
 	}
 
 	public static bool eatDistancePowerUp {
-		get { return Prefs.GetBool(DRAGON_EAT_DISTANCE_POWER_UP, false); }
-		set { Prefs.SetBool(DRAGON_EAT_DISTANCE_POWER_UP, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_EAT_DISTANCE_POWER_UP, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_EAT_DISTANCE_POWER_UP, value); }
 	}
 
 	public static bool slowPowerUp {
-		get { return Prefs.GetBool(DRAGON_SLOW_POWER_UP, false); }
-		set { Prefs.SetBool(DRAGON_SLOW_POWER_UP, value); }
+		get { return Prefs.GetBoolPlayer(DRAGON_SLOW_POWER_UP, false); }
+		set { Prefs.SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
 	}
 
 	public static bool newCameraSystem{
-		get { return Prefs.GetBool(NEW_CAMERA_SYSTEM, true); }	// New camera system by default
-		set { Prefs.SetBool(NEW_CAMERA_SYSTEM, value); }
+		get { return Prefs.GetBoolPlayer(NEW_CAMERA_SYSTEM, true); }	// New camera system by default
+		set { Prefs.SetBoolPlayer(NEW_CAMERA_SYSTEM, value); }
 	}
 }
