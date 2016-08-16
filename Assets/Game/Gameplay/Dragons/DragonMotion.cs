@@ -234,7 +234,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 
 		// Movement Setup
-		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
+		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
+		m_dargonAcceleration = m_dragon.data.speedSkill.value;
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
