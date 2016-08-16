@@ -25,7 +25,7 @@ namespace AI {
 		[SerializeField] private float m_orientationSpeed = 120f;
 		[SerializeField] private bool m_faceDirection = true;
 		public bool faceDirection { get { return m_faceDirection; } set { m_faceDirection = value; } }
-		[SerializeField][HideInInspector] private bool m_facePlayer = false;
+		[SerializeField][HideInInspector] private bool m_rollRotation = false;
 
 		[SerializeField] private bool m_limitHorizontalRotation = false;
 		[SerializeField][HideInInspector] private float m_faceLeftAngle = -90f;
@@ -205,29 +205,26 @@ namespace AI {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
 			} else if (m_faceDirection && m_pilot.speed > 0.01f) {				
-				if (m_facePlayer) {
-					Vector3 right = Vector3.Cross(m_direction, m_upVector);
-					Vector3 up = Vector3.Cross(right, m_direction);
-					m_targetRotation = Quaternion.LookRotation(m_direction - (new Vector3(0, 0, 0.01f)), up); // Little hack to force the rotation to face user, 
-				} else {
-					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
-				}
+				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 
-				float angle = Vector3.Angle(Vector3.right, m_direction);
+				if (m_rollRotation) {
+					float angle = Vector3.Angle(Vector3.right, m_direction);
 
-				if (angle > 10f && angle < 90f) {
-					angle = Mathf.Min(35f, angle);
-				} else if (angle > 90f && angle < 170f) {
-					angle = Mathf.Min(35f, 180f - angle);
-				} else {
-					angle = 0f;
-				}
+					if (angle > 10f && angle < 90f) {
+						angle = Mathf.Min(35f, angle);
+					} else if (angle > 90f && angle < 170f) {
+						angle = Mathf.Min(35f, 180f - angle);
+					} else {
+						angle = 0f;
+					}
 
-				if (m_direction.x < 0f && m_direction.z > 0f
-				||  m_direction.x > 0f && m_direction.z < 0f)
-					angle *= -1;
+					if (m_direction.x < 0f && m_direction.z > 0f
+					||  m_direction.x > 0f && m_direction.z < 0f) {
+						angle *= -1;
+					}
 				
-				m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
+					m_targetRotation = Quaternion.AngleAxis(angle, m_direction) * m_targetRotation;
+				}
 
 			} else {
 				if (m_pilot.speed > 0.01f) {
@@ -237,36 +234,17 @@ namespace AI {
 
 			}
 
-			if (m_limitHorizontalRotation || m_limitVerticalRotation) {
-				m_targetRotation = LimitRotation(m_targetRotation);
-			}
-		}
-
-
-		private Quaternion LimitRotation(Quaternion _quat) {
-			Vector3 euler = _quat.eulerAngles;
-
 			if (m_limitHorizontalRotation) {
-				if (m_direction.x < 0f) {
-					if (euler.y < m_faceLeftAngle) {
-						euler.y = m_faceLeftAngle;
-					}
-				} else if (m_direction.x > 0) {
-					if (euler.y > m_faceRightAngle) {
-						euler.y = m_faceRightAngle;
-					}
-				}
+				if (m_direction.x < 0f) 	m_targetRotation = Quaternion.AngleAxis(m_faceLeftAngle, m_upVector) * m_targetRotation; 
+				else if (m_direction.x > 0f)m_targetRotation = Quaternion.AngleAxis(m_faceRightAngle, m_upVector) * m_targetRotation; 
 			}
 
-			if (m_limitVerticalRotation) {					
-				if (m_direction.y > 0.25f) {
-					euler.x = Mathf.Max(m_faceUpAngle, euler.x);
-				} else if (m_direction.y < -0.25f) {
-					euler.x = Mathf.Min(m_faceDownAngle, euler.x);
-				}
+			if (m_limitVerticalRotation) {
+				Vector3 euler = m_targetRotation.eulerAngles;
+				if (m_direction.y > 0.25f) 			euler.x = Mathf.Max(m_faceUpAngle, euler.x);
+				else if (m_direction.y < -0.25f) 	euler.x = Mathf.Min(m_faceDownAngle, euler.x);
+				m_targetRotation = Quaternion.Euler(euler);
 			}
-
-			return Quaternion.Euler(euler);
 		}
 
 		private bool CheckCollisions() {

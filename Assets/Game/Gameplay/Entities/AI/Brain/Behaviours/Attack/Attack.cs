@@ -8,6 +8,7 @@ namespace AI {
 			public int consecutiveAttacks = 3;
 			public float attackDelay = 0f;
 			public float retreatTime = 0f;
+			public bool stop = true;
 			public bool faceEnemy = true;
 			public bool faceEnemyY = false;
 			public int facing = 1;
@@ -47,7 +48,9 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
-				m_pilot.SetMoveSpeed(0, false);
+				if (m_data.stop)
+					m_pilot.SetMoveSpeed(0, true);
+
 				if (m_attacksLeft <= 0)
 					m_attacksLeft =  m_data.consecutiveAttacks;
 				m_timer = 0f;

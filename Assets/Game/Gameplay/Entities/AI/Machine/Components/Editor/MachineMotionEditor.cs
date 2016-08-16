@@ -68,7 +68,7 @@ public class MachineMotionEditor : ExtendedPropertyDrawer {
 					DrawToggleLeftAndAdvance(_property);
 					if (_property.boolValue) {
 						EditorGUI.indentLevel++;
-						DrawAndAdvance(m_rootProperty.FindPropertyRelative("m_facePlayer"));
+						DrawAndAdvance(m_rootProperty.FindPropertyRelative("m_rollRotation"));
 						EditorGUI.indentLevel--;
 					}
 				} else if (_property.name == "m_limitHorizontalRotation") {

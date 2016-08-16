@@ -1164,7 +1164,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 460
     m_faceDirection: 0
-    m_facePlayer: 0
+    m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -1254,8 +1254,8 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":5,"max":10},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":4,"max":6},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":6.5,"arrivalRadius":3.5,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":22,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_timeBeforeBackHome: 0
+  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":5,"max":10},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":4,"max":6},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":6.5,"arrivalRadius":3.5,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":22,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
 --- !u!137 &13791830
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
