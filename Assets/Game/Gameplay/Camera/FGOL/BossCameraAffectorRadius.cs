@@ -35,7 +35,7 @@ public class BossCameraAffectorRadius : MonoBehaviour
 		}
 		else
 		{
-			gameObject.layer = LayerMask.NameToLayer("PlayerOnly");
+			gameObject.layer = LayerMask.NameToLayer("Triggers");
 			m_collider.enabled = true;
 			m_collider.isTrigger = true;
 			// the lossyscale is because we don't want the value set by the designers to be affected by the scale of the parent transform.
