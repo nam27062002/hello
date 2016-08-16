@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [ExecuteInEditMode]
 public class FogManager : SingletonMonoBehaviour<FogManager>
 {
-	private FogNode[] m_fogNodes;
+	// private FogNode[] m_fogNodes;
+	private List<FogNode> m_usedFogNodes = new List<FogNode>();
+	private Rect m_getRect = new Rect();
 
 	public struct FogResult
 	{
@@ -35,10 +38,23 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 	FogNodeResult[] m_resultNodes = new FogNodeResult[NODES_TO_TAKE_INTO_ACCOUNT];
 	private bool m_ready = false;
 
-	void Start()
+	QuadTree<FogNode> m_fogNodes;
+	FogNode[] m_fogNodesArray;
+
+	private bool m_useQuadtree = false;
+
+	IEnumerator Start()
 	{
+		if ( Application.isPlaying )
+		{
+			while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
+			{
+				yield return null;
+			}
+		}
+
 		// Find all ambient nodes
-		m_fogNodes = FindObjectsOfType(typeof(FogNode)) as FogNode[];
+		RefillQuadtree();
 		m_ready = true;
 	}
 
@@ -46,9 +62,22 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 	{
 		if ( !Application.isPlaying )	
 		{
-			m_fogNodes = FindObjectsOfType(typeof(FogNode)) as FogNode[];
+			RefillQuadtree();
 			m_ready = true;	
 		}
+	}
+
+	void RefillQuadtree()
+	{
+		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
+		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
+		if(data != null) {
+			bounds = data.mapCameraBounds;
+		}
+		m_fogNodesArray = FindObjectsOfType(typeof(FogNode)) as FogNode[];
+		m_fogNodes = new QuadTree<FogNode>(bounds.x, bounds.y, bounds.width, bounds.height);
+		for( int i = 0; i<m_fogNodesArray.Length; i++ )
+			m_fogNodes.Insert( m_fogNodesArray[i] );
 	}
 
 	public bool IsReady()
@@ -66,12 +95,47 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 			m_resultNodes[i].Reset();
 		}
 
-		for( int i = 0; i<m_fogNodes.Length; i++ )
+		m_usedFogNodes.Clear();
+
+		Vector2 pos = (Vector2)position;
+		FogNode[] inRangeNodes;
+		if ( m_useQuadtree )
 		{
-			m_fogNodes[i].used = false;
-			Vector2 pos = (Vector2)position;
-			Vector2 nodePos = (Vector2)m_fogNodes[i].transform.position;
-			// float magnitude = (position - m_fogNodes[i].transform.position).sqrMagnitude;
+			int sizeMultiplier = 1;
+			float distance;
+			int validNodes = 0;
+			do
+			{
+				validNodes = 0;
+				distance = 100 * sizeMultiplier;
+				m_getRect.size = Vector2.one * distance;
+				m_getRect.center = pos;
+				inRangeNodes = m_fogNodes.GetItemsInRange( m_getRect );
+				// remove nodes not in distance
+				for( int i = 0; i<inRangeNodes.Length; i++ )
+				{
+					if ( ((Vector2)inRangeNodes[i].transform.position - pos).sqrMagnitude > (distance * distance) )
+					{
+						inRangeNodes[i] = null;
+					}
+					else
+					{
+						validNodes++;
+					}
+				}
+				sizeMultiplier++;
+			}while( validNodes < NODES_TO_TAKE_INTO_ACCOUNT );
+		}
+		else
+		{
+			inRangeNodes = m_fogNodesArray;
+		}
+		for( int i = 0; i<inRangeNodes.Length; i++ )
+		{
+			if ( inRangeNodes[i] == null )
+				continue;
+
+			Vector2 nodePos = (Vector2)inRangeNodes[i].transform.position;
 			float magnitude = (pos - nodePos).sqrMagnitude;
 			// find empty or farthest
 			int selectedIndex = -1;
@@ -96,7 +160,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 			if ( selectedIndex != -1 && magnitude < m_resultNodes[selectedIndex].m_distance)
 			{
 				m_resultNodes[selectedIndex].m_distance = magnitude;
-				m_resultNodes[selectedIndex].m_node = m_fogNodes[i];
+				m_resultNodes[selectedIndex].m_node = inRangeNodes[i];
 			}
 		}
 
@@ -108,7 +172,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 			if ( m_resultNodes[i].m_node != null )
 			{
 				totalDistance += m_resultNodes[i].m_distance;
-				m_resultNodes[i].m_node.used = true;
+				m_usedFogNodes.Add(m_resultNodes[i].m_node);
 			}
 		}
 
@@ -143,10 +207,10 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 	{
 #if UNITY_EDITOR
 		// Check if fog node selected
-		if ( m_fogNodes != null )
-		for( int i = 0; i<m_fogNodes.Length; i++ )
+		if ( m_fogNodesArray != null )
+		for( int i = 0; i<m_fogNodesArray.Length; i++ )
 		{
-			if (UnityEditor.Selection.Contains( m_fogNodes[i].gameObject ) )
+			if (UnityEditor.Selection.Contains( m_fogNodesArray[i].gameObject ) )
 			{
 				DrawGizmos();
 				return;
@@ -165,8 +229,8 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 
 	void DrawGizmos()
 	{
-		for( int i = 0; i<m_fogNodes.Length; i++ )
-			m_fogNodes[i].CustomGuizmoDraw();
+		for( int i = 0; i<m_fogNodesArray.Length; i++ )
+			m_fogNodesArray[i].CustomGuizmoDraw( m_usedFogNodes.Contains( m_fogNodesArray[i] ) );
 	}
 
 }
