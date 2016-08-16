@@ -43,6 +43,7 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) {
 				SelectTarget();
 				m_pilot.SlowDown(m_data.alwaysSlowdown); // this wander state doesn't have an idle check
+				m_pilot.SetMoveSpeed(m_data.speed); //TODO
 				m_goToIdle = false;
 			}
 
