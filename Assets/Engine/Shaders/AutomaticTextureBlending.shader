@@ -47,7 +47,6 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					LIGHTING_COORDS(2,3)
 					float2 lmap : TEXCOORD4; 
 					float blendValue : TEXCOORD5;
-					HG_DARKEN(6)
 				};
 
 				sampler2D _MainTex;
@@ -70,7 +69,6 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 
 					float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 					HG_TRANSFER_FOG(o, worldPos, _FogStart, _FogEnd, _FogColor);	// Fog
-					HG_TRANSFER_DARKEN(o, worldPos);
 
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
@@ -97,7 +95,6 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					#endif
 
 					HG_APPLY_FOG(i, col, _FogColor);	// Fog
-					HG_APPLY_DARKEN( i, col );
 					 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 					return col;
