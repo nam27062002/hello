@@ -186,9 +186,15 @@ namespace AI {
 			return m_signals.GetValue(_signal);
 		}
 
-		public void StickToCollisions(bool _value) {
+		public void UseGravity(bool _value) {
 			if (m_motion != null) {
-				m_motion.stickToGround = _value;
+				m_motion.useGravity = _value;
+			}
+		}
+
+		public void CheckCollisions(bool _value) {
+			if (m_motion != null) {
+				m_motion.checkCollisions = _value;
 			}
 		}
 

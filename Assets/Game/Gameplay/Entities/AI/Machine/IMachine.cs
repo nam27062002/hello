@@ -19,7 +19,8 @@ namespace AI {
 		void SetSignal(Signals.Type _signal, bool _activated);
 		bool GetSignal(Signals.Type _signal);
 
-		void StickToCollisions(bool _value);
+		void UseGravity(bool _value);
+		void CheckCollisions(bool _value);
 		void FaceDirection(bool _value);
 		bool IsFacingDirection();
 

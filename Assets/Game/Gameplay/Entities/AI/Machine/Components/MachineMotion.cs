@@ -15,8 +15,8 @@ namespace AI {
 			Back
 		};
 
-		[SerializeField] private bool m_stickToGround = false;
-		public bool stickToGround { get { return m_stickToGround; } set { m_stickToGround = value; } }
+		[SerializeField] private bool m_useGravity = false;
+		public bool useGravity { get { return m_useGravity; } set { m_useGravity = value; } }
 		[SerializeField] private bool m_walkOnWalls = false;
 		[SerializeField] private float m_mass = 1f;
 
@@ -36,21 +36,26 @@ namespace AI {
 		[SerializeField][HideInInspector] private float m_faceDownAngle = 40f;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		private Vector3 m_position;
-		public Vector3 position { get { return m_machine.transform.position; } set { m_machine.transform.position = m_position = value; } }
+		public bool checkCollisions { set { m_walkOnWalls = value; } }
+		
+		public Vector3 position { get { return m_machine.transform.position; } set { m_machine.transform.position = value; } }
 
 		private float m_zOffset; // if we use different rails for machines
 		public float zOffset { set { m_zOffset = value; } }
 
-		private Vector3 m_upVector;
-		public Vector3 upVector { get { return m_upVector; } set { m_upVector = value;} }
-
 		private Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
 
-		private Vector3 m_velocity;
-		private Vector3 m_gravity;
+		private Vector3 m_upVector;
+		public Vector3 upVector { get { return m_upVector; } set { m_upVector = value;} }
 
+		private Vector3 m_collisionNormal;
+
+		private Vector3 m_velocity;
+		private Vector3 m_acceleration;
+
+		private Collider m_collider;
+		private Rigidbody m_rbody;
 		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
 
@@ -64,14 +69,15 @@ namespace AI {
 		public override void Init() {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
+			m_collider = m_machine.transform.FindComponentRecursive<Collider>();
+			m_rbody = m_machine.GetComponent<Rigidbody>();
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");
 
-			m_position = m_machine.transform.position;
 			m_rotation = m_machine.transform.rotation;
 			m_targetRotation = m_rotation;
 
-			if (m_walkOnWalls) m_stickToGround = true;
+			if (m_walkOnWalls) m_useGravity = true;
 
 			switch (m_defaultUpVector) {
 				case UpVector.Up: 		m_upVector = Vector3.up; 		break;
@@ -83,7 +89,9 @@ namespace AI {
 			}
 
 			m_velocity = Vector3.zero;
-			m_gravity = Vector3.zero;
+			m_acceleration = Vector3.zero;
+			m_collisionNormal = Vector3.up;
+
 			if (m_mass < 0f) {
 				m_mass = 0f;
 			}
@@ -102,53 +110,52 @@ namespace AI {
 			}
 
 			if (m_pilot != null) {
+				// "Physics" updates
 				Vector3 impulse = (m_pilot.impulse - m_velocity);
 				impulse /= m_mass; //mass
 				m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
 				m_direction = m_pilot.direction;
 
-				m_viewControl.NavigationLayer(m_pilot.impulse);
+				if (m_walkOnWalls) {
+					CheckWalkOnWallsCollisions();
+				}
 
+				if (m_useGravity) {
+					if (IsGrounded()) {
+						m_acceleration = Vector3.zero;
+					} else {
+						m_acceleration += -m_collisionNormal * 98f * m_mass * Time.deltaTime;
+					}
+				}
+
+				m_rbody.velocity = m_velocity + m_acceleration * Time.deltaTime;
+
+
+
+				// machine should face the same direction it is moving
+				UpdateOrientation();
+				//Aiming!!
+				if (m_eye != null) {
+					UpdateAim();
+				}
+				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+
+				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
+				m_machine.transform.rotation = m_rotation;
+
+				// View updates
 				UpdateAttack();
 
-				//m_position += (m_velocity + m_gravity) * Time.deltaTime;
+				m_viewControl.NavigationLayer(m_pilot.impulse);
+
 				if (m_pilot.speed > 0.01f) {
-					m_viewControl.Move(m_pilot.impulse.magnitude); //???
+					m_viewControl.Move(m_pilot.speed);//m_pilot.impulse.magnitude); //???
 				} else {
 					m_viewControl.Move(0f);
 				}
 
 				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
-
-			/*	if (m_stickToGround) {
-					bool isOnCollider = CheckCollisions();
-					if (!isOnCollider) {
-						m_gravity.y -= 0.98f;
-						m_machine.SetSignal(Signals.Type.FallDown, true);
-					} else {
-						m_gravity = Vector3.zero;
-						m_machine.SetSignal(Signals.Type.FallDown, false);
-					}
-				}
-*/
-				UpdateOrientation();
-
-				//Vector3 pos = m_position;
-				//pos.z += m_zOffset;
-				//m_machine.transform.position = pos;
-				m_machine.GetComponent<Rigidbody>().velocity = m_velocity;
-
-				//Aiming!!
-				if (m_eye != null) {
-					UpdateAim();
-				}
-
-				// machine should face the same direction it is moving
-				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
-
-				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
-				m_machine.transform.rotation = m_rotation;
 			}
 		}
 
@@ -248,60 +255,57 @@ namespace AI {
 			}
 		}
 
-		private bool CheckCollisions() {
-			// teleport to ground
+		private bool IsGrounded() {
+			RaycastHit hit;
+			bool hasHit = Physics.Raycast(m_collider.bounds.center, -m_collisionNormal, out hit, m_collider.bounds.extents.y + 2f, m_groundMask);
+
+			if (hasHit) {
+				m_machine.SetSignal(Signals.Type.FallDown, hit.distance > 2f);
+			} else {
+				m_machine.SetSignal(Signals.Type.FallDown, true);
+			}
+			
+			return hasHit && hit.distance <= (m_collider.bounds.extents.y + 0.01f);
+		}
+
+		private bool CheckWalkOnWallsCollisions() {			
 			Vector3 normal = Vector3.up;
 			Vector3 up = m_upVector;
 
-			Vector3 start = m_position + (up * 3f);
-			Vector3 end = m_position - (up * 3f);
-
+			Vector3 start = position + (up * 3f);
+			Vector3 end = position - (up * 3f);
+		
 			RaycastHit hit;
-			bool hasHit = Linecast(start, end, true, out hit);
+			bool hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
 			Debug.DrawLine(start, end, Color.black);
 
-			if (m_walkOnWalls) {
-				if (!hasHit) {
-					start = m_position - (up * 3f);
-					end = m_position + (up * 3f);
-					hasHit = Linecast(start, end, true, out hit);
-				}
-
-				if (hasHit) {
-					normal = hit.normal;
-				}
-
-				// check forward to find change on the ground beforehand
-				RaycastHit hitForward;
-				start = m_position + m_direction + (normal * 3f);
-				end = m_position + m_direction - (normal * 3f);
-
-				Debug.DrawLine(start, end, Color.magenta);
-				if (hasHit && Linecast(start, end, false, out hitForward)) {
-					normal = (normal * 0.25f) + (hitForward.normal * 0.75f);
-					m_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
-				}
+			if (!hasHit) {
+				start = position - (up * 3f);
+				end = position + (up * 3f);
+				hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
 			}
 
+			if (hasHit) {
+				normal = hit.normal;
+			}
+
+			m_collisionNormal = normal;
+
+			// check forward to find change on the ground beforehand
+			RaycastHit hitForward;
+			start = position + m_direction + (normal * 3f);
+			end = position + m_direction - (normal * 3f);
+
+			Debug.DrawLine(start, end, Color.magenta);
+			if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
+				normal = (normal * 0.25f) + (hitForward.normal * 0.75f);
+				m_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
+			}
+		
 			m_upVector = normal.normalized;
-			Debug.DrawLine(m_position, m_position + m_upVector, Color.cyan);
+			Debug.DrawLine(position, position + m_upVector, Color.cyan);
 
 			return hasHit;
-		}
-
-		private bool Linecast(Vector3 _start, Vector3 _end, bool _updatePosition, out RaycastHit _hit) {
-			if (Physics.Linecast(_start, _end, out _hit, m_groundMask)) {
-				if (_updatePosition) {/*
-					m_position.x = _hit.point.x;
-					m_position.y = _hit.point.y;
-					*/
-					m_position.x = Mathf.Lerp(m_position.x, _hit.point.x, Time.deltaTime * 8f);
-					m_position.y = Mathf.Lerp(m_position.y, _hit.point.y, Time.deltaTime * 8f);
-
-				}
-				return true;
-			}
-			return false;
 		}
 	}
 }
