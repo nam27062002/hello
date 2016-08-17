@@ -37,7 +37,7 @@ namespace AI {
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		private Vector3 m_position;
-		public Vector3 position { get { return m_position; } set { m_machine.transform.position = m_position = value; } }
+		public Vector3 position { get { return m_machine.transform.position; } set { m_machine.transform.position = m_position = value; } }
 
 		private float m_zOffset; // if we use different rails for machines
 		public float zOffset { set { m_zOffset = value; } }
@@ -111,7 +111,7 @@ namespace AI {
 
 				UpdateAttack();
 
-				m_position += (m_velocity + m_gravity) * Time.deltaTime;
+				//m_position += (m_velocity + m_gravity) * Time.deltaTime;
 				if (m_pilot.speed > 0.01f) {
 					m_viewControl.Move(m_pilot.impulse.magnitude); //???
 				} else {
@@ -121,7 +121,7 @@ namespace AI {
 				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 
-				if (m_stickToGround) {
+			/*	if (m_stickToGround) {
 					bool isOnCollider = CheckCollisions();
 					if (!isOnCollider) {
 						m_gravity.y -= 0.98f;
@@ -131,12 +131,13 @@ namespace AI {
 						m_machine.SetSignal(Signals.Type.FallDown, false);
 					}
 				}
-
+*/
 				UpdateOrientation();
 
-				Vector3 pos = m_position;
-				pos.z += m_zOffset;
-				m_machine.transform.position = pos;
+				//Vector3 pos = m_position;
+				//pos.z += m_zOffset;
+				//m_machine.transform.position = pos;
+				m_machine.GetComponent<Rigidbody>().velocity = m_velocity;
 
 				//Aiming!!
 				if (m_eye != null) {
