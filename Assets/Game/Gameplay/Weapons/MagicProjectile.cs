@@ -29,8 +29,10 @@ public class MagicProjectile : MonoBehaviour, IProjectile {
 	}
 
 	public void OnCollisionEnterAOC(object _o, CollisionInfo _collision) {
-		m_isDragonHit = true;
-		m_timer = m_damageDelay;
+		if (_collision.Hit.rigidbody != null) {
+			m_isDragonHit = true;
+			m_timer = m_damageDelay;
+		}
 	}
 	
 	// Update is called once per frame
