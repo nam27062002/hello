@@ -50,10 +50,10 @@ public class DragonControlPlayer : DragonControl {
 #if UNITY_EDITOR
         if (joystickControls != null)
         {
+            joystickControls.UpdateJoystickControls();
             joystickMoving = joystickControls.isMoving();
             moving = moving || joystickMoving;
             action = action || joystickControls.getAction();
-            joystickControls.UpdateJoystickControls();
         }
 #endif
     }
