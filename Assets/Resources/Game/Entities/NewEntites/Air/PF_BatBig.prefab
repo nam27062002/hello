@@ -8,7 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 455504}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_LArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,8 @@ GameObject:
   - 4: {fileID: 425414}
   - 114: {fileID: 11472200}
   - 114: {fileID: 11464356}
-  m_Layer: 0
+  - 135: {fileID: 135000011093771074}
+  m_Layer: 22
   m_Name: area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +42,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 421774}
   - 137: {fileID: 13769988}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +57,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 459160}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +94,8 @@ GameObject:
   - 114: {fileID: 11403898}
   - 114: {fileID: 11437250}
   - 114: {fileID: 11499696}
-  m_Layer: 0
+  - 54: {fileID: 54000013404545012}
+  m_Layer: 22
   m_Name: PF_BatBig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +110,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 461332}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_LArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +125,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 420924}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_RArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138,7 +140,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 418810}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,7 +155,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 454418}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_Tail_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +170,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 438846}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_Ears
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +185,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 409786}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_RArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,7 +200,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 445868}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_LArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,7 +217,7 @@ GameObject:
   - 4: {fileID: 419378}
   - 95: {fileID: 9515022}
   - 114: {fileID: 11472490}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -230,7 +232,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 479816}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Bat_RArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,7 +320,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 469052}
-  m_RootOrder: 2
+  m_RootOrder: 1
 --- !u!4 &438846
 Transform:
   m_ObjectHideFlags: 1
@@ -415,7 +417,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 469052}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!4 &469052
 Transform:
   m_ObjectHideFlags: 1
@@ -428,8 +430,8 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 419378}
-  - {fileID: 467286}
   - {fileID: 425414}
+  - {fileID: 467286}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &479816
@@ -700,3 +702,30 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 156466}
   m_IsPrefabParent: 1
+--- !u!54 &54000013404545012
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156466}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!135 &135000011093771074
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112626}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.19
+  m_Center: {x: 0, y: 0, z: 0}

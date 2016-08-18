@@ -99,21 +99,19 @@ namespace AI {
 
 		public override void Update() {
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
+				m_velocity = Vector3.zero;
+				m_rotation = m_machine.transform.rotation;
 				return;
 			}
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
+				m_velocity = Vector3.zero;
+				m_rotation = m_machine.transform.rotation;
 				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Type.Burning));
 				return;
-			} else {
-				m_viewControl.Panic(m_machine.GetSignal(Signals.Type.FallDown), m_machine.GetSignal(Signals.Type.Burning));
 			}
-
+				
 			if (m_pilot != null) {
-				// "Physics" updates
-				Vector3 impulse = (m_pilot.impulse - m_velocity);
-				impulse /= m_mass; //mass
-				m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
 				m_direction = m_pilot.direction;
 
 				if (m_walkOnWalls) {
@@ -121,19 +119,33 @@ namespace AI {
 				}
 
 				if (m_useGravity) {
+					Vector3 forceGravity = -m_collisionNormal * 9.8f * m_mass;
+					
 					if (IsGrounded()) {
-						m_acceleration = Vector3.zero;
+						UpdateVelocity();
+						m_rbody.velocity = m_velocity + (forceGravity / m_mass) * Time.deltaTime;
 					} else {
-						m_acceleration += -m_collisionNormal * 98f * m_mass * Time.deltaTime;
+						// free fall, drag, friction and stuff
+						const float airDensity = 1.293f;
+						const float drag = 1.3f;//human //0.47f;//sphere
+						float area = Mathf.PI * Mathf.Pow(m_collider.bounds.extents.x, 2f);
+
+						Vector3 forceDrag = -m_velocity.normalized * 0.5f * airDensity * drag * area * Mathf.Pow(m_velocity.magnitude, 2f);
+						m_acceleration = (forceGravity + forceDrag) / m_mass;
+
+						m_velocity += m_acceleration * Time.deltaTime;
+						m_rbody.velocity = m_velocity;
 					}
+				} else {
+					UpdateVelocity();
+					m_rbody.velocity = m_velocity;
 				}
 
-				m_rbody.velocity = m_velocity + m_acceleration * Time.deltaTime;
-
-
+				Debug.DrawLine(position, position + m_rbody.velocity, Color.yellow);
 
 				// machine should face the same direction it is moving
 				UpdateOrientation();
+
 				//Aiming!!
 				if (m_eye != null) {
 					UpdateAim();
@@ -157,7 +169,17 @@ namespace AI {
 				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 			}
+
+			m_viewControl.Panic(m_machine.GetSignal(Signals.Type.FallDown), m_machine.GetSignal(Signals.Type.Burning));
 		}
+
+		private void UpdateVelocity() {
+			// "Physics" updates
+			Vector3 impulse = (m_pilot.impulse - m_velocity);
+			impulse /= m_mass; //mass
+			m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
+		}
+
 
 		private void UpdateAttack() {
 			if (m_pilot.IsActionPressed(Pilot.Action.Attack) && m_viewControl.canAttack()) {
@@ -265,7 +287,7 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.FallDown, true);
 			}
 			
-			return hasHit && hit.distance <= (m_collider.bounds.extents.y + 0.01f);
+			return hasHit && hit.distance <= (m_collider.bounds.extents.y + 0.075f);
 		}
 
 		private bool CheckWalkOnWallsCollisions() {			

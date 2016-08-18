@@ -251,6 +251,7 @@ namespace AI {
 
 		// External interactions
 		public void ReceiveDamage(float _damage) {
+			_damage = 0f;
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 			}
