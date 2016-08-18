@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/Fire"
+﻿Shader "Hungry Dragon/Fire Transparent"
 {
 	Properties
 	{
@@ -7,10 +7,10 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Transparent" }
+		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 		LOD 100
-		// Blend SrcAlpha OneMinusSrcAlpha 
-		Blend One One
+		Blend SrcAlpha OneMinusSrcAlpha 
+		// Blend One One
 		Cull Off
 		ZWrite Off
 		Pass
@@ -45,7 +45,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.noiseUV = TRANSFORM_TEX(  v.uv + float2( _Time.y, -_Time.y ) , _NoiseTex);
+				o.noiseUV = TRANSFORM_TEX(  v.uv + float2( 0, -_Time.y ) , _NoiseTex);
 				return o;
 			}
 			
@@ -55,10 +55,10 @@
 				fixed4 noise = tex2D( _NoiseTex, i.noiseUV ) * 0.65;
 				noise.g = noise.g * i.uv.y;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
-
 				return col;
 			}
 			ENDCG
 		}
 	}
+Fallback "Mobile/VertexLit"
 }
