@@ -1,23 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FogNode : MonoBehaviour 
+public class FogNode : MonoBehaviour, IQuadTreeItem
 {
 	public Color m_fogColor = Color.white;
 	public float m_fogStart = 0;
 	public float m_fogEnd = 100;
 
-	private bool m_used = false;
-	public bool used
-	{
-		get{ return m_used; }
-		set { m_used = value; }
-	}
 
-
-	public void CustomGuizmoDraw()
+	public void CustomGuizmoDraw( bool used = false)
 	{
-		if ( m_used )
+		if ( used )
 		{
 			Gizmos.color = Color.white;
 			Gizmos.DrawSphere( transform.position, 1.25f);	
@@ -25,4 +18,6 @@ public class FogNode : MonoBehaviour
 		Gizmos.color = m_fogColor;
 		Gizmos.DrawSphere( transform.position, 1);
 	}
+
+	// public Transform transform { get {return gameObject.transform;} }
 }

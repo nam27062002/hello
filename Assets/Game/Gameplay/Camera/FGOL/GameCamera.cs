@@ -196,6 +196,16 @@ public class GameCamera : MonoBehaviour
 
 	private TouchControlsDPad	m_touchControls = null;
 
+
+
+
+	enum State
+	{
+		INTRO,
+		PLAY
+	};
+	State m_state = State.INTRO;
+
 	//----------------------------------------------------------------------------
 	
 	void Awake()
@@ -243,11 +253,19 @@ public class GameCamera : MonoBehaviour
         m_expOne = Mathf.Exp(1.0f);
 		m_bossCamMode = BossCamMode.NoBoss;
 		enabled = DebugSettings.newCameraSystem;
+		m_state = State.INTRO;
 #if !PRODUCTION
 	    // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
 #endif
 
 		InstanceManager.gameCamera = this;
+
+		// Subscribe to external events
+		// Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+
 	}
 
 	IEnumerator Start() 
@@ -263,15 +281,43 @@ public class GameCamera : MonoBehaviour
 			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
 
-		SetTargetObject( InstanceManager.player.gameObject );
 
+
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
+		if(spawnPointObj == null) 
+		{
+			// We couldn't find a spawn point for this specific type, try to find a generic one
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
+		}
+		Vector3 pos = spawnPointObj.transform.position;
+		m_position = pos;
+		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
+		m_transform.position = m_position;
+
+
+		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
+		{
+			m_state = State.PLAY;
+			SetTargetObject( InstanceManager.player.gameObject );
+		}
 
 	}
 
 	void OnDestroy()
 	{
+		// Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		InstanceManager.gameCamera = null;
 	}
+
+	private void CountDownEnded()
+	{
+		m_state = State.PLAY;
+		SetTargetObject( InstanceManager.player.gameObject );
+	}
+
 
     public void SetTargetObject(GameObject obj, bool snap = true)
  	{
@@ -421,6 +467,25 @@ public class GameCamera : MonoBehaviour
 			GetComponent<GameCameraController>().enabled = true;
 			enabled = false;
 		}
+		PlayUpdate();
+		/*
+		switch( m_state )
+		{
+			case State.INTRO:
+			{
+			}break;
+			case State.PLAY:
+			{
+				
+			}break;
+		}
+		*/
+
+	}
+
+	void PlayUpdate()
+	{
+
 
 #if UNITY_EDITOR
 		float prevZ = transform.position.z;

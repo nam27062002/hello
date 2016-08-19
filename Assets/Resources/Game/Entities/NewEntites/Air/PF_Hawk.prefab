@@ -647,7 +647,7 @@ MonoBehaviour:
     min: 0.9
     max: 1.4
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":16,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":5,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"acceleration":20,"speed":20,"arrivalRadius":2,"attackPoint":"attack_0","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":15,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":true},{"damage":16,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":5,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"acceleration":20,"speed":20,"arrivalRadius":2,"attackPoint":"attack_0","dataType":"AI.Behaviour.ChargeData","editorFolded":true},{"boostSpeed":15,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":true},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":true}]'
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!114 &11422592
@@ -747,7 +747,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 90
     m_faceDirection: 1
-    m_facePlayer: 0
+    m_rollRotation: 1
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -768,9 +768,11 @@ MonoBehaviour:
       min: 0
       max: 0
   m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
+  m_onSpawnSounds:
+  - 
   m_onEatenSoundProbability: 4.5
-  m_onEatenSounds: []
+  m_onEatenSounds:
+  - 
 --- !u!137 &13703098
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

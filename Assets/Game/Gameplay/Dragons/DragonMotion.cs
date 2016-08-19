@@ -169,16 +169,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	RaycastHit m_raycastHit = new RaycastHit();
 
-	private Vector3 m_introTarget;
+/*private Vector3 m_introTarget;
 	public Vector3 introTarget
 	{
 		get { return introTarget; }
 		set { introTarget = value; }
 	}
-
+	*/
 	private float m_introTimer;
 	private const float m_introDuration = 3;
-	private Vector3 m_destination;
+
+	// private Vector3 m_destination;
 	private Transform m_preyPreviousTransformParent;
 	private AI.Machine m_holdPrey = null;
 	private Transform m_holdPreyTransform = null;
@@ -233,7 +234,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 
 		// Movement Setup
-		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
+		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
+		m_dargonAcceleration = m_dragon.data.speedSkill.value;
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
@@ -293,9 +295,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Intro:
 				{
-					m_animator.SetBool("fly", false);
-					m_animator.SetBool("fly down", false);
-					m_introTimer = m_introDuration;
 				}break;
 				/*case State.HoldingPrey:
 				{
@@ -349,8 +348,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Intro:
 				{
-					m_animator.SetBool("fly", true);
-					m_animator.SetBool("fly down", true);
+					m_animator.Play("BaseLayer.Intro");
 					m_introTimer = m_introDuration;
 				}break;
 				/*
@@ -401,9 +399,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_introTimer -= Time.deltaTime;
 				if ( m_introTimer <= 0 )
 					ChangeState( State.Idle );
-				float delta = m_introTimer / m_introDuration;
-				m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
-				m_destination += m_introTarget;
+				// float delta = m_introTimer / m_introDuration;
+				// m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
+				// m_destination += m_introTarget;
 			}break;
 			/*
 			case State.HoldingPrey:
@@ -419,8 +417,21 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		if ( m_holdPrey != null )
 		{
-			Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
-			m_holdPrey.transform.position = m_holdPrey.transform.position + (deltaPosition - m_holdPreyTransform.position);
+			// Rotation
+			Quaternion rot = m_holdPrey.transform.localRotation;
+			m_holdPrey.transform.localRotation = Quaternion.identity;
+			Vector3 holdDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.forward);
+			Vector3 holdUpDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.up);
+			// m_holdPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
+			m_holdPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 8);
+
+			// Position
+			Vector3 pos = m_holdPrey.transform.localPosition;
+			m_holdPrey.transform.localPosition = Vector3.zero;
+			Vector3 holdPoint = m_tongue.InverseTransformPoint( m_holdPreyTransform.position );
+			// m_holdPrey.transform.localPosition = -holdPoint;
+			m_holdPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 8);
+
 		}
 				
 		m_animator.SetFloat("height", m_height);
@@ -505,12 +516,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				break;
 			case State.Intro:
 			{
-				m_impulse = (m_destination - transform.position).normalized;
-				m_direction = m_impulse;
-				m_impulse *= m_speedValue;
-				transform.position = m_destination;
-				m_rbody.velocity = Vector3.zero;
-				transform.rotation.SetLookRotation( Vector3.right );
+				// m_impulse = (m_destination - transform.position).normalized;
+				// m_direction = m_impulse;
+				// m_impulse *= m_speedValue;
+				// transform.position = m_destination;
+				// m_rbody.velocity = Vector3.zero;
+				// transform.rotation.SetLookRotation( Vector3.right );
 			}break;
 			/*
 			case State.HoldingPrey:
@@ -1014,7 +1025,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartIntroMovement(Vector3 introTarget)
 	{
-		m_introTarget = introTarget;
+		// m_introTarget = introTarget;
+		m_transform.position = introTarget;
 		m_introTimer = m_introDuration;
 		ChangeState(State.Intro);
 	}
