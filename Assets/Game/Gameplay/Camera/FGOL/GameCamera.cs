@@ -196,7 +196,8 @@ public class GameCamera : MonoBehaviour
 
 	private TouchControlsDPad	m_touchControls = null;
 
-
+	public GameObject m_animatedCameraPrefab;
+	private AnimatedCamera m_animatedCamera;
 
 
 	enum State
@@ -266,6 +267,10 @@ public class GameCamera : MonoBehaviour
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
+
+		GameObject go = Instantiate(m_animatedCameraPrefab) as GameObject;
+		m_animatedCamera = go.GetComponent<AnimatedCamera>();
+
 	}
 
 	IEnumerator Start() 
@@ -281,8 +286,6 @@ public class GameCamera : MonoBehaviour
 			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
 
-
-
 		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
 		if(spawnPointObj == null) 
 		{
@@ -294,6 +297,10 @@ public class GameCamera : MonoBehaviour
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 		m_transform.position = m_position;
 
+		m_animatedCamera.transform.position = m_position;
+		m_animatedCamera.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
+		m_animatedCamera.PlayIntro();
+		m_unityCamera.enabled = false;
 
 		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
 		{
@@ -481,6 +488,15 @@ public class GameCamera : MonoBehaviour
 		}
 		*/
 
+	}
+
+	void GetCameraSetup( Camera otherCamera )
+	{
+		m_fov = otherCamera.fieldOfView;
+		m_position = otherCamera.transform.position;
+		m_rotation = otherCamera.transform.eulerAngles;
+
+		m_snap = true;
 	}
 
 	void PlayUpdate()
