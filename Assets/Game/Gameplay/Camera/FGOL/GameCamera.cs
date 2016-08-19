@@ -266,7 +266,7 @@ public class GameCamera : MonoBehaviour
 		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-
+		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
 
 		GameObject go = Instantiate(m_animatedCameraPrefab) as GameObject;
 		m_animatedCamera = go.GetComponent<AnimatedCamera>();
@@ -316,13 +316,21 @@ public class GameCamera : MonoBehaviour
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.RemoveListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
 		InstanceManager.gameCamera = null;
 	}
 
 	private void CountDownEnded()
 	{
 		m_state = State.PLAY;
+		// m_unityCamera.enabled = true;
 		SetTargetObject( InstanceManager.player.gameObject );
+	}
+
+	private void IntroDone()
+	{
+		m_unityCamera.enabled = true;
+		GetCameraSetup( m_animatedCamera.m_canera );
 	}
 
 
@@ -495,8 +503,8 @@ public class GameCamera : MonoBehaviour
 		m_fov = otherCamera.fieldOfView;
 		m_position = otherCamera.transform.position;
 		m_rotation = otherCamera.transform.eulerAngles;
-
-		m_snap = true;
+		m_transform.position = m_position;
+		UpdateValues();
 	}
 
 	void PlayUpdate()

@@ -5,6 +5,6 @@ public class AnimatedCameraEvents : MonoBehaviour
 {
 	public void IntroDone()
 	{
-		Debug.Log("Intro Done");
+		Messenger.Broadcast(GameEvents.CAMERA_INTRO_DONE);
 	}
 }
