@@ -183,6 +183,12 @@ namespace AI {
 			return false;
 		}
 
+		public void SetVelocity(Vector3 _v) {
+			if (m_motion != null) {
+				m_motion.SetVelocity(_v);
+			}
+		}
+
 		// Debug
 		void OnDrawGizmosSelected() {
 			

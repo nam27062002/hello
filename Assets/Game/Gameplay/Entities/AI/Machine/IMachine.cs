@@ -35,6 +35,7 @@ namespace AI {
 		void BiteAndHold();
 		bool Burn(float _damage, Transform _transform);
 
+		void SetVelocity(Vector3 _v);
 
 		void SetRail(uint _rail, uint _total);
 	}

@@ -97,6 +97,10 @@ namespace AI {
 			}
 		}
 
+		public void SetVelocity(Vector3 _v) {
+			m_velocity = _v;
+		}
+
 		public override void Update() {
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
 				m_velocity = Vector3.zero;
@@ -109,6 +113,8 @@ namespace AI {
 				m_rotation = m_machine.transform.rotation;
 				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Type.Burning));
 				return;
+			} else {
+				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
 				
 			if (m_pilot != null) {
@@ -129,11 +135,12 @@ namespace AI {
 						const float airDensity = 1.293f;
 						const float drag = 1.3f;//human //0.47f;//sphere
 						float area = Mathf.PI * Mathf.Pow(m_collider.bounds.extents.x, 2f);
+						float terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (airDensity * area * drag));
 
-						Vector3 forceDrag = -m_velocity.normalized * 0.5f * airDensity * drag * area * Mathf.Pow(m_velocity.magnitude, 2f);
-						m_acceleration = (forceGravity + forceDrag) / m_mass;
+						Vector3 forceDrag = -m_velocity.normalized * 0.25f * airDensity * drag * area * Mathf.Pow(m_velocity.magnitude, 2f) / m_mass;
+						m_acceleration = (forceGravity + forceDrag);
 
-						m_velocity += m_acceleration * Time.deltaTime;
+						m_velocity += Vector3.ClampMagnitude(m_acceleration * Time.deltaTime, terminalVelocity);
 						m_rbody.velocity = m_velocity;
 					}
 				} else {
@@ -170,7 +177,7 @@ namespace AI {
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 			}
 
-			m_viewControl.Panic(m_machine.GetSignal(Signals.Type.FallDown), m_machine.GetSignal(Signals.Type.Burning));
+			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 		}
 
 		private void UpdateVelocity() {
@@ -279,12 +286,14 @@ namespace AI {
 
 		private bool IsGrounded() {
 			RaycastHit hit;
-			bool hasHit = Physics.Raycast(m_collider.bounds.center, -m_collisionNormal, out hit, m_collider.bounds.extents.y + 2f, m_groundMask);
+			bool hasHit = Physics.Raycast(m_collider.bounds.center, -m_collisionNormal, out hit, m_collider.bounds.extents.y + 10f, m_groundMask);
 
 			if (hasHit) {
 				m_machine.SetSignal(Signals.Type.FallDown, hit.distance > 2f);
+				m_viewControl.Height(hit.distance);
 			} else {
 				m_machine.SetSignal(Signals.Type.FallDown, true);
+				m_viewControl.Height(100f);
 			}
 			
 			return hasHit && hit.distance <= (m_collider.bounds.extents.y + 0.075f);
@@ -294,16 +303,16 @@ namespace AI {
 			Vector3 normal = Vector3.up;
 			Vector3 up = m_upVector;
 
-			Vector3 start = position + (up * 3f);
-			Vector3 end = position - (up * 3f);
+			Vector3 start = position + (up * 4f);
+			Vector3 end = position - (up * 4f);
 		
 			RaycastHit hit;
 			bool hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
 			Debug.DrawLine(start, end, Color.black);
 
 			if (!hasHit) {
-				start = position - (up * 3f);
-				end = position + (up * 3f);
+				start = position - (up * 4f);
+				end = position + (up * 4f);
 				hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
 			}
 
@@ -315,8 +324,8 @@ namespace AI {
 
 			// check forward to find change on the ground beforehand
 			RaycastHit hitForward;
-			start = position + m_direction + (normal * 3f);
-			end = position + m_direction - (normal * 3f);
+			start = position + m_direction + (normal * 4f);
+			end = position + m_direction - (normal * 4f);
 
 			Debug.DrawLine(start, end, Color.magenta);
 			if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {

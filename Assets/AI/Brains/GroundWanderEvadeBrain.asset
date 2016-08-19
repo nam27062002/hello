@@ -25,6 +25,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: b2e6052c06cc3476aa9af39caa635c5f, type: 2}
   - m_name: Fall down
     m_componentAssets: []
+  - m_name: On hit ground
+    m_componentAssets:
+    - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -42,6 +45,12 @@ MonoBehaviour:
     id: onCalm
     from: 2
   - to: 1
+    id: onRecover
+    from: 4
+  - to: 3
+    id: onFallDown
+    from: -1
+  - to: 4
     id: OnGround
     from: -1
   m_firstState: 1
