@@ -85,9 +85,15 @@ namespace AI {
 			return false;
 		}
 
-		public void StickToCollisions(bool _value) {
+		public void UseGravity(bool _value) {
 			if (m_motion != null) {
-				m_motion.stickToGround = _value;
+				m_motion.useGravity = _value;
+			}
+		}
+
+		public void CheckCollisions(bool _value) {
+			if (m_motion != null) {
+				m_motion.checkCollisions = _value;
 			}
 		}
 
@@ -175,6 +181,12 @@ namespace AI {
 		public virtual bool Burn(float _damage, Transform _transform) {
 			
 			return false;
+		}
+
+		public void SetVelocity(Vector3 _v) {
+			if (m_motion != null) {
+				m_motion.SetVelocity(_v);
+			}
 		}
 
 		// Debug

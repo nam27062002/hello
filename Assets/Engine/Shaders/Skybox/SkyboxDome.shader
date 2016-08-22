@@ -27,9 +27,7 @@ SubShader {
 	float4 _MainTex_ST;
 	float4 _DetailTex_ST;
 
-	float4 _FogColor;
-	float _FogStart;
-	float _FogEnd;
+	HG_FOG_VARIABLES
 
 	struct appdata
 	{
@@ -51,7 +49,7 @@ SubShader {
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex); 
 		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex);
-		HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
+		HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 		return o;
 	}
 	ENDCG
@@ -72,7 +70,7 @@ SubShader {
 			fixed4 one = fixed4(1,1,1,1);
 			fixed4 col = one - (one-tex) * (one-tex2);
 
-			HG_APPLY_FOG(i, col, _FogColor);	// Fog
+			HG_APPLY_FOG(i, col);	// Fog
 			UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 			return col;

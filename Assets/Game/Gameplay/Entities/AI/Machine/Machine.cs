@@ -186,9 +186,15 @@ namespace AI {
 			return m_signals.GetValue(_signal);
 		}
 
-		public void StickToCollisions(bool _value) {
+		public void UseGravity(bool _value) {
 			if (m_motion != null) {
-				m_motion.stickToGround = _value;
+				m_motion.useGravity = _value;
+			}
+		}
+
+		public void CheckCollisions(bool _value) {
+			if (m_motion != null) {
+				m_motion.checkCollisions = _value;
 			}
 		}
 
@@ -275,13 +281,11 @@ namespace AI {
 
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
-		public void BiteAndHold() 
-		{
+		public void BiteAndHold() {
 			m_edible.BiteAndHold();
 		}
 
-		public void ReleaseHold() 
-		{
+		public void ReleaseHold() {
 			m_motion.position = transform.position;
 			m_edible.ReleaseHold();
 		}
@@ -297,6 +301,12 @@ namespace AI {
 				return true;
 			}
 			return false;
+		}
+
+		public void SetVelocity(Vector3 _v) {
+			if (m_motion != null) {
+				m_motion.SetVelocity(_v);
+			}
 		}
 
 		// Debug

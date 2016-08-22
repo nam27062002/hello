@@ -69,7 +69,7 @@ public class EaseCurveTestEditor : Editor {
 	// MENU ENTRIES														//
 	//------------------------------------------------------------------//
 	[MenuItem("Hungry Dragon/AOC/Scene Tweeners", false, 101)]
-	public static void OpenScene1() { HungryDragonEditorMenu.OpenScene("Assets/Tests/TestAlger/Tweeners/TweenersTest.unity"); }
+	public static void OpenScene1() { HungryDragonEditorMenu.OpenScene("Assets/Tests/TestAlger/Tweeners/TweenersTest.unity", true); }
 }
 
 /// <summary>

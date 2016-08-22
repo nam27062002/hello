@@ -123,8 +123,8 @@ public class DragonProgression : SerializableClass {
 		// Experience can't be subtracted
 		if(_xpToAdd <= 0) return;
 
-		// Just do it
-		m_xp += _xpToAdd;
+		// Add xp, capping to max level's XP
+		m_xp = Mathf.Min(m_xp + _xpToAdd, m_levelsXp[lastLevel]);
 
 		// Check for level ups
 		if(_checkLevelUp) {

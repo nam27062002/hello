@@ -45,7 +45,7 @@ namespace AI {
 
 			protected override void OnUpdate() {
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
-				if (dSqr < 1f) {
+				if (dSqr < 1.5f) {
 					m_machine.SetSignal(Signals.Type.BackToHome, false);
 					Transition(OnBackAtHome);
 				}
