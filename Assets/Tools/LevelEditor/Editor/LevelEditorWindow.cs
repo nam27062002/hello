@@ -140,9 +140,6 @@ namespace LevelEditor {
 			// Make sure we have enough room for asset previews
 			AssetPreview.SetPreviewTextureCacheSize(500);	// Increase if problems happen
 
-			// Close any non-editable scenes
-			CloseNonEditableScenes();
-
 			// Store scene name
 			m_sceneName = EditorSceneManager.GetActiveScene().name;
 
@@ -180,9 +177,24 @@ namespace LevelEditor {
 		/// Close any open scene that doesn't have the "Level" component.
 		/// </summary>
 		public void CloseNonEditableScenes() {
-			// [AOC] DISABLE FOR NOW, LOOKS BUGGY
-			return;
+			// [AOC] Alternative, bug-free version
+			//		 Make sure at least that neither the SC_Loading, SC_Menu, SC_Game nor SC_Popups scenes are open to avoid conflicts with the LevelEditor
+			// 		 Ask to save current scenes first
+			EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+			string[] toCheck = new string[] { "SC_Loading", "SC_Menu", "SC_Game", "SC_Popups" };
+			List<Scene> scenesToRemove = new List<Scene>();
+			for(int i = 0; i < toCheck.Length; i++) {
+				Scene sc = EditorSceneManager.GetSceneByName(toCheck[i]);
+				Debug.Log(sc.name + " valid? " + sc.IsValid().ToString());
+				if(sc.IsValid()) {
+					scenesToRemove.Add(sc);
+				}
+			}
 
+
+
+			// [AOC] DISABLE FOR NOW, LOOKS BUGGY
+			/*
 			// Close any "non-editable" open scene (aka no Level object)
 			List<Scene> scenesToRemove = new List<Scene>();
 			for(int i = 0; i < EditorSceneManager.sceneCount; i++) {
@@ -205,7 +217,7 @@ namespace LevelEditor {
 				if(level == null) {
 					scenesToRemove.Add(sc);
 				}
-			}
+			}*/
 
 			// We always need at least one scene, so if none of the current scenes are valid, open the level editor scene before removing them
 			if(scenesToRemove.Count == EditorSceneManager.sceneCount) {

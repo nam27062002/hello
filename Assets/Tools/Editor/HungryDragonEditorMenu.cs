@@ -132,7 +132,7 @@ public class HungryDragonEditorMenu {
 	public static void ShowLevelEditorWindow() {
 		// Show existing window instance. If one doesn't exist, make one.
 		LevelEditor.LevelEditorWindow window = LevelEditor.LevelEditorWindow.instance;
-		
+
 		// Setup window
 		window.titleContent = new GUIContent("Level Editor");
 		window.minSize = new Vector2(330f, 350f);	// Min required width to properly fit all the content
@@ -141,6 +141,7 @@ public class HungryDragonEditorMenu {
 		
 		// Make sure everything is initialized properly
 		window.Init();
+		window.CloseNonEditableScenes();
 		
 		// Show it
 		window.ShowTab();
@@ -168,19 +169,16 @@ public class HungryDragonEditorMenu {
 
 	//----------------------------------------------- SCENE SHORTCUTS -------------------------------------------------//
 	[MenuItem("Hungry Dragon/Scenes/SC_Loading", false, 0)]
-	public static void OpenScene1() { OpenScene("Assets/Game/Scenes/SC_Loading.unity"); }
+	public static void OpenScene1() { OpenScene("Assets/Game/Scenes/SC_Loading.unity", true); }
 
 	[MenuItem("Hungry Dragon/Scenes/SC_Menu", false, 1)]
-	public static void OpenScene2() { OpenScene("Assets/Game/Scenes/SC_Menu.unity"); }
+	public static void OpenScene2() { OpenScene("Assets/Game/Scenes/SC_Menu.unity", true); }
 
 	[MenuItem("Hungry Dragon/Scenes/SC_Game", false, 2)]
-	public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity"); }
+	public static void OpenScene3() { OpenScene("Assets/Game/Scenes/SC_Game.unity", true); }
 
-	[MenuItem("Hungry Dragon/Scenes/SC_LevelEditor", false, 51)]
-	public static void OpenScene4() { OpenScene("Assets/Tools/LevelEditor/SC_LevelEditor.unity"); }
-
-	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 52)]
-	public static void OpenScene5() { OpenScene("Assets/Tests/SC_Popups.unity"); }
+	[MenuItem("Hungry Dragon/Scenes/SC_Popups", false, 51)]
+	public static void OpenScene4() { OpenScene("Assets/Tests/SC_Popups.unity", false); }
 
 	//------------------------------------------------------------------------//
 	// CONTEXT MENU SETUP													  //
@@ -213,9 +211,15 @@ public class HungryDragonEditorMenu {
 	/// Open the scene with the given name.
 	/// </summary>
 	/// <param name="_sceneName">The path of the scene starting at project root and with extension (e.g. "Assets/MyScenesFolder/MyScene.unity").</param>
-	public static void OpenScene(string _scenePath) {
+	/// <param name="_closeLevelEditor">Whether to force closing the level editor before opening the scene.</param>
+	public static void OpenScene(string _scenePath, bool _closeLevelEditor) {
 		// Ask to save current scenes first
 		EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+
+		// If asked to close the level editor, do it now
+		if(_closeLevelEditor) {
+			LevelEditor.LevelEditorWindow.instance.Close();
+		}
 
 		// Just do it
 		EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);	// Will close all open scenes

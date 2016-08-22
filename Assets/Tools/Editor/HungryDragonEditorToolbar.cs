@@ -116,12 +116,12 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// Level Editor
 			if(GUILayout.Button(new GUIContent("LE", "Level Editor"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene4();
+				HungryDragonEditorMenu.ShowLevelEditorWindow();
 			}
 
 			// Popups
 			if(GUILayout.Button(new GUIContent("P", "Popups Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene5();
+				HungryDragonEditorMenu.OpenScene4();
 			}
 
 			// Add a separator
