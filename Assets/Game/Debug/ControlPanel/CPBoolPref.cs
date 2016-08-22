@@ -42,7 +42,7 @@ public class CPBoolPref : CPPrefBase {
 	/// </summary>
 	override public void Refresh() {
 		base.Refresh();
-		m_toggle.isOn = Prefs.GetBoolPlayer(id);
+		m_toggle.isOn = DebugSettings.Get(id);
 	}
 
 	//------------------------------------------------------------------//
@@ -52,6 +52,6 @@ public class CPBoolPref : CPPrefBase {
 	/// The toggle has changed.
 	/// </summary>
 	public void OnValueChanged() {
-		Prefs.SetBoolPlayer(id, m_toggle.isOn);
+		DebugSettings.Set(id, m_toggle.isOn);
 	}
 }
