@@ -78,8 +78,8 @@ namespace AI {
 					m_idleTimer = 0f;
 					m_pilot.SlowDown(true);
 
-					float m = (m_machine.position - m_pilot.target).sqrMagnitude;
-					if (m < 1f * 1f) {
+					float m = Mathf.Abs(m_machine.position.x - m_pilot.target.x);
+					if (m < 1f) {
 						Transition(OnRest);
 					}
 				}

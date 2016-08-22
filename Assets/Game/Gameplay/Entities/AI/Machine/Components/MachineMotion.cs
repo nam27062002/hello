@@ -120,16 +120,17 @@ namespace AI {
 			if (m_pilot != null) {
 				m_direction = m_pilot.direction;
 
-				if (m_walkOnWalls) {
-					CheckWalkOnWallsCollisions();
-				}
-
 				if (m_useGravity) {
-					Vector3 forceGravity = -m_collisionNormal * 9.8f * m_mass;
+					GetCollisionNormal();
+
+					Vector3 forceGravity = Vector3.zero;
+					if (m_walkOnWalls) 	forceGravity =  -m_collisionNormal * 9.8f * m_mass;
+					else 				forceGravity =  Vector3.down * 9.8f * m_mass;
 					
 					if (IsGrounded() || m_walkOnWalls) {
+						m_velocity.y = 0f;
 						UpdateVelocity();
-						m_rbody.velocity = m_velocity + (forceGravity / (m_mass * 0.5f)) * Time.deltaTime;
+						m_rbody.velocity = m_velocity + (forceGravity / m_mass) * Time.deltaTime;
 					} else {
 						// free fall, drag, friction and stuff
 						const float airDensity = 1.293f;
@@ -286,7 +287,7 @@ namespace AI {
 
 		private bool IsGrounded() {
 			RaycastHit hit;
-			bool hasHit = Physics.Raycast(m_collider.bounds.center, -m_collisionNormal, out hit, m_collider.bounds.extents.y + 10f, m_groundMask);
+			bool hasHit = Physics.Raycast(position + Vector3.up * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
 
 			if (hasHit) {
 				m_machine.SetSignal(Signals.Type.FallDown, hit.distance > 2f);
@@ -296,10 +297,10 @@ namespace AI {
 				m_viewControl.Height(100f);
 			}
 			
-			return hasHit && hit.distance <= (m_collider.bounds.extents.y + 0.075f);
+			return hasHit && hit.distance <= 0.3f;
 		}
 
-		private bool CheckWalkOnWallsCollisions() {			
+		private bool GetCollisionNormal() {			
 			Vector3 normal = Vector3.up;
 			Vector3 up = m_upVector;
 
@@ -310,32 +311,38 @@ namespace AI {
 			bool hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
 			Debug.DrawLine(start, end, Color.black);
 
-			if (!hasHit) {
-				start = position - (up * 2f);
-				end = position + (up * 2f);
-				hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
-			}
-
 			if (hasHit) {
 				normal = hit.normal;
 			}
 
-			m_collisionNormal = normal;
+			if (m_walkOnWalls) {
+				if (!hasHit) {
+					start = position - (up * 2f);
+					end = position + (up * 2f);
+					hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
+				}
 
-			// check forward to find change on the ground beforehand
-			RaycastHit hitForward;
-			start = position + m_direction + (normal * 2f);
-			end = position + m_direction - (normal * 2f);
+				if (hasHit) {
+					normal = hit.normal;
+				}
 
-			Debug.DrawLine(start, end, Color.magenta);
-			if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
-				normal = (normal * 0.25f) + (hitForward.normal * 0.75f);
-				m_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
+				// check forward to find change on the ground beforehand
+				RaycastHit hitForward;
+				Vector3 upVector = normal;
+				start = position + m_direction + (normal * 2f);
+				end = position + m_direction - (normal * 2f);
+
+				Debug.DrawLine(start, end, Color.magenta);
+				if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
+					upVector = (normal * 0.25f) + (hitForward.normal * 0.75f);
+					m_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
+				}
+			
+				m_upVector = upVector.normalized;
+				Debug.DrawLine(position, position + m_upVector, Color.cyan);
 			}
-		
-			m_upVector = normal.normalized;
-			Debug.DrawLine(position, position + m_upVector, Color.cyan);
 
+			m_collisionNormal = normal;
 			return hasHit;
 		}
 	}
