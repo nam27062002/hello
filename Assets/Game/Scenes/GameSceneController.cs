@@ -21,7 +21,7 @@ public class GameSceneController : GameSceneControllerBase {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly string NAME = "SC_Game";
-	public static readonly float COUNTDOWN = 3f;	// Seconds
+	public static readonly float COUNTDOWN = 5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
 	public static readonly float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
 
 	public enum EStates {
@@ -101,7 +101,9 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Load the dragon
 		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
+
 
 	/// <summary>
 	/// First update.
@@ -145,7 +147,8 @@ public class GameSceneController : GameSceneControllerBase {
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
-						ChangeState(EStates.RUNNING);
+						Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+						// ChangeState(EStates.RUNNING);
 					}
 				}
 			} break;
@@ -184,6 +187,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Call parent
 		base.OnDestroy();
+
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -287,7 +292,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 			case EStates.COUNTDOWN: {
 				// Notify the game
-				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+				// Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
 			} break;
 
 			case EStates.RUNNING: {
@@ -361,5 +366,10 @@ public class GameSceneController : GameSceneControllerBase {
 	public override bool IsLevelLoaded()
 	{
 		return state > EStates.LOADING_LEVEL;
+	}
+
+	private void CountDownEnded()
+	{
+		ChangeState(EStates.RUNNING);
 	}
 }

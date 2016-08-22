@@ -155,4 +155,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 		if (m_wingsStrongFlap != null)
 			m_wingsStrongFlap.mute = false;
 	}
+
+	public void IntroDone()
+	{
+		Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+	}
 }

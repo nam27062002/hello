@@ -97,5 +97,8 @@ public enum GameEvents {
 	MERGE_SERVER_SAVE_DATA,
 
 	// UI events
-	INGAME_PC_FEEDBACK_END		// no params
+	INGAME_PC_FEEDBACK_END,		// no params
+
+	// Camera events
+	CAMERA_INTRO_DONE,			// no params
 }
