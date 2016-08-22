@@ -97,6 +97,11 @@ public class HUDXPBar : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// A sebug setting has been changed.
+	/// </summary>
+	/// <param name="_id">ID of the changed setting.</param>
+	/// <param name="_newValue">New value of the setting.</param>
 	private void OnDebugSettingChanged(string _id, bool _newValue) {
 		// XP bar setting?
 		if(_id == DebugSettings.SHOW_XP_BAR) {
