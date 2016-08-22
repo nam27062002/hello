@@ -127,9 +127,9 @@ namespace AI {
 				if (m_useGravity) {
 					Vector3 forceGravity = -m_collisionNormal * 9.8f * m_mass;
 					
-					if (IsGrounded()) {
+					if (IsGrounded() || m_walkOnWalls) {
 						UpdateVelocity();
-						m_rbody.velocity = m_velocity + (forceGravity / m_mass) * Time.deltaTime;
+						m_rbody.velocity = m_velocity + (forceGravity / (m_mass * 0.5f)) * Time.deltaTime;
 					} else {
 						// free fall, drag, friction and stuff
 						const float airDensity = 1.293f;
@@ -303,16 +303,16 @@ namespace AI {
 			Vector3 normal = Vector3.up;
 			Vector3 up = m_upVector;
 
-			Vector3 start = position + (up * 4f);
-			Vector3 end = position - (up * 4f);
+			Vector3 start = position + (up * 2f);
+			Vector3 end = position - (up * 2f);
 		
 			RaycastHit hit;
 			bool hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
 			Debug.DrawLine(start, end, Color.black);
 
 			if (!hasHit) {
-				start = position - (up * 4f);
-				end = position + (up * 4f);
+				start = position - (up * 2f);
+				end = position + (up * 2f);
 				hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
 			}
 
@@ -324,8 +324,8 @@ namespace AI {
 
 			// check forward to find change on the ground beforehand
 			RaycastHit hitForward;
-			start = position + m_direction + (normal * 4f);
-			end = position + m_direction - (normal * 4f);
+			start = position + m_direction + (normal * 2f);
+			end = position + m_direction - (normal * 2f);
 
 			Debug.DrawLine(start, end, Color.magenta);
 			if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
