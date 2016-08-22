@@ -185,7 +185,6 @@ namespace LevelEditor {
 			List<Scene> scenesToRemove = new List<Scene>();
 			for(int i = 0; i < toCheck.Length; i++) {
 				Scene sc = EditorSceneManager.GetSceneByName(toCheck[i]);
-				Debug.Log(sc.name + " valid? " + sc.IsValid().ToString());
 				if(sc.IsValid()) {
 					scenesToRemove.Add(sc);
 				}
