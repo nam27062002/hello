@@ -72,7 +72,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	void Awake() {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
-		m_animator.logWarnings = false;
+		if (m_animator != null) m_animator.logWarnings = false;
 
 		// Load gold material
 		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
@@ -104,8 +104,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_attack = false;
 		m_falling = false;
 
-		m_animator.enabled = true;
-		m_animator.speed = 1f;
+		if (m_animator != null) {
+			m_animator.enabled = true;
+			m_animator.speed = 1f;
+		}
 
 		if (m_entity != null) {
 			// Restore materials
