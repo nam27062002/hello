@@ -30,6 +30,8 @@ public static class DebugSettings {
 	public static readonly string DRAGON_EAT_DISTANCE_POWER_UP = "DRAGON_EAT_DISTANCE_POWER_UP";
 	public static readonly string DRAGON_SLOW_POWER_UP   = "DRAGON_SLOW_POWER_UP";
 	public static readonly string NEW_CAMERA_SYSTEM      = "NEW_CAMERA_SYSTEM";
+	public static readonly string SHOW_XP_BAR			 = "SHOW_XP_BAR";
+	public static readonly string SHOW_COLLISIONS		 = "SHOW_COLLISIONS";
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -79,5 +81,30 @@ public static class DebugSettings {
 	public static bool newCameraSystem{
 		get { return Prefs.GetBoolPlayer(NEW_CAMERA_SYSTEM, true); }	// New camera system by default
 		set { Prefs.SetBoolPlayer(NEW_CAMERA_SYSTEM, value); }
+	}
+
+	//------------------------------------------------------------------//
+	// METHODS															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Get the value of a debug setting.
+	/// </summary>
+	/// <param name="_id">Identifier of the debug setting to be obtained. Usually one of the constants in this class.</param>
+	/// <returns>The value of the requested setting, <c>false</c> if the setting ID was not recognized.</returns>
+	public static bool Get(string _id) {
+		return Prefs.GetBoolPlayer(_id, false);
+	}
+
+	/// <summary>
+	/// Set the value of a debug setting.
+	/// </summary>
+	/// <param name="_id">ID of the setting to be set.</param>
+	/// <param name="_value">New value for the setting with the given ID.</param>
+	public static void Set(string _id, bool _value) {
+		// Set new value
+		Prefs.SetBoolPlayer(_id, _value);
+
+		// Notify game
+		Messenger.Broadcast<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, _id, _value);
 	}
 }

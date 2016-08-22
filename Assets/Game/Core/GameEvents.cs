@@ -13,6 +13,7 @@ public enum GameEvents {
 	DEBUG_MENU_DRAGON_SELECTED = EngineEvents.END,
 	DEBUG_SIMULATION_FINISHED,
 	DEBUG_UNLOCK_LEVELS,
+	DEBUG_SETTING_CHANGED,		// params: string _settingID, bool _newValue
 
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
