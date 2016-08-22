@@ -50,6 +50,7 @@ namespace AI {
 		public Vector3 upVector { get { return m_upVector; } set { m_upVector = value;} }
 
 		private Vector3 m_collisionNormal;
+		private bool m_isGrounded;
 
 		private Vector3 m_velocity;
 		private Vector3 m_acceleration;
@@ -77,15 +78,38 @@ namespace AI {
 			m_rotation = m_machine.transform.rotation;
 			m_targetRotation = m_rotation;
 
-			if (m_walkOnWalls) m_useGravity = true;
+			m_isGrounded = false;
 
-			switch (m_defaultUpVector) {
-				case UpVector.Up: 		m_upVector = Vector3.up; 		break;
-				case UpVector.Down: 	m_upVector = Vector3.down; 		break;
-				case UpVector.Right: 	m_upVector = Vector3.right; 	break;
-				case UpVector.Left: 	m_upVector = Vector3.left; 		break;
-				case UpVector.Forward: 	m_upVector = Vector3.forward; 	break;
-				case UpVector.Back: 	m_upVector = Vector3.back;		break;
+			if (m_walkOnWalls) {
+				m_useGravity = true;
+
+				//find the nearest wall and use that up vector
+				RaycastHit[] hit = new RaycastHit[4];
+				bool[] hasHit = new bool[4];
+
+				hasHit[0] = Physics.Linecast(position, position + Vector3.down * 5f, out hit[0], m_groundMask);
+				hasHit[1] = Physics.Linecast(position, position + Vector3.up * 5f,	 out hit[1], m_groundMask);
+				hasHit[2] = Physics.Linecast(position, position + Vector3.right * 5f,out hit[2], m_groundMask);
+				hasHit[3] = Physics.Linecast(position, position + Vector3.left * 5f, out hit[3], m_groundMask);
+
+				float d = 99999f;
+				for (int i = 0; i < 4; i++) {
+					if (hasHit[i]) {
+						if (hit[i].distance < d) {
+							d = hit[i].distance;
+							m_upVector = hit[i].normal;
+						}
+					}
+				}
+			} else {
+				switch (m_defaultUpVector) {
+					case UpVector.Up: 		m_upVector = Vector3.up; 		break;
+					case UpVector.Down: 	m_upVector = Vector3.down; 		break;
+					case UpVector.Right: 	m_upVector = Vector3.right; 	break;
+					case UpVector.Left: 	m_upVector = Vector3.left; 		break;
+					case UpVector.Forward: 	m_upVector = Vector3.forward; 	break;
+					case UpVector.Back: 	m_upVector = Vector3.back;		break;
+				}
 			}
 
 			m_velocity = Vector3.zero;
@@ -126,9 +150,17 @@ namespace AI {
 					Vector3 forceGravity = Vector3.zero;
 					if (m_walkOnWalls) 	forceGravity =  -m_collisionNormal * 9.8f * m_mass;
 					else 				forceGravity =  Vector3.down * 9.8f * m_mass;
-					
-					if (IsGrounded() || m_walkOnWalls) {
-						m_velocity.y = 0f;
+
+					bool isGrounded = IsGrounded();
+
+					if (m_isGrounded != isGrounded) {
+						if (isGrounded) {
+							m_velocity = Vector3.zero; // reset velocity when reaching ground
+						}
+						m_isGrounded = isGrounded;
+					}
+
+					if (m_isGrounded || m_walkOnWalls) {						
 						UpdateVelocity();
 						m_rbody.velocity = m_velocity + (forceGravity / m_mass) * Time.deltaTime;
 					} else {
