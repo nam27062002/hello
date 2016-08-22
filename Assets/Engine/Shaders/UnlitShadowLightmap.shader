@@ -50,16 +50,14 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
 
-				float4 _FogColor;
-				float _FogStart;
-				float _FogEnd;
+				HG_FOG_VARIABLES
 				
 				v2f vert (appdata_t v) 
 				{
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
+					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
@@ -80,7 +78,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					col.rgb *= lm;
 					#endif
 
-					HG_APPLY_FOG(i, col, _FogColor);	// Fog
+					HG_APPLY_FOG(i, col);	// Fog
 
 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque

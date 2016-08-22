@@ -52,9 +52,7 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 				float4 _MainTex_ST;
 				sampler2D _SecondTexture;
 
-				float4 _FogColor;
-				float _FogStart;
-				float _FogEnd;
+				HG_FOG_VARIABLES
 				
 				v2f vert (appdata_t v) 
 				{
@@ -62,7 +60,7 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 					o.color = v.color;
-					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
+					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
 					o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
@@ -86,7 +84,7 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 					col.rgb *= lm;
 					#endif
 
-					HG_APPLY_FOG(i, col, _FogColor);	// Fog
+					HG_APPLY_FOG(i, col);	// Fog
 
 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque

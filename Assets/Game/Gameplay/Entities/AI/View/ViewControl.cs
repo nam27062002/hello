@@ -53,6 +53,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_boost;
 	private bool m_scared;
 	private bool m_panic; //bite and hold state
+	private bool m_falling;
 	private bool m_attack;
 
 	private float m_desiredBlendX;
@@ -71,7 +72,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	void Awake() {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
-		m_animator.logWarnings = false;
+		if (m_animator != null) m_animator.logWarnings = false;
 
 		// Load gold material
 		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
@@ -101,9 +102,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_scared = false;
 		m_panic = false;
 		m_attack = false;
+		m_falling = false;
 
-		m_animator.enabled = true;
-		m_animator.speed = 1f;
+		if (m_animator != null) {
+			m_animator.enabled = true;
+			m_animator.speed = 1f;
+		}
 
 		if (m_entity != null) {
 			// Restore materials
@@ -196,9 +200,15 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_animator.SetFloat("aim", _blendFactor);
 	}
 
+	public void Height(float _height) {
+		m_animator.SetFloat("height", _height);
+	}
+
 	public void Move(float _speed) {
-		if (m_panic)
+		if (m_panic || m_falling) {
+			m_animator.speed = 1f;
 			return;
+		}
 
 		if (_speed > 0.01f) {
 			// 0- walk  1- run, blending in between
@@ -258,6 +268,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			} else {
 				m_animator.SetBool("hold", _panic);
 			}
+		}
+	}
+
+	public void Falling(bool _falling) {
+		if (m_falling != _falling) {
+			m_falling = _falling;
+			m_animator.speed = 1f;
+			m_animator.SetBool("falling", _falling);
 		}
 	}
 

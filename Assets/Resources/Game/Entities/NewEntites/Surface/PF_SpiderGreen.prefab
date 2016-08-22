@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 485126}
   - 114: {fileID: 11433592}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: spinneret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,9 @@ GameObject:
   - 114: {fileID: 11474244}
   - 114: {fileID: 11492210}
   - 114: {fileID: 11409804}
-  m_Layer: 0
+  - 135: {fileID: 135000014171976356}
+  - 54: {fileID: 54000010225638462}
+  m_Layer: 21
   m_Name: PF_SpiderGreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,9 +164,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enableMotion: 1
   m_motion:
-    m_stickToGround: 1
+    m_useGravity: 1
     m_walkOnWalls: 1
-    m_mass: 1
+    m_mass: 10
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 0
@@ -211,7 +213,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011663404774}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg3_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +228,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013661255120}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +243,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012833114050}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg4_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -256,7 +258,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012546390176}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg3_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,7 +273,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012741872082}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg1_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -286,7 +288,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000014163721502}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg3_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +306,7 @@ GameObject:
   - 95: {fileID: 95000013806394644}
   - 114: {fileID: 114000010500472334}
   - 120: {fileID: 120000013362175846}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -319,7 +321,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010659778082}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg2_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -334,7 +336,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012856905320}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg3_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,7 +351,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013407286588}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_Abdomen_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,7 +366,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010721304050}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg2_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +381,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010275781360}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Tooth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -394,7 +396,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010251669698}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg4_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -409,7 +411,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011538248894}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg3_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -424,7 +426,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013480039264}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg4_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -439,7 +441,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010401036176}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg2_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -454,7 +456,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010319859260}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg3_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -469,7 +471,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012072222266}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg4_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -484,7 +486,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012869785758}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg4_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -499,7 +501,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010134575198}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg2_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -514,7 +516,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010682935684}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg1_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -529,7 +531,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013733285884}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -544,7 +546,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010633518866}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg4_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -559,7 +561,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000014033490330}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Leg1_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -574,7 +576,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013467966448}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_Abdomen_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -589,7 +591,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010987154708}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg2_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -604,7 +606,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012861367252}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg2_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,7 +622,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000012632206058}
   - 137: {fileID: 137000012797804466}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -635,7 +637,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013542643008}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -650,7 +652,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011791544934}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_R_Tooth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -665,7 +667,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013442345784}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Spider_L_Leg1_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1105,6 +1107,21 @@ Transform:
   - {fileID: 4000013661255120}
   m_Father: {fileID: 409022}
   m_RootOrder: 0
+--- !u!54 &54000010225638462
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 174698}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!95 &95000013806394644
 Animator:
   serializedVersion: 3
@@ -1175,6 +1192,18 @@ LineRenderer:
       serializedVersion: 2
       rgba: 4294967295
   m_UseWorldSpace: 1
+--- !u!135 &135000014171976356
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 174698}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.62
+  m_Center: {x: 0, y: 0.63, z: -0.27}
 --- !u!137 &137000012797804466
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

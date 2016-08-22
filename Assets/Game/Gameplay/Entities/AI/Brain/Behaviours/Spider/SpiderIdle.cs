@@ -52,7 +52,8 @@ namespace AI {
 
 			protected override void OnExit(AI.State _newState) {
 				m_pilot.ReleaseAction(Pilot.Action.Button_A);
-				m_machine.StickToCollisions(true);
+				m_machine.UseGravity(true);
+				m_machine.CheckCollisions(true);
 
 				m_pilot.SetDirection(Vector3.zero, false);
 			}
@@ -63,7 +64,7 @@ namespace AI {
 				switch (m_idleState) {
 					case IdleState.Hang_down:
 						m = (m_machine.position - m_target).sqrMagnitude;
-						if (m < 0.5f * 0.5f) {
+						if (m < 1f) {
 							ChangeState(IdleState.Hang_idle);
 						}
 						break;
@@ -77,7 +78,7 @@ namespace AI {
 
 					case IdleState.Hang_up:
 						m = (m_machine.position - m_target).sqrMagnitude;
-						if (m < 0.5f * 0.5f) {
+						if (m < 1f) {
 							Transition(OnMove);
 						}
 						break;
@@ -97,7 +98,8 @@ namespace AI {
 				switch (_state) {
 					case IdleState.Hang_down:
 						m_pilot.PressAction(Pilot.Action.Button_A);
-						m_machine.StickToCollisions(false);
+						m_machine.UseGravity(false);
+						m_machine.CheckCollisions(false);
 						m_machine.upVector = Vector3.up;
 
 						m_target = m_machine.position + Vector3.down * ((SpiderIdleData)m_data).hangDownDistance.GetRandom();
