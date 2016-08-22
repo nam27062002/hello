@@ -105,12 +105,13 @@ public class Entity : MonoBehaviour, ISpawnable {
 	}
 
 	// Use this for initialization
-	void Start () 
+	IEnumerator Start () 
 	{
+		m_bounds = GetComponentInChildren<CircleArea2D>();
+		while( Camera.main == null )
+			yield return null;
 		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
-
-		m_bounds = GetComponentInChildren<CircleArea2D>();
 	}
 
 	void OnEnable() {
