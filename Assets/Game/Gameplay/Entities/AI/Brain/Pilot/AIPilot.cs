@@ -68,8 +68,10 @@ namespace AI {
 
 			// braaiiiinnn ~ ~ ~ ~ ~
 			if (m_brain == null) {
-				m_brain = UnityEngine.Object.Instantiate(m_brainResource) as StateMachine;
-				m_brain.Initialise(gameObject, true);
+				if (m_brainResource != null) {
+					m_brain = UnityEngine.Object.Instantiate(m_brainResource) as StateMachine;
+					m_brain.Initialise(gameObject, true);
+				}
 			} else {
 				m_brain.Reset();
 			}
@@ -79,7 +81,7 @@ namespace AI {
 		}
 
 		public override void OnTrigger(string _trigger, object[] _param = null) {
-			m_brain.Transition(_trigger, _param);
+			if (m_brain != null) m_brain.Transition(_trigger, _param);
 		}
 
 		public void GoTo(Vector3 _target) {

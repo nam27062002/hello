@@ -8,7 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 458024}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_LArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23,7 +23,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 497712}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_RArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 467884}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_Legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 463746}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_LArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +68,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 483772}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_RArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 484904}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_LArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,9 @@ GameObject:
   - 114: {fileID: 11438110}
   - 114: {fileID: 11451842}
   - 114: {fileID: 11477200}
-  m_Layer: 0
+  - 136: {fileID: 136000010254113160}
+  - 54: {fileID: 54000010415919742}
+  m_Layer: 22
   m_Name: PF_Crow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,7 +120,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 402268}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,7 +135,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 447210}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,7 +150,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 407124}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_Tail_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +166,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 489356}
   - 95: {fileID: 9512236}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +182,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 407598}
   - 137: {fileID: 13756668}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +197,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 492292}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Crow_RArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -414,7 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enableMotion: 1
   m_motion:
-    m_stickToGround: 0
+    m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 1
     m_defaultUpVector: 0
@@ -580,3 +582,31 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 119230}
   m_IsPrefabParent: 1
+--- !u!54 &54000010415919742
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119230}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!136 &136000010254113160
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119230}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.14
+  m_Height: 0.88
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.36, z: 0.09}

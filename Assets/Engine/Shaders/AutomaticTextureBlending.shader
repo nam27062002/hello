@@ -53,9 +53,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 				float4 _MainTex_ST;
 				sampler2D _SecondTexture;
 
-				float4 _FogColor;
-				float _FogStart;
-				float _FogEnd;
+				HG_FOG_VARIABLES
 				
 				v2f vert (appdata_t v) 
 				{
@@ -68,7 +66,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					o.blendValue = (o.blendValue * 2) - 1;
 
 					float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-					HG_TRANSFER_FOG(o, worldPos, _FogStart, _FogEnd, _FogColor);	// Fog
+					HG_TRANSFER_FOG(o, worldPos);	// Fog
 
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 					#if LIGHTMAP_ON
@@ -94,7 +92,7 @@ Shader "Hungry Dragon/Automatic Texture Blending + Lightmap And Recieve Shadow"
 					col.rgb *= lm;
 					#endif
 
-					HG_APPLY_FOG(i, col, _FogColor);	// Fog
+					HG_APPLY_FOG(i, col);	// Fog
 					 
 					UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 					return col;
