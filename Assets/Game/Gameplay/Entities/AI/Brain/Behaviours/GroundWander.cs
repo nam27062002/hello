@@ -39,15 +39,15 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<GroundWanderData>();
+			}
 
+			protected override void OnEnter(State oldState, object[] param) {
 				m_limitMin.x = m_pilot.area.bounds.min.x;
 				m_limitMax.x = m_pilot.area.bounds.max.x;
 
 				m_limitMin.y = m_pilot.area.bounds.min.y;
 				m_limitMax.y = m_pilot.area.bounds.max.y;
-			}
 
-			protected override void OnEnter(State oldState, object[] param) {				
 				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SlowDown(false);
 
