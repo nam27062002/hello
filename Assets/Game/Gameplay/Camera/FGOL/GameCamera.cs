@@ -203,6 +203,7 @@ public class GameCamera : MonoBehaviour
 	enum State
 	{
 		INTRO,
+		INTRO_DONE,
 		PLAY
 	};
 	State m_state = State.INTRO;
@@ -297,15 +298,20 @@ public class GameCamera : MonoBehaviour
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 		m_transform.position = m_position;
 
-		m_animatedCamera.transform.position = m_position;
-		m_animatedCamera.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
-		m_animatedCamera.PlayIntro();
-		m_unityCamera.enabled = false;
+		SetTargetObject( InstanceManager.player.gameObject );
 
 		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
 		{
 			m_state = State.PLAY;
-			SetTargetObject( InstanceManager.player.gameObject );
+
+		}
+		else
+		{
+			m_state = State.INTRO;
+			m_animatedCamera.transform.position = m_position;
+			m_animatedCamera.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
+			m_animatedCamera.PlayIntro();
+			m_unityCamera.enabled = false;	
 		}
 
 	}
@@ -322,15 +328,25 @@ public class GameCamera : MonoBehaviour
 
 	private void CountDownEnded()
 	{
+	/*
+		if ( m_state == State.INTRO )
+		{
+			m_state = State.INTRO_DONE;
+			m_unityCamera.enabled = true;
+			GetCameraSetup( m_animatedCamera.m_canera );
+	 	}
+	 	*/
 		m_state = State.PLAY;
-		// m_unityCamera.enabled = true;
-		SetTargetObject( InstanceManager.player.gameObject );
 	}
 
 	private void IntroDone()
 	{
-		m_unityCamera.enabled = true;
-		GetCameraSetup( m_animatedCamera.m_canera );
+		// if ( m_state == State.INTRO )
+		{
+			// m_state = State.INTRO_DONE;
+			m_unityCamera.enabled = true;
+			GetCameraSetup( m_animatedCamera.m_canera );
+		}
 	}
 
 
@@ -476,7 +492,6 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-
 		if ( !DebugSettings.newCameraSystem )
 		{
 			GetComponent<GameCameraController>().enabled = true;
@@ -504,6 +519,7 @@ public class GameCamera : MonoBehaviour
 		m_position = otherCamera.transform.position;
 		m_rotation = otherCamera.transform.eulerAngles;
 		m_transform.position = m_position;
+
 		UpdateValues();
 	}
 
