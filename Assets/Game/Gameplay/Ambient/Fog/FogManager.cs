@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class FogManager : SingletonMonoBehaviour<FogManager>
 {
+	public Texture m_fogCurveTexture;
 	// private FogNode[] m_fogNodes;
 	private List<FogNode> m_usedFogNodes = new List<FogNode>();
 	private Rect m_getRect = new Rect();
@@ -43,6 +44,11 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 
 	private bool m_useQuadtree = false;
 
+	void Awake()
+	{
+		Shader.SetGlobalTexture("_FogTexture", m_fogCurveTexture);
+	}
+
 	IEnumerator Start()
 	{
 		if ( Application.isPlaying )
@@ -63,6 +69,7 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 		if ( !Application.isPlaying )	
 		{
 			RefillQuadtree();
+			Shader.SetGlobalTexture("_FogTexture", m_fogCurveTexture);
 			m_ready = true;	
 		}
 	}
