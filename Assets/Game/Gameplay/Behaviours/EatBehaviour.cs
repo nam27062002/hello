@@ -88,7 +88,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		Capsule
 	};
 
-	private EatCheckType m_eatCheckType = EatCheckType.Capsule;
+	private EatCheckType m_eatCheckType = EatCheckType.EntitiesManager;
 	public EatCheckType eatCheckType{ get {return m_eatCheckType;} set{ m_eatCheckType = value; } }
 	private Entity[] m_checkEntities = new Entity[20];
 	private int m_numCheckEntities = 0;
