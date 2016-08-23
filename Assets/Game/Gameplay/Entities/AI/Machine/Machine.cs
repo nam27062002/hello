@@ -139,6 +139,7 @@ namespace AI {
 			}
 		}
 
+		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
 		void OnCollisionEnter(Collision _collision) {
 			object[] _params = new object[1]{_collision.gameObject};
@@ -149,13 +150,13 @@ namespace AI {
 		void OnTriggerEnter(Collider _other) {
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
-			SetSignal(Signals.Type.Trigger, true);
+			SetSignal(Signals.Type.Trigger, true, _params);
 		}
 
 		void OnTriggerExit(Collider _other) {
 			SetSignal(Signals.Type.Trigger, false);
 		}
-		//
+		//-----------------------------------------------------------
 
 		// Update is called once per frame
 		void Update() {
@@ -178,12 +179,16 @@ namespace AI {
 			m_inflammable.Update();
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated) {
-			m_signals.SetValue(_signal, _activated);
+		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
+			m_signals.SetValue(_signal, _activated, _params);
 		}
 
 		public bool GetSignal(Signals.Type _signal) {
 			return m_signals.GetValue(_signal);
+		}
+
+		public object[] GetSignalParams(Signals.Type _signal) {
+			return m_signals.GetParams(_signal);
 		}
 
 		public void UseGravity(bool _value) {
