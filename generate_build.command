@@ -59,8 +59,8 @@ cd ${SCRIPT_PATH}
 # UPDATE GIT
 # Revert changes to modified files.
 git reset --hard
-# Remove all untracked files and directories.
-git clean -fdx
+# Remove untracked files and directories.
+git clean -fd
 # Chante branch
 git fetch
 git checkout $BRANCH
