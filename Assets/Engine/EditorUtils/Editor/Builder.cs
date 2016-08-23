@@ -47,8 +47,7 @@ public class Builder : MonoBehaviour
 		// Generate project		
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, m_iOSSymbols);
-		// PlayerSettings.bundleVersion = GameSettings.iOSVersion.ToString();
-		PlayerSettings.iOS.buildNumber = GameSettings.internalVersion.ToString();
+		PlayerSettings.iOS.buildNumber = GameSettings.internalVersion;
 
 		// Build
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
@@ -58,7 +57,6 @@ public class Builder : MonoBehaviour
 		// Restore 
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, oldSymbols);
-		// PlayerSettings.bundleVersion = oldVersion;
 		PlayerSettings.iOS.buildNumber = oldBuildNumber;
 	}
 	
@@ -74,48 +72,48 @@ public class Builder : MonoBehaviour
 		// Build
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, m_AndroidSymbols);
-		// PlayerSettings.bundleVersion = GameSettings.androidVersion.ToString();
 		PlayerSettings.Android.bundleVersionCode = GameSettings.androidVersionCode;
 
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
 		string date = System.DateTime.Now.ToString("yyyy-M-d");
-		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion.ToString() + ":" + GameSettings.androidVersionCode.ToString() + "_" + date + ".apk");
+		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion + ":" + GameSettings.androidVersionCode.ToString() + "_" + date + ".apk");
 		BuildPipeline.BuildPlayer(m_scenes, stagePath, BuildTarget.Android, BuildOptions.None);
 
 		// Restore Player Settings
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, oldSymbols);
-		// PlayerSettings.bundleVersion = oldVersion;
 		PlayerSettings.Android.bundleVersionCode = oldVersionCode;
 	}
 
 	[MenuItem ("Build/Increase Internal Version Number")]
 	private static void IncreaseInternalVersionNumber()
 	{
-		GameSettings.internalVersion.patch++;
-		EditorUtility.SetDirty( GameSettings.instance);
-		AssetDatabase.SaveAssets();
-
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null)
 		{
 			settingsInstance.IncreaseAllMinorVersionNumber();
+			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 		}
 	}
 	
 	[MenuItem ("Build/Increase Android Version Code")]
 	private static void IncreaseAndroidVersionCode()
 	{
-		GameSettings.androidVersionCode++;
-		EditorUtility.SetDirty( GameSettings.instance);
-		AssetDatabase.SaveAssets();
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		if(settingsInstance != null)
+		{
+			int value = int.Parse(settingsInstance.m_strVersionAndroidGplayCode);
+			value++;
+			settingsInstance.m_strVersionAndroidGplayCode = value.ToString();
+			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
+		}
 	}
 
 	[MenuItem ("Build/Output Version")]
 	private static void OutputVersion()
 	{
 		StreamWriter sw = File.CreateText("outputVersion.txt");
-		sw.WriteLine( GameSettings.internalVersion.ToString() );
+		sw.WriteLine( GameSettings.internalVersion );
 		sw.Close();
 	}
 }
