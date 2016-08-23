@@ -16,8 +16,9 @@ namespace AI {
 		Transform transform { get; }
 
 		// Internal connections
-		void SetSignal(Signals.Type _signal, bool _activated);
+		void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null);
 		bool GetSignal(Signals.Type _signal);
+		object[] GetSignalParams(Signals.Type _signal);
 
 		void UseGravity(bool _value);
 		void CheckCollisions(bool _value);
