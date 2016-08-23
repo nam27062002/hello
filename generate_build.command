@@ -74,7 +74,7 @@ git pull origin $BRANCH
 
 cd Calety
 git pull
-cd ..
+cd ${SCRIPT_PATH}
 
 if $INCREASE_VERSION_NUMBER; then
 echo "Increasing version number"
