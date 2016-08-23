@@ -75,15 +75,13 @@ git pull origin $BRANCH
 if $INCREASE_VERSION_NUMBER; then
 echo "Increasing version number"
 #Increase Version Number
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath $SCRIPT_PATH -quit
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath $SCRIPT_PATH -quit -buildTarget ios
 fi
-echo "Increse version codes"
 #incease Build Code
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
-echo "Output Version"
 #output version
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
 VERSION_ID="$(cat outputVersion.txt)"
 
@@ -91,13 +89,13 @@ if $BUILD_ANDROID; then
     #GENERATE APKS
     echo "Generating APKs"
     rm "${SCRIPT_PATH}/*.apk"    # just in case
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android
 fi
 
 if $BUILD_IOS; then
     #GENERATE XCODE PROJECTS
     echo "Generating xCode Projects"
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
     # GENERATE ARCHIVES AND IPAS
     mkdir "${SCRIPT_PATH}/archives/"
