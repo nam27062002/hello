@@ -75,16 +75,17 @@ git pull origin $BRANCH
 if $INCREASE_VERSION_NUMBER; then
 echo "Increasing version number"
 #Increase Version Number
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseInternalVersionNumber -projectPath $SCRIPT_PATH -quit -buildTarget ios
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath $SCRIPT_PATH -quit -buildTarget ios
 fi
+#incease Build Code
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
+#output version
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
 VERSION_ID="$(cat outputVersion.txt)"
 
 if $BUILD_ANDROID; then
-#Increase Android Version Code
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseAndroidVersionCode -projectPath $SCRIPT_PATH -quit -buildTarget android
     #GENERATE APKS
     echo "Generating APKs"
     rm "${SCRIPT_PATH}/*.apk"    # just in case
@@ -118,6 +119,7 @@ fi
 # commit project changes
 echo "Committing changes"
 git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
+git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
 git commit -m "Automatic Buid. Version ${VERSION_ID}"
 git push origin ${BRANCH}
 
