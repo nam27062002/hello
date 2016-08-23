@@ -181,6 +181,6 @@ public class CPServerTab : MonoBehaviour {
 	/// </summary>
 	public void OnClearConsoleButton() {
 		m_outputSb.Length = 0;
-		Output("Hungry Dragon v" + GameSettings.internalVersion.ToString() + " console output");
+		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
 	}
 }

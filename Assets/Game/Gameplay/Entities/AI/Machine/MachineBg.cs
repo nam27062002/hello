@@ -11,7 +11,6 @@ namespace AI {
 		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
 
 		private Pilot m_pilot = null;
-		private ViewControl m_viewControl = null;
 
 		private Group m_group; // this will be a reference
 
@@ -36,8 +35,6 @@ namespace AI {
 		// Use this for initialization
 		void Awake() {
 			m_pilot = GetComponent<Pilot>();
-			m_viewControl = GetComponent<ViewControl>();
-
 			m_motion.Attach(this, null, m_pilot);
 		}
 
@@ -64,11 +61,11 @@ namespace AI {
 
 
 		void OnTriggerEnter(Collider _other) {
-			SetSignal(Signals.Type.Trigger, true);
+			SetSignal(Signals.Type.Trigger, true, null);
 		}
 
 		void OnTriggerExit(Collider _other) {
-			SetSignal(Signals.Type.Trigger, false);
+			SetSignal(Signals.Type.Trigger, false, null);
 		}
 		//
 
@@ -77,12 +74,16 @@ namespace AI {
 			if (m_enableMotion) m_motion.Update();
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated) {
+		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params) {
 			
 		}
 
 		public bool GetSignal(Signals.Type _signal) {
 			return false;
+		}
+
+		public object[] GetSignalParams(Signals.Type _signal) {
+			return null;
 		}
 
 		public void UseGravity(bool _value) {

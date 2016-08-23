@@ -34,25 +34,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private string m_playerName = "Player";
 	public static string playerName { get { return instance.m_playerName; }}
 
-	[Comment("Increase intervals for dragon's health drain.\nTODO!! Must be re-designed and implemented.")]
-	[SerializeField] private List<TimeDrain> m_healthDrainIncForTime;
-	public static List<TimeDrain> healthDrainIncForTime { get { return instance.m_healthDrainIncForTime; } }
-
 	[Separator("Versioning")]
 	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
 	public static Version internalVersion { get { return instance.m_internalVersion; }}
-
-	[SerializeField] private Version m_iOSVersion = new Version(1, 0, 0);
-	public static Version iOSVersion { get { return instance.m_iOSVersion; }}
-
-	[SerializeField] private Version m_androidVersion = new Version(1, 0, 0);
-	public static Version androidVersion { get { return instance.m_androidVersion; }}
-
-	[SerializeField] private int m_androidVersionCode = 0;
-	public static int androidVersionCode { 
-		get { return instance.m_androidVersionCode; }
-		set { instance.m_androidVersionCode = value; }
-	}
 
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
