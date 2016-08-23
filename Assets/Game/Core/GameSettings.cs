@@ -34,20 +34,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private string m_playerName = "Player";
 	public static string playerName { get { return instance.m_playerName; }}
 
-	public static string internalVersion { get { return instance.m_caletySettings.GetClientBuildVersion(); }}
-
-	public static int androidVersionCode { get { return int.Parse(instance.m_caletySettings.m_strVersionAndroidGplayCode); }}
-
-	private CaletySettings m_caletySettings;
-
-	public GameSettings() 
-	{
-	}
-
-	void OnEnable()
-	{
-		m_caletySettings = (CaletySettings)Resources.Load("CaletySettings");
-	}
+	[Separator("Versioning")]
+	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
+	public static Version internalVersion { get { return instance.m_internalVersion; }}
 
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//

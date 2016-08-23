@@ -34,7 +34,6 @@ public class GameCameraDebug : MonoBehaviour {
 	// Internal
 	private Camera m_camera = null;
 	int m_cullingMask = 0;
-
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

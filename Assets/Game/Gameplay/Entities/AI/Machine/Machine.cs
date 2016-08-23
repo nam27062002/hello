@@ -131,10 +131,12 @@ namespace AI {
 
 			if (_trigger == SignalTriggers.OnDestroyed) {
 					m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing));
+					if (m_motion != null) m_motion.Stop();
 					if (m_collider != null) m_collider.enabled = false;
 					m_entity.Disable(true);
 			} else if (_trigger == SignalTriggers.OnBurning) {
 					m_viewControl.Burn();
+					if (m_motion != null) m_motion.Stop();
 					if (m_collider != null) m_collider.enabled = false;
 			}
 		}
@@ -258,6 +260,9 @@ namespace AI {
 		public void ReceiveDamage(float _damage) {
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
+				if (IsDead()) {
+					if (m_motion != null) m_motion.Stop();
+				}
 			}
 		}
 

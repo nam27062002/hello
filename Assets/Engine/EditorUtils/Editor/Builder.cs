@@ -15,16 +15,16 @@ public class Builder : MonoBehaviour
 		"Assets/Game/Scenes/SC_Game.unity",
 
 		"Assets/Game/Scenes/Levels/Art/ART_PlayTest_01.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
+		// "Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
 		"Assets/Game/Scenes/Levels/Spawners/SP_PlayTest_01.unity",
 
 		"Assets/Game/Scenes/Levels/Art/ART_Medieval.unity",
 		"Assets/Game/Scenes/Levels/Collision/CO_Medieval.unity",
 		"Assets/Game/Scenes/Levels/Spawners/SP_Medieval.unity",
 
-		"Assets/Game/Scenes/Levels/Art/ART_HS_Map.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_HS_Map.unity",
-		"Assets/Game/Scenes/Levels/Spawners/SP_HS_Map.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_Spawners.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_Spawners.unity",
+		"Assets/Game/Scenes/Levels/Spawners/SP_Spawners.unity",
 
 		"Assets/Tools/LevelEditor/SC_LevelEditor.unity",
 	};
@@ -41,13 +41,12 @@ public class Builder : MonoBehaviour
 		// Save Player Settings
 		string oldBundleIdentifier = PlayerSettings.bundleIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS);
-		string oldVersion = PlayerSettings.bundleVersion;
-		string oldBuildNumber = PlayerSettings.iOS.buildNumber;
 
 		// Generate project		
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, m_iOSSymbols);
-		PlayerSettings.iOS.buildNumber = GameSettings.internalVersion;
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.iOS);
+		UpdateCaletySettings();
 
 		// Build
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
@@ -57,7 +56,6 @@ public class Builder : MonoBehaviour
 		// Restore 
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, oldSymbols);
-		PlayerSettings.iOS.buildNumber = oldBuildNumber;
 	}
 	
 	[MenuItem ("Build/Android")]
@@ -66,45 +64,62 @@ public class Builder : MonoBehaviour
 		// Save Player Settings
 		string oldBundleIdentifier = PlayerSettings.bundleIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android);
-		string oldVersion = PlayerSettings.bundleVersion;
-		int oldVersionCode = PlayerSettings.Android.bundleVersionCode;
 
 		// Build
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, m_AndroidSymbols);
-		PlayerSettings.Android.bundleVersionCode = GameSettings.androidVersionCode;
+		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.Android);
+		UpdateCaletySettings();
 
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
 		string date = System.DateTime.Now.ToString("yyyy-M-d");
-		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion + ":" + GameSettings.androidVersionCode.ToString() + "_" + date + ".apk");
+		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion + ":" + PlayerSettings.Android.bundleVersionCode + "_" + date + ".apk");
 		BuildPipeline.BuildPlayer(m_scenes, stagePath, BuildTarget.Android, BuildOptions.None);
 
 		// Restore Player Settings
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, oldSymbols);
-		PlayerSettings.Android.bundleVersionCode = oldVersionCode;
 	}
 
-	[MenuItem ("Build/Increase Internal Version Number")]
-	private static void IncreaseInternalVersionNumber()
+	[MenuItem ("Build/Increase Minor Version Number")]
+	private static void IncreaseMinorVersionNumber()
+	{
+		GameSettings.internalVersion.patch++;
+		EditorUtility.SetDirty(GameSettings.instance);
+		AssetDatabase.SaveAssets();
+	}
+	
+	[MenuItem ("Build/Increase Version Codes")]
+	private static void IncreaseVersionCodes()
 	{
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null)
 		{
-			settingsInstance.IncreaseAllMinorVersionNumber();
+			settingsInstance.m_strVersionIOSCode = IncreaseVersionCode( settingsInstance.m_strVersionIOSCode );
+			settingsInstance.m_strVersionAndroidGplayCode = IncreaseVersionCode( settingsInstance.m_strVersionAndroidGplayCode );
+			settingsInstance.m_strVersionAndroidAmazonCode = IncreaseVersionCode( settingsInstance.m_strVersionAndroidAmazonCode );
+			EditorUtility.SetDirty( settingsInstance );
+			AssetDatabase.SaveAssets();
 			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 		}
 	}
-	
-	[MenuItem ("Build/Increase Android Version Code")]
-	private static void IncreaseAndroidVersionCode()
+
+	private static string IncreaseVersionCode( string versionCode )
+	{
+		int res;
+		if (int.TryParse( versionCode, out res))
+		{
+			res++;
+			return res.ToString();
+		}
+		return versionCode;
+	}
+
+	private static void UpdateCaletySettings()
 	{
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null)
 		{
-			int value = int.Parse(settingsInstance.m_strVersionAndroidGplayCode);
-			value++;
-			settingsInstance.m_strVersionAndroidGplayCode = value.ToString();
 			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 		}
 	}

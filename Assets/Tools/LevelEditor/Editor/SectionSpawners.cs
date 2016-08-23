@@ -229,7 +229,6 @@ namespace LevelEditor {
 			Spawner sp = null;
 			if ( IsPathBehaviour( entityPrefab ) )
 			{
-				sp = newSpawnerObj.AddComponent<PathSpawner>();
 				spawnerName += "Path";
 			}
 			else
