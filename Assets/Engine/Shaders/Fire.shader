@@ -54,6 +54,7 @@
 				// sample the texture
 				fixed4 noise = tex2D( _NoiseTex, i.noiseUV ) * 0.65;
 				noise.g = noise.g * i.uv.y;
+				noise.r = 0;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
 				return col;
 			}
