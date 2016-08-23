@@ -6,6 +6,5 @@ public class GameSettingsEditor : Editor {
 	
 	public override void OnInspectorGUI() {
 		DrawDefaultInspector();
-		PlayerSettings.bundleVersion = GameSettings.iOSVersion.ToString();
 	}
 }

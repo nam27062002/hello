@@ -346,6 +346,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	virtual protected void EndHold()
 	{
 		m_holdingPrey.ReleaseHold();
+		m_holdingPrey.SetVelocity(m_motion.velocity * 2f);
 		m_holdingPrey = null;
 
 		m_noAttackTime = m_holdStunTime;

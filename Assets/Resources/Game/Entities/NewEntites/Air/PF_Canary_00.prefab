@@ -104,7 +104,9 @@ GameObject:
   - 114: {fileID: 11475328}
   - 114: {fileID: 11430714}
   - 114: {fileID: 11439040}
-  m_Layer: 0
+  - 135: {fileID: 135000010285406574}
+  - 54: {fileID: 54000014046134604}
+  m_Layer: 22
   m_Name: PF_Canary_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -406,7 +408,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114680}
-  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
+  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -509,7 +511,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enableMotion: 1
   m_motion:
-    m_stickToGround: 0
+    m_useGravity: 0
     m_walkOnWalls: 0
     m_mass: 4
     m_defaultUpVector: 0
@@ -614,6 +616,21 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 129198}
   m_IsPrefabParent: 1
+--- !u!54 &54000014046134604
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129198}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!114 &114000010333019328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -628,3 +645,15 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 0.39877605
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!135 &135000010285406574
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129198}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.19
+  m_Center: {x: 0, y: 0.31, z: 0.03}

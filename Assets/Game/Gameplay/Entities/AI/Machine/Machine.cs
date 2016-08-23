@@ -131,14 +131,17 @@ namespace AI {
 
 			if (_trigger == SignalTriggers.OnDestroyed) {
 					m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing));
+					if (m_motion != null) m_motion.Stop();
 					if (m_collider != null) m_collider.enabled = false;
 					m_entity.Disable(true);
 			} else if (_trigger == SignalTriggers.OnBurning) {
 					m_viewControl.Burn();
+					if (m_motion != null) m_motion.Stop();
 					if (m_collider != null) m_collider.enabled = false;
 			}
 		}
 
+		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
 		void OnCollisionEnter(Collision _collision) {
 			object[] _params = new object[1]{_collision.gameObject};
@@ -149,13 +152,13 @@ namespace AI {
 		void OnTriggerEnter(Collider _other) {
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
-			SetSignal(Signals.Type.Trigger, true);
+			SetSignal(Signals.Type.Trigger, true, _params);
 		}
 
 		void OnTriggerExit(Collider _other) {
 			SetSignal(Signals.Type.Trigger, false);
 		}
-		//
+		//-----------------------------------------------------------
 
 		// Update is called once per frame
 		void Update() {
@@ -178,17 +181,27 @@ namespace AI {
 			m_inflammable.Update();
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated) {
-			m_signals.SetValue(_signal, _activated);
+		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
+			m_signals.SetValue(_signal, _activated, _params);
 		}
 
 		public bool GetSignal(Signals.Type _signal) {
 			return m_signals.GetValue(_signal);
 		}
 
-		public void StickToCollisions(bool _value) {
+		public object[] GetSignalParams(Signals.Type _signal) {
+			return m_signals.GetParams(_signal);
+		}
+
+		public void UseGravity(bool _value) {
 			if (m_motion != null) {
-				m_motion.stickToGround = _value;
+				m_motion.useGravity = _value;
+			}
+		}
+
+		public void CheckCollisions(bool _value) {
+			if (m_motion != null) {
+				m_motion.checkCollisions = _value;
 			}
 		}
 
@@ -247,6 +260,9 @@ namespace AI {
 		public void ReceiveDamage(float _damage) {
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
+				if (IsDead()) {
+					if (m_motion != null) m_motion.Stop();
+				}
 			}
 		}
 
@@ -275,13 +291,11 @@ namespace AI {
 
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
-		public void BiteAndHold() 
-		{
+		public void BiteAndHold() {
 			m_edible.BiteAndHold();
 		}
 
-		public void ReleaseHold() 
-		{
+		public void ReleaseHold() {
 			m_motion.position = transform.position;
 			m_edible.ReleaseHold();
 		}
@@ -297,6 +311,12 @@ namespace AI {
 				return true;
 			}
 			return false;
+		}
+
+		public void SetVelocity(Vector3 _v) {
+			if (m_motion != null) {
+				m_motion.SetVelocity(_v);
+			}
 		}
 
 		// Debug

@@ -13,7 +13,9 @@ GameObject:
   - 114: {fileID: 11451598}
   - 114: {fileID: 11485410}
   - 114: {fileID: 11455198}
-  m_Layer: 8
+  - 136: {fileID: 136000012050958464}
+  - 54: {fileID: 54000010715511648}
+  m_Layer: 21
   m_Name: PF_Sheep_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,7 +29,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -32.72, y: 1.81, z: 0}
+  m_LocalPosition: {x: -32.72, y: 1.007, z: 1.999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -47,9 +49,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enableMotion: 1
   m_motion:
-    m_stickToGround: 1
+    m_useGravity: 1
     m_walkOnWalls: 0
-    m_mass: 5
+    m_mass: 10
     m_defaultUpVector: 0
     m_orientationSpeed: 460
     m_faceDirection: 0
@@ -119,7 +121,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":5,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":5,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
 --- !u!114 &11485410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -165,7 +167,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012149814218}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_RArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,7 +183,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000010614739196}
   - 137: {fileID: 137000010530774316}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,7 +198,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013825458126}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LLeg_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -211,7 +213,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012508204230}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +228,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011757623392}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_Hip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +243,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012529396558}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LArm_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -257,7 +259,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000013339403740}
   - 95: {fileID: 95000010845593240}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -272,7 +274,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013671219150}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +289,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013767364998}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -302,7 +304,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013300780986}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_RLeg_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -317,7 +319,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013383544600}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_REar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -332,7 +334,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012046581474}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_RArm_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -347,7 +349,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012936926924}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LLeg_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,7 +364,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012029753704}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_RLeg_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -377,7 +379,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010355042760}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_Head_Ctrl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -392,7 +394,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011926566886}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LLeg_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -407,7 +409,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010453279080}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LLeg_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -422,7 +424,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000014069827796}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_RLeg_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -437,7 +439,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011482530788}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452,7 +454,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000014029526012}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -467,7 +469,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000012717221368}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_RLeg_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +484,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013665166040}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_LEar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -497,7 +499,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000013284874566}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_RArm_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -512,7 +514,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011453676636}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Sheep_Neck_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -748,7 +750,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011759811720}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.007, z: -0.198}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -854,6 +856,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4000012029753704}
   m_RootOrder: 0
+--- !u!54 &54000010715511648
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 128698}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!95 &95000010845593240
 Animator:
   serializedVersion: 3
@@ -871,6 +888,19 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!136 &136000012050958464
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 128698}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.62
+  m_Height: 0
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!137 &137000010530774316
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

@@ -2,11 +2,12 @@
 {
 	Properties
 	{
-		_Color ("Color", Color) = (1,1,1,1)
+		_Color ("Color", Color) = (1, 1, 1, 1)
+		_DebugColor ("Debug Color", Color) = (0.5, 1, 0, 0.5)	// Green-ish, used by the replacement shader
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" "ReplacementShaderID"="Collision"}
 		LOD 100
 
 		Pass
@@ -15,8 +16,9 @@
 			#pragma vertex vert
 			#pragma fragment frag
 
-			uniform fixed4 _Color;
 			#include "UnityCG.cginc"
+
+			uniform fixed4 _Color;
 
 			struct appdata
 			{

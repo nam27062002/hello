@@ -13,6 +13,7 @@ public enum GameEvents {
 	DEBUG_MENU_DRAGON_SELECTED = EngineEvents.END,
 	DEBUG_SIMULATION_FINISHED,
 	DEBUG_UNLOCK_LEVELS,
+	DEBUG_SETTING_CHANGED,		// params: string _settingID, bool _newValue
 
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
@@ -96,5 +97,8 @@ public enum GameEvents {
 	MERGE_SERVER_SAVE_DATA,
 
 	// UI events
-	INGAME_PC_FEEDBACK_END		// no params
+	INGAME_PC_FEEDBACK_END,		// no params
+
+	// Camera events
+	CAMERA_INTRO_DONE,			// no params
 }
