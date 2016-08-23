@@ -77,10 +77,12 @@ echo "Increasing version number"
 #Increase Version Number
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath $SCRIPT_PATH -quit -buildTarget ios
 fi
+echo "Increasing Build Code"
 #incease Build Code
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
 #output version
+echo "Output Version"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
 VERSION_ID="$(cat outputVersion.txt)"
