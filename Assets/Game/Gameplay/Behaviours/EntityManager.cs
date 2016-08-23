@@ -35,6 +35,22 @@ public class EntityManager : SingletonMonoBehaviour<EntityManager> {
 		return m_searchList.ToArray();
 	}
 
+	public int GetEntitiesInRange2DNonAlloc(Vector2 _center, float _radius, Entity[] results)
+	{
+		int numResult = 0;
+		for (int i = 0; i < m_entities.Count && numResult < results.Length; i++) {
+			Entity e = m_entities[i];
+			if (e != null) {				
+				if (e.IntersectsWith(_center, _radius)) {
+					results[ numResult ] = e;
+					numResult++;
+				}
+			}
+		}
+		return numResult;
+	}
+
+
 	public Entity GetEntityInRangeNearest2D(Vector2 _center, float _radius, DragonTier _tier) {
 		float minDistSqr = _radius * _radius;
 		Entity nearestEntity = null;

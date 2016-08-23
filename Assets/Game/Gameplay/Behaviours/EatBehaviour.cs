@@ -81,6 +81,19 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected bool m_waitJawsEvent = false;
 
+	public enum EatCheckType
+	{
+		EntitiesManager,
+		Box,
+		Capsule
+	};
+
+	private EatCheckType m_eatCheckType = EatCheckType.Capsule;
+	public EatCheckType eatCheckType{ get {return m_eatCheckType;} set{ m_eatCheckType = value; } }
+	private Entity[] m_checkEntities = new Entity[20];
+	private int m_numCheckEntities = 0;
+	private Collider[] m_checkEntityColliders = new Collider[20];
+	private int m_entitiesColliderMask = -1;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -101,6 +114,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdBoostDamageMultiplier = 3;
 		m_holdHealthGainRate = 10;
 		m_holdDuration = 1;
+
+		m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys")| 1 << LayerMask.NameToLayer("MachinePreys")| 1 << LayerMask.NameToLayer("GroundPreys")| 1 << LayerMask.NameToLayer("Mines");
 	}
 
 	protected void SetupHoldParametersForTier( string tierSku)
@@ -386,10 +401,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
 		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * eatRadius);
 
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(arcOrigin, arcRadius);
-		for (int e = 0; e < preys.Length; e++) 
+		UpdateEntitiesToCheck( arcOrigin, arcRadius);
+		for (int e = 0; e < m_numCheckEntities; e++) 
 		{
-			Entity entity = preys[e];
+			Entity entity = m_checkEntities[e];
 			if (entity.IsEdible())
 			{
 				// Start bite attempt
@@ -414,6 +429,51 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
+	private void UpdateEntitiesToCheck( Vector3 position, float distance )
+	{
+		m_numCheckEntities = 0;
+		switch(m_eatCheckType)
+		{
+			case EatCheckType.EntitiesManager:
+			{
+				m_numCheckEntities = EntityManager.instance.GetEntitiesInRange2DNonAlloc(position, distance, m_checkEntities);
+			}break;
+			case EatCheckType.Capsule:
+			{
+				Vector3 start = position;
+				start.z = -10;
+				Vector3 end = position;
+				end.z = 10;
+				int entities = Physics.OverlapCapsuleNonAlloc(start, end, distance, m_checkEntityColliders, m_entitiesColliderMask);
+
+				for( int i = 0; i<entities; i++ )
+				{
+					Entity entity = m_checkEntityColliders[i].attachedRigidbody.GetComponent<Entity>();
+					if ( entity != null )
+					{
+						m_checkEntities[ m_numCheckEntities ] = entity;
+						m_numCheckEntities++;
+					}
+				}
+			}break;
+			case EatCheckType.Box:
+			{
+				int entities = Physics.OverlapBoxNonAlloc( position, Vector3.one * distance * 0.5f + Vector3.forward * 10, m_checkEntityColliders, Quaternion.identity, m_entitiesColliderMask);
+
+				for( int i = 0; i<entities; i++ )
+				{
+					Entity entity = m_checkEntityColliders[i].attachedRigidbody.GetComponent<Entity>();
+					if ( entity != null )
+					{
+						m_checkEntities[ m_numCheckEntities ] = entity;
+						m_numCheckEntities++;
+					}
+				}
+			}break;
+		}
+
+	}
+
 	private void FindSomethingToEat( bool _canHold = true ) 
 	{
 		float eatDistance = m_eatDistance * transform.localScale.x;
@@ -429,9 +489,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		AI.Machine preyToHold = null;
 		List<AI.Machine> preysToEat = new List<AI.Machine>();
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
-		for (int e = 0; e < preys.Length; e++) {
-			Entity entity = preys[e];
+		UpdateEntitiesToCheck( m_suction.position, eatDistance);
+		for (int e = 0; e < m_numCheckEntities; e++) {
+			Entity entity = m_checkEntities[e];
 			if (entity.IsEdible(m_tier))
 			{
 				if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
