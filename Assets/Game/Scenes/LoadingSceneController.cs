@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -22,30 +23,43 @@ public class LoadingSceneController : SceneController {
 	//------------------------------------------------------------------//
 	public static readonly string NAME = "SC_Loading";
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-	// References
-	[SerializeField] private Text m_loadingTxt = null;
+    private static bool s_inSaveLoaderState = false;
+
+    public static bool InSaveLoaderState
+    {
+        get { return s_inSaveLoaderState; }
+    }
+
+    //------------------------------------------------------------------//
+    // MEMBERS															//
+    //------------------------------------------------------------------//
+    // References
+    [SerializeField] private Text m_loadingTxt = null;
 	[SerializeField] private Slider m_loadingBar = null;
 
 	// Internal
 	private float timer = 0;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	override protected void Awake() {
+    private bool m_startLoadFlow = true;
+    private bool m_loading = false;
+    private bool m_loadingDone = false;
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    override protected void Awake() {
 		// Call parent
 		base.Awake();
 		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!");
 		DebugUtils.Assert(m_loadingBar != null, "Required component!");
-	}
+
+        SaveFacade.Instance.OnLoadComplete += OnLoadingFinished;
+    }
 
 	/// <summary>
 	/// First update.
@@ -87,11 +101,12 @@ public class LoadingSceneController : SceneController {
 		// Social
 		SocialPlatformManager.SharedInstance.Init();
 
-		// Load persistence
-		PersistenceManager.Init();
+        // Load persistence
+        // [DGR] Persistence changed                
+        PersistenceManager.Init();
 		PersistenceManager.Load();
-		GameServerManager.SharedInstance.LoginToServer();
-		PersistenceSynchManager.CreateInstance(true);
+		//GameServerManager.SharedInstance.LoginToServer();
+		PersistenceSynchManager.CreateInstance(true);                
 
 		// Initialize localization
 		SetSavedLanguage();
@@ -110,12 +125,12 @@ public class LoadingSceneController : SceneController {
         }
 
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
-    }
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	void Update() {
+    }    
+
+    /// <summary>
+    /// Called every frame.
+    /// </summary>
+    void Update() {
 		// Update load progress
 		//m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(SceneManager.loadProgress * 100f, 0));
 
@@ -125,9 +140,15 @@ public class LoadingSceneController : SceneController {
 		m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
 		m_loadingBar.normalizedValue = loadProgress;
 
-		// Once load is finished, navigate to the menu scene
-		if(loadProgress >= 1f && !GameSceneManager.isLoading) FlowManager.GoToMenu();
-	}
+        // The persistence is loaded once this loading state is loaded 
+        if (!GameSceneManager.isLoading)
+        {
+            StartLoadFlow();
+        }
+
+        // Once load is finished, navigate to the menu scene
+        if(loadProgress >= 1f && /*!GameSceneManager.isLoading*/m_loadingDone) FlowManager.GoToMenu();
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -165,5 +186,50 @@ public class LoadingSceneController : SceneController {
 			}
 		}
 	}
+
+    private void StartLoadFlow()
+    {
+        if (m_startLoadFlow)
+        {
+            s_inSaveLoaderState = true;
+
+            m_startLoadFlow = false;
+            m_loading = true;
+            m_loadingDone = false;
+
+            Debug.Log("Started Loading Flow");
+
+            SaveFacade.Instance.Load();
+        }
+    }
+
+    private void OnLoadingFinished()
+    {
+        Debug.Log("OnLoadingFinished - " + m_loading);
+
+        if (m_loading)
+        {
+            m_loading = false;
+
+            Action onComplete = delegate ()
+            {
+                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Auth state check complete!");
+
+                s_inSaveLoaderState = false;
+                m_loadingDone = true;                
+            };
+
+            SocialFacade.Network network = SocialManager.GetSelectedSocialNetwork();
+            if (false && SocialManager.Instance.IsUser(network) && !SaveFacade.Instance.cloudSaveEnabled)
+            {
+                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Check Facebook User Auth State!");
+                SocialManager.Instance.Authenticate(network, onComplete);
+            }
+            else
+            {
+                onComplete();
+            }
+        }
+    }
 }
 
