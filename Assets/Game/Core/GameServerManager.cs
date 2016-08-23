@@ -301,8 +301,13 @@ public class GameServerManager :  MonoBehaviour
 			m_delegate = new GameServerManager.GameSessionDelegate();
 	        GameSessionManager.SharedInstance.SetListener( m_delegate );
 
+
+            // 
 			m_configured = true;
         }
+
+        //[DGR] Extra api calls which are needed by Dragon but are not defined in Calety. Maybe they could be added in Calety when it supports offline mode
+        CaletyExtensions_Init();                
     }
 
 	public void LoginToServer ()
@@ -315,6 +320,19 @@ public class GameServerManager :  MonoBehaviour
 				m_delegate.m_waitingLoginResponse = true;
 	        	GameSessionManager.SharedInstance.LogInToServer ();
 	        }
+        }
+    }
+
+    public void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)
+    {
+        PrepareServerConfig();
+        if (!m_delegate.m_logged)
+        {
+            if (!m_delegate.m_waitingLoginResponse)
+            {
+                m_delegate.m_waitingLoginResponse = true;
+                CaletyExtensions_LogInToServerThruPlatform(platformId, platformUserId, platformToken);
+            }
         }
     }
 
@@ -374,18 +392,124 @@ public class GameServerManager :  MonoBehaviour
 
 	}
 
+    public void GetPersistence()
+    {
+        CaletyExtensions_GetPersistence();
+    }
 
-	/// <summary>
-	/// Tries the merge save datas. If true
-	/// </summary>
-	/// <returns><c>true</c>, if merge save datas was tryed, <c>false</c> otherwise.</returns>
-	/// <param name="saveData1">Save data1.</param>
-	/// <param name="saveData2">Save data2.</param>
-	/*
+    public void SetPersistence()
+    {
+        CaletyExtensions_SetPersistence("{\"test\":\"2\"}");
+    }
+
+    /// <summary>
+    /// Tries the merge save datas. If true
+    /// </summary>
+    /// <returns><c>true</c>, if merge save datas was tryed, <c>false</c> otherwise.</returns>
+    /// <param name="saveData1">Save data1.</param>
+    /// <param name="saveData2">Save data2.</param>
+    /*
 	public bool TryMergeSaveDatas( SimpleJSON.JSONClass saveData1, SimpleJSON.JSONClass saveData2)
 	{
 		
 
 	}
 	*/
+
+    #region calety_extensions
+    private void CaletyExtensions_Init()
+    {
+        NetworkManager.SharedInstance.RegistryEndPoint("/api/persistence/get", NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500 }, CaletyExtensions_OnGetPersistenceResponse);
+        NetworkManager.SharedInstance.RegistryEndPoint("/api/persistence/set", NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnSetPersistenceResponse);
+    }
+
+    private bool CaletyExtensions_OnGetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
+    {
+        Debug.Log("OnGetPersistenceResponse statusCode=" + iResponseCode);
+
+        switch (iResponseCode)
+        {
+            case 200: // Get successful            
+                {
+                    JSONNode kJSONData = JSON.Parse(strResponse);                    
+                    break;
+                }
+
+            case 401: // Error: Token is wronn (No authorized)
+                {
+                    break;
+                }
+            case 500:
+                {
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+        }
+
+        return true;
+    }
+
+    public bool CaletyExtensions_OnSetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
+    {
+        Debug.Log("OnSetPersistenceResponse statusCode=" + iResponseCode);
+
+        switch (iResponseCode)
+        {
+            case 200: // Set successful            
+                {
+                    break;
+                }
+
+            case 400: // Json passed as a parameter corrupted
+                {
+                    break;
+                }
+
+            case 500: // Error
+                {
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+        }
+
+        return true;
+    }
+
+    public void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)
+    {
+        ServerManager.SharedInstance.SetNetworkPlatform(platformId);
+        ServerManager.SharedInstance.Server_SendAuth(platformUserId, platformToken);
+    }
+
+    public void CaletyExtensions_GetPersistence()
+    {
+        if (IsLogged())
+        {
+            Dictionary<string, string> kParams = new Dictionary<string, string>();
+            kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+            kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+            ServerManager.SharedInstance.SendCommand("/api/persistence/get", kParams);
+        }
+    }
+
+    public void CaletyExtensions_SetPersistence(string persistence)
+    {
+        if (IsLogged())
+        {
+            Dictionary<string, string> kParams = new Dictionary<string, string>();
+            kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+            kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+            kParams["universe"] = persistence;
+            ServerManager.SharedInstance.SendCommand("/api/persistence/set", kParams);
+        }
+    }
+    #endregion
 }
