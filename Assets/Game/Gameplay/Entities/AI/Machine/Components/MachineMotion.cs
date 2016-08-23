@@ -125,15 +125,21 @@ namespace AI {
 			m_velocity = _v;
 		}
 
+		public void Stop() {
+			m_velocity = Vector3.zero;
+			m_rbody.velocity = Vector3.zero;
+			m_rbody.angularVelocity = Vector3.zero;
+		}
+
 		public override void Update() {
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
-				m_velocity = Vector3.zero;
+				Stop();
 				m_rotation = m_machine.transform.rotation;
 				return;
 			}
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
-				m_velocity = Vector3.zero;
+				Stop();
 				m_rotation = m_machine.transform.rotation;
 				m_viewControl.Panic(true, m_machine.GetSignal(Signals.Type.Burning));
 				return;
