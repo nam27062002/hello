@@ -76,67 +76,78 @@ namespace LevelEditor {
 		/// Draw the section.
 		/// </summary>
 		public void OnGUI() {
-			// Group in a box
-			EditorGUILayout.BeginVertical(LevelEditorWindow.instance.styles.boxStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
-				// Title
-				EditorGUILayout.BeginHorizontal(); {
-					GUILayout.FlexibleSpace();
-					GUILayout.Label("Game Simulator", EditorStyles.boldLabel);
-					GUILayout.FlexibleSpace();
-				} EditorGUILayout.EndHorizontal();
+			// Title - encapsulate in a nice button to make it foldable
+			GUI.backgroundColor = Colors.gray;
+			bool folded = Prefs.GetBoolEditor("LevelEditor.SectionSimulation.folded", false);
+			if(GUILayout.Button((folded ? "►" : "▼") + " Game Simulator", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true))) {
+				folded = !folded;
+				Prefs.SetBoolEditor("LevelEditor.SectionSimulation.folded", folded);
+			}
+			GUI.backgroundColor = Colors.white;
 
-				// If any parameter changes, update simulation
-				EditorGUI.BeginChangeCheck();
+			// -Only show if unfolded
+			if(!folded) {
+				// Group in a box
+				EditorGUILayout.BeginVertical(LevelEditorWindow.styles.sectionContentStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
+					// Only show if a Spawners Level is loaded
+					Level spawnersLevel = LevelEditorWindow.sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS);
+					if(spawnersLevel == null) {
+						EditorGUILayout.HelpBox("A Spawners scene is required to run the simulator", MessageType.Error);
+					} else {
+						// If any parameter changes, update simulation
+						EditorGUI.BeginChangeCheck();
 
-				// Enable simulation?
-				simulationEnabled = EditorGUILayout.ToggleLeft(" Enable Simulation", simulationEnabled);
+						// Enable simulation?
+						simulationEnabled = EditorGUILayout.ToggleLeft(" Enable Simulation", simulationEnabled);
 
-				// Time slider
-				bool wasEnabled = GUI.enabled;
-				GUI.enabled = simulationEnabled;
-				EditorGUILayout.BeginHorizontal(); {
-					// Slider
-					EditorGUILayout.LabelField("Time", GUILayout.Width(40f));
-					time = EditorGUILayout.Slider(time, 0f, timeMax);
+						// Time slider
+						bool wasEnabled = GUI.enabled;
+						GUI.enabled = simulationEnabled;
+						EditorGUILayout.BeginHorizontal(); {
+							// Slider
+							EditorGUILayout.LabelField("Time", GUILayout.Width(40f));
+							time = EditorGUILayout.Slider(time, 0f, timeMax);
 
-					// Max XP
-					EditorGUILayout.LabelField("Max", GUILayout.Width(40f));
-					timeMax = EditorGUILayout.FloatField(timeMax, GUILayout.Width(50f));
-				} EditorGUILayout.EndHorizontal();
+							// Max XP
+							EditorGUILayout.LabelField("Max", GUILayout.Width(40f));
+							timeMax = EditorGUILayout.FloatField(timeMax, GUILayout.Width(50f));
+						} EditorGUILayout.EndHorizontal();
 
-				// XP slider
-				EditorGUILayout.BeginHorizontal(); {
-					// Slider
-					EditorGUILayout.LabelField("XP", GUILayout.Width(40f));
-					xp = EditorGUILayout.Slider(xp, 0f, xpMax);
+						// XP slider
+						EditorGUILayout.BeginHorizontal(); {
+							// Slider
+							EditorGUILayout.LabelField("XP", GUILayout.Width(40f));
+							xp = EditorGUILayout.Slider(xp, 0f, xpMax);
 
-					// Max XP
-					EditorGUILayout.LabelField("Max", GUILayout.Width(40f));
-					xpMax = EditorGUILayout.FloatField(xpMax, GUILayout.Width(50f));
-				} EditorGUILayout.EndHorizontal();
-				GUI.enabled = wasEnabled;
+							// Max XP
+							EditorGUILayout.LabelField("Max", GUILayout.Width(40f));
+							xpMax = EditorGUILayout.FloatField(xpMax, GUILayout.Width(50f));
+						} EditorGUILayout.EndHorizontal();
+						GUI.enabled = wasEnabled;
 
-				// If any parameter has changed, update simulation
-				if(EditorGUI.EndChangeCheck()) {
-					UpdateSimulation();
-				}
+						// If any parameter has changed, update simulation
+						if(EditorGUI.EndChangeCheck()) {
+							UpdateSimulation();
+						}
 
-				// Enemy count stats
-				const float columnWidth = 60f;
-				EditorGUILayout.BeginHorizontal(); {
-					EditorGUILayout.LabelField("Enemies", GUILayout.Width(columnWidth));
-					EditorGUILayout.LabelField("MIN", GUILayout.Width(columnWidth));
-					EditorGUILayout.LabelField("MAX", GUILayout.Width(columnWidth));
-					EditorGUILayout.LabelField("AVG", GUILayout.Width(columnWidth));
-				} EditorGUILayout.EndHorizontal();
+						// Enemy count stats
+						const float columnWidth = 60f;
+						EditorGUILayout.BeginHorizontal(); {
+							EditorGUILayout.LabelField("Enemies", GUILayout.Width(columnWidth));
+							EditorGUILayout.LabelField("MIN", GUILayout.Width(columnWidth));
+							EditorGUILayout.LabelField("MAX", GUILayout.Width(columnWidth));
+							EditorGUILayout.LabelField("AVG", GUILayout.Width(columnWidth));
+						} EditorGUILayout.EndHorizontal();
 
-				EditorGUILayout.BeginHorizontal(); {
-					GUILayout.Space(columnWidth);
-					EditorGUILayout.LabelField(m_enemiesCount.min.ToString(), GUILayout.Width(columnWidth));
-					EditorGUILayout.LabelField(m_enemiesCount.max.ToString(), GUILayout.Width(columnWidth));
-					EditorGUILayout.LabelField(m_enemiesCount.center.ToString(), GUILayout.Width(columnWidth));
-				} EditorGUILayout.EndHorizontal();
-			} EditorGUILayout.EndVertical();
+						EditorGUILayout.BeginHorizontal(); {
+							GUILayout.Space(columnWidth);
+							EditorGUILayout.LabelField(m_enemiesCount.min.ToString(), GUILayout.Width(columnWidth));
+							EditorGUILayout.LabelField(m_enemiesCount.max.ToString(), GUILayout.Width(columnWidth));
+							EditorGUILayout.LabelField(m_enemiesCount.center.ToString(), GUILayout.Width(columnWidth));
+						} EditorGUILayout.EndHorizontal();
+					}
+				} EditorGUILayout.EndVertical();
+			}
 		}
 
 		//--------------------------------------------------------------------//

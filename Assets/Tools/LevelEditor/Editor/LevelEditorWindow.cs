@@ -32,6 +32,8 @@ namespace LevelEditor {
 			public GUIStyle groupListStyle = null;	// Option style for a SelectionGrid element
 			public GUIStyle whiteScrollListStyle = null;	// Scroll list with white background
 			public GUIStyle boxStyle = null;	// Background boxes
+			public GUIStyle sectionHeaderStyle = null;	// Section title, background + title + button
+			public GUIStyle sectionContentStyle = null;	// Section content background
 		}
 
 		//------------------------------------------------------------------//
@@ -40,7 +42,8 @@ namespace LevelEditor {
 		// Sections
 		private ILevelEditorSection[] m_sections = new ILevelEditorSection[] {
 			new SectionLevels(),
-			new SectionSimulation()
+			new SectionSimulation(),
+			new SectionDragonSpawn()
 		};
 
 		// Styles
@@ -64,11 +67,12 @@ namespace LevelEditor {
 		}
 		 
 		// Section shortcuts - don't change order in the array!!
-		public SectionLevels sectionLevels { get { return m_sections[0] as SectionLevels; }}
-		public SectionSimulation sectionSimulation { get { return m_sections[1] as SectionSimulation; }}
+		public static SectionLevels sectionLevels { get { return instance.m_sections[0] as SectionLevels; }}
+		public static SectionSimulation sectionSimulation { get { return instance.m_sections[1] as SectionSimulation; }}
+		public static SectionDragonSpawn sectionDragonSpawn { get { return instance.m_sections[2] as SectionDragonSpawn; }}
 
 		// Styles shortcut
-		public Styles styles { get { return m_styles; }}
+		public static Styles styles { get { return instance.m_styles; }}
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
@@ -258,13 +262,14 @@ namespace LevelEditor {
 				}
 
 				// Draw sections
-				// Level section - always drawn
+				// Level section
 				sectionLevels.OnGUI();
 
-				// Simulation section - only if spawners level is loaded
-				if(sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS) != null) {
-					sectionSimulation.OnGUI();
-				}
+				// Dragon spawn section
+				sectionDragonSpawn.OnGUI();
+
+				// Simulation section
+				sectionSimulation.OnGUI();
 			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 
@@ -314,6 +319,27 @@ namespace LevelEditor {
 			{ // Background boxes
 				m_styles.boxStyle = new GUIStyle(EditorStyles.helpBox);
 				m_styles.boxStyle.padding = new RectOffset(10, 10, 10, 10);
+			}
+
+			{ // Section header style
+				GUIStyle newStyle = new GUIStyle(EditorStyles.helpBox);
+
+				newStyle.fontSize = EditorStyles.boldLabel.fontSize;
+				newStyle.fontSize = 11;
+				newStyle.fontStyle = FontStyle.Bold;
+				newStyle.alignment = TextAnchor.MiddleLeft;
+				newStyle.margin = new RectOffset(4, 4, 4, -1);	// No separation with content box
+
+				m_styles.sectionHeaderStyle = newStyle;
+			}
+
+			{ // Section content style
+				GUIStyle newStyle = new GUIStyle(m_styles.sectionHeaderStyle);
+
+				newStyle.margin = new RectOffset(4, 4, -1, 4);	// No separation with header box
+				newStyle.padding = new RectOffset(10, 10, 10, 10);
+
+				m_styles.sectionContentStyle = newStyle;
 			}
 		}
 

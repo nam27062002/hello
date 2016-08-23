@@ -86,7 +86,7 @@ namespace LevelEditor {
 			// Quick'n'dirty timer to place the dragon at the spawn point
 			if(m_timer > 0f) {
 				m_timer -= Time.deltaTime;
-				if(m_timer <= 0f) InstanceManager.player.MoveToSpawnPoint();
+				if(m_timer <= 0f) InstanceManager.player.MoveToSpawnPoint(true);
 			}
 		}
 
@@ -119,7 +119,7 @@ namespace LevelEditor {
 			InstanceManager.player.ResetStats(false);
 
 			// Put player in position and make it playable
-			InstanceManager.player.MoveToSpawnPoint();
+			InstanceManager.player.MoveToSpawnPoint(true);
 			InstanceManager.player.playable = true;
 
 			// Enable reward manager to see coins/score feedback
