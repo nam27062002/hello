@@ -12,7 +12,7 @@ public class NetTest : MonoBehaviour
 	void Start () 
 	{
 		// CUSTOM SERVER
-		m_loginButton.SetActive(false);
+		m_loginButton.SetActive(true);
 		m_actionButtons.SetActive(false);
 		m_waitingText.SetActive(false);
 		m_mergeLayout.SetActive(false);
@@ -51,9 +51,8 @@ public class NetTest : MonoBehaviour
 	{
 		if ( logged )
 		{
-            m_loginButton.SetActive(true);
-            //CheckShowMerge();
-        }
+			CheckShowMerge();
+		}
 		else
 		{
 			
@@ -64,26 +63,19 @@ public class NetTest : MonoBehaviour
 	{
 		m_loginButton.SetActive(false);
 		m_waitingText.SetActive(true);
-        //GameServerManager.SharedInstance.LoginToServer();        
-        if (SocialPlatformManager.SharedInstance.IsLoggedIn())
-        {
-            GameServerManager.SharedInstance.LogInToServerThruPlatform("facebook", SocialPlatformManager.SharedInstance.GetUserId(), SocialPlatformManager.SharedInstance.GetToken());
-        }
-    }
+		GameServerManager.SharedInstance.LoginToServer();
+	}
 
 	public void GetUniverse()
 	{
-        //GameServerManager.SharedInstance.GetUniverse();
-        GameServerManager.SharedInstance.GetPersistence();
-    }
+		GameServerManager.SharedInstance.GetUniverse();
+	}
 
 	public void SetUniverse()
 	{
-        /*SimpleJSON.JSONClass info = PersistenceManager.LoadToObject( PersistenceManager.activeProfile );
+		SimpleJSON.JSONClass info = PersistenceManager.LoadToObject( PersistenceManager.activeProfile );
 		GameServerManager.SharedInstance.SetUniverse( info );
-        */
-        GameServerManager.SharedInstance.SetPersistence();
-    }
+	}
 
 
 	// SOCIAL PLATFORM
