@@ -28,6 +28,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] private int m_flockBonus = 0;
 
 	[Separator("Activation")]
+	[Tooltip("Spawners may not be present on every run (percentage).")]
+	[SerializeField][Range(0f, 100f)] private float m_activationChange = 100f;
+
 	[Tooltip("For the spawners that must spawn even when the dragon is not near (i.e. the spawners around the start area)")]
 	[SerializeField] private bool m_activeOnStart = false;
 
@@ -91,26 +94,30 @@ public class Spawner : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Use this for initialization
 	protected virtual void Start() {
-		m_entities = new GameObject[m_quantity.max];
+		float rnd = Random.Range(0f, 100f);
 
-		if (m_rails == 0) m_rails = 1;
+		if (rnd <= m_activationChange) {
+			m_entities = new GameObject[m_quantity.max];
 
-		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
+			if (m_rails == 0) m_rails = 1;
 
-		// Get external references
-		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
-		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+			PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
 
-		m_area = GetArea();
+			// Get external references
+			// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
+			m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
-		m_groupController = GetComponent<EntityGroupController>();
-		if (m_groupController) {
-			m_groupController.Init(m_quantity.max);
+			m_area = GetArea();
+
+			m_groupController = GetComponent<EntityGroupController>();
+			if (m_groupController) {
+				m_groupController.Init(m_quantity.max);
+			}
+
+			m_guideFunction = GetComponent<IGuideFunction>();
+
+			SpawnerManager.instance.Register(this);
 		}
-
-		m_guideFunction = GetComponent<IGuideFunction>();
-
-		SpawnerManager.instance.Register(this);
 
 		gameObject.SetActive(false);
 	}
