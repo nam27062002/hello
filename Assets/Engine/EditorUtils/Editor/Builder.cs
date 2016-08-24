@@ -18,15 +18,20 @@ public class Builder : MonoBehaviour
 		// "Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
 		"Assets/Game/Scenes/Levels/Spawners/SP_PlayTest_01.unity",
 
+		"Assets/Game/Scenes/Levels/Spawners/SP_Spawners.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_Spawners.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_Spawners.unity",
+
+
 		"Assets/Game/Scenes/Levels/Art/ART_Medieval.unity",
 		"Assets/Game/Scenes/Levels/Collision/CO_Medieval.unity",
 		"Assets/Game/Scenes/Levels/Spawners/SP_Medieval.unity",
 
-		"Assets/Game/Scenes/Levels/Art/ART_Spawners.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_Spawners.unity",
-		"Assets/Game/Scenes/Levels/Spawners/SP_Spawners.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_Carla.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_Carla.unity",
+		"Assets/Game/Scenes/Levels/Spawners/SP_Carla.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_Carla_cut.unity",
 
-		"Assets/Tools/LevelEditor/SC_LevelEditor.unity",
 	};
 
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
