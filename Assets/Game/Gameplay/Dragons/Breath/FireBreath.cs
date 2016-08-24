@@ -63,6 +63,9 @@ public class FireBreath : DragonBreathBehaviour {
 	float m_timeToNextLoopAudio = 0;
 	AudioSource m_lastAudioSource;
 
+	private Entity[] m_checkEntities = new Entity[50];
+	private int m_numCheckEntities = 0;
+
 	override protected void ExtendedStart() {
 
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameParticle), m_maxParticles, false);
@@ -302,14 +305,15 @@ public class FireBreath : DragonBreathBehaviour {
 		//--------------------------------------------------------------------------------------------
 		// try to burn things!!!
 		// search for preys!
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
-		for (int i = 0; i < preys.Length; i++) 
+		// Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
+		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_sphCenter, m_sphRadius, m_checkEntities);
+		for (int i = 0; i < m_numCheckEntities; i++) 
 		{
-			Entity prey = preys[i];
+			Entity prey = m_checkEntities[i];
 			if ((prey.circleArea != null && Overlaps(prey.circleArea)) || IsInsideArea(prey.transform.position)) 
 			{
 				if (CanBurn(prey) || m_type == Type.Super) {
-					AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
+					AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
 					if (machine != null) {
 						machine.Burn(damage * Time.deltaTime, transform);
 					}
