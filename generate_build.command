@@ -52,7 +52,10 @@ do
 done;
 
 
-SCRIPT_PATH=$(pwd)/"$(dirname $0)"
+RELATIVE_PATH="$(dirname $0)"
+cd $RELATIVE_PATH
+
+SCRIPT_PATH="$(pwd)"
 echo $SCRIPT_PATH
 cd ${SCRIPT_PATH}
 

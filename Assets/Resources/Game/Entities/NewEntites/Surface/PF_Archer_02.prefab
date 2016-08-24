@@ -84,6 +84,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 464262}
   - 114: {fileID: 11463112}
+  - 114: {fileID: 114000013707833440}
   m_Layer: 21
   m_Name: HoldPreyPoint
   m_TagString: Untagged
@@ -666,7 +667,6 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 8.982699}
   m_Children:
   - {fileID: 468478}
-  - {fileID: 464262}
   m_Father: {fileID: 436634}
   m_RootOrder: 2
 --- !u!4 &438926
@@ -841,13 +841,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 117446}
-  m_LocalRotation: {x: -0.9753964, y: 0.22003579, z: -0.002993723, w: 0.013312039}
-  m_LocalPosition: {x: -0.6210407, y: 0.01241567, z: -0.0000012046813}
+  m_LocalRotation: {x: -0.4166039, y: 0.5597754, z: -0.4320242, w: 0.5713561}
+  m_LocalPosition: {x: 0, y: 1.7755039, z: -0.0146140475}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: -1.4125999, y: 179.3295, z: -154.567}
   m_Children: []
-  m_Father: {fileID: 437894}
-  m_RootOrder: 1
+  m_Father: {fileID: 4000012978746312}
+  m_RootOrder: 0
 --- !u!4 &464592
 Transform:
   m_ObjectHideFlags: 1
@@ -861,6 +861,7 @@ Transform:
   m_Children:
   - {fileID: 454398}
   - {fileID: 441306}
+  - {fileID: 4000012978746312}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &465928
@@ -1302,6 +1303,35 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 137544}
   m_IsPrefabParent: 1
+--- !u!1 &1000011713087296
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000012978746312}
+  m_Layer: 21
+  m_Name: holdPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4000012978746312
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011713087296}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 464262}
+  m_Father: {fileID: 464592}
+  m_RootOrder: 2
 --- !u!54 &54000012078941286
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1317,6 +1347,18 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114000013707833440
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Spine1
 --- !u!136 &136000013977480550
 CapsuleCollider:
   m_ObjectHideFlags: 1
