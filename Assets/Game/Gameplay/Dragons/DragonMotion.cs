@@ -415,6 +415,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			*/
 		}
 
+
+				
+		m_animator.SetFloat("height", m_height);
+
+		UpdateBodyBending();
+	}
+
+	void LateUpdate()
+	{
 		if ( m_holdPrey != null )
 		{
 			// Rotation
@@ -423,20 +432,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			Vector3 holdDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.forward);
 			Vector3 holdUpDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.up);
 			// m_holdPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
-			m_holdPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 8);
+			m_holdPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
 
 			// Position
 			Vector3 pos = m_holdPrey.transform.localPosition;
 			m_holdPrey.transform.localPosition = Vector3.zero;
 			Vector3 holdPoint = m_tongue.InverseTransformPoint( m_holdPreyTransform.position );
 			// m_holdPrey.transform.localPosition = -holdPoint;
-			m_holdPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 8);
+			m_holdPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
 
 		}
-				
-		m_animator.SetFloat("height", m_height);
-
-		UpdateBodyBending();
 	}
 
 	void UpdateBodyBending()
