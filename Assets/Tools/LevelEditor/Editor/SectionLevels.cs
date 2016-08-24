@@ -168,8 +168,6 @@ namespace LevelEditor {
 			// Aux vars
 			bool levelLoaded = (activeLevel != null);
 			bool playing = EditorApplication.isPlaying;
-			string oldDragon = LevelEditor.settings.testDragon;
-			string newDragon = oldDragon;
 
 			// Some spacing
 			GUILayout.Space(5f);
@@ -195,7 +193,7 @@ namespace LevelEditor {
 			GUILayout.Space(5f);
 			
 			// Toolbar
-			EditorGUILayout.BeginVertical(LevelEditorWindow.instance.styles.boxStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
+			EditorGUILayout.BeginVertical(LevelEditorWindow.styles.boxStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 				EditorGUILayout.BeginHorizontal(); {
 					// Create
 					GUI.enabled = !playing;
@@ -234,62 +232,6 @@ namespace LevelEditor {
 				
 				// If level was deleted or closed, don't continue (avoid null references)
 				if(levelLoaded && activeLevel == null) return;
-				
-				// Separator
-				EditorGUILayoutExt.Separator(new SeparatorAttribute(5f));
-				
-				// Dragon selector
-				GUI.enabled = levelLoaded && !playing;
-				EditorGUILayout.BeginHorizontal(); {
-					// Label
-					GUILayout.Label("Test Dragon:");
-					
-					// Dragon selector
-					string[] options = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).ToArray();
-					int oldIdx = ArrayUtility.IndexOf<string>(options, oldDragon);
-					int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);	// Select first dragon if saved dragon was not found (i.e. sku changes)
-					if(oldIdx != newIdx) {
-						newDragon = options[newIdx];
-						LevelEditor.settings.testDragon = newDragon;
-						EditorUtility.SetDirty(LevelEditor.settings);
-						EditorApplication.SaveAssets();
-					}
-				} EditorGUILayoutExt.EndHorizontalSafe();
-				GUI.enabled = true;
-				
-				// Dragon spawners - only in spawner mode
-				if(activeLevel is LevelTypeSpawners) {
-					EditorGUILayout.BeginHorizontal(); {
-						// Show/Create spawn point
-						GameObject spawnPointObj = null;
-						LevelTypeSpawners spawnersLevel = levelLoaded ? activeLevel as LevelTypeSpawners : null;
-						if(levelLoaded) spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, false);
-						if(spawnPointObj == null) {
-							GUI.enabled = levelLoaded && !playing;
-							if(GUILayout.Button("Create Spawn")) {
-								spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, true);
-								EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);
-								EditorUtils.FocusObject(spawnPointObj);
-							}
-						} else {
-							GUI.enabled = true;
-							if(GUILayout.Button("Show Spawn")) {
-								EditorUtils.FocusObject(spawnPointObj);
-							}
-						}
-						
-						// Focus default spawn point
-						GUI.enabled = levelLoaded;
-						if(GUILayout.Button("Show Default Spawn")) {
-							spawnPointObj = spawnersLevel.GetDragonSpawnPoint("");
-							EditorUtils.FocusObject(spawnPointObj);
-							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
-						}
-						
-						GUI.enabled = true;
-					} EditorGUILayoutExt.EndHorizontalSafe();
-				}
-				GUI.enabled = true;
 				
 				// Separator
 				EditorGUILayoutExt.Separator(new SeparatorAttribute(5f));

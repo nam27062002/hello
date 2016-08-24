@@ -274,13 +274,22 @@ public class DragonPlayer : MonoBehaviour {
 	/// at its current position.
 	/// Uses GameObject.Find, so don't abuse it!
 	/// </summary>
-	public void MoveToSpawnPoint() {
-		// Look for a default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + data.def.sku);
+	/// <param name="_levelEditor">Try to use the level editor's spawn point?</param>
+	public void MoveToSpawnPoint(bool _levelEditor) {
+		// Use level editor's spawn point or try to use specific's dragon spawn point?
+		GameObject spawnPointObj = null;
+		if(_levelEditor) {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+		} else {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+		}
+
+		// If we couldn't find a valid spawn point, try to find a generic one
 		if(spawnPointObj == null) {
-			// We couldn't find a spawn point for this specific type, try to find a generic one
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
+
+		// Move to position
 		if(spawnPointObj != null) {
 			transform.position = spawnPointObj.transform.position;
 

@@ -15,16 +15,16 @@ public class Builder : MonoBehaviour
 		"Assets/Game/Scenes/SC_Game.unity",
 
 		"Assets/Game/Scenes/Levels/Art/ART_PlayTest_01.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
+		// "Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
 		"Assets/Game/Scenes/Levels/Spawners/SP_PlayTest_01.unity",
 
 		"Assets/Game/Scenes/Levels/Art/ART_Medieval.unity",
 		"Assets/Game/Scenes/Levels/Collision/CO_Medieval.unity",
 		"Assets/Game/Scenes/Levels/Spawners/SP_Medieval.unity",
 
-		"Assets/Game/Scenes/Levels/Art/ART_HS_Map.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_HS_Map.unity",
-		"Assets/Game/Scenes/Levels/Spawners/SP_HS_Map.unity",
+		"Assets/Game/Scenes/Levels/Art/ART_Spawners.unity",
+		"Assets/Game/Scenes/Levels/Collision/CO_Spawners.unity",
+		"Assets/Game/Scenes/Levels/Spawners/SP_Spawners.unity",
 
 		"Assets/Tools/LevelEditor/SC_LevelEditor.unity",
 	};

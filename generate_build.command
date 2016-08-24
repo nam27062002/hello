@@ -72,6 +72,10 @@ fi
 #update branch
 git pull origin $BRANCH
 
+cd Calety
+git pull
+cd ${SCRIPT_PATH}
+
 if $INCREASE_VERSION_NUMBER; then
 echo "Increasing version number"
 #Increase Version Number
