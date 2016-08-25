@@ -54,7 +54,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {				
-				if (m_machine.enemy != null) {
+				if (m_target != null) {
 					float m = (m_machine.position - m_target.position).sqrMagnitude;
 					if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
 						Transition(OnEnemyInRange);

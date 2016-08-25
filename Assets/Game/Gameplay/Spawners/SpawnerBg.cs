@@ -60,6 +60,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 
 	protected EntityGroupController m_groupController;
 	protected IGuideFunction m_guideFunction;
+	public IGuideFunction guideFunction { get { return m_guideFunction; } }
 
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
