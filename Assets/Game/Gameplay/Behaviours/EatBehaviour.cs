@@ -436,28 +436,31 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
 		for (int e = 0; e < m_numCheckEntities; e++) {
 			Entity entity = m_checkEntities[e];
-			if (entity.IsEdible(m_tier))
+			if ( entity.IsEdible() )
 			{
-				if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
+				if (entity.IsEdible(m_tier))
 				{
-					AI.Machine machine = entity.GetComponent<AI.Machine>();
-					if (!machine.IsDead()) {
-						preysToEat.Add(machine);
+					if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
+					{
+						AI.Machine machine = entity.GetComponent<AI.Machine>();
+						if (!machine.IsDead()) {
+							preysToEat.Add(machine);
+						}
 					}
 				}
-			}
-			else if (entity.CanBeHolded(m_tier))
-			{
-				if (_canHold)
+				else if (entity.CanBeHolded(m_tier))
 				{
-					AI.Machine machine = entity.GetComponent<AI.Machine>();
-					preyToHold = machine;
+					if (_canHold)
+					{
+						AI.Machine machine = entity.GetComponent<AI.Machine>();
+						preyToHold = machine;
+					}
 				}
-			}
-			else 
-			{
-				if (m_isPlayer)
-					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
+				else 
+				{
+					if (m_isPlayer)
+						Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
+				}
 			}
 		}
 
