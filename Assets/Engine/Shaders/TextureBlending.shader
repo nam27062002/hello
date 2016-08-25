@@ -91,7 +91,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 						// col = col * (i.color + fixed4(0.5,0.5,0.5,0.5));	// Soft Light
 						col = 2 * i.color * col;	// Overlay
 					}
-					return col;
+
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
 
