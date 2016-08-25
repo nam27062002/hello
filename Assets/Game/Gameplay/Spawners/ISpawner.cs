@@ -9,6 +9,7 @@ public interface ISpawner : IQuadTreeItem {
 	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
 
 	AreaBounds area{ get; }
+	IGuideFunction guideFunction{ get; }
 	Transform transform{ get; }
 
 }

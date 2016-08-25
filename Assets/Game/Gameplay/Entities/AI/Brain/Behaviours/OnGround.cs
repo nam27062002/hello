@@ -42,6 +42,7 @@ namespace AI {
 				//
 				m_timer -= Time.deltaTime;
 				if (m_timer <= 0) {
+					SpawnerAreaManager.instance.UpdateAreaAt(m_machine.position, ref m_pilot);
 					Transition(OnRecover);
 				}
 			}

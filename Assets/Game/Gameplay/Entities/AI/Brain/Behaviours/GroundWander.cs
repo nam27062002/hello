@@ -66,9 +66,7 @@ namespace AI {
 					m_side = 1; // we'll keep walking in the same direction
 
 					m_sideTimer -= Time.deltaTime;
-					if (m_sideTimer <= 0
-					||  target.x < m_limitMin.x || target.x > m_limitMax.x
-					||  target.y < m_limitMin.y || target.y > m_limitMax.y) {
+					if (m_sideTimer <= 0 || ShouldChangeDirection(target)) {
 						m_side *= -1;
 						m_sideTimer = m_data.timeToChangeDirection.GetRandom();
 					}
@@ -83,6 +81,20 @@ namespace AI {
 						Transition(OnRest);
 					}
 				}
+			}
+
+			private bool ShouldChangeDirection(Vector3 _pos) {
+				bool goingOutside = _pos.x < m_limitMin.x || _pos.x > m_limitMax.x ||  _pos.y < m_limitMin.y || _pos.y > m_limitMax.y;
+				bool changeDir = false;
+
+				if (goingOutside) {
+					Vector3 v = m_pilot.homePosition - m_machine.position;
+					Vector3 d = _pos - m_machine.position;
+					float dot = Vector3.Dot(d, v);
+					changeDir = dot < 0;
+				}
+
+				return changeDir;
 			}
 		}
 	}

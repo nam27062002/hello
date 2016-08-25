@@ -11,24 +11,22 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderGravity;
 	public Dropdown m_eatTypeDropDown;
 	private DragonMotion m_motion;
-	private EatBehaviour m_eatBehaviour;
 
 	void OnEnable()
 	{
 		if ( InstanceManager.player != null )
 		{
 			m_motion = InstanceManager.player.GetComponent<DragonMotion>();
-			m_eatBehaviour = InstanceManager.player.GetComponent<EatBehaviour>();
 
 			m_sliderVelocity.value = m_motion.m_dargonAcceleration;
 			m_sliderUp.value = m_motion.m_dragonMass;
 			m_sliderDown.value = m_motion.m_dragonFricction;
 			m_moveTypeDropDown.value = DragonMotion.movementType;
-			switch( m_eatBehaviour.eatCheckType )
+			switch( EntityManager.instance.overlapingMethod )
 			{
-				case EatBehaviour.EatCheckType.EntitiesManager: m_eatTypeDropDown.value = 0;break;
-				case EatBehaviour.EatCheckType.Capsule: m_eatTypeDropDown.value = 1;break;
-				case EatBehaviour.EatCheckType.Box: m_eatTypeDropDown.value = 2;break;
+				case EntityManager.OverlapingMethod.EntitiesManager: m_eatTypeDropDown.value = 0;break;
+				case EntityManager.OverlapingMethod.Capsule: m_eatTypeDropDown.value = 1;break;
+				case EntityManager.OverlapingMethod.Box: m_eatTypeDropDown.value = 2;break;
 			}
 			m_sliderGravity.value = m_motion.m_dragonGravityModifier;
 		}		
@@ -66,13 +64,13 @@ public class QuickDragonSettings : MonoBehaviour {
 
 	public void SetEatType(int type)
 	{
-		if (m_eatBehaviour)	
+		if (EntityManager.instance)	
 		{
 			switch( type )
 			{
-				case 0:m_eatBehaviour.eatCheckType = EatBehaviour.EatCheckType.EntitiesManager;break;
-				case 1:m_eatBehaviour.eatCheckType = EatBehaviour.EatCheckType.Capsule;break;
-				case 2:m_eatBehaviour.eatCheckType = EatBehaviour.EatCheckType.Box;break;
+				case 0:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.EntitiesManager;break;
+				case 1:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.Capsule;break;
+				case 2:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.Box;break;
 			}
 		}
 	}
