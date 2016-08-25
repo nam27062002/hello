@@ -11,6 +11,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		public Vector3 offset = Vector3.zero;
 	}
 
+	[Serializable]
+	public class SkinData {
+		public Material skin;
+		[Range(0f, 100f)] public float m_chance = 0f;
+	}
+
 	public enum SpecialAnims {
 		A = 0,
 		B,
@@ -42,6 +48,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[SeparatorAttribute]
 	[SerializeField] private ParticleData m_explosionParticles; // this will explode when burning
+
+	[SeparatorAttribute("Skin")]
+	[SerializeField] private List<SkinData> m_skins = new List<SkinData>();
 
 
 	//-----------------------------------------------
@@ -110,14 +119,28 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		if (m_entity != null) {
+			Material altMaterial = null;
+
+			if (m_entity.isGolden) {
+				altMaterial = m_materialGold;
+			} else if (m_skins.Count > 0) {				
+				for (int i = 0; i < m_skins.Count; i++) {
+					float rnd = UnityEngine.Random.Range(0f, 100f);
+					if (rnd < m_skins[i].m_chance) {
+						altMaterial = m_skins[i].skin;
+						break;
+					}
+				}
+			}
+
 			// Restore materials
 			Renderer[] renderers = GetComponentsInChildren<Renderer>();
 			for (int i = 0; i < renderers.Length; i++) {
-				if (m_entity.isGolden) {				
+				if (altMaterial != null) {				
 					Material[] materials = renderers[i].materials;
 					for (int m = 0; m < materials.Length; m++) {
 						if (!materials[m].shader.name.EndsWith("Additive"))
-							materials[m] = m_materialGold;
+							materials[m] = altMaterial;
 					}
 					renderers[i].materials = materials;
 				} else {
