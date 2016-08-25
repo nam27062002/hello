@@ -67,6 +67,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	protected EntityGroupController m_groupController;
 	protected IGuideFunction m_guideFunction;
+	public IGuideFunction guideFunction { get { return m_guideFunction; } }
 
 	private uint m_entityAlive;
 	private uint m_entitySpawned;
@@ -117,6 +118,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			m_guideFunction = GetComponent<IGuideFunction>();
 
 			SpawnerManager.instance.Register(this);
+			SpawnerAreaManager.instance.Register(this);
 		}
 
 		gameObject.SetActive(false);

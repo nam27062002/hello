@@ -30,6 +30,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private Bounds m_bounds; // view bounds
 
 	public AreaBounds area{ get {return null;} }
+	public IGuideFunction guideFunction{ get {return null;} }
 
 	private GameCameraController m_camera;
 	private GameCamera m_newCamera;

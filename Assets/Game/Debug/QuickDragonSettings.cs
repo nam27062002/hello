@@ -9,6 +9,7 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderDown;
 	public Dropdown m_moveTypeDropDown;
 	public Slider m_sliderGravity;
+	public Dropdown m_eatTypeDropDown;
 	private DragonMotion m_motion;
 
 	void OnEnable()
@@ -21,6 +22,12 @@ public class QuickDragonSettings : MonoBehaviour {
 			m_sliderUp.value = m_motion.m_dragonMass;
 			m_sliderDown.value = m_motion.m_dragonFricction;
 			m_moveTypeDropDown.value = DragonMotion.movementType;
+			switch( EntityManager.instance.overlapingMethod )
+			{
+				case EntityManager.OverlapingMethod.EntitiesManager: m_eatTypeDropDown.value = 0;break;
+				case EntityManager.OverlapingMethod.Capsule: m_eatTypeDropDown.value = 1;break;
+				case EntityManager.OverlapingMethod.Box: m_eatTypeDropDown.value = 2;break;
+			}
 			m_sliderGravity.value = m_motion.m_dragonGravityModifier;
 		}		
 	}
@@ -53,5 +60,18 @@ public class QuickDragonSettings : MonoBehaviour {
 	{
 		if ( m_motion != null )
 			m_motion.m_dragonGravityModifier = _size;
+	}
+
+	public void SetEatType(int type)
+	{
+		if (EntityManager.instance)	
+		{
+			switch( type )
+			{
+				case 0:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.EntitiesManager;break;
+				case 1:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.Capsule;break;
+				case 2:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.Box;break;
+			}
+		}
 	}
 }

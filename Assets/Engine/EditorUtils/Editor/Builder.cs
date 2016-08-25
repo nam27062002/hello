@@ -1,34 +1,13 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
 public class Builder : MonoBehaviour 
 {	
 	
-
-	static string[] m_scenes  = 
-	{
-		"Assets/Game/Scenes/SC_Loading.unity",
-		"Assets/Game/Scenes/SC_Menu.unity",
-		"Assets/Game/Scenes/SC_Game.unity",
-
-		"Assets/Game/Scenes/Levels/Art/ART_PlayTest_01.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_PlayTest_01.unity",
-		"Assets/Game/Scenes/Levels/Spawners/SP_PlayTest_01.unity",
-
-		"Assets/Game/Scenes/Levels/Art/ART_Medieval.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_Medieval.unity",
-		"Assets/Game/Scenes/Levels/Spawners/SP_Medieval.unity",
-
-		"Assets/Game/Scenes/Levels/Art/ART_HS_Map.unity",
-		"Assets/Game/Scenes/Levels/Collision/CO_HS_Map.unity",
-		"Assets/Game/Scenes/Levels/Spawners/SP_HS_Map.unity",
-
-		"Assets/Tools/LevelEditor/SC_LevelEditor.unity",
-	};
-
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
 	const string m_iOSSymbols = "";
 
@@ -51,7 +30,9 @@ public class Builder : MonoBehaviour
 		// Build
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
 		dstPath = System.IO.Path.Combine(dstPath, "xcode");
-		BuildPipeline.BuildPlayer( m_scenes, dstPath, BuildTarget.iOS, BuildOptions.None); 
+
+
+		BuildPipeline.BuildPlayer( GetBuildingScenes(), dstPath, BuildTarget.iOS, BuildOptions.None); 
 
 		// Restore 
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
@@ -74,11 +55,24 @@ public class Builder : MonoBehaviour
 		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
 		string date = System.DateTime.Now.ToString("yyyy-M-d");
 		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion + ":" + PlayerSettings.Android.bundleVersionCode + "_" + date + ".apk");
-		BuildPipeline.BuildPlayer(m_scenes, stagePath, BuildTarget.Android, BuildOptions.None);
+		BuildPipeline.BuildPlayer(GetBuildingScenes(), stagePath, BuildTarget.Android, BuildOptions.None);
 
 		// Restore Player Settings
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, oldSymbols);
+	}
+
+	public static string[] GetBuildingScenes()
+	{
+		List<string> scenes = new List<string>();
+		for( int i = 0; i< EditorBuildSettings.scenes.Length; i++)
+		{
+			if ( EditorBuildSettings.scenes[i].enabled )
+			{
+				scenes.Add(EditorBuildSettings.scenes[i].path);
+			}
+		}
+		return scenes.ToArray();
 	}
 
 	[MenuItem ("Build/Increase Minor Version Number")]

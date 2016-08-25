@@ -23,7 +23,7 @@ namespace AI {
 		//----------------------------------------------------------------------------------------------------------------
 
 		protected AreaBounds m_area;
-		public AreaBounds area { get { return m_area; } }
+		public AreaBounds area { get { return m_area; } set { m_area = value; } }
 
 		protected IGuideFunction m_guideFunction;
 		public IGuideFunction guideFunction { 

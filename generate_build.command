@@ -52,7 +52,10 @@ do
 done;
 
 
-SCRIPT_PATH=$(pwd)/"$(dirname $0)"
+RELATIVE_PATH="$(dirname $0)"
+cd $RELATIVE_PATH
+
+SCRIPT_PATH="$(pwd)"
 echo $SCRIPT_PATH
 cd ${SCRIPT_PATH}
 
@@ -71,6 +74,10 @@ if [[ $success -ne 0 ]]; then
 fi
 #update branch
 git pull origin $BRANCH
+
+cd Calety
+git pull
+cd ${SCRIPT_PATH}
 
 if $INCREASE_VERSION_NUMBER; then
 echo "Increasing version number"
