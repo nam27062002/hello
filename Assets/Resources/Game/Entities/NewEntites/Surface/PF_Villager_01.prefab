@@ -348,6 +348,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 436760}
   - 114: {fileID: 11459028}
+  - 114: {fileID: 114000011055342836}
   m_Layer: 21
   m_Name: HoldPreyPoint
   m_TagString: Untagged
@@ -635,13 +636,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 176664}
-  m_LocalRotation: {x: -0.000000040441588, y: 0.000000045771905, z: 0.21440065, w: 0.97674584}
-  m_LocalPosition: {x: -0.75811636, y: 0.077577494, z: -0}
+  m_LocalRotation: {x: 0.33227244, y: -0.62416863, z: -0.33227825, w: 0.62417936}
+  m_LocalPosition: {x: 0, y: 1.9212213, z: 0.027838023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 24.7607}
   m_Children: []
-  m_Father: {fileID: 488260}
-  m_RootOrder: 1
+  m_Father: {fileID: 4000011390334812}
+  m_RootOrder: 0
 --- !u!4 &437958
 Transform:
   m_ObjectHideFlags: 1
@@ -781,6 +782,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 445016}
+  - {fileID: 4000011390334812}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &482786
@@ -824,7 +826,6 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 8.982699}
   m_Children:
   - {fileID: 455970}
-  - {fileID: 436760}
   m_Father: {fileID: 431690}
   m_RootOrder: 2
 --- !u!4 &488348
@@ -1101,6 +1102,35 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 131698}
   m_IsPrefabParent: 1
+--- !u!1 &1000012531856332
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011390334812}
+  m_Layer: 21
+  m_Name: holdPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4000011390334812
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012531856332}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 436760}
+  m_Father: {fileID: 475722}
+  m_RootOrder: 1
 --- !u!54 &54000010887478324
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1116,6 +1146,18 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114000011055342836
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Spine1
 --- !u!136 &136000011231704714
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -22,6 +22,7 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		public static readonly string DRAGON_SPAWN_POINT_NAME = "DragonSpawn";	// Concatenate DragonId for specific spawn points
+		public static readonly string LEVEL_EDITOR_SPAWN_POINT_NAME = "LevelEditor";
 		private static readonly string DRAGON_SPAWN_POINTS_CONTAINER_NAME = "DragonSpawnPoints";
 
 		//------------------------------------------------------------------//

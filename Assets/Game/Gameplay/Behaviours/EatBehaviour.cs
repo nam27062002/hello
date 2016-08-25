@@ -81,6 +81,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected bool m_waitJawsEvent = false;
 
+
+	private Entity[] m_checkEntities = new Entity[20];
+	private int m_numCheckEntities = 0;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -386,10 +390,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
 		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * eatRadius);
 
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(arcOrigin, arcRadius);
-		for (int e = 0; e < preys.Length; e++) 
+		m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
+		for (int e = 0; e < m_numCheckEntities; e++) 
 		{
-			Entity entity = preys[e];
+			Entity entity = m_checkEntities[e];
 			if (entity.IsEdible())
 			{
 				// Start bite attempt
@@ -429,9 +433,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		AI.Machine preyToHold = null;
 		List<AI.Machine> preysToEat = new List<AI.Machine>();
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
-		for (int e = 0; e < preys.Length; e++) {
-			Entity entity = preys[e];
+		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
+		for (int e = 0; e < m_numCheckEntities; e++) {
+			Entity entity = m_checkEntities[e];
 			if (entity.IsEdible(m_tier))
 			{
 				if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
