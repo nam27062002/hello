@@ -75,9 +75,6 @@ namespace AI {
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");
 
-			m_rotation = m_machine.transform.rotation;
-			m_targetRotation = m_rotation;
-
 			m_isGrounded = false;
 
 			if (m_walkOnWalls) {
@@ -115,6 +112,7 @@ namespace AI {
 			m_velocity = Vector3.zero;
 			m_acceleration = Vector3.zero;
 			m_collisionNormal = Vector3.up;
+			m_direction = (UnityEngine.Random.Range(0f, 1f) < 0.6f)? Vector3.right : Vector3.left;
 
 			if (m_mass < 0f) {
 				m_mass = 0f;
@@ -124,11 +122,16 @@ namespace AI {
 				// teleport to ground
 				GetCollisionNormal();
 				RaycastHit hit;
-				bool hasHit = Physics.Raycast(position + Vector3.up * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
+				bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
 				if (hasHit) {
 					m_machine.position = hit.point;
 				}
 			}
+
+			m_rotation = Quaternion.LookRotation(m_direction, m_upVector);
+			m_targetRotation = m_rotation;
+
+			m_machine.transform.rotation = m_rotation;
 		}
 
 		public void SetVelocity(Vector3 _v) {
@@ -335,7 +338,7 @@ namespace AI {
 
 		private bool IsGrounded() {
 			RaycastHit hit;
-			bool hasHit = Physics.Raycast(position + Vector3.up * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
+			bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
 
 			if (hasHit) {
 				m_machine.SetSignal(Signals.Type.FallDown, hit.distance > 2f);
