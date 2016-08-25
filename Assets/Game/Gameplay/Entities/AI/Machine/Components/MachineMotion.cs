@@ -119,6 +119,16 @@ namespace AI {
 			if (m_mass < 0f) {
 				m_mass = 0f;
 			}
+
+			if (m_useGravity) {
+				// teleport to ground
+				GetCollisionNormal();
+				RaycastHit hit;
+				bool hasHit = Physics.Raycast(position + Vector3.up * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
+				if (hasHit) {
+					m_machine.position = hit.point;
+				}
+			}
 		}
 
 		public void SetVelocity(Vector3 _v) {
