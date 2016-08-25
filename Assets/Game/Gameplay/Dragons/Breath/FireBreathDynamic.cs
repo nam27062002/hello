@@ -16,13 +16,15 @@ public class FireBreathDynamic : MonoBehaviour
 	// Cached components
 	private MeshFilter m_meshFilter = null;
 
-    private float m_distance = 20;
-    private float m_aplitude = 6;
+    public float m_distance = 20;
+    public float m_aplitude = 6;
     private float m_splits = 10;
 
     private int m_numPos = 0;
 
     Vector3[] m_whip;
+
+    public AnimationCurve m_shapeCurve;
 
 	// Use this for initialization
 	void Start () 
@@ -67,23 +69,26 @@ public class FireBreathDynamic : MonoBehaviour
 
 	void InitUVs()
 	{
-		m_UV[0] = Vector2.zero;
-		m_UV[1] = Vector2.right;
+		m_UV[0] = Vector2.right * 0.5f;
+		m_UV[1] = Vector2.right * 0.5f;
 		float vStep = 1.0f / (m_splits + 1);
+		float hStep = 1.0f / (m_splits + 1);
 
 		int step = 1;
 		for( int i = 2; i<m_numPos; i += 2 )
 		{
+			float xDisplacement = m_shapeCurve.Evaluate(step/(float)(m_splits+2)) * 0.5f;
+
+			//m_UV[i].x = 0.5f + hStep/2.0f * step;
+			m_UV[i].x = 0.5f + xDisplacement;
 			m_UV[i].y = vStep * step;
 
-			m_UV[i+1].x = 1;
+			// m_UV[i+1].x = 0.5f - hStep/2.0f * step;
+			m_UV[i+1].x = 0.5f - xDisplacement;
 			m_UV[i+1].y = vStep * step;
 
 			step++;
 		}
-
-		// m_UV[m_numPos - 2 ] = Vector2.up;
-		// m_UV[ m_numPos - 1 ] = Vector2.one;
 	}
 
 	void InitTriangles()
@@ -140,7 +145,7 @@ public class FireBreathDynamic : MonoBehaviour
 		m_pos[1] = Vector3.zero;
 
 		// float xStep = m_distance / (m_splits + 1);
-		float yStep = m_aplitude / (m_splits + 1);
+		// float yStep = m_aplitude / (m_splits + 1);
 
 		Vector3 worldPos = transform.position;
 		int step = 1;
@@ -148,26 +153,17 @@ public class FireBreathDynamic : MonoBehaviour
 
 		for( int i = 2; i<m_numPos; i += 2 )
 		{
-
-			Vector3 normal = m_whip[whipIndex];
-			if ( whipIndex > 0 )
-				normal = m_whip[whipIndex] - m_whip[whipIndex-1];
-			else
-				normal = m_whip[whipIndex] - transform.position;
-			normal.Normalize();
-			float tmp = normal.x;
-			normal.x = -normal.y;
-			normal.y = tmp;
-
-			normal = transform.InverseTransformDirection( normal );
+			float yDisplacement = m_shapeCurve.Evaluate(step/(float)(m_splits+2)) * m_aplitude;
 
 			m_pos[i] =  transform.InverseTransformPoint(m_whip[whipIndex]);
-			m_pos[i] += normal * yStep * step;
-			m_pos[i].z = 0;
+			// m_pos[i] += Vector3.up * yStep * step;
+			m_pos[i] += Vector3.up * yDisplacement;
+			// m_pos[i].z = 0;
 
 			m_pos[i+1] = transform.InverseTransformPoint(m_whip[whipIndex]);
-			m_pos[i+1] += normal * -yStep * step;
-			m_pos[i+1].z = 0;
+			// m_pos[i+1] += -Vector3.up * yStep * step;
+			m_pos[i+1] += -Vector3.up * yDisplacement;
+			// m_pos[i+1].z = 0;
 
 			step++;
 			whipIndex++;
@@ -199,6 +195,9 @@ public class FireBreathDynamic : MonoBehaviour
 	{
 		MoveWhip();
 		ReshapeFromWhip();
+		InitUVs();
+
+		m_mesh.uv = m_UV;
 		m_mesh.vertices = m_pos;
 	}
 
@@ -210,7 +209,7 @@ public class FireBreathDynamic : MonoBehaviour
 		for( int i = 0; i<m_splits + 1; i++ )
 		{
 			Vector3 shouldBePos = pos + move * xStep * (i+1);
-			m_whip[i] = Vector3.Lerp( m_whip[i], shouldBePos, (1.1f - (i/m_splits)) * Time.deltaTime * 10);
+			m_whip[i] = Vector3.Lerp( m_whip[i], shouldBePos, (1.5f - (i/m_splits)) * Time.deltaTime * 10);
 		}
 	}
 }
