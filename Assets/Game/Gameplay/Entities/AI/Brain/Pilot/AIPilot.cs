@@ -50,8 +50,7 @@ namespace AI {
 		public virtual void Spawn(ISpawner _spawner) {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
-			m_area = _spawner.area;
-			m_homePosition = _spawner.transform.position;
+			SetArea(_spawner);
 
 			if (UnityEngine.Random.Range(0f, 1f) < 0.5f) {
 				m_direction = Vector2.right;
@@ -74,6 +73,15 @@ namespace AI {
 				}
 			} else {
 				m_brain.Reset();
+			}
+		}
+
+		public void SetArea(ISpawner _spawner) {
+			if (_spawner != null) {
+				m_area = _spawner.area;
+				m_homePosition = _spawner.transform.position;
+				m_guideFunction = _spawner.guideFunction;
+				m_target = m_homePosition;
 			}
 		}
 

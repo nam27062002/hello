@@ -5,7 +5,7 @@
 // - can receive shadows
 // - has lightmap
 
-Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow" 
+Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow" 
 {
 	Properties 
 	{
@@ -71,11 +71,27 @@ Shader "Hungry Dragon/Texture Blending + Lightmap And Recieve Shadow"
 				
 				fixed4 frag (v2f i) : SV_Target
 				{
+					
 					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 					fixed4 col2 = tex2D(_SecondTexture, i.texcoord);	// Color
-					float l = saturate( col.a + ( (i.color.g * 2) - 1 ) );
-					col = lerp( col2, col, l) * i.color.r;
-
+					float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
+					col = lerp( col2, col, l);
+					// Sof Light with vertex color 
+					// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
+					// https://en.wikipedia.org/wiki/Relative_luminance
+					float luminance = 0.2126 * i.color.r + 0.7152 * i.color.g + 0.0722 * i.color.b;
+					if ( luminance > 0.5 )
+					{
+						fixed4 one = fixed4(1,1,1,1);
+						// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
+						col = one - 2 * (one-i.color) * (one-col);	// Overlay
+					}
+					else
+					{
+						// col = col * (i.color + fixed4(0.5,0.5,0.5,0.5));	// Soft Light
+						col = 2 * i.color * col;	// Overlay
+					}
+					return col;
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
 

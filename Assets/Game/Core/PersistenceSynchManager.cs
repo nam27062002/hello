@@ -59,11 +59,12 @@ public class PersistenceSynchManager : SingletonMonoBehaviour<PersistenceSynchMa
 
 	void Update()
 	{
-		if ( m_continueSynchProcess )
+        // [DGR] Disabled in order to prevent the annoying merge popup as the new system is implemented
+		/*if ( m_continueSynchProcess )
 		{
 			m_continueSynchProcess = false;
 			SynchProcess();
-		}
+		}*/
 	}
 
 	void SynchProcess()

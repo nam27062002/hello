@@ -4,7 +4,7 @@ using System;
 
 namespace AI
 {
-	[CreateAssetMenu(menuName = "State Machine")]
+	[CreateAssetMenu(menuName = "Brain")]
 	public class StateMachine : ScriptableObject
 	{
 		[SerializeField]
