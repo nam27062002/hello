@@ -16,9 +16,9 @@ SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
 # SMB Settings
 SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
-SMB_FOLDER="BCNStudio/QA/HungryDragon"
+SMB_FOLDER="BCNStudio/QA/HungryDragon/builds"
 
-DATE="$(date +%Y-%m-%d)"
+DATE="$(date +%Y%m%d)"
 
 USAGE="usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false]"
 
@@ -122,18 +122,16 @@ fi
 echo "Committing changes"
 git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
 git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
-git commit -m "Automatic Buid. Version ${VERSION_ID}"
+git commit -m "Automatic Build. Version ${VERSION_ID}"
 git push origin ${BRANCH}
 
+# GENERATE TAG
 if $CREATE_TAG; then
-    # GENERATE TAG
     git tag ${VERSION_ID}
-    # Share tag
     git push origin ${VERSION_ID}
 fi
 
 # SEND TO SAMBA SERVER
-
 echo "Sending To Server"
 mkdir server
 mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" server
