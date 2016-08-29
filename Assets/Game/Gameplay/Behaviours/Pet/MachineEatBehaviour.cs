@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class DragonPetEatBehaviour : EatBehaviour {
+public class MachineEatBehaviour : EatBehaviour {
 
 	[SerializeField] private DragonTier m_petTier;
 

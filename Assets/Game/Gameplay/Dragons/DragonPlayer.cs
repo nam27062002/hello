@@ -77,7 +77,7 @@ public class DragonPlayer : MonoBehaviour {
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
 			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
-			GetComponent<DragonEatBehaviour>().enabled = value;		// Eat stuff
+			GetComponent<PlayerEatBehaviour>().enabled = value;		// Eat stuff
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}

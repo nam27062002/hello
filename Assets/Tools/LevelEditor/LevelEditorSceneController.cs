@@ -118,20 +118,12 @@ namespace LevelEditor {
 			// Run spawner manager
 			SpawnerManager.instance.EnableSpawners();
 
-			if ( InstanceManager.player != null ){
-				// Reset dragon stats
-				InstanceManager.player.ResetStats(false);
+			// Reset dragon stats
+			InstanceManager.player.ResetStats(false);
 
-				// Put player in position and make it playable
-				InstanceManager.player.MoveToSpawnPoint(true);
-				InstanceManager.player.playable = true;
-			}else{
-				// Reset dragon stats
-				InstanceManager.playerEntity.ResetStats(false);
-
-				// Put player in position and make it playable
-				InstanceManager.playerEntity.MoveToSpawnPoint(true);
-			}
+			// Put player in position and make it playable
+			InstanceManager.player.MoveToSpawnPoint(true);
+			InstanceManager.player.playable = true;
 
 			// Enable reward manager to see coins/score feedback
 			RewardManager.Reset();
