@@ -1,13 +1,17 @@
 #!/bin/Bash
-# This scripts generates xcode_stage and xcode_prod projects and generates the ipa files
+# This script generates Android (apk) and iOS (ipa) builds with a given setup
 
-# default parameters
+# Bash setup
+set -e  # Exit on error - see http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181
+
+# Default parameters
 BRANCH="develop"
 BUILD_ANDROID=false
 BUILD_IOS=true
 INCREASE_VERSION_NUMBER=true
 CREATE_TAG=true
 GAME_NAME="hd"
+OUTPUT_DIR="~/Desktop/$GAME_NAME_builds"
 
 # iOS Code Sign
 PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.hungrydragon.dev"
@@ -20,10 +24,10 @@ SMB_PASS="Lm0%2956jkR%23Tg"
 SMB_FOLDER="BCNStudio/QA/HungryDragon/builds"
 
 # Other internal vars
-OUTPUT_DIR="~/Desktop/$GAME_NAME_builds"
 DATE="$(date +%Y%m%d)"
-USAGE="usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false]"
+USAGE="usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false] [-output dirpath]"
 
+# Parse parameters
 for ((i=1;i<=$#;i++)); 
 do
     PARAM_NAME=${!i}
@@ -45,6 +49,9 @@ do
     elif [ "$PARAM_NAME" == "-tag" ]; then
         ((i++))
         CREATE_TAG=${!i}
+    elif [ "$PARAM_NAME" == "-output" ] ; then
+        ((i++))
+        OUTPUT_DIR=${!i}
     else 
         echo "Unknown parameter ${PARAM_NAME}"
         echo $USAGE
@@ -52,107 +59,123 @@ do
     fi
 done;
 
+# Store script's relative path
 RELATIVE_PATH="$(dirname $0)"
 cd $RELATIVE_PATH
 
+# Go to script's (project's) path
 SCRIPT_PATH="$(pwd)"
 echo $SCRIPT_PATH
-cd ${SCRIPT_PATH}
+cd "${SCRIPT_PATH}"
 
-# UPDATE GIT
+# Update git
 # Revert changes to modified files.
 git reset --hard
+
 # Remove untracked files and directories.
 git clean -fd
-# Chante branch
+
+# Change branch
 git fetch
 git checkout $BRANCH
-success=$?
-if [[ $success -ne 0 ]]; then
-    echo "Something went wrong. Exiting"
-    exit 1
-fi
-#update branch
+
+# Update branch
 git pull origin $BRANCH
 
+# Update calety
 cd Calety
 git pull
-cd ${SCRIPT_PATH}
+cd "${SCRIPT_PATH}"
 
+# Increase internal version number
 if $INCREASE_VERSION_NUMBER; then
-echo "Increasing version number"
-#Increase Version Number
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath $SCRIPT_PATH -quit -buildTarget ios
+echo "Increasing internal version number"
+    /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath {$SCRIPT_PATH} -quit -buildTarget ios
 fi
+
+# Increase build unique code
 echo "Increasing Build Code"
-#incease Build Code
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
-#output version
-echo "Output Version"
+# Read internal version number
+# Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
+echo "Reading internal version number"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
-
 VERSION_ID="$(cat outputVersion.txt)"
+rm "outputVersion.txt"
 
+# Make sure output dir is exists
+mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed
+
+# Generate Android build
 if $BUILD_ANDROID; then
-    #GENERATE APKS
     echo "Generating APKs"
-    
-    STAGE_APK_FILE="${GAME_NAME}_${VERSION_ID}_${DATE}.apk"
 
+    # Make sure output dir exists
     mkdir "${OUTPUT_DIR}/apks/"
-    rm "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"    # just in case
     
+    # Do it!
     /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android -outputDir $OUTPUT_DIR
 fi
 
+# Generate iOS build
 if $BUILD_IOS; then
-    #GENERATE XCODE PROJECTS
-    echo "Generating xCode Projects"
+    # Generate XCode project
+    echo "Generating XCode Project"
     /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios -outputDir $OUTPUT_DIR
 
-    # GENERATE ARCHIVES AND IPAS
+    # Make sure output dirs exist
     mkdir "${OUTPUT_DIR}/archives/"
     mkdir "${OUTPUT_DIR}/ipas/"
 
-    #STAGE
-    echo "Archiving"
+    # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${GAME_NAME}_${VERSION_ID}.xcarchive"
     STAGE_IPA_FILE="${GAME_NAME}_${VERSION_ID}_${DATE}.ipa"
-    PROJECT_NAME="${SCRIPT_PATH}/xcode/Unity-iPhone.xcodeproj"
+    PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
+    # Generate Archive
+    echo "Archiving"
     xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 
-    xcodebuild archive -project $PROJECT_NAME -configuration Release -scheme "Unity-iPhone" -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
-    rm "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"    # just in case
-    xcodebuild -exportArchive -archivePath "${SCRIPT_PATH}/archives/${ARCHIVE_FILE}" -exportPath "${SCRIPT_PATH}/ipas/" -exportOptionsPlist "${SCRIPT_PATH}/xcode/Info.plist"
-    mv "${SCRIPT_PATH}/ipas/Unity-iPhone.ipa" "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}"
+    xcodebuild archive -project $PROJECT_NAME -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
+
+    # Generate IPA file
+    echo "Exporting IPA"
+    rm "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"    # just in case
+    xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "${OUTPUT_DIR}/xcode/Info.plist"
+    mv "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
 fi
 
-
-# commit project changes
+# Commit project changes
 echo "Committing changes"
 git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
 git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
-git commit -m "Automatic Build. Version ${VERSION_ID}"
+git commit -m "Automatic Build. Version ${VERSION_ID}."
 git push origin ${BRANCH}
 
-# GENERATE TAG
+# Create Git tag
 if $CREATE_TAG; then
     git tag ${VERSION_ID}
     git push origin ${VERSION_ID}
 fi
 
-# SEND TO SAMBA SERVER
-echo "Sending To Server"
+# Upload to Samba server
+echo "Sending to server"
+
+# Mount the server into a tmp folder
 mkdir server
 mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" server
 
+# Copy IPA
 if $BUILD_IOS; then
-    cp "${SCRIPT_PATH}/ipas/${STAGE_IPA_FILE}" "server/"
+    cp "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}" "server/"
 fi
+
+# Copy APK
 if $BUILD_ANDROID; then
-    cp "${SCRIPT_PATH}/*.apk" "server/"
+    cp "${OUTPUT_DIR}/*.apk" "server/"
 fi
+
+# Unmount server and remove tmp folder
 umount server
 rmdir server
