@@ -110,7 +110,6 @@ public class Entity : MonoBehaviour, ISpawnable {
 		m_bounds = GetComponentInChildren<CircleArea2D>();
 		while( Camera.main == null )
 			yield return null;
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
@@ -206,24 +205,14 @@ public class Entity : MonoBehaviour, ISpawnable {
 		m_checkOnScreenTimer -= Time.deltaTime;
 		if (m_checkOnScreenTimer <= 0) 
 		{	
-			if ( DebugSettings.newCameraSystem )	
-			{
-				if(m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
-			}
-			else
-			{
-				if(m_camera != null) m_isOnScreen = m_camera.IsInsideActivationMinArea(transform.position);
-			}
+			if(m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
 			m_checkOnScreenTimer = 0.5f;
 		}
 	}
 
 	void LateUpdate() {
 		// check camera to destroy this entity if it is outside view area
-		if (
-			(DebugSettings.newCameraSystem && m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) || 
-			(!DebugSettings.newCameraSystem && m_camera != null && m_camera.IsInsideDeactivationArea(transform.position))
-		) 
+		if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) 
 		{
 			if (m_spawner != null) {
 				Disable(false);

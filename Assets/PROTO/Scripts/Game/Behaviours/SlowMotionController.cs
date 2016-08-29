@@ -41,7 +41,7 @@ public class SlowMotionController : MonoBehaviour {
 	#endregion
 
 	#region REFERENCES -------------------------------------------------------------------------------------------------
-	private GameCameraController mMainCameraController = null;
+	// private GameCameraController mMainCameraController = null;
 	private MotionBlur mMotionBlur = null;
 	#endregion
 
@@ -50,7 +50,7 @@ public class SlowMotionController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	public void Start() {
-		mMainCameraController = Camera.main.GetComponent<GameCameraController>();
+		// mMainCameraController = Camera.main.GetComponent<GameCameraController>();
 		mMotionBlur = Camera.main.GetComponent<MotionBlur>();
 		mMotionBlur.enabled = false;
 	}

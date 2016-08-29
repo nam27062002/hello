@@ -73,7 +73,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 
 	private bool m_readyToBeDisabled;
 
-	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
 
 	// Level editing stuff
@@ -94,7 +93,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 
 		PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
 
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 
 		m_area = GetArea();
@@ -197,18 +195,10 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 			// Respawn on cooldown?
 
 			// Check activation area
-			if ( DebugSettings.newCameraSystem )
-			{
-				if(m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
-					Spawn();
-				}
+			if(m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
+				Spawn();
 			}
-			else
-			{
-				if(m_camera != null && m_camera.IsInsideBackgroundActivationArea(transform.position)) {
-					Spawn();
-				}
-			}
+			
 
 		}
 

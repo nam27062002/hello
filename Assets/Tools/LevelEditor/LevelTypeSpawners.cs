@@ -70,25 +70,15 @@ namespace LevelEditor {
 				spawnPointObj.transform.SetParent(spawnContainerObj.transform, true);
 			}
 
-			if ( DebugSettings.newCameraSystem )
+			if ( Camera.main != null )
 			{
-				if ( Camera.main != null )
+				GameCamera camera = Camera.main.GetComponent<GameCamera>();
+				if (camera != null && spawnPointObj != null) 
 				{
-					GameCamera camera = Camera.main.GetComponent<GameCamera>();
-					if (camera != null && spawnPointObj != null) 
-					{
-						camera.transform.position = spawnPointObj.transform.position;
-					}
-				}
-			}
-			else
-			{
-				GameCameraController camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
-
-				if (camera != null && spawnPointObj != null) {
 					camera.transform.position = spawnPointObj.transform.position;
 				}
 			}
+			
 
 			return spawnPointObj;
 		}

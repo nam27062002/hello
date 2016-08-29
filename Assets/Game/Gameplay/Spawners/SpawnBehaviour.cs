@@ -14,7 +14,6 @@ public class SpawnBehaviour : MonoBehaviour {
 	private int m_index;
 	public int index { get { return m_index; } }
 
-	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
 
 	private bool m_wasEatenOrBurned;
@@ -23,7 +22,6 @@ public class SpawnBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	void Start() {
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
@@ -51,15 +49,7 @@ public class SpawnBehaviour : MonoBehaviour {
 		
 		if (m_deactivate) 
 		{
-			bool isInsideDeactivationArea = false;
-			if ( DebugSettings.newCameraSystem )
-			{
-				isInsideDeactivationArea = m_newCamera.IsInsideDeactivationArea(transform.position);
-			}
-			else
-			{
-				isInsideDeactivationArea = m_camera.IsInsideDeactivationArea(transform.position);
-			}
+			bool isInsideDeactivationArea = m_newCamera.IsInsideDeactivationArea(transform.position);
 
 			if ( isInsideDeactivationArea )
 			{

@@ -80,7 +80,6 @@ public class Entity_Old : Initializable {
 	private bool m_isOnScreen = false;
 	private float m_checkOnScreenTimer = 0;
 
-	GameCameraController m_camera;
 
 	//-----------------------------------------------
 	// Methods
@@ -137,7 +136,6 @@ public class Entity_Old : Initializable {
 
 	void Start()
 	{
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 	}
 
 	public override void Initialize() {
@@ -165,7 +163,8 @@ public class Entity_Old : Initializable {
 			m_checkOnScreenTimer -= Time.deltaTime;
 			if ( m_checkOnScreenTimer <= 0 )
 			{	
-				bool test = m_camera.IsInsideActivationMinArea( transform.position );
+				// bool test = m_camera.IsInsideActivationMinArea( transform.position );
+				bool test = false;
 				if ( test && !m_isOnScreen )	// If I wast on screen and new I am
 				{
 					if (Random.Range( 0, 100.0f ) < m_onAppearSoundProbability)
