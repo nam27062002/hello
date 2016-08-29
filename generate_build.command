@@ -69,7 +69,7 @@ echo "BUILDER: Running script from path ${SCRIPT_PATH}"
 
 # Update git
 # Revert changes to modified files.
-git reset --hard
+#git reset --hard
 
 # Remove untracked files and directories.
 git clean -fd
@@ -90,21 +90,21 @@ cd "${SCRIPT_PATH}"
 if $INCREASE_VERSION_NUMBER; then
     echo
     echo "BUILDER: Increasing internal version number"
-    set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
-    "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath $SCRIPT_PATH -quit
-    set -e
+    #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
+    "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath "${SCRIPT_PATH}" -quit
+    #set -e
 fi
 
 # Increase build unique code
 echo
 echo "BUILDER: Increasing Build Code"
-"${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit
+"${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath "${SCRIPT_PATH}" -quit
 
 # Read internal version number
 # Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
 echo
 echo "BUILDER: Reading internal version number"
-"${UNITY_APP}" -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit
+"${UNITY_APP}" -batchmode -executeMethod Builder.OutputVersion -projectPath "${SCRIPT_PATH}" -quit
 VERSION_ID="$(cat outputVersion.txt)"
 echo $VERSION_ID
 rm "outputVersion.txt"
@@ -121,7 +121,7 @@ if $BUILD_ANDROID; then
     mkdir -p "${OUTPUT_DIR}/apks/"
     
     # Do it!
-    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android -outputDir $OUTPUT_DIR
+    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateAPK -projectPath "${SCRIPT_PATH}" -quit -buildTarget android -outputDir "${OUTPUT_DIR}"
 fi
 
 # Generate iOS build
@@ -129,7 +129,7 @@ if $BUILD_IOS; then
     # Generate XCode project
     echo
     echo "BUILDER: Generating XCode Project"
-    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios -outputDir $OUTPUT_DIR
+    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateXcode -projectPath "${SCRIPT_PATH}" -quit -buildTarget ios -outputDir "${OUTPUT_DIR}"
 
     # Make sure output dirs exist
     mkdir -p "${OUTPUT_DIR}/archives/"
@@ -165,8 +165,10 @@ git push origin ${BRANCH}
 
 # Create Git tag
 if $CREATE_TAG; then
+    set +e  # Don't exit script on error
     git tag ${VERSION_ID}
     git push origin ${VERSION_ID}
+    set -e
 fi
 
 # Upload to Samba server
