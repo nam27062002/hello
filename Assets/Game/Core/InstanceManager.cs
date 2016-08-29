@@ -29,10 +29,16 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 	}
 
 	// Only during game scene, reference to the dragon
-	private DragonPlayer m_player = null;
+	private DragonPlayer m_player = null;	// DEPRECATED
 	public static DragonPlayer player {
 		get { return instance.m_player; }
 		set { if(instance != null) instance.m_player = value; }
+	}
+
+	private PlayerEntity m_playerEntoty = null;
+	public static PlayerEntity playerEntity {
+		get { return instance.m_playerEntoty; }
+		set { if(instance != null) instance.m_playerEntoty = value; }
 	}
 
 	private GameCamera m_gameCamera = null;

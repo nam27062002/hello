@@ -234,16 +234,18 @@ public class HUDStatBar : MonoBehaviour {
 	}
 
 	private float GetExtraValue() {
+		if ( InstanceManager.player )
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.healthMax;
 			case Type.Energy:	return InstanceManager.player.energyMax;
 			case Type.Fury:		return 1;	// [AOC] Furt powerup not yet implemented
 			case Type.SuperFury:return 1;	// [AOC] Furt powerup not yet implemented
 		}
-		return 0;
+		return 1;
 	}
 
 	private float GetBaseValue() {
+		if ( InstanceManager.player )
 		switch( m_type ) 
 		{
 			case Type.Health: 	return InstanceManager.player.healthBase;
@@ -251,10 +253,11 @@ public class HUDStatBar : MonoBehaviour {
 			case Type.Fury:		return 1;	// [AOC] Furt powerup not yet implemented
 			case Type.SuperFury:return 1;	// [AOC] Furt powerup not yet implemented
 		}
-		return 0;
+		return 1;
 	}
 
 	private float GetValue() {
+		if ( InstanceManager.player )
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.health;
 			case Type.Energy:	return InstanceManager.player.energy;
@@ -266,6 +269,7 @@ public class HUDStatBar : MonoBehaviour {
 
 	public float GetSizePerUnit()
 	{
+		if ( InstanceManager.player )
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
 			case Type.Energy:	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");

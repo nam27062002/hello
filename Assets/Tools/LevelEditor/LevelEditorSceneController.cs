@@ -42,7 +42,8 @@ namespace LevelEditor {
 
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
-			InstanceManager.player.playable = false;
+			if ( InstanceManager.player != null )
+				InstanceManager.player.playable = false;
 
 			// Call parent
 			base.Awake();
@@ -86,7 +87,9 @@ namespace LevelEditor {
 			// Quick'n'dirty timer to place the dragon at the spawn point
 			if(m_timer > 0f) {
 				m_timer -= Time.deltaTime;
-				if(m_timer <= 0f) InstanceManager.player.MoveToSpawnPoint(true);
+				if(m_timer <= 0f)
+					if (InstanceManager.player)
+				 		InstanceManager.player.MoveToSpawnPoint(true);
 			}
 		}
 
@@ -115,12 +118,20 @@ namespace LevelEditor {
 			// Run spawner manager
 			SpawnerManager.instance.EnableSpawners();
 
-			// Reset dragon stats
-			InstanceManager.player.ResetStats(false);
+			if ( InstanceManager.player != null ){
+				// Reset dragon stats
+				InstanceManager.player.ResetStats(false);
 
-			// Put player in position and make it playable
-			InstanceManager.player.MoveToSpawnPoint(true);
-			InstanceManager.player.playable = true;
+				// Put player in position and make it playable
+				InstanceManager.player.MoveToSpawnPoint(true);
+				InstanceManager.player.playable = true;
+			}else{
+				// Reset dragon stats
+				InstanceManager.playerEntity.ResetStats(false);
+
+				// Put player in position and make it playable
+				InstanceManager.playerEntity.MoveToSpawnPoint(true);
+			}
 
 			// Enable reward manager to see coins/score feedback
 			RewardManager.Reset();
