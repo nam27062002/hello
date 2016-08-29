@@ -62,7 +62,6 @@ public class Entity : MonoBehaviour, ISpawnable {
 
 	private float m_checkOnScreenTimer = 0;
 
-	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
 
 
