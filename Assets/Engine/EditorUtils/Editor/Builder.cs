@@ -11,7 +11,7 @@ public class Builder : MonoBehaviour
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
 	const string m_iOSSymbols = "";
 
-	const string m_apkName = "hd_";
+	const string m_apkName = "hd";
 	const string m_AndroidSymbols = "";
 
 	[MenuItem ("Build/IOs")]
@@ -27,12 +27,15 @@ public class Builder : MonoBehaviour
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.iOS);
 		UpdateCaletySettings();
 
-		// Build
-		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
-		dstPath = System.IO.Path.Combine(dstPath, "xcode");
+		// Figure out output file
+		string outputDir = GetArg("outputDir");
+		if(string.IsNullOrEmpty(outputDir)) {
+			outputDir = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));	// Default output dir is the project's folder
+		}
+		string stagePath = System.IO.Path.Combine(outputDir, "xcode");	// Should be something like ouputDir/xcode
 
-
-		BuildPipeline.BuildPlayer( GetBuildingScenes(), dstPath, BuildTarget.iOS, BuildOptions.None); 
+		// Do the build!
+		BuildPipeline.BuildPlayer( GetBuildingScenes(), stagePath, BuildTarget.iOS, BuildOptions.None); 
 
 		// Restore 
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
@@ -52,14 +55,36 @@ public class Builder : MonoBehaviour
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.Android);
 		UpdateCaletySettings();
 
-		string dstPath = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));
-		string date = System.DateTime.Now.ToString("yyyy-M-d");
-		string stagePath = System.IO.Path.Combine(dstPath, m_apkName + "_" + GameSettings.internalVersion + ":" + PlayerSettings.Android.bundleVersionCode + "_" + date + ".apk");
+		// Figure out output file
+		string outputDir = GetArg("outputDir");
+		if(string.IsNullOrEmpty(outputDir)) {
+			outputDir = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));	// Default output dir is the project's folder
+		}
+		string date = System.DateTime.Now.ToString("yyyyMMdd");
+		string stagePath = System.IO.Path.Combine(outputDir, m_apkName + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + ".apk");	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
+
+		// Do the build!
 		BuildPipeline.BuildPlayer(GetBuildingScenes(), stagePath, BuildTarget.Android, BuildOptions.None);
 
 		// Restore Player Settings
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, oldSymbols);
+	}
+
+	/// <summary>
+	/// Get an argument from the command line.
+	/// </summary>
+	/// <returns>The value of the requested argument, <c>null</c> if the requested argument was not passed through the command line.</returns>
+	/// <param name="_argName">The name of the argument to be retrieved.</param>
+	private static string GetArg(string _argName) {
+		// From https://effectiveunity.com/articles/making-most-of-unitys-command-line.html
+		var args = System.Environment.GetCommandLineArgs();
+		for(int i = 0; i < args.Length; i++) {
+			if(args[i] == _argName && args.Length > i + 1) {
+				return args[i + 1];
+			}
+		}
+		return null;
 	}
 
 	public static string[] GetBuildingScenes()

@@ -1,6 +1,7 @@
 #!/bin/Bash
 # This scripts generates xcode_stage and xcode_prod projects and generates the ipa files
 
+# default parameters
 BRANCH="develop"
 BUILD_ANDROID=false
 BUILD_IOS=true
@@ -18,8 +19,9 @@ SMB_USER="srv_acc_bcn_jenkins"
 SMB_PASS="Lm0%2956jkR%23Tg"
 SMB_FOLDER="BCNStudio/QA/HungryDragon/builds"
 
+# Other internal vars
+OUTPUT_DIR="~/Desktop/$GAME_NAME_builds"
 DATE="$(date +%Y%m%d)"
-
 USAGE="usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false]"
 
 for ((i=1;i<=$#;i++)); 
@@ -30,7 +32,6 @@ do
         exit 1
     elif [ "$PARAM_NAME" == "-b" ] ; then
         ((i++))
-        echo ${i}
         BRANCH=${!i}
     elif [ "$PARAM_NAME" == "-android" ]; then
         ((i++))
@@ -50,7 +51,6 @@ do
         exit 1
     fi
 done;
-
 
 RELATIVE_PATH="$(dirname $0)"
 cd $RELATIVE_PATH
@@ -97,18 +97,23 @@ VERSION_ID="$(cat outputVersion.txt)"
 if $BUILD_ANDROID; then
     #GENERATE APKS
     echo "Generating APKs"
-    rm "${SCRIPT_PATH}/*.apk"    # just in case
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android
+    
+    STAGE_APK_FILE="${GAME_NAME}_${VERSION_ID}_${DATE}.apk"
+
+    mkdir "${OUTPUT_DIR}/apks/"
+    rm "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"    # just in case
+    
+    /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android -outputDir $OUTPUT_DIR
 fi
 
 if $BUILD_IOS; then
     #GENERATE XCODE PROJECTS
     echo "Generating xCode Projects"
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios
+    /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios -outputDir $OUTPUT_DIR
 
     # GENERATE ARCHIVES AND IPAS
-    mkdir "${SCRIPT_PATH}/archives/"
-    mkdir "${SCRIPT_PATH}/ipas/"
+    mkdir "${OUTPUT_DIR}/archives/"
+    mkdir "${OUTPUT_DIR}/ipas/"
 
     #STAGE
     echo "Archiving"
