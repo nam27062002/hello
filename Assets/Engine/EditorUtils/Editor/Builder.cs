@@ -28,11 +28,14 @@ public class Builder : MonoBehaviour
 		UpdateCaletySettings();
 
 		// Figure out output file
-		string outputDir = GetArg("outputDir");
+		string outputDir = GetArg("-outputDir");
 		if(string.IsNullOrEmpty(outputDir)) {
 			outputDir = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));	// Default output dir is the project's folder
 		}
 		string stagePath = System.IO.Path.Combine(outputDir, "xcode");	// Should be something like ouputDir/xcode
+
+		// Some feedback
+		Debug.Log("Generating XCode project at path: " + stagePath);
 
 		// Do the build!
 		BuildPipeline.BuildPlayer( GetBuildingScenes(), stagePath, BuildTarget.iOS, BuildOptions.None); 
@@ -56,12 +59,15 @@ public class Builder : MonoBehaviour
 		UpdateCaletySettings();
 
 		// Figure out output file
-		string outputDir = GetArg("outputDir");
+		string outputDir = GetArg("-outputDir");
 		if(string.IsNullOrEmpty(outputDir)) {
 			outputDir = Application.dataPath.Substring(0, Application.dataPath.IndexOf("Assets"));	// Default output dir is the project's folder
 		}
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
 		string stagePath = System.IO.Path.Combine(outputDir, m_apkName + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + ".apk");	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
+
+		// Some feedback
+		Debug.Log("Generating Android APK at path: " + stagePath);
 
 		// Do the build!
 		BuildPipeline.BuildPlayer(GetBuildingScenes(), stagePath, BuildTarget.Android, BuildOptions.None);

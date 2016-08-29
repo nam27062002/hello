@@ -11,7 +11,7 @@ BUILD_IOS=true
 INCREASE_VERSION_NUMBER=true
 CREATE_TAG=true
 GAME_NAME="hd"
-OUTPUT_DIR="~/Desktop/$GAME_NAME_builds"
+OUTPUT_DIR="${HOME}/Desktop/${GAME_NAME}_builds"
 
 # iOS Code Sign
 PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.hungrydragon.dev"
@@ -60,19 +60,16 @@ do
     fi
 done;
 
-# Store script's relative path
-RELATIVE_PATH="$(dirname $0)"
-cd $RELATIVE_PATH
-
-# Go to script's (project's) path
+# Store script's (project's) absolute path
+# To get an absolute path, dir to it and then use pwd command
+cd "$(dirname $0)"
 SCRIPT_PATH="$(pwd)"
 echo
-echo "BUILDER: Running script at path ${SCRIPT_PATH}"
-cd "${SCRIPT_PATH}"
+echo "BUILDER: Running script from path ${SCRIPT_PATH}"
 
 # Update git
 # Revert changes to modified files.
-#git reset --hard
+git reset --hard
 
 # Remove untracked files and directories.
 git clean -fd
@@ -93,24 +90,27 @@ cd "${SCRIPT_PATH}"
 if $INCREASE_VERSION_NUMBER; then
     echo
     echo "BUILDER: Increasing internal version number"
-    "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath {$SCRIPT_PATH} -quit -buildTarget ios
+    set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
+    "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath $SCRIPT_PATH -quit
+    set -e
 fi
 
 # Increase build unique code
 echo
 echo "BUILDER: Increasing Build Code"
-"${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit -buildTarget ios
+"${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit
 
 # Read internal version number
 # Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
 echo
 echo "BUILDER: Reading internal version number"
-"${UNITY_APP}" -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
+"${UNITY_APP}" -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit
 VERSION_ID="$(cat outputVersion.txt)"
+echo $VERSION_ID
 rm "outputVersion.txt"
 
 # Make sure output dir is exists
-mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed
+mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed (and to not exit with error if folder already exists)
 
 # Generate Android build
 if $BUILD_ANDROID; then
@@ -118,7 +118,7 @@ if $BUILD_ANDROID; then
     echo "BUILDER: Generating APKs"
 
     # Make sure output dir exists
-    mkdir "${OUTPUT_DIR}/apks/"
+    mkdir -p "${OUTPUT_DIR}/apks/"
     
     # Do it!
     "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android -outputDir $OUTPUT_DIR
@@ -132,8 +132,8 @@ if $BUILD_IOS; then
     "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios -outputDir $OUTPUT_DIR
 
     # Make sure output dirs exist
-    mkdir "${OUTPUT_DIR}/archives/"
-    mkdir "${OUTPUT_DIR}/ipas/"
+    mkdir -p "${OUTPUT_DIR}/archives/"
+    mkdir -p "${OUTPUT_DIR}/ipas/"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
@@ -174,7 +174,7 @@ echo
 echo "BUILDER: Sending to server"
 
 # Mount the server into a tmp folder
-mkdir server
+mkdir -p server
 mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" server
 
 # Copy IPA
