@@ -240,8 +240,7 @@ public class GameCamera : MonoBehaviour
 
 		m_posFrom = m_posTo = m_transform.position;
 
-		if ( DebugSettings.newCameraSystem )
-			UpdateValues();
+		UpdateValues();
 		m_hasInitialized = true;
 		
 		// If an attempt was made to assign the target object before this Awake()
@@ -254,7 +253,6 @@ public class GameCamera : MonoBehaviour
 
         m_expOne = Mathf.Exp(1.0f);
 		m_bossCamMode = BossCamMode.NoBoss;
-		enabled = DebugSettings.newCameraSystem;
 		m_state = State.INTRO;
 #if !PRODUCTION
 	    // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
@@ -492,11 +490,6 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-		if ( !DebugSettings.newCameraSystem )
-		{
-			GetComponent<GameCameraController>().enabled = true;
-			enabled = false;
-		}
 		PlayUpdate();
 		/*
 		switch( m_state )

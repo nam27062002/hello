@@ -79,7 +79,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 					// Sof Light with vertex color 
 					// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 					// https://en.wikipedia.org/wiki/Relative_luminance
-					float luminance = 0.2126 * i.color.r + 0.7152 * i.color.g + 0.0722 * i.color.b;
+					float luminance = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 					if ( luminance > 0.5 )
 					{
 						fixed4 one = fixed4(1,1,1,1);

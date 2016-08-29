@@ -35,7 +35,6 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 	private float m_updateTimer = 0f;
 
 	// External references
-	private GameCameraController m_camera = null;
 	private GameCamera m_newCamera = null;
 
 	// Detection area
@@ -107,13 +106,10 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 
 			// Get activation bounds
 			// Update every frame in case camera bounds change (i.e. zoom in/out)
-			if(DebugSettings.newCameraSystem && m_newCamera != null) {
+			if(m_newCamera != null) {
 				m_minRect = m_newCamera.activationMinRect;
 				m_maxRect = m_newCamera.activationMaxRect;
-			} else if(m_camera != null) {
-				m_minRect = m_camera.activationMinRect;
-				m_maxRect = m_camera.activationMaxRect;
-			}
+			} 
 
 			// Split it in 4 rectangles that the quadtree can process
 			// 1: bottom sub-rect
@@ -239,7 +235,6 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 		// Make sure camera reference is valid
 		// Spawners are only used in the game and level editor scenes, so we can be sure that both game camera and game scene controller will be present
 		Camera gameCamera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
-		m_camera = gameCamera.GetComponent<GameCameraController>();
 		m_newCamera = gameCamera.GetComponent<GameCamera>();
 
 		// Create and populate QuadTree
@@ -264,7 +259,6 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 		m_selectedSpawners.Clear();
 
 		// Drop camera references
-		m_camera = null;
 		m_newCamera = null;
 
 		// Make sure manager is disabled
