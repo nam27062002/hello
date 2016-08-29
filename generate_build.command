@@ -24,8 +24,9 @@ SMB_PASS="Lm0%2956jkR%23Tg"
 SMB_FOLDER="BCNStudio/QA/HungryDragon/builds"
 
 # Other internal vars
+UNITY_APP="/Applications/Unity/Unity.app/Contents/MacOS/Unity"
 DATE="$(date +%Y%m%d)"
-USAGE="usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false] [-output dirpath]"
+USAGE="Usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false] [-output dirpath]"
 
 # Parse parameters
 for ((i=1;i<=$#;i++)); 
@@ -65,12 +66,13 @@ cd $RELATIVE_PATH
 
 # Go to script's (project's) path
 SCRIPT_PATH="$(pwd)"
-echo $SCRIPT_PATH
+echo
+echo "BUILDER: Running script at path ${SCRIPT_PATH}"
 cd "${SCRIPT_PATH}"
 
 # Update git
 # Revert changes to modified files.
-git reset --hard
+#git reset --hard
 
 # Remove untracked files and directories.
 git clean -fd
@@ -89,18 +91,21 @@ cd "${SCRIPT_PATH}"
 
 # Increase internal version number
 if $INCREASE_VERSION_NUMBER; then
-echo "Increasing internal version number"
-    /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath {$SCRIPT_PATH} -quit -buildTarget ios
+    echo
+    echo "BUILDER: Increasing internal version number"
+    "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath {$SCRIPT_PATH} -quit -buildTarget ios
 fi
 
 # Increase build unique code
-echo "Increasing Build Code"
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit -buildTarget ios
+echo
+echo "BUILDER: Increasing Build Code"
+"${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath $SCRIPT_PATH -quit -buildTarget ios
 
 # Read internal version number
 # Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
-echo "Reading internal version number"
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
+echo
+echo "BUILDER: Reading internal version number"
+"${UNITY_APP}" -batchmode -executeMethod Builder.OutputVersion -projectPath $SCRIPT_PATH -quit -buildTarget ios
 VERSION_ID="$(cat outputVersion.txt)"
 rm "outputVersion.txt"
 
@@ -109,20 +114,22 @@ mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed
 
 # Generate Android build
 if $BUILD_ANDROID; then
-    echo "Generating APKs"
+    echo
+    echo "BUILDER: Generating APKs"
 
     # Make sure output dir exists
     mkdir "${OUTPUT_DIR}/apks/"
     
     # Do it!
-    /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android -outputDir $OUTPUT_DIR
+    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateAPK -projectPath $SCRIPT_PATH -quit -buildTarget android -outputDir $OUTPUT_DIR
 fi
 
 # Generate iOS build
 if $BUILD_IOS; then
     # Generate XCode project
-    echo "Generating XCode Project"
-    /Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios -outputDir $OUTPUT_DIR
+    echo
+    echo "BUILDER: Generating XCode Project"
+    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateXcode -projectPath $SCRIPT_PATH -quit -buildTarget ios -outputDir $OUTPUT_DIR
 
     # Make sure output dirs exist
     mkdir "${OUTPUT_DIR}/archives/"
@@ -135,19 +142,22 @@ if $BUILD_IOS; then
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
     # Generate Archive
-    echo "Archiving"
+    echo
+    echo "BUILDER: Archiving"
     xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 
     xcodebuild archive -project $PROJECT_NAME -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
 
     # Generate IPA file
-    echo "Exporting IPA"
+    echo
+    echo "BUILDER: Exporting IPA"
     rm "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"    # just in case
     xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "${OUTPUT_DIR}/xcode/Info.plist"
     mv "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
 fi
 
 # Commit project changes
-echo "Committing changes"
+echo
+echo "BUILDER: Committing changes"
 git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
 git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
 git commit -m "Automatic Build. Version ${VERSION_ID}."
@@ -160,7 +170,8 @@ if $CREATE_TAG; then
 fi
 
 # Upload to Samba server
-echo "Sending to server"
+echo
+echo "BUILDER: Sending to server"
 
 # Mount the server into a tmp folder
 mkdir server

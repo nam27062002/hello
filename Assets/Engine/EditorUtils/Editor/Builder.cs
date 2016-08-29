@@ -103,6 +103,7 @@ public class Builder : MonoBehaviour
 	[MenuItem ("Build/Increase Minor Version Number")]
 	private static void IncreaseMinorVersionNumber()
 	{
+		Debug.Log("UNITY: IncreaseMinorVersionNumber()");
 		GameSettings.internalVersion.patch++;
 		EditorUtility.SetDirty(GameSettings.instance);
 		AssetDatabase.SaveAssets();
@@ -111,6 +112,7 @@ public class Builder : MonoBehaviour
 	[MenuItem ("Build/Increase Version Codes")]
 	private static void IncreaseVersionCodes()
 	{
+		Debug.Log("UNITY: IncreaseVersionCode()");
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null)
 		{
@@ -125,6 +127,7 @@ public class Builder : MonoBehaviour
 
 	private static string IncreaseVersionCode( string versionCode )
 	{
+		Debug.Log("UNITY: IncreaseVersionCode(" + versionCode + ")");
 		int res;
 		if (int.TryParse( versionCode, out res))
 		{
@@ -146,6 +149,7 @@ public class Builder : MonoBehaviour
 	[MenuItem ("Build/Output Version")]
 	private static void OutputVersion()
 	{
+		Debug.Log("UNITY: OutputVersion()");
 		StreamWriter sw = File.CreateText("outputVersion.txt");
 		sw.WriteLine( GameSettings.internalVersion );
 		sw.Close();
