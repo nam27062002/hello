@@ -31,7 +31,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		InsideWater,
 		OuterSpace,
 		Intro,
-		// HoldingPrey,
+		Latching,
 		None,
 	};
 
@@ -58,7 +58,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_groundCollider;
-	DragonEatBehaviour		m_eatBehaviour;
+	PlayerEatBehaviour		m_eatBehaviour;
 
 
 	// Movement control
@@ -169,13 +169,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	RaycastHit m_raycastHit = new RaycastHit();
 
-/*private Vector3 m_introTarget;
-	public Vector3 introTarget
-	{
-		get { return introTarget; }
-		set { introTarget = value; }
-	}
-	*/
 	private float m_introTimer;
 	private const float m_introDuration = 3;
 
@@ -185,6 +178,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Transform m_holdPreyTransform = null;
 
 	private float m_boostMultiplier;
+
+	private bool m_grab = false;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -222,7 +217,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_rbody = GetComponent<Rigidbody>();
 		m_groundCollider = GetComponentInChildren<SphereCollider>();
-		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
+		m_eatBehaviour = GetComponent<PlayerEatBehaviour>();
 		m_height = 10f;
 
 		m_targetSpeedMultiplier = 1;
@@ -296,11 +291,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Intro:
 				{
 				}break;
-				/*case State.HoldingPrey:
+				case State.Latching:
 				{
 					m_groundCollider.enabled = true;
 				}break;
-				*/
 			}
 
 			// entering new state
@@ -351,12 +345,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.Play("BaseLayer.Intro");
 					m_introTimer = m_introDuration;
 				}break;
-				/*
-				case State.HoldingPrey:
+				case State.Latching:
 				{
-					// m_groundCollider.enabled = false;
+					m_groundCollider.enabled = false;
 				}break;
-				*/
 			}
 
 			m_state = _nextState;
@@ -403,16 +395,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				// m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
 				// m_destination += m_introTarget;
 			}break;
-			/*
-			case State.HoldingPrey:
+			case State.Latching:
 			{
-				// m_orientation.SetRotation( m_holdPreyTransform.rotation );
-				// RotateToDirection( m_holdPreyTransform.forward );
+				RotateToDirection( m_holdPreyTransform.forward );
 				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
-				m_holdPrey.transform.position += deltaPosition - m_tongue.position;
-
+				transform.position += deltaPosition - m_tongue.position;
 			}break;
-			*/
 		}
 
 
@@ -426,21 +414,23 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( m_holdPrey != null )
 		{
-			// Rotation
-			Quaternion rot = m_holdPrey.transform.localRotation;
-			m_holdPrey.transform.localRotation = Quaternion.identity;
-			Vector3 holdDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.forward);
-			Vector3 holdUpDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.up);
-			// m_holdPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
-			m_holdPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
+			if (m_grab)
+			{
+				// Rotation
+				Quaternion rot = m_holdPrey.transform.localRotation;
+				m_holdPrey.transform.localRotation = Quaternion.identity;
+				Vector3 holdDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.forward);
+				Vector3 holdUpDirection = m_tongue.InverseTransformDirection(m_holdPreyTransform.up);
+				// m_holdPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
+				m_holdPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
 
-			// Position
-			Vector3 pos = m_holdPrey.transform.localPosition;
-			m_holdPrey.transform.localPosition = Vector3.zero;
-			Vector3 holdPoint = m_tongue.InverseTransformPoint( m_holdPreyTransform.position );
-			// m_holdPrey.transform.localPosition = -holdPoint;
-			m_holdPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
-
+				// Position
+				Vector3 pos = m_holdPrey.transform.localPosition;
+				m_holdPrey.transform.localPosition = Vector3.zero;
+				Vector3 holdPoint = m_tongue.InverseTransformPoint( m_holdPreyTransform.position );
+				// m_holdPrey.transform.localPosition = -holdPoint;
+				m_holdPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
+			}
 		}
 	}
 
@@ -528,13 +518,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				// m_rbody.velocity = Vector3.zero;
 				// transform.rotation.SetLookRotation( Vector3.right );
 			}break;
-			/*
-			case State.HoldingPrey:
+			case State.Latching:
 			{
 				m_impulse = Vector3.zero;
 				m_rbody.velocity = Vector3.zero;
 			}break;
-			*/
 
 		}
 		
@@ -1013,17 +1001,33 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		ChangeState( State.Fly_Down);
 	} 
 
-	public void StartHoldPreyMovement( AI.Machine prey, Transform _holdPreyTransform )
+	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
 	{
-		m_preyPreviousTransformParent = prey.transform.parent;
-		prey.transform.parent = m_tongue;
 		m_holdPrey = prey;
 		m_holdPreyTransform = _holdPreyTransform;
+	
+		m_preyPreviousTransformParent = prey.transform.parent;
+		prey.transform.parent = m_tongue;
+		
 	}
 
-	public void EndHoldMovement()
+	public void EndGrabMovement()
 	{
 		m_holdPrey.transform.parent = m_preyPreviousTransformParent;
+		m_holdPrey = null;
+		m_holdPreyTransform = null;
+	}
+
+	public void StartLatchMovement( AI.Machine prey, Transform _holdPreyTransform )
+	{
+		m_holdPrey = prey;
+		m_holdPreyTransform = _holdPreyTransform;
+		ChangeState(State.Latching);
+	}
+
+	public void EndLatchMovement()
+	{
+		ChangeState(State.Idle);
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
 	}

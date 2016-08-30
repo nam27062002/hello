@@ -19,7 +19,7 @@ namespace AI {
 		public override void Init() {
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 
-			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
+			m_biteResistance = (m_entity as Entity).def.GetAsFloat("biteResistance");
 
 			HoldPreyPoint[] holdPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
 			if (holdPoints != null) {
@@ -34,12 +34,12 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Chewing, true);
 
 			if (EntityManager.instance != null)
-				EntityManager.instance.Unregister(m_entity);
+				EntityManager.instance.Unregister(m_entity as Entity);
 		}
 
 		public void BeingSwallowed(Transform _transform) {			
 			// Get the reward to be given from the entity
-			Reward reward = m_entity.GetOnKillReward(false);
+			Reward reward = (m_entity as Entity).GetOnKillReward(false);
 
 			// Dispatch global event
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);

@@ -285,6 +285,7 @@ public class GameCamera : MonoBehaviour
 			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
 
+
 		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
 		if(spawnPointObj == null) 
 		{

@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Serialization;
 
-public class EntityBg : MonoBehaviour, ISpawnable 
+public class EntityBg : IEntity
 {
 	//-----------------------------------------------
 	// Properties
@@ -21,14 +21,14 @@ public class EntityBg : MonoBehaviour, ISpawnable
 
 
 
-	public void Disable(bool _destroyed) 
+	public override void Disable(bool _destroyed) 
 	{
+		base.Disable( _destroyed );
 		if ( m_spawner != null )
 			m_spawner.RemoveEntity(gameObject, _destroyed);
-		gameObject.SetActive(false);
 	}
 
-	public void Spawn(ISpawner _spawner) 
+	public override void Spawn(ISpawner _spawner) 
 	{
 		m_spawner = _spawner;
 	}
