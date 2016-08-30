@@ -31,6 +31,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_holdPreyTimer = 0;
 	protected AI.Machine m_holdingPrey = null;
 	protected Transform m_holdTransform = null;
+	protected bool m_grabbingPrey = false;
 
 	protected Transform m_attackTarget = null;
 	protected float m_attackTimer = 0;
@@ -264,8 +265,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		*/
 	}
 
-	virtual protected void StartHold(AI.Machine _prey) 
+	virtual protected void StartHold( AI.Machine _prey, bool grab = false) 
 	{
+		m_grabbingPrey = grab;
 		// look for closer hold point
 		float distance = float.MaxValue;
 		List<Transform> points = _prey.holdPreyPoints;
@@ -282,7 +284,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_holdTransform == null )
 			m_holdTransform = _prey.transform;
 
-		//_prey.OnHoldBy(this);
+
+		// TODO (MALH): Check if bite and grab or bite and hold
 		_prey.BiteAndHold();
 
 		m_holdingPrey = _prey;
@@ -432,6 +435,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
 		AI.Machine preyToHold = null;
+		Entity entityToHold = null;
 		List<AI.Machine> preysToEat = new List<AI.Machine>();
 		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
 		for (int e = 0; e < m_numCheckEntities; e++) {
@@ -454,6 +458,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					{
 						AI.Machine machine = entity.GetComponent<AI.Machine>();
 						preyToHold = machine;
+						entityToHold = entity;
 					}
 				}
 				else 
@@ -466,7 +471,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if ( preyToHold != null )
 		{
-			StartHold(preyToHold);
+			StartHold(preyToHold, entityToHold.CanBeGrabbed( m_tier));
 		}
 		else if ( preysToEat.Count > 0 )
 		{

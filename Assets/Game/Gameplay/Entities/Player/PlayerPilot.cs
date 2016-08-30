@@ -17,7 +17,7 @@ using System.Collections;
 /// <summary>
 /// Main control of the dragon movement.
 /// </summary>
-public class DragonMotion : MonoBehaviour, MotionInterface {
+public class PlayerPilot : AI.Pilot {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -40,19 +40,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	//------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private float m_stunnedTime;
-	[SerializeField] private float m_velocityBlendRate = 256.0f;
 	[SerializeField] private float m_rotBlendRate = 350.0f;
-
-
-	protected Rigidbody m_rbody;
-	public Rigidbody rbody
-	{
-		get{ return m_rbody; }
-	}
 
 	// References to components
 	Animator  				m_animator;
-	DragonPlayer			m_dragon;
+	PlayerEntity			m_dragon;
 	DragonHealthBehaviour	m_health;
 	DragonControl			m_controls;
 	DragonAnimationEvents 	m_animationEventController;
@@ -62,8 +54,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 
 	// Movement control
-	private Vector3 m_impulse;
-	private Vector3 m_direction;
 	private Quaternion m_desiredRotation;
 	private Vector3 m_angularVelocity;
 	private float m_targetSpeedMultiplier;
@@ -187,11 +177,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
+		base.Awake();
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 
 		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
-		m_dragon			= GetComponent<DragonPlayer>();
+		m_dragon			= GetComponent<PlayerEntity>();
 		m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControl>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
@@ -215,7 +206,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}
 		}
 
-		m_rbody = GetComponent<Rigidbody>();
 		m_groundCollider = GetComponentInChildren<SphereCollider>();
 		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_height = 10f;
@@ -240,6 +230,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// Use this for initialization.
 	/// </summary>
 	void Start() {
+		
 		// Initialize some internal vars
 		m_currentSpeedMultiplier = 0.5f;
 
@@ -319,7 +310,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 
 				case State.Stunned:
-					m_rbody.velocity = m_impulse;
 					m_stunnedTimer = m_stunnedTime;
 					m_currentSpeedMultiplier = 0.5f;
 					m_animator.SetTrigger("damage");
@@ -402,11 +392,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				transform.position += deltaPosition - m_tongue.position;
 			}break;
 		}
-
-
-				
 		m_animator.SetFloat("height", m_height);
-
 		UpdateBodyBending();
 	}
 
@@ -445,11 +431,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			backMultiplier = 0.35f;
 		}
 
+		/*
 		if (m_eatBehaviour.GetAttackTarget() != null)
 		{
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
 			backMultiplier = 0.35f;
 		}
+		*/
 
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
 
@@ -521,12 +509,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case State.Latching:
 			{
 				m_impulse = Vector3.zero;
-				m_rbody.velocity = Vector3.zero;
 			}break;
 
 		}
 		
-		m_rbody.angularVelocity = m_angularVelocity;
+		// m_rbody.angularVelocity = m_angularVelocity;
 
 		m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
 
@@ -546,89 +533,33 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	public static int movementType = 1;
 	private void UpdateMovement() 
 	{
-		switch( movementType )
+		Vector3 impulse = m_controls.GetImpulse(1); 
+		if ( impulse != Vector3.zero )
 		{
-			case 0:
-			{
-				Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier); 
-				if (impulse != Vector3.zero) {
-					// accelerate the dragon
-					float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
-					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
+			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
 
-					ComputeFinalImpulse(impulse);
-					RotateToDirection( m_impulse );
-					// m_orientation.SetDirection(m_direction);
-				} else {
-					ChangeState(State.Idle);
-				}
+			// v_max = a/f
+			// t_max = 5/f
 
-			}break;
-			case 1:
-			{
-				Vector3 impulse = m_controls.GetImpulse(1); 
-				if ( impulse != Vector3.zero )
-				{
-					// http://stackoverflow.com/questions/667034/simple-physics-based-movement
+			float gravity = 9.81f * m_dragonGravityModifier;
+			Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+			acceleration += impulse * m_dargonAcceleration * m_targetSpeedMultiplier * m_dragonMass;	// User Force
 
-					// v_max = a/f
-					// t_max = 5/f
+			// stroke's Drag
+			// m_impulse = m_rbody.velocity;
 
-					float gravity = 9.81f * m_dragonGravityModifier;
-					Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
-					acceleration += impulse * m_dargonAcceleration * m_targetSpeedMultiplier * m_dragonMass;	// User Force
-
-					// stroke's Drag
-					m_impulse = m_rbody.velocity;
-
-					float impulseMag = m_impulse.magnitude;
-					m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
-					m_direction = m_impulse.normalized;
-					RotateToDirection( impulse );
-				}
-				else
-				{
-					ComputeImpulseToZero();
-					ChangeState( State.Idle );
-				}
-			}break;
-			case 2:
-			{
-				Vector3 impulse = m_controls.GetImpulse(1); 
-				if (impulse != Vector3.zero) 
-				{
-
-					// accelerate the dragon
-					float sin = impulse.y / Mathf.Sqrt( Mathf.Pow(impulse.y,2) + Mathf.Pow(impulse.x,2) );
-
-					float speedUp = 1.5f + -sin * 0.5f;
-					// float targetMultiplier = m_targetSpeedMultiplier * speedUp * m_speedValue;
-					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
-					impulse = impulse * m_currentSpeedMultiplier * m_speedValue;
-
-					float moveDamp = m_velocityBlendRate;//  + -sin;
-
-					m_impulse = m_rbody.velocity;
-					// Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref impulse, moveDamp * Time.deltaTime, 8.0f);
-					// m_impulse = Damping( m_impulse, impulse, moveDamp * Time.deltaTime, 0.9f);
-					float maxDampingScale = Util.m_defaultMaxDampingScale;
-					Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref impulse, moveDamp * Time.deltaTime, 8.0f, maxDampingScale);
-
-					m_direction = m_impulse.normalized;
-					RotateToDirection( m_impulse );
-				} 
-				else 
-				{
-					ComputeImpulseToZero();
-					ChangeState(State.Idle);
-				}
-			}break;
+			float impulseMag = m_impulse.magnitude;
+			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+			m_direction = m_impulse.normalized;
+			RotateToDirection( impulse );
 		}
-
-		m_rbody.velocity = m_impulse;
+		else
+		{
+			ComputeImpulseToZero();
+			ChangeState( State.Idle );
+		}
 	}
 
 
@@ -668,8 +599,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		} else {
 			ChangeState(State.Idle);
 		}
-
-		m_rbody.velocity = m_impulse;
 	}
 
 	private void UpdateParabolicMovement( float moveValue )
@@ -683,7 +612,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_direction = m_impulse.normalized;
 		RotateToDirection( m_impulse );
-		m_rbody.velocity = m_impulse;
 	}
 
 	private void FlyAwayFromGround() {
@@ -694,7 +622,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			
 			Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
 			ComputeFinalImpulse(impulse);	
-			m_rbody.velocity = m_impulse;
 		}
 		else 
 		{
@@ -710,7 +637,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_direction = Vector3.left;
 		}
 
-		m_rbody.velocity = m_impulse;
 		RotateToDirection(m_direction, true);
 
 		m_desiredRotation = m_transform.rotation;
@@ -723,30 +649,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
 			// m_impulse.Normalize();
 
-			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * Time.deltaTime, 8.0f);
+			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, 256 * Time.deltaTime, 8.0f);
 			m_direction = m_impulse.normalized;
 		}
 	}
 
 	private void ComputeImpulseToZero()
 	{
-		switch( movementType )
-		{
-			case 0:
-			{
-				m_impulse = Vector3.zero;
-			}break;
-			case 1:
-			{
-				float impulseMag = m_impulse.magnitude;
-				m_impulse += -(m_impulse.normalized * m_dragonFricction * 2 * impulseMag * Time.deltaTime);
-			}break;
-			case 2:
-			{
-				Vector3 zero = Vector3.zero;
-				Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref zero, m_velocityBlendRate * Time.deltaTime, 8.0f);
-			}break;
-		}
+		float impulseMag = m_impulse.magnitude;
+		m_impulse += -(m_impulse.normalized * m_dragonFricction * 2 * impulseMag * Time.deltaTime);
 
 		m_direction = m_impulse.normalized;
 	}
@@ -826,12 +737,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Stop dragon's movement
-	/// </summary>
-	public void Stop() {
-		m_rbody.velocity = Vector3.zero;
-	}
 		
 	public void AddForce(Vector3 _force) {
 		m_impulse = _force;
@@ -872,10 +777,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		get { return m_impulse; }
 	}
 
-	public Vector2 angularVelocity{
-		get  { return m_rbody.angularVelocity; }
-	}
-
 	// current speed
 	public float maxSpeed {
 		get { return m_speedValue * m_currentSpeedMultiplier; }
@@ -893,23 +794,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		get 
 		{
-			switch( movementType )		
-			{
-				case 0:
-				{
-					return m_speedValue * m_boostMultiplier * 1.2f; 		
-				}break;
-				case 1:
-				{
-					return (m_dargonAcceleration * m_boostMultiplier / m_dragonFricction) * m_dragonMass;
-				}break;
-				case 2:
-				{
-					return m_speedValue * m_boostMultiplier * 2f;
-				}break;
-			}
-			return m_speedValue;
-
+			return (m_dargonAcceleration * m_boostMultiplier / m_dragonFricction) * m_dragonMass;
 		}
 	}
 

@@ -89,12 +89,19 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_eatingBoosts.Add( entitySku, value);
 	}
 
-	override protected void StartHold(AI.Machine _prey) 
+	override protected void StartHold(AI.Machine _prey, bool grab = false) 
 	{
-		base.StartHold(_prey);
+		base.StartHold(_prey, grab);
 		// TODO (miguel) this has to be adapted to the pet
 		DragonMotion motion = GetComponent<DragonMotion>();
-		motion.StartHoldPreyMovement(m_holdingPrey, m_holdTransform);
+		if ( grab )
+		{
+			motion.StartGrabPreyMovement(m_holdingPrey, m_holdTransform);
+		}
+		else
+		{
+			motion.StartLatchMovement(m_holdingPrey, m_holdTransform);
+		}
 	}
 
 	override protected void EndHold()
@@ -102,6 +109,13 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.EndHold();
 		// TODO (miguel) this has to be adapted to the pet
 		DragonMotion motion = GetComponent<DragonMotion>();
-		motion.EndHoldMovement();
+		if ( m_grabbingPrey )
+		{
+			motion.EndGrabMovement();
+		}
+		else
+		{
+			motion.EndLatchMovement();
+		}
 	}
 }

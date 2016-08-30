@@ -21,7 +21,7 @@ namespace AI {
 		[SerializeField] private List<string> m_onEatenSounds = new List<string>();
 
 
-		private Entity m_entity = null;
+		private IEntity m_entity = null;
 		private Pilot m_pilot = null;
 		private ViewControl m_viewControl = null;
 		private Collider m_collider = null;
@@ -60,7 +60,7 @@ namespace AI {
 
 		// Use this for initialization
 		void Awake() {
-			m_entity = GetComponent<Entity>();
+			m_entity = GetComponent<IEntity>();
 			m_pilot = GetComponent<Pilot>();
 			m_viewControl = GetComponent<ViewControl>();
 			m_collider = GetComponent<Collider>();
