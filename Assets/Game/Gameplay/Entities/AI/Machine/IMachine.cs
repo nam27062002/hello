@@ -32,7 +32,7 @@ namespace AI {
 
 		// External interactions
 		void Bite();
-		void BeingSwallowed(Transform _transform);
+		void BeingSwallowed(Transform _transform, bool rewardPlayer);
 		void BiteAndHold();
 		bool Burn(float _damage, Transform _transform);
 

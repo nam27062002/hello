@@ -20,5 +20,6 @@ public enum DamageType {
 
 	NORMAL,
 	CURSE,
-	POISON
+	POISON,
+	LATCH
 }
