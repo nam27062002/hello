@@ -14,8 +14,9 @@ GAME_NAME="hd"
 OUTPUT_DIR="${HOME}/Desktop/${GAME_NAME}_builds"
 
 # iOS Code Sign
-PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.hungrydragon.dev"
-PROVISIONING_PROFILE_UUID="99d18f4a-2a05-4e39-a5da-370321ce140b"
+PROVISIONING_PROFILE="XC Ad Hoc: com.ubisoft.hungrydragon.dev"  # Not used, just for reference. Make sure it's downloaded in the build machine (XCode->Preferences->Accounts->View Details)
+#PROVISIONING_PROFILE_UUID="99d18f4a-2a05-4e39-a5da-370321ce140b"
+PROVISIONING_PROFILE_UUID="e2a6e917-8663-4459-b97f-6ec3c7e1d3d3" # Get it by right-click on the target provisioning profile in XCode->Preferences->Accounts->View Details and choosing "Show in Finder" (the UUID is the filename of the selected profile)
 SIGNING_ID="iPhone Distribution: Marie Cordon (Y3J3C97LQ8)" # NOT WORKING!!
 
 # SMB Settings
@@ -27,6 +28,7 @@ SMB_FOLDER="BCNStudio/QA/HungryDragon/builds"
 UNITY_APP="/Applications/Unity/Unity.app/Contents/MacOS/Unity"
 DATE="$(date +%Y%m%d)"
 USAGE="Usage: generate_build.sh [-b branch_name] [-android true|false] [-ios true|false] [-increase_version true|false] [-tag true|false] [-output dirpath]"
+START_TIME=$(date +%s)
 
 # Parse parameters
 for ((i=1;i<=$#;i++)); 
@@ -69,17 +71,17 @@ echo "BUILDER: Running script from path ${SCRIPT_PATH}"
 
 # Update git
 # Revert changes to modified files.
-#git reset --hard
+git reset --hard
 
 # Remove untracked files and directories.
 git clean -fd
 
 # Change branch
 git fetch
-git checkout $BRANCH
+git checkout "${BRANCH}"
 
 # Update branch
-git pull origin $BRANCH
+git pull origin "${BRANCH}"
 
 # Update calety
 cd Calety
@@ -89,7 +91,7 @@ cd "${SCRIPT_PATH}"
 # Increase internal version number
 if $INCREASE_VERSION_NUMBER; then
     echo
-    echo "BUILDER: Increasing internal version number"
+    echo "BUILDER: Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
     "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath "${SCRIPT_PATH}" -quit
     #set -e
@@ -97,17 +99,17 @@ fi
 
 # Increase build unique code
 echo
-echo "BUILDER: Increasing Build Code"
+echo "BUILDER: Increasing Build Code..."
 "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath "${SCRIPT_PATH}" -quit
 
 # Read internal version number
 # Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
 echo
-echo "BUILDER: Reading internal version number"
+echo "BUILDER: Reading internal version number..."
 "${UNITY_APP}" -batchmode -executeMethod Builder.OutputVersion -projectPath "${SCRIPT_PATH}" -quit
 VERSION_ID="$(cat outputVersion.txt)"
 echo $VERSION_ID
-rm "outputVersion.txt"
+rm -f "outputVersion.txt"
 
 # Make sure output dir is exists
 mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed (and to not exit with error if folder already exists)
@@ -115,7 +117,7 @@ mkdir -p "${OUTPUT_DIR}"    # -p to create all parent hierarchy if needed (and t
 # Generate Android build
 if $BUILD_ANDROID; then
     echo
-    echo "BUILDER: Generating APKs"
+    echo "BUILDER: Generating APKs..."
 
     # Make sure output dir exists
     mkdir -p "${OUTPUT_DIR}/apks/"
@@ -128,7 +130,7 @@ fi
 if $BUILD_IOS; then
     # Generate XCode project
     echo
-    echo "BUILDER: Generating XCode Project"
+    echo "BUILDER: Generating XCode Project..."
     "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateXcode -projectPath "${SCRIPT_PATH}" -quit -buildTarget ios -outputDir "${OUTPUT_DIR}"
 
     # Make sure output dirs exist
@@ -143,16 +145,20 @@ if $BUILD_IOS; then
 
     # Generate Archive
     echo
-    echo "BUILDER: Archiving"
-    xcodebuild clean -project $PROJECT_NAME -configuration Release -alltargets 
-    xcodebuild archive -project $PROJECT_NAME -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}"
+    echo "BUILDER: Cleaning XCode build..."
+    xcodebuild clean -project "${PROJECT_NAME}" -configuration Release -alltargets 
 
+    echo
+    echo "BUILDER: Archiving..."
+    # Since the archiving process has a lot of verbose (and XCode doesn't allow us to regulate it), show only the relevant lines
+    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}" | egrep '^(/.+:[0-9+:[0-9]+:.(error|warning):|fatal|===|fail)' # From http://stackoverflow.com/questions/2244637/how-to-filter-the-xcodebuild-command-line-output
+    
     # Generate IPA file
     echo
-    echo "BUILDER: Exporting IPA"
-    rm "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"    # just in case
+    echo "BUILDER: Exporting IPA..."
+    rm -f "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"    # just in case
     xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "${OUTPUT_DIR}/xcode/Info.plist"
-    mv "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
+    mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
 fi
 
 # Commit project changes
@@ -161,19 +167,19 @@ echo "BUILDER: Committing changes"
 git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
 git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
 git commit -m "Automatic Build. Version ${VERSION_ID}."
-git push origin ${BRANCH}
+git push origin "${BRANCH}"
 
 # Create Git tag
 if $CREATE_TAG; then
     set +e  # Don't exit script on error
-    git tag ${VERSION_ID}
-    git push origin ${VERSION_ID}
+    git tag "${VERSION_ID}"
+    git push origin "${VERSION_ID}"
     set -e
 fi
 
 # Upload to Samba server
 echo
-echo "BUILDER: Sending to server"
+echo "BUILDER: Sending to server..."
 
 # Mount the server into a tmp folder
 mkdir -p server
@@ -192,3 +198,10 @@ fi
 # Unmount server and remove tmp folder
 umount server
 rmdir server
+
+# Done!
+END_TIME=$(date "+%s")
+DIFF=$(echo "$END_TIME - $START_TIME" | bc)
+echo
+echo "BUILDER: Done in $(date -j -u -f "%s" $DIFF "+%Hh %Mm %Ss")!" # -j to not actually set the date, -u for UTC time, -f to specify input format (%s -> seconds)
+echo
