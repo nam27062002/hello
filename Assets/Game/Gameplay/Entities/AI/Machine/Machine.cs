@@ -87,6 +87,8 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.OnDanger);
 			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.OnSafe);
 
+			m_signals.SetOnEnableTrigger(Signals.Type.Critical, SignalTriggers.OnCritical);
+
 			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
 			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
 

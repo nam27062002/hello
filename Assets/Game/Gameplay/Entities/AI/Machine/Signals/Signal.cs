@@ -13,6 +13,7 @@ namespace AI {
 		[StateTransitionTrigger] public static string OnCalm 				= "onCalm";
 		[StateTransitionTrigger] public static string OnDanger 				= "onDanger";
 		[StateTransitionTrigger] public static string OnSafe 				= "onSafe";
+		[StateTransitionTrigger] public static string OnCritical			= "onCritical";
 		[StateTransitionTrigger] public static string OnPanic 				= "onPanic";
 		[StateTransitionTrigger] public static string OnRecoverFromPanic 	= "onRecoverFromPanic";
 		[StateTransitionTrigger] public static string OnOutsideArea 		= "onOutsideArea";
@@ -33,7 +34,8 @@ namespace AI {
 	        Hungry, 	
 	        Alert, 	
 	        Warning, 
-	        Danger, 	
+	        Danger,
+			Critical,
 	        Panic, 	
 	        BackToHome,
 	        Burning, 
