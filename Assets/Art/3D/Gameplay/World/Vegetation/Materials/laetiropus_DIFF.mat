@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Big_Tree_mat
-  m_Shader: {fileID: 4800000, guid: f493c23147f904dd28c1dbe194f90bd9, type: 3}
+  m_Name: laetiropus_DIFF
+  m_Shader: {fileID: 4800000, guid: 8303da806b99a45bcbaf8904f9f40c9a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -48,8 +48,8 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 62152a92f7c6132498bd99d92611f187, type: 3}
-        m_Scale: {x: 70, y: 70}
+        m_Texture: {fileID: 2800000, guid: d41078d2bdac46b44a38a453e2d14a37, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
@@ -69,16 +69,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _SecondTexture
-      second:
-        m_Texture: {fileID: 2800000, guid: 5f23323347970814ea4cb173f287fe1e, type: 3}
-        m_Scale: {x: 0, y: 0}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _BumpStrength
+      second: 3
     - first:
         name: _Cutoff
       second: 0.5
@@ -89,14 +86,14 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _FogEnd
-      second: 1500
-    - first:
-        name: _FogStart
-      second: -9.2
+        name: _GlossMapScale
+      second: 1
     - first:
         name: _Glossiness
       second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
     - first:
         name: _Metallic
       second: 0
@@ -110,6 +107,15 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
+        name: _Specular
+      second: 1
+    - first:
+        name: _SpecularHighlights
+      second: 1
+    - first:
         name: _SrcBlend
       second: 1
     - first:
@@ -121,10 +127,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.8862746, g: 0.08627451, b: 0.4431373, a: 1}
+      second: {r: 0.8000001, g: 0.42168757, b: 0.13302718, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _FogColor
-      second: {r: 0.37889272, g: 0.46233138, b: 0.7058823, a: 0.781}
