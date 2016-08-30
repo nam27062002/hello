@@ -7,6 +7,7 @@ namespace AI {
 		public class SpiderIdleData : IdleData {
 			public Range hangDownChance = new Range(0.5f, 0.75f);
 			public Range hangDownDistance = new Range(2f, 6f);
+			public float hangDownSpeed = 2.5f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Spider/Idle")]
@@ -101,7 +102,7 @@ namespace AI {
 						m_machine.upVector = Vector3.up;
 
 						m_target = m_machine.position + Vector3.down * ((SpiderIdleData)m_data).hangDownDistance.GetRandom();
-						m_pilot.SetMoveSpeed(2.5f);
+						m_pilot.SetMoveSpeed(((SpiderIdleData)m_data).hangDownSpeed);
 						m_pilot.GoTo(m_target);
 						m_pilot.SetDirection(Vector3.down, true);
 						break;
@@ -117,7 +118,7 @@ namespace AI {
 						m_machine.UseGravity(false);
 						m_pilot.SetDirection(Vector3.down, true);
 						m_target = m_startPosition;
-						m_pilot.SetMoveSpeed(2.5f);
+						m_pilot.SetMoveSpeed(((SpiderIdleData)m_data).hangDownSpeed);
 						m_pilot.GoTo(m_target);
 						break;
 
