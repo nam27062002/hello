@@ -37,6 +37,9 @@ public class Chest : MonoBehaviour {
 	public State state { get { return m_state; }}
 	public bool collected { get { return m_state == State.COLLECTED; }}
 
+	// Internal
+	private float m_sqrCollisionRadius = 1f;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -44,7 +47,8 @@ public class Chest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
+		// Pre-compute squared collision distance to avoid doing it every time
+		m_sqrCollisionRadius = m_collisionRadius * m_collisionRadius;
 	}
 
 	/// <summary>
@@ -56,7 +60,7 @@ public class Chest : MonoBehaviour {
 			// Based on MineBehaviour
 			Vector2 v = (InstanceManager.player.transform.position - transform.position);
 			float distanceSqr = v.sqrMagnitude;
-			if(distanceSqr <= m_collisionRadius * m_collisionRadius) {
+			if(distanceSqr <= m_sqrCollisionRadius) {
 				// Collect chest!
 				m_state = State.COLLECTED;
 
@@ -74,6 +78,14 @@ public class Chest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// EDITOR															//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// A value has changed on the inspector.
+	/// </summary>
+	private void OnValidate() {
+		// Re-compute squared collision distance
+		m_sqrCollisionRadius = m_collisionRadius * m_collisionRadius;
+	}
+
 	/// <summary>
 	/// Draw scene helpers.
 	/// </summary>
