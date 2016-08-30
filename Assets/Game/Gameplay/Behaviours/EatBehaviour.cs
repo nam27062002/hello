@@ -27,9 +27,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected float m_eatingTimer;
 	protected float m_eatingTime;
 
-	// if player slowed down because of eating
-	protected bool m_slowedDown;
-
 	// Hold stuff
 	private float m_holdPreyTimer = 0;
 	protected AI.Machine m_holdingPrey = null;
@@ -103,8 +100,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_prey = new List<PreyData>();
 		m_bloodEmitter = new List<GameObject>();
 
-		m_slowedDown = false;
-
 		MouthCache();
 		m_holdStunTime = 0.5f;
 		m_holdDamage = 10;
@@ -140,9 +135,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected virtual void OnDisable() {
 		m_eatingTimer = 0;
-		if (m_slowedDown) {
-			SlowDown(false);
-		}
 
 		for (int i = 0; i < m_prey.Count; i++) {	
 			if (m_prey[i].prey != null) {
@@ -245,10 +237,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Yes!! Eat it!!
 		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _prey.biteResistance);
 
-		if (m_eatingTime >= 0.5f) {
-			SlowDown(true);
-		}
-
 		PreyData preyData = new PreyData();
 
 		preyData.startParent = _prey.transform.parent;
@@ -298,17 +286,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if (empty) {
 			m_prey.Clear();
-			if (m_slowedDown) {
-				SlowDown(false);
-			}
 		}
 	}
-
-	/// <summary>
-	/// Slows down. To be implemented by derived classes. It's called when we start eating a bid prey
-	/// </summary>
-	/// <param name="_enable">If set to <c>true</c> enable.</param>
-	protected abstract void SlowDown(bool _enable);
 
 	///
 	/// END EATING

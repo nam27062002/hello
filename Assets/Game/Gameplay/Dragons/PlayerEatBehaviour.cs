@@ -122,18 +122,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 		}
 	}
 
-	protected override void SlowDown(bool _enable) {
-		if (_enable) {
-			m_dragonBoost.StopBoost();
-			m_motion.SetSpeedMultiplier(0.25f);
-			m_slowedDown = true;
-		} else {
-			m_motion.SetSpeedMultiplier(1f);
-			m_dragonBoost.ResumeBoost();
-			m_slowedDown = false;
-		}
-	}
-
 	public void AddEatingBost( string entitySku, float value )
 	{
 		m_eatingBoosts.Add( entitySku, value);
