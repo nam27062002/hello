@@ -43,6 +43,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
+		m_rewardsPlayer = true;
 
 		DragonAnimationEvents animEvents = GetComponentInChildren<DragonAnimationEvents>();
 		if ( animEvents != null )
@@ -77,7 +78,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 
 	protected override void Eat(AI.Machine _prey) {
 		base.Eat( _prey );
-
 		m_animator.SetBool("eat", true);
 		if (m_eatingTime >= 0.5f || m_prey.Count > 2) 
 		{
@@ -85,9 +85,9 @@ public class PlayerEatBehaviour : EatBehaviour {
 		}
 	}
 
-	protected override void Chew()
+	protected override void UpdateEating()
 	{
-		base.Chew();
+		base.UpdateEating();
 		if ( m_prey.Count <= 0 )
 			m_animator.SetBool("eat", false);	
 	}
@@ -148,7 +148,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 	override protected void StartHold(AI.Machine _prey, bool grab = false) 
 	{
 		base.StartHold(_prey, grab);
-		// TODO (miguel) this has to be adapted to the pet
 		DragonMotion motion = GetComponent<DragonMotion>();
 		if ( grab )
 		{
@@ -182,7 +181,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 	override protected void EndHold()
 	{
 		base.EndHold();
-		// TODO (miguel) this has to be adapted to the pet
 		DragonMotion motion = GetComponent<DragonMotion>();
 		if ( m_grabbingPrey )
 		{
@@ -206,13 +204,8 @@ public class PlayerEatBehaviour : EatBehaviour {
 		m_animator.SetBool("eatHold", false);
 	}
 
-	override public float GetHoldDamge(){
-	 	float damage = m_holdDamage; 
-	 	if ( m_dragonBoost.IsBoostActive() )
-	 	{
-			damage *= m_holdBoostDamageMultiplier;
-	 	}
-	 	return damage;
+	override public bool IsBoosting(){
+	 	return m_dragonBoost.IsBoostActive();
 	 }
 
 

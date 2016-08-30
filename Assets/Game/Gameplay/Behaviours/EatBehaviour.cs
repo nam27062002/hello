@@ -26,15 +26,23 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected float m_eatingTimer;
 	protected float m_eatingTime;
+
+	// if player slowed down because of eating
 	protected bool m_slowedDown;
+
+	// Hold stuff
 	private float m_holdPreyTimer = 0;
 	protected AI.Machine m_holdingPrey = null;
+	protected DragonPlayer m_holdingPlayer = null;
+	protected DragonHealthBehaviour m_holdingPlayerHealth = null;
 	protected Transform m_holdTransform = null;
 	protected bool m_grabbingPrey = false;
 
+	// Attacking/Targeting
 	protected Transform m_attackTarget = null;
 	protected float m_attackTimer = 0;
 
+	// 
 	protected Transform m_suction;
 	protected Transform m_mouth;
 	public Transform mouth
@@ -53,31 +61,35 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_noAttackTime = 0;
 	private float m_holdingBlood = 0;
 
+	// config
 	protected bool m_canHold = true;		// if this eater can hold a prey
 	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
 	protected int m_limitEatingValue = 1;	// limit value
-	protected bool m_isPlayer = true;
+	protected bool m_isPlayer = true;		// If eating entity is the player
+	protected bool m_waitJawsEvent = false;	// if wait for jaws closing event or just wait time
+	protected bool m_rewardsPlayer = false;	
+	protected bool m_canLatchOnPlayer = false;
 
+		// Hold config
 	protected float m_holdStunTime;
 	protected float m_holdDamage;
 	protected float m_holdBoostDamageMultiplier;
 	protected float m_holdHealthGainRate;
 	protected float m_holdDuration;
 
-
-
 	// Arc detection values
 	private const float m_minAngularSpeed = 0;
 	private const float m_maxAngularSpeed = 12;
 	private const float m_minArcAngle = 60;
 	private const float m_maxArcAngle = 180;
+		// Multiplies eating distance to detect targets
 	private const float m_eatDetectionRadiusMultiplier = 4;
+		// Increases bite distance based on angular speed
 	private const float m_angleSpeedMultiplier = 1.2f;
+		// Inceases bite distance based on speed
 	private const float m_speedRadiusMultiplier = 0.1f;
 
-	protected bool m_waitJawsEvent = false;
-
-
+	// This are tmp variables we reuse every time we need to find targets
 	private Entity[] m_checkEntities = new Entity[20];
 	private int m_numCheckEntities = 0;
 
@@ -113,11 +125,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-
 	protected void SetupHoldParametersForTier( string tierSku )
 	{
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.HOLD_PREY_TIER, "tier", tierSku);
-
 		if ( def != null)
 		{
 			m_holdStunTime = def.GetAsFloat("stunTime");
@@ -156,7 +166,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		if (m_prey.Count > 0)
 		{
-			Chew();
+			UpdateEating();
 		}
 
 		if ( m_attackTarget != null )
@@ -178,6 +188,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				UpdateHoldingPrey();
 			}
+			else if ( m_holdingPlayer )
+			{
+				UpdateLatchOnPlayer();	// A Type of holding
+			}
 			else 
 			{
 				if (m_noAttackTime <= 0)	// no attack time y no estoy intentando comerme algo? y si ya estoy comiendo? empiezo un nuevo bite?
@@ -190,6 +204,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	}
 
+	/// <summary>
+	/// Function called when the eater closes the jaw. It can come from an animation event or timed event
+	/// </summary>
 	public void OnJawsClose()
 	{
 		// Bite kill!
@@ -220,6 +237,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// EATING FUNCTIONS
 	/// </summary>
 
+	/// Start Eating _prey
 	protected virtual void Eat(AI.Machine _prey) {
 		
 		_prey.Bite();
@@ -243,7 +261,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_prey.Add(preyData);
 	}
 
-	protected virtual void Chew() {
+	/// <summary>
+	/// Eating Update
+	/// </summary>
+	protected virtual void UpdateEating() {
 		bool empty = true;
 
 		for (int i = 0; i < m_prey.Count; i++) {
@@ -283,6 +304,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Slows down. To be implemented by derived classes. It's called when we start eating a bid prey
+	/// </summary>
+	/// <param name="_enable">If set to <c>true</c> enable.</param>
+	protected abstract void SlowDown(bool _enable);
+
 	///
 	/// END EATING
 	///
@@ -291,6 +318,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// HOLDING FUNCTIONS
 	/// </summary>
 
+	/// Start holding a prey machine
 	virtual protected void StartHold( AI.Machine _prey, bool grab = false) 
 	{
 		m_grabbingPrey = grab;
@@ -315,17 +343,47 @@ public abstract class EatBehaviour : MonoBehaviour {
 		_prey.BiteAndHold();
 
 		m_holdingPrey = _prey;
+		m_holdingPlayer = null;
 		m_holdPreyTimer = m_holdDuration;
 	}
 
+	virtual protected void StartLatchOnPlayer( DragonPlayer player )
+	{
+		m_grabbingPrey = false;
+		// look for closer hold point
+		float distance = float.MaxValue;
+		/*
+		List<Transform> points = _prey.holdPreyPoints;
+		m_holdTransform = null;
+		for( int i = 0; i<points.Count; i++ )
+		{
+			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
+			{
+				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
+				m_holdTransform = points[i];
+			}
+		}
+
+		if ( m_holdTransform == null )
+			m_holdTransform = _prey.transform;
+			*/
+		m_holdTransform = player.transform;
+
+		// TODO (MALH): Check if bite and grab or bite and hold
+
+		m_holdingPlayer = player;
+		m_holdingPrey = null;
+		m_holdPreyTimer = m_holdDuration;
+	}
+
+	/// <summary>
+	/// Update holding a prey
+	/// </summary>
 	protected virtual void UpdateHoldingPrey()
 	{
 		if (m_holdingBlood <= 0)
 		{
-			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
-			m_holdingBlood = 0.5f;
+			StartBlood();
 		}
 		else
 		{
@@ -333,18 +391,17 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 
 		// damage prey
-		float damage = GetHoldDamge();
+		float damage = m_holdDamage;
+		if ( IsBoosting() )
+		{
+			damage *= m_holdBoostDamageMultiplier;
+		}
 
 		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
 		if (m_holdingPrey.IsDead())
 		{
 			Swallow(m_holdingPrey);
-
-			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
-			m_holdingBlood = 0.5f;
-
+			StartBlood();
 			EndHold();
 		}
 		else
@@ -355,19 +412,70 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				// release prey
 				// Escaped Event
-				Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
+				if ( m_isPlayer )
+					Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
 				EndHold();
 			}	
 		}
 	}
 
-	public virtual float GetHoldDamge(){ return m_holdDamage; }
+	protected virtual void UpdateLatchOnPlayer()
+	{
+		if (m_holdingBlood <= 0)
+		{
+			StartBlood();
+		}
+		else
+		{
+			m_holdingBlood -= Time.deltaTime;
+		}
 
+		// damage prey
+		float damage = m_holdDamage;
+		if ( IsBoosting() )
+		{
+			damage *= m_holdBoostDamageMultiplier;
+		}
+
+		m_holdingPlayerHealth.ReceiveDamage( damage * Time.deltaTime, DamageType.LATCH, transform, false);
+		if (!m_holdingPlayer.IsAlive())
+		{
+			StartBlood();
+			EndHold();
+		}
+		else
+		{
+			// Swallow
+			m_holdPreyTimer -= Time.deltaTime;
+			if ( m_holdPreyTimer <= 0 ) // or prey is death
+			{
+				EndHold();
+			}	
+		}
+	}
+
+
+	/// Check if boosting while eating. To be implemented by derived classes
+	public virtual bool IsBoosting()
+	{ 
+		return false; 
+	}
+
+	/// <summary>
+	/// Ends the hold.
+	/// </summary>
 	virtual protected void EndHold()
 	{
-		m_holdingPrey.ReleaseHold();
-		m_holdingPrey.SetVelocity(m_motion.velocity * 2f);
-		m_holdingPrey = null;
+		if ( m_holdingPrey != null)
+		{
+			m_holdingPrey.ReleaseHold();
+			m_holdingPrey.SetVelocity(m_motion.velocity * 2f);
+			m_holdingPrey = null;
+		}
+		else if ( m_holdingPlayer != null)
+		{
+			m_holdingPlayer = null;
+		}
 
 		m_noAttackTime = m_holdStunTime;
 	}
@@ -375,13 +483,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// <summary>
 	/// END HOLD
 	/// </summary>
-
-
-
-
-	private void Swallow(AI.Machine _prey) {
-		_prey.BeingSwallowed(m_mouth);//( m_mouth );
-	}
 
 
 	/// <summary>
@@ -492,7 +593,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Gets the find eating distance. This 
+	/// Returns the distance this entity can eat something
 	/// </summary>
 	/// <returns>The find eating distance.</returns>
 	protected virtual float GetEatDistance()
@@ -501,7 +602,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 
-
+	private void StartBlood(){
+		Vector3 bloodPos = m_mouth.position;
+		bloodPos.z = -50f;
+		m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
+		m_holdingBlood = 0.5f;
+	}
 
 	private void UpdateBlood() {
 		if (m_bloodEmitter.Count > 0) {
@@ -524,17 +630,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	protected abstract void SlowDown(bool _enable);
 
-
-
-
-
-
-
-
-
-
+	/// On kill function over prey. Eating or holding
+	private void Swallow(AI.Machine _prey) {
+		_prey.BeingSwallowed(m_mouth, m_rewardsPlayer);//( m_mouth );
+	}
 
 	/// <summary>
 	/// GIZMO

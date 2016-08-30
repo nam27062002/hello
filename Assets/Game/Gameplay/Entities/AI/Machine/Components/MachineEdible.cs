@@ -37,12 +37,14 @@ namespace AI {
 				EntityManager.instance.Unregister(m_entity as Entity);
 		}
 
-		public void BeingSwallowed(Transform _transform) {			
-			// Get the reward to be given from the entity
-			Reward reward = (m_entity as Entity).GetOnKillReward(false);
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
+			if ( _rewardsPlayer ){
+				// Get the reward to be given from the entity
+				Reward reward = (m_entity as Entity).GetOnKillReward(false);
 
-			// Dispatch global event
-			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);
+				// Dispatch global event
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_pilot.transform, reward);
+			}
 
 			m_viewControl.SpawnEatenParticlesAt(_transform);
 
