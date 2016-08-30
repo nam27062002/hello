@@ -35,12 +35,6 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 		set { if(instance != null) instance.m_player = value; }
 	}
 
-	private PlayerEntity m_playerEntoty = null;
-	public static PlayerEntity playerEntity {
-		get { return instance.m_playerEntoty; }
-		set { if(instance != null) instance.m_playerEntoty = value; }
-	}
-
 	private GameCamera m_gameCamera = null;
 	public static GameCamera gameCamera {
 		get { return instance.m_gameCamera; }

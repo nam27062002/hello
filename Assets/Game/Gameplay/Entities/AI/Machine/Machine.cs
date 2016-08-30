@@ -280,7 +280,7 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform) {			
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
 			if (m_willPlayEatenSound) {
 				if (m_entity.isOnScreen) {
 					PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
@@ -288,7 +288,7 @@ namespace AI {
 				}
 			}
 
-			m_edible.BeingSwallowed(_transform);
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }

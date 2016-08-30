@@ -7,6 +7,4 @@ public interface MotionInterface {
 	Vector2 angularVelocity { get; }
 
 	float maxSpeed { get; }
-
-	void SetSpeedMultiplier(float _value);
 }

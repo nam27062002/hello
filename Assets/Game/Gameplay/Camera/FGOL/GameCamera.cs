@@ -286,11 +286,7 @@ public class GameCamera : MonoBehaviour
 		}
 
 
-		GameObject spawnPointObj;
-		if ( InstanceManager.player )
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
-		else
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.playerEntity.data.def.sku);
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
 		if(spawnPointObj == null) 
 		{
 			// We couldn't find a spawn point for this specific type, try to find a generic one
@@ -301,10 +297,7 @@ public class GameCamera : MonoBehaviour
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 		m_transform.position = m_position;
 
-		if ( InstanceManager.player != null )
-			SetTargetObject( InstanceManager.player.gameObject );
-		else
-			SetTargetObject( InstanceManager.playerEntity.gameObject );
+		SetTargetObject( InstanceManager.player.gameObject );
 
 		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
 		{

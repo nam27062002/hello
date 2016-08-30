@@ -239,13 +239,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		instance.SetScoreMultiplier(0);
 
 		instance.m_sceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
-		if ( InstanceManager.player != null ){
-			// Survival Bonus
-			instance.ParseSurvivalBonus( InstanceManager.player.data.tierDef.sku );
-		}else{
-			instance.ParseSurvivalBonus( InstanceManager.playerEntity.data.tierDef.sku );
-		}
-
+		instance.ParseSurvivalBonus( InstanceManager.player.data.tierDef.sku );
 
 		instance.m_isHighScore = false;
 

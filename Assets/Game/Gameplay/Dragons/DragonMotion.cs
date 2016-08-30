@@ -58,7 +58,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_groundCollider;
-	DragonEatBehaviour		m_eatBehaviour;
+	PlayerEatBehaviour		m_eatBehaviour;
 
 
 	// Movement control
@@ -66,11 +66,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector3 m_direction;
 	private Quaternion m_desiredRotation;
 	private Vector3 m_angularVelocity;
-	private float m_targetSpeedMultiplier;
-	public float targetSpeedMultiplier
+	private float m_boostSpeedMultiplier;
+	public float boostSpeedMultiplier
 	{
-		get {return m_targetSpeedMultiplier;}
-		set { m_targetSpeedMultiplier = value; }
+		get {return m_boostSpeedMultiplier;}
+		set { m_boostSpeedMultiplier = value; }
+	}
+
+	public float m_holdSpeedMultiplier;
+	public float holdSpeedMultiplier
+	{
+		get {return m_holdSpeedMultiplier;}
+		set { m_holdSpeedMultiplier = value; }
 	}
 
 	private float m_currentSpeedMultiplier;
@@ -217,10 +224,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_rbody = GetComponent<Rigidbody>();
 		m_groundCollider = GetComponentInChildren<SphereCollider>();
-		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
+		m_eatBehaviour = GetComponent<PlayerEatBehaviour>();
 		m_height = 10f;
 
-		m_targetSpeedMultiplier = 1;
+		m_boostSpeedMultiplier = 1;
+		m_holdSpeedMultiplier = 1;
 
 		m_transform = transform;
 		m_currentFrontBend = Vector2.zero;
@@ -440,7 +448,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Vector3 dir = m_desiredRotation * Vector3.right;
 		float backMultiplier = 1;
 
-		if (targetSpeedMultiplier > 1)// if boost active
+		if (GetTargetSpeedMultiplier() > 1)// if boost active
 		{
 			backMultiplier = 0.35f;
 		}
@@ -557,7 +565,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				if (impulse != Vector3.zero) {
 					// accelerate the dragon
 					float speedUp = (m_state == State.Fly_Down)? 1.2f : 1f;
-					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
+					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, GetTargetSpeedMultiplier() * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
 					ComputeFinalImpulse(impulse);
 					RotateToDirection( m_impulse );
@@ -579,7 +587,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 					float gravity = 9.81f * m_dragonGravityModifier;
 					Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
-					acceleration += impulse * m_dargonAcceleration * m_targetSpeedMultiplier * m_dragonMass;	// User Force
+					acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
 
 					// stroke's Drag
 					m_impulse = m_rbody.velocity;
@@ -606,7 +614,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 					float speedUp = 1.5f + -sin * 0.5f;
 					// float targetMultiplier = m_targetSpeedMultiplier * speedUp * m_speedValue;
-					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
+					m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, GetTargetSpeedMultiplier() * speedUp, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 					impulse = impulse * m_currentSpeedMultiplier * m_speedValue;
 
 					float moveDamp = m_velocityBlendRate;//  + -sin;
@@ -631,6 +639,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_rbody.velocity = m_impulse;
 	}
 
+	float GetTargetSpeedMultiplier()
+	{
+		return m_boostSpeedMultiplier * m_holdSpeedMultiplier;
+	}
 
 	Vector3 Damping( Vector3 src, Vector3 dst, float dt, float factor)
 	{
@@ -661,7 +673,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if (impulse != Vector3.zero) 
 		{
 			// accelerate the dragon
-			m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, m_targetSpeedMultiplier, Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
+			m_currentSpeedMultiplier = Mathf.Lerp(m_currentSpeedMultiplier, GetTargetSpeedMultiplier() , Time.deltaTime * 20.0f); //accelerate from stop to normal or boost velocity
 
 			ComputeFinalImpulse(impulse);
 			RotateToDirection( m_impulse );
@@ -756,7 +768,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		float len = dir.magnitude;
 		// m_rotBlendRate is param
 		float blendRate = m_rotBlendRate;
-		if ( m_targetSpeedMultiplier > 1 )
+		if ( GetTargetSpeedMultiplier() > 1 )
 			blendRate *= 2;
 
 		if ( slowly )
@@ -881,7 +893,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		get { return m_speedValue * m_currentSpeedMultiplier; }
 	}
 
-		public float howFast
+	public float howFast
 	{
 		get{ 
 			float f =m_impulse.magnitude / absoluteMaxSpeed;
@@ -911,10 +923,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			return m_speedValue;
 
 		}
-	}
-
-	public void SetSpeedMultiplier(float _value) {
-		m_targetSpeedMultiplier = _value;
 	}
 
 	//------------------------------------------------------------------//
@@ -1003,6 +1011,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
 	{
+		// TODO: Calculate hold speed multiplier
+		m_holdSpeedMultiplier = 0.5f;
+
 		m_holdPrey = prey;
 		m_holdPreyTransform = _holdPreyTransform;
 	
@@ -1013,6 +1024,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void EndGrabMovement()
 	{
+		m_holdSpeedMultiplier = 1;
 		m_holdPrey.transform.parent = m_preyPreviousTransformParent;
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
