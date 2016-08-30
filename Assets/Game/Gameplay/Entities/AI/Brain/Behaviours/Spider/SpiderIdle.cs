@@ -53,7 +53,6 @@ namespace AI {
 			protected override void OnExit(AI.State _newState) {
 				m_pilot.ReleaseAction(Pilot.Action.Button_A);
 				m_machine.UseGravity(true);
-				m_machine.CheckCollisions(true);
 
 				m_pilot.SetDirection(Vector3.zero, false);
 			}
@@ -71,21 +70,21 @@ namespace AI {
 
 					case IdleState.Hang_idle:
 						m_timer -= Time.deltaTime;
-						if (m_timer <= 0f) {
+						if (m_timer <= 0f || m_machine.GetSignal(Signals.Type.Danger)) {
 							ChangeState(IdleState.Hang_up);
 						}
 						break;
 
 					case IdleState.Hang_up:
 						m = (m_machine.position - m_target).sqrMagnitude;
-						if (m < 1f) {
+						if (m < 2f) {
 							Transition(OnMove);
 						}
 						break;
 
 					case IdleState.Normal:
 						m_timer -= Time.deltaTime;
-						if (m_timer <= 0f) {
+						if (m_timer <= 0f || m_machine.GetSignal(Signals.Type.Danger)) {
 							Transition(OnMove);
 						}
 						break;
@@ -99,7 +98,6 @@ namespace AI {
 					case IdleState.Hang_down:
 						m_pilot.PressAction(Pilot.Action.Button_A);
 						m_machine.UseGravity(false);
-						m_machine.CheckCollisions(false);
 						m_machine.upVector = Vector3.up;
 
 						m_target = m_machine.position + Vector3.down * ((SpiderIdleData)m_data).hangDownDistance.GetRandom();
@@ -109,11 +107,15 @@ namespace AI {
 						break;
 
 					case IdleState.Hang_idle:
+						m_machine.UseGravity(false);
+						m_pilot.SetDirection(Vector3.down, true);
 						m_pilot.SetMoveSpeed(0f, false);
 						m_timer = m_data.restTime.GetRandom();
 						break;
 
 					case IdleState.Hang_up:
+						m_machine.UseGravity(false);
+						m_pilot.SetDirection(Vector3.down, true);
 						m_target = m_startPosition;
 						m_pilot.SetMoveSpeed(2.5f);
 						m_pilot.GoTo(m_target);

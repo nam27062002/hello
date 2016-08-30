@@ -47,7 +47,7 @@ GameObject:
   - 114: {fileID: 11474244}
   - 114: {fileID: 11492210}
   - 114: {fileID: 11409804}
-  - 136: {fileID: 136000014026511838}
+  - 135: {fileID: 135000010878284756}
   - 54: {fileID: 54000012314379416}
   m_Layer: 21
   m_Name: PF_SpiderRed
@@ -62,8 +62,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174698}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.857, y: 1.83, z: -9.2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.29, y: 5.43, z: -9.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -79,7 +79,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163356}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.004, y: 0.357, z: -1.022}
+  m_LocalPosition: {x: 0.004, y: 0.357, z: -0.482}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -92,7 +92,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 115596}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.013, y: 0.191, z: 1.589}
+  m_LocalPosition: {x: 0.013, y: 0.191, z: 2.129}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -204,7 +204,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"damage":25,"consecutiveAttacks":200,"attackDelay":2,"retreatTime":5,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_serializedJson: '[{"hangDownChance":{"min":1,"max":1},"hangDownDistance":{"min":4,"max":6},"restTime":{"min":60,"max":120},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"damage":25,"consecutiveAttacks":200,"attackDelay":2,"retreatTime":5,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -242,7 +242,7 @@ MonoBehaviour:
     m_maxRadius: 4
     m_senseAbove: 1
     m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_sensorOffset: {x: 0, y: 0.3, z: 2}
     m_senseDelay:
       min: 0.25
       max: 0.5
@@ -873,7 +873,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013046782262}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.54}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1260,8 +1260,8 @@ LineRenderer:
       serializedVersion: 2
       rgba: 4294967295
   m_UseWorldSpace: 1
---- !u!136 &136000014026511838
-CapsuleCollider:
+--- !u!135 &135000010878284756
+SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1269,10 +1269,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.65
-  m_Height: 1.8
-  m_Direction: 2
-  m_Center: {x: 0, y: 0.63, z: -0.27}
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!137 &137000012337031480
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
