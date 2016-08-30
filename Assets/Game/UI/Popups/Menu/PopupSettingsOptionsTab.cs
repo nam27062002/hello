@@ -96,7 +96,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
         // Change localization!
         if (LocalizationManager.SharedInstance.SetLanguage(m_languageDefs[m_selectedIdx].sku))
         {
-            PlayerPrefs.SetString(KEY_SETTINGS_LANGUAGE, m_languageDefs[m_selectedIdx].sku);
+            PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, m_languageDefs[m_selectedIdx].sku);
         }
 
         Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
