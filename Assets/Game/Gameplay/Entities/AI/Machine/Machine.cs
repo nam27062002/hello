@@ -21,7 +21,7 @@ namespace AI {
 		[SerializeField] private List<string> m_onEatenSounds = new List<string>();
 
 
-		private Entity m_entity = null;
+		private IEntity m_entity = null;
 		private Pilot m_pilot = null;
 		private ViewControl m_viewControl = null;
 		private Collider m_collider = null;
@@ -60,7 +60,7 @@ namespace AI {
 
 		// Use this for initialization
 		void Awake() {
-			m_entity = GetComponent<Entity>();
+			m_entity = GetComponent<IEntity>();
 			m_pilot = GetComponent<Pilot>();
 			m_viewControl = GetComponent<ViewControl>();
 			m_collider = GetComponent<Collider>();
@@ -86,6 +86,8 @@ namespace AI {
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.OnDanger);
 			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.OnSafe);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Critical, SignalTriggers.OnCritical);
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
 			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
@@ -278,7 +280,7 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform) {			
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
 			if (m_willPlayEatenSound) {
 				if (m_entity.isOnScreen) {
 					PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
@@ -286,7 +288,7 @@ namespace AI {
 				}
 			}
 
-			m_edible.BeingSwallowed(_transform);
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }

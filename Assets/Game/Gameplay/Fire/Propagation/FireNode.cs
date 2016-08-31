@@ -33,7 +33,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private Vector3 m_fireSpriteDestinationScale;
 
 	private GameObject m_fireSprite;
-	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
 
 	private Reward m_reward;
@@ -48,7 +47,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	void Start () {
 		FirePropagationManager.Insert(this);
 
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_reward = new Reward();
 		m_reward.coins = 0;
@@ -88,15 +86,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			{
 				//check if we have to render the particle
 
-				bool isInsideActivationMaxArea = false;
-				if ( DebugSettings.newCameraSystem )
-				{
-					isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(transform.position);
-				}
-				else
-				{
-					isInsideActivationMaxArea = m_camera.IsInsideActivationMaxArea(transform.position);
-				}
+				bool isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(transform.position);
 
 				if (m_fireSprite != null) 
 				{

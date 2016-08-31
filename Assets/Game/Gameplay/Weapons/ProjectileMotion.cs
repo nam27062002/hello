@@ -130,8 +130,4 @@ public class ProjectileMotion : Initializable, MotionInterface
 		}
 	}
 
-	public void SetSpeedMultiplier(float _value)
-	{
-		
-	}
 }

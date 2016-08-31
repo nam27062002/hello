@@ -42,7 +42,8 @@ namespace LevelEditor {
 
 			// Load the dragon
 			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
-			InstanceManager.player.playable = false;
+			if ( InstanceManager.player != null )
+				InstanceManager.player.playable = false;
 
 			// Call parent
 			base.Awake();
@@ -86,7 +87,9 @@ namespace LevelEditor {
 			// Quick'n'dirty timer to place the dragon at the spawn point
 			if(m_timer > 0f) {
 				m_timer -= Time.deltaTime;
-				if(m_timer <= 0f) InstanceManager.player.MoveToSpawnPoint(true);
+				if(m_timer <= 0f)
+					if (InstanceManager.player)
+				 		InstanceManager.player.MoveToSpawnPoint(true);
 			}
 		}
 

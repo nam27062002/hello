@@ -32,7 +32,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public AreaBounds area{ get {return null;} }
 	public IGuideFunction guideFunction{ get {return null;} }
 
-	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
 
 	//-----------------------------------------------
@@ -41,7 +40,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	void Start() {
 		SpawnerManager.instance.Register(this);
 
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 
 		GameObject viewBurned = transform.FindChild("view_burned").gameObject;
@@ -69,15 +67,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 					m_timer = 0;
 				}
 			} else {
-				bool isInsideActivationArea = false;
-				if ( DebugSettings.newCameraSystem )
-				{
-					isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
-				}
-				else
-				{
-					isInsideActivationArea = m_camera.IsInsideActivationArea(m_bounds);
-				}
+				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
+				
 				if (isInsideActivationArea) 
 				{
 					Spawn();

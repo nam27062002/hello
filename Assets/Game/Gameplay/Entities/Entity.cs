@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Serialization;
 
-public class Entity : MonoBehaviour, ISpawnable {
+public class Entity : IEntity {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -33,27 +33,20 @@ public class Entity : MonoBehaviour, ISpawnable {
 	private DragonTier m_edibleFromTier = 0;
 	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
 
-	private bool m_canBeHolded;
-	private DragonTier m_holdFromTier = 0;
-	public DragonTier holdFromTier { get { return m_holdFromTier; } }
+	private bool m_canBeGrabbed;
+	private DragonTier m_grabFromTier = 0;
+
+	private bool m_canBeLatchedOn;
+	private DragonTier m_latchFromTier = 0;
 
 	private FeedbackData m_feedbackData = new FeedbackData();
 	public FeedbackData feedbackData { get { return m_feedbackData; }}
-
-	// Health
-	private float m_maxHealth;
-	private float m_health;
-	public float health { get { return m_health; } set { m_health = value; } }
 
 	private bool m_isGolden = false;
 	public bool isGolden { get { return m_isGolden; } }
 
 	private bool m_isPC = false;
 	public bool isPC { get { return m_isPC; } }
-
-	private bool m_isOnScreen = false;
-	public bool isOnScreen { get { return m_isOnScreen; } }
-
 
 	//-----------------------------------------------
 	// Attributes
@@ -62,7 +55,6 @@ public class Entity : MonoBehaviour, ISpawnable {
 
 	private float m_checkOnScreenTimer = 0;
 
-	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
 
 
@@ -95,8 +87,14 @@ public class Entity : MonoBehaviour, ISpawnable {
 		m_isEdible = m_def.GetAsBool("isEdible");
 		m_edibleFromTier = (DragonTier)m_def.GetAsInt("edibleFromTier");
 
-		m_canBeHolded = m_def.GetAsBool("canBeHolded", false);
-		m_holdFromTier = (DragonTier)m_def.GetAsInt("holdFromTier");
+		// m_canBeHolded = m_def.GetAsBool("canBeHolded", false);
+		// m_holdFromTier = (DragonTier)m_def.GetAsInt("holdFromTier");
+
+		m_canBeGrabbed = m_def.GetAsBool("canBeGrabbed", false);
+		m_grabFromTier = (DragonTier)m_def.GetAsInt("grabFromTier");
+
+		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
+		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchFromTier");
 
 		m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
 
@@ -110,7 +108,6 @@ public class Entity : MonoBehaviour, ISpawnable {
 		m_bounds = GetComponentInChildren<CircleArea2D>();
 		while( Camera.main == null )
 			yield return null;
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
@@ -123,7 +120,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 			EntityManager.instance.Unregister(this);
 	}
 
-	public void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		m_spawner = _spawner;
 
 		DragonTier tier = InstanceManager.player.data.tier;
@@ -136,10 +133,9 @@ public class Entity : MonoBehaviour, ISpawnable {
 		m_health = m_maxHealth;
 	}
 
-	public void Disable(bool _destroyed) {
-		m_health = 0f;
+	public override void Disable(bool _destroyed) {
+		base.Disable( _destroyed );
 		m_spawner.RemoveEntity(gameObject, _destroyed);
-		gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -165,9 +161,7 @@ public class Entity : MonoBehaviour, ISpawnable {
 		return newReward;
 	}
 
-	public void Damage(float damage)  {
-		m_health -= damage;
-	}
+
 
 	public bool IsEdible() {
 		return m_isEdible;
@@ -178,7 +172,15 @@ public class Entity : MonoBehaviour, ISpawnable {
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {
-		return m_canBeHolded && (m_holdFromTier <= _tier);
+		return CanBeGrabbed(_tier) || CanBeLatchedOn(_tier);
+	}
+
+	public bool CanBeGrabbed( DragonTier _tier ){
+		return m_canBeGrabbed && m_grabFromTier <= _tier;
+	}
+
+	public bool CanBeLatchedOn( DragonTier _tier){
+		return m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
 	public bool IntersectsWith(Vector2 _center, float _radius) 
@@ -206,24 +208,14 @@ public class Entity : MonoBehaviour, ISpawnable {
 		m_checkOnScreenTimer -= Time.deltaTime;
 		if (m_checkOnScreenTimer <= 0) 
 		{	
-			if ( DebugSettings.newCameraSystem )	
-			{
-				if(m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
-			}
-			else
-			{
-				if(m_camera != null) m_isOnScreen = m_camera.IsInsideActivationMinArea(transform.position);
-			}
+			if(m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
 			m_checkOnScreenTimer = 0.5f;
 		}
 	}
 
 	void LateUpdate() {
 		// check camera to destroy this entity if it is outside view area
-		if (
-			(DebugSettings.newCameraSystem && m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) || 
-			(!DebugSettings.newCameraSystem && m_camera != null && m_camera.IsInsideDeactivationArea(transform.position))
-		) 
+		if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) 
 		{
 			if (m_spawner != null) {
 				Disable(false);

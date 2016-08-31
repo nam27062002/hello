@@ -165,7 +165,7 @@ namespace AI {
 			
 		}
 
-		public void BeingSwallowed(Transform _transform) {			
+		public void BeingSwallowed(Transform _transform, bool _rewardPlayer) {			
 			
 		}
 

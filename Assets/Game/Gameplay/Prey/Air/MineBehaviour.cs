@@ -18,12 +18,10 @@ public class MineBehaviour : Initializable {
 	private float m_timer;
 	private DragonHealthBehaviour m_dragon;
 
-	private GameCameraController m_camera;
 	private GameCamera m_newCamera;
 
 	// Use this for initialization
 	void Start() {
-		m_camera = Camera.main.GetComponent<GameCameraController>();
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	
 		PoolManager.CreatePool(m_explosionPrefab, 5, false);
@@ -98,16 +96,7 @@ public class MineBehaviour : Initializable {
 		// Hide mesh and destroy object after all explosions have been triggered
 		Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
 		renderer.enabled = false;
-
-		if ( DebugSettings.newCameraSystem )
-		{
-			m_newCamera.SetCameraShake(0.75f);
-		}
-		else
-		{
-			m_camera.Shake(0.75f, new Vector3(0.75f, 0.75f, 0));
-		}
-
+		m_newCamera.SetCameraShake(0.75f);
 		m_timer = m_delayRange.GetRandom();
 
 		if ( m_explosionSounds.Count > 0 )

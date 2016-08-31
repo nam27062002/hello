@@ -46,11 +46,13 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 					HG_FOG_COORDS(1)
 					LIGHTING_COORDS(2,3)
 					float2 lmap : TEXCOORD4; 
+					half2 texcoord2 : TEXCOORD5;
 				};
 
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
 				sampler2D _SecondTexture;
+				float4 _SecondTexture_ST;
 
 				HG_FOG_VARIABLES
 				
@@ -59,6 +61,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 					o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+					o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
 					o.color = v.color;
 					HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
@@ -73,13 +76,13 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 				{
 					
 					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
-					fixed4 col2 = tex2D(_SecondTexture, i.texcoord);	// Color
+					fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
 					float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
 					col = lerp( col2, col, l);
 					// Sof Light with vertex color 
 					// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 					// https://en.wikipedia.org/wiki/Relative_luminance
-					float luminance = 0.2126 * i.color.r + 0.7152 * i.color.g + 0.0722 * i.color.b;
+					float luminance = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 					if ( luminance > 0.5 )
 					{
 						fixed4 one = fixed4(1,1,1,1);
@@ -91,7 +94,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 						// col = col * (i.color + fixed4(0.5,0.5,0.5,0.5));	// Soft Light
 						col = 2 * i.color * col;	// Overlay
 					}
-					return col;
+
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col *= attenuation;
 

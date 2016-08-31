@@ -29,7 +29,6 @@ public static class DebugSettings {
 	public static readonly string DRAGON_DIVE			 = "DRAGON_DIVE";
 	public static readonly string DRAGON_EAT_DISTANCE_POWER_UP = "DRAGON_EAT_DISTANCE_POWER_UP";
 	public static readonly string DRAGON_SLOW_POWER_UP   = "DRAGON_SLOW_POWER_UP";
-	public static readonly string NEW_CAMERA_SYSTEM      = "NEW_CAMERA_SYSTEM";
 	public static readonly string SHOW_XP_BAR			 = "SHOW_XP_BAR";
 	public static readonly string SHOW_COLLISIONS		 = "SHOW_COLLISIONS";
 
@@ -76,11 +75,6 @@ public static class DebugSettings {
 	public static bool slowPowerUp {
 		get { return Prefs.GetBoolPlayer(DRAGON_SLOW_POWER_UP, false); }
 		set { Prefs.SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
-	}
-
-	public static bool newCameraSystem{
-		get { return Prefs.GetBoolPlayer(NEW_CAMERA_SYSTEM, true); }	// New camera system by default
-		set { Prefs.SetBoolPlayer(NEW_CAMERA_SYSTEM, value); }
 	}
 
 	//------------------------------------------------------------------//

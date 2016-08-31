@@ -38,7 +38,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public Vector2 direction { get { return m_direction; } }
 
 	protected DragonPlayer m_dragon;
-	private DragonEatBehaviour 		m_eatBehaviour;
+	private PlayerEatBehaviour 		m_eatBehaviour;
 	private DragonHealthBehaviour 	m_healthBehaviour;
 	private DragonAttackBehaviour 	m_attackBehaviour;
 	protected Animator m_animator;
@@ -123,7 +123,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 
 		m_dragon = GetComponent<DragonPlayer>();
-		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
+		m_eatBehaviour = GetComponent<PlayerEatBehaviour>();
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();		
 		m_animator = transform.FindChild("view").GetComponent<Animator>();

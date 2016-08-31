@@ -94,7 +94,7 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					string from = def.Get("param1");
 					float percentage = def.GetAsFloat("param2");
-					DragonEatBehaviour eatBehaviour = GetComponent<DragonEatBehaviour>();
+					PlayerEatBehaviour eatBehaviour = GetComponent<PlayerEatBehaviour>();
 					eatBehaviour.AddEatingBost( from, percentage);
 				}break;
 			}

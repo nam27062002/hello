@@ -174,11 +174,13 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 
 		// Load the prefab for the dragon with the given ID
 		GameObject prefabObj = Resources.Load<GameObject>(data.def.GetAsString("gamePrefab"));
+
 		Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property
 		playerObj = Instantiate<GameObject>(prefabObj);
 		playerObj.name = GameSettings.playerName;
+			
 	}
 
 	public static void SetupUser( UserProfile user)
