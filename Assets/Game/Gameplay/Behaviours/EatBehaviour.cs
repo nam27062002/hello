@@ -14,9 +14,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------	
 
-	[SerializeField]private float m_absorbTime;
-	[SerializeField]private float m_minEatAnimTime;
-	[SerializeField]protected float m_eatDistance;
+	[SerializeField]private float m_absorbTime = 1;
+	[SerializeField]private float m_minEatAnimTime = 1;
+	[SerializeField]protected float m_eatDistance = 1;
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 
 	protected List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
