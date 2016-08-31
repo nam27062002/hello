@@ -7,7 +7,7 @@ public class MachineEatBehaviour : EatBehaviour {
 	public DragonTier eaterTier { get {return m_eaterTier; }}
 
 	protected void Start() {
-		m_motion = GetComponent<PreyMotion>();
+		m_motion = GetComponent<AI.Machine>();
 		m_tier = m_eaterTier;
 		m_eatSpeedFactor = 0.5f;	// [AOC] HARDCODED!!
 		m_canHold = false;

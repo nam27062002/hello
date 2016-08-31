@@ -29,6 +29,9 @@ GameObject:
   - 114: {fileID: 114000012488899708}
   - 114: {fileID: 11448730}
   - 114: {fileID: 114000013111741076}
+  - 114: {fileID: 114000011637225726}
+  - 54: {fileID: 54000013371132386}
+  - 135: {fileID: 135000013338795870}
   m_Layer: 0
   m_Name: PF_PetMachine
   m_TagString: Untagged
@@ -72,7 +75,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.11, y: 0.17, z: -2.193}
+  m_LocalPosition: {x: 1.903234, y: 1.47509, z: -1.8698664}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -1735,7 +1738,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012156065266}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.058, y: -0.48, z: 0}
   m_LocalScale: {x: 0.3500899, y: 0.3500899, z: 0.3500899}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_Children:
@@ -1772,6 +1775,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4000013568790608}
   m_RootOrder: 2
+--- !u!54 &54000013371132386
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!95 &95000013645872626
 Animator:
   serializedVersion: 3
@@ -1789,6 +1807,33 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114000011637225726
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_walkSpeed: 1
+  m_runSpeed: 1
+  m_minPlaybakSpeed: 1
+  m_maxPlaybakSpeed: 1.5
+  m_onBoostMaxPlaybackSpeed: 0
+  m_hasNavigationLayer: 0
+  m_hasRotationLayer: 0
+  m_animA: 
+  m_animB: 
+  m_animC: 
+  m_onEatenParticles: []
+  m_explosionParticles:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_skins: []
 --- !u!114 &114000011716939334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1805,7 +1850,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":0,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":0,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":10,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":10,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424
@@ -1819,7 +1864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: 
+  m_sku: bush_01
 --- !u!114 &114000012488899708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1849,7 +1894,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_enableSensor: 1
+  m_enableSensor: 0
   m_sensor:
     m_sightRadius: 0
     m_maxRadius: 0
@@ -1884,7 +1929,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
   m_Name: 
@@ -1910,6 +1955,18 @@ MonoBehaviour:
   m_eatBigSound: {fileID: 0}
   m_wingsWindSound: {fileID: 0}
   m_wingsStrongFlap: {fileID: 0}
+--- !u!135 &135000013338795870
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &137000011964618562
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

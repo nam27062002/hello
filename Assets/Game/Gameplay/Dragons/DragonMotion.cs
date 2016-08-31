@@ -869,22 +869,23 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	//------------------------------------------------------------------//
 	// GETTERS															//
 	//------------------------------------------------------------------//
-	public Vector2 position {
+	public Vector3 position {
 		get { return transform.position; }
+		set { transform.position = value; }
 	}
 	/// <summary>
 	/// Obtain the current direction of the dragon.
 	/// </summary>
 	/// <returns>The direction the dragon is currently moving towards.</returns>
-	public Vector2 direction {
+	public Vector3 direction {
 		get { return m_direction; }
 	}
 		
-	public Vector2 velocity {
+	public Vector3 velocity {
 		get { return m_impulse; }
 	}
 
-	public Vector2 angularVelocity{
+	public Vector3 angularVelocity{
 		get  { return m_rbody.angularVelocity; }
 	}
 

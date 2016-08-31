@@ -53,6 +53,8 @@ namespace AI {
 		private bool m_isGrounded;
 
 		private Vector3 m_velocity;
+		public Vector3 velocity { get{  return m_velocity; } }
+		public Vector3 angularVelocity { get{  return m_rbody.angularVelocity; } }
 		private Vector3 m_acceleration;
 
 		private Collider m_collider;

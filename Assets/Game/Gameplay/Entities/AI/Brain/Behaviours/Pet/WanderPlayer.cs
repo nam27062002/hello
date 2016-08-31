@@ -66,12 +66,15 @@ namespace AI {
 
 			private void SelectTarget() {
 
-				m_target = InstanceManager.player.transform.position;	//  Get Pet position??
+				if ( InstanceManager.player != null )
+				{
+					m_target = InstanceManager.player.transform.position;	//  Get Pet position??
 
-				if (m_data.speed > 0f) {
-					m_timer = (m_machine.position - m_target).magnitude / m_data.speed;
-				} else {
-					m_timer = 0f;
+					if (m_data.speed > 0f) {
+						m_timer = (m_machine.position - m_target).magnitude / m_data.speed;
+					} else {
+						m_timer = 0f;
+					}
 				}
 			}
 		}

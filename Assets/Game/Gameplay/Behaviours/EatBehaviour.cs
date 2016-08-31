@@ -485,8 +485,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		arcRadius = arcRadius * m_eatDetectionRadiusMultiplier;
 		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
 
+		Vector3 dir = m_motion.direction;
+		dir.z = 0;
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
-		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * arcRadius);
+		Vector3 arcOrigin = m_suction.position - (dir * arcRadius);
 
 		m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
 		for (int e = 0; e < m_numCheckEntities; e++) 
@@ -496,13 +498,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				// Start bite attempt
 				Vector3 heading = (entity.transform.position - arcOrigin);
-				float dot = Vector3.Dot(heading, m_motion.direction);
+				float dot = Vector3.Dot(heading, dir);
 				if ( dot > 0)
 				{
 					// Check arc
 					Vector3 circleCenter = entity.circleArea.center;
 					circleCenter.z = 0;
-					if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, m_motion.direction, circleCenter, entity.circleArea.radius))
+					if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, dir, circleCenter, entity.circleArea.radius))
 					{
 						StartAttackTarget( entity.transform );
 						break;
@@ -543,8 +545,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 					if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
 					{
 						AI.Machine machine = entity.GetComponent<AI.Machine>();
-						if (!machine.IsDead()) {
-							preysToEat.Add(machine);
+						if (!machine.IsDead() && !machine.IsDying()) {
+								preysToEat.Add(machine);
 						}
 					}
 				}
@@ -648,17 +650,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
-		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * eatRadius);
+		Vector2 dir = (Vector2)m_motion.direction;
+		Vector3 arcOrigin = m_suction.position - (Vector3)(dir * eatRadius);
 
 		// Draw Arc
 		Gizmos.color = Color.yellow;
 		Gizmos.DrawWireSphere(arcOrigin, arcRadius);
 		Gizmos.color = Color.red;
-		Debug.DrawLine(arcOrigin, arcOrigin + (Vector3)(m_motion.direction * arcRadius));
+		Debug.DrawLine(arcOrigin, arcOrigin + (Vector3)(dir * arcRadius));
 
-		Vector2 dUp = m_motion.direction.RotateDegrees(arcAngle/2.0f);
+		Vector2 dUp = dir.RotateDegrees(arcAngle/2.0f);
 		Debug.DrawLine( arcOrigin, arcOrigin + (Vector3)(dUp * arcRadius) );
-		Vector2 dDown = m_motion.direction.RotateDegrees(-arcAngle/2.0f);
+		Vector2 dDown = dir.RotateDegrees(-arcAngle/2.0f);
 		Debug.DrawLine( arcOrigin, arcOrigin + (Vector3)(dDown * arcRadius) );
 
 	}

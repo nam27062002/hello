@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 
 public interface MotionInterface {
-	Vector2 position { get; }
-	Vector2 direction { get; }
-	Vector2 velocity { get; }
-	Vector2 angularVelocity { get; }
-
-	float maxSpeed { get; }
+	Vector3 position 	{ get; set; }
+	Vector3 direction 	{ get; }
+	Vector3 velocity 	{ get; }
+	Vector3 angularVelocity { get; }
 }

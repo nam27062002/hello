@@ -24,7 +24,11 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) {
 				base.OnEnter(_oldState, _param);
 				// Get Target!
+				if ( _param.Length > 0 ){
+					m_eatBehaviour.StartAttackTarget( _param[0] as Transform);	
+				}else{
 				m_eatBehaviour.StartAttackTarget( m_machine.enemy );
+				}
 				m_eatBehaviour.enabled = true;
 			}
 
