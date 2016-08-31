@@ -90,6 +90,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private Entity[] m_checkEntities = new Entity[20];
 	private int m_numCheckEntities = 0;
 
+
+	public delegate void OnEvent();
+	public OnEvent onBiteKill;
+	public OnEvent onEndEating;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -205,9 +209,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_holdingPrey == null )
 		{
 			BiteKill(m_prey.Count <= 0 && m_canHold);
-
-			if ( m_holdingPrey == null )
-				TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+			if (onBiteKill != null)
+				onBiteKill();
+			// if ( m_holdingPrey == null )
+			// 	TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 		}
 	}
 
@@ -286,6 +291,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if (empty) {
 			m_prey.Clear();
+			if ( onEndEating != null)
+				onEndEating();
 		}
 	}
 
@@ -497,7 +504,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					circleCenter.z = 0;
 					if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, m_motion.direction, circleCenter, entity.circleArea.radius))
 					{
-						OnStartAttackTarget( entity.transform );
+						StartAttackTarget( entity.transform );
 						break;
 					}
 				}
@@ -506,7 +513,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	protected virtual void OnStartAttackTarget( Transform _transform )
+	public virtual void StartAttackTarget( Transform _transform )
 	{
 		m_attackTarget = _transform;
 		m_attackTimer = 0.2f;
