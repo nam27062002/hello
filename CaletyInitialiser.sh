@@ -22,7 +22,7 @@ createSymbolicLinks ()
     cd $1/calety
     #git checkout develop
     #git pull
-    cd $strCurrentFolder
+    cd "${strCurrentFolder}"
 
     cd Assets
 
