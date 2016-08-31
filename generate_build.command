@@ -166,6 +166,7 @@ echo
 echo "BUILDER: Committing changes"
 git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
 git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
+git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
 git commit -m "Automatic Build. Version ${VERSION_ID}."
 git push origin "${BRANCH}"
 
