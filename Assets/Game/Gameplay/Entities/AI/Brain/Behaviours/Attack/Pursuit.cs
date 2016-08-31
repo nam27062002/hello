@@ -63,7 +63,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {				
-				if (m_target != null) {
+				if (m_machine.GetSignal(Signals.Type.Warning)) {
 
 					if (m_pursuitState == PursuitState.Move_Towards) {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {

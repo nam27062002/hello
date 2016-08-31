@@ -103,6 +103,9 @@ namespace AI {
 
 			m_signals.SetOnEnableTrigger(Signals.Type.FallDown, SignalTriggers.OnFallDown);
 			m_signals.SetOnDisableTrigger(Signals.Type.FallDown, SignalTriggers.OnGround);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnLockedInCage);
+			m_signals.SetOnDisableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnUnlockedFromCage);
 		}
 
 		void OnEnable() {
@@ -259,6 +262,17 @@ namespace AI {
 		}
 
 		// External interactions
+		public void LockInCage() {
+			m_entity.allowEdible = false;
+			SetSignal(Signals.Type.LockedInCage, true);
+		}
+
+		public void UnlockFromCage() {
+			m_entity.allowEdible = true;
+			SetSignal(Signals.Type.LockedInCage, false);
+		}
+
+
 		public void ReceiveDamage(float _damage) {
 			if (!IsDead()) {
 				m_entity.Damage(_damage);

@@ -4,41 +4,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-/*
-[CustomEditor(typeof(ContainerBehaviour.ContainerHit))]
-public class ContainerHitEditor : Editor
-{
-	
-}
-*/
 
-
-[CustomEditor(typeof(ContainerBehaviour))]
-public class ContainerBehaviourEditor : Editor 
+[CustomEditor(typeof(CageBehaviour))]
+public class CageBehaviourEditor : Editor 
 {
-	// SerializedProperty m_hits;
+	SerializedProperty m_hits;
 	SerializedProperty m_onBreakParticle;
 	SerializedProperty m_keyList;
 	SerializedProperty m_valueList;
+
 	void OnEnable()
     {
-		// m_hits = serializedObject.FindProperty("m_hits");
 		m_onBreakParticle = serializedObject.FindProperty("m_onBreakParticle");
-		SerializedProperty hits = serializedObject.FindProperty("m_hits");
-		m_keyList = hits.FindPropertyRelative("m_keyList");
-		m_valueList = hits.FindPropertyRelative("m_valueList");
+		m_hits = serializedObject.FindProperty("m_hits");
+		m_keyList = m_hits.FindPropertyRelative("m_keyList");
+		m_valueList = m_hits.FindPropertyRelative("m_valueList");
     }
 
 	public override void OnInspectorGUI() 
 	{
 		serializedObject.Update();
-		ContainerBehaviour myTarget = ( ContainerBehaviour ) target;
+		CageBehaviour myTarget = (CageBehaviour) target;
 		for( DragonTier d = DragonTier.TIER_0; d < DragonTier.COUNT; d++ )
 		{
-
 			if ( !myTarget.m_hits.dict.ContainsKey(d) )
 			{
-				myTarget.m_hits.dict.Add( d, new ContainerBehaviour.ContainerHit() );
+				myTarget.m_hits.dict.Add( d, new CageBehaviour.ContainerHit() );
 				EditorUtility.SetDirty( myTarget );
 			}
 

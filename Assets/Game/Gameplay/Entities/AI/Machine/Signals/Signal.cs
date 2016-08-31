@@ -25,6 +25,8 @@ namespace AI {
 		[StateTransitionTrigger] public static string OnDestroyed 			= "onDestroyed";
 		[StateTransitionTrigger] public static string OnFallDown 			= "onFallDown";
 		[StateTransitionTrigger] public static string OnGround				= "OnGround";
+		[StateTransitionTrigger] public static string OnLockedInCage		= "onLockedInCage";
+		[StateTransitionTrigger] public static string OnUnlockedFromCage	= "onUnlockedFromCage";
 	}
 
 	public class Signals {
@@ -45,6 +47,7 @@ namespace AI {
 	        Collision,
 	        Trigger,
 			FallDown,
+			LockedInCage,
 
 			Count
 		}

@@ -131,6 +131,8 @@ public class Entity : IEntity {
 		m_checkOnScreenTimer = 0;
 
 		m_health = m_maxHealth;
+
+		m_allowEdible = true;
 	}
 
 	public override void Disable(bool _destroyed) {
@@ -164,23 +166,23 @@ public class Entity : IEntity {
 
 
 	public bool IsEdible() {
-		return m_isEdible;
+		return m_allowEdible && m_isEdible;
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return m_isEdible && (m_edibleFromTier <= _tier);
+		return m_allowEdible && m_isEdible && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {
-		return CanBeGrabbed(_tier) || CanBeLatchedOn(_tier);
+		return m_allowEdible && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
 	}
 
 	public bool CanBeGrabbed( DragonTier _tier ){
-		return m_canBeGrabbed && m_grabFromTier <= _tier;
+		return m_allowEdible && m_canBeGrabbed && m_grabFromTier <= _tier;
 	}
 
 	public bool CanBeLatchedOn( DragonTier _tier){
-		return m_canBeLatchedOn && m_latchFromTier <= _tier;
+		return m_allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
 	public bool IntersectsWith(Vector2 _center, float _radius) 

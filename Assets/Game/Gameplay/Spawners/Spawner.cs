@@ -318,16 +318,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 		m_entitiesKilled = 0;
 
-		ExtendedSpawn();
-
 		uint rail = 0;
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			Entity entity = m_entities[i].GetComponent<Entity>();
-			Debug.Assert(entity != null, "Entity prefab at spawner " + this.name + " doesn't have a Entity component!");
-
-			AI.AIPilot pilot = m_entities[i].GetComponent<AI.AIPilot>();
-			Debug.Assert(pilot != null, "Entity prefab at spawner " + this.name + " doesn't have a Pilot component!");
-			pilot.guideFunction = m_guideFunction;
+		for (int i = 0; i < m_entitySpawned; i++) {
+			GameObject spawning = m_entities[i];
 
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
@@ -338,25 +331,35 @@ public class Spawner : MonoBehaviour, ISpawner {
 				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
 			}
 
-			entity.transform.position = pos;
-			entity.transform.localScale = Vector3.one * m_scale.GetRandom();
+			spawning.transform.position = pos;
+			spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
 
-			entity.Spawn(this); // lets spawn Entity component first
-			pilot.Spawn(this);
+			Entity entity = spawning.GetComponent<Entity>();
+			if (entity != null) {
+				entity.Spawn(this); // lets spawn Entity component first
+			}
 
-			ISpawnable[] components = entity.GetComponents<ISpawnable>();
+			AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
+			if (pilot != null) {
+				pilot.guideFunction = m_guideFunction;
+				pilot.Spawn(this);
+			}
+
+			ISpawnable[] components = spawning.GetComponents<ISpawnable>();
 			foreach (ISpawnable component in components) {
 				if (component != entity && component != pilot) {
 					component.Spawn(this);
 				}
 			}
 
-			AI.Machine machine = entity.GetComponent<AI.Machine>();
-			machine.SetRail(rail, m_rails);
-			rail = (rail + 1) % m_rails;
+			AI.Machine machine = spawning.GetComponent<AI.Machine>();
+			if (machine != null) {
+				machine.SetRail(rail, m_rails);
+				rail = (rail + 1) % m_rails;
 
-			if (m_groupController) {	
-				machine.EnterGroup(ref m_groupController.flock);
+				if (m_groupController) {	
+					machine.EnterGroup(ref m_groupController.flock);
+				}
 			}
 		}
 
@@ -374,8 +377,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 		// Program the next spawn time
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 	}
-
-	protected virtual void ExtendedSpawn() {}
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();
@@ -401,8 +402,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 	}
 
-	virtual protected Vector3 RandomStartDisplacement()
-	{
+	virtual protected Vector3 RandomStartDisplacement()	{
 		return Random.onUnitSphere * 2f;
 	}
 }
