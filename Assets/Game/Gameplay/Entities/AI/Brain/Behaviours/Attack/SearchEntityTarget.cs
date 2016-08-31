@@ -4,7 +4,7 @@ using System.Collections;
 namespace AI {
 	namespace Behaviour {	
 		[System.Serializable]
-		public class SearchEntityData : AttackData {
+		public class SearchEntityData : StateComponentData {
 			public float range = 5f;
 		}
 

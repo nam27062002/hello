@@ -1,20 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &107074
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 453738}
-  m_Layer: 12
-  m_Name: points
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &112168
 GameObject:
   m_ObjectHideFlags: 0
@@ -39,35 +24,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &139586
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 400426}
-  - 114: {fileID: 11472626}
-  m_Layer: 12
-  m_Name: mouth
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &400426
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 139586}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.598, y: 0.504, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children: []
-  m_Father: {fileID: 453738}
-  m_RootOrder: 0
 --- !u!4 &424588
 Transform:
   m_ObjectHideFlags: 1
@@ -79,23 +35,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 453738}
   - {fileID: 4000014077848312}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
---- !u!4 &453738
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 107074}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 400426}
-  m_Father: {fileID: 424588}
   m_RootOrder: 0
 --- !u!114 &11448730
 MonoBehaviour:
@@ -109,18 +50,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_type: 0
---- !u!114 &11472626
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 139586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_parentName: Fire_Dummy
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -1737,17 +1666,17 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012156065266}
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0.058, y: -0.48, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.058, y: -0.48, z: -0.799}
   m_LocalScale: {x: 0.3500899, y: 0.3500899, z: 0.3500899}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 97.327, z: 0}
   m_Children:
   - {fileID: 4000013442634866}
   - {fileID: 4000010851616210}
   - {fileID: 4000013599342304}
   - {fileID: 4000010284751434}
   m_Father: {fileID: 424588}
-  m_RootOrder: 1
+  m_RootOrder: 0
 --- !u!4 &4000014116815336
 Transform:
   m_ObjectHideFlags: 1
@@ -1850,8 +1779,8 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":10,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":15,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 2
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":10,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":150,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424
 MonoBehaviour:
