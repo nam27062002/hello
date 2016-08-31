@@ -5,8 +5,9 @@ namespace AI {
 	[Serializable]
 	public class MachineSensor : MachineComponent {
 
-		[SerializeField] private float m_minRadius;
+		[SerializeField] private float m_sightRadius;
 		[SerializeField] private float m_maxRadius;
+		[SerializeField] private float m_minRadius;
 		[SerializeField] private bool m_senseAbove = true;
 		[SerializeField] private bool m_senseBelow = true;
 		[SerializeField] private Vector3 m_sensorOffset = Vector3.zero;
@@ -40,8 +41,9 @@ namespace AI {
 			} else {
 				m_senseTimer -= Time.deltaTime;
 				if (m_senseTimer <= 0) {
-					bool isInsideMinArea = false;
+					bool isInsideSightArea = false;
 					bool isInsideMaxArea = false;
+					bool isInsideMinArea = false;
 					bool sense = false;
 
 					if (m_senseAbove && m_senseBelow) {
@@ -56,25 +58,30 @@ namespace AI {
 						Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
 						float distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
 
-						if (distanceSqr < m_maxRadius * m_maxRadius) {
-							// check if the dragon is inside the sense zone
-							if (distanceSqr < m_minRadius * m_minRadius) {
-								isInsideMinArea = true;
-							}
-							isInsideMaxArea = true;
-						} 
+						if (distanceSqr < m_sightRadius * m_sightRadius) {							
+							if (distanceSqr < m_maxRadius * m_maxRadius) {
+								// check if the dragon is inside the sense zone
+								if (distanceSqr < m_minRadius * m_minRadius) {
+									isInsideMinArea = true;
+								}
+								isInsideMaxArea = true;
+							} 
+							isInsideSightArea = true;
+						}
 
 						if (isInsideMinArea || isInsideMaxArea) {
 							// Check line cast
 							if (Physics.Linecast(sensorPosition, m_enemy.position, s_groundMask)) {
+								isInsideSightArea = false;
 								isInsideMinArea = false;
 								isInsideMaxArea = false;
 							}
 						}
 					}
 
-					m_machine.SetSignal(Signals.Type.Warning, isInsideMaxArea);
-					m_machine.SetSignal(Signals.Type.Danger, isInsideMinArea);
+					m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
+					m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
+					m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
 
 					m_senseTimer = m_senseDelay.GetRandom();
 				}
@@ -84,10 +91,12 @@ namespace AI {
 		// Debug
 		public override void OnDrawGizmosSelected(Transform _go) {
 			Vector3 pos = _go.position + (_go.rotation * m_sensorOffset);
-			Gizmos.color = Color.red;
-			Gizmos.DrawWireSphere(pos, m_minRadius);
-			Gizmos.color = Color.white;
+			Gizmos.color = Colors.paleYellow;
+			Gizmos.DrawWireSphere(pos, m_sightRadius);
+			Gizmos.color = Colors.red;
 			Gizmos.DrawWireSphere(pos, m_maxRadius);
+			Gizmos.color = Colors.magenta;
+			Gizmos.DrawWireSphere(pos, m_minRadius);
 		}
 	}
 }

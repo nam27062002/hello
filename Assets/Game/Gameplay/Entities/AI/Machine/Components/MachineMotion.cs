@@ -161,6 +161,10 @@ namespace AI {
 			}
 				
 			if (m_pilot != null) {
+				if (m_pilot.speed <= 0.01f) {
+					Stop();
+				}
+
 				m_direction = m_pilot.direction;
 
 				if (m_useGravity) {
