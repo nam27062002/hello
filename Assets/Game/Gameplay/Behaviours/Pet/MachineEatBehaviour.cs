@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 public class MachineEatBehaviour : EatBehaviour {
 
-	[SerializeField] private DragonTier m_petTier;
+	[SerializeField] private DragonTier m_eaterTier;
+	public DragonTier eaterTier { get {return m_eaterTier; }}
 
 	protected void Start() {
 		m_motion = GetComponent<PreyMotion>();
-		m_tier = m_petTier;
+		m_tier = m_eaterTier;
 		m_eatSpeedFactor = 0.5f;	// [AOC] HARDCODED!!
 		m_canHold = false;
 		m_limitEating = true;
@@ -17,7 +18,7 @@ public class MachineEatBehaviour : EatBehaviour {
 		Entity entity = GetComponent<Entity>();
 		// if is pet -> m_rewardPlayer = true
 
-		SetupHoldParametersForTier( DragonData.TierToSku( m_petTier));
+		SetupHoldParametersForTier( DragonData.TierToSku( m_eaterTier));
 	}
 
 }

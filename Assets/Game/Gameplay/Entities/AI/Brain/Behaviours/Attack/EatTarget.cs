@@ -4,7 +4,7 @@ using System.Collections;
 namespace AI {
 	namespace Behaviour {
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Eat Target")]
-		public class EatTaret : StateComponent {
+		public class EatTarget : StateComponent {
 
 			[StateTransitionTrigger]
 			private static string OnBiteFail = "onBiteFail";
@@ -12,14 +12,6 @@ namespace AI {
 			private static string OnEndEating = "onEndEating";
 
 			private EatBehaviour m_eatBehaviour;
-
-			public override StateComponentData CreateData() {
-				return new AttackMeleeData();
-			}
-
-			public override System.Type GetDataType() {
-				return typeof(AttackMeleeData);
-			}
 
 			protected override void OnInitialise() {
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();

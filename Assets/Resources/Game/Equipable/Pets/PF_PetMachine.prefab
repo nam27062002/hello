@@ -1800,12 +1800,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: 53623709766d540219dcd662f88be6b3, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
   m_speedFactorRange:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":0,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"","projectileSpawnTransformName":"","damage":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":0,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":5,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":0,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424
@@ -1893,7 +1893,7 @@ MonoBehaviour:
   m_minEatAnimTime: 0
   m_eatDistance: 0
   m_burpSounds: []
-  m_petTier: 0
+  m_eaterTier: 0
 --- !u!114 &114000014104032136
 MonoBehaviour:
   m_ObjectHideFlags: 1

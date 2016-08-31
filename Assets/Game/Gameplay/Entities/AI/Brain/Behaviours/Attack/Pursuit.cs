@@ -26,6 +26,7 @@ namespace AI {
 
 			protected PursuitData m_data;
 			protected Transform m_target;
+			protected AI.Machine m_targetMachine;
 
 			private PursuitState m_pursuitState;
 
@@ -51,19 +52,29 @@ namespace AI {
 				m_pilot.SlowDown(true);
 
 				m_target = null;
+				m_targetMachine = null;
 
 				if (m_machine.enemy != null) {
 					m_target = m_machine.enemy.FindTransformRecursive(m_data.attackPoint);
 					if (m_target == null) {
 						m_target = m_machine.enemy;
 					}
+
+					m_targetMachine = m_machine.enemy.GetComponent<Machine>();
 				}
 
 				m_pursuitState = PursuitState.Move_Towards;
 			}
 
-			protected override void OnUpdate() {				
-				if (m_target != null) {
+			protected override void OnUpdate() {	
+				if ( m_targetMachine != null ){
+					if ( m_targetMachine.IsDead() || m_targetMachine.GetSignal(Signals.Type.Chewing) || m_targetMachine.GetSignal(Signals.Type.Burning)){
+						m_target = null;
+						m_targetMachine = null;
+					}
+				}
+									
+				if (m_target != null && m_target.gameObject.activeInHierarchy) {
 
 					if (m_pursuitState == PursuitState.Move_Towards) {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
