@@ -3,6 +3,9 @@ using System.Collections;
 
 abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
+	protected bool m_allowEdible;
+	public bool allowEdible { set { m_allowEdible = value; } }
+
 	// Health
 	protected float m_maxHealth;
 	protected float m_health;
