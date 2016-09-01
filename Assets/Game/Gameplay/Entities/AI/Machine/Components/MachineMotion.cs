@@ -294,11 +294,13 @@ namespace AI {
 			}
 		}
 
-		private void UpdateOrientation() {	
+		private void UpdateOrientation() {				
 			if (m_walkOnWalls) {
 				if (m_direction != Vector3.zero) {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
+			} else if (m_machine.GetSignal(Signals.Type.FallDown)) {
+				m_targetRotation = Quaternion.LookRotation(m_direction, m_collisionNormal);
 			} else if (m_faceDirection && m_pilot.speed > 0.01f) {				
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 

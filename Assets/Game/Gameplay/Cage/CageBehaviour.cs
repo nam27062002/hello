@@ -21,7 +21,11 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
+	[SeparatorAttribute]
 	[SerializeField] public  SerializableInstance m_hits = new SerializableInstance();
+	[SeparatorAttribute]
+	[SerializeField] private GameObject m_colliderHolder;
+	[SerializeField] private GameObject m_view;
 	[SerializeField] private string m_onBreakParticle;
 
 	private float m_waitTimer = 0;
@@ -31,7 +35,6 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	private ISpawner m_spawner;
 	private CageSpawner m_cageSpawner;
 
-	private GameObject m_view;
 	private GameCamera m_newCamera;
 
 
@@ -44,7 +47,6 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 
 		m_currentHits = new ContainerHit();
 
-		m_view = transform.FindChild("view").gameObject;
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
@@ -124,7 +126,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	private void SetCollisionsEnabled(bool _value) {
-		Collider[] colliders = GetComponents<Collider>();
+		Collider[] colliders = m_colliderHolder.GetComponents<Collider>();
 		for (int c = 0; c < colliders.Length; c++) {
 			colliders[c].enabled = _value;
 		}
