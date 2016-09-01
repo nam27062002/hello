@@ -74,10 +74,14 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {	
-				if ( m_targetMachine != null ){
-					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()){
+				if (m_targetMachine != null) {
+					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()) {
 						m_target = null;
 						m_targetMachine = null;
+					}
+				} else {
+					if (!m_machine.GetSignal(Signals.Type.Warning)) {
+						m_target = null;
 					}
 				}
 									
@@ -100,6 +104,12 @@ namespace AI {
 							// Player is inside our Critical area and we can't attack it from here, me should move back a bit
 							Vector3 direction = m_machine.direction;
 							Vector3 target = m_machine.position + direction * m_data.speed;
+
+							if (!m_pilot.area.Contains(target)) {
+								//change direction
+								target = m_machine.position + direction * m_data.speed * -1;
+							}
+
 							m_pilot.GoTo(target);
 						} else {
 							ChangeState(PursuitState.Move_Towards);

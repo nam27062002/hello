@@ -31,6 +31,13 @@ MonoBehaviour:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
   - m_name: Fall down
     m_componentAssets: []
+  - m_name: Locked in Cage Idle
+    m_componentAssets:
+    - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Locked in Cage Attack
+    m_componentAssets:
+    - {fileID: 11400000, guid: ac358085d83df4a548bcc228537390aa, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -65,10 +72,25 @@ MonoBehaviour:
   - to: 1
     id: onEnemyOutOfSight
     from: 2
+  - to: 7
+    id: onEnemyInRange
+    from: 6
+  - to: 6
+    id: onMaxAttacks
+    from: 7
+  - to: 6
+    id: onOutOfRange
+    from: 7
   - to: 5
     id: onFallDown
     from: -1
   - to: 1
     id: OnGround
+    from: -1
+  - to: 6
+    id: onLockedInCage
+    from: -1
+  - to: 1
+    id: onUnlockedFromCage
     from: -1
   m_firstState: 1

@@ -29,6 +29,9 @@ namespace AI {
 		void	LeaveGroup();
 
 		// External interactions
+		void LockInCage();
+		void UnlockFromCage();
+
 		void Bite();
 		void BeingSwallowed(Transform _transform, bool rewardPlayer);
 		void BiteAndHold();
