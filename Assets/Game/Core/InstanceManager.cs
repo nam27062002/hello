@@ -41,13 +41,6 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 		set { if(instance != null) instance.m_gameCamera = value; }
 	}
 
-	// Only during game scene, reference to the pet
-	private DragonPet m_pet = null;
-	public static DragonPet pet {
-		get { return instance.m_pet; }
-		set { if(instance != null) instance.m_pet = value; }
-	}
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

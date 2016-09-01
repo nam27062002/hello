@@ -26,9 +26,10 @@ namespace AI {
 
 			protected PursuitData m_data;
 			protected Transform m_target;
+			protected AI.Machine m_targetMachine;
 
 			private PursuitState m_pursuitState;
-
+			private object[] m_transitionParam;
 
 			public override StateComponentData CreateData() {
 				return new PursuitData();
@@ -42,7 +43,7 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<PursuitData>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
-
+				m_transitionParam = new object[1];
 				m_target = null;
 			}
 
@@ -51,19 +52,36 @@ namespace AI {
 				m_pilot.SlowDown(true);
 
 				m_target = null;
+				m_targetMachine = null;
 
-				if (m_machine.enemy != null) {
+				if ( param != null && param.Length > 0 )
+				{
+					m_target = param[0] as Transform;
+					if ( m_target )
+						m_targetMachine = m_target.GetComponent<Machine>();
+				}
+
+				if (m_target == null && m_machine.enemy != null) {
 					m_target = m_machine.enemy.FindTransformRecursive(m_data.attackPoint);
 					if (m_target == null) {
 						m_target = m_machine.enemy;
 					}
+
+					m_targetMachine = m_machine.enemy.GetComponent<Machine>();
 				}
 
 				m_pursuitState = PursuitState.Move_Towards;
 			}
 
-			protected override void OnUpdate() {				
-				if (m_machine.GetSignal(Signals.Type.Warning)) {
+			protected override void OnUpdate() {	
+				if ( m_targetMachine != null ){
+					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()){
+						m_target = null;
+						m_targetMachine = null;
+					}
+				}
+									
+				if (m_machine.GetSignal(Signals.Type.Warning) && m_target != null && m_target.gameObject.activeInHierarchy) {
 
 					if (m_pursuitState == PursuitState.Move_Towards) {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
@@ -71,7 +89,8 @@ namespace AI {
 						} else {
 							float m = (m_machine.position - m_target.position).sqrMagnitude;
 							if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
-								Transition(OnEnemyInRange);
+								m_transitionParam[0] = m_target;
+								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
 								m_pilot.GoTo(m_target.position);
 							}

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public interface IMachine {
-		//
-		Vector3 position 	{ get; set; }
+	public interface IMachine : MotionInterface {
+
 		Vector3 target		{ get; }
-		Vector3 direction 	{ get; }
 		Vector3 upVector	{ get; set; }
 		Transform enemy 	{ get; } 
 

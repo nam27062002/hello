@@ -17,6 +17,9 @@ public class DragonEquip : MonoBehaviour {
 
 		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 
+
+
+
 		/* TODO: refractor full equip function
 		 Dictionary<Equipable.AttachPoint, string> equip = dragon.data.equip;
 		// Change skin if there is any custom available
@@ -40,6 +43,26 @@ public class DragonEquip : MonoBehaviour {
 				points[i].Equip(equipable.GetComponent<Equipable>());
 			}
 		}*/
+	}
+
+	void Start()
+	{
+	/*
+		string pet = "Game/Equipable/Pets/PF_PetMachine";
+		GameObject prefabObj = Resources.Load<GameObject>(pet);
+		GameObject equipable = Instantiate<GameObject>(prefabObj);
+		equipable.transform.position = transform.position;
+
+		AI.AIPilot pilot = equipable.GetComponent<AI.AIPilot>();
+		pilot.Spawn(null);
+
+		ISpawnable[] components = pilot.GetComponents<ISpawnable>();
+		foreach (ISpawnable component in components) {
+			if (component != pilot ) {
+				component.Spawn(null);
+			}
+		}
+		*/
 	}
 
 	public void PreviewDisguise(string _disguise) {
