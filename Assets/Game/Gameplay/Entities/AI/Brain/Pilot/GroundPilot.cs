@@ -17,7 +17,7 @@ namespace AI {
 		protected override void Update() {
 			base.Update();
 
-			m_impulse = Vector3.zero;
+			// m_impulse = Vector3.zero;
 
 			if (speed > 0.01f) {
 				m_target.y = transform.position.y;
@@ -25,10 +25,11 @@ namespace AI {
 				//m_direction = GetGroundDirection();
 
 				Vector3 v = m_target - transform.position;	
+				v = v.normalized * speed;
 				if (m_slowDown) {
-					Util.MoveTowardsVector3WithDamping(ref m_impulse, ref v, speed, 32f * Time.deltaTime);
+					Util.MoveTowardsVector3WithDamping(ref m_impulse, ref v, 32f * Time.deltaTime, 8.0f);
 				} else {
-					m_impulse = v.normalized * speed;
+					m_impulse = v;
 				}
 				Debug.DrawLine(transform.position, transform.position + m_impulse, Color.white);
 
