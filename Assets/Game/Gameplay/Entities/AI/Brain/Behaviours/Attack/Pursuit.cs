@@ -27,6 +27,7 @@ namespace AI {
 			protected PursuitData m_data;
 			protected Transform m_target;
 			protected AI.Machine m_targetMachine;
+			protected Entity m_targetEntity;
 
 			private PursuitState m_pursuitState;
 			private object[] m_transitionParam;
@@ -53,12 +54,15 @@ namespace AI {
 
 				m_target = null;
 				m_targetMachine = null;
+				m_targetEntity = null;
 
 				if ( param != null && param.Length > 0 )
 				{
 					m_target = param[0] as Transform;
 					if ( m_target )
 						m_targetMachine = m_target.GetComponent<Machine>();
+					if ( m_target )
+						m_targetEntity = m_target.GetComponent<Entity>();
 				}
 
 				if (m_target == null && m_machine.enemy != null) {
@@ -68,6 +72,7 @@ namespace AI {
 					}
 
 					m_targetMachine = m_machine.enemy.GetComponent<Machine>();
+					m_targetEntity = m_machine.enemy.GetComponent<Entity>();
 				}
 
 				m_pursuitState = PursuitState.Move_Towards;
@@ -78,6 +83,7 @@ namespace AI {
 					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()){
 						m_target = null;
 						m_targetMachine = null;
+						m_targetEntity = null;
 					}
 				}
 									
@@ -87,12 +93,20 @@ namespace AI {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
 							ChangeState(PursuitState.Move_Away);
 						} else {
-							float m = (m_machine.position - m_target.position).sqrMagnitude;
+							float m = 0;
+							if ( m_targetEntity != null ){
+								m = (m_machine.position - m_targetEntity.circleArea.center).sqrMagnitude;
+							}else{
+								m = (m_machine.position - m_target.position).sqrMagnitude;
+							}
 							if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
 								m_transitionParam[0] = m_target;
 								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
-								m_pilot.GoTo(m_target.position);
+								if ( m_targetEntity != null )
+									m_pilot.GoTo(m_targetEntity.circleArea.center);	
+								else
+									m_pilot.GoTo(m_target.position);
 							}
 						}
 					} else if (m_pursuitState == PursuitState.Move_Away) {

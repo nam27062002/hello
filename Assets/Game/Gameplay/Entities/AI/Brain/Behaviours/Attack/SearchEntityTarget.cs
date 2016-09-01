@@ -6,6 +6,8 @@ namespace AI {
 		[System.Serializable]
 		public class SearchEntityData : StateComponentData {
 			public float range = 5f;
+			public bool m_checkDistanceToPlayer;
+			public float m_farAwayDistance = 5;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Search Entity Target")]
@@ -61,17 +63,25 @@ namespace AI {
 				if (m_timer > 0f) {
 					m_timer -= Time.deltaTime;
 				} else {
-
-					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( m_machine.position , m_data.range, m_checkEntities);
-					for (int e = 0; e < m_numCheckEntities; e++) 
+					float range = m_data.range;
+					if ( m_data.m_checkDistanceToPlayer )
 					{
-						Entity entity = m_checkEntities[e];
-						if (entity.IsEdible() && entity.IsEdible( m_eaterTier ))
+						range = m_data.m_farAwayDistance - (InstanceManager.player.transform.position - m_machine.position).magnitude;
+						range = Mathf.Max(range, 0);
+					}
+					if ( range> 0 )
+					{
+						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( m_machine.position , m_data.range, m_checkEntities);
+						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
-							// Check if closed? Not for the moment
-							m_transitionParam[0] = entity.transform;
-							Transition( OnEnemyInRange, m_transitionParam);
-							break;
+							Entity entity = m_checkEntities[e];
+							if (entity.IsEdible() && entity.IsEdible( m_eaterTier ))
+							{
+								// Check if closed? Not for the moment
+								m_transitionParam[0] = entity.transform;
+								Transition( OnEnemyInRange, m_transitionParam);
+								break;
+							}
 						}
 					}
 
