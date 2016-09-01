@@ -164,7 +164,11 @@ namespace AI {
 				
 			if (m_pilot != null) {
 				if (m_pilot.speed <= 0.01f) {
-					Stop();
+					if (m_useGravity) {
+						if (m_isGrounded) Stop();
+					} else {
+						Stop();
+					}
 				}
 
 				m_direction = m_pilot.direction;
@@ -179,7 +183,7 @@ namespace AI {
 					bool isGrounded = IsGrounded();
 
 					if (m_isGrounded != isGrounded) {
-						if (isGrounded) {
+						if (m_isGrounded) {
 							m_velocity = Vector3.zero; // reset velocity when reaching ground
 						}
 						m_isGrounded = isGrounded;
@@ -198,7 +202,8 @@ namespace AI {
 						Vector3 forceDrag = -m_velocity.normalized * 0.25f * airDensity * drag * area * Mathf.Pow(m_velocity.magnitude, 2f) / m_mass;
 						m_acceleration = (forceGravity + forceDrag);
 
-						m_velocity += Vector3.ClampMagnitude(m_acceleration * Time.deltaTime, terminalVelocity);
+						m_velocity += m_acceleration * Time.deltaTime;
+						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity);
 						m_rbody.velocity = m_velocity;
 					}
 				} else {
@@ -300,7 +305,7 @@ namespace AI {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
 			} else if (m_machine.GetSignal(Signals.Type.FallDown)) {
-				m_targetRotation = Quaternion.LookRotation(m_direction, m_collisionNormal);
+				m_targetRotation = Quaternion.LookRotation(m_direction, m_collisionNormal	);
 			} else if (m_faceDirection && m_pilot.speed > 0.01f) {				
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 
@@ -355,7 +360,7 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.FallDown, true);
 				m_viewControl.Height(100f);
 			}
-			
+
 			return hasHit && hit.distance <= 0.3f;
 		}
 
