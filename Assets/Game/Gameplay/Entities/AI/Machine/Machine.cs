@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class Machine : MonoBehaviour, IMachine, ISpawnable {		
+	public class Machine : MonoBehaviour, IMachine, ISpawnable, MotionInterface {		
 		/**************/
 		/*			  */
 		/**************/
@@ -45,6 +45,8 @@ namespace AI {
 		public Vector3 target	 { 	get { return m_pilot.target; } }
 		public Vector3 direction { 	get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
 		public Vector3 upVector  { 	get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		public Vector3 velocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
+		public Vector3 angularVelocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		public Transform enemy { 
 			get {
@@ -270,6 +272,11 @@ namespace AI {
 
 		public bool IsDead() {
 			return m_entity.health <= 0 || m_signals.GetValue(Signals.Type.Destroyed);
+		}
+
+		public bool IsDying()
+		{
+			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
 		public float biteResistance { get { return m_edible.biteResistance; }}

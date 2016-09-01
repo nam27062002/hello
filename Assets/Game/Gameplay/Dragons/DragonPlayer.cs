@@ -292,10 +292,11 @@ public class DragonPlayer : MonoBehaviour {
 		// Move to position
 		if(spawnPointObj != null) {
 			transform.position = spawnPointObj.transform.position;
-
+			/*
 			if (InstanceManager.pet != null) {
 				InstanceManager.pet.transform.position = spawnPointObj.transform.position;
 			}
+			*/
 		}
 	}
 
@@ -311,9 +312,11 @@ public class DragonPlayer : MonoBehaviour {
 		{
 			Vector3 introPos = spawnPointObj.transform.position;
 			transform.position = introPos + Vector3.left * 30;
+			/*
 			if (InstanceManager.pet != null) {
 				InstanceManager.pet.transform.position = introPos;
 			}
+			*/
 			GetComponent<DragonMotion>().StartIntroMovement(introPos);
 		}
 	}

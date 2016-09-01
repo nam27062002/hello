@@ -209,9 +209,9 @@ public class PlayerEatBehaviour : EatBehaviour {
 	}
 
 
-	protected override void OnStartAttackTarget (Transform _transform)
+	public override void StartAttackTarget (Transform _transform)
 	{
-		base.OnStartAttackTarget (_transform);
+		base.StartAttackTarget (_transform);
 		// Start attack animation
 		m_animator.SetBool("eat", true);
 	}
