@@ -49,9 +49,8 @@ namespace AI {
 
 			if (speed > 0.01f) {
 				
-
 				Vector3 v = m_target - m_machine.position;
-				v = v.normalized * moveSpeed;
+				v = v.normalized * Mathf.Min(moveSpeed, v.magnitude * 2);
 
 				if (m_slowDown) { // this machine will slow down its movement when arriving to its detination
 					Util.MoveTowardsVector3WithDamping(ref m_seek, ref v, 32f * Time.deltaTime, 8.0f);
