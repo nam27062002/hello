@@ -35,8 +35,18 @@ namespace AI
 				while(states.Length < m_transitionFoldout.Count)
 					m_transitionFoldout.RemoveAt(m_transitionFoldout.Count - 1);
 			}
-			
-			var td = TypeUtil.GetPrivateVar<StateMachine.TransitionData[]>(stateMachine, "m_transitionData");
+
+			StateMachine.TransitionData[] td = TypeUtil.GetPrivateVar<StateMachine.TransitionData[]>(stateMachine, "m_transitionData");
+			// Check all transition data is valid
+			List<StateMachine.TransitionData> validTd = new List<StateMachine.TransitionData>();
+			for( int i = 0;i<td.Length; i++ )
+			{
+				if ( td[i].from < states.Length && td[i].to < states.Length)
+					validTd.Add( td[i] );
+			}
+			td = validTd.ToArray();
+			TypeUtil.SetPrivateVar( stateMachine, "m_transitionData", td);
+
 			Dictionary<int, List<StateMachine.TransitionData>> transitions = new Dictionary<int, List<StateMachine.TransitionData>>();
 			List<StateMachine.TransitionData> anyStateTransitions = new List<StateMachine.TransitionData>();
 
