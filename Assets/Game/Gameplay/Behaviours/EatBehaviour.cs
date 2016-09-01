@@ -542,7 +542,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				if (entity.IsEdible(m_tier))
 				{
-					if (m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
+					if (m_limitEating && (preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
 					{
 						AI.Machine machine = entity.GetComponent<AI.Machine>();
 						if (!machine.IsDead() && !machine.IsDying()) {
