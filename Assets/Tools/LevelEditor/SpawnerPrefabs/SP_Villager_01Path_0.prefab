@@ -24,9 +24,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 111670}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 51.1, y: 143.48, z: 2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 105.69, y: 20.68, z: 0}
+  m_LocalScale: {x: 3.088865, y: 1, z: 4.928872}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
@@ -59,9 +59,10 @@ MonoBehaviour:
   m_circular: 0
   m_smoothRadius: 0.5
   m_points:
-  - {x: -3.2156448, y: 1.1630554, z: 0}
-  - {x: 4.3973694, y: -2.2752228, z: 0}
-  - {x: 10.280987, y: -5.258377, z: 0}
+  - {x: 1.6752396, y: 0.14203453, z: 0.003083229}
+  - {x: 1.6752396, y: 0.14203453, z: 0.003083229}
+  - {x: 1.6752396, y: 0.14203453, z: 0.003083229}
+  - {x: -1.5846252, y: 0.12810516, z: -0.08276129}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -84,7 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 131698, guid: 6537d3ed394e64369a5a1c9f43fd3a5c, type: 2}
+  m_entityPrefab: {fileID: 159302, guid: e8aa6289de8221b4d8d97be3c9b33928, type: 2}
   m_quantity:
     min: 1
     max: 1
@@ -93,11 +94,12 @@ MonoBehaviour:
     max: 1
   m_rails: 1
   m_flockBonus: 0
-  m_activeOnStart: 0
+  m_activationChange: 100
+  m_activeOnStart: 1
   m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 60
-    max: 60
+    min: 300
+    max: 300
   m_maxSpawns: 0
