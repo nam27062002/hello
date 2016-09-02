@@ -93,9 +93,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private int m_numCheckEntities = 0;
 	private int m_playerColliderMask = -1;
 
+	protected bool m_pauseEating = false;
+
 	public delegate void OnEvent();
 	public OnEvent onBiteKill;
 	public OnEvent onEndEating;
+	public OnEvent onEndLatching;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -161,6 +164,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		return enabled && m_prey.Count > 0;
 	}
 
+	public bool IsLatching()
+	{
+		return m_holdingPlayer != null || (!m_grabbingPrey && m_holdingPrey);
+	}
+
 	// Update is called once per frame
 	void Update() 
 	{
@@ -194,7 +202,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			}
 			else 
 			{
-				if (m_noAttackTime <= 0)	// no attack time y no estoy intentando comerme algo? y si ya estoy comiendo? empiezo un nuevo bite?
+				if (m_noAttackTime <= 0 && !m_pauseEating)	// no attack time y no estoy intentando comerme algo? y si ya estoy comiendo? empiezo un nuevo bite?
 					TargetSomethingToEat();	// Buscar target
 				
 			}
@@ -205,12 +213,31 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Pauses the eating. End eating what it has in the mouth but does not let anything else in
+	/// </summary>
+	public void PauseEating()
+	{
+		m_pauseEating = true;
+		if ( m_holdingPrey != null || m_holdingPlayer != null)
+			EndHold();
+	}
+
+	/// <summary>
+	/// Resumes the eating.
+	/// </summary>
+	public void ResumeEating( float timeNoAttack = 0 )
+	{
+		m_pauseEating = false;	
+		m_noAttackTime = timeNoAttack;
+	}
+
+	/// <summary>
 	/// Function called when the eater closes the jaw. It can come from an animation event or timed event
 	/// </summary>
 	public void OnJawsClose()
 	{
 		// Bite kill!
-		if ( m_holdingPrey == null )
+		if ( m_holdingPrey == null && !m_pauseEating)
 		{
 			BiteKill(m_prey.Count <= 0 && m_canHold);
 			if (onBiteKill != null)
@@ -362,8 +389,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// TODO (MALH): Check if bite and grab or bite and hold
 
 		m_holdingPlayer = player;
+		m_holdingPlayer.StartLatchedOn();
+
 		m_holdingPrey = null;
 		m_holdPreyTimer = m_holdDuration;
+
 	}
 
 	/// <summary>
@@ -427,7 +457,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			damage *= m_holdBoostDamageMultiplier;
 		}
 
-		m_holdingPlayerHealth.ReceiveDamage( damage * Time.deltaTime, DamageType.LATCH, transform, false);
+		m_holdingPlayer.dragonHealthBehaviour.ReceiveDamage( damage * Time.deltaTime, DamageType.LATCH, transform, false);
 		if (!m_holdingPlayer.IsAlive())
 		{
 			StartBlood();
@@ -458,12 +488,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		if ( m_holdingPrey != null)
 		{
+			if ( !m_grabbingPrey && onEndLatching != null)
+				onEndLatching();
+				
 			m_holdingPrey.ReleaseHold();
 			m_holdingPrey.SetVelocity(m_motion.velocity * 2f);
 			m_holdingPrey = null;
 		}
 		else if ( m_holdingPlayer != null)
 		{
+			if (onEndLatching != null)
+				onEndLatching();
+			m_holdingPlayer.EndLatchedOn();
 			m_holdingPlayer = null;
 		}
 
@@ -536,7 +572,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float eatDistance = GetEatDistance();
 		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
-		if (m_canLatchOnPlayer && InstanceManager.player != null)
+		if (m_canLatchOnPlayer && InstanceManager.player != null && !InstanceManager.player.BeingLatchedOn())
 		{
 			m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_suction.position, eatDistance, m_checkPlayer, m_playerColliderMask);
 			if ( m_numCheckEntities > 0 )

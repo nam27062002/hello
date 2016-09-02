@@ -43,6 +43,7 @@ namespace AI {
 	        Burning, 
 	        Chewing, 
 			Biting,
+			Latching,
 	        Destroyed, 
 	        Collision,
 	        Trigger,

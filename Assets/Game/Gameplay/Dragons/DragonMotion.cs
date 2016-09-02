@@ -73,12 +73,19 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		set { m_boostSpeedMultiplier = value; }
 	}
 
-	public float m_holdSpeedMultiplier;
+	private float m_holdSpeedMultiplier;
 	public float holdSpeedMultiplier
 	{
 		get {return m_holdSpeedMultiplier;}
 		set { m_holdSpeedMultiplier = value; }
 	}
+
+	private float m_latchedOnSpeedMultiplier = 0;
+	private bool m_latchedOn = false;
+	public bool isLatchedMovement 
+	{ 
+		get{return m_latchedOn;} 
+	} 
 
 	private float m_currentSpeedMultiplier;
 	public float currentSpeedMultiplier
@@ -229,6 +236,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_boostSpeedMultiplier = 1;
 		m_holdSpeedMultiplier = 1;
+		m_latchedOnSpeedMultiplier = 1;
 
 		m_transform = transform;
 		m_currentFrontBend = Vector2.zero;
@@ -641,7 +649,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	float GetTargetSpeedMultiplier()
 	{
-		return m_boostSpeedMultiplier * m_holdSpeedMultiplier;
+		return m_boostSpeedMultiplier * m_holdSpeedMultiplier * m_latchedOnSpeedMultiplier;
 	}
 
 	Vector3 Damping( Vector3 src, Vector3 dst, float dt, float factor)
@@ -1047,6 +1055,24 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
 		m_grab = false;
+	}
+
+	/// <summary>
+	/// Starts the latched on movement. Called When a prey starts latching on us
+	/// </summary>
+	public void StartLatchedOnMovement()
+	{
+		m_latchedOnSpeedMultiplier = 0.1f;
+		m_latchedOn = true;
+	}
+
+	/// <summary>
+	/// Ends the latched on movement. Called when a prey stops laching on us
+	/// </summary>
+	public void EndLatchedOnMovement()
+	{
+		m_latchedOnSpeedMultiplier = 1f;
+		m_latchedOn = false;
 	}
 
 	public void StartIntroMovement(Vector3 introTarget)
