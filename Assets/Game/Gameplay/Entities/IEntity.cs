@@ -3,15 +3,21 @@ using System.Collections;
 
 abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
-	protected bool m_allowEdible;
-	public bool allowEdible { set { m_allowEdible = value; } }
+	private int m_allowEdible;
+	public bool allowEdible { get { return m_allowEdible == 0; } set { if (value) { m_allowEdible = Mathf.Max(0, m_allowEdible - 1); } else { m_allowEdible++; } } }
+
+	private int m_allowBurnable;
+	public bool allowBurnable { get { return m_allowBurnable == 0; } set { if (value) { m_allowBurnable = Mathf.Max(0, m_allowBurnable - 1); } else { m_allowBurnable++; } } }
 
 	// Health
 	protected float m_maxHealth;
 	protected float m_health;
 	public float health { get { return m_health; } set { m_health = value; } }
 
-	public abstract void Spawn(ISpawner _spawner);
+	public virtual void Spawn(ISpawner _spawner) {
+		m_allowEdible = 0;
+		m_allowBurnable = 0;
+	}
 
 	protected bool m_isOnScreen = false;
 	public bool isOnScreen { get { return m_isOnScreen; } }

@@ -27,6 +27,8 @@ namespace AI {
 		[StateTransitionTrigger] public static string OnGround				= "OnGround";
 		[StateTransitionTrigger] public static string OnLockedInCage		= "onLockedInCage";
 		[StateTransitionTrigger] public static string OnUnlockedFromCage	= "onUnlockedFromCage";
+		[StateTransitionTrigger] public static string OnInvulnerable		= "onInvulnerable";
+		[StateTransitionTrigger] public static string OnVulnerable			= "onVulnerable";
 	}
 
 	public class Signals {
@@ -48,6 +50,7 @@ namespace AI {
 	        Trigger,
 			FallDown,
 			LockedInCage,
+			Invulnerable,
 
 			Count
 		}

@@ -108,6 +108,9 @@ namespace AI {
 
 			m_signals.SetOnEnableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnLockedInCage);
 			m_signals.SetOnDisableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnUnlockedFromCage);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnInvulnerable);
+			m_signals.SetOnDisableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnVulnerable);
 		}
 
 		void OnEnable() {
@@ -145,6 +148,12 @@ namespace AI {
 					m_viewControl.Burn();
 					if (m_motion != null) m_motion.Stop();
 					if (m_collider != null) m_collider.enabled = false;
+			} else if (_trigger == SignalTriggers.OnInvulnerable) {
+				m_entity.allowEdible = false;
+				m_entity.allowBurnable = false;
+			} else if (_trigger == SignalTriggers.OnVulnerable) {
+				m_entity.allowEdible = true;
+				m_entity.allowBurnable = true;
 			}
 		}
 
@@ -186,6 +195,8 @@ namespace AI {
 				m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
 			}
 			m_inflammable.Update();
+
+			Debug.Log("invulnerable: " + GetSignal(Signals.Type.Invulnerable));
 		}
 
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
@@ -324,7 +335,7 @@ namespace AI {
 		}
 
 		public virtual bool Burn(float _damage, Transform _transform) {
-			if (m_inflammable != null && !IsDead()) {
+			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(_damage);
 					if (m_entity.health <= 0) {
