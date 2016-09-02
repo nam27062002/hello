@@ -59,13 +59,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_holdingBlood = 0;
 
 	// config
-	protected bool m_canHold = true;		// if this eater can hold a prey
-	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
-	protected int m_limitEatingValue = 1;	// limit value
 	protected bool m_isPlayer = true;		// If eating entity is the player
-	protected bool m_waitJawsEvent = false;	// if wait for jaws closing event or just wait time
 	protected bool m_rewardsPlayer = false;	
 	protected bool m_canLatchOnPlayer = false;
+	protected bool m_canEatEntities = true;
+	protected bool m_waitJawsEvent = false;	// if wait for jaws closing event or just wait time
+	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
+	protected int m_limitEatingValue = 1;	// limit value
+	protected bool m_canHold = true;		// if this eater can hold a prey
 
 		// Hold config
 	protected float m_holdStunTime;
@@ -88,8 +89,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	// This are tmp variables we reuse every time we need to find targets
 	private Entity[] m_checkEntities = new Entity[20];
+	private Collider[] m_checkPlayer = new Collider[2];
 	private int m_numCheckEntities = 0;
-
+	private int m_playerColliderMask = -1;
 
 	public delegate void OnEvent();
 	public OnEvent onBiteKill;
@@ -110,6 +112,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdBoostDamageMultiplier = 3;
 		m_holdHealthGainRate = 10;
 		m_holdDuration = 1;
+
+		m_playerColliderMask = 1 << LayerMask.NameToLayer("Player");
 	}
 
 	// find mouth transform 
@@ -383,7 +387,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			damage *= m_holdBoostDamageMultiplier;
 		}
 
-		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
+		// m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
 		if (m_holdingPrey.IsDead())
 		{
 			Swallow(m_holdingPrey);
@@ -393,7 +397,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		else
 		{
 			// Swallow
-			m_holdPreyTimer -= Time.deltaTime;
+			// m_holdPreyTimer -= Time.deltaTime;
 			if ( m_holdPreyTimer <= 0 ) // or prey is death
 			{
 				// release prey
@@ -532,49 +536,62 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float eatDistance = GetEatDistance();
 		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
-		AI.Machine preyToHold = null;
-		Entity entityToHold = null;
-		List<AI.Machine> preysToEat = new List<AI.Machine>();
-		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
-		for (int e = 0; e < m_numCheckEntities; e++) {
-			Entity entity = m_checkEntities[e];
-			if ( entity.IsEdible() )
+		if (m_canLatchOnPlayer && InstanceManager.player != null)
+		{
+			m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_suction.position, eatDistance, m_checkPlayer, m_playerColliderMask);
+			if ( m_numCheckEntities > 0 )
 			{
-				if (entity.IsEdible(m_tier))
-				{
-					if (m_limitEating && (preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
-					{
-						AI.Machine machine = entity.GetComponent<AI.Machine>();
-						if (!machine.IsDead() && !machine.IsDying()) {
-								preysToEat.Add(machine);
-						}
-					}
-				}
-				else if (entity.CanBeHolded(m_tier))
-				{
-					if (_canHold)
-					{
-						AI.Machine machine = entity.GetComponent<AI.Machine>();
-						preyToHold = machine;
-						entityToHold = entity;
-					}
-				}
-				else 
-				{
-					if (m_isPlayer)
-						Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
-				}
+				// Sart latching on player
+				StartLatchOnPlayer( InstanceManager.player );
 			}
 		}
 
-		if ( preyToHold != null )
+		if ( m_canEatEntities && m_holdingPlayer == null )
 		{
-			StartHold(preyToHold, entityToHold.CanBeGrabbed( m_tier));
-		}
-		else if ( preysToEat.Count > 0 )
-		{
-			for( int i = 0; i<preysToEat.Count; i++ )
-				Eat(preysToEat[i]);
+			AI.Machine preyToHold = null;
+			Entity entityToHold = null;
+			List<AI.Machine> preysToEat = new List<AI.Machine>();
+			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
+			for (int e = 0; e < m_numCheckEntities; e++) {
+				Entity entity = m_checkEntities[e];
+				if ( entity.IsEdible() )
+				{
+					if (entity.IsEdible(m_tier))
+					{
+						if (m_limitEating && (preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
+						{
+							AI.Machine machine = entity.GetComponent<AI.Machine>();
+							if (!machine.IsDead() && !machine.IsDying()) {
+									preysToEat.Add(machine);
+							}
+						}
+					}
+					else if (entity.CanBeHolded(m_tier))
+					{
+						if (_canHold)
+						{
+							AI.Machine machine = entity.GetComponent<AI.Machine>();
+							preyToHold = machine;
+							entityToHold = entity;
+						}
+					}
+					else 
+					{
+						if (m_isPlayer)
+							Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
+					}
+				}
+			}
+
+			if ( preyToHold != null )
+			{
+				StartHold(preyToHold, entityToHold.CanBeGrabbed( m_tier));
+			}
+			else if ( preysToEat.Count > 0 )
+			{
+				for( int i = 0; i<preysToEat.Count; i++ )
+					Eat(preysToEat[i]);
+			}
 		}
 
 		m_attackTarget = null;

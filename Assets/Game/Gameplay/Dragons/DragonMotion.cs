@@ -1013,8 +1013,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
 	{
 		// TODO: Calculate hold speed multiplier
-		m_holdSpeedMultiplier = 0.5f;
+		m_holdSpeedMultiplier = 0.8f;
 
+		m_grab = true;
 		m_holdPrey = prey;
 		m_holdPreyTransform = _holdPreyTransform;
 	
@@ -1029,10 +1030,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_holdPrey.transform.parent = m_preyPreviousTransformParent;
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
+		m_grab = false;
 	}
 
 	public void StartLatchMovement( AI.Machine prey, Transform _holdPreyTransform )
 	{
+		m_grab = false;
 		m_holdPrey = prey;
 		m_holdPreyTransform = _holdPreyTransform;
 		ChangeState(State.Latching);
@@ -1043,6 +1046,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		ChangeState(State.Idle);
 		m_holdPrey = null;
 		m_holdPreyTransform = null;
+		m_grab = false;
 	}
 
 	public void StartIntroMovement(Vector3 introTarget)

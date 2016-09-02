@@ -15,9 +15,6 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_limitEatingValue = 1;
 		m_isPlayer = false;
 
-		Entity entity = GetComponent<Entity>();
-		// if is pet -> m_rewardPlayer = true
-
 		SetupHoldParametersForTier( DragonData.TierToSku( m_eaterTier));
 	}
 
