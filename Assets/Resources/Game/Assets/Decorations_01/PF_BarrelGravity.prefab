@@ -11,8 +11,6 @@ GameObject:
   - 33: {fileID: 3310342}
   - 23: {fileID: 2333072}
   - 95: {fileID: 9518240}
-  - 114: {fileID: 114000013077643100}
-  - 114: {fileID: 114000013916529310}
   - 136: {fileID: 136000013200559376}
   - 54: {fileID: 54000011319626284}
   m_Layer: 0
@@ -114,67 +112,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &114000013077643100
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 159302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 1
-    m_walkOnWalls: 0
-    m_mass: 5
-    m_defaultUpVector: 0
-    m_orientationSpeed: 120
-    m_faceDirection: 1
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_enableSensor: 0
-  m_sensor:
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_onSpawnSoundProbability: 40
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds: []
---- !u!114 &114000013916529310
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 159302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56b50cf50e7834c5397a1f060efb7791, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
-  m_speedFactorRange:
-    min: 1
-    max: 1
-  m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":1,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
 --- !u!136 &136000013200559376
 CapsuleCollider:
   m_ObjectHideFlags: 1
