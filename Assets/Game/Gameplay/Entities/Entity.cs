@@ -90,11 +90,11 @@ public class Entity : IEntity {
 		// m_canBeHolded = m_def.GetAsBool("canBeHolded", false);
 		// m_holdFromTier = (DragonTier)m_def.GetAsInt("holdFromTier");
 
-		m_canBeGrabbed = m_def.GetAsBool("canBeGrabbed", false);
+		m_canBeGrabbed = m_def.GetAsBool("canBeGrabed", false);
 		m_grabFromTier = (DragonTier)m_def.GetAsInt("grabFromTier");
 
 		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
-		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchFromTier");
+		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchOnFromTier");
 
 		m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
 

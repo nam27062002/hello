@@ -387,7 +387,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			damage *= m_holdBoostDamageMultiplier;
 		}
 
-		// m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
+		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
 		if (m_holdingPrey.IsDead())
 		{
 			Swallow(m_holdingPrey);
@@ -397,7 +397,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		else
 		{
 			// Swallow
-			// m_holdPreyTimer -= Time.deltaTime;
+			m_holdPreyTimer -= Time.deltaTime;
 			if ( m_holdPreyTimer <= 0 ) // or prey is death
 			{
 				// release prey
