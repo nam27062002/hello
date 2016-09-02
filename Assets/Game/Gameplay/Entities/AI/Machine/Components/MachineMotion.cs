@@ -70,7 +70,7 @@ namespace AI {
 		public MachineMotion() {}
 
 		public override void Init() {
-			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle");
+			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 
 			m_collider = m_machine.transform.FindComponentRecursive<Collider>();
 			m_rbody = m_machine.GetComponent<Rigidbody>();
