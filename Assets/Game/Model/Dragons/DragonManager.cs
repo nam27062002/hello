@@ -198,4 +198,11 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 			instance.m_dragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
 		}
 	}
+
+	/// <summary>
+	/// Has a user been loaded into the manager?
+	/// </summary>
+	public static bool IsReady() {
+		return instance.m_user != null;
+	}
 }

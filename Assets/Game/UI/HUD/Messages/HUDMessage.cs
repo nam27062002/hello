@@ -44,7 +44,9 @@ public class HUDMessage : MonoBehaviour {
 		CHEST_FOUND,
 		BOOST_REMINDER,
 		FIRE_RUSH,
-		MEGA_FIRE_RUSH
+		MEGA_FIRE_RUSH,
+		EGG_FOUND,
+		EGG_INVENTORY_FULL
 	}
 
 	// How to react with consecutive triggers
@@ -113,6 +115,7 @@ public class HUDMessage : MonoBehaviour {
 
 	// Custom internal vars for specific types
 	private float m_timeSinceLastBoostReminder = 0f;
+	private string m_needBiggerDragonEntitySku = "";
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -144,12 +147,14 @@ public class HUDMessage : MonoBehaviour {
 			case Type.HEALTH_STARVING:		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnToggleMessage);			break;
 			case Type.HEALTH_CRITICAL:		Messenger.AddListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnToggleMessage);			break;
 			case Type.CURSED:				Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
-			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
+			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.EGG_FOUND:			Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);			break;
+			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 		}
 	}
 
@@ -164,12 +169,14 @@ public class HUDMessage : MonoBehaviour {
 			case Type.HEALTH_STARVING:		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnToggleMessage);			break;
 			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnToggleMessage);			break;
 			case Type.CURSED:				Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
-			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
+			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.EGG_FOUND:			Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);				break;
+			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 		}
 	}
 
@@ -329,7 +336,8 @@ public class HUDMessage : MonoBehaviour {
 	/// A bigger dragon is required.
 	/// </summary>
 	/// <param name="_requiredTier">The required tier. DragonTier.COUNT if not defined.</param>
-	private void OnBiggerDragonNeeded(DragonTier _requiredTier)  {
+	/// <param name="_entitySku">The entity we're trying to eat.</param>
+	private void OnBiggerDragonNeeded(DragonTier _requiredTier, string _entitySku)  {
 		// Setup text
 		// TODO: we'll add all the icons into a font and we'll print the icons as a character.
 		Image icon = this.FindComponentRecursive<Image>();
@@ -351,6 +359,14 @@ public class HUDMessage : MonoBehaviour {
 			}
 			icon.sprite = Resources.Load<Sprite>(path);		// [AOC] An async/precached load might be required
 		}
+
+		// If already visible and trying to eat the same entity, don't restart the animation
+		if(m_visible && m_needBiggerDragonEntitySku == _entitySku) {
+			m_repeatType = RepeatType.RESTART_TIMER;
+		} else {
+			m_repeatType = RepeatType.RESTART_ANIM;
+		}
+		m_needBiggerDragonEntitySku = _entitySku;
 
 		// Show!
 		Show();
@@ -421,5 +437,21 @@ public class HUDMessage : MonoBehaviour {
 		if(_type == DamageType.CURSE) {
 			Show();
 		}
+	}
+
+	/// <summary>
+	/// An egg has been found while playing.
+	/// </summary>
+	/// <param name="_egg">The found egg.</param>
+	private void OnEggCollected(CollectibleEgg _egg) {
+		Show();
+	}
+
+	/// <summary>
+	/// An egg has been found while playing but we failed to collect it (inventory full).
+	/// </summary>
+	/// <param name="_egg">The found egg.</param>
+	private void OnEggCollectedFail(CollectibleEgg _egg) {
+		Show();
 	}
 }

@@ -25,7 +25,7 @@ public class PopupChestReward : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Chests/PF_PopupChestReward";
+	public static readonly string PATH = "UI/Popups/Collectibles/PF_PopupChestReward";
 	private static readonly int TAPS_TO_OPEN = 3;
 
 	//------------------------------------------------------------------//
@@ -38,10 +38,10 @@ public class PopupChestReward : MonoBehaviour {
 	// Internal logic
 	private int m_chestTapCount = 0;
 	private bool m_chestOpened = false;
+	private bool m_testMode = false;
 
 	// Internal references
 	private UIScene3D m_chestScene3D = null;
-	private EggUIScene3D m_eggRewardScene3D = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -60,6 +60,11 @@ public class PopupChestReward : MonoBehaviour {
 			chestRawImage.texture = m_chestScene3D.renderTexture;
 			chestRawImage.color = Colors.white;
 		}
+
+		// Are we just testing the popup? - Yes if we're not in the game scene controller
+		if(InstanceManager.GetSceneController<GameSceneControllerBase>() == null) {
+			m_testMode = true;
+		}
 	}
 	
 	/// <summary>
@@ -70,12 +75,6 @@ public class PopupChestReward : MonoBehaviour {
 		if(m_chestScene3D != null) {
 			UIScene3DManager.Remove(m_chestScene3D);
 			m_chestScene3D = null;
-		}
-
-		// Destroy egg reward 3D scene
-		if(m_eggRewardScene3D != null) {
-			UIScene3DManager.Remove(m_eggRewardScene3D);
-			m_eggRewardScene3D = null;
 		}
 	}
 
@@ -111,14 +110,6 @@ public class PopupChestReward : MonoBehaviour {
 				rewardObj.FindComponentRecursive<Localizer>("TextReward").Localize("TID_CHEST_REWARD_BOOSTER");
 				rewardObj.GetComponent<DOTweenAnimation>().DOPlay();
 			} break;
-
-			case ChestManager.RewardType.EGG: {
-				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, ChestManager.rewardSku);
-				GameObject rewardObj = this.FindObjectRecursive("RewardEgg");
-				rewardObj.SetActive(true);
-				rewardObj.FindComponentRecursive<Localizer>("TextReward").Localize("TID_CHEST_REWARD_EGG", eggDef.GetLocalized("tidName"));
-				rewardObj.GetComponent<DOTweenAnimation>().DOPlay();
-			} break;
 		}
 
 		// Launch chest effect
@@ -145,6 +136,9 @@ public class PopupChestReward : MonoBehaviour {
 		// Give the reward right now and save persistence
 		ChestManager.ApplyReward();
 		PersistenceManager.Save();
+
+		// Clear chestmanager :)
+		ChestManager.ClearSelectedChest();
 	}
 
 	//------------------------------------------------------------------//
@@ -156,7 +150,11 @@ public class PopupChestReward : MonoBehaviour {
 	public void OnOpenPreAnimation() {
 		// Instantiate reward view now so it doesn't cause an FPS drop during the animation
 		// Tell the manager to generate a reward
-		ChestManager.GenerateReward();
+		if(m_testMode) {
+			ChestManager.SetReward(ChestManager.RewardType.PC, 50, "");
+		} else {
+			ChestManager.GenerateReward();
+		}
 
 		// Initialize reward view based on type
 		switch(ChestManager.rewardType) {
@@ -168,23 +166,11 @@ public class PopupChestReward : MonoBehaviour {
 			case ChestManager.RewardType.BOOSTER: {
 				// [AOC] TODO!!
 			} break;
-
-			case ChestManager.RewardType.EGG: {
-				// Instantiate the 3D scene and initialize the raw image
-				// Create a new dummy egg with the rewarded sku
-				Egg newEgg = Egg.CreateFromSku(ChestManager.rewardSku);
-				if(m_eggRewardScene3D == null) {
-					m_eggRewardScene3D = EggUIScene3D.CreateFromEgg(newEgg);
-				} else {
-					m_eggRewardScene3D.SetEgg(newEgg);
-				}
-				GameObject rewardObj = this.FindObjectRecursive("RewardEgg");
-				RawImage eggRawImage = rewardObj.GetComponentInChildren<RawImage>();
-				if(eggRawImage != null) {
-					m_eggRewardScene3D.InitRawImage(ref eggRawImage);
-				}
-			} break;
 		}
+
+		// Hide ok button
+		CanvasGroup okButton = this.FindComponentRecursive<CanvasGroup>("ButtonOk");
+		if(okButton != null) okButton.alpha = 0f;
 	}
 
 	/// <summary>
@@ -214,11 +200,6 @@ public class PopupChestReward : MonoBehaviour {
 	/// Ok button pressed.
 	/// </summary>
 	public void OnOkButton() {
-		// If reward was an egg, go straight to incubator when going back to the menu
-		if(ChestManager.rewardType == ChestManager.RewardType.EGG) {
-			GameVars.menuInitialScreen = MenuScreens.INCUBATOR;
-		}
-
 		// Close this popup, the results screen controller will know what to do next
 		GetComponent<PopupController>().Close(true);
 	}

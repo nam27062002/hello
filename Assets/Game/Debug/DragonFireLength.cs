@@ -10,6 +10,10 @@ public class DragonFireLength : MonoBehaviour {
 	private FireBreath m_fireBreath;
 	private FireLightning m_fireLightning;
 
+	void Awake() {
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, LevelUp);
+	}
+
 	void Start() {
 		m_slider = GetComponent<Slider>();
 
@@ -25,8 +29,6 @@ public class DragonFireLength : MonoBehaviour {
 
 			m_slider.value = m_length;
 		}
-
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, LevelUp);
 	}
 
 	void OnDestroy()
