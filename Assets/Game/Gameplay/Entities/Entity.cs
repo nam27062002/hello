@@ -90,11 +90,11 @@ public class Entity : IEntity {
 		// m_canBeHolded = m_def.GetAsBool("canBeHolded", false);
 		// m_holdFromTier = (DragonTier)m_def.GetAsInt("holdFromTier");
 
-		m_canBeGrabbed = m_def.GetAsBool("canBeGrabbed", false);
+		m_canBeGrabbed = m_def.GetAsBool("canBeGrabed", false);
 		m_grabFromTier = (DragonTier)m_def.GetAsInt("grabFromTier");
 
 		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
-		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchFromTier");
+		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchOnFromTier");
 
 		m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
 
@@ -131,6 +131,8 @@ public class Entity : IEntity {
 		m_checkOnScreenTimer = 0;
 
 		m_health = m_maxHealth;
+
+		base.Spawn(_spawner);
 	}
 
 	public override void Disable(bool _destroyed) {
@@ -164,23 +166,23 @@ public class Entity : IEntity {
 
 
 	public bool IsEdible() {
-		return m_isEdible;
+		return allowEdible && m_isEdible;
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return m_isEdible && (m_edibleFromTier <= _tier);
+		return allowEdible && m_isEdible && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {
-		return CanBeGrabbed(_tier) || CanBeLatchedOn(_tier);
+		return allowEdible && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
 	}
 
 	public bool CanBeGrabbed( DragonTier _tier ){
-		return m_canBeGrabbed && m_grabFromTier <= _tier;
+		return allowEdible && m_canBeGrabbed && m_grabFromTier <= _tier;
 	}
 
 	public bool CanBeLatchedOn( DragonTier _tier){
-		return m_canBeLatchedOn && m_latchFromTier <= _tier;
+		return allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
 	public bool IntersectsWith(Vector2 _center, float _radius) 

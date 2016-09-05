@@ -97,7 +97,7 @@ namespace AI {
 		public void SetMoveSpeed(float _speed, bool _blend = true) {
 			m_moveSpeed = _speed;
 			if (!_blend) {
-				m_currentSpeed = 0;
+				m_currentSpeed = m_moveSpeed;
 			}
 		}
 
