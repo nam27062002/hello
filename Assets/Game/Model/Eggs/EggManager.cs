@@ -67,6 +67,11 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		}
 	}
 
+	// In-game collectible egg
+	// Should be initialized at the start of the game by calling the SelectCollectibleEgg() method.
+	private CollectibleEgg m_collectibleEgg = null;
+	public static CollectibleEgg collectibleEgg { get { return instance.m_collectibleEgg; }}
+
 	// Internal
 	UserProfile m_user;
 
@@ -121,6 +126,9 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	/// Monobehaviour update implementation.
 	/// </summary>
 	public void Update() {
+		// Must be initialized
+		if(!IsReady()) return;
+
 		// Check for incubator deadline
 		for(int i = 0; i < INVENTORY_SIZE; i++) {
 			if(inventory[i] != null && inventory[i].isIncubating) {
@@ -190,6 +198,49 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		// Probabiliy set makes it easy for us!
 		string rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
+	}
+
+	/// <summary>
+	/// Select a random egg from the current level and define it as the active egg.
+	/// All other eggs in the level will be removed.
+	/// A level must be loaded beforehand, otherwise nothing will happen.
+	/// To be called at the start of the game.
+	/// </summary>
+	public static void SelectCollectibleEgg() {
+		// Get all the eggs in the scene
+		GameObject[] eggs = GameObject.FindGameObjectsWithTag(CollectibleEgg.TAG);
+		if(eggs.Length > 0) {
+			// Grab a random one from the list and define it as active egg
+			// [AOC] CHECK!! We might need to filter by dragon tier (blockers, etc.)
+			// Don't enable egg during the first run
+			GameObject eggObj = null;
+			if(UsersManager.currentUser.gamesPlayed > 0) { 
+				eggObj = eggs.GetRandomValue();
+				instance.m_collectibleEgg = eggObj.GetComponent<CollectibleEgg>();
+			}
+
+			// Remove the rest of chests from the scene
+			for(int i = 0; i < eggs.Length; i++) {
+				// Skip if selected chest
+				if(eggs[i] == eggObj) continue;
+
+				// Delete from scene otherwise
+				GameObject.Destroy(eggs[i]);
+				eggs[i] = null;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Clears the selected collectible egg.
+	/// To be called at the end of the game.
+	/// </summary>
+	public static void ClearCollectibleEgg() {
+		// Skip if there is no active egg
+		if(instance.m_collectibleEgg == null) return;
+
+		// For now let's just lose the reference to it
+		instance.m_collectibleEgg = null;
 	}
 
 	//------------------------------------------------------------------//

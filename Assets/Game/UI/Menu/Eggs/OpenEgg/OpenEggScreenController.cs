@@ -99,7 +99,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events.
-		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
@@ -134,7 +134,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 

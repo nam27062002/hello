@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public abstract class EatBehaviour : MonoBehaviour {
@@ -606,7 +606,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					else 
 					{
 						if (m_isPlayer)
-							Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
+							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier, entity.sku);
 					}
 				}
 			}
