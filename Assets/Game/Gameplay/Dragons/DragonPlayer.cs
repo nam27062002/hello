@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -59,7 +60,8 @@ public class DragonPlayer : MonoBehaviour {
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
-
+	private List<Transform> m_holdPreyPoints = new List<Transform>();
+	public List<Transform> holdPreyPoints { get{ return m_holdPreyPoints; } }
 
 	// Interaction
 	public bool playable {
@@ -152,6 +154,13 @@ public class DragonPlayer : MonoBehaviour {
 		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
+		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
+		if (holdPoints != null) {
+			for (int i = 0;i<holdPoints.Length; i++) {
+				m_holdPreyPoints.Add(holdPoints[i].transform);
+			}
+		}
+
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
@@ -469,7 +478,7 @@ public class DragonPlayer : MonoBehaviour {
 	public void EndLatchedOn()
 	{
 		m_dragonMotion.EndLatchedOnMovement();
-		m_dragonEatBehaviour.ResumeEating( 1.0f );
+		m_dragonEatBehaviour.ResumeEating( 5.0f );
 	}
 
 	public bool BeingLatchedOn()

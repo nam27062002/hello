@@ -33,6 +33,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected DragonPlayer m_holdingPlayer = null;
 	protected DragonHealthBehaviour m_holdingPlayerHealth = null;
 	protected Transform m_holdTransform = null;
+	public Transform holdTransform{ get{ return m_holdTransform; } }
 	protected bool m_grabbingPrey = false;
 
 	// Attacking/Targeting
@@ -340,21 +341,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		m_grabbingPrey = grab;
 		// look for closer hold point
-		float distance = float.MaxValue;
-		List<Transform> points = _prey.holdPreyPoints;
-		m_holdTransform = null;
-		for( int i = 0; i<points.Count; i++ )
-		{
-			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
-			{
-				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
-				m_holdTransform = points[i];
-			}
-		}
+		SerchClosestTransform( _prey.holdPreyPoints );
 
 		if ( m_holdTransform == null )
 			m_holdTransform = _prey.transform;
-
 
 		// TODO (MALH): Check if bite and grab or bite and hold
 		_prey.BiteAndHold();
@@ -367,24 +357,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 	virtual protected void StartLatchOnPlayer( DragonPlayer player )
 	{
 		m_grabbingPrey = false;
-		// look for closer hold point
-		float distance = float.MaxValue;
-		/*
-		List<Transform> points = _prey.holdPreyPoints;
-		m_holdTransform = null;
-		for( int i = 0; i<points.Count; i++ )
-		{
-			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
-			{
-				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
-				m_holdTransform = points[i];
-			}
-		}
+
+		SerchClosestTransform( player.holdPreyPoints );
 
 		if ( m_holdTransform == null )
-			m_holdTransform = _prey.transform;
-			*/
-		m_holdTransform = player.transform;
+			m_holdTransform = player.transform;
 
 		// TODO (MALH): Check if bite and grab or bite and hold
 
@@ -394,6 +371,21 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_holdingPrey = null;
 		m_holdPreyTimer = m_holdDuration;
 
+	}
+
+	virtual protected void SerchClosestTransform( List<Transform> holdPreyPoints )
+	{
+		float distance = float.MaxValue;
+		List<Transform> points = holdPreyPoints;
+		m_holdTransform = null;
+		for( int i = 0; i<points.Count; i++ )
+		{
+			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
+			{
+				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
+				m_holdTransform = points[i];
+			}
+		}
 	}
 
 	/// <summary>
