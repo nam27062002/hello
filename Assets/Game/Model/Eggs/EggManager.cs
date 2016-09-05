@@ -210,18 +210,26 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		// Get all the eggs in the scene
 		GameObject[] eggs = GameObject.FindGameObjectsWithTag(CollectibleEgg.TAG);
 		if(eggs.Length > 0) {
+			// [AOC] Filter by dragon tier (blockers, etc.)
+			List<GameObject> filteredEggs = new List<GameObject>();
+			DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
+			for(int i = 0; i < eggs.Length; i++) {
+				if(eggs[i].GetComponent<CollectibleEgg>().requiredTier <= currentTier) {
+					filteredEggs.Add(eggs[i]);
+				}
+			}
+
 			// Grab a random one from the list and define it as active egg
-			// [AOC] CHECK!! We might need to filter by dragon tier (blockers, etc.)
 			// Don't enable egg during the first run
 			GameObject eggObj = null;
 			if(UsersManager.currentUser.gamesPlayed > 0) { 
-				eggObj = eggs.GetRandomValue();
+				eggObj = filteredEggs.GetRandomValue();
 				instance.m_collectibleEgg = eggObj.GetComponent<CollectibleEgg>();
 			}
 
-			// Remove the rest of chests from the scene
+			// Remove the rest of eggs from the scene
 			for(int i = 0; i < eggs.Length; i++) {
-				// Skip if selected chest
+				// Skip if selected egg
 				if(eggs[i] == eggObj) continue;
 
 				// Delete from scene otherwise

@@ -33,8 +33,14 @@ public class CollectibleEgg : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed to inspector
+	[SerializeField] private DragonTier m_requiredTier = DragonTier.TIER_0;
+	public DragonTier requiredTier { get { return m_requiredTier; }}
+
+	[Space]
 	[SerializeField] private GameObject m_view = null;
 	[SerializeField] private GameObject m_mapMarker = null;
+
+	[Space]
 	[SerializeField] private ParticleSystem m_idleFX = null;
 	[SerializeField] private ParticleSystem m_collectFX = null;
 

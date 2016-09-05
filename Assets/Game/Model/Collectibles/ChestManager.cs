@@ -83,12 +83,20 @@ public class ChestManager : Singleton<ChestManager> {
 		// Get all the chests in the scene
 		GameObject[] chests = GameObject.FindGameObjectsWithTag(Chest.TAG);
 		if(chests.Length > 0) {
+			// [AOC] Filter by dragon tier (blockers, etc.)
+			List<GameObject> filteredChests = new List<GameObject>();
+			DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
+			for(int i = 0; i < chests.Length; i++) {
+				if(chests[i].GetComponent<Chest>().requiredTier <= currentTier) {
+					filteredChests.Add(chests[i]);
+				}
+			}
+
 			// Grab a random one from the list and define it as active chest
-			// [AOC] CHECK!! We might need to filter by dragon tier (different heights, etc.)
 			// Don't enable chest during the first run
 			GameObject chestObj = null;
 			if(UsersManager.currentUser.gamesPlayed > 0) { 
-				chestObj = chests.GetRandomValue();
+				chestObj = filteredChests.GetRandomValue();
 				instance.m_selectedChest = chestObj.GetComponent<Chest>();
 			}
 
