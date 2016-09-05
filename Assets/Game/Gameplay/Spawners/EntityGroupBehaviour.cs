@@ -56,7 +56,7 @@ public class EntityGroupBehaviour : MonoBehaviour
 
 				if (entity != null && entity != gameObject) 
 				{
-					direction = m_motion.position - (Vector2)entity.transform.position;
+					direction = (Vector2)m_motion.position - (Vector2)entity.transform.position;
 					float distanceSqr = direction.sqrMagnitude;
 
 					if (distanceSqr < m_groupAvoidRadiusSqr) {

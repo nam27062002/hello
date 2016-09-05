@@ -118,7 +118,7 @@ public class WanderBehaviour : Initializable {
 		if (m_isEvasive && m_motion.speed < 0.25f) {
 			ChooseTarget();
 		} else {
-			if ((m_target - m_motion.position).sqrMagnitude < 1f) {
+			if ((m_target - (Vector2)m_motion.position).sqrMagnitude < 1f) {
 				if (Random.Range(0f, 1f) < m_idleProbability) {
 					m_nextState = State.Idle;
 				} else {
@@ -157,9 +157,9 @@ public class WanderBehaviour : Initializable {
 			displacementForce.x = Mathf.Cos(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
 			displacementForce.y = Mathf.Sin(m_displacementAngle * Mathf.Deg2Rad) * m_displacementRadius;
 
-			target = m_motion.position + displacementCenter + displacementForce;
+			target = (Vector2)m_motion.position + displacementCenter + displacementForce;
 			if (!m_area.Contains(target)) { //move backwards?
-				target = m_motion.position - (displacementCenter + displacementForce);
+				target = (Vector2)m_motion.position - (displacementCenter + displacementForce);
 
 				Vector2 dir = m_motion.direction;
 				if (dir.x < 0 && dir.y > 0 || dir.x > 0 && dir.y < 0)

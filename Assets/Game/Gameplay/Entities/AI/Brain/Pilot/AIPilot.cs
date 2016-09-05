@@ -48,7 +48,7 @@ namespace AI {
 		// METHODS															  //
 		//--------------------------------------------------------------------//
 		public virtual void Spawn(ISpawner _spawner) {
-			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
+			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
 
 			SetArea(_spawner);
 

@@ -20,7 +20,7 @@ namespace AI {
 
 		private bool m_perpendicularAvoid;
 		private Vector3 m_lastImpulse;
-
+		private Vector3 m_seek;
 
 
 		protected virtual void Start() {
@@ -28,6 +28,9 @@ namespace AI {
 
 			m_collisionCheckPool = NextCollisionCheckID % CollisionCheckPools;
 			NextCollisionCheckID++;
+
+			m_lastImpulse = Vector3.zero;
+			m_seek = Vector3.zero;
 		}
 
 		public override void Spawn(ISpawner _spawner) {
@@ -45,18 +48,18 @@ namespace AI {
 			m_impulse = Vector3.zero;
 
 			if (speed > 0.01f) {
-				Vector3 seek = Vector3.zero;
-				Vector3 flee = Vector3.zero;
-
+				
 				Vector3 v = m_target - m_machine.position;
+				v = v.normalized * Mathf.Min(moveSpeed, v.magnitude * 2);
 
 				if (m_slowDown) { // this machine will slow down its movement when arriving to its detination
-					Util.MoveTowardsVector3WithDamping(ref seek, ref v, moveSpeed, 32f * Time.deltaTime);
+					Util.MoveTowardsVector3WithDamping(ref m_seek, ref v, 32f * Time.deltaTime, 8.0f);
 				} else {
-					seek = v.normalized * moveSpeed;
+					m_seek = v;
 				}
-				Debug.DrawLine(m_machine.position, m_machine.position + seek, Color.green);
+				Debug.DrawLine(m_machine.position, m_machine.position + m_seek, Color.green);
 
+				Vector3 flee = Vector3.zero;
 				if (IsActionPressed(Action.Avoid)) {
 					Transform enemy = m_machine.enemy;
 					if (enemy != null) {
@@ -75,8 +78,8 @@ namespace AI {
 					}
 				}
 
-				float dot = Vector3.Dot(seek.normalized, flee.normalized);
-				float seekMagnitude = seek.magnitude;
+				float dot = Vector3.Dot(m_seek.normalized, flee.normalized);
+				float seekMagnitude = m_seek.magnitude;
 				float fleeMagnitude = flee.magnitude;
 
 				if (dot <= DOT_START) {
@@ -88,7 +91,7 @@ namespace AI {
 				if (m_perpendicularAvoid) {
 					m_impulse.Set(-flee.y, flee.x, flee.z);
 				} else {
-					m_impulse = seek + flee;
+					m_impulse = m_seek + flee;
 				}
 				m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 
@@ -110,6 +113,10 @@ namespace AI {
 				m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
 
 				Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
+			}
+			else
+			{
+				m_seek = Vector3.zero;
 			}
 
 			m_externalImpulse = Vector3.zero;
