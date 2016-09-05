@@ -75,7 +75,7 @@ GameObject:
   - 135: {fileID: 13536548}
   - 114: {fileID: 11452820}
   - 54: {fileID: 54000011371471642}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: PF_Mine_big
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enableMotion: 1
+  m_enableMotion: 0
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
@@ -470,6 +470,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
     m_sightRadius: 0

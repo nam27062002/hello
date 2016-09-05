@@ -32,12 +32,15 @@ namespace AI {
 		public virtual bool avoidCollisions { get { return false; } set { } }
 
 		private StateMachine m_brain;
+		public StateMachine brain{ get{ return m_brain; } }
 
 		protected Vector3 m_homePosition;
 		public Vector3 homePosition { get { return m_homePosition; } }
 
 		protected Vector3 m_target;
 		public override Vector3 target { get { return m_target; } }
+
+		protected Quaternion m_targetRotation;
 
 		protected bool m_slowDown;
 
@@ -94,6 +97,10 @@ namespace AI {
 
 		public void GoTo(Vector3 _target) {
 			m_target = _target;
+		}
+
+		public void RotateTo( Quaternion _rotation ){
+			m_targetRotation = _rotation;
 		}
 
 		public void SlowDown(bool _value) {

@@ -51,16 +51,21 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	private void Awake() {
 		m_spawners = new List<ISpawner>();
+	}
 
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
-	/// Destructor.
+	/// Component disabled.
 	/// </summary>
-	private void OnDestroy() {
+	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);

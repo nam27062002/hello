@@ -68,24 +68,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		float d = 1000f;
-		float t = 0f;
-		for(t = 0f; t <= 1000f; t += 1f) {
-			float tr = t/d;
-			float dr = 1f;
-
-			float p = d * 0.3f;
-			float s = p / 4f;
-
-			float f1 = Mathf.Pow(2f, -10f * tr);
-			//Debug.Log("\t" + f1);
-			float f2 =  Mathf.Sin((tr * dr - s) * (2f * Mathf.PI) / p);
-			//Debug.Log("\t" + f2);
-			//float delta = (Mathf.Pow(2f, -10f * t) * Mathf.Sin((t * d - s) * (2f * Mathf.PI) / p) + 1.0f);
-			float delta = (f1 * f2 + 1f);
-
-			Debug.Log(t + "/" + d + " -> " + delta);
-		}
+		Debug.Log(System.DateTime.Now.ToString("yyyyMMdd"));
 	}
 
 	/// <summary>

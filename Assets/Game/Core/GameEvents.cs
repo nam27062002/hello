@@ -33,7 +33,7 @@ public enum GameEvents {
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
 	BOOST_TOGGLED,				// params: bool _activated
-	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message)
+	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
 
 	// Entity events
 	ENTITY_EATEN,		// params: Transform _entity, Reward _reward
@@ -54,6 +54,8 @@ public enum GameEvents {
 	// Collectible events
 	COLLECTIBLE_COLLECTED,		// params: Collectible _collectible
 	CHEST_COLLECTED,			// params: Chest _chest
+	EGG_COLLECTED,				// params: CollectibleEgg _egg
+	EGG_COLLECTED_FAIL,			// params: CollectibleEgg _egg
 
 	// Dragon collection events
 	DRAGON_ACQUIRED,			// params: DragonData _data
@@ -80,7 +82,7 @@ public enum GameEvents {
 	EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
 	EGG_INCUBATION_STARTED,		// params: Egg _egg
 	EGG_INCUBATION_ENDED,		// params: Egg _egg
-	EGG_COLLECTED,				// params: Egg _egg				// [AOC] Triggered when any egg is collected, whether it is the one in the incubator or one purchased from the shop
+	EGG_OPENED,					// params: Egg _egg				// [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
 
 	// GameServerManager events
 	LOGGED,						// params: bool

@@ -283,8 +283,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// InstanceManager.player.MoveToSpawnPoint();
 				InstanceManager.player.StartIntroMovement();
 
-				// Spawn chest
+				// Spawn collectibles
 				ChestManager.SelectChest();
+				EggManager.SelectCollectibleEgg();
 				
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_STARTED);

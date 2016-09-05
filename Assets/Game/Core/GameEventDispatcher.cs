@@ -24,16 +24,15 @@ public class GameEventDispatcher : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed
 	[Tooltip("Optional, to differientate between multiple dispatchers in the same GameObject")]
 	[NumericRange(0)]
 	[SerializeField] private int m_id = 0;
 
+	// We must store the event as a string, since serializing the enum value would result in a wrong value if new values are added in the middle of the enum
 	[Tooltip("For now, only events with no parameters are supported.")]
-	[SerializeField] private GameEvents m_eventType;
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+	[EnumList(typeof(GameEvents))]
+	[SerializeField] private string m_eventTypeName = "";
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -42,7 +41,9 @@ public class GameEventDispatcher : MonoBehaviour {
 	/// Broadcast the event of the given type, no parameters.
 	/// </summary>
 	public void Dispatch() {
-		Messenger.Broadcast(m_eventType);
+		// Figure out the enum value equivalent to the stored name
+		GameEvents eventType = (GameEvents)System.Enum.Parse(typeof(GameEvents), m_eventTypeName, true);
+		Messenger.Broadcast(eventType);
 	}
 
 	/// <summary>
