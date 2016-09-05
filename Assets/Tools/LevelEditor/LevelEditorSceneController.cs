@@ -129,8 +129,9 @@ namespace LevelEditor {
 			RewardManager.Reset();
 
 			// Spawn collectibles
-			ChestManager.SelectChest();
-			EggManager.SelectCollectibleEgg();
+			// [AOC] By designers request, let's keep all collectibles visible in the level editor
+			//ChestManager.SelectChest();
+			//EggManager.SelectCollectibleEgg();
 
 			// Reset timer
 			m_elapsedSeconds = 0;
