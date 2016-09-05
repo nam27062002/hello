@@ -319,7 +319,7 @@ public class FireBreath : DragonBreathBehaviour {
 					}
 				} else {
 					// Show message saying I cannot burn it
-					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT);
+					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 				}
 			}
 		}

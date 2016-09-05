@@ -77,6 +77,11 @@ public class AIPilotEditor : Editor {
 
 		// Draw the data list!
 		Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
+		if ( Application.isPlaying && m_targetAIPilot != null){
+			EditorGUILayout.Space();
+			EditorGUILayout.LabelField("Current State: " + m_targetAIPilot.brain.current.name);
+		}
+
 		EditorGUILayout.Space();
 		EditorGUILayoutExt.Separator(new SeparatorAttribute("State Machine Components Data"));
 		foreach(AIPilot.StateComponentDataKVP kvp in m_targetAIPilot.componentsData) {

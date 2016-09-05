@@ -128,8 +128,9 @@ namespace LevelEditor {
 			// Enable reward manager to see coins/score feedback
 			RewardManager.Reset();
 
-			// Spawn chest
+			// Spawn collectibles
 			ChestManager.SelectChest();
+			EggManager.SelectCollectibleEgg();
 
 			// Reset timer
 			m_elapsedSeconds = 0;
