@@ -55,7 +55,7 @@ namespace AI {
 
 				m_speed = 0;
 				m_pilot.SetMoveSpeed(m_speed, false);
-				m_pilot.SlowDown(true);
+				m_pilot.SlowDown(false);
 
 				Transform target = null;
 				if (m_machine.enemy != null) {
@@ -83,8 +83,8 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				m_pilot.SetMoveSpeed(m_speed);
-				m_speed = m_data.speed + m_data.acceleration * m_elapsedTime * m_elapsedTime;
+				m_pilot.SetMoveSpeed(m_speed, false);
+				m_speed = m_data.speed + m_data.acceleration * m_elapsedTime;
 				m_elapsedTime += Time.deltaTime;
 
 				//
