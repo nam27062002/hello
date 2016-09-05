@@ -169,6 +169,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		return m_holdingPlayer != null || (!m_grabbingPrey && m_holdingPrey);
 	}
 
+	public bool IsGrabbing()
+	{
+		return m_grabbingPrey;
+	}
+
 	// Update is called once per frame
 	void Update() 
 	{
