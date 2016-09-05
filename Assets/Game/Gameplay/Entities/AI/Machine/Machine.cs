@@ -196,7 +196,7 @@ namespace AI {
 			}
 			m_inflammable.Update();
 
-			Debug.Log("invulnerable: " + GetSignal(Signals.Type.Invulnerable));
+			//Debug.Log("invulnerable: " + GetSignal(Signals.Type.Invulnerable));
 		}
 
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
