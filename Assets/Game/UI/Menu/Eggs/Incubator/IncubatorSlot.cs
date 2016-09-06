@@ -34,6 +34,9 @@ public class IncubatorSlot : MonoBehaviour {
 
 	// External references
 	[Space]
+	[SerializeField] private MenuEggLoader m_eggPreview = null;
+
+	[Space]
 	[SerializeField] private Slider m_incubationTimeSlider = null;
 	[SerializeField] private Text m_incubationTimeText = null;
 	[SerializeField] private Text m_skipCostText = null;
@@ -62,7 +65,9 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Notification hidden at start
-		m_newNotification.Hide(false);
+		if(m_newNotification != null) {
+			m_newNotification.Hide(false);
+		}
 	}
 
 	/// <summary>
@@ -77,11 +82,12 @@ public class IncubatorSlot : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
-
 		// Make sure we're updated
 		Refresh();
+
+		// Subscribe to external events
+		// [AOC] Order is super-important, otherwise the initial state change on the egg will trigger another Refresh which will try to create another view for the egg
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
@@ -125,11 +131,16 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// New notification
-		m_newNotification.Set(targetEgg != null && targetEgg.isNew);
+		if(m_newNotification != null) {
+			m_newNotification.Set(targetEgg != null && targetEgg.isNew);
+		}
+
+		// Make sure egg's preview is loaded/unloaded
+		m_eggPreview.Load(targetEgg);
+		m_eggPreview.gameObject.SetActive(targetEgg != null);
 
 		// Show/Hide elements based on egg state
-		//m_emptySlotAnim.Set(targetEgg == null);
-		m_emptySlotAnim.Set(false);	// Never show for now
+		m_emptySlotAnim.Set(targetEgg == null);
 		m_pendingIncubationAnim.Set(targetEgg != null && targetEgg.state == Egg.State.STORED && EggManager.incubatingEgg == null);	// Pending incubation is a bit more tricky: only allow if there is no other egg already incubating
 		m_incubatingAnim.Set(targetEgg != null && targetEgg.state == Egg.State.INCUBATING);
 		m_readyAnim.Set(targetEgg != null && targetEgg.state == Egg.State.READY);
@@ -191,12 +202,8 @@ public class IncubatorSlot : MonoBehaviour {
 	/// The button has been pressed.
 	/// </summary>
 	public void OnOpenButton() {
-		// Incubator screen will take care of it
-		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		IncubatorScreenController incubatorScreen = screensController.GetScreen((int)MenuScreens.INCUBATOR).GetComponent<IncubatorScreenController>();
-		if(incubatorScreen != null) {
-			incubatorScreen.StartOpenEggFlow(targetEgg);
-		}
+		// Screen controller will take care of it
+		InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(targetEgg);
 	}
 }
 
