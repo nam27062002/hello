@@ -100,6 +100,11 @@ public class DragonPlayer : MonoBehaviour {
 		get{ return m_dragonHeatlhBehaviour; }
 	}
 
+	private DragonBoostBehaviour m_dragonBoostBehaviour = null;
+	public DragonBoostBehaviour dragonBoostBehaviour
+	{
+		get{ return m_dragonBoostBehaviour; }
+	}
 
 	public float furyProgression
 	{
@@ -152,6 +157,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_dragonEatBehaviour =  GetComponent<PlayerEatBehaviour>();
 		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
+		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
 		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();

@@ -173,6 +173,8 @@ namespace AI {
 			} else {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
+
+			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 				
 			if (m_pilot != null) {
 				if (m_pilot.speed <= 0.01f) {
@@ -251,8 +253,6 @@ namespace AI {
 				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 			}
-
-			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 		}
 
 		private void UpdateVelocity() {

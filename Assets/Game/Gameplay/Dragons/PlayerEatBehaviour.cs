@@ -216,4 +216,9 @@ public class PlayerEatBehaviour : EatBehaviour {
 		m_animator.SetBool("eat", true);
 	}
 
+	public override void PauseEating()
+	{
+		base.PauseEating();
+		m_animator.SetBool("eat", false);
+	}
 }
