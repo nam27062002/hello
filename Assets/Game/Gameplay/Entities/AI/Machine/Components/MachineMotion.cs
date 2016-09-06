@@ -151,6 +151,18 @@ namespace AI {
 				Stop();
 				m_rotation = m_machine.transform.rotation;
 				return;
+			}else if ( m_machine.GetSignal(Signals.Type.Latching) ){
+				Stop();
+
+				UpdateOrientation();
+				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
+				m_machine.transform.rotation = m_rotation;
+				m_machine.transform.position = m_pilot.target;
+
+				m_viewControl.Move(0);
+				m_viewControl.Latching(true);
+				return;	
 			}
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
@@ -161,6 +173,8 @@ namespace AI {
 			} else {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
+
+			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 				
 			if (m_pilot != null) {
 				if (m_pilot.speed <= 0.01f) {
@@ -239,8 +253,6 @@ namespace AI {
 				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 			}
-
-			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 		}
 
 		private void UpdateVelocity() {

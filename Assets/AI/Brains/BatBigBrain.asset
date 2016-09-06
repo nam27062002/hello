@@ -22,7 +22,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   - m_name: Pursuit
     m_componentAssets:
-    - {fileID: 11400000, guid: 3ff23bd6dcc5240d09e52388bceb9084, type: 2}
+    - {fileID: 11400000, guid: f169cd6c920fa43b8876708d78f4a6b2, type: 2}
   - m_name: Latch
     m_componentAssets:
     - {fileID: 11400000, guid: e7b6bdda530fa46c0befd684308ad13e, type: 2}
@@ -30,6 +30,7 @@ MonoBehaviour:
     m_componentAssets:
     - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
     - {fileID: 11400000, guid: cdc2a30fcd81a46a88bcf06ba5b18f47, type: 2}
+    - {fileID: 11400000, guid: e76be2bec77bd450d8b35540a4488860, type: 2}
   m_transitionData:
   - to: 0
     id: onMove
@@ -39,6 +40,9 @@ MonoBehaviour:
     from: 1
   - to: 2
     id: onEnemyInSight
+    from: 0
+  - to: 2
+    id: onEnemyInRange
     from: 0
   - to: 3
     id: onEnemyInRange
@@ -53,6 +57,6 @@ MonoBehaviour:
     id: onEndLatching
     from: 3
   - to: 0
-    id: onRest
+    id: onTimeFinished
     from: 4
   m_firstState: 1

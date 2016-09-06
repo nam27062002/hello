@@ -27,6 +27,7 @@ namespace AI {
 			private Transform m_parent;
 			private float m_timer;
 
+			private Transform m_holdTransform;
 
 			//--------------------------------------------------------
 			public override StateComponentData CreateData() {
@@ -45,6 +46,8 @@ namespace AI {
 				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;
 
 				m_data = m_pilot.GetComponentData<LatchData>();
+				m_eatBehaviour.holdDamage = m_data.damage;
+				m_eatBehaviour.holdDuration = m_data.duration;
 
 				m_transitionParam = new object[1];
 				m_transitionParam[0] = m_data.stunTime; // retreat time
@@ -58,12 +61,17 @@ namespace AI {
 				// Get Target!
 				m_eatBehaviour.StartAttackTarget( InstanceManager.player.transform);
 				m_eatBehaviour.enabled = true;
+				m_eatBehaviour.holdDamage = m_data.damage;
+				m_eatBehaviour.holdDuration = m_data.duration;
 
+				m_holdTransform = null;
 				m_machine.SetSignal(Signals.Type.Latching, true);
 			}
 
 			protected override void OnExit(State _newState) {
 				m_eatBehaviour.enabled = false;
+				m_holdTransform = null;
+				m_pilot.ReleaseAction(Pilot.Action.Latching);
 				m_machine.SetSignal(Signals.Type.Latching, false);
 			}
 
@@ -72,6 +80,23 @@ namespace AI {
 				if ( !m_eatBehaviour.IsLatching() )
 				{
 					Transition(OnBiteFail);
+				}
+				else
+				{
+					m_pilot.PressAction(Pilot.Action.Latching);
+					m_holdTransform = m_eatBehaviour.holdTransform;
+					m_pilot.GoTo( m_holdTransform.position );
+					m_pilot.RotateTo( m_holdTransform.rotation );
+				}
+			}
+
+			protected override void OnUpdate()
+			{
+				base.OnUpdate();
+				if (m_holdTransform)
+				{
+					m_pilot.GoTo( m_holdTransform.position );
+					m_pilot.RotateTo( m_holdTransform.rotation );
 				}
 			}
 

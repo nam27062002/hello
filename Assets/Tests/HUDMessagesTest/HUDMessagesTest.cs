@@ -68,11 +68,12 @@ public class HUDMessagesTest : MonoBehaviour {
 	/// </summary>
 	/// <param name="_type">Type. Doesn't match HUDMessage.Type, careful!</param>
 	public void SimulateMessage(int _type) {
+		string[] randomEntitySkus = {"entity_1", "entity_2", "entity_3"};
 		switch(_type) {
 			case 0:		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, null);		break;
 			case 1:		Messenger.Broadcast(GameEvents.SURVIVAL_BONUS_ACHIEVED);				break;
 			case 2:		Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, 10f, DamageType.CURSE, null);	break;
-			case 3:		Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, (DragonTier)UnityEngine.Random.Range((int)DragonTier.TIER_1, (int)DragonTier.COUNT));	break;
+			case 3:		Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, (DragonTier)UnityEngine.Random.Range((int)DragonTier.TIER_1, (int)DragonTier.COUNT), randomEntitySkus.GetRandomValue());	break;
 
 			case 4:	{
 				Mission m = new Mission();
@@ -82,7 +83,7 @@ public class HUDMessagesTest : MonoBehaviour {
 				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
 			} break;
 
-			case 5:		Messenger.Broadcast<Chest>(GameEvents.CHEST_COLLECTED, null);			break;
+			case 5:		Messenger.Broadcast<Collectible>(GameEvents.CHEST_COLLECTED, null);			break;
 			default:	break;
 		}
 	}

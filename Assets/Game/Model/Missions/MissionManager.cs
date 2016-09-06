@@ -105,7 +105,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	private void Update() 
 	{
 		bool gaming = InstanceManager.GetSceneController<GameSceneController>() != null;
-		m_user.userMissions.CheckActivation(!gaming);
+		if(m_user != null) m_user.userMissions.CheckActivation(!gaming);
 
 		// Propagate to registered listeners
 		OnUpdate();
