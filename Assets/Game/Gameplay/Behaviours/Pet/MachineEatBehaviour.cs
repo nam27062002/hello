@@ -6,8 +6,9 @@ public class MachineEatBehaviour : EatBehaviour {
 	[SerializeField] private DragonTier m_eaterTier;
 	public DragonTier eaterTier { get {return m_eaterTier; }}
 
-	protected void Start() {
+	override protected void Awake() {
 
+		base.Awake();
 		m_canLatchOnPlayer = true;
 
 		m_motion = GetComponent<AI.Machine>();

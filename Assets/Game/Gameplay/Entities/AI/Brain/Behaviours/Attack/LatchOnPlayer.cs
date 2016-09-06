@@ -46,6 +46,8 @@ namespace AI {
 				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;
 
 				m_data = m_pilot.GetComponentData<LatchData>();
+				m_eatBehaviour.holdDamage = m_data.damage;
+				m_eatBehaviour.holdDuration = m_data.duration;
 
 				m_transitionParam = new object[1];
 				m_transitionParam[0] = m_data.stunTime; // retreat time
@@ -59,6 +61,9 @@ namespace AI {
 				// Get Target!
 				m_eatBehaviour.StartAttackTarget( InstanceManager.player.transform);
 				m_eatBehaviour.enabled = true;
+				m_eatBehaviour.holdDamage = m_data.damage;
+				m_eatBehaviour.holdDuration = m_data.duration;
+
 				m_holdTransform = null;
 				m_machine.SetSignal(Signals.Type.Latching, true);
 			}
