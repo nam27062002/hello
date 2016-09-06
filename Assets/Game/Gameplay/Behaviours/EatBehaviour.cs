@@ -72,9 +72,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Hold config
 	protected float m_holdStunTime;
 	protected float m_holdDamage;
+	public float holdDamage{ get{ return m_holdDamage; } set{ m_holdDamage = value; } }
 	protected float m_holdBoostDamageMultiplier;
 	protected float m_holdHealthGainRate;
 	protected float m_holdDuration;
+	public float holdDuration{ get{ return m_holdDuration; } set{ m_holdDuration = value; } }
 
 	// Arc detection values
 	private const float m_minAngularSpeed = 0;
@@ -170,6 +172,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		return m_holdingPlayer != null || (!m_grabbingPrey && m_holdingPrey);
 	}
 
+	public bool IsGrabbing()
+	{
+		return m_grabbingPrey;
+	}
+
 	// Update is called once per frame
 	void Update() 
 	{
@@ -216,7 +223,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// <summary>
 	/// Pauses the eating. End eating what it has in the mouth but does not let anything else in
 	/// </summary>
-	public void PauseEating()
+	public virtual void PauseEating()
 	{
 		m_pauseEating = true;
 		if ( m_holdingPrey != null || m_holdingPlayer != null)
@@ -459,6 +466,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			// Swallow
 			m_holdPreyTimer -= Time.deltaTime;
+			if ( m_holdingPlayer.dragonBoostBehaviour.IsBoostActive() )
+				m_holdPreyTimer -= Time.deltaTime;
 			if ( m_holdPreyTimer <= 0 ) // or prey is death
 			{
 				EndHold();

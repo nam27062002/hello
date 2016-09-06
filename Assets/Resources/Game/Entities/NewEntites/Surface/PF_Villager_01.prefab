@@ -332,7 +332,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 445016}
   - 95: {fileID: 9514502}
-  m_Layer: 21
+  m_Layer: 0
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -783,6 +783,7 @@ Transform:
   m_Children:
   - {fileID: 445016}
   - {fileID: 4000011390334812}
+  - {fileID: 4000011408368702}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &482786
@@ -915,7 +916,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false},{"standUpTime":1.5,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.25,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7.5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false},{"standUpTime":1.5,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
 --- !u!114 &11449904
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -997,6 +998,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_affectedByDragonTrample: 1
   m_enableSensor: 1
   m_sensor:
     m_sightRadius: 10
@@ -1104,6 +1106,24 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 131698}
   m_IsPrefabParent: 1
+--- !u!1 &1000011993423810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011408368702}
+  - 135: {fileID: 135000011831875382}
+  - 114: {fileID: 114000013918191104}
+  - 114: {fileID: 114000012861185118}
+  m_Layer: 16
+  m_Name: trigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000012531856332
 GameObject:
   m_ObjectHideFlags: 0
@@ -1133,6 +1153,19 @@ Transform:
   - {fileID: 436760}
   m_Father: {fileID: 475722}
   m_RootOrder: 1
+--- !u!4 &4000011408368702
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011993423810}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 475722}
+  m_RootOrder: 2
 --- !u!54 &54000010887478324
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -1160,6 +1193,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Human_Spine1
+--- !u!114 &114000012861185118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011993423810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Pelvis
+--- !u!114 &114000013918191104
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011993423810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ec28088696d843d1a86f4d065110df8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_receiver: {fileID: 131698}
+  m_onCollisionEnter: 0
+  m_onCollisionStay: 0
+  m_onCollisionExit: 0
+  m_onTriggerEnter: 1
+  m_onTriggerStay: 1
+  m_onTriggerExit: 1
+--- !u!135 &135000011831875382
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011993423810}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 1.36, z: 0}
 --- !u!136 &136000011231704714
 CapsuleCollider:
   m_ObjectHideFlags: 1
