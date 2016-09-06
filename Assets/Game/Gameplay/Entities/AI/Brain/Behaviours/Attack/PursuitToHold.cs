@@ -45,7 +45,7 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.SetMoveSpeed(m_data.speed);
-				m_pilot.SlowDown(true);
+				m_pilot.SlowDown(false);
 
 				m_targetMachine = null;
 				m_targetEntity = null;
