@@ -8,23 +8,48 @@ public class FireBreathDynamic : MonoBehaviour
 	private int[] m_triangles = null;
 	private Vector3[] m_pos = null;
 	private Vector2[] m_UV = null;
+    private Color[] m_color = null;
 
-	// Meshes
-	private Mesh m_mesh = null;
+    // Meshes
+    private Mesh m_mesh = null;
 
 
 	// Cached components
 	private MeshFilter m_meshFilter = null;
 
-    public float m_distance = 20;
+    public float m_distance = 10;
     public float m_aplitude = 6;
     private float m_splits = 10;
 
     private int m_numPos = 0;
 
     Vector3[] m_whip;
+    Vector3[] m_whipTangent;
+//    bool[] m_whipCollision;
+
+    private int m_collisionSplit = 0;
+
+
+    public Color m_initialColor;
+    public Color m_flameColor;
+    public Color m_collisionColor;
 
     public AnimationCurve m_shapeCurve;
+    public AnimationCurve m_FlameAnimation;
+    public AnimationCurve m_FlexCurve;
+
+
+    public float fireDelay = 1.0f;
+
+
+
+    public string m_groundLayer;
+    public string[] m_enemyLayers;
+
+    private int m_groundLayerMask;
+
+
+    private Vector3 lastInitialPosition;
 
 	// Use this for initialization
 	void Start () 
@@ -32,6 +57,8 @@ public class FireBreathDynamic : MonoBehaviour
 		// Cache
 		m_meshFilter = GetComponent<MeshFilter>();
 		m_numPos = (int)(4 + m_splits * 2);
+
+        m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
 		InitWhip();
 		InitArrays();
@@ -42,28 +69,36 @@ public class FireBreathDynamic : MonoBehaviour
 
         CreateMesh();
 
+        lastInitialPosition = transform.position;
 	}
 
 	void InitWhip()
 	{
 		m_whip = new Vector3[(int)m_splits + 1];
-		float xStep = m_distance / (m_splits + 1);
-		Vector3 move = transform.right.normalized;
+        m_whipTangent = new Vector3[(int)m_splits + 1];
+//        m_whipCollision = new bool[(int)m_splits + 1];
+
+        float xStep = m_distance / (m_splits + 1);
+		Vector3 move = transform.right;
 		Vector3 pos = transform.position;
-		for( int i = 0; i<m_splits + 1; i++ )
+		for( int i = 0; i < (m_splits + 1); i++ )
 		{
 			m_whip[i] = pos + (move * xStep * i);
-		}
-	}
+            m_whipTangent[i] = transform.up;
+//            m_whipCollision[i] = false;
 
+        }
+	}
 	void InitArrays()
 	{	
 		m_pos = new Vector3[m_numPos];
 		m_UV = new Vector2[m_numPos];
-		for( int i = 0;i<m_numPos; i++ )
+        m_color = new Color[m_numPos];
+        for ( int i = 0; i < m_numPos; i++ )
 		{
 			m_pos[i] = Vector3.zero;
 			m_UV[i] = Vector2.zero;
+            m_color[i] = (i < 4) ? m_initialColor : m_flameColor;
 		}
 	}
 
@@ -114,8 +149,8 @@ public class FireBreathDynamic : MonoBehaviour
 			pos++;
 		}
 	}
-
-	void Reshape( /* float angle? */)
+    /*
+	void Reshape( )
 	{
 		m_pos[0] = Vector3.zero;
 		m_pos[1] = Vector3.zero;
@@ -138,50 +173,76 @@ public class FireBreathDynamic : MonoBehaviour
 		// m_pos[m_numPos - 1] = Vector3.right * m_distance + Vector3.down * m_aplitude;
 	}
 
-
+    */
 	void ReshapeFromWhip( /* float angle? */)
 	{
-		m_pos[0] = Vector3.zero;
-		m_pos[1] = Vector3.zero;
+		m_pos[0] = m_pos[1] = Vector3.zero;
 
-		// float xStep = m_distance / (m_splits + 1);
-		// float yStep = m_aplitude / (m_splits + 1);
-
-		Vector3 worldPos = transform.position;
 		int step = 1;
 		int whipIndex = 0;
+        Vector3 newPos1, newPos2;
 
-		for( int i = 2; i<m_numPos; i += 2 )
+        for ( int i = 2; i<m_numPos; i += 2 )
 		{
 			float yDisplacement = m_shapeCurve.Evaluate(step/(float)(m_splits+2)) * m_aplitude;
+            Vector3 whipTangent = transform.InverseTransformDirection(m_whipTangent[whipIndex]);
 
-			m_pos[i] =  transform.InverseTransformPoint(m_whip[whipIndex]);
-			// m_pos[i] += Vector3.up * yStep * step;
-			m_pos[i] += Vector3.up * yDisplacement;
-			// m_pos[i].z = 0;
+            newPos1 = newPos2 = transform.InverseTransformPoint(m_whip[whipIndex]);
 
-			m_pos[i+1] = transform.InverseTransformPoint(m_whip[whipIndex]);
-			// m_pos[i+1] += -Vector3.up * yStep * step;
-			m_pos[i+1] += -Vector3.up * yDisplacement;
-			// m_pos[i+1].z = 0;
+            float kd = m_FlexCurve.Evaluate(whipIndex / m_splits);
 
-			step++;
+            float md = (transform.position.y - lastInitialPosition.y) * kd * fireDelay;
+
+            //            newPos1 += (whipTangent) * (yDisplacement + md);
+            //            newPos2 -= (whipTangent) * (yDisplacement - md);
+
+                        if (transform.right.x < 0.0f)
+                        {
+                            newPos1 += (whipTangent) * (yDisplacement + md);
+                            newPos2 -= (whipTangent) * (yDisplacement - md);
+                        }
+                        else
+                        {
+                            newPos1 += (whipTangent) * (yDisplacement - md);
+                            newPos2 -= (whipTangent) * (yDisplacement + md);
+                        }
+
+//            newPos1 += (whipTangent) * (yDisplacement - md);
+//            newPos2 -= (whipTangent) * (yDisplacement + md);
+
+            //            float kd = 1.0f - (whipIndex / m_splits);
+            //            kd = Mathf.Pow(Mathf.Clamp(kd, 0.0f, 1.0f), 2.0f);
+
+            m_pos[i] = newPos1;
+            m_pos[i + 1] = newPos2;
+
+            if (i > 2)
+            {
+                m_color[i] = m_color[i + 1] = (whipIndex == m_collisionSplit) ? m_collisionColor : m_flameColor;
+            }
+
+            step++;
 			whipIndex++;
 		}
 
-		// m_pos[m_numPos - 2] = Vector3.right * m_distance + Vector3.up * m_aplitude;
-		// m_pos[m_numPos - 1] = Vector3.right * m_distance + Vector3.down * m_aplitude;
-	}
+//        Debug.Log("lastInitialPositionVariation: " + (lastInitialPosition - transform.position).ToString());
+
+        lastInitialPosition = transform.position;
 
 
-	// Recreates the mesh
-	void CreateMesh()
+    }
+
+
+    // Recreates the mesh
+    void CreateMesh()
 	{
 		m_mesh = new Mesh();
 		m_mesh.MarkDynamic();
 
 		m_mesh.vertices = m_pos;
         m_mesh.uv = m_UV;
+        m_mesh.colors = m_color;
+
 
         m_mesh.SetTriangles( m_triangles, 0);
 		// m_mesh.SetIndices(m_triangles, MeshTopology.Triangles, 0);
@@ -193,15 +254,86 @@ public class FireBreathDynamic : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		MoveWhip();
+//        MoveWhip();
+        UpdateWhip();
 		ReshapeFromWhip();
 		InitUVs();
 
 		m_mesh.uv = m_UV;
 		m_mesh.vertices = m_pos;
+        m_mesh.colors = m_color;
 	}
 
-	void MoveWhip()
+
+
+    void UpdateWhip()
+    {
+        RaycastHit hit;
+        Vector3 whipDirection = transform.right;
+        whipDirection.z = 0.0f;
+        whipDirection.Normalize();
+        //        Vector3 whipTangent = transform.up;
+
+        Vector3 whipTangent = Vector3.Cross(Vector3.forward, whipDirection);//transform.up;
+
+        Vector3 whipOrigin = transform.position;
+
+        float flameAnim = m_FlameAnimation.Evaluate(Time.realtimeSinceStartup);
+
+        float xStep = (flameAnim * m_distance) / (m_splits + 1);
+        m_collisionSplit = (int)m_splits + 1;
+
+        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance, m_groundLayerMask))
+        {
+            Vector3 hitNormal = hit.normal;
+            float wn = Vector3.Dot(hitNormal, whipDirection);
+            Vector3 whipReflect = whipDirection - (hitNormal * wn * 2.0f);
+//            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, (whipDirection.x < 0.0f) ? -Vector3.forward: Vector3.forward);
+            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
+            //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
+
+            for (int i = 0; i < m_splits + 1; i++)
+            {
+                float currentDist = (xStep * i);
+
+                if (currentDist < hit.distance)
+                {
+                    m_whip[i] = whipOrigin + (whipDirection * currentDist);
+                    m_whipTangent[i] = whipTangent;
+//                    m_whipCollision[i] = false;
+                }
+                else if (currentDist < (hit.distance + xStep))
+                {
+                    m_whip[i] = hit.point;
+                    m_whipTangent[i] = whipTangent;    // (whipTangent + whipReflectTangent).normalized;
+//                    m_whipCollision[i] = true;
+                    m_collisionSplit = i;
+                }
+                else
+                {
+                    m_whip[i] = hit.point + ((currentDist - hit.distance) * whipReflect);
+                    m_whipTangent[i] = whipReflectTangent;
+//                    m_whipCollision[i] = false;
+                }
+
+            }
+        }
+        else
+        {
+            for (int i = 0; i < m_splits + 1; i++)
+            {
+                float currentDist = (xStep * i);
+                m_whip[i] = whipOrigin + (whipDirection * currentDist);
+                m_whipTangent[i] = whipTangent;
+//                m_whipCollision[i] = false;
+            }
+        }
+
+//        MoveWhip();
+    }
+
+
+    void MoveWhip()
 	{
 		float xStep = m_distance / (m_splits + 1);
 		Vector3 move = transform.right.normalized;
@@ -209,7 +341,7 @@ public class FireBreathDynamic : MonoBehaviour
 		for( int i = 0; i<m_splits + 1; i++ )
 		{
 			Vector3 shouldBePos = pos + move * xStep * (i+1);
-			m_whip[i] = Vector3.Lerp( m_whip[i], shouldBePos, (1.5f - (i/m_splits)) * Time.deltaTime * 10);
+			m_whip[i] = Vector3.Lerp( m_whip[i], shouldBePos, (1.25f - (i/m_splits)) * Time.deltaTime * 15.0f);
 		}
 	}
 }
