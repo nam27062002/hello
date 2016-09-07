@@ -3,6 +3,8 @@ using System.Collections;
 
 abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
+	public const string ENTITY_PREFABS_PATH = "Game/Entities/NewEntites/";
+
 	private int m_allowEdible;
 	public bool allowEdible { get { return m_allowEdible == 0; } set { if (value) { m_allowEdible = Mathf.Max(0, m_allowEdible - 1); } else { m_allowEdible++; } } }
 
