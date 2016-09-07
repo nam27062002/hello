@@ -230,6 +230,7 @@ GameObject:
   - 114: {fileID: 11425004}
   - 54: {fileID: 54000013900218966}
   - 136: {fileID: 136000014075825026}
+  - 114: {fileID: 114000013200702288}
   m_Layer: 22
   m_Name: PF_EnemyRhino
   m_TagString: Untagged
@@ -2126,7 +2127,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":14,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":30,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3.5,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":14,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":30,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":35,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!114 &11492604
@@ -2322,6 +2323,22 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114000013200702288
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ecedc79e668a408395849ca8a7a9c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frameWidthIncrement: 20
+  frameMeAndPlayer: 0
+  radius: 0
+  detectType: 1
+  m_minPerformanceRatingToUse: 0.4
 --- !u!136 &136000014075825026
 CapsuleCollider:
   m_ObjectHideFlags: 1
