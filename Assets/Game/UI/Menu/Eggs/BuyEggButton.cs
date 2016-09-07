@@ -35,7 +35,7 @@ public class BuyEggButton : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Set price
-		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_STANDARD_EGG);
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
 		m_priceText.text = StringUtils.FormatNumber(eggDef.GetAsInt("pricePC"));
 	}
 
@@ -50,7 +50,7 @@ public class BuyEggButton : MonoBehaviour {
 		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Get price and start purchase flow
-		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_STANDARD_EGG);
+		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
 		long pricePC = eggDef.GetAsLong("pricePC");
 		if(UsersManager.currentUser.pc >= pricePC) {
 			// Perform transaction
