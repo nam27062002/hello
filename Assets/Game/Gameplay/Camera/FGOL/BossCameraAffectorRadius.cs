@@ -55,18 +55,19 @@ public class BossCameraAffectorRadius : MonoBehaviour
 		RemoveBossCam();
 	}
 
-	protected void OnTriggerEnter()
+	protected void OnTriggerEnter( Collider _collider )
 	{
 		// leaving this check here to be absolutely sure that nothing will go wrong...
-		if(!m_bca.permanentlyDisabled)
+		if(!m_bca.permanentlyDisabled && _collider.tag == "Player")
 		{
 			NotifyBossCam();
         }
 	}
 
-	protected void OnTriggerExit()
+	protected void OnTriggerExit(Collider _collider)
 	{
-		RemoveBossCam();
+		if (_collider.tag == "Player")
+			RemoveBossCam();
 	}
 
 	//--------------------------------------------------------
