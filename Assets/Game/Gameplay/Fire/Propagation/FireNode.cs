@@ -14,6 +14,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	[SerializeField] private string m_breathHitParticle = "PF_FireHit";
 	[SerializeField] private bool m_hitParticleMatchDirection = false;
 	[SeparatorAttribute]
+	[SerializeField] private float m_hitRadius = 0f;
 	[SerializeField] private float m_resistanceMax = 25f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerSecond = 6f;
@@ -22,6 +23,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	{
 		get{ return m_burningTime; }
 	}
+
+	private CircleAreaBounds m_area;
+	public CircleAreaBounds area { get { return m_area; } }
 
 	private List<FireNode> m_neighbours;
 	private State m_state;
@@ -51,6 +55,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_reward = new Reward();
 		m_reward.coins = 0;
 		m_reward.origin = "firenode";
+
+		m_area = new CircleAreaBounds(transform.position, m_hitRadius);
 
 		// get two closets neighbours
 		FindNeighbours();
@@ -225,7 +231,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	void OnDrawGizmosSelected() {
-		Gizmos.color = Color.magenta;
-		Gizmos.DrawSphere(transform.position, 0.25f);
+		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.75f);
+		Gizmos.DrawSphere(transform.position, 0.5f);
+
+		Gizmos.color = Colors.fuchsia;
+		Gizmos.DrawWireSphere(transform.position, m_hitRadius);
 	}
 }
