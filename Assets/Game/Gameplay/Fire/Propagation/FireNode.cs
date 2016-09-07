@@ -173,14 +173,14 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void StartFire() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("FireSprite");
+			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc");
 
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = m_fireSpriteScale;
 			m_fireSpriteDestinationScale = transform.localScale * Random.Range( 0.55f, 1.45f);
 			m_fireSprite.transform.localRotation = transform.localRotation;
 
-			if (Random.Range(0,100) > 50) {
+			/*if (Random.Range(0,100) > 50) {
 				m_fireSprite.transform.Rotate(Vector3.up, 180, Space.Self);
 				// Move child!!
 				if (m_fireSprite.transform.childCount > 0) {
@@ -191,6 +191,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			}
 
 			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(1f, 2f));
+			*/
 		}
 	}
 

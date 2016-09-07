@@ -200,7 +200,6 @@ namespace AI {
 					if (m_isGrounded != isGrounded) {
 						if (m_isGrounded) {
 							m_velocity = Vector3.zero; // reset velocity when reaching ground
-							Debug.Log("reset!");
 						}
 						m_isGrounded = isGrounded;
 					}
