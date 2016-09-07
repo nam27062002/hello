@@ -850,6 +850,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: 110193190}
   - {fileID: 110139462}
+  - {fileID: 1101000011275756934}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -1232,23 +1233,23 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 110232812}
-    m_Position: {x: 48, y: 24, z: 0}
+    m_Position: {x: 120, y: 156, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110210306}
-    m_Position: {x: 48, y: -84, z: 0}
+    m_Position: {x: 120, y: -132, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110282564}
-    m_Position: {x: -192, y: 156, z: 0}
+    m_Position: {x: -156, y: 96, z: 0}
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 110720518}
-    m_Position: {x: -192, y: 12, z: 0}
+    m_Position: {x: -156, y: 12, z: 0}
   - serializedVersion: 1
     m_StateMachine: {fileID: 110773040}
-    m_Position: {x: 300, y: 24, z: 0}
+    m_Position: {x: 384, y: 12, z: 0}
   - serializedVersion: 1
     m_StateMachine: {fileID: 1107000012416743666}
-    m_Position: {x: 48, y: 156, z: 0}
+    m_Position: {x: 120, y: 12, z: 0}
   m_AnyStateTransitions:
   - {fileID: 110129672}
   m_EntryTransitions: []
@@ -1260,9 +1261,9 @@ AnimatorStateMachine:
       first: {fileID: 110773040}
       second: []
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: -396, y: 156, z: 0}
+  m_AnyStatePosition: {x: -132, y: 180, z: 0}
   m_EntryPosition: {x: -396, y: 12, z: 0}
-  m_ExitPosition: {x: -240, y: 228, z: 0}
+  m_ExitPosition: {x: -396, y: 60, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 110255668}
 --- !u!1109 &110902104
@@ -1408,6 +1409,30 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.95555556
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
+--- !u!1101 &1101000011275756934
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: falling
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 1102000011480785124}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.25
+  m_TransitionOffset: 0
+  m_ExitTime: 0.94545454
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0

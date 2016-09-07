@@ -51,9 +51,8 @@ public class InflammableDecoration : Initializable {
 
 		int coinsPerNode = coins / m_fireNodes.Length;
 
-		DragonBreathBehaviour breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
-		bool _canBeBurned = breath.CanBurn( this );
-		m_shouldExplode = breath.ShouldExplode( this );
+		bool _canBeBurned = FirePropagationManager.CanBurn(this);
+		m_shouldExplode = FirePropagationManager.ShouldExplode(this);
 		for (int i = 0; i < m_fireNodes.Length - 1; i++) {
 			m_fireNodes[i].Init(coinsPerNode, _canBeBurned);
 		}

@@ -16,37 +16,40 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------//
 public class UserMissions
 {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+    //------------------------------------------------------------------//
+    // CONSTANTS														//
+    //------------------------------------------------------------------//
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
+    //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//
 
-	// Content
-	// [AOC] TEMP!! Eventually it will be replaced by procedural generation
-	private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT];	// Pointing to the definition to be generated next
+    // Content
+    // [AOC] TEMP!! Eventually it will be replaced by procedural generation
+    private int[] m_generationIdx = new int[(int)Mission.Difficulty.COUNT]; // Pointing to the definition to be generated next
 
-	// Active missions
-	// [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
-	private Mission[] m_missions = new Mission[(int)Mission.Difficulty.COUNT];
+    // Active missions
+    // [AOC] Expose it if you want to see current missions content (alternatively switch to debug inspector)
+    private Mission[] m_missions = new Mission[(int)Mission.Difficulty.COUNT];
 
 
-	// Necessary info for the user missions to work
-	private int m_ownedDragons;
-	public int ownedDragons
-	{
-		set{ m_ownedDragons = value; }
-	}
+    // Necessary info for the user missions to work
+    private int m_ownedDragons;
+    public int ownedDragons
+    {
+        set { m_ownedDragons = value; }
+    }
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+    // Returns the amount of missions completed by the user since so far. This counter is used to meassure the user's progress
+    public int missionsCompletedAmount { get; set; }
+    
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
 
-	/// <summary>
-	/// </summary>
-	public void CheckActivation(bool canActivate = true) 
+    /// <summary>
+    /// </summary>
+    public void CheckActivation(bool canActivate = true) 
 	{
 		for(int i = 0; i < m_missions.Length; i++) 
 		{
@@ -298,7 +301,11 @@ public class UserMissions
 				m_missions[i].Load(activeMissions[i]);
 			}
 		}
-	}
+
+        // Amount of missions completed by the user so far
+        string key = "missionsCompletedAmount";
+        missionsCompletedAmount = _data.ContainsKey(key) ? _data["missionsCompletedAmount"].AsInt : 0;
+    }
 	
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
@@ -315,8 +322,11 @@ public class UserMissions
 		}
 		data.Add("activeMissions", missions);
 
-		// Generation Index
-		SimpleJSON.JSONArray idxs = new SimpleJSON.JSONArray();
+        // Amount of missions completed by the user so far
+        data.Add("missionsCompletedAmount", missionsCompletedAmount + "");
+
+        // Generation Index
+        SimpleJSON.JSONArray idxs = new SimpleJSON.JSONArray();
 		for( int i = 0; i<m_generationIdx.Length; i++ )
 			idxs.Add( m_generationIdx[i].ToString() );
 

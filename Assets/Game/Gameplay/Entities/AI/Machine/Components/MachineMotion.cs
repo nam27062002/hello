@@ -173,11 +173,14 @@ namespace AI {
 			} else {
 				m_viewControl.Panic(false, m_machine.GetSignal(Signals.Type.Burning));
 			}
+
+			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 				
 			if (m_pilot != null) {
 				if (m_pilot.speed <= 0.01f) {
 					if (m_useGravity) {
-						if (m_isGrounded) Stop();
+						if (m_isGrounded && !m_machine.GetSignal(Signals.Type.FallDown)) 
+							Stop();
 					} else {
 						Stop();
 					}
@@ -197,6 +200,7 @@ namespace AI {
 					if (m_isGrounded != isGrounded) {
 						if (m_isGrounded) {
 							m_velocity = Vector3.zero; // reset velocity when reaching ground
+							Debug.Log("reset!");
 						}
 						m_isGrounded = isGrounded;
 					}
@@ -251,8 +255,6 @@ namespace AI {
 				m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 				m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 			}
-
-			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 		}
 
 		private void UpdateVelocity() {

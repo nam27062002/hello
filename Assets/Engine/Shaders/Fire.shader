@@ -24,6 +24,7 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
+				float4 color : COLOR;
 				float2 uv : TEXCOORD0;
 			};
 
@@ -32,6 +33,7 @@
 				float2 uv : TEXCOORD0;
 				float2 noiseUV : TEXCOORD1;
 				float4 vertex : SV_POSITION;
+				float4 color : COLOR;
 			}; 
 
 			sampler2D _MainTex;
@@ -44,8 +46,9 @@
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.color = v.color;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.noiseUV = TRANSFORM_TEX(  v.uv + float2( 0, -_Time.y ) , _NoiseTex);
+				o.noiseUV = TRANSFORM_TEX(  v.uv + float2( 0, -_Time.y * 5.0) , _NoiseTex);
 				return o;
 			}
 			
@@ -56,7 +59,7 @@
 				noise.g = noise.g * i.uv.y;
 				noise.r = 0;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
-				return col;
+				return col * i.color;
 			}
 			ENDCG
 		}
