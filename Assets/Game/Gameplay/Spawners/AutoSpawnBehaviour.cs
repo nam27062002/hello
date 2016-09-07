@@ -25,9 +25,12 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		}
 	}
 
-	private float m_timer;
+	private float m_respawnTime;
 
 	private Bounds m_bounds; // view bounds
+
+	// Scene referemces
+	private GameSceneControllerBase m_gameSceneController = null;
 
 	public AreaBounds area{ get {return null;} }
 	public IGuideFunction guideFunction{ get {return null;} }
@@ -41,6 +44,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		SpawnerManager.instance.Register(this);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
+		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
 		GameObject viewBurned = transform.FindChild("view_burned").gameObject;
 		Collider collider = GetComponent<Collider>();
@@ -61,16 +65,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	public void CheckRespawn() {
 		if (m_state == State.Respawning) {
-			if (m_timer > 0) {
-				m_timer -= Time.deltaTime;
-				if (m_timer < 0) {
-					m_timer = 0;
-				}
-			} else {
-				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
-				
-				if (isInsideActivationArea) 
-				{
+			if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
+				//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);				
+				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
+				if (isInsideActivationArea) {
 					Spawn();
 				}
 			}
@@ -78,7 +76,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 
 	public void Respawn() {
-		m_timer = m_spawnTime;
+		// Program the next spawn time
+		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
 		m_state = State.Respawning;
 	}
 		

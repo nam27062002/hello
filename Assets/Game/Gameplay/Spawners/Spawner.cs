@@ -191,6 +191,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 						reward.score = (int)(m_flockBonus * m_entitiesKilled);
 						Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
 					}
+
+					// Program the next spawn time
+					m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 				} else {
 					m_respawnTime = -1; // instant respawn, because player didn't kill all the entities
 				}
@@ -374,8 +377,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		m_allEntitiesKilledByPlayer = false;
 
-		// Program the next spawn time
-		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+		m_respawnTime = -1;
 	}
 
 	protected virtual AreaBounds GetArea() {
