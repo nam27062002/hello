@@ -23,7 +23,13 @@ public class PopupMessage : MonoBehaviour
     public class Config
     {
         public string TitleTid { get; set; }
-        public string MessageTid { get; set; }      
+        public string MessageTid { get; set; } 
+        public string[] MessageParams { get; set; }
+
+        // Use should use these properties instead of the ones defined above if you need to write a text directly. Using tids is the recommended approach, you should use these properties only
+        // in exceptional cases when you don't have t
+        public string TitleText { get; set; }
+        public string MessageText { get; set; }
 
         public string ConfirmButtonTid { get; set; }
         public Action OnConfirm { get; set; }
@@ -31,20 +37,52 @@ public class PopupMessage : MonoBehaviour
         public string CancelButtonTid { get; set; }
         public Action OnCancel { get; set; }
 
+        public string ExtraButtonTid { get; set; }
+        public Action OnExtra { get; set; }
+
         public enum EButtonsMode
         {
             None,
             Confirm,
-            ConfirmAndCancel
+            ConfirmAndCancel,
+            ConfirmAndExtraAndCancel
+
         };
         public EButtonsMode ButtonMode { get; set; }
-
+        
         public Config()
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
+            TitleTid = null;
+            MessageTid = null;
+            MessageParams = null;
+            TitleText = null;
+            MessageText = null;
             ConfirmButtonTid = "TID_GEN_OK";
+            OnConfirm = null;
             CancelButtonTid = "TID_GEN_CANCEL";
+            OnCancel = null;
             ButtonMode = EButtonsMode.None;
         }
+    }
+
+    public static Config sm_config;
+    public static Config GetConfig()
+    {
+        if (sm_config == null)
+        {
+            sm_config = new Config();
+        }
+        else
+        {
+            sm_config.Reset();
+        }
+
+        return sm_config;
     }
 
     public static readonly string PATH = "UI/Popups/Message/PF_PopupMessage";
@@ -75,6 +113,7 @@ public class PopupMessage : MonoBehaviour
 
     private Config m_config;    
 
+    private bool IsInited { get; set; }
     private void Awake()
     {        
         DebugUtils.Assert(m_titleText != null, "Required field!");
@@ -85,25 +124,69 @@ public class PopupMessage : MonoBehaviour
         DebugUtils.Assert(m_buttonConfirmCenterText != null, "Required field!");
         DebugUtils.Assert(m_buttonConfirmRightText != null, "Required field!");
 
-        // The listeners are added here to make sure they will be added only once
-        m_buttonCancel.onClick.AddListener(OnCancel);
-        m_buttonConfirmCenter.onClick.AddListener(OnConfirm);
+        IsInited = false;
+
+        m_buttonCancel.onClick.AddListener(OnCancel);        
         m_buttonConfirmRight.onClick.AddListener(OnConfirm);
+    }    
+
+    private void Reset()
+    {
+        if (m_config != null)
+        {
+            if (m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel)
+            {
+                m_buttonConfirmCenter.onClick.RemoveListener(OnExtra);
+            }
+            else if (m_config.ButtonMode == Config.EButtonsMode.Confirm)
+            {
+                m_buttonConfirmCenter.onClick.RemoveListener(OnConfirm);
+            }
+        }        
     }
 
     private void Start()
     {
 #if UNITY_EDITOR        
         // Only for testing purposes        
-        //Test_Open();
+        //Test_Open();        
 #endif
     }
 
     public void Configure(Config config)
     {
+        if (m_config != null)
+        {
+            Reset();
+        }
+
         m_config = config;
-        m_titleText.Localize(m_config.TitleTid);
-        m_messageText.Localize(m_config.MessageTid);
+
+        // Tid has priority over the plain text
+        if (m_config.TitleTid != null)
+        {
+            m_titleText.Localize(m_config.TitleTid);
+        }
+        else if (m_config.TitleText != null)
+        {
+            m_titleText.text.text = m_config.TitleText;
+        }
+
+        if (m_config.MessageTid != null)
+        {
+            if (m_config.MessageParams == null)
+            {
+                m_messageText.Localize(m_config.MessageTid);
+            }
+            else
+            {
+                m_messageText.Localize(m_config.MessageTid, m_config.MessageParams);
+            }
+        }
+        else if (m_config.MessageText != null)
+        {
+            m_messageText.text.text = m_config.MessageText;
+        }
 
         // All buttons disabled by default since the required ones will be enabled depending on the button mode
         m_buttonCancel.gameObject.SetActive(false);
@@ -116,11 +199,13 @@ public class PopupMessage : MonoBehaviour
             {
                 // Center button chosen since there's only one
                 m_buttonConfirmCenter.gameObject.SetActive(true);                
-                m_buttonConfirmCenterText.Localize(m_config.ConfirmButtonTid);                
+                m_buttonConfirmCenterText.Localize(m_config.ConfirmButtonTid);
+                m_buttonConfirmCenter.onClick.AddListener(OnConfirm);
             }
             break;
 
             case Config.EButtonsMode.ConfirmAndCancel:
+            case Config.EButtonsMode.ConfirmAndExtraAndCancel:
             {
                 // Cancel button
                 m_buttonCancel.gameObject.SetActive(true);                    
@@ -129,6 +214,13 @@ public class PopupMessage : MonoBehaviour
                 // Confirm button: the right button is used because there are two buttons
                 m_buttonConfirmRight.gameObject.SetActive(true);
                 m_buttonConfirmRightText.Localize(m_config.ConfirmButtonTid);                
+
+                if (m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel)
+                {
+                    m_buttonConfirmCenter.gameObject.SetActive(true);
+                    m_buttonConfirmCenterText.Localize(m_config.ExtraButtonTid);
+                    m_buttonConfirmCenter.onClick.AddListener(OnExtra);
+                }
             }
             break;
         }       
@@ -155,6 +247,16 @@ public class PopupMessage : MonoBehaviour
         if (m_config != null && m_config.OnCancel != null)
         {
             m_config.OnCancel();
+        }
+
+        Close();
+    }
+
+    public void OnExtra()
+    {
+        if (m_config != null && m_config.OnExtra != null)
+        {
+            m_config.OnExtra();
         }
 
         Close();
@@ -200,7 +302,7 @@ public class PopupMessage : MonoBehaviour
 
     private void Test_ConfigNoButtons()
     {
-        Config config = new Config();
+        Config config = GetConfig();
         config.TitleTid = "TID_DRAGON_BALROG_NAME";
         config.MessageTid = "TID_DRAGON_BALROG_DESC";
         Configure(config);
@@ -217,9 +319,9 @@ public class PopupMessage : MonoBehaviour
 
     private void Test_ConfigConfirm()
     {
-        Config config = new Config();
+        Config config = GetConfig();
         config.TitleTid = "TID_DRAGON_BALROG_NAME";
-        config.MessageTid = "TID_DRAGON_BALROG_DESC";
+        config.MessageTid = "TID_DRAGON_BALROG_DESC";        
         config.ButtonMode = Config.EButtonsMode.Confirm;
         config.OnConfirm = Test_OnConfirm;
         Configure(config);
@@ -227,7 +329,7 @@ public class PopupMessage : MonoBehaviour
 
     private void Test_ConfigConfirmAndCancel()
     {
-        Config config = new Config();
+        Config config = GetConfig();
         config.TitleTid = "TID_DRAGON_BALROG_NAME";
         config.MessageTid = "TID_DRAGON_BALROG_DESC";
         config.ButtonMode = Config.EButtonsMode.ConfirmAndCancel;

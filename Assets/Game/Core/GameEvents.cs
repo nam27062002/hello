@@ -85,19 +85,11 @@ public enum GameEvents {
 	EGG_OPENED,					// params: Egg _egg				// [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
 
 	// GameServerManager events
-	LOGGED,						// params: bool
-	NEW_SAVE_DATA_FROM_SERVER,	
+	LOGGED,						// params: bool	
 
 	// Social Platform Manager Events
-	SOCIAL_LOGGED,				// params: bool
-
-	// Syncing events
-	GOOD_PLACE_TO_SYNCH,
-	NO_SYNCHING,
-
-	//
-	MERGE_SERVER_SAVE_DATA,
-
+	SOCIAL_LOGGED,				// params: bool	
+	
 	// UI events
 	INGAME_PC_FEEDBACK_END,		// no params
 

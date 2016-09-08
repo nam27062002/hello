@@ -99,4 +99,20 @@ public class DebugUtils {
 	static public bool SoftAssert(bool _checkCondition, string _message) {
 		return DebugUtils.Assert(_checkCondition, _message);
 	}
+
+#if !ENABLE_LOG || PRODUCTION
+    [Conditional("FALSE")]
+#endif
+    public static void LogException(System.Exception exception)
+    {
+        UnityEngine.Debug.LogException(exception);
+    }
+
+#if !ENABLE_LOG || PRODUCTION
+    [Conditional("FALSE")]
+#endif
+    public static void LogException(System.Exception exception, UnityEngine.Object context)
+    {
+        UnityEngine.Debug.LogException(exception, context);
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 
 public class PopupMergeProfilePill : MonoBehaviour 
@@ -16,12 +17,14 @@ public class PopupMergeProfilePill : MonoBehaviour
 
 	UserProfile m_profile;
 
-	public void Setup( UserProfile _profile, UserProfile _profileToCompare )
+	public void Setup(ProgressComparatorSystem _progress, ProgressComparatorSystem _progressToCompare )
 	{
-		m_profile = _profile;
+		m_profile = _progress.UserProfile;    
+        UserProfile _profileToCompare = _progressToCompare.UserProfile;
 
-		m_name.text = _profile.saveTimestamp.ToString("G", LocalizationManager.SharedInstance.Culture);
-		m_name.color = (_profile.saveTimestamp.CompareTo(_profileToCompare.saveTimestamp) > 0 ? m_highlightTextColor : m_normalTextColor);
+        //m_name.text = _profile.timePlayed.ToString("G", LocalizationManager.SharedInstance.Culture);
+        m_name.text = GetTimeString(_progress.lastModified);
+		m_name.color = (_progress.lastModified > _progressToCompare.lastModified) ? m_highlightTextColor : m_normalTextColor;
 
 		m_softCurrency.text = StringUtils.FormatNumber(m_profile.coins);
 		m_softCurrency.color = (m_profile.coins > _profileToCompare.coins ? m_highlightTextColor : m_normalTextColor);
@@ -41,4 +44,13 @@ public class PopupMergeProfilePill : MonoBehaviour
 		);
 		m_dragons.color = (dragons1 > dragons2 ? m_highlightTextColor : m_normalTextColor);
 	}
+
+    private string GetTimeString(int unixTimeStamp)
+    {
+        //TODO Localize?
+        DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+        dt = dt.AddSeconds(unixTimeStamp).ToLocalTime();
+        //return dt.ToString("F");
+        return dt.ToString("G");
+    }
 }

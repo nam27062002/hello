@@ -1,0 +1,180 @@
+﻿/// <summary>
+/// This class is responsible for implementing the <c>Authenticator</c>interface by using Calety.
+/// </summary>
+
+using FGOL.Authentication;
+using FGOL.Server;
+using System;
+using System.Collections.Generic;
+public class AuthenticatorCalety : Authenticator
+{
+    protected override void ExtendedCheckConnection(Action<Error> callback)
+    {
+        GameServerManager.SharedInstance.Ping(callback);
+    }
+
+    public override void Authenticate(string fgolID, User.LoginCredentials credentials, User.LoginType network, Action<Error, AuthResult> callback)
+    {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+        parameters["authMethod"] = network.ToString();
+        parameters["deviceToken"] = Token.ToString();
+
+        if (!string.IsNullOrEmpty(fgolID))
+        {
+            parameters["fgolID"] = fgolID;
+        }
+
+        // [DGR] Not supported yet
+        //parameters["credentials"] = Json.Serialize(credentials.ToDictionary());
+
+        Log("Authenticate " + network.ToString() + " socialID = " + credentials.socialID);
+        GameServerManager.SharedInstance.LogInToServerThruPlatform(network.ToString(), credentials.socialID, credentials.accessToken, 
+            delegate (Error commandError, Dictionary<string, object> response)
+            {
+                Log("OnLoginToServerThruPlatform " + commandError);
+                if (commandError == null)
+                {
+                    //string[] requiredParams = new string[] { "cloudCredentials", "cloudCredentialsExpiry", "fgolID", "savePath", "bucket", "sessionToken", "sessionExpiry", "socialExpiry", "authState", "cloudSaveAvailable" };
+
+                    // [DGR] Not needed yet
+                    //if (Commander.IsValidResponse(response, requiredParams))
+                    {
+                        AuthResult result = new AuthResult();
+                        result.fgolID = response["fgolID"] as string;
+                        /*
+                        result.cloudSaveLocation = response["savePath"] as string;
+                        result.cloudSaveBucket = response["bucket"] as string;
+                        */
+                        result.sessionToken = response["sessionToken"] as string;
+                        /*result.sessionExpiry = Convert.ToInt32(response["sessionExpiry"]);
+                        result.cloudCredentials = response["cloudCredentials"] as Dictionary<string, object>;
+                        result.cloudCredentialsExpiry = Convert.ToInt32(response["cloudCredentialsExpiry"]);
+                        result.socialExpiry = Convert.ToInt32(response["socialExpiry"]);
+                        */
+                        result.authState = (AuthState)Enum.Parse(typeof(AuthState), response["authState"] as string);
+                        result.upgradeAvailable = response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);
+                        //result.cloudSaveAvailable = Convert.ToBoolean(response["cloudSaveAvailable"]);
+                        result.cloudSaveAvailable = true;
+
+                        callback(null, result);
+
+                        /*if (OnLoggedIn != null)
+                        {
+                            OnLoggedIn();
+                        }*/
+                    }
+                    /*else
+                    {
+                        callback(new InvalidServerResponseError("Missing response params: " + string.Join(",", requiredParams)), null);
+                    }*/
+                }
+                else
+                {
+                    Log("OnLoginToServerThruPlatform error = " + commandError.ToString());
+                    callback(commandError, null);
+                }
+            }
+        );        
+    }
+
+    public override void Logout(Action<Error> callback)
+    {
+        GameServerManager.SharedInstance.LogOut(callback);
+    }
+
+    public override void GetServerTime(Action<Error, string, int> onGetServerTime)
+    {
+        GameServerManager.SharedInstance.GetServerTime(
+            delegate (Error commandError, Dictionary<string, object> response)
+            {
+                string dateTimeNow = null;
+                int unixTimestamp = -1;
+
+                if (commandError == null)
+                {
+                    if (response != null && response.ContainsKey("dateTime") && response.ContainsKey("unixTimestamp"))
+                    {
+                        dateTimeNow = response["dateTime"] as string;
+
+                        try
+                        {
+                            unixTimestamp = Convert.ToInt32(response["unixTimestamp"]);
+                        }
+                        catch (Exception) { }
+                    }
+                    else
+                    {
+                        commandError = new InvalidServerResponseError("Response not as expected");
+                    }
+                }
+
+                onGetServerTime(commandError, dateTimeNow, unixTimestamp);
+            }
+        );
+    }
+
+    public override void UpdateSaveVersion(bool preliminary, Action<Error, int> onUpdate)
+    {
+        Dictionary<string, string> parameters = new Dictionary<string, string>
+            {
+                { "fgolID", User.ID }
+            };
+
+        if (preliminary)
+        {
+            parameters["prelimUpdate"] = preliminary.ToString();
+        }
+
+        GameServerManager.SharedInstance.UpdateSaveVersion(preliminary,
+            delegate (Error commandError, Dictionary<string, object> response)
+            {
+                //string dateTimeNow = null;
+                int unixTimestamp = -1;
+
+                if (commandError == null)
+                {
+                    if (response != null && response.ContainsKey("dateTime") && response.ContainsKey("unixTimestamp"))
+                    {
+                        //dateTimeNow = response["dateTime"] as string;
+
+                        try
+                        {
+                            unixTimestamp = Convert.ToInt32(response["unixTimestamp"]);
+                        }
+                        catch (Exception) { }
+                    }
+                    else
+                    {
+                        commandError = new InvalidServerResponseError("Response not as expected");
+                    }
+
+                }
+
+                onUpdate(commandError, unixTimestamp);
+            }
+        );      
+    }
+
+    #region log
+    private const string PREFIX = "AuthenticatorCalety:";
+
+    private void Log(string message)
+    {
+        //Debug.Log(PREFIX + message);
+        Facebook.Unity.FacebookLogger.Info(PREFIX + message);
+    }
+
+    private void LogWarning(string message)
+    {
+        Log(message);
+        //Debug.LogWarning(PREFIX + message);
+    }
+
+    private void LogError(string message)
+    {
+        Log(message);
+        //Debug.LogError(PREFIX + message);
+    }
+    #endregion
+}
