@@ -10,6 +10,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	private List<FireNode> m_fireNodesLogic;
 	private AudioSource m_fireNodeAudio;
 	private DragonBreathBehaviour m_breath;
+	private DefinitionNode m_decorationEffects = null;
 	
 	private float m_timer;
 
@@ -29,13 +30,16 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	}
 
 	void Start() {
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FireSprite"), 25, true);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireNewProc"), 25, true);
+
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FireSprite_a"), 25, true);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/FireSprite_b"), 25, true);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/SmokeParticle"), 25, true);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/BurnParticle"), 25, true);
 
 		// get player breath component
+		m_decorationEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "tier", InstanceManager.player.data.tierDef.sku);
+
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 		m_timer = m_checkFireTime;
 	}
@@ -54,7 +58,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 
 				for (int i = 0; i < nodes.Length; i++) {
 					FireNode fireNode = nodes[i];
-					if (m_breath.IsInsideArea(fireNode.transform.position)) 
+					if (m_breath.Overlaps(fireNode.area)) 
 					{
 						// Check if I can burn this fire Node
 						if ( fireNode.canBurn || m_breath.type == DragonBreathBehaviour.Type.Super )
@@ -89,8 +93,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	/// Inserts the burning. Registers a burning fire node while on fire
 	/// </summary>
 	/// <param name="_fireNode">Fire node.</param>
-	public static void InsertBurning( Transform _fireNode )
-	{
+	public static void InsertBurning(Transform _fireNode) {
 		instance.m_burningFireNodes.Add( _fireNode );
 		if(!instance.m_fireNodeAudio.isPlaying)
 			instance.m_fireNodeAudio.Play();
@@ -100,13 +103,31 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	/// Removes the burning fire node from the registered burning list
 	/// </summary>
 	/// <param name="_fireNode">Fire node.</param>
-	public static void RemoveBurning( Transform _fireNode)
-	{
-		instance.m_burningFireNodes.Remove( _fireNode );
-		if ( instance.m_burningFireNodes.Count <= 0 )
+	public static void RemoveBurning( Transform _fireNode) {
+		instance.m_burningFireNodes.Remove(_fireNode);
+		if (instance.m_burningFireNodes.Count <= 0)
 			instance.m_fireNodeAudio.Stop();
 	}
 
+
+	public static bool CanBurn(InflammableDecoration _decoration) {
+		if (instance.m_decorationEffects != null) {
+			string param = instance.m_decorationEffects.Get(_decoration.sku, "");
+			if (param.Equals("explode") || param.Equals("true"))
+				return true;
+		}
+		return true;
+		//return false;
+	}
+
+	public static bool ShouldExplode(InflammableDecoration _decoration) {
+		if (instance.m_decorationEffects != null) {
+			string param = instance.m_decorationEffects.Get(_decoration.sku, "");
+			if (param.Equals("explode"))
+				return true;
+		}
+		return false;
+	}
 
 	// :3
 	void OnDrawGizmosSelected() {

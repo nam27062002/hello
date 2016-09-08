@@ -40,14 +40,13 @@ namespace AI {
 		private bool m_willPlayEatenSound;
 
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
-									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } 
-								}
+									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
 
-		public Vector3 target	 { 	get { return m_pilot.target; } }
-		public Vector3 direction { 	get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Vector3 upVector  { 	get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
-		public Vector3 velocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
-		public Vector3 angularVelocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
+		public Vector3 target			{ get { return m_pilot.target; } }
+		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
+		public Vector3 upVector 		{ get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		public Vector3 velocity			{ get { if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
+		public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		public Transform enemy { 
 			get {
@@ -190,7 +189,9 @@ namespace AI {
 					bool isLatching = dragonEat.IsLatching();
 					bool isGrabbing = dragonEat.IsGrabbing();
 
-					if (isEating || isLatching || isGrabbing) {
+					if (true || isEating || isLatching || isGrabbing) {
+						Vector3 speed = InstanceManager.player.dragonMotion.velocity;
+						m_motion.SetVelocity(speed * 10f);
 						SetSignal(Signals.Type.FallDown, true);
 					}
 				}

@@ -921,6 +921,7 @@ GameObject:
   - 114: {fileID: 11423720}
   - 136: {fileID: 136000010435708558}
   - 54: {fileID: 54000012777818228}
+  - 114: {fileID: 114000011374793840}
   m_Layer: 22
   m_Name: PF_DragonEnemyDevil
   m_TagString: Untagged
@@ -2487,6 +2488,22 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114000011374793840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 191076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ecedc79e668a408395849ca8a7a9c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frameWidthIncrement: 20
+  frameMeAndPlayer: 0
+  radius: 0
+  detectType: 1
+  m_minPerformanceRatingToUse: 0.4
 --- !u!136 &136000010435708558
 CapsuleCollider:
   m_ObjectHideFlags: 1
