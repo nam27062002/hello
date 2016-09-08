@@ -19,38 +19,35 @@ using System.Collections.Generic;
 /// Main user profile. Store here all the user-related data: currencies, stats, 
 /// progress, purchases...
 /// Singleton class, work with it via its static methods only.
+/// IT extends <c>UserSaveSystem</c>, which takes care of technical parameters such as last time it's been saved and so on
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class UserProfile
+public class UserProfile : UserSaveSystem
 {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS																  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // MEMBERS																  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// PROPERTIES															  //
-	//------------------------------------------------------------------------//
-	// Tech
-	private int m_saveCounter = 0;
-	public int saveCounter
-	{
-		get{ return m_saveCounter; }
-		set{ m_saveCounter = value; }
-	}
+    //------------------------------------------------------------------------//
+    // PROPERTIES															  //
+    //------------------------------------------------------------------------//		
 
-	// Last save timestamp
-	private DateTime m_saveTimestamp = DateTime.UtcNow;
-	public DateTime saveTimestamp {
-		get { return m_saveTimestamp; }
-	}
+    // Last save timestamp
+    private DateTime m_saveTimestamp = DateTime.UtcNow;
+    public DateTime saveTimestamp
+    {
+        get { return m_saveTimestamp; }
+    }
 
-	// Set default values in the inspector, use static methods to set them from code
-	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
-	[Separator("Economy")]
+    public int lastModified { get; set; }
+
+    // Set default values in the inspector, use static methods to set them from code
+    // [AOC] We want these to be consulted but never set from outside, so don't add a setter
+    [Separator("Economy")]
 	[SerializeField] private long m_coins;
 	public long coins {
 		get { return m_coins; }
@@ -65,7 +62,9 @@ public class UserProfile
 	[SerializeField] private string m_currentDragon = "";
 	public string currentDragon {
 		get { return m_currentDragon; }
-		set { m_currentDragon = value; }
+		set {
+            m_currentDragon = value;
+        }
 	}
 
 	[SerializeField] /*[SkuList(Definitions.Category.LEVELS)]*/ private string m_currentLevel = "";
@@ -145,14 +144,13 @@ public class UserProfile
 		get{ return m_userMissions; }
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// PUBLIC STATIC METHODS												  //
-	//------------------------------------------------------------------------//
-
+    //------------------------------------------------------------------------//
+    // PUBLIC STATIC METHODS												  //
+    //------------------------------------------------------------------------//    
 	public UserProfile()
 	{
 		m_dragonsBySku = new Dictionary<string, DragonData>();
@@ -170,8 +168,8 @@ public class UserProfile
 		m_incubatingEgg = null;
 
 		m_wardrobe = new Wardrobe();
-		m_userMissions = new UserMissions();
-	}
+		m_userMissions = new UserMissions();      
+    }
 
 
 	/// <summary>
@@ -228,35 +226,65 @@ public class UserProfile
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//   
 
-	/// <summary>
-	/// Load state from a json object.
-	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public void Load(SimpleJSON.JSONNode _data) {
+    public override void Load()
+    {
+        base.Load();
+
+        string jsonAsString = m_saveData.ToString();
+        if (jsonAsString != null)
+        {            
+            JSONNode json = JSON.Parse(jsonAsString);
+            Load(json);
+        }       
+    }
+
+    public override void Save()
+    {
+        base.Save();
+
+        // Update timestamp
+        m_saveTimestamp = DateTime.UtcNow;
+
+        JSONNode json = ToJson();
+        m_saveData.Merge(json.ToString());      
+    }
+
+    /// <summary>
+    /// Load state from a json object.
+    /// </summary>
+    /// <param name="_data">The data object loaded from persistence.</param>
+    private void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
 		Debug.Log("Loading UserProfile\n" + _data.ToString());
 		SimpleJSON.JSONNode profile = _data["userProfile"];
 
-		// Tech
-		if ( profile.ContainsKey("saveCounter") ) {
-			m_saveCounter = profile["saveCounter"].AsInt;
-		} else {
-			m_saveCounter = 0;
-		}
-		
-		if( profile.ContainsKey("timestamp") ) {
-			m_saveTimestamp = DateTime.Parse(profile["timestamp"], System.Globalization.CultureInfo.InvariantCulture);
-		} else {
-			m_saveTimestamp = DateTime.Now;
-		}
+        if (profile.ContainsKey("timestamp"))
+        {
+            m_saveTimestamp = DateTime.Parse(profile["timestamp"], System.Globalization.CultureInfo.InvariantCulture);
+        }
+        else
+        {
+            m_saveTimestamp = DateTime.Now;
+        }
 
-		// Economy
-		m_coins = profile["sc"].AsInt;
-		m_pc = profile["pc"].AsInt;
+        // Economy
+        string key = "sc";
+        if (profile.ContainsKey(key)) {
+            m_coins = profile[key].AsInt;
+        } else {
+            m_coins = 0;
+        }
+
+        key = "pc";
+        if (profile.ContainsKey(key)) {
+            m_pc = profile[key].AsInt;
+        } else {
+            m_pc = 0;
+        }        
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
@@ -267,13 +295,45 @@ public class UserProfile
 			m_currentLevel = profile["currentLevel"];
 		else
 			m_currentLevel = "";
-		m_tutorialStep = ( TutorialStep )profile["tutorialStep"].AsInt;
-		m_furyUsed = profile["furyUsed"].AsBool;
 
-		// Game stats
-		m_gamesPlayed = profile["gamesPlayed"].AsInt;
-		m_highScore = profile["highScore"].AsInt;
-		m_superFuryProgression = profile["superFuryProgression"].AsInt;
+
+        key = "tutorialStep";
+        if (profile.ContainsKey(key)) {
+            m_tutorialStep = (TutorialStep)profile["tutorialStep"].AsInt;
+        } else {
+            m_tutorialStep = (TutorialStep)0;
+        }
+
+        key = "furyUsed";
+        if (profile.ContainsKey(key)) {
+            m_furyUsed = profile[key].AsBool;
+        } else {
+            m_furyUsed = false;
+        }        
+
+        // Game stats
+        key = "gamesPlayed";
+        if (profile.ContainsKey(key)) {
+            m_gamesPlayed = profile[key].AsInt;
+        } else {
+            m_gamesPlayed = 0;
+        }
+
+        key = "highScore";
+        if (profile.ContainsKey(key)) {
+            m_highScore = profile[key].AsLong;
+        }
+        else {
+            m_highScore = 0;
+        }
+
+        key = "superFuryProgression";
+        if (profile.ContainsKey(key)) {
+            m_superFuryProgression = profile[key].AsInt;
+        }
+        else {
+            m_superFuryProgression = 0;
+        }        
 
 		// Some cheats override profile settings - will be saved with the next Save()
 		if(Prefs.GetBoolPlayer("skipTutorialCheat")) {
@@ -360,35 +420,21 @@ public class UserProfile
 		// Incubator timer
 		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
 	}
-
-	/// <summary>
-	/// Create and return a persistence save data object initialized with the data.
-	/// </summary>
-	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public SimpleJSON.JSONClass Save() {
-		// Update timestamp
-		m_saveTimestamp = DateTime.UtcNow;
-
-		// Create and return json
-		return ToJson();
-	}
-
-	/// <summary>
-	/// Create a json with the current data in the profile.
-	/// Similar to Save(), but doesn't update timestamp nor save count.
-	/// </summary>
-	/// <returns>A json representing this profile.</returns>
-	public SimpleJSON.JSONClass ToJson() {
+	
+    /// <summary>
+    /// Create a json with the current data in the profile.
+    /// Similar to Save(), but doesn't update timestamp nor save count.
+    /// </summary>
+    /// <returns>A json representing this profile.</returns>
+    public SimpleJSON.JSONClass ToJson() {
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
 
-		// Tech
-		profile.Add("saveCounter", m_saveCounter.ToString());
-		profile.Add("timestamp", m_saveTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        profile.Add("timestamp", m_saveTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-		// Economy
-		profile.Add( "sc", m_coins.ToString());
+        // Economy
+        profile.Add( "sc", m_coins.ToString());
 		profile.Add( "pc", m_pc.ToString());
 
 		// Game settings
@@ -459,19 +505,14 @@ public class UserProfile
 		}
 		return ret;
 	}
-
-	public void UniserverSetted()
-	{
-		m_saveCounter++;
-	}
-
+	
 	public string GetEquipedDisguise( string _dragonSku )
 	{
 		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
 			return m_dragonsBySku[ _dragonSku ].diguise;
 		return "";
 	}
-
+    
 	public bool EquipDisguise( string _dragonSku, string _disguiseSku)
 	{
 		bool ret = false;
@@ -490,7 +531,7 @@ public class UserProfile
 	/// Return a string representation of this class.
 	/// </summary>
 	/// <returns>A formatted json string representing this class.</returns>
-	public string ToString() {
+	public override string ToString() {
 		return ToJson().ToString();
 	}
 }

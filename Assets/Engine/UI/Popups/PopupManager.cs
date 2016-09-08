@@ -211,4 +211,18 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 		m_openedPopups.Remove(_popup);
 		m_closedPopups.Remove(_popup);
 	}
+
+    #region popup_message
+    public static PopupController PopupMessage_Open(PopupMessage.Config _config)
+    {    
+        PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupMessage");
+        if (_popup != null)
+        {
+            PopupMessage _popupMessage = _popup.GetComponent<PopupMessage>();
+            _popupMessage.Configure(_config);
+        }
+
+        return _popup;       
+    }
+    #endregion   
 }
