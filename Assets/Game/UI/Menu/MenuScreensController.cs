@@ -21,7 +21,7 @@ public enum MenuScreens {
 	PLAY,
 	DRAGON_SELECTION,
 	LEVEL_SELECTION,
-	INCUBATOR,
+	SKILLS,
 	OPEN_EGG,
 	EQUIPMENT,
 
@@ -39,14 +39,14 @@ public class MenuScreensController : NavigationScreenSystem {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	[Space()]
+	[Space]
 	[Comment("There should always be one scene entry per screen, value can be null")]
 	[SerializeField] private MenuScreenScene[] m_scenes = new MenuScreenScene[(int)MenuScreens.COUNT];
 	public MenuScreenScene[] scenes {
 		get { return m_scenes; }
 	}
 
-	[Space()]
+	[Space]
 	[SerializeField] private Camera m_camera = null;
 	public Camera camera { 
 		get { return m_camera; }
@@ -104,6 +104,23 @@ public class MenuScreensController : NavigationScreenSystem {
 	public MenuScreenScene GetScene(int _screenIdx) {
 		if(_screenIdx < 0 || _screenIdx >= (int)MenuScreens.COUNT) return null;
 		return m_scenes[_screenIdx];
+	}
+
+	/// <summary>
+	/// Start open flow on the given Egg.
+	/// </summary>
+	/// <returns>Whether the opening process was started or not.</returns>
+	/// <param name="_egg">The egg to be opened.</param>
+	public bool StartOpenEggFlow(Egg _egg) {
+		// Just in case, shouldn't happen anything if there is no egg incubating or it is not ready
+		if(_egg == null || _egg.state != Egg.State.READY) return false;
+
+		// Go to OPEN_EGG screen and start open flow
+		OpenEggScreenController openEggScreen = GetScreen((int)MenuScreens.OPEN_EGG).GetComponent<OpenEggScreenController>();
+		openEggScreen.StartFlow(_egg);
+		GoToScreen((int)MenuScreens.OPEN_EGG);
+
+		return true;
 	}
 
 	//------------------------------------------------------------------//

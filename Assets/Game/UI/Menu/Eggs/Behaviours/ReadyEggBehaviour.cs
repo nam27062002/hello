@@ -62,11 +62,7 @@ public class ReadyEggBehaviour : MonoBehaviour, IPointerClickHandler {
 			.Play();
 
 		// Incubator screen will take care of it
-		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		IncubatorScreenController incubatorScreen = screensController.GetScreen((int)MenuScreens.INCUBATOR).GetComponent<IncubatorScreenController>();
-		if(incubatorScreen != null) {
-			incubatorScreen.StartOpenEggFlow(GetComponent<EggController>().eggData);
-		}
+		InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(GetComponent<EggController>().eggData);
 	}
 }
 

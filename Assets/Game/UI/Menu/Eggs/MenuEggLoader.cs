@@ -40,19 +40,14 @@ public class MenuEggLoader : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void OnEnable() {
-		// Instantiate the 3D scene and initialize the raw image
-		if(m_eggScene3D == null) {
-			m_eggScene3D = EggUIScene3D.CreateEmpty();
-			m_eggScene3D.InitRawImage(ref m_targetRawImage);
-		}
-
-		// If a egg sku was defined from inspector and we have no loaded egg, create it now
-		if(m_eggScene3D.egg == null && !string.IsNullOrEmpty(m_eggSku)) {
+		// If a egg sku was defined from inspector, load it now (unless an egg is already loaded)
+		if(!string.IsNullOrEmpty(m_eggSku) && m_eggScene3D == null) {
 			// Create a new egg
 			Egg newEgg = Egg.CreateFromSku(m_eggSku);
+			newEgg.ChangeState(Egg.State.SHOWROOM);	// By default it will be on showroom state
 
 			// Load it into this scene!
-			m_eggScene3D.SetEgg(newEgg);
+			Load(newEgg);
 		}
 	}
 
@@ -70,6 +65,29 @@ public class MenuEggLoader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Load the given egg's preview.
+	/// If it's the same that is already loaded, nothing will be done.
+	/// If a different egg was loaded, it will be unloaded.
+	/// </summary>
+	/// <param name="_egg">The egg to be displayed. <c>null</c> to unload any active preview.</param>
+	public void Load(Egg _egg) {
+		// Instantiate the 3D scene and initialize the raw image if not done
+		if(m_eggScene3D == null) {
+			m_eggScene3D = EggUIScene3D.CreateEmpty();
+			m_eggScene3D.InitRawImage(ref m_targetRawImage);
+		}
+
+		// Just do it!
+		m_eggScene3D.SetEgg(_egg);
+
+		// Store new egg's sku
+		if(_egg != null) {
+			m_eggSku = _egg.def.sku;
+		} else {
+			m_eggSku = string.Empty;
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

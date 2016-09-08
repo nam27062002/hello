@@ -73,9 +73,6 @@ public class PopupEggReward : MonoBehaviour {
 		
 			// Consume the collected egg
 			EggManager.ClearCollectibleEgg();
-
-			// Go straight to incubator when going back to the menu
-			GameVars.menuInitialScreen = MenuScreens.INCUBATOR;
 		}
 
 		// Close this popup, the results screen controller will know what to do next
