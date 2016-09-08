@@ -262,6 +262,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 		// Clear QuadTree
 		m_spawnersTree = null;
 		m_selectedSpawners.Clear();
+		m_spawners.Clear();
 
 		// Drop camera references
 		m_newCamera = null;

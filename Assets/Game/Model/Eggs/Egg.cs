@@ -23,6 +23,7 @@ public class Egg {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public static readonly string SKU_STANDARD_EGG = "egg_standard";
+	public static readonly string SKU_PREMIUM_EGG = "egg_premium";
 
 	public enum State {
 		INIT,		// Init state
