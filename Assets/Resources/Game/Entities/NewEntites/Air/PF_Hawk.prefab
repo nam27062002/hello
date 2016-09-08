@@ -542,7 +542,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 182380}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.999, y: -4.499, z: 0.26953125}
+  m_LocalPosition: {x: 61.19258, y: 56.222633, z: 0.26953125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -649,7 +649,7 @@ MonoBehaviour:
     min: 0.9
     max: 1.4
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":true},{"damage":16,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":5,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"acceleration":20,"speed":20,"arrivalRadius":2,"attackPoint":"attack_0","dataType":"AI.Behaviour.ChargeData","editorFolded":true},{"boostSpeed":15,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":true},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":true}]'
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"acceleration":50,"damage":5,"retreatTime":5,"attackPoint":"attack_2","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":true}]'
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!114 &11422592
@@ -748,26 +748,26 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 360
+    m_orientationSpeed: 180
     m_faceDirection: 1
     m_rollRotation: 1
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
     m_limitVerticalRotation: 1
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
   m_railSeparation:
     min: 0.5
     max: 1
   m_enableSensor: 1
   m_sensor:
     m_sightRadius: 7.5
-    m_maxRadius: 1
+    m_maxRadius: 3
     m_minRadius: 0
     m_senseAbove: 0
     m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: -0.15, z: 0}
+    m_sensorOffset: {x: 0, y: -0.84, z: 0}
     m_senseDelay:
       min: 0
       max: 0

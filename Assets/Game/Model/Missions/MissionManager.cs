@@ -86,7 +86,8 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	{
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-	}
+        Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);
+    }
 
 	/// <summary>
 	/// Scriptable object has been disabled.
@@ -95,7 +96,8 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-	}
+        Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);
+    }
 
 	/// <summary>
 	/// Called every frame.
@@ -103,7 +105,7 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 	private void Update() 
 	{
 		bool gaming = InstanceManager.GetSceneController<GameSceneController>() != null;
-		m_user.userMissions.CheckActivation(!gaming);
+		if(m_user != null) m_user.userMissions.CheckActivation(!gaming);
 
 		// Propagate to registered listeners
 		OnUpdate();
@@ -219,4 +221,13 @@ public class MissionManager : SingletonMonoBehaviour<MissionManager> {
 		UsersManager.currentUser.userMissions.ownedDragons = ownedDragons;
 		UsersManager.currentUser.userMissions.UnlockByDragonsNumber();
 	}
+
+    /// <summary>
+	/// A mission has been completed by the user.
+	/// </summary>
+	/// <param name="_mission">The mision that has just been completed.</param>
+    private void OnMissionCompleted(Mission _mission)
+    {
+        UsersManager.currentUser.userMissions.missionsCompletedAmount++;
+    }
 }

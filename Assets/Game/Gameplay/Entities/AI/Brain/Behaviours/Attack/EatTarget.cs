@@ -34,7 +34,8 @@ namespace AI {
 
 			protected override void OnExit(State _newState) {
 				base.OnExit(_newState);
-				m_eatBehaviour.enabled = false;
+				if ( m_eatBehaviour )
+					m_eatBehaviour.enabled = false;
 			}
 
 			protected void OnBiteKillEvent(){
@@ -42,7 +43,7 @@ namespace AI {
 					// It failed on eating a prey -> Return
 					Transition( OnBiteFail);
 				}
-				// else -> wait to finish eating
+				// else -> wait to finish eating, stop pursuing
 			}
 
 			protected void OnEndEatingEvent(){

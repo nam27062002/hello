@@ -128,8 +128,10 @@ namespace LevelEditor {
 			// Enable reward manager to see coins/score feedback
 			RewardManager.Reset();
 
-			// Spawn chest
-			ChestManager.SelectChest();
+			// Spawn collectibles
+			// [AOC] By designers request, let's keep all collectibles visible in the level editor
+			//ChestManager.SelectChest();
+			//EggManager.SelectCollectibleEgg();
 
 			// Reset timer
 			m_elapsedSeconds = 0;

@@ -22,8 +22,12 @@ public class DisguisesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Pill prefab
+	[Separator("Project References")]
+	[SerializeField] private GameObject m_pillPrefab = null;
+
 	// References
-	[Separator("References")]
+	[Separator("Scene References")]
 	[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
 	[SerializeField] private DisguisePowerIcon[] m_powers;
 	[SerializeField] private RectTransform m_layout;
@@ -60,9 +64,8 @@ public class DisguisesScreenController : MonoBehaviour {
 	private void Awake() {
 		// Instantiate pills
 		m_pills = new DisguisePill[9];
-		GameObject prefab = Resources.Load<GameObject>("UI/Popups/Disguises/PF_DisguisesPill");
 		for (int i = 0; i < 9; i++) {
-			GameObject pill = GameObject.Instantiate<GameObject>(prefab);
+			GameObject pill = GameObject.Instantiate<GameObject>(m_pillPrefab);
 			pill.transform.parent = m_layout;
 			pill.transform.localScale = Vector3.one;
 

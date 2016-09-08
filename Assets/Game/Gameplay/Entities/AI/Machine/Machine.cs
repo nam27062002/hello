@@ -9,6 +9,7 @@ namespace AI {
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
 		[SerializeField] private MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
+		[SerializeField] private bool m_affectedByDragonTrample = false;
 
 		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
@@ -39,14 +40,13 @@ namespace AI {
 		private bool m_willPlayEatenSound;
 
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
-									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } 
-								}
+									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
 
-		public Vector3 target	 { 	get { return m_pilot.target; } }
-		public Vector3 direction { 	get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Vector3 upVector  { 	get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
-		public Vector3 velocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
-		public Vector3 angularVelocity	{ get{ if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
+		public Vector3 target			{ get { return m_pilot.target; } }
+		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
+		public Vector3 upVector 		{ get { if (m_enableMotion && m_motion != null) return m_motion.upVector;  else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		public Vector3 velocity			{ get { if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
+		public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		public Transform enemy { 
 			get {
@@ -108,6 +108,9 @@ namespace AI {
 
 			m_signals.SetOnEnableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnLockedInCage);
 			m_signals.SetOnDisableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnUnlockedFromCage);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnInvulnerable);
+			m_signals.SetOnDisableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnVulnerable);
 		}
 
 		void OnEnable() {
@@ -145,25 +148,54 @@ namespace AI {
 					m_viewControl.Burn();
 					if (m_motion != null) m_motion.Stop();
 					if (m_collider != null) m_collider.enabled = false;
+			} else if (_trigger == SignalTriggers.OnInvulnerable) {
+				m_entity.allowEdible = false;
+				m_entity.allowBurnable = false;
+			} else if (_trigger == SignalTriggers.OnVulnerable) {
+				m_entity.allowEdible = true;
+				m_entity.allowBurnable = true;
 			}
 		}
 
 		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
-		void OnCollisionEnter(Collision _collision) {
+		void OnCollisionEnter(Collision _collision) {			
 			object[] _params = new object[1]{_collision.gameObject};
 			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
 		}
 
-
 		void OnTriggerEnter(Collider _other) {
+			OnTriggerStay(_other);
+
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
 			SetSignal(Signals.Type.Trigger, true, _params);
 		}
 
 		void OnTriggerExit(Collider _other) {
+			OnTriggerStay(_other);
+
 			SetSignal(Signals.Type.Trigger, false);
+		}
+
+		void OnTriggerStay(Collider _other) {
+			if (m_affectedByDragonTrample) {
+				// lets check if dragon is trampling this entity
+				if (!GetSignal(Signals.Type.FallDown) && _other.gameObject.tag == "Player") {
+					// is in trample mode? - dragon has the mouth full
+					PlayerEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
+
+					bool isEating	= dragonEat.IsEating();
+					bool isLatching = dragonEat.IsLatching();
+					bool isGrabbing = dragonEat.IsGrabbing();
+
+					if (true || isEating || isLatching || isGrabbing) {
+						Vector3 speed = InstanceManager.player.dragonMotion.velocity;
+						m_motion.SetVelocity(speed * 10f);
+						SetSignal(Signals.Type.FallDown, true);
+					}
+				}
+			}
 		}
 		//-----------------------------------------------------------
 
@@ -324,7 +356,7 @@ namespace AI {
 		}
 
 		public virtual bool Burn(float _damage, Transform _transform) {
-			if (m_inflammable != null && !IsDead()) {
+			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(_damage);
 					if (m_entity.health <= 0) {

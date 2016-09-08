@@ -23,6 +23,7 @@ public class Egg {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public static readonly string SKU_STANDARD_EGG = "egg_standard";
+	public static readonly string SKU_PREMIUM_EGG = "egg_premium";
 
 	public enum State {
 		INIT,		// Init state
@@ -30,7 +31,7 @@ public class Egg {
 		INCUBATING,	// Egg is in the incubator
 		READY,		// Egg has finished incubation period and is ready to be collected
 		OPENING,	// Egg is being opened
-		COLLECTED,	// Egg has been collected
+		COLLECTED,	// Egg reward has been collected
 		SHOWROOM	// Egg for display only, state is not relevant
 	};
 
@@ -287,7 +288,7 @@ public class Egg {
 		PersistenceManager.Save();
 
 		// Notify game
-		Messenger.Broadcast<Egg>(GameEvents.EGG_COLLECTED, this);
+		Messenger.Broadcast<Egg>(GameEvents.EGG_OPENED, this);
 	}
 
 	/// <summary>

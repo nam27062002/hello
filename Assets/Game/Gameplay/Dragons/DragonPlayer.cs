@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -28,8 +29,6 @@ public class DragonPlayer : MonoBehaviour {
 
 	private DragonData m_data = null;
 	public DragonData data { get { return m_data; }}
-
-	private DragonBreathBehaviour m_dragonBreath;
 
 	[Header("Life & energy")]
 	private float m_health;
@@ -61,15 +60,8 @@ public class DragonPlayer : MonoBehaviour {
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
-	public float furyProgression
-	{
-		get { return m_dragonBreath.GetFuryProgression(); }
-	}
-
-	public float superFuryProgression
-	{
-		get{ return m_dragonBreath.GetSuperFuryProgression(); }
-	}
+	private List<Transform> m_holdPreyPoints = new List<Transform>();
+	public List<Transform> holdPreyPoints { get{ return m_holdPreyPoints; } }
 
 	// Interaction
 	public bool playable {
@@ -88,6 +80,40 @@ public class DragonPlayer : MonoBehaviour {
 	public DragonBreathBehaviour breathBehaviour
 	{
 		get{ return m_breathBehaviour; }
+	}
+
+	private DragonMotion m_dragonMotion = null;
+	public DragonMotion dragonMotion
+	{
+		get{ return m_dragonMotion; }
+	}
+
+	private PlayerEatBehaviour m_dragonEatBehaviour = null;
+	public PlayerEatBehaviour dragonEatBehaviour
+	{
+		get{ return m_dragonEatBehaviour; }
+	}
+
+	private DragonHealthBehaviour m_dragonHeatlhBehaviour = null;
+	public DragonHealthBehaviour dragonHealthBehaviour
+	{
+		get{ return m_dragonHeatlhBehaviour; }
+	}
+
+	private DragonBoostBehaviour m_dragonBoostBehaviour = null;
+	public DragonBoostBehaviour dragonBoostBehaviour
+	{
+		get{ return m_dragonBoostBehaviour; }
+	}
+
+	public float furyProgression
+	{
+		get { return m_breathBehaviour.GetFuryProgression(); }
+	}
+
+	public float superFuryProgression
+	{
+		get{ return m_breathBehaviour.GetSuperFuryProgression(); }
 	}
 
 	// Internal
@@ -128,10 +154,19 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
+		m_dragonMotion = GetComponent<DragonMotion>();
+		m_dragonEatBehaviour =  GetComponent<PlayerEatBehaviour>();
+		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
+		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
+		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
+		if (holdPoints != null) {
+			for (int i = 0;i<holdPoints.Length; i++) {
+				m_holdPreyPoints.Add(holdPoints[i].transform);
+			}
+		}
 
-		m_dragonBreath = GetComponent<DragonBreathBehaviour>();
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
@@ -252,7 +287,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns><c>true</c> if this instance is fury on; otherwise, <c>false</c>.</returns>
 	public bool IsFuryOn() {
 		
-		return m_dragonBreath.IsFuryOn() && m_dragonBreath.type == DragonBreathBehaviour.Type.Standard;
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Standard;
 	}
 
 
@@ -262,7 +297,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
 	public bool IsSuperFuryOn() {
 		
-		return m_dragonBreath.IsFuryOn() && m_dragonBreath.type == DragonBreathBehaviour.Type.Super;
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Super;
 	}
 
 
@@ -317,7 +352,7 @@ public class DragonPlayer : MonoBehaviour {
 				InstanceManager.pet.transform.position = introPos;
 			}
 			*/
-			GetComponent<DragonMotion>().StartIntroMovement(introPos);
+			m_dragonMotion.StartIntroMovement(introPos);
 		}
 	}
 
@@ -438,5 +473,22 @@ public class DragonPlayer : MonoBehaviour {
 	public void SetMineShields( int numHits )
 	{
 		m_mineShield = numHits;
+	}
+
+	public void StartLatchedOn()
+	{
+		m_dragonMotion.StartLatchedOnMovement();
+		m_dragonEatBehaviour.PauseEating();
+	}
+
+	public void EndLatchedOn()
+	{
+		m_dragonMotion.EndLatchedOnMovement();
+		m_dragonEatBehaviour.ResumeEating( 5.0f );
+	}
+
+	public bool BeingLatchedOn()
+	{
+		return m_dragonMotion.isLatchedMovement;
 	}
 }

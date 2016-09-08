@@ -109,11 +109,11 @@ public class FireBreath : DragonBreathBehaviour {
 		return false; 
 	}
 
-	override public bool Overlaps( CircleArea2D _circle)
+	override public bool Overlaps(CircleAreaBounds _circle)
 	{
 		if (m_isFuryOn) 
 		{
-			if (_circle.Overlaps( m_bounds2D )) 
+			if (_circle.Overlaps(m_bounds2D)) 
 			{
 				if (IsInsideTriangle( _circle.center ))
 				{
@@ -310,7 +310,7 @@ public class FireBreath : DragonBreathBehaviour {
 		for (int i = 0; i < m_numCheckEntities; i++) 
 		{
 			Entity prey = m_checkEntities[i];
-			if ((prey.circleArea != null && Overlaps(prey.circleArea)) || IsInsideArea(prey.transform.position)) 
+			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
 				if (CanBurn(prey) || m_type == Type.Super) {
 					AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
@@ -319,7 +319,7 @@ public class FireBreath : DragonBreathBehaviour {
 					}
 				} else {
 					// Show message saying I cannot burn it
-					Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT);
+					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 				}
 			}
 		}

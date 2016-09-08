@@ -174,26 +174,45 @@ public class ResultsScreenController : MonoBehaviour {
 
 
 	/// <summary>
-	/// Go back to menu!
+	/// Try to go back to the menu. If a popup is pending (chest reward, egg reward), it will be displayed instead.
 	/// </summary>
-	private void GoToMenu() {
-		// Update global stats
-		UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
+	/// <returns>Whether we're going back to the menu (<c>true</c>) or we've been interrupted by some pending popup (<c>false</c>).</returns>
+	private bool TryGoToMenu() {
+		// If we found a chest, open the chest reward popup
+		if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
+			PopupManager.OpenPopupAsync(PopupChestReward.PATH);
+		}
 
-		// Apply rewards to user profile
-		RewardManager.ApplyRewardsToProfile();
+		// Did we found an egg during the game?
+		else if(EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected) {
+			PopupManager.OpenPopupAsync(PopupEggReward.PATH);	// Yes! Show popup
+		}
 
-		// Process Missions: give rewards and generate new missions replacing those completed
-		MissionManager.ProcessMissions();
+		// Nothing else to show, go back to the menu!
+		else {
+			// Update global stats
+			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 
-		// Clear chest manager
-		ChestManager.ClearSelectedChest();
+			// Apply rewards to user profile
+			RewardManager.ApplyRewardsToProfile();
 
-		// Save persistence
-		PersistenceManager.Save();
+			// Process Missions: give rewards and generate new missions replacing those completed
+			MissionManager.ProcessMissions();
 
-		// Go back to main menu
-		FlowManager.GoToMenu();
+			// Clear collectibles
+			ChestManager.ClearSelectedChest();
+			EggManager.ClearCollectibleEgg();
+
+			// Save persistence
+			PersistenceManager.Save();
+
+			// Go back to main menu
+			FlowManager.GoToMenu();
+
+			return true;
+		}
+
+		return false;
 	}
 
 	//------------------------------------------------------------------//
@@ -204,10 +223,11 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup that has been closed</param>
 	public void OnPopupClosed(PopupController _popup) {
-		// Was it the chest reward popup?
-		if(_popup.GetComponent<PopupChestReward>() != null) {
+		// Was it the chest reward or the egg reward popups?
+		if(_popup.GetComponent<PopupChestReward>() != null
+		|| _popup.GetComponent<PopupEggReward>() != null) {
 			// Go back to menu
-			GoToMenu();
+			TryGoToMenu();
 		}
 	}
 
@@ -215,11 +235,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// Go back to the main menu, finalizing all the required stuff in the game scene.
 	/// </summary>
 	public void OnGoToMenu() {
-		// If we found a chest, open the chest reward popup
-		if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
-			PopupManager.OpenPopupAsync(PopupChestReward.PATH);
-		} else {
-			GoToMenu();
-		}
+		// Use internal method
+		TryGoToMenu();
 	}
 }

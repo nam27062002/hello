@@ -302,6 +302,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
+	public void Latching( bool _latching){
+		
+	}
+
 	public void Attack() {
 		if (m_panic)
 			return;

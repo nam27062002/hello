@@ -39,7 +39,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_actionButtonsAnimator = null;
 	[SerializeField] private Button m_instantOpenButton = null;
 	[SerializeField] private Button m_callToActionButton = null;
-	[SerializeField] private Button m_buyButton = null;
 	[SerializeField] private Button m_backButton = null;
 
 	[Separator("Rewards")]
@@ -58,7 +57,6 @@ public class OpenEggScreenController : MonoBehaviour {
 	private Transform m_eggAnchor = null;
 	private Transform m_rewardAnchor = null;
 	private GameObject m_rewardView = null;
-	private EggUIScene3D m_buyButtonEggScene = null;
 
 	// Internal
 	private State m_state = State.IDLE;
@@ -99,7 +97,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events.
-		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
@@ -134,7 +132,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		}
 
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
@@ -142,11 +140,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Destructor
 	/// </summary>
 	private void OnDestroy() {
-		// Destroy Egg 3D scene
-		if(m_buyButtonEggScene != null) {
-			UIScene3DManager.Remove(m_buyButtonEggScene);
-			m_buyButtonEggScene = null;
-		}
+		
 	}
 
 	//------------------------------------------------------------------//
@@ -214,14 +208,10 @@ public class OpenEggScreenController : MonoBehaviour {
 			LaunchIntroExistingEgg();
 		}
 
-		// Initialize buy button
-		if(m_egg != null) {
-			// Price
-			m_buyButton.FindComponentRecursive<Text>("TextPrice").text = StringUtils.FormatNumber(m_egg.eggData.def.GetAsInt("pricePC"));
-
-			// Initialize the scene with the egg
-			// The scene will take care of everything
-			m_buyButtonEggScene.SetEgg(Egg.CreateFromDef(m_egg.eggData.def));
+		// [AOC] Hacky!! Disable particle FX for now
+		ParticleSystem[] particleFX = m_egg.GetComponentsInChildren<ParticleSystem>();
+		for(int i = 0; i < particleFX.Length; i++) {
+			particleFX[i].gameObject.SetActive(false);
 		}
 	}
 
@@ -253,14 +243,6 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_rewardAnchor = m_scene.FindTransformRecursive("RewardAnchor");
 				Debug.Assert(m_rewardAnchor != null, "Required \"RewardAnchor\" transform not found!");
 			}
-		}
-
-		// Egg scene for the buy button
-		if(m_buyButtonEggScene == null) {
-			// Create a new scene and link it to the buy button raw image
-			m_buyButtonEggScene = EggUIScene3D.CreateEmpty();
-			RawImage eggPreviewArea = m_buyButton.GetComponentInChildren<RawImage>();
-			m_buyButtonEggScene.InitRawImage(ref eggPreviewArea);
 		}
 	}
 
@@ -587,37 +569,6 @@ public class OpenEggScreenController : MonoBehaviour {
 				equipmentScreen.GetComponent<EquipmentScreenController>().ShowPets();
 				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
 			} break;
-		}
-	}
-
-	/// <summary>
-	/// Buy another egg.
-	/// </summary>
-	public void OnBuyButton() {
-		// This option should only be available on the IDLE state
-		if(m_state != State.IDLE) return;
-
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
-
-		// Get price and start purchase flow
-		long pricePC = m_egg.eggData.def.GetAsLong("pricePC");
-		if(UsersManager.currentUser.pc >= pricePC) {
-			// Perform transaction
-			UsersManager.currentUser.AddPC(-pricePC);
-			PersistenceManager.Save();
-
-			// Create a new egg instance
-			Egg purchasedEgg = Egg.CreateFromDef(m_egg.eggData.def);
-			purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
-
-			// Restart flow!
-			StartFlow(purchasedEgg);
-		} else {
-			// Open PC shop popup
-			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
-
-			// Currency popup / Resources flow disabled for now
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 

@@ -6,6 +6,8 @@ namespace AI {
 		[System.Serializable]
 		public class SearchEntityData : StateComponentData {
 			public float range = 5f;
+			public bool m_checkDistanceToPlayer;
+			public float m_farAwayDistance = 5;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Search Entity Target")]
@@ -31,12 +33,17 @@ namespace AI {
 			private Entity[] m_checkEntities = new Entity[20];
 			private int m_numCheckEntities = 0;
 
+			private int m_collidersMask;
+
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<SearchEntityData>();
 				m_timer = 0f;
 				m_shutdownSensorTime = 0f;
 				m_eaterTier = m_pilot.GetComponent<MachineEatBehaviour>().eaterTier;	// Temp
 				m_transitionParam = new object[1];
+
+				m_collidersMask = 1<<LayerMask.NameToLayer("Ground") | 1<<LayerMask.NameToLayer("Obstacle");
+
 				base.OnInitialise();
 			}
 
@@ -61,17 +68,32 @@ namespace AI {
 				if (m_timer > 0f) {
 					m_timer -= Time.deltaTime;
 				} else {
-
-					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( m_machine.position , m_data.range, m_checkEntities);
-					for (int e = 0; e < m_numCheckEntities; e++) 
+					float range = m_data.range;
+					if ( m_data.m_checkDistanceToPlayer && InstanceManager.player != null)
 					{
-						Entity entity = m_checkEntities[e];
-						if (entity.IsEdible() && entity.IsEdible( m_eaterTier ))
+						range = m_data.m_farAwayDistance - (InstanceManager.player.transform.position - m_machine.position).magnitude;
+						range = Mathf.Max(range, 0);
+					}
+					if ( range> 0 )
+					{
+						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( m_machine.position , m_data.range, m_checkEntities);
+						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
-							// Check if closed? Not for the moment
-							m_transitionParam[0] = entity.transform;
-							Transition( OnEnemyInRange, m_transitionParam);
-							break;
+							Entity entity = m_checkEntities[e];
+							if (entity.IsEdible() && entity.IsEdible( m_eaterTier ))
+							{
+								// Check if physics reachable
+								RaycastHit hit;
+								Vector3 dir = entity.circleArea.center - m_machine.position;
+								bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+								if ( !hasHit )
+								{
+									// Check if closed? Not for the moment
+									m_transitionParam[0] = entity.transform;
+									Transition( OnEnemyInRange, m_transitionParam);
+									break;
+								}
+							}
 						}
 					}
 

@@ -159,7 +159,7 @@ public class IncubatorTutorial : MonoBehaviour {
 		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
 
 		// If leaving the incubator screen, stop the tutorial
-		if(_event.toScreenIdx != (int)MenuScreens.INCUBATOR) {
+		if(_event.toScreenIdx != (int)MenuScreens.DRAGON_SELECTION) {
 			// Stop the tutorial if it's running
 			StopTutorial();
 			return;

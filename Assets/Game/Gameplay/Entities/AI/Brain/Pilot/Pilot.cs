@@ -13,6 +13,7 @@ namespace AI {
 			Avoid,
 			Pursuit,
 			Scared,
+			Latching,
 			Button_A, // "buttons" to manage
 			Button_B, // the specila actions 
 			Button_C, // of the current machine
@@ -97,7 +98,7 @@ namespace AI {
 		public void SetMoveSpeed(float _speed, bool _blend = true) {
 			m_moveSpeed = _speed;
 			if (!_blend) {
-				m_currentSpeed = 0;
+				m_currentSpeed = m_moveSpeed;
 			}
 		}
 

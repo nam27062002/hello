@@ -30,11 +30,12 @@ public class CPServerTab : MonoBehaviour {
 	// Exposed References
 	[SerializeField] private ScrollRect m_outputScroll = null;
 	[SerializeField] private Text m_outputText = null;
+    [SerializeField] private Text m_accountIdText = null;
 
 
 
-	// Internal
-	private DateTime m_startTimestamp;
+    // Internal
+    private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();
 
     //private RequestNetwork requestNetwork;
@@ -57,6 +58,11 @@ public class CPServerTab : MonoBehaviour {
         //RequestNetworkOnline.CreateInstance();
         //requestNetwork = new RequestNetworkOnline();
 
+    }
+
+    private void OnEnable()
+    {
+        m_accountIdText.text = "Account Id: " + GameSessionManager.SharedInstance.GetUID();
     }
 
     private void Update()

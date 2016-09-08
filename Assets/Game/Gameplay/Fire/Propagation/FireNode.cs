@@ -14,6 +14,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	[SerializeField] private string m_breathHitParticle = "PF_FireHit";
 	[SerializeField] private bool m_hitParticleMatchDirection = false;
 	[SeparatorAttribute]
+	[SerializeField] private float m_hitRadius = 0f;
 	[SerializeField] private float m_resistanceMax = 25f;
 	[SerializeField] private float m_burningTime = 10f;
 	[SerializeField] private float m_damagePerSecond = 6f;
@@ -22,6 +23,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	{
 		get{ return m_burningTime; }
 	}
+
+	private CircleAreaBounds m_area;
+	public CircleAreaBounds area { get { return m_area; } }
 
 	private List<FireNode> m_neighbours;
 	private State m_state;
@@ -51,6 +55,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_reward = new Reward();
 		m_reward.coins = 0;
 		m_reward.origin = "firenode";
+
+		m_area = new CircleAreaBounds(transform.position, m_hitRadius);
 
 		// get two closets neighbours
 		FindNeighbours();
@@ -167,14 +173,14 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void StartFire() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("FireSprite");
+			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc");
 
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = m_fireSpriteScale;
 			m_fireSpriteDestinationScale = transform.localScale * Random.Range( 0.55f, 1.45f);
 			m_fireSprite.transform.localRotation = transform.localRotation;
 
-			if (Random.Range(0,100) > 50) {
+			/*if (Random.Range(0,100) > 50) {
 				m_fireSprite.transform.Rotate(Vector3.up, 180, Space.Self);
 				// Move child!!
 				if (m_fireSprite.transform.childCount > 0) {
@@ -185,6 +191,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			}
 
 			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(1f, 2f));
+			*/
 		}
 	}
 
@@ -225,7 +232,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	void OnDrawGizmosSelected() {
-		Gizmos.color = Color.magenta;
-		Gizmos.DrawSphere(transform.position, 0.25f);
+		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.75f);
+		Gizmos.DrawSphere(transform.position, 0.5f);
+
+		Gizmos.color = Colors.fuchsia;
+		Gizmos.DrawWireSphere(transform.position, m_hitRadius);
 	}
 }

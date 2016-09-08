@@ -168,7 +168,7 @@ GameObject:
   - 4: {fileID: 479000}
   - 114: {fileID: 11408994}
   - 114: {fileID: 11401264}
-  - 114: {fileID: 11407202}
+  - 114: {fileID: 114000013114265422}
   m_Layer: 0
   m_Name: PF_Scaffold
   m_TagString: Untagged
@@ -717,7 +717,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138210}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3897, y: 0.1635, z: 0}
+  m_LocalPosition: {x: 6.12, y: 4.15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -815,17 +815,20 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: efcb466cf2fa34f75be22ac54a9b0f7f, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -869,6 +872,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -897,23 +901,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
---- !u!114 &11407202
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: shop_armory
-  m_onAppearSoundProbability: 0
-  m_onApprearSounds: []
 --- !u!114 &11408994
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -940,6 +931,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -956,6 +948,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -972,6 +965,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -988,6 +982,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1004,6 +999,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1020,6 +1016,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1036,6 +1033,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1052,6 +1050,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1068,6 +1067,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1084,6 +1084,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1100,6 +1101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1116,6 +1118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1132,6 +1135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1148,6 +1152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1164,6 +1169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_breathHitParticle: PF_WoodHit
   m_hitParticleMatchDirection: 0
+  m_hitRadius: 1
   m_resistanceMax: 10
   m_burningTime: 10
   m_damagePerSecond: 6
@@ -1176,17 +1182,20 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 2fd29286c40ca407c818273ba15e8371, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -1196,6 +1205,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300000, guid: 0ff4754e025e94d9ca4341e109d600b9, type: 3}
   m_Bones:
   - {fileID: 456966}
@@ -1220,3 +1230,15 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 138210}
   m_IsPrefabParent: 1
+--- !u!114 &114000013114265422
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: cart

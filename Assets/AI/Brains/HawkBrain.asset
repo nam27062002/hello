@@ -20,9 +20,6 @@ MonoBehaviour:
   - m_name: Charge
     m_componentAssets:
     - {fileID: 11400000, guid: 7d9a0f75f0b814aa7bdb68421c5fcb27, type: 2}
-  - m_name: Attack
-    m_componentAssets:
-    - {fileID: 11400000, guid: bc6691513185b490da52c123ea81bba2, type: 2}
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
@@ -33,21 +30,12 @@ MonoBehaviour:
   - to: 1
     id: onEnemyInRange
     from: 0
-  - to: 2
-    id: onEnemyInRange
+  - to: 0
+    id: onChargeEnd
     from: 1
   - to: 0
-    id: onEnemyOutOfSight
-    from: 1
-  - to: 0
-    id: onMaxAttacks
+    id: onBackAtHome
     from: 2
-  - to: 0
-    id: onOutOfRange
-    from: 2
-  - to: 3
-    id: onOutsideArea
-    from: -1
   - to: 0
     id: onBackAtHome
     from: -1
