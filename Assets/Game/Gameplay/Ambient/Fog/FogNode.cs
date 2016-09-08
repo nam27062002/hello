@@ -7,6 +7,13 @@ public class FogNode : MonoBehaviour, IQuadTreeItem
 	public float m_fogStart = 0;
 	public float m_fogEnd = 100;
 
+	private Rect m_rect;
+	public Rect boundingRect { get { 
+										if (m_rect == null) {
+											m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+										}
+										return m_rect; } 
+									}
 
 	public void CustomGuizmoDraw( bool used = false)
 	{
@@ -20,4 +27,5 @@ public class FogNode : MonoBehaviour, IQuadTreeItem
 	}
 
 	// public Transform transform { get {return gameObject.transform;} }
+
 }

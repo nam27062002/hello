@@ -65,6 +65,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 		} 
 	}
 
+	private Rect m_rect;
+	public Rect boundingRect { get { return m_rect; } }
+
 	protected EntityGroupController m_groupController;
 	protected IGuideFunction m_guideFunction;
 	public IGuideFunction guideFunction { get { return m_guideFunction; } }
@@ -114,6 +117,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 			if (m_groupController) {
 				m_groupController.Init(m_quantity.max);
 			}
+
+			m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 
 			m_guideFunction = GetComponent<IGuideFunction>();
 
