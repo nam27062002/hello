@@ -20,9 +20,7 @@ public class OptimizationToolEditor
 		//SceneLightmapSetupEditor.UpdateAllLightMapDataInfosEditor();
 		//SceneLightmapSetupEditor.SetAllSetLightmapNearToNull();
 
-		// TODO (MALH) : Recover this
-		// PrefabsSetupEditor.GeneratePrefabsEditorLODEditor();
-		// PrefabsSetupEditor.GeneratePrefabsLOD();
+		PrefabsSetupEditor.GeneratePrefabsLOD();
 	}
 
 	[MenuItem("Hungry Dragon/OptimizationUtility/Disable All")]
@@ -35,9 +33,7 @@ public class OptimizationToolEditor
 		//SceneLightmapSetupEditor.RestoreAllLightMapDataInfosEditor();
 		//SceneLightmapSetupEditor.DeleteFoldersEditor();
 
-		// TODO (MALH) : Recover this
-		// PrefabsSetupEditor.RestorePrefabsLODEditor();
-		// PrefabsSetupEditor.DeleteFoldersEditor();
+		PrefabsSetupEditor.DeleteFoldersEditor();
 	}
 }
 /*
@@ -483,16 +479,16 @@ public class SpawnerScenesVariationsEditor
 
 	}
 }
-// TODO (MALH): Recover this class
-/*
+
 public class PrefabsSetupEditor
 {
     static bool showDialog = false;
+	static Dictionary<int,Material> materialDictionary = new Dictionary<int,Material> ();
 
     [MenuItem("FGOL/OptimizationUtility/Prefabs/GeneratePrefabsLOD")]
     public static void GeneratePrefabsEditorLODEditor()
     {
-        List<string> foldersToCheckOut = OptimizationDataEditor.instance.GetPrefabsFolderToBeReset();
+        // List<string> foldersToCheckOut = OptimizationDataEditor.instance.GetPrefabsFolderToBeReset();
         // FGOL.Perforce.PerforceManager.Checkout(foldersToCheckOut, true);
         GeneratePrefabsLOD();
         // FGOL.Perforce.PerforceManager.Revert(foldersToCheckOut);
@@ -500,106 +496,114 @@ public class PrefabsSetupEditor
 
     public static void GeneratePrefabsLOD()
     {
-        OptimizationDataEditor.instance.ResetPrefabsFolder();
-        MaterialPrefabSetupObjects materialPrefab = new MaterialPrefabSetupObjects();
-        materialPrefab.Reset();
-        foreach (string spawnerLevel in OptimizationDataInfo.instance.SpawnerLevelToLoad)
-        {
-            ProcessLevel(spawnerLevel, materialPrefab);
-        }
+		materialDictionary.Clear();
+
+		string prefabsDestinationFolder = Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_LOW_PATH;
+		OptimizationDataEditor.instance.DeleteAndCreateADir( prefabsDestinationFolder );
+		string materialsDestinationFolder = Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_LOW_PATH + "/Materials";
+		OptimizationDataEditor.instance.DeleteAndCreateADir( materialsDestinationFolder );
+
+		string projectPath = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length);
+		OptimizationDataEditor.instance.DeleteAndCreateADir( projectPath + OptimizationDataInfo.MaterialPrefabsSavePath );
+
+		string prefabOriginalFolder = Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_PATH;
+		string[] files = Directory.GetFiles(prefabOriginalFolder, "*.prefab", SearchOption.AllDirectories);
+
+		foreach (string f in files) 
+		{
+			
+			string resoucePath = f.Substring( (Application.dataPath + "/Resources/").Length );
+			resoucePath = resoucePath.Substring( 0, resoucePath.Length - ".prefab".Length);
+			GameObject prefab =  Resources.Load<GameObject>( resoucePath) ;
+			if ( prefab != null )
+			{
+				// Create a prefab copy
+				string destinationPrefabPath = "Assets/Resources/" + IEntity.ENTITY_PREFABS_LOW_PATH + f.Substring( prefabOriginalFolder.Length);
+				Directory.CreateDirectory( Path.GetDirectoryName(destinationPrefabPath) );
+				UnityEngine.Object newPrefab = PrefabUtility.CreateEmptyPrefab( destinationPrefabPath );
+
+				if (newPrefab != null) 
+				{
+					GameObject updatedPrefab = PrefabUtility.ReplacePrefab (
+						prefab,
+						newPrefab,
+						ReplacePrefabOptions.ConnectToPrefab
+					);
+
+					// Create low quality material
+					CreateLowMaterials( updatedPrefab );
+				}
+			}
+		}
     }
 
-    static void ProcessLevel(string spawnerLevel, MaterialPrefabSetupObjects materialPrefab)
+    private static void CreateLowMaterials( GameObject prefab )
     {
-        string sceneFile = OptimizationDataEditor.instance.GetSpawnerLevelFileURLFromName(spawnerLevel);
-        if (showDialog)
-        {
-            if (EditorUtility.DisplayDialog("Scene Prefabs processing", "Are you sure you want to process the scene " + sceneFile + " ?", "YES", "NO"))
-            {
-                EditorSceneManager.OpenScene(sceneFile);
-                materialPrefab.Execute();
-                if (EditorUtility.DisplayDialog("Scene Prefabs processed", "Do you want to save the scene " + sceneFile + " ?", "YES", "NO"))
-                {
-                    materialPrefab.RemovePrefabsInstanceAndSave();
-                }
-            }
-        } 
-        else
-        {
-            EditorSceneManager.OpenScene(sceneFile);
-            materialPrefab.Execute();
-            materialPrefab.RemovePrefabsInstanceAndSave();
-        }
+		Renderer[] renderers = prefab.GetComponentsInChildren<Renderer> ();
+		if (renderers != null && renderers.Length > 0)
+		{
+			for (int i = 0; i < renderers.Length; i++)
+			{
+				processRenderer( renderers[i] );
+			}
+		}
     }
 
-    [MenuItem("FGOL/OptimizationUtility/Prefabs/RestorePrefabsLOD")]
-    public static void RestorePrefabsLODEditor()
-    {
-        List<string> foldersToCheckOut = OptimizationDataEditor.instance.GetPrefabsFolderToBeReset();
-        // FGOL.Perforce.PerforceManager.Checkout(foldersToCheckOut, true);
-        RestorePrefabsLOD();
-        foreach (string path in foldersToCheckOut)
-        {
-            OptimizationDataEditor.instance.DeleteADir(path);
-        }
-        // FGOL.Perforce.PerforceManager.Revert(foldersToCheckOut);
-    }
+	protected static bool processRenderer (Renderer renderer)
+	{
+		bool materialChanged = false;
+		Material[] sharedMaterials = renderer.sharedMaterials;
+		for (int i=0; i<sharedMaterials.Length; i++)
+		{
+			Material material = sharedMaterials[i];
+			if (material != null)
+			{
+				int materialInstanceID = material.GetInstanceID ();
+				if (!materialDictionary.ContainsKey (materialInstanceID))
+				{
+					for (int j=0; j<OptimizationDataInfo.instance.PropertiesNameTofind.Length; j++) {
+						string propertyNameTofind = OptimizationDataInfo.instance.PropertiesNameTofind [j];
+						if (material.HasProperty (propertyNameTofind))
+						{
+							Material clonedMaterial = new Material (material);
+							clonedMaterial.SetTexture (propertyNameTofind, null);
+							clonedMaterial.name = material.name + OptimizationDataInfo.LDSufix;
+							materialDictionary [materialInstanceID] = clonedMaterial;
 
-    public static void RestorePrefabsLOD()
-    {
-        AssetDatabase.StartAssetEditing();
-        MaterialPrefabSetupObjects materialPrefab = new MaterialPrefabSetupObjects();
-        foreach (string spawnerLevel in OptimizationDataInfo.instance.SpawnerLevelToLoad)
-        {
-            RestoreLevel(spawnerLevel, materialPrefab);
-        }
-        
-        AssetDatabase.StopAssetEditing();
-        AssetDatabase.SaveAssets();
-    }
+							string materialName = clonedMaterial.name + OptimizationDataInfo.MaterialFileExtension;
+							string materialSVPath = OptimizationDataInfo.MaterialPrefabsSavePath + "/" + materialName;
+							AssetDatabase.CreateAsset (clonedMaterial, materialSVPath);
+							sharedMaterials [i] = materialDictionary [materialInstanceID];
+							materialChanged = true;
+							break;
+						}
+					}
+				}
+				else
+				{
+					sharedMaterials [i] = materialDictionary [materialInstanceID];
+					materialChanged = true;
+				}
+			}
+		}
+		renderer.sharedMaterial = sharedMaterials[0];
+		renderer.sharedMaterials = sharedMaterials;
+		return materialChanged;
+	}
 
     [MenuItem("FGOL/OptimizationUtility/Prefabs/DeleteFolders")]
     public static void DeleteFoldersEditor()
     {
-        List<string> foldersToCheckOut = OptimizationDataEditor.instance.GetPrefabsFolderToBeReset();
-        foldersToCheckOut.Add(OptimizationDataInfo.MaterialPrefabsSavePath);
-        // FGOL.Perforce.PerforceManager.Checkout(foldersToCheckOut, true);
         DeleteFolders();
     }
 
     public static void DeleteFolders()
     {
-        List<string> directoryToDelete=new List<string>();
-        directoryToDelete.Add(OptimizationDataInfo.MaterialPrefabsSavePath);
-        directoryToDelete.AddRange (OptimizationDataEditor.instance.GetPrefabsFolderToBeReset());
-        foreach(string path in directoryToDelete)
-        {
-            OptimizationDataEditor.instance.DeleteADir(path);
-        }
+		string prefabsDestinationFolder = Application.dataPath + "/Resouces/" + IEntity.ENTITY_PREFABS_LOW_PATH;
+		OptimizationDataEditor.instance.DeleteADir( prefabsDestinationFolder );
+		string materialsDestinationFolder = Application.dataPath + "/Resouces/" + IEntity.ENTITY_PREFABS_LOW_PATH + "/Materials";
+		OptimizationDataEditor.instance.DeleteADir( materialsDestinationFolder );
     }
-    
-    static void RestoreLevel(string spawnerLevel, MaterialPrefabSetupObjects materialPrefab)
-    {
-        string sceneFile = OptimizationDataEditor.instance.GetSpawnerLevelFileURLFromName(spawnerLevel);
 
-        if (showDialog)
-        {
-            if (EditorUtility.DisplayDialog("Scene Prefabs processing", "Are you sure you want to process the scene " + sceneFile + " ?", "YES", "NO"))
-            {
-                EditorSceneManager.OpenScene(sceneFile);
-                materialPrefab.RestoreOriginalPrefabs();
-                if (EditorUtility.DisplayDialog("Scene Prefabs processed", "Do you want to save the scene " + sceneFile + " ?", "YES", "NO"))
-                {
-                    EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-                }
-            }
-        } 
-        else
-        {
-            EditorSceneManager.OpenScene(sceneFile);
-            materialPrefab.RestoreOriginalPrefabs();
-            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-        }
-    }
+
 }
-*/
