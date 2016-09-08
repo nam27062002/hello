@@ -44,22 +44,6 @@ public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
 		this.transform.SetPosZ(DEFAULT_Z);
 	}
 
-	/// <summary>
-	/// The manager has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<string>(EngineEvents.SCENE_UNLOADED, OnSceneUnloaded);
-	}
-
-	/// <summary>
-	/// The manager has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(EngineEvents.SCENE_UNLOADED, OnSceneUnloaded);
-	}
-
 	//------------------------------------------------------------------//
 	// PRIVATE METHODS													//
 	//------------------------------------------------------------------//
@@ -177,7 +161,9 @@ public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
 		if(spotIdx < 0) return;
 
 		// Destroy scene
-		if(_destroy) GameObject.Destroy(_scene.gameObject);
+		if(_destroy) {
+			GameObject.Destroy(_scene.gameObject);
+		}
 
 		// Remove from the list
 		// Don't change list size so we can reuse spots (this could be improved with a smarter algorithm, although we shouldn't have that many objects)
@@ -187,20 +173,4 @@ public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// A game scene has been unloaded.
-	/// </summary>
-	/// <param name="_sceneName">Name of the scene that has just been unloaded.</param>
-	private void OnSceneUnloaded(string _sceneName) {
-		// Delete non-persistent scenes
-		List<UIScene3D> toDelete = new List<UIScene3D>(m_scenes.Count);
-		for(int i = 0; i < m_scenes.Count; i++) {
-			if(m_scenes[i] != null) {
-				if(!m_scenes[i].persistent) toDelete.Add(m_scenes[i]);
-			}
-		}
-		for(int i = 0; i < toDelete.Count; i++) {
-			Remove(toDelete[i]);
-		}
-	}
 }

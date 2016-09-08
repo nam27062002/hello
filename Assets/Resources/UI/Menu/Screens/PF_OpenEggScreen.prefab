@@ -783,6 +783,7 @@ GameObject:
   - 114: {fileID: 11455582}
   - 114: {fileID: 11428582}
   - 114: {fileID: 11481576}
+  - 114: {fileID: 114000011322746392}
   m_Layer: 0
   m_Name: ButtonBuy
   m_TagString: Untagged
@@ -930,6 +931,7 @@ GameObject:
   - 114: {fileID: 11498230}
   - 114: {fileID: 11491034}
   - 114: {fileID: 11460620}
+  - 114: {fileID: 114000013507932526}
   m_Layer: 5
   m_Name: RawImage
   m_TagString: Untagged
@@ -1130,7 +1132,7 @@ Animator:
   m_GameObject: {fileID: 186878}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: db7f3a669176be0429d80f0c2827701c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 04fde761d8968c54c99dfc298c63bbf2, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1210,8 +1212,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11422350}
-        m_MethodName: OnBuyButton
+      - m_Target: {fileID: 114000011322746392}
+        m_MethodName: OnBuyEgg
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1617,7 +1619,6 @@ MonoBehaviour:
   m_actionButtonsAnimator: {fileID: 11451026}
   m_instantOpenButton: {fileID: 11408420}
   m_callToActionButton: {fileID: 11459028}
-  m_buyButton: {fileID: 11401546}
   m_backButton: {fileID: 11440854}
   m_rewardInfo: {fileID: 147154}
   m_rewardRarity: {fileID: 11473692}
@@ -3692,7 +3693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 20
+    m_Left: -50
     m_Right: 30
     m_Top: 0
     m_Bottom: 0
@@ -3803,8 +3804,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 200
-  m_PreferredHeight: 200
+  m_PreferredWidth: 250
+  m_PreferredHeight: 250
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
 --- !u!114 &11491162
@@ -5241,3 +5242,28 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 164792}
   m_IsPrefabParent: 1
+--- !u!114 &114000011322746392
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 186878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d19d40a92c4394960a3c5036628ae8fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_priceText: {fileID: 11484538}
+--- !u!114 &114000013507932526
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 198970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c96b92d39d0f43cf89c09747b5e0134, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_eggSku: egg_premium
+  m_targetRawImage: {fileID: 11498230}
