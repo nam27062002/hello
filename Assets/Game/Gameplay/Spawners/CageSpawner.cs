@@ -21,11 +21,16 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 
 	//---------------------------------------------------------------------------------------------------------
 
+	private Rect m_rect;
+	public Rect boundingRect { get { return m_rect; } }
 	public string name 					{ get { return name; } }
 	public AreaBounds area 				{ get { return m_areaBounds; } set { m_areaBounds = value; } }
 	public IGuideFunction guideFunction	{ get { return null; } }
 
 	//---------------------------------------------------------------------------------------------------------
+	void Start() {
+		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+	}
 
 	public void Initialize() {
 		int maxEntities = 0;

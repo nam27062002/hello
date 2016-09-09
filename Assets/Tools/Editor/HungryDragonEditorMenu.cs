@@ -101,6 +101,8 @@ public class HungryDragonEditorMenu {
 			return;
 		}
 
+		int removeString = "Assets/Resources/".Length;
+		int removeExternsion =  ".prefab".Length;
 		// Pick selected prefab adn check that it's valid
 		for(int i = 0; i < Selection.gameObjects.Length; i++) {
 			// Check that prefab corresponds to an entity
@@ -110,8 +112,17 @@ public class HungryDragonEditorMenu {
 				continue;
 			}
 
+			string myPath = AssetDatabase.GetAssetPath( entityPrefab );
+			if ( !string.IsNullOrEmpty(myPath) )
+			{
+				myPath = myPath.Substring( removeString);
+				myPath = myPath.Substring(0, myPath.Length - removeExternsion);
+				SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite, myPath + ".png");
+			}
+
+
 			// Generate icon for the selected prefab
-			SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite);
+			// SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite);
 		}
 	}
 

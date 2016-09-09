@@ -21,6 +21,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[Separator("Entity")]
 	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
 	[SerializeField] public GameObject m_entityPrefab;
+
+	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area.")]
+	[EntityPrefabListAttribute]
+	[SerializeField] public string m_entityPrefabStr = "";
+	private string m_entityPrefabPath;
+
+
 	[SerializeField] public RangeInt m_quantity = new RangeInt(1, 1);
 	[SerializeField] public Range	 m_scale = new Range(1f, 1f);
 	[SerializeField] private uint	m_rails = 1;
@@ -65,6 +72,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 		} 
 	}
 
+	private Rect m_rect;
+	public Rect boundingRect { get { return m_rect; } }
+
 	protected EntityGroupController m_groupController;
 	protected IGuideFunction m_guideFunction;
 	public IGuideFunction guideFunction { get { return m_guideFunction; } }
@@ -102,7 +112,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			if (m_rails == 0) m_rails = 1;
 
-			PoolManager.CreatePool(m_entityPrefab, Mathf.Max(15, m_entities.Length), true);
+			m_entityPrefabPath = IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr;
+
+			// TODO[MALH]: Get path relative to quality version
+			PoolManager.CreatePool(m_entityPrefabStr, m_entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
 
 			// Get external references
 			// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
@@ -114,6 +127,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 			if (m_groupController) {
 				m_groupController.Init(m_quantity.max);
 			}
+
+			m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 
 			m_guideFunction = GetComponent<IGuideFunction>();
 
@@ -153,7 +168,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	public void ForceRemoveEntities() {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] != null) {
-				PoolManager.ReturnInstance(m_entities[i]);
+				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
 				m_entities[i] = null;
 			}
 		}
@@ -169,7 +184,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] == _entity) 
 			{
-				PoolManager.ReturnInstance( m_entities[i] );
+				PoolManager.ReturnInstance( m_entityPrefabStr, m_entities[i] );
 				m_entities[i] = null;
 				if (_killedByPlayer) {
 					m_entitiesKilled++;
@@ -316,7 +331,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 
 		for (int i = 0; i < m_entitySpawned; i++) {			
-			m_entities[i] = PoolManager.GetInstance(m_entityPrefab.name);
+			m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr);
 			m_entityAlive++;
 		}
 		m_entitiesKilled = 0;
@@ -399,7 +414,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			// Draw icon! - only in editor!
 			#if UNITY_EDITOR
 				// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
-				Gizmos.DrawIcon(transform.position, "Spawners/" + this.m_entityPrefab.name, true);
+				Gizmos.DrawIcon(transform.position, IEntity.ENTITY_PREFABS_PATH + this.m_entityPrefabStr, true);
 			#endif
 		}
 	}
