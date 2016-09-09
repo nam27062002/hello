@@ -343,6 +343,9 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.FINISHED: {
 				// Disable dragon
 				InstanceManager.player.playable = false;
+
+                // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
+                SaveFacade.Instance.timePlayed += (int)m_elapsedSeconds;
 			} break;
 		}
 		

@@ -68,17 +68,9 @@ public class MenuSceneController : SceneController {
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
 		// Shortcut to screens controller
-		m_screensController = GetComponent<MenuScreensController>();
-
-		Messenger.AddListener(GameEvents.MERGE_SERVER_SAVE_DATA, OnMergeSaveData);
+		m_screensController = GetComponent<MenuScreensController>();        
 	}
-
-	protected override void OnDestroy() 
-	{
-		base.OnDestroy();
-		Messenger.RemoveListener(GameEvents.MERGE_SERVER_SAVE_DATA, OnMergeSaveData);
-	}
-
+	
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
@@ -179,15 +171,6 @@ public class MenuSceneController : SceneController {
 	public void OnLevelSelected(string _levelSku) {
 		// Update menu selected level
 		m_selectedLevel = _levelSku;
-	}
-
-	void OnMergeSaveData()
-	{
-		PopupController pc = PopupManager.OpenPopupInstant(PopupMerge.PATH);
-		PopupMerge pm = pc.GetComponent<PopupMerge>();
-		if ( pm != null ) {
-			pm.OnMergeSaveData();
-		}
-	}
+	}	
 }
 

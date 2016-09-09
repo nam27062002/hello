@@ -1,36 +1,42 @@
-﻿using UnityEngine;
+﻿using FGOL.Save;
+using FGOL.Save.SaveStates;
+using System;
 using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(PopupController))]
 public class PopupMerge : MonoBehaviour 
 {
-
 	public static readonly string PATH = "UI/Popups/Merge/PF_PopupMerge";
 
 	public PopupMergeProfilePill m_leftPill;
 	public PopupMergeProfilePill m_rightPill;
+    public GameObject m_closeBtn;
 
-	UserProfile m_profile1;
-	UserProfile m_profile2;
+    ProgressComparatorSystem m_profile1;
+    ProgressComparatorSystem m_profile2;
 
-	/*
-	PopupMerge()
-	{
-		Messenger.AddListener(GameEvents.MERGE_SERVER_SAVE_DATA, onMergeSaveData);
-	}
+    private ConflictState ConflictState { get; set; }
 
-	protected void OnDestroy() 
-	{
-		Messenger.RemoveListener(GameEvents.MERGE_SERVER_SAVE_DATA, onMergeSaveData);
-	}
-	*/
+    private Action<ConflictResult> OnResolved { get; set; }
 
-	/// <summary>
-	/// Setup the popup with the two given user profiles.
-	/// </summary>
-	/// <param name="_profile1">First profile, usually the player's current profile.</param>
-	/// <param name="_profile2">Second profile, usually the profile received from the server.</param>
-	public void Setup(UserProfile _profile1, UserProfile _profile2) {
+    /*
+    // Uncomment to test from SC_Popups scene
+    private void Awake()
+    {
+        Test();
+    }*/
+
+    /// <summary>
+    /// Setup the popup with the two given user profiles.
+    /// </summary>
+    /// <param name="conflictState">The state of conflict between the local and the cloud profiles that has trigged this popup</param>
+    /// <param name="_profile1">First profile, usually the player's current profile.</param>
+    /// <param name="_profile2">Second profile, usually the profile received from the server.</param>
+    public void Setup(ConflictState conflictState, ProgressComparatorSystem _profile1, ProgressComparatorSystem _profile2, bool dismissable, Action<ConflictResult> onResolved) {
+        ConflictState = conflictState;
+        OnResolved = onResolved;
+
 		// Initialize left pill with profile 1
 		m_profile1 = _profile1;
 		m_leftPill.Setup(_profile1, _profile2);
@@ -38,71 +44,87 @@ public class PopupMerge : MonoBehaviour
 		// Initialize right pill with the other profile
 		m_profile2 = _profile2;
 		m_rightPill.Setup(_profile2, _profile1);
-	}
 
-	public void OnMergeSaveData()
-	{
-		// Initialize popup using the current user's profile and the one received from the server
-		UserProfile p2 = new UserProfile();
-		p2.Load(GameServerManager.SharedInstance.GetLastRecievedUniverse());
-		Setup(UsersManager.currentUser, p2);
-	}
+        m_closeBtn.SetActive(dismissable);
+    }
 
 	public void OnUseLeftOption()
-	{
-		ChooseProfile(m_profile1);
-	}
+	{        
+        // Use local save
+        if (ConflictState != ConflictState.RecommendLocal && ConflictState != ConflictState.UserDecision)
+        {
+            ShowConfirmationPopup(ConflictResult.Local);
+        }
+        else
+        {
+            DismissPopup(ConflictResult.Local);
+        }
+    }
 
 	public void OnUseRightOption()
 	{
-		ChooseProfile(m_profile2);
-	}
+        // Use cloud save
+        if (ConflictState != ConflictState.RecommendCloud && ConflictState != ConflictState.UserDecision)
+        {
+            ShowConfirmationPopup(ConflictResult.Cloud);
+        }
+        else
+        {
+            DismissPopup(ConflictResult.Cloud);
+        }
+    }
 
-	/// <summary>
-	/// Perform all the required actions once a profile has been chosen.
-	/// </summary>
-	/// <param name="_chosenProfile">The chosen profile.</param>
-	private void ChooseProfile(UserProfile _chosenProfile) {
-		// Special treatment if the chosen profile is the current one
-		bool isCurrent = (_chosenProfile == UsersManager.currentUser);
-		if(isCurrent) {
-			// Update save counter to the latest one
-			UsersManager.currentUser.saveCounter = Mathf.Max(m_profile1.saveCounter, m_profile2.saveCounter);
-		} else {
-			// Load into current user
-			UsersManager.currentUser.Load(_chosenProfile.ToJson());	// [AOC] This is a bit hacky, probably we should have a Load() method on UserProfile with another UserProfile as a parameter
-		}
+    private void ShowConfirmationPopup(ConflictResult result)
+    {
+        PersistenceManager.Popups_OpenMergeConfirmation(
+            delegate ()
+            {
+                DismissPopup(result);
+            }
+        );
+    }
 
-		// Flush server data and save new persistence
-		GameServerManager.SharedInstance.CleanLastRecievedUniverse();
-		GameServerManager.SharedInstance.saveDataRecovered = true;
-		PersistenceManager.Save();
+    private void DismissPopup(ConflictResult result)
+    {
+        if (OnResolved != null)
+        {
+            OnResolved(result);
+        }
 
-		// Close and destroy popup
-		GetComponent<PopupController>().Close(true);
+        // Close and destroy popup
+        GetComponent<PopupController>().Close(true);
+    }
 
-		// If loading a new profile, restart game
-		if(!isCurrent) {
-			FlowManager.Restart();
-		}
-	}
+    /// <summary>
+    /// Called by the player when the user clicks on the close button
+    /// </summary>
+    public void OnDismiss()
+    {
+        DismissPopup(ConflictResult.Dismissed);
+    }
 
-	/// <summary>
-	/// For testing purposes!
-	/// </summary>
-	public void Test() {
-		UserProfile p1 = new UserProfile();
-		TextAsset universe1 = Resources.Load("__TEMP/test_universe_1") as TextAsset;
-		SimpleJSON.JSONClass json1 = SimpleJSON.JSONNode.Parse(universe1.ToString()) as SimpleJSON.JSONClass;
-		p1.Load(json1);
-		Debug.Log("PROFILE 1:\n" + p1.ToString());
+    /// <summary>
+    /// For testing purposes!
+    /// </summary>
+    public void Test() {
+        //[DGR] Not needed anymore since we're using FGOL technology for persistence now        
 
-		UserProfile p2 = new UserProfile();
-		TextAsset universe2 = Resources.Load("__TEMP/test_universe_2") as TextAsset;
-		SimpleJSON.JSONClass json2 = SimpleJSON.JSONNode.Parse(universe2.ToString()) as SimpleJSON.JSONClass;
-		p2.Load(json2);
-		Debug.Log("PROFILE 2:\n" + p2.ToString());
+        SaveData p1 = new SaveData("p1");
+        TextAsset universe1 = Resources.Load("__TEMP/test_universe_1") as TextAsset;
+        p1.LoadFromString(universe1.ToString());        
+        ProgressComparatorSystem progress1 = new ProgressComparatorSystem();
+        progress1.data = p1;
+        progress1.Load();
+        Debug.Log("PROFILE 1:\n" + p1.ToString());
 
-		Setup(p1, p2);
-	}
+        SaveData p2 = new SaveData("p1");
+        TextAsset universe2 = Resources.Load("__TEMP/test_universe_2") as TextAsset;
+        p2.LoadFromString(universe1.ToString());        
+        ProgressComparatorSystem progress2 = new ProgressComparatorSystem();
+        progress2.data = p2;
+        progress2.Load();
+        Debug.Log("PROFILE 2:\n" + p2.ToString());
+     
+		Setup(ConflictState.RecommendCloud, progress1, progress2, false, null);        
+    }
 }
