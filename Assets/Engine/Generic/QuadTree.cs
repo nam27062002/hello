@@ -74,9 +74,8 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	public void Remove(T _item) {
 		if (m_indexTable.ContainsKey(_item)) {			
 			List<QuadTreeNode<T>> nodes = m_indexTable[_item];
-			while(nodes.Count > 0) {
-				QuadTreeNode<T> node = nodes.First();
-				node.Remove(_item, ref m_indexTable);
+			for (int i = 0; i < nodes.Count; i++) {
+				nodes[i].Remove(_item, ref m_indexTable);
 			}
 			m_indexTable.Remove(_item);
 		}
