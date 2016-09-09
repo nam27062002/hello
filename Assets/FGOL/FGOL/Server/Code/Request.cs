@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FGOL.Configuration;
+// [DGR] CONFIG: Not supported yet
+//using FGOL.Configuration;
 using BestHTTP;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
@@ -31,13 +32,15 @@ namespace FGOL.Server
 
         protected void Run(string url, Method method, Hashtable headers, Dictionary<string, string> parameters, byte[] data, OnCompleteDG callback, string sslValidationDomain = null)
         {
-            System.Diagnostics.Stopwatch sw = null;
-
-			if(Convert.ToBoolean(Config.Instance["request.profile"]))
+            // [DGR] CONFIG: Not supported yet            
+            /*
+            System.Diagnostics.Stopwatch sw = null;            
+            if (Convert.ToBoolean(Config.Instance["request.profile"]))
 			{
             	sw = new System.Diagnostics.Stopwatch();
             	sw.Start();
 			}
+            */
 
             HTTPMethods httpMethod = HTTPMethods.Get;
 
@@ -55,11 +58,13 @@ namespace FGOL.Server
 
             HTTPRequest req = new HTTPRequest(uri, httpMethod, delegate(HTTPRequest request, HTTPResponse response)
             {
+                // [DGR] CONFIG: not supported yet
+                /*
                 if(sw != null)
                 {
                     sw.Stop();
                     Debug.Log(String.Format("FGOL.Server.Request :: Response Time for URL: {0} - Elapsed: {1}ms", url, sw.ElapsedMilliseconds));
-                }
+                }                
 
                 if (Convert.ToBoolean(Config.Instance["request.dumpHeaders"]))
                 {
@@ -88,6 +93,7 @@ namespace FGOL.Server
                         Debug.Log(responseHeaders);
                     }
                 }
+                */
 
                 if(DebugDisableConnection)
                 {

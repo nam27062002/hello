@@ -21,7 +21,9 @@ public class WeiboSocialSystem : ISocialSystem
 
     public void Init(SocialSaveSystem socialSaveSystem)
     {
-        EventManager.Instance.RegisterEvent(Events.OnGameDBLoaded, OnGameDBLoaded);
+        // [DGR] RULES: No support added yet
+        //EventManager.Instance.RegisterEvent(Events.OnGameDBLoaded, OnGameDBLoaded);
+
         // [DGR] No support added yet
         //m_socialSaveSystem = socialSaveSystem;
     }
@@ -506,32 +508,32 @@ SocialManagerUtilities.CheckConnectionAuth(delegate (SocialManagerUtilities.Conn
 });
 }
 
-private void OnGameDBLoaded(Enum eventType, object[] args)
-{
-/*
-//[DGR] No support added yet
-GameDB gameDB = GameDataManager.Instance.gameDB;
-
-if (gameDB != null)
-{
-    PlayerInitData data = gameDB.GetItem<PlayerInitData>(PlayerInitData.KeyPlayer);
-
-    if (data != null)
+    // [DGR] RULES: No support added yet
+    /*
+    private void OnGameDBLoaded(Enum eventType, object[] args)
     {
-        m_loginRewardType = data.facebookLoginRewardType;
-        m_loginRewardAmount = data.facebookLoginReward;
-    }
-    else
-    {
-        Debug.LogWarning("WeiboSocialSystem (OnGameDBLoaded) :: PlayerInitData is not available!");
-    }
-}
-else
-{
-    Debug.LogWarning("WeiboSocialSystem (OnGameDBLoaded) :: GameDB is not available!");
-}
-*/
+        GameDB gameDB = GameDataManager.Instance.gameDB;
+
+        if (gameDB != null)
+        {
+            PlayerInitData data = gameDB.GetItem<PlayerInitData>(PlayerInitData.KeyPlayer);
+
+            if (data != null)
+            {
+                m_loginRewardType = data.facebookLoginRewardType;
+                m_loginRewardAmount = data.facebookLoginReward;
+            }
+            else
+            {
+                Debug.LogWarning("WeiboSocialSystem (OnGameDBLoaded) :: PlayerInitData is not available!");
+            }
         }
+        else
+        {
+            Debug.LogWarning("WeiboSocialSystem (OnGameDBLoaded) :: GameDB is not available!");
+        }
+    }
+    */
 
     private IEnumerator LoadCachedProfileImage(string socialID, Action<Texture2D> onLoaded)
     {
