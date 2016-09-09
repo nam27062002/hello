@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using FGOL.Server;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class NetTest : MonoBehaviour 
 {
@@ -16,18 +19,12 @@ public class NetTest : MonoBehaviour
 		m_actionButtons.SetActive(false);
 		m_waitingText.SetActive(false);
 		m_mergeLayout.SetActive(false);
-
-		Messenger.AddListener<bool>(GameEvents.LOGGED, OnLog);
+		
 		Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLog);
 
 		// SOCIAL PLATFORM
 		SocialPlatformManager.SharedInstance.Init();
 
-	}
-
-	void OnDestroy()
-	{
-		Messenger.RemoveListener<bool>(GameEvents.LOGGED, OnLog);
 	}
 
 	void OnLog( bool logged)
@@ -36,8 +33,7 @@ public class NetTest : MonoBehaviour
 		{
 			m_loginButton.SetActive(false);
 			m_waitingText.SetActive(false);
-			m_actionButtons.SetActive(true);
-			CheckShowMerge();
+			m_actionButtons.SetActive(true);			
 		}
 		else
 		{
@@ -47,42 +43,44 @@ public class NetTest : MonoBehaviour
 		}
 	}
 
-	void OnSocialLog( bool logged )
+	void OnSocialLog(bool logged)
 	{
-		if ( logged )
+		if (logged)
 		{
-            m_loginButton.SetActive(true);
-            //CheckShowMerge();
-        }
-		else
-		{
-			
-		}
+            m_loginButton.SetActive(true);            
+        }		
 	}
 
 	public void Login()
 	{
 		m_loginButton.SetActive(false);
-		m_waitingText.SetActive(true);
-        //GameServerManager.SharedInstance.LoginToServer();        
+		m_waitingText.SetActive(true);              
         if (SocialPlatformManager.SharedInstance.IsLoggedIn())
         {
-            GameServerManager.SharedInstance.LogInToServerThruPlatform("facebook", SocialPlatformManager.SharedInstance.GetUserId(), SocialPlatformManager.SharedInstance.GetToken());
+            GameServerManager.SharedInstance.LogInToServerThruPlatform("facebook", SocialPlatformManager.SharedInstance.GetUserId(), SocialPlatformManager.SharedInstance.GetToken(),
+                delegate (Error commandError, Dictionary<string, object> response)
+                {
+                    if (commandError == null)
+                    {
+                        OnLog(true);
+                    }
+                    else
+                    {
+                        OnLog(false);
+                    }
+                }
+            );
         }
     }
 
 	public void GetUniverse()
-	{
-        //GameServerManager.SharedInstance.GetUniverse();
-        GameServerManager.SharedInstance.GetPersistence();
+	{        
+        GameServerManager.SharedInstance.GetPersistence(null);
     }
 
 	public void SetUniverse()
-	{
-        /*SimpleJSON.JSONClass info = PersistenceManager.LoadToObject( PersistenceManager.activeProfile );
-		GameServerManager.SharedInstance.SetUniverse( info );
-        */
-        GameServerManager.SharedInstance.SetPersistence();
+	{     
+        GameServerManager.SharedInstance.SetPersistence("{\"version\":\"0.1.1\"}", null);
     }
 
 
@@ -91,25 +89,10 @@ public class NetTest : MonoBehaviour
 	{
 		SocialPlatformManager.SharedInstance.Login();
 	}
-
-
-	// MERGING
-	private void CheckShowMerge()
-	{
-		// If we are logged in both platgorms and we already merged our local account with the save data
-		if ( GameServerManager.SharedInstance.IsLogged() /*&& GameServerManager.SharedInstance.saveDataRecovered*/ && SocialPlatformManager.SharedInstance.IsLoggedIn() )
-		{
-			m_mergeLayout.SetActive(true);
-		}
-		else
-		{
-			m_mergeLayout.SetActive(false);
-		}
-	}
+	
 
 	public void MergeButton()
 	{
-		GameServerManager.SharedInstance.MergeSocialAccount();
 	}
 
 	public void OnResetDeviceInfo()

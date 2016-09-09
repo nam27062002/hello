@@ -58,6 +58,9 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 		} 
 	}
 
+	private Rect m_rect;
+	public Rect boundingRect { get { return m_rect; } }
+
 	protected EntityGroupController m_groupController;
 	protected IGuideFunction m_guideFunction;
 	public IGuideFunction guideFunction { get { return m_guideFunction; } }
@@ -87,6 +90,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	// Use this for initialization
 	protected virtual void Start() {
+		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 		m_entities = new GameObject[m_quantity.max];
 
 		if (m_rails == 0) m_rails = 1;

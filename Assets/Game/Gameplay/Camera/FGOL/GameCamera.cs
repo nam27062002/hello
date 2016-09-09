@@ -1050,6 +1050,7 @@ public class GameCamera : MonoBehaviour
 		Vector3 center = _bounds.center;
 		center.z = 0;
 		_bounds.center = center;
+
 		return m_activationMax.Intersects(_bounds);
 	}
 
