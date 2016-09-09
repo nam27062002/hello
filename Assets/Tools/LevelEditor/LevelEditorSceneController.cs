@@ -28,25 +28,33 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		private float m_timer = 0.5f;
 
-		//------------------------------------------------------------------//
-		// GENERIC METHODS													//
-		//------------------------------------------------------------------//
-		/// <summary>
-		/// Initialization.
-		/// </summary>
-		override protected void Awake() {
-			// Initialize some required managers
-			ContentManager.InitContent();
-			PersistenceManager.Load();
+        private bool m_started = false;
+
+        //------------------------------------------------------------------//
+        // GENERIC METHODS													//
+        //------------------------------------------------------------------//
+        /// <summary>
+        /// Initialization.
+        /// </summary>
+        override protected void Awake() {
+            ApplicationManager.CreateInstance();            
+
+            // Initialize some required managers
+            ContentManager.InitContent();			
 			SpawnerManager.CreateInstance();
 
-			// Load the dragon
-			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
-			if ( InstanceManager.player != null )
-				InstanceManager.player.playable = false;
+            UsersManager.CreateInstance();
+            SaveFacade.Instance.Init();
+            PersistenceManager.Init();
+            PersistenceManager.Load();
 
-			// Call parent
-			base.Awake();
+            // Load the dragon
+            DragonManager.LoadDragon(LevelEditor.settings.testDragon);
+            if (InstanceManager.player != null)
+                InstanceManager.player.playable = false;
+
+            // Call parent
+            base.Awake();
 		}
 
 		/// <summary>

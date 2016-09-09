@@ -27,6 +27,36 @@ public class PoolManager : SingletonMonoBehaviour<PoolManager> {
 	}
 
 	/// <summary>
+	/// Creates the pool. Creates a pool for the resource _prefabPath with the id _prefabName. With an initial size _initSize. It can grow if _canGrow
+	/// </summary>
+	/// <param name="_prefabName">Prefab name. Id to ask for this resource</param>
+	/// <param name="_prefabPath">Prefab path. Resources path</param>
+	/// <param name="_initSize">Init size.</param>
+	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
+	public static void CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true) {
+		// Use alternative function
+		CreatePool(_prefabName, _prefabPath, instance.transform, _initSize, _canGrow);
+	}
+
+	/// <summary>
+	/// Creates the pool.
+	/// </summary>
+	/// <param name="_prefabName">Prefab name.</param>
+	/// <param name="_prefabPath">Prefab path.</param>
+	/// <param name="_container">Container.</param>
+	/// <param name="_initSize">Init size.</param>
+	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
+	public static void CreatePool(string _prefabName, string _prefabPath, Transform _container, int _initSize = 10, bool _canGrow = true) {
+		// Skip if the pool already exists
+		if(!instance.m_pools.ContainsKey(_prefabName)) {
+			GameObject go = Resources.Load<GameObject>( _prefabPath );
+			Pool pool = new Pool(go, _container, _initSize, _canGrow, _container == instance.transform);	// [AOC] Create new container if given container is the Pool Manager.
+			instance.m_pools.Add(_prefabName, pool);
+		}
+	}
+
+
+	/// <summary>
 	/// Get the first available instance of the prefab with the given name.
 	/// </summary>
 	public static GameObject GetInstance(string _id) {
@@ -43,6 +73,17 @@ public class PoolManager : SingletonMonoBehaviour<PoolManager> {
 	{
 		if ( instance.m_pools.ContainsKey( go.name ) )
 			instance.m_pools[ go.name ].Return(go);
+	}
+
+	/// <summary>
+	/// Returns the instance by id _name
+	/// </summary>
+	/// <param name="_name">Name.</param>
+	/// <param name="go">Instance</param>
+	public static void ReturnInstance( string _name, GameObject go)
+	{
+		if ( instance.m_pools.ContainsKey( _name ) )
+			instance.m_pools[ _name ].Return(go);
 	}
 
 	/// <summary>

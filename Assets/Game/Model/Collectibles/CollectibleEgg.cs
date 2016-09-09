@@ -112,10 +112,12 @@ public class CollectibleEgg : MonoBehaviour {
 	/// To be called via Invoke().
 	/// </summary>
 	private void HideAfterDelay() {
+		// Hide the view
+		if(m_view != null) m_view.gameObject.SetActive(false);
+
 		// Let's move it down instead so it looks like debris
-		//if(m_view != null) m_view.gameObject.SetActive(false);
-		if(m_view != null) {
+		/*if(m_view != null) {
 			m_view.transform.Translate(0f, -1.15f, 0f, Space.World);	// [AOC] Magic Number >_<
-		}
+		}*/
 	}
 }
