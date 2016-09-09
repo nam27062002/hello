@@ -24,6 +24,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		get{ return m_burningTime; }
 	}
 
+
+	private Rect m_rect;
+	public Rect boundingRect { get { return m_rect; } }
+
 	private CircleAreaBounds m_area;
 	public CircleAreaBounds area { get { return m_area; } }
 
@@ -49,6 +53,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	// Use this for initialization
 	void Start () {
+		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+
 		FirePropagationManager.Insert(this);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();

@@ -1,6 +1,4 @@
-﻿using FGOL.Configuration;
-using FGOL.Server;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,6 +75,12 @@ public static class GeoLocation
 
     private static void GetServerLocation(Action<Location?> onComplete)
     {
+        // [DGR] SERVER: Not supported yet
+        if (onComplete != null)
+        {
+            onComplete(Location.Default);
+        }
+        /*    
         string configEnvironment = Config.Instance["server.environment"] as string;
         string environment = configEnvironment != null ? configEnvironment : Globals.GetEnvironment().ToString();
 
@@ -131,6 +135,7 @@ public static class GeoLocation
 
             onComplete(loc);
         }, "*.fgol.mobi");
+        */
     }
 
     private static Location GetLocationByLanguage()

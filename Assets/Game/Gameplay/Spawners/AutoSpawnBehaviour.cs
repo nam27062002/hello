@@ -16,6 +16,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	[SerializeField] private float m_spawnTime;
 
+
 	private State m_state;
 	public State state
 	{
@@ -28,6 +29,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private float m_respawnTime;
 
 	private Bounds m_bounds; // view bounds
+	private Rect m_rect;
+	public Rect boundingRect { get { return m_rect; } }
 
 	// Scene referemces
 	private GameSceneControllerBase m_gameSceneController = null;
@@ -53,6 +56,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		} else {
 			m_bounds = viewBurned.GetComponent<Renderer>().bounds;
 		}
+
+		m_rect = new Rect(m_bounds.min.x, m_bounds.min.y, m_bounds.size.x, m_bounds.size.y);
 	}
 
 	public void Initialize() {
@@ -66,8 +71,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public void CheckRespawn() {
 		if (m_state == State.Respawning) {
 			if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
-				//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);				
-				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
+				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);				
+				//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
 				if (isInsideActivationArea) {
 					Spawn();
 				}

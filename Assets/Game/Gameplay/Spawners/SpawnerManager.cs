@@ -41,7 +41,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 	private FastBounds2D m_minRect = null;	// From the game camera
 	private FastBounds2D m_maxRect = null;
 	private Rect[] m_subRect = new Rect[4];
-	private List<ISpawner> m_selectedSpawners = new List<ISpawner>();
+	private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -124,7 +124,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 				m_maxRect.w,
 				m_minRect.y0 - m_maxRect.y0
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect[0], ref m_selectedSpawners);
+			m_spawnersTree.GetHashSetInRange(m_subRect[0], ref m_selectedSpawners);
 
 			// 2: right sub-rect
 			m_subRect[1].Set(
@@ -133,7 +133,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 				m_maxRect.x1 - m_minRect.x1,
 				m_minRect.h
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect[1], ref m_selectedSpawners);
+			m_spawnersTree.GetHashSetInRange(m_subRect[1], ref m_selectedSpawners);
 
 			// 3: top sub-rect
 			m_subRect[2].Set(
@@ -142,7 +142,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 				m_maxRect.w,
 				m_maxRect.y1 - m_minRect.y1
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect[2], ref m_selectedSpawners);
+			m_spawnersTree.GetHashSetInRange(m_subRect[2], ref m_selectedSpawners);
 
 			// 4: left sub-rect
 			m_subRect[3].Set(
@@ -151,11 +151,11 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 				m_minRect.x0 - m_maxRect.x0,
 				m_minRect.h
 			);
-			m_spawnersTree.AddItemsInRange(m_subRect[3], ref m_selectedSpawners);
+			m_spawnersTree.GetHashSetInRange(m_subRect[3], ref m_selectedSpawners);
 
 			// Process all selected spawners!
-			for(int i = 0; i < m_selectedSpawners.Count; i++) {
-				m_selectedSpawners[i].CheckRespawn();
+			foreach(ISpawner item in m_selectedSpawners) {
+				item.CheckRespawn();
 			}
 		}
 	}
@@ -216,8 +216,8 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 
 		// Selected spawners
 		Gizmos.color = Colors.WithAlpha(Colors.yellow, 1.0f);
-		for(int i = 0; i < m_selectedSpawners.Count; i++) {
-			Gizmos.DrawSphere(m_selectedSpawners[i].transform.position, 0.5f);
+		foreach(ISpawner item in m_selectedSpawners) {
+			Gizmos.DrawSphere(item.boundingRect.center, 0.5f);
 		}
 
 		// Sub-rectangles

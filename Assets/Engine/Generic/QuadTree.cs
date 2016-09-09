@@ -17,7 +17,8 @@ using System.Collections.Generic;
 /// All items to be inserted in a quad tree must implement this interface
 /// </summary>
 public interface IQuadTreeItem {
-	Transform transform { get; }
+	//Transform transform { get; }
+	Rect boundingRect { get; }
 }
 
 /// <summary>
@@ -37,9 +38,8 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	private QuadTreeNode<T> m_root;
-	private List<T> m_items;
 	private List<QuadTreeNode<T>> m_nodes;
-	private Dictionary<T, QuadTreeNode<T>> m_indexTable;
+	private Dictionary<T, List<QuadTreeNode<T>>> m_indexTable;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -53,9 +53,8 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	/// <param name="_h">Height in world coords.</param>
 	public QuadTree(float _x, float _y, float _w, float _h) {
 		m_root = new QuadTreeNode<T>();
-		m_items = new List<T>();
 		m_nodes = new List<QuadTreeNode<T>>();
-		m_indexTable = new Dictionary<T, QuadTreeNode<T>>();
+		m_indexTable = new Dictionary<T, List<QuadTreeNode<T>>>();
 
 		m_root.Init(0, null, new Rect(_x, _y, _w, _h));
 	}
@@ -73,29 +72,24 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	/// </summary>
 	/// <param name="_item">The item to be removed.</param>
 	public void Remove(T _item) {
-		if (m_indexTable.ContainsKey(_item)) {
-			QuadTreeNode<T> node = m_indexTable[_item];
-			node.Remove(_item, ref m_indexTable);
+		if (m_indexTable.ContainsKey(_item)) {			
+			List<QuadTreeNode<T>> nodes = m_indexTable[_item];
+			while(nodes.Count > 0) {
+				QuadTreeNode<T> node = nodes.First();
+				node.Remove(_item, ref m_indexTable);
+			}
 			m_indexTable.Remove(_item);
 		}
 	}
 
 	/// <summary>
+	/// [Not implemented]
 	/// Update the QuadTree indexing of an item.
 	/// Call this if an item's position has changed.
 	/// </summary>
 	/// <param name="_item">The item to be updated.</param>
 	public void Update(T _item) {
-		if (m_indexTable.ContainsKey(_item)) {
-			QuadTreeNode<T> node = m_indexTable[_item];
-
-			if (!node.Contains(_item.transform.position)) {
-				QuadTreeNode<T> parent = node.parent;
-				node.Remove(_item, ref m_indexTable);
-				m_indexTable.Remove(_item);
-				parent.InsertFromLeaf(_item, ref m_indexTable);
-			}
-		}
+		//TODO: implement when needed
 	}
 
 	/// <summary>
@@ -104,18 +98,26 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	/// <returns>An array with all the items in range.</returns>
 	/// <param name="_rect">The rectangle to be checked.</param>
 	public T[] GetItemsInRange(Rect _rect) {
-		m_items.Clear();
-		PreOrderInRange(m_root, _rect, ref m_items);
-		return m_items.ToArray();
+		HashSet<T> hashSet = new HashSet<T>();	
+		PreOrderInRange(m_root, _rect, ref hashSet);
+
+		int i = 0;
+		T[] array = new T[hashSet.Count];
+		foreach(T item in hashSet) {
+			array[i] = item;
+			i++;
+		}
+
+		return array;
 	}
 
 	/// <summary>
-	/// Find all items within the given rectangle and add them to the given list.
+	/// Find all items within the given rectangle.
 	/// </summary>
-	/// <param name="_rect">Rectangle to be checked.</param>
-	/// <param name="_list">List where the selected items will be added.</param>
-	public void AddItemsInRange(Rect _rect, ref List<T> _list) {
-		PreOrderInRange(m_root, _rect, ref _list);
+	/// <param name="_rect">The rectangle to be checked.</param>
+	/// <param name="_set">HashSet to store the results</param>
+	public void GetHashSetInRange(Rect _rect, ref HashSet<T> _set) {		
+		PreOrderInRange(m_root, _rect, ref _set);
 	}
 
 	//------------------------------------------------------------------------//
@@ -127,19 +129,20 @@ public class QuadTree<T> where T : IQuadTreeItem {
 	/// </summary>
 	/// <param name="_node">Node to be checked.</param>
 	/// <param name="_rect">Rectangle to be checked.</param>
-	/// <param name="_list">List where the selected items will be added.</param>
-	private void PreOrderInRange(QuadTreeNode<T> _node, Rect _rect, ref List<T> _list) {
+	/// <param name="_set">HashSet where the selected items will be added.</param>
+	private void PreOrderInRange(QuadTreeNode<T> _node, Rect _rect, ref HashSet<T> _set) {
 		if (_node.IsLeaf()) {
 			// Check intersection item by item
-			for(int i = 0; i < _node.items.Count; i++) {
-				if(_rect.Contains(_node.items[i].transform.position)) {
-					_list.Add(_node.items[i]);
+			for(int i = 0; i < _node.items.Count; i++) {				
+				//if(_rect.Contains(_node.items[i].transform.position)) {
+				if(_rect.Overlaps(_node.items[i].boundingRect)) {
+					_set.Add(_node.items[i]);
 				}
 			}
 		} else {
 			for (int i = 0; i < 4; i++) {
 				if (_node.child[i].Intersects(_rect)) {
-					PreOrderInRange(_node.child[i], _rect, ref _list);
+					PreOrderInRange(_node.child[i], _rect, ref _set);
 				}
 			}
 		}
