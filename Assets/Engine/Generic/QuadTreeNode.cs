@@ -92,9 +92,7 @@ public class QuadTreeNode<T> where T : IQuadTreeItem {
 	}
 	
 	public void Remove(T _item, ref Dictionary<T, List<QuadTreeNode<T>>> _indexTable) {
-
 		m_items.Remove(_item);
-		Join(ref _indexTable);
 	}
 		
 	private void Subdivide(ref Dictionary<T, List<QuadTreeNode<T>>> _indexTable) {

@@ -29,7 +29,7 @@ public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
     {
         Reset();
 
-        //FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);        
+        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);        
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
@@ -43,10 +43,10 @@ public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
         SaveFacade.Instance.OnLoadStarted += OnLoadStarted;
         SaveFacade.Instance.OnLoadComplete += OnLoadComplete;        
 
-        // [DGR] NOTIF Not supported yet
+        // [DGR] NOTIF: Not supported yet
         //NotificationManager.Instance.Init();        
 
-        // [DGR] GAME VALIDATOR Not supported yet
+        // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
     }

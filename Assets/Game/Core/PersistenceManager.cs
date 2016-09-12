@@ -685,7 +685,7 @@ public static class PersistenceManager {
     /// <returns></returns>
     public static int Rules_GetPCAmountToIncentivizeSocial()
         {
-        // [DGR] TODO: To read from content
+        // [DGR] RULES: To read from content
         return 25;
     }
 #endregion

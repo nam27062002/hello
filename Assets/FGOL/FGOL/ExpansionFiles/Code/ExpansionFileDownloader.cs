@@ -218,7 +218,7 @@ namespace FGOL.ExpansionFiles
 		}
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-	protected IEnumerator DownloadAndLoad()
+	/*protected IEnumerator DownloadAndLoad()
 	{
 		Debug.Log(string.Format("ExpansionFileManager :: Obb local path = {0}", m_localUrl));
 		WWW www = WWW.LoadFromCacheOrDownload(m_localUrl, 0);
@@ -236,7 +236,7 @@ namespace FGOL.ExpansionFiles
 		{
 			Finish(Result.Success);
 		}
-	}
+	}*/
 #endif
 	}
 }

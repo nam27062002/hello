@@ -98,7 +98,7 @@ public class GameServerManagerCalety : GameServerManager
         }
 
         // There are merge conflicts and asks to show the merging popup
-        public override void onMergeShowPopupNeeded()
+        public override void onMergeShowPopupNeeded(JSONNode kLocalAccount, JSONNode kCloudAccount)
         {
             m_waitingMergeResponse = false;
             Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
