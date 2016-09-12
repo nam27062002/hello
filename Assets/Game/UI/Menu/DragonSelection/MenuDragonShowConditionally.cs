@@ -37,6 +37,10 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Config
+	[Comment("Leave empty to use the current selected dragon on the menu as target.")]
+	[SkuList(DefinitionsCategory.DRAGONS, true)]
+	[SerializeField] private string m_targetDragonSku = "";
+
 	[Comment("Ownership of the selected dragon", 5f)]
 	[SerializeField] private bool m_showIfLocked = false;
 	[SerializeField] private bool m_showIfAvailable = false;
@@ -44,6 +48,9 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 
 	[Comment("Will override ownership status for those dragons", 5f)]
 	[SerializeField] private HideForDragons m_hideForDragons;
+
+	[Comment("Animation options")]
+	[SerializeField] private bool m_restartShowAnimation = false;
 
 	// Internal references
 	private ShowHideAnimator m_animator = null;
@@ -144,7 +151,7 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// <param name="_sku">The sku of the newly selected dragon.</param>
 	public void OnDragonSelected(string _sku) {
 		// Just update visibility
-		Apply(_sku, true, true);
+		Apply(string.IsNullOrEmpty(m_targetDragonSku) ? _sku : m_targetDragonSku, true, m_restartShowAnimation);
 	}
 
 	/// <summary>
@@ -152,13 +159,19 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_data">The data of the acquired dragon.</param>
 	public void OnDragonAcquired(DragonData _data) {
+		// Is it our target dragon?
+		string targetSku = m_targetDragonSku;
+		if(string.IsNullOrEmpty(targetSku)) {
+			targetSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		}
+
 		// It should be the selected dragon, but check anyway
-		if(_data.def.sku != InstanceManager.GetSceneController<MenuSceneController>().selectedDragon) {
+		if(_data.def.sku != targetSku) {
 			return;
 		}
 
 		// Update visibility
-		Apply(_data.def.sku, true, false);
+		Apply(targetSku, true, false);
 	}
 
 	/// <summary>
@@ -169,7 +182,7 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// <param name="_useAnims">Whether to use anims or not.</param>
 	private IEnumerator LaunchDelayedAnimation(bool _toShow, bool _useAnims) {
 		// Delay
-		yield return new WaitForSeconds(0.25f);
+		yield return new WaitForSeconds(m_animator.tweenDuration);
 
 		// Do it!
 		m_animator.Set(_toShow, _useAnims);
