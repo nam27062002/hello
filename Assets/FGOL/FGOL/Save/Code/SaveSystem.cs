@@ -32,7 +32,7 @@ namespace FGOL.Save
 
         #region Protected Properties
         /*
-        //[DGR] No support added yet
+        //[DGR] RULES: No support added yet
         protected GameDB gameDB
         {
             get { return GameDataManager.Instance.gameDB; }

@@ -25,7 +25,7 @@ public class AuthenticatorCalety : Authenticator
             parameters["fgolID"] = fgolID;
         }
 
-        // [DGR] Not supported yet
+        // [DGR] SERVER: Not supported yet
         //parameters["credentials"] = Json.Serialize(credentials.ToDictionary());
 
         Log("Authenticate " + network.ToString() + " socialID = " + credentials.socialID);
@@ -37,7 +37,7 @@ public class AuthenticatorCalety : Authenticator
                 {
                     //string[] requiredParams = new string[] { "cloudCredentials", "cloudCredentialsExpiry", "fgolID", "savePath", "bucket", "sessionToken", "sessionExpiry", "socialExpiry", "authState", "cloudSaveAvailable" };
 
-                    // [DGR] Not needed yet
+                    // [DGR] SERVER: Not needed yet
                     //if (Commander.IsValidResponse(response, requiredParams))
                     {
                         AuthResult result = new AuthResult();
