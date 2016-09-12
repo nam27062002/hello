@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class Machine : MonoBehaviour, IMachine, ISpawnable, MotionInterface {		
+	public class Machine : MonoBehaviour, IMachine, ISpawnable, MotionInterface {	
+		protected static int m_groundMask;
+
 		/**************/
 		/*			  */
 		/**************/
@@ -62,6 +64,8 @@ namespace AI {
 
 		// Use this for initialization
 		void Awake() {
+			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
+
 			m_entity = GetComponent<IEntity>();
 			m_pilot = GetComponent<Pilot>();
 			m_viewControl = GetComponent<ViewControl>();
@@ -159,9 +163,23 @@ namespace AI {
 
 		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
-		void OnCollisionEnter(Collision _collision) {			
+		void OnCollisionEnter(Collision _collision) {
 			object[] _params = new object[1]{_collision.gameObject};
 			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
+
+			if (m_motion != null) {
+				if (((1 << _collision.gameObject.layer) & m_groundMask) != 0) {
+					m_motion.OnCollisionGroundEnter();
+				}
+			}
+		}
+
+		void OnCollisionExit(Collision _collision) {
+			if (m_motion != null) {
+				if (((1 << _collision.gameObject.layer) & m_groundMask) != 0) {
+					m_motion.OnCollisionGroundExit();
+				}
+			}
 		}
 
 		void OnTriggerEnter(Collider _other) {

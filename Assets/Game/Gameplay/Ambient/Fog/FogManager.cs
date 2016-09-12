@@ -7,7 +7,6 @@ public class FogManager : SingletonMonoBehaviour<FogManager>
 {
 	public Texture m_fogCurveTexture;
 	// private FogNode[] m_fogNodes;
-	private HashSet<FogNode> m_fogNodesSet;
 	private List<FogNode> m_usedFogNodes = new List<FogNode>();
 	private Rect m_getRect = new Rect();
 
