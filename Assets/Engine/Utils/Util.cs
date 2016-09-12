@@ -951,5 +951,23 @@ public static class Util
         }
 
         return null;
+    }   
+
+    public static YieldInstruction StartCoroutineWithoutMonobehaviour(string name, IEnumerator coroutine)
+    {
+        GameObject go = new GameObject(name);
+        HelperMonoBehaviour mono = go.AddComponent<HelperMonoBehaviour>();
+        return mono.StartCoroutine(HelperCoroutine(coroutine, mono));
+    }
+
+    private static IEnumerator HelperCoroutine(IEnumerator coroutine, HelperMonoBehaviour helperObject)
+    {
+        yield return helperObject.StartCoroutine(coroutine);
+        MonoBehaviour.Destroy(helperObject.gameObject);
+    }
+
+    // Empty helper class. We just need it to extend from MonoBehaviour because Unity doesn't allow to add a plain MonoBehaviour component to a game object
+    private class HelperMonoBehaviour : MonoBehaviour
+    {
     }
 }

@@ -2,12 +2,14 @@
 {
 	Properties
 	{
-		_NoiseTex ("Texture", 2D) = "white" {}
-		_ColorRamp("Texture", 2D) = "white" {}
+		_NoiseTex ("Noise", 2D) = "white" {}
+		_ColorRamp("Color Ramp", 2D) = "white" {}
 		_RampOffset("Ramp Offset", Range(0.0, 1.0)) = 0.2 //
-		_ColorSteps("Color steps", Range(0.0, 20.0)) = 8.0	// color steps
-		_AlphaThreshold("Alpha threshold", Range(0.0, 20.0)) = 2.0	// alpha threshold
-		_FirePower("Fire Power", Range(1.0, 10.0)) = 3.0	// Fire power
+		_ColorSteps("Color steps", Range(0.0, 128.0)) = 8.0	// color steps
+		_AlphaThreshold("Alpha threshold", Range(0.0, 128.0)) = 2.0	// alpha threshold
+		_Speed("Fire Speed", Float) = 1.0				// Fire speed
+		_Power("Fire Power", Range(1.0, 10.0)) = 3.0	// Fire power
+		_Seed("Random Seed", Float) = 0.0							//Randomize effect
 	}
 
 	SubShader
@@ -49,7 +51,9 @@
 			float	_RampOffset;
 			float   _ColorSteps;
 			float	_AlphaThreshold;
-			float	_FirePower;
+			float	_Speed;
+			float	_Power;
+			float	_Seed;
 
 
 			v2f vert (appdata v)
@@ -60,26 +64,27 @@
 				o.uv = TRANSFORM_TEX(v.uv, _NoiseTex);
 //				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
-			}
-			
+			}			
+
+
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float intensity = tex2D(_NoiseTex, (i.uv.xy - float2(0.0, _Time.y * 0.75)) * 0.5).x;
-				intensity += tex2D(_NoiseTex, (i.uv.xy - float2(0.91, _Time.y * 0.75) * 0.25)).x;
-
+				float intensity = tex2D(_NoiseTex, (i.uv.xy - float2(_Seed, _Time.y * _Speed))).x;
+				intensity += tex2D(_NoiseTex, (i.uv.xy - float2(-_Seed, _Time.y * _Speed * 0.5))).x;
 
 //				// apply fog
 //				UNITY_APPLY_FOG(i.fogCoord, col);
 
 				half2 d = i.uv - half2(0.5, 0.5);
 
-				intensity = intensity * (0.25 - dot(d, d)) * _FirePower;
+				intensity = intensity * (0.25 - dot(d, d)) * _Power;
 				intensity = floor(intensity * _ColorSteps) / _ColorSteps;
 				float txid = clamp(1.0 - intensity + _RampOffset, 0.0, 1.0);
 
-				fixed3 col = tex2D(_ColorRamp, float2(txid, 0.0));
+//				fixed3 col = fixed3(txid, txid, txid);// tex2D(_ColorRamp, float2(txid, 0.0));
+				fixed3 col =  tex2D(_ColorRamp, float2(txid, 0.0));
 
-				return float4(col, step(_AlphaThreshold / _ColorSteps, intensity));
+				return fixed4(col, step(_AlphaThreshold / _ColorSteps, intensity));
 
 			}
 

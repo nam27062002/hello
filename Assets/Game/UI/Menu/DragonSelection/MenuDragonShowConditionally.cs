@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 
@@ -36,6 +37,10 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Config
+	[Comment("Leave empty to use the current selected dragon on the menu as target.")]
+	[SkuList(DefinitionsCategory.DRAGONS, true)]
+	[SerializeField] private string m_targetDragonSku = "";
+
 	[Comment("Ownership of the selected dragon", 5f)]
 	[SerializeField] private bool m_showIfLocked = false;
 	[SerializeField] private bool m_showIfAvailable = false;
@@ -43,6 +48,9 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 
 	[Comment("Will override ownership status for those dragons", 5f)]
 	[SerializeField] private HideForDragons m_hideForDragons;
+
+	[Comment("Animation options")]
+	[SerializeField] private bool m_restartShowAnimation = false;
 
 	// Internal references
 	private ShowHideAnimator m_animator = null;
@@ -67,7 +75,7 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 
 		// Apply for the first time with currently selected dragon and without animation
-		Apply(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon, false);
+		Apply(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon, false, false);
 	}
 	
 	/// <summary>
@@ -94,7 +102,8 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon to be considered.</param>
 	/// <param name="_useAnims">Whether to animate or not.</param>
-	private void Apply(string _sku, bool _useAnims) {
+	/// <param name="_resetAnim">Optionally force the animation to be played, even if going to the same state.</param>
+	private void Apply(string _sku, bool _useAnims, bool _resetAnim) {
 		// Check whether the object should be visible or not
 		bool toShow = false;
 		DragonData dragon = DragonManager.GetDragonData(_sku);
@@ -121,7 +130,16 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 		}
 
 		// Let animator do its magic
-		m_animator.Set(toShow, _useAnims);
+		// If forcing animation and going from visible to visible, hide before showing again
+		if(_resetAnim && toShow && m_animator.visible && isActiveAndEnabled && m_animator.tweenType != ShowHideAnimator.TweenType.NONE) {
+			// Go to opposite of the target state
+			m_animator.Hide(_useAnims, false);
+
+			// Program the animation to the target state in sync with the dragon scroll animation (more or less)
+			StartCoroutine(LaunchDelayedAnimation(toShow, _useAnims));
+		} else {
+			m_animator.Set(toShow, _useAnims);
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -133,7 +151,7 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// <param name="_sku">The sku of the newly selected dragon.</param>
 	public void OnDragonSelected(string _sku) {
 		// Just update visibility
-		Apply(_sku, true);
+		Apply(string.IsNullOrEmpty(m_targetDragonSku) ? _sku : m_targetDragonSku, true, m_restartShowAnimation);
 	}
 
 	/// <summary>
@@ -141,13 +159,33 @@ public class MenuDragonShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_data">The data of the acquired dragon.</param>
 	public void OnDragonAcquired(DragonData _data) {
+		// Is it our target dragon?
+		string targetSku = m_targetDragonSku;
+		if(string.IsNullOrEmpty(targetSku)) {
+			targetSku = InstanceManager.GetSceneController<MenuSceneController>().selectedDragon;
+		}
+
 		// It should be the selected dragon, but check anyway
-		if(_data.def.sku != InstanceManager.GetSceneController<MenuSceneController>().selectedDragon) {
+		if(_data.def.sku != targetSku) {
 			return;
 		}
 
 		// Update visibility
-		Apply(_data.def.sku, true);
+		Apply(targetSku, true, false);
+	}
+
+	/// <summary>
+	/// Use it to set the animator's visibility after a delay via StartCoroutine().
+	/// </summary>
+	/// <returns>The coroutine function.</returns>
+	/// <param name="_toShow">Whether to show or hide the object.</param>
+	/// <param name="_useAnims">Whether to use anims or not.</param>
+	private IEnumerator LaunchDelayedAnimation(bool _toShow, bool _useAnims) {
+		// Delay
+		yield return new WaitForSeconds(m_animator.tweenDuration);
+
+		// Do it!
+		m_animator.Set(_toShow, _useAnims);
 	}
 }
 
