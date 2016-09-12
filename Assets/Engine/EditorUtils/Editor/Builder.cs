@@ -109,16 +109,17 @@ public class Builder : MonoBehaviour
 	[MenuItem ("Build/Increase Minor Version Number")]
 	private static void IncreaseMinorVersionNumber()
 	{
-		Debug.Log("UNITY: IncreaseMinorVersionNumber()");
+		// Increase game settings internal version
 		GameSettings.internalVersion.patch++;
 		EditorUtility.SetDirty(GameSettings.instance);
+
+		// Save assets
 		AssetDatabase.SaveAssets();
 	}
 	
 	[MenuItem ("Build/Increase Version Codes")]
 	private static void IncreaseVersionCodes()
 	{
-		Debug.Log("UNITY: IncreaseVersionCode()");
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null)
 		{
@@ -148,6 +149,13 @@ public class Builder : MonoBehaviour
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null)
 		{
+			// Make sure version numbers match Game Settings
+			// Public version number displayed in the app store. Should be 1.0 at the first Soft Launch release.
+			// Build code (m_strVersionIOSCode, m_strVersionAndroidGplayCode, m_strVersionAndroidAmazonCode) is increased automatically for each build, don't change it manually
+			settingsInstance.m_strVersionIOS = GameSettings.publicVersioniOS;
+			settingsInstance.m_strVersionAndroidGplay = GameSettings.publicVersionGGP;
+			settingsInstance.m_strVersionAndroidAmazon = GameSettings.publicVersionAmazon;
+
 			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 		}
 	}
