@@ -17,6 +17,9 @@ using System.Collections.Generic;
 /// <summary>
 /// Global manager of eggs.
 /// Has its own asset in the Resources/Singletons folder with all the required parameters.
+/// Slot 0 of the incubator is considered the active egg, which can be incubated, opened, etc.
+/// The other slots are just for storage. Inventory should always be filled from 0 to N, and 
+/// eggs are automatically shifted when the egg in slot 0 is collected.
 /// </summary>
 public class EggManager : SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
@@ -60,10 +63,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	// Incubator
 	public static Egg incubatingEgg {
 		get {
-			for(int i = 0; i < INVENTORY_SIZE; i++) {
-				if(inventory[i] != null && inventory[i].isIncubating) return inventory[i];
-			}
-			return null;
+			return inventory[0];	// Always first slot
 		}
 	}
 
@@ -130,12 +130,10 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		if(!IsReady()) return;
 
 		// Check for incubator deadline
-		for(int i = 0; i < INVENTORY_SIZE; i++) {
-			if(inventory[i] != null && inventory[i].isIncubating) {
-				if(DateTime.UtcNow >= inventory[i].incubationEndTimestamp) {
-					// Incubation done!
-					inventory[i].ChangeState(Egg.State.READY);
-				}
+		if(incubatingEgg != null && incubatingEgg.isIncubating) {
+			if(DateTime.UtcNow >= incubatingEgg.incubationEndTimestamp) {
+				// Incubation done!
+				incubatingEgg.ChangeState(Egg.State.READY);
 			}
 		}
 	}
@@ -157,7 +155,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 				instance.m_user.eggsInventory[i] = _newEgg;
 				_newEgg.ChangeState(Egg.State.STORED);
 
-				// Return slot idnex
+				// Return slot index
 				return i;
 			}
 		}
@@ -167,7 +165,7 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	}
 
 	/// <summary>
-	/// Removes an egg from the the inventory, emptying the slot the egg is in.
+	/// Removes an egg from the the inventory, shifting all the eggs in the following slots one slot to the left.
 	/// Doesn't change the state of the egg.
 	/// </summary>
 	/// <returns>The inventory slot from where the egg was removed. <c>-1</c> if the egg wasn't found in the inventory.</returns>
@@ -180,8 +178,17 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		for(int i = 0; i < INVENTORY_SIZE; i++) {
 			// Is this the slot?
 			if(inventory[i] == _egg) {
-				// Yes!! Remove the egg and return slot idnex
+				// Yes!! Remove the egg
 				inventory[i] = null;
+
+				// Shift the rest of slots to the left
+				for(int j = i + 1; j < INVENTORY_SIZE; j++) {
+					// Move to the left and clear slot j
+					inventory[j-1] = inventory[j];
+					inventory[j] = null;
+				}
+
+				// Return the slot the egg was in
 				return i;
 			}
 		}
