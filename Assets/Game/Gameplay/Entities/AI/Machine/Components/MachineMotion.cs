@@ -51,6 +51,8 @@ namespace AI {
 
 		private Vector3 m_collisionNormal;
 		private bool m_isGrounded;
+		private bool m_isColliderOnGround;
+		private float m_heightFromGround;
 
 		private Vector3 m_velocity;
 		public Vector3 velocity { get{  return m_velocity; } }
@@ -78,6 +80,8 @@ namespace AI {
 			m_eye = m_machine.transform.FindChild("eye");
 
 			m_isGrounded = false;
+			m_isColliderOnGround = false;
+			m_heightFromGround = 100f;
 
 			if (m_walkOnWalls) {
 				m_useGravity = true;
@@ -127,6 +131,7 @@ namespace AI {
 				bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
 				if (hasHit) {
 					m_machine.position = hit.point;
+					m_heightFromGround = 0f;
 				}
 			}
 
@@ -144,6 +149,21 @@ namespace AI {
 			m_velocity = Vector3.zero;
 			m_rbody.velocity = Vector3.zero;
 			m_rbody.angularVelocity = Vector3.zero;
+		}
+
+		public void OnCollisionGroundEnter() {
+			if (m_useGravity) {
+				if (!m_isGrounded) {
+					Stop();
+				}
+				m_isColliderOnGround = true;
+			}
+		}
+
+		public void OnCollisionGroundExit() {
+			if (m_useGravity) {				
+				m_isColliderOnGround = false;
+			}
 		}
 
 		public override void Update() {
@@ -177,7 +197,8 @@ namespace AI {
 			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 				
 			if (m_pilot != null) {
-				if (m_pilot.speed <= 0.01f) {
+				
+				if (m_pilot.IsActionPressed(Pilot.Action.Boost)) {
 					if (m_useGravity) {
 						if (m_isGrounded && !m_machine.GetSignal(Signals.Type.FallDown)) 
 							Stop();
@@ -195,14 +216,10 @@ namespace AI {
 					if (m_walkOnWalls) 	forceGravity =  -m_collisionNormal * 9.8f * m_mass;
 					else 				forceGravity =  Vector3.down * 9.8f * m_mass;
 
-					bool isGrounded = IsGrounded();
+					GetHeightFromGround();
+					m_isGrounded = m_isColliderOnGround || m_heightFromGround < 0.3f;
 
-					if (m_isGrounded != isGrounded) {
-						if (m_isGrounded) {
-							m_velocity = Vector3.zero; // reset velocity when reaching ground
-						}
-						m_isGrounded = isGrounded;
-					}
+					m_machine.SetSignal(Signals.Type.FallDown, !m_isGrounded && m_heightFromGround > 2f);
 
 					if (m_isGrounded || m_walkOnWalls) {						
 						UpdateVelocity();
@@ -211,10 +228,9 @@ namespace AI {
 						// free fall, drag, friction and stuff
 						const float airDensity = 1.293f;
 						const float drag = 1.3f;//human //0.47f;//sphere
-						float area = Mathf.PI * Mathf.Pow(m_collider.bounds.extents.x, 2f);
-						float terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (airDensity * area * drag));
+						float terminalVelocity = Mathf.Sqrt((2f * m_mass * 9.8f) * (airDensity * 1f * drag));
 
-						Vector3 forceDrag = -m_velocity.normalized * 0.25f * airDensity * drag * area * Mathf.Pow(m_velocity.magnitude, 2f) / m_mass;
+						Vector3 forceDrag = -m_velocity.normalized * 0.25f * airDensity * drag * 1f * Mathf.Pow(m_velocity.magnitude, 2f) / m_mass;
 						m_acceleration = (forceGravity + forceDrag);
 
 						m_velocity += m_acceleration * Time.deltaTime;
@@ -362,19 +378,21 @@ namespace AI {
 			}
 		}
 
-		private bool IsGrounded() {
-			RaycastHit hit;
-			bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
-
-			if (hasHit) {
-				m_machine.SetSignal(Signals.Type.FallDown, hit.distance > 2f);
-				m_viewControl.Height(hit.distance);
+		private void GetHeightFromGround() {
+			if (m_isColliderOnGround) {
+				m_heightFromGround = 0f;
 			} else {
-				m_machine.SetSignal(Signals.Type.FallDown, true);
-				m_viewControl.Height(100f);
+				RaycastHit hit;
+				bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_collisionNormal, out hit, 5f, m_groundMask);
+
+				if (hasHit) {
+					m_heightFromGround = hit.distance;
+				} else {
+					m_heightFromGround = 100f;
+				}
 			}
 
-			return hasHit && hit.distance <= 0.3f;
+			m_viewControl.Height(m_heightFromGround);
 		}
 
 		private bool GetCollisionNormal() {			

@@ -6,6 +6,7 @@ namespace AI {
 		
 		public enum Action {
 			Boost = 0,
+			Stop,
 			Attack,
 			Aim,
 			Bite,
@@ -100,10 +101,19 @@ namespace AI {
 			if (!_blend) {
 				m_currentSpeed = m_moveSpeed;
 			}
+			m_actions[(int)Action.Stop] = false;
 		}
 
 		public void SetBoostSpeed(float _boostSpeed) {
 			m_boostSpeed = _boostSpeed;
+			m_actions[(int)Action.Stop] = false;
+		}
+
+		public void Stop() {
+			m_moveSpeed = 0f;
+			m_currentSpeed = 0f;
+			m_boostSpeed = 0f;
+			m_actions[(int)Action.Stop] = true;
 		}
 
 		public void SetDirection(Vector3 _dir, bool _force = false) {
