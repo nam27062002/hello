@@ -29,7 +29,7 @@ public class SpawnerAreaManager : SingletonMonoBehaviour<SpawnerAreaManager> {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private override void OnDestroy() {
+	protected override void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
