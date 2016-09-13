@@ -27,8 +27,9 @@ public class Egg {
 
 	public enum State {
 		INIT,		// Init state
-		STORED,		// Egg is in storage, waiting for incubation
-		INCUBATING,	// Egg is in the incubator
+		STORED,		// Egg is in storage, waiting to be moved to the incubation slot
+		READY_FOR_INCUBATION,	// Egg is in the incubation slot
+		INCUBATING,	// Egg is incubating
 		READY,		// Egg has finished incubation period and is ready to be collected
 		OPENING,	// Egg is being opened
 		COLLECTED,	// Egg reward has been collected
@@ -161,6 +162,11 @@ public class Egg {
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, this);
 			} break;
+		}
+
+		// If leaving a state other than INIT, clear "isNew" flag (probably the user has performed an action on the egg, so it's no longer new!)
+		if(m_state != State.INIT) {
+			isNew = false;
 		}
 
 		// Change state

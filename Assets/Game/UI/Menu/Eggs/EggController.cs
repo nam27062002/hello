@@ -26,6 +26,9 @@ public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Exposed
+	[SerializeField] private GameObject m_incubatorFX;
+
 	// Data
 	private Egg m_eggData = null;
 	public Egg eggData {
@@ -101,9 +104,36 @@ public class EggController : MonoBehaviour {
 		m_openBehaviour.enabled = (m_eggData.state == Egg.State.OPENING);
 		m_readyBehaviour.enabled = (m_eggData.state == Egg.State.READY);
 
-		// Update animator! - Luckily animator is self-managed
-		m_animator.SetInteger("egg_state", (int)m_eggData.state);
-		m_animator.SetTrigger("egg_state_changed");
+		// Launch different animations depending on state
+		switch(m_eggData.state) {
+			case Egg.State.INIT:
+			case Egg.State.STORED:
+			case Egg.State.OPENING:
+			case Egg.State.COLLECTED: {
+				m_animator.SetTrigger("idle");
+			} break;
+
+			case Egg.State.READY_FOR_INCUBATION:
+			case Egg.State.SHOWROOM: {
+				m_animator.SetTrigger("idle_rotation");
+			} break;
+
+			case Egg.State.INCUBATING: {
+				m_animator.SetTrigger("incubating");
+			} break;
+
+			case Egg.State.READY: {
+				m_animator.SetTrigger("ready");
+			} break;
+		}
+
+		// In addition, if it's the egg on the incubator show some nice FX
+		if(m_incubatorFX != null) {
+			bool showFX = (m_eggData.state == Egg.State.READY_FOR_INCUBATION
+						|| m_eggData.state == Egg.State.INCUBATING
+						|| m_eggData.state == Egg.State.READY);
+			m_incubatorFX.SetActive(showFX);
+		}
 	}
 
 	//------------------------------------------------------------------//

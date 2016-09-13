@@ -153,7 +153,13 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 			if(instance.m_user.eggsInventory[i] == null) {
 				// Yes!! Store egg
 				instance.m_user.eggsInventory[i] = _newEgg;
-				_newEgg.ChangeState(Egg.State.STORED);
+
+				// Set initial state - if the first empty slot is the incubating slot, mark it as "ready for incubation"
+				if(i == 0) {
+					_newEgg.ChangeState(Egg.State.READY_FOR_INCUBATION);
+				} else {
+					_newEgg.ChangeState(Egg.State.STORED);
+				}
 
 				// Return slot index
 				return i;
@@ -186,6 +192,11 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 					// Move to the left and clear slot j
 					inventory[j-1] = inventory[j];
 					inventory[j] = null;
+				}
+
+				// If an egg has been moved to the incubator slot, make sure it's ready to incubate
+				if(inventory[0] != null && inventory[0].state == Egg.State.STORED) {
+					inventory[0].ChangeState(Egg.State.READY_FOR_INCUBATION);
 				}
 
 				// Return the slot the egg was in
