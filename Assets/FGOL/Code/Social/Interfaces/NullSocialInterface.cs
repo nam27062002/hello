@@ -7,6 +7,11 @@ public class NullSocialInterface : ISocialInterface
 {
     public void Init(){ }
 
+    public bool IsInited()
+    {
+        return false;
+    }
+
     public void AppActivation(){ }
 
     public void Login(PermissionType[] permissions, Action<bool> onLogin)

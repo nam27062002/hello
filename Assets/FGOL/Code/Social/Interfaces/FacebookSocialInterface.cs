@@ -9,15 +9,19 @@ using UnityEngine;
 public class FacebookSocialInterface : ISocialInterface
 {
     private Action m_onInitialization = null;
+    private bool m_isInited = false;
 
     public void Init()
     {
+        m_isInited = false;
+
         FB.Init(
             delegate()
             {
-                Debug.Log("Facebook :: Initialized");
+                Debug.Log("Facebook :: Initialized");                
 
-                if(m_onInitialization != null)
+                m_isInited = true;
+                if (m_onInitialization != null)
                 {
                     m_onInitialization();
                 }
@@ -27,6 +31,11 @@ public class FacebookSocialInterface : ISocialInterface
                 //TODO do we need to deal with this? This is fired when the game is hidden so we may need to pause or resume stuff!
             }
         );
+    }
+
+    public bool IsInited()
+    {
+        return m_isInited;
     }
 
     public void AppActivation()
@@ -528,19 +537,16 @@ public class FacebookSocialInterface : ISocialInterface
 
     private void Log(string message)
     {
-        Debug.Log(PREFIX + message);
-        Facebook.Unity.FacebookLogger.Info(PREFIX + message);
+        Debug.Log(PREFIX + message);        
     }
 
     private void LogWarning(string message)
-    {
-        Log(message);
+    {     
         Debug.LogWarning(PREFIX + message);
     }
 
     private void LogError(string message)
-    {
-        Log(message);
+    {        
         Debug.LogError(PREFIX + message);
     }
     #endregion

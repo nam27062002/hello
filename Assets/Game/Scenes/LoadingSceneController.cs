@@ -101,10 +101,7 @@ public class LoadingSceneController : SceneController {
 		ParticleManager.CreateInstance(true);
 		PopupManager.CreateInstance(true);
 		InstanceManager.CreateInstance(true);
-
-		// Social
-		SocialPlatformManager.SharedInstance.Init();
-
+		
         // Load persistence        
         SaveFacade.Instance.Init();               
         PersistenceManager.Init();		                      
@@ -141,8 +138,11 @@ public class LoadingSceneController : SceneController {
 		m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
 		m_loadingBar.normalizedValue = loadProgress;
 
-        // The persistence is loaded once this loading state is loaded 
-        if (!GameSceneManager.isLoading) {
+        // The persistence is loaded once this loading state is loaded and the social facade is initialized (or a reasonable timeout in order to prevent the game from getting stack 
+        // if social facade can't be initialized). We want to wait for the social facade to be initialized in order to have the chance to reuse a previous login to the social platform 
+        // if the session hasn't expired yet.
+        if (!GameSceneManager.isLoading && 
+            (SocialFacade.Instance.IsInited() || timer > 1f)) {
             StartLoadFlow();
         }
 

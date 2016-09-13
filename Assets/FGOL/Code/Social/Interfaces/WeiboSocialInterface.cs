@@ -58,7 +58,7 @@ public class WeiboSocialInterface : ISocialInterface
     // [DGR] No support added yet
     //private WeiboListener m_weiboListener = null;
 
-    private string m_userDisplayName = "Me";
+    private string m_userDisplayName = "Me";    
 
     public void Init()
     {
@@ -83,6 +83,10 @@ public class WeiboSocialInterface : ISocialInterface
         m_interface.Init(HSW_KEY, HSW_SECRET, HSW_REDIRECT);
     }
 
+    public bool IsInited()
+    {
+        return m_interface != null && m_interface.IsInitialised();
+    }
 
     public void AppActivation()
     {
