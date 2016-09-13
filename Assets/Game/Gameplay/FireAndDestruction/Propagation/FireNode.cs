@@ -197,11 +197,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 			Renderer fireSpr = m_fireSprite.GetFirstComponentInChildren<Renderer>();
 			m_fireMaterial = fireSpr.material;
-			m_fireMaterial.SetFloat("_Seed", transform.position.y * Random.Range(0.9f, 1.1f));
+			m_fireMaterial.SetFloat("_Seed", Random.Range(0f, 1f));
 			m_fireMaterial.SetFloat("_Power", 0f);
 
 			m_firePower = 0f;
-			m_firePowerDest = 2.5f;
+			m_firePowerDest = 4.8f;
 		}
 	}
 
