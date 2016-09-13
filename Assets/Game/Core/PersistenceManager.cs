@@ -503,15 +503,15 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
-    public static void Popups_OpenCloudSaveCorruptedError(Action onConfirm)
+    public static void Popups_OpenUpdateToSolveLocalSaveCorrupted(bool updateAvailable, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_CORRUPTED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_CORRUPTED_TEXT";
+        config.TitleTid = "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TITLE";
+        config.MessageTid = (updateAvailable) ? "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TEXT_UPDATE1" : "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TEXT_UPDATE2";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
-    }
+    }   
 
     public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm)
     {
@@ -561,6 +561,64 @@ public static class PersistenceManager {
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popups_OpenCloudSaveCorruptedError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_CORRUPTED_TITLE";
+        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_CORRUPTED_TEXT";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popups_OpenUpdateToSolveCloudSaveCorrupted(bool updateAvailable, Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_ERROR_UPDATE_TITLE";
+        config.MessageTid = (updateAvailable) ? "STRING_SAVE_POPUP_ERROR_UPDATE_TEXT1" : "STRING_SAVE_POPUP_ERROR_UPDATE_TEXT2";
+        config.OnConfirm = onConfirm;
+        if (updateAvailable)
+        {
+            config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+            config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+            config.OnCancel = onCancel;
+        }
+        else
+        {
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        }
+
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popup_OpenPromptUpdate(Action onConfirm, Action onCancel)
+    {
+        string platformUpdateMessage = "UNKNOWN";
+
+        switch (Globals.GetPlatform())
+        {
+            case Globals.Platform.iOS:
+                platformUpdateMessage = "STRING_SAVE_POPUP_PROMPT_UPDATE_TEXT_IOS";
+                break;
+            case Globals.Platform.Android:
+                platformUpdateMessage = "STRING_SAVE_POPUP_PROMPT_UPDATE_TEXT_ANDROID";
+                break;
+            case Globals.Platform.Amazon:
+                platformUpdateMessage = "STRING_SAVE_POPUP_PROMPT_UPDATE_TEXT_AMAZON";
+                break;
+        }
+
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_PROMPT_UPDATE_TITLE";
+        config.MessageTid = platformUpdateMessage;
+        config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+        config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+        config.OnConfirm = onConfirm;
+        config.OnCancel = onCancel;        
+        PopupManager.PopupMessage_Open(config);                                
     }
 
     public static void Popups_OpenSaveDiskOutOfSpaceError(Action onConfirm)

@@ -116,21 +116,16 @@ public class SaveFacadeErrorHandler
         {
             Action onUpgradeAvailable = delegate()
             {
-                /*
-                [DGR] UPDATE No support added yet
-                MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
-                config.titleText = message.title;
-                config.messageText = message.message;
-				config.messageArgs = new object[] { (int)code, networkUsed };
-                config.confirmText = "STRING_BUTTON_UPDATE";
-                config.onConfirm = onGoToAppStore;
-                config.cancelText = "STRING_BUTTON_CONTINUE";
-                config.onCancel = onContinue;
-                config.modal = false;
-				config.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.cancel;
-                MessageBoxPopup.OpenMessageBox(config);
-                */
-                Debug.Log("SaveFacadeErrorHandler :: Default result: TODO: Show Popup");
+                PopupMessage.Config config = PopupMessage.GetConfig();
+                config.TitleTid = message.title;
+                config.MessageTid = message.message;                
+                config.MessageParams = new string[] { code.ToString(), SocialFacade.GetLocalizedNetworkName(networkUsed) };
+                config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+                config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+                config.OnConfirm = onGoToAppStore;
+                config.OnCancel = onContinue;
+                config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+                PersistenceManager.Popups_OpenMessage(config);                
             };
 
             if(state == ErrorState.UpgradeNeeded)
@@ -143,22 +138,14 @@ public class SaveFacadeErrorHandler
                     }
                     else
                     {
-                        /*
-                        [DGR] UPDATE No support added yet
-                        MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
-                        config.titleText = message.title;
-                        config.messageText = message.message;
-                        config.messageArgs = new object[] { (int)code };
-                        config.confirmText = "STRING_BUTTON_CONTINUE";
-                        config.onConfirm = onContinue;
-                        config.cancelEnabled = false;
-                        config.modal = false;
-						config.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.confirm;
-                    
-                        MessageBoxPopup.OpenMessageBox(config);
-                        */
-
-                        Debug.Log("SaveFacadeErrorHandler :: No upgrade available: TODO: Show Popup");
+                        PopupMessage.Config config = PopupMessage.GetConfig();
+                        config.TitleTid = message.title;
+                        config.MessageTid = message.message;
+                        config.MessageParams = new string[] { code.ToString() };
+                        config.ConfirmButtonTid = "STRING_BUTTON_CONTINUE";                        
+                        config.OnConfirm = onContinue;                        
+                        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+                        PersistenceManager.Popups_OpenMessage(config);                        
                     }
                 });
             }
@@ -168,42 +155,28 @@ public class SaveFacadeErrorHandler
             }
             else if(state == ErrorState.UpgradeNeededAvailableLocalCorrupt)
             {
-                /*
-                [DGR] UPDATE No support added yet
-                MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
-                config.titleText = message.title;
-                config.messageText = message.message;
-                config.messageArgs = new object[] { (int)code };
-                config.confirmText = "STRING_BUTTON_UPDATE";
-                config.onConfirm = onGoToAppStore;
-                config.cancelEnabled = false;
-				config.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.confirm;
-                config.modal = false;
-                    
-                MessageBoxPopup.OpenMessageBox(config);
-                */
-                Debug.Log("SaveFacadeErrorHandler :: UpgradeNeededAvailableLocalCorrupt: TODO: Show Popup");
+                PopupMessage.Config config = PopupMessage.GetConfig();
+                config.TitleTid = message.title;
+                config.MessageTid = message.message;
+                config.MessageParams = new string[] { code.ToString() };
+                config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+                config.OnConfirm = onGoToAppStore;
+                config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+                PersistenceManager.Popups_OpenMessage(config);               
             }
             else
             {
                 Action noContinue = null;
                 noContinue = delegate()
                 {
-                    /*
-                    [DGR] UPDATE No support added yet
-                    MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
-                    config.titleText = message.title;
-                    config.messageText = message.message;
-                    config.messageArgs = new object[] { (int)code };
-                    config.onConfirm = noContinue;
-                    config.cancelEnabled = false;
-					config.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.confirm;
-                    config.modal = false;
-                    
-                    MessageBoxPopup.OpenMessageBox(config);
-                    */
-
-                    Debug.Log("SaveFacadeErrorHandler :: noContinue: TODO: Show Popup");
+                    PopupMessage.Config config = PopupMessage.GetConfig();
+                    config.TitleTid = message.title;
+                    config.MessageTid = message.message;
+                    config.MessageParams = new string[] { code.ToString() };
+                    config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+                    config.OnConfirm = noContinue;
+                    config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+                    PersistenceManager.Popups_OpenMessage(config);                  
                 };
 
                 noContinue();
