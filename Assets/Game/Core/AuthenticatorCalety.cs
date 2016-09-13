@@ -161,20 +161,17 @@ public class AuthenticatorCalety : Authenticator
 
     private void Log(string message)
     {
-        //Debug.Log(PREFIX + message);
-        Facebook.Unity.FacebookLogger.Info(PREFIX + message);
+        Debug.Log(PREFIX + message);        
     }
 
     private void LogWarning(string message)
-    {
-        Log(message);
-        //Debug.LogWarning(PREFIX + message);
+    {        
+        Debug.LogWarning(PREFIX + message);
     }
 
     private void LogError(string message)
-    {
-        Log(message);
-        //Debug.LogError(PREFIX + message);
+    {     
+        Debug.LogError(PREFIX + message);
     }
     #endregion
 }
