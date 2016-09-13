@@ -38,37 +38,40 @@ public class InflammableDecoration : Initializable {
 
 		m_entity = GetComponent<Entity>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
-		m_view = transform.FindChild("view").gameObject;
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
-		m_burned = false;
 
-		int coins = 0;
+		ZoneManager zones = GameObjectExt.FindComponent<ZoneManager>(true);
+		ZoneManager.ZoneEffect zEffect = zones.GetFireEffectCode(transform.position, m_entity.sku);
 
-		if (m_entity!= null) {
-			coins = m_entity.reward.coins;
+		if (zEffect == ZoneManager.ZoneEffect.None) {
+			for (int i = 0; i < m_fireNodes.Length; i++) {
+				Destroy(m_fireNodes[i].gameObject);
+			}
+			Destroy(m_viewBurned);
+			Destroy(m_autoSpawner);
+			Destroy(m_entity);
+			Destroy(this);
+		} else {
+			m_view = transform.FindChild("view").gameObject;
+			m_burned = false;
+			m_shouldExplode = (zEffect == ZoneManager.ZoneEffect.L);
+
+			int coins = (m_entity == null)? 0 : m_entity.reward.coins;
+			int coinsPerNode = coins / m_fireNodes.Length;
+
+			for (int i = 0; i < m_fireNodes.Length; i++) {
+				m_fireNodes[i].Init(coinsPerNode, zEffect);
+			}
+			m_startPosition = transform.position;
+
+			Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
+			for (int i = 0; i < renderers.Length; i++) {
+				m_originalMaterials[ renderers[i] ] = renderers[i].materials;
+			}
+			m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/RedBurnToAshes") as Material);
+			m_ashMaterial.renderQueue = 3000;// Force transparent
 		}
-
-		int coinsPerNode = coins / m_fireNodes.Length;
-
-		bool _canBeBurned = FirePropagationManager.CanBurn(this);
-		m_shouldExplode = FirePropagationManager.ShouldExplode(this);
-		for (int i = 0; i < m_fireNodes.Length - 1; i++) {
-			m_fireNodes[i].Init(coinsPerNode, _canBeBurned);
-		}
-
-		m_fireNodes[m_fireNodes.Length - 1].Init(coins - (coinsPerNode * (m_fireNodes.Length - 1)), _canBeBurned);
-
-		m_startPosition = transform.position;
-
-
-		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) 
-		{
-			m_originalMaterials[ renderers[i] ] = renderers[i].materials;
-		}
-		m_ashMaterial = new Material(Resources.Load ("Game/Assets/Materials/RedBurnToAshes") as Material);
-		m_ashMaterial.renderQueue = 3000;// Force transparent
 	}
 
 	public override void Initialize() {
@@ -78,8 +81,7 @@ public class InflammableDecoration : Initializable {
 		transform.localScale = Vector3.one;
 		m_burned = false;
 
-		for (int i = 0; i < m_fireNodes.Length; i++) 
-		{
+		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Reset();
 		}
 
@@ -99,19 +101,15 @@ public class InflammableDecoration : Initializable {
 		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning )	// if respawning we wait
 			return;
 
-		if (m_burned) 
-		{
+		if (m_burned) {
 			// Advance dissolve!
 			m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
 
-			if ( m_timer.IsFinished() )
-			{
+			if (m_timer.IsFinished()) {
 				m_view.SetActive(false);
 				m_autoSpawner.Respawn();
 			}
-		} 
-		else 
-		{
+		} else {
 			m_burned = true;
 			bool oneIsDamaged = false;
 			// Vector3 breathDir = Vector3.zero;	-> usefull if you need to orientate the explosion particle
@@ -197,7 +195,7 @@ public class InflammableDecoration : Initializable {
 		}
 		m_ashMaterial.SetFloat("_BurnLevel", 0);
 
-		if (!string.IsNullOrEmpty( m_ashesAsset)) 
+		if (!string.IsNullOrEmpty(m_ashesAsset)) 
 		{
 			GameObject particle = ParticleManager.Spawn(m_ashesAsset, m_view.transform.position, "Ashes");
 			if (particle) 

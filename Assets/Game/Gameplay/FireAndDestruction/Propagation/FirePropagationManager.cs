@@ -48,27 +48,16 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 		if(m_breath == null) return;
 
 		//check if this intersecs with dragon breath
-		if ( m_breath.IsFuryOn() )
-		{
+		if (m_breath.IsFuryOn()) {
 			m_timer -= Time.deltaTime;
-			if (m_timer <= 0) 
-			{
+			if (m_timer <= 0) {
 				m_timer += m_checkFireTime;
 				FireNode[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
 
 				for (int i = 0; i < nodes.Length; i++) {
 					FireNode fireNode = nodes[i];
-					if (m_breath.Overlaps(fireNode.area)) 
-					{
-						// Check if I can burn this fire Node
-						if ( fireNode.canBurn || m_breath.type == DragonBreathBehaviour.Type.Super )
-						{
-							fireNode.Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
-						}
-						else
-						{
-							// Show message: "I cannot burn this!"
-						}
+					if (m_breath.Overlaps(fireNode.area)) {
+						fireNode.Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
 					}
 				}
 			}
@@ -108,27 +97,7 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 		if (instance.m_burningFireNodes.Count <= 0)
 			instance.m_fireNodeAudio.Stop();
 	}
-
-
-	public static bool CanBurn(InflammableDecoration _decoration) {
-		if (instance.m_decorationEffects != null) {
-			string param = instance.m_decorationEffects.Get(_decoration.sku, "");
-			if (param.Equals("explode") || param.Equals("true"))
-				return true;
-		}
-		return true;
-		//return false;
-	}
-
-	public static bool ShouldExplode(InflammableDecoration _decoration) {
-		if (instance.m_decorationEffects != null) {
-			string param = instance.m_decorationEffects.Get(_decoration.sku, "");
-			if (param.Equals("explode"))
-				return true;
-		}
-		return false;
-	}
-
+		
 	// :3
 	void OnDrawGizmosSelected() {
 		if (m_fireNodes != null)
