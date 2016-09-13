@@ -132,7 +132,8 @@ public class EggController : MonoBehaviour {
 			bool showFX = (m_eggData.state == Egg.State.READY_FOR_INCUBATION
 						|| m_eggData.state == Egg.State.INCUBATING
 						|| m_eggData.state == Egg.State.READY);
-			m_incubatorFX.SetActive(showFX);
+			//m_incubatorFX.SetActive(showFX);
+			m_incubatorFX.SetActive(false);	// Disable for now
 		}
 	}
 
