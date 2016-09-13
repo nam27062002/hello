@@ -7,6 +7,10 @@ public class InflammableDecoration : Initializable {
 	[CommentAttribute("Add an explosion effect when this object is burned out.")]
 	[SerializeField] private string m_explosionParticle = "";
 
+
+
+	private ZoneManager m_zoneManager;
+
 	private GameObject m_view;
 	private GameObject m_viewBurned;
 
@@ -17,32 +21,47 @@ public class InflammableDecoration : Initializable {
 	private AutoSpawnBehaviour m_autoSpawner;
 	private Vector3 m_startPosition;
 
-	private Dictionary<Renderer, Material[]>  m_originalMaterials = new Dictionary<Renderer, Material[]>();
+	private Dictionary<Renderer, Material[]> m_originalMaterials = new Dictionary<Renderer, Material[]>();
 	private Material m_ashMaterial;
 	public string m_ashesAsset;
 	private Entity m_entity;
-	public string sku
-	{
-		get{ return m_entity.sku; }
-	}
+	public string sku { get { return m_entity.sku; } }
 
 	private bool m_shouldExplode;
 
-	// Use this for initialization
-	IEnumerator Start()
-	{
-		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
-		{
-			yield return null;
-		}
 
+
+	// Use this for initialization
+	void Start() {		
+	}
+
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+	}
+
+	/// <summary>
+	/// A new level was loaded.
+	/// </summary>
+	private void OnLevelLoaded() {
 		m_entity = GetComponent<Entity>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 
-		ZoneManager zones = GameObjectExt.FindComponent<ZoneManager>(true);
-		ZoneManager.ZoneEffect zEffect = zones.GetFireEffectCode(transform.position, m_entity.sku);
+		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
+		ZoneManager.ZoneEffect zEffect = m_zoneManager.GetFireEffectCode(transform.position, m_entity.sku);
 
 		if (zEffect == ZoneManager.ZoneEffect.None) {
 			for (int i = 0; i < m_fireNodes.Length; i++) {
@@ -89,7 +108,6 @@ public class InflammableDecoration : Initializable {
 
 		transform.position = m_startPosition;
 		ResetViewMaterials();
-
 	}
 
 	// Update is called once per frame

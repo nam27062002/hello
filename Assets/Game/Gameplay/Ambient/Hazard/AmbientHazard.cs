@@ -326,7 +326,7 @@ public class AmbientHazard : MonoBehaviour {
 				m_collider.enabled = false;
 
 				// Launch deactivation animation
-				if(m_animator != null) {
+				if(m_animator != null && m_animator.isInitialized) {
 					m_animator.ResetTrigger("activate");
 					m_animator.SetTrigger("deactivate");
 				}
@@ -338,7 +338,7 @@ public class AmbientHazard : MonoBehaviour {
 
 			case State.ACTIVATING: {
 				// Launch activation animation
-				if(m_animator != null) {
+				if(m_animator != null && m_animator.isInitialized) {
 					m_animator.ResetTrigger("deactivate");
 					m_animator.SetTrigger("activate");
 				}

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class ZoneManager : MonoBehaviour {
 
@@ -22,22 +22,44 @@ public class ZoneManager : MonoBehaviour {
 	[SeparatorAttribute]
 	[SerializeField] private Color m_zone1Color = Colors.WithAlpha(Colors.paleYellow, 0.45f);
 	[SerializeField] private Color m_zone2Color = Colors.WithAlpha(Colors.maroon, 0.25f);
+	public Color zone1Color { get { return m_zone1Color; } }
+	public Color zone2Color { get { return m_zone2Color; } }
 
+	private string m_dragonTier;
+	private Dictionary<string, DefinitionNode> m_burnDefinitions;
 
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 	void Start() {
 		//load definitions 
+		m_dragonTier = InstanceManager.player.data.tierDef.sku;
+		m_burnDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DECORATION);
 	}
 
 	public ZoneEffect GetFireEffectCode(Vector3 _pos, string _sku) {
 		Zone zone = GetZone(_pos.z);
 
-		if (zone == Zone.Zone1) {
-			return ZoneEffect.S; 
-		} else if (zone == Zone.Zone2) {
-			return ZoneEffect.M;
+		if (zone != Zone.None) {
+			DefinitionNode burnDef = m_burnDefinitions[_sku];
+
+			//should explode?
+			string minTier = burnDef.Get("minTierExplode");
+			if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
+				return ZoneEffect.L;
+			} else {
+				//should burn?
+				minTier = burnDef.Get("minTierBurn");
+				if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
+					return ZoneEffect.M;
+				} else {
+					//should feedback?
+					minTier = burnDef.Get("minTierFeedback");
+					if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
+						return ZoneEffect.S; 
+					}
+				}
+			}
 		}
 
 		return ZoneEffect.None;
