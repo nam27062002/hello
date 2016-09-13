@@ -404,7 +404,7 @@ public class GameServerManagerCalety : GameServerManager
             Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
             Commands_PrepareToRunCommand(command, parameters, callback, ++retries);
         }
-        else
+        else if (callback != null)
         {
             Log("Commander Callback :: " + command);
             callback(error, result);
@@ -429,7 +429,7 @@ public class GameServerManagerCalety : GameServerManager
                     Commands_AfterCommand(command, parameters, error, result, callback, retries);                        
                 });
             }
-            else
+            else if (callback != null)
             {
                 callback(beforeError, null);
             }
