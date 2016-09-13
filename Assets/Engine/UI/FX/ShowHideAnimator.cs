@@ -69,9 +69,16 @@ public class ShowHideAnimator : MonoBehaviour {
 	// All tween-related parameters will be ignored if an animator is defined.
 	// Feel free to add new tween types or extra parameters
 	[SerializeField] protected float m_tweenDuration = 0.25f;
+	public float tweenDuration { get { return m_tweenDuration; }}
+
 	[SerializeField] protected float m_tweenValue = 1f;					// Use it to tune the animation (e.g. offset for move tweens, scale factor for the scale tweens, initial alpha for fade tweens).
+	public float tweenValue { get { return m_tweenValue; }}
+
 	[SerializeField] protected Ease m_tweenEase = Ease.OutBack;
+	public Ease tweenEase { get { return m_tweenEase; }}
+
 	[SerializeField] protected float m_tweenDelay = 0f;
+	public float tweenDelay { get { return m_tweenDelay; }}
 
 	// Custom tweens
 	[SerializeField] protected DOTweenAnimation[] m_showTweens = new DOTweenAnimation[0];

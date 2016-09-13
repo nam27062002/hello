@@ -670,6 +670,33 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);             
     }  
 
+    public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TITLE";
+        
+        int lastUploadTime = SaveFacade.Instance.lastUploadTime;        
+        if (lastUploadTime > 0)
+        {
+            config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT1";
+            DateTime lastUpload = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            lastUpload = lastUpload.AddSeconds(lastUploadTime).ToLocalTime();            
+            string lastUploadStr = lastUpload.ToString("F");
+            config.MessageParams = new string[] { lastUploadStr };
+        }
+        else
+        {
+            config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT2";
+        }
+
+        config.ConfirmButtonTid = "STRING_SAVE_POPUP_CLOUD_SAVE_SYNC_NOW";
+        config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;
+        config.OnConfirm = onCancel;
+        PopupManager.PopupMessage_Open(config);        
+    }
+
     public static void Popups_OpenMessage(PopupMessage.Config config)
     {
         PopupManager.PopupMessage_Open(config);
@@ -685,7 +712,7 @@ public static class PersistenceManager {
     /// <returns></returns>
     public static int Rules_GetPCAmountToIncentivizeSocial()
         {
-        // [DGR] TODO: To read from content
+        // [DGR] RULES: To read from content
         return 25;
     }
 #endregion

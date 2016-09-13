@@ -53,7 +53,7 @@ public class UserSaveSystem : SaveSystem
 
     private Dictionary<string, int> m_promoPackPurchaseCount = new Dictionary<string, int>();
 
-    //[DGR] No support added yet
+    //[DGR] COMMUNITY: No support added yet
     //public Dictionary<string, CommunityPopup.RewardStates> m_communityRewardData = new Dictionary<string, CommunityPopup.RewardStates>();
 
     public int timePlayed = 0;
@@ -64,7 +64,7 @@ public class UserSaveSystem : SaveSystem
     public Dictionary<int, bool> tierInfoPopupShown = new Dictionary<int, bool>();
 
 	public bool isPirate = false;
-    //[DGR] No support added yet
+    //[DGR] ANTICHEAT: No support added yet
     //public ObscuredBool isHacker = false;
     //public ObscuredBool isCheater = false;
     public bool isHacker = false;
@@ -116,7 +116,7 @@ public class UserSaveSystem : SaveSystem
         iapPurchaseMade = false;
         tierInfoPopupShown.Clear();
         facebookInviteSent = false;
-        //[DGR] No support added yet
+        // [DGR] COMMUNITY: No support added yet
         //m_communityRewardData.Clear();
         m_promoPackPurchaseCount.Clear();
     }
@@ -141,7 +141,7 @@ public class UserSaveSystem : SaveSystem
             facebookInviteSent = GetBool("FacebookInviteSent");
 
             /*
-            //[DGR] No supported yet
+            //[DGR] RULES: No supported yet
             IEnumerator iterator = gameDB.GetEnumerator<SharkTierData>();
 
             PushKey("TierInfoPopupShown");
@@ -159,7 +159,7 @@ public class UserSaveSystem : SaveSystem
             childFriendlyMode = GetBool("ChildFriendlyMode", false);
 
             /*
-            //[DGR] No supported yet
+            //[DGR] COMMUNITY: No supported yet
             List<string> communityRewardKeys = GetCommunityRewardKeys();
 
             PushKey("CommunityRewards");
@@ -212,7 +212,7 @@ public class UserSaveSystem : SaveSystem
             throw new CorruptedSaveException(e);
         }
 
-        //[DGR] No support added yet
+        //[DGR] RULES: No support added yet
         //GameDataManager.Instance.gameDataID = m_gameDataID;
     }
 
@@ -234,7 +234,7 @@ public class UserSaveSystem : SaveSystem
          SetBool("FacebookInviteSent", facebookInviteSent);
 
         /*
-        //[DGR] No support added yet
+        //[DGR] RULES: No support added yet
         PushKey("TierInfoPopupShown");
          {
              foreach (var pair in tierInfoPopupShown)
@@ -248,7 +248,7 @@ public class UserSaveSystem : SaveSystem
          SetBool("ChildFriendlyMode", childFriendlyMode);
 
         /*
-        //[DGR] No supported yet            
+        //[DGR] COMMUNITY: No supported yet            
         PushKey("CommunityRewards");
         {
             List<string> communityRewardKeys = new List<string>(GetCommunityRewardKeys());
@@ -329,7 +329,7 @@ public class UserSaveSystem : SaveSystem
         List<string> keyList = new List<string>();
 
         /*
-        //[DGR] No support added yet
+        //[DGR] COMMUNITY: No support added yet
         IEnumerator communityEntriesEnumerator = gameDB.GetEnumerator<Definitions.CommunityData>();
 
         while (communityEntriesEnumerator.MoveNext())

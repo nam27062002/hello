@@ -171,7 +171,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         // log in to selected network        
         SocialFacade.Network network = Model_SocialGetCenteredNetwork();
 
-        // [DGR] Not supported yet
+        // [DGR] ANALYTICS: Not supported yet
         // HSXAnalyticsManager.Instance.loginContext = "OptionsLogin";
                 
         SocialManager.Instance.Login(network, (success) =>
@@ -226,7 +226,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                         {
                             //Debug.Log("WEIBOWEIBO: LOG OUT from " + currentNetwork.ToString() + " COMPLETE!");
                             // on logout
-                            // [DGR] Not supported yet
+                            // [DGR] ANALYTICS: Not supported yet
                             // HSXAnalyticsManager.Instance.SocialLogout(currentNetwork.ToString());
 
                             // Log in to new network
@@ -268,7 +268,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                                 User_LoadProfileInfo();
                                 Cloud_DisableCloudSave();
 
-                                // [DGR] Not supported yet
+                                // [DGR] ANALYTICS Not supported yet
                                 //HSXAnalyticsManager.Instance.SocialLogout(currentNetwork.ToString());
 
                                 //  Reenable log in button
@@ -333,7 +333,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         // Report cloud save disabled to analytics only once! The actual disable logic may be called multiple times
         if (SaveFacade.Instance.cloudSaveEnabled)
         {
-            // [DGR] Not supported yet
+            // [DGR] ANALYTICS Not supported yet
             //HSXAnalyticsManager.Instance.CloudSaveDisabledResult("Disabled", SystemInfo.deviceModel);
         }
 
