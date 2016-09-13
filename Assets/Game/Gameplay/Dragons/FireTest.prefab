@@ -28,7 +28,8 @@ Transform:
   m_LocalPosition: {x: 4.7673655, y: -2.3020227, z: -38.35547}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children: []
+  m_Children:
+  - {fileID: 4000011929484278}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!23 &2370384
@@ -78,24 +79,82 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e3e8ee1182574614afedccf4606ff56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_distance: 20
-  m_aplitude: 6
+  m_distance: 10
+  m_aplitude: 2
+  m_initialColor: {r: 0.5019608, g: 0, b: 1, a: 0}
+  m_flameColor: {r: 1, g: 1, b: 1, a: 1}
+  m_collisionColor: {r: 1, g: 1, b: 1, a: 0}
   m_shapeCurve:
     serializedVersion: 2
     m_Curve:
     - time: 0
-      value: 0
-      inSlope: 3.7768385
-      outSlope: 3.7768385
+      value: -0.031249998
+      inSlope: 1.6818748
+      outSlope: 1.6818748
       tangentMode: 0
     - time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      value: 0.975
+      inSlope: 0.25806475
+      outSlope: 0.25806475
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+  m_FlameAnimation:
+    serializedVersion: 2
+    m_Curve:
+    - time: -0.004166667
+      value: -0.037499998
+      inSlope: 3.0973449
+      outSlope: 3.0973449
+      tangentMode: 10
+    - time: 0.034914434
+      value: 0.08354765
+      inSlope: 1.3515732
+      outSlope: 1.3515732
+      tangentMode: 10
+    - time: 0.1291826
+      value: 0.046387278
+      inSlope: 0.40320426
+      outSlope: 0.40320426
+      tangentMode: 10
+    - time: 0.26083192
+      value: 0.20444638
+      inSlope: 0.8110378
+      outSlope: 0.8110378
+      tangentMode: 10
+    - time: 0.8857201
+      value: 0.46781707
+      inSlope: 2.6057823
+      outSlope: 2.6057823
+      tangentMode: 10
+    - time: 0.9979426
+      value: 1.0053738
+      inSlope: 4.790096
+      outSlope: 4.790096
+      tangentMode: 10
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  m_FlexCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0.06956343
+      outSlope: 0.06956343
+      tangentMode: 0
+    - time: 1
+      value: 1
+      inSlope: 3.9883144
+      outSlope: 3.9883144
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  fireDelay: 25
+  m_groundLayer: Ground
+  m_enemyLayers: []
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -107,3 +166,31 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 197018}
   m_IsPrefabParent: 1
+--- !u!1 &1000010108121136
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011929484278}
+  m_Layer: 0
+  m_Name: WhipEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4000011929484278
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010108121136}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 415608}
+  m_RootOrder: 0

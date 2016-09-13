@@ -50,6 +50,7 @@ public class FireBreathDynamic : MonoBehaviour
 
 
     private Vector3 lastInitialPosition;
+    private GameObject whipEnd;
 
 	// Use this for initialization
 	void Start () 
@@ -60,7 +61,10 @@ public class FireBreathDynamic : MonoBehaviour
 
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
-		InitWhip();
+        whipEnd = transform.FindChild("WhipEnd").gameObject;
+        whipEnd.transform.SetLocalPosX(m_distance);
+
+        InitWhip();
 		InitArrays();
 		InitUVs();
 		InitTriangles();
@@ -69,7 +73,7 @@ public class FireBreathDynamic : MonoBehaviour
 
         CreateMesh();
 
-        lastInitialPosition = transform.position;
+        lastInitialPosition = whipEnd.transform.position;
 	}
 
 	void InitWhip()
@@ -181,6 +185,7 @@ public class FireBreathDynamic : MonoBehaviour
 		int step = 1;
 		int whipIndex = 0;
         Vector3 newPos1, newPos2;
+//        Vector3 WhipExtreme = 
 
         for ( int i = 2; i<m_numPos; i += 2 )
 		{
@@ -191,7 +196,7 @@ public class FireBreathDynamic : MonoBehaviour
 
             float kd = m_FlexCurve.Evaluate(whipIndex / m_splits);
 
-            float md = (transform.position.y - lastInitialPosition.y) * kd * fireDelay;
+            float md = (whipEnd.transform.position.y - lastInitialPosition.y) * kd * fireDelay;
 
             //            newPos1 += (whipTangent) * (yDisplacement + md);
             //            newPos2 -= (whipTangent) * (yDisplacement - md);
@@ -227,7 +232,7 @@ public class FireBreathDynamic : MonoBehaviour
 
 //        Debug.Log("lastInitialPositionVariation: " + (lastInitialPosition - transform.position).ToString());
 
-        lastInitialPosition = transform.position;
+        lastInitialPosition = whipEnd.transform.position;
 
 
     }
@@ -289,7 +294,7 @@ public class FireBreathDynamic : MonoBehaviour
             float wn = Vector3.Dot(hitNormal, whipDirection);
             Vector3 whipReflect = whipDirection - (hitNormal * wn * 2.0f);
 //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, (whipDirection.x < 0.0f) ? -Vector3.forward: Vector3.forward);
-            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
+            Vector3 whipReflectTangent = Vector3.Cross(Vector3.forward, whipReflect);
             //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
 
             for (int i = 0; i < m_splits + 1; i++)
@@ -305,7 +310,8 @@ public class FireBreathDynamic : MonoBehaviour
                 else if (currentDist < (hit.distance + xStep))
                 {
                     m_whip[i] = hit.point;
-                    m_whipTangent[i] = whipTangent;    // (whipTangent + whipReflectTangent).normalized;
+                    m_whipTangent[i] = (whipTangent + whipReflectTangent).normalized;
+//                    m_whipTangent[i] = whipTangent;    // (whipTangent + whipReflectTangent).normalized;
 //                    m_whipCollision[i] = true;
                     m_collisionSplit = i;
                 }

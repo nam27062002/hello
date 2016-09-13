@@ -4,15 +4,20 @@
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_NoiseTex ("Noise Texture", 2D) = "white" {}
+		_CutOut ("CutOut", Range(0.0, 1.0)) = 0.5
 	}
+
 	SubShader
 	{
-		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+//		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+		Tags {"Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout"}
 		LOD 100
-		Blend SrcAlpha OneMinusSrcAlpha 
+//		Blend SrcAlpha OneMinusSrcAlpha 
 		// Blend One One
 		Cull Off
-		ZWrite Off
+//		ZWrite Off
+
+
 		Pass
 		{
 			CGPROGRAM
@@ -20,6 +25,8 @@
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
+
+//			AlphaTest Less[_CutOut]
 
 			struct appdata
 			{
@@ -42,6 +49,8 @@
 			sampler2D _NoiseTex;
 			float4 _NoiseTex_ST;
 
+			float _CutOut;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -55,10 +64,11 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// sample the texture
-				fixed4 noise = tex2D( _NoiseTex, i.noiseUV ) * 0.65;
+				fixed4 noise = tex2D( _NoiseTex, i.noiseUV ) * 0.8;
 				noise.g = noise.g * i.uv.y;
 				noise.r = 0;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
+				clip(col.a - _CutOut);
 				return col * i.color;
 			}
 			ENDCG

@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/FireShader"
+﻿Shader "Hungry Dragon/FlameShader"
 {
 	Properties
 	{
@@ -8,7 +8,7 @@
 		_ColorSteps("Color steps", Range(0.0, 128.0)) = 8.0	// color steps
 		_AlphaThreshold("Alpha threshold", Range(0.0, 128.0)) = 2.0	// alpha threshold
 		_Speed("Fire Speed", Float) = 1.0				// Fire speed
-		_Power("Fire Power", Range(1.0, 10.0)) = 3.0	// Fire power
+		_Power("Fire Power", Range(0.0, 10.0)) = 3.0	// Fire power
 		_Seed("Random Seed", Float) = 0.0							//Randomize effect
 		_Alpha("Alpha", Range(0.0, 1.0)) = 1.0	// alpha translucency
 	}
@@ -17,10 +17,8 @@
 	{
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		LOD 100
-		//Blend SrcAlpha OneMinusSrcAlpha
 		Blend SrcAlpha OneMinusSrcAlpha
 		// Blend One One
-		//Blend OneMinusDstColor One
 		Cull Off
 		ZWrite Off
 
@@ -59,7 +57,6 @@
 			float	_Seed;
 			float	_Alpha;
 
-
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -72,10 +69,10 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-//				i.uv.y = 1.0 - i.uv.y;
-//				i.uv.y *= i.uv.y * i.uv.y;
-				float intensity = tex2D(_NoiseTex, (i.uv.xy - float2(_Seed, _Time.y * _Speed))).x;
-				intensity += tex2D(_NoiseTex, (i.uv.xy - float2(-_Seed, _Time.y * _Speed * 0.333))).x;
+				i.uv.y = 1.0 - (i.uv.y * 0.75);
+				i.uv.y *= i.uv.y;
+				float intensity = tex2D(_NoiseTex, (i.uv.xy + float2(_Seed, _Time.y * _Speed))).x;
+				intensity += tex2D(_NoiseTex, (i.uv.xy + float2(-_Seed, _Time.y * _Speed * 0.333) + float2(0.0, intensity * 0.5))).x;// +pow(i.uv.y, 3.0);
 
 //				// apply fog
 //				UNITY_APPLY_FOG(i.fogCoord, col);
@@ -89,9 +86,12 @@
 //				fixed3 col = fixed3(txid, txid, txid);// tex2D(_ColorRamp, float2(txid, 0.0));
 				fixed3 col =  tex2D(_ColorRamp, float2(txid, 0.0));
 
-//				return fixed4(col, step(_AlphaThreshold / _ColorSteps, intensity));
-				float threshold = _AlphaThreshold / _ColorSteps;
-				return fixed4(col, step(threshold, intensity) * _Alpha);
+//				return fixed4(col, step(_AlphaThreshold / _ColorSteps, intensity) * _Alpha);
+//				return fixed4(col, clamp(0.0, 1.0, intensity / (_AlphaThreshold / _ColorSteps)));// *_Alpha);
+				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
+//				alfa = clamp(alfa - _AlphaThreshold, 0.0, 1.0);
+				return fixed4(col, alfa * _Alpha);
+
 			}
 
 			ENDCG
