@@ -6,19 +6,19 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 	
 	[SerializeField] private float m_checkFireTime = 0.25f;
 
-	private QuadTree<FireNode> m_fireNodes;
-	private List<FireNode> m_fireNodesLogic;
+	private QuadTree<FireNode> m_fireNodesTree;
+	private List<FireNode> m_fireNodes;
 	private AudioSource m_fireNodeAudio;
 	private DragonBreathBehaviour m_breath;
-	private DefinitionNode m_decorationEffects = null;
-	
+		
 	private float m_timer;
 
 	public List<Transform> m_burningFireNodes = new List<Transform>();
 
+
 	void Awake() {
-		m_fireNodes = new QuadTree<FireNode>(-600f, -100f, 1000f, 400f);
-		m_fireNodesLogic = new List<FireNode>();
+		m_fireNodesTree = new QuadTree<FireNode>(-600f, -100f, 1000f, 400f);
+		m_fireNodes = new List<FireNode>();
 
 		m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
 		m_fireNodeAudio.playOnAwake = false;
@@ -37,45 +37,51 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/SmokeParticle"), 25, true);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/BurnParticle"), 25, true);
 
-		// get player breath component
-		m_decorationEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "tier", InstanceManager.player.data.tierDef.sku);
-
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 		m_timer = m_checkFireTime;
 	}
 
-	void Update() {
-		if(m_breath == null) return;
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+	}
 
-		//check if this intersecs with dragon breath
-		if (m_breath.IsFuryOn()) {
-			m_timer -= Time.deltaTime;
-			if (m_timer <= 0) {
-				m_timer += m_checkFireTime;
-				FireNode[] nodes = m_fireNodes.GetItemsInRange(m_breath.bounds2D);
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+	}
 
-				for (int i = 0; i < nodes.Length; i++) {
-					FireNode fireNode = nodes[i];
-					if (m_breath.Overlaps(fireNode.area)) {
-						fireNode.Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
-					}
-				}
-			}
+	/// <summary>
+	/// A new level was loaded.
+	/// </summary>
+	private void OnLevelLoaded() {
+		// Create and populate QuadTree
+		// Get map bounds!
+		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
+		LevelMapData data = GameObjectExt.FindComponent<LevelMapData>(true);
+		if(data != null) {
+			bounds = data.mapCameraBounds;
 		}
-
-		for (int i = 0; i < m_fireNodesLogic.Count; i++) {
-			m_fireNodesLogic[i].UpdateLogic();
+		m_fireNodesTree = new QuadTree<FireNode>(bounds.x, bounds.y, bounds.width, bounds.height);
+		for(int i = 0; i < m_fireNodes.Count; i++) {
+			m_fireNodesTree.Insert(m_fireNodes[i]);
 		}
 	}
-		
+
 	public static void Insert(FireNode _fireNode) {
-		instance.m_fireNodes.Insert(_fireNode);
-		instance.m_fireNodesLogic.Add(_fireNode);
+		instance.m_fireNodes.Add(_fireNode);
+		if (instance.m_fireNodesTree != null) instance.m_fireNodesTree.Insert(_fireNode);
 	}
 
 	public static void Remove(FireNode _fireNode) {
 		instance.m_fireNodes.Remove(_fireNode);
-		instance.m_fireNodesLogic.Remove(_fireNode);
+		if (instance.m_fireNodesTree != null) instance.m_fireNodesTree.Remove(_fireNode);
 	}
 
 	/// <summary>
@@ -97,10 +103,34 @@ public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationMana
 		if (instance.m_burningFireNodes.Count <= 0)
 			instance.m_fireNodeAudio.Stop();
 	}
+
+	void Update() {
+		if(m_breath == null) return;
+
+		//check if this intersecs with dragon breath
+		if (m_breath.IsFuryOn()) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0) {
+				m_timer += m_checkFireTime;
+				FireNode[] nodes = m_fireNodesTree.GetItemsInRange(m_breath.bounds2D);
+
+				for (int i = 0; i < nodes.Length; i++) {
+					FireNode fireNode = nodes[i];
+					if (m_breath.Overlaps(fireNode.area)) {
+						fireNode.Burn(m_breath.damage * m_checkFireTime, m_breath.direction, true);
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < m_fireNodes.Count; i++) {
+			m_fireNodes[i].UpdateLogic();
+		}
+	}
 		
 	// :3
 	void OnDrawGizmosSelected() {
-		if (m_fireNodes != null)
-			m_fireNodes.DrawGizmos(Color.yellow);
+		if (m_fireNodesTree != null)
+			m_fireNodesTree.DrawGizmos(Color.yellow);
 	}
 }
