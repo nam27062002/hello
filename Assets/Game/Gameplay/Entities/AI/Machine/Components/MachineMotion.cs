@@ -198,7 +198,7 @@ namespace AI {
 				
 			if (m_pilot != null) {				
 				if (m_useGravity) {
-					if (m_isGrounded && !m_machine.GetSignal(Signals.Type.FallDown)) 
+					if (m_isGrounded && m_machine.GetSignal(Signals.Type.FallDown)) 
 						Stop();
 				}
 
