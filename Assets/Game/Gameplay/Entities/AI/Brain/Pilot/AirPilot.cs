@@ -70,11 +70,13 @@ namespace AI {
 							v.z = 0;
 
 							float distSqr = v.sqrMagnitude;
-							if (distSqr > 0 && m_avoidDistanceAttenuation > 0) {
-								v.Normalize();
-								v *= (m_avoidDistanceAttenuation * m_avoidDistanceAttenuation) / distSqr;
+							float distAttSqr = m_avoidDistanceAttenuation * m_avoidDistanceAttenuation;
+
+							v.Normalize();
+							if (distSqr > distAttSqr) {								
+								v *= distAttSqr / distSqr;
 							}
-							flee = v;
+							flee = v * speed;
 							flee.z = 0;
 
 							Debug.DrawLine(m_machine.position, m_machine.position + flee, Color.red);

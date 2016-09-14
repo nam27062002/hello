@@ -29,6 +29,9 @@ MonoBehaviour:
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
+  - m_name: Guard
+    m_componentAssets:
+    - {fileID: 11400000, guid: 9f822a57e0f754c25bac67c6de963f75, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -63,6 +66,15 @@ MonoBehaviour:
   - to: 1
     id: onEnemyOutOfSight
     from: 2
+  - to: 5
+    id: onEnemyInGuardArea
+    from: 2
+  - to: 3
+    id: onEnemyInRange
+    from: 5
+  - to: 2
+    id: onPursuitEnemy
+    from: 5
   - to: 4
     id: onOutsideArea
     from: -1

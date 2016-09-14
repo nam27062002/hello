@@ -84,7 +84,7 @@ namespace AI {
 
 			private void StartAttack() {
 				if (m_machine.enemy == null) {
-					Transition(OnOutOfRange, m_transitionParam);
+					Transition(OnOutOfRange);
 				} else {
 					m_pilot.PressAction(Pilot.Action.Attack);
 
@@ -144,7 +144,7 @@ namespace AI {
 
 					if (m_attacksLeft > 0) {
 						if (!m_machine.GetSignal(Signals.Type.Danger)) {		
-							Transition(OnOutOfRange, m_transitionParam);
+							Transition(OnOutOfRange);
 						}
 					} else {
 						Transition(OnMaxAttacks, m_transitionParam);
