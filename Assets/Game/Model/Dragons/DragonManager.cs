@@ -44,20 +44,20 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 		get { return GetDragonData(instance.m_user.currentDragon); }
 	}
 
-	// Shortcut to get the data of the dragon following the currently selected
-	// Null for last dragon
-	public static DragonData nextDragon {
+	// Shortcut to get the data of the biggest owned dragon (following progression order)
+	// Null if there are no dragons owned (should never happen)
+	public static DragonData biggestOwnedDragon {
 		get {
-			// [AOC] We could use the "order" field, but I don't trust it to be always consistent with the dragons list, so just search by sku
-			for(int i = 0; i < instance.m_dragonsByOrder.Count - 1; i++) {	// [AOC] Skip last dragon (since it doesn't have a "next" dragon)
-				// Is it the current dragon?
-				if(instance.m_dragonsByOrder[i].def.sku == UsersManager.currentUser.currentDragon) {
-					// Yes! Return next dragon
-					return instance.m_dragonsByOrder[i + 1];	// [AOC] Should be safe since we're excluding last dragon from the loop
+			// Reverse-iterate all the dragons by order and find the biggest one owned
+			for(int i = instance.m_dragonsByOrder.Count - 1; i >= 0; i--) {
+				// Is it owned?
+				if(instance.m_dragonsByOrder[i].isOwned) {
+					// Yes! Return dragon
+					return instance.m_dragonsByOrder[i];
 				}
 			}
 
-			// Current dragon not found or was last dragon
+			// No dragons owned (should never happen)
 			return null;
 		}
 	}

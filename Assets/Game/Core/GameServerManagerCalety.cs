@@ -763,32 +763,28 @@ public class GameServerManagerCalety : GameServerManager
     #region log
     private const string LOG_CHANNEL = "[GameServerManagerCalety]";
     private void LogWarning(ECommand command, Error error, Exception e = null)
-    {
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));
-        /*Debug.LogWarning(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));        
+    {        
+        Debug.LogWarning(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));        
         if (e != null)
         {
             Debug.LogWarning(e);
-        }*/
+        }
 
     }
 
     private void Log(string message)
     {
-        //Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} {1}", LOG_CHANNEL, message));
+        Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));        
     }
 
     private void LogWarning(string message)
     {
-        //Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));    
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} {1}", LOG_CHANNEL, message));
+        Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));            
     }
 
     private void LogError(string message)
     {
-        //Debug.LogError(String.Format("{0} {1}", LOG_CHANNEL, message));
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} {1}", LOG_CHANNEL, message));
+        Debug.LogError(String.Format("{0} {1}", LOG_CHANNEL, message));        
     }
     #endregion
 }

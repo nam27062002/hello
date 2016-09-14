@@ -5,6 +5,7 @@ using UnityEngine;
 interface ISocialInterface
 {
     void Init();
+    bool IsInited();
     void AppActivation();
     void Login(PermissionType[] permissions, Action<bool> onLogin);
     bool IsLoggedIn();

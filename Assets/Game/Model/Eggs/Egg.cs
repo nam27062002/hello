@@ -233,8 +233,28 @@ public class Egg {
 		// Apply the reward
 		switch(m_rewardData.type) {
 			case "suit": {
-				// Pick a random dragon to give the disguise to
-				string dragonSku = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).GetRandomValue();
+				// Select a dragon for which we will give the reward
+				// We fake the probability so we get more rewards for dragons closer to our current progression (biggest owned dragon)
+				// Use the disguiseRewardDistributionDefinitions content table for it
+				DragonData biggestOwnedDragonData = DragonManager.biggestOwnedDragon;	// Should never be null
+				DefinitionNode distributionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISE_REWARDS_DISTRIBUTION, biggestOwnedDragonData.def.sku + "_distribution");	// "dragonsku_distribution" naming convention
+				string dragonSku = "";
+				if(distributionDef != null) {
+					// Use a probability set to get a ponderated random dragon sku
+					ProbabilitySet probSet = new ProbabilitySet();
+					List<string> dragonSkus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS);
+					for(int i = 0; i < dragonSkus.Count; i++) {
+						// Only if there's actually a probability for this dragon
+						if(distributionDef.Has(dragonSkus[i])) {
+							probSet.AddElement(dragonSkus[i], distributionDef.GetAsFloat(dragonSkus[i]));
+						}
+					}
+					probSet.Validate();
+					dragonSku = probSet.GetWeightedRandomElement().label;
+				} else {
+					// Distribution def not found, just pick a random dragon to give the disguise to
+					dragonSku = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).GetRandomValue();
+				}
 
 				// Get a random disguise of the target rarity
 				string rarity = rewardDef.sku;

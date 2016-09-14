@@ -63,8 +63,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		PersistenceManager.Clear();
 
 		// If required, tutorial will be auto-completed next time we reload the profile
-		Prefs.SetBoolPlayer("skipTutorialCheat", _skipTutorial);
 		PlayerPrefs.DeleteAll();
+		Prefs.SetBoolPlayer("skipTutorialCheat", _skipTutorial);
 
 		// Restart game
 		FlowManager.Restart();
