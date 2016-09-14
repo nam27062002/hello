@@ -84,7 +84,7 @@ public class DisguisePowerTooltip : MonoBehaviour {
 		m_nameText.Localize(_powerDef.Get("tidName"));
 
 		// Desc
-		m_descriptionText.text = DragonPowerUp.GetDescription(_powerDef.sku);	// Custom formatting depending on powerup type, already localized
+		m_descriptionText.text = DragonPowerUp.GetDescription(_powerDef, false);	// Custom formatting depending on powerup type, already localized
 	}
 
 	/// <summary>

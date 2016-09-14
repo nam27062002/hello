@@ -2,7 +2,30 @@
 using System.Collections;
 
 public class DragonPowerUp : MonoBehaviour {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	public static readonly Color COLOR_HEALTH = new Color(0f, 1f, 0f);
+	public static readonly Color COLOR_BOOST = new Color(0f, 0.75f, 0.6f);
+	public static readonly Color COLOR_FIRE = new Color(1f, 0.6f, 0.1f);
+	public static readonly Color COLOR_BITE = new Color(1f, 1f, 1f);
+	public static readonly Color COLOR_SPEED = new Color(1f, 1f, 1f);
 
+	public static readonly Color COLOR_GOLD = new Color(1f, 0.7f, 0.2f);
+	public static readonly Color COLOR_PC = new Color(1f, 0f, 0.5f);
+
+	public static readonly Color COLOR_CHESTS = new Color(1f, 0.6f, 0f);
+	public static readonly Color COLOR_EGGS = new Color(0.75f, 0.33f, 1f);
+
+	public static readonly Color COLOR_MINE = new Color(0.8f, 0.8f, 0.8f);
+	public static readonly Color COLOR_POISON = new Color(0.6f, 1f, 0.1f);
+	public static readonly Color COLOR_OBSTACLE = new Color(0.7f, 0.7f, 0.6f);
+	public static readonly Color COLOR_ENTITY = new Color(0.2f, 0.8f, 0.9f);
+	public static readonly Color COLOR_WATER = new Color(0.2f, 0.8f, 0.9f);
+
+	//------------------------------------------------------------------------//
+	// METHODS																  //
+	//------------------------------------------------------------------------//
 	void Start() 
 	{
 		DragonPlayer player = GetComponent<DragonPlayer>();
@@ -105,65 +128,83 @@ public class DragonPowerUp : MonoBehaviour {
 	/// Gets the description of this powerup, properly translated and formatted 
 	/// depending on powerup type.
 	/// </summary>
-	public static string GetDescription(string _powerSku) {
+	/// <param name="_powerSku">Sku of the power whose description we want.</param>
+	/// <param name="_short">Whether to return the short or the long description.</param>
+	/// <returns>The description for the given power. Empty string if power not known or no description available.</returns>
+	public static string GetDescription(string _powerSku, bool _short) {
 		// Get definition
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
-		if(def == null) return "";
+		return GetDescription(def, _short);
+	}
+
+	/// <summary>
+	/// Gets the description of this powerup, properly translated and formatted 
+	/// depending on powerup type.
+	/// </summary>
+	/// <param name="_powerSku">Sku of the power whose description we want.</param>
+	/// <param name="_short">Whether to return the short or the long description.</param>
+	/// <returns>The description for the given power. Empty string if power not known or no description available.</returns>
+	public static string GetDescription(DefinitionNode _powerDef, bool _short) {
+		// Check definition
+		if(_powerDef == null) return "";
+
+		// Short or long description?
+		string fieldId = _short ? "tidDescShort" : "tidDesc";
 
 		// Every power type has a different format
-		switch(def.GetAsString("type")) {
+		switch(_powerDef.GetAsString("type")) {
 			case "hp_increase":	 {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0), Colors.lime.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			case "boost_increase": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0), Colors.teal.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), COLOR_BOOST.ToHexString("#"));
 			} break;
 
 			case "fury_increase": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsFloat("param1"), 0), Colors.red.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), COLOR_FIRE.ToHexString("#"));
 			} break;
 
 			case "dive": {
-				return def.GetLocalized("tidDesc");
+				return _powerDef.GetLocalized(fieldId, COLOR_WATER.ToHexString("#"));
 			} break;
 			
 			case "avoid": {
 				// Check sub type with param one
-				string subtype = def.Get("param1");
-				int numHits = def.GetAsInt("param2");
+				string subtype = _powerDef.Get("param1");
+				int numHits = _powerDef.GetAsInt("param2");
 				switch(subtype) {
 					case "mine": {
-						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits), Colors.orange.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), COLOR_MINE.ToHexString("#"));
 					} break;
 
 					case "poison": {
-						return def.GetLocalized("tidDesc", StringUtils.FormatNumber(numHits), Colors.skyBlue.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), COLOR_POISON.ToHexString("#"));
 					} break;
 
 					default: {
-						return def.GetLocalized("tidDesc");
+						return _powerDef.GetLocalized(fieldId);
 					} break;
 				}
 			} break;
 
 			case "lives": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")), Colors.lime.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			case "dragonram": {
-				return def.GetLocalized("tidDesc", StringUtils.FormatNumber(def.GetAsInt("param1")), Colors.orange.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), COLOR_OBSTACLE.ToHexString("#"));
 			} break;
 			
 			case "preyHpBoost": {
 				// Show target entity name
 				// [AOC] TODO!! Plural
-				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, def.GetAsString("param1"));
-				return def.GetLocalized("tidDesc", entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(def.GetAsFloat("param2"), 0), Colors.skyBlue.ToHexString("#"), Colors.lime.ToHexString("#"));
+				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, _powerDef.GetAsString("param1"));
+				return _powerDef.GetLocalized(fieldId, entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), COLOR_ENTITY.ToHexString("#"), COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			default: {
-				return def.GetLocalized("tidDesc");
+				return _powerDef.GetLocalized(fieldId);
 			} break;
 		}
 
