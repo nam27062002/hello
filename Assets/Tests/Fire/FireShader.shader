@@ -1,4 +1,4 @@
-﻿Shader "Unlit/FireShader"
+﻿Shader "Hungry Dragon/FireShader"
 {
 	Properties
 	{
@@ -10,14 +10,17 @@
 		_Speed("Fire Speed", Float) = 1.0				// Fire speed
 		_Power("Fire Power", Range(1.0, 10.0)) = 3.0	// Fire power
 		_Seed("Random Seed", Float) = 0.0							//Randomize effect
+		_Alpha("Alpha", Range(0.0, 1.0)) = 1.0	// alpha translucency
 	}
 
 	SubShader
 	{
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		LOD 100
+		//Blend SrcAlpha OneMinusSrcAlpha
 		Blend SrcAlpha OneMinusSrcAlpha
 		// Blend One One
+		//Blend OneMinusDstColor One
 		Cull Off
 		ZWrite Off
 
@@ -54,6 +57,7 @@
 			float	_Speed;
 			float	_Power;
 			float	_Seed;
+			float	_Alpha;
 
 
 			v2f vert (appdata v)
@@ -66,11 +70,12 @@
 				return o;
 			}			
 
-
 			fixed4 frag (v2f i) : SV_Target
 			{
+//				i.uv.y = 1.0 - i.uv.y;
+//				i.uv.y *= i.uv.y * i.uv.y;
 				float intensity = tex2D(_NoiseTex, (i.uv.xy - float2(_Seed, _Time.y * _Speed))).x;
-				intensity += tex2D(_NoiseTex, (i.uv.xy - float2(-_Seed, _Time.y * _Speed * 0.5))).x;
+				intensity += tex2D(_NoiseTex, (i.uv.xy - float2(-_Seed, _Time.y * _Speed * 0.333))).x;
 
 //				// apply fog
 //				UNITY_APPLY_FOG(i.fogCoord, col);
@@ -84,8 +89,9 @@
 //				fixed3 col = fixed3(txid, txid, txid);// tex2D(_ColorRamp, float2(txid, 0.0));
 				fixed3 col =  tex2D(_ColorRamp, float2(txid, 0.0));
 
-				return fixed4(col, step(_AlphaThreshold / _ColorSteps, intensity));
-
+//				return fixed4(col, step(_AlphaThreshold / _ColorSteps, intensity));
+				float threshold = _AlphaThreshold / _ColorSteps;
+				return fixed4(col, step(threshold, intensity) * _Alpha);
 			}
 
 			ENDCG

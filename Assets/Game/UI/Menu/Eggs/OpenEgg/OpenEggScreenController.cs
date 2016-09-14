@@ -39,6 +39,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_actionButtonsAnimator = null;
 	[SerializeField] private Button m_instantOpenButton = null;
 	[SerializeField] private Button m_callToActionButton = null;
+	[SerializeField] private Localizer m_callToActionText = null;
 	[SerializeField] private Button m_backButton = null;
 
 	[Separator("Rewards")]
@@ -332,6 +333,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			case "suit": {
 				// Get disguise def
 				rewardedItemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, rewardData.value);
+				DefinitionNode targetDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, rewardedItemDef.GetAsString("dragonSku"));
 
 				// Disguise rarity
 				m_rewardRarity.InitFromRarity(rewardedItemDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
@@ -339,11 +341,20 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
 				int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(rewardedItemDef.sku);
 				if(rewardData.coins > 0) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", rewardedItemDef.GetLocalized("tidName"), StringUtils.FormatNumber(rewardData.coins));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", rewardedItemDef.GetLocalized("tidName"), targetDragonDef.GetLocalized("tidName"), StringUtils.FormatNumber(rewardData.coins));
 				} else if(disguiseLevel == 1) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", rewardedItemDef.GetLocalized("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", rewardedItemDef.GetLocalized("tidName"), targetDragonDef.GetLocalized("tidName"));
 				} else {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", rewardedItemDef.GetLocalized("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", rewardedItemDef.GetLocalized("tidName"), targetDragonDef.GetLocalized("tidName"));
+				}
+
+				// Call to action text
+				// Different text if the target dragon is not owned
+				DragonData targetDragonData = DragonManager.GetDragonData(targetDragonDef.sku);
+				if(targetDragonData.isOwned) {
+					m_callToActionText.Localize("TID_EGG_EQUIP_REWARD");
+				} else {
+					m_callToActionText.Localize("TID_EGG_PREVIEW_REWARD");
 				}
 			} break;
 
@@ -359,6 +370,9 @@ public class OpenEggScreenController : MonoBehaviour {
 				// [AOC] TODO!!
 				//m_rewardDescText.Localize("TID_EGG_REWARD_PET", rewardDef.sku);
 				m_rewardDescText.Localize("TID_GEN_COMING_SOON");
+
+				// Call to action text
+				m_callToActionText.Localize("TID_EGG_EQUIP_REWARD");
 			} break;
 		}
 

@@ -52,15 +52,17 @@ public class DefinitionsCategory
 	public const string EGGS = "EGGS";
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
+	public const string DISGUISE_REWARDS_DISTRIBUTION = "DISGUISE_REWARDS_DISTRIBUTION";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";
 	public const string DISGUISES_EQUIP = "DISGUISES_EQUIP";
 	public const string DISGUISES_POWERUPS = "DISGUISES_POWERUPS";
 
-	// Fire properties
+	// Fire and Destruction properties
 	public const string FIRE_SPAWN_EFFECTS = "FIRE_SPAWN_EFFECTS";
 	public const string FIRE_DECORATION_EFFECTS = "FIRE_DECORATION_EFFECTS";
+	public const string BURN_DECORATION = "BURN_DECORATION";
 
 	// Hold Prey
 	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";

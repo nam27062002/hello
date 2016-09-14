@@ -58,6 +58,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
+				m_pilot.SetMoveSpeed(m_data.speed);
 				m_idleTimer -= Time.deltaTime;
 
 				if (m_idleTimer > 0f) {

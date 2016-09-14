@@ -29,10 +29,12 @@ public class SpawnerAreaManager : SingletonMonoBehaviour<SpawnerAreaManager> {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	protected override void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+
+		base.OnDestroy();
 	}
 
 
@@ -99,7 +101,9 @@ public class SpawnerAreaManager : SingletonMonoBehaviour<SpawnerAreaManager> {
 		int c = (int)Mathf.Min(m_cols, Mathf.Max(0, ((_pos.x - m_mapBounds.xMin) / CELL_SIZE)));
 		int r = (int)Mathf.Min(m_rows, Mathf.Max(0, ((_pos.y - m_mapBounds.yMin) / CELL_SIZE)));
 
-		_pilot.SetArea(m_grid[r, c]);
+		if (m_grid != null) {
+			_pilot.SetArea(m_grid[r, c]);
+		}
 	}
 
 	//------------------------------------------------------------------------//

@@ -36,26 +36,27 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	private float m_resistance;
 	private float m_timer;
+	private float m_particleTimer;
 
-	private Vector3 m_fireSpriteScale;
-	private Vector3 m_fireSpriteDestinationScale;
+	private float m_firePower;
+	private float m_firePowerDest;
 
 	private GameObject m_fireSprite;
+	private Material m_fireMaterial;
 	private GameCamera m_newCamera;
 
 	private Reward m_reward;
 
-	private bool m_canBurn = false;
-	public bool canBurn { get { return m_canBurn; } }
+	private ZoneManager.ZoneEffect m_zoneEffect;
 
 	Vector3 m_lastBreathDirection;
 	public Vector3 lastBreathHitDiretion { get { return m_lastBreathDirection; } }
 
+
+
 	// Use this for initialization
 	void Start () {
 		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
-
-		FirePropagationManager.Insert(this);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_reward = new Reward();
@@ -70,13 +71,12 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		gameObject.SetActive(false);
 	}
 
-	public void Init(int _goldReward, bool _canBurn) {
+	public void Init(int _goldReward, ZoneManager.ZoneEffect _effect) {
 		m_reward.coins = _goldReward;
-		m_canBurn = _canBurn;
+		m_zoneEffect = _effect;
 		Reset();
-		if (!m_canBurn) {
-			enabled = false;
-		}
+
+		FirePropagationManager.Insert(this);
 	}
 
 	public void Reset() {
@@ -85,36 +85,32 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_resistance = m_resistanceMax;
 		m_state = State.Idle;
 		m_lastBreathDirection = Vector3.up;
-		m_fireSpriteScale = Vector3.zero;
+		m_firePower = 0f;
+		m_firePowerDest = 0f;
+
+		m_particleTimer = 0f;
 	}
 
 	public void UpdateLogic() {
 		if (m_fireSprite != null)
 			m_fireSprite.transform.position = transform.position;
 		
-		switch(m_state)
-		{
-			case State.Burning:
-			{
+		switch(m_state) {
+			case State.Burning: {
 				//check if we have to render the particle
-
 				bool isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(transform.position);
 
-				if (m_fireSprite != null) 
-				{
-					m_fireSprite.transform.localScale = m_fireSpriteScale;
+				if (m_fireSprite != null) {
+					m_fireMaterial.SetFloat("_Power", m_firePower);
 
-					if (!isInsideActivationMaxArea) 
-					{
+					if (!isInsideActivationMaxArea) {
 						StopFire();
 					}
-				} 
-				else if (isInsideActivationMaxArea) 
-				{
+				} else if (isInsideActivationMaxArea) {
 					StartFire();
 				}
 
-				m_fireSpriteScale = Vector3.Lerp(m_fireSpriteScale, m_fireSpriteDestinationScale, Time.smoothDeltaTime * 1.5f);
+				m_firePower = Mathf.Lerp(m_firePower, m_firePowerDest, Time.smoothDeltaTime * 1.5f);
 
 				//burn near nodes and fuel them
 				if (m_timer > 0) {
@@ -129,21 +125,29 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 					m_state = State.Burned;
 				}
 			} break;
-			case State.Burned:
-			{
+
+			case State.Burned: {
 				if (m_fireSprite != null) {
-					m_fireSprite.transform.localScale = Vector3.Lerp(m_fireSprite.transform.localScale, Vector3.zero, Time.smoothDeltaTime);
+					m_firePower = Mathf.Lerp(m_firePower, 0f, Time.smoothDeltaTime);
+					m_fireMaterial.SetFloat("_Power", m_firePower);
 
 					if (m_fireSprite.transform.localScale.x < 0.1f) {
 						StopFire();
 					}
 				}
 			} break;
+
+			default:
+				m_particleTimer -= Time.deltaTime;
+				if (m_particleTimer <= 0f) {
+					m_particleTimer = 0f;
+				}
+				break;
 		}
 	}
 
 	public bool IsBurned() {
-		return m_state > State.Damaged;//  && m_timer < m_burningTime * 0.5f;
+		return m_state > State.Damaged; //&& m_timer < m_burningTime * 0.5f;
 	}
 
 	public bool IsDamaged() {
@@ -153,25 +157,31 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public void Burn(float _damage, Vector2 _direction, bool _dragonBreath) {
 		if (m_state == State.Idle || m_state == State.Damaged) {	
 			if (_dragonBreath) {
-				GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position + Vector3.back * 2);				
-				if (hitParticle != null && m_hitParticleMatchDirection) {
-					Vector3 angle = new Vector3(0, 90, 0);
-					m_lastBreathDirection = _direction;
-					if (_direction.x < 0) {
-						angle.y *= -1;
-					}
+				if (m_particleTimer <= 0f) {
+					GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position + Vector3.back * 2);				
+					if (hitParticle != null && m_hitParticleMatchDirection) {
+						Vector3 angle = new Vector3(0, 90, 0);
+						m_lastBreathDirection = _direction;
+						if (_direction.x < 0) {
+							angle.y *= -1;
+						}
 
-					hitParticle.transform.rotation = Quaternion.Euler(angle);
+						hitParticle.transform.rotation = Quaternion.Euler(angle);
+					}
+					m_particleTimer = 0.5f;
 				}
 			}
 
-			m_resistance -= _damage;
-			m_state = State.Damaged;
+			if (m_zoneEffect >= ZoneManager.ZoneEffect.M) {
+				// The M effect burns the house
+				m_resistance -= _damage;
+				m_state = State.Damaged;
 
-			if (m_resistance <= 0) {
-				m_state = State.Burning;
-				m_timer = m_burningTime;
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
+				if (m_resistance <= 0) {
+					m_state = State.Burning;
+					m_timer = m_burningTime;
+					Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
+				}
 			}
 		}
 	}
@@ -182,22 +192,16 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc");
 
 			m_fireSprite.transform.position = transform.position;
-			m_fireSprite.transform.localScale = m_fireSpriteScale;
-			m_fireSpriteDestinationScale = transform.localScale * Random.Range( 0.55f, 1.45f);
+			m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);
 			m_fireSprite.transform.localRotation = transform.localRotation;
 
-			/*if (Random.Range(0,100) > 50) {
-				m_fireSprite.transform.Rotate(Vector3.up, 180, Space.Self);
-				// Move child!!
-				if (m_fireSprite.transform.childCount > 0) {
-					Vector3 p = transform.localPosition;
-					p.z = -p.z;
-					transform.localPosition = p;
-				}
-			}
+			Renderer fireSpr = m_fireSprite.GetFirstComponentInChildren<Renderer>();
+			m_fireMaterial = fireSpr.material;
+			m_fireMaterial.SetFloat("_Seed", Random.Range(0f, 1f));
+			m_fireMaterial.SetFloat("_Power", 0f);
 
-			m_fireSprite.GetComponent<Animator>().Play("burn", 0 , Random.Range(1f, 2f));
-			*/
+			m_firePower = 0f;
+			m_firePowerDest = 4.8f;
 		}
 	}
 
@@ -205,7 +209,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		if ( m_state < State.Burning) {
 			// Insta reward
 			m_state = State.Burned;
-			//FirePropagationManager.Remove(this);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
 		}
 	}
@@ -217,6 +220,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			PoolManager.ReturnInstance( m_fireSprite );
 		}
 		m_fireSprite = null;
+		m_fireMaterial = null;
 	}
 
 	public void StartSmoke(float _time) {

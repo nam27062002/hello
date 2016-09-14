@@ -196,15 +196,10 @@ namespace AI {
 
 			m_viewControl.Falling(m_machine.GetSignal(Signals.Type.FallDown));
 				
-			if (m_pilot != null) {
-				
-				if (m_pilot.IsActionPressed(Pilot.Action.Boost)) {
-					if (m_useGravity) {
-						if (m_isGrounded && !m_machine.GetSignal(Signals.Type.FallDown)) 
-							Stop();
-					} else {
+			if (m_pilot != null) {				
+				if (m_useGravity) {
+					if (m_isGrounded && !m_machine.GetSignal(Signals.Type.FallDown)) 
 						Stop();
-					}
 				}
 
 				m_direction = m_pilot.direction;

@@ -490,14 +490,12 @@ public class FacebookSocialSystem : ISocialSystem
     private const string PREFIX = "FbSocialSystem:";
     private void Log(string message)
     {
-        Debug.Log(PREFIX + message);
-        Facebook.Unity.FacebookLogger.Info(PREFIX  + message);        
+        Debug.Log(PREFIX + message);        
     }
 
     private void LogWarning(string message)
-    {
-        Log(message);
-        //Debug.LogWarning(PREFIX + message);
+    {        
+        Debug.LogWarning(PREFIX + message);
     }
     #endregion
 }

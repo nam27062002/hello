@@ -5,13 +5,22 @@ using UnityEngine;
 public class EditorDummySocialInterface : ISocialInterface
 {
     private bool m_isLoggedIn = false;
+    private bool m_isInited = false;
     private string m_networkName = "";
     public EditorDummySocialInterface(string networkName)
     {
         m_networkName = networkName;
     }
 
-    public void Init(){ }
+    public void Init()
+    {
+        m_isInited = true;
+    }
+
+    public bool IsInited()
+    {
+        return m_isInited;
+    }
 
     public void AppActivation(){ }
 

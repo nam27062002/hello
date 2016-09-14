@@ -48,10 +48,14 @@ public class PoolManager : SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
 	public static void CreatePool(string _prefabName, string _prefabPath, Transform _container, int _initSize = 10, bool _canGrow = true) {
 		// Skip if the pool already exists
-		if(!instance.m_pools.ContainsKey(_prefabName)) {
-			GameObject go = Resources.Load<GameObject>( _prefabPath );
-			Pool pool = new Pool(go, _container, _initSize, _canGrow, _container == instance.transform);	// [AOC] Create new container if given container is the Pool Manager.
-			instance.m_pools.Add(_prefabName, pool);
+		if (!instance.m_pools.ContainsKey(_prefabName)) {
+			GameObject go = Resources.Load<GameObject>(_prefabPath);
+			if (go != null) {
+				Pool pool = new Pool(go, _container, _initSize, _canGrow, _container == instance.transform);	// [AOC] Create new container if given container is the Pool Manager.
+				instance.m_pools.Add(_prefabName, pool);
+			} else {
+				Debug.LogError("Can't create a pool for: " + _prefabPath);
+			}
 		}
 	}
 

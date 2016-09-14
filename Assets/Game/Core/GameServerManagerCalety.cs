@@ -404,7 +404,7 @@ public class GameServerManagerCalety : GameServerManager
             Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
             Commands_PrepareToRunCommand(command, parameters, callback, ++retries);
         }
-        else
+        else if (callback != null)
         {
             Log("Commander Callback :: " + command);
             callback(error, result);
@@ -429,7 +429,7 @@ public class GameServerManagerCalety : GameServerManager
                     Commands_AfterCommand(command, parameters, error, result, callback, retries);                        
                 });
             }
-            else
+            else if (callback != null)
             {
                 callback(beforeError, null);
             }
@@ -763,32 +763,28 @@ public class GameServerManagerCalety : GameServerManager
     #region log
     private const string LOG_CHANNEL = "[GameServerManagerCalety]";
     private void LogWarning(ECommand command, Error error, Exception e = null)
-    {
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));
-        /*Debug.LogWarning(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));        
+    {        
+        Debug.LogWarning(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));        
         if (e != null)
         {
             Debug.LogWarning(e);
-        }*/
+        }
 
     }
 
     private void Log(string message)
     {
-        //Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} {1}", LOG_CHANNEL, message));
+        Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));        
     }
 
     private void LogWarning(string message)
     {
-        //Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));    
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} {1}", LOG_CHANNEL, message));
+        Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));            
     }
 
     private void LogError(string message)
     {
-        //Debug.LogError(String.Format("{0} {1}", LOG_CHANNEL, message));
-        Facebook.Unity.FacebookLogger.Info(String.Format("{0} {1}", LOG_CHANNEL, message));
+        Debug.LogError(String.Format("{0} {1}", LOG_CHANNEL, message));        
     }
     #endregion
 }

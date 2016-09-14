@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: FireMaterial2
-  m_Shader: {fileID: 4800000, guid: 2908e39ad7b03c54e9ddb840cbb5ade9, type: 3}
+  m_Shader: {fileID: 4800000, guid: b5d133454c866364f90d201e1c7baed2, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -83,14 +83,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
+        name: _Alpha
+      second: 1
+    - first:
         name: _AlphaThreshold
-      second: 5.6
+      second: 13.6
     - first:
         name: _BumpScale
       second: 1
     - first:
         name: _ColorSteps
-      second: 11
+      second: 24.3
     - first:
         name: _Cutoff
       second: 0.5
@@ -126,13 +129,13 @@ Material:
       second: 0.02
     - first:
         name: _Power
-      second: 2.89
+      second: 4.81
     - first:
         name: _RampOffset
-      second: 0.148
+      second: 0.468
     - first:
         name: _Seed
-      second: 0.2
+      second: 0.1
     - first:
         name: _SmoothnessTextureChannel
       second: 0
@@ -141,7 +144,7 @@ Material:
       second: 1
     - first:
         name: _Speed
-      second: 0.75
+      second: 1
     - first:
         name: _SrcBlend
       second: 1

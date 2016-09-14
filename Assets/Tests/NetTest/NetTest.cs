@@ -11,6 +11,15 @@ public class NetTest : MonoBehaviour
 	public GameObject m_waitingText;
 	public GameObject m_mergeLayout;
 
+    private enum ESocialAPI
+    {
+        None,
+        Calety,
+        FGOL
+    }
+
+    private ESocialAPI socialAPI = ESocialAPI.FGOL;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -20,12 +29,18 @@ public class NetTest : MonoBehaviour
 		m_waitingText.SetActive(false);
 		m_mergeLayout.SetActive(false);
 		
-		Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLog);
+        switch (socialAPI)
+        {
+            case ESocialAPI.Calety:
+                Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLog);                
+                SocialPlatformManager.SharedInstance.Init();
+                break;
 
-		// SOCIAL PLATFORM
-		SocialPlatformManager.SharedInstance.Init();
-
-	}
+            case ESocialAPI.FGOL:
+                SocialFacade.Instance.Init();
+                break;
+        }		        
+    }
 
 	void OnLog( bool logged)
 	{
@@ -55,7 +70,8 @@ public class NetTest : MonoBehaviour
 	{
 		m_loginButton.SetActive(false);
 		m_waitingText.SetActive(true);              
-        if (SocialPlatformManager.SharedInstance.IsLoggedIn())
+        if ((socialAPI == ESocialAPI.Calety && SocialPlatformManager.SharedInstance.IsLoggedIn()) ||
+            (socialAPI == ESocialAPI.FGOL && SocialFacade.Instance.IsLoggedIn(SocialFacade.Network.Facebook)))
         {
             GameServerManager.SharedInstance.LogInToServerThruPlatform("facebook", SocialPlatformManager.SharedInstance.GetUserId(), SocialPlatformManager.SharedInstance.GetToken(),
                 delegate (Error commandError, Dictionary<string, object> response)
@@ -87,8 +103,21 @@ public class NetTest : MonoBehaviour
 	// SOCIAL PLATFORM
 	public void SocialLogin()
 	{
-		SocialPlatformManager.SharedInstance.Login();
-	}
+        switch (socialAPI)
+        {
+            case ESocialAPI.Calety:
+                SocialPlatformManager.SharedInstance.Login();
+                break;
+
+            case ESocialAPI.FGOL:
+                SocialFacade.Instance.Login(SocialFacade.Network.Facebook, new PermissionType[] { PermissionType.Basic }, OnSocialLog);
+                break;
+
+            case ESocialAPI.None:
+                Debug.Log("No social API assigned");
+                break;
+        }                
+    }
 	
 
 	public void MergeButton()
