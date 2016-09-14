@@ -337,7 +337,7 @@ public static class PersistenceManager {
     /// <summary>
     /// Opens a popup to ask the user whether or not she wants to enable the cloud save
     /// </summary>
-    public static void Popups_OpenEnableCloudSavePopup(Action onConfirm, Action onCancel)
+    public static void Popups_AskToEnableCloudSavePopup(Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "STRING_SAVE_POPUP_PROMPT_CLOUD_ENABLE_TITLE";
@@ -349,7 +349,11 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
-    public static void Popups_OpenDisableCloudSavePopup(Action onConfirm)
+    /// <summary>
+    /// This popup is shown when the user clicks on CLOUD SAVE to enable the feature. It's used to explain how the feature works to the user
+    /// </summary>
+    /// <param name="onConfirm"></param>
+    public static void Popups_OpenEnableCloudSavePopup(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "STRING_SAVE_POPUP_CLOUD_ENABLED_TITLE";
@@ -363,10 +367,7 @@ public static class PersistenceManager {
                 break;
             case Globals.Platform.Android:
                 enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_ANDROID";
-                break;
-            case Globals.Platform.Amazon:
-                enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_AMAZON";
-                break;
+                break;          
         }
 
         config.MessageTid = enablePlatformMessage;
