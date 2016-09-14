@@ -303,6 +303,38 @@ public static class PersistenceManager {
     }
 
     /// <summary>
+    /// This popup is shown when an error happens when the user tries to enable the cloud save, but there's no connection
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/5%29Try+to+cloud+save+with+no+network    
+    /// </summary>
+    public static void Popups_OpenEnableCloudFailed(int errorCode, Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TITLE";
+        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TEXT";
+        config.MessageParams = new string[] { "" + errorCode };
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// A not logged user tries to enable the cloud so she's prompted to login first and an error when loging in happens
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/6%29Cancel+login+when+clicking+on+cloud+save
+    /// </summary>
+    public static void Popups_OpenLoginToCloudFailed(int errorCode, SocialFacade.Network network, Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_LOGIN_FAILED_TITLE";
+        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_LOGIN_FAILED_TEXT_SN";
+        config.MessageParams = new string[] { "" + errorCode, SocialFacade.GetLocalizedNetworkName(network) };
+        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;
+        config.OnCancel = onCancel;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
     /// Opens a popup to ask the user whether or not she wants to enable the cloud save
     /// </summary>
     public static void Popups_OpenEnableCloudSavePopup(Action onConfirm, Action onCancel)
@@ -401,6 +433,10 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
+    /// <summary>
+    /// This popup is shown when the user cancels the login process
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/7%29Cancel+login
+    /// </summary>    
     public static void Popups_OpenLoginGenericError(SocialFacade.Network network, Action onConfirm)
     {        
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -662,37 +698,7 @@ public static class PersistenceManager {
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);       
-    }
-
-    /// <summary>
-    /// This popup is shown when an error happens when the user tries to enable the cloud save.
-    /// </summary>
-    public static void Popups_OpenEnableCloudFailed(int errorCode, Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TEXT";
-        config.MessageParams = new string[] { "" + errorCode };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-    }
-
-    /// <summary>
-    /// This popup is shown when an error happens when the user tries to enable the cloud save.
-    /// </summary>
-    public static void Popups_OpenLoginToCloudFailed(int errorCode, SocialFacade.Network network, Action onConfirm, Action onCancel)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TEXT";
-        config.MessageParams = new string[] { "" + errorCode, SocialFacade.GetLocalizedNetworkName(network) };
-        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        config.OnCancel = onCancel;
-        PopupManager.PopupMessage_Open(config);
-    }
+    }        
 
     /// <summary>
     /// The user is prompted with this popup so she can choose the persistence to keep when there's a conflict between the progress stored in local and the one stored in the cloud
