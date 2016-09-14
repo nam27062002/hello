@@ -48,6 +48,8 @@ public class IncubatorSlot : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_pendingIncubationAnim = null;
 	[SerializeField] private ShowHideAnimator m_incubatingAnim = null;
 	[SerializeField] private ShowHideAnimator m_readyAnim = null;
+	[SerializeField] private ShowHideAnimator m_glowAnim = null;
+	[SerializeField] private ShowHideAnimator m_emptyInfoAnim = null;
 
 	// Internal logic
 	private int m_previousCostPC = -1;
@@ -140,10 +142,12 @@ public class IncubatorSlot : MonoBehaviour {
 		m_eggPreview.gameObject.SetActive(targetEgg != null);
 
 		// Show/Hide elements based on egg state
-		m_emptySlotAnim.Set(targetEgg == null);
-		m_pendingIncubationAnim.Set(targetEgg != null && targetEgg.state == Egg.State.STORED && EggManager.incubatingEgg == null);	// Pending incubation is a bit more tricky: only allow if there is no other egg already incubating
-		m_incubatingAnim.Set(targetEgg != null && targetEgg.state == Egg.State.INCUBATING);
-		m_readyAnim.Set(targetEgg != null && targetEgg.state == Egg.State.READY);
+		if(m_emptySlotAnim != null)			m_emptySlotAnim.Set(targetEgg == null || m_slotIdx != 0);	// Show always for secondary slots
+		if(m_pendingIncubationAnim != null) m_pendingIncubationAnim.Set(targetEgg != null && targetEgg.state == Egg.State.READY_FOR_INCUBATION);
+		if(m_incubatingAnim != null) 		m_incubatingAnim.Set(targetEgg != null && targetEgg.state == Egg.State.INCUBATING);
+		if(m_readyAnim != null) 			m_readyAnim.Set(targetEgg != null && targetEgg.state == Egg.State.READY);
+		if(m_glowAnim != null)				m_glowAnim.Set(targetEgg != null);
+		if(m_emptyInfoAnim != null)			m_emptyInfoAnim.Set(targetEgg == null);
 	}
 
 	//------------------------------------------------------------------//
@@ -154,13 +158,8 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	/// <param name="_egg">The egg.</param>
 	private void OnEggStateChanged(Egg _egg, Egg.State _from, Egg.State _to) {
-		// Does it match our egg?
-		// Refresh as well when any egg has started/finished incubating
-		if(_egg == targetEgg || _to == Egg.State.INCUBATING || _from == Egg.State.INCUBATING) {
-			// Refresh view
-			// [AOC] TODO!! Trigger different FX depending on state
-			Refresh();
-		}
+		// Refresh view
+		Refresh();
 	}
 
 	/// <summary>

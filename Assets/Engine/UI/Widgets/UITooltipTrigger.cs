@@ -41,6 +41,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 	[Comment("\nThe tooltip will be spawned from this anchor point.\nIf not defined, it will be autopositioned using the trigger's transform as anchor.")]
 	[SerializeField] private RectTransform m_anchor = null;
+	[SerializeField] private bool m_keepOriginalPosition = false;
 	[SerializeField] private bool m_checkScreenBounds = true;
 
 	// Events, subscribe as needed via inspector or code
@@ -110,8 +111,8 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 			}
 		}
 
-		// If required, make sure tooltip is not out of screen
-		if(m_checkScreenBounds) {
+		// Unless explicitely denied, put tooltip on anchor's position
+		if(!m_keepOriginalPosition) {
 			// Instantly unfold it for a moment to get the right measurements
 			float deltaBackup = m_tooltip.delta;
 			m_tooltip.ForceShow(false);
@@ -120,23 +121,27 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 			m_tooltip.transform.localPosition = spawnTransform.localPosition;
 			Canvas canvas = GetComponentInParent<Canvas>();
 
+			// Get some aux vars
 			Rect tooltipRect = (m_tooltip.transform as RectTransform).rect;	// Tooltip in local coords
 			Rect canvasRect = (canvas.transform as RectTransform).rect;	// Canvas in local coords
 			tooltipRect = m_tooltip.transform.TransformRect(tooltipRect, canvas.transform);
 			Vector3 offset = Vector3.zero;
 
-			// Check horizontal edges
-			if(tooltipRect.xMin < canvasRect.xMin) {
-				offset.x = canvasRect.xMin - tooltipRect.xMin;
-			} else if(tooltipRect.xMax > canvasRect.xMax) {
-				offset.x = canvasRect.xMax - tooltipRect.xMax;
-			}
+			// If required, make sure tooltip is not out of screen
+			if(m_checkScreenBounds) {
+				// Check horizontal edges
+				if(tooltipRect.xMin < canvasRect.xMin) {
+					offset.x = canvasRect.xMin - tooltipRect.xMin;
+				} else if(tooltipRect.xMax > canvasRect.xMax) {
+					offset.x = canvasRect.xMax - tooltipRect.xMax;
+				}
 
-			// Check vertical edges
-			if(tooltipRect.yMin < canvasRect.yMin) {
-				offset.y = canvasRect.yMin - tooltipRect.yMin;
-			} else if(tooltipRect.yMax > canvasRect.yMax) {
-				offset.y = canvasRect.yMax - tooltipRect.yMax;
+				// Check vertical edges
+				if(tooltipRect.yMin < canvasRect.yMin) {
+					offset.y = canvasRect.yMin - tooltipRect.yMin;
+				} else if(tooltipRect.yMax > canvasRect.yMax) {
+					offset.y = canvasRect.yMax - tooltipRect.yMax;
+				}
 			}
 
 			// Convert offset to tooltip's local coords and apply

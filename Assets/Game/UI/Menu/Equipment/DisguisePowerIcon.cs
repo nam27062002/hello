@@ -28,6 +28,7 @@ public class DisguisePowerIcon : MonoBehaviour {
 	// Exposed References
 	[SerializeField] private Image m_powerIcon = null;
 	[SerializeField] private GameObject m_lockIcon = null;
+	[SerializeField] private Text m_shortDescriptionText = null;
 
 	// Exposed Setup
 	[Space]
@@ -76,6 +77,11 @@ public class DisguisePowerIcon : MonoBehaviour {
 			m_powerIcon.sprite = Array.Find<Sprite>(allIcons, (_sprite) => { return _sprite.name == iconName; });
 		}
 
+		// Short description
+		if(m_shortDescriptionText != null) {
+			m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true);	// Custom formatting depending on powerup type, already localized
+		}
+
 		// Lock
 		SetLocked(_locked);
 	}
@@ -117,7 +123,8 @@ public class DisguisePowerIcon : MonoBehaviour {
 			powerTooltip.SetLocked(m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
 
 			// Set arrow offset to make it point to this icon
-			//powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
+			powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
+
 			// [AOC] With the new layout, set tooltip's position to spawn from the same icon's Y.
 			powerTooltip.transform.SetPosY(this.transform.position.y);
 		}
