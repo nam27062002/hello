@@ -43,6 +43,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.EGGS, new string[]{"Rules/eggDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.EGG_REWARDS, new string[]{"Rules/eggRewardDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.CHEST_REWARDS, new string[]{"Rules/chestRewardDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.DISGUISE_REWARDS_DISTRIBUTION, new string[]{"Rules/disguiseRewardDistributionDefinitions"});
 
 		// Disguises
 		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[]{"Rules/disguisesDefinitions"});
