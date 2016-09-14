@@ -306,7 +306,7 @@ public static class PersistenceManager {
     /// This popup is shown when an error happens when the user tries to enable the cloud save, but there's no connection
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/5%29Try+to+cloud+save+with+no+network    
     /// </summary>
-    public static void Popups_OpenEnableCloudFailed(int errorCode, Action onConfirm)
+    public static void Popups_OpenCloudEnableHasFailed(int errorCode, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TITLE";
@@ -321,7 +321,7 @@ public static class PersistenceManager {
     /// A not logged user tries to enable the cloud so she's prompted to login first and an error when loging in happens
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/6%29Cancel+login+when+clicking+on+cloud+save
     /// </summary>
-    public static void Popups_OpenLoginToCloudFailed(int errorCode, SocialFacade.Network network, Action onConfirm, Action onCancel)
+    public static void Popups_OpenCloudLoginHasFailed(int errorCode, SocialFacade.Network network, Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_LOGIN_FAILED_TITLE";
@@ -365,10 +365,53 @@ public static class PersistenceManager {
 		PopupManager.PopupMessage_Open(config);        
 	}
 
+	/// <summary>
+	/// This popup is shown when the user clicks on disable the cloud save on settings popup.
+	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/editpage.action?pageId=358115355
+	/// </summary>
+	public static void Popups_OpenCloudDisable(Action onConfirm, Action onCancel)
+	{
+		PopupMessage.Config config = PopupMessage.GetConfig();
+		config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_DISABLE_TITLE";
+		config.MessageTid = "STRING_SAVE_POPUP_WARN_CLOUD_DISABLE_TEXT";        
+		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+		config.OnConfirm = onConfirm;
+		config.OnCancel = onCancel;
+		PopupManager.PopupMessage_Open(config);        
+	}
+
+	/// <summary>
+	/// This popup is shown when the user clicks on CLOUD SAVE on settings popup to enable the feature. It's used to explain how the feature works to the user
+	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/createpage.action?spaceKey=ubm&fromPageId=358111491
+	/// </summary>
+	public static void Popups_OpenCloudEnable(Action onConfirm)
+	{
+		PopupMessage.Config config = PopupMessage.GetConfig();
+		config.TitleTid = "STRING_SAVE_POPUP_CLOUD_ENABLED_TITLE";
+
+		string enablePlatformMessage = "UNKNOWN";
+
+		switch (Globals.GetPlatform())
+		{
+		case Globals.Platform.iOS:
+			enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_IOS";
+			break;
+		case Globals.Platform.Android:
+			enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_ANDROID";
+			break;          
+		}
+
+		config.MessageTid = enablePlatformMessage;
+		config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()) };
+		config.OnConfirm = onConfirm;        
+		config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+		PopupManager.PopupMessage_Open(config);
+	}    
+
     /// <summary>
     /// Opens a popup to ask the user whether or not she wants to enable the cloud save
     /// </summary>
-    public static void Popups_AskToEnableCloudSavePopup(Action onConfirm, Action onCancel)
+    public static void Popups_RecomendCloudEnable(Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "STRING_SAVE_POPUP_PROMPT_CLOUD_ENABLE_TITLE";
@@ -378,35 +421,7 @@ public static class PersistenceManager {
         config.OnCancel = onCancel;
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         PopupManager.PopupMessage_Open(config);
-    }
-
-    /// <summary>
-    /// This popup is shown when the user clicks on CLOUD SAVE to enable the feature. It's used to explain how the feature works to the user
-    /// </summary>
-    /// <param name="onConfirm"></param>
-    public static void Popups_OpenEnableCloudSavePopup(Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_CLOUD_ENABLED_TITLE";
-
-        string enablePlatformMessage = "UNKNOWN";
-
-        switch (Globals.GetPlatform())
-        {
-            case Globals.Platform.iOS:
-                enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_IOS";
-                break;
-            case Globals.Platform.Android:
-                enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_ANDROID";
-                break;          
-        }
-
-        config.MessageTid = enablePlatformMessage;
-        config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()) };
-        config.OnConfirm = onConfirm;        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        PopupManager.PopupMessage_Open(config);
-    }    
+    }		   
 
     public static void Popups_OpenSwitchingUserWithCloudSaveEnabled(SocialFacade.Network networkFrom, SocialFacade.Network networkTo, Action onConfirm, Action onCancel)
     {
@@ -480,6 +495,22 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
+	/// <summary>
+	/// This popup is shown when the user clicks on logout button on settings popup
+	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/createpage.action?spaceKey=ubm&fromPageId=358111491
+	/// </summary>   
+	public static void Popups_OpenLogoutWarning(SocialFacade.Network network, bool cloudSaveEnabled, Action onConfirm, Action onCancel)
+	{        
+		PopupMessage.Config config = PopupMessage.GetConfig();
+		config.TitleTid = cloudSaveEnabled ? "STRING_SAVE_POPUP_WARN_CLOUD_LOGOUT_TITLE" : "STRING_SOCIAL_WARNING_LOGOUT";
+		config.MessageTid = cloudSaveEnabled ? "STRING_SAVE_POPUP_WARN_CLOUD_LOGOUT_TEXT_SN" : "STRING_SOCIAL_WARNING_LOGOUT_FB_SN";
+		config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
+		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+		config.OnConfirm = onConfirm;
+		config.OnCancel = onCancel;
+		PopupManager.PopupMessage_Open(config);
+	}
+
     public static void Popups_OpenLoginWhenAlreadyLoggedIn(SocialFacade.Network networkFrom, SocialFacade.Network networkTo, Action onConfirm, Action onCancel)
     {                     
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -490,19 +521,7 @@ public static class PersistenceManager {
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         PopupManager.PopupMessage_Open(config);
-    }
-
-    public static void Popups_OpenLogoutWarning(SocialFacade.Network network, bool cloudSaveEnabled, Action onConfirm, Action onCancel)
-    {        
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = cloudSaveEnabled ? "STRING_SAVE_POPUP_WARN_CLOUD_LOGOUT_TITLE" : "STRING_SOCIAL_WARNING_LOGOUT";
-        config.MessageTid = cloudSaveEnabled ? "STRING_SAVE_POPUP_WARN_CLOUD_LOGOUT_TEXT_SN" : "STRING_SOCIAL_WARNING_LOGOUT_FB_SN";
-        config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        config.OnCancel = onCancel;
-        PopupManager.PopupMessage_Open(config);
-    }
+    }		  
 
     public static void Popups_OpenCloudSwitchWarning(SocialFacade.Network network, Action onConfirm, Action onCancel)
     {        
@@ -514,21 +533,7 @@ public static class PersistenceManager {
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         PopupManager.PopupMessage_Open(config);
-    }
-
-    /// <summary>
-    /// This popup is shown when the user clicks to disable the cloud save on settings popup.
-    /// </summary>
-    public static void Popups_OpenCloudDisable(Action onConfirm, Action onCancel)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_DISABLE_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_WARN_CLOUD_DISABLE_TEXT";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        config.OnCancel = onCancel;
-        PopupManager.PopupMessage_Open(config);        
-    }
+    }		    
 
     public static void Popups_OpenErrorLoadFailed(Action onConfirm)
     {
