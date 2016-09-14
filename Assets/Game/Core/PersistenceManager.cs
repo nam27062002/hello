@@ -334,6 +334,37 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
+	/// <summary>
+	/// This popup is shown when the user clicks on cloud sync icon on hud.
+	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/createpage.action?spaceKey=ubm&fromPageId=358111491
+	/// </summary>
+	public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
+	{
+		PopupMessage.Config config = PopupMessage.GetConfig();
+		config.TitleTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TITLE";
+
+		int lastUploadTime = SaveFacade.Instance.lastUploadTime;        
+		if (lastUploadTime > 0)
+		{
+			config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT1";
+			DateTime lastUpload = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			lastUpload = lastUpload.AddSeconds(lastUploadTime).ToLocalTime();            
+			string lastUploadStr = lastUpload.ToString("F");
+			config.MessageParams = new string[] { lastUploadStr };
+		}
+		else
+		{
+			config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT2";
+		}
+
+		config.ConfirmButtonTid = "STRING_SAVE_POPUP_CLOUD_SAVE_SYNC_NOW";
+		config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+		config.OnConfirm = onConfirm;
+		config.OnCancel = onCancel;
+		PopupManager.PopupMessage_Open(config);        
+	}
+
     /// <summary>
     /// Opens a popup to ask the user whether or not she wants to enable the cloud save
     /// </summary>
@@ -375,8 +406,8 @@ public static class PersistenceManager {
         config.OnConfirm = onConfirm;        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         PopupManager.PopupMessage_Open(config);
-    }
-    
+    }    
+
     public static void Popups_OpenSwitchingUserWithCloudSaveEnabled(SocialFacade.Network networkFrom, SocialFacade.Network networkTo, Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -733,34 +764,7 @@ public static class PersistenceManager {
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);             
-    }  
-
-    public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TITLE";
-        
-        int lastUploadTime = SaveFacade.Instance.lastUploadTime;        
-        if (lastUploadTime > 0)
-        {
-            config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT1";
-            DateTime lastUpload = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            lastUpload = lastUpload.AddSeconds(lastUploadTime).ToLocalTime();            
-            string lastUploadStr = lastUpload.ToString("F");
-            config.MessageParams = new string[] { lastUploadStr };
-        }
-        else
-        {
-            config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT2";
-        }
-
-        config.ConfirmButtonTid = "STRING_SAVE_POPUP_CLOUD_SAVE_SYNC_NOW";
-        config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        config.OnConfirm = onCancel;
-        PopupManager.PopupMessage_Open(config);        
-    }
+    }  		    
 
     public static void Popups_OpenMessage(PopupMessage.Config config)
     {
