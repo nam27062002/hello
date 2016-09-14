@@ -34,6 +34,10 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	[Space]
 	[SerializeField] private UIScene3DLoader m_nextDragonScene3DLoader = null;
 
+	// Internal
+	private DragonData m_nextDragonData = null;
+	private DragonData m_requiredDragonData = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -46,6 +50,24 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		Debug.Assert(m_infoText != null, "Required field not initialized!");
 		Debug.Assert(m_unlockFX != null, "Required field not initialized!");
 		Debug.Assert(m_nextDragonScene3DLoader != null, "Required field not initialized!");
+
+		// Find out next dragon to unlock
+		// It should be the first locked dragon
+		// None if all dragons are already unlocked
+		// Iterate all the dragons by order and find the first one locked
+		m_nextDragonData = null;
+		m_requiredDragonData = null;
+		for(int i = 0; i < DragonManager.dragonsByOrder.Count; i++) {
+			// Is it locked?
+			if(DragonManager.dragonsByOrder[i].isLocked) {
+				// No! Use this dragon
+				m_nextDragonData = DragonManager.dragonsByOrder[i];
+
+				// Find out required dragon as well
+				m_requiredDragonData = DragonManager.GetDragonData(m_nextDragonData.def.GetAsString("previousDragonSku"));
+				break;
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -56,14 +78,8 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// </summary>
 	/// <returns><c>true</c> if the pill must be displayed on the carousel, <c>false</c> otherwise.</returns>
 	public override bool MustBeDisplayed() {
-		// Display only if:
-		// a) Next dragon wasn't already unlocked
-		// b) There actually is a next dragon
-		// c) Next dragon is not already owned (purchased with PC)
-		DragonData nextDragonData = DragonManager.nextDragon;
-		return RewardManager.dragonInitialUnlockProgress < 1f 
-			&& nextDragonData != null 
-			&& !nextDragonData.isOwned;
+		// Only if there is an actual dragon to unlock
+		return m_nextDragonData != null;
 	}
 
 	/// <summary>
@@ -71,15 +87,22 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// The <c>OnFinished</c> event will be invoked once the animation has finished.
 	/// </summary>
 	protected override void StartInternal() {
-		// Aux vars
-		DragonData nextDragonData = DragonManager.nextDragon;
+		// Shouldn't be called if there is no dragon to be unlocked, but just in case
+		if(m_nextDragonData == null) return;
 
 		// Bar: animate!
 		if(m_progressBar) {
 			// Initialize bar
 			m_progressBar.minValue = 0;
 			m_progressBar.maxValue = 1;
-			m_progressBar.value = RewardManager.dragonInitialUnlockProgress;
+
+			// If we played the game with the unlocking dragon, use XP progress before the game as bar value (we will animate with the XP earned during the game)
+			// Otherwise just use current XP progress - bar won't animate
+			if(DragonManager.currentDragon.def.sku == m_requiredDragonData.def.sku) {
+				m_progressBar.value = RewardManager.dragonInitialTotalXPProgress;
+			} else {
+				m_progressBar.value = m_requiredDragonData.progression.progressByXp;
+			}
 
 			// Program animation
 			LaunchBarAnim();
@@ -88,10 +111,23 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 		// Hide unlock group
 		m_unlockFX.SetActive(false);
 
+		// Initialize info text
+		if(m_nextDragonData.isLocked) {
+			// Different text if we're not using the required dragon
+			if(DragonManager.currentDragon.def.sku == m_requiredDragonData.def.sku) {
+				m_infoText.Localize("TID_RESULTS_TO_UNLOCK_NEXT_DRAGON", m_nextDragonData.def.GetLocalized("tidName"));	// "To unlock Brute:"
+			} else {
+				m_infoText.Localize("TID_RESULTS_DRAGON_REQUIRED", m_requiredDragonData.def.GetLocalized("tidName"), m_nextDragonData.def.GetLocalized("tidName"));	// "Play with Baby to unlock Brute!"
+			}
+		} else {
+			// Should never get here, but just in case
+			m_infoText.Localize("TID_RESULTS_DRAGON_ALREADY_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));	// "Brute already unlocked!"
+		}
+
 		// Load and pose the dragon - will override any existing dragon
 		MenuDragonLoader dragonLoader = m_nextDragonScene3DLoader.scene.FindComponentRecursive<MenuDragonLoader>();
 		if(dragonLoader != null) {
-			dragonLoader.LoadDragon(nextDragonData.def.sku);
+			dragonLoader.LoadDragon(m_nextDragonData.def.sku);
 			dragonLoader.FindComponentRecursive<Animator>().SetTrigger("idle");
 		}
 
@@ -107,27 +143,34 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 	/// Launchs the animation of the "unlock next dragon" bar
 	/// </summary>
 	private void LaunchBarAnim() {
-		// Aux vars
-		float targetDelta = DragonManager.currentDragon.progression.progressByXp;
-		if(UNLOCK_DRAGON_CHEAT) targetDelta = 1f;
+		// Target delta
+		float sourceDelta = m_progressBar.value;
+		float targetDelta = m_requiredDragonData.progression.progressByXp;
+		if(UNLOCK_DRAGON_CHEAT) targetDelta = 1f;	// For testing purposes!
+
+		// No animation needed if source and target delta are the same
+		if(Mathf.Abs(targetDelta - sourceDelta) < float.Epsilon) {
+			DelayedFinish(0.5f);	// Notify finish after some delay
+		}
 
 		// Launch the tween!
-		DOTween.To(
-			// Getter function
-			() => { 
-				return m_progressBar.value; 
-			}, 
+		else {
+			DOTween.To(
+				// Getter function
+				() => { 
+					return m_progressBar.value; 
+				}, 
 
-			// Setter function
-			(_newValue) => {
-				m_progressBar.value = _newValue;
-			},
+				// Setter function
+				(_newValue) => {
+					m_progressBar.value = _newValue;
+				},
 
-			// Value and duration
-			targetDelta, 2f * ANIM_SPEED_MULT
-		)
+				// Value and duration
+				targetDelta, 2f * ANIM_SPEED_MULT
+			)
 
-		// Other setup parameters
+			// Other setup parameters
 			.SetDelay(0.5f * ANIM_SPEED_MULT)	// Give some time for the pill's show animation
 			.SetEase(Ease.InOutCubic)
 
@@ -143,15 +186,13 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 					}
 				}
 			);
+		}
 	}
 
 	/// <summary>
 	/// Launches the dragon unlock animation.
 	/// </summary>
 	private void LaunchDragonUnlockAnimation() {
-		// Aux vars
-		DragonData nextDragonData = DragonManager.nextDragon;
-
 		// Prepare for animation
 		m_unlockFX.SetActive(true);
 		m_unlockFX.transform.localScale = Vector3.zero;
@@ -168,7 +209,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 			// Change bar text as well
 			.AppendCallback(() => {
 				if(m_infoText != null) {
-					m_infoText.Localize("TID_RESULTS_DRAGON_UNLOCKED", nextDragonData.def.GetLocalized("tidName"));
+					m_infoText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
 				}
 			})
 
@@ -192,7 +233,7 @@ public class ResultsScreenProgressionPill : ResultsScreenCarouselPill {
 
 		// Update text with the name of the unlocked dragon
 		Localizer unlockText = m_unlockFX.FindComponentRecursive<Localizer>("UnlockText");
-		if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", nextDragonData.def.GetLocalized("tidName"));
+		if(unlockText != null) unlockText.Localize("TID_RESULTS_DRAGON_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));
 
 		// Play cool dragon animation!
 		/*if(m_nextDragonScene3D != null) {
