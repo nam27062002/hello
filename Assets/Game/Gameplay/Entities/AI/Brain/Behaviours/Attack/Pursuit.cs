@@ -8,6 +8,7 @@ namespace AI {
 			public float speed;
 			public float arrivalRadius = 1f;
 			public string attackPoint;
+			public bool hasGuardState = false;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit")]
@@ -15,6 +16,9 @@ namespace AI {
 
 			[StateTransitionTrigger]
 			private static string OnEnemyInRange = "onEnemyInRange";
+
+			[StateTransitionTrigger]
+			private static string OnEnemyInGuardArea = "onEnemyInGuardArea";
 
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
@@ -98,19 +102,29 @@ namespace AI {
 							ChangeState(PursuitState.Move_Away);
 						} else {
 							float m = 0;
-							if ( m_targetEntity != null ){
+							if (m_targetEntity != null) {
 								m = (m_machine.position - m_targetEntity.circleArea.center).sqrMagnitude;
-							}else{
+							} else {
 								m = (m_machine.position - m_target.position).sqrMagnitude;
 							}
+
 							if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
 								m_transitionParam[0] = m_target;
 								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
-								if ( m_targetEntity != null )
+								if (m_data.hasGuardState) {
+									m = Mathf.Abs(m_machine.position.x - m_target.position.x);
+									if (m <= 1f) {
+										m_transitionParam[0] = m_target;
+										Transition(OnEnemyInGuardArea, m_transitionParam);
+									}
+								}
+
+								if (m_targetEntity != null) {
 									m_pilot.GoTo(m_targetEntity.circleArea.center);	
-								else
+								} else {
 									m_pilot.GoTo(m_target.position);
+								}
 							}
 						}
 					} else if (m_pursuitState == PursuitState.Move_Away) {

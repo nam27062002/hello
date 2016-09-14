@@ -99,6 +99,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		get { return m_showSpawnerInEditor; }
 		set { m_showSpawnerInEditor = value; }
 	}
+
 	
 	//-----------------------------------------------
 	// Methods
@@ -107,7 +108,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	protected virtual void Start() {
 		float rnd = Random.Range(0f, 100f);
 
-		if (rnd <= m_activationChange) {
+		if (!string.IsNullOrEmpty(m_entityPrefabStr) && rnd <= m_activationChange) {
 			m_entities = new GameObject[m_quantity.max];
 
 			if (m_rails == 0) m_rails = 1;
@@ -184,7 +185,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] == _entity) 
 			{
-				PoolManager.ReturnInstance( m_entityPrefabStr, m_entities[i] );
+				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
 				m_entities[i] = null;
 				if (_killedByPlayer) {
 					m_entitiesKilled++;

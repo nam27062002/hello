@@ -41,6 +41,11 @@ public class ZoneManager : MonoBehaviour {
 		Zone zone = GetZone(_pos.z);
 
 		if (zone != Zone.None) {
+			if (m_burnDefinitions == null) {
+				m_dragonTier = InstanceManager.player.data.tierDef.sku;
+				m_burnDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DECORATION);
+			}
+
 			DefinitionNode burnDef = m_burnDefinitions[_sku];
 
 			//should explode?
