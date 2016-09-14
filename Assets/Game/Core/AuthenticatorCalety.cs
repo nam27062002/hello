@@ -54,8 +54,13 @@ public class AuthenticatorCalety : Authenticator
                         */
                         result.authState = (AuthState)Enum.Parse(typeof(AuthState), response["authState"] as string);
                         result.upgradeAvailable = response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);
+
+                        // [DG] SERVER: Not supported so far. We assume that it's always available
                         //result.cloudSaveAvailable = Convert.ToBoolean(response["cloudSaveAvailable"]);
                         result.cloudSaveAvailable = true;
+
+                        // TO UNCOMMENT to force flow https://mdc-web-tomcat17.ubisoft.org/confluence/pages/createpage.action?spaceKey=ubm&fromPageId=358111491
+                        //result.cloudSaveAvailable = false;
 
                         callback(null, result);
 
