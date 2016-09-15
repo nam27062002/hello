@@ -368,6 +368,7 @@ public static class PersistenceManager {
     /// <summary>
     /// This popup is shown when the user clicks on disable the cloud save on settings popup.
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/10%29Disable+cloud+save
+	/// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/15%29Switch+users
     /// </summary>
     public static void Popups_OpenCloudDisable(Action onConfirm, Action onCancel)
 	{
@@ -447,7 +448,8 @@ public static class PersistenceManager {
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);        
     }
-
+		
+	/// {DGR» TO ASK FGOL
     public static void Popups_OpenLoginErrorWrongSocialAccount(SocialFacade.Network network, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -461,6 +463,7 @@ public static class PersistenceManager {
 
     /// <summary>
     /// This popup is shown when the user has logged in, but she hasn't provided us with the permission to retrieve her friends.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/14%29New+user+incomplete+login
     /// </summary>
     public static void Popups_OpenLoginIncomplete(SocialFacade.Network network, bool incentiveAlreadyGiven, int incentiveAmount, Action onConfirm, Action onCancel)
     {
@@ -525,6 +528,11 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }		  
 
+	/// <summary>
+	/// This popup is shown when the user tries to switch users: logout from an account A and tries to log in an account B
+	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/editpage.action?pageId=358118704
+	/// [DGR] TO ASK FGOL
+	/// </summary>
     public static void Popups_OpenCloudSwitchWarning(SocialFacade.Network network, Action onConfirm, Action onCancel)
     {        
         PopupMessage.Config config = PopupMessage.GetConfig();
