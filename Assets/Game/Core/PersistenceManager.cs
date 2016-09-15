@@ -461,6 +461,7 @@ public static class PersistenceManager {
 
     /// <summary>
     /// This popup is shown when the user has logged in, but she hasn't provided us with the permission to retrieve her friends.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/14%29New+user+incomplete+login
     /// </summary>
     public static void Popups_OpenLoginIncomplete(SocialFacade.Network network, bool incentiveAlreadyGiven, int incentiveAmount, Action onConfirm, Action onCancel)
     {
