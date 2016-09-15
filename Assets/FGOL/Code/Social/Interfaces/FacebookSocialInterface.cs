@@ -59,17 +59,13 @@ public class FacebookSocialInterface : ISocialInterface
     public void Login(PermissionType[] permissions, Action<bool> onLogin)
     {
         //Check that read permissions aren't asked together with write permissions
-        bool writePermissions = Array.IndexOf<PermissionType>(permissions, PermissionType.Publish) >= 0;
-
-        Log("Login " + onLogin);
+        bool writePermissions = Array.IndexOf<PermissionType>(permissions, PermissionType.Publish) >= 0;        
         if (!writePermissions || permissions.Length == 1)
-        {
-            Log("Login dentro");
+        {            
             Action login = delegate ()
             {
                 FacebookDelegate<ILoginResult> loginCallback = delegate(ILoginResult result)
-                {
-                    Log("loginCallback " + FB.IsLoggedIn);
+                {         
                     if (FB.IsLoggedIn)
                     {
                         onLogin(true);
@@ -82,26 +78,22 @@ public class FacebookSocialInterface : ISocialInterface
                 };
 
                 if (writePermissions)
-                {
-                    Log("LogInWithPublishPermissions " + loginCallback);
+                {             
                     FB.LogInWithPublishPermissions(GetLoginScope(permissions), loginCallback);
                 }
                 else
-                {
-                    Log("LogInWithReadPermissions " + loginCallback);
+                {                 
                     FB.LogInWithReadPermissions(GetLoginScope(permissions), loginCallback);
                 }
             };
-
-            Log("IsInitialized " + FB.IsInitialized);
+            
             if (FB.IsInitialized)
             {
-                Log("login()");
                 login();
             }
             else
             {
-                Debug.LogWarning("FacebookInterface :: Not initialized!");
+                LogWarning("FacebookInterface :: Not initialized!");
                 m_onInitialization += login;
             }
         }

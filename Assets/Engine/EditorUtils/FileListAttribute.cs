@@ -32,6 +32,7 @@ public class FileListAttribute : PropertyAttribute {
 	/// </summary>
 	/// <param name="_folderPath">Path of the folder whose files we wanna list, starting at Assets (Application.datapath) (but not including it, e.g. "Game/MyFolder").</param>
 	/// <param name="_fileExtensions">Optionally add a search filter to the list. Match the format as in https://msdn.microsoft.com/en-us/library/8he88b63(v=vs.110).aspx.</param>
+	/// <param name="_filter">The search string to match against the names of files in path. This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions.</param>
 	/// <param name="_allowEmptyValue">Whether to allow leaving the field empty or not.</param>
 	public FileListAttribute(string _folderPath, StringUtils.PathFormat _format, string _filter = "*", bool _allowEmptyValue = true) {
 		m_folderPath = _folderPath;
