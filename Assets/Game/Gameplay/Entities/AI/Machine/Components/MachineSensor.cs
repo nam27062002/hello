@@ -28,8 +28,8 @@ namespace AI {
 		public override void Init() {
 			m_enemy = InstanceManager.player.transform;
 
-			m_senseTimer = m_senseDelay.GetRandom();
-			m_enemyRadiusSqr = 0;
+			m_senseTimer = 0f;
+			m_enemyRadiusSqr = 0f;
 
 			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
@@ -83,7 +83,11 @@ namespace AI {
 					m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
 					m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
 
-					m_senseTimer = m_senseDelay.GetRandom();
+					if (isInsideSightArea) {
+						m_senseTimer = m_senseDelay.GetRandom();
+					} else {
+						m_senseTimer = 0f;//UnityEngine.Random.Range(0f, 1f);
+					}
 				}
 			}				
 		}

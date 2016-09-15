@@ -777,7 +777,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 84.97096, y: 82.80247, z: 0}
+  m_LocalPosition: {x: 80.21237, y: 54.054253, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -916,7 +916,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":1.25,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7.5,"checkDragonPositionTime":2,"dataType":"AI.Behaviour.HumanFleeData","editorFolded":false},{"standUpTime":1.5,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.25,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3,"checkDragonPositionTime":2,"checkForActionPointTime":0.25,"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1.5,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false}]'
 --- !u!114 &11449904
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1005,11 +1005,11 @@ MonoBehaviour:
     m_maxRadius: 4
     m_minRadius: 0
     m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 1.5, z: 0}
+    m_senseBelow: 0
+    m_sensorOffset: {x: 0, y: 0.86, z: 0}
     m_senseDelay:
-      min: 0
-      max: 0
+      min: 5
+      max: 7
   m_onSpawnSoundProbability: 0
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50

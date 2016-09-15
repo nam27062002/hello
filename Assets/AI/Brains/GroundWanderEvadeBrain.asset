@@ -22,12 +22,15 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   - m_name: Flee
     m_componentAssets:
-    - {fileID: 11400000, guid: b2e6052c06cc3476aa9af39caa635c5f, type: 2}
+    - {fileID: 11400000, guid: 4bb307b99c27a43368586bf7abab79bf, type: 2}
   - m_name: Fall down
     m_componentAssets: []
   - m_name: On hit ground
     m_componentAssets:
     - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
+  - m_name: At Action Point
+    m_componentAssets:
+    - {fileID: 11400000, guid: 0b2979f264b4247bbbb9776a76223711, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -35,18 +38,30 @@ MonoBehaviour:
   - to: 2
     id: onEnemyInSight
     from: 0
+  - to: 2
+    id: onEnemyInRange
+    from: 0
   - to: 0
     id: onMove
     from: 1
   - to: 2
     id: onEnemyInSight
     from: 1
+  - to: 2
+    id: onEnemyInRange
+    from: 1
   - to: 0
     id: onCalm
+    from: 2
+  - to: 5
+    id: onActionPoint
     from: 2
   - to: 1
     id: onRecover
     from: 4
+  - to: 1
+    id: onCalm
+    from: 5
   - to: 3
     id: onFallDown
     from: -1
