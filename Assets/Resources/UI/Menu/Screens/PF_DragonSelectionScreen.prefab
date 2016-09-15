@@ -4957,6 +4957,7 @@ GameObject:
   - 222: {fileID: 222000013249623474}
   - 114: {fileID: 114000012407090692}
   - 95: {fileID: 95000012017742094}
+  - 114: {fileID: 114000013057468990}
   m_Layer: 5
   m_Name: InfoBtn
   m_TagString: Untagged
@@ -8072,7 +8073,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114000013057468990}
+        m_MethodName: OpenPopup
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000012461495660
@@ -8598,6 +8610,18 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114000013057468990
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010895622584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d677588cf25b47fe84f2f773daf1f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_popupPath: UI/Popups/Gatcha/PF_PopupInfoEgg
 --- !u!114 &114000013061429180
 MonoBehaviour:
   m_ObjectHideFlags: 1
