@@ -52,6 +52,12 @@ public class FireBreathDynamic : MonoBehaviour
     private Vector3 lastInitialPosition;
     private GameObject whipEnd;
 
+//    public FireOfBreathScript breathFire = null;
+    public GameObject breathFire = null;
+    public float timeDelay = 0.25f;
+
+    private float lastTime;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -74,6 +80,8 @@ public class FireBreathDynamic : MonoBehaviour
         CreateMesh();
 
         lastInitialPosition = whipEnd.transform.position;
+
+        lastTime = Time.time;
 	}
 
 	void InitWhip()
@@ -223,7 +231,7 @@ public class FireBreathDynamic : MonoBehaviour
 
             if (i > 2)
             {
-                m_color[i] = m_color[i + 1] = (whipIndex == m_collisionSplit) ? m_collisionColor : m_flameColor;
+                m_color[i] = m_color[i + 1] = (whipIndex > m_collisionSplit) ? m_collisionColor : m_flameColor;
             }
 
             step++;
@@ -297,6 +305,14 @@ public class FireBreathDynamic : MonoBehaviour
             Vector3 whipReflectTangent = Vector3.Cross(Vector3.forward, whipReflect);
             //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
 
+            //            Instantiate<FireOfBreathScript>(breathFire)
+
+            if (Time.time > lastTime + timeDelay)
+            {
+                Instantiate(breathFire, hit.point, Quaternion.identity);
+                lastTime = Time.time;
+            }
+
             for (int i = 0; i < m_splits + 1; i++)
             {
                 float currentDist = (xStep * i);
@@ -310,16 +326,20 @@ public class FireBreathDynamic : MonoBehaviour
                 else if (currentDist < (hit.distance + xStep))
                 {
                     m_whip[i] = hit.point;
-                    m_whipTangent[i] = (whipTangent + whipReflectTangent).normalized;
-//                    m_whipTangent[i] = whipTangent;    // (whipTangent + whipReflectTangent).normalized;
+//                    m_whipTangent[i] = (whipTangent + whipReflectTangent).normalized;
+                    m_whipTangent[i] = whipTangent;    // (whipTangent + whipReflectTangent).normalized;
 //                    m_whipCollision[i] = true;
                     m_collisionSplit = i;
                 }
                 else
                 {
-                    m_whip[i] = hit.point + ((currentDist - hit.distance) * whipReflect);
-                    m_whipTangent[i] = whipReflectTangent;
-//                    m_whipCollision[i] = false;
+                    m_whip[i] = hit.point;
+                    m_whipTangent[i] = whipTangent;
+
+                    // (whipTangent + whipReflectTangent).normalized;
+                    //                    m_whip[i] = hit.point + ((currentDist - hit.distance) * whipReflect);
+                    //                    m_whipTangent[i] = whipReflectTangent;
+                    //                    m_whipCollision[i] = false;
                 }
 
             }
