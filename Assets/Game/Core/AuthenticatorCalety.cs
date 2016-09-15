@@ -53,9 +53,11 @@ public class AuthenticatorCalety : Authenticator
                         result.socialExpiry = Convert.ToInt32(response["socialExpiry"]);
                         */
                         result.authState = (AuthState)Enum.Parse(typeof(AuthState), response["authState"] as string);
-                        result.upgradeAvailable = response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);
-                        //result.cloudSaveAvailable = Convert.ToBoolean(response["cloudSaveAvailable"]);
-                        result.cloudSaveAvailable = true;
+                        result.upgradeAvailable = response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);                        
+                        result.cloudSaveAvailable = Convert.ToBoolean(response["cloudSaveAvailable"]);
+
+                        // TO UNCOMMENT to force flow https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/13%29Recommend+cloud+save
+                        //result.cloudSaveAvailable = false;
 
                         callback(null, result);
 

@@ -334,11 +334,11 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
-	/// <summary>
-	/// This popup is shown when the user clicks on cloud sync icon on hud.
-	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/createpage.action?spaceKey=ubm&fromPageId=358111491
-	/// </summary>
-	public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
+    /// <summary>
+    /// This popup is shown when the user clicks on cloud sync icon on hud.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/9%29Sync+cloud+save
+    /// </summary>
+    public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
 	{
 		PopupMessage.Config config = PopupMessage.GetConfig();
 		config.TitleTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TITLE";
@@ -365,11 +365,11 @@ public static class PersistenceManager {
 		PopupManager.PopupMessage_Open(config);        
 	}
 
-	/// <summary>
-	/// This popup is shown when the user clicks on disable the cloud save on settings popup.
-	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/editpage.action?pageId=358115355
-	/// </summary>
-	public static void Popups_OpenCloudDisable(Action onConfirm, Action onCancel)
+    /// <summary>
+    /// This popup is shown when the user clicks on disable the cloud save on settings popup.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/10%29Disable+cloud+save
+    /// </summary>
+    public static void Popups_OpenCloudDisable(Action onConfirm, Action onCancel)
 	{
 		PopupMessage.Config config = PopupMessage.GetConfig();
 		config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_DISABLE_TITLE";
@@ -380,11 +380,12 @@ public static class PersistenceManager {
 		PopupManager.PopupMessage_Open(config);        
 	}
 
-	/// <summary>
-	/// This popup is shown when the user clicks on CLOUD SAVE on settings popup to enable the feature. It's used to explain how the feature works to the user
-	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/createpage.action?spaceKey=ubm&fromPageId=358111491
-	/// </summary>
-	public static void Popups_OpenCloudEnable(Action onConfirm)
+    /// <summary>
+    /// This popup is shown when the user clicks on CLOUD SAVE on settings popup to enable the feature. It's used to explain how the feature works to the user
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/11%29Enable+cloud+save
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/13%29Recommend+cloud+save
+    /// </summary>
+    public static void Popups_OpenCloudEnable(Action onConfirm)
 	{
 		PopupMessage.Config config = PopupMessage.GetConfig();
 		config.TitleTid = "STRING_SAVE_POPUP_CLOUD_ENABLED_TITLE";
@@ -406,12 +407,13 @@ public static class PersistenceManager {
 		config.OnConfirm = onConfirm;        
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
 		PopupManager.PopupMessage_Open(config);
-	}    
+	}
 
     /// <summary>
-    /// Opens a popup to ask the user whether or not she wants to enable the cloud save
+    /// Opens a popup to ask the user whether or not she wants to enable the cloud save. This popup is shown after the user logs in if the server sends cloudSaveAvailable to false.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/13%29Recommend+cloud+save
     /// </summary>
-    public static void Popups_RecomendCloudEnable(Action onConfirm, Action onCancel)
+    public static void Popups_RecommendCloudEnable(Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "STRING_SAVE_POPUP_PROMPT_CLOUD_ENABLE_TITLE";
@@ -495,11 +497,11 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
-	/// <summary>
-	/// This popup is shown when the user clicks on logout button on settings popup
-	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/createpage.action?spaceKey=ubm&fromPageId=358111491
-	/// </summary>   
-	public static void Popups_OpenLogoutWarning(SocialFacade.Network network, bool cloudSaveEnabled, Action onConfirm, Action onCancel)
+    /// <summary>
+    /// This popup is shown when the user clicks on logout button on settings popup
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/12%29Logout
+    /// </summary>   
+    public static void Popups_OpenLogoutWarning(SocialFacade.Network network, bool cloudSaveEnabled, Action onConfirm, Action onCancel)
 	{        
 		PopupMessage.Config config = PopupMessage.GetConfig();
 		config.TitleTid = cloudSaveEnabled ? "STRING_SAVE_POPUP_WARN_CLOUD_LOGOUT_TITLE" : "STRING_SOCIAL_WARNING_LOGOUT";
