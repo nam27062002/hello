@@ -71,7 +71,6 @@ SubShader {
 
 				fixed burnedFactor = tex2D(_BurnMask, i.texcoord * _BurnMaskScale).r - _BurnLevel;
 
-
 				if (burnedFactor <= -0.7)
 				{
 					fixed delta = 1.0 - (burnedFactor + 0.7) / -0.3f;
@@ -85,6 +84,7 @@ SubShader {
 
 				fixed idxBurn = clamp(fragAlpha / _BurnWidth, 0.0, 1.0);
 				col = max(col, tex2D(_ColorRamp, float2(idxBurn, 0.0)));
+//				col = min(col, tex2D(_ColorRamp, float2(idxBurn, 0.0)));
 
 				// HG_APPLY_FOG(i, col, _FogColor);	// Fog
 				return col;

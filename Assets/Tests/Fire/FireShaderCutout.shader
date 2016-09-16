@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/FireShader"
+﻿Shader "Hungry Dragon/FireShader - Cutout"
 {
 	Properties
 	{
@@ -15,14 +15,15 @@
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent+20" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags {"Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout"}
+//		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		LOD 100
 		//Blend SrcAlpha OneMinusSrcAlpha
 		Blend SrcAlpha OneMinusSrcAlpha
 		// Blend One One
 		//Blend OneMinusDstColor One
 		Cull Off
-		ZWrite Off
+//		ZWrite Off
 
 		Pass
 		{
@@ -84,6 +85,10 @@
 
 				intensity = intensity * (0.25 - dot(d, d)) * _Power;
 				intensity = floor(intensity * _ColorSteps) / _ColorSteps;
+
+				clip(intensity - _AlphaThreshold);
+
+
 				float txid = clamp(1.0 - intensity + _RampOffset, 0.0, 1.0);
 
 //				fixed3 col = fixed3(txid, txid, txid);// tex2D(_ColorRamp, float2(txid, 0.0));
