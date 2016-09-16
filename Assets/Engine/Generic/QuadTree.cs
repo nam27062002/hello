@@ -110,6 +110,12 @@ public class QuadTree<T> where T : IQuadTreeItem {
 		return array;
 	}
 
+
+	public T[] GetItemsAt(Vector2 _point) {
+		Rect r = new Rect(_point, Vector3.one * 0.1f);
+		return GetItemsInRange(r);
+	}
+
 	/// <summary>
 	/// Find all items within the given rectangle.
 	/// </summary>

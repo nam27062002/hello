@@ -9,13 +9,13 @@
 
 	SubShader
 	{
-//		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
-		Tags {"Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout"}
+		Tags {"Queue"="Transparent+10" "IgnoreProjector"="True" "RenderType"="Transparent"}
+//		Tags {"Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout"}
 		LOD 100
-//		Blend SrcAlpha OneMinusSrcAlpha 
+		Blend SrcAlpha OneMinusSrcAlpha 
 		// Blend One One
 		Cull Off
-//		ZWrite Off
+		ZWrite Off
 
 
 		Pass
@@ -68,7 +68,7 @@
 				noise.g = noise.g * i.uv.y;
 				noise.r = 0;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
-				clip(col.a - _CutOut);
+//				clip(col.a - _CutOut);
 				return col * i.color;
 			}
 			ENDCG

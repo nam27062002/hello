@@ -461,7 +461,7 @@ MonoBehaviour:
     max: 1.25
   m_timeBeforeBackHome: 2
   m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":5,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false}]'
-  m_avoidDistanceAttenuation: 2
+  m_avoidDistanceAttenuation: 0.5
   m_avoidCollisions: 1
 --- !u!114 &11477590
 MonoBehaviour:
@@ -495,8 +495,8 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 8
-    m_maxRadius: 3
+    m_sightRadius: 2
+    m_maxRadius: 1
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1

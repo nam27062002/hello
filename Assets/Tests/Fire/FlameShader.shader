@@ -83,13 +83,9 @@
 				intensity = floor(intensity * _ColorSteps) / _ColorSteps;
 				float txid = clamp(1.0 - intensity + _RampOffset, 0.0, 1.0);
 
-//				fixed3 col = fixed3(txid, txid, txid);// tex2D(_ColorRamp, float2(txid, 0.0));
 				fixed3 col =  tex2D(_ColorRamp, float2(txid, 0.0));
 
-//				return fixed4(col, step(_AlphaThreshold / _ColorSteps, intensity) * _Alpha);
-//				return fixed4(col, clamp(0.0, 1.0, intensity / (_AlphaThreshold / _ColorSteps)));// *_Alpha);
 				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
-//				alfa = clamp(alfa - _AlphaThreshold, 0.0, 1.0);
 				return fixed4(col, alfa * _Alpha);
 
 			}
