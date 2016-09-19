@@ -72,10 +72,12 @@ public class GameServerManagerCalety : GameServerManager
                 Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
             }
 
+            // An error is sent, just in case the client is waiting for a response for any command
             if (m_onResponse != null)
             {
-                m_onResponse(null, 200);
+                m_onResponse(null, 500);
             }
+
             // no problem, continue playing
         }
 
@@ -233,7 +235,13 @@ public class GameServerManagerCalety : GameServerManager
         //if (!m_delegate.m_logged)
         {
             if (!m_delegate.m_waitingLoginResponse)
-            {
+            {                
+                // We need to logout before if already logged in
+                if (GameSessionManager.SharedInstance.IsLogged())
+                {
+                    LogOut(null);
+                }
+                
                 m_delegate.m_logged = false;
                 m_delegate.m_waitingLoginResponse = true;
 
@@ -248,12 +256,12 @@ public class GameServerManagerCalety : GameServerManager
 
     public override void LogOut(Action<Error> callback)
     {
-        Commands_PrepareToRunCommand(ECommand.Logout, null,
-            delegate(Error error, Dictionary<string, object> response)
-            {
-                callback(error);
-            }
-        );
+        // The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
+        GameSessionManager.SharedInstance.LogOutFromServer(false);
+        if (callback != null)
+        {
+            callback(null);
+        }       
     }
 
     public override void GetServerTime(Action<Error, Dictionary<string, object>> callback)
@@ -296,8 +304,7 @@ public class GameServerManagerCalety : GameServerManager
     {
         None,
         Ping,
-        Login,
-        Logout,
+        Login,        
         GetTime,
         GetPersistence,
         SetPersistence,
@@ -443,7 +450,7 @@ public class GameServerManagerCalety : GameServerManager
         Log("RunCommand " + command + " CurrentCommand = " + Commands_CurrentCommand);
         // Commands have to be executed one by one since we're not using actions on server side
         if (Commands_CurrentCommand == ECommand.None)
-        {
+        {            
             Commands_CurrentCommand = command;
             Commands_CurrentCallback = callback;
 
@@ -461,13 +468,7 @@ public class GameServerManagerCalety : GameServerManager
                     Log("Command Login");
                     CaletyExtensions_LogInToServerThruPlatform(parameters["platformId"], parameters["platformUserId"], parameters["platformToken"]);
                 }
-                break;
-
-                case ECommand.Logout:
-                {
-                    GameSessionManager.SharedInstance.LogOutFromServer(false);                        
-                }
-                break;
+                break;                
 
                 case ECommand.GetTime:
                 {
@@ -670,6 +671,8 @@ public class GameServerManagerCalety : GameServerManager
                     response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
                     response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
                     response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+                                                                                              //response["authState"] = Authenticator.AuthState.NewSocialLogin.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+
                     response["upgradeAvailable"] = false.ToString(); // response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);
                     response["cloudSaveAvailable"] = false.ToString(); //Convert.ToBoolean(response["cloudSaveAvailable"]);
                 }
@@ -730,8 +733,8 @@ public class GameServerManagerCalety : GameServerManager
     }
 
     private void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)
-    {
-        Log("CaletyExtensions_LogInToServerThruPlatform");
+    {        
+        Log("CaletyExtensions_LogInToServerThruPlatform");        
         ServerManager.SharedInstance.SetNetworkPlatform(platformId);
         ServerManager.SharedInstance.Server_SendAuth(platformUserId, platformToken);
     }
