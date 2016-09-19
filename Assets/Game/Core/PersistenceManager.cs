@@ -617,6 +617,10 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
+    /// <summary>
+    /// This popup is shown when the local save is corrupted but the cloud save is ok when syncing with the cloud
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/20%29Local+save+corrupted
+    /// </summary>    
     public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -639,8 +643,12 @@ public static class PersistenceManager {
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
-    }       
+    }
 
+    /// <summary>
+    /// This popup is shown when the game doesn't have access to the cloud server. This is a legacy code from HSX since we'll always have access to the cloud server because it's our server
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/24%29No+access+to+cloud
+    /// </summary>    
     public static void Popups_OpenLoadSaveInaccessibleError(Action onConfirm, Action onCancel, Action onExtra)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -681,6 +689,10 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
+    /// <summary>
+    /// This popup is shown when both local save and cloud save are corrupted when syncing
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/23%29Local+save+corrupted+and+cloud+save+corrupted
+    /// </summary>    
     public static void Popups_OpenLoadSaveBothCorruptedError(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();

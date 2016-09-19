@@ -457,9 +457,14 @@ public class GameServerManagerCalety : GameServerManager
             switch (Commands_CurrentCommand)
             {
                 case ECommand.Ping:
-                {
-                    // [DGR] SERVER: To change for an actual request to the server
-                    Commands_OnResponse(null, 200);
+                {                    
+                    CaletyExtensions_Ping();
+                }
+                break;
+
+                case ECommand.GetTime:
+                {                 
+                    CaletyExtensions_GetTime();
                 }
                 break;
 
@@ -469,14 +474,7 @@ public class GameServerManagerCalety : GameServerManager
                     CaletyExtensions_LogInToServerThruPlatform(parameters["platformId"], parameters["platformUserId"], parameters["platformToken"]);
                 }
                 break;                
-
-                case ECommand.GetTime:
-                {
-                    // [DGR] SERVER: To change for an actual request to the server
-                    Commands_OnResponse(null, 200);                        
-                }
-                break;
-
+                
                 case ECommand.GetPersistence:
                 {
                     CaletyExtensions_GetPersistence();
@@ -662,6 +660,12 @@ public class GameServerManagerCalety : GameServerManager
         
         if (error == null)
         {
+            JSONNode result = null;
+            if (responseData != null)
+            {
+                result = SimpleJSON.JSON.Parse(responseData);                
+            }
+
             switch (Commands_CurrentCommand)
             {
                 case ECommand.Login:
@@ -681,10 +685,20 @@ public class GameServerManagerCalety : GameServerManager
                 case ECommand.GetTime:
                 case ECommand.UpdateSaveVersion:
                 {
+                    int time = Globals.GetUnixTimestamp();
+
+                    // Checks if the response from server can be interpreted
+                    string key = "t";                
+                    if (result != null && result.ContainsKey(key))
+                    {
+                        long timeAsLong = result[key].AsLong;
+                        time = (int)(timeAsLong / 1000);                        
+                    }
+
                     // [DGR] SERVER: Receive these parameters from server
                     response = new Dictionary<string, object>();
-                    response["dateTime"] = Globals.GetUnixTimestamp() + "";
-                    response["unixTimestamp"] = Globals.GetUnixTimestamp();
+                        response["dateTime"] = time;
+                    response["unixTimestamp"] = time;
                 }
                 break;
 
@@ -707,11 +721,30 @@ public class GameServerManagerCalety : GameServerManager
     #endregion
 
     #region calety_extensions
+    private static string COMMAND_PING = "/api/server/ping";
+    private static string COMMAND_TIME = "/api/server/time";
+    private static string COMMAND_GET_PERSISTENCE = "/api/persistence/get";
+    private static string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
+
     private void CaletyExtensions_Init()
     {
-        NetworkManager.SharedInstance.RegistryEndPoint("/api/persistence/get", NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500 }, CaletyExtensions_OnGetPersistenceResponse);
-        NetworkManager.SharedInstance.RegistryEndPoint("/api/persistence/set", NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnSetPersistenceResponse);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_PING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnPing);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_TIME, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnGetTime);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_GET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500 }, CaletyExtensions_OnGetPersistenceResponse);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_SET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnSetPersistenceResponse);        
     }    
+
+    private bool CaletyExtensions_OnPing(string strResponse, string strCmd, int iResponseCode)
+    {
+        Commands_OnResponse(strResponse, iResponseCode);
+        return true;
+    }
+
+    private bool CaletyExtensions_OnGetTime(string strResponse, string strCmd, int iResponseCode)
+    {
+        Commands_OnResponse(strResponse, iResponseCode);
+        return true;
+    }
 
     private bool CaletyExtensions_OnGetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
     {
@@ -721,14 +754,14 @@ public class GameServerManagerCalety : GameServerManager
             strResponse = "{\"version\":\"0.1.1\"}";
         }
 
-        Commands_OnResponse(strResponse, iResponseCode);       
+        Commands_OnResponse(strResponse, iResponseCode);        
         return true;
     }
 
     public bool CaletyExtensions_OnSetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
     {
         Log("OnSetPersistenceResponse statusCode=" + iResponseCode);
-        Commands_OnResponse(strResponse, iResponseCode);       
+        Commands_OnResponse(strResponse, iResponseCode);
         return true;
     }
 
@@ -746,7 +779,7 @@ public class GameServerManagerCalety : GameServerManager
             Dictionary<string, string> kParams = new Dictionary<string, string>();
             kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
             kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-            ServerManager.SharedInstance.SendCommand("/api/persistence/get", kParams);
+            ServerManager.SharedInstance.SendCommand(COMMAND_GET_PERSISTENCE, kParams);
         }
     }
 
@@ -758,8 +791,18 @@ public class GameServerManagerCalety : GameServerManager
             kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
             kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
             kParams["universe"] = persistence;
-            ServerManager.SharedInstance.SendCommand("/api/persistence/set", kParams);
+            ServerManager.SharedInstance.SendCommand(COMMAND_SET_PERSISTENCE, kParams);
         }
+    }
+
+    private void CaletyExtensions_Ping()
+    {        
+        ServerManager.SharedInstance.SendCommand(COMMAND_PING);
+    }
+
+    private void CaletyExtensions_GetTime()
+    {
+        ServerManager.SharedInstance.SendCommand(COMMAND_TIME);
     }
     #endregion
 
