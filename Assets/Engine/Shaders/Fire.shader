@@ -78,6 +78,7 @@
 
 				noise.r = 0.0f;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
+				col.a *= step(0.1, noise.g);
 
 //				float wAtenuation = 0.75 - abs(i.uv.x - 0.5);
 //				col.a *= wAtenuation;// *wAtenuation;
