@@ -71,14 +71,13 @@
 			{
 				// sample the texture
 				fixed4 noise = tex2D( _NoiseTex, i.noiseUV ) * _Flamethrower;
-				noise.g = noise.g * i.uv.y * _Flamedistance;
+				noise.g = (noise.g * i.uv.y * _Flamedistance);
 
-//				fixed4 noise = tex2D(_NoiseTex, i.noiseUV) * _FlameThrower * 0.75;
-//				noise.g = noise.g * i.uv.y * _FlameThrower;
+//				fixed4 noise = tex2D(_NoiseTex, i.noiseUV) * _FlameThrower * 0.75;/				noise.g = noise.g * i.uv.y * _FlameThrower;
 
 				noise.r = 0.0f;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
-				col.a *= step(0.1, noise.g);
+				col.a *= smoothstep(0.025, 0.15, noise.g);
 
 //				float wAtenuation = 0.75 - abs(i.uv.x - 0.5);
 //				col.a *= wAtenuation;// *wAtenuation;
