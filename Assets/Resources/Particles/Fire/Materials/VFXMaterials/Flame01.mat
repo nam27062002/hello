@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: FireMaterial2
-  m_Shader: {fileID: 4800000, guid: b5d133454c866364f90d201e1c7baed2, type: 3}
-  m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 1
-  m_CustomRenderQueue: -1
+  m_Name: Flame01
+  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -19,12 +19,6 @@ Material:
         name: _BumpMap
       second:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ColorRamp
-      second:
-        m_Texture: {fileID: 2800000, guid: 5818f0fb913f3c64d9d905206ea8b6cd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -54,19 +48,13 @@ Material:
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: f54adda32ac75774aba934628068350c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
       second:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _NoiseTex
-      second:
-        m_Texture: {fileID: 2800000, guid: 7992f8109c916834d8a78481f1563891, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -83,17 +71,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
-        name: _Alpha
-      second: 1
-    - first:
-        name: _AlphaThreshold
-      second: 13.6
-    - first:
         name: _BumpScale
       second: 1
-    - first:
-        name: _ColorSteps
-      second: 31
     - first:
         name: _Cutoff
       second: 0.5
@@ -104,16 +83,10 @@ Material:
         name: _DstBlend
       second: 0
     - first:
-        name: _FirePower
-      second: 2.63
-    - first:
-        name: _GlossMapScale
-      second: 1
-    - first:
         name: _Glossiness
       second: 0.5
     - first:
-        name: _GlossyReflections
+        name: _InvFade
       second: 1
     - first:
         name: _Metallic
@@ -127,24 +100,6 @@ Material:
     - first:
         name: _Parallax
       second: 0.02
-    - first:
-        name: _Power
-      second: 5.23
-    - first:
-        name: _RampOffset
-      second: 0.367
-    - first:
-        name: _Seed
-      second: 0.1
-    - first:
-        name: _SmoothnessTextureChannel
-      second: 0
-    - first:
-        name: _SpecularHighlights
-      second: 1
-    - first:
-        name: _Speed
-      second: 0.75
     - first:
         name: _SrcBlend
       second: 1
@@ -161,3 +116,6 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _TintColor
+      second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

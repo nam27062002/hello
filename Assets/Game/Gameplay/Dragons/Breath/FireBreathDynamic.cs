@@ -41,8 +41,6 @@ public class FireBreathDynamic : MonoBehaviour
 
     public float fireDelay = 1.0f;
 
-
-
     public string m_groundLayer;
     public string[] m_enemyLayers;
 
@@ -204,10 +202,8 @@ public class FireBreathDynamic : MonoBehaviour
 
             float kd = m_FlexCurve.Evaluate(whipIndex / m_splits);
 
-            float md = (whipEnd.transform.position.y - lastInitialPosition.y) * kd * fireDelay;
+            float md = 0.0f;// (whipEnd.transform.position.y - lastInitialPosition.y) * kd * fireDelay;
 
-            //            newPos1 += (whipTangent) * (yDisplacement + md);
-            //            newPos2 -= (whipTangent) * (yDisplacement - md);
 
                         if (transform.right.x < 0.0f)
                         {
@@ -220,11 +216,6 @@ public class FireBreathDynamic : MonoBehaviour
                             newPos2 -= (whipTangent) * (yDisplacement + md);
                         }
 
-//            newPos1 += (whipTangent) * (yDisplacement - md);
-//            newPos2 -= (whipTangent) * (yDisplacement + md);
-
-            //            float kd = 1.0f - (whipIndex / m_splits);
-            //            kd = Mathf.Pow(Mathf.Clamp(kd, 0.0f, 1.0f), 2.0f);
 
             m_pos[i] = newPos1;
             m_pos[i + 1] = newPos2;
@@ -309,7 +300,7 @@ public class FireBreathDynamic : MonoBehaviour
 
             if (Time.time > lastTime + timeDelay)
             {
-                Instantiate(breathFire, hit.point, Quaternion.identity);
+                Instantiate(breathFire, hit.point, Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward));
                 lastTime = Time.time;
             }
 
