@@ -20,15 +20,17 @@ public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
     /// <summary>
     /// Time in seconds that will force a reauthentication in the social network if the application has been in background longer than this amount of time
     /// </summary>
-    private const int SocialNetworkReauthTime = 120;
+    private const int SocialNetworkReauthTime = 120;    
 
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
 	/// </summary>
 	protected void Awake()
     {
-        Reset();
+        Setting_Init();
 
+        Reset();
+        
         FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);        
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
@@ -63,16 +65,18 @@ public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
 
     public bool NeedsToRestartFlow { get; set; }
 
-    private bool SaveLoadIsCompleted { get; set; }
+    private bool SaveLoadIsCompleted { get; set; }    
 
     protected void Update()
     {        
         // To Debug
-        if (Input.GetKeyDown(KeyCode.A))
+        /*if (Input.GetKeyDown(KeyCode.A))
         {
-            NeedsToRestartFlow = true;           
+            //NeedsToRestartFlow = true;           
             //Debug_ToggleIsPaused();
-        }     
+
+            Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+        }*/     
         
         if (NeedsToRestartFlow)
         {
@@ -212,7 +216,46 @@ public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
     }
     #endregion
 
-    #region debug
+    #region settings
+    // This region is responsible for managing option settings such as sound
+
+    private const string SETTINGS_SOUND_KEY = "sound";
+
+    private bool m_settingsSoundIsEnabled;
+
+    private void Setting_Init()
+    {
+        // Sound is disabled by default
+        Settings_SetSoundIsEnabled(PlayerPrefs.GetInt(SETTINGS_SOUND_KEY, 0) > 0, false);
+    }
+
+    public bool Settings_GetSoundIsEnabled()
+    {
+        return m_settingsSoundIsEnabled;
+    }
+
+    private void Settings_SetSoundIsEnabled(bool value, bool persist)
+    {
+        m_settingsSoundIsEnabled = value;
+
+        // TODO: To use AudioManager instead
+        AudioListener.pause = !m_settingsSoundIsEnabled;
+
+        if (persist)
+        {
+            int intValue = (m_settingsSoundIsEnabled) ? 1 : 0;
+            PlayerPrefs.SetInt(SETTINGS_SOUND_KEY, intValue);
+            PlayerPrefs.Save();
+        }
+    }
+
+    public void Settings_ToggleSoundIsEnabled()
+    {
+        Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+    }
+    #endregion
+
+        #region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_ToggleIsPaused()
@@ -220,6 +263,6 @@ public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
         Debug_IsPaused = !Debug_IsPaused;
         OnApplicationPause(Debug_IsPaused);
     }
-    #endregion
+    #endregion    
 }
 
