@@ -28,8 +28,6 @@
 			
 			#include "UnityCG.cginc"
 
-//			AlphaTest Less[_CutOut]
-
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -51,7 +49,6 @@
 			sampler2D _NoiseTex;
 			float4 _NoiseTex_ST;
 
-//			float _CutOut;
 			float _Flamespeed;
 			float _Flamethrower;
 			float _Flamedistance;
@@ -62,7 +59,7 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.color = v.color;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.noiseUV = TRANSFORM_TEX(  v.uv + float2( 0, -_Time.y * _Flamespeed) , _NoiseTex);
+				o.noiseUV = TRANSFORM_TEX( v.uv + float2( 0, -_Time.y * _Flamespeed) , _NoiseTex );
 				return o;
 			}
 			
@@ -71,18 +68,15 @@
 			{
 				// sample the texture
 				fixed4 noise = tex2D( _NoiseTex, i.noiseUV ) * _Flamethrower;
-				noise.g = (noise.g * i.uv.y * _Flamedistance);
+				noise += tex2D(_NoiseTex, i.noiseUV - float2(0.0, _Time.y * _Flamespeed * 2.0)) * _Flamethrower;
 
-//				fixed4 noise = tex2D(_NoiseTex, i.noiseUV) * _FlameThrower * 0.75;/				noise.g = noise.g * i.uv.y * _FlameThrower;
+				noise *= 0.5;
+				noise.g = (noise.g * i.uv.y * _Flamedistance);
 
 				noise.r = 0.0f;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
 				col.a *= smoothstep(0.025, 0.15, noise.g);
 
-//				float wAtenuation = 0.75 - abs(i.uv.x - 0.5);
-//				col.a *= wAtenuation;// *wAtenuation;
-//				col.a *= noise.g;
-//				clip(col.a - _CutOut);
 				return col * i.color;
 			}
 			ENDCG
