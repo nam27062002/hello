@@ -226,6 +226,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public virtual void PauseEating()
 	{
 		m_pauseEating = true;
+		m_attackTarget = null;
 		if ( m_holdingPrey != null || m_holdingPlayer != null)
 			EndHold();
 	}

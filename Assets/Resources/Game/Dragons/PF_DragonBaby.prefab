@@ -301,6 +301,7 @@ GameObject:
   - 114: {fileID: 11408926}
   - 114: {fileID: 11438592}
   - 114: {fileID: 11412152}
+  - 114: {fileID: 114000012705948140}
   - 114: {fileID: 11444004}
   - 114: {fileID: 11459072}
   - 114: {fileID: 11419346}
@@ -2884,7 +2885,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6a9901a8bc4e4db89adc4deffdad93a, type: 3}
   m_Name: 
@@ -3902,6 +3903,37 @@ MonoBehaviour:
   m_minEatAnimTime: 0.1
   m_eatDistance: 1.5
   m_burpSounds: []
+--- !u!114 &114000012705948140
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 25
+  m_length: 6
+  m_sizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 3
+      tangentMode: 0
+    - time: 1
+      value: 3
+      inSlope: 3
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_flameLight: PF_FireLight
+  dragonFlame: {fileID: 197018, guid: 9df4859c1087a4e57a7ea6ebc1549ea9, type: 2}
 --- !u!114 &114000013077924290
 MonoBehaviour:
   m_ObjectHideFlags: 1

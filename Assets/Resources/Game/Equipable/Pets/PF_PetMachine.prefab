@@ -13,10 +13,10 @@ GameObject:
   - 114: {fileID: 114000011716939334}
   - 114: {fileID: 114000012488899708}
   - 114: {fileID: 11448730}
-  - 114: {fileID: 114000013111741076}
   - 114: {fileID: 114000011637225726}
   - 54: {fileID: 54000013371132386}
   - 135: {fileID: 135000013338795870}
+  - 114: {fileID: 114000013147041998}
   m_Layer: 0
   m_Name: PF_PetMachine
   m_TagString: Untagged
@@ -1752,7 +1752,7 @@ MonoBehaviour:
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 0
+  m_hasNavigationLayer: 1
   m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
@@ -1823,6 +1823,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
     m_sightRadius: 0
@@ -1852,7 +1853,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &114000013111741076
+--- !u!114 &114000013147041998
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1863,11 +1864,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_absorbTime: 1
-  m_minEatAnimTime: 1
+  m_absorbTime: 0.1
+  m_minEatAnimTime: 0.1
   m_eatDistance: 2
   m_burpSounds: []
   m_eaterTier: 0
+  m_isPet: 1
 --- !u!114 &114000014104032136
 MonoBehaviour:
   m_ObjectHideFlags: 1

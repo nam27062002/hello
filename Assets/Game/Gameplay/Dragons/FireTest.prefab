@@ -79,8 +79,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e3e8ee1182574614afedccf4606ff56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_distance: 10
-  m_aplitude: 2
+  m_distance: 5
+  m_aplitude: 3
   m_initialColor: {r: 0.5019608, g: 0, b: 1, a: 0}
   m_flameColor: {r: 1, g: 1, b: 1, a: 1}
   m_collisionColor: {r: 1, g: 1, b: 1, a: 0}
@@ -88,14 +88,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - time: 0
-      value: -0.031249998
-      inSlope: 1.6818748
-      outSlope: 1.6818748
+      value: 0.15
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     - time: 1
-      value: 0.975
-      inSlope: 0.25806475
-      outSlope: 0.25806475
+      value: 1
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -136,6 +136,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+  flameAnimationTime: 0
   m_FlexCurve:
     serializedVersion: 2
     m_Curve:

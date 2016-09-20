@@ -123,9 +123,17 @@ public class Entity : IEntity {
 	override public void Spawn(ISpawner _spawner) {
 		m_spawner = _spawner;
 
-		DragonTier tier = InstanceManager.player.data.tier;
-		m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
-		m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
+		if ( InstanceManager.player != null )
+		{
+			DragonTier tier = InstanceManager.player.data.tier;
+			m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
+			m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
+		}
+		else
+		{
+			m_isGolden = false;
+			m_isPC = false;
+		}
 
 		m_isOnScreen = false;
 		m_checkOnScreenTimer = 0;
