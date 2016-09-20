@@ -49,7 +49,6 @@ public class FireBreathDynamic : MonoBehaviour
     private Vector3 lastInitialPosition;
     private GameObject whipEnd;
 
-    public GameObject breathFire = null;
     public float timeDelay = 0.25f;
 
     private float lastTime;
@@ -310,8 +309,6 @@ public class FireBreathDynamic : MonoBehaviour
             Vector3 whipReflectTangent = Vector3.Cross(Vector3.forward, whipReflect);
             //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
 
-            //            Instantiate<FireOfBreathScript>(breathFire)
-
             if (Time.time > lastTime + timeDelay)
             {
 
@@ -319,9 +316,6 @@ public class FireBreathDynamic : MonoBehaviour
                 fire.transform.position = hit.point;
                 fire.transform.rotation = Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward);
                 fire.transform.SetLocalScale(0.25f);
-                //GameObject fire = (GameObject)Instantiate(breathFire, hit.point, Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward));
-                //                fire.transform.localScale.Set(0.5f, 0.5f, 0.5f);
-                //                fire.transform.lossyScale.Set(0.25f, 0.25f, 0.25f);
 
                 lastTime = Time.time;
             }
