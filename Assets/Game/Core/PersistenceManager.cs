@@ -820,10 +820,11 @@ public static class PersistenceManager {
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);       
-    }        
+    }
 
     /// <summary>
     /// The user is prompted with this popup so she can choose the persistence to keep when there's a conflict between the progress stored in local and the one stored in the cloud
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29Sync+Conflict
     /// </summary>
     public static void Popups_OpenMerge(ConflictState conflictState, ProgressComparatorSystem local, ProgressComparatorSystem cloud, bool dismissable, Action<ConflictResult> onResolve)
     {
@@ -835,6 +836,10 @@ public static class PersistenceManager {
         }
     }
 
+    /// <summary>
+    /// This popup is shown when the user doesn't choose the recommended option in sync conflict popup.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29Sync+Conflict
+    /// </summary>    
     public static void Popups_OpenMergeConfirmation(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
