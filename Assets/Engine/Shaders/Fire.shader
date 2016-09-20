@@ -4,7 +4,7 @@
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_NoiseTex ("Noise Texture", 2D) = "white" {}
-		_Flamespeed("Flame speed", Range(0.0, 5.0)) = 0.5
+		_Flamespeed("Flame speed", Range(0.0, 2.0)) = 0.5
 		_Flamethrower("Flame thrower", Range(0.0, 5.0)) = 0.8
 		_Flamedistance("Flame distance", Range(0.0, 5.0)) = 1.5
 	}
