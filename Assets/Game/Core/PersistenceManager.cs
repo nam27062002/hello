@@ -664,7 +664,11 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);       
     }
 
-    public static void Popups_OpenLocalSaveGenericError(Action onConfirm)
+    /// <summary>
+    /// This popup is shown when the game is not allowed to save locally.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/25%29Can%27t+save+locally
+    /// </summary>    
+    public static void Popups_OpenLocalSaveCantSaveError(Action onConfirm)
     {
         string platformErrorMessage = "UNKNOWN";
 
@@ -686,6 +690,36 @@ public static class PersistenceManager {
         config.ExtraButtonTid = "STRING_BUTTON_UPLOAD";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;        
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when starting the game if there's no free disk space to store the local save
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/27%29No+disk+space
+    /// </summary>    
+    public static void Popups_OpenLocalSaveDiskOutOfSpaceError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TITLE";
+        config.MessageTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TEXT_SPACE";
+        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when starting the game if there's no access to disk to store the local save.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/28%29No+disk+access
+    /// </summary>    
+    public static void Popups_OpenLocalSaveDiskNoAccessError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TITLE";
+        config.MessageTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TEXT_ACCESS";
+        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
     }
 
@@ -730,6 +764,10 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
+    /// <summary>
+    /// This popup is shown when the game realizes that there's game update available in the app store after receiving the response for an auth request
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/26%29Game+update+available
+    /// </summary>   
     public static void Popup_OpenPromptUpdate(Action onConfirm, Action onCancel)
     {
         string platformUpdateMessage = "UNKNOWN";
@@ -756,30 +794,13 @@ public static class PersistenceManager {
         config.OnCancel = onCancel;
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         PopupManager.PopupMessage_Open(config);                                
-    }
+    }    
 
-    public static void Popups_OpenSaveDiskOutOfSpaceError(Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TEXT_SPACE";
-        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-    }
-
-    public static void Popups_OpenSaveDiskNoAccessError(Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TEXT_ACCESS";
-        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-    }
-
+    /// <summary>
+    /// This popup is shown only after the first time the user logs in facebook with the friend list permission granted
+    /// </summary>
+    /// <param name="rewardAmount"></param>
+    /// <param name="onConfirm"></param>
     public static void Popups_OpenLoginComplete(int rewardAmount, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -822,8 +843,12 @@ public static class PersistenceManager {
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
-    }  
-    
+    }
+
+    /// <summary>
+    /// This popup is shown when there's no internet connection
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29No+internet+connection
+    /// </summary>    
     public static void Popups_OpenErrorConnection(SocialFacade.Network network, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
