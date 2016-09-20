@@ -34,8 +34,9 @@ public class FireBreathDynamic : MonoBehaviour
 
     public AnimationCurve m_shapeCurve;
     public AnimationCurve m_FlameAnimation;
-    public float flameAnimationTime = 0.0f;
     public AnimationCurve m_FlexCurve;
+
+    private float flameAnimationTime = 0.0f;
 
     public float fireDelay = 1.0f;
 
@@ -310,7 +311,11 @@ public class FireBreathDynamic : MonoBehaviour
 
             if (Time.time > lastTime + timeDelay)
             {
-                Instantiate(breathFire, hit.point, Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward));
+                GameObject fire = (GameObject)Instantiate(breathFire, hit.point, Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward));
+                //                fire.transform.localScale.Set(0.5f, 0.5f, 0.5f);
+                //                fire.transform.lossyScale.Set(0.25f, 0.25f, 0.25f);
+                fire.transform.SetLocalScale(0.25f);
+
                 lastTime = Time.time;
             }
 
