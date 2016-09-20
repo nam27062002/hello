@@ -4,38 +4,37 @@ using System.Collections;
 namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
-		public class GuardData : StateComponentData {
+		public class GuardOutOfSightData : StateComponentData {
+			public Range guardTime = new Range(2f, 4f);
 		}
 
-		[CreateAssetMenu(menuName = "Behaviour/Attack/Guard")]
-		public class Guard : StateComponent {
+		[CreateAssetMenu(menuName = "Behaviour/Attack/Guard Out Of Sight")]
+		public class GuardOutOfSight : StateComponent {
 
 			[StateTransitionTrigger]
 			private static string OnEnemyInRange = "onEnemyInRange";
 
 			[StateTransitionTrigger]
-			private static string OnPursuitEnemy = "onPursuitEnemy";
+			private static string OnCalmDown = "onCalmDown";
 
 
+			//-----------------------------------------------------------------------
+			private GuardOutOfSightData m_data;
+			private float m_timer;
 
-			protected GuardData m_data;
-			protected Transform m_target;
-			private object[] m_transitionParam;
 
-
+			//-----------------------------------------------------------------------
 			public override StateComponentData CreateData() {
-				return new ChargeData();
+				return new GuardOutOfSightData();
 			}
 
 			public override System.Type GetDataType() {
-				return typeof(GuardData);
+				return typeof(GuardOutOfSightData);
 			}
 
 			protected override void OnInitialise() {
-				m_data = m_pilot.GetComponentData<GuardData>();
+				m_data = m_pilot.GetComponentData<GuardOutOfSightData>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
-
-				m_transitionParam = new object[1];
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -44,8 +43,7 @@ namespace AI {
 				m_pilot.Stop();
 				m_pilot.PressAction(Pilot.Action.Button_A);
 
-				m_target = param[0] as Transform;
-				m_transitionParam[0] = m_target;
+				m_timer = m_data.guardTime.GetRandom();
 			}
 
 			protected override void OnExit(State _newState) {
@@ -56,9 +54,9 @@ namespace AI {
 				if (m_machine.GetSignal(Signals.Type.Danger)) {
 					Transition(OnEnemyInRange);
 				} else {
-					float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
-					if (m > 2f) {
-						Transition(OnPursuitEnemy, m_transitionParam);
+					m_timer -= Time.deltaTime;
+					if (m_timer <= 0f) {
+						Transition(OnCalmDown);
 					}
 				}
 			}

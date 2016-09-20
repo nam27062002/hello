@@ -29,9 +29,15 @@ MonoBehaviour:
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
-  - m_name: Guard
+  - m_name: Guard Out Of Range
     m_componentAssets:
     - {fileID: 11400000, guid: 9f822a57e0f754c25bac67c6de963f75, type: 2}
+  - m_name: Guard Out Of Sight
+    m_componentAssets:
+    - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
+  - m_name: Guard Out Of Area
+    m_componentAssets:
+    - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -63,11 +69,14 @@ MonoBehaviour:
   - to: 3
     id: onEnemyInRange
     from: 2
-  - to: 1
+  - to: 6
     id: onEnemyOutOfSight
     from: 2
   - to: 5
     id: onEnemyInGuardArea
+    from: 2
+  - to: 7
+    id: onOutsideArea
     from: 2
   - to: 3
     id: onEnemyInRange
@@ -75,10 +84,22 @@ MonoBehaviour:
   - to: 2
     id: onPursuitEnemy
     from: 5
+  - to: 3
+    id: onEnemyInRange
+    from: 6
+  - to: 1
+    id: onCalmDown
+    from: 6
+  - to: 3
+    id: onEnemyInRange
+    from: 7
   - to: 4
-    id: onOutsideArea
-    from: -1
+    id: onCalmDown
+    from: 7
   - to: 1
     id: onBackAtHome
+    from: 4
+  - to: 7
+    id: onOutsideArea
     from: -1
   m_firstState: 1

@@ -39,35 +39,48 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Warning, false);
 				m_machine.SetSignal(Signals.Type.Danger, false);
 			} else {
+				float distanceSqr = 0f;
+				bool isInsideSightArea = m_machine.GetSignal(Signals.Type.Warning);
+				bool isInsideMaxArea = false;
+				bool isInsideMinArea = false;
+				bool sense = false;
+
+				if (m_senseAbove && m_senseBelow) {
+					sense = true;
+				} else if (m_senseAbove) {
+					sense = m_enemy.position.y > sensorPosition.y;
+				} else if (m_senseBelow) {
+					sense = m_enemy.position.y < sensorPosition.y;								
+				}
+
 				m_senseTimer -= Time.deltaTime;
 				if (m_senseTimer <= 0) {
-					bool isInsideSightArea = false;
-					bool isInsideMaxArea = false;
-					bool isInsideMinArea = false;
-					bool sense = false;
+					Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
+					distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
 
-					if (m_senseAbove && m_senseBelow) {
-						sense = true;
-					} else if (m_senseAbove) {
-						sense = m_enemy.position.y > sensorPosition.y;
-					} else if (m_senseBelow) {
-						sense = m_enemy.position.y < sensorPosition.y;								
+					isInsideSightArea = distanceSqr < m_sightRadius * m_sightRadius;
+
+					if (isInsideSightArea) {
+						m_senseTimer = m_senseDelay.GetRandom();
+					} else {
+						m_senseTimer = 0f;
 					}
+				}
 
+				if (isInsideSightArea) {
 					if (sense) {
-						Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
-						float distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
-
-						if (distanceSqr < m_sightRadius * m_sightRadius) {							
-							if (distanceSqr < m_maxRadius * m_maxRadius) {
-								// check if the dragon is inside the sense zone
-								if (distanceSqr < m_minRadius * m_minRadius) {
-									isInsideMinArea = true;
-								}
-								isInsideMaxArea = true;
-							} 
-							isInsideSightArea = true;
+						if (distanceSqr == 0f) {
+							Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
+							distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
 						}
+
+						if (distanceSqr < m_maxRadius * m_maxRadius) {
+							// check if the dragon is inside the sense zone
+							if (distanceSqr < m_minRadius * m_minRadius) {
+								isInsideMinArea = true;
+							}
+							isInsideMaxArea = true;
+						} 
 
 						if (isInsideMinArea || isInsideMaxArea) {
 							// Check line cast
@@ -78,17 +91,11 @@ namespace AI {
 							}
 						}
 					}
-
-					m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
-					m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
-					m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
-
-					if (isInsideSightArea) {
-						m_senseTimer = m_senseDelay.GetRandom();
-					} else {
-						m_senseTimer = 0f;//UnityEngine.Random.Range(0f, 1f);
-					}
 				}
+
+				m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
+				m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
+				m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
 			}				
 		}
 
