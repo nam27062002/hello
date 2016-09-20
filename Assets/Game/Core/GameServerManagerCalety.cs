@@ -751,7 +751,9 @@ public class GameServerManagerCalety : GameServerManager
         // [DGR] Server: Default universe
         if (strResponse == "{}")
         {
-            strResponse = "{\"version\":\"0.1.1\"}";
+            SimpleJSON.JSONNode defaultJson = PersistenceManager.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
+            defaultJson.Add("version", FGOL.Save.SaveGameManager.Instance.Version);
+            strResponse = defaultJson.ToString();
         }
 
         Commands_OnResponse(strResponse, iResponseCode);        
