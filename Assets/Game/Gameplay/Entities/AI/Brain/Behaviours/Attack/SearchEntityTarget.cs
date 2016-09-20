@@ -39,7 +39,12 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<SearchEntityData>();
 				m_timer = 0f;
 				m_shutdownSensorTime = 0f;
-				m_eaterTier = m_pilot.GetComponent<MachineEatBehaviour>().eaterTier;	// Temp
+
+				// Temp
+				MachineEatBehaviour machineEat = m_pilot.GetComponent<MachineEatBehaviour>();
+				if ( machineEat )
+					m_eaterTier = machineEat.eaterTier;
+
 				m_transitionParam = new object[1];
 
 				m_collidersMask = 1<<LayerMask.NameToLayer("Ground") | 1<<LayerMask.NameToLayer("Obstacle");

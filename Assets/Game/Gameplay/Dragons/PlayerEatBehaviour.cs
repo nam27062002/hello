@@ -49,8 +49,9 @@ public class PlayerEatBehaviour : EatBehaviour {
 		if ( animEvents != null )
 		{
 			animEvents.onEatEvent += onEatEvent;
-			m_waitJawsEvent = false;
+			m_waitJawsEvent = true;
 		}
+		m_waitJawsEvent = false;// not working propertly for the moment!
 	}
 
 	override protected void OnDisable()
@@ -68,6 +69,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	{
 		OnJawsClose();
 	}
+
 
 	void OnDestroy() {
 		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
