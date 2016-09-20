@@ -326,6 +326,26 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
+	public void StartAttackTarget()
+	{
+		m_animator.SetBool("eat", true);
+	}
+
+	public void StopAttackTarget()
+	{
+		m_animator.SetBool("eat", false);
+	}
+
+	public void StartEating()
+	{
+		m_animator.SetBool("eat", true);
+	}
+
+	public void StopEating()
+	{
+		m_animator.SetBool("eat", false);
+	}
+
 	public void SpecialAnimation(SpecialAnims _anim, bool _value) {
 		if (m_specialAnimations[(int)_anim] != _value) {
 			switch(_anim) {
