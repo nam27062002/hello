@@ -67,6 +67,8 @@ namespace AI {
 		private Quaternion m_rotation;
 		private Quaternion m_targetRotation;
 
+		private Transform m_attackTarget = null;
+		public Transform attackTarget { get{ return m_attackTarget; } set{ m_attackTarget = value; } }
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public MachineMotion() {}
@@ -254,7 +256,17 @@ namespace AI {
 				// View updates
 				UpdateAttack();
 
-				m_viewControl.NavigationLayer(m_pilot.impulse);
+				// Check if targeting to bend through that direction
+				if (m_attackTarget)
+				{
+					Vector3 dir = m_attackTarget.position - position;
+					dir.Normalize();
+					m_viewControl.NavigationLayer(dir);	
+				}
+				else
+				{
+					m_viewControl.NavigationLayer(m_pilot.impulse);	
+				}
 
 				if (m_pilot.speed > 0.01f) {
 					m_viewControl.Move(m_pilot.speed);//m_pilot.impulse.magnitude); //???
