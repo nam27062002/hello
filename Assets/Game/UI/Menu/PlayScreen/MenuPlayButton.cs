@@ -39,7 +39,7 @@ public class MenuPlayButton : MenuNavigationButton {
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_PLAY_SCREEN)) {
 			// Advance tutorial step
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_PLAY_SCREEN);
-			PersistenceManager.Save();
+			PersistenceManager.Save(true);
 
 			// Go straight to game
 			OnStartGameButton();

@@ -204,7 +204,7 @@ public class ResultsScreenController : MonoBehaviour {
 			EggManager.ClearCollectibleEgg();
 
 			// Save persistence
-			PersistenceManager.Save();
+			PersistenceManager.Save(true);
 
 			// Go back to main menu
 			FlowManager.GoToMenu();
