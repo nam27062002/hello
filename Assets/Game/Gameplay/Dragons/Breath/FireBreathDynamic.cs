@@ -61,8 +61,11 @@ public class FireBreathDynamic : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		// Cache
-		m_meshFilter = GetComponent<MeshFilter>();
+
+        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire/Prefabs/FireOfBreath"), 15, false);
+
+        // Cache
+        m_meshFilter = GetComponent<MeshFilter>();
 		m_numPos = (int)(4 + m_splits * 2);
 
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
@@ -311,10 +314,14 @@ public class FireBreathDynamic : MonoBehaviour
 
             if (Time.time > lastTime + timeDelay)
             {
-                GameObject fire = (GameObject)Instantiate(breathFire, hit.point, Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward));
+
+                GameObject fire = PoolManager.GetInstance("FireOfBreath");
+                fire.transform.position = hit.point;
+                fire.transform.rotation = Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward);
+                fire.transform.SetLocalScale(0.25f);
+                //GameObject fire = (GameObject)Instantiate(breathFire, hit.point, Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward));
                 //                fire.transform.localScale.Set(0.5f, 0.5f, 0.5f);
                 //                fire.transform.lossyScale.Set(0.25f, 0.25f, 0.25f);
-                fire.transform.SetLocalScale(0.25f);
 
                 lastTime = Time.time;
             }

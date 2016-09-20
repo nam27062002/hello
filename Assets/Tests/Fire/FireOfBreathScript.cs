@@ -10,7 +10,8 @@ public class FireOfBreathScript : MonoBehaviour {
 
         Animation anim = GetComponent<Animation>();
         anim.Play();
-        Destroy(gameObject, anim.clip.length);
+//        Debug.Log("FireOfBreathScript - Start()");
+//        Destroy(gameObject, anim.clip.length);
 	}
 	
 }
