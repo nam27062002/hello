@@ -486,7 +486,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// <summary>
 	/// Ends the hold.
 	/// </summary>
-	virtual protected void EndHold()
+	virtual public void EndHold()
 	{
 		if ( m_holdingPrey != null)
 		{
