@@ -17,6 +17,7 @@ GameObject:
   - 54: {fileID: 54000013371132386}
   - 135: {fileID: 135000013338795870}
   - 114: {fileID: 114000013147041998}
+  - 114: {fileID: 114000010091332200}
   m_Layer: 0
   m_Name: PF_PetMachine
   m_TagString: Untagged
@@ -1736,6 +1737,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114000010091332200
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cd18c69356f446dfb8aebbf457a182a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_type: 0
 --- !u!114 &114000011637225726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1779,7 +1792,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":10,"checkDistanceToPlayer":true,"farAwayDistance":10,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":12,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":10,"checkDistanceToPlayer":true,"farAwayDistance":10,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":12,"arrivalRadius":1,"hasGuardState":false,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424

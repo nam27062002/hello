@@ -706,7 +706,7 @@ GameObject:
   - 222: {fileID: 222000011541593282}
   - 114: {fileID: 114000012831658780}
   - 114: {fileID: 114000011884593766}
-  - 114: {fileID: 114000013740886354}
+  - 114: {fileID: 114000014072898540}
   m_Layer: 5
   m_Name: MessageText
   m_TagString: Untagged
@@ -1973,7 +1973,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: STRING_CLOUD_CLOUDSAVE
+  m_tid: TID_SAVE_CLOUD_CLOUDSAVE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000010957067638
@@ -2290,7 +2290,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_socialEnableBtn: {fileID: 114000010668796150}
   m_socialLogoutBtn: {fileID: 1000013722358350}
-  m_socialMessageText: {fileID: 114000013740886354}
+  m_socialMessageText: {fileID: 114000014072898540}
   m_cloudEnabledButton: {fileID: 1000013294978160}
   m_cloudDisabledButton: {fileID: 1000011190516038}
   m_resyncButton: {fileID: 114000013160773012}
@@ -2619,7 +2619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: STRING_CLOUD_BUTT_SYNCSAVE
+  m_tid: TID_SAVE_CLOUD_BUTT_SYNCSAVE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000012237815270
@@ -2936,7 +2936,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '#Compete with your Facebook friends'
+  m_Text: Compete with your Facebook friends
 --- !u!114 &114000013074647940
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3253,7 +3253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: STRING_CLOUD_SYNCSAVE
+  m_tid: TID_SAVE_CLOUD_SYNCSAVE_DESC
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000013533076864
@@ -3354,7 +3354,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '#Save'
+  m_Text: Save
 --- !u!114 &114000013709116192
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3388,20 +3388,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: LOGOUT
---- !u!114 &114000013740886354
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011131563528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: '#ENABLE'
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114000013742503640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3467,7 +3453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: '#Save'
+  m_tid: TID_GEN_SAVE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114000013839086636
@@ -3736,6 +3722,20 @@ MonoBehaviour:
   m_shadowAngle: 280
   m_shadowSize: 5.1
   m_shadowColor: {r: 1, g: 0.6413793, b: 0, a: 1}
+--- !u!114 &114000014072898540
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011131563528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114000014114129350
 MonoBehaviour:
   m_ObjectHideFlags: 1

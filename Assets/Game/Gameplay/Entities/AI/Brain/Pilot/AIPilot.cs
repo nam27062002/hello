@@ -37,6 +37,9 @@ namespace AI {
 		protected Vector3 m_homePosition;
 		public Vector3 homePosition { get { return m_homePosition; } }
 
+		protected Transform m_homeTransform;
+		public Transform homeTransform { get { return m_homeTransform; } set{ m_homeTransform = value; } }
+
 		protected Vector3 m_target;
 		public override Vector3 target { get { return m_target; } }
 

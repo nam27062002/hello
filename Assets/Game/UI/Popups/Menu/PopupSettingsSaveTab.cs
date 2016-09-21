@@ -18,14 +18,14 @@ using UnityEngine.UI;
 /// </summary>
 public class PopupSettingsSaveTab : MonoBehaviour
 {
-    private const string STRING_SPINNER_LOADING = "STRING_SPINNER_LOADING";
-    private const string STRING_CLOUD_SN = "STRING_CLOUD_SN";
-    private const string STRING_CLOUD_SN_LOGGED = "STRING_CLOUD_SN_LOGGED";
-    private const string STRING_SOCIAL_FB_LOGIN_MAINMENU_INCENTIVIZED = "STRING_SOCIAL_FB_LOGIN_MAINMENU_INCENTIVIZED";
-    private const string STRING_SOCIAL_FB_PERM_MAINMENU_INCENTIVIZED = "STRING_SOCIAL_FB_PERM_MAINMENU_INCENTIVIZED";
-    private const string STRING_SOCIAL_FB_PERM_MAINMENU = "STRING_SOCIAL_FB_PERM_MAINMENU";
-    private const string STRING_OPTIONS_USERPROFILE_LOG_RECEIVE_SN = "STRING_OPTIONS_USERPROFILE_LOG_RECEIVE_SN";
-    private const string STRING_OPTIONS_USERPROFILE_LOG_NETWORK = "STRING_OPTIONS_USERPROFILE_LOG_NETWORK";
+    private const string TID_LOADING = "TID_GEN_LOADING";
+    private const string TID_CLOUD_DESC = "TID_SAVE_CLOUD_DESC";
+    private const string TID_CLOUD_DESC_LOGGED = "TID_SAVE_CLOUD_LOGGED_DESC";
+    private const string TID_SOCIAL_LOGIN_MAINMENU_INCENTIVIZED = "TID_SOCIAL_LOGIN_MAINMENU_INCENTIVIZED";
+    private const string TID_SOCIAL_PERM_MAINMENU_INCENTIVIZED = "TID_SOCIAL_PERM_MAINMENU_INCENTIVIZED";
+    private const string TID_SOCIAL_PERM_MAINMENU = "TID_SOCIAL_PERM_MAINMENU";
+    private const string TID_OPTIONS_USERPROFILE_LOG_RECEIVE = "TID_SOCIAL_USERPROFILE_LOG_RECEIVE";
+    private const string TID_OPTIONS_USERPROFILE_LOG_NETWORK = "TID_SOCIAL_USERPROFILE_LOG_NETWORK";
 
     void Awake()
     {            
@@ -156,12 +156,12 @@ public class PopupSettingsSaveTab : MonoBehaviour
             if (Model_SocialIsLoggedIn(network) && Model_SaveIsCloudSaveEnabled())
             {
                 // ... show an advice about cloud save.
-                m_socialMessageText.Localize(STRING_CLOUD_SN_LOGGED, localizedName);
+                m_socialMessageText.Localize(TID_CLOUD_DESC_LOGGED, localizedName);
             }
             else
             {
                 // else use a generic string.
-                m_socialMessageText.Localize(STRING_CLOUD_SN, localizedName);
+                m_socialMessageText.Localize(TID_CLOUD_DESC, localizedName);
             }
         }
     }
@@ -506,7 +506,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             m_userAvatarImage.gameObject.SetActive(false);
             //m_profileSpinner.SetActive(true);
 
-            m_userNameText.text = LocalizationManager.SharedInstance.Get(STRING_SPINNER_LOADING);
+            m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
 
             Model_SocialGetProfileInfo(SocialFacade.Network.Default, 
             delegate (string userName) 
@@ -563,7 +563,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     }
                     else
                     {
-                        m_userNotLoggedInRewardText.Localize(STRING_SOCIAL_FB_PERM_MAINMENU);
+                        m_userNotLoggedInRewardText.Localize(TID_SOCIAL_PERM_MAINMENU);
                     }
 
                     break;
@@ -574,7 +574,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
                     if (!string.IsNullOrEmpty(centeredNetwork))
                     {
-                        m_userNotLoggedInMessageText.Localize(STRING_OPTIONS_USERPROFILE_LOG_RECEIVE_SN, centeredNetwork);
+                        m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, centeredNetwork);
                     }
                     //m_spriteBGReceive.SetActive(true);
 
@@ -588,8 +588,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
                     if (!string.IsNullOrEmpty(centeredNetwork))
                     {
-                        m_userPreviouslyLoggedInMessageText.Localize(STRING_OPTIONS_USERPROFILE_LOG_NETWORK, centeredNetwork);
-                        m_socialMessageText.Localize(STRING_CLOUD_SN, centeredNetwork);
+                        m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, centeredNetwork);
+                        m_socialMessageText.Localize(TID_CLOUD_DESC, centeredNetwork);
                     }
 
                     break;
@@ -603,8 +603,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         if (localizedName != null)
         {
-            m_userNotLoggedInMessageText.Localize(STRING_OPTIONS_USERPROFILE_LOG_RECEIVE_SN, localizedName);
-            m_userPreviouslyLoggedInMessageText.Localize(STRING_OPTIONS_USERPROFILE_LOG_NETWORK, localizedName);            
+            m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, localizedName);
+            m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, localizedName);            
         }
     }
     #endregion

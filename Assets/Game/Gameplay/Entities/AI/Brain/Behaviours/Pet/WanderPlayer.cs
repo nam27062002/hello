@@ -37,11 +37,7 @@ namespace AI {
 			}
 
 			private void SelectTarget() {
-
-				if ( InstanceManager.player != null )
-				{
-					m_target = InstanceManager.player.transform;	//  Get Pet position??
-				}
+				m_target = m_pilot.homeTransform;	//  Get Pet position??
 			}
 		}
 	}
