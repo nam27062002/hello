@@ -16,7 +16,7 @@ public class Builder : MonoBehaviour
 	const string m_apkName = "hd";
 	const string m_AndroidSymbols = "";
 
-	[MenuItem ("Build/IOs")]
+	//[MenuItem ("Build/IOs")]
 	static void GenerateXcode()
 	{
 		// Save Player Settings
@@ -47,7 +47,7 @@ public class Builder : MonoBehaviour
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, oldSymbols);
 	}
 	
-	[MenuItem ("Build/Android")]
+	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
 	{
 		// Save Player Settings
@@ -110,8 +110,14 @@ public class Builder : MonoBehaviour
 
 	/// <summary>
 	/// Sets the version number via console argument.
+	/// Expected args: -version version_number
+	/// Used by the development team, QC, etc. to identify each build internally.
+	/// Format X.Y.Z where:
+	/// - X: Development Stage [1..4] (1 - Preproduction, 2 - Production, 3 - Soft Launch, 4 - Worldwide Launch)
+	/// - Y: Sprint Number [1..N]
+	/// - Z: Build Number [1..N] within the sprint, increased by 1 for each new build
 	/// </summary>
-	private static void SetVersionNumber() {
+	private static void SetInternalVersion() {
 		// Get new version number from parameter
 		string versionString = GetArg("-version");
 		if(string.IsNullOrEmpty(versionString)) {
@@ -152,18 +158,60 @@ public class Builder : MonoBehaviour
 		}
 	}
 
-	[MenuItem ("Build/Increase Minor Version Number")]
+	//[MenuItem ("Build/Increase Minor Version Number")]
 	private static void IncreaseMinorVersionNumber()
 	{
 		// Increase game settings internal version
 		GameSettings.internalVersion.patch++;
-		EditorUtility.SetDirty(GameSettings.instance);
 
 		// Save assets
+		EditorUtility.SetDirty(GameSettings.instance);
 		AssetDatabase.SaveAssets();
 	}
+
+	/// <summary>
+	/// Manually sets the public version in a target platform(s).
+	/// Expected arguments: [-ios ios_version_name] [-ggp ggp_version_name] [-amz amz_version_name]
+	/// Public version number displayed in the stores, used by the players to identify different application updates
+	/// Format X.Y where:
+	/// - X: Arbitrary, only changed on major game change (usually never)
+	/// - 0 during Preproduction/Production
+	/// - [1..N] at Soft/WW Launch
+	/// - Y: Increased for every push to the app store [1..N]
+	/// </summary>
+	private static void SetPublicVersion() {
+		// Aux vars
+		bool dirty = false;
+
+		// Try iOS
+		string iosVersion = GetArg("-ios");
+		if(!string.IsNullOrEmpty(iosVersion)) {
+			GameSettings.publicVersioniOS = iosVersion;
+			dirty = true;
+		}
+
+		// Try Google Play
+		string ggpVersion = GetArg("-ggp");
+		if(!string.IsNullOrEmpty(ggpVersion)) {
+			GameSettings.publicVersionGGP = ggpVersion;
+			dirty = true;
+		}
+
+		// Try Amazon
+		string amzVersion = GetArg("-amz");
+		if(!string.IsNullOrEmpty(amzVersion)) {
+			GameSettings.publicVersionAmazon = amzVersion;
+			dirty = true;
+		}
+
+		// Save assets
+		if(dirty) {
+			EditorUtility.SetDirty(GameSettings.instance);
+			AssetDatabase.SaveAssets();
+		}
+	}
 	
-	[MenuItem ("Build/Increase Version Codes")]
+	//[MenuItem ("Build/Increase Version Codes")]
 	private static void IncreaseVersionCodes()
 	{
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
@@ -205,7 +253,7 @@ public class Builder : MonoBehaviour
 		}
 	}
 
-	[MenuItem ("Build/Output Version")]
+	//[MenuItem ("Build/Output Version")]
 	private static void OutputVersion() {
 		StreamWriter sw = File.CreateText("outputVersion.txt");
 		sw.WriteLine( GameSettings.internalVersion );
