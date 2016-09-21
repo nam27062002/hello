@@ -108,8 +108,8 @@ public class WeiboSocialSystem : ISocialSystem
                             /*
                             //[DGR] No support added yet
                             MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
-                            config.titleText = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_TITLE";
-							config.messageText = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_TEXT";
+                            config.titleText = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
+							config.messageText = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_DESC";
                             config.messageArgs = new object[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()),
 								SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
 							config.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.cancel;
@@ -129,8 +129,8 @@ public class WeiboSocialSystem : ISocialSystem
                             config.onCancel = delegate ()
                             {
                                 MessageBoxPopup.MessageBoxConfig cancelConfig = new MessageBoxPopup.MessageBoxConfig();
-                                cancelConfig.titleText = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_TITLE";
-								cancelConfig.messageText = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_TEXT_SN";
+                                cancelConfig.titleText = "TID_SAVE_ERROR_CLOUD_DISABLED_NAME";
+								cancelConfig.messageText = "TID_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_DESC";
 								cancelConfig.messageArgs = new object[] { SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
 								cancelConfig.cancelEnabled = false;
 								cancelConfig.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.confirm;
@@ -157,8 +157,8 @@ public class WeiboSocialSystem : ISocialSystem
                             //[DGR] No support added yet
                             MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
 
-                            config.titleText = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT";
-							config.messageText = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT_FB_SN";
+                            config.titleText = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_NAME";
+							config.messageText = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_DESC";
 							config.messageArgs = new object[] { SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
                             config.onConfirm = delegate ()
                             {
@@ -185,8 +185,8 @@ public class WeiboSocialSystem : ISocialSystem
 
                     config.cancelEnabled = false;
 
-                    config.titleText = "STRING_SOCIAL_LOGIN_FAILED";
-                    config.messageText = "STRING_SOCIAL_LOGIN_FAILED_FB_SN";
+                    config.titleText = "TID_SOCIAL_LOGIN_FAILED_NAME";
+                    config.messageText = "TID_SOCIAL_LOGIN_FAILED_DESC";
                     config.messageArgs = new object[] { SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
                     config.onConfirm = delegate ()
                     {
@@ -225,8 +225,8 @@ public void Authenticate(Action onComplete = null)
                 //[DGR] No support added yet
                 MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
 
-                config.titleText = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT";
-                config.messageText = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT_FB_SN";
+                config.titleText = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_NAME";
+                config.messageText = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_DESC";
                 config.messageArgs = new object[]{SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
                 config.onConfirm = delegate ()
                 {
@@ -310,8 +310,8 @@ public void AskForPublishPermission(Action<bool> onPermissionGranted)
                 //[DGR] No support added yet
                 MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
 
-                config.titleText = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT";
-                config.messageText = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT_FB_SN";
+                config.titleText = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_NAME";
+                config.messageText = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_DESC";
                 config.messageArgs = new object[] { SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
                 config.onConfirm = delegate ()
                 {
@@ -324,8 +324,8 @@ public void AskForPublishPermission(Action<bool> onPermissionGranted)
                 config.modal = false;
                 MessageBoxPopup.OpenMessageBox(config);
                 */
-        }
-        else
+            }
+            else
         {
             onFailedPermissions();
         }
@@ -378,8 +378,8 @@ if (!m_socialSaveSystem.WasSocialSystemIncentivised(SocialFacade.Network.Weibo))
         HSXAnalyticsManager.Instance.CurrencyEarned("LoginReward", "Weibo", m_loginRewardType.ToString(), m_loginRewardAmount);
 
         MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
-        config.titleText = "STRING_SOCIAL_LOGIN_COMPLETE_TITLE";
-        config.messageText = "STRING_SOCIAL_LOGIN_COMPLETE_FB";
+        config.titleText = "TID_SOCIAL_LOGIN_COMPLETE_NAME";
+        config.messageText = "TID_SOCIAL_LOGIN_COMPLETE_DESC";
         config.messageArgs = new object[] { m_loginRewardAmount, currencySymbol }; //TODO need to replace both value and symbol
         config.onConfirm = delegate ()
         {
