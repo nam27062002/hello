@@ -91,6 +91,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_particleTimer = 0f;
 	}
 
+	public void Disable() {
+		m_state = State.Burned;
+	}
+
 	public void UpdateLogic() {
 		if (m_fireSprite != null)
 			m_fireSprite.transform.position = transform.position;
