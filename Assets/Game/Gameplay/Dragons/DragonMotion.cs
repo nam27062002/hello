@@ -315,7 +315,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// entering new state
 			switch (_nextState) {
 				case State.Idle:
-					m_animator.SetBool("fly", false);
+					m_animator.SetBool("move", false);
 
 					// m_impulse = Vector3.zero;
 					// m_rbody.velocity = m_impulse;
@@ -325,11 +325,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 
 				case State.Fly:
-					m_animator.SetBool("fly", true);
+					m_animator.SetBool("move", true);
 					break;
 
 				case State.Fly_Down:
-					m_animator.SetBool("fly", true);
+					m_animator.SetBool("move", true);
 					m_animator.SetBool("fly down", true);
 					break;
 
@@ -343,7 +343,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				{
 					if ( m_canMoveInsideWater )
 					{
-						m_animator.SetBool("fly", false);
+						m_animator.SetBool("move", false);
 						m_animator.SetBool("swim", true);
 					}
 					else
@@ -476,7 +476,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_currentFrontBend.x = Util.MoveTowardsWithDamping(m_currentFrontBend.x, desiredBendX, blendRate*dt, blendDampingRange);
 		m_animator.SetFloat("direction X", m_currentFrontBend.x);
 		m_currentBackBend.x = Util.MoveTowardsWithDamping(m_currentBackBend.x, desiredBendX * backMultiplier, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("back directionX", m_currentBackBend.x);
+		m_animator.SetFloat("back direction X", m_currentBackBend.x);
 
 
 		float desiredBendY = Mathf.Clamp(localDir.y*2.0f, -1.0f, 1.0f);		// max Y bend is about 45 degrees, so *2.

@@ -29,13 +29,13 @@ public class FollowTarget : Initializable {
 	}
 
 	void OnEnable() {
-		m_animator.SetBool("fly", true);
+		m_animator.SetBool("move", true);
 	}
 
 	void OnDisable() {
 		m_target = null;
 		m_motion.Stop();
-		m_animator.SetBool("fly", false);
+		m_animator.SetBool("move", false);
 	}
 
 	public void SetTarget(MotionInterface _target) {
