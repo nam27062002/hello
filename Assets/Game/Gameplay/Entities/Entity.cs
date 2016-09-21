@@ -62,7 +62,7 @@ public class Entity : IEntity {
 	void Awake() {
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
-
+		m_bounds = GetComponentInChildren<CircleArea2D>();
 	}
 
 	private void InitFromDef() {
@@ -105,7 +105,7 @@ public class Entity : IEntity {
 	// Use this for initialization
 	IEnumerator Start () 
 	{
-		m_bounds = GetComponentInChildren<CircleArea2D>();
+		
 		while( Camera.main == null )
 			yield return null;
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
