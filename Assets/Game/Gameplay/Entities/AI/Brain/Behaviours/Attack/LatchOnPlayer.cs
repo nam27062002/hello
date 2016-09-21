@@ -29,6 +29,8 @@ namespace AI {
 
 			private Transform m_holdTransform;
 
+			private Machine m_myMachine;
+
 			//--------------------------------------------------------
 			public override StateComponentData CreateData() {
 				return new LatchData();
@@ -40,6 +42,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 
+				m_myMachine = m_pilot.GetComponent<AI.Machine>();
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 				m_eatBehaviour.enabled = false;
 				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
@@ -95,8 +98,12 @@ namespace AI {
 				base.OnUpdate();
 				if (m_holdTransform)
 				{
-					m_pilot.GoTo( m_holdTransform.position );
-					m_pilot.RotateTo( m_holdTransform.rotation );
+					if (m_myMachine.IsDead() || m_myMachine.IsDying())	{
+						Transition(OnEndLatching, m_transitionParam);	
+					}else{	
+						m_pilot.GoTo( m_holdTransform.position );
+						m_pilot.RotateTo( m_holdTransform.rotation );
+					}
 				}
 			}
 

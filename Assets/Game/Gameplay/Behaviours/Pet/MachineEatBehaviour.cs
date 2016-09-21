@@ -66,7 +66,8 @@ public class MachineEatBehaviour : EatBehaviour {
 		{
 			m_machine.StopAttackTarget();	// Stop Attacking Target
 		}
-		base.BiteKill();
+		if ( !m_machine.IsDead() && !m_machine.IsDying() )
+			base.BiteKill();
 	}
 
 
