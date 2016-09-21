@@ -6,11 +6,11 @@ public class ZoneManager : MonoBehaviour {
 	public enum ZoneEffect {
 		None = 0,
 		S, // feedback
-		M, // burn / destroy
-		L  // explode
+		M, // burn / destroy with KB or collide 
+		L  // explode / destroy
 	};
 
-	private enum Zone {
+	public enum Zone {
 		None = 0,
 		Zone1,
 		Zone2
@@ -82,7 +82,7 @@ public class ZoneManager : MonoBehaviour {
 		return ZoneEffect.None;
 	}
 
-	private Zone GetZone(float _z) {
+	public Zone GetZone(float _z) {
 		if (_z > -m_zone1Size * 0.5f) {
 			if (_z < m_zone1Size * 0.5f) {
 				return Zone.Zone1;
