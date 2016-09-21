@@ -10,6 +10,7 @@ public class DestructibleDecoration : Initializable {
 	}
 
 	[SerializeField] private DestructionType m_zone1Effect = DestructionType.Collision;
+	[SerializeField] private float m_knockBackStrength = 5f;
 	[CommentAttribute("Add a destroy effect when this object is trampled by Dragon.")]
 	[SerializeField] private string m_destroyParticle = "";
 
@@ -118,17 +119,17 @@ public class DestructibleDecoration : Initializable {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_destroyParticle != "") {
-						ParticleManager.Spawn(m_destroyParticle, transform.position);
+						ParticleManager.Spawn(m_destroyParticle, transform.position + m_collider.center);
 					}
 
-					if (m_addKnockBack) {
+					if (m_addKnockBack && m_knockBackStrength > 0f) {
 						DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
 
-						Vector3 knockBack = dragonMotion.transform.position - transform.position;
+						Vector3 knockBack = dragonMotion.transform.position - (transform.position + m_collider.center);
 						knockBack.z = 0f;
 						knockBack.Normalize();
 
-						knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * 5f, 2f));
+						knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
 
 						dragonMotion.AddForce(knockBack);
 					}
