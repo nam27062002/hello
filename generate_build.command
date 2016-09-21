@@ -69,6 +69,9 @@ SCRIPT_PATH="$(pwd)"
 echo
 echo "BUILDER: Running script from path ${SCRIPT_PATH}"
 
+# Initialize default Unity parameters
+UNITY_PARAMS="-batchmode -projectPath \"${SCRIPT_PATH}\" -logfile -nographics -quit"
+
 # Update git
 # Revert changes to modified files.
 git reset --hard
@@ -93,20 +96,20 @@ if $INCREASE_VERSION_NUMBER; then
     echo
     echo "BUILDER: Increasing internal version number..."
     #set +e  # For some unknown reason, in occasions the Builder.IncreaseMinorVersionNumber causes an error, making the script to stop - Disable exitOnError for this single instruction
-    "${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseMinorVersionNumber -projectPath "${SCRIPT_PATH}" -quit
+    "${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.IncreaseMinorVersionNumber | grep "BUILDER"
     #set -e
 fi
 
 # Increase build unique code
 echo
 echo "BUILDER: Increasing Build Code..."
-"${UNITY_APP}" -batchmode -executeMethod Builder.IncreaseVersionCodes -projectPath "${SCRIPT_PATH}" -quit
+"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.IncreaseVersionCodes | grep "BUILDER"
 
 # Read internal version number
 # Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
 echo
 echo "BUILDER: Reading internal version number..."
-"${UNITY_APP}" -batchmode -executeMethod Builder.OutputVersion -projectPath "${SCRIPT_PATH}" -quit
+"${UNITY_APP}" "${UNITY_PARAMS}" -executeMethod Builder.OutputVersion | grep "BUILDER"
 VERSION_ID="$(cat outputVersion.txt)"
 echo $VERSION_ID
 rm -f "outputVersion.txt"
@@ -123,7 +126,7 @@ if $BUILD_ANDROID; then
     mkdir -p "${OUTPUT_DIR}/apks/"
     
     # Do it!
-    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateAPK -projectPath "${SCRIPT_PATH}" -quit -buildTarget android -outputDir "${OUTPUT_DIR}"
+    "${UNITY_APP}" "${UNITY_PARAMS}" -buildTarget android -executeMethod Builder.GenerateAPK -outputDir "${OUTPUT_DIR}" | grep "BUILDER"
 fi
 
 # Generate iOS build
@@ -131,7 +134,7 @@ if $BUILD_IOS; then
     # Generate XCode project
     echo
     echo "BUILDER: Generating XCode Project..."
-    "${UNITY_APP}" -batchmode -executeMethod Builder.GenerateXcode -projectPath "${SCRIPT_PATH}" -quit -buildTarget ios -outputDir "${OUTPUT_DIR}"
+    "${UNITY_APP}" "${UNITY_PARAMS}" -buildTarget ios -executeMethod Builder.GenerateXcode -outputDir "${OUTPUT_DIR}" | grep "BUILDER"
 
     # Make sure output dirs exist
     mkdir -p "${OUTPUT_DIR}/archives/"
