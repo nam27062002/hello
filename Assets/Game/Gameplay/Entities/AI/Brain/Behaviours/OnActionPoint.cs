@@ -17,7 +17,8 @@ namespace AI {
 
 			protected OnActionPointData m_data;
 
-			protected float m_timer;
+			private ActionPoint m_ap;
+			private float m_timer;
 
 			public override StateComponentData CreateData() {
 				return new OnActionPointData();
@@ -34,10 +35,14 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.PressAction(Pilot.Action.Scared);
 				m_pilot.Stop();
+
+				m_ap = ActionPointManager.instance.GetActionPointAt(m_machine.transform.position);
+				m_ap.Enter();
 			}
 
 			protected override void OnExit(State newState) {
 				m_pilot.ReleaseAction(Pilot.Action.Scared);
+				m_ap.Leave();
 			}
 
 			protected override void OnUpdate() {

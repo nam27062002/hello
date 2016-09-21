@@ -74,7 +74,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	public void OnAddCoins() {
 		// Just do it
 		UsersManager.currentUser.AddCoins(m_coinsAmount);
-		PersistenceManager.Save();
+		PersistenceManager.Save(true);
 
 		// Close popup?
 		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
@@ -86,7 +86,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	public void OnAddPC() {
 		// Just do it
 		UsersManager.currentUser.AddPC(m_pcAmount);
-		PersistenceManager.Save();
+		PersistenceManager.Save(true);
 
 		// Close popup?
 		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);

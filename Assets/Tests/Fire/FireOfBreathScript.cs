@@ -8,8 +8,9 @@ public class FireOfBreathScript : MonoBehaviour {
         MeshRenderer mrenderer = GetComponent<MeshRenderer>();
         mrenderer.material.SetFloat("seed", Random.value);
 
-//        Animation anim = GetComponent<Animation>();
-//        anim.Play();
+        Animation anim = GetComponent<Animation>();
+        anim.Play();
+//        Debug.Log("FireOfBreathScript - Start()");
 //        Destroy(gameObject, anim.clip.length);
 	}
 	

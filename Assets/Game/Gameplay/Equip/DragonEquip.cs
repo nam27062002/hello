@@ -47,7 +47,7 @@ public class DragonEquip : MonoBehaviour {
 
 	void Start()
 	{
-	/*
+
 		string pet = "Game/Equipable/Pets/PF_PetMachine";
 		GameObject prefabObj = Resources.Load<GameObject>(pet);
 		GameObject equipable = Instantiate<GameObject>(prefabObj);
@@ -62,7 +62,6 @@ public class DragonEquip : MonoBehaviour {
 				component.Spawn(null);
 			}
 		}
-		*/
 	}
 
 	public void PreviewDisguise(string _disguise) {
