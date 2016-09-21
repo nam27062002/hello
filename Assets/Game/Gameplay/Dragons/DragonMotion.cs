@@ -359,6 +359,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				{
 					m_animator.Play("BaseLayer.Intro");
 					m_introTimer = m_introDuration;
+					RotateToDirection( Vector3.right );
 				}break;
 				case State.Latching:
 				{
@@ -406,6 +407,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_introTimer -= Time.deltaTime;
 				if ( m_introTimer <= 0 )
 					ChangeState( State.Idle );
+				RotateToDirection( Vector3.right );
 				// float delta = m_introTimer / m_introDuration;
 				// m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
 				// m_destination += m_introTarget;
