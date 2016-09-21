@@ -8,10 +8,12 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 469370}
-  - 114: {fileID: 11420746}
+  - 114: {fileID: 114000012508620092}
   - 114: {fileID: 11474300}
-  - 114: {fileID: 11402152}
-  m_Layer: 0
+  - 114: {fileID: 11420746}
+  - 114: {fileID: 114000013213110956}
+  - 65: {fileID: 65000012781704786}
+  m_Layer: 16
   m_Name: PF_Strew_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -131,10 +133,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105652}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000016292068}
-  m_LocalPosition: {x: 84.54, y: 5.060509, z: 3.82}
+  m_LocalRotation: {x: -0, y: 0.89036244, z: -0, w: -0.45525247}
+  m_LocalPosition: {x: 10.78, y: 0.221, z: -0.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -126.07201, z: 0}
   m_Children:
   - {fileID: 421286}
   - {fileID: 407968}
@@ -260,20 +262,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11402152
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 105652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: hay
-  m_onAppearSoundProbability: 0
-  m_onApprearSounds: []
 --- !u!114 &11420746
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -327,3 +315,41 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 105652}
   m_IsPrefabParent: 1
+--- !u!65 &65000012781704786
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105652}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.24, y: 0.87, z: 2.54}
+  m_Center: {x: 0, y: 0.41, z: 0}
+--- !u!114 &114000012508620092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: straw_bale
+--- !u!114 &114000013213110956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Effect: 2
+  m_knockBackStrength: 1
+  m_destroyParticle: PF_straw_explosion

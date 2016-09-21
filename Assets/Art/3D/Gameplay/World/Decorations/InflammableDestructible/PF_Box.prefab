@@ -74,10 +74,12 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 496988}
-  - 114: {fileID: 11436206}
+  - 114: {fileID: 114000012794420204}
   - 114: {fileID: 11458008}
-  - 114: {fileID: 11488622}
-  m_Layer: 0
+  - 114: {fileID: 11436206}
+  - 114: {fileID: 114000010658463718}
+  - 65: {fileID: 65000012752861192}
+  m_Layer: 16
   m_Name: PF_Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +132,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175384}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000016292068}
-  m_LocalPosition: {x: 68.93, y: 5.060509, z: 3.82}
+  m_LocalPosition: {x: 33.93, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
   m_Children:
@@ -284,20 +286,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 15
---- !u!114 &11488622
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 175384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: box_01
-  m_onAppearSoundProbability: 0
-  m_onApprearSounds: []
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -309,3 +297,41 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 175384}
   m_IsPrefabParent: 1
+--- !u!65 &65000012752861192
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 175384}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.63, y: 0.76, z: 1.04}
+  m_Center: {x: 0, y: 0.38, z: 0}
+--- !u!114 &114000010658463718
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 175384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Effect: 2
+  m_knockBackStrength: 2
+  m_destroyParticle: PF_WoodHit
+--- !u!114 &114000012794420204
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 175384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: box_01
