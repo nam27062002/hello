@@ -72,6 +72,8 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState) {
+				if ( m_eatBehaviour.IsLatching() )
+					m_eatBehaviour.EndHold();
 				m_eatBehaviour.enabled = false;
 				m_holdTransform = null;
 				m_pilot.ReleaseAction(Pilot.Action.Latching);
@@ -99,6 +101,8 @@ namespace AI {
 				if (m_holdTransform)
 				{
 					if (m_myMachine.IsDead() || m_myMachine.IsDying())	{
+						if ( m_eatBehaviour.IsLatching() )
+							m_eatBehaviour.EndHold();
 						Transition(OnEndLatching, m_transitionParam);	
 					}else{	
 						m_pilot.GoTo( m_holdTransform.position );
