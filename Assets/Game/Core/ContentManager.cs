@@ -17,7 +17,7 @@ public class ContentManager
 
 		// Settings
 		kDefinitionFiles.Add(DefinitionsCategory.LOCALIZATION, new string[]{"Rules/localizationDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings"});
+		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings", "Rules/initialSettings"});
 		// kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
 		// Progression
@@ -59,12 +59,12 @@ public class ContentManager
 
 		// Power Ups
 		kDefinitionFiles.Add(DefinitionsCategory.POWERUPS, new string[]{"Rules/powerUpsDefinitions"});
+        
+        // ADD HERE ANY NEW DEFINITIONS FILE!
 
-		// ADD HERE ANY NEW DEFINITIONS FILE!
 
 
-
-		List<string> kRulesListToCalculateCRC = new List<string>();
+        List<string> kRulesListToCalculateCRC = new List<string>();
 		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, ref kRulesListToCalculateCRC );
 		m_ready = true;
 

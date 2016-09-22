@@ -214,15 +214,52 @@ public static class PersistenceManager {
 	/// <param name="_profileName">The name of the profile to be loaded.</param>
 	public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "") 
 	{
-		// Load data from prefab
-		CheckProfileName(ref _profileName);
-		TextAsset defaultProfile = Resources.Load<TextAsset>(PersistenceProfile.RESOURCES_FOLDER + _profileName);
-		if(defaultProfile != null) 
-		{
-			return SimpleJSON.JSON.Parse( defaultProfile.text ) as SimpleJSON.JSONClass;
-		}
+        SimpleJSON.JSONClass _returnValue = null;
 
-		return null;
+        // Load data from prefab
+        CheckProfileName(ref _profileName);
+        
+        // The default profile is created from rules
+        if (_profileName == PersistenceProfile.DEFAULT_PROFILE)
+        {
+            DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
+            if (_def != null)
+            {
+                string _sc = _def.Get("softCurrency");
+                string _pc = _def.Get("hardCurrency");
+                string _initialDragonSku = _def.Get("initialDragonSKU");                
+
+                _returnValue = new SimpleJSON.JSONClass();
+
+                // User Profile: sc, pc, currentDragon
+                SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
+                _userProfile.Add("sc", _sc);
+                _userProfile.Add("pc", _pc);
+                _userProfile.Add("currentDragon", _initialDragonSku);
+                _userProfile.Add("currentLevel", "level_0");                
+                _returnValue.Add("userProfile", _userProfile);
+
+                // Initial dragon
+                SimpleJSON.JSONClass _dragon = new SimpleJSON.JSONClass();
+                _dragon.Add("sku", _initialDragonSku);
+                _dragon.Add("owned", "true");                
+
+                // Dragons
+                SimpleJSON.JSONArray _dragons = new SimpleJSON.JSONArray();
+                _dragons.Add(_dragon);
+                _returnValue.Add("dragons", _dragons);                
+            }
+        }
+        else
+        {
+            TextAsset defaultProfile = Resources.Load<TextAsset>(PersistenceProfile.RESOURCES_FOLDER + _profileName);
+            if (defaultProfile != null)
+            {
+                _returnValue =  SimpleJSON.JSON.Parse(defaultProfile.text) as SimpleJSON.JSONClass;
+            }
+        }
+
+		return _returnValue;
 	}
 
 	//------------------------------------------------------------------//
@@ -278,11 +315,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLoadingPopup()
     {
         if (!Popups_IsLoadingPopupOpen())
-        {
-            PopupMessage.Config config = PopupMessage.GetConfig();
-            config.TitleTid = "TID_SAVE_CLOUD_LOADING_NAME";
-            config.MessageTid = "TID_SAVE_CLOUD_LOADING_WAIT";
-            Popups_LoadingPopup = PopupManager.PopupMessage_Open(config);
+        {            
+            Popups_LoadingPopup = PopupManager.PopupLoading_Open();
         }
     }
 
@@ -879,9 +913,15 @@ public static class PersistenceManager {
     /// </summary>
     /// <returns></returns>
     public static int Rules_GetPCAmountToIncentivizeSocial()
+    {
+        int returnValue = 0;
+        DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+        if (_def != null)
         {
-        // [DGR] RULES: To read from content
-        return 25;
+            returnValue = _def.GetAsInt("incentivizeFBGem");
+        }
+
+        return returnValue;
     }
 #endregion
 }

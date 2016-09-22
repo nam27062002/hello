@@ -27,7 +27,7 @@ public class DefinitionsCategory
 
 	// General
 	public const string LOCALIZATION = "LOCALIZATION";
-	public const string SETTINGS = "SETTINGS";		// Contains several xml files with different signatures: gameSettings, dragonSettings...
+	public const string SETTINGS = "SETTINGS";		// Contains several xml files with different signatures: gameSettings, dragonSettings, initialSettings,...
 
 	// Progression
 	public const string LEVELS = "LEVELS";
@@ -68,7 +68,6 @@ public class DefinitionsCategory
 	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";
 
 	// Power Ups
-	public const string POWERUPS = "POWERUPS";
-
+	public const string POWERUPS = "POWERUPS";    
 };
     
