@@ -27,7 +27,7 @@ public class DefinitionsCategory
 
 	// General
 	public const string LOCALIZATION = "LOCALIZATION";
-	public const string SETTINGS = "SETTINGS";		// Contains several xml files with different signatures: gameSettings, dragonSettings...
+	public const string SETTINGS = "SETTINGS";		// Contains several xml files with different signatures: gameSettings, dragonSettings, initialSettings,...
 
 	// Progression
 	public const string LEVELS = "LEVELS";
@@ -62,13 +62,12 @@ public class DefinitionsCategory
 	// Fire and Destruction properties
 	public const string FIRE_SPAWN_EFFECTS = "FIRE_SPAWN_EFFECTS";
 	public const string FIRE_DECORATION_EFFECTS = "FIRE_DECORATION_EFFECTS";
-	public const string BURN_DECORATION = "BURN_DECORATION";
+	public const string BURN_DESTRUCTION_DECORATION = "BURN_DECORATION";
 
 	// Hold Prey
 	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";
 
 	// Power Ups
-	public const string POWERUPS = "POWERUPS";
-
+	public const string POWERUPS = "POWERUPS";    
 };
     

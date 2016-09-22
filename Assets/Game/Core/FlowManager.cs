@@ -82,8 +82,9 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
         //SaveFacade.DestroyInstance();     
         SaveFacade.Instance.Reset();   
 
-        // Change to the loading scene
-        GameSceneManager.SwitchScene(LoadingSceneController.NAME);
+        // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
+        // from the editor)
+        GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);
 	}
 }
 
