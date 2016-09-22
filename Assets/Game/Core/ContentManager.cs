@@ -60,11 +60,14 @@ public class ContentManager
 		// Power Ups
 		kDefinitionFiles.Add(DefinitionsCategory.POWERUPS, new string[]{"Rules/powerUpsDefinitions"});
 
-		// ADD HERE ANY NEW DEFINITIONS FILE!
+        // Initial Settings
+        kDefinitionFiles.Add(DefinitionsCategory.INITIAL_SETTINGS, new string[] { "Rules/initialSettings" });
+
+        // ADD HERE ANY NEW DEFINITIONS FILE!
 
 
 
-		List<string> kRulesListToCalculateCRC = new List<string>();
+        List<string> kRulesListToCalculateCRC = new List<string>();
 		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, ref kRulesListToCalculateCRC );
 		m_ready = true;
 

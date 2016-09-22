@@ -70,5 +70,7 @@ public class DefinitionsCategory
 	// Power Ups
 	public const string POWERUPS = "POWERUPS";
 
+    // Initial Settings
+    public const string INITIAL_SETTINGS = "INITIAL_SETTINGS";
 };
     
