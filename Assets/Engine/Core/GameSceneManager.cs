@@ -99,22 +99,26 @@ public class GameSceneManager : SingletonMonoBehaviour<GameSceneManager> {
 		UpdateState();
 	}
 
-	//------------------------------------------------------------------//
-	// STATIC PUBLIC METHODS											//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Switchs to the given scene, unless we're already on it.
-	/// </summary>
-	/// <param name="_nextSceneName">The name of the scene to go to.</param>
-	/// <param name="_loadingScene">Optionally define a scene to be loaded between the current scene and the next one.</param>
-	public static void SwitchScene(string _nextSceneName, string _loadingScene = "") {
+    //------------------------------------------------------------------//
+    // STATIC PUBLIC METHODS											//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Switchs to the given scene, unless we're already on it.
+    /// </summary>
+    /// <param name="_nextSceneName">The name of the scene to go to.</param>
+    /// <param name="_loadingScene">Optionally define a scene to be loaded between the current scene and the next one.</param>
+    /// <param name="_forceScene">When <c>true</c> <c>_nextsceneName</c> is loaded even though it's already the current scene.</param>
+    public static void SwitchScene(string _nextSceneName, string _loadingScene = "", bool _forceScene = false) {
 		// If the target scene is different than the current one, store it as next scene
 		if(currentScene != _nextSceneName) {
 			// Store next scene, the load will begin on the next Update() call
 			instance.m_nextScene = _nextSceneName;
 			instance.m_loadingScene = _loadingScene;
 		}
-	}
+        else if (_forceScene) {
+            instance.ChangeState(ESceneState.RESET);
+        }
+    }        	
 
 	/// <summary>
 	/// Specially for debugging, force the name of the current scene.
