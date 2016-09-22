@@ -3,14 +3,15 @@ using System.Collections;
 
 public class DestructibleDecoration : Initializable {
 
-	private enum DestructionType {
+	private enum InteractionType {
 		Collision = 0,
-		GoThrough,
-		DestroyAndKB
+		GoThrough
 	}
 
-	[SerializeField] private DestructionType m_zone1Effect = DestructionType.Collision;
+	[SerializeField] private InteractionType m_zone1Interaction = InteractionType.Collision;
 	[SerializeField] private float m_knockBackStrength = 5f;
+	[CommentAttribute("Add a feedback effect when this object is touched by Dragon.")]
+	[SerializeField] private string m_feddbackParticle = "";
 	[CommentAttribute("Add a destroy effect when this object is trampled by Dragon.")]
 	[SerializeField] private string m_destroyParticle = "";
 
@@ -25,7 +26,6 @@ public class DestructibleDecoration : Initializable {
 	private Entity m_entity;
 
 	private bool m_spawned = false;
-	private bool m_addKnockBack = false;
 
 	private DragonBreathBehaviour m_breath;
 
@@ -57,7 +57,7 @@ public class DestructibleDecoration : Initializable {
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
 		m_zone = m_zoneManager.GetZone(transform.position.z);
-		m_effect = m_zoneManager.GetFireEffectCode(transform.position, m_entity.sku);
+		m_effect = m_zoneManager.GetDestructionEffectCode(transform.position, m_entity.sku);
 
 		if (m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
@@ -69,23 +69,13 @@ public class DestructibleDecoration : Initializable {
 
 			Vector3 center = m_collider.center;
 			if (m_zone == ZoneManager.Zone.Zone1) {
-				switch (m_zone1Effect) {
-					case DestructionType.Collision:
-						m_collider.enabled = true;
-						m_collider.isTrigger = false;
-						center.z = 0f;
-						break;
+				m_collider.enabled = true;
+				m_collider.isTrigger = true;
+				center.z = 0f;
 
-					case DestructionType.GoThrough:
-						m_collider.enabled = false;
-						break;
-
-					case DestructionType.DestroyAndKB:
-						m_addKnockBack = true;
-						m_collider.enabled = true;
-						m_collider.isTrigger = true;
-						center.z = 0f;
-						break;
+				if (m_effect == ZoneManager.ZoneEffect.S
+				&&	m_zone1Interaction == InteractionType.Collision) {
+					m_collider.isTrigger = false;
 				}
 			} else if (m_zone == ZoneManager.Zone.Zone2) {
 				m_collider.enabled = true;
@@ -104,13 +94,27 @@ public class DestructibleDecoration : Initializable {
 		m_spawned = true;
 
 		if (m_zone == ZoneManager.Zone.Zone1) {
-			switch (m_zone1Effect) {
-				case DestructionType.Collision:		m_collider.enabled = true;	break;
-				case DestructionType.GoThrough: 	m_collider.enabled = false; break;
-				case DestructionType.DestroyAndKB:	m_collider.enabled = true;	break;
+			switch (m_zone1Interaction) {
+				case InteractionType.Collision:		m_collider.enabled = true;	break;
+				case InteractionType.GoThrough: 	m_collider.enabled = false; break;
 			}
 		} else if (m_zone == ZoneManager.Zone.Zone2) {
 			m_collider.enabled = true;
+		}
+	}
+
+	void OnCollisionEnter(Collision _other) {
+		if (m_spawned) {
+			if (!m_breath.IsFuryOn()) {
+				if (_other.gameObject.CompareTag("Player")) {
+					if (_other.contacts.Length > 0) {
+						ContactPoint contact = _other.contacts[0];
+						if (m_feddbackParticle != "") {
+							ParticleManager.Spawn(m_feddbackParticle, contact.point);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -118,25 +122,37 @@ public class DestructibleDecoration : Initializable {
 		if (m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
-					if (m_destroyParticle != "") {
-						ParticleManager.Spawn(m_destroyParticle, transform.position + m_collider.center);
+					Vector3 particlePosition = transform.position + m_collider.center;
+
+					if (m_zone == ZoneManager.Zone.Zone2) {
+						particlePosition.z = transform.position.z;
 					}
 
-					if (m_addKnockBack && m_knockBackStrength > 0f) {
-						DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
+					if (m_effect == ZoneManager.ZoneEffect.S) {
+						if (m_feddbackParticle != "") {
+							ParticleManager.Spawn(m_feddbackParticle, particlePosition);
+						}
+					} else {
+						if (m_destroyParticle != "") {
+							ParticleManager.Spawn(m_destroyParticle, particlePosition);
+						}
 
-						Vector3 knockBack = dragonMotion.transform.position - (transform.position + m_collider.center);
-						knockBack.z = 0f;
-						knockBack.Normalize();
+						if (m_zone == ZoneManager.Zone.Zone1 && m_knockBackStrength > 0f) {
+							DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
 
-						knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
+							Vector3 knockBack = dragonMotion.transform.position - (transform.position + m_collider.center);
+							knockBack.z = 0f;
+							knockBack.Normalize();
 
-						dragonMotion.AddForce(knockBack);
+							knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
+
+							dragonMotion.AddForce(knockBack);
+						}
+
+						m_autoSpawner.Respawn();
+						m_view.SetActive(false);
+						m_spawned = false;
 					}
-
-					m_autoSpawner.Respawn();
-					m_view.SetActive(false);
-					m_spawned = false;
 				}
 			}
 		}

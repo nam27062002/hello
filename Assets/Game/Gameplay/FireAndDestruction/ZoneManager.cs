@@ -26,7 +26,7 @@ public class ZoneManager : MonoBehaviour {
 	public Color zone2Color { get { return m_zone2Color; } }
 
 	private string m_dragonTier;
-	private Dictionary<string, DefinitionNode> m_burnDefinitions;
+	private Dictionary<string, DefinitionNode> m_burnDestructionDefinitions;
 
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -34,19 +34,19 @@ public class ZoneManager : MonoBehaviour {
 	void Start() {
 		//load definitions 
 		m_dragonTier = InstanceManager.player.data.tierDef.sku;
-		m_burnDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DECORATION);
+		m_burnDestructionDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DESTRUCTION_DECORATION);
 	}
 
 	public ZoneEffect GetFireEffectCode(Vector3 _pos, string _sku) {
 		Zone zone = GetZone(_pos.z);
 
 		if (zone != Zone.None) {
-			if (m_burnDefinitions == null) {
+			if (m_burnDestructionDefinitions == null) {
 				m_dragonTier = InstanceManager.player.data.tierDef.sku;
-				m_burnDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DECORATION);
+				m_burnDestructionDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DESTRUCTION_DECORATION);
 			}
 
-			DefinitionNode burnDef = m_burnDefinitions[_sku];
+			DefinitionNode burnDef = m_burnDestructionDefinitions[_sku];
 
 			//should explode?
 			string minTier = burnDef.Get("minTierExplode");
@@ -73,10 +73,23 @@ public class ZoneManager : MonoBehaviour {
 	public ZoneEffect GetDestructionEffectCode(Vector3 _pos, string _sku) {
 		Zone zone = GetZone(_pos.z);
 
-		if (zone == Zone.Zone1) {
-			return ZoneEffect.S;
-		} else if (zone == Zone.Zone2) {
-			return ZoneEffect.M;
+		if (zone != Zone.None) {
+			if (m_burnDestructionDefinitions == null) {
+				m_dragonTier = InstanceManager.player.data.tierDef.sku;
+				m_burnDestructionDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DESTRUCTION_DECORATION);
+			}
+
+			DefinitionNode burnDef = m_burnDestructionDefinitions[_sku];
+			string minTier = burnDef.Get("minTierBurn");
+			if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
+				return ZoneEffect.M;
+			} else {
+				//should feedback?
+				minTier = burnDef.Get("minTierFeedback");
+				if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
+					return ZoneEffect.S; 
+				}
+			}
 		}
 
 		return ZoneEffect.None;
