@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 public class Builder : MonoBehaviour 
 {	
@@ -14,7 +16,7 @@ public class Builder : MonoBehaviour
 	const string m_apkName = "hd";
 	const string m_AndroidSymbols = "";
 
-	[MenuItem ("Build/IOs")]
+	//[MenuItem ("Build/IOs")]
 	static void GenerateXcode()
 	{
 		// Save Player Settings
@@ -35,7 +37,7 @@ public class Builder : MonoBehaviour
 		string stagePath = System.IO.Path.Combine(outputDir, "xcode");	// Should be something like ouputDir/xcode
 
 		// Some feedback
-		Debug.Log("Generating XCode project at path: " + stagePath);
+		UnityEngine.Debug.Log("Generating XCode project at path: " + stagePath);
 
 		// Do the build!
 		BuildPipeline.BuildPlayer( GetBuildingScenes(), stagePath, BuildTarget.iOS, BuildOptions.None); 
@@ -45,7 +47,7 @@ public class Builder : MonoBehaviour
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, oldSymbols);
 	}
 	
-	[MenuItem ("Build/Android")]
+	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
 	{
 		// Save Player Settings
@@ -67,7 +69,7 @@ public class Builder : MonoBehaviour
 		string stagePath = System.IO.Path.Combine(outputDir, m_apkName + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + ".apk");	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
 		// Some feedback
-		Debug.Log("Generating Android APK at path: " + stagePath);
+		UnityEngine.Debug.Log("Generating Android APK at path: " + stagePath);
 
 		// Do the build!
 		BuildPipeline.BuildPlayer(GetBuildingScenes(), stagePath, BuildTarget.Android, BuildOptions.None);
@@ -106,18 +108,110 @@ public class Builder : MonoBehaviour
 		return scenes.ToArray();
 	}
 
-	[MenuItem ("Build/Increase Minor Version Number")]
+	/// <summary>
+	/// Sets the version number via console argument.
+	/// Expected args: -version version_number
+	/// Used by the development team, QC, etc. to identify each build internally.
+	/// Format X.Y.Z where:
+	/// - X: Development Stage [1..4] (1 - Preproduction, 2 - Production, 3 - Soft Launch, 4 - Worldwide Launch)
+	/// - Y: Sprint Number [1..N]
+	/// - Z: Build Number [1..N] within the sprint, increased by 1 for each new build
+	/// </summary>
+	private static void SetInternalVersion() {
+		// Get new version number from parameter
+		string versionString = GetArg("-version");
+		if(string.IsNullOrEmpty(versionString)) {
+			PrintMessage("ERROR SetVersionNumber: no parameter -version could be found");
+			EditorApplication.Exit(1);	// Error!
+			return;
+		}
+
+		// Parse version number
+		// Must have the format X.Y.Z - regular expressions come in handy!
+		bool error = true;
+		Match match = Regex.Match(versionString, @"([0-9]+).([0-9]+).([0-9]+)");
+		if(match.Success) {
+			// We should have 4 groups: the whole match, and each individual version number. If not, something went wrong, abort
+			if(match.Groups.Count == 4) {
+				// Parse the value of each group as an int (already validated by the regex, so it shouldn't throw any exception)
+				GameSettings.internalVersion.major = int.Parse(match.Groups[1].Value);
+				GameSettings.internalVersion.minor = int.Parse(match.Groups[2].Value);
+				GameSettings.internalVersion.patch = int.Parse(match.Groups[3].Value);
+
+				// Save assets
+				EditorUtility.SetDirty(GameSettings.instance);
+				AssetDatabase.SaveAssets();
+
+				// Mark as success
+				error = false;
+			}
+		}
+
+		// If there was any error, show feedback and exit with error
+		if(error) {
+			PrintMessage("ERROR SetVersionNumber: parameter -version unrecognized format" +
+				"\nMust be X.Y.Z where:" +
+				"\n- X: Development Stage [1..4] (1 - Preproduction, 2 - Production, 3 - Soft Launch, 4 - Worldwide Launch)" +
+				"\n- Y: Sprint Number [1..N]" +
+				"\n- Z: Build Number [1..N] within the sprint, increased by 1 for each new build");
+			EditorApplication.Exit(1);	// Error!
+		}
+	}
+
+	//[MenuItem ("Build/Increase Minor Version Number")]
 	private static void IncreaseMinorVersionNumber()
 	{
 		// Increase game settings internal version
 		GameSettings.internalVersion.patch++;
-		EditorUtility.SetDirty(GameSettings.instance);
 
 		// Save assets
+		EditorUtility.SetDirty(GameSettings.instance);
 		AssetDatabase.SaveAssets();
 	}
+
+	/// <summary>
+	/// Manually sets the public version in a target platform(s).
+	/// Expected arguments: [-ios ios_version_name] [-ggp ggp_version_name] [-amz amz_version_name]
+	/// Public version number displayed in the stores, used by the players to identify different application updates
+	/// Format X.Y where:
+	/// - X: Arbitrary, only changed on major game change (usually never)
+	/// - 0 during Preproduction/Production
+	/// - [1..N] at Soft/WW Launch
+	/// - Y: Increased for every push to the app store [1..N]
+	/// </summary>
+	private static void SetPublicVersion() {
+		// Aux vars
+		bool dirty = false;
+
+		// Try iOS
+		string iosVersion = GetArg("-ios");
+		if(!string.IsNullOrEmpty(iosVersion)) {
+			GameSettings.publicVersioniOS = iosVersion;
+			dirty = true;
+		}
+
+		// Try Google Play
+		string ggpVersion = GetArg("-ggp");
+		if(!string.IsNullOrEmpty(ggpVersion)) {
+			GameSettings.publicVersionGGP = ggpVersion;
+			dirty = true;
+		}
+
+		// Try Amazon
+		string amzVersion = GetArg("-amz");
+		if(!string.IsNullOrEmpty(amzVersion)) {
+			GameSettings.publicVersionAmazon = amzVersion;
+			dirty = true;
+		}
+
+		// Save assets
+		if(dirty) {
+			EditorUtility.SetDirty(GameSettings.instance);
+			AssetDatabase.SaveAssets();
+		}
+	}
 	
-	[MenuItem ("Build/Increase Version Codes")]
+	//[MenuItem ("Build/Increase Version Codes")]
 	private static void IncreaseVersionCodes()
 	{
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
@@ -134,7 +228,6 @@ public class Builder : MonoBehaviour
 
 	private static string IncreaseVersionCode( string versionCode )
 	{
-		Debug.Log("UNITY: IncreaseVersionCode(" + versionCode + ")");
 		int res;
 		if (int.TryParse( versionCode, out res))
 		{
@@ -160,12 +253,46 @@ public class Builder : MonoBehaviour
 		}
 	}
 
-	[MenuItem ("Build/Output Version")]
-	private static void OutputVersion()
-	{
-		Debug.Log("UNITY: OutputVersion()");
+	//[MenuItem ("Build/Output Version")]
+	private static void OutputVersion() {
 		StreamWriter sw = File.CreateText("outputVersion.txt");
 		sw.WriteLine( GameSettings.internalVersion );
 		sw.Close();
+	}
+
+	/// <summary>
+	/// Start a process.
+	/// </summary>
+	/// <param name="_command">The process to be started.</param>
+	/// <param name="_args">Parmeters line.</param>
+	private static void RunProcess(string _command, string _args = "") {
+		// Setup start info
+		Process process = new Process();
+		process.StartInfo.FileName = _command;
+		process.StartInfo.Arguments = _args;
+
+		process.StartInfo.RedirectStandardError = false;
+		process.StartInfo.RedirectStandardOutput = false;
+		process.StartInfo.RedirectStandardInput = false;
+		process.StartInfo.UseShellExecute = true;
+
+		// Run the process and wait until it finishes
+		process.Start();
+		process.WaitForExit();
+	}
+
+	/// <summary>
+	/// Print a message to the output terminal. Attach BUILDER prefix to make it 
+	/// easy to filter among Unity's default messages.
+	/// Filtering can be done by attaching the following command after the Unity instruction:
+	/// <c>| grep BUILDER</c>
+	/// To be able to see the output in when launching in batch mode, the -logfile 
+	/// parameter without any value must be used.
+	/// </summary>
+	private static void PrintMessage(string _msg) {
+		// Add prefix before each line so it can be parsed using grep
+		string prefix = "BUILDER> ";
+		_msg = _msg.Replace("\n", "\n" + prefix);
+		UnityEngine.Debug.Log(prefix + _msg);
 	}
 }

@@ -55,7 +55,7 @@ public class BuyEggButton : MonoBehaviour {
 		if(UsersManager.currentUser.pc >= pricePC) {
 			// Perform transaction
 			UsersManager.currentUser.AddPC(-pricePC);
-			PersistenceManager.Save();
+			PersistenceManager.Save(true);
 
 			// Create a new egg instance
 			Egg purchasedEgg = Egg.CreateFromDef(eggDef);

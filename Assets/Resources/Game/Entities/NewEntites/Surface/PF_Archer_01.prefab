@@ -1079,8 +1079,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_sightRadius: 10
-    m_maxRadius: 4
-    m_minRadius: 0
+    m_maxRadius: 6
+    m_minRadius: 4
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 1.5, z: 0}
@@ -1185,7 +1185,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":8,"max":13},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3.5,"arrivalRadius":12,"hasGuardState":false,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":5,"consecutiveAttacks":6,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":8,"max":13},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3.5,"arrivalRadius":6,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":5,"consecutiveAttacks":6,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false}]'
 --- !u!137 &13708154
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

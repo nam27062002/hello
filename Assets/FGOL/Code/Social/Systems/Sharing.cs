@@ -83,7 +83,7 @@ public class Sharing
 
                 MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
                 config.cancelEnabled = false;
-                config.titleText = "STRING_SOCIAL_ERROR_CONNECTION_TITLE";
+                config.titleText = "TID_SOCIAL_ERROR_CONNECTION_NAME";
                 config.messageText = "STRING_SOCIAL_ERROR_CONNECTION_INFO_GENERIC";
                 config.onConfirm = onComplete;
 				config.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.confirm;

@@ -14,6 +14,8 @@ public class InflammableDecoration : Initializable {
 	private GameObject m_view;
 	private GameObject m_viewBurned;
 
+	private BoxCollider m_collider;
+
 	private FireNode[] m_fireNodes;
 	private bool m_burned;
 	private DeltaTimer m_timer = new DeltaTimer();
@@ -59,11 +61,13 @@ public class InflammableDecoration : Initializable {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
+		m_collider = GetComponent<BoxCollider>();
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
 		ZoneManager.ZoneEffect zEffect = m_zoneManager.GetFireEffectCode(transform.position, m_entity.sku);
 
 		if (zEffect == ZoneManager.ZoneEffect.None) {
+			if (m_collider) Destroy(m_collider);
 			for (int i = 0; i < m_fireNodes.Length; i++) {
 				Destroy(m_fireNodes[i].gameObject);
 			}
@@ -116,8 +120,12 @@ public class InflammableDecoration : Initializable {
 		if (m_autoSpawner == null)
 			return;
 
-		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning )	// if respawning we wait
+		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning ) {	// if respawning we wait
+			for (int i = 0; i < m_fireNodes.Length; i++) {
+				m_fireNodes[i].Disable();
+			}
 			return;
+		}
 
 		if (m_burned) {
 			// Advance dissolve!
@@ -126,6 +134,7 @@ public class InflammableDecoration : Initializable {
 			if (m_timer.IsFinished()) {
 				m_view.SetActive(false);
 				m_autoSpawner.Respawn();
+				if (m_collider) m_collider.enabled = false;
 			}
 		} else {
 			m_burned = true;
@@ -157,6 +166,7 @@ public class InflammableDecoration : Initializable {
 				m_autoSpawner.Respawn();
 				m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
+				if (m_collider) m_collider.enabled = false;
 				// Switch material for the view to the dark and start dissolving
 
 			}

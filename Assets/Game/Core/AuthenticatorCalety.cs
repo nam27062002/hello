@@ -51,13 +51,19 @@ public class AuthenticatorCalety : Authenticator
                         result.cloudCredentials = response["cloudCredentials"] as Dictionary<string, object>;
                         result.cloudCredentialsExpiry = Convert.ToInt32(response["cloudCredentialsExpiry"]);
                         result.socialExpiry = Convert.ToInt32(response["socialExpiry"]);
+                        result.cloudSaveAvailable = Convert.ToBoolean(response["cloudSaveAvailable"]);
                         */
                         result.authState = (AuthState)Enum.Parse(typeof(AuthState), response["authState"] as string);
-                        result.upgradeAvailable = response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);                        
-                        result.cloudSaveAvailable = Convert.ToBoolean(response["cloudSaveAvailable"]);
+                        result.upgradeAvailable = response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);
+
+                        // TO UNCOMMENT to force flow https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/26%29Game+update+available
+                        //result.upgradeAvailable = true;                        
+
+                        // [DGR] cloud save is always available as long as the user is logged in
+                        result.cloudSaveAvailable = true;
 
                         // TO UNCOMMENT to force flow https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/13%29Recommend+cloud+save
-                        //result.cloudSaveAvailable = false;
+                        //result.cloudSaveAvailable = false;                        
 
                         callback(null, result);
 

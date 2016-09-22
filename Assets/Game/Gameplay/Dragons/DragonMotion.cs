@@ -163,7 +163,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public Transform tongue { get { if (m_tongue == null) { m_tongue = transform.FindTransformRecursive("Fire_Dummy"); } return m_tongue; } }
 	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
-	public Transform cameraLookAt   { get { if (m_cameraLookAt == null)   { m_cameraLookAt = transform.FindTransformRecursive("camera");  } return m_cameraLookAt;   } }
 	private Vector3 m_lastPosition;
 	private Vector3 lastPosition
 	{
@@ -316,7 +315,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// entering new state
 			switch (_nextState) {
 				case State.Idle:
-					m_animator.SetBool("fly", false);
+					m_animator.SetBool("move", false);
 
 					// m_impulse = Vector3.zero;
 					// m_rbody.velocity = m_impulse;
@@ -326,11 +325,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 
 				case State.Fly:
-					m_animator.SetBool("fly", true);
+					m_animator.SetBool("move", true);
 					break;
 
 				case State.Fly_Down:
-					m_animator.SetBool("fly", true);
+					m_animator.SetBool("move", true);
 					m_animator.SetBool("fly down", true);
 					break;
 
@@ -344,7 +343,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				{
 					if ( m_canMoveInsideWater )
 					{
-						m_animator.SetBool("fly", false);
+						m_animator.SetBool("move", false);
 						m_animator.SetBool("swim", true);
 					}
 					else
@@ -360,6 +359,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				{
 					m_animator.Play("BaseLayer.Intro");
 					m_introTimer = m_introDuration;
+					RotateToDirection( Vector3.right );
 				}break;
 				case State.Latching:
 				{
@@ -407,6 +407,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_introTimer -= Time.deltaTime;
 				if ( m_introTimer <= 0 )
 					ChangeState( State.Idle );
+				RotateToDirection( Vector3.right );
 				// float delta = m_introTimer / m_introDuration;
 				// m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
 				// m_destination += m_introTarget;
@@ -453,7 +454,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void UpdateBodyBending()
 	{		
 		float dt = Time.deltaTime;
-		Vector3 dir = m_desiredRotation * Vector3.right;
+		Vector3 dir = m_desiredRotation * Vector3.forward;
 		float backMultiplier = 1;
 
 		if (GetTargetSpeedMultiplier() > 1)// if boost active
@@ -473,18 +474,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		float blendDampingRange = 0.2f;
 
 
-		float desiredBendX = Mathf.Clamp(-localDir.z*3.0f, -1.0f, 1.0f);	// max X bend is about 30 degrees, so *3
+		float desiredBendX = Mathf.Clamp(localDir.x*3.0f, -1.0f, 1.0f);	// max X bend is about 30 degrees, so *3
 		m_currentFrontBend.x = Util.MoveTowardsWithDamping(m_currentFrontBend.x, desiredBendX, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("BendFrontX", m_currentFrontBend.x);
+		m_animator.SetFloat("direction X", m_currentFrontBend.x);
 		m_currentBackBend.x = Util.MoveTowardsWithDamping(m_currentBackBend.x, desiredBendX * backMultiplier, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("BendBackX", m_currentBackBend.x);
+		m_animator.SetFloat("back direction X", m_currentBackBend.x);
 
 
 		float desiredBendY = Mathf.Clamp(localDir.y*2.0f, -1.0f, 1.0f);		// max Y bend is about 45 degrees, so *2.
 		m_currentFrontBend.y = Util.MoveTowardsWithDamping(m_currentFrontBend.y, desiredBendY, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("BendFrontY", m_currentFrontBend.y);
+		m_animator.SetFloat("direction Y", m_currentFrontBend.y);
 		m_currentBackBend.y = Util.MoveTowardsWithDamping(m_currentBackBend.y, desiredBendY * backMultiplier, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("BendBackY", m_currentBackBend.y);
+		m_animator.SetFloat("back direction Y", m_currentBackBend.y);
 
 		// update 'body bending' boolean parameter, we use this in the anim state machine
 		// to notify things like straight swim variations that they should break out and return
@@ -791,19 +792,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			float angle = dir.ToAngleDegrees();
 			float pitch = angle;
 			float twist = angle;
-			float yaw = 0.0f;
+			float yaw = 0;
 			Quaternion qPitch = Quaternion.Euler(0.0f, 0.0f, pitch);
 			Quaternion qYaw = Quaternion.Euler(0.0f, yaw, 0.0f);
 			Quaternion qTwist = Quaternion.Euler(twist, 0.0f, 0.0f);
-			m_desiredRotation = qPitch * qYaw * qTwist;
+			m_desiredRotation = qYaw * qPitch * qTwist;
 			Vector3 eulerRot = m_desiredRotation.eulerAngles;		
 			if (dir.y > 0.25f) {
 				eulerRot.z = Mathf.Min(40f, eulerRot.z);
 			} else if (dir.y < -0.25f) {
 				eulerRot.z = Mathf.Max(300f, eulerRot.z);
 			}
-			m_desiredRotation = Quaternion.Euler(eulerRot);
-
+			m_desiredRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
 			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(transform.rotation, m_desiredRotation, blendRate);
 		}
 		else

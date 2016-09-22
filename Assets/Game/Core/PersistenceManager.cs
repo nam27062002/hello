@@ -239,7 +239,7 @@ public static class PersistenceManager {
 	}
 
     #region texts
-    public const string TID_SOCIAL_FB_LOGIN_MAINMENU_INCENTIVIZED = "STRING_SOCIAL_FB_LOGIN_MAINMENU_INCENTIVIZED";
+    public const string TID_SOCIAL_FB_LOGIN_MAINMENU_INCENTIVIZED = "TID_SOCIAL_LOGIN_MAINMENU_INCENTIVIZED";
 
     public static void Texts_LocalizeIncentivizedSocial(Localizer text)
     {
@@ -280,8 +280,8 @@ public static class PersistenceManager {
         if (!Popups_IsLoadingPopupOpen())
         {
             PopupMessage.Config config = PopupMessage.GetConfig();
-            config.TitleTid = "STRING_CLOUD_LOADING_TITLE";
-            config.MessageTid = "STRING_CLOUD_LOADING_WAIT";
+            config.TitleTid = "TID_SAVE_CLOUD_LOADING_NAME";
+            config.MessageTid = "TID_SAVE_CLOUD_LOADING_WAIT";
             Popups_LoadingPopup = PopupManager.PopupMessage_Open(config);
         }
     }
@@ -309,8 +309,8 @@ public static class PersistenceManager {
     public static void Popups_OpenCloudEnableHasFailed(int errorCode, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_OFFLINE_TEXT";
+        config.TitleTid = "TID_SAVE_ERROR_CLOUD_OFFLINE_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_CLOUD_OFFLINE_DESC";
         config.MessageParams = new string[] { "" + errorCode };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
@@ -324,10 +324,10 @@ public static class PersistenceManager {
     public static void Popups_OpenCloudLoginHasFailed(int errorCode, SocialFacade.Network network, Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_LOGIN_FAILED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_LOGIN_FAILED_TEXT_SN";
+        config.TitleTid = "TID_SAVE_ERROR_CLOUD_LOGIN_FAILED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_CLOUD_LOGIN_FAILED_DESC";
         config.MessageParams = new string[] { "" + errorCode, SocialFacade.GetLocalizedNetworkName(network) };
-        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
@@ -341,12 +341,12 @@ public static class PersistenceManager {
     public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
 	{
 		PopupMessage.Config config = PopupMessage.GetConfig();
-		config.TitleTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TITLE";
+		config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
 
 		int lastUploadTime = SaveFacade.Instance.lastUploadTime;        
 		if (lastUploadTime > 0)
 		{
-			config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT1";
+			config.MessageTid = "TID_SAVE_CLOUD_ACTIVE_DESC";
 			DateTime lastUpload = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 			lastUpload = lastUpload.AddSeconds(lastUploadTime).ToLocalTime();            
 			string lastUploadStr = lastUpload.ToString("F");
@@ -354,11 +354,11 @@ public static class PersistenceManager {
 		}
 		else
 		{
-			config.MessageTid = "STRING_SAVE_POPUP_CLOUD_SAVE_ACTIVE_TEXT2";
+			config.MessageTid = "TID_SAVE_POPUP_CLOUD_SAVE_ACTIVE_DESC";
 		}
 
-		config.ConfirmButtonTid = "STRING_SAVE_POPUP_CLOUD_SAVE_SYNC_NOW";
-		config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+		config.ConfirmButtonTid = "TID_SAVE_POPUP_CLOUD_SAVE_SYNC_NOW";
+		config.CancelButtonTid = "TID_GEN_CONTINUE";
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 		config.OnConfirm = onConfirm;
 		config.OnCancel = onCancel;
@@ -373,8 +373,8 @@ public static class PersistenceManager {
     public static void Popups_OpenCloudDisable(Action onConfirm, Action onCancel)
 	{
 		PopupMessage.Config config = PopupMessage.GetConfig();
-		config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_DISABLE_TITLE";
-		config.MessageTid = "STRING_SAVE_POPUP_WARN_CLOUD_DISABLE_TEXT";        
+		config.TitleTid = "TID_SAVE_WARN_CLOUD_DISABLE_NAME";
+		config.MessageTid = "TID_SAVE_WARN_CLOUD_DISABLE_DESC";        
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 		config.OnConfirm = onConfirm;
 		config.OnCancel = onCancel;
@@ -389,17 +389,17 @@ public static class PersistenceManager {
     public static void Popups_OpenCloudEnable(Action onConfirm)
 	{
 		PopupMessage.Config config = PopupMessage.GetConfig();
-		config.TitleTid = "STRING_SAVE_POPUP_CLOUD_ENABLED_TITLE";
+		config.TitleTid = "TID_SAVE_CLOUD_ENABLED_NAME";
 
 		string enablePlatformMessage = "UNKNOWN";
 
 		switch (Globals.GetPlatform())
 		{
 		case Globals.Platform.iOS:
-			enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_IOS";
+			enablePlatformMessage = "TID_SAVE_CLOUD_ENABLED_IOS_DESC";
 			break;
 		case Globals.Platform.Android:
-			enablePlatformMessage = "STRING_SAVE_POPUP_CLOUD_ENABLED_TEXT_ANDROID";
+			enablePlatformMessage = "TID_SAVE_CLOUD_ENABLED_ANDROID_DESC";
 			break;          
 		}
 
@@ -417,44 +417,86 @@ public static class PersistenceManager {
     public static void Popups_RecommendCloudEnable(Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_PROMPT_CLOUD_ENABLE_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_PROMPT_CLOUD_ENABLE_TEXT_SOCIAL_SN";
+        config.TitleTid = "TID_SAVE_PROMPT_CLOUD_ENABLE_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_PROMPT_CLOUD_ENABLE_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()) };
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         PopupManager.PopupMessage_Open(config);
-    }		   
+    }
 
+    /// <summary>
+	/// This popup is shown when the user tries to switch users: logout from an account A and tries to log in an account B
+	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/editpage.action?pageId=358118704
+	/// [DGR] TO ASK FGOL
+	/// </summary>
+    public static void Popups_OpenCloudSwitchWarning(SocialFacade.Network network, Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_DESC";
+        config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;
+        config.OnCancel = onCancel;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when the persistence stored in cloud is corrupted. It's been taken from HSX but it shouldn't be possible because our cloud is managed by our server.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/16%29Cloud+save+corrupted
+    /// </summary>    
+    public static void Popups_OpenCloudSaveCorruptedError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_CLOUD_CORRUPTED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_CLOUD_CORRUPTED_DESC";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+
+    /// <summary>
+    /// Popup shown when the user changed social networks. It's shown when the user is logged in a social platform and clicks on log in to a different social network.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/15%29Switch+users
+    /// [DGR] FLOW: Not supported yet since only one social platform is shown simultaneously
+    /// </summary>    
     public static void Popups_OpenSwitchingUserWithCloudSaveEnabled(SocialFacade.Network networkFrom, SocialFacade.Network networkTo, Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_TEXT";
+        config.TitleTid = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(networkFrom), SocialFacade.GetLocalizedNetworkName(networkTo) };        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
-        config.OnConfirm = onCancel;
+        config.OnCancel = onCancel;
         PopupManager.PopupMessage_Open(config);        
     }
 
+    /// <summary>
+    /// This popup is shown when the user clicks on cancel on the popup that is shown when the user switches platform social accounts (this popup lets the user know that she's about to
+    /// change the progress)
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/15%29Switch+users
+    /// </summary>    
     public static void Popups_OpenNoCloudSaveEnabledAnymore(SocialFacade.Network network, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_TEXT_SN";
+        config.TitleTid = "TID_SAVE_ERROR_CLOUD_DISABLED_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);        
     }
 		
-	/// {DGR» TO ASK FGOL
+	/// {DGR] TO ASK FGOL
     public static void Popups_OpenLoginErrorWrongSocialAccount(SocialFacade.Network network, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT";
-        config.MessageTid = "STRING_SOCIAL_ERROR_WRONG_ACCOUNT_FB_SN";
+        config.TitleTid = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_NAME";
+        config.MessageTid = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
@@ -468,15 +510,15 @@ public static class PersistenceManager {
     public static void Popups_OpenLoginIncomplete(SocialFacade.Network network, bool incentiveAlreadyGiven, int incentiveAmount, Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SOCIAL_LOGIN_INCOMPLETE_TITLE";
+        config.TitleTid = "TID_SOCIAL_LOGIN_INCOMPLETE_NAME";
 
         if (incentiveAlreadyGiven)
         {
-            config.MessageTid = "STRING_SOCIAL_LOGIN_INCOMPLETE_FB2";
+            config.MessageTid = "TID_SOCIAL_LOGIN_INCOMPLETE_DESC2";
         }
         else
         {
-            config.MessageTid = "STRING_SOCIAL_LOGIN_INCOMPLETE_FB_SN";
+            config.MessageTid = "TID_SOCIAL_LOGIN_INCOMPLETE_DESC";
             config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network), "" + incentiveAmount };
         }
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
@@ -492,8 +534,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLoginGenericError(SocialFacade.Network network, Action onConfirm)
     {        
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SOCIAL_LOGIN_FAILED";
-        config.MessageTid = "STRING_SOCIAL_LOGIN_FAILED_FB_SN";
+        config.TitleTid = "TID_SOCIAL_LOGIN_FAILED_NAME";
+        config.MessageTid = "TID_SOCIAL_LOGIN_FAILED_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
@@ -507,8 +549,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLogoutWarning(SocialFacade.Network network, bool cloudSaveEnabled, Action onConfirm, Action onCancel)
 	{        
 		PopupMessage.Config config = PopupMessage.GetConfig();
-		config.TitleTid = cloudSaveEnabled ? "STRING_SAVE_POPUP_WARN_CLOUD_LOGOUT_TITLE" : "STRING_SOCIAL_WARNING_LOGOUT";
-		config.MessageTid = cloudSaveEnabled ? "STRING_SAVE_POPUP_WARN_CLOUD_LOGOUT_TEXT_SN" : "STRING_SOCIAL_WARNING_LOGOUT_FB_SN";
+		config.TitleTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_NAME" : "STRING_SOCIAL_WARNING_LOGOUT";
+		config.MessageTid = cloudSaveEnabled ? "TID_SAVE_POPUP_WARN_CLOUD_LOGOUT_DESC" : "TID_SOCIAL_WARNING_LOGOUT_DESC";
 		config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 		config.OnConfirm = onConfirm;
@@ -516,104 +558,105 @@ public static class PersistenceManager {
 		PopupManager.PopupMessage_Open(config);
 	}
 
+    /// <summary>
+    /// This popup has been taken from HSX but it's not supported by Dragon yet since only one network is offered to the user
+    /// </summary>    
     public static void Popups_OpenLoginWhenAlreadyLoggedIn(SocialFacade.Network networkFrom, SocialFacade.Network networkTo, Action onConfirm, Action onCancel)
     {                     
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_TEXT";
+        config.TitleTid = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(networkFrom), SocialFacade.GetLocalizedNetworkName(networkTo) };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         PopupManager.PopupMessage_Open(config);
-    }		  
+    }
 
-	/// <summary>
-	/// This popup is shown when the user tries to switch users: logout from an account A and tries to log in an account B
-	/// https://mdc-web-tomcat17.ubisoft.org/confluence/pages/editpage.action?pageId=358118704
-	/// [DGR] TO ASK FGOL
-	/// </summary>
-    public static void Popups_OpenCloudSwitchWarning(SocialFacade.Network network, Action onConfirm, Action onCancel)
-    {        
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_WARN_CLOUD_SWITCH_TEXT_SN";        
-        config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        config.OnCancel = onCancel;
-        PopupManager.PopupMessage_Open(config);
-    }		    
-
-    public static void Popups_OpenErrorLoadFailed(Action onConfirm)
+    /// <summary>
+    /// This popup is shown when the access to the local save file is not authorized by the device when starting the game
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/18%29No+access+to+local+data
+    /// </summary>    
+    public static void Popups_OpenLocalSavePermissionErrorWhenStarting(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_LOAD_FAILED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_LOAD_FAILED_TEXT";
-        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
+        config.TitleTid = "TID_SAVE_ERROR_LOAD_FAILED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_LOAD_FAILED_DESC";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);        
     }
 
-    public static void Popups_OpenLoadSavePermissionError(Action onConfirm)
+    /// <summary>
+    /// This popup is shown when the access to the local save file is not authorized by the device when syncing progress
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/19%29No+access+to+local+data+when+syncing
+    /// </summary>        
+    public static void Popups_OpenLocalSavePermissionErrorWhenSyncing(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_LOAD_FAILED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_LOAD_FAILED_TEXT";
+        config.TitleTid = "TID_SAVE_ERROR_LOAD_FAILED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_LOAD_FAILED_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
     }
 
-    public static void Popups_OpenLoadSaveBothCorruptedError(Action onConfirm)
-    {        
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_BOTH_SAVE_CORRUPTED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_BOTH_SAVE_CORRUPTED_TEXT";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-    }
-
+    /// <summary>
+    /// This popup is shown when the local save is corrupted when the game was going to continue locally
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/20%29Local+save+corrupted
+    /// </summary>
+    /// <param name="cloudEver">Whether or not the user has synced with server</param>    
     public static void Popups_OpenLoadSaveCorruptedError(bool cloudEver, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TITLE";
-        config.MessageTid = (cloudEver) ? "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TEXT_OFFLINE" : "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TEXT";        
+        config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
+        config.MessageTid = (cloudEver) ? "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
     }
 
-    public static void Popups_OpenUpdateToSolveLocalSaveCorrupted(bool updateAvailable, Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TITLE";
-        config.MessageTid = (updateAvailable) ? "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TEXT_UPDATE1" : "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TEXT_UPDATE2";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-    }   
-
+    /// <summary>
+    /// This popup is shown when the local save is corrupted but the cloud save is ok when syncing with the cloud
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/20%29Local+save+corrupted
+    /// </summary>    
     public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_LOCAL_SAVE_CORRUPTED_TEXT_CLOUD";
+        config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_ERROR_LOCAL_CORRUPTED_CLOUD_SAVE_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);        
+        PopupManager.PopupMessage_Open(config);
     }
 
+    /// <summary>
+    /// This popup is shown when the version of cloud save is more recent than the one in local save and local save is corrupted and no game update is available.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/22%29Version+of+cloud+save+more+recent+than+the+one+in+local+save+and+local+save+corrupted
+    /// </summary>    
+    public static void Popups_OpenUpdateToSolveLocalSaveCorrupted(bool updateAvailable, Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
+        config.MessageTid = (updateAvailable) ? "TID_SAVE_ERROR_LOCAL_CORRUPTED_UPDATE_DESC1" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_UPDATE_DESC2";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when the game doesn't have access to the cloud server. This is a legacy code from HSX since we'll always have access to the cloud server because it's our server
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/24%29No+access+to+cloud
+    /// </summary>    
     public static void Popups_OpenLoadSaveInaccessibleError(Action onConfirm, Action onCancel, Action onExtra)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_INACCESSIBLE_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_INACCESSIBLE_TEXT";
-        config.ConfirmButtonTid = "STRING_BUTTON_CONTINUE";
-        config.CancelButtonTid = "STRING_BUTTON_RETRY";
-        config.ExtraButtonTid = "STRING_BUTTON_UPLOAD";
+        config.TitleTid = "TID_SAVE_POPUP_ERROR_CLOUD_INACCESSIBLE_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_ERROR_CLOUD_INACCESSIBLE_DESC";
+        config.ConfirmButtonTid = "TID_GEN_CONTINUE";
+        config.CancelButtonTid = "TID_GEN_RETRY";
+        config.ExtraButtonTid = "TID_GEN_UPLOAD";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndExtraAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
@@ -621,14 +664,18 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);       
     }
 
-    public static void Popups_OpenLocalSaveGenericError(Action onConfirm)
+    /// <summary>
+    /// This popup is shown when the game is not allowed to save locally.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/25%29Can%27t+save+locally
+    /// </summary>    
+    public static void Popups_OpenLocalSaveCantSaveError(Action onConfirm)
     {
         string platformErrorMessage = "UNKNOWN";
 
         switch (Globals.GetPlatform())
         {
             case Globals.Platform.iOS:
-                platformErrorMessage = "STRING_SAVE_POPUP_ERROR_SAVE_FAILED_TEXT_IOS";
+                platformErrorMessage = "TID_SAVE_ERROR_FAILED_DESC";
                 break;
             case Globals.Platform.Android:
                 platformErrorMessage = "STRING_SAVE_POPUP_ERROR_SAVE_FAILED_TEXT_ANDROID";
@@ -636,36 +683,76 @@ public static class PersistenceManager {
         }
 
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_SAVE_FAILED_TITLE";                
+        config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";                
         config.MessageTid = platformErrorMessage;
-        config.ConfirmButtonTid = "STRING_BUTTON_CONTINUE";
-        config.CancelButtonTid = "STRING_BUTTON_RETRY";
-        config.ExtraButtonTid = "STRING_BUTTON_UPLOAD";
+        config.ConfirmButtonTid = "TID_GEN_CONTINUE";
+        config.CancelButtonTid = "TID_GEN_RETRY";
+        config.ExtraButtonTid = "TID_GEN_UPLOAD";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);
     }
 
-    public static void Popups_OpenCloudSaveCorruptedError(Action onConfirm)
+    /// <summary>
+    /// This popup is shown when starting the game if there's no free disk space to store the local save
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/27%29No+disk+space
+    /// </summary>    
+    public static void Popups_OpenLocalSaveDiskOutOfSpaceError(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_CORRUPTED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_CLOUD_SAVE_CORRUPTED_TEXT";
+        config.TitleTid = "TID_SAVE_ERROR_DISABLED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_DISABLED_SPACE_DESC";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
     }
 
+    /// <summary>
+    /// This popup is shown when starting the game if there's no access to disk to store the local save.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/28%29No+disk+access
+    /// </summary>    
+    public static void Popups_OpenLocalSaveDiskNoAccessError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_DISABLED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_DISABLED_ACCESS_DESC";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when both local save and cloud save are corrupted when syncing
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/23%29Local+save+corrupted+and+cloud+save+corrupted
+    /// </summary>    
+    public static void Popups_OpenLoadSaveBothCorruptedError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_BOTH_SAVE_CORRUPTED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_BOTH_SAVE_CORRUPTED_DESC";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when the version used in the cloud save is more recent than the one used in the local save, which means that the user should update the game if there's a new version
+    /// available.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/21%29Version+of+cloud+save+more+recent+than+the+one+in+local+save
+    /// </summary>
+    /// <param name="updateAvailable">Whether or not a game update is available</param>    
     public static void Popups_OpenUpdateToSolveCloudSaveCorrupted(bool updateAvailable, Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "STRING_SAVE_POPUP_ERROR_UPDATE_TITLE";
-        config.MessageTid = (updateAvailable) ? "STRING_SAVE_POPUP_ERROR_UPDATE_TEXT1" : "STRING_SAVE_POPUP_ERROR_UPDATE_TEXT2";
+        config.MessageTid = (updateAvailable) ? "TID_SAVE_ERROR_UPDATE_DESC1" : "TID_SAVE_ERROR_UPDATE_DESC2";
         config.OnConfirm = onConfirm;
         if (updateAvailable)
         {
             config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
-            config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+            config.CancelButtonTid = "TID_GEN_CONTINUE";
             config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
             config.OnCancel = onCancel;
         }
@@ -677,6 +764,10 @@ public static class PersistenceManager {
         PopupManager.PopupMessage_Open(config);
     }
 
+    /// <summary>
+    /// This popup is shown when the game realizes that there's game update available in the app store after receiving the response for an auth request
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/26%29Game+update+available
+    /// </summary>   
     public static void Popup_OpenPromptUpdate(Action onConfirm, Action onCancel)
     {
         string platformUpdateMessage = "UNKNOWN";
@@ -684,10 +775,10 @@ public static class PersistenceManager {
         switch (Globals.GetPlatform())
         {
             case Globals.Platform.iOS:
-                platformUpdateMessage = "STRING_SAVE_POPUP_PROMPT_UPDATE_TEXT_IOS";
+                platformUpdateMessage = "TID_SAVE_PROMPT_UPDATE_IOS_DESC";
                 break;
             case Globals.Platform.Android:
-                platformUpdateMessage = "STRING_SAVE_POPUP_PROMPT_UPDATE_TEXT_ANDROID";
+                platformUpdateMessage = "TID_SAVE_PROMPT_UPDATE_ANDROID_DESC";
                 break;
             case Globals.Platform.Amazon:
                 platformUpdateMessage = "STRING_SAVE_POPUP_PROMPT_UPDATE_TEXT_AMAZON";
@@ -695,42 +786,26 @@ public static class PersistenceManager {
         }
 
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_PROMPT_UPDATE_TITLE";
+        config.TitleTid = "TID_SAVE_PROMPT_UPDATE_NAME";
         config.MessageTid = platformUpdateMessage;
         config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
-        config.CancelButtonTid = "STRING_BUTTON_CONTINUE";
+        config.CancelButtonTid = "TID_GEN_CONTINUE";
         config.OnConfirm = onConfirm;
-        config.OnCancel = onCancel;        
+        config.OnCancel = onCancel;
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         PopupManager.PopupMessage_Open(config);                                
-    }
+    }    
 
-    public static void Popups_OpenSaveDiskOutOfSpaceError(Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TEXT_SPACE";
-        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-    }
-
-    public static void Popups_OpenSaveDiskNoAccessError(Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_ERROR_SAVE_DISABLED_TEXT_ACCESS";
-        config.ConfirmButtonTid = "STRING_BUTTON_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-    }
-
+    /// <summary>
+    /// This popup is shown only after the first time the user logs in facebook with the friend list permission granted
+    /// </summary>
+    /// <param name="rewardAmount"></param>
+    /// <param name="onConfirm"></param>
     public static void Popups_OpenLoginComplete(int rewardAmount, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SOCIAL_LOGIN_COMPLETE_TITLE";
-        config.MessageTid = "STRING_SOCIAL_LOGIN_COMPLETE_FB";
+        config.TitleTid = "TID_SOCIAL_LOGIN_COMPLETE_NAME";
+        config.MessageTid = "TID_SOCIAL_LOGIN_COMPLETE_DESC";
         config.MessageParams = new string[] { rewardAmount + "" };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
@@ -740,15 +815,16 @@ public static class PersistenceManager {
     public static void Popups_OpenPublishPermissionFailed(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_FACEBOOKPOST_ERROR_SHAREPERMISSION_TITLE";
-        config.MessageTid = "STRING_FACEBOOKPOST_ERROR_SHAREPERMISSION";        
+        config.TitleTid = "TID_SOCIAL_ERROR_SHAREPERMISSION_NAME";
+        config.MessageTid = "TID_SOCIAL_ERROR_SHAREPERMISSION_DESC";        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);       
-    }        
+    }
 
     /// <summary>
     /// The user is prompted with this popup so she can choose the persistence to keep when there's a conflict between the progress stored in local and the one stored in the cloud
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29Sync+Conflict
     /// </summary>
     public static void Popups_OpenMerge(ConflictState conflictState, ProgressComparatorSystem local, ProgressComparatorSystem cloud, bool dismissable, Action<ConflictResult> onResolve)
     {
@@ -760,21 +836,29 @@ public static class PersistenceManager {
         }
     }
 
+    /// <summary>
+    /// This popup is shown when the user doesn't choose the recommended option in sync conflict popup.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29Sync+Conflict
+    /// </summary>    
     public static void Popups_OpenMergeConfirmation(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_WARN_CLOUD_WRONG_CHOICE_TITLE";
-        config.MessageTid = "STRING_SAVE_POPUP_WARN_CLOUD_WRONG_CHOICE_TEXT";                
+        config.TitleTid = "TID_SAVE_POPUP_WARN_CLOUD_WRONG_CHOICE_NAME";
+        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_WRONG_CHOICE_DESC";                
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
-    }  
-    
+    }
+
+    /// <summary>
+    /// This popup is shown when there's no internet connection
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29No+internet+connection
+    /// </summary>    
     public static void Popups_OpenErrorConnection(SocialFacade.Network network, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SOCIAL_ERROR_CONNECTION_TITLE";
-        config.MessageTid = "STRING_SOCIAL_ERROR_CONNECTION_INFO_SN";
+        config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
+        config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;

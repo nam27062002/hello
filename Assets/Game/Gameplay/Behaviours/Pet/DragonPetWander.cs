@@ -24,13 +24,13 @@ public class DragonPetWander : MonoBehaviour {
 		m_idle = true;
 		m_timer = 2f;
 
-		m_animator.SetBool("fly", true);
+		m_animator.SetBool("move", true);
 		m_motion.SetSpeedMultiplier(0.75f);
 	}
 
 	void OnDisable() {
 		m_motion.Stop();
-		m_animator.SetBool("fly", false);
+		m_animator.SetBool("move", false);
 		m_motion.SetSpeedMultiplier(1f);
 	}
 
