@@ -17,7 +17,7 @@ public class ContentManager
 
 		// Settings
 		kDefinitionFiles.Add(DefinitionsCategory.LOCALIZATION, new string[]{"Rules/localizationDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings"});
+		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings", "Rules/initialSettings"});
 		// kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
 		// Progression
@@ -53,18 +53,18 @@ public class ContentManager
 		// Fire and Destruction properties
 		kDefinitionFiles.Add(DefinitionsCategory.FIRE_SPAWN_EFFECTS, new string[]{"Rules/spawnersDragonBurnDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.FIRE_DECORATION_EFFECTS, new string[]{"Rules/entityDragonBurnDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.BURN_DECORATION, new string[]{"Rules/burnRelation"});
+		kDefinitionFiles.Add(DefinitionsCategory.BURN_DESTRUCTION_DECORATION, new string[]{"Rules/burnRelation"});
 
 		kDefinitionFiles.Add(DefinitionsCategory.HOLD_PREY_TIER, new string[]{"Rules/holdPreyTierSettingsDefinitions"});
 
 		// Power Ups
 		kDefinitionFiles.Add(DefinitionsCategory.POWERUPS, new string[]{"Rules/powerUpsDefinitions"});
+        
+        // ADD HERE ANY NEW DEFINITIONS FILE!
 
-		// ADD HERE ANY NEW DEFINITIONS FILE!
 
 
-
-		List<string> kRulesListToCalculateCRC = new List<string>();
+        List<string> kRulesListToCalculateCRC = new List<string>();
 		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, ref kRulesListToCalculateCRC );
 		m_ready = true;
 

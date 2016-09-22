@@ -59,14 +59,15 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	private GUIStyle m_selectionGridStyle = null;
 	private GUIStyle m_titleLabelStyle = null;
 	private GUIStyle m_centeredLabelStyle = null;
+    private GUIStyle m_warningLabelStyle = null;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Update the inspector window.
-	/// </summary>
-	public void OnGUI() {
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Update the inspector window.
+    /// </summary>
+    public void OnGUI() {
 		// Initialize custom styles
 		InitStyles();
 
@@ -246,8 +247,12 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 					} EditorGUILayout.EndScrollView();
 				}	EditorGUILayout.EndVertical();
 
-				// Some spacing
-				GUILayout.Space(SPACING);
+                if (m_selectedProfile == PersistenceProfile.DEFAULT_PROFILE) {
+                    GUILayout.Label("Generated from rules. You can't delete or edit it", m_warningLabelStyle);
+                }
+
+                // Some spacing
+                GUILayout.Space(SPACING);
 			} EditorGUILayout.EndVertical();
 
 			// Some spacing at the end
@@ -311,9 +316,18 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		if(m_centeredLabelStyle == null) {
 			m_centeredLabelStyle = new GUIStyle(EditorStyles.label);
 			m_centeredLabelStyle.alignment = TextAnchor.MiddleCenter;
-			m_centeredLabelStyle.fontStyle = FontStyle.Bold;
-		}
-	}
+			m_centeredLabelStyle.fontStyle = FontStyle.Bold;            
+        }
+
+        // Warning Label
+        if (m_warningLabelStyle == null)
+        {
+            m_warningLabelStyle = new GUIStyle(EditorStyles.label);
+            m_warningLabelStyle.alignment = TextAnchor.MiddleCenter;
+            m_warningLabelStyle.fontStyle = FontStyle.Bold;
+            m_warningLabelStyle.normal.textColor = Color.red;
+        }
+    }
 
 	/// <summary>
 	/// Show the current selected profile into the view column.
@@ -332,10 +346,18 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 			PersistenceManager.activeProfile = m_selectedProfile;	// Savegames and profiles have the same name
 		}
 
-		// Delete button - only if allowed
+        // Delete button - only if allowed   
+        bool delete = false;
+        bool _isDefaultProfile = m_selectedProfile == PersistenceProfile.DEFAULT_PROFILE;
+
+        GUI.enabled = true;
+        // Default profile is not allowed to be deleted         
+        if (!_isDefaultProfile)
+        {
+            delete = GUILayout.Button("Delete Profile");
+        }
 		GUI.enabled = true;
-		bool delete = GUILayout.Button("Delete Profile");
-		GUI.enabled = true;
+        
 		if(delete) 
 		{
 			string saveToRemove = m_selectedProfile;
@@ -349,7 +371,9 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		else {
 			// Create a serialized object for this profile
 			SimpleJSON.JSONClass profile =  m_profilePrefabs[m_selectedProfile];
-			if (ShowSaveDataInfo( ref profile ))
+
+            // Default profile is not allowed to be edited because it's generated from rules
+			if (ShowSaveDataInfo( ref profile, !_isDefaultProfile))
 			{
 				m_profilePrefabs[m_selectedProfile] = profile;
 				SaveProfile( m_selectedProfile, profile);
@@ -392,13 +416,15 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		// If not cleared, draw content
 		else 
 		{
-			SimpleJSON.JSONClass data = m_saveGames[ m_selectedSavegame ];
-			if (ShowSaveDataInfo( ref data ))
-			{
-				m_saveGames[ m_selectedSavegame ] = data;
-				PersistenceManager.SaveFromObject( m_selectedSavegame, data);
-			}
-
+            if (m_saveGames.ContainsKey(m_selectedSavegame))
+            {
+                SimpleJSON.JSONClass data = m_saveGames[m_selectedSavegame];
+                if (ShowSaveDataInfo(ref data))
+                {
+                    m_saveGames[m_selectedSavegame] = data;
+                    PersistenceManager.SaveFromObject(m_selectedSavegame, data);
+                }
+            }
 		}
 	}
 
@@ -408,14 +434,24 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 	/// profile by creating new savegames and deleting old ones.
 	/// </summary>
 	private void ReloadData() {
-		// Load all gameobjects in the target resources folder
-		TextAsset[] prefabs = Resources.LoadAll<TextAsset>(PersistenceProfile.RESOURCES_FOLDER);
+        // If definitions are not loaded, do it now
+        if (!ContentManager.ready) ContentManager.InitContent();
 
-		// Use a dictionary for easier access
-		m_profilePrefabs.Clear();
-		for(int i = 0; i < prefabs.Length; i++) 
-		{
-			SimpleJSON.JSONClass json = SimpleJSON.JSONNode.Parse( prefabs[i].text ) as SimpleJSON.JSONClass;
+        // Load all gameobjects in the target resources folder
+        TextAsset[] prefabs = Resources.LoadAll<TextAsset>(PersistenceProfile.RESOURCES_FOLDER);
+
+        SimpleJSON.JSONClass json;
+
+        // Use a dictionary for easier access
+        m_profilePrefabs.Clear();
+		for(int i = 0; i < prefabs.Length; i++) {
+            if (prefabs[i].name == PersistenceProfile.DEFAULT_PROFILE) {
+                json = PersistenceManager.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
+            }
+            else {
+                json = SimpleJSON.JSONNode.Parse(prefabs[i].text) as SimpleJSON.JSONClass;
+            }
+
 			m_profilePrefabs.Add(prefabs[i].name, json );
 		}
 
@@ -432,15 +468,15 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 		// Get save games list
 		m_saveGames.Clear();
-		string[] saveGameNames = PersistenceManager.GetSavedGamesList();
+		string[] saveGameNames = PersistenceManager.GetSavedGamesList();        
 		
 		// Make sure we still have exactly one savegame for each profile
 		// Make sure current selection is still valid
 		// a) Check for savegames to be deleted
 		for(int i = 0; i < saveGameNames.Length; i++) 
-		{
+		{            
 			if(!m_profilePrefabs.ContainsKey(saveGameNames[i])) 
-			{
+			{         
 				PersistenceManager.Clear(saveGameNames[i]);
 			}
 			else
@@ -482,7 +518,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		SimpleJSON.JSONClass newSaveData = null;
 		try
 		{
-			newSaveData = PersistenceManager.LoadToObject(PersistenceProfile.DEFAULT_PROFILE);
+			newSaveData = PersistenceManager.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
 		}
 		catch( System.Exception )
 		{
@@ -501,8 +537,12 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 	private void SaveProfile( string _name, SimpleJSON.JSONClass _saveData)
 	{
-		string resourcesFolder = Application.dataPath + "/Resources/" + PersistenceProfile.RESOURCES_FOLDER;
-		File.WriteAllText( resourcesFolder + "/" + _name + ".json", _saveData.ToString());
+        // The default profile doesn't have to be saved to a json file because it's generated from rules
+        if (_name != PersistenceProfile.DEFAULT_PROFILE)
+        {
+            string resourcesFolder = Application.dataPath + "/Resources/" + PersistenceProfile.RESOURCES_FOLDER;
+            File.WriteAllText(resourcesFolder + "/" + _name + ".json", _saveData.ToString());
+        }
 	}
 
 	/// <summary>
@@ -538,35 +578,32 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 
 
-	private bool ShowSaveDataInfo( ref SimpleJSON.JSONClass _data )
-	{
+	private bool ShowSaveDataInfo( ref SimpleJSON.JSONClass _data, bool _isEditable = true ) {
 		bool ret = false;
 
 		string value = _data.ToString("");
 
-		// SC
-		string result = GUILayout.TextArea( value );
-		if ( !result.Equals(value) )
-		{
-			try
-			{
-				SimpleJSON.JSONClass parsed = SimpleJSON.JSONNode.Parse( result) as SimpleJSON.JSONClass;
-				if(parsed != null)
-				{
-					_data = parsed;
-					ret = true;
-				}
-			}
-			catch( System.Exception e )
-			{
-				Debug.Log( "Cannot parse json result" );
-			}
-		}
-
-
-
+        // SC
+        if (_isEditable) {
+            string result = GUILayout.TextArea(value);
+            if (!result.Equals(value)) {
+                try {
+                    SimpleJSON.JSONClass parsed = SimpleJSON.JSONNode.Parse(result) as SimpleJSON.JSONClass;
+                    if (parsed != null) {
+                        _data = parsed;
+                        ret = true;
+                    }
+                }
+                catch (System.Exception e) {
+                    Debug.Log("Cannot parse json result");
+                }
+            }
+        }
+        else
+        {
+            GUILayout.Label(value);
+        }
 
 		return ret;
 	}
-
 }
