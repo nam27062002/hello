@@ -97,7 +97,7 @@ public class MapMarker : MonoBehaviour {
 		if(m_rotateWithObject) {
 			// Black maths magic from HSX
 			// Find out parent's direction and nullify Z component
-			Vector3 dir = parentTransform.right;
+			Vector3 dir = parentTransform.forward;
 			dir.z = 0.0f;
 
 			// Flip based on direction

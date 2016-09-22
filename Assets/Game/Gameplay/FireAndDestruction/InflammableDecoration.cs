@@ -120,8 +120,12 @@ public class InflammableDecoration : Initializable {
 		if (m_autoSpawner == null)
 			return;
 
-		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning )	// if respawning we wait
+		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning ) {	// if respawning we wait
+			for (int i = 0; i < m_fireNodes.Length; i++) {
+				m_fireNodes[i].Disable();
+			}
 			return;
+		}
 
 		if (m_burned) {
 			// Advance dissolve!
