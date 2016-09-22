@@ -47,10 +47,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	private int m_frame;
 
-	private GameObject m_light;
-
-	public string m_flameLight = "PF_FireLight";
-
 	float m_timeToNextLoopAudio = 0;
 	AudioSource m_lastAudioSource;
 
@@ -73,8 +69,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
         dragonFlameInstance.EnableFlame(false);
 
-        PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameLight), 1, false);
-
         m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
@@ -96,7 +90,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 		m_frame = 0;
 
-		m_light = null;
+//		m_light = null;
 	}
 
 
@@ -141,9 +135,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 		base.BeginFury( _type);
 		m_lastAudioSource  = AudioManager.instance.PlayClip("audio/sfx/Burning/Flamethrower first");
 		m_timeToNextLoopAudio = m_lastAudioSource.clip.length;
-		m_light = PoolManager.GetInstance(m_flameLight);
-		m_light.transform.position = m_mouthTransform.position;
-		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * transform.localScale.x * 1.75f, 1f);
         dragonFlameInstance.EnableFlame(true);
     }
 
@@ -154,9 +145,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_lastAudioSource.Stop();
 		m_lastAudioSource = null;
 		AudioManager.instance.PlayClip("audio/sfx/Burning/Flamethrower End");
-		m_light.SetActive(false);
-		PoolManager.ReturnInstance( m_light );
-		m_light = null;
         dragonFlameInstance.EnableFlame(false);
     }
 
@@ -239,11 +227,11 @@ public class FireBreathNew : DragonBreathBehaviour {
 		float lerpT = 0.15f;
 
 		//Vector3 pos = new Vector3(m_triP0.x, m_triP0.y, -8f);
-		m_light.transform.position = m_triP0; //Vector3.Lerp(m_light.transform.position, pos, 1f);
+//		m_light.transform.position = m_triP0; //Vector3.Lerp(m_light.transform.position, pos, 1f);
 
 		float angle = Vector3.Angle(Vector3.right, m_direction);
 		if (m_direction.y > 0) angle *= -1;
-		m_light.transform.localRotation = Quaternion.Lerp(m_light.transform.localRotation, Quaternion.AngleAxis(angle, Vector3.back), lerpT);
+//		m_light.transform.localRotation = Quaternion.Lerp(m_light.transform.localRotation, Quaternion.AngleAxis(angle, Vector3.back), lerpT);
 
 		m_frame = (m_frame + 1) % 4;
 
