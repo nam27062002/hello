@@ -172,9 +172,9 @@ public class Builder : MonoBehaviour
 			settingsInstance.m_strVersionIOSCode = IncreaseVersionCode( settingsInstance.m_strVersionIOSCode );
 			settingsInstance.m_strVersionAndroidGplayCode = IncreaseVersionCode( settingsInstance.m_strVersionAndroidGplayCode );
 			settingsInstance.m_strVersionAndroidAmazonCode = IncreaseVersionCode( settingsInstance.m_strVersionAndroidAmazonCode );
+			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 			EditorUtility.SetDirty( settingsInstance );
 			AssetDatabase.SaveAssets();
-			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 		}
 	}
 
