@@ -62,7 +62,7 @@ public class DefinitionsCategory
 	// Fire and Destruction properties
 	public const string FIRE_SPAWN_EFFECTS = "FIRE_SPAWN_EFFECTS";
 	public const string FIRE_DECORATION_EFFECTS = "FIRE_DECORATION_EFFECTS";
-	public const string BURN_DECORATION = "BURN_DECORATION";
+	public const string BURN_DESTRUCTION_DECORATION = "BURN_DECORATION";
 
 	// Hold Prey
 	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";

@@ -53,7 +53,7 @@ public class ContentManager
 		// Fire and Destruction properties
 		kDefinitionFiles.Add(DefinitionsCategory.FIRE_SPAWN_EFFECTS, new string[]{"Rules/spawnersDragonBurnDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.FIRE_DECORATION_EFFECTS, new string[]{"Rules/entityDragonBurnDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.BURN_DECORATION, new string[]{"Rules/burnRelation"});
+		kDefinitionFiles.Add(DefinitionsCategory.BURN_DESTRUCTION_DECORATION, new string[]{"Rules/burnRelation"});
 
 		kDefinitionFiles.Add(DefinitionsCategory.HOLD_PREY_TIER, new string[]{"Rules/holdPreyTierSettingsDefinitions"});
 
