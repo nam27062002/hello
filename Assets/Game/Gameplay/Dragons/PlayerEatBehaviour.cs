@@ -168,7 +168,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	}
 
 
-	override protected void EndHold()
+	override public void EndHold()
 	{
 		base.EndHold();
 		DragonMotion motion = GetComponent<DragonMotion>();
