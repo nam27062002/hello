@@ -8,11 +8,11 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 415608}
-  - 114: {fileID: 11412856}
   - 33: {fileID: 3330592}
   - 23: {fileID: 2370384}
+  - 114: {fileID: 114000010043916884}
   m_Layer: 0
-  m_Name: FireTest
+  m_Name: DragonBreath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197018}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.7673655, y: -2.3020227, z: -38.35547}
+  m_LocalPosition: {x: -4.940189, y: 1.03, z: 1.852098}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -42,7 +42,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
+  m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: b2a5f3cd7eeb543bdbb67abafa8bc0c8, type: 2}
@@ -67,97 +67,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197018}
-  m_Mesh: {fileID: 0}
---- !u!114 &11412856
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e3e8ee1182574614afedccf4606ff56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_distance: 5
-  m_aplitude: 3
-  m_initialColor: {r: 0.5019608, g: 0, b: 1, a: 0}
-  m_flameColor: {r: 1, g: 1, b: 1, a: 1}
-  m_collisionColor: {r: 1, g: 1, b: 1, a: 0}
-  m_shapeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 0.15
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - time: 1
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_FlameAnimation:
-    serializedVersion: 2
-    m_Curve:
-    - time: -0.004166667
-      value: -0.037499998
-      inSlope: 3.0973449
-      outSlope: 3.0973449
-      tangentMode: 10
-    - time: 0.034914434
-      value: 0.08354765
-      inSlope: 1.3515732
-      outSlope: 1.3515732
-      tangentMode: 10
-    - time: 0.1291826
-      value: 0.046387278
-      inSlope: 0.40320426
-      outSlope: 0.40320426
-      tangentMode: 10
-    - time: 0.26083192
-      value: 0.20444638
-      inSlope: 0.8110378
-      outSlope: 0.8110378
-      tangentMode: 10
-    - time: 0.8857201
-      value: 0.46781707
-      inSlope: 2.6057823
-      outSlope: 2.6057823
-      tangentMode: 10
-    - time: 0.9979426
-      value: 1.0053738
-      inSlope: 4.790096
-      outSlope: 4.790096
-      tangentMode: 10
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  flameAnimationTime: 0
-  m_FlexCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 0.06956343
-      outSlope: 0.06956343
-      tangentMode: 0
-    - time: 1
-      value: 1
-      inSlope: 3.9883144
-      outSlope: 3.9883144
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  fireDelay: 25
-  m_groundLayer: Ground
-  m_enemyLayers: []
-  breathFire: {fileID: 1000012664721882, guid: 8d8cea0d8a9be0847a2a835e47bb365e, type: 2}
-  timeDelay: 0.15
+  m_Mesh: {fileID: 4300000, guid: 5251b2439d812bc42a97b959a1a2a5b6, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -197,3 +107,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 415608}
   m_RootOrder: 0
+--- !u!114 &114000010043916884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 197018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b82c55fd2522164fb8d55020836d7a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_distance: 10
+  m_aplitude: 6
+  m_initialColor: {r: 0.516, g: 0.297, b: 1, a: 1}
+  m_flameColor: {r: 1, g: 1, b: 1, a: 1}
+  m_collisionColor: {r: 0, g: 0, b: 0, a: 0}
+  m_shapeCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_FlameAnimation:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_FlexCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fireDelay: 1
+  m_groundLayer: 
+  m_enemyLayers: []
+  timeDelay: 0.25
