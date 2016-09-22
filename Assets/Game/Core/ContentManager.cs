@@ -17,7 +17,7 @@ public class ContentManager
 
 		// Settings
 		kDefinitionFiles.Add(DefinitionsCategory.LOCALIZATION, new string[]{"Rules/localizationDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings"});
+		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings", "Rules/initialSettings"});
 		// kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
 		// Progression
@@ -59,10 +59,7 @@ public class ContentManager
 
 		// Power Ups
 		kDefinitionFiles.Add(DefinitionsCategory.POWERUPS, new string[]{"Rules/powerUpsDefinitions"});
-
-        // Initial Settings
-        kDefinitionFiles.Add(DefinitionsCategory.INITIAL_SETTINGS, new string[] { "Rules/initialSettings" });
-
+        
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
 

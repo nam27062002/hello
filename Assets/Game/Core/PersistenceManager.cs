@@ -222,7 +222,7 @@ public static class PersistenceManager {
         // The default profile is created from rules
         if (_profileName == PersistenceProfile.DEFAULT_PROFILE)
         {
-            DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INITIAL_SETTINGS, "initialSettings");
+            DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
             if (_def != null)
             {
                 string _sc = _def.Get("softCurrency");
@@ -916,9 +916,15 @@ public static class PersistenceManager {
     /// </summary>
     /// <returns></returns>
     public static int Rules_GetPCAmountToIncentivizeSocial()
+    {
+        int returnValue = 0;
+        DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+        if (_def != null)
         {
-        // [DGR] RULES: To read from content
-        return 25;
+            returnValue = _def.GetAsInt("incentivizeFBGem");
+        }
+
+        return returnValue;
     }
 #endregion
 }
