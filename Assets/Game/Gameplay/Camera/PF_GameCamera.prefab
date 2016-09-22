@@ -12,7 +12,6 @@ GameObject:
   - 124: {fileID: 12481626}
   - 92: {fileID: 9212364}
   - 81: {fileID: 8136056}
-  - 114: {fileID: 11460498}
   - 114: {fileID: 11427856}
   - 114: {fileID: 11457446}
   - 114: {fileID: 11486938}
@@ -302,28 +301,6 @@ MonoBehaviour:
   zoomInDuration: 0.5
   zoomOutDuration: 1
   alwaysTrigger: 1
---- !u!114 &11460498
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe148db22b4994b409b994efd1c19a8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_limitX:
-    min: -10000
-    max: 10000
-  m_defaultZoom: 45
-  m_farZoom: 55
-  m_shakeDefaultAmount: {x: 0.5, y: 0.5, z: 0}
-  m_shakeDefaultDuration: 0.15
-  m_shakeDecayOverTime: 1
-  m_activationDistance: 5
-  m_activationRange: 3
-  m_deactivationDistance: 25
 --- !u!114 &11486938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -577,8 +554,6 @@ MonoBehaviour:
   m_refCamera: {fileID: 2055932}
   m_collisionReplacementShader: {fileID: 4800000, guid: 13e9ed0c2439a45e483c113bffde0e61,
     type: 3}
-  m_camera: {fileID: 0}
-  m_cullingMask: 0
 --- !u!114 &114000011098854082
 MonoBehaviour:
   m_ObjectHideFlags: 1

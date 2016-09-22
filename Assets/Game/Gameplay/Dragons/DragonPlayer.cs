@@ -484,7 +484,7 @@ public class DragonPlayer : MonoBehaviour {
 	public void EndLatchedOn()
 	{
 		m_dragonMotion.EndLatchedOnMovement();
-		m_dragonEatBehaviour.ResumeEating( 5.0f );
+		m_dragonEatBehaviour.ResumeEating( 2.5f );
 	}
 
 	public bool BeingLatchedOn()
