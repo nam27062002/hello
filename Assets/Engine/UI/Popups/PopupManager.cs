@@ -211,8 +211,7 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 		m_openedPopups.Remove(_popup);
 		m_closedPopups.Remove(_popup);
 	}
-
-    #region popup_message
+    
     public static PopupController PopupMessage_Open(PopupMessage.Config _config)
     {    
         PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupMessage");
@@ -224,5 +223,9 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
 
         return _popup;       
     }
-    #endregion   
+
+    public static PopupController PopupLoading_Open()
+    {
+        return OpenPopupInstant("UI/Popups/Message/PF_PopupLoading");        
+    }
 }

@@ -315,11 +315,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLoadingPopup()
     {
         if (!Popups_IsLoadingPopupOpen())
-        {
-            PopupMessage.Config config = PopupMessage.GetConfig();
-            config.TitleTid = "TID_SAVE_CLOUD_LOADING_NAME";
-            config.MessageTid = "TID_SAVE_CLOUD_LOADING_WAIT";
-            Popups_LoadingPopup = PopupManager.PopupMessage_Open(config);
+        {            
+            Popups_LoadingPopup = PopupManager.PopupLoading_Open();
         }
     }
 
