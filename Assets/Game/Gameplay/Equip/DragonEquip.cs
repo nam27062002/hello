@@ -47,22 +47,27 @@ public class DragonEquip : MonoBehaviour {
 
 	void Start()
 	{
-	/*
-		string pet = "Game/Equipable/Pets/PF_PetMachine";
-		GameObject prefabObj = Resources.Load<GameObject>(pet);
-		GameObject equipable = Instantiate<GameObject>(prefabObj);
-		equipable.transform.position = transform.position;
 
-		AI.AIPilot pilot = equipable.GetComponent<AI.AIPilot>();
-		pilot.Spawn(null);
+		Dictionary<Equipable.AttachPoint, string> equip = new Dictionary<Equipable.AttachPoint, string>();
+		equip.Add(Equipable.AttachPoint.Pet_1, "PF_PetMachine");
 
-		ISpawnable[] components = pilot.GetComponents<ISpawnable>();
-		foreach (ISpawnable component in components) {
-			if (component != pilot ) {
-				component.Spawn(null);
+		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
+		for (int i = 0; i < points.Length; i++) {
+			Equipable.AttachPoint point = points[i].point;
+			if (equip.ContainsKey(point)) {
+				string item = equip[point];
+
+				string pet = "Game/Equipable/Pets/" + item;
+				GameObject prefabObj = Resources.Load<GameObject>(pet);
+				GameObject equipable = Instantiate<GameObject>(prefabObj);
+
+				// get equipable object!
+				points[i].Equip(equipable.GetComponent<Equipable>());
 			}
 		}
-		*/
+
+
+
 	}
 
 	public void PreviewDisguise(string _disguise) {

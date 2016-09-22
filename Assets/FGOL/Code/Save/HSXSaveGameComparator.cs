@@ -69,11 +69,8 @@ public class HSXSaveGameComparator : SaveGameComparator
                 //Check local save progress and automatically replace with cloud if its a brand new save!
                 if (m_localProgress.dragonsOwned <= 1 && m_localProgress.missionsCompleted == 0 && m_cloudProgress.timePlayed == 0 && !m_localProgress.iapPurchaseMade)
                 {
-                    Debug.Log("HSXSaveGameComparator (CompareSaves) :: Brand New Save UseCloud");
-
-                    // [DGR] SERVER: When the server sends the default persistence then we'll be able to use UseCloud again
-                    //state = ConflictState.UseCloud;
-                    state = ConflictState.UseLocal;
+                    Debug.Log("HSXSaveGameComparator (CompareSaves) :: Brand New Save UseCloud");                    
+                    state = ConflictState.UseCloud;                    
                 }
                 //If dragons and mission are equal
                 else if (m_localProgress.dragonsOwned == m_cloudProgress.dragonsOwned && m_localProgress.missionsCompleted == m_cloudProgress.missionsCompleted)

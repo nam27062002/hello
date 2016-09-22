@@ -72,10 +72,12 @@ public class GameServerManagerCalety : GameServerManager
                 Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
             }
 
+            // An error is sent, just in case the client is waiting for a response for any command
             if (m_onResponse != null)
             {
-                m_onResponse(null, 200);
+                m_onResponse(null, 500);
             }
+
             // no problem, continue playing
         }
 
@@ -233,7 +235,13 @@ public class GameServerManagerCalety : GameServerManager
         //if (!m_delegate.m_logged)
         {
             if (!m_delegate.m_waitingLoginResponse)
-            {
+            {                
+                // We need to logout before if already logged in
+                if (GameSessionManager.SharedInstance.IsLogged())
+                {
+                    LogOut(null);
+                }
+                
                 m_delegate.m_logged = false;
                 m_delegate.m_waitingLoginResponse = true;
 
@@ -248,12 +256,12 @@ public class GameServerManagerCalety : GameServerManager
 
     public override void LogOut(Action<Error> callback)
     {
-        Commands_PrepareToRunCommand(ECommand.Logout, null,
-            delegate(Error error, Dictionary<string, object> response)
-            {
-                callback(error);
-            }
-        );
+        // The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
+        GameSessionManager.SharedInstance.LogOutFromServer(false);
+        if (callback != null)
+        {
+            callback(null);
+        }       
     }
 
     public override void GetServerTime(Action<Error, Dictionary<string, object>> callback)
@@ -296,8 +304,7 @@ public class GameServerManagerCalety : GameServerManager
     {
         None,
         Ping,
-        Login,
-        Logout,
+        Login,        
         GetTime,
         GetPersistence,
         SetPersistence,
@@ -443,16 +450,21 @@ public class GameServerManagerCalety : GameServerManager
         Log("RunCommand " + command + " CurrentCommand = " + Commands_CurrentCommand);
         // Commands have to be executed one by one since we're not using actions on server side
         if (Commands_CurrentCommand == ECommand.None)
-        {
+        {            
             Commands_CurrentCommand = command;
             Commands_CurrentCallback = callback;
 
             switch (Commands_CurrentCommand)
             {
                 case ECommand.Ping:
-                {
-                    // [DGR] SERVER: To change for an actual request to the server
-                    Commands_OnResponse(null, 200);
+                {                    
+                    CaletyExtensions_Ping();
+                }
+                break;
+
+                case ECommand.GetTime:
+                {                 
+                    CaletyExtensions_GetTime();
                 }
                 break;
 
@@ -461,21 +473,8 @@ public class GameServerManagerCalety : GameServerManager
                     Log("Command Login");
                     CaletyExtensions_LogInToServerThruPlatform(parameters["platformId"], parameters["platformUserId"], parameters["platformToken"]);
                 }
-                break;
-
-                case ECommand.Logout:
-                {
-                    GameSessionManager.SharedInstance.LogOutFromServer(false);                        
-                }
-                break;
-
-                case ECommand.GetTime:
-                {
-                    // [DGR] SERVER: To change for an actual request to the server
-                    Commands_OnResponse(null, 200);                        
-                }
-                break;
-
+                break;                
+                
                 case ECommand.GetPersistence:
                 {
                     CaletyExtensions_GetPersistence();
@@ -661,6 +660,12 @@ public class GameServerManagerCalety : GameServerManager
         
         if (error == null)
         {
+            JSONNode result = null;
+            if (responseData != null)
+            {
+                result = SimpleJSON.JSON.Parse(responseData);                
+            }
+
             switch (Commands_CurrentCommand)
             {
                 case ECommand.Login:
@@ -670,6 +675,8 @@ public class GameServerManagerCalety : GameServerManager
                     response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
                     response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
                     response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+                                                                                              //response["authState"] = Authenticator.AuthState.NewSocialLogin.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+
                     response["upgradeAvailable"] = false.ToString(); // response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);
                     response["cloudSaveAvailable"] = false.ToString(); //Convert.ToBoolean(response["cloudSaveAvailable"]);
                 }
@@ -678,10 +685,20 @@ public class GameServerManagerCalety : GameServerManager
                 case ECommand.GetTime:
                 case ECommand.UpdateSaveVersion:
                 {
+                    int time = Globals.GetUnixTimestamp();
+
+                    // Checks if the response from server can be interpreted
+                    string key = "t";                
+                    if (result != null && result.ContainsKey(key))
+                    {
+                        long timeAsLong = result[key].AsLong;
+                        time = (int)(timeAsLong / 1000);                        
+                    }
+
                     // [DGR] SERVER: Receive these parameters from server
                     response = new Dictionary<string, object>();
-                    response["dateTime"] = Globals.GetUnixTimestamp() + "";
-                    response["unixTimestamp"] = Globals.GetUnixTimestamp();
+                        response["dateTime"] = time;
+                    response["unixTimestamp"] = time;
                 }
                 break;
 
@@ -704,34 +721,55 @@ public class GameServerManagerCalety : GameServerManager
     #endregion
 
     #region calety_extensions
+    private static string COMMAND_PING = "/api/server/ping";
+    private static string COMMAND_TIME = "/api/server/time";
+    private static string COMMAND_GET_PERSISTENCE = "/api/persistence/get";
+    private static string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
+
     private void CaletyExtensions_Init()
     {
-        NetworkManager.SharedInstance.RegistryEndPoint("/api/persistence/get", NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500 }, CaletyExtensions_OnGetPersistenceResponse);
-        NetworkManager.SharedInstance.RegistryEndPoint("/api/persistence/set", NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnSetPersistenceResponse);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_PING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnPing);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_TIME, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnGetTime);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_GET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500 }, CaletyExtensions_OnGetPersistenceResponse);
+        NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_SET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, new int[] { 200, 500, 400 }, CaletyExtensions_OnSetPersistenceResponse);        
     }    
+
+    private bool CaletyExtensions_OnPing(string strResponse, string strCmd, int iResponseCode)
+    {
+        Commands_OnResponse(strResponse, iResponseCode);
+        return true;
+    }
+
+    private bool CaletyExtensions_OnGetTime(string strResponse, string strCmd, int iResponseCode)
+    {
+        Commands_OnResponse(strResponse, iResponseCode);
+        return true;
+    }
 
     private bool CaletyExtensions_OnGetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
     {
         // [DGR] Server: Default universe
         if (strResponse == "{}")
         {
-            strResponse = "{\"version\":\"0.1.1\"}";
+            SimpleJSON.JSONNode defaultJson = PersistenceManager.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
+            defaultJson.Add("version", FGOL.Save.SaveGameManager.Instance.Version);
+            strResponse = defaultJson.ToString();
         }
 
-        Commands_OnResponse(strResponse, iResponseCode);       
+        Commands_OnResponse(strResponse, iResponseCode);        
         return true;
     }
 
     public bool CaletyExtensions_OnSetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
     {
         Log("OnSetPersistenceResponse statusCode=" + iResponseCode);
-        Commands_OnResponse(strResponse, iResponseCode);       
+        Commands_OnResponse(strResponse, iResponseCode);
         return true;
     }
 
     private void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)
-    {
-        Log("CaletyExtensions_LogInToServerThruPlatform");
+    {        
+        Log("CaletyExtensions_LogInToServerThruPlatform");        
         ServerManager.SharedInstance.SetNetworkPlatform(platformId);
         ServerManager.SharedInstance.Server_SendAuth(platformUserId, platformToken);
     }
@@ -743,7 +781,7 @@ public class GameServerManagerCalety : GameServerManager
             Dictionary<string, string> kParams = new Dictionary<string, string>();
             kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
             kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-            ServerManager.SharedInstance.SendCommand("/api/persistence/get", kParams);
+            ServerManager.SharedInstance.SendCommand(COMMAND_GET_PERSISTENCE, kParams);
         }
     }
 
@@ -755,8 +793,18 @@ public class GameServerManagerCalety : GameServerManager
             kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
             kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
             kParams["universe"] = persistence;
-            ServerManager.SharedInstance.SendCommand("/api/persistence/set", kParams);
+            ServerManager.SharedInstance.SendCommand(COMMAND_SET_PERSISTENCE, kParams);
         }
+    }
+
+    private void CaletyExtensions_Ping()
+    {        
+        ServerManager.SharedInstance.SendCommand(COMMAND_PING);
+    }
+
+    private void CaletyExtensions_GetTime()
+    {
+        ServerManager.SharedInstance.SendCommand(COMMAND_TIME);
     }
     #endregion
 

@@ -255,15 +255,13 @@ namespace FGOL.Save
                             }
 
                             //First thing to do is download the cloud save if this fails then we just continue as if offline
-                            GameServerManager.SharedInstance.GetPersistence(delegate (Error error, Dictionary<string, object> response)
-                            //m_request.DownloadFile(user.cloudSaveBucket, user.cloudSaveLocation, user.cloudCredentials.values, unixTimestamp, user.cloudCredentials.expiry, delegate (Error error, byte[] data)
+                            GameServerManager.SharedInstance.GetPersistence(delegate (Error error, Dictionary<string, object> response)                            
                             {
                                 if (error == null)
                                 {                                   
-                                    SaveData cloudSave = new SaveData(user.saveID);
-                                    //LoadState cloudResult = cloudSave.LoadFromStream(new MemoryStream(data));
+                                    SaveData cloudSave = new SaveData(user.saveID);                                    
                                     string persistence = response["response"] as string;
-                                    LoadState cloudResult = cloudSave.LoadFromString(persistence);
+                                    LoadState cloudResult = cloudSave.LoadFromString(persistence);                                    
 
                                     //Now we have the raw save data load it through the systems
                                     if (cloudResult == LoadState.OK)
@@ -363,6 +361,8 @@ namespace FGOL.Save
                                 }
                                 else if (error.GetType() == typeof(FileNotFoundError))
                                 {
+                                    // GetPersistence returns FileNotFoundError
+                                    // [DGR] SERVER: DEPRECATED since our server will never return this error. Legacy from when S3 was used as cloud server
                                     Debug.Log("SaveGameManager (SyncCloudSave) :: File not found on S3!");
 
                                     if (localResult == LoadState.OK)
@@ -396,12 +396,14 @@ namespace FGOL.Save
                                 }
                                 else
                                 {
+                                    // Any other error returned by GetPersistence
                                     m_syncCompleteCallback(error, SyncState.Error);
                                 }
                             });
                         }
                         else
                         {
+                            // GetTime returns an error
                             m_syncCompleteCallback(getTimeError, SyncState.Error);
                         }
 

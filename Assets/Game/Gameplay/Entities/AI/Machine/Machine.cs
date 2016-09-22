@@ -373,6 +373,31 @@ namespace AI {
 			m_edible.ReleaseHold();
 		}
 
+
+		public void StartAttackTarget(Transform _transform)
+		{
+			m_motion.attackTarget = _transform;
+			m_viewControl.StartAttackTarget();
+		}
+
+		public void StopAttackTarget()
+		{
+			m_motion.attackTarget = null;
+			m_viewControl.StopAttackTarget();
+		}
+
+		public void StartEating()
+		{
+			m_viewControl.StartEating();
+		}
+
+		public void StopEating()
+		{
+			m_viewControl.StopEating();
+		}
+
+
+
 		public virtual bool Burn(float _damage, Transform _transform) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {

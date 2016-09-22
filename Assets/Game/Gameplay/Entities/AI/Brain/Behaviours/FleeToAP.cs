@@ -8,6 +8,7 @@ namespace AI {
 			public float speed = 1f;
 			public float checkDragonPositionTime = 2f;
 			public float checkForActionPointTime = 1f;
+			public Actions actions;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Flee to Action Point")]
@@ -15,6 +16,9 @@ namespace AI {
 
 			[StateTransitionTrigger]
 			private static string OnActionPoint = "onActionPoint";
+
+			[StateTransitionTrigger]
+			private static string OnGoBackHome = "onGoBackHome";
 
 			private FleeToAPData m_data;
 
@@ -58,6 +62,28 @@ namespace AI {
 				m_actionPointTimer -= Time.deltaTime;
 				if (m_actionPointTimer <= 0f) {
 					ap = ActionPointManager.instance.GetActionPointAt(m_machine.transform.position);
+
+					if (ap != null) {
+						Actions.Action action = null;
+
+						if (ap.CanEnter()) {
+							action = ap.GetAction(ref m_data.actions);
+						} else {
+							action = ap.GetDefaultAction();
+						}
+
+						if (action != null) {
+							if (action.id == Actions.Id.Home) {
+								Transition(OnGoBackHome);
+								return;
+							} else if (action.id == Actions.Id.GoOn) {
+								ap = null;
+							}
+						} else {
+							ap = null;
+						}
+					}
+
 					m_actionPointTimer = m_data.checkForActionPointTime;
 				}
 

@@ -79,6 +79,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 		// If leaving this screen, remove "new" flag from eggs
 		if(_event.fromScreenIdx == (int)MenuScreens.DRAGON_SELECTION) {
+            PersistenceManager.Save(true);
+
 			for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) {
 				if(EggManager.inventory[i] != null) {
 					EggManager.inventory[i].isNew = false;

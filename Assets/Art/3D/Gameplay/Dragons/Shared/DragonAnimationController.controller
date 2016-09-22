@@ -13,133 +13,133 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: fly
+    m_Controller: {fileID: 0}
+  - m_Name: move
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: fly down
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: glide
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: glide alt
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: boost
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: breath
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: eat
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: eat crazy
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: eatHold
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: blink
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: starving
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: damage
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: dead
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: eatingSpeed
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: BendFrontX
+    m_Controller: {fileID: 0}
+  - m_Name: direction X
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: BendFrontY
+    m_Controller: {fileID: 0}
+  - m_Name: direction Y
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: BendBackX
+    m_Controller: {fileID: 0}
+  - m_Name: back direction X
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: BendBackY
+    m_Controller: {fileID: 0}
+  - m_Name: back direction Y
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Bend
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: LevelUp
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 1
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: swim
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: BaseLayer
@@ -355,8 +355,8 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: height
     m_Mirror: 0
-  m_BlendParameter: BendBackX
-  m_BlendParameterY: BendBackY
+  m_BlendParameter: back direction X
+  m_BlendParameterY: back direction Y
   m_MinThreshold: 0
   m_MaxThreshold: 1
   m_UseAutomaticThresholds: 1
@@ -441,8 +441,8 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: height
     m_Mirror: 0
-  m_BlendParameter: BendFrontX
-  m_BlendParameterY: BendFrontY
+  m_BlendParameter: direction X
+  m_BlendParameterY: direction Y
   m_MinThreshold: 0
   m_MaxThreshold: 0.27428576
   m_UseAutomaticThresholds: 1
@@ -456,7 +456,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
@@ -507,7 +507,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: boost
@@ -651,7 +651,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
@@ -747,7 +747,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: swim
@@ -843,7 +843,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: boost
@@ -903,7 +903,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
@@ -948,7 +948,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
@@ -1203,7 +1203,7 @@ AnimatorStateTransition:
     m_ConditionEvent: glide
     m_EventTreshold: 0
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 110754522}
   m_DstState: {fileID: 0}
@@ -1344,7 +1344,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: boost
@@ -1395,7 +1395,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: boost
@@ -1590,7 +1590,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 110279404}
@@ -2792,7 +2792,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: fly down
@@ -2824,7 +2824,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
@@ -2901,7 +2901,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: fly down
@@ -2920,7 +2920,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 110248316}
@@ -2952,7 +2952,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
@@ -3000,7 +3000,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 110248316}
@@ -3032,7 +3032,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: boost
@@ -3051,7 +3051,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: boost
@@ -3070,7 +3070,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
@@ -3086,7 +3086,7 @@ AnimatorTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: fly
+    m_ConditionEvent: move
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: glide

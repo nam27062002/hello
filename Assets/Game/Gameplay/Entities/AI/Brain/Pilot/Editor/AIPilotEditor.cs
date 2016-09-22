@@ -209,6 +209,30 @@ public class AIPilotEditor : Editor {
 			return newRange;
 		}
 
+		// Action
+		else if(_f.FieldType == typeof(Actions.Action)) {
+			Actions.Action currentAction = (Actions.Action)_currentValue;
+
+			EditorGUILayout.BeginHorizontal(); {
+				// Prefix label
+				EditorGUILayout.PrefixLabel(_f.Name);
+
+				// Reset indent level whithin the horizontal layout
+				int indentLevelBckp = EditorGUI.indentLevel;
+				EditorGUI.indentLevel = 0;
+
+				// Min and max fields, with small labels
+				EditorGUIUtility.labelWidth = 30f;
+				currentAction.active = EditorGUILayout.Toggle(currentAction.active);
+
+				// Restore indent level and label width
+				EditorGUIUtility.labelWidth = 0f;
+				EditorGUI.indentLevel = indentLevelBckp;
+			} EditorGUILayout.EndHorizontal();
+
+			return currentAction;
+		}
+
 		// Class - put it at the end so other classes with custom display (string, Range) are processed before
 		else if(_f.FieldType.IsClass) {
 			// If current value is null, create a new instance of the type (Unity's default behaviour)

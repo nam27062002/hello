@@ -29,14 +29,20 @@ public class AttachPoint : MonoBehaviour {
 
 
 	private void EquipPet() {
-		Initializable[] toInit = m_item.GetComponents<Initializable>();
 		m_item.transform.position = transform.position;
+		AI.AIPilot pilot = m_item.GetComponent<AI.AIPilot>();
+		m_item.transform.position = transform.position;
+		pilot.homeTransform = transform;
+		pilot.Spawn(null);
 
-		for (int i = 0; i < toInit.Length; i++) {
-			toInit[i].Initialize();
+		ISpawnable[] components = pilot.GetComponents<ISpawnable>();
+		foreach (ISpawnable component in components) {
+			if (component != pilot ) {
+				component.Spawn(null);
+			}
 		}
 
-		m_item.transform.localScale = transform.lossyScale; //??
+
 	}
 
 	private void EquipAccessory() {

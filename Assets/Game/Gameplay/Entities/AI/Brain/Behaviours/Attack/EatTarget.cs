@@ -27,7 +27,7 @@ namespace AI {
 				if ( _param.Length > 0 ){
 					m_eatBehaviour.StartAttackTarget( _param[0] as Transform);	
 				}else{
-				m_eatBehaviour.StartAttackTarget( m_machine.enemy );
+					m_eatBehaviour.StartAttackTarget( m_machine.enemy );
 				}
 				m_eatBehaviour.enabled = true;
 			}

@@ -62,7 +62,7 @@ public class Entity : IEntity {
 	void Awake() {
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
-
+		m_bounds = GetComponentInChildren<CircleArea2D>();
 	}
 
 	private void InitFromDef() {
@@ -105,7 +105,7 @@ public class Entity : IEntity {
 	// Use this for initialization
 	IEnumerator Start () 
 	{
-		m_bounds = GetComponentInChildren<CircleArea2D>();
+		
 		while( Camera.main == null )
 			yield return null;
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
@@ -123,9 +123,17 @@ public class Entity : IEntity {
 	override public void Spawn(ISpawner _spawner) {
 		m_spawner = _spawner;
 
-		DragonTier tier = InstanceManager.player.data.tier;
-		m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
-		m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
+		if ( InstanceManager.player != null )
+		{
+			DragonTier tier = InstanceManager.player.data.tier;
+			m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
+			m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
+		}
+		else
+		{
+			m_isGolden = false;
+			m_isPC = false;
+		}
 
 		m_isOnScreen = false;
 		m_checkOnScreenTimer = 0;
