@@ -103,6 +103,20 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
+
+		// Preload particles
+		for( int i = 0; i < m_onEatenParticles.Count; i++) {
+			ParticleData data = m_onEatenParticles[i];
+			if (!string.IsNullOrEmpty(data.name)) {
+				ParticleManager.CreatePool(data.name, data.path);
+			}
+		}
+
+		if (m_explosionParticles.name != "") {
+			ParticleManager.CreatePool(m_explosionParticles.name, m_explosionParticles.path);
+		}
+
+		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
 	}
 	//
 

@@ -6,24 +6,35 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
 
 	/// <summary>
+	/// Preload a particle effect before it is needed in game.
+	/// </summary>
+	/// <param name="_prefabName">Identifier. Must match the name of the prefab to be used.</param>
+	/// <param name="_path">Optional resources path of the prefab to be considerd if no pool with the given ID is found. Folder name within the Resources/Particles/ folder, excluding prefab name (e.g. "Game/Effects")</param>
+	/// <param name="_size">Size of the pool.</param>
+	public static void CreatePool(string _prefabName, string _folderPath = "", int _size = 10) {
+		if (!instance.m_particlePools.ContainsKey(_prefabName)) {
+			// [AOC] Small hack for retrocompatibility
+			if (!string.IsNullOrEmpty(_folderPath)) {
+				if (!_folderPath.EndsWith("/")) _folderPath = _folderPath + "/";
+			}
+
+			GameObject prefab = (GameObject)Resources.Load("Particles/" + _folderPath + _prefabName);
+			CreatePool(prefab, _size);
+		}
+	}
+
+	/// <summary>
 	/// Spawn a particle effect with the given ID at a world position.
 	/// If no pool was found with the given ID, load a prefab from a target path
 	/// and create a pool from it.
 	/// </summary>
 	/// <returns>The spawned game object.</returns>
-	/// <param name="_id">Identifier. Must match the name of the prefab to be used.</param>
+	/// <param name="_prefabName">Identifier. Must match the name of the prefab to be used.</param>
 	/// <param name="_at">World position where to spawn the particle system.</param>
 	/// <param name="_path">Optional resources path of the prefab to be considerd if no pool with the given ID is found. Folder name within the Resources/Particles/ folder, excluding prefab name (e.g. "Game/Effects")</param>
 	public static GameObject Spawn(string _prefabName, Vector3 _at = default(Vector3), string _folderPath = "") {
 		// If we don't have a pool with the given ID, create it
-		if(!instance.m_particlePools.ContainsKey(_prefabName)) {
-			// [AOC] Small hack for retrocompatibility
-			if(!string.IsNullOrEmpty(_folderPath)) {
-				if(!_folderPath.EndsWith("/")) _folderPath = _folderPath + "/";
-			}
-			GameObject prefab = (GameObject)Resources.Load("Particles/" + _folderPath + _prefabName);
-			CreatePool(prefab);
-		}
+		CreatePool(_prefabName, _folderPath);
 
 		// Get a new system from the pool, spawn it and return it
 		if(instance.m_particlePools.ContainsKey(_prefabName)) {
@@ -47,7 +58,7 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 		if(_prefab == null) return null;
 
 		// If we don't have a pool with the given prefab, create it
-		if(!instance.m_particlePools.ContainsKey(_prefab.name)) {
+		if (!instance.m_particlePools.ContainsKey(_prefab.name)) {
 			CreatePool(_prefab);
 		}
 
@@ -94,7 +105,8 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 	/// The id of the new pool will be the prefab's name.
 	/// </summary>
 	/// <param name="_prefab">The prefab to be used to create the pool.</param>
-	private static void CreatePool(GameObject _prefab) {
+	/// <param name="_size">Size of the pool.</param>
+	private static void CreatePool(GameObject _prefab, int _size = 10) {
 		// Ignore if given prefab is not valid
 		if(_prefab == null) return;
 
@@ -102,7 +114,7 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 		if(instance.m_particlePools.ContainsKey(_prefab.name)) return;
 
 		// Do it!
-		Pool pool = new Pool(_prefab, instance.transform, 10, false, true);
+		Pool pool = new Pool(_prefab, instance.transform, _size, false, true);
 		instance.m_particlePools.Add(_prefab.name, pool);
 	}
 
