@@ -66,6 +66,20 @@ public class DragonBreath2 : MonoBehaviour
         // Cache
         m_meshFilter = GetComponent<MeshFilter>();
 
+
+        m_mesh = m_meshFilter.sharedMesh;
+        m_mesh.MarkDynamic();
+        Color[] colors = new Color[m_mesh.vertices.Length];// m_mesh.colors;
+
+        for (int c = 0; c < colors.Length; c++)
+        {
+            colors[c] = new Color(Random.value, Random.value, Random.value);
+        }
+
+        m_mesh.colors = colors;
+
+        m_meshFilter.sharedMesh = m_mesh;
+
         lastInitialPosition = whipEnd.transform.position;
 
         flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
