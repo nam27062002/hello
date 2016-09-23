@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/TransparnetAdditive"
+﻿Shader "Hungry Dragon/TransparentSoftAdditive"
 {
 	Properties
 	{
@@ -10,7 +10,7 @@
 		LOD 100
 		ZWrite Off
 		Cull Off
-		Blend SrcAlpha One 
+		Blend OneMinusDstColor One
 
 		Pass
 		{
