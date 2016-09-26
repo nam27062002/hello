@@ -129,9 +129,18 @@ public class PlayerEatBehaviour : EatBehaviour {
 		m_eatingBoosts.Add( entitySku, value);
 	}
 
+	public override void StopAttackTarget()
+	{
+		if ( m_attackTarget != null )
+		{
+			m_animator.SetBool("eat", false);	// Stop targeting animation
+		}
+		base.StopAttackTarget();
+	}
+
 	override protected void BiteKill( bool _canHold = true ) 
 	{
-		m_animator.SetBool("eat", false);	// Stop targeting animation
+		
 		base.BiteKill();
 	}
 

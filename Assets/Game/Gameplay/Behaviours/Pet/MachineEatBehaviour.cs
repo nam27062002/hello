@@ -60,12 +60,17 @@ public class MachineEatBehaviour : EatBehaviour {
 		}
 	}
 
+	public override void StopAttackTarget()
+	{
+		if ( m_attackTarget != null )
+		{
+			m_machine.StopAttackTarget();
+		}
+		base.StopAttackTarget();
+	}
+
 	override protected void BiteKill( bool _canHold = true ) 
 	{
-		if ( m_machine )
-		{
-			m_machine.StopAttackTarget();	// Stop Attacking Target
-		}
 		if ( !m_machine.IsDead() && !m_machine.IsDying() )
 			base.BiteKill();
 	}
