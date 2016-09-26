@@ -5,8 +5,8 @@ namespace AI {
 	namespace Behaviour {
 		
 
-		[CreateAssetMenu(menuName = "Behaviour/Wander Player")]
-		public class WanderPlayer : StateComponent {
+		[CreateAssetMenu(menuName = "Behaviour/Pet/Wander Player")]
+		public class PetWanderPlayer : StateComponent {
 
 			private WanderData m_data;
 			private Transform m_target;

@@ -43,8 +43,6 @@ namespace AI {
 		protected Vector3 m_target;
 		public override Vector3 target { get { return m_target; } }
 
-		protected Quaternion m_targetRotation;
-
 		protected bool m_slowDown;
 
 		private bool m_isOutside;

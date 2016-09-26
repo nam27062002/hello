@@ -86,8 +86,8 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 		}
 	}
 
-	public void CheckRespawn() 	{}
-	public void Respawn()		{ Spawn(); }
+	public bool CanRespawn() 	{ return true; }
+	public bool Respawn()		{ Spawn(); return true; }
 
 	//---------------------------------------------------------------------------------------------------------
 
