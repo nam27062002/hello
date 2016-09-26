@@ -5,7 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class LatchData : StateComponentData {
-			public float stunTime = 0;
+			public Range stunTime = new Range( 4,6 );
 			public float damage = 1;
 			public float duration = 2;
 
@@ -28,7 +28,7 @@ namespace AI {
 			private float m_timer;
 
 			private Transform m_holdTransform;
-
+			private Transform m_originalParent;
 			private Machine m_myMachine;
 
 			//--------------------------------------------------------
@@ -53,7 +53,7 @@ namespace AI {
 				m_eatBehaviour.holdDuration = m_data.duration;
 
 				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.stunTime; // retreat time
+				m_transitionParam[0] = m_data.stunTime.GetRandom(); // retreat time
 
 				base.OnInitialise();
 			}
@@ -88,6 +88,9 @@ namespace AI {
 				}
 				else
 				{
+					m_originalParent = m_pilot.transform.parent;
+					m_pilot.transform.parent = m_holdTransform;
+
 					m_pilot.PressAction(Pilot.Action.Latching);
 					m_holdTransform = m_eatBehaviour.holdTransform;
 					m_pilot.GoTo( m_holdTransform.position );
@@ -103,7 +106,7 @@ namespace AI {
 					if (m_myMachine.IsDead() || m_myMachine.IsDying())	{
 						if ( m_eatBehaviour.IsLatching() )
 							m_eatBehaviour.EndHold();
-						Transition(OnEndLatching, m_transitionParam);	
+						OnEndLatchingEvent();
 					}else{	
 						m_pilot.GoTo( m_holdTransform.position );
 						m_pilot.RotateTo( m_holdTransform.rotation );
@@ -112,7 +115,8 @@ namespace AI {
 			}
 
 			void OnEndLatchingEvent()
-			{
+			{	
+				m_pilot.transform.parent = m_originalParent;
 				Transition(OnEndLatching, m_transitionParam);
 			}
 		}
