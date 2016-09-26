@@ -38,9 +38,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[Tooltip("Spawners may not be present on every run (percentage).")]
 	[SerializeField][Range(0f, 100f)] private float m_activationChange = 100f;
 
-	[Tooltip("For the spawners that must spawn even when the dragon is not near (i.e. the spawners around the start area)")]
-	[SerializeField] private bool m_activeOnStart = false;
-
 	[Tooltip("Meant for background spawners, will ignore respawn settings and activation triggers.")]
 	[SerializeField] private bool m_alwaysActive = false;
 	public bool alwaysActive { get { return m_alwaysActive; }}
@@ -155,10 +152,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_allEntitiesKilledByPlayer = false;
 
 		m_readyToBeDisabled = false;
-
-		if (m_activeOnStart) {
-			Spawn();
-		}
 	}
 
 	public void ResetSpawnTimer()

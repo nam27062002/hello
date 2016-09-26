@@ -253,6 +253,15 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 		for(int i = 0; i < m_spawners.Count; i++) {
 			m_spawnersTree.Insert(m_spawners[i]);
 		}
+
+		m_selectedSpawners.Clear();
+		m_minRect = m_newCamera.activationMinRect;
+		m_spawnersTree.GetHashSetInRange(m_minRect.ToRect(), ref m_selectedSpawners);
+
+		// Process all selected spawners!
+		foreach(ISpawner item in m_selectedSpawners) {
+			item.CheckRespawn();
+		}
 	}
 
 	/// <summary>

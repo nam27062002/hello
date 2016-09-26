@@ -41,11 +41,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 408412}
-  - 114: {fileID: 11463780}
-  - 114: {fileID: 11494864}
   - 114: {fileID: 11401698}
-  - 114: {fileID: 11498378}
-  - 114: {fileID: 11456010}
   - 114: {fileID: 11404390}
   - 54: {fileID: 5476966}
   - 65: {fileID: 6565240}
@@ -106,17 +102,20 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 9003e362fd9054a44bd3cb97be54b88e, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -166,17 +165,20 @@ TrailRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 446970abd0c4a452aa9a493584925d3a, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -238,76 +240,6 @@ MonoBehaviour:
   m_moveType: 0
   m_arrowSpeed: 20
   m_arrowMaxDuration: 5
---- !u!114 &11456010
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 279d857c822824ee89d79e757d0876fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_destroyOnBurn: 0
-  m_checkFireTime: 0.25
-  m_ashesAsset: 
-  m_dissolveTime: 0.25
-  m_explosionPrefab: {fileID: 156574, guid: 0dea4c5a514534f54b1b7633972c33f6, type: 2}
-  m_scaleRange:
-    min: 1
-    max: 1.5
-  m_rotationRange:
-    min: 0
-    max: 360
-  m_shake: 0
-  m_slowMotion: 0
-  m_burnSize: 4
-  m_burnDuration: 0.75
-  m_orientedBurn: 1
---- !u!114 &11463780
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f4356f54d8094c3788d69197c36872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: missile
-  m_onAppearSoundProbability: 40
-  m_onApprearSounds: []
---- !u!114 &11494864
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8801765e0a55c4bf39163c520af098bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_vulnerable: 0
-  m_onEatenParticles: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds: []
---- !u!114 &11498378
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0.57035285, y: 0}
-  radius: 1
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

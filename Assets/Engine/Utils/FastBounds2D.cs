@@ -143,6 +143,11 @@ public class FastBounds2D
 	{
 		return new Bounds(new Vector3((x0+x1)*0.5f, (y0+y1)*0.5f, 0.0f), new Vector3(x1-x0, y1-y0, 1.0f));
 	}
+
+	public Rect ToRect()
+	{
+		return new Rect(x0, y0, w, h);
+	}
 	
 	//----------------------------------------------------------------------------
 	// Set centre, leave size unchanged
