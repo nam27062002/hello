@@ -56,30 +56,20 @@ public class DragonBreath2 : MonoBehaviour
     private float enableTime = 0.0f;
     private bool enableState = false;
 
+    private Vector3[] originalVertices;
+    private Vector2[] originalUV;
 
-	// Use this for initialization
-	void Start () 
+    private Color[] colorVertex;
+
+
+
+    // Use this for initialization
+    void Start () 
 	{
 
-        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire/Prefabs/FireOfBreath"), 15, false);
+        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire&Destruction/_PrefabsWIP/FireOfBreath"), 15, false);
 
         // Cache
-        m_meshFilter = GetComponent<MeshFilter>();
-
-
-        m_mesh = m_meshFilter.sharedMesh;
-        m_mesh.MarkDynamic();
-        Color[] colors = new Color[m_mesh.vertices.Length];// m_mesh.colors;
-
-        for (int c = 0; c < colors.Length; c++)
-        {
-            colors[c] = new Color(Random.value, Random.value, Random.value);
-        }
-
-        m_mesh.colors = colors;
-
-        m_meshFilter.sharedMesh = m_mesh;
-
         lastInitialPosition = whipEnd.transform.position;
 
         flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
@@ -89,8 +79,51 @@ public class DragonBreath2 : MonoBehaviour
 
 	}
 
-	// Update is called once per frame
-	void Update () 
+    void initMesh()
+    {
+        m_meshFilter = GetComponent<MeshFilter>();
+
+        m_mesh = m_meshFilter.sharedMesh;
+        m_mesh.MarkDynamic();
+
+        Color[] colors = new Color[m_mesh.vertices.Length];// m_mesh.colors;
+
+        for (int c = 0; c < colors.Length; c++)
+        {
+            if (c < 4)
+            {
+                colors[c] = m_initialColor;
+            }
+            else if (c > colors.Length - 4)
+            {
+                colors[c] = m_initialColor;
+            }
+            else
+            {
+                colors[c] = Color.white;
+            }
+
+        }
+
+        m_mesh.colors = colors;
+        m_meshFilter.sharedMesh = m_mesh;
+
+        /*
+
+                for (int c = 0; c < colors.Length; c++)
+                {
+                    colors[c] = new Color(Random.value, Random.value, Random.value);
+                }
+
+                m_mesh.colors = colors;
+
+                m_meshFilter.sharedMesh = m_mesh;
+        */
+
+    }
+
+    // Update is called once per frame
+    void Update () 
 	{
 	}
 
