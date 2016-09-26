@@ -9,7 +9,7 @@ Material:
   m_Name: FireTest
   m_Shader: {fileID: 4800000, guid: dae658b3af41349d4b92ed1c37e117b2, type: 3}
   m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
-    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR
+    GLOWEFFECT_USE_MAINTEX GLOWEFFECT_USE_VERTEXCOLOR_OFF
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -20,6 +20,12 @@ Material:
         name: _BumpMap
       second:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ColorRamp
+      second:
+        m_Texture: {fileID: 2800000, guid: 5818f0fb913f3c64d9d905206ea8b6cd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -67,7 +73,7 @@ Material:
     - first:
         name: _NoiseTex
       second:
-        m_Texture: {fileID: 2800000, guid: 9f822ceb778ba324a95a2fb0adb9fed6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 434279bc076a26647a5d75b000d29df1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -84,8 +90,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
+        name: _Alpha
+      second: 1
+    - first:
+        name: _AlphaThreshold
+      second: 2
+    - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _ColorSteps
+      second: 8
     - first:
         name: _CutOut
       second: 0.5
@@ -103,13 +118,13 @@ Material:
       second: 5.3
     - first:
         name: _Flamedistance
-      second: 1.24
+      second: 1.57
     - first:
         name: _Flamespeed
-      second: 0.5
+      second: 0.68
     - first:
         name: _Flamethrower
-      second: 1.13
+      second: 0.81
     - first:
         name: _FogEnd
       second: 100
@@ -131,6 +146,18 @@ Material:
     - first:
         name: _Parallax
       second: 0.02
+    - first:
+        name: _Power
+      second: 4.82
+    - first:
+        name: _RampOffset
+      second: 0.2
+    - first:
+        name: _Seed
+      second: 0
+    - first:
+        name: _Speed
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
