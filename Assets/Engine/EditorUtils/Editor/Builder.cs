@@ -27,7 +27,6 @@ public class Builder : MonoBehaviour
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
 		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, m_iOSSymbols);
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.iOS);
-		EditorUserBuildSettings.development = true;
 		UpdateCaletySettings();
 
 		// Figure out output file

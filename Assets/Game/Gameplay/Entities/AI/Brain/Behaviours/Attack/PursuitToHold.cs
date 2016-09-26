@@ -8,6 +8,7 @@ namespace AI {
 		public class PursuitToHoldData : StateComponentData {
 			public float speed;
 			public float arrivalRadius = 1f;
+			public Range timeout = new Range(4,6);
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit To Hold")]
@@ -19,11 +20,16 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
 
+			[StateTransitionTrigger]
+			private static string OnPursuitTimeOut = "onPursuitTimeOut";
+
 			protected PursuitToHoldData m_data;
 
 			protected AI.Machine m_targetMachine;
 			protected Entity m_targetEntity;
 			protected DragonPlayer m_player;
+			protected float m_timer;
+			protected float m_timeOut;
 
 
 			private object[] m_transitionParam;
@@ -64,7 +70,8 @@ namespace AI {
 				{
 					m_player = InstanceManager.player;
 				}
-
+				m_timer = 0;
+				m_timeOut = m_data.timeout.GetRandom();
 			}
 
 			protected override void OnUpdate() {	
@@ -81,6 +88,8 @@ namespace AI {
 					}
 				}
 
+
+
 				Transform m_target = null;
 				if ( m_targetMachine != null)
 					m_target = SearchClosestHoldPoint( m_targetMachine.holdPreyPoints );
@@ -92,10 +101,18 @@ namespace AI {
 					m_transitionParam[0] = m_target;
 					Transition(OnEnemyInRange, m_transitionParam);
 				} else {
-					if ( m_targetEntity != null )
-						m_pilot.GoTo(m_targetEntity.circleArea.center);	
+					m_timer += Time.deltaTime;
+					if ( m_timer > m_timeOut )
+					{
+						Transition( OnPursuitTimeOut );
+					}
 					else
-						m_pilot.GoTo(m_target.position);
+					{
+						if ( m_targetEntity != null )
+							m_pilot.GoTo(m_targetEntity.circleArea.center);	
+						else
+							m_pilot.GoTo(m_target.position);
+					}
 				}
 									
 				

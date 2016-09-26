@@ -182,12 +182,12 @@ namespace AI {
 				return;
 			}else if ( m_machine.GetSignal(Signals.Type.Latching) ){
 				Stop();
-
-				UpdateOrientation();
-				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+				m_targetRotation = m_pilot.targetRotation;
+				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed * 10.0f);
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 				m_machine.transform.rotation = m_rotation;
-				m_machine.transform.position = m_pilot.target;
+
+				m_machine.transform.position =  Vector3.Lerp( m_machine.transform.position, m_pilot.target, Time.deltaTime * 10.0f);
 
 				m_viewControl.Move(0);
 				m_viewControl.Latching(true);

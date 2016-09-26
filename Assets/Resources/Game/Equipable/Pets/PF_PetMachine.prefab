@@ -1762,7 +1762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 1
-  m_runSpeed: 1
+  m_runSpeed: 2
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
@@ -1793,7 +1793,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":10,"checkDistanceToPlayer":true,"farAwayDistance":10,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":12,"arrivalRadius":1,"hasGuardState":false,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424
@@ -1874,14 +1874,14 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_absorbTime: 0.1
   m_minEatAnimTime: 0.1
-  m_eatDistance: 2
+  m_eatDistance: 0.5
   m_burpSounds: []
   m_eaterTier: 0
   m_isPet: 1
