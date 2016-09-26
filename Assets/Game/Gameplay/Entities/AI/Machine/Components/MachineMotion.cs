@@ -57,7 +57,7 @@ namespace AI {
 
 		private Vector3 m_velocity;
 		public Vector3 velocity { get{  return m_velocity; } }
-		public Vector3 angularVelocity { get{  return m_rbody.angularVelocity; } }
+		public Vector3 angularVelocity { get{  if (m_rbody != null)return m_rbody.angularVelocity;return Vector3.zero; } }
 		private Vector3 m_acceleration;
 
 		private Collider m_collider;
