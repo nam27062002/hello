@@ -149,7 +149,7 @@ public class DestructibleDecoration : Initializable {
 							dragonMotion.AddForce(knockBack);
 						}
 
-						m_autoSpawner.Respawn();
+						m_autoSpawner.StartRespawn();
 						m_view.SetActive(false);
 						m_spawned = false;
 					}
