@@ -198,7 +198,7 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 
 	public AudioSource PlayClipAtPoint(AudioClip clip, Vector3 pos, float pitch = 1.0f)
 	{
-		GameObject tempGO = m_audioSourcePool.Get();
+		GameObject tempGO = m_audioSourcePool.Get(true);
 		tempGO.transform.position = pos; // set its position
 		AudioSource aSource = tempGO.GetComponent<AudioSource>();
 		aSource.clip = clip; // define the clip
@@ -217,7 +217,7 @@ public class AudioManager :  SingletonMonoBehaviour<AudioManager>
 	
 	public AudioSource PlayClipAndFollow(AudioClip clip, Transform toFollow, float pitch = 1.0f)
 	{
-		GameObject tempGO = m_audioSourcePool.Get();
+		GameObject tempGO = m_audioSourcePool.Get(true);
 		tempGO.transform.localPosition = Vector3.zero;
 		AudioSource aSource = tempGO.GetComponent<AudioSource>();
 		aSource.clip = clip; // define the clip

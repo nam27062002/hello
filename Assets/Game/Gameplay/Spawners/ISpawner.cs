@@ -4,8 +4,8 @@ public interface ISpawner : IQuadTreeItem {
 	string name { get; }
 	void Initialize();
 	void ForceRemoveEntities();
-	void CheckRespawn();
-	void Respawn();
+	bool CanRespawn();
+	bool Respawn(); //return true if it respawned completelly
 	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
 
 	AreaBounds area{ get; }
