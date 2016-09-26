@@ -45,6 +45,8 @@ public class MachineEatBehaviour : EatBehaviour {
 		{
 			m_waitJawsEvent = false;
 		}
+
+		m_rewardsPlayer = m_isPet;
 	}
 
 
