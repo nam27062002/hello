@@ -44,9 +44,9 @@
 					float4 vertex : POSITION;
 					fixed4 color : COLOR;
 					float2 texcoord : TEXCOORD0;
-				#ifdef SOFTPARTICLES_ON
-					float4 projPos : TEXCOORD1;
-				#endif
+//				#ifdef SOFTPARTICLES_ON
+//					float4 projPos : TEXCOORD1;
+//				#endif
 				};
 
 				float4 _MainTex_ST;
@@ -55,10 +55,10 @@
 				{
 					v2f o;
 					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				#ifdef SOFTPARTICLES_ON
-					o.projPos = ComputeScreenPos(o.vertex);
-					COMPUTE_EYEDEPTH(o.projPos.z);
-				#endif
+//				#ifdef SOFTPARTICLES_ON
+//					o.projPos = ComputeScreenPos(o.vertex);
+//					COMPUTE_EYEDEPTH(o.projPos.z);
+//				#endif
 					o.color = v.color;
 					o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
 					return o;
@@ -69,12 +69,12 @@
 
 				fixed4 frag(v2f i) : COLOR
 				{
-				#ifdef SOFTPARTICLES_ON
-					float sceneZ = LinearEyeDepth(UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos))));
-					float partZ = i.projPos.z;
-					float fade = saturate(_InvFade * (sceneZ - partZ));
-					i.color.a *= fade;
-				#endif
+//				#ifdef SOFTPARTICLES_ON
+//					float sceneZ = LinearEyeDepth(UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos))));
+//					float partZ = i.projPos.z;
+//					float fade = saturate(_InvFade * (sceneZ - partZ));
+//					i.color.a *= fade;
+//				#endif
 
 					half4 prev = i.color * tex2D(_MainTex, i.texcoord);
 					prev.rgb *= prev.a;
@@ -115,68 +115,5 @@
 		}
 	}
 
-/*
-	Properties
-	{
-		_MainTex ("Texture", 2D) = "white" {}
-	}
-	SubShader
-	{
-//		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" "PreviewType"="Plane" }
-		Tags{ "QUEUE" = "Transparent" "IGNOREPROJECTOR" = "true" "RenderType" = "GlowTransparent" "PreviewType" = "Plane" }
-
-		LOD 100
-		ZWrite Off
-		Cull Off
-		Blend OneMinusDstColor One
-
-//		AlphaTest Less .01
-//		ColorMask RGB
-
-		Pass
-		{
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma multi_compile_particles
-
-			#include "UnityCG.cginc"
-
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
-
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
-			
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				return o;
-			}
-			
-			fixed4 frag (v2f i) : SV_Target
-			{
-				// sample the texture
-				fixed4 col = tex2D(_MainTex, i.uv);
-				return col;
-			}
-			ENDCG
-		}
-	}
-	*/
-
 	CustomEditor "GlowMaterialInspector"
-
 }
