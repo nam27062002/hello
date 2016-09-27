@@ -441,7 +441,7 @@ public static class PersistenceManager {
 		config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()) };
 		config.OnConfirm = onConfirm;        
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-		PopupManager.PopupMessage_Open(config);
+		PopupManager.PopupEnableCloud_Open(config);
 	}
 
     /// <summary>

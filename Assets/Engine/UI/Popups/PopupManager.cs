@@ -228,4 +228,16 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
     {
         return OpenPopupInstant("UI/Popups/Message/PF_PopupLoading");        
     }
+
+    public static PopupController PopupEnableCloud_Open(PopupMessage.Config _config)
+    {
+        PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupEnableCloud");
+        if (_popup != null)
+        {
+            PopupMessage _popupMessage = _popup.GetComponent<PopupMessage>();
+            _popupMessage.Configure(_config);
+        }
+
+        return _popup;
+    }
 }
