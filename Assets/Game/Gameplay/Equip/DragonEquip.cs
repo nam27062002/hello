@@ -5,6 +5,8 @@ public class DragonEquip : MonoBehaviour {
 
 	private string m_dragonSku;
 
+	public static int m_numPets = 1;
+
 	void Awake() {
 		DragonPlayer player = GetComponent<DragonPlayer>();
 
@@ -49,7 +51,10 @@ public class DragonEquip : MonoBehaviour {
 	{
 
 		Dictionary<Equipable.AttachPoint, string> equip = new Dictionary<Equipable.AttachPoint, string>();
-		equip.Add(Equipable.AttachPoint.Pet_1, "PF_PetMachine");
+		for( int i = 0; i<m_numPets; i++ )
+		{
+			equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetMachine");	
+		}
 
 		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
 		for (int i = 0; i < points.Length; i++) {
@@ -65,8 +70,6 @@ public class DragonEquip : MonoBehaviour {
 				points[i].Equip(equipable.GetComponent<Equipable>());
 			}
 		}
-
-
 
 	}
 
