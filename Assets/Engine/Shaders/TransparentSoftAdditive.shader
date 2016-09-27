@@ -3,6 +3,9 @@
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
 		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = 1.0
+
+//		_GlowColor("Glow Color", Color) = (1, 1, 1, 1)
+//		_GlowColorMult("Glow Color Multiplier", Color) = (1, 1, 1, 1)
 	}
 
 	Category{
@@ -50,6 +53,9 @@
 				};
 
 				float4 _MainTex_ST;
+//				uniform half4 _GlowColor;
+//				uniform half4 _GlowColorMult;
+
 
 				v2f vert(appdata_t v)
 				{
