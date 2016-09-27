@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 // This is a Quadtree! a Quadtree full of fires
-public class FirePropagationManager : SingletonMonoBehaviour<FirePropagationManager> {
+public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagationManager> {
 	
 	[SerializeField] private float m_checkFireTime = 0.25f;
 

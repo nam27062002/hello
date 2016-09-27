@@ -9,10 +9,6 @@ using System.Collections.Generic;
 
 #pragma warning disable 1591 // undocumented XML code warning
 
-#if UNITY_FLASH
-#error Building for Flash is only supported by the full version of the Audio Toolkit
-#endif
-
 public class AudioToolkitDemo : MonoBehaviour
 {
     public AudioClip customAudioClip;
@@ -20,9 +16,10 @@ public class AudioToolkitDemo : MonoBehaviour
     float musicVolume = 1;
     float ambienceVolume = 1;
     bool musicPaused = false;
-    int scrollbarWidth = 130;
 
-    AudioObject introLoopOutroAudio;
+    Vector2 playlistScrollPos = Vector2.zero;
+
+    PoolableReference<AudioObject> introLoopOutroAudio;
 
     void OnGUI()
     {
@@ -33,17 +30,17 @@ public class AudioToolkitDemo : MonoBehaviour
 
     void DrawGuiLeftSide()
     {
-        GUI.skin.label.richText = true;
-
         var headerStyle = new GUIStyle( GUI.skin.label );
         headerStyle.normal.textColor = new UnityEngine.Color( 1, 1, 0.5f );
-        GUI.Label( new Rect( 22, 10, 300, 22 ), "<size=14>ClockStone Audio Toolkit Free Version - Demo</size>", headerStyle );
+        string txt = string.Format( "ClockStone Audio Toolkit - Demo" );
+        GUI.Label( new Rect( 22, 10, 500, 20 ), txt, headerStyle );
 
         int ypos = 10;
         int yposOff = 35;
         int buttonWidth = 200;
+        int scrollbarWidth = 130;
 
-        ypos += 50;
+        ypos += 30;
 
         GUI.Label( new Rect( 250, ypos, buttonWidth, 30 ), "Global Volume" );
 
@@ -57,7 +54,7 @@ public class AudioToolkitDemo : MonoBehaviour
 
         ypos += yposOff;
 
-        GUI.Label( new Rect( 250, ypos +10, buttonWidth, 30 ), "Music Volume" );
+        GUI.Label( new Rect( 250, ypos + 10, buttonWidth, 30 ), "Music Volume" );
 
         float musicVolumeNew = GUI.HorizontalSlider( new Rect( 250, ypos + 30, scrollbarWidth, 30 ), musicVolume, 0, 1 );
 
@@ -69,7 +66,7 @@ public class AudioToolkitDemo : MonoBehaviour
 
         GUI.Label( new Rect( 250 + scrollbarWidth + 30, ypos + 10, buttonWidth, 30 ), "Ambience Volume" );
 
-        float ambienceVolumeNew = GUI.HorizontalSlider( new Rect( 250 + scrollbarWidth + 30, ypos + 30, scrollbarWidth, 30 ), ambienceVolume, 0, 1 );
+        float ambienceVolumeNew = GUI.HorizontalSlider( new Rect( 250 + scrollbarWidth + 30, ypos + 30 , scrollbarWidth, 30 ), ambienceVolume, 0, 1 );
 
         if ( ambienceVolumeNew != ambienceVolume )
         {
@@ -84,14 +81,21 @@ public class AudioToolkitDemo : MonoBehaviour
 
         ypos += yposOff;
 
+        
+
         if ( GUI.Button( new Rect( 20, ypos, buttonWidth, 30 ), "Stop Music" ) )
         {
             AudioController.StopMusic( 0.3f );
         }
 
+        //if ( GUI.Button( new Rect( 250, ypos, buttonWidth, 30 ), "Stop Ambience" ) )
+        //{
+        //    AudioController.StopAmbienceSound( 0.5f );
+        //}
+
         ypos += yposOff;
 
-        bool musicPausedNew = GUI.Toggle( new Rect( 20, ypos, buttonWidth, 30 ), musicPaused, "Pause Music" );
+        bool musicPausedNew = GUI.Toggle( new Rect( 20, ypos, buttonWidth, 30 ), musicPaused, "Pause All Audio" );
 
         if ( musicPausedNew != musicPaused )
         {
@@ -99,15 +103,14 @@ public class AudioToolkitDemo : MonoBehaviour
 
             if ( musicPaused )
             {
-                AudioController.PauseMusic();
+                AudioController.PauseAll( 0.1f );
             }
             else
-                AudioController.UnpauseMusic();
+                AudioController.UnpauseAll( 0.1f );
         }
 
 
-        ypos += yposOff;
-        ypos += yposOff;
+        ypos += 20;
 
         if ( GUI.Button( new Rect( 20, ypos, buttonWidth, 30 ), "Play Sound with random pitch" ) )
         {
@@ -129,7 +132,24 @@ public class AudioToolkitDemo : MonoBehaviour
         }
         ypos += yposOff;
 
-        ypos += yposOff;
+        GUI.Label(new Rect(20, ypos, 100, 20), "Playlists: ");
+
+        ypos += 20;
+
+        playlistScrollPos = GUI.BeginScrollView(new Rect(20, ypos, buttonWidth, 100), playlistScrollPos,
+            new Rect(0, 0, buttonWidth, 33f*AudioController.Instance.musicPlaylists.Length));
+
+        for ( int i = 0; i < AudioController.Instance.musicPlaylists.Length; ++i )
+        {
+            if ( GUI.Button( new Rect( 20, i * 33f, buttonWidth - 20, 30f ), AudioController.Instance.musicPlaylists[ i ].name ) )
+            {
+                AudioController.SetCurrentMusicPlaylist( AudioController.Instance.musicPlaylists[ i ].name );
+            }
+        }
+
+        ypos += 105;
+        
+        GUI.EndScrollView();
 
         if ( GUI.Button( new Rect( 20, ypos, buttonWidth, 30 ), "Play Music Playlist" ) )
         {
@@ -152,8 +172,10 @@ public class AudioToolkitDemo : MonoBehaviour
 
         ypos += yposOff;
         AudioController.Instance.loopPlaylist = GUI.Toggle( new Rect( 20, ypos, buttonWidth, 30 ), AudioController.Instance.loopPlaylist, "Loop Playlist" );
-        ypos += yposOff;
+        ypos += 20;
         AudioController.Instance.shufflePlaylist = GUI.Toggle( new Rect( 20, ypos, buttonWidth, 30 ), AudioController.Instance.shufflePlaylist, "Shuffle Playlist " );
+        ypos += 20;
+        AudioController.Instance.soundMuted = GUI.Toggle( new Rect( 20, ypos, buttonWidth, 30 ), AudioController.Instance.soundMuted, "Sound Muted" );
 
     }
 
@@ -162,7 +184,7 @@ public class AudioToolkitDemo : MonoBehaviour
 
     void DrawGuiRightSide()
     {
-        int ypos = 10;
+        int ypos = 50;
         int yposOff = 35;
         int buttonWidth = 300;
 
@@ -175,7 +197,6 @@ public class AudioToolkitDemo : MonoBehaviour
                 wasClipAdded = true;
                 wasCategoryAdded = true;
             }
-            ypos += yposOff;
         }
         else
         {
@@ -184,11 +205,10 @@ public class AudioToolkitDemo : MonoBehaviour
                 AudioController.Play( "CustomAudioItem" );
             }
 
-            ypos += yposOff;
-
             if ( wasClipAdded )
             {
 
+                ypos += yposOff;
 
                 if ( GUI.Button( new Rect( Screen.width - ( buttonWidth + 20 ), ypos, buttonWidth, 30 ), "Remove custom AudioClip" ) )
                 {
@@ -200,7 +220,7 @@ public class AudioToolkitDemo : MonoBehaviour
             }
         }
 
-        ypos += yposOff;
+        ypos = 130;
 
 #if !UNITY_AUDIO_FEATURES_4_1
         BeginDisabledGroup( true );
@@ -220,47 +240,24 @@ public class AudioToolkitDemo : MonoBehaviour
 
         if ( GUI.Button( new Rect( Screen.width - ( buttonWidth + 20 ), ypos, buttonWidth, 50 ), "Play intro-loop-outro sequence\ngatling gun" ) )
         {
-            introLoopOutroAudio = AudioController.Play( "IntroLoopOutro_Gun" );
+            introLoopOutroAudio = new PoolableReference<AudioObject>( AudioController.Play( "IntroLoopOutro_Gun" ) );
         }
 
         ypos += 20;
         ypos += yposOff;
 
-        BeginDisabledGroup( introLoopOutroAudio == null  );
+        BeginDisabledGroup( !(introLoopOutroAudio != null && introLoopOutroAudio.Get() != null) );
 
         if ( GUI.Button( new Rect( Screen.width - ( buttonWidth + 20 ), ypos, buttonWidth, 30 ), "Finish gatling gun sequence" ) )
         {
-            introLoopOutroAudio.FinishSequence();
+            introLoopOutroAudio.Get().FinishSequence();
         }
 
         EndDisabledGroup();
-        ypos += yposOff;
 
 #if !UNITY_AUDIO_FEATURES_4_1
-       EndDisabledGroup();
+        EndDisabledGroup();
 #endif
-
-        ypos += 10;
-
-        const float textWidth = 500;
-
-        GUI.skin.box.alignment = TextAnchor.UpperLeft;
-        GUI.skin.box.wordWrap = true;
-        GUI.skin.box.richText = true;
-
-        const string infoText =
-            "<size=18><color=orange>Welcome to Audio Toolkit!\n</color></size>" +
-            "<size=14>The number one audio management solution for Unity used in AAA titles!\n\n" +
-            "What does the toolkit do? In a nutshell:\n" + 
-            "1) It separates scripting from managing audio:\n" +
-            " Let your audio artist define complex behaviours of what 'MySoundID' will sound like. All within the Unity inspector.\n" +
-            "2) Trigger audio without any scripting knowledge using the example behaviours like <color=lightblue>PlayAudio</color> or by script with\n" +
-            " a simple function call, e.g. <color=lightblue>AudioController.Play( \"MySoundID\" );</color>\n"+ 
-            "3) It makes life much easier in many ways: control volume by categories, play random effects, chain sequences of sound files, define sound alternatives, manage playlists, ...\n" +
-            "\n<color=cyan>Select the AudioController game object to see how to configure audio in the inspector!</color>" + 
-            "</size>";
-
-        GUI.Box( new Rect( Screen.width - textWidth, ypos, textWidth - 10 , Screen.height - ypos - 60 ), infoText );
 
     }
 
@@ -273,7 +270,7 @@ public class AudioToolkitDemo : MonoBehaviour
     }
     void OnAudioCompleteleyPlayed( AudioObject audioObj )
     {
-        Debug.Log( "Finished playing " + audioObj.audioID + " with clip " + audioObj.GetComponent<AudioSource>().clip.name );
+        Debug.Log( "Finished playing " + audioObj.audioID + " with clip " + audioObj.primaryAudioSource.clip.name );
     }
 
     List<bool> disableGUILevels = new List<bool>();

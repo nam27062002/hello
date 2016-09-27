@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /// the X axis at the manager's Z, which will be quite far away in the -Z axis.
 /// In any case, scene's transformations can always be manually changed to fit necessities.
 /// </summary>
-public class UIScene3DManager : SingletonMonoBehaviour<UIScene3DManager> {
+public class UIScene3DManager : UbiBCN.SingletonMonoBehaviour<UIScene3DManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

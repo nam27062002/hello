@@ -17,7 +17,7 @@
 	SubShader
 	{
 //		Tags {"Queue"="Transparent+5" "IgnoreProjector"="True" "RenderType"="Transparent"}
-		Tags{ "Queue" = "Transparent+5" "RenderType" = "Glow" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "Glow" }
 //		Tags{ "Queue" = "Transparent+5" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 //		Tags {"Queue" = "Geometry- 2"  "RenderType" = "Glow"}
 		LOD 100

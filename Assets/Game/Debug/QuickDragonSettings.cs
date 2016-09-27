@@ -10,6 +10,7 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Dropdown m_moveTypeDropDown;
 	public Slider m_sliderGravity;
 	public Dropdown m_eatTypeDropDown;
+	public Dropdown m_numPetsDropDown;
 	private DragonMotion m_motion;
 
 	void OnEnable()
@@ -29,7 +30,8 @@ public class QuickDragonSettings : MonoBehaviour {
 				case EntityManager.OverlapingMethod.Box: m_eatTypeDropDown.value = 2;break;
 			}
 			m_sliderGravity.value = m_motion.m_dragonGravityModifier;
-		}		
+		}	
+		m_numPetsDropDown.value = DragonEquip.m_numPets;	
 	}
 	
 	public void SetVelocityBend(float _size) 
@@ -73,5 +75,10 @@ public class QuickDragonSettings : MonoBehaviour {
 				case 2:EntityManager.instance.overlapingMethod = EntityManager.OverlapingMethod.Box;break;
 			}
 		}
+	}
+
+	public void SetNumPets( int numPets )
+	{
+		DragonEquip.m_numPets = numPets;
 	}
 }

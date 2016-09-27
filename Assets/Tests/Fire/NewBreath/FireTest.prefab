@@ -10,7 +10,6 @@ GameObject:
   - 4: {fileID: 415608}
   - 33: {fileID: 3330592}
   - 23: {fileID: 2370384}
-  - 114: {fileID: 114000010043916884}
   - 114: {fileID: 114000013179902344}
   m_Layer: 0
   m_Name: FireTest
@@ -26,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197018}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 26.91, y: 40.81161, z: -6.6273947}
+  m_LocalPosition: {x: 102.8702, y: 101.66254, z: 6.0064716}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -201,44 +200,6 @@ Transform:
   - {fileID: 4000012374743620}
   m_Father: {fileID: 4000011929484278}
   m_RootOrder: 0
---- !u!114 &114000010043916884
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 197018}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b82c55fd2522164fb8d55020836d7a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_distance: 5
-  m_aplitude: 6
-  m_initialColor: {r: 0.516, g: 0.297, b: 1, a: 1}
-  m_flameColor: {r: 1, g: 1, b: 1, a: 1}
-  m_collisionColor: {r: 0, g: 0, b: 0, a: 0}
-  m_shapeCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  m_FlameAnimation:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  m_FlexCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  fireDelay: 1
-  m_groundLayer: 
-  m_enemyLayers: []
-  timeDelay: 0.25
 --- !u!114 &114000013179902344
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -357,7 +318,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: -719264564
+  randomSeed: 233721346
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -2026,7 +1987,7 @@ ParticleSystem:
   moveWithTransform: 1
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: -748474047
+  randomSeed: -1167721604
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -3735,7 +3696,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 2
-  randomSeed: -1956809100
+  randomSeed: -1824836192
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -5432,7 +5393,7 @@ ParticleSystemRenderer:
   m_LengthScale: 2
   m_SortingFudge: 0
   m_NormalDirection: 1
-  m_RenderAlignment: 0
+  m_RenderAlignment: 1
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}

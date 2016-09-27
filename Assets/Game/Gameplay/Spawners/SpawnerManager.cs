@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Singleton to manage all the spawners in a level in an efficient way.
 /// </summary>
-public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
+public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

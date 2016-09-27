@@ -10,7 +10,7 @@ using UnityEngine;
 /// This class is responsible for handling stuff related to the whole application in a high level. For example if an analytics event has to be sent when the application is paused or resumed
 /// you should send that event from here. It also offers a place where to initialize stuff only once regardless the amount of times the flow leads the user to the Loading scene.
 /// </summary>
-public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
+public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManager>
 {
     /// <summary>
     /// Time in seconds that will force a cloud save resync if the application has been in background longer than this amount of time
