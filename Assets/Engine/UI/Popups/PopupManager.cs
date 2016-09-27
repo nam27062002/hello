@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// - Optional delay before opening a popup
 /// - Stacked popups (popup over popup)
 /// </summary>
-public class PopupManager : SingletonMonoBehaviour<PopupManager> {
+public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

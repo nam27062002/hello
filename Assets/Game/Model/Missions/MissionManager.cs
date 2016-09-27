@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /// Has its own asset in the Resources/Singletons folder, all content must be
 /// initialized there.
 /// </summary>
-public class MissionManager : SingletonMonoBehaviour<MissionManager> {
+public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

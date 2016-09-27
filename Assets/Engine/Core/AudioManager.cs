@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Audio;
 
-public class AudioManager :  SingletonMonoBehaviour<AudioManager> 
+public class AudioManager :  UbiBCN.SingletonMonoBehaviour<AudioManager> 
 {
 	private const float AUDIO_MUSIC_VOLUME_DEFAULT = 0;
 	private const float AUDIO_SFX_VOLUME_DEFAULT = 0;

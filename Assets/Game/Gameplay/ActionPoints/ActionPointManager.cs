@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class ActionPointManager : SingletonMonoBehaviour<ActionPointManager> {
+public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

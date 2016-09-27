@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 [ExecuteInEditMode]
-public class FogManager : SingletonMonoBehaviour<FogManager>
+public class FogManager : UbiBCN.SingletonMonoBehaviour<FogManager>
 {
 	public Texture m_fogCurveTexture;
 	// private FogNode[] m_fogNodes;

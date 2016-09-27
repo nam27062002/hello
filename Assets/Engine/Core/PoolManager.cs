@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PoolManager : SingletonMonoBehaviour<PoolManager> {
+public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private Dictionary<string, Pool> m_pools = new Dictionary<string, Pool>();
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class EntityManager : SingletonMonoBehaviour<EntityManager> {
+public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager> {
 
 	private List<Entity> m_entities;
 	private List<Entity> m_searchList;

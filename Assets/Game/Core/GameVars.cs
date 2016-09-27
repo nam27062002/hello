@@ -18,7 +18,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class GameVars : SingletonMonoBehaviour<GameVars> {
+public class GameVars : UbiBCN.SingletonMonoBehaviour<GameVars> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
