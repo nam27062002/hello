@@ -214,11 +214,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 	}
 		
-	public void CheckRespawn() {		
+	public bool CanRespawn() {		
 		// Ignore all logic for always active spawners
 		if (m_alwaysActive) {
 			if (m_entityAlive == 0) {
-				Spawn();
+				return true;
 			}
 		}
 
@@ -231,7 +231,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 					// Respawn on cooldown?
 					if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
 						// Everything ok! Spawn!
-						Spawn();
+						return true;
 					}
 				}
 			}
@@ -243,6 +243,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 				}
 			}
 		}
+
+		return false;
 	}
 
 	/// <summary>
@@ -311,25 +313,40 @@ public class Spawner : MonoBehaviour, ISpawner {
 		return endConditionsOk;
 	}
 
-	public void Respawn() {
+	public bool Respawn() {
+		if (m_entityAlive == 0) {
+			if (m_entitiesKilled == m_entitySpawned) {
+				m_entitySpawned = (uint)m_quantity.GetRandom();
+			} else {
+				// If player didn't killed all the spawned entities we'll re spawn only the remaining alive.
+				// Also, this respawn will be instant.
+				m_entitySpawned = m_entitySpawned - m_entitiesKilled;
+			}
+			m_entitiesKilled = 0;
+			m_allEntitiesKilledByPlayer = false;
+			m_respawnTime = -1;
+		}
 
+		System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+		watch.Start();
+		for (uint i = m_entityAlive; i < m_entitySpawned; i++) {			
+			m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
+			m_entityAlive++;
+
+			if (watch.ElapsedMilliseconds >= 9f) {
+				break;
+			}
+		}
+
+		if (m_entityAlive == m_entitySpawned) {
+			Spawn();
+			return true;
+		}
+
+		return false;
 	}
 
 	private void Spawn() {
-		if (m_entitiesKilled == m_entitySpawned) {
-			m_entitySpawned = (uint)m_quantity.GetRandom();
-		} else {
-			// If player didn't killed all the spawned entities we'll re spawn only the remaining alive.
-			// Also, this respawn will be instant.
-			m_entitySpawned = m_entitySpawned - m_entitiesKilled;
-		}
-
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr);
-			m_entityAlive++;
-		}
-		m_entitiesKilled = 0;
-
 		uint rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {
 			GameObject spawning = m_entities[i];
@@ -373,6 +390,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 					machine.EnterGroup(ref m_groupController.flock);
 				}
 			}
+
+			spawning.SetActive(true);
 		}
 
 		// Disable this spawner after a number of spawns
@@ -383,10 +402,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 				SpawnerManager.instance.Unregister(this);
 			}
 		}
-
-		m_allEntitiesKilledByPlayer = false;
-
-		m_respawnTime = -1;
 	}
 
 	protected virtual AreaBounds GetArea() {

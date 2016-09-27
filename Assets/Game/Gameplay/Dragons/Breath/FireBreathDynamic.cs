@@ -61,7 +61,7 @@ public class FireBreathDynamic : MonoBehaviour
 	void Start () 
 	{
 
-        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire/Prefabs/FireOfBreath"), 15, false);
+        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire&Destruction/_PrefabsWIP/FireOfBreath"), 15, false);
 
         // Cache
         m_meshFilter = GetComponent<MeshFilter>();

@@ -68,25 +68,32 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	}
 
-	public void CheckRespawn() {
-		if (m_state == State.Respawning) {
-			if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
-				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);				
-				//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
-				if (isInsideActivationArea) {
-					Spawn();
-				}
-			}
-		}
-	}
-
-	public void Respawn() {
+	public void StartRespawn() {
 		// Program the next spawn time
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
 		m_state = State.Respawning;
 	}
+
+	public bool CanRespawn() {
+		if (m_state == State.Respawning) {
+			if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
+				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
+				//bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(transform.position);	
+				if (isInsideActivationArea) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public bool Respawn() {
+		Spawn();
+		return true;
+	}
 		
-	private void Spawn() {		
+	private void Spawn() {
 		Initializable[] components = GetComponents<Initializable>();
 		foreach (Initializable component in components) {
 			component.Initialize();
@@ -94,5 +101,5 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		m_state = State.Idle;
 	}
 
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer){}
+	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {}
 }

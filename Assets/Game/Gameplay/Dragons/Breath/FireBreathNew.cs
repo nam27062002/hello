@@ -63,6 +63,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         GameObject tempFire = Instantiate<GameObject>(dragonFlame);
         tempFire.transform.parent = m_tongue;
         tempFire.transform.localPosition = Vector3.zero;
+//        tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, -90.0f));
         tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
         tempFire.transform.localScale = Vector3.one;
         dragonFlameInstance = tempFire.GetComponent<FireBreathDynamic>();
