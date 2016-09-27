@@ -74,7 +74,7 @@ GameObject:
   - 224: {fileID: 224000012409873898}
   - 222: {fileID: 222000014230953612}
   - 114: {fileID: 114000010027320436}
-  - 114: {fileID: 114000013933975328}
+  - 114: {fileID: 114000014037991646}
   m_Layer: 5
   m_Name: ButtonConfirmCenter
   m_TagString: Untagged
@@ -259,6 +259,21 @@ GameObject:
   - 114: {fileID: 114000011731417918}
   m_Layer: 5
   m_Name: TitleLabel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1000013793266422
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 224000013798538266}
+  m_Layer: 5
+  m_Name: ButtonConfirmCenterRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -845,8 +860,11 @@ MonoBehaviour:
   m_titleText: {fileID: 114000010019728234}
   m_messageText: {fileID: 114000012573941880}
   m_buttonCancel: {fileID: 0}
-  m_buttonConfirmCenter: {fileID: 114000013933975328}
+  m_buttonCancelRoot: {fileID: 0}
+  m_buttonConfirmCenter: {fileID: 114000014037991646}
+  m_buttonConfirmCenterRoot: {fileID: 1000013793266422}
   m_buttonConfirmRight: {fileID: 0}
+  m_buttonConfirmRightRoot: {fileID: 0}
   m_buttonCancelText: {fileID: 0}
   m_buttonConfirmCenterText: {fileID: 114000010259348710}
   m_buttonConfirmRightText: {fileID: 0}
@@ -958,7 +976,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114000013933975328
+--- !u!114 &114000014037991646
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -981,7 +999,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 5
+    m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
@@ -1184,11 +1202,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 224000012388701684}
-  m_RootOrder: 1
+  m_Father: {fileID: 224000013798538266}
+  m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 48.96}
+  m_AnchoredPosition: {x: 0, y: -285.03998}
   m_SizeDelta: {x: 311.59998, y: 136.6}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224000010615425268
@@ -1317,8 +1335,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 224000013257941464}
-  - {fileID: 224000010312167306}
-  - {fileID: 224000012409873898}
+  - {fileID: 224000013798538266}
   m_Father: {fileID: 224000010066567478}
   m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1334,15 +1351,15 @@ RectTransform:
   m_GameObject: {fileID: 1000010755596884}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9999998, y: 0.9999998, z: 0.9999998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 224000014268602914}
-  m_Father: {fileID: 224000012388701684}
-  m_RootOrder: 2
+  m_Father: {fileID: 224000013798538266}
+  m_RootOrder: 1
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 60}
+  m_AnchoredPosition: {x: 0, y: -273.99997}
   m_SizeDelta: {x: 300, y: 120}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224000012766630360
@@ -1400,6 +1417,26 @@ RectTransform:
   m_AnchoredPosition: {x: -115.3, y: 57.77}
   m_SizeDelta: {x: 535, y: 470}
   m_Pivot: {x: 1, y: 0.5}
+--- !u!224 &224000013798538266
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013793266422}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 224000010312167306}
+  - {fileID: 224000012409873898}
+  m_Father: {fileID: 224000012388701684}
+  m_RootOrder: 1
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000014205646322
 RectTransform:
   m_ObjectHideFlags: 1

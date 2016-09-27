@@ -123,17 +123,21 @@ public class PopupMessage : MonoBehaviour
     private void Awake()
     {        
         DebugUtils.Assert(m_titleText != null, "Required field!");
-        DebugUtils.Assert(m_messageText != null, "Required field!");
-        DebugUtils.Assert(m_buttonCancel != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmCenter != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmRight != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmCenterText != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmRightText != null, "Required field!");
+        DebugUtils.Assert(m_messageText != null, "Required field!");        
+        DebugUtils.Assert(m_buttonConfirmCenter != null, "Required field!");        
+        DebugUtils.Assert(m_buttonConfirmCenterText != null, "Required field!");        
 
         IsInited = false;
 
-        m_buttonCancel.onClick.AddListener(OnCancel);        
-        m_buttonConfirmRight.onClick.AddListener(OnConfirm);
+        if (m_buttonCancel != null)
+        {
+            m_buttonCancel.onClick.AddListener(OnCancel);
+        }
+
+        if (m_buttonConfirmRight != null)
+        {
+            m_buttonConfirmRight.onClick.AddListener(OnConfirm);
+        }
     }    
 
     private void Reset()
@@ -195,9 +199,17 @@ public class PopupMessage : MonoBehaviour
         }
 
         // All buttons disabled by default since the required ones will be enabled depending on the button mode
-        m_buttonCancelRoot.SetActive(false);
+        if (m_buttonCancelRoot != null)
+        {
+            m_buttonCancelRoot.SetActive(false);
+        }
+        
         m_buttonConfirmCenterRoot.SetActive(false);
-        m_buttonConfirmRightRoot.SetActive(false);
+
+        if (m_buttonConfirmRightRoot != null)
+        {
+            m_buttonConfirmRightRoot.SetActive(false);
+        }
 
         switch (m_config.ButtonMode)
         {            
@@ -213,13 +225,27 @@ public class PopupMessage : MonoBehaviour
             case Config.EButtonsMode.ConfirmAndCancel:
             case Config.EButtonsMode.ConfirmAndExtraAndCancel:
             {
-                // Cancel button
-                m_buttonCancelRoot.SetActive(true);                    
-                m_buttonCancelText.Localize(m_config.CancelButtonTid);
+                if (m_buttonCancelRoot != null)
+                {
+                    // Cancel button
+                    m_buttonCancelRoot.SetActive(true);
+                }
+
+                if (m_buttonCancelText != null)
+                {
+                    m_buttonCancelText.Localize(m_config.CancelButtonTid);
+                }
 
                 // Confirm button: the right button is used because there are two buttons
-                m_buttonConfirmRightRoot.SetActive(true);
-                m_buttonConfirmRightText.Localize(m_config.ConfirmButtonTid);                
+                if (m_buttonConfirmRightRoot != null)
+                {
+                    m_buttonConfirmRightRoot.SetActive(true);
+                }
+
+                if (m_buttonConfirmRightText != null)
+                {
+                    m_buttonConfirmRightText.Localize(m_config.ConfirmButtonTid);
+                }
 
                 if (m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel)
                 {
