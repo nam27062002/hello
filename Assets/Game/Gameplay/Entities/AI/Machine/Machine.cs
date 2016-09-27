@@ -163,6 +163,7 @@ namespace AI {
 				m_entity.allowEdible = true;
 				m_entity.allowBurnable = true;
 			}
+
 		}
 
 		//-----------------------------------------------------------
@@ -195,12 +196,33 @@ namespace AI {
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
 			SetSignal(Signals.Type.Trigger, true, _params);
+
+
+			if ( _other.tag == "Water" )
+			{
+				m_viewControl.StartSwimming();	
+			}
+			else if (_other.tag == "Space" )
+			{
+				m_viewControl.FlyToSpace();
+			}
 		}
 
 		void OnTriggerExit(Collider _other) {
 			OnTriggerStay(_other);
 
 			SetSignal(Signals.Type.Trigger, false);
+			object[] _params = new object[1]{_other.gameObject};
+			OnTrigger(SignalTriggers.OnTriggerExit, _params);
+
+			if ( _other.tag == "Water" )
+			{
+				m_viewControl.StopSwimming();	
+			}
+			else if (_other.tag == "Space" )
+			{
+				m_viewControl.ReturnFromSpace();
+			}
 		}
 
 		void OnTriggerStay(Collider _other) {

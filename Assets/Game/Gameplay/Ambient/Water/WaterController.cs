@@ -48,18 +48,27 @@ public class WaterController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider _other) {
-		CreateSplash();
+		if ( _other.tag == "Player" )
+			CreateSplash(m_player.velocity.y, _other.transform);
+		else if ( _other.tag == "Pet" ){
+			AI.Machine m = _other.GetComponent<AI.Machine>();
+			CreateSplash(m.velocity.y, _other.transform);
+		}
 	}
 
 	void OnTriggerExit (Collider _other) {
-		CreateSplash();
+		if ( _other.tag == "Player" )
+			CreateSplash( m_player.velocity.y, _other.transform );
+		else if ( _other.tag == "Pet" ){
+			AI.Machine m = _other.GetComponent<AI.Machine>();
+			CreateSplash(m.velocity.y, _other.transform);
+		}
 	}
 
-	void CreateSplash () {
-		float yVelocity = Mathf.Abs(m_player.velocity.y);
-		Debug.Log(yVelocity);
+	void CreateSplash (float yVelocity, Transform _transform) {
+		yVelocity = Mathf.Abs(yVelocity);
 		if (yVelocity > 1f) {
-			Vector3 pos = m_player.transform.position;
+			Vector3 pos = _transform.position;
 			float waterY = transform.position.y;
 			pos.y = waterY;
 
