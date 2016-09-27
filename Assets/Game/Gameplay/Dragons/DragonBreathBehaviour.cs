@@ -238,6 +238,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 						
 					}break;
 				}
+				
+				// With fury on boost is infinite
+				m_dragon.AddEnergy(m_dragon.energyMax);
 
 				if ( m_currentRemainingFuryDuration <= 0) 
 				{
