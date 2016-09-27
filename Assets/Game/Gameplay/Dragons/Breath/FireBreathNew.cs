@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
+
 public class FireBreathNew : DragonBreathBehaviour {
 
 	[Header("Emitter")]
@@ -55,7 +56,14 @@ public class FireBreathNew : DragonBreathBehaviour {
 
     public GameObject dragonFlame = null;
 
+
+    public const bool FIRETEST = true;
+
+#if FIRETEST
     private FireBreathDynamic dragonFlameInstance = null;
+#else
+    private DragonBreath2 dragonFlameInstance = null;
+#endif
 
     override protected void ExtendedStart() {
 
@@ -63,10 +71,16 @@ public class FireBreathNew : DragonBreathBehaviour {
         GameObject tempFire = Instantiate<GameObject>(dragonFlame);
         tempFire.transform.parent = m_tongue;
         tempFire.transform.localPosition = Vector3.zero;
-//        tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, -90.0f));
+
+#if FIRETEST
         tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
-        tempFire.transform.localScale = Vector3.one;
         dragonFlameInstance = tempFire.GetComponent<FireBreathDynamic>();
+#else
+        tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, -90.0f));
+        dragonFlameInstance = tempFire.GetComponent<DragonBreath2>();
+#endif
+
+        tempFire.transform.localScale = Vector3.one;
 
         dragonFlameInstance.EnableFlame(false);
 
