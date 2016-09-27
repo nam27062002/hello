@@ -7,7 +7,7 @@
 
 	Category
 	{
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "GlowTransparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Cull Off Lighting Off ZWrite Off Fog{ Color(0,0,0,0) }
 
