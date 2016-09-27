@@ -92,8 +92,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		}
 
 		if (m_active) {
-			// Don't drain energy if cheat is enabled
-			if(!DebugSettings.infiniteBoost) {
+			// Don't drain energy if cheat is enabled or dragon fury is on
+			if(!DebugSettings.infiniteBoost && !m_dragon.IsFuryOn()) {
 				m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain);
 				if (m_dragon.energy <= 0f) {
 					StopBoost();
