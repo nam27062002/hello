@@ -112,7 +112,7 @@
 		}
 	}
 
-	Fallback "Diffuse"
+//	Fallback "Diffuse"
 	CustomEditor "GlowMaterialInspector"
 
 }

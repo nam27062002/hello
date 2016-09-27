@@ -129,6 +129,7 @@ public class DragonBreath2 : MonoBehaviour
 //        iniCanon.rotation = Quaternion.
 	}
 
+/*
     public void EnableFlame(bool value)
     {
         if (value)
@@ -139,4 +140,14 @@ public class DragonBreath2 : MonoBehaviour
         enableTime = Time.time;
         enableState = value;
     }
+
+*/
+
+    public void EnableFlame(bool value)
+    {
+        gameObject.active = value;
+        enableTime = Time.time;
+        enableState = value;
+    }
+
 }
