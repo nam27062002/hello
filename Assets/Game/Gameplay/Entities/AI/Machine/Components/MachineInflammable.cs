@@ -119,14 +119,9 @@ namespace AI {
 				case State.Ashes:
 					if (m_timer <= 0f) {
 						m_machine.SetSignal(Signals.Type.Destroyed, true);
+						UpdateAshLevel(0);
 					} else {
-						float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime)));
-						for (int i = 0; i < m_ashMaterials.Count; i++) {
-							Material[] mats = m_ashMaterials[i];
-							for (int j = 0; j < mats.Length; j++) {
-								mats[j].SetFloat("_AshLevel", ashLevel);
-							}
-						}
+						UpdateAshLevel(m_timer / m_dissolveTime);
 					}
 					break;
 			}
@@ -145,11 +140,23 @@ namespace AI {
 
 			if (m_nextState == State.Burned) {				
 				m_timer = 0.5f; //secs
+				UpdateAshLevel(1);
 			} else if (m_nextState == State.Ashes) {
-				m_timer = m_dissolveTime;				
+				m_timer = m_dissolveTime;		
 			}
 
 			m_state = m_nextState;
+		}
+
+		private void UpdateAshLevel( float delta )
+		{
+			float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - delta));
+			for (int i = 0; i < m_ashMaterials.Count; i++) {
+				Material[] mats = m_ashMaterials[i];
+				for (int j = 0; j < mats.Length; j++) {
+					mats[j].SetFloat("_AshLevel", ashLevel);
+				}
+			}
 		}
 	}
 }
