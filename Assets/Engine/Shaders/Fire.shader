@@ -96,7 +96,7 @@
 		}
 	}
 
-	Fallback "Diffuse"
+//	Fallback "Diffuse"
 	CustomEditor "GlowMaterialInspector"
 
 //Fallback "Mobile/VertexLit"

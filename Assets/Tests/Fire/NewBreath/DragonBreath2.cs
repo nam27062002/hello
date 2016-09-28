@@ -77,9 +77,9 @@ public class DragonBreath2 : MonoBehaviour
         // Cache
         lastInitialPosition = whipEnd.position;
 
-        flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
+//        flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
 
-        enableTime = lastTime = Time.time;
+//        enableTime = lastTime = Time.time;
 
         initMesh();
 	}
@@ -129,6 +129,7 @@ public class DragonBreath2 : MonoBehaviour
 //        iniCanon.rotation = Quaternion.
 	}
 
+/*
     public void EnableFlame(bool value)
     {
         if (value)
@@ -139,4 +140,14 @@ public class DragonBreath2 : MonoBehaviour
         enableTime = Time.time;
         enableState = value;
     }
+
+*/
+
+    public void EnableFlame(bool value)
+    {
+        gameObject.active = value;
+        enableTime = Time.time;
+        enableState = value;
+    }
+
 }
