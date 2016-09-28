@@ -411,7 +411,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public bool CanBurn(InflammableDecoration _decoration) {
 		if ( m_decorationEffects != null )
 		{
-			string param = m_decorationEffects.Get( _decoration.sku, "" );
+			string param = m_decorationEffects.GetAsString( _decoration.sku );
 			if ( param.Equals("explode") || param.Equals("true") )
 				return true;
 		}
@@ -422,7 +422,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 		if ( m_decorationEffects != null )
 		{
-			string param = m_decorationEffects.Get( _decoration.sku, "" );
+			string param = m_decorationEffects.GetAsString( _decoration.sku );
 			if ( param.Equals("explode"))
 				return true;
 		}

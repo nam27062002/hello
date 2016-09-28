@@ -41,7 +41,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 		m_motion = GetComponent<DragonMotion>();
 
 		m_tier = m_dragon.data.tier;
-		m_eatSpeedFactor = m_dragon.data.def.Get<float>("eatSpeedFactor");
+		m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
 		m_rewardsPlayer = true;
