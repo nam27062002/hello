@@ -9,6 +9,7 @@ namespace AI {
 			public float speed;
 			public float arrivalRadius = 1f;
 			public Range timeout = new Range(4,6);
+			public Range onFailShutdown = new Range(4,6);
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit To Hold")]
@@ -79,12 +80,14 @@ namespace AI {
 					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()) {
 						m_targetMachine = null;
 						m_targetEntity = null;
-						Transition(OnEnemyOutOfSight);
+						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				} else if ( m_player != null ){
 					if ( !m_player.IsAlive() || m_player.BeingLatchedOn() )
 					{
-						Transition(OnEnemyOutOfSight);
+						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				}
 
@@ -104,7 +107,8 @@ namespace AI {
 					m_timer += Time.deltaTime;
 					if ( m_timer > m_timeOut )
 					{
-						Transition( OnPursuitTimeOut );
+						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						Transition( OnPursuitTimeOut, m_transitionParam );
 					}
 					else
 					{
