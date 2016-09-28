@@ -77,9 +77,9 @@ public class DragonBreath2 : MonoBehaviour
         // Cache
         lastInitialPosition = whipEnd.position;
 
-        flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
+//        flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
 
-        enableTime = lastTime = Time.time;
+//        enableTime = lastTime = Time.time;
 
         initMesh();
 	}
