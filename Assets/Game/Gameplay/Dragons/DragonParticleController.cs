@@ -18,11 +18,6 @@ public class DragonParticleController : MonoBehaviour
 	public Transform m_cloudTrailAnchor;
 	private ParticleSystem m_cloudTrailInstance;
 
-	void Awake() {
-		// Register events
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-	}
-
 	void Start () 
 	{
 		GameObject go;
@@ -33,8 +28,12 @@ public class DragonParticleController : MonoBehaviour
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
 	}
 
+	void OnEnable() {
+		// Register events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+	}
 
-	void OnDestroy()
+	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}

@@ -15,10 +15,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 	{
 		base.Awake();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
-
-		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	private void MouthCache() 
@@ -32,6 +28,11 @@ public class PlayerEatBehaviour : EatBehaviour {
 		}
 	}
 
+	protected void OnEnable() {
+		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+	}
 
 	protected void Start() 
 	{
@@ -62,19 +63,16 @@ public class PlayerEatBehaviour : EatBehaviour {
 		{
 			m_animator.SetBool("eat", false);
 		}
+
+		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 
 	void onEatEvent()
 	{
 		OnJawsClose();
-	}
-
-
-	void OnDestroy() {
-		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 
