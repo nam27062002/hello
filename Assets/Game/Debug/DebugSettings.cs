@@ -31,6 +31,8 @@ public static class DebugSettings {
 	public static readonly string DRAGON_SLOW_POWER_UP   = "DRAGON_SLOW_POWER_UP";
 	public static readonly string SHOW_XP_BAR			 = "SHOW_XP_BAR";
 	public static readonly string SHOW_COLLISIONS		 = "SHOW_COLLISIONS";
+	public static readonly string NEW_CAMERA_SYSTEM		 = "NEW_CAMERA_SYSTEM";
+
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
