@@ -660,7 +660,7 @@ public class GameCamera : MonoBehaviour
 #endif
 	}
 
-	public static float m_moveDamp = 0.1f;
+	public static float m_moveDamp = 0.46f;
 	public static float m_lookDamp = 0.1f;
 
 	void PlayDampUpdate()
