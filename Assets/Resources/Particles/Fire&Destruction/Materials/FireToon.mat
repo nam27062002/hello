@@ -7,8 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: FireToon
-  m_Shader: {fileID: 4800000, guid: 7b02f7ce37d284f438c24c60b25379a4, type: 3}
-  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
+  m_Shader: {fileID: 4800000, guid: 7d115b274302b5d46a753301e417a7e7, type: 3}
+  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR GLOWEFFECT_USE_GLOWTEX_OFF
     GLOWEFFECT_USE_MAINTEX GLOWEFFECT_USE_VERTEXCOLOR
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -159,6 +159,12 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _GlowColor
+      second: {r: 0.9485294, g: 0.9485294, b: 0.927606, a: 1}
+    - first:
+        name: _GlowColorMult
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _TintColor
       second: {r: 0.53676474, g: 0.53676474, b: 0.53676474, a: 0.456}
