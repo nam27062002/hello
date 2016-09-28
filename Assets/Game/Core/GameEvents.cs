@@ -95,4 +95,5 @@ public enum GameEvents {
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params
+	CAMERA_SHAKE				// params: float _duration, float _intensity
 }
