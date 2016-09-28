@@ -8,6 +8,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	private DragonBoostBehaviour m_dragonBoost;
 	private Dictionary<string, float> m_eatingBoosts = new Dictionary<string, float>();
 	private Animator m_animator;
+	protected bool m_pausedOnFury = false;
 
 	//--------------
 
@@ -111,7 +112,21 @@ public class PlayerEatBehaviour : EatBehaviour {
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
 	{
 		if (toogle)
-			m_attackTarget = null;
+		{
+			if ( m_pauseEating )
+			{
+				m_pausedOnFury = true;
+				PauseEating();
+			}
+		}
+		else
+		{
+			if ( m_pauseEating && m_pausedOnFury )
+			{
+				m_pausedOnFury = false;
+				ResumeEating();
+			}
+		}
 	}
 
 	void OnMultiplierLost()
