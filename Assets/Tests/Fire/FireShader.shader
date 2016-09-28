@@ -15,7 +15,8 @@
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent + 10" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+//		Tags{ "Queue" = "Transparent+10" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent+10" "IgnoreProjector" = "True" "RenderType" = "Glow" }
 		LOD 100
 		//Blend SrcAlpha OneMinusSrcAlpha
 		Blend SrcAlpha OneMinusSrcAlpha
@@ -97,4 +98,9 @@
 			ENDCG
 		}
 	}
+
+	Fallback "Diffuse"
+	CustomEditor "GlowMaterialInspector"
+
+
 }

@@ -20,6 +20,7 @@ GameObject:
   - 82: {fileID: 8279618}
   - 114: {fileID: 11447402}
   - 114: {fileID: 114000011327172364}
+  - 114: {fileID: 114000010147363370}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -501,6 +502,29 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
+--- !u!114 &114000010147363370
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52f78e93835bdf04eb5ad39ac500b342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowMaterial: {fileID: 2100000, guid: 384a7936c98fd0a4c8bb8f336aafe16f, type: 2}
+  glowReplaceShader: {fileID: 4800000, guid: 0d7c5cc6776db14459960ae53cb4ce35, type: 3}
+  glowMode: 0
+  blendMode: 2
+  downsampleSize: 128
+  blurIterations: 4
+  blurSpread: 1.41
+  glowStrength: 1.24
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  glowColorMultiplier: {r: 1, g: 0.465, b: 0.209, a: 1}
 --- !u!114 &114000010427000824
 MonoBehaviour:
   m_ObjectHideFlags: 1

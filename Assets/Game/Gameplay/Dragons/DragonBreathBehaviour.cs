@@ -214,7 +214,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void Update() {
 		// Cheat for infinite fire
-		bool cheating = ( UnityEngine.Debug.isDebugBuild && (DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+		bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
 
 		if (m_isFuryOn) 
@@ -238,33 +238,37 @@ public class DragonBreathBehaviour : MonoBehaviour {
 						
 					}break;
 				}
+				
+				// With fury on boost is infinite
+				m_dragon.AddEnergy(m_dragon.energyMax);
 
 				if ( m_currentRemainingFuryDuration <= 0) 
 				{
 					EndFury();
 					m_animator.SetBool("breath", false);
-
-				} else {				
+				} 
+				else
+				{
 					Breath();
 					m_animator.SetBool("breath", true);
 				}
 			}
 		} else {
 
-			if(cheating) 
+			if (cheating)
 			{
-				if ( DebugSettings.infiniteFire )
+				if (DebugSettings.infiniteFire)
 					AddFury(m_furyMax - m_currentFury);	// Set to max fury
-				else if ( DebugSettings.infiniteSuperFire )
+				else if (DebugSettings.infiniteSuperFire)
 					UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
 			}
 
-			if ( UsersManager.currentUser.superFuryProgression >= m_superFuryMax )
+			if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
 			{
 				BeginFury( Type.Super );
 
 			}
-			else if (m_currentFury >= m_furyMax) 
+			else if (m_currentFury >= m_furyMax)
 			{
 				BeginFury( Type.Standard );
 			}

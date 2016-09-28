@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// In-game control panel for cheats, debug settings and more.
 /// </summary>
-public class ControlPanel : SingletonMonoBehaviour<ControlPanel> {
+public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// Global manager of dragons. Stores current state of all dragons in the game
 /// (level, stats, upgrades, etc).
 /// </summary>
-public class DragonManager : SingletonMonoBehaviour<DragonManager> {
+public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

@@ -95,12 +95,18 @@ public class PopupMessage : MonoBehaviour
 
     [SerializeField]
     private Button m_buttonCancel;
+    [SerializeField]
+    private GameObject m_buttonCancelRoot;
 
     [SerializeField]
     private Button m_buttonConfirmCenter;
+    [SerializeField]
+    private GameObject m_buttonConfirmCenterRoot;
 
     [SerializeField]
     private Button m_buttonConfirmRight;
+    [SerializeField]
+    private GameObject m_buttonConfirmRightRoot;
 
     [SerializeField]
     private Localizer m_buttonCancelText;
@@ -117,17 +123,21 @@ public class PopupMessage : MonoBehaviour
     private void Awake()
     {        
         DebugUtils.Assert(m_titleText != null, "Required field!");
-        DebugUtils.Assert(m_messageText != null, "Required field!");
-        DebugUtils.Assert(m_buttonCancel != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmCenter != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmRight != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmCenterText != null, "Required field!");
-        DebugUtils.Assert(m_buttonConfirmRightText != null, "Required field!");
+        DebugUtils.Assert(m_messageText != null, "Required field!");        
+        DebugUtils.Assert(m_buttonConfirmCenter != null, "Required field!");        
+        DebugUtils.Assert(m_buttonConfirmCenterText != null, "Required field!");        
 
         IsInited = false;
 
-        m_buttonCancel.onClick.AddListener(OnCancel);        
-        m_buttonConfirmRight.onClick.AddListener(OnConfirm);
+        if (m_buttonCancel != null)
+        {
+            m_buttonCancel.onClick.AddListener(OnCancel);
+        }
+
+        if (m_buttonConfirmRight != null)
+        {
+            m_buttonConfirmRight.onClick.AddListener(OnConfirm);
+        }
     }    
 
     private void Reset()
@@ -189,16 +199,24 @@ public class PopupMessage : MonoBehaviour
         }
 
         // All buttons disabled by default since the required ones will be enabled depending on the button mode
-        m_buttonCancel.gameObject.SetActive(false);
-        m_buttonConfirmCenter.gameObject.SetActive(false);
-        m_buttonConfirmRight.gameObject.SetActive(false);
+        if (m_buttonCancelRoot != null)
+        {
+            m_buttonCancelRoot.SetActive(false);
+        }
+        
+        m_buttonConfirmCenterRoot.SetActive(false);
+
+        if (m_buttonConfirmRightRoot != null)
+        {
+            m_buttonConfirmRightRoot.SetActive(false);
+        }
 
         switch (m_config.ButtonMode)
         {            
             case Config.EButtonsMode.Confirm:
             {
                 // Center button chosen since there's only one
-                m_buttonConfirmCenter.gameObject.SetActive(true);                
+                m_buttonConfirmCenterRoot.SetActive(true);                
                 m_buttonConfirmCenterText.Localize(m_config.ConfirmButtonTid);
                 m_buttonConfirmCenter.onClick.AddListener(OnConfirm);
             }
@@ -207,17 +225,31 @@ public class PopupMessage : MonoBehaviour
             case Config.EButtonsMode.ConfirmAndCancel:
             case Config.EButtonsMode.ConfirmAndExtraAndCancel:
             {
-                // Cancel button
-                m_buttonCancel.gameObject.SetActive(true);                    
-                m_buttonCancelText.Localize(m_config.CancelButtonTid);
+                if (m_buttonCancelRoot != null)
+                {
+                    // Cancel button
+                    m_buttonCancelRoot.SetActive(true);
+                }
+
+                if (m_buttonCancelText != null)
+                {
+                    m_buttonCancelText.Localize(m_config.CancelButtonTid);
+                }
 
                 // Confirm button: the right button is used because there are two buttons
-                m_buttonConfirmRight.gameObject.SetActive(true);
-                m_buttonConfirmRightText.Localize(m_config.ConfirmButtonTid);                
+                if (m_buttonConfirmRightRoot != null)
+                {
+                    m_buttonConfirmRightRoot.SetActive(true);
+                }
+
+                if (m_buttonConfirmRightText != null)
+                {
+                    m_buttonConfirmRightText.Localize(m_config.ConfirmButtonTid);
+                }
 
                 if (m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel)
                 {
-                    m_buttonConfirmCenter.gameObject.SetActive(true);
+                    m_buttonConfirmCenterRoot.SetActive(true);
                     m_buttonConfirmCenterText.Localize(m_config.ExtraButtonTid);
                     m_buttonConfirmCenter.onClick.AddListener(OnExtra);
                 }
@@ -294,10 +326,16 @@ public class PopupMessage : MonoBehaviour
                 Test_ConfigConfirmAndCancel();
             }
             break;
+
+            case 3:
+            {
+                Test_ConfigConfirmAndExtraAndCancel();
+            }
+            break;
         }
 
         sm_testTimesOpened++;
-        sm_testTimesOpened = sm_testTimesOpened % 3;
+        sm_testTimesOpened = sm_testTimesOpened % 4;
     }
 
     private void Test_ConfigNoButtons()
@@ -339,6 +377,20 @@ public class PopupMessage : MonoBehaviour
         Configure(config);
     }
 
+    private void Test_ConfigConfirmAndExtraAndCancel()
+    {
+        Config config = GetConfig();
+        config.TitleTid = "TID_DRAGON_BALROG_NAME";
+        config.MessageTid = "TID_DRAGON_BALROG_DESC";
+        config.ButtonMode = Config.EButtonsMode.ConfirmAndExtraAndCancel;
+        config.OnConfirm = Test_OnConfirm;
+        config.OnCancel = Test_OnCancel;
+        config.OnExtra = Test_OnExtra;
+        config.ConfirmButtonTid = "TID_GEN_ACCEPT";
+        config.ExtraButtonTid = "EXTRA";
+        Configure(config);
+    }
+
     private void Test_OnConfirm()
     {
         Debug.Log("On confirm button clicked");
@@ -347,6 +399,11 @@ public class PopupMessage : MonoBehaviour
     private void Test_OnCancel()
     {
         Debug.Log("On cancel button clicked");
+    }
+
+    private void Test_OnExtra()
+    {
+        Debug.Log("On extra button clicked");
     }
     #endregion
 }

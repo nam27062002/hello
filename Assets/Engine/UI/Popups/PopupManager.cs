@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// - Optional delay before opening a popup
 /// - Stacked popups (popup over popup)
 /// </summary>
-public class PopupManager : SingletonMonoBehaviour<PopupManager> {
+public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -227,5 +227,17 @@ public class PopupManager : SingletonMonoBehaviour<PopupManager> {
     public static PopupController PopupLoading_Open()
     {
         return OpenPopupInstant("UI/Popups/Message/PF_PopupLoading");        
+    }
+
+    public static PopupController PopupEnableCloud_Open(PopupMessage.Config _config)
+    {
+        PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupEnableCloud");
+        if (_popup != null)
+        {
+            PopupMessage _popupMessage = _popup.GetComponent<PopupMessage>();
+            _popupMessage.Configure(_config);
+        }
+
+        return _popup;
     }
 }

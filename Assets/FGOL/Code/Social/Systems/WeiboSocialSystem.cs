@@ -109,7 +109,7 @@ public class WeiboSocialSystem : ISocialSystem
                             //[DGR] No support added yet
                             MessageBoxPopup.MessageBoxConfig config = new MessageBoxPopup.MessageBoxConfig();
                             config.titleText = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
-							config.messageText = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_DESC";
+							config.messageText = "TID_SAVE_WARN_CLOUD_SWITCH_NETWORK_DESC";
                             config.messageArgs = new object[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()),
 								SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
 							config.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.cancel;
@@ -130,7 +130,7 @@ public class WeiboSocialSystem : ISocialSystem
                             {
                                 MessageBoxPopup.MessageBoxConfig cancelConfig = new MessageBoxPopup.MessageBoxConfig();
                                 cancelConfig.titleText = "TID_SAVE_ERROR_CLOUD_DISABLED_NAME";
-								cancelConfig.messageText = "TID_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_DESC";
+								cancelConfig.messageText = "TID_SAVE_ERROR_CLOUD_SAVE_DISABLED_DESC";
 								cancelConfig.messageArgs = new object[] { SocialFacade.GetLocalizedNetworkName(SocialFacade.Network.Weibo)};
 								cancelConfig.cancelEnabled = false;
 								cancelConfig.backButtonMode = MessageBoxPopup.MessageBoxConfig.BackButtonMode.confirm;

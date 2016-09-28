@@ -21,7 +21,7 @@ using System.Collections.Generic;
 /// The other slots are just for storage. Inventory should always be filled from 0 to N, and 
 /// eggs are automatically shifted when the egg in slot 0 is collected.
 /// </summary>
-public class EggManager : SingletonMonoBehaviour<EggManager> {
+public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

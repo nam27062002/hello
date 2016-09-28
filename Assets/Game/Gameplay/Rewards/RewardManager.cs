@@ -30,7 +30,7 @@ public class ScoreMultiplier {
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
 /// </summary>
-public class RewardManager : SingletonMonoBehaviour<RewardManager> {
+public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

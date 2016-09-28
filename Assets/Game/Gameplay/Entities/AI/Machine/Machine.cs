@@ -60,6 +60,10 @@ namespace AI {
 			}
 		}
 
+		bool m_isHolded = false;	// if machine being holded
+		bool m_isPetTarget = false;
+		public bool isPetTarget{ get{ return m_isPetTarget;} set { m_isPetTarget = value; } }
+
 		//---------------------------------------------------------------------------------
 
 		// Use this for initialization
@@ -159,13 +163,15 @@ namespace AI {
 				m_entity.allowEdible = true;
 				m_entity.allowBurnable = true;
 			}
+
 		}
 
 		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
 		void OnCollisionEnter(Collision _collision) {
-			object[] _params = new object[1]{_collision.gameObject};
+			object[] _params = new object[1]{_collision};
 			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
+			SetSignal(Signals.Type.Collision, true, _params);
 
 			if (m_motion != null) {
 				if (((1 << _collision.gameObject.layer) & m_groundMask) != 0) {
@@ -180,6 +186,8 @@ namespace AI {
 					m_motion.OnCollisionGroundExit();
 				}
 			}
+
+			SetSignal(Signals.Type.Collision, false);
 		}
 
 		void OnTriggerEnter(Collider _other) {
@@ -188,12 +196,33 @@ namespace AI {
 			object[] _params = new object[1]{_other.gameObject};
 			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
 			SetSignal(Signals.Type.Trigger, true, _params);
+
+
+			if ( _other.tag == "Water" )
+			{
+				m_viewControl.StartSwimming();	
+			}
+			else if (_other.tag == "Space" )
+			{
+				m_viewControl.FlyToSpace();
+			}
 		}
 
 		void OnTriggerExit(Collider _other) {
 			OnTriggerStay(_other);
 
 			SetSignal(Signals.Type.Trigger, false);
+			object[] _params = new object[1]{_other.gameObject};
+			OnTrigger(SignalTriggers.OnTriggerExit, _params);
+
+			if ( _other.tag == "Water" )
+			{
+				m_viewControl.StopSwimming();	
+			}
+			else if (_other.tag == "Space" )
+			{
+				m_viewControl.ReturnFromSpace();
+			}
 		}
 
 		void OnTriggerStay(Collider _other) {
@@ -343,6 +372,22 @@ namespace AI {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
+
+		public bool CanBeBitten()
+		{
+			if (!enabled)
+				return false;
+			if ( IsDead() || IsDying() )
+				return false;
+			if (m_isHolded)
+				return false;
+			if ( m_pilot.IsActionPressed(Pilot.Action.Latching) )
+				return false;
+
+			return true;
+		}
+
+
 		public float biteResistance { get { return m_edible.biteResistance; }}
 
 		public void Bite() {
@@ -365,10 +410,12 @@ namespace AI {
 		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
 		public void BiteAndHold() {
+			m_isHolded = true;
 			m_edible.BiteAndHold();
 		}
 
 		public void ReleaseHold() {
+			m_isHolded = false;
 			m_motion.position = transform.position;
 			m_edible.ReleaseHold();
 		}

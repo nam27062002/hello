@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PoolManager : SingletonMonoBehaviour<PoolManager> {
+public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private Dictionary<string, Pool> m_pools = new Dictionary<string, Pool>();
 
@@ -63,9 +63,9 @@ public class PoolManager : SingletonMonoBehaviour<PoolManager> {
 	/// <summary>
 	/// Get the first available instance of the prefab with the given name.
 	/// </summary>
-	public static GameObject GetInstance(string _id) {
+	public static GameObject GetInstance(string _id, bool _activate = true) {
 		if(instance.m_pools.ContainsKey(_id)) 
-			return instance.m_pools[_id].Get();
+			return instance.m_pools[_id].Get(_activate);
 
 		return null;
 	}

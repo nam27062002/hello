@@ -59,9 +59,9 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156466}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.9255261, y: 13.125511, z: -3.469881}
+  m_LocalPosition: {x: 48.978, y: 1.42, z: 0.923}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -71.401, y: 0, z: 0}
   m_Children:
   - {fileID: 4000010277734086}
   - {fileID: 425414}
@@ -83,7 +83,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 0
     m_walkOnWalls: 0
-    m_mass: 1
+    m_mass: 3
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_faceDirection: 0
@@ -101,8 +101,8 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 5
-    m_maxRadius: 1.3
+    m_sightRadius: 7
+    m_maxRadius: 5
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -142,7 +142,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":6,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"stunTime":5,"damage":1,"duration":10,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":100,"arrivalRadius":1,"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":6,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"stunTime":{"min":4,"max":6},"damage":1,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":1.5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":12,"arrivalRadius":1,"timeout":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
 --- !u!114 &11464356
@@ -168,8 +168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.09104991, y: 0.091049194}
-  radius: 0.24455225
+  offset: {x: 0.08590388, y: 0.23518455}
+  radius: 0.28573382
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11499696
 MonoBehaviour:
@@ -296,6 +296,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000010277734086}
   - 95: {fileID: 95000013108842436}
+  - 114: {fileID: 114000014120770688}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -492,7 +493,7 @@ Transform:
   m_GameObject: {fileID: 1000011497161668}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.046, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.6, y: 1.6, z: 1.6}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000013418112394}
@@ -725,6 +726,17 @@ MonoBehaviour:
   m_burpSounds: []
   m_eaterTier: 0
   m_isPet: 0
+--- !u!114 &114000014120770688
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011497161668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &135000011093771074
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -735,8 +747,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.19
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.33
+  m_Center: {x: 0.1, y: 0.18, z: 0}
 --- !u!137 &137000012754386910
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

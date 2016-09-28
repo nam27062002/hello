@@ -199,7 +199,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 		}
 	}
 		
-	public void CheckRespawn() {		
+	public bool CanRespawn() {		
 		
 		// If we don't have any entity alive, proceed
 		if(m_entityAlive == 0) {
@@ -207,21 +207,22 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 
 			// Check activation area
 			if(m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
-				Spawn();
+				return true;
 			}
 			
 
 		}
 
-
+		return false;
 	}
 
 	public void UpdateLogic() {
 		ExtendedUpdateLogic();
 	}
 
-	public void Respawn() {
-
+	public bool Respawn() {
+		Spawn();
+		return true;
 	}
 
 	private void Spawn() {

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// [RequireComponent(typeof(PreyMotion))]
+
 public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 
 	[SerializeField] private GameObject m_explosionPrefab = null;
@@ -15,11 +15,10 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	private Transform m_oldParent = null;
 
 	private Vector2 m_targetCenter;
-	private PreyMotion m_motion;
 	private ProjectileMotion m_pMotion;
-	private EdibleBehaviour m_edible;
 
 	public List<GameObject> m_activateOnShoot = new List<GameObject>();
+
 
 	// Use this for initialization
 	void Start () {		
@@ -27,14 +26,9 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 			PoolManager.CreatePool(m_explosionPrefab, 5, false);
 		}
 
-		m_motion = GetComponent<PreyMotion>();
-		m_pMotion = GetComponent<ProjectileMotion>();
-		m_edible = GetComponent<EdibleBehaviour>();
-
-		if (m_motion) m_motion.enabled = false;
+		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
-		if (m_edible) m_edible.enabled = false;
-
+	
 		m_hasBeenShot = false;
 	}
 
@@ -64,9 +58,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		transform.localScale = Vector3.one;
 
 		//disable everything
-		if (m_motion) m_motion.enabled = false;
 		if (m_pMotion) m_pMotion.enabled = false;
-		if (m_edible) m_edible.enabled = false;
 
 		//wait until the projectil is shot
 		m_hasBeenShot = false;
@@ -80,10 +72,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 			m_oldParent = null;
 		}
 
-		if (m_motion) m_motion.enabled = true;
 		if (m_pMotion) m_pMotion.enabled = true;
-		if (m_edible) m_edible.enabled = true;
-
 
 		if (m_pMotion != null) {
 			Vector3 pos = InstanceManager.player.GetComponent<DragonMotion>().head.position;
@@ -103,29 +92,16 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	void Update() {
 		if (m_hasBeenShot) {
 			// The dragon may eat this projectile, so we disable the explosion if that happens 
-			if (!m_edible.isBeingEaten && m_motion != null) {
-				float distanceToTargetSqr = (m_targetCenter - (Vector2)transform.position).sqrMagnitude;
-				if (distanceToTargetSqr <= 0.5f) {
-					Explode(false);	
-				}
+			float distanceToTargetSqr = (m_targetCenter - (Vector2)transform.position).sqrMagnitude;
+			if (distanceToTargetSqr <= 0.5f) {
+				Explode(false);
 			}
 		}
 	}
 		
-	// Update is called once per frame
-	void FixedUpdate () {
-		if (m_hasBeenShot) {
-			if (!m_edible.isBeingEaten)  {
-				if (m_motion != null) {
-					m_motion.Seek(m_targetCenter);
-				}
-			}
-		}
-	}
-
 	void OnTriggerEnter(Collider _other) {
 		if (m_hasBeenShot) {
-			if (!m_edible.isBeingEaten && _other.tag == "Player")  {
+			if (_other.tag == "Player")  {
 				Explode(true);
 			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
 				Explode(false);
