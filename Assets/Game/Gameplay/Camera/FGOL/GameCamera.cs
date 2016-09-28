@@ -1057,39 +1057,40 @@ public class GameCamera : MonoBehaviour
 		UpdateBounds();	
 	
 	}
+    
+    private Ray[] m_cameraRays = new Ray[4];
+    private Vector3[] m_cameraPts = new Vector3[4];
 
-	void UpdateBounds()
+    void UpdateBounds()
 	{
 		m_unityCamera.fieldOfView = m_fov;
 		
 		float z = -m_position.z;
 
-		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 
-		Ray[] cameraRays = new Ray[4];
-		cameraRays[0] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));
-		cameraRays[1] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, 0.0f, z));
-		cameraRays[2] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, m_unityCamera.pixelHeight, z));
-		cameraRays[3] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, m_unityCamera.pixelHeight, z));
+		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 		
+        m_cameraRays[0] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));
+        m_cameraRays[1] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, 0.0f, z));
+        m_cameraRays[2] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, m_unityCamera.pixelHeight, z));
+        m_cameraRays[3] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, m_unityCamera.pixelHeight, z));
 		
 		// generate two world bounds, one for z=0, one for background spawners
 		for(int j=0; j<2; j++)
 		{
 			bool bg = (j==1);
 			
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));
-			Vector3[] pts = new Vector3[4];
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));			
 			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_screenWorldBounds;
 			
 			for(int i=0; i<4; i++)
 			{
-				Vector3? intersect = Util.RayPlaneIntersect(cameraRays[i], plane);
+				Vector3? intersect = Util.RayPlaneIntersect(m_cameraRays[i], plane);
 				if(intersect != null)
 				{
-					pts[i] = (Vector3)intersect;
+                    m_cameraPts[i] = (Vector3)intersect;
 					if(i == 0)	// initialize bounds with first point and zero size
-						bounds.Set(pts[i].x, pts[i].y, 0.0f, 0.0f);
+						bounds.Set(m_cameraPts[i].x, m_cameraPts[i].y, 0.0f, 0.0f);
 					else
-						bounds.Encapsulate(ref pts[i]);
+						bounds.Encapsulate(ref m_cameraPts[i]);
 				}
 			}
 			
