@@ -15,6 +15,10 @@ public class PlayerEatBehaviour : EatBehaviour {
 	{
 		base.Awake();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
+
+		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	private void MouthCache() 
@@ -37,10 +41,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 
 		m_tier = m_dragon.data.tier;
 		m_eatSpeedFactor = m_dragon.data.def.Get<float>("eatSpeedFactor");
-
-		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
 		m_rewardsPlayer = true;
