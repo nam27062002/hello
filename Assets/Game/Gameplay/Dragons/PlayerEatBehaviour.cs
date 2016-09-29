@@ -113,7 +113,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	{
 		if (toogle)
 		{
-			if ( m_pauseEating )
+			if ( !m_pauseEating )
 			{
 				m_pausedOnFury = true;
 				PauseEating();
