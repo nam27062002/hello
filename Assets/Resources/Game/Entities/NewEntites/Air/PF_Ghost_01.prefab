@@ -682,7 +682,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: -45
     m_faceDownAngle: 45
-    m_ignoreCollisionsWhenOffscreen: 0
   m_railSeparation:
     min: 0.5
     max: 1
@@ -702,6 +701,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
+  m_inflammable:
+    m_ashesAsset: 
+    m_dissolveTime: 1.5
+    m_ashExceptions:
+    - {fileID: 2378524}
 --- !u!137 &13797460
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
