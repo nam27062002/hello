@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/TransparentSoftAdditive"
+﻿Shader "Hungry Dragon/TransparentSoftAdditive(Glow)"
 {
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
