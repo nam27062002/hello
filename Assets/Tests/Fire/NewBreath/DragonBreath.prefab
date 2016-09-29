@@ -23,7 +23,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197018}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.08669114, y: 27.694342, z: 11.172256}
+  m_LocalPosition: {x: 28.682505, y: 38.456596, z: 5.4589334}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -240,74 +240,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b82c55fd2522164fb8d55020836d7a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_distance: 10
+  m_distance: 5
   m_aplitude: 6
+  m_collisionFirePrefab: BonfireToon
+  m_collisionFireDelay: 0.2
+  m_collisionEmiters: 10
+  m_groundLayer: Ground
+  m_enemyLayers: []
+  m_canonScale: {x: 1, y: 1, z: 1}
   m_initialColor: {r: 0.516, g: 0.297, b: 1, a: 1}
   m_flameColor: {r: 1, g: 1, b: 1, a: 1}
   m_collisionColor: {r: 0, g: 0, b: 0, a: 0}
-  m_shapeCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  m_FlameAnimation:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - time: 0.038297065
-      value: 0.15880817
-      inSlope: 0.19683503
-      outSlope: 0.19683503
-      tangentMode: 0
-    - time: 0.064830095
-      value: 0.086227626
-      inSlope: 0.2733618
-      outSlope: 0.2733618
-      tangentMode: 0
-    - time: 0.09287
-      value: 0.2463955
-      inSlope: 0.3573671
-      outSlope: 0.3573671
-      tangentMode: 0
-    - time: 0.13380638
-      value: 0.06449704
-      inSlope: 0.333637
-      outSlope: 0.333637
-      tangentMode: 0
-    - time: 0.20248705
-      value: 0.4404964
-      inSlope: 0.5066395
-      outSlope: 0.5066395
-      tangentMode: 0
-    - time: 0.48429173
-      value: 0.2889081
-      inSlope: 0.20951033
-      outSlope: 0.20951033
-      tangentMode: 0
-    - time: 1.5
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_FlexCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  fireDelay: 1
-  m_groundLayer: 
-  m_enemyLayers: []
-  timeDelay: 0.25
-  CanonScale: {x: 1.5, y: 1, z: 1}
 --- !u!198 &198000010550068172
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -358,7 +301,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 1963645421
+  randomSeed: 1441358830
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -3736,7 +3679,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: -872154657
+  randomSeed: -456139423
   InitialModule:
     serializedVersion: 2
     enabled: 1
