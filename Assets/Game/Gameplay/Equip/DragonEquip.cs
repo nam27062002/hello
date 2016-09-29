@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 
 public class DragonEquip : MonoBehaviour {
+	private static readonly string DISGUISE_CHANGE_PS = "PS_DisguiseChange";
+	private static readonly string DISGUISE_CHANGE_PS_FOLDER = "Menu";
 
 	private string m_dragonSku;
 
@@ -95,6 +97,9 @@ public class DragonEquip : MonoBehaviour {
 
 	private void OnDisguiseChanged(string _sku) {
 		if (m_dragonSku == _sku) {
+			// Show some FX and cool animation!
+			// https://youtu.be/RFqw3xiuSvQ?t=8m45s
+			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0f, 1.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
 			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 		}
 	}

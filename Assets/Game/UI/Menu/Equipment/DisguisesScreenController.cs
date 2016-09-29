@@ -36,13 +36,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	private Transform m_previewAnchor;
 	private Transform m_dragonRotationArrowsPos;
 
-	// Set it before opening this screen to start with a specific disguise selected
-	private string m_previewDisguise = "";
-	public string previewDisguise {
-		get { return m_previewDisguise; }
-		set { m_previewDisguise = value; }
-	}
-
 	// Pills management
 	private DisguisePill[] m_pills;
 	private DisguisePill m_equippedPill;	// Pill corresponding to the equipped disguise 
@@ -52,8 +45,8 @@ public class DisguisesScreenController : MonoBehaviour {
 	private ShowHideAnimator[] m_powerAnims = new ShowHideAnimator[3];
 
 	// Other data
-	private string m_dragonSku;
-	private Wardrobe m_wardrobe;
+	private string m_dragonSku = "";
+	private Wardrobe m_wardrobe = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -108,8 +101,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Use internal finalizer
-		Finalize();
+		
 	}
 
 	/// <summary>
@@ -122,27 +114,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Trigger all animators needed to display the pets screen.
-	/// </summary>
-	public void Show() {
-		// The list
-		this.GetComponent<ShowHideAnimator>().Show();
-
-		// Make sure the screen is properly initialized
-		Initialize();
-	}
-
-	/// <summary>
-	/// Trigger all animators needed to hide the pets screen.
-	/// </summary>
-	public void Hide() {
-		// The list
-		this.GetComponent<ShowHideAnimator>().Hide();
-
-		// Make sure the screen is properly finalized
-		Finalize();
-	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
@@ -150,38 +121,36 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// <summary>
 	/// Setup the screen with the data of the currently selected dragon.
 	/// </summary>
-	private void Initialize() {
+	/// <param name="_initialDisguiseSku">The disguise to focus. If it's from a different dragon than the current one, the target dragon will be selected. Leave empty to load current setup.</param>
+	public void Initialize(string _initialDisguiseSku = "") {
 		// Aux vars
-		MenuSceneController sceneController = InstanceManager.GetSceneController<MenuSceneController>();
-		MenuDragonScreenController screenController = sceneController.GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
-		MenuScreenScene scene = sceneController.screensController.GetScene((int)MenuScreens.EQUIPMENT);
+		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
 
 		// Get target dragon
 		// If we have a disguise preview set, select the dragon for that disguise first
-		if(m_previewDisguise != "") {
-			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_previewDisguise);
-			if(disguiseDef != null) {
-				screenController.dragonSelector.SetSelectedDragon(disguiseDef.Get("dragonSku"));
-				screenController.dragonScroller3D.FocusDragon(disguiseDef.Get("dragonSku"), false);
-			} else {
+		Debug.Log("PREVIEWING DISGUISE " + _initialDisguiseSku);
+		if(!string.IsNullOrEmpty(_initialDisguiseSku)) {
+			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _initialDisguiseSku);
+			if(disguiseDef == null) {
 				// Invalid disguise sku!
-				m_previewDisguise = "";
+				_initialDisguiseSku = "";
 			}
 		}
-		m_dragonSku = sceneController.selectedDragon;
+
+		// Store current dragon (should've been initialized by the Equipment screen)
+		m_dragonSku = menuController.selectedDragon;
 
 		// Find out initial disguise
 		// Dragon's current disguise by default, but can be overriden by setting the previewDisguise property before opening the screen
-		//string currentDisguise = Wardrobe.GetEquipedDisguise(m_dragonSku);
 		string currentDisguise = UsersManager.currentUser.GetEquipedDisguise(m_dragonSku);
-		if(m_previewDisguise != "") {
-			currentDisguise = m_previewDisguise;
-			m_previewDisguise = "";
+		if(_initialDisguiseSku != "") {
+			currentDisguise = _initialDisguiseSku;
 		}
 
 		// Find the 3D dragon preview
-		if(scene != null) {
-			MenuDragonPreview preview = scene.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku);
+		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.EQUIPMENT);
+		if(scene3D != null) {
+			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku);
 			if(preview != null) m_previewAnchor = preview.transform;
 			//m_dragonRotationArrowsPos = scene.transform.FindChild("Arrows");
 		}
@@ -236,10 +205,11 @@ public class DisguisesScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Perform all required actions when leaving the screen.
+	/// Setup the screen with the data of the currently selected dragon.
 	/// </summary>
-	private void Finalize() {
-		// Restore equipped disguise
+	/// <param name="_initialDisguiseSku">The disguise to focus. If it's from a different dragon than the current one, the target dragon will be selected. Leave empty to load current setup.</param>
+	public void Finalize() {
+		// Restore equiped disguise on target dragon (either a valid equipable disguise or the default one)
 		bool newEquip = false;
 		if(m_equippedPill != null) {
 			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, m_equippedPill.sku);
@@ -247,6 +217,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, "default");
 		}
 
+		// Broadcast message
 		if(newEquip) {
 			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
 		}
@@ -280,6 +251,24 @@ public class DisguisesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The screen is about to be shown.
+	/// </summary>
+	public void OnShow() {
+		// Make sure the screen is properly initialized
+		Debug.Log("ON SHOW");
+		Initialize();
+	}
+
+	/// <summary>
+	/// The screen has been hidden.
+	/// </summary>
+	public void OnHide() {
+		// Make sure the screen is properly finalized
+		Debug.Log("ON HIDE");
+		Finalize();
+	}
+
 	/// <summary>
 	/// A disguise pill has been clicked.
 	/// </summary>
@@ -330,18 +319,17 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill = _pill;
 		m_selectedPill.Select(true);
 
-		// Apply selected disguise to dragon preview and animate
+		// Apply selected disguise to dragon preview
 		if(UsersManager.currentUser.EquipDisguise(m_dragonSku, m_selectedPill.sku)) {
-			// Only animate if disguise has actually changed
-			DOTween.Kill("DisguiseEquippedAnim", true);	// Kill any existing tween
-			if(m_previewAnchor != null) m_previewAnchor.DOScale(Vector3.zero, 1f).From().SetId("DisguiseEquippedAnim").SetEase(Ease.OutElastic);
-
 			// Notify game
 			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
 		}
 
 		// If selected disguise is equippable, do it
-		if(m_selectedPill != m_equippedPill && m_selectedPill.level > 0) {
+		// To be equipable must be unlocked as well as the target dragon
+		if(m_selectedPill != m_equippedPill 
+		&& m_selectedPill.level > 0
+		&& DragonManager.GetDragonData(m_dragonSku).isOwned) {
 			// Refresh previous equipped pill
 			if(m_equippedPill != null) {
 				m_equippedPill.Use(false);

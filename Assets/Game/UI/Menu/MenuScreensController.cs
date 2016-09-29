@@ -46,6 +46,11 @@ public class MenuScreensController : NavigationScreenSystem {
 		get { return m_scenes; }
 	}
 
+	// Other properties
+	public MenuScreenScene currentScene {
+		get { return m_scenes[currentScreenIdx]; }
+	}
+
 	[Space]
 	[SerializeField] private Camera m_camera = null;
 	public Camera camera { 

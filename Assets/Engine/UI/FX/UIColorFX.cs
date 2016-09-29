@@ -47,9 +47,9 @@ public class UIColorFX : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// First update call.
+	/// Component has been enabled.
 	/// </summary>
-	void Start () {
+	void OnEnable() {
 		// Initialize materials
 		ApplyMaterials();
 	}
@@ -57,7 +57,7 @@ public class UIColorFX : MonoBehaviour {
 	/// <summary>
 	/// Update is called once per frame
 	/// </summary>
-	void Update () {
+	void Update() {
 		// Detect hierarchy changes
         // We assume that hierarchy is not going to change when the application is running in order to prevent memory from being allocated potencially every tick,
         // however we want to apply the materials in edit time (hierarchy in edit time might change in order to check how a new widget would look like in the hierarchy)

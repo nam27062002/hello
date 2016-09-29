@@ -113,6 +113,16 @@ public class MenuSceneController : SceneController {
 		return screensController.GetScene((int)_screen);
 	}
 
+	/// <summary>
+	/// Changes dragon selected to the given one.
+	/// </summary>
+	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
+	public void SetSelectedDragon(string _sku) {
+		// Let dragon screen do the job
+		MenuDragonScreenController dragonScreen = GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
+		dragonScreen.dragonSelector.SetSelectedDragon(_sku);
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
