@@ -4,11 +4,18 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private DragonAttackBehaviour m_attackBehaviour;
 	private DragonBoostBehaviour m_bostBehaviour;
-	public AudioSource m_wingsSound;
-	public AudioSource m_eatSound;
-	public AudioSource m_eatBigSound;
-	public AudioSource m_wingsWindSound;
-	public AudioSource m_wingsStrongFlap;
+	public string m_wingsSound;
+	private AudioObject m_wingsSoundAO;
+
+	public string m_eatSound;
+	public string m_eatBigSound;
+
+	public string m_wingsWindSound;
+	private AudioObject m_wingsWindSoundAO;
+
+	public string m_wingsStrongFlap;
+	private AudioObject m_wingsStrongFlapAO;
+
 	protected Animator m_animator;
 
 
@@ -56,7 +63,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_bostBehaviour.ActivateTrails();
 		if (m_wingsWindSound != null)
 		{
-			m_wingsWindSound.Play();
+			m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
 		}
 	}
 
@@ -65,41 +72,39 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_bostBehaviour.DeactivateTrails();
 		if (m_wingsWindSound != null)
 		{
-			m_wingsWindSound.Pause();
+			AudioController.Play(m_wingsWindSound, transform);
 		}
 	}
 
 	public void WingsSound()
 	{
-		if (m_wingsSound != null)
+		if (!string.IsNullOrEmpty(m_wingsSound))
 		{
-			m_wingsSound.Play();
+			m_wingsSoundAO = AudioController.Play(m_wingsSound, transform);
 		}
 	}
 
 	public void StrongFlap()
 	{
-		if (m_wingsStrongFlap != null)
+		if (!string.IsNullOrEmpty(m_wingsStrongFlap))
 		{
-			m_wingsStrongFlap.Play();
+			m_wingsStrongFlapAO = AudioController.Play(m_wingsStrongFlap, transform);
 		}
 	}
 
 	public void EatStartEvent()
 	{
-		if ( m_eatSound != null )
+		if (!string.IsNullOrEmpty(m_eatSound))
 		{
-			m_eatSound.pitch = Random.Range( 0.75f, 1.25f);
-			m_eatSound.Play();
+			AudioController.Play(m_eatSound, transform);
 		}
 	}
 
 	public void EatBigStartEvent()
 	{
-		if ( m_eatBigSound != null )
+		if (!string.IsNullOrEmpty(m_eatBigSound))
 		{
-			m_eatBigSound.pitch = Random.Range( 0.75f, 1.25f);
-			m_eatBigSound.Play();
+			AudioController.Play(m_eatBigSound, transform);
 		}
 	}
 
@@ -115,46 +120,47 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	}
 
+	private void MuteWindSounds()
+	{
+		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
+			m_wingsWindSoundAO.volume = 0;
+		if (m_wingsSoundAO != null && m_wingsSoundAO.IsPlaying())
+			m_wingsSoundAO.volume = 0;
+		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
+			m_wingsStrongFlapAO.volume = 0;
+	}
+
+	private void UnmuteWindSounds()
+	{
+		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
+			m_wingsWindSoundAO.volume = m_wingsWindSoundAO.volumeItem;
+		if (m_wingsSoundAO != null && m_wingsSoundAO.IsPlaying())
+			m_wingsSoundAO.volume = m_wingsSoundAO.volumeItem;
+		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
+			m_wingsStrongFlapAO.volume = m_wingsStrongFlapAO.volumeItem;
+	}
 
 	public void OnInsideWater()
 	{
-		if (m_wingsWindSound != null)
-			m_wingsWindSound.mute = true;
-		if (m_wingsSound != null)
-			m_wingsSound.mute = true;
-		if (m_wingsStrongFlap != null)
-			m_wingsStrongFlap.mute = true;
+		MuteWindSounds();
 	}
 
 	public void OnExitWater()
 	{
-		if (m_wingsWindSound != null)
-			m_wingsWindSound.mute = false;
-		if (m_wingsSound != null)
-			m_wingsSound.mute = false;
-		if (m_wingsStrongFlap != null)
-			m_wingsStrongFlap.mute = false;
+		UnmuteWindSounds();
 	}
 
 	public void OnEnterOuterSpace()
 	{
-		if (m_wingsWindSound != null)
-			m_wingsWindSound.mute = true;
-		if (m_wingsSound != null)
-			m_wingsSound.mute = true;
-		if (m_wingsStrongFlap != null)
-			m_wingsStrongFlap.mute = true;
+		MuteWindSounds();
 	}
 
 	public void OnExitOuterSpace()
 	{
-		if (m_wingsWindSound != null)
-			m_wingsWindSound.mute = false;
-		if (m_wingsSound != null)
-			m_wingsSound.mute = false;
-		if (m_wingsStrongFlap != null)
-			m_wingsStrongFlap.mute = false;
+		UnmuteWindSounds();
 	}
+
+
 
 	public void IntroDone()
 	{

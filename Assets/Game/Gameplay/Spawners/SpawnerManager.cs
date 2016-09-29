@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Singleton to manage all the spawners in a level in an efficient way.
 /// </summary>
-public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
+public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -43,6 +43,8 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 	private Rect[] m_subRect = new Rect[4];
 	private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
 
+	private List<ISpawner> m_spawning;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -51,6 +53,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	private void Awake() {
 		m_spawners = new List<ISpawner>();
+		m_spawning = new List<ISpawner>();
 	}
 
 	/// <summary>
@@ -155,7 +158,22 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 
 			// Process all selected spawners!
 			foreach(ISpawner item in m_selectedSpawners) {
-				item.CheckRespawn();
+				if (item.CanRespawn()) {
+					m_spawning.Add(item);
+				}
+			}
+		}
+
+		System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+		watch.Start();
+		for (int i = 0; i < m_spawning.Count; i++) {
+			ISpawner sp = m_spawning[i];
+			if (sp.Respawn()) {
+				m_spawning.Remove(sp);
+				i = Mathf.Max(0, i - 1);
+			}
+			if (watch.ElapsedMilliseconds >= 9f) {
+				break;
 			}
 		}
 	}
@@ -260,7 +278,7 @@ public class SpawnerManager : SingletonMonoBehaviour<SpawnerManager> {
 
 		// Process all selected spawners!
 		foreach(ISpawner item in m_selectedSpawners) {
-			item.CheckRespawn();
+			item.CanRespawn();
 		}
 	}
 

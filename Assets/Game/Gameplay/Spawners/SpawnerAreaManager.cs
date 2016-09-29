@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class SpawnerAreaManager : SingletonMonoBehaviour<SpawnerAreaManager> {
+public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManager> {
 
 	private const float CELL_SIZE = 5f;
 

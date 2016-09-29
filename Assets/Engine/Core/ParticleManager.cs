@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
+public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	// Pool of pools! :D
 	private Dictionary<string, Pool> m_particlePools = new Dictionary<string, Pool>();
 
@@ -38,7 +38,7 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 
 		// Get a new system from the pool, spawn it and return it
 		if(instance.m_particlePools.ContainsKey(_prefabName)) {
-			GameObject system = instance.m_particlePools[_prefabName].Get();
+			GameObject system = instance.m_particlePools[_prefabName].Get(true);
 			SpawnSystem(system, _at);
 			return system;
 		}
@@ -63,7 +63,7 @@ public class ParticleManager : SingletonMonoBehaviour<ParticleManager> {
 		}
 
 		// Get a new system from the pool, spawn it and return it
-		GameObject system = instance.m_particlePools[_prefab.name].Get();
+		GameObject system = instance.m_particlePools[_prefab.name].Get(true);
 		SpawnSystem(system, _at);
 		return system;
 	}

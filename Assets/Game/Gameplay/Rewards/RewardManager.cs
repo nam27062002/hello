@@ -30,7 +30,7 @@ public class ScoreMultiplier {
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
 /// </summary>
-public class RewardManager : SingletonMonoBehaviour<RewardManager> {
+public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -205,14 +205,14 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		for(int i = 0; i < defs.Count; i++) {
 			// Create a new score multiplier
 			newMult = new ScoreMultiplier();
-			newMult.multiplier = defs[i].Get<float>("multiplier");
-			newMult.requiredKillStreak = defs[i].Get<int>("requiredKillStreak");
-			newMult.duration = defs[i].Get<float>("duration");
+			newMult.multiplier = defs[i].GetAsFloat("multiplier");
+			newMult.requiredKillStreak = defs[i].GetAsInt("requiredKillStreak");
+			newMult.duration = defs[i].GetAsFloat("duration");
 
 			// Feedback messages
 			feedbackDefs = defs[i].GetChildNodesByTag("FeedbackMessage");
 			for(int j = 0; j < feedbackDefs.Count; j++) {
-				newMult.feedbackMessages.Add(feedbackDefs[j].Get<string>("tidMessage"));
+				newMult.feedbackMessages.Add(feedbackDefs[j].GetAsString("tidMessage"));
 			}
 
 			// Store new multiplier

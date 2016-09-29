@@ -19,7 +19,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class FlowManager : SingletonMonoBehaviour<FlowManager> {
+public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//

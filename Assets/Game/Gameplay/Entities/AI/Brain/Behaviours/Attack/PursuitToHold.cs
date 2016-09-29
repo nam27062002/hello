@@ -8,6 +8,8 @@ namespace AI {
 		public class PursuitToHoldData : StateComponentData {
 			public float speed;
 			public float arrivalRadius = 1f;
+			public Range timeout = new Range(4,6);
+			public Range onFailShutdown = new Range(4,6);
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit To Hold")]
@@ -19,11 +21,16 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
 
+			[StateTransitionTrigger]
+			private static string OnPursuitTimeOut = "onPursuitTimeOut";
+
 			protected PursuitToHoldData m_data;
 
 			protected AI.Machine m_targetMachine;
 			protected Entity m_targetEntity;
 			protected DragonPlayer m_player;
+			protected float m_timer;
+			protected float m_timeOut;
 
 
 			private object[] m_transitionParam;
@@ -64,7 +71,8 @@ namespace AI {
 				{
 					m_player = InstanceManager.player;
 				}
-
+				m_timer = 0;
+				m_timeOut = m_data.timeout.GetRandom();
 			}
 
 			protected override void OnUpdate() {	
@@ -72,14 +80,18 @@ namespace AI {
 					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()) {
 						m_targetMachine = null;
 						m_targetEntity = null;
-						Transition(OnEnemyOutOfSight);
+						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				} else if ( m_player != null ){
 					if ( !m_player.IsAlive() || m_player.BeingLatchedOn() )
 					{
-						Transition(OnEnemyOutOfSight);
+						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				}
+
+
 
 				Transform m_target = null;
 				if ( m_targetMachine != null)
@@ -92,10 +104,19 @@ namespace AI {
 					m_transitionParam[0] = m_target;
 					Transition(OnEnemyInRange, m_transitionParam);
 				} else {
-					if ( m_targetEntity != null )
-						m_pilot.GoTo(m_targetEntity.circleArea.center);	
+					m_timer += Time.deltaTime;
+					if ( m_timer > m_timeOut )
+					{
+						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						Transition( OnPursuitTimeOut, m_transitionParam );
+					}
 					else
-						m_pilot.GoTo(m_target.position);
+					{
+						if ( m_targetEntity != null )
+							m_pilot.GoTo(m_targetEntity.circleArea.center);	
+						else
+							m_pilot.GoTo(m_target.position);
+					}
 				}
 									
 				

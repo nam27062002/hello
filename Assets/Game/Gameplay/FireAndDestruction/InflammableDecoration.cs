@@ -133,7 +133,7 @@ public class InflammableDecoration : Initializable {
 
 			if (m_timer.IsFinished()) {
 				m_view.SetActive(false);
-				m_autoSpawner.Respawn();
+				m_autoSpawner.StartRespawn();
 				if (m_collider) m_collider.enabled = false;
 			}
 		} else {
@@ -163,7 +163,7 @@ public class InflammableDecoration : Initializable {
 					// breathDir.Normalize();	-> if you need to recolocate for the explosion
 					// destroyParticle.transform.rotation.SetLookRotation( breathDir );
 				}
-				m_autoSpawner.Respawn();
+				m_autoSpawner.StartRespawn();
 				m_view.SetActive(false);
 				m_viewBurned.SetActive(true);
 				if (m_collider) m_collider.enabled = false;

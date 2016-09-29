@@ -22,7 +22,7 @@ public class FogSetter : MonoBehaviour
 
 	void Update()
 	{
-		if ( m_fogManager == null && !Application.isPlaying )
+		if ( m_fogManager == null )
 		{
 			Init();
 		}

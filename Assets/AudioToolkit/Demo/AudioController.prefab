@@ -26,9 +26,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 394.44336, y: 332.89673, z: -105.17383}
+  m_LocalPosition: {x: 394.443359, y: 332.896729, z: -105.173828}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -43,7 +42,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 366085030, guid: 6c3fe97f7c7cf7840845cfee747751ac, type: 3}
+  m_Script: {fileID: 11500000, guid: 1669b0a062dc66842ab1bca41a93ebe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   AudioObjectPrefab: {fileID: 100000, guid: 0c1c735ac5b98ad428f564386ebb50c9, type: 2}
@@ -74,7 +73,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -113,7 +112,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -152,7 +151,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -191,7 +190,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -221,7 +220,6 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 0}
   - Name: SFX
     _parentCategoryName: 
     AudioObjectPrefab: {fileID: 0}
@@ -236,7 +234,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -311,7 +309,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -350,7 +348,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 5
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -407,7 +405,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 3
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -457,14 +455,14 @@ MonoBehaviour:
     - Name: RandomLoopSequence
       Loop: 2
       loopSequenceCount: 4
-      loopSequenceOverlap: 0.2
+      loopSequenceOverlap: .200000003
       loopSequenceRandomDelay: 0
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -539,7 +537,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 7
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -605,13 +603,12 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 0}
   - Name: Ambience
     _parentCategoryName: 
     AudioObjectPrefab: {fileID: 0}
     AudioItems:
     - Name: atmo
-      Loop: 0
+      Loop: 1
       loopSequenceCount: 0
       loopSequenceOverlap: 0
       loopSequenceRandomDelay: 0
@@ -620,7 +617,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: .100000001
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -650,19 +647,14 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 0}
   musicPlaylists:
   - name: Default
     playlistItems:
     - Bassoon
     - Flute
-    - Oboe
     - Windbells
-  musicPlaylist:
-  - Bassoon
-  - Flute
-  - Windbells
-  - Oboe
+    - Oboe
+  musicPlaylist: []
   loopPlaylist: 1
   shufflePlaylist: 0
   crossfadePlaylist: 0
@@ -674,7 +666,7 @@ MonoBehaviour:
     currentCategoryIndex: 2
     currentItemIndex: 0
     currentSubitemIndex: 0
-    currentPlaylistEntryIndex: 3
+    currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
 --- !u!1002 &11400001
 EditorExtensionImpl:
@@ -690,6 +682,7 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 100000}
   m_IsPrefabParent: 1
+  m_IsExploded: 1
 --- !u!1002 &100100001
 EditorExtensionImpl:
   serializedVersion: 6

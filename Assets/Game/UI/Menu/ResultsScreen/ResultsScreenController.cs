@@ -178,14 +178,9 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <returns>Whether we're going back to the menu (<c>true</c>) or we've been interrupted by some pending popup (<c>false</c>).</returns>
 	private bool TryGoToMenu() {
-		// If we found a chest, open the chest reward popup
-		if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
-			PopupManager.OpenPopupAsync(PopupChestReward.PATH);
-		}
-
-		// Did we found an egg during the game?
-		else if(EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected) {
-			PopupManager.OpenPopupAsync(PopupEggReward.PATH);	// Yes! Show popup
+		// Check for any impediment to go to the menu (i.e. pending popups)
+		if(false) {
+			// Nothing for now
 		}
 
 		// Nothing else to show, go back to the menu!
