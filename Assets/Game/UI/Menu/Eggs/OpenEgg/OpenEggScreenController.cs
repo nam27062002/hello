@@ -571,16 +571,15 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(m_egg.eggData.rewardData.type) {
 			case "suit": {
 				// Go to the disguises screen
-				NavigationScreen equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT);
-				equipmentScreen.GetComponent<EquipmentScreenController>().ShowDisguises();
-				equipmentScreen.FindComponentRecursive<DisguisesScreenController>().previewDisguise = m_egg.eggData.rewardData.value;
+				EquipmentScreenController equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT).GetComponent<EquipmentScreenController>();
+				equipmentScreen.Setup("", m_egg.eggData.rewardData.value, "", EquipmentScreenController.Tab.DISGUISES);
 				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
 			} break;
 
 			case "pet": {
-				// [AOC] TODO!!	Go to pets screen
-				NavigationScreen equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT);
-				equipmentScreen.GetComponent<EquipmentScreenController>().ShowPets();
+				// Go to the disguises screen
+				EquipmentScreenController equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT).GetComponent<EquipmentScreenController>();
+				equipmentScreen.Setup("", "", m_egg.eggData.rewardData.value, EquipmentScreenController.Tab.PETS);
 				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
 			} break;
 		}

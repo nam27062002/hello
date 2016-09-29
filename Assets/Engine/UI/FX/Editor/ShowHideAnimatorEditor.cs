@@ -22,6 +22,7 @@ public class ShowHideAnimatorEditor : Editor {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	// Info field
 	private static readonly string INFO = 
 		"- Tween type determines the \"show\" direction. \"hide\" will be the reversed tween.\n" +
 		"- To use CUSTOM, add as many DOTweenAnimation components as desired and link them to the corresponding arrays.\n" +
@@ -33,10 +34,6 @@ public class ShowHideAnimatorEditor : Editor {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Extra info field
-	private static bool s_infoExpanded = false;
-	private static bool s_eventsExpanded = false;
-
 	// Casted target
 	private ShowHideAnimator m_targetAnimator = null;
 
@@ -99,9 +96,11 @@ public class ShowHideAnimatorEditor : Editor {
 		}
 
 		// Events
+		// Use the expanded attribute of the "OnShowPreAnimation" property so setting is stored per object
 		EditorGUILayout.Space();
-		s_eventsExpanded = EditorGUILayout.Foldout(s_eventsExpanded, "Events");
-		if(s_eventsExpanded) {
+		SerializedProperty onShowPreAnimationProp = serializedObject.FindProperty("OnShowPreAnimation");
+		onShowPreAnimationProp.isExpanded = EditorGUILayout.Foldout(onShowPreAnimationProp.isExpanded, "Events");
+		if(onShowPreAnimationProp.isExpanded) {
 			EditorGUI.indentLevel++;
 			DoProperty("OnShowPreAnimation");
 			DoProperty("OnShowPostAnimation");
@@ -112,11 +111,12 @@ public class ShowHideAnimatorEditor : Editor {
 		
 		// Foldable info
 		EditorGUILayout.Space();
-		if(GUILayout.Button(s_infoExpanded ? "HIDE" : "HELP", GUILayout.Width(50f))) {
-			s_infoExpanded = !s_infoExpanded;
+		bool infoExpanded = EditorPrefs.GetBool("ShowHideAnimatorEditor.InfoExpanded", false);
+		if(GUILayout.Button(infoExpanded ? "HIDE" : "HELP", GUILayout.Width(50f))) {
+			infoExpanded = !infoExpanded;
+			EditorPrefs.SetBool("ShowHideAnimatorEditor.InfoExpanded", infoExpanded);
 		}
-		//s_infoExpanded = EditorGUILayout.Foldout(s_infoExpanded, "MORE INFO");
-		if(s_infoExpanded) {
+		if(infoExpanded) {
 			EditorGUILayout.HelpBox(INFO, MessageType.Info);
 		}
 
