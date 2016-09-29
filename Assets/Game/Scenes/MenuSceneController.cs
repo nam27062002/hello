@@ -78,7 +78,6 @@ public class MenuSceneController : SceneController {
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	/// <summary>
@@ -88,7 +87,6 @@ public class MenuSceneController : SceneController {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.RemoveListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	//------------------------------------------------------------------//
@@ -130,15 +128,6 @@ public class MenuSceneController : SceneController {
 	/// Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-		// If selected level is unlocked, update profile
-		if(m_selectedLevel != UsersManager.currentUser.currentLevel && LevelManager.IsLevelUnlocked(m_selectedLevel)) {
-			// Update profile
-			UsersManager.currentUser.currentLevel = m_selectedLevel;
-			
-			// Save persistence
-			PersistenceManager.Save();
-		}
-
 		// Go to game!
 		// [AOC] No need to block the button, the GameFlow already controls spamming
 		FlowManager.GoToGame();
@@ -173,14 +162,5 @@ public class MenuSceneController : SceneController {
 		// Just make it the current dragon
 		OnDragonSelected(_data.def.sku);
 	}
-
-	/// <summary>
-	/// A level has been selected.
-	/// </summary>
-	/// <param name="_levelSku">The sku of the selected level.</param>
-	public void OnLevelSelected(string _levelSku) {
-		// Update menu selected level
-		m_selectedLevel = _levelSku;
-	}	
 }
 
