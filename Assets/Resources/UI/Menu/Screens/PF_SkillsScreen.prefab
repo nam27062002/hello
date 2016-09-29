@@ -84,6 +84,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_name: skills
+  m_allowBackToThisScreen: 1
 --- !u!114 &11465142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -135,6 +136,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 224000010300231678}
+  - {fileID: 224000013696225186}
   - {fileID: 224000012589383162}
   m_Father: {fileID: 22499148}
   m_RootOrder: 1
@@ -156,7 +158,6 @@ RectTransform:
   m_Children:
   - {fileID: 224000013627681676}
   - {fileID: 22452728}
-  - {fileID: 224000013696225186}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
@@ -1824,7 +1825,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1000014008545424
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -7709,7 +7710,7 @@ RectTransform:
   - {fileID: 224000013671160172}
   - {fileID: 224000011873079994}
   m_Father: {fileID: 22452728}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: -14, y: 14}
@@ -8088,11 +8089,11 @@ RectTransform:
   m_Children:
   - {fileID: 224000013239876988}
   - {fileID: 224000013966931838}
-  m_Father: {fileID: 22499148}
-  m_RootOrder: 2
+  m_Father: {fileID: 22452728}
+  m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.028686523, y: -38.99994}
+  m_AnchoredPosition: {x: 0, y: -40}
   m_SizeDelta: {x: 395, y: 339}
   m_Pivot: {x: 1, y: 0}
 --- !u!224 &224000013725727482

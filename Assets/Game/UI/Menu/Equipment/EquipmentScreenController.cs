@@ -16,28 +16,52 @@ using UnityEngine.UI;
 /// <summary>
 /// 
 /// </summary>
+[RequireComponent(typeof(TabSystem))]
+[RequireComponent(typeof(NavigationShowHideAnimator))]
 public class EquipmentScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private enum Subscreen {
+	public enum Tab {
 		DISGUISES,
-		PETS
+		PETS,
+		PHOTO
 	};
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Button m_disguisesButton = null;
 	[SerializeField] private DisguisesScreenController m_disguisesScreen = null;
-
-	[Space]
-	[SerializeField] private Button m_petsButton = null;
 	[SerializeField] private PetsScreenController m_petsScreen = null;
 
-	// Internal
-	private Subscreen m_lastActiveScreen = Subscreen.DISGUISES;
+	// Internal references
+	private TabSystem m_tabs = null;
+	private TabSystem tabs {
+		get { 
+			if(m_tabs == null) {
+				m_tabs = GetComponent<TabSystem>();
+			}
+			return m_tabs;
+		}
+	}
+
+	private NavigationShowHideAnimator m_animator = null;
+	private NavigationShowHideAnimator animator {
+		get { 
+			if(m_animator == null) {
+				m_animator = GetComponent<NavigationShowHideAnimator>();
+			}
+			return m_animator;
+		}
+	}
+
+	// Initial setup
+	private string m_initialDragonSku = "";
+	private string m_previouslySelectedDragonSku = "";	// Store it to scroll back to it when leaving the screen
+	private string m_initialDisguiseSku = "";
+	private string m_initialPetSku = "";
+	private Tab m_initialTab = Tab.DISGUISES;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -46,111 +70,109 @@ public class EquipmentScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Register to external events
-		ShowHideAnimator animator = GetComponent<ShowHideAnimator>();
-		if(animator != null) {
-			animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
-			animator.OnHidePreAnimation.AddListener(OnHidePreAnimation);
-		}
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		// Initialize with either of the screens!
-		switch(m_lastActiveScreen) {
-			case Subscreen.DISGUISES:	ShowDisguises();	break;
-			case Subscreen.PETS: 		ShowPets();			break;
-		}
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		// Unregister from external events
-		ShowHideAnimator animator = GetComponent<ShowHideAnimator>();
-		if(animator != null) {
-			animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
-			animator.OnHidePreAnimation.RemoveListener(OnHidePreAnimation);
-		}
+		// Subscribe to animator's events
+		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
+		animator.OnHidePostAnimation.AddListener(OnHidePostAnimation);
 	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Shows the disguises screen and hides the pets.
+	/// Setup the screen before opening it.
+	/// Can be called while open as well, but might result in weird visual behaviour.
 	/// </summary>
-	public void ShowDisguises() {
-		// If we're in another screen, just change the lastActiveScreen so the disguises screen is displayed by default when opening the equipment screen
-		if(isActiveAndEnabled) {
-			m_disguisesScreen.Show();
-			m_disguisesButton.interactable = false;
-			m_petsScreen.Hide();
-			m_petsButton.interactable = true;
+	/// <param name="_dragonSku">Dragon sku. Leave empty for current dragon. If there is a mismatch with <paramref name="_disguiseSku"/> associated dragon, the latter will be used.</param>
+	/// <param name="_disguiseSku">Disguise sku. Leave empty for current disguise on target dragon. If there is a mismatch with the disguise's associated dragon and <paramref name="_dragonSku"/>, the first will be used.</param>
+	/// <param name="_petSku">Pet sku. Leave empty for current pet on target dragon.</param>
+	/// <param name="_initialTab">Initial tab to be displayed. Use <c>NONE</c> to keep last active tab.</param>
+	public void Setup(string _dragonSku, string _disguiseSku, string _petSku, Tab _initialTab) {
+		// Store initial vars
+		m_initialDragonSku = _dragonSku;
+		m_initialDisguiseSku = _disguiseSku;
+		m_initialPetSku = _petSku;
+		m_initialTab = _initialTab;
+
+		// If a valid disguise is defined, it overrides target dragon
+		DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _disguiseSku);
+		if(disguiseDef != null) {
+			m_initialDragonSku = disguiseDef.Get("dragonSku");
 		}
-		m_lastActiveScreen = Subscreen.DISGUISES;
+
+		// If screen is open, instantly refresh
+		// Otherwise the OnShowPreAnimation will take care of it
+		if(animator.visible) {
+			Initialize();
+		}
 	}
 
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Shows the pets screen and hides the disguises.
+	/// Focus target dragon, load initial disguise and go to target tab!
 	/// </summary>
-	public void ShowPets() {
-		// If we're in another screen, just change the lastActiveScreen so the pets screen is displayed by default when opening the equipment screen
-		if(isActiveAndEnabled) {
-			m_disguisesScreen.Hide();
-			m_disguisesButton.interactable = true;
-			m_petsScreen.Show();
-			m_petsButton.interactable = false;
+	private void Initialize() {
+		// Select target dragon (if any)
+		if(!string.IsNullOrEmpty(m_initialDragonSku)) {
+			// Store currently selected dragon to restore selection when leaving
+			// Unless we already have a target dragon to go to when leaving
+			MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+			if(string.IsNullOrEmpty(m_previouslySelectedDragonSku)) {
+				m_previouslySelectedDragonSku = menuController.selectedDragon;
+			}
+
+			// Select target dragon - dragon scroller should scroll to it
+			menuController.SetSelectedDragon(m_initialDragonSku);
 		}
-		m_lastActiveScreen = Subscreen.PETS;
+
+		// Initialize disguises screen with the target disguise
+		m_disguisesScreen.Initialize(m_initialDisguiseSku);
+
+		// Initialize pets screen with the target pet
+		//m_petsScreen.Initialize(m_initialPetSku);
+
+		// Switch to initial tab
+		// If screen is open, use animation
+		// Otherwise, the animation will be triggered by the Equipment Screen's NavigationScreen component
+		if(animator.visible) {
+			tabs.GoToScreen((int)m_initialTab);
+		} else {
+			tabs.GoToScreen((int)m_initialTab, NavigationScreen.AnimType.NONE);
+		}
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The screen is about to be hidden.
+	/// Screen is about to be open.
 	/// </summary>
-	/// <param name="_animator">The animator that is about to be hidden.</param>
-	private void OnHidePreAnimation(ShowHideAnimator _animator) {
-		// Hdie both sub-screens
-		m_disguisesScreen.Hide();
-		m_petsScreen.Hide();
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnShowPreAnimation(ShowHideAnimator _animator) {
+		// Refresh with initial data!
+		Initialize();
 	}
 
 	/// <summary>
-	/// The screen is about to be displayed.
+	/// Screen has just closed
 	/// </summary>
-	/// <param name="_animator">The animator that is about to be shown.</param>
-	private void OnShowPreAnimation(ShowHideAnimator _animator) {
-		// Restore last active screen and hide the rest
-		switch(m_lastActiveScreen) {
-			case Subscreen.DISGUISES:	ShowDisguises();	break;
-			case Subscreen.PETS: 		ShowPets();			break;
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnHidePostAnimation(ShowHideAnimator _animator) {
+		// Make sure screens are properly finalized
+		m_disguisesScreen.Finalize();
+
+		// Scroll back to previously selected dragon if different than current one
+		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+		if(menuController.selectedDragon != m_previouslySelectedDragonSku) {
+			// Select target dragon
+			menuController.SetSelectedDragon(m_previouslySelectedDragonSku);
 		}
+
+		// Clear internal data
+		m_initialDragonSku = "";
+		m_previouslySelectedDragonSku = "";
+		m_initialDisguiseSku = "";
+		m_initialTab = Tab.DISGUISES;	// Always show disguises tab by default
 	}
 }
