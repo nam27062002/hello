@@ -916,7 +916,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":1.25,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1.5,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":3,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.25,"timeToIdle":{"min":5,"max":10},"timeToChangeDirection":{"min":8,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":3},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":6,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":false},"home":{"id":3,"active":false}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1.5,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":3,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
 --- !u!114 &11449904
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -954,9 +954,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 1.5
-  m_runSpeed: 3
+  m_runSpeed: 6
   m_minPlaybakSpeed: 0.5
-  m_maxPlaybakSpeed: 1.5
+  m_maxPlaybakSpeed: 2
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
@@ -1008,8 +1008,8 @@ MonoBehaviour:
     m_senseBelow: 0
     m_sensorOffset: {x: 0, y: 0.86, z: 0}
     m_senseDelay:
-      min: 5
-      max: 7
+      min: 2
+      max: 5
   m_onSpawnSoundProbability: 0
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
@@ -1017,6 +1017,10 @@ MonoBehaviour:
   - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v04
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v03
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v02
+  m_inflammable:
+    m_ashesAsset: 
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
 --- !u!114 &11484900
 MonoBehaviour:
   m_ObjectHideFlags: 1
