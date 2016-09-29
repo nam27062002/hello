@@ -36,13 +36,14 @@ public class MenuDragonScroller3D : MonoBehaviour {
 
 	// Setup
 	[Space(10)]
-	[SerializeField] private float m_animDuration = 0.5f;
-	public float animDuration {
-		get { return m_animDuration; }
-		set { m_animDuration = value; }
+	[Tooltip("Seconds to travel one dragon's distance (min) and all dragon's distance (max).\nFinal animation duration will be interpolated from that.")]
+	[SerializeField] private Range m_animSpeed = new Range(0.3f, 1f);
+	public Range animSpeed {
+		get { return m_animSpeed; }
+		set { m_animSpeed = value; }
 	}
 
-	[SerializeField] private Ease m_animEase = Ease.InOutCubic;
+	[SerializeField] private Ease m_animEase = Ease.InOutQuad;
 	public Ease animEase {
 		get { return m_animEase; }
 		set { m_animEase = value; }
@@ -52,23 +53,23 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	// Delta and snap point are stored in the camera path to avoid keeping control of multiple vars
 	public float delta {
 		get { 
-			if(m_cameraPath == null) return 0f;
+			return 0f;
 			return m_cameraPath.delta; 
 		}
 		set {
-			if(m_cameraPath != null) m_cameraPath.delta = value;
-			if(m_lookAtPath != null) m_lookAtPath.delta = value;
+			m_cameraPath.delta = value;
+			m_lookAtPath.delta = value;
 		}
 	}
 
 	public int snapPoint {
 		get { 
-			if(m_cameraPath == null) return 0;
+			return 0;
 			return m_cameraPath.snapPoint; 
 		}
 		set {
-			if(m_cameraPath != null) m_cameraPath.snapPoint = value;
-			if(m_lookAtPath != null) m_lookAtPath.snapPoint = value;
+			m_cameraPath.snapPoint = value;
+			m_lookAtPath.snapPoint = value;
 		}
 	}
 
@@ -95,6 +96,9 @@ public class MenuDragonScroller3D : MonoBehaviour {
 			// Add it into the map
 			m_dragonPreviews[dragonPreviews[i].sku] = dragonPreviews[i];
 		}
+
+		// Subscribe to external events
+		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>
@@ -112,14 +116,20 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// Component enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		
 	}
 
 	/// <summary>
 	/// Component disabled.
 	/// </summary>
 	private void OnDisable() {
+		
+	}
+
+	/// <summary>
+	/// Destructor
+	/// </summary>
+	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
@@ -130,17 +140,12 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	private void Update() {
 		// If we're in the dragon selection screen, snap camera to curves
 		// [AOC] A bit dirty, but best way I can think of right now (and gacha is waiting)
-		if(m_menuScreensController.currentScreenIdx == (int)MenuScreens.DRAGON_SELECTION) {
+		if(m_menuScreensController.currentScene == m_menuScreensController.GetScene((int)MenuScreens.DRAGON_SELECTION)) {
 			// Only if camera is not already moving!
 			if(!m_menuScreensController.tweening) {
 				// Move camera! ^_^
-				if(m_cameraPath != null) {
-					m_menuScreensController.camera.transform.position = m_cameraPath.position;
-				}
-
-				if(m_lookAtPath != null) {
-					m_menuScreensController.camera.transform.LookAt(m_lookAtPath.position);
-				}
+				m_menuScreensController.camera.transform.position = m_cameraPath.position;
+				m_menuScreensController.camera.transform.LookAt(m_lookAtPath.position);
 			}
 		}
 	}
@@ -153,9 +158,15 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// </summary>
 	/// <param name="_delta">Target delta.</param>
 	public void GoTo(float _delta) {
+		// Adapt duration to the distance to traverse
+		int targetSnapPoint = m_cameraPath.path.GetPointAt(_delta);
+		float dist = Mathf.Abs((float)(targetSnapPoint - m_cameraPath.snapPoint));
+		float delta = Mathf.InverseLerp(0, m_cameraPath.path.pointCount, dist);
+		float duration = m_animSpeed.Lerp(delta);
+
 		// Just let the paths manage it
-		if(m_cameraPath != null) m_cameraPath.GoTo(_delta, m_animDuration, m_animEase);
-		if(m_lookAtPath != null) m_lookAtPath.GoTo(_delta, m_animDuration, m_animEase);
+		m_cameraPath.GoTo(_delta, duration, m_animEase);
+		m_lookAtPath.GoTo(_delta, duration, m_animEase);
 	}
 
 	/// <summary>
@@ -164,10 +175,15 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// <param name="_snapPoint">Target control point.</param>
 	/// <returns>The delta corresponding to the target snap point</returns>
 	public float SnapTo(int _snapPoint) {
+		// Adapt duration to the distance to traverse
+		float dist = Mathf.Abs((float)(_snapPoint - m_cameraPath.snapPoint));
+		float delta = Mathf.InverseLerp(0, m_cameraPath.path.pointCount, dist);
+		float duration = m_animSpeed.Lerp(delta);
+
 		// Just let the paths manage it
 		float targetDelta = 0f;
-		if(m_cameraPath != null) targetDelta = m_cameraPath.SnapTo(_snapPoint, m_animDuration, m_animEase);
-		if(m_lookAtPath != null) m_lookAtPath.SnapTo(_snapPoint, m_animDuration, m_animEase);
+		targetDelta = m_cameraPath.SnapTo(_snapPoint, duration, m_animEase);
+		m_lookAtPath.SnapTo(_snapPoint, duration, m_animEase);
 		return targetDelta;
 	}
 
@@ -184,8 +200,8 @@ public class MenuDragonScroller3D : MonoBehaviour {
 		if(_animate) {
 			SnapTo(menuOrder);
 		} else {
-			if(m_cameraPath != null) m_cameraPath.snapPoint = menuOrder;
-			if(m_lookAtPath != null) m_lookAtPath.snapPoint = menuOrder;
+			m_cameraPath.snapPoint = menuOrder;
+			m_lookAtPath.snapPoint = menuOrder;
 		}
 	}
 
@@ -225,7 +241,14 @@ public class MenuDragonScroller3D : MonoBehaviour {
 	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
 	private void OnDragonSelected(string _sku) {
 		// Move camera to the newly selected dragon
-		FocusDragon(_sku, true);
+		// If the current menu screen is not using the dragon selection 3D scene, skip animation
+		MenuScreenScene currentScene = m_menuScreensController.currentScene;
+		MenuScreenScene dragonSelectionScene = m_menuScreensController.GetScene((int)MenuScreens.DRAGON_SELECTION);
+		if(currentScene == dragonSelectionScene) {
+			FocusDragon(_sku, true);
+		} else {
+			FocusDragon(_sku, false);
+		}
 	}
 }
 
