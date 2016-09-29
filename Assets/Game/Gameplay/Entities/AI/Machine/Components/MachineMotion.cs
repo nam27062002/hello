@@ -34,7 +34,6 @@ namespace AI {
 		[SerializeField] private bool m_limitVerticalRotation = false;
 		[SerializeField][HideInInspector] private float m_faceUpAngle = 320f;
 		[SerializeField][HideInInspector] private float m_faceDownAngle = 40f;
-		[SerializeField] private bool m_ignoreCollisionsWhenOffscreen = false;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public bool checkCollisions { set { m_walkOnWalls = value; } }
@@ -57,7 +56,7 @@ namespace AI {
 
 		private Vector3 m_velocity;
 		public Vector3 velocity { get{  return m_velocity; } }
-		public Vector3 angularVelocity { get{  return m_rbody.angularVelocity; } }
+		public Vector3 angularVelocity { get{  if (m_rbody != null)return m_rbody.angularVelocity;return Vector3.zero; } }
 		private Vector3 m_acceleration;
 
 		private Collider m_collider;
@@ -171,10 +170,7 @@ namespace AI {
 
 		public override void Update() {
 
-			if (m_ignoreCollisionsWhenOffscreen)
-			{
-				m_collider.enabled = m_entity.isOnScreen;
-			}
+			
 
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
 				Stop();
@@ -182,12 +178,12 @@ namespace AI {
 				return;
 			}else if ( m_machine.GetSignal(Signals.Type.Latching) ){
 				Stop();
-
-				UpdateOrientation();
-				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+				m_targetRotation = m_pilot.targetRotation;
+				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed * 10.0f);
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 				m_machine.transform.rotation = m_rotation;
-				m_machine.transform.position = m_pilot.target;
+
+				m_machine.transform.position =  Vector3.Lerp( m_machine.transform.position, m_pilot.target, Time.deltaTime * 10.0f);
 
 				m_viewControl.Move(0);
 				m_viewControl.Latching(true);

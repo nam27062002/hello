@@ -214,15 +214,52 @@ public static class PersistenceManager {
 	/// <param name="_profileName">The name of the profile to be loaded.</param>
 	public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "") 
 	{
-		// Load data from prefab
-		CheckProfileName(ref _profileName);
-		TextAsset defaultProfile = Resources.Load<TextAsset>(PersistenceProfile.RESOURCES_FOLDER + _profileName);
-		if(defaultProfile != null) 
-		{
-			return SimpleJSON.JSON.Parse( defaultProfile.text ) as SimpleJSON.JSONClass;
-		}
+        SimpleJSON.JSONClass _returnValue = null;
 
-		return null;
+        // Load data from prefab
+        CheckProfileName(ref _profileName);
+        
+        // The default profile is created from rules
+        if (_profileName == PersistenceProfile.DEFAULT_PROFILE)
+        {
+            DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
+            if (_def != null)
+            {
+                string _sc = _def.Get("softCurrency");
+                string _pc = _def.Get("hardCurrency");
+                string _initialDragonSku = _def.Get("initialDragonSKU");                
+
+                _returnValue = new SimpleJSON.JSONClass();
+
+                // User Profile: sc, pc, currentDragon
+                SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
+                _userProfile.Add("sc", _sc);
+                _userProfile.Add("pc", _pc);
+                _userProfile.Add("currentDragon", _initialDragonSku);
+                _userProfile.Add("currentLevel", "level_0");                
+                _returnValue.Add("userProfile", _userProfile);
+
+                // Initial dragon
+                SimpleJSON.JSONClass _dragon = new SimpleJSON.JSONClass();
+                _dragon.Add("sku", _initialDragonSku);
+                _dragon.Add("owned", "true");                
+
+                // Dragons
+                SimpleJSON.JSONArray _dragons = new SimpleJSON.JSONArray();
+                _dragons.Add(_dragon);
+                _returnValue.Add("dragons", _dragons);                
+            }
+        }
+        else
+        {
+            TextAsset defaultProfile = Resources.Load<TextAsset>(PersistenceProfile.RESOURCES_FOLDER + _profileName);
+            if (defaultProfile != null)
+            {
+                _returnValue =  SimpleJSON.JSON.Parse(defaultProfile.text) as SimpleJSON.JSONClass;
+            }
+        }
+
+		return _returnValue;
 	}
 
 	//------------------------------------------------------------------//
@@ -278,11 +315,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLoadingPopup()
     {
         if (!Popups_IsLoadingPopupOpen())
-        {
-            PopupMessage.Config config = PopupMessage.GetConfig();
-            config.TitleTid = "TID_SAVE_CLOUD_LOADING_NAME";
-            config.MessageTid = "TID_SAVE_CLOUD_LOADING_WAIT";
-            Popups_LoadingPopup = PopupManager.PopupMessage_Open(config);
+        {            
+            Popups_LoadingPopup = PopupManager.PopupLoading_Open();
         }
     }
 
@@ -354,10 +388,10 @@ public static class PersistenceManager {
 		}
 		else
 		{
-			config.MessageTid = "TID_SAVE_POPUP_CLOUD_SAVE_ACTIVE_DESC";
+			config.MessageTid = "TID_SAVE_CLOUD_SAVE_ACTIVE_DESC";
 		}
 
-		config.ConfirmButtonTid = "TID_SAVE_POPUP_CLOUD_SAVE_SYNC_NOW";
+		config.ConfirmButtonTid = "TID_SAVE_CLOUD_SAVE_SYNC_NOW";
 		config.CancelButtonTid = "TID_GEN_CONTINUE";
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 		config.OnConfirm = onConfirm;
@@ -407,7 +441,7 @@ public static class PersistenceManager {
 		config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()) };
 		config.OnConfirm = onConfirm;        
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-		PopupManager.PopupMessage_Open(config);
+		PopupManager.PopupEnableCloud_Open(config);
 	}
 
     /// <summary>
@@ -418,7 +452,7 @@ public static class PersistenceManager {
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROMPT_CLOUD_ENABLE_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_PROMPT_CLOUD_ENABLE_DESC";
+        config.MessageTid = "TID_SAVE_PROMPT_CLOUD_ENABLE_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(SocialManager.GetSelectedSocialNetwork()) };
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
@@ -435,7 +469,7 @@ public static class PersistenceManager {
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_DESC";
+        config.MessageTid = "TID_SAVE_WARN_CLOUD_SWITCH_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
@@ -467,7 +501,7 @@ public static class PersistenceManager {
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_DESC";
+        config.MessageTid = "TID_SAVE_WARN_CLOUD_SWITCH_NETWORK_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(networkFrom), SocialFacade.GetLocalizedNetworkName(networkTo) };        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
@@ -484,7 +518,7 @@ public static class PersistenceManager {
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_DISABLED_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_ERROR_CLOUD_SAVE_DISABLED_DESC";
+        config.MessageTid = "TID_SAVE_ERROR_CLOUD_SAVE_DISABLED_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
@@ -495,8 +529,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLoginErrorWrongSocialAccount(SocialFacade.Network network, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_NAME";
-        config.MessageTid = "TID_SOCIAL_ERROR_WRONG_ACCOUNT_DESC";
+        config.TitleTid = "TID_SAVE_ERROR_CLOUD_WRONG_USER_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_CLOUD_WRONG_USER_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
@@ -549,8 +583,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLogoutWarning(SocialFacade.Network network, bool cloudSaveEnabled, Action onConfirm, Action onCancel)
 	{        
 		PopupMessage.Config config = PopupMessage.GetConfig();
-		config.TitleTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_NAME" : "STRING_SOCIAL_WARNING_LOGOUT";
-		config.MessageTid = cloudSaveEnabled ? "TID_SAVE_POPUP_WARN_CLOUD_LOGOUT_DESC" : "TID_SOCIAL_WARNING_LOGOUT_DESC";
+		config.TitleTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_NAME" : "TID_SOCIAL_WARNING_LOGOUT_TITLE";
+		config.MessageTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_DESC" : "TID_SOCIAL_WARNING_LOGOUT_DESC";
 		config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(network) };
 		config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 		config.OnConfirm = onConfirm;
@@ -565,7 +599,7 @@ public static class PersistenceManager {
     {                     
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_WARN_CLOUD_SWITCH_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_SWITCH_NETWORK_DESC";
+        config.MessageTid = "TID_SAVE_WARN_CLOUD_SWITCH_NETWORK_DESC";
         config.MessageParams = new string[] { SocialFacade.GetLocalizedNetworkName(networkFrom), SocialFacade.GetLocalizedNetworkName(networkTo) };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
@@ -625,7 +659,7 @@ public static class PersistenceManager {
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_ERROR_LOCAL_CORRUPTED_CLOUD_SAVE_DESC";
+        config.MessageTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_CLOUD_SAVE_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
@@ -652,8 +686,8 @@ public static class PersistenceManager {
     public static void Popups_OpenLoadSaveInaccessibleError(Action onConfirm, Action onCancel, Action onExtra)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_POPUP_ERROR_CLOUD_INACCESSIBLE_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_ERROR_CLOUD_INACCESSIBLE_DESC";
+        config.TitleTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_DESC";
         config.ConfirmButtonTid = "TID_GEN_CONTINUE";
         config.CancelButtonTid = "TID_GEN_RETRY";
         config.ExtraButtonTid = "TID_GEN_UPLOAD";
@@ -678,7 +712,7 @@ public static class PersistenceManager {
                 platformErrorMessage = "TID_SAVE_ERROR_FAILED_DESC";
                 break;
             case Globals.Platform.Android:
-                platformErrorMessage = "STRING_SAVE_POPUP_ERROR_SAVE_FAILED_TEXT_ANDROID";
+                platformErrorMessage = "TID_SAVE_ERROR_SAVE_FAILED_ANDROID";
                 break;            
         }
 
@@ -746,12 +780,12 @@ public static class PersistenceManager {
     public static void Popups_OpenUpdateToSolveCloudSaveCorrupted(bool updateAvailable, Action onConfirm, Action onCancel)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "STRING_SAVE_POPUP_ERROR_UPDATE_TITLE";
+        config.TitleTid = "TID_SAVE_ERROR_UPDATE_TITLE";
         config.MessageTid = (updateAvailable) ? "TID_SAVE_ERROR_UPDATE_DESC1" : "TID_SAVE_ERROR_UPDATE_DESC2";
         config.OnConfirm = onConfirm;
         if (updateAvailable)
         {
-            config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+            config.ConfirmButtonTid = "TID_GEN_UPDATE";
             config.CancelButtonTid = "TID_GEN_CONTINUE";
             config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
             config.OnCancel = onCancel;
@@ -788,7 +822,7 @@ public static class PersistenceManager {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROMPT_UPDATE_NAME";
         config.MessageTid = platformUpdateMessage;
-        config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+        config.ConfirmButtonTid = "TID_GEN_UPDATE";
         config.CancelButtonTid = "TID_GEN_CONTINUE";
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
@@ -843,8 +877,8 @@ public static class PersistenceManager {
     public static void Popups_OpenMergeConfirmation(Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_POPUP_WARN_CLOUD_WRONG_CHOICE_NAME";
-        config.MessageTid = "TID_SAVE_POPUP_WARN_CLOUD_WRONG_CHOICE_DESC";                
+        config.TitleTid = "TID_SAVE_WARN_CLOUD_WRONG_CHOICE_NAME";
+        config.MessageTid = "TID_SAVE_WARN_CLOUD_WRONG_CHOICE_DESC";                
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
@@ -879,9 +913,15 @@ public static class PersistenceManager {
     /// </summary>
     /// <returns></returns>
     public static int Rules_GetPCAmountToIncentivizeSocial()
+    {
+        int returnValue = 0;
+        DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+        if (_def != null)
         {
-        // [DGR] RULES: To read from content
-        return 25;
+            returnValue = _def.GetAsInt("incentivizeFBGem");
+        }
+
+        return returnValue;
     }
 #endregion
 }

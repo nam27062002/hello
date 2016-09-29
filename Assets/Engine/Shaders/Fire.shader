@@ -7,12 +7,19 @@
 		_Flamespeed("Flame speed", Range(0.0, 2.0)) = 0.5
 		_Flamethrower("Flame thrower", Range(0.0, 5.0)) = 0.8
 		_Flamedistance("Flame distance", Range(0.0, 5.0)) = 1.5
+
+//		_GlowTex("Glow Texture", 2D) = "white" {}
+//		_GlowColor("Glow Color", Color) = (1, 1, 1, 1)
+//		_GlowColorMult("Glow Color Multiplier", Color) = (1, 1, 1, 1)
+
 	}
 
 	SubShader
 	{
-		Tags {"Queue"="Transparent+5" "IgnoreProjector"="True" "RenderType"="Transparent"}
-//		Tags {"Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout"}
+//		Tags {"Queue"="Transparent+5" "IgnoreProjector"="True" "RenderType"="Transparent"}
+		Tags{ "Queue" = "Transparent" "RenderType" = "Glow" }
+//		Tags{ "Queue" = "Transparent+5" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+//		Tags {"Queue" = "Geometry- 2"  "RenderType" = "Glow"}
 		LOD 100
 		Blend SrcAlpha OneMinusSrcAlpha 
 		// Blend One One
@@ -25,6 +32,8 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma fragmentoption ARB_precision_hint_fastest
+
 			
 			#include "UnityCG.cginc"
 
@@ -52,6 +61,9 @@
 			float _Flamespeed;
 			float _Flamethrower;
 			float _Flamedistance;
+
+//			uniform half4 _GlowColor;
+//			uniform half4 _GlowColorMult;
 
 			v2f vert (appdata v)
 			{
@@ -83,5 +95,9 @@
 			ENDCG
 		}
 	}
-Fallback "Mobile/VertexLit"
+
+//	Fallback "Diffuse"
+	CustomEditor "GlowMaterialInspector"
+
+//Fallback "Mobile/VertexLit"
 }

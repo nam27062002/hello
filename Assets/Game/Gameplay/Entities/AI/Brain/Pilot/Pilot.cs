@@ -64,6 +64,9 @@ namespace AI {
 		protected bool m_directionForced;
 		public Vector3 direction { get { return m_direction; } }
 
+		protected Quaternion m_targetRotation;
+		public Quaternion targetRotation{ get { return m_targetRotation; } }
+
 		public virtual Vector3 target { get { return transform.position; } }
 
 		//----------------------------------------------------------------------------------------------------------------

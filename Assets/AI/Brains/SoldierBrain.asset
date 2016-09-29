@@ -66,6 +66,9 @@ MonoBehaviour:
   - to: 2
     id: onCritical
     from: 3
+  - to: 7
+    id: onOutsideArea
+    from: 3
   - to: 3
     id: onEnemyInRange
     from: 2
@@ -84,10 +87,13 @@ MonoBehaviour:
   - to: 2
     id: onPursuitEnemy
     from: 5
+  - to: 6
+    id: onCalm
+    from: 5
   - to: 3
     id: onEnemyInRange
     from: 6
-  - to: 1
+  - to: 0
     id: onCalmDown
     from: 6
   - to: 3

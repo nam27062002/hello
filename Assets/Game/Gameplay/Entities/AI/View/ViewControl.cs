@@ -64,6 +64,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_panic; //bite and hold state
 	private bool m_falling;
 	private bool m_attack;
+	private bool m_swim;
+	private bool m_inSpace;
+	private bool m_moving;
 
 	private float m_desiredBlendX;
 	private float m_desiredBlendY;
@@ -103,6 +106,20 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
+
+		// Preload particles
+		for( int i = 0; i < m_onEatenParticles.Count; i++) {
+			ParticleData data = m_onEatenParticles[i];
+			if (!string.IsNullOrEmpty(data.name)) {
+				ParticleManager.CreatePool(data.name, data.path);
+			}
+		}
+
+		if (m_explosionParticles.name != "") {
+			ParticleManager.CreatePool(m_explosionParticles.name, m_explosionParticles.path);
+		}
+
+		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
 	}
 	//
 
@@ -112,6 +129,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_panic = false;
 		m_attack = false;
 		m_falling = false;
+		m_swim = false;
+		m_inSpace = false;
+		m_moving = false;
 
 		if (m_animator != null) {
 			m_animator.enabled = true;
@@ -169,6 +189,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 			m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
 			m_animator.SetFloat("direction Y", m_currentBlendY);
+		}
+
+		m_animator.SetBool("swim", m_swim);
+		m_animator.SetBool("fly down", m_inSpace);
+		if (!m_swim){
+			m_animator.SetBool("move", m_moving);
+		}else{
+			m_animator.SetBool("move", false);
 		}
 	}
 
@@ -253,10 +281,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			}
 
 			m_animator.SetFloat("speed", blendFactor);
-			m_animator.SetBool("move", true);
+			m_moving = true;
 			m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
 		} else {
-			m_animator.SetBool("move", false);
+			m_moving = false;
 			m_animator.speed = Mathf.Lerp(m_animator.speed, 1f, Time.deltaTime * 2f);
 		}
 	}
@@ -344,6 +372,26 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	public void StopEating()
 	{
 		m_animator.SetBool("eat", false);
+	}
+
+	public void StartSwimming()
+	{
+		m_swim = true;
+	}
+
+	public void StopSwimming()
+	{
+		m_swim = false;
+	}
+
+	public void FlyToSpace()
+	{
+		m_inSpace = true;
+	}
+
+	public void ReturnFromSpace()
+	{
+		m_inSpace = false;
 	}
 
 	public void SpecialAnimation(SpecialAnims _anim, bool _value) {

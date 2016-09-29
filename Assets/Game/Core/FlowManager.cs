@@ -19,7 +19,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class FlowManager : SingletonMonoBehaviour<FlowManager> {
+public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -82,8 +82,9 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
         //SaveFacade.DestroyInstance();     
         SaveFacade.Instance.Reset();   
 
-        // Change to the loading scene
-        GameSceneManager.SwitchScene(LoadingSceneController.NAME);
+        // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
+        // from the editor)
+        GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);
 	}
 }
 

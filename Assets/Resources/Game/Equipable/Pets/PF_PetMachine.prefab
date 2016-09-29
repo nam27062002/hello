@@ -19,7 +19,7 @@ GameObject:
   - 114: {fileID: 114000013147041998}
   m_Layer: 0
   m_Name: PF_PetMachine
-  m_TagString: Untagged
+  m_TagString: Pet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1484,7 +1484,7 @@ Transform:
   m_GameObject: {fileID: 1000014052050250}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.681, z: -0.802}
-  m_LocalScale: {x: 0.3581311, y: 0.3581311, z: 0.3581311}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000011040104348}
@@ -1745,11 +1745,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsSound: {fileID: 0}
-  m_eatSound: {fileID: 0}
-  m_eatBigSound: {fileID: 0}
-  m_wingsWindSound: {fileID: 0}
-  m_wingsStrongFlap: {fileID: 0}
+  m_wingsSound: 
+  m_eatSound: 
+  m_eatBigSound: 
+  m_wingsWindSound: 
+  m_wingsStrongFlap: 
 --- !u!114 &114000011637225726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1762,7 +1762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_walkSpeed: 1
-  m_runSpeed: 1
+  m_runSpeed: 2
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
@@ -1793,7 +1793,7 @@ MonoBehaviour:
     min: 1
     max: 1
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"range":10,"checkDistanceToPlayer":true,"farAwayDistance":10,"dataType":"AI.Behaviour.SearchEntityData","editorFolded":false},{"speed":12,"arrivalRadius":1,"hasGuardState":false,"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424
@@ -1807,7 +1807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: bush_01
+  m_sku: pet_01
 --- !u!114 &114000012488899708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1834,7 +1834,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-    m_ignoreCollisionsWhenOffscreen: 1
   m_railSeparation:
     min: 0.5
     max: 1
@@ -1854,6 +1853,10 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
+  m_inflammable:
+    m_ashesAsset: 
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
 --- !u!114 &114000012669857030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1874,14 +1877,14 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_absorbTime: 0.1
   m_minEatAnimTime: 0.1
-  m_eatDistance: 2
+  m_eatDistance: 0.5
   m_burpSounds: []
   m_eaterTier: 0
   m_isPet: 1
@@ -1895,8 +1898,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.45
+  m_Center: {x: 0, y: 0, z: -0.09}
 --- !u!137 &137000012077036284
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

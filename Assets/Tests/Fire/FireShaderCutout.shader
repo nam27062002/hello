@@ -15,8 +15,8 @@
 
 	SubShader
 	{
-		Tags {"Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout"}
-//		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags {"Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Glow"}
+//		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" }
 		LOD 100
 		//Blend SrcAlpha OneMinusSrcAlpha
 		Blend SrcAlpha OneMinusSrcAlpha

@@ -61,6 +61,7 @@ public class EntityPrefabListAttributeEditor : ExtendedPropertyDrawer {
 		{
 			string name = f.Substring(m_prefabsPath.Length);
 			name = name.Substring(0, name.Length - (".prefab").Length);
+			name = name.Replace("\\", "/");	// [AOC] Unify dir separator character between Windows and OSX!
 			m_prefabNames.Add( name );
 		}
 

@@ -146,22 +146,22 @@ public class RulesReaderEditorWindow : EditorWindow {
 						EditorGUILayout.Space();
 						GUI.enabled = false;
 						EditorGUILayout.BeginVertical(EditorStyles.helpBox); {
-							m_stringValue = def.Get<string>(m_propertyId);
+							m_stringValue = def.GetAsString(m_propertyId);
 							EditorGUILayout.LabelField("as string", m_stringValue);
 
-							m_floatValue = def.Get<float>(m_propertyId);
+							m_floatValue = def.GetAsFloat(m_propertyId);
 							EditorGUILayout.FloatField("as float", m_floatValue);
 
-							m_intValue = def.Get<int>(m_propertyId);
+							m_intValue = def.GetAsInt(m_propertyId);
 							EditorGUILayout.IntField("as int", m_intValue);
 
-							m_doubleValue = def.Get<double>(m_propertyId);
+							m_doubleValue = def.GetAsDouble(m_propertyId);
 							EditorGUILayout.DoubleField("as double", m_doubleValue);
 
-							m_longValue = def.Get<long>(m_propertyId);
+							m_longValue = def.GetAsLong(m_propertyId);
 							EditorGUILayout.LongField("as long", m_longValue);
 
-							m_boolValue = def.Get<bool>(m_propertyId);
+							m_boolValue = def.GetAsBool(m_propertyId);
 							EditorGUILayout.Toggle("as bool", m_boolValue);
 						} EditorGUILayoutExt.EndVerticalSafe();
 						GUI.enabled = true;

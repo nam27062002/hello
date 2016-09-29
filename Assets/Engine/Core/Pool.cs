@@ -69,7 +69,7 @@ public class Pool {
 		m_containerObj = null;
 	}
 	
-	public GameObject Get()
+	public GameObject Get(bool _activate)
 	{			
 		if ( m_freeObjects.Count <= 0 && m_canGrow)
 		{
@@ -79,7 +79,7 @@ public class Pool {
 		if ( m_freeObjects.Count > 0)
 		{
 			GameObject go = m_freeObjects.Dequeue();
-			go.SetActive( true );
+			go.SetActive(_activate);
 			m_notFreeObjects.Add( go );
 			return go;
 		}

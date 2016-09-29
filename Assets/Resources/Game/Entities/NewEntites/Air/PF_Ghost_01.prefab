@@ -330,7 +330,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112932}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.35}
+  m_LocalPosition: {x: 0, y: 0, z: 0.45}
   m_LocalScale: {x: 100, y: 150, z: 100}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -701,6 +701,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
+  m_inflammable:
+    m_ashesAsset: 
+    m_dissolveTime: 1.5
+    m_ashExceptions:
+    - {fileID: 2378524}
 --- !u!137 &13797460
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

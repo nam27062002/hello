@@ -65,7 +65,7 @@ public class ChestManager : Singleton<ChestManager> {
 		DefinitionsManager.SharedInstance.SortByProperty(ref rewardDefs, "index", DefinitionsManager.SortType.NUMERIC);	// Make sure it matches the enum
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			m_rewardDropRate.AddElement(rewardDefs[i].sku);
-			m_rewardDropRate.SetProbability(i, rewardDefs[i].Get<float>("dropRate"), false);
+			m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("dropRate"), false);
 		}
 		m_rewardDropRate.Validate();
 	}
@@ -150,8 +150,8 @@ public class ChestManager : Singleton<ChestManager> {
 				// [AOC] Formula defined in the chestsRewards table
 				// A(LN(MaxDragon) +1)/B
 				DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "coins");
-				float A = rewardDef.Get<float>("factorA");
-				float B = rewardDef.Get<float>("factorB");
+				float A = rewardDef.GetAsFloat("factorA");
+				float B = rewardDef.GetAsFloat("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
 				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
 				float minReward = A * (Mathf.Log(1) + 1) / B;
@@ -164,8 +164,8 @@ public class ChestManager : Singleton<ChestManager> {
 				// [AOC] Formula defined in the chestsRewards table
 				// A(LN(MaxDragon) +1)/B
 				DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "pc");
-				float A = rewardDef.Get<float>("factorA");
-				float B = rewardDef.Get<float>("factorB");
+				float A = rewardDef.GetAsFloat("factorA");
+				float B = rewardDef.GetAsFloat("factorB");
 				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
 				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
 				float minReward = A * (Mathf.Log(1) + 1) / B;

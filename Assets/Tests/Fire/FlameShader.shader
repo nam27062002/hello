@@ -11,11 +11,20 @@
 		_Power("Fire Power", Range(0.0, 10.0)) = 3.0	// Fire power
 		_Seed("Random Seed", Float) = 0.0							//Randomize effect
 		_Alpha("Alpha", Range(0.0, 1.0)) = 1.0	// alpha translucency
+
+//		_GlowTex("Glow Texture", 2D) = "white" {}
+//		_GlowColor("Glow Color", Color) = (1, 1, 1, 1)
+//		_GlowColorMult("Glow Color Multiplier", Color) = (1, 1, 1, 1)
+
+
 	}
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+//		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "GlowTransparent" }
+//		Tags{ "Queue" = "Geometry+15" "RenderType" = "Glow" }
+		Tags{ "Queue" = "Transparent+15" "RenderType" = "Glow" }
+			//		Tags{ "Queue" = "Geometry" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
 		LOD 100
 		Blend SrcAlpha OneMinusSrcAlpha
 		// Blend One One
@@ -27,6 +36,8 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma fragmentoption ARB_precision_hint_fastest
+
 			// make fog work
 //			#pragma multi_compile_fog
 			
@@ -35,6 +46,7 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
+				float4 color : COLOR;
 				float2 uv : TEXCOORD0;
 			};
 
@@ -42,6 +54,7 @@
 			{
 				float2 uv : TEXCOORD0;
 //				UNITY_FOG_COORDS(1)
+				float4 vCol : COLOR;
 				float4 vertex : SV_POSITION;
 			};
 
@@ -57,17 +70,22 @@
 			float	_Seed;
 			float	_Alpha;
 
+//			uniform half4 _GlowColor;
+//			uniform half4 _GlowColorMult;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 //				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vCol = v.color;
 				o.uv = TRANSFORM_TEX(v.uv, _NoiseTex);
 //				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}			
 
 			fixed4 frag (v2f i) : SV_Target
+//			fixed4 frag(v2f i) : COLOR
 			{
 				i.uv.y = 1.0 - (i.uv.y * 0.75);
 				i.uv.y *= i.uv.y;
@@ -86,11 +104,15 @@
 				fixed3 col =  tex2D(_ColorRamp, float2(txid, 0.0));
 
 				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
-				return fixed4(col, alfa * _Alpha);
+				return fixed4(col, alfa * _Alpha) * i.vCol;
 
 			}
 
 			ENDCG
 		}
 	}
+
+//	Fallback "Diffuse"
+//	CustomEditor "GlowMaterialInspector"
+
 }

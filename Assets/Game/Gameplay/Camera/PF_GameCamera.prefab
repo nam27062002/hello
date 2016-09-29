@@ -12,7 +12,6 @@ GameObject:
   - 124: {fileID: 12481626}
   - 92: {fileID: 9212364}
   - 81: {fileID: 8136056}
-  - 114: {fileID: 11460498}
   - 114: {fileID: 11427856}
   - 114: {fileID: 11457446}
   - 114: {fileID: 11486938}
@@ -21,6 +20,7 @@ GameObject:
   - 82: {fileID: 8279618}
   - 114: {fileID: 11447402}
   - 114: {fileID: 114000011327172364}
+  - 114: {fileID: 114000010147363370}
   m_Layer: 0
   m_Name: PF_GameCamera
   m_TagString: MainCamera
@@ -302,28 +302,6 @@ MonoBehaviour:
   zoomInDuration: 0.5
   zoomOutDuration: 1
   alwaysTrigger: 1
---- !u!114 &11460498
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe148db22b4994b409b994efd1c19a8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_limitX:
-    min: -10000
-    max: 10000
-  m_defaultZoom: 45
-  m_farZoom: 55
-  m_shakeDefaultAmount: {x: 0.5, y: 0.5, z: 0}
-  m_shakeDefaultDuration: 0.15
-  m_shakeDecayOverTime: 1
-  m_activationDistance: 5
-  m_activationRange: 3
-  m_deactivationDistance: 25
 --- !u!114 &11486938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -524,6 +502,29 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
+--- !u!114 &114000010147363370
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52f78e93835bdf04eb5ad39ac500b342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowMaterial: {fileID: 2100000, guid: 384a7936c98fd0a4c8bb8f336aafe16f, type: 2}
+  glowReplaceShader: {fileID: 4800000, guid: 0d7c5cc6776db14459960ae53cb4ce35, type: 3}
+  glowMode: 0
+  blendMode: 2
+  downsampleSize: 128
+  blurIterations: 4
+  blurSpread: 1.41
+  glowStrength: 1.24
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  glowColorMultiplier: {r: 1, g: 0.465, b: 0.209, a: 1}
 --- !u!114 &114000010427000824
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -577,8 +578,6 @@ MonoBehaviour:
   m_refCamera: {fileID: 2055932}
   m_collisionReplacementShader: {fileID: 4800000, guid: 13e9ed0c2439a45e483c113bffde0e61,
     type: 3}
-  m_camera: {fileID: 0}
-  m_cullingMask: 0
 --- !u!114 &114000011098854082
 MonoBehaviour:
   m_ObjectHideFlags: 1

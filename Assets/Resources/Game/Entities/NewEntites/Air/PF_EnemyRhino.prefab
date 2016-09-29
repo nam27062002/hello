@@ -227,7 +227,6 @@ GameObject:
   - 114: {fileID: 11415738}
   - 114: {fileID: 11481972}
   - 114: {fileID: 11497242}
-  - 114: {fileID: 11425004}
   - 54: {fileID: 54000013900218966}
   - 136: {fileID: 136000014075825026}
   - 114: {fileID: 114000013200702288}
@@ -1981,6 +1980,7 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
+    m_ignoreCollisionsWhenOffscreen: 0
   m_railSeparation:
     min: 0.5
     max: 1
@@ -2036,18 +2036,6 @@ MonoBehaviour:
   offset: {x: -1.0093538, y: 0.1315948}
   radius: 0.7193324
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &11425004
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 117248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c00ae6ceee2f45eb8cd3b0319e06703, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FocusDistance: 25
 --- !u!114 &11435200
 MonoBehaviour:
   m_ObjectHideFlags: 1

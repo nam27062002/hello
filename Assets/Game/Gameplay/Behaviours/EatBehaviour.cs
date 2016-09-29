@@ -226,7 +226,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public virtual void PauseEating()
 	{
 		m_pauseEating = true;
-		m_attackTarget = null;
+		StopAttackTarget();
 		if ( m_holdingPrey != null || m_holdingPlayer != null)
 			EndHold();
 	}
@@ -248,6 +248,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Bite kill!
 		if ( m_holdingPrey == null && !m_pauseEating)
 		{
+			StopAttackTarget();
 			BiteKill(m_prey.Count <= 0 && m_canHold);
 			if (onBiteKill != null)
 				onBiteKill();
@@ -561,6 +562,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		m_attackTarget = _transform;
 		m_attackTimer = 0.2f;
+	}
+
+	public virtual void StopAttackTarget()
+	{
+		m_attackTarget = null;
 	}
 
 	/// <summary>

@@ -162,7 +162,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Progress
 		// Optionally hide progress for singlerun missions
-		bool show = !m_mission.def.Get<bool>("singleRun") || m_showProgressForSingleRunMissions;
+		bool show = !m_mission.def.GetAsBool("singleRun") || m_showProgressForSingleRunMissions;
 		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
 		if(show) {
 			m_activeObj.FindComponentRecursive<Localizer>("ProgressText").Localize("TID_FRACTION", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());

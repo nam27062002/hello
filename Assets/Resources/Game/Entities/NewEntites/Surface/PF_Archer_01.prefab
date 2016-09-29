@@ -1072,14 +1072,15 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
+    m_ignoreCollisionsWhenOffscreen: 0
   m_railSeparation:
     min: 0.5
     max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 10
-    m_maxRadius: 6
+    m_sightRadius: 11
+    m_maxRadius: 10
     m_minRadius: 4
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1185,7 +1186,7 @@ MonoBehaviour:
     min: 0.75
     max: 1.25
   m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":8,"max":13},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3.5,"arrivalRadius":6,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":5,"consecutiveAttacks":6,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":1},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3.5,"arrivalRadius":7,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":5,"consecutiveAttacks":6,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":1,"max":1},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false}]'
 --- !u!137 &13708154
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

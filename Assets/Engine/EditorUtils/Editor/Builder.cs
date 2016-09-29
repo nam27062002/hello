@@ -16,6 +16,11 @@ public class Builder : MonoBehaviour
 	const string m_apkName = "hd";
 	const string m_AndroidSymbols = "";
 
+    /// <summary>
+    /// When <c>true</c> the symbols defined by player settings are overriden by the ones that defined in <c>m_iOSSymbols</c> for iOs and <c>m_AndroidSymbols</c> for Android
+    /// </summary>
+    const bool OVERRIDE_SYMBOLS = false;
+
 	//[MenuItem ("Build/IOs")]
 	static void GenerateXcode()
 	{
@@ -25,7 +30,11 @@ public class Builder : MonoBehaviour
 
 		// Generate project		
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
-		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, m_iOSSymbols);
+        if (OVERRIDE_SYMBOLS)
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, m_iOSSymbols);
+        }
+
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.iOS);
 		UpdateCaletySettings();
 
@@ -44,7 +53,11 @@ public class Builder : MonoBehaviour
 
 		// Restore 
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
-		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS, oldSymbols);
+
+        if (OVERRIDE_SYMBOLS)
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, oldSymbols);
+        }
 	}
 	
 	//[MenuItem ("Build/Android")]
@@ -56,7 +69,11 @@ public class Builder : MonoBehaviour
 
 		// Build
 		PlayerSettings.bundleIdentifier = m_bundleIdentifier;
-		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, m_AndroidSymbols);
+        if (OVERRIDE_SYMBOLS)
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, m_AndroidSymbols);
+        }
+
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.Android);
 		UpdateCaletySettings();
 
@@ -76,7 +93,10 @@ public class Builder : MonoBehaviour
 
 		// Restore Player Settings
 		PlayerSettings.bundleIdentifier = oldBundleIdentifier;
-		PlayerSettings.SetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android, oldSymbols);
+        if (OVERRIDE_SYMBOLS)
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, oldSymbols);
+        }
 	}
 
 	/// <summary>
@@ -220,9 +240,9 @@ public class Builder : MonoBehaviour
 			settingsInstance.m_strVersionIOSCode = IncreaseVersionCode( settingsInstance.m_strVersionIOSCode );
 			settingsInstance.m_strVersionAndroidGplayCode = IncreaseVersionCode( settingsInstance.m_strVersionAndroidGplayCode );
 			settingsInstance.m_strVersionAndroidAmazonCode = IncreaseVersionCode( settingsInstance.m_strVersionAndroidAmazonCode );
+			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 			EditorUtility.SetDirty( settingsInstance );
 			AssetDatabase.SaveAssets();
-			CaletySettings.UpdatePlayerSettings( ref settingsInstance );
 		}
 	}
 

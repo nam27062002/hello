@@ -36,7 +36,10 @@ public class GameSceneController : GameSceneControllerBase {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private GameObject m_resultsScreen;
+	[SerializeField] private ResultsSceneController m_resultsScene;
+	public ResultsSceneController resultsScene {
+		get { return m_resultsScene; }
+	}
 
 	// Countdown
 	public float countdown {
@@ -168,8 +171,8 @@ public class GameSceneController : GameSceneControllerBase {
 						SpawnerManager.instance.DisableSpawners();
 
 						// Enable Results screen and move the camera to that position
-						if (m_resultsScreen != null) {
-							m_resultsScreen.SetActive(true);
+						if(m_resultsScene != null) {
+							m_resultsScene.Show();
 						}
 					}
 				}

@@ -60,7 +60,7 @@ public class SaveFacadeErrorHandler
     private Dictionary<ErrorState, CloudSaveMessage> m_errorMessages = new Dictionary<ErrorState, CloudSaveMessage>
     {
         { ErrorState.Authentication, new CloudSaveMessage("TID_SAVE_ERROR_CLOUD_LOGIN_FAILED_NAME", "TID_SAVE_ERROR_CLOUD_LOGIN_FAILED_DESC") },
-        { ErrorState.WrongUser, new CloudSaveMessage("TID_SAVE_POPUP_ERROR_CLOUD_WRONG_USER_NAME", "TID_SAVE_POPUP_ERROR_CLOUD_WRONG_USER_DESC") },
+        { ErrorState.WrongUser, new CloudSaveMessage("TID_SAVE_ERROR_CLOUD_WRONG_USER_NAME", "TID_SAVE_ERROR_CLOUD_SAVE_DISABLED_DESC") },
         { ErrorState.Connection, new CloudSaveMessage("TID_SAVE_ERROR_CLOUD_OFFLINE_NAME", "TID_SAVE_ERROR_CLOUD_OFFLINE_DESC") },
         { ErrorState.Corruption, new CloudSaveMessage("TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME", "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC") },
         { ErrorState.PermissionError, new CloudSaveMessage("TID_SAVE_ERROR_LOAD_FAILED_NAME", "TID_SAVE_ERROR_LOAD_FAILED_DESC") },
@@ -68,17 +68,17 @@ public class SaveFacadeErrorHandler
             ErrorState.SaveError, 
             new CloudSaveMessage("TID_SAVE_ERROR_FAILED_NAME", new Dictionary<Globals.Platform, string>
             {
-                { Globals.Platform.Android, "STRING_SAVE_POPUP_ERROR_SAVE_FAILED_TEXT_ANDROID" },
+                { Globals.Platform.Android, "TID_SAVE_ERROR_SAVE_FAILED_ANDROID" },
                 { Globals.Platform.iOS, "TID_SAVE_ERROR_FAILED_DESC" },
                 { Globals.Platform.Amazon, "STRING_SAVE_POPUP_ERROR_SAVE_FAILED_TEXT_AMAZON" }
             })
         },
-        { ErrorState.UpgradeNeeded, new CloudSaveMessage("STRING_SAVE_POPUP_ERROR_UPDATE_TITLE", "TID_SAVE_ERROR_UPDATE_DESC2") },
-        { ErrorState.UpgradeNeededAvailable, new CloudSaveMessage("STRING_SAVE_POPUP_ERROR_UPDATE_TITLE", "TID_SAVE_ERROR_UPDATE_DESC1") },
+        { ErrorState.UpgradeNeeded, new CloudSaveMessage("TID_SAVE_ERROR_UPDATE_TITLE", "TID_SAVE_ERROR_UPDATE_DESC2") },
+        { ErrorState.UpgradeNeededAvailable, new CloudSaveMessage("TID_SAVE_ERROR_UPDATE_TITLE", "TID_SAVE_ERROR_UPDATE_DESC1") },
         { ErrorState.UpgradeNeededAvailableLocalCorrupt, new CloudSaveMessage("TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME", "TID_SAVE_ERROR_LOCAL_CORRUPTED_UPDATE_DESC1") },
         { ErrorState.UpgradeNeededLocalCorrupt, new CloudSaveMessage("TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME", "TID_SAVE_ERROR_LOCAL_CORRUPTED_UPDATE_DESC2") },
         { ErrorState.UploadFailed, new CloudSaveMessage("TID_SAVE_ERROR_CLOUD_OFFLINE_NAME", "TID_SAVE_ERROR_CLOUD_OFFLINE_DESC") },
-        { ErrorState.SyncFailed, new CloudSaveMessage("TID_SAVE_POPUP_ERROR_SYNC_FAILED_NAME", "TID_SAVE_POPUP_ERROR_SYNC_FAILED_DESC") }
+        { ErrorState.SyncFailed, new CloudSaveMessage("TID_SAVE_ERROR_SYNC_FAILED_NAME", "TID_SAVE_ERROR_SYNC_FAILED_DESC") }
     };
 
     public void HandleError(ErrorState state, ErrorCodes code)
@@ -120,7 +120,7 @@ public class SaveFacadeErrorHandler
                 config.TitleTid = message.title;
                 config.MessageTid = message.message;                
                 config.MessageParams = new string[] { code.ToString(), SocialFacade.GetLocalizedNetworkName(networkUsed) };
-                config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+                config.ConfirmButtonTid = "TID_GEN_UPDATE";
                 config.CancelButtonTid = "TID_GEN_CONTINUE";
                 config.OnConfirm = onGoToAppStore;
                 config.OnCancel = onContinue;
@@ -159,7 +159,7 @@ public class SaveFacadeErrorHandler
                 config.TitleTid = message.title;
                 config.MessageTid = message.message;
                 config.MessageParams = new string[] { code.ToString() };
-                config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+                config.ConfirmButtonTid = "TID_GEN_UPDATE";
                 config.OnConfirm = onGoToAppStore;
                 config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
                 PersistenceManager.Popups_OpenMessage(config);               
@@ -173,7 +173,7 @@ public class SaveFacadeErrorHandler
                     config.TitleTid = message.title;
                     config.MessageTid = message.message;
                     config.MessageParams = new string[] { code.ToString() };
-                    config.ConfirmButtonTid = "STRING_BUTTON_UPDATE";
+                    config.ConfirmButtonTid = "TID_GEN_UPDATE";
                     config.OnConfirm = noContinue;
                     config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
                     PersistenceManager.Popups_OpenMessage(config);                  
