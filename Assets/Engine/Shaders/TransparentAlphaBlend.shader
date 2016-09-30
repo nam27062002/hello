@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/TransparentAlphaBlend"
+﻿Shader "Hungry Dragon/TransparentAlphaBlend(Glow)"
 {
 	Properties
 	{

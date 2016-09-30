@@ -32,9 +32,15 @@ public class NavigationScreen : MonoBehaviour {
 	// Exposed
 	[Comment("Optional name to navigate through screens using identifiers")]
 	[SerializeField] private string m_name = "";
-	public string name {
+	public string screenName {
 		get { return m_name; }
 		set { m_name = value; }
+	}
+
+	[SerializeField] private bool m_allowBackToThisScreen = true;
+	public bool allowBackToThisScreen {
+		get { return m_allowBackToThisScreen; }
+		set { m_allowBackToThisScreen = value; }
 	}
 
 	// References
@@ -76,13 +82,15 @@ public class NavigationScreen : MonoBehaviour {
 
 		// If the screen has a ShowHideAnimator, use it
 		if(m_showHideAnimator != null) {
-			m_showHideAnimator.Show(useAnim);
+			m_showHideAnimator.ForceShow(useAnim);
 		}
 
 		// Additionally look for all children containing a NavigationShowHideAnimator component and trigger it!
 		NavigationShowHideAnimator[] animators = GetComponentsInChildren<NavigationShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
 		for(int i = 0; i < animators.Length; i++) {
-			animators[i].Show(useAnim);
+			// Skip ourselves
+			if(animators[i] == m_showHideAnimator) continue;
+			animators[i].ForceShow(useAnim);
 		}
 	}
 	
@@ -93,29 +101,35 @@ public class NavigationScreen : MonoBehaviour {
 	public void Hide(AnimType _animType) {
 		// Aux vars
 		bool useAnim = (_animType != AnimType.NONE);
-
-		// If animation is not required, or both animators are null, disable the screen instantly
-		if(!useAnim || (m_unityAnimator == null && m_showHideAnimator == null)) {
-			gameObject.SetActive(false);
-		}
+		bool applied = false;
 
 		// If we have an animator, launch "out" animation - it should disable the screen when finishing
 		if(m_unityAnimator != null && useAnim) {
 			if(_animType == AnimType.AUTO) _animType = AnimType.NEUTRAL;	// [AOC] "AUTO" can only be used in a navigation screen system
 			m_unityAnimator.SetInteger("direction", (int)_animType);
 			m_unityAnimator.SetTrigger("out");
+			applied = true;
 		} 
 
 		// If the screen has a ShowHideAnimator, use it
 		if(m_showHideAnimator != null) {
-			m_showHideAnimator.Hide(useAnim);
+			m_showHideAnimator.ForceHide(useAnim);
+			applied = true;
 		}
 
 		// Additionally look for all children containing a NavigationShowHideAnimator component and trigger it!
 		NavigationShowHideAnimator[] animators = GetComponentsInChildren<NavigationShowHideAnimator>(false);	// Exclude inactive ones - they are already hidden! ^_^
 		for(int i = 0; i < animators.Length; i++) {
+			// Skip ourselves
+			if(animators[i] == m_showHideAnimator) continue;
+
 			// IMPORTANT!! Hide but don't disable them, otherwise they won't be shown again when navigating back to this screen
-			animators[i].Hide(useAnim, false);
+			animators[i].ForceHide(useAnim, false);
+		}
+
+		// If no animation was triggered, hide instantly
+		if(!applied) {
+			gameObject.SetActive(false);
 		}
 	}
 }

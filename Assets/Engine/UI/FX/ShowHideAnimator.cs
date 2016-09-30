@@ -146,7 +146,6 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	protected virtual void Awake() {
 		// Get external references
-		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_rectTransform = GetComponent<RectTransform>();
 	}
 
@@ -464,7 +463,8 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// If the object doesn't have a canvas group, add it to be able to fade it in/out - all tween types will use it
 		if(m_canvasGroup == null) {
-			m_canvasGroup = gameObject.AddComponent<CanvasGroup>();
+			// Try to fetch an existing canvas, create a new one if not found
+			m_canvasGroup = this.gameObject.ForceGetComponent<CanvasGroup>();
 		}
 
 		// Create new sequence

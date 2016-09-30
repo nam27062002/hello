@@ -357,7 +357,12 @@ public static class GameObjectExt {
 	/// <param name="_obj"></param>
 	/// <typeparam name="T"></typeparam>
 	public static T ForceGetComponent<T>(this GameObject _obj) where T : Component {
-		return _obj.GetComponent<T>() ?? _obj.AddComponent<T>();
+		//return _obj.GetComponent<T>() ?? _obj.AddComponent<T>();	// [AOC] For some unknown reason, this line throws an exception (after months of working properly). Do it the old way
+		T comp = _obj.GetComponent<T>();
+		if(comp == null) {
+			comp = _obj.AddComponent<T>();
+		}
+		return comp;
 	}
 
 	/// <summary>
@@ -367,7 +372,12 @@ public static class GameObjectExt {
 	/// <param name="_comp"></param>
 	/// <typeparam name="T"></typeparam>
 	public static T ForceGetComponent<T>(this Component _comp) where T: Component {
-		return _comp.GetComponent<T>() ?? _comp.gameObject.AddComponent<T>();
+		//return _comp.GetComponent<T>() ?? _comp.gameObject.AddComponent<T>();	// [AOC] For some unknown reason, this line throws an exception (after months of working properly). Do it the old way
+		T comp = _comp.GetComponent<T>();
+		if(comp == null) {
+			comp = _comp.gameObject.AddComponent<T>();
+		}
+		return comp;
 	}
 
 	/// <summary>

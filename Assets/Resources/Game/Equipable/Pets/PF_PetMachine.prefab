@@ -1807,7 +1807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: bush_01
+  m_sku: pet_01
 --- !u!114 &114000012488899708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1834,7 +1834,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-    m_ignoreCollisionsWhenOffscreen: 1
   m_railSeparation:
     min: 0.5
     max: 1
@@ -1854,6 +1853,10 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
+  m_inflammable:
+    m_ashesAsset: 
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
 --- !u!114 &114000012669857030
 MonoBehaviour:
   m_ObjectHideFlags: 1

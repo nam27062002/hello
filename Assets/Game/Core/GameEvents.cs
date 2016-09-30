@@ -66,7 +66,6 @@ public enum GameEvents {
 	MENU_DRAGON_SELECTED,		 // params: string _selectedDragonSku	// [AOC] Triggered when the dragon hovered in the dragon selection screen changes
 	MENU_DRAGON_CONFIRMED,		 // params: string _confirmedDragonSku	// [AOC] Triggered when the dragon hovered on the menu is valid to be used in gameplay (UserProfile.currentDragon updated)
 	MENU_DRAGON_DISGUISE_CHANGE, // params: string _dragonSku
-	MENU_LEVEL_SELECTED,		 // params: string _selectedLevelSku
 
 	// Mission events
 	MISSION_COMPLETED,			// params: Mission _mission

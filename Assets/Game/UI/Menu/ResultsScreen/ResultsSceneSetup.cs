@@ -22,7 +22,23 @@ public class ResultsSceneSetup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static readonly bool TEST = false;
+	public enum ChestTestMode {
+		NONE = 0,
+		FIXED_0,	// Match amount of chests with enum index for convenience
+		FIXED_1,
+		FIXED_2,
+		FIXED_3,
+		FIXED_4,
+		FIXED_5,
+		RANDOM
+	};
+
+	public enum EggTestMode {
+		NONE,
+		RANDOM,
+		FOUND,
+		NOT_FOUND
+	};
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -72,15 +88,21 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// How many chests?
 		// [AOC] TODO!! Pending new chests system
 		List<Chest> collectedChests = new List<Chest>();
-		if(TEST) {
-			// [AOC] DEBUG ONLY!!
-			int NUM_COLLECTED_CHESTS = Random.Range(0, 5);
-			for(int i = 0; i < NUM_COLLECTED_CHESTS; i++) {
+		if(DebugSettings.resultsChestTestMode == ChestTestMode.NONE) {
+			// Real logic
+			if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
+				// [AOC] TODO!! 5 chests logic
 				collectedChests.Add(ChestManager.selectedChest);
 			}
 		} else {
-			if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
-				// [AOC] TODO!! 5 chests logic
+			// [AOC] DEBUG ONLY!!
+			int NUM_COLLECTED_CHESTS = (int)DebugSettings.resultsChestTestMode;
+			NUM_COLLECTED_CHESTS -= 1;	// 0-based index
+			if(DebugSettings.resultsChestTestMode == ChestTestMode.RANDOM) {
+				NUM_COLLECTED_CHESTS = Random.Range(0, 5);
+			}
+
+			for(int i = 0; i < NUM_COLLECTED_CHESTS; i++) {
 				collectedChests.Add(ChestManager.selectedChest);
 			}
 		}
@@ -112,11 +134,24 @@ public class ResultsSceneSetup : MonoBehaviour {
 
 		// Egg found?
 		bool eggFound = false;
-		if(TEST) {
-			eggFound = (Random.Range(0f, 1f) > 0.5f);	// [AOC] DEBUG!!
-		} else {
-			eggFound = EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected;
+		switch(DebugSettings.resultsEggTestMode) {
+			case EggTestMode.FOUND: {
+				eggFound = true; 
+			} break;
+
+			case EggTestMode.NOT_FOUND: {
+				eggFound = false; 
+			} break;
+
+			case EggTestMode.RANDOM: {
+				eggFound = (Random.Range(0f, 1f) > 0.5f); 
+			} break;
+
+			case EggTestMode.NONE: {
+				eggFound = EggManager.collectibleEgg != null && EggManager.collectibleEgg.collected;
+			} break;
 		}
+
 		if(eggFound) {
 			totalDelay += 1f;	// Extra delay
 			m_eggSlot.localScale = Vector3.zero;

@@ -31,6 +31,9 @@ public static class DebugSettings {
 	public static readonly string DRAGON_SLOW_POWER_UP   = "DRAGON_SLOW_POWER_UP";
 	public static readonly string SHOW_XP_BAR			 = "SHOW_XP_BAR";
 	public static readonly string SHOW_COLLISIONS		 = "SHOW_COLLISIONS";
+	public static readonly string NEW_CAMERA_SYSTEM		 = "NEW_CAMERA_SYSTEM";
+	public static readonly string RESULTS_SCREEN_CHEST_TEST_MODE = "RESULTS_SCREEN_CHEST_TEST_MODE";
+	public static readonly string RESULTS_SCREEN_EGG_TEST_MODE = "RESULTS_SCREEN_EGG_TEST_MODE";
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -75,6 +78,16 @@ public static class DebugSettings {
 	public static bool slowPowerUp {
 		get { return Prefs.GetBoolPlayer(DRAGON_SLOW_POWER_UP, false); }
 		set { Prefs.SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
+	}
+
+	public static ResultsSceneSetup.ChestTestMode resultsChestTestMode {
+		get { return (ResultsSceneSetup.ChestTestMode)Prefs.GetIntPlayer(RESULTS_SCREEN_CHEST_TEST_MODE, (int)ResultsSceneSetup.ChestTestMode.NONE); }
+		set { Prefs.SetIntPlayer(RESULTS_SCREEN_CHEST_TEST_MODE, (int)value); }
+	}
+
+	public static ResultsSceneSetup.EggTestMode resultsEggTestMode {
+		get { return (ResultsSceneSetup.EggTestMode)Prefs.GetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)ResultsSceneSetup.EggTestMode.NONE); }
+		set { Prefs.SetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)value); }
 	}
 
 	//------------------------------------------------------------------//

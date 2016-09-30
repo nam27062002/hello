@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using System;
 
 namespace AI {
+	[Serializable]
 	public class MachineInflammable : MachineComponent {
 		//-----------------------------------------------
 		// Constants
@@ -19,7 +20,7 @@ namespace AI {
 		//-----------------------------------------------
 		[SerializeField] private string m_ashesAsset = "";
 		[SerializeField] private float m_dissolveTime = 1.5f;
-
+		[SerializeField] private List<Renderer> m_ashExceptions = new List<Renderer>();
 
 		//-----------------------------------------------
 		//
@@ -43,30 +44,28 @@ namespace AI {
 				if (m_renderers.Length > 0) {
 					for(int i = 0; i < m_renderers.Length; i++) {
 						Renderer renderer = m_renderers[i];
-						Material[] materials = new Material[renderer.materials.Length];
-
-						for (int j = 0; j < renderer.materials.Length; j++) {
-							Material newMat = null;
-							string shaderName = renderer.materials[j].shader.name;
-
-							if (shaderName.EndsWith("Additive")) {
-								// We will set to null and hide it at the beggining 
-								newMat = new Material(Resources.Load ("Game/Assets/Materials/Transparent") as Material);
-							} else if (shaderName.EndsWith("Bird")) {
-								// We ignore mask because its used for masking the diffuse texture
-								newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
-							} else {
+						if ( m_ashExceptions.Contains(renderer) )
+						{
+							m_ashMaterials.Add( null );
+						}
+						else
+						{
+							Material[] materials = new Material[renderer.materials.Length];
+							for (int j = 0; j < renderer.materials.Length; j++) {
+								Material newMat = null;
 								newMat = new Material(Resources.Load ("Game/Assets/Materials/BurnToAshes") as Material);
 								newMat.SetTexture("_AlphaMask", m_renderers[i].material.mainTexture);
+								newMat.renderQueue = 3000;
+								materials[j] = newMat;
 							}
-
-							newMat.renderQueue = 3000;
-							materials[j] = newMat;
+							m_ashMaterials.Add(materials);
 						}
-						m_ashMaterials.Add(materials);
 					}
 				}
 			}
+
+			for( int i = 0; i<m_ashExceptions.Count; i++ )
+				m_ashExceptions[i].enabled = true;
 
 			m_state = State.Idle;
 			m_nextState = State.Idle;
@@ -119,14 +118,9 @@ namespace AI {
 				case State.Ashes:
 					if (m_timer <= 0f) {
 						m_machine.SetSignal(Signals.Type.Destroyed, true);
+						UpdateAshLevel(0);
 					} else {
-						float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - (m_timer / m_dissolveTime)));
-						for (int i = 0; i < m_ashMaterials.Count; i++) {
-							Material[] mats = m_ashMaterials[i];
-							for (int j = 0; j < mats.Length; j++) {
-								mats[j].SetFloat("_AshLevel", ashLevel);
-							}
-						}
+						UpdateAshLevel(m_timer / m_dissolveTime);
 					}
 					break;
 			}
@@ -145,11 +139,24 @@ namespace AI {
 
 			if (m_nextState == State.Burned) {				
 				m_timer = 0.5f; //secs
+				UpdateAshLevel(1);
 			} else if (m_nextState == State.Ashes) {
-				m_timer = m_dissolveTime;				
+				m_timer = m_dissolveTime;		
 			}
 
 			m_state = m_nextState;
+		}
+
+		private void UpdateAshLevel( float delta )
+		{
+			float ashLevel = Mathf.Min(1, Mathf.Max(0, 1 - delta));
+			for (int i = 0; i < m_ashMaterials.Count; i++) {
+				Material[] mats = m_ashMaterials[i];
+				if (mats != null)
+				for (int j = 0; j < mats.Length; j++) {
+					mats[j].SetFloat("_AshLevel", ashLevel);
+				}
+			}
 		}
 	}
 }

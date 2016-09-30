@@ -513,6 +513,13 @@ public class UserProfile : UserSaveSystem
 		return "";
 	}
     
+	/// <summary>
+	/// Try to equip the given disguise into the target dragon.
+	/// Doesn't check that the disguise actually belongs to the dragon.
+	/// </summary>
+	/// <returns><c>true</c> if the disguise was different from the one previously equiped by the dragon, <c>false</c> otherwise.</returns>
+	/// <param name="_dragonSku">Dragon sku.</param>
+	/// <param name="_disguiseSku">Disguise sku.</param>
 	public bool EquipDisguise( string _dragonSku, string _disguiseSku)
 	{
 		bool ret = false;

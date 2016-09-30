@@ -35,7 +35,7 @@ namespace AI {
 
 
 		private MachineEdible m_edible = new MachineEdible();
-		private MachineInflammable m_inflammable = new MachineInflammable();
+		[SerializeField] private MachineInflammable m_inflammable = new MachineInflammable();
 
 
 		private bool m_willPlaySpawnSound;

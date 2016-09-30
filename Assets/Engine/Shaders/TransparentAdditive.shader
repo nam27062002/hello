@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/TransparentAdditive"
+﻿Shader "Hungry Dragon/TransparentAdditive(Glow)"
 {
 
 	Properties{

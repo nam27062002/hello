@@ -192,6 +192,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		m_animator.SetBool("swim", m_swim);
+		m_animator.SetBool("fly down", m_inSpace);
 		if (!m_swim){
 			m_animator.SetBool("move", m_moving);
 		}else{
