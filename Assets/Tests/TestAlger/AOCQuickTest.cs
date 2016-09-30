@@ -68,7 +68,11 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		Debug.Log(System.DateTime.Now.ToString("yyyyMMdd"));
+		//Debug.Log(System.DateTime.Now.ToString("yyyyMMdd"));
+		Type enumType = typeof(ResultsSceneSetup.ChestTestMode);
+		Debug.Log(enumType.AssemblyQualifiedName);
+		Type t = Type.GetType("ResultsSceneSetup+ChestTestMode", false);
+		Debug.Log(t == null ? "NULL" : t.Name);
 	}
 
 	/// <summary>
