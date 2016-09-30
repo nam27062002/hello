@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public class DisguisePillEvent : UnityEvent<DisguisePill>{}
 
+[RequireComponent(typeof(ScrollRectSnapPoint))]
 public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	//------------------------------------------//
@@ -17,6 +18,16 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	private DefinitionNode m_def;
 	public DefinitionNode def {
 		get { return m_def; }
+	}
+
+	private ScrollRectSnapPoint m_snapPoint = null;
+	public ScrollRectSnapPoint snapPoint {
+		get {
+			if(m_snapPoint == null) {
+				m_snapPoint = GetComponent<ScrollRectSnapPoint>();
+			}
+			return m_snapPoint;
+		}
 	}
 
 	private int m_level;

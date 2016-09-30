@@ -30,7 +30,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[Separator("Scene References")]
 	[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
 	[SerializeField] private DisguisePowerIcon[] m_powers;
-	[SerializeField] private RectTransform m_layout;
+	[SerializeField] private SnappingScrollRect m_scrollList = null;
 
 	// Preview
 	private Transform m_previewAnchor;
@@ -59,11 +59,11 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_pills = new DisguisePill[9];
 		for (int i = 0; i < 9; i++) {
 			GameObject pill = GameObject.Instantiate<GameObject>(m_pillPrefab);
-			pill.transform.parent = m_layout;
+			pill.transform.parent = m_scrollList.content;
 			pill.transform.localScale = Vector3.one;
 
 			m_pills[i] = pill.GetComponent<DisguisePill>();
-			m_pills[i].OnPillClicked.AddListener(OnPillClicked);
+			//m_pills[i].OnPillClicked.AddListener(OnPillClicked);		// [AOC] Will be handled by the snap scroll list
 		}
 
 		m_dragonSku = "";
@@ -201,7 +201,8 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Force a first refresh
 		// This will initialize both the equipped and selected pills as well
-		OnPillClicked(initialPill);
+		m_scrollList.SelectPoint(initialPill.snapPoint);
+		OnPillClicked(initialPill);	// [AOC] If selected point is the same that was already selected, the OnSelectionChanged callback won't be called. Make sure the pill is properly initialized by manually inboking OnPillClicked.
 	}
 
 	/// <summary>
@@ -267,6 +268,14 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Make sure the screen is properly finalized
 		Debug.Log("ON HIDE");
 		Finalize();
+	}
+
+	/// <summary>
+	/// A new pill has been selected on the snapping scroll list.
+	/// </summary>
+	/// <param name="_selectedPoint">Selected point.</param>
+	public void OnSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
+		OnPillClicked(_selectedPoint.GetComponent<DisguisePill>());
 	}
 
 	/// <summary>
