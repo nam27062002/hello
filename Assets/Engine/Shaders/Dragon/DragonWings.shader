@@ -19,10 +19,12 @@ Properties {
 }
 
 SubShader {
-	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
-	ZWrite On
+//	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" }
+	ZWrite on
 	Blend SrcAlpha OneMinusSrcAlpha 
-	Cull Back
+	Cull Off
+//	Cull Back
 	ColorMask RGBA
 	
 	Pass {
@@ -97,6 +99,11 @@ SubShader {
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 main = tex2D(_MainTex, i.texcoord);
+
+				clip(main.a - 0.5);
+
+
+
 				fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
 	            float3 encodedNormal = UnpackNormal (tex2D (_BumpMap, i.texcoord));
@@ -104,6 +111,7 @@ SubShader {
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
      			// normalDirection = i.normal;
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
+
 
      			fixed3 pointLights = fixed3(0,0,0);
      			for (int index = 0; index <1; index++)
