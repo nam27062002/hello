@@ -78,7 +78,7 @@ public class MenuDragonSelector : MonoBehaviour, IBeginDragHandler, IDragHandler
 		DragonData data = DragonManager.GetDragonData(_sku);
 
 		// Use select by index
-		SetSelectedDragon(data.def.GetAsInt("order"));
+		if(data != null) SetSelectedDragon(data.def.GetAsInt("order"));
 	}
 
 	/// <summary>

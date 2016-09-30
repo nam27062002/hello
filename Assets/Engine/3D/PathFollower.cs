@@ -54,11 +54,9 @@ public class PathFollower : MonoBehaviour {
 	public float delta {
 		get { return m_delta; }
 		set {
-			// Update snap point as well and apply
+			// Apply to target object and mark delta as dirty
 			m_delta = ClampDelta(value); 
-			if(m_path != null) {
-				m_snapPoint = m_path.GetPointAt(m_delta);
-			}
+			m_deltaDirty = true;
 			Apply();
 		}
 	}
@@ -72,7 +70,14 @@ public class PathFollower : MonoBehaviour {
 
 	[SerializeField] private int m_snapPoint = 0;
 	public int snapPoint {
-		get { return m_snapPoint; }
+		get { 
+			// If delta is dirty, compute again
+			if(m_deltaDirty && m_path != null) {
+				m_snapPoint = m_path.GetPointAt(m_delta);
+				m_deltaDirty = false;
+			}
+			return m_snapPoint; 
+		}
 		set {
 			// Update delta as well and apply
 			if(m_path != null) {
@@ -99,6 +104,7 @@ public class PathFollower : MonoBehaviour {
 	// Internal vars
 	private Tweener m_tween = null;
 	private bool m_dirty = true;
+	private bool m_deltaDirty = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -120,7 +126,7 @@ public class PathFollower : MonoBehaviour {
 			if(!isTweening) {
 				switch(m_linkMode) {
 					case LinkMode.DELTA: Apply(); break;
-					case LinkMode.SNAP_POINT: SnapTo(m_snapPoint); break;
+					case LinkMode.SNAP_POINT: SnapTo(snapPoint); break;
 				}
 			}
 		}
@@ -205,6 +211,7 @@ public class PathFollower : MonoBehaviour {
 				_newValue => {
 					m_delta = _newValue;	// Don't use property setter, which would kill the tween!
 					m_delta = ClampDelta(m_delta);	// If path is closed, loop around ^_^
+					m_deltaDirty = true;	// In case anyone wants to use the snapPoint property
 					Apply();
 				}, 
 				_delta,

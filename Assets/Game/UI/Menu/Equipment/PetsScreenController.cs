@@ -73,28 +73,27 @@ public class PetsScreenController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Trigger all animators needed to display the pets screen.
+	/// Setup the screen with a specific pet selected.
 	/// </summary>
-	public void Show() {
-		// The list
-		this.GetComponent<ShowHideAnimator>().Show();
+	/// <param name="_initialPetSku">The pet to focus. Leave empty to load current setup.</param>
+	public void Initialize(string _initialPetSku = "") {
 
-		// The pets slots and previews
-		// [AOC] TODO!!
-	}
-
-	/// <summary>
-	/// Trigger all animators needed to hide the pets screen.
-	/// </summary>
-	public void Hide() {
-		// The list
-		this.GetComponent<ShowHideAnimator>().Hide();
-
-		// The pets slots and previews
-		// [AOC] TODO!!
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Screen is about to be shown.
+	/// </summary>
+	public void OnShow() {
+		// [AOC] TODO!! Initialize
+	}
+
+	/// <summary>
+	/// Screen has been hidden.
+	/// </summary>
+	public void OnHide() {
+		// [AOC] TODO!! Finalize
+	}
 }

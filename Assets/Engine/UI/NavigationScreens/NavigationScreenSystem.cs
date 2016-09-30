@@ -153,6 +153,10 @@ public class NavigationScreenSystem : MonoBehaviour {
 		// Get last screen
 		int lastScreenIdx = SCREEN_NONE;
 		if(m_screenHistory.Count > 0) lastScreenIdx = m_screenHistory.Last();
+
+		// Aux vars
+		NavigationScreen currentScreen = (m_currentScreenIdx == SCREEN_NONE) ? null : m_screens[m_currentScreenIdx];
+		NavigationScreen newScreen = (_newScreenIdx == SCREEN_NONE) ? null : m_screens[_newScreenIdx];
 		
 		// Figure out animation direction based on current and new screen indexes
 		if(_animType == NavigationScreen.AnimType.AUTO) {
@@ -176,21 +180,20 @@ public class NavigationScreenSystem : MonoBehaviour {
 				m_screenHistory.RemoveAt(m_screenHistory.Count - 1);
 			} else {
 				// Moving forward to a new screen!
-				m_screenHistory.Add(m_currentScreenIdx);
+				// Don't add to history if going back to this screen is not allowed
+				if(currentScreen != null && currentScreen.allowBackToThisScreen) {
+					m_screenHistory.Add(m_currentScreenIdx);
+				}
 			}
 		}
 
 		// Hide current screen (if any)
-		NavigationScreen currentScreen = null;
-		if(m_currentScreenIdx != SCREEN_NONE) {
-			currentScreen = m_screens[m_currentScreenIdx];
+		if(currentScreen != null) {
 			currentScreen.Hide(_animType);
 		}
 		
 		// Show new screen (if any)
-		NavigationScreen newScreen = null;
-		if(_newScreenIdx != SCREEN_NONE) {
-			newScreen = m_screens[_newScreenIdx];
+		if(newScreen != null) {
 			newScreen.Show(_animType);
 		}
 

@@ -37,12 +37,8 @@ public class Chest : MonoBehaviour {
 	public DragonTier requiredTier { get { return m_requiredTier; }}
 
 	[Space]
-	[SerializeField] private Animator m_animator = null;
+	[SerializeField] private ChestViewController m_chestView = null;
 	[SerializeField] private GameObject m_mapMarker = null;
-
-	[Space]
-	[SerializeField] private ParticleSystem m_idleFX = null;
-	[SerializeField] private ParticleSystem m_collectFX = null;
 
 	// Logic
 	private State m_state = State.INIT;
@@ -64,8 +60,14 @@ public class Chest : MonoBehaviour {
 
 		// Start in the IDLE state
 		m_state = State.IDLE;
-		m_idleFX.Play();
-		m_collectFX.Stop();
+	}
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		// Setup view
+		m_chestView.ShowGlowFX(true);
 	}
 
 	//------------------------------------------------------------------//
@@ -89,12 +91,9 @@ public class Chest : MonoBehaviour {
 		// Disable map marker
 		if(m_mapMarker != null) m_mapMarker.SetActive(false);
 
-		// Launch FX
-		m_idleFX.Stop();
-		m_collectFX.Play();
-
-		// Launch animation
-		m_animator.SetTrigger("open");
+		// Open chest and launch FX
+		m_chestView.ShowGlowFX(false);
+		m_chestView.Open();
 
 		// Dispatch global event
 		Messenger.Broadcast<Chest>(GameEvents.CHEST_COLLECTED, this);

@@ -39,8 +39,9 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 	[SerializeField] private string m_prefabPath = "";
 
-	[Comment("\nThe tooltip will be spawned from this anchor point.\nIf not defined, it will be autopositioned using the trigger's transform as anchor.")]
+	[Comment("\nThe tooltip will be spawned from this anchor point.\nIf not defined, it will be autopositioned using the trigger's transform as anchor.\nActivating the \"Keep Original Position\" flag will override the anchor.")]
 	[SerializeField] private RectTransform m_anchor = null;
+	[SerializeField] private Vector2 m_offset = Vector2.zero;
 	[SerializeField] private bool m_keepOriginalPosition = false;
 	[SerializeField] private bool m_checkScreenBounds = true;
 
@@ -56,8 +57,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// If there is a tooltip instance linked, make sure it starts hidden
-		if(m_tooltip != null) m_tooltip.ForceHide(false);
+		
 	}
 
 	/// <summary>
@@ -114,14 +114,17 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 		// Unless explicitely denied, put tooltip on anchor's position
 		if(!m_keepOriginalPosition) {
 			// Instantly unfold it for a moment to get the right measurements
-			float deltaBackup = m_tooltip.delta;
-			m_tooltip.ForceShow(false);
+			float deltaBackup = m_tooltip.animator.delta;
+			m_tooltip.animator.ForceShow(false);
 
-			// Put it at the trigger's position
-			m_tooltip.transform.localPosition = spawnTransform.localPosition;
-			Canvas canvas = GetComponentInParent<Canvas>();
+			// Put it at the anchor's position
+			m_tooltip.transform.localPosition = spawnTransform.parent.TransformPoint(spawnTransform.localPosition, m_tooltip.transform.parent);
+
+			// Apply manual offset
+			m_tooltip.transform.localPosition = m_tooltip.transform.localPosition + new Vector3(m_offset.x, m_offset.y, 0f);
 
 			// Get some aux vars
+			Canvas canvas = GetComponentInParent<Canvas>();
 			Rect tooltipRect = (m_tooltip.transform as RectTransform).rect;	// Tooltip in local coords
 			Rect canvasRect = (canvas.transform as RectTransform).rect;	// Canvas in local coords
 			tooltipRect = m_tooltip.transform.TransformRect(tooltipRect, canvas.transform);
@@ -144,16 +147,16 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 				}
 			}
 
-			// Convert offset to tooltip's local coords and apply
-			offset = canvas.transform.TransformPoint(offset, spawnTransform.parent);
-			m_tooltip.transform.localPosition = spawnTransform.localPosition + offset;
+			// Compute final position in tooltip's local coords and apply
+			Vector3 finalCanvasPos = tooltip.transform.parent.TransformPoint(tooltip.transform.localPosition, canvas.transform) + offset;
+			m_tooltip.transform.localPosition = canvas.transform.TransformPoint(finalCanvasPos, tooltip.transform.parent);
 
 			// Restore previous animation delta and trigger show animation
-			m_tooltip.delta = deltaBackup;
+			m_tooltip.animator.delta = deltaBackup;
 		}
 
 		// Launch the animation!
-		m_tooltip.ForceShow();
+		m_tooltip.animator.ForceShow();
 
 		// Invoke event
 		OnTooltipOpen.Invoke(m_tooltip, this);
@@ -165,7 +168,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// <param name="_eventData">Event data.</param>
 	public void OnPointerUp(PointerEventData _eventData) {
 		// Just hide the tooltip, if created
-		if(m_tooltip != null) m_tooltip.Hide();
+		if(m_tooltip != null) m_tooltip.animator.Hide();
 	}
 
 	/// <summary>
@@ -174,6 +177,6 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// <param name="_eventData">Event data.</param>
 	public void OnPointerExit(PointerEventData _eventData) {
 		// Just hide the tooltip, if created
-		if(m_tooltip != null) m_tooltip.Hide();
+		if(m_tooltip != null) m_tooltip.animator.Hide();
 	}
 }

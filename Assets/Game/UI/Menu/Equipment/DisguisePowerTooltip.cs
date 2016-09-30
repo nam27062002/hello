@@ -31,8 +31,6 @@ public class DisguisePowerTooltip : MonoBehaviour {
 	[Space]
 	[SerializeField] private Image m_powerIcon = null;
 	[SerializeField] private GameObject m_lockInfo = null;
-	[Space]
-	[SerializeField] private RectTransform m_arrow = null;
 
 	// Data
 	private DefinitionNode m_powerDef = null;
@@ -94,20 +92,6 @@ public class DisguisePowerTooltip : MonoBehaviour {
 	public void SetLocked(bool _locked) {
 		// Lock info
 		m_lockInfo.SetActive(_locked);
-	}
-
-	/// <summary>
-	/// Adjust the arrow position along the side of the tooltip.
-	/// </summary>
-	/// <param name="_offset">Arrow offset, being 0.5 the center of the side (default), 0 the beginning and 1 the end.</param>
-	public void SetArrowOffset(float _offset) {
-		// Skip if there is no arrow
-		if(m_arrow == null) return;
-
-		// Apply offset
-		// [AOC] TODO!! Vertical arrows
-		m_arrow.anchorMin = new Vector2(_offset, m_arrow.anchorMin.y);
-		m_arrow.anchorMax = new Vector2(_offset, m_arrow.anchorMax.y);
 	}
 
 	//------------------------------------------------------------------------//

@@ -67,15 +67,15 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		List<DefinitionNode> difficultyDefs = new List<DefinitionNode>();
 		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.MISSION_DIFFICULTIES, ref difficultyDefs);
 		for(int i = 0; i < difficultyDefs.Count; i++) {
-			int difficultyIdx = difficultyDefs[i].Get<int>("index");
+			int difficultyIdx = difficultyDefs[i].GetAsInt("index");
 
-			m_dragonsToUnlock[difficultyIdx] = difficultyDefs[i].Get<int>("dragonsToUnlock");
-			m_cooldownPerDifficulty[difficultyIdx] = difficultyDefs[i].Get<int>("cooldownMinutes");
-			m_maxRewardPerDifficulty[difficultyIdx] = difficultyDefs[i].Get<int>("maxRewardCoins");
+			m_dragonsToUnlock[difficultyIdx] = difficultyDefs[i].GetAsInt("dragonsToUnlock");
+			m_cooldownPerDifficulty[difficultyIdx] = difficultyDefs[i].GetAsInt("cooldownMinutes");
+			m_maxRewardPerDifficulty[difficultyIdx] = difficultyDefs[i].GetAsInt("maxRewardCoins");
 
 			// For now all difficulties share the same coefs
-			m_removeMissionPCCoefA = difficultyDefs[i].Get<float>("removeMissionPCCoefA");
-			m_removeMissionPCCoefB = difficultyDefs[i].Get<float>("removeMissionPCCoefB");
+			m_removeMissionPCCoefA = difficultyDefs[i].GetAsFloat("removeMissionPCCoefA");
+			m_removeMissionPCCoefB = difficultyDefs[i].GetAsFloat("removeMissionPCCoefB");
 		}
 	}
 

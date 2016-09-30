@@ -8,6 +8,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	private DragonBoostBehaviour m_dragonBoost;
 	private Dictionary<string, float> m_eatingBoosts = new Dictionary<string, float>();
 	private Animator m_animator;
+	protected bool m_pausedOnFury = false;
 
 	//--------------
 
@@ -28,6 +29,11 @@ public class PlayerEatBehaviour : EatBehaviour {
 		}
 	}
 
+	protected void OnEnable() {
+		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+	}
 
 	protected void Start() 
 	{
@@ -36,11 +42,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 		m_motion = GetComponent<DragonMotion>();
 
 		m_tier = m_dragon.data.tier;
-		m_eatSpeedFactor = m_dragon.data.def.Get<float>("eatSpeedFactor");
-
-		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
 		m_rewardsPlayer = true;
@@ -62,19 +64,16 @@ public class PlayerEatBehaviour : EatBehaviour {
 		{
 			m_animator.SetBool("eat", false);
 		}
+
+		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 
 	void onEatEvent()
 	{
 		OnJawsClose();
-	}
-
-
-	void OnDestroy() {
-		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 
@@ -113,7 +112,21 @@ public class PlayerEatBehaviour : EatBehaviour {
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
 	{
 		if (toogle)
-			m_attackTarget = null;
+		{
+			if ( !m_pauseEating )
+			{
+				m_pausedOnFury = true;
+				PauseEating();
+			}
+		}
+		else
+		{
+			if ( m_pauseEating && m_pausedOnFury )
+			{
+				m_pausedOnFury = false;
+				ResumeEating();
+			}
+		}
 	}
 
 	void OnMultiplierLost()

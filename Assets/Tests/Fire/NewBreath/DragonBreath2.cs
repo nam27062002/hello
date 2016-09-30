@@ -3,12 +3,15 @@ using System.Collections;
 
 public class DragonBreath2 : MonoBehaviour 
 {
-
 	// Mesh cache
 	private int[] m_triangles = null;
 	private Vector3[] m_pos = null;
 	private Vector2[] m_UV = null;
     private Color[] m_color = null;
+
+    private Vector3[] m_whip;
+    private Vector3[] m_whipTangent;
+    //    bool[] m_whipCollision;
 
     // Meshes
     private Mesh m_mesh = null;
@@ -22,132 +25,124 @@ public class DragonBreath2 : MonoBehaviour
 
     private int m_numPos = 0;
 
-    Vector3[] m_whip;
-    Vector3[] m_whipTangent;
-//    bool[] m_whipCollision;
-
     private int m_collisionSplit = 0;
 
-    public Color m_initialColor;
-    public Color m_flameColor;
-    public Color m_collisionColor;
-
-    public AnimationCurve m_shapeCurve;
-    public AnimationCurve m_FlameAnimation;
-    public AnimationCurve m_FlexCurve;
-
-    private float flameAnimationTime = 0.0f;
-
-    public float fireDelay = 1.0f;
+    public string m_collisionFirePrefab;
+    public float m_collisionFireDelay = 0.5f;
+    public int m_collisionEmiters = 10;
 
     public string m_groundLayer;
     public string[] m_enemyLayers;
 
     private int m_groundLayerMask;
 
+    private Transform m_whipEnd;
+    private Transform m_iniCanon;
 
-    private Vector3 lastInitialPosition;
-    private Transform whipEnd;
-    private Transform iniCanon;
+    private float m_lastTime;
+    private bool m_enableState = false;
 
-    public float timeDelay = 0.25f;
+    private Vector3[] m_originalVertices;
+    private Vector2[] m_originalUV;
 
-    private float lastTime;
+    private Color[] m_colorVertex;
 
-    private float enableTime = 0.0f;
-    private bool enableState = false;
+    public Vector3 m_canonScale = Vector3.one;
 
-    private Vector3[] originalVertices;
-    private Vector2[] originalUV;
-
-    private Color[] colorVertex;
-
-    public Vector3 CanonScale = Vector3.one;
-
-
+    public Color m_initialColor;
+    public Color m_flameColor;
+    public Color m_collisionColor;
 
     // Use this for initialization
     void Start () 
 	{
+        ParticleManager.CreatePool(m_collisionFirePrefab, "Fire&Destruction/_PrefabsWIP/FireEffects/", m_collisionEmiters);
 
-        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire&Destruction/_PrefabsWIP/FireOfBreath"), 15, false);
+        m_whipEnd = transform.FindTransformRecursive("WhipEnd");
+        m_iniCanon = transform.FindTransformRecursive("IniCanon");
 
-        whipEnd = transform.FindTransformRecursive("WhipEnd");
-        iniCanon = transform.FindTransformRecursive("IniCanon");
-        // Cache
-        lastInitialPosition = whipEnd.position;
+        m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
-        flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
+        //        enableTime = lastTime = Time.time;
+        //        initMesh();
 
-        enableTime = lastTime = Time.time;
-
-        initMesh();
-	}
+        m_lastTime = Time.time;
+    }
 
     void initMesh()
     {
 
-        m_meshFilter = iniCanon.GetComponent<MeshFilter>();
+        m_meshFilter = m_iniCanon.GetComponent<MeshFilter>();
 
         m_mesh = m_meshFilter.sharedMesh;
         m_mesh.MarkDynamic();
 
-        colorVertex = new Color[m_mesh.vertices.Length];// m_mesh.colors;
-        originalVertices = m_mesh.vertices;
+        m_colorVertex = new Color[m_mesh.vertices.Length];// m_mesh.colors;
+        m_originalVertices = m_mesh.vertices;
 
-        for (int c = 0; c < colorVertex.Length; c++)
+        for (int c = 0; c < m_colorVertex.Length; c++)
         {
             if (c < 4)
             {
-                colorVertex[c] = m_initialColor;
+                m_colorVertex[c] = m_initialColor;
             }
             else if (c > 8)//(colorVertex.Length - 20))
             {
-                colorVertex[c] = m_collisionColor;
+                m_colorVertex[c] = m_collisionColor;
             }
             else
             {
-                colorVertex[c] = Color.white;
+                m_colorVertex[c] = Color.white;
             }
 
-            originalVertices[c] = Vector3.Scale(originalVertices[c], CanonScale);
+            m_originalVertices[c] = Vector3.Scale(m_originalVertices[c], m_canonScale);
         }
 
         m_mesh.normals = null;
-        m_mesh.vertices = originalVertices;
-        m_mesh.colors = colorVertex;
+        m_mesh.vertices = m_originalVertices;
+        m_mesh.colors = m_colorVertex;
         m_meshFilter.sharedMesh = m_mesh;
 
     }
 
     // Update is called once per frame
-    void Update () 
-	{
-        Vector3 front = transform.InverseTransformDirection(Vector3.forward);
-        iniCanon.localRotation = Quaternion.AngleAxis(Mathf.Rad2Deg * Vector3.Dot(front, Vector3.right), Vector3.up);
-//        iniCanon.Rotate( Vector3.up, , Space.Self);
-//        iniCanon.rotation = Quaternion.
-	}
-
-/*
-    public void EnableFlame(bool value)
+    void Update()
     {
-        if (value)
-        {
-            gameObject.active = value;
-        }
+        RaycastHit hit;
 
-        enableTime = Time.time;
-        enableState = value;
+        if (Physics.Raycast(transform.position, -transform.up, out hit, m_distance, m_groundLayerMask))
+        {
+            if (Time.time > m_lastTime + m_collisionFireDelay)
+            {
+                GameObject colFire = ParticleManager.Spawn(m_collisionFirePrefab, hit.point, "Fire&Destruction/_PrefabsWIP/FireEffects/");
+                if (colFire != null)
+                {
+                    colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
+                }
+                else
+                {
+                    Debug.Log("No Fire available!");
+                }
+
+                m_lastTime = Time.time;
+//                colFire.particleEmitter.particleSystem.
+            }
+        }
+        //        Vector3 front = transform.InverseTransformDirection(Vector3.forward);
+        //        iniCanon.localRotation = Quaternion.AngleAxis(Mathf.Rad2Deg * Vector3.Dot(front, Vector3.right), Vector3.up);
+        //        iniCanon.Rotate( Vector3.up, , Space.Self);
+        //        iniCanon.rotation = Quaternion.
     }
 
-*/
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(transform.position - transform.up * m_distance, 0.25f);
+    }
+
 
     public void EnableFlame(bool value)
     {
         gameObject.active = value;
-        enableTime = Time.time;
-        enableState = value;
     }
 
 }

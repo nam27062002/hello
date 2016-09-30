@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Text;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -36,11 +37,9 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_tapInfoText = null;
 
 	[Separator("Buttons")]
-	[SerializeField] private ShowHideAnimator m_actionButtonsAnimator = null;
 	[SerializeField] private Button m_instantOpenButton = null;
-	[SerializeField] private Button m_callToActionButton = null;
 	[SerializeField] private Localizer m_callToActionText = null;
-	[SerializeField] private Button m_backButton = null;
+	[SerializeField] private ShowHideAnimator m_finalPanel = null;
 
 	[Separator("Rewards")]
 	[SerializeField] private GameObject m_rewardInfo = null;
@@ -176,10 +175,9 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Hide HUD and buttons
 		bool animate = this.gameObject.activeInHierarchy;	// If the screen is not visible, don't animate
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(animate);
-		m_actionButtonsAnimator.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
 		m_tapInfoText.GetComponent<ShowHideAnimator>().ForceHide(animate);
-		m_backButton.GetComponent<ShowHideAnimator>().ForceHide(animate);
+		m_finalPanel.ForceHide(animate);
 
 		// Hide Flash FX
 		if(m_flashFX != null) m_flashFX.SetActive(false);
@@ -305,11 +303,9 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Show/Hide buttons and HUD
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().Show();
-		//m_callToActionButton.GetComponent<ShowHideAnimator>().Show(false);	// Always visible for now
-		m_actionButtonsAnimator.GetComponent<ShowHideAnimator>().Show();
 		m_instantOpenButton.GetComponent<ShowHideAnimator>().Hide();
 		m_tapInfoText.GetComponent<ShowHideAnimator>().Hide();
-		m_backButton.GetComponent<ShowHideAnimator>().Show();
+		m_finalPanel.Show();
 
 		// Change logic state
 		m_state = State.IDLE;
@@ -329,6 +325,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_rewardInfo.GetComponent<ShowHideAnimator>().Show(false);
 
 		// Different initializations based on reward type
+		StringBuilder sb = new StringBuilder();
 		switch(rewardType) {
 			case "suit": {
 				// Get disguise def
@@ -338,14 +335,22 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Disguise rarity
 				m_rewardRarity.InitFromRarity(rewardedItemDef.GetAsString("rarity"), rewardDef.GetLocalized("tidName"));
 
+				// Aux texts
+				sb.Length = 0;
+				string rewardName = sb.Append("<color=").Append(Colors.silver.ToHexString("#")).Append(">").Append(rewardedItemDef.GetLocalized("tidName")).Append("</color>").ToString();
+				sb.Length = 0;
+				string dragonName = sb.Append("<color=").Append(Colors.silver.ToHexString("#")).Append(">").Append(targetDragonDef.GetLocalized("tidName")).Append("</color>").ToString();
+				sb.Length = 0;
+				string rewardCoins = sb.Append("<color=").Append(GameConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
+
 				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
 				int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(rewardedItemDef.sku);
 				if(rewardData.coins > 0) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", rewardedItemDef.GetLocalized("tidName"), targetDragonDef.GetLocalized("tidName"), StringUtils.FormatNumber(rewardData.coins));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_MAXED", rewardName, dragonName, rewardCoins);
 				} else if(disguiseLevel == 1) {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", rewardedItemDef.GetLocalized("tidName"), targetDragonDef.GetLocalized("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UNLOCKED", rewardName, dragonName);
 				} else {
-					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", rewardedItemDef.GetLocalized("tidName"), targetDragonDef.GetLocalized("tidName"));
+					m_rewardDescText.Localize("TID_EGG_REWARD_DISGUISE_UPGRADED", rewardName, dragonName);
 				}
 
 				// Call to action text
@@ -571,16 +576,15 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(m_egg.eggData.rewardData.type) {
 			case "suit": {
 				// Go to the disguises screen
-				NavigationScreen equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT);
-				equipmentScreen.GetComponent<EquipmentScreenController>().ShowDisguises();
-				equipmentScreen.FindComponentRecursive<DisguisesScreenController>().previewDisguise = m_egg.eggData.rewardData.value;
+				EquipmentScreenController equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT).GetComponent<EquipmentScreenController>();
+				equipmentScreen.Setup("", m_egg.eggData.rewardData.value, "", EquipmentScreenController.Tab.DISGUISES);
 				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
 			} break;
 
 			case "pet": {
-				// [AOC] TODO!!	Go to pets screen
-				NavigationScreen equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT);
-				equipmentScreen.GetComponent<EquipmentScreenController>().ShowPets();
+				// Go to the disguises screen
+				EquipmentScreenController equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT).GetComponent<EquipmentScreenController>();
+				equipmentScreen.Setup("", "", m_egg.eggData.rewardData.value, EquipmentScreenController.Tab.PETS);
 				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
 			} break;
 		}
@@ -628,7 +632,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		// If entering this screen, force some show/hide animations that conflict with automated ones
 		if(_event.fromScreenIdx == (int)MenuScreens.OPEN_EGG) {
 			// At this point automated ones have already been launched, so we override them
-			m_backButton.GetComponent<ShowHideAnimator>().Hide(false);
 			m_tapInfoText.GetComponent<ShowHideAnimator>().Hide(false);
 		}
 	}

@@ -113,6 +113,6 @@
 	}
 
 //	Fallback "Diffuse"
-	CustomEditor "GlowMaterialInspector"
+//	CustomEditor "GlowMaterialInspector"
 
 }

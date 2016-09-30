@@ -102,8 +102,13 @@ public class GameCamera : MonoBehaviour
 
 	private Transform			m_transform;
 	private Camera				m_unityCamera;
-	
+
+	private Vector3 			m_currentPos;
 	private Vector3				m_position;
+
+	private Vector3 			m_currentLookAt;
+	private Vector3				m_lookAt;
+
     private Vector3             m_rotation;
 	private float				m_fov = m_defaultFOV;						// Vertical FOV in degrees
 	private FastBounds2D		m_screenWorldBounds = new FastBounds2D();	// 2D bounds of the camera view at the z=0 plane
@@ -198,6 +203,7 @@ public class GameCamera : MonoBehaviour
 
 	public GameObject m_animatedCameraPrefab;
 	private AnimatedCamera m_animatedCamera;
+	public bool m_useDampCamera = false;
 
 
 	enum State
@@ -236,6 +242,9 @@ public class GameCamera : MonoBehaviour
 		m_pixelAspectY = ph/pw;
 		
 		m_position = m_transform.position;
+		m_currentPos = m_position;
+		m_currentLookAt = m_lookAt = m_position;
+		m_currentLookAt.z = m_lookAt.z = 0;
         m_rotation = m_transform.rotation.eulerAngles;
 
 		m_posFrom = m_posTo = m_transform.position;
@@ -269,6 +278,13 @@ public class GameCamera : MonoBehaviour
 
 		GameObject go = Instantiate(m_animatedCameraPrefab) as GameObject;
 		m_animatedCamera = go.GetComponent<AnimatedCamera>();
+
+
+		// Subscribe to external events
+		Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+
+
+		m_useDampCamera = DebugSettings.Get(DebugSettings.NEW_CAMERA_SYSTEM);
 
 	}
 
@@ -322,7 +338,19 @@ public class GameCamera : MonoBehaviour
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.RemoveListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
+
+		// Unsubscribe from external events.
+		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+
 		InstanceManager.gameCamera = null;
+	}
+
+	private void OnDebugSettingChanged(string _id, bool _newValue) {
+		// Show collisions cheat?
+		if(_id == DebugSettings.NEW_CAMERA_SYSTEM) {
+			// Enable/Disable object
+			m_useDampCamera = DebugSettings.Get(DebugSettings.NEW_CAMERA_SYSTEM);
+		}
 	}
 
 	private void CountDownEnded()
@@ -403,6 +431,9 @@ public class GameCamera : MonoBehaviour
 
 			UpdateValues();
 		}
+
+		m_currentLookAt = m_lookAt = m_position;
+		m_currentLookAt.z = m_lookAt.z = 0;
 	}
 
 	public void SetFrameWidthIncrement( float size, float cameraFrameWidthModifier )
@@ -491,7 +522,15 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-		PlayUpdate();
+		if (m_useDampCamera)
+		{
+			PlayDampUpdate();	
+		}
+		else
+		{
+			PlayUpdate();
+		}
+
 		/*
 		switch( m_state )
 		{
@@ -506,6 +545,8 @@ public class GameCamera : MonoBehaviour
 		*/
 
 	}
+
+
 
 	void GetCameraSetup( Camera otherCamera )
 	{
@@ -618,6 +659,76 @@ public class GameCamera : MonoBehaviour
 		}
 #endif
 	}
+
+	public static float m_moveDamp = 0.46f;
+	public static float m_lookDamp = 0.1f;
+
+	void PlayDampUpdate()
+	{
+		Vector3 targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
+		Vector3 desiredPos = targetPosition;
+		UpdateDampPos(desiredPos);
+		UpdateLookAt(desiredPos);
+
+
+		float frameWidth = m_frameWidthDefault;
+		if(m_targetMachine != null)
+        {
+            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
+            if(/*(machineFish != null) &&*/ !m_haveBoss)
+            {
+                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
+				frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+            }
+        }
+		frameWidth += m_frameWidthIncrement;
+		if(m_hasSlowmo)
+		{
+			frameWidth -= m_frameWidthDecrement;
+		}
+		else if(m_haveBoss)
+		{
+			frameWidth += m_largestBossFrameIncrement;
+		}
+		UpdateZooming(frameWidth, m_haveBoss);	// Sets m_position.z
+
+		m_transform.position = m_position + Random.insideUnitSphere * m_cameraShake;
+		m_transform.LookAt( m_lookAt );
+		UpdateBounds();
+
+		m_snap = false;
+		m_firstTime = false;
+		m_prevNumBosses = m_bossCamAffectors.Count;
+
+	}
+
+
+	void UpdateDampPos(Vector3 desiredPos)
+	{
+		m_currentPos.x = Damping( m_currentPos.x, desiredPos.x, Time.deltaTime, m_moveDamp);
+		m_currentPos.y = Damping( m_currentPos.y, desiredPos.y, Time.deltaTime, m_moveDamp);
+
+		m_position.x = desiredPos.x + (desiredPos.x - m_currentPos.x);
+		m_position.y = desiredPos.y + (desiredPos.y - m_currentPos.y);
+	}
+
+	void UpdateLookAt(Vector3 desiredPos)
+	{
+		m_currentLookAt.x = Damping( m_currentLookAt.x, desiredPos.x, Time.deltaTime, m_lookDamp);
+		m_currentLookAt.y = Damping( m_currentLookAt.y, desiredPos.y, Time.deltaTime, m_lookDamp);
+
+		m_lookAt.x = desiredPos.x + (desiredPos.x - m_currentLookAt.x);
+		m_lookAt.y = desiredPos.y + (desiredPos.y - m_currentLookAt.y);
+		m_lookAt.z = 0;
+	}
+
+	// Also called DampIIR (wiki search ...)
+	float Damping(float src, float dst, float dt, float factor)
+	{
+	    return (((src * factor) + (dst * dt)) / (factor + dt));
+	}
+
+
 
 	void UpdateWaterLevelOffset()
 	{
@@ -946,39 +1057,40 @@ public class GameCamera : MonoBehaviour
 		UpdateBounds();	
 	
 	}
+    
+    private Ray[] m_cameraRays = new Ray[4];
+    private Vector3[] m_cameraPts = new Vector3[4];
 
-	void UpdateBounds()
+    void UpdateBounds()
 	{
 		m_unityCamera.fieldOfView = m_fov;
 		
 		float z = -m_position.z;
 
-		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 
-		Ray[] cameraRays = new Ray[4];
-		cameraRays[0] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));
-		cameraRays[1] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, 0.0f, z));
-		cameraRays[2] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, m_unityCamera.pixelHeight, z));
-		cameraRays[3] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, m_unityCamera.pixelHeight, z));
+		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 		
+        m_cameraRays[0] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));
+        m_cameraRays[1] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, 0.0f, z));
+        m_cameraRays[2] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, m_unityCamera.pixelHeight, z));
+        m_cameraRays[3] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, m_unityCamera.pixelHeight, z));
 		
 		// generate two world bounds, one for z=0, one for background spawners
 		for(int j=0; j<2; j++)
 		{
 			bool bg = (j==1);
 			
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));
-			Vector3[] pts = new Vector3[4];
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, bg ? SpawnerManager.BACKGROUND_LAYER_Z : 0.0f));			
 			FastBounds2D bounds = bg ? m_backgroundWorldBounds : m_screenWorldBounds;
 			
 			for(int i=0; i<4; i++)
 			{
-				Vector3? intersect = Util.RayPlaneIntersect(cameraRays[i], plane);
+				Vector3? intersect = Util.RayPlaneIntersect(m_cameraRays[i], plane);
 				if(intersect != null)
 				{
-					pts[i] = (Vector3)intersect;
+                    m_cameraPts[i] = (Vector3)intersect;
 					if(i == 0)	// initialize bounds with first point and zero size
-						bounds.Set(pts[i].x, pts[i].y, 0.0f, 0.0f);
+						bounds.Set(m_cameraPts[i].x, m_cameraPts[i].y, 0.0f, 0.0f);
 					else
-						bounds.Encapsulate(ref pts[i]);
+						bounds.Encapsulate(ref m_cameraPts[i]);
 				}
 			}
 			

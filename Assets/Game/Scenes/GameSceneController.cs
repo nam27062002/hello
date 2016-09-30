@@ -37,6 +37,9 @@ public class GameSceneController : GameSceneControllerBase {
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private ResultsSceneController m_resultsScene;
+	public ResultsSceneController resultsScene {
+		get { return m_resultsScene; }
+	}
 
 	// Countdown
 	public float countdown {
@@ -169,7 +172,6 @@ public class GameSceneController : GameSceneControllerBase {
 
 						// Enable Results screen and move the camera to that position
 						if(m_resultsScene != null) {
-							m_resultsScene.gameObject.SetActive(true);
 							m_resultsScene.Show();
 						}
 					}

@@ -163,17 +163,17 @@ public class CameraSnapPointEditor : Editor {
 			GUI.enabled = wasEnabled;
 		} EditorGUILayout.EndHorizontal();
 
+		// Store new values
+		if(EditorGUI.EndChangeCheck()) {
+			serializedObject.ApplyModifiedProperties();
+		}
+
 		// Live preview, if enabled
 		if(m_editionCamera != null) {
 			m_editionCamera.gameObject.SetActive(m_targetSnapPoint.livePreview);
 			if(m_targetSnapPoint.livePreview) {
 				m_targetSnapPoint.Apply(m_editionCamera);
 			}
-		}
-
-		// Finish
-		if(EditorGUI.EndChangeCheck()) {
-			serializedObject.ApplyModifiedProperties();
 		}
 	}
 

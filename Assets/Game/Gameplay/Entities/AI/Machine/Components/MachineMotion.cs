@@ -34,7 +34,6 @@ namespace AI {
 		[SerializeField] private bool m_limitVerticalRotation = false;
 		[SerializeField][HideInInspector] private float m_faceUpAngle = 320f;
 		[SerializeField][HideInInspector] private float m_faceDownAngle = 40f;
-		[SerializeField] private bool m_ignoreCollisionsWhenOffscreen = false;
 
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public bool checkCollisions { set { m_walkOnWalls = value; } }
@@ -171,10 +170,7 @@ namespace AI {
 
 		public override void Update() {
 
-			if (m_ignoreCollisionsWhenOffscreen)
-			{
-				m_collider.enabled = m_entity.isOnScreen;
-			}
+			
 
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
 				Stop();

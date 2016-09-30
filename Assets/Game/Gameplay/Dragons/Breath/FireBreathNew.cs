@@ -54,7 +54,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
-    public GameObject dragonFlame = null;
+    public GameObject m_dragonFlame = null;
 
 
     public const bool FIRETEST = true;
@@ -68,7 +68,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     override protected void ExtendedStart() {
 
         Transform m_tongue = transform.FindTransformRecursive("Fire_Dummy");
-        GameObject tempFire = Instantiate<GameObject>(dragonFlame);
+        GameObject tempFire = Instantiate<GameObject>(m_dragonFlame);
         tempFire.transform.parent = m_tongue;
         tempFire.transform.localPosition = Vector3.zero;
 
