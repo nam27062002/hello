@@ -5,8 +5,12 @@
 		_NoiseTex ("Noise", 2D) = "white" {}
 		_ColorRamp("Color Ramp", 2D) = "white" {}
 		_RampOffset("Ramp Offset", Range(0.0, 1.0)) = 0.2 //
-		_ColorSteps("Color steps", Range(0.0, 128.0)) = 8.0	// color steps
-		_AlphaThreshold("Alpha threshold", Range(0.0, 128.0)) = 2.0	// alpha threshold
+//		_ColorSteps("Color steps", Range(0.0, 128.0)) = 8.0	// color steps
+//		_AlphaThreshold("Alpha threshold", Range(0.0, 128.0)) = 2.0	// alpha threshold
+
+			_ColorSteps("Color steps", Range(0.0, 8.0)) = 8.0	// color steps
+			_AlphaThreshold("Alpha threshold", Range(0.0, 8.0)) = 2.0	// alpha threshold
+
 		_Speed("Fire Speed", Float) = 1.0				// Fire speed
 		_Power("Fire Power", Range(0.0, 10.0)) = 3.0	// Fire power
 		_Seed("Random Seed", Float) = 0.0							//Randomize effect
@@ -103,7 +107,8 @@
 
 				fixed3 col =  tex2D(_ColorRamp, float2(txid, 0.0));
 
-				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
+//				float alfa = clamp((intensity / (_AlphaThreshold / _ColorSteps)) - 1.0, 0.0, 1.0);
+				float alfa = clamp((intensity) -_AlphaThreshold, 0.0, 1.0);
 				return fixed4(col, alfa * _Alpha) * i.vCol;
 
 			}
