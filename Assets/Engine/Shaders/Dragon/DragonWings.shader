@@ -9,8 +9,8 @@ Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_BumpMap ("Normal Map (RGB)", 2D) = "white" {}
 	_DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
-	_ColorMultiply ("Color Multiply", Color) = (1,1,1,1)
-	_ColorAdd ("Color Add", Color) = (0,0,0,0)
+//	_ColorMultiply ("Color Multiply", Color) = (1,1,1,1)
+//	_ColorAdd ("Color Add", Color) = (0,0,0,0)
 
 	_InnerLightAdd ("Inner Light Add", float) = 0
 	_InnerLightColor ("Inner Light Color", Color) = (1,1,1,1)
@@ -62,8 +62,8 @@ SubShader {
 			sampler2D _DetailTex;
 			float4 _DetailTex_ST;
 
-			float4 _ColorMultiply;
-			float4 _ColorAdd;
+//			float4 _ColorMultiply;
+//			float4 _ColorAdd;
 
 			uniform float _InnerLightAdd;
 			uniform float4 _InnerLightColor;
@@ -132,7 +132,8 @@ SubShader {
 				float specularLight = pow(max(dot( normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
 
 				// fixed4 col = (diffuse + fixed4(pointLights + (UNITY_LIGHTMODEL_AMBIENT.rgb),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate;
-				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
+//				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
+				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1)) * main + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 
 				return col; 
 
