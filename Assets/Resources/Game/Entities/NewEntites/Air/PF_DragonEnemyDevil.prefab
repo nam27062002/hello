@@ -2276,7 +2276,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-    m_ignoreCollisionsWhenOffscreen: 0
   m_railSeparation:
     min: 0.5
     max: 1
@@ -2296,6 +2295,10 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 4.5
   m_onEatenSounds: []
+  m_inflammable:
+    m_ashesAsset: 
+    m_dissolveTime: 1.5
+    m_ashExceptions: []
 --- !u!114 &11472212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2330,11 +2333,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsSound: {fileID: 0}
-  m_eatSound: {fileID: 0}
-  m_eatBigSound: {fileID: 0}
-  m_wingsWindSound: {fileID: 0}
-  m_wingsStrongFlap: {fileID: 0}
+  m_wingsSound: $
+  m_eatSound: (
+  m_eatBigSound: ','
+  m_wingsWindSound: 0
+  m_wingsStrongFlap: 4
 --- !u!135 &13523742
 SphereCollider:
   m_ObjectHideFlags: 1
