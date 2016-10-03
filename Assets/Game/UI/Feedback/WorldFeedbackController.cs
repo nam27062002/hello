@@ -34,6 +34,8 @@ public class WorldFeedbackController : MonoBehaviour {
 	// Internal vars
 	private Vector3 m_targetWorldPos = Vector3.zero;
 
+	private Camera m_camera = null;
+
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -95,14 +97,18 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// Make sure the feedback is positioned relative to the reference world position.
 	/// </summary>
 	private void ApplyPosOffset() {
+		if (m_camera == null) {
+			m_camera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
+		}
+
 		// Animation has already applied its position to the number based on (0,0)
 		// Apply 3D projection offset
 		// From http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
 		// We can do it that easily because we've adjusted the containers to match the camera viewport coords
 		// Only if a world coordinate to follow was given
 		Vector2 posScreen = Vector2.one/2f;	// Center of the screen
-		if(m_targetWorldPos != Vector3.zero) {
-			posScreen = Camera.main.WorldToViewportPoint(m_targetWorldPos);
+		if(m_camera != null && m_targetWorldPos != Vector3.zero) {
+			posScreen = m_camera.WorldToViewportPoint(m_targetWorldPos);
 		}
 		m_rectTransform.anchorMin = posScreen;
 		m_rectTransform.anchorMax = posScreen;

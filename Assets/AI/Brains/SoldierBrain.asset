@@ -48,8 +48,11 @@ MonoBehaviour:
   - to: 3
     id: onEnemyInRange
     from: 0
-  - to: 0
-    id: onMove
+  - to: 7
+    id: onOutsideArea
+    from: 0
+  - to: 7
+    id: onOutsideArea
     from: 1
   - to: 2
     id: onEnemyInSight
@@ -57,8 +60,11 @@ MonoBehaviour:
   - to: 3
     id: onEnemyInRange
     from: 1
-  - to: 1
-    id: onMaxAttacks
+  - to: 0
+    id: onMove
+    from: 1
+  - to: 7
+    id: onOutsideArea
     from: 3
   - to: 2
     id: onOutOfRange
@@ -66,11 +72,11 @@ MonoBehaviour:
   - to: 2
     id: onCritical
     from: 3
+  - to: 1
+    id: onMaxAttacks
+    from: 3
   - to: 7
     id: onOutsideArea
-    from: 3
-  - to: 3
-    id: onEnemyInRange
     from: 2
   - to: 6
     id: onEnemyOutOfSight
@@ -78,8 +84,8 @@ MonoBehaviour:
   - to: 5
     id: onEnemyInGuardArea
     from: 2
-  - to: 7
-    id: onOutsideArea
+  - to: 3
+    id: onEnemyInRange
     from: 2
   - to: 3
     id: onEnemyInRange

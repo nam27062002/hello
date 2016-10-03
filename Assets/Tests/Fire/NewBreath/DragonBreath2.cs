@@ -108,6 +108,7 @@ public class DragonBreath2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         RaycastHit hit;
 
         if (Physics.Raycast(transform.position, -transform.up, out hit, m_distance, m_groundLayerMask))
@@ -119,19 +120,11 @@ public class DragonBreath2 : MonoBehaviour
                 {
                     colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
                 }
-                else
-                {
-                    Debug.Log("No Fire available!");
-                }
 
                 m_lastTime = Time.time;
-//                colFire.particleEmitter.particleSystem.
             }
         }
-        //        Vector3 front = transform.InverseTransformDirection(Vector3.forward);
-        //        iniCanon.localRotation = Quaternion.AngleAxis(Mathf.Rad2Deg * Vector3.Dot(front, Vector3.right), Vector3.up);
-        //        iniCanon.Rotate( Vector3.up, , Space.Self);
-        //        iniCanon.rotation = Quaternion.
+
     }
 
     void OnDrawGizmos()
@@ -139,10 +132,9 @@ public class DragonBreath2 : MonoBehaviour
         Gizmos.DrawSphere(transform.position - transform.up * m_distance, 0.25f);
     }
 
-
     public void EnableFlame(bool value)
     {
-        gameObject.active = value;
+        gameObject.SetActive(value);
     }
 
 }

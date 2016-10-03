@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 1143067140}
+  m_SkyboxMaterial: {fileID: 221041286}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -94,6 +94,53 @@ NavMeshSettings:
 Transform:
   m_PrefabParentObject: {fileID: 447832, guid: f65890e0d5c97f64ca7333ea9906a019, type: 2}
   m_PrefabInternal: {fileID: 1395040363}
+--- !u!1 &29844139
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 134264, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 29844140}
+  - 114: {fileID: 29844141}
+  m_Layer: 0
+  m_Name: FireNode (12)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &29844140
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 476034, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 29844139}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 0.44483697, y: 4.312576, z: -2.7900004}
+  m_LocalScale: {x: 1.6333822, y: 1.6333821, z: 1.6333821}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 6
+--- !u!114 &29844141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11432364, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 29844139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1 &29869387
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,6 +169,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1191974494}
   m_RootOrder: 0
+--- !u!1 &37607151
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 176494, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 37607152}
+  - 114: {fileID: 37607153}
+  m_Layer: 0
+  m_Name: FireNode (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &37607152
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 428608, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 37607151}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -1.2500001, y: 7.16, z: 3.2000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 4
+--- !u!114 &37607153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11466946, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 37607151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &64222605
 Prefab:
   m_ObjectHideFlags: 0
@@ -294,6 +388,100 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 495222, guid: f391d71a69cd4564b8a2ab0485d90822, type: 2}
   m_PrefabInternal: {fileID: 77642313}
+--- !u!1 &140438911
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 180624, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 140438912}
+  - 114: {fileID: 140438913}
+  m_Layer: 0
+  m_Name: FireNode (39)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &140438912
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 452126, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 140438911}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 1.0157983, y: 1.5039905, z: 5.5243816}
+  m_LocalScale: {x: 1.1247213, y: 1.1247213, z: 1.1247213}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 25
+--- !u!114 &140438913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11487094, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 140438911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &151520026
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 110756, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 151520027}
+  - 114: {fileID: 151520028}
+  m_Layer: 0
+  m_Name: FireNode (35)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &151520027
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 464604, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 151520026}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -3.3900003, y: 1.2367002, z: 7.850002}
+  m_LocalScale: {x: 1.5201885, y: 1.5201886, z: 1.5201886}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 22
+--- !u!114 &151520028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11476182, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 151520026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &165202565
 Prefab:
   m_ObjectHideFlags: 0
@@ -377,7 +565,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 482030, guid: 998be1c6c6d17483b9d8426b91033f1d, type: 2}
       propertyPath: m_RootOrder
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 998be1c6c6d17483b9d8426b91033f1d, type: 2}
@@ -386,6 +574,55 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 477156, guid: 0bd8366cf4f413243ae1043ce2c317a6, type: 2}
   m_PrefabInternal: {fileID: 2093988732}
+--- !u!1 &186615634
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000013667734416, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 186615635}
+  - 114: {fileID: 186615636}
+  m_Layer: 0
+  m_Name: FireNode (34)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &186615635
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000010797182194, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 186615634}
+  m_LocalRotation: {x: -0, y: 0.000000029802322, z: 0.052250028, w: 0.9986341}
+  m_LocalPosition: {x: 1.2500005, y: 6.26, z: 1.7000008}
+  m_LocalScale: {x: 1.2990102, y: 1.2990098, z: 1.2990104}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 39
+--- !u!114 &186615636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000011125009500, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 186615634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &206066728
 Prefab:
   m_ObjectHideFlags: 0
@@ -534,6 +771,158 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 495222, guid: f391d71a69cd4564b8a2ab0485d90822, type: 2}
   m_PrefabInternal: {fileID: 215174244}
+--- !u!21 &221041286
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Skybox
+  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 1000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+    - first:
+        name: _BumpMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailAlbedoMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailMask
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailNormalMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _EmissionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MainTex
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MetallicGlossMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _OcclusionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ParallaxMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - first:
+        name: _AtmosphereThickness
+      second: 0.68999904
+    - first:
+        name: _BumpScale
+      second: 1
+    - first:
+        name: _Cutoff
+      second: 0.5
+    - first:
+        name: _DetailNormalMapScale
+      second: 1
+    - first:
+        name: _DstBlend
+      second: 0
+    - first:
+        name: _EmissionScaleUI
+      second: 0
+    - first:
+        name: _Exposure
+      second: 1.1099983
+    - first:
+        name: _Glossiness
+      second: 0.5
+    - first:
+        name: _HorizonHeight
+      second: 0.009999999
+    - first:
+        name: _Metallic
+      second: 0
+    - first:
+        name: _Mode
+      second: 0
+    - first:
+        name: _OcclusionStrength
+      second: 1
+    - first:
+        name: _Parallax
+      second: 0.02
+    - first:
+        name: _SrcBlend
+      second: 1
+    - first:
+        name: _SunSize
+      second: 0
+    - first:
+        name: _UVSec
+      second: 0
+    - first:
+        name: _ZWrite
+      second: 1
+    m_Colors:
+    - first:
+        name: _AddColor
+      second: {r: 0, g: 0, b: 0, a: 0}
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _EmissionColor
+      second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _EmissionColorUI
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _GroundColor
+      second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
+    - first:
+        name: _HorizonColor
+      second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
+    - first:
+        name: _SkyColor
+      second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
+    - first:
+        name: _SkyTint
+      second: {r: 0, g: 0.5862069, b: 1, a: 1}
+    - first:
+        name: _SunColor
+      second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
+    - first:
+        name: _SunPos
+      second: {r: 1, g: 0, b: 0, a: 0}
 --- !u!4 &222059864 stripped
 Transform:
   m_PrefabParentObject: {fileID: 447832, guid: 274b988f27eeeac4198e62ea73efff0d, type: 2}
@@ -590,6 +979,53 @@ MonoBehaviour:
     m_goOn:
       id: 2
       active: 1
+--- !u!1 &257083849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 157486, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 257083850}
+  - 114: {fileID: 257083851}
+  m_Layer: 0
+  m_Name: FireNode (37)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &257083850
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 424774, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 257083849}
+  m_LocalRotation: {x: -0, y: -0, z: 0.05225002, w: 0.99863404}
+  m_LocalPosition: {x: 1.6748194, y: 10.519457, z: 2.5225203}
+  m_LocalScale: {x: 1.1789297, y: 1.1789287, z: 1.1789303}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 40
+--- !u!114 &257083851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11444782, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 257083849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &282649431
 Prefab:
   m_ObjectHideFlags: 0
@@ -784,6 +1220,100 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 495222, guid: f391d71a69cd4564b8a2ab0485d90822, type: 2}
   m_PrefabInternal: {fileID: 297991423}
+--- !u!1 &300409227
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 138402, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 300409228}
+  - 114: {fileID: 300409229}
+  m_Layer: 0
+  m_Name: FireNode (19)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &300409228
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 413632, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 300409227}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -1.4800003, y: 7.9966955, z: -2.9300017}
+  m_LocalScale: {x: 1.6702484, y: 1.6702486, z: 1.6702486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 9
+--- !u!114 &300409229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11479006, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 300409227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &307084193
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 141830, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 307084194}
+  - 114: {fileID: 307084195}
+  m_Layer: 0
+  m_Name: FireNode (14)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &307084194
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 497800, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 307084193}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 4.798855, y: 5.448406, z: 0.24999595}
+  m_LocalScale: {x: 1.1572793, y: 1.1572789, z: 1.1572789}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 7
+--- !u!114 &307084195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11439850, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 307084193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!4 &312271095 stripped
 Transform:
   m_PrefabParentObject: {fileID: 456962, guid: 721bbb8e60cefeb48a301662e832f8c1, type: 2}
@@ -1005,7 +1535,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 417902, guid: 74af64121e31247dba542b5361cddb25, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 74af64121e31247dba542b5361cddb25, type: 2}
@@ -1014,6 +1544,95 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 486734, guid: ba9fb059e5ec3c34a8df29d33cadcbe2, type: 2}
   m_PrefabInternal: {fileID: 1600655672}
+--- !u!1 &367365790
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 139588, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 367365791}
+  - 114: {fileID: 367365792}
+  m_Layer: 0
+  m_Name: FireNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &367365791
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 416372, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 367365790}
+  m_LocalRotation: {x: -0.015709024, y: 0.30024037, z: 0.049832635, w: 0.95243144}
+  m_LocalPosition: {x: 1.757226, y: 0.7748922, z: 2.1363692}
+  m_LocalScale: {x: 1.5791029, y: 1.5791026, z: 1.5791026}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 0
+--- !u!114 &367365792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11413268, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 367365790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &371416349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 371416351}
+  - 114: {fileID: 371416350}
+  m_Layer: 0
+  m_Name: ParticleTester
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &371416350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 371416349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bab10ad6baf340e79d9c5347f033c50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleName: FireTip
+  particlePath: 
+--- !u!4 &371416351
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 371416349}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 44.867847, y: 5.218505, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
 --- !u!4 &380510195 stripped
 Transform:
   m_PrefabParentObject: {fileID: 496654, guid: e5566f169c14bc3478475eee37fa36e3, type: 2}
@@ -1347,6 +1966,100 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eab5ea6734a8467fadf03ce15e3d708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &460802889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 199394, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 460802890}
+  - 114: {fileID: 460802891}
+  m_Layer: 0
+  m_Name: FireNode (44)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &460802890
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 467344, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 460802889}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 1.2605786, y: 2.9368098, z: 3.0176835}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 28
+--- !u!114 &460802891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11490172, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 460802889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &507276765
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 111372, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 507276766}
+  - 114: {fileID: 507276767}
+  m_Layer: 0
+  m_Name: FireNode (27)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &507276766
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 463954, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 507276765}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -2.96, y: 12.498816, z: -1.4499998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 15
+--- !u!114 &507276767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11427734, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 507276765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!4 &517171024 stripped
 Transform:
   m_PrefabParentObject: {fileID: 442886, guid: 130a8ad539a298543bb382c8ef5b30a7, type: 2}
@@ -1406,6 +2119,53 @@ Prefab:
     - {fileID: 11464310, guid: e5566f169c14bc3478475eee37fa36e3, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: e5566f169c14bc3478475eee37fa36e3, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &544386835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 105064, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 544386836}
+  - 114: {fileID: 544386837}
+  m_Layer: 0
+  m_Name: FireNode (36)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &544386836
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 433472, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 544386835}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -4.29, y: 2.3, z: 4.9899983}
+  m_LocalScale: {x: 1.0839834, y: 1.0839834, z: 1.0839834}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 23
+--- !u!114 &544386837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11465966, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 544386835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &549889357
 Prefab:
   m_ObjectHideFlags: 0
@@ -1862,6 +2622,140 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ae27d9c9f5b219145a392c888f8682e4, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &625368545
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 172532, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 625368546}
+  - 33: {fileID: 625368549}
+  - 23: {fileID: 625368548}
+  - 95: {fileID: 625368547}
+  m_Layer: 0
+  m_Name: view_burned
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 0
+--- !u!4 &625368546
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 428202, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 625368545}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1358780367}
+  m_RootOrder: 2
+--- !u!95 &625368547
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 9565046, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 625368545}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: ac5967e7468fea94ea6a1b42d05f41c8, type: 3}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!23 &625368548
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2360384, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 625368545}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: efcb466cf2fa34f75be22ac54a9b0f7f, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &625368549
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3384166, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 625368545}
+  m_Mesh: {fileID: 4300070, guid: aac04af6f24510d42b41ac634b950955, type: 3}
+--- !u!1 &651702383
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 150204, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 651702384}
+  - 114: {fileID: 651702385}
+  m_Layer: 0
+  m_Name: FireNode (56)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &651702384
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 460974, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 651702383}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -0.17000008, y: 6.02, z: 5.1500006}
+  m_LocalScale: {x: 1.1632032, y: 1.1632031, z: 1.1632031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 37
+--- !u!114 &651702385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11475604, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 651702383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1 &671907834 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 111670, guid: f391d71a69cd4564b8a2ab0485d90822, type: 2}
@@ -1886,6 +2780,100 @@ MonoBehaviour:
 Transform:
   m_PrefabParentObject: {fileID: 466290, guid: e7c201b370e317541aec2554c6dbbd66, type: 2}
   m_PrefabInternal: {fileID: 788528864}
+--- !u!1 &679861398
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 193360, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 679861399}
+  - 114: {fileID: 679861400}
+  m_Layer: 0
+  m_Name: FireNode (52)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &679861399
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 422856, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 679861398}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -3.5200007, y: 4.89, z: 3.8100014}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 33
+--- !u!114 &679861400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11437124, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 679861398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &693293630
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 191426, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 693293631}
+  - 114: {fileID: 693293632}
+  m_Layer: 0
+  m_Name: FireNode (38)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &693293631
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 443684, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 693293630}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -1.9899993, y: 0.56999993, z: 4.650001}
+  m_LocalScale: {x: 1.2889292, y: 1.2889298, z: 1.2889298}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 24
+--- !u!114 &693293632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11472312, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 693293630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &722641464
 Prefab:
   m_ObjectHideFlags: 0
@@ -2331,10 +3319,104 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e7c201b370e317541aec2554c6dbbd66, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &797057185
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 107360, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 797057186}
+  - 114: {fileID: 797057187}
+  m_Layer: 0
+  m_Name: FireNode (10)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &797057186
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 404906, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 797057185}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -3.4500005, y: 5.96, z: -1.3513279}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 5
+--- !u!114 &797057187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11487068, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 797057185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!4 &823672138 stripped
 Transform:
   m_PrefabParentObject: {fileID: 495222, guid: f391d71a69cd4564b8a2ab0485d90822, type: 2}
   m_PrefabInternal: {fileID: 562927483}
+--- !u!1 &837208807
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 143722, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 837208808}
+  - 114: {fileID: 837208809}
+  m_Layer: 0
+  m_Name: FireNode (57)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &837208808
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 486754, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 837208807}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -1.2538869, y: 4.138714, z: 7.819998}
+  m_LocalScale: {x: 1.5262212, y: 1.5262214, z: 1.5262214}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 38
+--- !u!114 &837208809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11497274, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 837208807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_MetalToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!4 &848047571 stripped
 Transform:
   m_PrefabParentObject: {fileID: 465822, guid: 2b2133afa8b8c4d48abce7e1366e872c, type: 2}
@@ -2580,6 +3662,100 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e0708e93a8632cf4f9b610273060b7ae, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &894969311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 154896, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 894969312}
+  - 114: {fileID: 894969313}
+  m_Layer: 0
+  m_Name: FireNode (30)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &894969312
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 451944, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 894969311}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 0.84999985, y: 14.39, z: -1.1900018}
+  m_LocalScale: {x: 1.1016228, y: 1.1016228, z: 1.1016228}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 18
+--- !u!114 &894969313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11416382, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 894969311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &908587462
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 185200, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 908587463}
+  - 114: {fileID: 908587464}
+  m_Layer: 0
+  m_Name: FireNode (42)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &908587463
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 407674, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 908587462}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 0.9600002, y: 3.9600003, z: 7.1700015}
+  m_LocalScale: {x: 1.12, y: 1.12, z: 1.12}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 27
+--- !u!114 &908587464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11421352, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 908587462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &952220892
 Prefab:
   m_ObjectHideFlags: 0
@@ -2713,6 +3889,53 @@ Transform:
   - {fileID: 1065200931}
   m_Father: {fileID: 354319719}
   m_RootOrder: 35
+--- !u!1 &1022132705
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 154304, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1022132706}
+  - 114: {fileID: 1022132707}
+  m_Layer: 0
+  m_Name: FireNode (24)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1022132706
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 419128, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1022132705}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -1.4500004, y: 11.9905, z: 2.379999}
+  m_LocalScale: {x: 1.3391253, y: 1.3391252, z: 1.3391252}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 12
+--- !u!114 &1022132707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11415648, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1022132705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1 &1060116496 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 188156, guid: e5566f169c14bc3478475eee37fa36e3, type: 2}
@@ -2744,6 +3967,53 @@ MonoBehaviour:
   m_forcePreview: 0
   m_previewStep: 0.1
   m_previewMaxTime: 60
+--- !u!1 &1063107068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 176302, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1063107069}
+  - 114: {fileID: 1063107070}
+  m_Layer: 0
+  m_Name: FireNode (55)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1063107069
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 473328, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1063107068}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -0.7000009, y: 5.47, z: 3.119999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 36
+--- !u!114 &1063107070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11465176, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1063107068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &1065200930
 Prefab:
   m_ObjectHideFlags: 0
@@ -3095,6 +4365,55 @@ MonoBehaviour:
   offset: {x: 0.086437225, y: -0.2784214}
   size: {x: 18.489296, y: 1.7241325}
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!1 &1103319332
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000013381701978, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1103319333}
+  - 114: {fileID: 1103319334}
+  m_Layer: 0
+  m_Name: FireNode (23)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1103319333
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000013923909668, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1103319332}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -0.46999907, y: 8.737923, z: 2.3900018}
+  m_LocalScale: {x: 1.482628, y: 1.4826277, z: 1.4826277}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 11
+--- !u!114 &1103319334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000013743385080, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1103319332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &1112210506
 Prefab:
   m_ObjectHideFlags: 0
@@ -3306,158 +4625,6 @@ MonoBehaviour:
   offset: {x: -0.006258011, y: -0.012303352}
   size: {x: 11.122189, y: 6.2573605}
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!21 &1143067140
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Skybox
-  m_Shader: {fileID: 4800000, guid: 0c3cc5525b04f47eba2541662d3ca964, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 1000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-    - first:
-        name: _BumpMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - first:
-        name: _AtmosphereThickness
-      second: 0.68999904
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
-        name: _Exposure
-      second: 1.1099983
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _HorizonHeight
-      second: 0.009999999
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _SunSize
-      second: 0
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _ZWrite
-      second: 1
-    m_Colors:
-    - first:
-        name: _AddColor
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _GroundColor
-      second: {r: 0.9852941, g: 0.8816683, b: 0.5433607, a: 0.99999994}
-    - first:
-        name: _HorizonColor
-      second: {r: 1, g: 0.8413793, b: 0.50000006, a: 1}
-    - first:
-        name: _SkyColor
-      second: {r: 0.50735295, g: 0.65344805, b: 0.99999994, a: 0.99999994}
-    - first:
-        name: _SkyTint
-      second: {r: 0, g: 0.5862069, b: 1, a: 1}
-    - first:
-        name: _SunColor
-      second: {r: 1, g: 0.007352948, b: 0.007352948, a: 1}
-    - first:
-        name: _SunPos
-      second: {r: 1, g: 0, b: 0, a: 0}
 --- !u!1001 &1159403392
 Prefab:
   m_ObjectHideFlags: 0
@@ -3597,6 +4764,53 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7e79c76ae8222407c91c3bf9fdbbe1ed, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1186028129
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 185128, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1186028130}
+  - 114: {fileID: 1186028131}
+  m_Layer: 0
+  m_Name: FireNode (25)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1186028130
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 448090, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1186028129}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -2.5524812, y: 13.32952, z: 0.7799995}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 13
+--- !u!114 &1186028131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11445832, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1186028129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!4 &1189256450 stripped
 Transform:
   m_PrefabParentObject: {fileID: 443504, guid: f7103fd90e47f7441a87b08c32889fc6, type: 2}
@@ -3630,6 +4844,53 @@ Transform:
   - {fileID: 29869388}
   m_Father: {fileID: 1117695729}
   m_RootOrder: 0
+--- !u!1 &1194984065
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 162480, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1194984066}
+  - 114: {fileID: 1194984067}
+  m_Layer: 0
+  m_Name: FireNode (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1194984066
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 439348, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1194984065}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -1.4507234, y: 1.3862218, z: -2.819998}
+  m_LocalScale: {x: 1.679843, y: 1.6798435, z: 1.6798435}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 2
+--- !u!114 &1194984067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11471610, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1194984065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &1203383343
 Prefab:
   m_ObjectHideFlags: 0
@@ -3901,6 +5162,241 @@ MonoBehaviour:
   m_forcePreview: 0
   m_previewStep: 0.1
   m_previewMaxTime: 60
+--- !u!1 &1208978514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 166120, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1208978515}
+  - 114: {fileID: 1208978516}
+  m_Layer: 0
+  m_Name: FireNode (54)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1208978515
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 450730, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1208978514}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -2.6300015, y: 5.1, z: 5.919999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 35
+--- !u!114 &1208978516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11450678, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1208978514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &1230805471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 153732, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1230805472}
+  - 114: {fileID: 1230805473}
+  m_Layer: 0
+  m_Name: FireNode (17)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1230805472
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 406394, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1230805471}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 2.9100003, y: 8.62, z: -0.9199991}
+  m_LocalScale: {x: 1.1307106, y: 1.1307105, z: 1.1307105}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 8
+--- !u!114 &1230805473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11458758, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1230805471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &1233918972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 188600, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1233918973}
+  - 114: {fileID: 1233918974}
+  m_Layer: 0
+  m_Name: FireNode (41)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1233918973
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 483956, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1233918972}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -0.13587475, y: 0.39512745, z: 8.212718}
+  m_LocalScale: {x: 1.5404165, y: 1.5404167, z: 1.5404167}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 26
+--- !u!114 &1233918974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11492144, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1233918972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &1237241221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 105090, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1237241222}
+  - 114: {fileID: 1237241223}
+  m_Layer: 0
+  m_Name: FireNode (32)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1237241222
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 436010, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1237241221}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -1.1299993, y: 16.24, z: 2.6000018}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 20
+--- !u!114 &1237241223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11446160, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1237241221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_MetalToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &1240538206
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 112422, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1240538207}
+  - 114: {fileID: 1240538208}
+  m_Layer: 0
+  m_Name: FireNode (45)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1240538207
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 403300, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1240538206}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 3.239999, y: 4.25, z: 1.599999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 29
+--- !u!114 &1240538208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11455564, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1240538206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &1256364742
 Prefab:
   m_ObjectHideFlags: 0
@@ -4609,10 +6105,256 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 95e7a0da4e22daf4f9b0ed43eba5d50d, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1318878261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 193626, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1318878262}
+  - 114: {fileID: 1318878263}
+  m_Layer: 0
+  m_Name: FireNode (48)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1318878262
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 430204, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1318878261}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -4.01, y: 4.5, z: 6.8600025}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 31
+--- !u!114 &1318878263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11493412, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1318878261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!4 &1333767476 stripped
 Transform:
   m_PrefabParentObject: {fileID: 469734, guid: 70289c577f16a2541b45163d35cf2d54, type: 2}
   m_PrefabInternal: {fileID: 1501869328}
+--- !u!1 &1335236694
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 193788, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1335236695}
+  - 114: {fileID: 1335236696}
+  m_Layer: 0
+  m_Name: FireNode (46)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1335236695
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 480452, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1335236694}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -3.9266624, y: 3.7979991, z: 1.8000011}
+  m_LocalScale: {x: 1.14, y: 1.14, z: 1.14}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 30
+--- !u!114 &1335236696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11400788, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1335236694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &1337574982
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 182288, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1337574983}
+  - 114: {fileID: 1337574984}
+  m_Layer: 0
+  m_Name: FireNode (53)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1337574983
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 431388, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1337574982}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -3.1156542, y: 6.6499085, z: 2.1413674}
+  m_LocalScale: {x: 1.3019081, y: 1.301908, z: 1.301908}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 34
+--- !u!114 &1337574984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11423332, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1337574982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &1358780361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 131196, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1358780367}
+  - 114: {fileID: 1358780366}
+  - 114: {fileID: 1358780365}
+  - 114: {fileID: 1358780364}
+  - 114: {fileID: 1358780363}
+  - 65: {fileID: 1358780362}
+  m_Layer: 16
+  m_Name: PF_Village_House_03 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!65 &1358780362
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 65000014005406818, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358780361}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5, y: 16, z: 5}
+  m_Center: {x: -1.29, y: 8, z: 0}
+--- !u!114 &1358780363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000011828085960, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358780361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Interaction: 0
+  m_knockBackStrength: 10
+  m_feddbackParticle: PS_SplintersRocks
+  m_destroyParticle: PS_SplintersRocks
+--- !u!114 &1358780364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11432444, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358780361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_explosionParticle: PF_FarmHouseExplosion
+  m_ashesAsset: 
+--- !u!114 &1358780365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11494244, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358780361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 30
+--- !u!114 &1358780366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 114000012430637056, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358780361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: village_house_01
+--- !u!4 &1358780367
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 433286, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358780361}
+  m_LocalRotation: {x: -0, y: 0.61200315, z: -0, w: 0.79085535}
+  m_LocalPosition: {x: 24.013214, y: 0.23416185, z: 11.59}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: -284.225, z: 0}
+  m_Children:
+  - {fileID: 1758035417}
+  - {fileID: 2138064574}
+  - {fileID: 625368546}
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
 --- !u!4 &1366266210 stripped
 Transform:
   m_PrefabParentObject: {fileID: 494148, guid: a87fc1896c25b20439b46fe4d4093702, type: 2}
@@ -4740,6 +6482,53 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 465508, guid: e0708e93a8632cf4f9b610273060b7ae, type: 2}
   m_PrefabInternal: {fileID: 888197769}
+--- !u!1 &1383057807
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 138836, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1383057808}
+  - 114: {fileID: 1383057809}
+  m_Layer: 0
+  m_Name: FireNode (29)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1383057808
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 430434, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1383057807}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 1.6299993, y: 13.05, z: -2.4400012}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 17
+--- !u!114 &1383057809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11478276, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1383057807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &1395040363
 Prefab:
   m_ObjectHideFlags: 0
@@ -5020,11 +6809,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114000011931421630, guid: eb4a05957bbbe47f891747a2d092de29,
-        type: 2}
-      propertyPath: m_zone1Interaction
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: eb4a05957bbbe47f891747a2d092de29, type: 2}
   m_IsPrefabParent: 0
@@ -5213,6 +6997,53 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 70289c577f16a2541b45163d35cf2d54, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1565121041
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 139174, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1565121042}
+  - 114: {fileID: 1565121043}
+  m_Layer: 0
+  m_Name: FireNode (21)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1565121042
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 424836, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1565121041}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -4.663508, y: 9.595812, z: 0.15999937}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 10
+--- !u!114 &1565121043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11437416, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1565121041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &1578318408
 Prefab:
   m_ObjectHideFlags: 0
@@ -5597,11 +7428,98 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 433286, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1758035416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 171284, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1758035417}
+  - 33: {fileID: 1758035420}
+  - 23: {fileID: 1758035419}
+  - 95: {fileID: 1758035418}
+  m_Layer: 0
+  m_Name: view
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1758035417
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 499424, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1758035416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1358780367}
+  m_RootOrder: 0
+--- !u!95 &1758035418
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 9538586, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1758035416}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: ac5967e7468fea94ea6a1b42d05f41c8, type: 3}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!23 &1758035419
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 2324670, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1758035416}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 4c2bbee09f80d374da2d318159684b44, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &1758035420
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 3371034, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1758035416}
+  m_Mesh: {fileID: 4300070, guid: aac04af6f24510d42b41ac634b950955, type: 3}
 --- !u!1001 &1773447458
 Prefab:
   m_ObjectHideFlags: 0
@@ -5777,6 +7695,100 @@ Prefab:
     - {fileID: 11449404, guid: 2c2bcbbaf2455164482232f7f0418024, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 2c2bcbbaf2455164482232f7f0418024, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1782502680
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100912, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1782502681}
+  - 114: {fileID: 1782502682}
+  m_Layer: 0
+  m_Name: FireNode (26)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1782502681
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 401082, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1782502680}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -3.9493074, y: 10.740399, z: -0.3400004}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 14
+--- !u!114 &1782502682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11402398, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1782502680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
+--- !u!1 &1828906146
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 182572, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1828906147}
+  - 114: {fileID: 1828906148}
+  m_Layer: 0
+  m_Name: FireNode (28)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1828906147
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 471062, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1828906146}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -0.43999976, y: 11.299608, z: -3.0118632}
+  m_LocalScale: {x: 1.2886161, y: 1.2886161, z: 1.2886161}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 16
+--- !u!114 &1828906148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11416826, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1828906146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!4 &1881798492 stripped
 Transform:
   m_PrefabParentObject: {fileID: 495222, guid: c53c961034f56a640aa7d2fb4420d18a, type: 2}
@@ -5818,11 +7830,16 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 488620, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
       propertyPath: m_RootOrder
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 165904, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
       propertyPath: m_Name
       value: PF_Barrel_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010597727262, guid: af500da2c7b6548f6952759d22cffc08,
+        type: 2}
+      propertyPath: m_feddbackParticle
+      value: PS_Splinters
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
@@ -5877,6 +7894,53 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 465066, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
   m_PrefabInternal: {fileID: 2132759585}
+--- !u!1 &1984045649
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 180262, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1984045650}
+  - 114: {fileID: 1984045651}
+  m_Layer: 0
+  m_Name: FireNode (33)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &1984045650
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 406272, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1984045649}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -0.98, y: 15.959024, z: -1.5100002}
+  m_LocalScale: {x: 1.1116228, y: 1.1116228, z: 1.1116228}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 21
+--- !u!114 &1984045651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11461496, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1984045649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &1985078830
 Prefab:
   m_ObjectHideFlags: 0
@@ -6459,6 +8523,53 @@ Transform:
 Transform:
   m_PrefabParentObject: {fileID: 433160, guid: 51e94301a87bfb14d8722ccd40eb134c, type: 2}
   m_PrefabInternal: {fileID: 1284245022}
+--- !u!1 &2038670831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 144688, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2038670832}
+  - 114: {fileID: 2038670833}
+  m_Layer: 0
+  m_Name: FireNode (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &2038670832
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 481360, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2038670831}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 3.675221, y: 0.2713156, z: 0.32428646}
+  m_LocalScale: {x: 2.1871843, y: 2.1871831, z: 2.1871831}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 1
+--- !u!114 &2038670833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11431248, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2038670831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &2042732204
 Prefab:
   m_ObjectHideFlags: 0
@@ -6468,15 +8579,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 488620, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 45.4
+      value: 47.584
       objectReference: {fileID: 0}
     - target: {fileID: 488620, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.2331862
+      value: 0.212
       objectReference: {fileID: 0}
     - target: {fileID: 488620, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 12.456538
+      value: 12.79
       objectReference: {fileID: 0}
     - target: {fileID: 488620, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
       propertyPath: m_LocalRotation.x
@@ -6501,6 +8612,53 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: af500da2c7b6548f6952759d22cffc08, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &2059735587
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 178230, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2059735588}
+  - 114: {fileID: 2059735589}
+  m_Layer: 0
+  m_Name: FireNode (51)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &2059735588
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 465388, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2059735587}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -2.5299995, y: 6.45, z: 6.010001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 32
+--- !u!114 &2059735589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11408944, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2059735587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &2063618899
 Prefab:
   m_ObjectHideFlags: 0
@@ -6624,7 +8782,6 @@ MonoBehaviour:
   m_rails: 1
   m_flockBonus: 0
   m_activationChange: 100
-  m_activeOnStart: 0
   m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
@@ -6632,6 +8789,53 @@ MonoBehaviour:
     min: 0
     max: 0
   m_maxSpawns: 0
+--- !u!1 &2080504214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 122926, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2080504215}
+  - 114: {fileID: 2080504216}
+  m_Layer: 0
+  m_Name: FireNode (31)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &2080504215
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 428906, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2080504214}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: 1.3507563, y: 14.89, z: 1.3903244}
+  m_LocalScale: {x: 1.090645, y: 1.090645, z: 1.090645}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 19
+--- !u!114 &2080504216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11494422, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2080504214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1 &2090077447
 GameObject:
   m_ObjectHideFlags: 0
@@ -6739,6 +8943,53 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0bd8366cf4f413243ae1043ce2c317a6, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &2102588858
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 161086, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2102588859}
+  - 114: {fileID: 2102588860}
+  m_Layer: 0
+  m_Name: FireNode (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &2102588859
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 433872, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2102588858}
+  m_LocalRotation: {x: 0, y: 0, z: 0.052250024, w: 0.99863404}
+  m_LocalPosition: {x: -3.5600004, y: 1.3705631, z: 0.30999994}
+  m_LocalScale: {x: 1.1084819, y: 1.1084815, z: 1.1084815}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5.9901}
+  m_Children: []
+  m_Father: {fileID: 2138064574}
+  m_RootOrder: 3
+--- !u!114 &2102588860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11455526, guid: 6292f3fe1f4234e2e943bba6e8085b23,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2102588858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_breathHitParticle: PS_NotBurnable_WoodToon
+  m_hitParticleMatchDirection: 0
+  m_hitRadius: 2
+  m_resistanceMax: 10
+  m_burningTime: 10
+  m_damagePerSecond: 0.5
 --- !u!1001 &2110173062
 Prefab:
   m_ObjectHideFlags: 0
@@ -6886,3 +9137,72 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 12480f61e1a802d4ba6e2c2ade7c2f7f, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &2138064573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 175870, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2138064574}
+  m_Layer: 0
+  m_Name: FireNodes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!4 &2138064574
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 428090, guid: 6292f3fe1f4234e2e943bba6e8085b23, type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2138064573}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 367365791}
+  - {fileID: 2038670832}
+  - {fileID: 1194984066}
+  - {fileID: 2102588859}
+  - {fileID: 37607152}
+  - {fileID: 797057186}
+  - {fileID: 29844140}
+  - {fileID: 307084194}
+  - {fileID: 1230805472}
+  - {fileID: 300409228}
+  - {fileID: 1565121042}
+  - {fileID: 1103319333}
+  - {fileID: 1022132706}
+  - {fileID: 1186028130}
+  - {fileID: 1782502681}
+  - {fileID: 507276766}
+  - {fileID: 1828906147}
+  - {fileID: 1383057808}
+  - {fileID: 894969312}
+  - {fileID: 2080504215}
+  - {fileID: 1237241222}
+  - {fileID: 1984045650}
+  - {fileID: 151520027}
+  - {fileID: 544386836}
+  - {fileID: 693293631}
+  - {fileID: 140438912}
+  - {fileID: 1233918973}
+  - {fileID: 908587463}
+  - {fileID: 460802890}
+  - {fileID: 1240538207}
+  - {fileID: 1335236695}
+  - {fileID: 1318878262}
+  - {fileID: 2059735588}
+  - {fileID: 679861399}
+  - {fileID: 1337574983}
+  - {fileID: 1208978515}
+  - {fileID: 1063107069}
+  - {fileID: 651702384}
+  - {fileID: 837208808}
+  - {fileID: 186615635}
+  - {fileID: 257083850}
+  m_Father: {fileID: 1358780367}
+  m_RootOrder: 1

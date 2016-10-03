@@ -37,7 +37,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		CreatePool(_prefabName, _folderPath);
 
 		// Get a new system from the pool, spawn it and return it
-		if(instance.m_particlePools.ContainsKey(_prefabName)) {
+		if (instance.m_particlePools.ContainsKey(_prefabName)) {
 			GameObject system = instance.m_particlePools[_prefabName].Get(true);
 			SpawnSystem(system, _at);
 			return system;
@@ -55,7 +55,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <param name="_at">World position where to spawn the particle system.</param>
 	public static GameObject Spawn(GameObject _prefab, Vector3 _at = default(Vector3)) {
 		// Ignore if given prefab is not valid
-		if(_prefab == null) return null;
+		if (_prefab == null) return null;
 
 		// If we don't have a pool with the given prefab, create it
 		if (!instance.m_particlePools.ContainsKey(_prefab.name)) {
@@ -76,7 +76,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <param name="_at">The world position where to spawn the particle system.</param>
 	private static void SpawnSystem(GameObject _system, Vector3 _at) {
 		// Skip if system is not valid
-		if(_system == null) return;
+		if (_system == null) return;
 
 		// Reset system's position
 		_system.transform.localPosition = Vector3.zero;
@@ -84,8 +84,10 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 
 		// Restart all particle systems within the instance
 		ParticleSystem[] subsystems = _system.GetComponentsInChildren<ParticleSystem>();
-		for(int i = 0; i < subsystems.Length; i++) {
+		for (int i = 0; i < subsystems.Length; i++) {
 			subsystems[i].Clear();
+			ParticleSystem.EmissionModule em = subsystems[i].emission;
+			em.enabled = true;
 			subsystems[i].Play();
 		}
 	}
@@ -95,7 +97,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// </summary>
 	public static void ReturnInstance(GameObject _system) {
 		// Make sure we actually have a pool for this system!
-		if(instance.m_particlePools.ContainsKey(_system.name)) {
+		if (instance.m_particlePools.ContainsKey(_system.name)) {
 			instance.m_particlePools[_system.name].Return(_system);
 		}
 	}
@@ -108,10 +110,10 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <param name="_size">Size of the pool.</param>
 	private static void CreatePool(GameObject _prefab, int _size = 10) {
 		// Ignore if given prefab is not valid
-		if(_prefab == null) return;
+		if (_prefab == null) return;
 
 		// If a pool with the given name already exists, ignore
-		if(instance.m_particlePools.ContainsKey(_prefab.name)) return;
+		if (instance.m_particlePools.ContainsKey(_prefab.name)) return;
 
 		// Do it!
 		Pool pool = new Pool(_prefab, instance.transform, _size, false, true);
@@ -125,7 +127,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <param name="_newSize">New size for the target pool.</param>
 	public static void ResizePool(string _id, int _newSize) {
 		// Find pool
-		if(!instance.m_particlePools.ContainsKey(_id)) return;
+		if (!instance.m_particlePools.ContainsKey(_id)) return;
 
 		// Change pool's size
 		instance.m_particlePools[_id].Resize(_newSize);

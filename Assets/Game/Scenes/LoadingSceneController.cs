@@ -55,8 +55,7 @@ public class LoadingSceneController : SceneController {
 		base.Awake();
 		ContentManager.InitContent();
 		// Check required references
-		DebugUtils.Assert(m_loadingTxt != null, "Required component!");
-		DebugUtils.Assert(m_loadingBar != null, "Required component!");                
+		DebugUtils.Assert(m_loadingTxt != null, "Required component!");       
     }    
 
 	/// <summary>
@@ -136,7 +135,9 @@ public class LoadingSceneController : SceneController {
 		timer += Time.deltaTime;
 		float loadProgress = Mathf.Min(timer/1f, 1f);	// Divide by the amount of seconds to simulate
 		m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
-		m_loadingBar.normalizedValue = loadProgress;
+
+		if (m_loadingBar != null)
+			m_loadingBar.normalizedValue = loadProgress;
 
         // The persistence is loaded once this loading state is loaded and the social facade is initialized (or a reasonable timeout in order to prevent the game from getting stack 
         // if social facade can't be initialized). We want to wait for the social facade to be initialized in order to have the chance to reuse a previous login to the social platform 
