@@ -83,7 +83,7 @@ public class HUDMessagesTest : MonoBehaviour {
 				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
 			} break;
 
-			case 5:		Messenger.Broadcast<Collectible>(GameEvents.CHEST_COLLECTED, null);			break;
+			//case 5:		Messenger.Broadcast<Collectible>(GameEvents.CHEST_COLLECTED, null);			break; //[MSF] Collectible component was a Prototype
 			default:	break;
 		}
 	}
