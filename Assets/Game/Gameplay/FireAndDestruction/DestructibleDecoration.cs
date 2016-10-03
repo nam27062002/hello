@@ -25,6 +25,8 @@ public class DestructibleDecoration : Initializable {
 	private BoxCollider m_collider;
 	private Entity m_entity;
 
+	private Vector3 m_colliderCenter;
+
 	private bool m_spawned = false;
 
 	private DragonBreathBehaviour m_breath;
@@ -67,11 +69,11 @@ public class DestructibleDecoration : Initializable {
 		} else {
 			m_view = transform.FindChild("view").gameObject;
 
-			Vector3 center = m_collider.center;
+			m_colliderCenter = m_collider.center;
+
 			if (m_zone == ZoneManager.Zone.Zone1) {
 				m_collider.enabled = true;
 				m_collider.isTrigger = true;
-				center.z = 0f;
 
 				if (m_effect == ZoneManager.ZoneEffect.S
 				&&	m_zone1Interaction == InteractionType.Collision) {
@@ -80,9 +82,14 @@ public class DestructibleDecoration : Initializable {
 			} else if (m_zone == ZoneManager.Zone.Zone2) {
 				m_collider.enabled = true;
 				m_collider.isTrigger = true;
-				center.z = -transform.position.z;
+
+				Vector3 colliderCenterTransform = Vector3.zero;
+				colliderCenterTransform.x = transform.position.x;
+				colliderCenterTransform.y = transform.position.y + m_collider.center.y;
+				colliderCenterTransform.z = 0;
+				colliderCenterTransform = transform.InverseTransformPoint(colliderCenterTransform);
+				m_collider.center = colliderCenterTransform;
 			}
-			m_collider.center = center;
 		}
 
 		m_spawned = true;
@@ -110,7 +117,7 @@ public class DestructibleDecoration : Initializable {
 					if (_other.contacts.Length > 0) {
 						ContactPoint contact = _other.contacts[0];
 						if (m_feddbackParticle != "") {
-							ParticleManager.Spawn(m_feddbackParticle, contact.point);
+							ParticleManager.Spawn(m_feddbackParticle, contact.point - (m_collider.center - m_colliderCenter));
 						}
 					}
 				}
@@ -122,10 +129,13 @@ public class DestructibleDecoration : Initializable {
 		if (m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
-					Vector3 particlePosition = transform.position + m_collider.center;
+					Vector3 particlePosition = transform.position + m_colliderCenter;
+					particlePosition.y = _other.transform.position.y;
 
-					if (m_zone == ZoneManager.Zone.Zone2) {
-						particlePosition.z = transform.position.z;
+					if (particlePosition.x < _other.transform.position.x) {
+						particlePosition.x += m_collider.size.x * 0.5f;
+					} else {
+						particlePosition.x -= m_collider.size.x * 0.5f;
 					}
 
 					if (m_effect == ZoneManager.ZoneEffect.S) {
@@ -152,6 +162,29 @@ public class DestructibleDecoration : Initializable {
 						m_autoSpawner.StartRespawn();
 						m_view.SetActive(false);
 						m_spawned = false;
+					}
+				}
+			}
+		}
+	}
+
+	void OnTriggerExit(Collider _other) {
+		if (m_spawned) {
+			if (!m_breath.IsFuryOn()) {
+				if (_other.gameObject.CompareTag("Player")) {
+					Vector3 particlePosition = transform.position + m_colliderCenter;
+					particlePosition.y = _other.transform.position.y;
+
+					if (particlePosition.x < _other.transform.position.x) {
+						particlePosition.x += m_collider.size.x * 0.5f;
+					} else {
+						particlePosition.x -= m_collider.size.x * 0.5f;
+					}
+
+					if (m_effect == ZoneManager.ZoneEffect.S) {
+						if (m_feddbackParticle != "") {
+							ParticleManager.Spawn(m_feddbackParticle, particlePosition);
+						}
 					}
 				}
 			}
