@@ -23,6 +23,7 @@ MonoBehaviour:
   - m_name: Pursuit
     m_componentAssets:
     - {fileID: 11400000, guid: 3ff23bd6dcc5240d09e52388bceb9084, type: 2}
+    - {fileID: 11400000, guid: 4ff482f51c1524c1cb2792d38d442b72, type: 2}
   - m_name: Attack
     m_componentAssets:
     - {fileID: 11400000, guid: ac358085d83df4a548bcc228537390aa, type: 2}
@@ -54,6 +55,9 @@ MonoBehaviour:
   - to: 0
     id: onEnemyOutOfSight
     from: 2
+  - to: 4
+    id: onOutsideArea
+    from: 2
   - to: 1
     id: onMaxAttacks
     from: 3
@@ -63,7 +67,4 @@ MonoBehaviour:
   - to: 0
     id: onBackAtHome
     from: 4
-  - to: 4
-    id: onOutsideArea
-    from: -1
   m_firstState: 0

@@ -251,6 +251,7 @@ namespace AI {
 				if (m_eye != null) {
 					UpdateAim();
 				}
+
 				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
 
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);

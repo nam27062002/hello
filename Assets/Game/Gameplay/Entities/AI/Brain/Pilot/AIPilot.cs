@@ -26,8 +26,9 @@ namespace AI {
 		[SerializeField] private Range m_speedFactorRange = new Range(1f, 1f);
 		private float m_speedFactor;
 		protected override float speedFactor { get { return m_speedFactor; } }
+		private float m_speedVariation;
+		protected override float speedVariation { get { return m_speedVariation; } }
 
-		[SerializeField] private float m_timeBeforeBackHome = 2f;
 
 		public virtual bool avoidCollisions { get { return false; } set { } }
 
@@ -45,8 +46,6 @@ namespace AI {
 
 		protected bool m_slowDown;
 
-		private bool m_isOutside;
-		private float m_outsideTimer;
 
 		//--------------------------------------------------------------------//
 		// METHODS															  //
@@ -63,11 +62,10 @@ namespace AI {
 			}
 
 			m_speedFactor = m_speedFactorRange.GetRandom();
+			m_speedVariation = UnityEngine.Random.Range(0.98f, 1.02f); 
 
 			m_target = transform.position;
 			m_slowDown = false;
-
-			m_isOutside = false;
 
 			// braaiiiinnn ~ ~ ~ ~ ~
 			if (m_brain == null) {
@@ -114,23 +112,6 @@ namespace AI {
 			// state machine updates
 			if (m_brain != null) {
 				m_brain.Update();
-			}
-
-			if (m_isOutside) {
-				m_outsideTimer -= Time.deltaTime;
-				if (m_outsideTimer <= 0) {
-					if (!m_area.Contains(m_machine.position)) {
-						m_machine.SetSignal(Signals.Type.BackToHome, true);
-					}
-					m_isOutside = false;
-				}
-			} else {			
-				// if this machine is outside his area, go back to home position (if it has this behaviour)
-				if (m_area != null && !m_area.Contains(m_machine.position)) {
-					// we'll let the unit stay outside a few seconds before triggering the "back to home" state
-					m_isOutside = true;
-					m_outsideTimer = m_timeBeforeBackHome;
-				}
 			}
 		}
 
