@@ -35,7 +35,7 @@ public class SoundSettingsToggle : MonoBehaviour
             ApplicationManager.instance.Settings_ToggleSoundIsEnabled();
             if (isEnabled)
             {
-                AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+                // AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
             }
 
             Refresh();

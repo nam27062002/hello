@@ -570,7 +570,6 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_egg.eggData.state != Egg.State.COLLECTED) return;
 
 		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Depending on opened egg's reward, perform different actions
 		switch(m_egg.eggData.rewardData.type) {
