@@ -14,6 +14,7 @@ GameObject:
   - 95: {fileID: 9598824}
   - 114: {fileID: 11443596}
   - 114: {fileID: 114000012067780662}
+  - 114: {fileID: 114000013051630254}
   m_Layer: 5
   m_Name: PF_DragonTierButton
   m_TagString: Untagged
@@ -76,7 +77,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 11416210}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114000013051630254}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &11416210
@@ -172,3 +184,15 @@ MonoBehaviour:
   m_transitionColor: {r: 0, g: 1, b: 0, a: 1}
   m_transitionAnimationTrigger: Selected
   m_transitionSprite: {fileID: 0}
+--- !u!114 &114000013051630254
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 164356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
