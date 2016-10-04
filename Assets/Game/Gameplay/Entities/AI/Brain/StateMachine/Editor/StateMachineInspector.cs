@@ -164,12 +164,20 @@ namespace AI
 				newTransitions.AddRange(anyStateTransitions);
 				TypeUtil.SetPrivateVar(stateMachine, "m_transitionData", newTransitions.ToArray());
 			}
+
 			// FirstState
-			int firstStateIndex = TypeUtil.GetPrivateVar<int>(stateMachine, "m_firstState");
+			int firstStateIndex = TypeUtil.GetPrivateVar<int>(stateMachine, "m_firstState_A");
 			firstStateIndex = Mathf.Min(stateNames.Length - 1, firstStateIndex);
 			firstStateIndex = EditorGUILayout.Popup("FirstState", firstStateIndex, stateNames);
-			TypeUtil.SetPrivateVar(stateMachine, "m_firstState", firstStateIndex);
-				
+			TypeUtil.SetPrivateVar(stateMachine, "m_firstState_A", firstStateIndex);
+
+			// FirstState
+			int altFirstStateIndex = TypeUtil.GetPrivateVar<int>(stateMachine, "m_firstState_B");
+			altFirstStateIndex = Mathf.Min(stateNames.Length - 1, altFirstStateIndex);
+			altFirstStateIndex = EditorGUILayout.Popup("FirstStateAlt", altFirstStateIndex, stateNames);
+			TypeUtil.SetPrivateVar(stateMachine, "m_firstState_B", altFirstStateIndex);
+
+			//
 			EditorUtility.SetDirty(stateMachine);
 			serializedObject.ApplyModifiedProperties();
 		}

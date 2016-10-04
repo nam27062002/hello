@@ -170,8 +170,6 @@ namespace AI {
 
 		public override void Update() {
 
-			
-
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
 				Stop();
 				m_rotation = m_machine.transform.rotation;
@@ -253,9 +251,10 @@ namespace AI {
 				}
 
 				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+				m_machine.transform.rotation = m_rotation;
 
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
-				m_machine.transform.rotation = m_rotation;
+
 
 				// View updates
 				UpdateAttack();
@@ -345,7 +344,7 @@ namespace AI {
 					m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 				}
 			} else if (m_machine.GetSignal(Signals.Type.FallDown)) {
-				m_targetRotation = Quaternion.LookRotation(m_direction, m_collisionNormal	);
+				m_targetRotation = Quaternion.LookRotation(m_direction, m_collisionNormal);
 			} else if (m_faceDirection && m_pilot.speed > 0.01f) {				
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 
@@ -371,6 +370,7 @@ namespace AI {
 			} else {
 				if (m_pilot.speed > 0.01f) {
 					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
+					m_direction += Vector3.back * 0.1f;
 				}
 				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
 

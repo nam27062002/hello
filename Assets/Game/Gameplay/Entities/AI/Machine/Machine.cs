@@ -81,6 +81,7 @@ namespace AI {
 			m_inflammable.Attach(this, m_entity, m_pilot);
 
 			m_signals = new Signals(this);
+			m_signals.Init();
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderPromoted);
 			m_signals.SetOnDisableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderDemoted);
@@ -119,12 +120,12 @@ namespace AI {
 		}
 
 		void OnEnable() {
-			if (m_signals != null)
-				m_signals.Init();
+			
 		}
 
 		void OnDisable() {
 			LeaveGroup();
+			m_signals.Init();
 		}
 
 		public void Spawn(ISpawner _spawner) {

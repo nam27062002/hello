@@ -18,7 +18,10 @@ namespace AI
 		TransitionData[] m_transitionData = new TransitionData[]{};
 
 		[SerializeField]
-		int m_firstState;
+		int m_firstState_A;
+
+		[SerializeField]
+		int m_firstState_B;
 
 		State m_current;
 		State m_previous;
@@ -54,9 +57,13 @@ namespace AI
 				m_states[i].Initialise(this, ref sharedComponents);
 			}
 
-			if(enterFirstState && m_states.Length > 0 && m_firstState > -1)
+			if(enterFirstState && m_states.Length > 0 && m_firstState_A > -1)
 			{
-				DoTransition(m_states[m_firstState], null);
+				int state = m_firstState_A;
+				if (m_firstState_B > -1 && UnityEngine.Random.Range(0f, 1f) > 0.5f) {
+					state = m_firstState_B;
+				}
+				DoTransition(m_states[state], null);
 			}
 		}
 
@@ -80,9 +87,14 @@ namespace AI
 				m_current.Exit(null);
 				m_current = null;
 			}
-			if(m_states.Length > 0 && m_firstState > -1)
+
+			if(m_states.Length > 0 && m_firstState_A > -1)
 			{
-				DoTransition(m_states[m_firstState], null);
+				int state = m_firstState_A;
+				if (m_firstState_B > -1 && UnityEngine.Random.Range(0f, 1f) > 0.5f) {
+					state = m_firstState_B;
+				}
+				DoTransition(m_states[state], null);
 			}
 		}
 
