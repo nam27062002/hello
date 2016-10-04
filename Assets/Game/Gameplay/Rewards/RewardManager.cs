@@ -244,9 +244,15 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_isHighScore = false;
 
 		// Current dragon progress
-		instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
-		instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
-		instance.m_dragonInitialTotalXPProgress = DragonManager.currentDragon.progression.progressByXp;
+		if (DragonManager.currentDragon != null) {
+			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
+			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+			instance.m_dragonInitialTotalXPProgress = DragonManager.currentDragon.progression.progressByXp;
+		} else {
+			instance.m_dragonInitialLevel = 1;
+			instance.m_dragonInitialLevelProgress = 0;
+			instance.m_dragonInitialTotalXPProgress = 0;
+		}
 	}
 
 	/// <summary>

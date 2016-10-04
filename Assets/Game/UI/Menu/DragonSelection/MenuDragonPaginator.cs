@@ -57,9 +57,9 @@ public class MenuDragonPaginator : TabSystem {
 			if(tierIcon != null) tierIcon.sprite = Resources.Load<Sprite>(tierDefs[i].GetAsString("icon"));
 
 			// Add a listener to the button to select the first dragon of that tier whenever the button is pressed
-			Button tierButton = newInstanceObj.GetComponent<Button>();
+			SelectableButton tierButton = newInstanceObj.GetComponent<SelectableButton>();
 			DragonTier tier = (DragonTier)i;	// Can't use "i" directly with a lambda expression http://stackoverflow.com/questions/3168375/using-the-iterator-variable-of-foreach-loop-in-a-lambda-expression-why-fails
-			tierButton.onClick.AddListener(
+			tierButton.button.onClick.AddListener(
 				() => { OnTierButtonClick(tier); }	// Way to add a listener with parameters (basically call a delegate function without parameters which in turn will call our actual callback with the desired parameter)
 			);
 
@@ -116,7 +116,7 @@ public class MenuDragonPaginator : TabSystem {
 	private void Initialize() {
 		// Reset all buttons
 		for(int i = 0; i < m_tabButtons.Count; i++) {
-			m_tabButtons[i].interactable = true;
+			m_tabButtons[i].SetSelected(false, false);
 		}
 
 		// Clear selected tab to make sure everything is properly initialized

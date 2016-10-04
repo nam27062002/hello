@@ -223,6 +223,7 @@ GameObject:
   - 114: {fileID: 114000013405538958}
   - 114: {fileID: 114000013941030854}
   - 114: {fileID: 114000010733262516}
+  - 114: {fileID: 114000012515215582}
   m_Layer: 5
   m_Name: ButtonBg
   m_TagString: Untagged
@@ -477,6 +478,17 @@ MonoBehaviour:
       - m_Target: {fileID: 114000011298517116}
         m_MethodName: Close
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 114000012515215582}
+        m_MethodName: Play
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1014,6 +1026,18 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &114000012515215582
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012773883834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114000012721473652
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1471,10 +1495,10 @@ RectTransform:
   - {fileID: 224000012549234936}
   m_Father: {fileID: 224000010250166296}
   m_RootOrder: 1
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 164.25, y: -62.5}
-  m_SizeDelta: {x: 0, y: 115}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000010593596090
 RectTransform:

@@ -162,7 +162,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		if (m_state == State.Idle || m_state == State.Damaged) {	
 			if (_dragonBreath) {
 				if (m_particleTimer <= 0f) {
-					GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position + Vector3.back * 2);				
+					GameObject hitParticle = ParticleManager.Spawn(m_breathHitParticle, transform.position);
 					if (hitParticle != null && m_hitParticleMatchDirection) {
 						Vector3 angle = new Vector3(0, 90, 0);
 						m_lastBreathDirection = _direction;
@@ -193,7 +193,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void StartFire() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc");
+			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc_old");
 
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);

@@ -13,27 +13,38 @@ public class DisableInSeconds : MonoBehaviour {
 	[SerializeField] private PoolType m_returnTo = PoolType.PoolManager;
 
 	private float m_activeTimer;
-	private ParticleSystem m_particleSystem;
+	private bool m_coroutineRunning;
+	private ParticleSystem[] m_particleSystems;
 
 	void Start() {
 		// lets grab the particle system if it exists. 
-		m_particleSystem = GetComponent<ParticleSystem>();
+		m_particleSystems = GetComponentsInChildren<ParticleSystem>();
 	}
 
 	void OnEnable() {
 		m_activeTimer = m_activeTime;
+		m_coroutineRunning = false;
 	}
 
-	void Update() {		
-		m_activeTimer -= Time.deltaTime;
-		if (m_activeTimer < 0f) {
-			if (m_particleSystem != null) {
-				// we are disabling a particle system
-				m_particleSystem.Stop();
-				StartCoroutine(WaitEndEmissionToDeactivate());
-			} else {
-				// it's a simple game object
-				Disable();
+	void Update() {	
+		if (!m_coroutineRunning) {	
+			m_activeTimer -= Time.deltaTime;
+			if (m_activeTimer < 0f) {
+				if (m_particleSystems.Length > 0) {
+					// we are disabling a particle system
+					for (int i = 0; i < m_particleSystems.Length; i++) {
+						if (m_particleSystems[i].loop) {
+							ParticleSystem.EmissionModule em = m_particleSystems[i].emission;
+							em.enabled = false;
+							m_particleSystems[i].Stop();
+						}
+					}
+					StartCoroutine(WaitEndEmissionToDeactivate());
+					m_coroutineRunning = true;
+				} else {
+					// it's a simple game object
+					Disable();
+				}
 			}
 		}
 	}
@@ -47,12 +58,19 @@ public class DisableInSeconds : MonoBehaviour {
 	}
 
 	IEnumerator WaitEndEmissionToDeactivate() {
-		while (m_particleSystem.particleCount > 0) {
-			yield return null;
-		}
+		bool alive = false;
+
+		do {
+			alive = false;
+			for (int i = 0; i < m_particleSystems.Length; i++) {
+				alive = alive || m_particleSystems[i].IsAlive();
+			}
+
+			if (alive) {
+				yield return null;
+			}
+		} while (alive);
 
 		Disable();
-
-		yield return null;
 	}
 }

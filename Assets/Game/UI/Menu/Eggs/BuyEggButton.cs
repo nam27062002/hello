@@ -46,8 +46,6 @@ public class BuyEggButton : MonoBehaviour {
 	/// The button has been pressed.
 	/// </summary>
 	public void OnBuyEgg() {
-		// SFX
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Get price and start purchase flow
 		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);

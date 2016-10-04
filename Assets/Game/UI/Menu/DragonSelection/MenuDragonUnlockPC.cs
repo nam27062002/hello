@@ -71,8 +71,6 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// </summary>
 	public void OnUnlock() 
 	{
-		// Play Sound
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);

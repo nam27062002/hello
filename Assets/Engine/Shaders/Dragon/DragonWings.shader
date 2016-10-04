@@ -16,6 +16,7 @@ Properties {
 	_InnerLightColor ("Inner Light Color", Color) = (1,1,1,1)
 
 	_SpecExponent ("Specular Exponent", float) = 1
+	_Cutoff("Cutoff Level", Range(0, 1)) = 0.5
 }
 
 SubShader {
@@ -69,6 +70,7 @@ SubShader {
 			uniform float4 _InnerLightColor;
 
 			uniform float _SpecExponent;
+			uniform float _Cutoff;
 
 			v2f vert (appdata_t v)
 			{
@@ -95,12 +97,13 @@ SubShader {
 
 				return o;
 			}
+
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 main = tex2D(_MainTex, i.texcoord);
 
-				clip(main.a - 0.5);
+				clip(main.a - _Cutoff);
 
 
 
@@ -111,6 +114,7 @@ SubShader {
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
      			// normalDirection = i.normal;
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
+				diffuse.a = 0.0;
 
 
      			fixed3 pointLights = fixed3(0,0,0);
@@ -125,15 +129,14 @@ SubShader {
 		               pointLights = pointLights + diffuseReflection;
 	            }
 
-	            // Inner lights
-     			fixed4 selfIlluminate = ( main * (detail.r * _InnerLightAdd * _InnerLightColor));
 
 				// Specular
-				float specularLight = pow(max(dot( normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
+				float specularLight = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
+				
+				// Inner lights
+				fixed4 selfIlluminate = fixed4( (detail.r * _InnerLightAdd * _InnerLightColor.xyz) + specularLight, 0.0 );
 
-				// fixed4 col = (diffuse + fixed4(pointLights + (UNITY_LIGHTMODEL_AMBIENT.rgb),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate;
-				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-
+				fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)), 1.0)) * main * (_ColorMultiply + _ColorAdd + selfIlluminate);
 				return col; 
 
 			}
