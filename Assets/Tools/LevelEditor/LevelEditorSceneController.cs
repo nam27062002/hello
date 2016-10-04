@@ -61,7 +61,7 @@ namespace LevelEditor {
 		/// First update.
 		/// </summary>
 		private void Start() {
-			StartGame();
+			
 		}
 
 		/// <summary>
@@ -89,15 +89,19 @@ namespace LevelEditor {
 		/// Called every frame.
 		/// </summary>
 		private void Update() {
-			// Update running time
-			m_elapsedSeconds += Time.deltaTime;
+			if (!m_started) {
+				StartGame();
+			} else {
+				// Update running time
+				m_elapsedSeconds += Time.deltaTime;
 
-			// Quick'n'dirty timer to place the dragon at the spawn point
-			if(m_timer > 0f) {
-				m_timer -= Time.deltaTime;
-				if(m_timer <= 0f)
-					if (InstanceManager.player)
-				 		InstanceManager.player.MoveToSpawnPoint(true);
+				// Quick'n'dirty timer to place the dragon at the spawn point
+				if(m_timer > 0f) {
+					m_timer -= Time.deltaTime;
+					if(m_timer <= 0f)
+						if (InstanceManager.player)
+					 		InstanceManager.player.MoveToSpawnPoint(true);
+				}
 			}
 		}
 
@@ -143,6 +147,8 @@ namespace LevelEditor {
 
 			// Reset timer
 			m_elapsedSeconds = 0;
+
+			m_started = true;
 		}
 
 		//------------------------------------------------------------------//
