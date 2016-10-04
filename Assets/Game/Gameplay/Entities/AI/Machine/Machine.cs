@@ -102,9 +102,6 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
 			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.BackToHome, SignalTriggers.OnOutsideArea);
-			m_signals.SetOnDisableTrigger(Signals.Type.BackToHome, SignalTriggers.OnBackAtHome);
-
 			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.OnBurning);
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Chewing, SignalTriggers.OnChewing);

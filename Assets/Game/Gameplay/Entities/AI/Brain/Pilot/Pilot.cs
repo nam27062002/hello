@@ -44,12 +44,13 @@ namespace AI {
 
 		// speed and leerping between values, trying to achieve smooth speed changes
 		protected virtual float speedFactor { get { return 1f; } }
+		protected virtual float speedVariation { get { return 1f; } }
 
 		private float m_moveSpeed;
-		public float moveSpeed { get { return m_moveSpeed * speedFactor; } }
+		public float moveSpeed { get { return m_moveSpeed * speedFactor * speedVariation; } }
 		
 		private float m_boostSpeed;
-		public float boostSpeed { get { return m_boostSpeed * speedFactor; } }
+		public float boostSpeed { get { return m_boostSpeed * speedFactor * speedVariation; } }
 
 		private float m_currentSpeed;
 		public float speed { get { return m_currentSpeed; } }
