@@ -35,7 +35,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] private int m_flockBonus = 0;
 
 	[Separator("Activation")]
-	[EnumListAttribute(typeof(DragonTier))]
 	[SerializeField] private DragonTier m_minTier = DragonTier.TIER_0;
 
 	[Tooltip("Spawners may not be present on every run (percentage).")]
