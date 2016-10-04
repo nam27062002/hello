@@ -39,7 +39,6 @@ namespace AI {
 
 			protected override void OnExit(State _newState) {
 				m_machine.SetSignal(Signals.Type.Alert, m_alertRestoreValue);
-				m_machine.SetSignal(Signals.Type.BackToHome, false);
 			}
 
 			protected override void OnUpdate() {
@@ -47,7 +46,6 @@ namespace AI {
 
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
 				if (dSqr < 1.5f) {
-					m_machine.SetSignal(Signals.Type.BackToHome, false);
 					Transition(OnBackAtHome);
 				}
 			}
