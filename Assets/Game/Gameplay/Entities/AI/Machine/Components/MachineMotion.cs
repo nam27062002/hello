@@ -370,9 +370,8 @@ namespace AI {
 			} else {
 				if (m_pilot.speed > 0.01f) {
 					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
-					m_direction += Vector3.back * 0.1f;
 				}
-				m_targetRotation = Quaternion.LookRotation(m_direction, m_upVector);
+				m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
 
 			}
 
