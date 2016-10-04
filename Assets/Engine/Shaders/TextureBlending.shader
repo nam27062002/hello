@@ -78,6 +78,7 @@ Shader "Hungry Dragon/Texture Blending Overlay + Lightmap And Recieve Shadow"
 					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 					fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
 					float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
+//					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
 					col = lerp( col2, col, l);
 					// Sof Light with vertex color 
 					// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html

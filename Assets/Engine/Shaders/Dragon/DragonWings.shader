@@ -103,30 +103,28 @@ SubShader {
 			{
 				fixed4 main = tex2D(_MainTex, i.texcoord);
 
-				clip(main.a - _Cutoff);
-
-
+//				clip(main.a - _Cutoff);
 
 				fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
 	            float3 encodedNormal = UnpackNormal (tex2D (_BumpMap, i.texcoord));
 	            float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
      			float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
-     			// normalDirection = i.normal;
+
+				// normalDirection = i.normal;
      			fixed4 diffuse = max(0,dot( normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 				diffuse.a = 0.0;
-
 
      			fixed3 pointLights = fixed3(0,0,0);
      			for (int index = 0; index <1; index++)
 	            {    
-		               float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
-		               float3 vertexToLightSource = lightPosition.xyz - i.posWorld.xyz;
-		               float3 lightDirection = normalize(vertexToLightSource);
-		               float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
-		               float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
-		               float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
-		               pointLights = pointLights + diffuseReflection;
+					float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
+					float3 vertexToLightSource = lightPosition.xyz - i.posWorld.xyz;
+					float3 lightDirection = normalize(vertexToLightSource);
+					float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
+					float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
+					float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
+					pointLights = pointLights + diffuseReflection;
 	            }
 
 

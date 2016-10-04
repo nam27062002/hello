@@ -90,6 +90,8 @@
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
 				col.a *= smoothstep(0.025, 0.15, noise.g);
 
+				col.a *= smoothstep(0.8, 1.0, 1.0 - abs(i.uv.x - 0.5));
+
 				return col * i.color;
 			}
 			ENDCG

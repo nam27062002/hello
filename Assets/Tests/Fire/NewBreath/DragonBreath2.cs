@@ -53,6 +53,7 @@ public class DragonBreath2 : MonoBehaviour
     public Color m_flameColor;
     public Color m_collisionColor;
 
+
     // Use this for initialization
     void Start () 
 	{
@@ -64,7 +65,7 @@ public class DragonBreath2 : MonoBehaviour
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
         //        enableTime = lastTime = Time.time;
-        //        initMesh();
+        initMesh();
 
         m_lastTime = Time.time;
     }
