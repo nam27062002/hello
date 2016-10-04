@@ -113,11 +113,13 @@ public class EquipmentScreenController : MonoBehaviour {
 	/// Focus target dragon, load initial disguise and go to target tab!
 	/// </summary>
 	private void Initialize() {
+		// Aux vars
+		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
+
 		// Select target dragon (if any)
 		if(!string.IsNullOrEmpty(m_initialDragonSku)) {
 			// Store currently selected dragon to restore selection when leaving
 			// Unless we already have a target dragon to go to when leaving
-			MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
 			if(string.IsNullOrEmpty(m_previouslySelectedDragonSku)) {
 				m_previouslySelectedDragonSku = menuController.selectedDragon;
 			}
@@ -131,6 +133,11 @@ public class EquipmentScreenController : MonoBehaviour {
 
 		// Initialize pets screen with the target pet
 		//m_petsScreen.Initialize(m_initialPetSku);
+
+		// Pets and photo tabs should be locked for non-owned dragons!
+		bool dragonOwned = DragonManager.GetDragonData(menuController.selectedDragon).isOwned;
+		tabs.SetTabEnabled((int)Tab.PETS, dragonOwned);
+		tabs.SetTabEnabled((int)Tab.PHOTO, dragonOwned);
 
 		// Switch to initial tab
 		// If screen is open, use animation
