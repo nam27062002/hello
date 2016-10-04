@@ -193,7 +193,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void StartFire() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc");
+			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc_old");
 
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);
