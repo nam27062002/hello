@@ -125,7 +125,7 @@ public class FireBreathDynamic : MonoBehaviour
 		{
 			m_pos[i] = Vector3.zero;
 			m_UV[i] = Vector2.zero;
-            m_color[i] = (i < 4) ? m_initialColor : m_flameColor;
+            m_color[i] = (i < 6) ? m_initialColor : m_flameColor;
 		}
 	}
 
@@ -190,7 +190,6 @@ public class FireBreathDynamic : MonoBehaviour
         int step = 1;
 		int whipIndex = 0;
         Vector3 newPos1, newPos2;
-//        Vector3 WhipExtreme = 
 
         for ( int i = 2; i < m_numPos; i += 2 )
 		{
@@ -217,27 +216,23 @@ public class FireBreathDynamic : MonoBehaviour
                 newPos2 -= (whipTangent) * (yDisplacement + md);
             }
 
-
             m_pos[i] = newPos1;
             m_pos[i + 1] = newPos2;
 
+            yDisplacement *= 0.5f;
 
-            yDisplacement *= 0.35f;
+            m_UV[i].Set(0.5f + yDisplacement, vStep * step);
+            m_UV[i + 1].Set(0.5f - yDisplacement, vStep * step);
 
-            m_UV[i].x = 0.5f + yDisplacement;
-//            m_UV[i].x = 0.75f;
-            m_UV[i].y = vStep * step;
-
-            m_UV[i + 1].x = 0.5f - yDisplacement;
-//            m_UV[i + 1].x = 0.25f;
-            m_UV[i + 1].y = vStep * step;
-
-
-            if (i > 2)
+            if (i > 6)
             {
                 m_color[i] = m_color[i + 1] = (whipIndex > m_collisionSplit) ? m_collisionColor : m_flameColor;
             }
-
+/*            else
+            {
+                m_color[i] = m_color[i + 1] = m_initialColor;
+            }
+*/
             step++;
 			whipIndex++;
 		}
@@ -350,7 +345,7 @@ public class FireBreathDynamic : MonoBehaviour
             Vector3 whipReflectTangent = Vector3.Cross(Vector3.forward, whipReflect);
             //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
 
-            if (Time.time > m_lastTime + timeDelay)
+            if (Time.time > (m_lastTime + timeDelay))
             {
                 GameObject colFire = ParticleManager.Spawn(m_collisionFirePrefab, hit.point, "Fire&Destruction/_PrefabsWIP/FireEffects/");
                 if (colFire != null)
@@ -369,7 +364,7 @@ public class FireBreathDynamic : MonoBehaviour
 
             for (int i = 0; i < m_splits + 1; i++)
             {
-                float currentDist = (xStep * i);
+                float currentDist = (xStep * (i + 1));
 
                 if (currentDist < hit.distance)
                 {
@@ -402,7 +397,7 @@ public class FireBreathDynamic : MonoBehaviour
         {
             for (int i = 0; i < m_splits + 1; i++)
             {
-                float currentDist = (xStep * i);
+                float currentDist = (xStep * (i + 1));
                 m_whip[i] = whipOrigin + (whipDirection * currentDist);
 //                m_whipTangent[i] = whipTangent;
 //                m_whipCollision[i] = false;
@@ -413,7 +408,7 @@ public class FireBreathDynamic : MonoBehaviour
         for (int i = 0; i < m_splits + 1; i++)
         {
             Vector3 distance = m_whip[i] - m_realWhip[i];
-            float fq = 1.0f - Mathf.Pow((i / (m_splits + 1)), m_fireFlexFactor);
+            float fq = Mathf.Pow(1.0f - (i / (m_splits + 1)), m_fireFlexFactor);
 //            float rq = Mathf.Clamp(fq + (Vector3.Dot(distance, distance) / mrq) * m_fireFlexFactor * Time.deltaTime, 0.0f, 1.0f);
 //            float rq = Mathf.Clamp(fq + (m_fireFlexFactor * Time.deltaTime), 0.0f, 1.0f);
             float rq = Mathf.Clamp(fq + ((1.0f / m_fireFlexFactor) * Time.deltaTime), 0.0f, 1.0f);
@@ -434,14 +429,14 @@ public class FireBreathDynamic : MonoBehaviour
             else
             {
                 whipDirection = m_realWhip[i] - m_realWhip[i - 1];
-                whipDirection.z = 0.0f;
+//                whipDirection.z = 0.0f;
                 m_whipTangent[i] = Vector3.Normalize(Vector3.Cross(Vector3.forward, whipDirection));//transform.up;
             }
         }
 //        MoveWhip();
     }
 
-
+/*
     void MoveWhip()
 	{
 		float xStep = m_distance / (m_splits + 1);
@@ -453,7 +448,7 @@ public class FireBreathDynamic : MonoBehaviour
 			m_whip[i] = Vector3.Lerp( m_whip[i], shouldBePos, (1.25f - (i/m_splits)) * Time.deltaTime * 15.0f);
 		}
 	}
-
+*/
 
     public void EnableFlame(bool value)
     {
