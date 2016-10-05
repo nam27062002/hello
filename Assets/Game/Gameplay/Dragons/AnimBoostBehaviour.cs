@@ -5,16 +5,18 @@ public class AnimBoostBehaviour : StateMachineBehaviour
 {
 	int loopHash = Animator.StringToHash("Loop");
 
-	void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
+	override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
 	{
+		base.OnStateEnter(animator, animatorStateInfo,layerIndex);
 		if (animatorStateInfo.shortNameHash == loopHash)
 		{
 			animator.gameObject.SendMessage("TurboLoopStart");			
 		}
 	}
 
-	void OnStateExit(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
+	override public void OnStateExit(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
 	{
+		base.OnStateExit(animator, animatorStateInfo,layerIndex);
 		if (animatorStateInfo.shortNameHash == loopHash)
 		{
 			animator.gameObject.SendMessage("TurboLoopEnd");

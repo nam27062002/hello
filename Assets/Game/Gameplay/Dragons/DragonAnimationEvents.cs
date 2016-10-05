@@ -73,9 +73,9 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public void TurboLoopEnd()
 	{
 		m_bostBehaviour.DeactivateTrails();
-		if (m_wingsWindSound != null)
+		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 		{
-			AudioController.Play(m_wingsWindSound, transform);
+			m_wingsWindSoundAO.Pause();
 		}
 	}
 
