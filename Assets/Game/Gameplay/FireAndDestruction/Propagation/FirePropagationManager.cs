@@ -30,7 +30,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	}
 
 	void Start() {
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireNewProc"), 25, true);
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireNewProc_old"), 25, true);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/SmokeParticle"), 25, true);
 
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();

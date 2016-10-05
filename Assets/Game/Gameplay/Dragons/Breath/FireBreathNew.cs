@@ -1,8 +1,9 @@
+#define FIRETEST
+
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
-
 
 public class FireBreathNew : DragonBreathBehaviour {
 
@@ -57,7 +58,8 @@ public class FireBreathNew : DragonBreathBehaviour {
     public GameObject m_dragonFlame = null;
 
 
-    public const bool FIRETEST = true;
+//    public const bool FIRETEST = true;
+
 
 #if FIRETEST
     private FireBreathDynamic dragonFlameInstance = null;
@@ -90,10 +92,11 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;
 
-		m_length = m_dragon.data.def.GetAsFloat("furyBaseLenght");
-		m_length *= transform.localScale.x;
-		float lengthIncrease = m_length * m_dragon.data.fireSkill.value;
-		m_length += lengthIncrease;
+        m_length = 4.0f; // m_dragon.data.def.GetAsFloat("furyBaseLenght");
+        m_length *= transform.localScale.x;
+      	float lengthIncrease = m_length * m_dragon.data.fireSkill.value;
+        m_length += lengthIncrease;
+        //      m_length = 2.0f;
 
 		m_actualLength = m_length;
 

@@ -4,8 +4,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private DragonAttackBehaviour m_attackBehaviour;
 	private DragonBoostBehaviour m_bostBehaviour;
-	public string m_wingsSound;
-	private AudioObject m_wingsSoundAO;
+	public string m_wingsIdleSound;
+	private AudioObject m_wingsIdleSoundAO;
+
+	public string m_wingsFlyingSound;
+	private AudioObject m_wingsFlyingSoundAO;
 
 	public string m_eatSound;
 	public string m_eatBigSound;
@@ -70,17 +73,25 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public void TurboLoopEnd()
 	{
 		m_bostBehaviour.DeactivateTrails();
-		if (m_wingsWindSound != null)
+		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 		{
-			AudioController.Play(m_wingsWindSound, transform);
+			m_wingsWindSoundAO.Pause();
 		}
 	}
 
-	public void WingsSound()
+	public void WingsIdleSound()
 	{
-		if (!string.IsNullOrEmpty(m_wingsSound))
+		if (!string.IsNullOrEmpty(m_wingsIdleSound))
 		{
-			m_wingsSoundAO = AudioController.Play(m_wingsSound, transform);
+			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
+		}
+	}
+
+	public void WingsFlyingSound()
+	{
+		if (!string.IsNullOrEmpty(m_wingsFlyingSound))
+		{
+			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
 		}
 	}
 
@@ -124,8 +135,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 			m_wingsWindSoundAO.volume = 0;
-		if (m_wingsSoundAO != null && m_wingsSoundAO.IsPlaying())
-			m_wingsSoundAO.volume = 0;
+		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
+			m_wingsIdleSoundAO.volume = 0;
+		if (m_wingsFlyingSoundAO != null && m_wingsFlyingSoundAO.IsPlaying())
+			m_wingsFlyingSoundAO.volume = 0;
 		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
 			m_wingsStrongFlapAO.volume = 0;
 	}
@@ -134,8 +147,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 			m_wingsWindSoundAO.volume = m_wingsWindSoundAO.volumeItem;
-		if (m_wingsSoundAO != null && m_wingsSoundAO.IsPlaying())
-			m_wingsSoundAO.volume = m_wingsSoundAO.volumeItem;
+		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
+			m_wingsIdleSoundAO.volume = m_wingsIdleSoundAO.volumeItem;
+		if (m_wingsFlyingSoundAO != null && m_wingsFlyingSoundAO.IsPlaying())
+			m_wingsFlyingSoundAO.volume = m_wingsFlyingSoundAO.volumeItem;
 		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
 			m_wingsStrongFlapAO.volume = m_wingsStrongFlapAO.volumeItem;
 	}

@@ -20,6 +20,7 @@ MonoBehaviour:
   - m_name: Charge
     m_componentAssets:
     - {fileID: 11400000, guid: 7d9a0f75f0b814aa7bdb68421c5fcb27, type: 2}
+    - {fileID: 11400000, guid: 4ff482f51c1524c1cb2792d38d442b72, type: 2}
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
@@ -33,10 +34,11 @@ MonoBehaviour:
   - to: 0
     id: onChargeEnd
     from: 1
+  - to: 2
+    id: onOutsideArea
+    from: 1
   - to: 0
     id: onBackAtHome
     from: 2
-  - to: 0
-    id: onBackAtHome
-    from: -1
-  m_firstState: 0
+  m_firstState_A: 0
+  m_firstState_B: 0

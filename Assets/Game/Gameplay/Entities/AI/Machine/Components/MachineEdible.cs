@@ -16,11 +16,11 @@ namespace AI {
 
 		public MachineEdible() {}
 
-		public override void Init() {
+		public override void Attach (IMachine _machine, IEntity _entity, Pilot _pilot){
+			base.Attach (_machine, _entity, _pilot);
+
 			m_viewControl = m_machine.GetComponent<ViewControl>();
-
 			m_biteResistance = (m_entity as Entity).def.GetAsFloat("biteResistance");
-
 			HoldPreyPoint[] holdPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
 			if (holdPoints != null) {
 				for (int i = 0;i<holdPoints.Length; i++) {
@@ -28,6 +28,8 @@ namespace AI {
 				}
 			}
 		}
+
+		public override void Init() {}
 
 		public void Bite() {
 			m_machine.SetSignal(Signals.Type.Panic, true);

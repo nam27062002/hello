@@ -35,8 +35,10 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[SerializeField] private int m_flockBonus = 0;
 
 	[Separator("Activation")]
+	[SerializeField] private DragonTier m_minTier = DragonTier.TIER_0;
+
 	[Tooltip("Spawners may not be present on every run (percentage).")]
-	[SerializeField][Range(0f, 100f)] private float m_activationChange = 100f;
+	[SerializeField][Range(0f, 100f)] private float m_activationChance = 100f;
 
 	[Tooltip("Meant for background spawners, will ignore respawn settings and activation triggers.")]
 	[SerializeField] private bool m_alwaysActive = false;
@@ -105,33 +107,35 @@ public class Spawner : MonoBehaviour, ISpawner {
 	protected virtual void Start() {
 		float rnd = Random.Range(0f, 100f);
 
-		if (!string.IsNullOrEmpty(m_entityPrefabStr) && rnd <= m_activationChange) {
-			m_entities = new GameObject[m_quantity.max];
+		if (InstanceManager.player.data.tier >= m_minTier) {
+			if (!string.IsNullOrEmpty(m_entityPrefabStr) && rnd <= m_activationChance) {
+				m_entities = new GameObject[m_quantity.max];
 
-			if (m_rails == 0) m_rails = 1;
+				if (m_rails == 0) m_rails = 1;
 
-			m_entityPrefabPath = IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr;
+				m_entityPrefabPath = IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr;
 
-			// TODO[MALH]: Get path relative to quality version
-			PoolManager.CreatePool(m_entityPrefabStr, m_entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
+				// TODO[MALH]: Get path relative to quality version
+				PoolManager.CreatePool(m_entityPrefabStr, m_entityPrefabPath, Mathf.Max(15, m_entities.Length), true);
 
-			// Get external references
-			// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
-			m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
+				// Get external references
+				// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
+				m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
-			m_area = GetArea();
+				m_area = GetArea();
 
-			m_groupController = GetComponent<EntityGroupController>();
-			if (m_groupController) {
-				m_groupController.Init(m_quantity.max);
+				m_groupController = GetComponent<EntityGroupController>();
+				if (m_groupController) {
+					m_groupController.Init(m_quantity.max);
+				}
+
+				m_rect = new Rect((Vector2)transform.position, Vector2.zero);
+
+				m_guideFunction = GetComponent<IGuideFunction>();
+
+				SpawnerManager.instance.Register(this);
+				SpawnerAreaManager.instance.Register(this);
 			}
-
-			m_rect = new Rect((Vector2)transform.position, Vector2.zero);
-
-			m_guideFunction = GetComponent<IGuideFunction>();
-
-			SpawnerManager.instance.Register(this);
-			SpawnerAreaManager.instance.Register(this);
 		}
 
 		gameObject.SetActive(false);
@@ -351,6 +355,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		uint rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {
 			GameObject spawning = m_entities[i];
+			spawning.SetActive(true);
 
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
@@ -392,7 +397,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				}
 			}
 
-			spawning.SetActive(true);
+
 		}
 
 		// Disable this spawner after a number of spawns

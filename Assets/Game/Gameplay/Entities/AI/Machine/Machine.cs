@@ -81,6 +81,7 @@ namespace AI {
 			m_inflammable.Attach(this, m_entity, m_pilot);
 
 			m_signals = new Signals(this);
+			m_signals.Init();
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderPromoted);
 			m_signals.SetOnDisableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderDemoted);
@@ -102,9 +103,6 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
 			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.BackToHome, SignalTriggers.OnOutsideArea);
-			m_signals.SetOnDisableTrigger(Signals.Type.BackToHome, SignalTriggers.OnBackAtHome);
-
 			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.OnBurning);
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Chewing, SignalTriggers.OnChewing);
@@ -122,8 +120,7 @@ namespace AI {
 		}
 
 		void OnEnable() {
-			if (m_signals != null)
-				m_signals.Init();
+			m_signals.Init();
 		}
 
 		void OnDisable() {

@@ -287,7 +287,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(m_selectedPill == _pill) return;
 
 		// SFX - not during the intialization
-		if(m_selectedPill != null) AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
+		// if(m_selectedPill != null) AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Update and Show/Hide title
 		ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();

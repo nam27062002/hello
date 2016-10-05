@@ -34,6 +34,11 @@ MonoBehaviour:
   - m_name: Go Home
     m_componentAssets:
     - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Idle Alert
+    m_componentAssets:
+    - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -59,22 +64,38 @@ MonoBehaviour:
   - to: 5
     id: onActionPoint
     from: 2
-  - to: 1
+  - to: 7
     id: onCalm
     from: 2
   - to: 1
     id: onRecover
     from: 4
-  - to: 1
+  - to: 7
     id: onCalm
     from: 5
   - to: 1
     id: onBackAtHome
     from: 6
+  - to: 2
+    id: onEnemyInSight
+    from: 6
+  - to: 2
+    id: onEnemyInRange
+    from: 6
+  - to: 6
+    id: onMove
+    from: 7
+  - to: 2
+    id: onEnemyInSight
+    from: 7
+  - to: 2
+    id: onEnemyInRange
+    from: 7
   - to: 3
     id: onFallDown
     from: -1
   - to: 4
     id: OnGround
     from: -1
-  m_firstState: 1
+  m_firstState_A: 1
+  m_firstState_B: 0
