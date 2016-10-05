@@ -29,9 +29,7 @@ namespace AI {
 			}
 		}
 
-		public override void Init() {
-			m_machine.SetSignal(Signals.Type.Destroyed, false);
-		}
+		public override void Init() {}
 
 		public void Bite() {
 			m_machine.SetSignal(Signals.Type.Panic, true);

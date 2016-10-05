@@ -355,6 +355,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 		uint rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {
 			GameObject spawning = m_entities[i];
+			spawning.SetActive(true);
 
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
@@ -396,7 +397,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				}
 			}
 
-			spawning.SetActive(true);
+
 		}
 
 		// Disable this spawner after a number of spawns

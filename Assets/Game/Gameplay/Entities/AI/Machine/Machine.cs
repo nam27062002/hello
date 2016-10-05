@@ -120,12 +120,11 @@ namespace AI {
 		}
 
 		void OnEnable() {
-			
+			m_signals.Init();
 		}
 
 		void OnDisable() {
 			LeaveGroup();
-			m_signals.Init();
 		}
 
 		public void Spawn(ISpawner _spawner) {
