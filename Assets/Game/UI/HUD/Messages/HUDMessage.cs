@@ -149,7 +149,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.CURSED:				Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
-			case Type.CHEST_FOUND:			Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
+			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
@@ -171,7 +171,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.CURSED:				Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
-			case Type.CHEST_FOUND:			Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
+			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
@@ -388,7 +388,7 @@ public class HUDMessage : MonoBehaviour {
 	/// A chest has been found.
 	/// </summary>
 	/// <param name="_chest">The chest that has been collected.</param>
-	private void OnChestCollected(Chest _chest) {
+	private void OnChestCollected(CollectibleChest _chest) {
 		Show();
 	}
 

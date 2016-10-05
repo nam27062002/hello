@@ -111,7 +111,21 @@ public class UserProfile : UserSaveSystem
 		get{ return m_dragonsBySku; }
 	}
 
-	// Egg Data
+	// Disguises
+	Wardrobe m_wardrobe;
+	public Wardrobe wardrobe
+	{
+		get{ return m_wardrobe; }
+	}
+
+	// Missions
+	UserMissions m_userMissions;
+	public UserMissions userMissions
+	{
+		get{ return m_userMissions; }
+	}
+
+	// Eggs
 	private Egg[] m_eggsInventory;
 	public Egg[] eggsInventory
 	{
@@ -131,17 +145,10 @@ public class UserProfile : UserSaveSystem
 		set{ m_incubationEndTimestamp = value; }
 	}
 
-	// DISGUISES
-	Wardrobe m_wardrobe;
-	public Wardrobe wardrobe
-	{
-		get{ return m_wardrobe; }
-	}
-
-	UserMissions m_userMissions;
-	public UserMissions userMissions
-	{
-		get{ return m_userMissions; }
+	// Chests
+	private Chest[] m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];	// Should always have the same length
+	public Chest[] dailyChests {
+		get { return m_dailyChests; }
 	}
 
     //------------------------------------------------------------------------//
@@ -149,8 +156,11 @@ public class UserProfile : UserSaveSystem
     //------------------------------------------------------------------------//
 
     //------------------------------------------------------------------------//
-    // PUBLIC STATIC METHODS												  //
-    //------------------------------------------------------------------------//    
+    // PUBLIC METHODS														  //
+    //------------------------------------------------------------------------//
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
 	public UserProfile()
 	{
 		m_dragonsBySku = new Dictionary<string, DragonData>();
@@ -194,6 +204,29 @@ public class UserProfile : UserSaveSystem
 		Messenger.Broadcast<long, long>(GameEvents.PROFILE_PC_CHANGED, pc - _iAmount, pc);
 	}
 
+	/// <summary>
+	/// Gets the number OF owned dragons.
+	/// </summary>
+	/// <returns>The number owned dragons.</returns>
+	public int GetNumOwnedDragons()
+	{
+		int ret = 0;
+		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
+		{
+			if ( pair.Value.isOwned )
+				ret++;
+		}
+		return ret;
+	}
+
+	/// <summary>
+	/// Return a string representation of this class.
+	/// </summary>
+	/// <returns>A formatted json string representing this class.</returns>
+	public override string ToString() {
+		return ToJson().ToString();
+	}
+
 	//------------------------------------------------------------------------//
 	// TUTORIAL																  //
 	// To simplify bitmask operations										  //
@@ -227,10 +260,9 @@ public class UserProfile : UserSaveSystem
 	}
 
     //------------------------------------------------------------------------//
-    // PERSISTENCE															  //
+    // PUBLIC PERSISTENCE METHODS											  //
     //------------------------------------------------------------------------//   
-
-    public override void Load()
+	public override void Load()
     {
         base.Load();
 
@@ -253,6 +285,9 @@ public class UserProfile : UserSaveSystem
         m_saveData.Merge(json.ToString());      
     }
 
+	//------------------------------------------------------------------------//
+	// PERSISTENCE LOAD METHODS												  //
+	//------------------------------------------------------------------------//   
     /// <summary>
     /// Load state from a json object.
     /// </summary>
@@ -341,6 +376,7 @@ public class UserProfile : UserSaveSystem
 			Prefs.SetBoolPlayer("skipTutorialCheat", false);
 		}
 
+		// Dragons
 		if ( _data.ContainsKey("dragons") )
 		{
 			SimpleJSON.JSONArray dragons = _data["dragons"] as SimpleJSON.JSONArray;
@@ -357,6 +393,25 @@ public class UserProfile : UserSaveSystem
 				pair.Value.ResetLoadedData();
 		}
 
+		// Disguises
+		m_wardrobe.InitFromDefinitions();
+		if ( _data.ContainsKey("disguises") ) {
+			m_wardrobe.Load( _data["disguises"] );
+		}
+
+		// Missions
+		if ( _data.ContainsKey("missions") )
+		{
+			m_userMissions.Load( _data["missions"] );
+			m_userMissions.ownedDragons = GetNumOwnedDragons();
+		}
+		else
+		{
+			// Clean missions
+			m_userMissions.ClearAllMissions();
+		}
+
+		// Eggs
 		if ( _data.ContainsKey("eggs") )
 		{
 			LoadEggData(_data["eggs"] as SimpleJSON.JSONClass);
@@ -368,26 +423,24 @@ public class UserProfile : UserSaveSystem
 				eggsInventory[i] = null;
 			m_incubatingEgg = null;
 		}
-		
-		m_wardrobe.InitFromDefinitions();
-		if ( _data.ContainsKey("disguises") )
-			m_wardrobe.Load( _data["disguises"] );
 
-		if ( _data.ContainsKey("missions") )
-		{
-			m_userMissions.Load( _data["missions"] );
-			m_userMissions.ownedDragons = GetNumOwnedDragons();
-		}
-		else
-		{
-			// Clean missions
-			m_userMissions.ClearAllMissions();
+		// Chests
+		if(_data.ContainsKey("chests")) {
+			LoadChestsData(_data["chests"] as SimpleJSON.JSONArray);
+		} else {
+			for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
+				dailyChests[i] = new Chest();
+			}
 		}
 	}
 
+	/// <summary>
+	/// Loads the data related to eggs.
+	/// </summary>
+	/// <param name="_data">The persistence data.</param>
 	private void LoadEggData( SimpleJSON.JSONClass _data )
 	{
-	// Inventory
+		// Inventory
 		SimpleJSON.JSONArray inventoryArray = _data["inventory"].AsArray;
 		for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) 
 		{
@@ -420,7 +473,35 @@ public class UserProfile : UserSaveSystem
 		// Incubator timer
 		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
 	}
-	
+
+	/// <summary>
+	/// Load the data related to the chests.
+	/// </summary>
+	/// <param name="_data">Persistence data.</param>
+	private void LoadChestsData(SimpleJSON.JSONArray _data) {
+		// Amount of chests is fix
+		for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
+			// If chest was not created, do it now
+			if(dailyChests[i] == null) {
+				dailyChests[i] = new Chest();
+			}
+
+			// If we have data for this chest, load it
+			if(i < _data.Count) {
+				dailyChests[i].Load(_data[i]);
+			}
+
+			// A chest should never initially be in the INIT state, nor in the REWARD_PENDING. Validate that.
+			if(dailyChests[i].state == Chest.State.INIT
+			|| dailyChests[i].state == Chest.State.PENDING_REWARD) {
+				dailyChests[i].ChangeState(Chest.State.NOT_COLLECTED);
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// PERSISTENCE SAVE METHODS												  //
+	//------------------------------------------------------------------------//
     /// <summary>
     /// Create a json with the current data in the profile.
     /// Similar to Save(), but doesn't update timestamp nor save count.
@@ -459,14 +540,20 @@ public class UserProfile : UserSaveSystem
 		}
 		data.Add( "dragons", dragons );
 
-		data.Add("eggs", SaveEggData());
 		data.Add("disguises", m_wardrobe.Save());
 		data.Add("missions", m_userMissions.Save());
+
+		data.Add("eggs", SaveEggData());
+		data.Add("chests", SaveChestsData());
 
 		// Return it
 		return data;
 	}
 
+	/// <summary>
+	/// Create the save data for the eggs.
+	/// </summary>
+	/// <returns>The save data for the eggs.</returns>
 	private SimpleJSON.JSONClass SaveEggData()
 	{
 		// Create new object, initialize and return it
@@ -495,17 +582,26 @@ public class UserProfile : UserSaveSystem
 		return data;
 	}
 
-	public int GetNumOwnedDragons()
-	{
-		int ret = 0;
-		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
-		{
-			if ( pair.Value.isOwned )
-				ret++;
+	/// <summary>
+	/// Creates the save data object for the chests.
+	/// </summary>
+	/// <returns>The chests save data object.</returns>
+	private SimpleJSON.JSONArray SaveChestsData() {
+		// Create new array
+		SimpleJSON.JSONArray data = new SimpleJSON.JSONArray();
+
+		// Initialize with current chests data
+		for(int i = 0; i < dailyChests.Length; i++) {
+			data.Add(dailyChests[i].Save());
 		}
-		return ret;
+
+		// Done!
+		return data;
 	}
-	
+
+	//------------------------------------------------------------------------//
+	// DISGUISES MANAGEMENT													  //
+	//------------------------------------------------------------------------//
 	public string GetEquipedDisguise( string _dragonSku )
 	{
 		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
@@ -532,14 +628,6 @@ public class UserProfile : UserSaveSystem
 			}
 		}
 		return ret;
-	}
-
-	/// <summary>
-	/// Return a string representation of this class.
-	/// </summary>
-	/// <returns>A formatted json string representing this class.</returns>
-	public override string ToString() {
-		return ToJson().ToString();
 	}
 }
 

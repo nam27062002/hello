@@ -1,101 +1,122 @@
-﻿// Chest.cs
+// Chest.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 12/01/2016.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 04/10/2016.
+// Copyright (c) 2016 Ubisoft. All rights reserved.
 
-//----------------------------------------------------------------------//
-// INCLUDES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
-//----------------------------------------------------------------------//
-// CLASSES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
 /// <summary>
-/// Single Chest object.
+/// Single Chest logic object.
 /// </summary>
-[RequireComponent(typeof(Collider))]
-public class Chest : MonoBehaviour {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string TAG = "Chest";
-
+[Serializable]
+public class Chest {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
 	public enum State {
-		INIT,		// Before the chest manager has selected a chest
-		IDLE,		// Target chest, not yet collected
-		COLLECTED	// Target chest, collected
+		INIT,			// Init state
+		NOT_COLLECTED,	// Chest spawned but not yet collected
+		PENDING_REWARD,	// Chest has been found, pending reward
+		COLLECTED,		// Chest reward has been collected
+		SHOWROOM		// Chest for display only, state is not relevant
 	};
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
-	// Exposed to inspector
-	[SerializeField] private DragonTier m_requiredTier = DragonTier.TIER_0;
-	public DragonTier requiredTier { get { return m_requiredTier; }}
-
-	[Space]
-	[SerializeField] private ChestViewController m_chestView = null;
-	[SerializeField] private GameObject m_mapMarker = null;
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Data
+	private string m_spawnPointID = "";
+	public string spawnPointID {
+		get { return m_spawnPointID; }
+		set { m_spawnPointID = value; }
+	}
 
 	// Logic
 	private State m_state = State.INIT;
-	public State state { get { return m_state; }}
-	public bool collected { get { return m_state == State.COLLECTED; }}
+	public State state { 
+		get { return m_state; }
+	}
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+	public bool collected {
+		get { return m_state == State.PENDING_REWARD || m_state == State.COLLECTED; }
+	}
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// Default constructor.
+	/// Private, use factory methods to create new Chests.
 	/// </summary>
-	private void Awake() {
-		// Make sure it belongs to the "Collectible" layer
-		this.gameObject.layer = LayerMask.NameToLayer("Collectible");
-
-		// Also make sure the object has the right tag
-		this.gameObject.tag = TAG;
-
-		// Start in the IDLE state
-		m_state = State.IDLE;
+	public Chest() {
+		// Nothing to do
 	}
 
 	/// <summary>
-	/// First update call.
+	/// Change the Chest's state.
+	/// Should only be called from the ChestManager.
 	/// </summary>
-	private void Start() {
-		// Setup view
-		m_chestView.ShowGlowFX(true);
+	/// <param name="_newState">The state to go to.</param>
+	public void ChangeState(State _newState) {
+		// [AOC] TODO!! Check state change restrictions.
+		// Perform actions before leaving a state
+		switch(m_state) {
+			default: {
+				// Nothing to do for now
+			} break;
+		}
+
+		// Change state
+		State oldState = m_state;
+		m_state = _newState;
+
+		// Perform actions upon entering a new state
+		switch(m_state) {
+			default: {
+				// Nothing to do for now
+			} break;
+		}
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// PERSISTENCE															  //
+	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Another collider has collided with this collider.
+	/// Load state from a json object.
 	/// </summary>
-	/// <param name="_other">The other collider.</param>
-	private void OnTriggerEnter(Collider _other) {
-		// Since it belongs to the "Collectible" layer, only the player will collide with it - no need to check
-		// If already collected, skip
-		if(m_state == State.COLLECTED) return;
+	/// <param name="_data">The json loaded from persistence.</param>
+	public void Load(SimpleJSON.JSONNode _data) {
+		// State
+		m_state = (State)_data["state"].AsInt;
 
-		// Collect chest!
-		m_state = State.COLLECTED;
+		// Spawn point ID
+		m_spawnPointID = _data["spawnPointID"];
+	}
 
-		// Disable collider
-		GetComponent<Collider>().enabled = false;
+	/// <summary>
+	/// Create and return a persistence save data object initialized with the data.
+	/// </summary>
+	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
+	public SimpleJSON.JSONNode Save() {
+		// Create new object, initialize and return it
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		// Disable map marker
-		if(m_mapMarker != null) m_mapMarker.SetActive(false);
+		// State
+		data.Add("state", ((int)m_state).ToString());
 
-		// Open chest and launch FX
-		m_chestView.ShowGlowFX(false);
-		m_chestView.Open();
+		// Spawn point ID
+		data.Add("spawnPointID", m_spawnPointID);
 
-		// Dispatch global event
-		Messenger.Broadcast<Chest>(GameEvents.CHEST_COLLECTED, this);
+		// Done!
+		return data;
 	}
 }

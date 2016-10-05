@@ -78,8 +78,9 @@ public static class PersistenceManager {
 	public static void Load(string _profileName = "")
     {               
         DragonManager.SetupUser(UsersManager.currentUser);
+		MissionManager.SetupUser(UsersManager.currentUser);
         EggManager.SetupUser(UsersManager.currentUser);
-        MissionManager.SetupUser(UsersManager.currentUser);
+		ChestManager.SetupUser(UsersManager.currentUser);
 
         //[DGR] FGOL SaveFacade is used to load the persistence
         // Makes sure Local ID is pointing to the active profile

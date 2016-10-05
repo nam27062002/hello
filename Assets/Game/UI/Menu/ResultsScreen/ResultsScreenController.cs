@@ -194,8 +194,10 @@ public class ResultsScreenController : MonoBehaviour {
 			// Process Missions: give rewards and generate new missions replacing those completed
 			MissionManager.ProcessMissions();
 
-			// Clear collectibles
-			ChestManager.ClearSelectedChest();
+			// Process collectible chests: give rewards and update collected chests count
+			ChestManager.ProcessChests();
+
+			// Clear collectible egg
 			EggManager.ClearCollectibleEgg();
 
 			// Save persistence
@@ -219,8 +221,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// <param name="_popup">The popup that has been closed</param>
 	public void OnPopupClosed(PopupController _popup) {
 		// Was it the chest reward or the egg reward popups?
-		if(_popup.GetComponent<PopupChestReward>() != null
-		|| _popup.GetComponent<PopupEggReward>() != null) {
+		if(_popup.GetComponent<PopupEggReward>() != null) {
 			// Go back to menu
 			TryGoToMenu();
 		}
