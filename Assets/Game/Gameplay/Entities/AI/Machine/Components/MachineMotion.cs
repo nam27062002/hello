@@ -73,14 +73,17 @@ namespace AI {
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public MachineMotion() {}
 
-		public override void Init() {
+		public override void Attach (IMachine _machine, IEntity _entity, Pilot _pilot)
+		{
+			base.Attach (_machine, _entity, _pilot);
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
-
 			m_collider = m_machine.transform.FindComponentRecursive<Collider>();
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");
+		}
 
+		public override void Init() {
 			m_isGrounded = false;
 			m_isColliderOnGround = false;
 			m_heightFromGround = 100f;

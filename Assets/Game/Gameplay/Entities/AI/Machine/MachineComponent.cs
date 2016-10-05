@@ -10,7 +10,7 @@ namespace AI {
 
 		public abstract void Init();
 
-		public void Attach(IMachine _machine, IEntity _entity, Pilot _pilot) {
+		public virtual void Attach(IMachine _machine, IEntity _entity, Pilot _pilot) {
 			m_entity = _entity;
 			m_pilot = _pilot;
 			m_machine = _machine;
