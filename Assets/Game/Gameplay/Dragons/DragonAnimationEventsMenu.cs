@@ -3,9 +3,9 @@
 public class DragonAnimationEventsMenu : MonoBehaviour {
 
 
-	public void WingsSound()
-	{
-	}
+	public void WingsIdleSound(){}
+
+	public void WingsFlyingSound(){}
 
 	public void StrongFlap()
 	{
