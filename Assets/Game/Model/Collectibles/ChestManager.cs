@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ using System.Linq;
 /// <summary>
 /// Global manager of chests.
 /// </summary>
-public class ChestManager : Singleton<ChestManager> {
+public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -58,8 +59,18 @@ public class ChestManager : Singleton<ChestManager> {
 		get { return dailyChests.Count(_ch => _ch.state == Chest.State.COLLECTED); }
 	}
 
+	// Reset timer
+	public static DateTime resetTimestamp {
+		get { return instance.m_user.dailyChestsResetTimestamp; }
+		private set { instance.m_user.dailyChestsResetTimestamp = value; }
+	}
+
+	public static TimeSpan timeToReset {
+		get { return resetTimestamp - DateTime.UtcNow; }
+	}
+
 	// Internal
-	UserProfile m_user = null;
+	private UserProfile m_user = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -67,12 +78,26 @@ public class ChestManager : Singleton<ChestManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	public ChestManager() {
+	public void Awake() {
 		
 	}
 
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	public void Update() {
+		// Must be initialized
+		if(!IsReady()) return;
+
+		// Check reset timer
+		if(DateTime.UtcNow >= resetTimestamp) {
+			// Reset!
+			Reset();
+		}
+	}
+
 	//------------------------------------------------------------------//
-	// PUBLIC UTILS														//
+	// PUBLIC STATIC METHODS											//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Pick all the collectible chests in the level and initialize with the current chest data.
@@ -207,6 +232,36 @@ public class ChestManager : Singleton<ChestManager> {
 	}
 
 	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Resets the chests and timer.
+	/// Made public for the cheats, shouldn't be called from outside.
+	/// </summary>
+	public static void Reset() {
+		// Pre checks
+		if(!IsReady()) return;
+
+		// Reset chests
+		for(int i = 0; i < dailyChests.Length; i++) {
+			// Should never be null!
+			if(dailyChests[i] == null) {
+				dailyChests[i] = new Chest(); 
+			}
+			dailyChests[i].Reset();
+		}
+
+		// Reset timer
+		resetTimestamp = DateTime.UtcNow.AddHours(24);	// [AOC] HARDCODED!!
+
+		// Notify game
+		Messenger.Broadcast(GameEvents.CHESTS_RESET);
+
+		// Save persistence
+		PersistenceManager.Save();
+	}
+
+	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
 	/// <summary>
@@ -214,7 +269,7 @@ public class ChestManager : Singleton<ChestManager> {
 	/// </summary>
 	/// <returns>Whether the manager has been initialized.</returns>
 	public static bool IsReady() {
-		return instance.m_user != null;
+		return instance.m_user != null && PersistenceManager.loadCompleted;
 	}
 
 	/// <summary>

@@ -151,6 +151,12 @@ public class UserProfile : UserSaveSystem
 		get { return m_dailyChests; }
 	}
 
+	private DateTime m_dailyChestsResetTimestamp;
+	public DateTime dailyChestsResetTimestamp {
+		get{ return m_dailyChestsResetTimestamp; }
+		set{ m_dailyChestsResetTimestamp = value; }
+	}
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -282,7 +288,8 @@ public class UserProfile : UserSaveSystem
         m_saveTimestamp = DateTime.UtcNow;
 
         JSONNode json = ToJson();
-        m_saveData.Merge(json.ToString());      
+		string jsonString = json.ToString();
+        m_saveData.Merge(jsonString);      
     }
 
 	//------------------------------------------------------------------------//
@@ -426,11 +433,12 @@ public class UserProfile : UserSaveSystem
 
 		// Chests
 		if(_data.ContainsKey("chests")) {
-			LoadChestsData(_data["chests"] as SimpleJSON.JSONArray);
+			LoadChestsData(_data["chests"] as SimpleJSON.JSONClass);
 		} else {
 			for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
 				dailyChests[i] = new Chest();
 			}
+			m_dailyChestsResetTimestamp = DateTime.UtcNow;
 		}
 	}
 
@@ -478,25 +486,32 @@ public class UserProfile : UserSaveSystem
 	/// Load the data related to the chests.
 	/// </summary>
 	/// <param name="_data">Persistence data.</param>
-	private void LoadChestsData(SimpleJSON.JSONArray _data) {
-		// Amount of chests is fix
-		for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
-			// If chest was not created, do it now
-			if(dailyChests[i] == null) {
-				dailyChests[i] = new Chest();
-			}
+	private void LoadChestsData(SimpleJSON.JSONClass _data) {
+		Debug.Log("LOADING CHESTS DATA!!\n" + _data.ToString());
+		// Amount of chests is constant
+		SimpleJSON.JSONArray chestsArray = _data["chests"].AsArray;
+		if(chestsArray != null) {
+			for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
+				// If chest was not created, do it now
+				if(dailyChests[i] == null) {
+					dailyChests[i] = new Chest();
+				}
 
-			// If we have data for this chest, load it
-			if(i < _data.Count) {
-				dailyChests[i].Load(_data[i]);
-			}
+				// If we have data for this chest, load it
+				if(i < chestsArray.Count) {
+					dailyChests[i].Load(chestsArray[i]);
+				}
 
-			// A chest should never initially be in the INIT state, nor in the REWARD_PENDING. Validate that.
-			if(dailyChests[i].state == Chest.State.INIT
-			|| dailyChests[i].state == Chest.State.PENDING_REWARD) {
-				dailyChests[i].ChangeState(Chest.State.NOT_COLLECTED);
+				// A chest should never initially be in the INIT state, nor in the REWARD_PENDING. Validate that.
+				if(dailyChests[i].state == Chest.State.INIT
+				|| dailyChests[i].state == Chest.State.PENDING_REWARD) {
+					dailyChests[i].ChangeState(Chest.State.NOT_COLLECTED);
+				}
 			}
 		}
+
+		// Reset timestamp
+		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
 	}
 
 	//------------------------------------------------------------------------//
@@ -586,14 +601,21 @@ public class UserProfile : UserSaveSystem
 	/// Creates the save data object for the chests.
 	/// </summary>
 	/// <returns>The chests save data object.</returns>
-	private SimpleJSON.JSONArray SaveChestsData() {
+	private SimpleJSON.JSONClass SaveChestsData() {
 		// Create new array
-		SimpleJSON.JSONArray data = new SimpleJSON.JSONArray();
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		// Initialize with current chests data
+		// Chests array
+		SimpleJSON.JSONArray chestsArray = new SimpleJSON.JSONArray();
 		for(int i = 0; i < dailyChests.Length; i++) {
-			data.Add(dailyChests[i].Save());
+			if(dailyChests[i] != null) {
+				chestsArray.Add(dailyChests[i].Save());
+			}
 		}
+		data.Add("chests", chestsArray);
+
+		// Reset timestamp
+		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
 		// Done!
 		return data;

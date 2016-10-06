@@ -87,6 +87,17 @@ public class Chest {
 		}
 	}
 
+	/// <summary>
+	/// Actions to perform when daily timer is over.
+	/// </summary>
+	public void Reset() {
+		// Change state
+		ChangeState(State.NOT_COLLECTED);
+
+		// Clear spawner ID
+		m_spawnPointID = string.Empty;
+	}
+
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//

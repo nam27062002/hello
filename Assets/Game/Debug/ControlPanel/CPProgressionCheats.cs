@@ -146,4 +146,31 @@ public class CPProgressionCheats : MonoBehaviour {
 		// If successful, save persistence
 		if(slotIdx >= 0) PersistenceManager.Save();
 	}
+
+	/// <summary>
+	/// Simulates daily chest collection (no menu refresh for now, reload menu for that).
+	/// </summary>
+	public void OnAddDailyChest() {
+		// Find the first non-collected chest
+		Chest ch = null;
+		foreach(Chest chest in ChestManager.dailyChests) {
+			if(!chest.collected) {
+				ch = chest;
+				break;
+			}
+		}
+
+		// Mark it as collected and process rewards
+		if(ch != null) {
+			ch.ChangeState(Chest.State.PENDING_REWARD);
+			ChestManager.ProcessChests();
+		}
+	}
+
+	/// <summary>
+	/// Simulate daily chests timer expiration.
+	/// </summary>
+	public void OnResetDailyChests() {
+		ChestManager.Reset();
+	}
 }

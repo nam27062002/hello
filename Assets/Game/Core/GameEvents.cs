@@ -53,6 +53,7 @@ public enum GameEvents {
 
 	// Collectible events
 	CHEST_COLLECTED,			// params: Chest _chest
+	CHESTS_RESET,				// no params
 	EGG_COLLECTED,				// params: CollectibleEgg _egg
 	EGG_COLLECTED_FAIL,			// params: CollectibleEgg _egg
 

@@ -54,7 +54,6 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -62,7 +61,6 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -197,8 +195,8 @@ public class ResultsScreenController : MonoBehaviour {
 			// Process collectible chests: give rewards and update collected chests count
 			ChestManager.ProcessChests();
 
-			// Clear collectible egg
-			EggManager.ClearCollectibleEgg();
+			// Process collectible egg
+			EggManager.ProcessCollectibleEgg();
 
 			// Save persistence
 			PersistenceManager.Save(true);
@@ -215,18 +213,6 @@ public class ResultsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// DELEGATES														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// A popup has been closed.
-	/// </summary>
-	/// <param name="_popup">The popup that has been closed</param>
-	public void OnPopupClosed(PopupController _popup) {
-		// Was it the chest reward or the egg reward popups?
-		if(_popup.GetComponent<PopupEggReward>() != null) {
-			// Go back to menu
-			TryGoToMenu();
-		}
-	}
-
 	/// <summary>
 	/// Go back to the main menu, finalizing all the required stuff in the game scene.
 	/// </summary>
