@@ -25,6 +25,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 
+	private Bounds m_bounds;
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
 
@@ -56,6 +57,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	// Use this for initialization
 	void Start () {
+		m_bounds = new Bounds(transform.position, Vector3.one * m_hitRadius * 2f);
 		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
@@ -102,11 +104,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		switch(m_state) {
 			case State.Burning: {
 				//check if we have to render the particle
-				bool isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(transform.position);
+				bool isInsideActivationMaxArea = m_newCamera.IsInsideActivationMaxArea(m_bounds);
 
 				if (m_fireSprite != null) {
-					m_fireMaterial.SetFloat("_Power", m_firePower);
-
 					if (!isInsideActivationMaxArea) {
 						StopFire();
 					}
@@ -120,22 +120,23 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 				if (m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					for (int i = 0; i < m_neighbours.Count; i++) {
-							m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime, Vector2.zero, false); // what amount of damage should
+						m_neighbours[i].Burn(m_damagePerSecond * Time.deltaTime, Vector2.zero, false); // what amount of damage should
 					}
 				} else {
 					m_timer = 5;
 					StartSmoke(m_timer);
-
+					if (m_fireSprite != null) {
+						m_fireSprite.GetComponentInChildren<Animator>().SetTrigger("extinguish");
+					}
 					m_state = State.Burned;
 				}
 			} break;
 
 			case State.Burned: {
-				if (m_fireSprite != null) {
-					m_firePower = Mathf.Lerp(m_firePower, 0f, Time.smoothDeltaTime);
-					m_fireMaterial.SetFloat("_Power", m_firePower);
-
-					if (m_fireSprite.transform.localScale.x < 0.1f) {
+				if (m_timer > 0) {
+					m_timer -= Time.deltaTime;
+				} else { 
+					if (m_fireSprite != null) {
 						StopFire();
 					}
 				}
@@ -193,19 +194,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void StartFire() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc_old");
+			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc");
 
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);
 			m_fireSprite.transform.localRotation = transform.localRotation;
-
-			Renderer fireSpr = m_fireSprite.GetFirstComponentInChildren<Renderer>();
-			m_fireMaterial = fireSpr.material;
-			m_fireMaterial.SetFloat("_Seed", Random.Range(0f, 1f));
-			m_fireMaterial.SetFloat("_Power", 0f);
-
-			m_firePower = 0f;
-			m_firePowerDest = 4.8f;
 		}
 	}
 
@@ -218,10 +211,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void StopFire() {
-		FirePropagationManager.RemoveBurning( transform );		
+		FirePropagationManager.RemoveBurning(transform);
 		if (m_fireSprite != null) {
 			m_fireSprite.SetActive(false);
-			PoolManager.ReturnInstance( m_fireSprite );
+			PoolManager.ReturnInstance(m_fireSprite);
 		}
 		m_fireSprite = null;
 		m_fireMaterial = null;
@@ -245,6 +238,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		}
 	}
 
+
+	//------------------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.75f);
 		Gizmos.DrawSphere(transform.position, 0.5f);
