@@ -55,7 +55,12 @@ public class DragonEquip : MonoBehaviour {
 		Dictionary<Equipable.AttachPoint, string> equip = new Dictionary<Equipable.AttachPoint, string>();
 		for( int i = 0; i<m_numPets; i++ )
 		{
-			equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetMachine");	
+			if ( i == 0 )
+				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetMachine");	
+			else if ( i == 1 )
+				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetGhostBuster");	
+			else
+				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetArmored");	
 		}
 
 		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();

@@ -102,6 +102,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public OnEvent onBiteKill;
 	public OnEvent onEndEating;
 	public OnEvent onEndLatching;
+
+
+	private List<string> m_ignoreTierList = new List<string>();
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -132,6 +136,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (m_suction == null) {
 			m_suction = m_mouth;
 		}
+	}
+
+	/// <summary>
+	/// Adds to ignore tier list. Adds and sku to an ignore tier list. This eating behaviour will be able to eat this entities event if it doesn't meet the tier requierement
+	/// </summary>
+	/// <param name="entitySku">Entity sku.</param>
+	public void AddToIgnoreTierList( string entitySku )
+	{
+		m_ignoreTierList.Add( entitySku );
 	}
 
 	protected void SetupHoldParametersForTier( string tierSku )
@@ -600,7 +613,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				Entity entity = m_checkEntities[e];
 				if ( entity.IsEdible() )
 				{
-					if (entity.IsEdible(m_tier))
+					if (entity.IsEdible(m_tier) || m_ignoreTierList.Contains( entity.sku ))
 					{
 						if (m_limitEating && (preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
 						{
