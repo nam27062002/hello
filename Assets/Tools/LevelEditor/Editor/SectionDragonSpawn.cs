@@ -58,7 +58,11 @@ namespace LevelEditor {
 				// Group in a box
 				EditorGUILayout.BeginVertical(LevelEditorWindow.styles.sectionContentStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 					// Aux vars
-					LevelTypeSpawners spawnersLevel = LevelEditorWindow.sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS) as LevelTypeSpawners;
+					LevelTypeSpawners spawnersLevel = null;
+					// TODO MALH: select proper spawner scene
+					List<Level> spawnersLevelList = LevelEditorWindow.sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS);
+					if ( spawnersLevelList != null && spawnersLevelList.Count > 0 ) 
+						spawnersLevel = spawnersLevelList[0] as LevelTypeSpawners;
 					bool levelLoaded = (spawnersLevel != null);
 					bool playing = EditorApplication.isPlaying;
 					string oldDragon = LevelEditor.settings.testDragon;
