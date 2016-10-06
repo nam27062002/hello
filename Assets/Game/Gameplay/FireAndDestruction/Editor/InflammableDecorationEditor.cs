@@ -43,10 +43,11 @@ public class InflammableDecorationEditor : Editor {
 		for (int i = 0; i < m_fireNodes.Count; i++) {
 			switch (Tools.current) {
 				case Tool.Move:		 m_fireNodes[i].position = Handles.PositionHandle(m_fireNodes[i].position, m_fireNodes[i].rotation);								break;
-				case Tool.Rotate:	 m_fireNodes[i].localRotation = Handles.RotationHandle(m_fireNodes[i].localRotation, m_fireNodes[i].position);						break;
 				case Tool.Scale:	 m_fireNodes[i].localScale = Handles.ScaleHandle(m_fireNodes[i].localScale, m_fireNodes[i].position, m_fireNodes[i].rotation, 1.5f);break;
 			}
-			m_fireParticles[i].transform.CopyFrom(m_fireNodes[i]);
+			m_fireParticles[i].transform.position = m_fireNodes[i].position;
+			m_fireParticles[i].transform.localScale = m_fireNodes[i].localScale;
+			//m_fireParticles[i].transform.CopyFrom(m_fireNodes[i]);
 			//m_fireParticles[i].GetComponent<ParticleSystem>().Simulate(1f, true);
 		}
 	}
