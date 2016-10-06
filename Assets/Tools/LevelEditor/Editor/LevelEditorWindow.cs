@@ -253,7 +253,7 @@ namespace LevelEditor {
 
 			EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true)); {
 				// Mode selector
-				LevelEditorSettings.Mode newMode = (LevelEditorSettings.Mode)GUILayout.Toolbar((int)LevelEditor.settings.selectedMode, new string[] {"SPAWNERS", "COLLISION", "ART" }, GUILayout.Height(50));
+				LevelEditorSettings.Mode newMode = (LevelEditorSettings.Mode)GUILayout.Toolbar((int)LevelEditor.settings.selectedMode, new string[] {"SPAWNERS", "COLLISION", "ART", "SOUND" }, GUILayout.Height(50));
 				if(newMode != LevelEditor.settings.selectedMode) {
 					// Mode changed! Do whatever needed
 					LevelEditor.settings.selectedMode = newMode;
@@ -358,12 +358,13 @@ namespace LevelEditor {
 
 			// If an art scene is opened, make it the main scene (so the lightning setup is the right one)
 			// Except for Mac, where some lightning settings make Unity crash -_-
-			#if !UNITY_EDITOR_OSX
-			Level artLevel = sectionLevels.GetLevel(LevelEditorSettings.Mode.ART);
-			if(artLevel != null) {
-				EditorSceneManager.SetActiveScene(artLevel.gameObject.scene);
+			// #if !UNITY_EDITOR_OSX
+			// TODO MALH: Select proper scene from art
+			List<Level> artLevel = sectionLevels.GetLevel(LevelEditorSettings.Mode.ART);
+			if(artLevel != null && artLevel.Count !=0) {
+				EditorSceneManager.SetActiveScene(artLevel[0].gameObject.scene);
 			}
-			#endif
+			// #endif
 
 			// Force a repaint
 			Repaint();

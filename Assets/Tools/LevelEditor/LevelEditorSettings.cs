@@ -52,6 +52,7 @@ namespace LevelEditor {
 			SPAWNERS,
 			COLLISION,
 			ART,
+			SOUND,
 
 			COUNT
 		}
