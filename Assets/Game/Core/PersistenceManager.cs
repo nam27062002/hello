@@ -26,7 +26,7 @@ using System.Collections.Generic;
 /// is completely independent from the PersistenceManager to allow more flexibility regarding
 /// future needs.
 /// </summary>
-public static class PersistenceManager {
+public class PersistenceManager : Singleton<PersistenceManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -54,6 +54,11 @@ public static class PersistenceManager {
         }
 	}
 
+	private bool m_loadCompleted = false;
+	public static bool loadCompleted {
+		get { return instance.m_loadCompleted; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -64,7 +69,7 @@ public static class PersistenceManager {
 		// Forces a different code path in the BinaryFormatter that doesn't rely on run-time code generation (which would break on iOS).
 		// From http://answers.unity3d.com/questions/30930/why-did-my-binaryserialzer-stop-working.html
 		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
-
+		instance.m_loadCompleted = false;
         Popups_Init();
     }
 
@@ -78,13 +83,17 @@ public static class PersistenceManager {
 	public static void Load(string _profileName = "")
     {               
         DragonManager.SetupUser(UsersManager.currentUser);
+		MissionManager.SetupUser(UsersManager.currentUser);
         EggManager.SetupUser(UsersManager.currentUser);
-        MissionManager.SetupUser(UsersManager.currentUser);
+		ChestManager.SetupUser(UsersManager.currentUser);
 
         //[DGR] FGOL SaveFacade is used to load the persistence
         // Makes sure Local ID is pointing to the active profile
+		// [AOC] Added OnLoadCompleted callback
         SaveGameManager.LocalSaveID = activeProfile;
         Debug.Log("Active profile id = " + activeProfile);
+		instance.m_loadCompleted = false;
+		SaveFacade.Instance.OnLoadComplete += instance.OnLoadCompleted;
         SaveFacade.Instance.Load();
 	}   
 
@@ -924,5 +933,19 @@ public static class PersistenceManager {
         return returnValue;
     }
 #endregion
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// SaveFacade's load has been completed.
+	/// </summary>
+	public void OnLoadCompleted() {
+		// Unsubscribe from the event
+		SaveFacade.Instance.OnLoadComplete -= OnLoadCompleted;
+
+		// Change flag
+		instance.m_loadCompleted = true;
+	}
 }
 

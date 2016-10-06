@@ -8,48 +8,69 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
 /// Global manager of chests.
-/// Has its own asset in the Resources/Singletons folder with all the required parameters.
 /// </summary>
-[CreateAssetMenu]
-public class ChestManager : Singleton<ChestManager> {
+public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public enum RewardType {
-		COINS,
-		PC,
-		BOOSTER,	// [AOC] TODO!!
-
-		COUNT
-	};
+	public static readonly int NUM_DAILY_CHESTS = 5;
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Store drop rate probabilities
-	private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
+	// Chests and chest getters
+	// All chests, not sorted
+	public static Chest[] dailyChests {
+		get { return instance.m_user.dailyChests; }
+	}
 
-	// Internal vars
-	private Chest m_selectedChest = null;
-	public static Chest selectedChest { get { return instance.m_selectedChest; }}
+	// Chest sorted by state (INIT -> NOT_COLLECTED -> PENDING_REWARD -> COLLECTED)
+	public static List<Chest> sortedChests {
+		get {
+			List<Chest> sortedChests = new List<Chest>(dailyChests);
+			sortedChests.Sort(
+				(_ch1, _ch2) => { 
+					return _ch1.state.CompareTo(_ch2.state);
+				}
+			);
+			return sortedChests;
+		}
+	}
 
-	// Reward
-	private RewardType m_rewardType;
-	public static RewardType rewardType { get { return instance.m_rewardType; }}
+	// Collected chests count. Includes chests in the PENDING_REWARD state.
+	public static int collectedAndPendingChests {
+		// C#'s Linq extensions come in handy!
+		get { return dailyChests.Count(_ch => _ch.collected); }
+	}
 
-	private int m_rewardAmount;
-	public static int rewardAmount { get { return instance.m_rewardAmount; }}
+	// Collected chests count. Only chests in the COLLECTED state.
+	public static int collectedChests {
+		// C#'s Linq extensions come in handy!
+		get { return dailyChests.Count(_ch => _ch.state == Chest.State.COLLECTED); }
+	}
 
-	private string m_rewardSku;
-	public static string rewardSku { get { return instance.m_rewardSku; }}
+	// Reset timer
+	public static DateTime resetTimestamp {
+		get { return instance.m_user.dailyChestsResetTimestamp; }
+		private set { instance.m_user.dailyChestsResetTimestamp = value; }
+	}
+
+	public static TimeSpan timeToReset {
+		get { return resetTimestamp - DateTime.UtcNow; }
+	}
+
+	// Internal
+	private UserProfile m_user = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -57,163 +78,205 @@ public class ChestManager : Singleton<ChestManager> {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	public ChestManager() {
-		// Initialize probability set from definitions
-		m_rewardDropRate = new ProbabilitySet();
-		List<DefinitionNode> rewardDefs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.CHEST_REWARDS, ref rewardDefs);
-		DefinitionsManager.SharedInstance.SortByProperty(ref rewardDefs, "index", DefinitionsManager.SortType.NUMERIC);	// Make sure it matches the enum
-		for(int i = 0; i < rewardDefs.Count; i++) {
-			m_rewardDropRate.AddElement(rewardDefs[i].sku);
-			m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("dropRate"), false);
+	public void Awake() {
+		
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	public void Update() {
+		// Must be initialized
+		if(!IsReady()) return;
+
+		// Check reset timer
+		if(DateTime.UtcNow >= resetTimestamp) {
+			// Reset!
+			Reset();
 		}
-		m_rewardDropRate.Validate();
 	}
 
 	//------------------------------------------------------------------//
-	// PUBLIC UTILS														//
+	// PUBLIC STATIC METHODS											//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Select a random chest from the current level and define it as the active chest.
-	/// All other chests in the level will be removed.
-	/// A level must be loaded beforehand, otherwise nothing will happen.
+	/// Pick all the collectible chests in the level and initialize with the current chest data.
 	/// To be called at the start of the game.
 	/// </summary>
-	public static void SelectChest() {
+	public static void OnLevelLoaded() {
 		// Get all the chests in the scene
-		GameObject[] chests = GameObject.FindGameObjectsWithTag(Chest.TAG);
-		if(chests.Length > 0) {
-			// [AOC] Filter by dragon tier (blockers, etc.)
-			List<GameObject> filteredChests = new List<GameObject>();
+		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
+		if(chestSpawners.Length > 0) {
+			// Special case: chests are disabled during the very first run!
+			if(instance.m_user.gamesPlayed <= 0) {
+				for(int i = 0; i < chestSpawners.Length; i++) {
+					GameObject.Destroy(chestSpawners[i]);
+				}
+				return;
+			}
+
+			// Aux vars
+			List<Chest> pendingChests = new List<Chest>(dailyChests);
+			List<CollectibleChest> validSpawners = new List<CollectibleChest>();
+			List<CollectibleChest> toRemove = new List<CollectibleChest>();
 			DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
-			for(int i = 0; i < chests.Length; i++) {
-				if(chests[i].GetComponent<Chest>().requiredTier <= currentTier) {
-					filteredChests.Add(chests[i]);
+			CollectibleChest spawner = null;
+			bool spawnerUsed = false;
+
+			// Iterate all spawn points and initialize them
+			for(int i = 0; i < chestSpawners.Length; i++) {
+				// Reset aux vars
+				spawnerUsed = false;
+				spawner = chestSpawners[i].GetComponent<CollectibleChest>();
+				if(spawner == null) continue;
+
+				// Does this spawn point match one of the chests?
+				for(int j = 0; j < pendingChests.Count && !spawnerUsed; j++) {
+					if(spawner.name == pendingChests[j].spawnPointID) {
+						// Yes!! Use it
+						spawner.Initialize(pendingChests[j]);
+						pendingChests.RemoveAt(j);
+						spawnerUsed = true;
+						break;
+					}
+				}
+
+				// Skip to next spawner if used
+				if(spawnerUsed) continue;
+
+				// Check whether it's a valid spawner (filter by dragon tier)
+				if(spawner.requiredTier <= currentTier) {
+					validSpawners.Add(spawner);
+				} else {
+					toRemove.Add(spawner);
 				}
 			}
 
-			// Grab a random one from the list and define it as active chest
-			// Don't enable chest during the first run
-			GameObject chestObj = null;
-			if(UsersManager.currentUser.gamesPlayed > 0) { 
-				chestObj = filteredChests.GetRandomValue();
-				instance.m_selectedChest = chestObj.GetComponent<Chest>();
+			// If we have any pending chest, assing a new spawner to it!
+			for(int i = 0; i < pendingChests.Count; i++) {
+				// Pick a random one from the valid spawners list
+				spawner = validSpawners.GetRandomValue();
+
+				// Update chest
+				// If chest was in the INIT state, change to NOT_COLLECTED
+				if(pendingChests[i].state == Chest.State.INIT) {
+					pendingChests[i].ChangeState(Chest.State.NOT_COLLECTED);
+				}
+				pendingChests[i].spawnPointID = validSpawners[i].name;
+
+				// Initialize spawner
+				spawner.Initialize(pendingChests[i]);
+				validSpawners.Remove(spawner);
 			}
 
-			// Remove the rest of chests from the scene
-			for(int i = 0; i < chests.Length; i++) {
-				// Skip if selected chest
-				if(chests[i] == chestObj) continue;
-
-				// Delete from scene otherwise
-				GameObject.Destroy(chests[i]);
-				chests[i] = null;
+			// Finally remove the unused spawners from the scene
+			toRemove.AddRange(validSpawners);
+			for(int i = 0; i < toRemove.Count; i++) {
+				GameObject.Destroy(toRemove[i].gameObject);
+				toRemove[i] = null;
 			}
 		}
 	}
 
 	/// <summary>
-	/// Clears the active chest.
-	/// To be called at the end of the game.
+	/// Give pending rewards and update chests states and collected chests count.
 	/// </summary>
-	public static void ClearSelectedChest() {
-		// Skip if there is no active chest
-		if(instance.m_selectedChest == null) return;
+	public static void ProcessChests() {
+		// Pre checks
+		if(!IsReady()) return;
 
-		// For now let's just lose the reference to it
-		instance.m_selectedChest = null;
+		// Process all chests pending reward
+		Chest chest = null;
+		int collectedCount = collectedChests;
+		for(int i = 0; i < dailyChests.Length; i++) {
+			// If chest is not pending a reward, do nothing
+			chest = dailyChests[i];
+			if(chest.state != Chest.State.PENDING_REWARD) continue;
+
+			// Mark chest as collected
+			chest.ChangeState(Chest.State.COLLECTED);
+
+			// Get reward corresponding to the current amount of collected chests
+			collectedCount++;
+			DefinitionNode rewardDef = GetRewardDef(collectedCount);
+			if(rewardDef == null) continue;	// Do nothing if a reward could not be found
+
+			// Give reward
+			switch(rewardDef.Get("type")) {
+				case "coins": {
+					instance.m_user.AddCoins(rewardDef.GetAsInt("amount"));
+				} break;
+
+				case "pc": {
+					instance.m_user.AddCoins(rewardDef.GetAsInt("pc"));
+				} break;
+			}
+		}
+
+		// Save persistence
+		PersistenceManager.Save();
 	}
 
 	/// <summary>
-	/// Generate a new chest reward using manager's setup.
-	/// Reward can be accessed through the manager's properties.
+	/// Get the reward definition corresponding to a specific amount of collected chests.
 	/// </summary>
-	public static void GenerateReward() {
-		// First of all, select reward type
-		// Special case: force some specific reward for the first chest found
-		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CHEST_REWARD)) {
-			// Tutorial completed, get random reward
-			instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
-		} else {
-			// Tutorial not completed: force some specific reward
-			// [AOC] TODO!! Disabled for now, give a random reward
-			instance.m_rewardType = (RewardType)instance.m_rewardDropRate.GetWeightedRandomElementIdx();
+	/// <returns>The definition, <c>null</c> if something is wrong.</returns>
+	/// <param name="_collectedChests">Amount of collected chests to be considered.</param>
+	public static DefinitionNode GetRewardDef(int _collectedChests) {
+		// Pretty straightforward, just check the "collectedChests" variable on the chests rewards definitions
+		return DefinitionsManager.SharedInstance.GetDefinitionByVariable(
+			DefinitionsCategory.CHEST_REWARDS, 
+			"collectedChests", 
+			_collectedChests.ToString(System.Globalization.CultureInfo.InvariantCulture)
+		);
+	}
 
-			// Complete tutorial
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CHEST_REWARD);
-			PersistenceManager.Save();
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Resets the chests and timer.
+	/// Made public for the cheats, shouldn't be called from outside.
+	/// </summary>
+	public static void Reset() {
+		// Pre checks
+		if(!IsReady()) return;
+
+		// Reset chests
+		for(int i = 0; i < dailyChests.Length; i++) {
+			// Should never be null!
+			if(dailyChests[i] == null) {
+				dailyChests[i] = new Chest(); 
+			}
+			dailyChests[i].Reset();
 		}
 
-		// Now compute amount/sku based on reward type
-		switch(instance.m_rewardType) {
-			case RewardType.COINS: {
-				// [AOC] Formula defined in the chestsRewards table
-				// A(LN(MaxDragon) +1)/B
-				DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "coins");
-				float A = rewardDef.GetAsFloat("factorA");
-				float B = rewardDef.GetAsFloat("factorB");
-				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
-				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
-				float minReward = A * (Mathf.Log(1) + 1) / B;
-				float reward = Random.Range(minReward, maxReward);
-				instance.m_rewardAmount = (int)MathUtils.Snap(reward, 100f);
-				instance.m_rewardAmount = Mathf.Max(1, instance.m_rewardAmount);	// At least 1 coin
-			} break;
+		// Reset timer
+		resetTimestamp = DateTime.UtcNow.AddHours(24);	// [AOC] HARDCODED!!
 
-			case RewardType.PC: {
-				// [AOC] Formula defined in the chestsRewards table
-				// A(LN(MaxDragon) +1)/B
-				DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.CHEST_REWARDS, "pc");
-				float A = rewardDef.GetAsFloat("factorA");
-				float B = rewardDef.GetAsFloat("factorB");
-				float ownedDragons = (float)DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
-				float maxReward = A * (Mathf.Log(ownedDragons) + 1) / B;
-				float minReward = A * (Mathf.Log(1) + 1) / B;
-				float reward = Random.Range(minReward, maxReward);
-				instance.m_rewardAmount = (int)MathUtils.Snap(reward, 1f);
-				instance.m_rewardAmount = Mathf.Max(1, instance.m_rewardAmount);	// At least 1 pc
-			} break;
+		// Notify game
+		Messenger.Broadcast(GameEvents.CHESTS_RESET);
 
-			case RewardType.BOOSTER: {
-				instance.m_rewardAmount = 1;
-				instance.m_rewardSku = "TODO!!";
-			} break;
-		}
+		// Save persistence
+		PersistenceManager.Save();
+	}
+
+	//------------------------------------------------------------------//
+	// PERSISTENCE														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Has the manager been initialized with persistence data?
+	/// </summary>
+	/// <returns>Whether the manager has been initialized.</returns>
+	public static bool IsReady() {
+		return instance.m_user != null && PersistenceManager.loadCompleted;
 	}
 
 	/// <summary>
-	/// Only for testing purposes, sets a custom reward and amount.
+	/// Initialize the manager with persistence data.
 	/// </summary>
-	/// <param name="_type">Reward type.</param>
-	/// <param name="_amount">Reward amount.</param>
-	/// <param name="_sku">Reward sku.</param>
-	public static void SetReward(RewardType _type, int _amount, string _sku) {
-		instance.m_rewardType = _type;
-		instance.m_rewardAmount = _amount;
-		instance.m_rewardSku = _sku;
-	}
-
-	/// <summary>
-	/// Applies the previously generated reward to the player's profile.
-	/// Persistence should be saved afterwards.
-	/// </summary>
-	public static void ApplyReward() {
-		// [AOC] TODO!! Make sure a reward has been generated
-		// [AOC] TODO!! Send game event?
-
-		// Depends on reward type
-		switch(instance.m_rewardType) {
-			case RewardType.COINS: {
-				UsersManager.currentUser.AddCoins(instance.m_rewardAmount);
-			} break;
-
-			case RewardType.PC: {
-				UsersManager.currentUser.AddPC(instance.m_rewardAmount);
-			} break;
-
-			case RewardType.BOOSTER: {
-				// [AOC] TODO!!
-			} break;
-		}
-	}
+	/// <param name="_user">The persistence data.</param>
+	public static void SetupUser(UserProfile _user) {
+		instance.m_user = _user;
+	} 
 }

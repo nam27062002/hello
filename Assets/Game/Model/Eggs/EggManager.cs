@@ -258,14 +258,21 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	}
 
 	/// <summary>
-	/// Clears the selected collectible egg.
 	/// To be called at the end of the game.
+	/// If the collectible egg was found, adds it to the inventory.
+	/// Otherwise clears the collectible egg.
 	/// </summary>
-	public static void ClearCollectibleEgg() {
-		// Skip if there is no active egg
-		if(instance.m_collectibleEgg == null) return;
+	public static void ProcessCollectibleEgg() {
+		// Was the collectible egg found?
+		if(instance.m_collectibleEgg != null && instance.m_collectibleEgg.collected) {
+			// Add the egg to the inventory
+			AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));		// [AOC] Collectible egg is always a standard egg
 
-		// For now let's just lose the reference to it
+			// Save persistence
+			PersistenceManager.Save();
+		}
+
+		// In any case, clear the collectible egg
 		instance.m_collectibleEgg = null;
 	}
 
