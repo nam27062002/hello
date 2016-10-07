@@ -18,14 +18,21 @@ public class DragonParticleController : MonoBehaviour
 	public Transform m_cloudTrailAnchor;
 	private ParticleSystem m_cloudTrailInstance;
 
+	private Transform _transform;
+	private bool m_insideWater = false;
+	private float m_waterY = 0;
+	private float m_waterDepth = 5;
+	private const float m_waterDepthIncrease = 2;
+
 	void Start () 
 	{
-		GameObject go;
-
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
+
+		m_waterDepth = InstanceManager.player.data.scale + m_waterDepthIncrease;
+		_transform = transform;
 	}
 
 	void OnEnable() {
@@ -36,6 +43,22 @@ public class DragonParticleController : MonoBehaviour
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+	}
+
+	void Update()
+	{
+		if ( m_insideWater && m_bubblesInstance != null)	
+		{
+			if ( m_waterY - _transform.position.y > m_waterDepth ){
+				// Bubbles should be activated
+				if ( !m_bubblesInstance.isPlaying )
+					m_bubblesInstance.Play();
+			}else{
+				// Bubbles should be desactivated
+				if ( m_bubblesInstance.isPlaying )
+					m_bubblesInstance.Stop();
+			}
+		}
 	}
 
 	private ParticleSystem InitParticles(GameObject _prefab, Transform _anchor)
@@ -54,18 +77,20 @@ public class DragonParticleController : MonoBehaviour
 	void OnLevelUp( DragonData data )
 	{
 		m_levelUpInstance.Play();
+		m_waterDepth = data.scale + m_waterDepthIncrease;
 	}
 
 
 	public void OnEnterWater()
 	{
-		if ( m_bubblesInstance != null )
-			m_bubblesInstance.Play();
+		m_waterY = _transform.position.y;
+		m_insideWater = true;
 	}
 
 	public void OnExitWater()
 	{
-		if ( m_bubblesInstance != null )
+		m_insideWater = false;
+		if ( m_bubblesInstance != null && m_bubblesInstance.isPlaying)
 			m_bubblesInstance.Stop();
 	}
 

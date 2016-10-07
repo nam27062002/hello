@@ -85,34 +85,59 @@ public class LevelManager : SingletonScriptableObject<LevelManager> {
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
 		AsyncOperation loadingTask = null;
 
-		loadingTask = SceneManager.LoadSceneAsync(def.GetAsString("spawnersScene"), LoadSceneMode.Additive);
-		if(DebugUtils.SoftAssert(loadingTasks != null, "The spawners scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
-			loadingTasks.Add(loadingTask);
-		}
-
-		loadingTask = SceneManager.LoadSceneAsync(def.GetAsString("collisionScene"), LoadSceneMode.Additive);
-		if(DebugUtils.SoftAssert(loadingTasks != null, "The collision scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
-			loadingTasks.Add(loadingTask);
-		}
-
-		loadingTask = SceneManager.LoadSceneAsync(def.GetAsString("artScene"), LoadSceneMode.Additive);
-		if(DebugUtils.SoftAssert(loadingTasks != null, "The art scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) 
+		List<string> spawnersScene = def.GetAsList<string>("spawnersScene");
+		for( int i = 0; i<spawnersScene.Count; i++ )
 		{
-			loadingTasks.Add(loadingTask);
-			loadingTask.allowSceneActivation = true;
-
+			loadingTask = SceneManager.LoadSceneAsync(spawnersScene[i], LoadSceneMode.Additive);
+			if(DebugUtils.SoftAssert(loadingTasks != null, "The spawners scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
+				loadingTasks.Add(loadingTask);
+			}	
 		}
 
+		List<string> collisionScene = def.GetAsList<string>("collisionScene");
+		for( int i = 0; i<collisionScene.Count; i++ )
+		{
+			loadingTask = SceneManager.LoadSceneAsync(collisionScene[i], LoadSceneMode.Additive);
+			if(DebugUtils.SoftAssert(loadingTasks != null, "The collision scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
+				loadingTasks.Add(loadingTask);
+			}
+		}
+
+		List<string> soundScene = def.GetAsList<string>("soundScene");
+		for( int i = 0; i<soundScene.Count; i++ )
+		{
+			if ( !string.IsNullOrEmpty( soundScene[i]) ){
+				loadingTask = SceneManager.LoadSceneAsync(soundScene[i], LoadSceneMode.Additive);
+				if(DebugUtils.SoftAssert(loadingTasks != null, "The sound scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) {
+					loadingTasks.Add(loadingTask);
+				}
+			}
+		}
+
+		List<string> artScene = def.GetAsList<string>("artScene");
+		for( int i = 0; i<artScene.Count; i++ )
+		{
+			loadingTask = SceneManager.LoadSceneAsync(artScene[i], LoadSceneMode.Additive);
+			if(DebugUtils.SoftAssert(loadingTasks != null, "The art scene defined to level " + _sku + " couldn't be found (probably mispelled or not added to build settings)")) 
+			{
+				loadingTasks.Add(loadingTask);
+			}
+		}
+
+
+
+		if ( loadingTask != null )
+			loadingTask.allowSceneActivation = true;
 		return loadingTasks.ToArray();
 	}
 
 	public static void SetArtSceneActive( string _sku )
 	{
 		// [AOC] For some reason, the lightning settings of the Art scene makes the OSX Editor to crash
-		#if !UNITY_EDITOR_OSX
+		// #if !UNITY_EDITOR_OSX
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, _sku);
-		Scene scene = SceneManager.GetSceneByName(def.GetAsString("artScene"));
+		Scene scene = SceneManager.GetSceneByName(def.GetAsString("activeScene"));
 		SceneManager.SetActiveScene(scene);
-		#endif
+		// #endif
 	}
 }

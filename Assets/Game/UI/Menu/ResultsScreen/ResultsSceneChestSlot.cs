@@ -51,24 +51,34 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// <summary>
 	/// Setup and start animation with the given chest info.
 	/// </summary>
-	/// <param name="_chest">The chest to be displayed.</param>
-	public void LaunchAnimation(Chest _chest) {
-		// [AOC] TODO!! Gather the reward for this chest and instantiate the appropiate reward prefab
-		bool coins = Random.Range(0f, 1f) < 0.75f ? true : false;
-		string rewardPrefabPath = coins ? COINS_REWARD_PREFAB : PC_REWARD_PREFAB;	// [AOC] Simulate variety
-		GameObject rewardPrefab = Resources.Load<GameObject>(rewardPrefabPath);
-		m_rewardObj = GameObject.Instantiate<GameObject>(rewardPrefab);
-		m_rewardObj.transform.SetParent(this.transform, false);
-		m_rewardObj.SetActive(false);
+	/// <param name="_chestRewardDef">Data to be displayed.</param>
+	public void LaunchAnimation(DefinitionNode _chestRewardDef) {
+		// Skip reward setup if def is not valid
+		if(_chestRewardDef != null) {
+			// Aux vars
+			string rewardPrefabPath = "";
 
-		// Set text
-		TextMesh text = m_rewardObj.FindComponentRecursive<TextMesh>();
-		if(text != null) {
-			if(coins) {
-				int[] values = {50, 200, 500, 1000};
-				text.text = "+" + StringUtils.FormatNumber(values.GetRandomValue());
-			} else {
-				text.text = "+" + 5.ToString();
+			// PC or coins?
+			switch(_chestRewardDef.Get("type")) {
+				case "coins": {
+					rewardPrefabPath = COINS_REWARD_PREFAB;
+				} break;
+
+				case "pc": {
+					rewardPrefabPath = PC_REWARD_PREFAB;
+				} break;
+			}
+
+			// Load and instantiate reward prefab
+			GameObject rewardPrefab = Resources.Load<GameObject>(rewardPrefabPath);
+			m_rewardObj = GameObject.Instantiate<GameObject>(rewardPrefab);
+			m_rewardObj.transform.SetParent(this.transform, false);
+			m_rewardObj.SetActive(false);
+
+			// Set text
+			TextMesh text = m_rewardObj.FindComponentRecursive<TextMesh>();
+			if(text != null) {
+				text.text = "+" + StringUtils.FormatNumber(_chestRewardDef.GetAsInt("amount"));
 			}
 		}
 

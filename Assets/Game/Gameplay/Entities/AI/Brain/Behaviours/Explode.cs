@@ -48,6 +48,8 @@ namespace AI {
 						knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_data.damage, 2f));
 
 						dragonMotion.AddForce(knockBack);
+					} else if ( collider.CompareTag("Pet") ){
+						// is armored pet we should push it
 					} else if (collider.layer == LayerMask.NameToLayer("GroundPreys")) {
 						IMachine machine = collider.GetComponent<IMachine>();
 						if (machine != null) {

@@ -6,7 +6,7 @@ public class FrameColoring : MonoBehaviour
 	
 	public Color m_fireColor = Color.black;
 	public Color m_superFireColor = Color.black;
-	public Color m_startingColor = Color.black;
+	public Color m_starvingColor = Color.black;
 
 	private float m_value = 0.5f;
 	private Color m_color;
@@ -16,6 +16,7 @@ public class FrameColoring : MonoBehaviour
 	DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
 	private bool m_starvingOn = false;
 	private bool m_criticaOn = false;
+	private bool m_ko = false;
 
 	void Start()
 	{
@@ -24,6 +25,8 @@ public class FrameColoring : MonoBehaviour
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
 		Messenger.AddListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCritical);
+		Messenger.AddListener(GameEvents.PLAYER_KO, OnKo);
+		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	private void OnDestroy() 
@@ -31,6 +34,8 @@ public class FrameColoring : MonoBehaviour
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_STARVING_TOGGLED, OnStarving);
 		Messenger.RemoveListener<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, OnCritical);
+		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnKo);
+		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void OnRenderImage (RenderTexture source, RenderTexture destination)
@@ -52,15 +57,21 @@ public class FrameColoring : MonoBehaviour
 			}
 
 		}
+
 		else if ( m_criticaOn )
 		{
 			m_value = Mathf.Lerp( m_value, 0.7f + Mathf.Sin( Time.time * 5 ) * 0.2f, Time.deltaTime * 10);
-			m_color = Color.Lerp( m_color, m_startingColor, Time.deltaTime * 10);
+			m_color = Color.Lerp( m_color, m_starvingColor, Time.deltaTime * 10);
 		}
 		else if ( m_starvingOn )
 		{
 			m_value = Mathf.Lerp( m_value, 0.15f + Mathf.Sin( Time.time * 2.5f ) * 0.1f, Time.deltaTime * 10);
-			m_color = Color.Lerp( m_color, m_startingColor, Time.deltaTime * 5);
+			m_color = Color.Lerp( m_color, m_starvingColor, Time.deltaTime * 5);
+		}
+		else if ( m_ko )
+		{
+			m_value = Mathf.Lerp( m_value, 0.9f + Mathf.Sin( Time.time * 2.5f ) * 0.05f, Time.deltaTime * 10);
+			m_color = Color.Lerp( m_color, m_starvingColor, Time.deltaTime * 2.5f);
 		}
 		else
 		{
@@ -92,5 +103,15 @@ public class FrameColoring : MonoBehaviour
 	private void OnCritical( bool _isCritical ) 
 	{
 		m_criticaOn = _isCritical;
+	}
+
+	private void OnKo()
+	{
+		m_ko = true;
+	}
+
+	private void OnRevive()
+	{
+		m_ko = false;	
 	}
 }

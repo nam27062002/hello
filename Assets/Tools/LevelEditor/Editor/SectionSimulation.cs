@@ -90,8 +90,8 @@ namespace LevelEditor {
 				// Group in a box
 				EditorGUILayout.BeginVertical(LevelEditorWindow.styles.sectionContentStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 					// Only show if a Spawners Level is loaded
-					Level spawnersLevel = LevelEditorWindow.sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS);
-					if(spawnersLevel == null) {
+					List<Level> spawnersLevel = LevelEditorWindow.sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS);
+					if(spawnersLevel == null || spawnersLevel.Count == 0) {
 						EditorGUILayout.HelpBox("A Spawners scene is required to run the simulator", MessageType.Error);
 					} else {
 						// If any parameter changes, update simulation

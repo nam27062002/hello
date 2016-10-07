@@ -101,7 +101,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 110610}
-  m_Mesh: {fileID: 4300000, guid: 515b459d985b4284cbe4b62f34cf75e7, type: 3}
+  m_Mesh: {fileID: 4300002, guid: fe49200c65d5648cd80053416401a2e7, type: 3}
 --- !u!65 &6588548
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -142,6 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 670d2c63586a3415db2cd3f1d28a5f46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_incubatorFX: {fileID: 0}
 --- !u!114 &11463772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -273,7 +274,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013394803362}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 11
   startDelay:
     scalar: 0
@@ -311,12 +312,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 63433504
   looping: 1
   prewarm: 1
   playOnAwake: 1
   moveWithTransform: 0
+  autoRandomSeed: 0
   scalingMode: 1
+  randomSeed: 63433504
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -1976,7 +1978,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012726067838}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 11
   startDelay:
     scalar: 0
@@ -2014,12 +2016,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 63433504
   looping: 1
   prewarm: 1
   playOnAwake: 1
   moveWithTransform: 0
+  autoRandomSeed: 0
   scalingMode: 1
+  randomSeed: 63433504
   InitialModule:
     serializedVersion: 2
     enabled: 1

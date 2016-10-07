@@ -29,7 +29,8 @@ public class MenuHUD : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Not much to do
+		// HUD should always be on top, but for editing purposes, we keep it belows
+		this.transform.SetAsLastSibling();
 	}
 
 	/// <summary>

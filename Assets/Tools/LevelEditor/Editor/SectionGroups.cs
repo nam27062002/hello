@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -53,7 +54,15 @@ namespace LevelEditor {
 				GUI.skin.label.alignment = TextAnchor.UpperLeft;
 				
 				// Aux vars
-				Group[] groups = LevelEditorWindow.sectionLevels.activeLevel.GetComponentsInChildren<Group>();
+				List<Level> levels = LevelEditorWindow.sectionLevels.activeLevels;
+				List<Group> groupsList = new List<Group>();
+				for( int i = 0; i<levels.Count; i++ )
+				{
+					Group[] g = levels[i].GetComponentsInChildren<Group>();	
+					groupsList.AddRange(g);
+				}
+				Group[] groups = groupsList.ToArray();
+				 
 					
 				// Spacing
 				GUILayout.Space(2);
@@ -62,7 +71,7 @@ namespace LevelEditor {
 				EditorGUILayout.BeginHorizontal(); {
 					if(GUILayout.Button("New")) {
 						// An external window will manage it
-						AddGroupWindow.Show(LevelEditorWindow.sectionLevels.activeLevel, OnGroupCreated);
+						// AddGroupWindow.Show(LevelEditorWindow.sectionLevels.activeLevels, OnGroupCreated);
 					}
 					
 					GUI.enabled = (m_selectedGroup != null);
