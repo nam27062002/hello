@@ -20,7 +20,7 @@ public class UINotification : ShowHideAnimator {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static string DEFAULT_PREFAB_PATH = "UI/Common/Generic/PF_UINotification";	// Just for comfort, change it if path changes
+	public static string DEFAULT_PREFAB_PATH = "UI/Common/PF_UINotification";	// Just for comfort, change it if path changes
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

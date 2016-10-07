@@ -69,7 +69,7 @@ public class DisguisePowerTooltip : MonoBehaviour {
 		// Power icon
 		if(m_powerIcon != null) {
 			// Load power icons spritesheet
-			Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Popups/Disguises/powers/icons_powers");
+			Sprite[] allIcons = Resources.LoadAll<Sprite>("UI/Metagame/Powers/icons_powers");
 
 			// Pick target icon
 			string iconName = _powerDef.GetAsString("icon");

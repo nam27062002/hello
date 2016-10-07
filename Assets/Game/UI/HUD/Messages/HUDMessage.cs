@@ -341,23 +341,16 @@ public class HUDMessage : MonoBehaviour {
 		// Setup text
 		// TODO: we'll add all the icons into a font and we'll print the icons as a character.
 		Image icon = this.FindComponentRecursive<Image>();
-		if(_requiredTier == DragonTier.COUNT) {
-			// Required tier unknown, hide icon
-			icon.enabled = false;
-		} else {
+		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, "order", ((int)_requiredTier).ToString());
+		if(tierDef != null) {
 			// Show icon
 			icon.enabled = true;
 
 			// Load proper icon
-			string path = "UI/Menu/Graphics/tiers/";
-			switch(_requiredTier) {
-				case DragonTier.TIER_0: path += "icon_xs";	break;
-				case DragonTier.TIER_1: path += "icon_s";	break;
-				case DragonTier.TIER_2: path += "icon_m";	break;
-				case DragonTier.TIER_3: path += "icon_l";	break;
-				case DragonTier.TIER_4: path += "icon_xl";	break;
-			}
-			icon.sprite = Resources.Load<Sprite>(path);		// [AOC] An async/precached load might be required
+			icon.sprite = Resources.Load<Sprite>(tierDef.GetAsString("icon"));	// [AOC] An async/precached load might be required
+		} else {
+			// Disable icon
+			icon.enabled = false;
 		}
 
 		// If already visible and trying to eat the same entity, don't restart the animation

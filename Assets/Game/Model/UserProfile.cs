@@ -288,8 +288,7 @@ public class UserProfile : UserSaveSystem
         m_saveTimestamp = DateTime.UtcNow;
 
         JSONNode json = ToJson();
-		string jsonString = json.ToString();
-        m_saveData.Merge(jsonString);      
+		m_saveData.Merge(json.ToString());
     }
 
 	//------------------------------------------------------------------------//
@@ -301,7 +300,6 @@ public class UserProfile : UserSaveSystem
     /// <param name="_data">The data object loaded from persistence.</param>
     private void Load(SimpleJSON.JSONNode _data) {
 		// Just read values from persistence object
-		Debug.Log("Loading UserProfile\n" + _data.ToString());
 		SimpleJSON.JSONNode profile = _data["userProfile"];
 
         if (profile.ContainsKey("timestamp"))
@@ -487,7 +485,6 @@ public class UserProfile : UserSaveSystem
 	/// </summary>
 	/// <param name="_data">Persistence data.</param>
 	private void LoadChestsData(SimpleJSON.JSONClass _data) {
-		Debug.Log("LOADING CHESTS DATA!!\n" + _data.ToString());
 		// Amount of chests is constant
 		SimpleJSON.JSONArray chestsArray = _data["chests"].AsArray;
 		if(chestsArray != null) {
@@ -530,19 +527,20 @@ public class UserProfile : UserSaveSystem
         profile.Add("timestamp", m_saveTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         // Economy
-        profile.Add( "sc", m_coins.ToString());
-		profile.Add( "pc", m_pc.ToString());
+		profile.Add( "sc", m_coins.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		profile.Add( "pc", m_pc.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
-		profile.Add("tutorialStep",((int)m_tutorialStep).ToString());
-		profile.Add("furyUsed", m_furyUsed.ToString());
+		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(System.Globalization.CultureInfo.InvariantCulture));
+		profile.Add("furyUsed", m_furyUsed.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
 		// Game stats
-		profile.Add("gamesPlayed",m_gamesPlayed.ToString());
-		profile.Add("highScore",m_highScore.ToString());
-		profile.Add("superFuryProgression",m_superFuryProgression.ToString());
+		profile.Add("gamesPlayed",m_gamesPlayed.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		profile.Add("highScore",m_highScore.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		profile.Add("superFuryProgression",m_superFuryProgression.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
 		data.Add("userProfile", profile);
 
 		// DRAGONS

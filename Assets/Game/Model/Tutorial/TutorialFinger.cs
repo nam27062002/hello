@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TutorialFinger : MonoBehaviour 
 {
 
-	public const string PATH = "UI/Popups/Tutorial/PF_TutorialFinger";
+	public const string PATH = "UI/Common/PF_TutorialFinger";
 	
 	private Sequence m_sequence = null;
 	private Transform m_start;

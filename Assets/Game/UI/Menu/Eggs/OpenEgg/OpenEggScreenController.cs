@@ -496,7 +496,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 					// If not already done, instantiate God Rays effect
 					if(godraysObj == null) {
-						GameObject prefab = Resources.Load<GameObject>("UI/Common/Effects/PF_GodRayFX");
+						GameObject prefab = Resources.Load<GameObject>("UI/FX/PF_GodRayFX");
 						godraysObj = GameObject.Instantiate<GameObject>(prefab);
 						godraysObj.name = "godrayFX";
 						godraysObj.transform.SetParentAndReset(powerIcon.transform);

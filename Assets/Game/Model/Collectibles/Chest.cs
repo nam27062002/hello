@@ -95,7 +95,7 @@ public class Chest {
 		ChangeState(State.NOT_COLLECTED);
 
 		// Clear spawner ID
-		m_spawnPointID = string.Empty;
+		m_spawnPointID = "";
 	}
 
 	//------------------------------------------------------------------------//
@@ -125,6 +125,7 @@ public class Chest {
 		data.Add("state", ((int)m_state).ToString());
 
 		// Spawn point ID
+		if(string.IsNullOrEmpty(m_spawnPointID)) m_spawnPointID = "-";	// [AOC] Apparently SimpleJson crashes when parsing an empty string in the ToString() method. Use this for now.
 		data.Add("spawnPointID", m_spawnPointID);
 
 		// Done!
