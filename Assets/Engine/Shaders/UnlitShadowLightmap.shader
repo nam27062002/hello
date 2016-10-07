@@ -43,7 +43,9 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
 					LIGHTING_COORDS(2,3)
+					#if LIGHTMAP_ON
 					float2 lmap : TEXCOORD4;
+					#endif
 					float4 color : COLOR; 
 				};
 

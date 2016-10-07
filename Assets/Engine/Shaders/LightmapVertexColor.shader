@@ -43,7 +43,9 @@ Shader "Hungry Dragon/Lightmap And VertexColor (Background)"
 					float4 vertex : SV_POSITION;
 					half2 texcoord : TEXCOORD0;
 					HG_FOG_COORDS(1)
-					float2 lmap : TEXCOORD4; 
+					#if LIGHTMAP_ON
+					float2 lmap : TEXCOORD4;
+					#endif
 					float4 color : COLOR;
 				};
 
