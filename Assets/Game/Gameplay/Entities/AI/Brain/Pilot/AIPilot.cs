@@ -60,7 +60,6 @@ namespace AI {
 			}
 
 			m_speedFactor = m_speedFactorRange.GetRandom();
-			m_speedVariation = UnityEngine.Random.Range(0.98f, 1.02f); 
 
 			m_target = transform.position;
 			m_slowDown = false;
