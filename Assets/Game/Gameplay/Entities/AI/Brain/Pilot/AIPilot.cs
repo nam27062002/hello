@@ -26,8 +26,6 @@ namespace AI {
 		[SerializeField] private Range m_speedFactorRange = new Range(1f, 1f);
 		private float m_speedFactor;
 		protected override float speedFactor { get { return m_speedFactor; } }
-		private float m_speedVariation;
-		protected override float speedVariation { get { return m_speedVariation; } }
 
 
 		public virtual bool avoidCollisions { get { return false; } set { } }
