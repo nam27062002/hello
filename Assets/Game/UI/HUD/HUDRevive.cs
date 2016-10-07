@@ -59,6 +59,7 @@ public class HUDRevive : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		m_timer.Stop();
 		m_paidReviveCount = 0;
 		m_freeReviveCount = 0;
@@ -78,6 +79,7 @@ public class HUDRevive : MonoBehaviour {
 	void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 
 		// Restore timescale
 		Time.timeScale = 1f;
@@ -105,26 +107,7 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	private void DoRevive() {
 		// Revive!
-		bool wasStarving = InstanceManager.player.IsStarving();
-		bool wasCritical = InstanceManager.player.IsCritical();
 		InstanceManager.player.ResetStats(true);
-
-		// Disable status effects if required
-		if(wasStarving != InstanceManager.player.IsStarving()) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, InstanceManager.player.IsStarving());
-		}
-		if(wasCritical != InstanceManager.player.IsCritical()) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, InstanceManager.player.IsCritical());
-		}
-
-		// Stop timer
-		m_timer.Stop();
-
-		// Hide
-		m_animator.Hide();
-
-		// Restore timescale
-		Time.timeScale = 1f;
 	}
 
 	//------------------------------------------------------------------------//
@@ -204,6 +187,18 @@ public class HUDRevive : MonoBehaviour {
 
 		// Slow motion
 		Time.timeScale = 0.25f;
+	}
+
+	private void OnPlayerRevive()
+	{
+		// Stop timer
+		m_timer.Stop();
+
+		// Hide
+		m_animator.Hide();
+
+		// Restore timescale
+		Time.timeScale = 1f;
 	}
 
 	/// <summary>
