@@ -9,8 +9,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 495222}
   - 114: {fileID: 11418398}
-  - 114: {fileID: 11419134}
   - 114: {fileID: 114000012306135012}
+  - 114: {fileID: 114000012318038126}
   m_Layer: 0
   m_Name: SP_SpiderRed
   m_TagString: Untagged
@@ -24,7 +24,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 111670}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 113.34, y: 193.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -45,23 +45,6 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
---- !u!114 &11419134
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 111670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_circular: 0
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -3.2709274, y: 7.3619843, z: 0}
-  - {x: 0.15995407, y: -0.06149292, z: 0}
-  - {x: 16.463293, y: -0.09431076, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -94,8 +77,8 @@ MonoBehaviour:
     max: 1
   m_rails: 1
   m_flockBonus: 0
-  m_activationChange: 100
-  m_activeOnStart: 0
+  m_minTier: 0
+  m_activationChance: 100
   m_alwaysActive: 0
   m_activationTriggers: []
   m_deactivationTriggers: []
@@ -103,3 +86,17 @@ MonoBehaviour:
     min: 0
     max: 0
   m_maxSpawns: 0
+--- !u!114 &114000012318038126
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 111670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.0000038146973, y: -0.0000076293945}
+  size: {x: 12.280235, y: 8.293594}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
