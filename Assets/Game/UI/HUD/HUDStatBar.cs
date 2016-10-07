@@ -322,7 +322,7 @@ public class HUDStatBar : MonoBehaviour {
 
 					}
 				}
-				if (showAnimations) {
+				if (showAnimations && remainingLives < m_extraIcons.Count) {
 					Animator anim = m_extraIcons[remainingLives].GetComponent<Animator>();
 					if (anim) {
 						anim.enabled = true;

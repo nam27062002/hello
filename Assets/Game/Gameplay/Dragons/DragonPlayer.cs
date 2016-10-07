@@ -205,6 +205,10 @@ public class DragonPlayer : MonoBehaviour {
 	/// Reset some variable stats for this dragon.
 	/// </summary>
 	public void ResetStats(bool _revive) {
+
+		bool wasStarving = IsStarving();
+		bool wasCritical = IsCritical();
+
 		m_health = m_healthMax;
 		m_energy = m_energyMax;
 
@@ -214,6 +218,21 @@ public class DragonPlayer : MonoBehaviour {
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
 		} else {
 			m_invulnerableAfterReviveTimer = 0;
+		}
+
+		if ( _revive )
+		{
+			bool isStarving = IsStarving();
+			if(wasStarving != isStarving) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+			}
+
+			bool isCritical = IsCritical();
+			if(wasCritical != isCritical) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
+			}
+
+			Messenger.Broadcast(GameEvents.PLAYER_REVIVE);
 		}
 	}
 
@@ -241,31 +260,37 @@ public class DragonPlayer : MonoBehaviour {
 				ResetStats(true);
 				Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
 			}
+			// If I have an angel pet and aura still playing
+
 			else
 			{
 				// Send global even
 				Messenger.Broadcast(GameEvents.PLAYER_KO);
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, false);
-
+					// Hode Starving and Critical effects
+				if (wasStarving)
+					Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
+				if (wasCritical)
+					Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, false);
 				// Make dragon unplayable (xD)
 				playable = false;
 			}
 		}
-
-		// Check for starvation
-		bool isStarving = IsStarving();
-		if(wasStarving != isStarving) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
-		}
-
-		bool isCritical = IsCritical();
-		if(wasCritical != isCritical) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
-
-			// Special case: if we're leaving the critical stat but we're still starving, toggle starving mode
-			if(!isCritical && isStarving) {
+		else
+		{
+			// Check for starvation
+			bool isStarving = IsStarving();
+			if(wasStarving != isStarving) {
 				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+			}
+
+			bool isCritical = IsCritical();
+			if(wasCritical != isCritical) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
+
+				// Special case: if we're leaving the critical stat but we're still starving, toggle starving mode
+				if(!isCritical && isStarving) {
+					Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+				}
 			}
 		}
 	}
