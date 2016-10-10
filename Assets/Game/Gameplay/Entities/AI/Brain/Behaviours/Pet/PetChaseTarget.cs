@@ -29,8 +29,6 @@ namespace AI {
 			protected MachineEatBehaviour m_eatBehaviour;
 			protected float m_timer;
 
-			private object[] m_transitionParam;
-
 			public override StateComponentData CreateData() {
 				return new PetChaseTargetData();
 			}
@@ -42,17 +40,14 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<PetChaseTargetData>();
 				m_eatBehaviour = m_pilot.GetComponent<MachineEatBehaviour>();
-				m_eatBehaviour.PauseEating();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
-				m_transitionParam = new object[1];
 				m_target = null;
-
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.SetMoveSpeed(m_data.speed);
-				m_pilot.SlowDown(true);
+				m_pilot.SlowDown(false);
 
 				m_target = null;
 				m_targetMachine = null;
@@ -80,7 +75,6 @@ namespace AI {
 				if ( m_targetMachine != null )
 					m_targetMachine.isPetTarget = true;
 
-				m_eatBehaviour.ResumeEating();
 				m_timer = 0;
 			}
 
@@ -88,8 +82,7 @@ namespace AI {
 			{
 				if ( m_targetMachine != null )
 					m_targetMachine.isPetTarget = false;
-				m_eatBehaviour.PauseEating();
-
+				m_pilot.SlowDown(true);
 				m_target = null;
 				m_targetMachine = null;
 				m_targetEntity = null;	
@@ -141,13 +134,18 @@ namespace AI {
 						}
 						else
 						{
+							Vector3 pos;
 							// Chase
 							if (m_targetEntity != null) {
-								m_pilot.GoTo(m_targetEntity.circleArea.center);	
+								pos = m_targetEntity.circleArea.center;
+								if (m_targetMachine != null)
+									pos += m_targetMachine.velocity;
 							} else {
-								m_pilot.GoTo(m_target.position);
+								pos = m_target.position;
 							}
-							
+							// pos.z = Mathf.Clamp( pos.z, -2, 2);
+							m_pilot.GoTo(pos);
+							m_pilot.SetMoveSpeed(m_data.speed);
 						}
 					}
 
