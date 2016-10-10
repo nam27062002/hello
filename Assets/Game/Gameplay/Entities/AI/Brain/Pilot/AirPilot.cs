@@ -58,6 +58,10 @@ namespace AI {
 						v = v.normalized * Mathf.Min(moveSpeed, v.magnitude * 2);
 						Util.MoveTowardsVector3WithDamping(ref m_seek, ref v, 32f * Time.deltaTime, 8.0f);
 					} else {
+						if ( v.sqrMagnitude < moveSpeed * moveSpeed )
+							v = v.normalized * Mathf.Max( moveSpeed * 0.25f, v.magnitude * 2 );
+						else
+							v = v.normalized * moveSpeed;
 						m_seek = v;
 					}
 					Debug.DrawLine(m_machine.position, m_machine.position + m_seek, Color.green);

@@ -139,7 +139,7 @@ namespace AI {
 							if (m_targetEntity != null) {
 								pos = m_targetEntity.circleArea.center;
 								if (m_targetMachine != null)
-									pos += m_targetMachine.velocity;
+									pos += m_targetMachine.velocity * Time.deltaTime;
 							} else {
 								pos = m_target.position;
 							}
