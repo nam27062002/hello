@@ -66,8 +66,22 @@ public class FireBreathDynamic : MonoBehaviour
     private bool enableState = false;
 
 
-	// Use this for initialization
-	void Start () 
+    private ParticleSystem fireToonCopy;
+
+    T CopyComponent<T>(T original, GameObject destination) where T : Component
+    {
+        System.Type type = original.GetType();
+        Component copy = destination.AddComponent(type);
+        System.Reflection.FieldInfo[] fields = type.GetFields();
+        foreach (System.Reflection.FieldInfo field in fields)
+        {
+            field.SetValue(copy, field.GetValue(original));
+        }
+        return copy as T;
+    }
+
+    // Use this for initialization
+    void Start () 
 	{
         ParticleManager.CreatePool(m_collisionFirePrefab, "", m_collisionEmiters);
         // Cache
@@ -77,6 +91,8 @@ public class FireBreathDynamic : MonoBehaviour
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
         whipEnd = transform.FindChild("WhipEnd").gameObject;
+//        ParticleSystem fireToonInstance = whipEnd.GetComponentInChildren<ParticleSystem>();
+//        fireToonCopy = CopyComponent<ParticleSystem>(fireToonInstance, fireToonInstance.gameObject);
 
         InitWhip();
 		InitArrays();
@@ -90,7 +106,6 @@ public class FireBreathDynamic : MonoBehaviour
         lastInitialPosition = whipEnd.transform.position;
 
         flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
-
         enableTime = m_lastTime = Time.time;
 
     }
@@ -267,7 +282,7 @@ public class FireBreathDynamic : MonoBehaviour
         m_mesh.colors = m_color;
 
         Vector3 particlePos = whipEnd.transform.localPosition;
-        float particleDistance = m_distance * Mathf.Pow(effectScale, 1.25f);
+        float particleDistance = m_distance * Mathf.Pow(effectScale, 1.5f);
         particlePos.x = m_collisionDistance < particleDistance ? m_collisionDistance : particleDistance;
         //        whipEnd.transform.SetLocalPosX(m_distance * effectScale);
         whipEnd.transform.localPosition = particlePos;
@@ -300,7 +315,7 @@ public class FireBreathDynamic : MonoBehaviour
         m_collisionSplit = (int)m_splits - 1;
         m_collisionDistance = 10000000.0f;
 
-        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance, m_groundLayerMask))
+        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance * effectScale * 2.0f, m_groundLayerMask))
         {
 
             if (Time.time > m_lastTime + m_collisionFireDelay)
