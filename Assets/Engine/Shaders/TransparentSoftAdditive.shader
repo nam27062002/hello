@@ -2,7 +2,7 @@
 {
 	Properties{
 		_MainTex("Particle Texture", 2D) = "white" {}
-		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = 1.0
+//		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = 1.0
 
 //		_GlowColor("Glow Color", Color) = (1, 1, 1, 1)
 //		_GlowColorMult("Glow Color Multiplier", Color) = (1, 1, 1, 1)
