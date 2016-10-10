@@ -71,6 +71,7 @@ public class ShowHideAnimatorEditor : Editor {
 		switch(m_targetAnimator.tweenType) {
 			case ShowHideAnimator.TweenType.ANIMATOR: {
 				DoProperty("m_animator");
+				DoProperty("m_tweenDelay");
 			} break;
 
 			case ShowHideAnimator.TweenType.CUSTOM: {
@@ -174,6 +175,6 @@ public class ShowHideAnimatorEditor : Editor {
 	//------------------------------------------------------------------//
 	private void DoProperty(string _id) {
 		SerializedProperty p = serializedObject.FindProperty(_id);
-		if(p != null) EditorGUILayout.PropertyField(p);
+		if(p != null) EditorGUILayout.PropertyField(p, true);
 	}
 }

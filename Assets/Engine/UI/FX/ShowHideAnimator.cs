@@ -18,6 +18,9 @@ using DG.Tweening;
 /// <summary>
 /// Simple behaviour to show/hide the target game object using either an animator,
 /// a predefined set of tweens, or custom tweens.
+/// In order to use a Unity animator, it is strongly recommended to create an Animation 
+/// Override Controller on the provided Animation Controller ANC_ShowHideAnimator
+/// and override it with custom animations based on the AN_ShowHideAnimator**** animations.
 /// TODO!!
 /// 	- Support for non-symmetric animations
 /// </summary>
@@ -85,7 +88,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	[SerializeField] protected DOTweenAnimation[] m_hideTweens = new DOTweenAnimation[0];
 
 	// Animator param
-	[Comment("Must have triggers \"show\" and \"hide\"")]
+	[Comment("Must have triggers \"show\", \"hide\", \"instantShow\" and \"instantHide\"")]
 	[SerializeField] protected Animator m_animator = null;
 
 	// Events
@@ -102,6 +105,10 @@ public class ShowHideAnimator : MonoBehaviour {
 	protected Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
 	protected bool m_isDirty = true;
 	protected bool m_disableAfterHide = true;
+
+	// To control delay on Animator-driven animations
+	private float m_delayTimer = 0f;
+	private bool m_delaying = false;
 
 	// Since visibility is linked to object's being active, we cannot trust in initializing it properly on the Awake call (since Awake is not called for disabled objects)
 	// Forced to do this workaround
@@ -120,7 +127,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	// Public properties
-	// Sequence delta, only for tween animations
+	// Sequence delta, only for sequence animations
 	public float delta {
 		get {
 			if(m_sequence == null) {
@@ -166,6 +173,21 @@ public class ShowHideAnimator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	protected virtual void Update() {
+		// Update delay timer!
+		if(m_delaying) {
+			m_delayTimer -= Time.deltaTime;
+			if(m_delayTimer <= 0f) {
+				// Delay timer should only be active if we're showing with animation
+				LaunchShowAnimation(true);
+				m_delaying = false;
+			}
+		}
+	}
+
+	/// <summary>
 	/// Destructor.
 	/// </summary>
 	protected virtual void OnDestroy() {
@@ -199,48 +221,12 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Broadcast pre-animation event
 		OnShowPreAnimation.Invoke(this);
 
-		// If not using animations, put sequence to the end point and return
+		// Trigger the animation!
+		LaunchShowAnimation(_animate);
+
+		// If not animating, do immediate postprocessing
 		if(!_animate) {
-			if(m_sequence != null) m_sequence.Goto(1f);
-
-			// Immediately broadcast post-animation event
-			OnShowPostAnimation.Invoke(this);
-			return;
-		}
-
-		// Perform different actions depending on the selected animation type
-		switch(m_tweenType) {
-			case TweenType.ANIMATOR: {
-				// If using an animator, let it do all the work
-				if(m_animator != null) {
-					// Just activate the right trigger
-					m_animator.SetTrigger("show");
-				}
-			} break;
-
-			case TweenType.NONE: {
-				// Nothing else to do, Immediately broadcast post-animation event
-				OnShowPostAnimation.Invoke(this);
-			} break;
-
-			case TweenType.CUSTOM: {
-				// Stop all running hide animators
-				for(int i = 0; i < m_hideTweens.Length; i++) {
-					m_hideTweens[i].DOPause();
-				}
-
-				// If using custom tween animators, restart all the animators in the show array
-				for(int i = 0; i < m_showTweens.Length; i++) {
-					m_showTweens[i].DORestart();
-				}
-			} break;
-
-			default: {
-				// Using tweens, play the sequence in the proper direction
-				if(m_sequence != null) {
-					m_sequence.PlayForward();		// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
-				}
-			} break;
+			DoShowPostProcessing();
 		}
 	}
 
@@ -271,87 +257,19 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_isDirty) {
 			RecreateTween();
 
-			// Since we're going backwards, initialize the new sequence at the end
+			// Since we're going backwards, initialize the new sequence at the end (in case there is one)
 			if(m_sequence != null) m_sequence.Goto(1f);
 		}
 
 		// Broadcast pre-animation event
 		OnHidePreAnimation.Invoke(this);
 
-		// If not using animations, put sequence to the start point and instantly disable the object
+		// Trigger the animation!
+		LaunchHideAnimation(_animate);
+
+		// If not animating, do immediate post-processing
 		if(!_animate) {
-			if(m_sequence != null) {
-				m_sequence.Goto(0f);
-				if(_disableAfterAnimation) gameObject.SetActive(false);
-			} else {
-				gameObject.SetActive(false);
-			}
-
-			// Immediately broadcast post-animation event
-			OnHidePostAnimation.Invoke(this);
-			return;
-		}
-
-		// Perform different actions depending on the selected animation type
-		switch(m_tweenType) {
-			case TweenType.ANIMATOR: {
-				// If using an animator, let it do all the work
-				if(m_animator != null) {
-					// Just activate the right trigger
-					m_animator.SetTrigger("hide");
-				}
-			} break;
-
-			case TweenType.NONE: {
-				// If tween type is set to NONE, just disable the object
-				gameObject.SetActive(false);
-
-				// Immediately broadcast post-animation event
-				OnHidePostAnimation.Invoke(this);
-			} break;
-
-			case TweenType.CUSTOM: {
-				// Stop all running hide animators
-				for(int i = 0; i < m_showTweens.Length; i++) {
-					m_showTweens[i].DOPause();
-				}
-
-				// If using custom tween animators, restart all the animators in the hide event
-				for(int i = 0; i < m_hideTweens.Length; i++) {
-					m_hideTweens[i].DORestart();
-				}
-			} break;
-
-			default: {
-				// Using tweens, play the sequence in the proper direction
-				if(m_sequence != null) {
-					m_sequence.PlayForward();		// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
-				}
-			} break;
-		}
-
-		// If using an animator, let it do all the work
-		if(m_animator != null) {
-			// Just activate the right trigger
-			m_animator.SetTrigger("hide");
-			return;
-		}
-
-		// If tween type is set to NONE, just disable the object
-		if(m_tweenType == TweenType.NONE) {
-			gameObject.SetActive(false);
-			return;
-		}
-
-		// If using custom tween animators, just let the tween engine manage it
-		if(m_tweenType == TweenType.CUSTOM) {
-			DOTween.Restart(gameObject, "hide");
-			return;
-		}
-
-		// Using tweens, play the sequence in the proper direction
-		if(m_sequence != null) {
-			m_sequence.PlayBackwards();	// The cool thing is that if the show animation is interrupted, the hide animation will start from the interruption point
+			DoHidePostProcessing();
 		}
 	}
 
@@ -517,6 +435,176 @@ public class ShowHideAnimator : MonoBehaviour {
 		m_sequence.PrependInterval(m_tweenDelay);
 	}
 
+	/// <summary>
+	/// Launch the show animation. Can be override by heirs.
+	/// </summary>
+	/// <param name="_animate">Whether to actually launch the animation or just instantly show.</param>
+	protected virtual void LaunchShowAnimation(bool _animate) {
+		// Perform different actions depending on the selected animation type
+		switch(m_tweenType) {
+			// Unity animation
+			case TweenType.ANIMATOR: {
+				// If using an animator, let it do all the work
+				// Animate?
+				if(_animate) {
+					// If we have a delay setup, wait before launching the animation!
+					if(tweenDelay > 0f && !m_delaying) {
+						m_delayTimer = tweenDelay;
+						m_delaying = true;
+						SetAnimTrigger("instantHide");	// Reset animation state machine
+					} else {
+						m_delayTimer = 0f;
+						m_delaying = false;
+						SetAnimTrigger("show");
+					}
+				} else {
+					m_delayTimer = 0f;
+					m_delaying = false;
+					SetAnimTrigger("instantShow");
+				}
+			} break;
+
+			// None
+			case TweenType.NONE: {
+				// Immediately do post-processing, simulating animation ending
+				if(_animate) DoShowPostProcessing();
+			} break;
+
+			// Custom tweens
+			case TweenType.CUSTOM: {
+				// Stop all running hide animators
+				for(int i = 0; i < m_hideTweens.Length; i++) {
+					m_hideTweens[i].DOPause();
+				}
+
+				// Restart all the animators in the show array
+				for(int i = 0; i < m_showTweens.Length; i++) {
+					if(_animate) {
+						m_showTweens[i].DORestart();
+					} else {
+						m_showTweens[i].DOGoto(1f);	// Instantly move to the end of the tween when not animating
+					}
+				}
+			} break;
+
+			// Sequence
+			default: {
+				// Using tweens, play the sequence in the proper direction
+				if(m_sequence != null) {
+					// Animate?
+					if(_animate) {
+						m_sequence.PlayForward();	// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
+					} else {
+						m_sequence.Goto(1f);		// Instantly move to the end of the sequence
+					}
+				}
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Launch the hide animation. Can be override by heirs.
+	/// </summary>
+	/// <param name="_animate">Whether to actually launch the animation or just instantly hide.</param>
+	protected virtual void LaunchHideAnimation(bool _animate) {
+		// Perform different actions depending on the selected animation type
+		switch(m_tweenType) {
+			// Unity animation
+			case TweenType.ANIMATOR: {
+				// If using an animator, let it do all the work
+				// No delay on hide animations
+				m_delayTimer = 0f;
+				m_delaying = false;
+
+				// Animate?
+				if(_animate) {
+					SetAnimTrigger("hide");
+				} else {
+					SetAnimTrigger("instantHide");
+				}
+			} break;
+
+			// None
+			case TweenType.NONE: {
+				// Immediately do postprocessing
+				if(_animate) DoHidePostProcessing();
+			} break;
+
+			// Custom tweens
+			case TweenType.CUSTOM: {
+				// Stop all running hide animators
+				for(int i = 0; i < m_showTweens.Length; i++) {
+					m_showTweens[i].DOPause();
+				}
+
+				// If using custom tween animators, restart all the animators in the hide event
+				for(int i = 0; i < m_hideTweens.Length; i++) {
+					if(_animate) {
+						m_hideTweens[i].DORestart();
+					} else {
+						m_hideTweens[i].DOGoto(0f);
+					}
+				}
+			} break;
+
+			// Sequence
+			default: {
+				// Using tweens, play the sequence in the proper direction
+				if(m_sequence != null) {
+					// Animate?
+					if(_animate) {
+						m_sequence.PlayBackwards();	// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
+					} else {
+						m_sequence.Goto(0f);		// Instantly move to the start point
+					}
+				}
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Perform all the required stuff after the show process (either with or 
+	/// without animation) has finished.
+	/// Can be override by heirs.
+	/// </summary>
+	protected virtual void DoShowPostProcessing() {
+		// Broadcast event
+		OnShowPostAnimation.Invoke(this);
+	}
+
+	/// <summary>
+	/// Perform all the required stuff after the hide process (either with or 
+	/// without animation) has finished.
+	/// Can be override by heirs.
+	/// </summary>
+	protected virtual void DoHidePostProcessing() {
+		// Broadcast event
+		OnHidePostAnimation.Invoke(this);
+
+		// Optionally disable object after the hide animation has finished
+		if(m_disableAfterHide) {
+			gameObject.SetActive(false);
+		}
+	}
+
+	/// <summary>
+	/// Only when in ANIMATION mode:
+	/// Reset all animator triggers and sets one.
+	/// </summary>
+	private void SetAnimTrigger(string _trigger) {
+		// Animator must be valid!
+		if(m_animator == null) return;
+
+		// Reset all known triggers
+		m_animator.ResetTrigger("show");
+		m_animator.ResetTrigger("hide");
+		m_animator.ResetTrigger("instantShow");
+		m_animator.ResetTrigger("instantHide");
+
+		// Set the target trigger
+		m_animator.SetTrigger(_trigger);
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -527,16 +615,9 @@ public class ShowHideAnimator : MonoBehaviour {
 	protected virtual void OnSequenceCompleted() {
 		// Which animation has finished?
 		if(visible) {
-			// Show animation, broadcast event
-			OnShowPostAnimation.Invoke(this);
+			DoShowPostProcessing();
 		} else {
-			// Hide animation, broadcast event
-			OnHidePostAnimation.Invoke(this);
-
-			// Optionally disable object after the hide animation has finished
-			if(m_disableAfterHide) {
-				gameObject.SetActive(false);
-			}
+			DoHidePostProcessing();
 		}
 	}
 
@@ -552,9 +633,8 @@ public class ShowHideAnimator : MonoBehaviour {
 			}
 		}
 
-		// No more active tweens!
-		// Broadcast event
-		OnShowPostAnimation.Invoke(this);
+		// No more active tweens! Do post processing
+		DoShowPostProcessing();
 	}
 
 	/// <summary>
@@ -569,14 +649,22 @@ public class ShowHideAnimator : MonoBehaviour {
 			}
 		}
 
-		// No more active tweens!
-		// Broadcast event
-		OnHidePostAnimation.Invoke(this);
+		// No more active tweens! Do postprocessing
+		DoHidePostProcessing();
+	}
 
-		// Optionally disable object after the hide animation has finished
-		if(m_disableAfterHide) {
-			gameObject.SetActive(false);
-		}
+	/// <summary>
+	/// Animation events, must be connected to the animations!
+	/// </summary>
+	public void OnShowAnimationCompleted() {
+		DoShowPostProcessing();
+	}
+
+	/// <summary>
+	/// Animation events, must be connected to the animations!
+	/// </summary>
+	public void OnHideAnimationCompleted() {
+		DoHidePostProcessing();
 	}
 }
 
