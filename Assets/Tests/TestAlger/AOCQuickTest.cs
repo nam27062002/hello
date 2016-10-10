@@ -56,7 +56,15 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+		sb.Append("Daily Chests: ");
+		sb.Append(ChestManager.collectedChests.ToString());
+		sb.Append("/");
+		sb.Append(ChestManager.NUM_DAILY_CHESTS.ToString());
+		sb.AppendLine();
+		sb.Append("Time Remaining: ");
+		sb.Append(TimeUtils.FormatTime(ChestManager.timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
+		GetComponent<Text>().text = sb.ToString();
 	}
 
 	public void OnRestart() {

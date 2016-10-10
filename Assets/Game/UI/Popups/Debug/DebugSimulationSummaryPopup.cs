@@ -21,7 +21,7 @@ public class DebugSimulationSummaryPopup : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Debug/PF_DebugSimulationSummaryPopup";
+	public static readonly string PATH = "UI/Popups/PF_DebugSimulationSummaryPopup";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//

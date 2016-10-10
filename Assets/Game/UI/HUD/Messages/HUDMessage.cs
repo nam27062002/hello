@@ -149,7 +149,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.CURSED:				Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
-			case Type.CHEST_FOUND:			Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
+			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
@@ -171,7 +171,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.CURSED:				Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
-			case Type.CHEST_FOUND:			Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
+			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
 			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
 			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
 			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
@@ -341,23 +341,16 @@ public class HUDMessage : MonoBehaviour {
 		// Setup text
 		// TODO: we'll add all the icons into a font and we'll print the icons as a character.
 		Image icon = this.FindComponentRecursive<Image>();
-		if(_requiredTier == DragonTier.COUNT) {
-			// Required tier unknown, hide icon
-			icon.enabled = false;
-		} else {
+		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, "order", ((int)_requiredTier).ToString());
+		if(tierDef != null) {
 			// Show icon
 			icon.enabled = true;
 
 			// Load proper icon
-			string path = "UI/Menu/Graphics/tiers/";
-			switch(_requiredTier) {
-				case DragonTier.TIER_0: path += "icon_xs";	break;
-				case DragonTier.TIER_1: path += "icon_s";	break;
-				case DragonTier.TIER_2: path += "icon_m";	break;
-				case DragonTier.TIER_3: path += "icon_l";	break;
-				case DragonTier.TIER_4: path += "icon_xl";	break;
-			}
-			icon.sprite = Resources.Load<Sprite>(path);		// [AOC] An async/precached load might be required
+			icon.sprite = Resources.Load<Sprite>(tierDef.GetAsString("icon"));	// [AOC] An async/precached load might be required
+		} else {
+			// Disable icon
+			icon.enabled = false;
 		}
 
 		// If already visible and trying to eat the same entity, don't restart the animation
@@ -388,7 +381,7 @@ public class HUDMessage : MonoBehaviour {
 	/// A chest has been found.
 	/// </summary>
 	/// <param name="_chest">The chest that has been collected.</param>
-	private void OnChestCollected(Chest _chest) {
+	private void OnChestCollected(CollectibleChest _chest) {
 		Show();
 	}
 

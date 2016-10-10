@@ -22,6 +22,8 @@ public class SpiderViewControl : ViewControl {
 		if (m_hanging) {
 			m_web.SetPosition(1, m_spinneret.position);
 		}
+
+		base.Update();
 	}
 
 	protected override void OnSpecialAnimationEnter(SpecialAnims _anim) {

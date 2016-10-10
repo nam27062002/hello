@@ -21,7 +21,7 @@ public class PopupTutorialControls : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Tutorial/PF_PopupTutorialControls";
+	public static readonly string PATH = "UI/Popups/PF_PopupTutorialControls";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

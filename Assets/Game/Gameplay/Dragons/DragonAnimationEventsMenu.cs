@@ -2,10 +2,11 @@
 
 public class DragonAnimationEventsMenu : MonoBehaviour {
 
+	public void WingsSound(){}	// To be deleted
 
-	public void WingsSound()
-	{
-	}
+	public void WingsIdleSound(){}
+
+	public void WingsFlyingSound(){}
 
 	public void StrongFlap()
 	{
@@ -22,4 +23,6 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 	public void EatEvent()
 	{
 	}
+
+
 }

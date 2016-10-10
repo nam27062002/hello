@@ -29,6 +29,8 @@ public class FireBreathDynamic : MonoBehaviour
 //    bool[] m_whipCollision;
 
     private int m_collisionSplit = 0;
+    private float m_collisionDistance = 0.0f;
+    private float m_particleDistance = 0.0f;
 
     public Color m_initialColor;
     public Color m_flameColor;
@@ -56,22 +58,32 @@ public class FireBreathDynamic : MonoBehaviour
 
     public float timeDelay = 0.25f;
 
+    public float effectScale = 1.0f;
+
     private float m_lastTime;
 
     private float enableTime = 0.0f;
     private bool enableState = false;
 
 
-	// Use this for initialization
-	void Start () 
+    private ParticleSystem fireToonCopy;
+
+    T CopyComponent<T>(T original, GameObject destination) where T : Component
+    {
+        System.Type type = original.GetType();
+        Component copy = destination.AddComponent(type);
+        System.Reflection.FieldInfo[] fields = type.GetFields();
+        foreach (System.Reflection.FieldInfo field in fields)
+        {
+            field.SetValue(copy, field.GetValue(original));
+        }
+        return copy as T;
+    }
+
+    // Use this for initialization
+    void Start () 
 	{
-
-        //        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire&Destruction/_PrefabsWIP/FireOfBreath"), 15, false);
-
-        ParticleManager.CreatePool(m_collisionFirePrefab, "Fire&Destruction/_PrefabsWIP/FireEffects/", m_collisionEmiters);
-
-//        PoolManager.CreatePool((GameObject)Resources.Load("Particles/Fire&Destruction/_PrefabsWIP/FireOfBreath"), 15, false);
-
+        ParticleManager.CreatePool(m_collisionFirePrefab, "", m_collisionEmiters);
         // Cache
         m_meshFilter = GetComponent<MeshFilter>();
 		m_numPos = (int)(4 + m_splits * 2);
@@ -79,7 +91,8 @@ public class FireBreathDynamic : MonoBehaviour
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
         whipEnd = transform.FindChild("WhipEnd").gameObject;
-        whipEnd.transform.SetLocalPosX(m_distance);
+//        ParticleSystem fireToonInstance = whipEnd.GetComponentInChildren<ParticleSystem>();
+//        fireToonCopy = CopyComponent<ParticleSystem>(fireToonInstance, fireToonInstance.gameObject);
 
         InitWhip();
 		InitArrays();
@@ -93,18 +106,18 @@ public class FireBreathDynamic : MonoBehaviour
         lastInitialPosition = whipEnd.transform.position;
 
         flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
-
         enableTime = m_lastTime = Time.time;
-	}
 
-	void InitWhip()
+    }
+
+    void InitWhip()
 	{
 		m_whip = new Vector3[(int)m_splits + 1];
         m_realWhip = new Vector3[(int)m_splits + 1];
         m_whipTangent = new Vector3[(int)m_splits + 1];
 //        m_whipCollision = new bool[(int)m_splits + 1];
 
-        float xStep = m_distance / (m_splits + 1);
+        float xStep = (m_distance * effectScale) / (m_splits + 1);
 		Vector3 move = transform.right;
 		Vector3 pos = transform.position;
 		for( int i = 0; i < (m_splits + 1); i++ )
@@ -125,7 +138,7 @@ public class FireBreathDynamic : MonoBehaviour
 		{
 			m_pos[i] = Vector3.zero;
 			m_UV[i] = Vector2.zero;
-            m_color[i] = (i < 4) ? m_initialColor : m_flameColor;
+            m_color[i] = (i < 6) ? m_initialColor : m_flameColor;
 		}
 	}
 
@@ -152,32 +165,8 @@ public class FireBreathDynamic : MonoBehaviour
 			pos++;
 		}
 	}
-    /*
-	void Reshape( )
-	{
-		m_pos[0] = Vector3.zero;
-		m_pos[1] = Vector3.zero;
 
-		float xStep = m_distance / (m_splits + 1);
-		float yStep = m_aplitude / (m_splits + 1);
-
-		int step = 1;
-		for( int i = 2; i<m_numPos; i += 2 )
-		{
-			m_pos[i].x = xStep * step;
-			m_pos[i].y = yStep * step;
-
-			m_pos[i+1].x = xStep * step;
-			m_pos[i+1].y = -yStep * step;
-			step++;
-		}
-
-		// m_pos[m_numPos - 2] = Vector3.right * m_distance + Vector3.up * m_aplitude;
-		// m_pos[m_numPos - 1] = Vector3.right * m_distance + Vector3.down * m_aplitude;
-	}
-
-    */
-	void ReshapeFromWhip( /* float angle? */)
+    void ReshapeFromWhip( /* float angle? */)
 	{
 		m_pos[0] = m_pos[1] = Vector3.zero;
 
@@ -190,7 +179,6 @@ public class FireBreathDynamic : MonoBehaviour
         int step = 1;
 		int whipIndex = 0;
         Vector3 newPos1, newPos2;
-//        Vector3 WhipExtreme = 
 
         for ( int i = 2; i < m_numPos; i += 2 )
 		{
@@ -200,44 +188,34 @@ public class FireBreathDynamic : MonoBehaviour
 
             newPos1 = newPos2 = transform.InverseTransformPoint(m_realWhip[whipIndex]);
 
-//            float kd = m_FlexCurve.Evaluate(whipIndex / m_splits);
-
-            float md = 0.0f;
-            //            float md = (whipEnd.transform.position.y - lastInitialPosition.y) * kd * fireDelay;
-
-
             if (transform.right.x < 0.0f)
             {
-                newPos1 += (whipTangent) * (yDisplacement + md);
-                newPos2 -= (whipTangent) * (yDisplacement - md);
+                newPos1 += whipTangent * yDisplacement;
+                newPos2 -= whipTangent * yDisplacement;
             }
             else
             {
-                newPos1 += (whipTangent) * (yDisplacement - md);
-                newPos2 -= (whipTangent) * (yDisplacement + md);
+                newPos1 += whipTangent * yDisplacement;
+                newPos2 -= whipTangent * yDisplacement;
             }
-
 
             m_pos[i] = newPos1;
             m_pos[i + 1] = newPos2;
 
+            yDisplacement *= 0.5f;
 
-            yDisplacement *= 0.35f;
+            m_UV[i].Set(0.5f + yDisplacement, vStep * step);
+            m_UV[i + 1].Set(0.5f - yDisplacement, vStep * step);
 
-            m_UV[i].x = 0.5f + yDisplacement;
-//            m_UV[i].x = 0.75f;
-            m_UV[i].y = vStep * step;
-
-            m_UV[i + 1].x = 0.5f - yDisplacement;
-//            m_UV[i + 1].x = 0.25f;
-            m_UV[i + 1].y = vStep * step;
-
-
-            if (i > 2)
+            if (i > 6)
             {
                 m_color[i] = m_color[i + 1] = (whipIndex > m_collisionSplit) ? m_collisionColor : m_flameColor;
             }
-
+/*            else
+            {
+                m_color[i] = m_color[i + 1] = m_initialColor;
+            }
+*/
             step++;
 			whipIndex++;
 		}
@@ -245,8 +223,6 @@ public class FireBreathDynamic : MonoBehaviour
 //        Debug.Log("lastInitialPositionVariation: " + (lastInitialPosition - transform.position).ToString());
 
         lastInitialPosition = whipEnd.transform.position;
-
-
     }
 
     void InitUVs()
@@ -304,7 +280,17 @@ public class FireBreathDynamic : MonoBehaviour
 		m_mesh.uv = m_UV;
 		m_mesh.vertices = m_pos;
         m_mesh.colors = m_color;
-	}
+
+        Vector3 particlePos = whipEnd.transform.localPosition;
+        float particleDistance = m_distance * Mathf.Pow(effectScale, 1.5f);
+        particlePos.x = m_collisionDistance < particleDistance ? m_collisionDistance : particleDistance;
+        //        whipEnd.transform.SetLocalPosX(m_distance * effectScale);
+        whipEnd.transform.localPosition = particlePos;
+
+        whipEnd.transform.SetLocalScale(effectScale);
+
+
+    }
 
     void UpdateWhip()
     {
@@ -324,16 +310,17 @@ public class FireBreathDynamic : MonoBehaviour
             gameObject.active = false;
         }
 
-        float xStep = (flameAnim * m_distance) / (m_splits + 1);
+        float xStep = (flameAnim * m_distance * effectScale) / (m_splits + 1);
 //        m_collisionSplit = (int)m_splits + 1;
         m_collisionSplit = (int)m_splits - 1;
+        m_collisionDistance = 10000000.0f;
 
-        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance, m_groundLayerMask))
+        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance * effectScale * 2.0f, m_groundLayerMask))
         {
 
             if (Time.time > m_lastTime + m_collisionFireDelay)
             {
-                GameObject colFire = ParticleManager.Spawn(m_collisionFirePrefab, hit.point, "Fire&Destruction/_PrefabsWIP/FireEffects/");
+                GameObject colFire = ParticleManager.Spawn(m_collisionFirePrefab, hit.point, "");
                 if (colFire != null)
                 {
                     colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
@@ -342,6 +329,7 @@ public class FireBreathDynamic : MonoBehaviour
                 m_lastTime = Time.time;
             }
 
+            m_collisionDistance = hit.distance;
 
             Vector3 hitNormal = hit.normal;
             float wn = Vector3.Dot(hitNormal, whipDirection);
@@ -349,8 +337,8 @@ public class FireBreathDynamic : MonoBehaviour
 //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, (whipDirection.x < 0.0f) ? -Vector3.forward: Vector3.forward);
             Vector3 whipReflectTangent = Vector3.Cross(Vector3.forward, whipReflect);
             //            Vector3 whipReflectTangent = Vector3.Cross(whipReflect, Vector3.forward);
-
-            if (Time.time > m_lastTime + timeDelay)
+/*
+            if (Time.time > (m_lastTime + timeDelay))
             {
                 GameObject colFire = ParticleManager.Spawn(m_collisionFirePrefab, hit.point, "Fire&Destruction/_PrefabsWIP/FireEffects/");
                 if (colFire != null)
@@ -358,18 +346,12 @@ public class FireBreathDynamic : MonoBehaviour
                     colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
                 }
 
-/*
-                GameObject fire = PoolManager.GetInstance("FireOfBreath");
-                fire.transform.position = hit.point;
-                fire.transform.rotation = Quaternion.AngleAxis(Random.value * 360.0f, Vector3.forward);
-                fire.transform.SetLocalScale(0.25f);
-*/
                 m_lastTime = Time.time;
             }
-
+*/
             for (int i = 0; i < m_splits + 1; i++)
             {
-                float currentDist = (xStep * i);
+                float currentDist = (xStep * (i + 1));
 
                 if (currentDist < hit.distance)
                 {
@@ -380,9 +362,6 @@ public class FireBreathDynamic : MonoBehaviour
                 else if (currentDist < (hit.distance + xStep))
                 {
                     m_whip[i] = hit.point;
-//                    m_whipTangent[i] = (whipTangent + whipReflectTangent).normalized;
-//                    m_whipTangent[i] = whipTangent;    // (whipTangent + whipReflectTangent).normalized;
-//                    m_whipCollision[i] = true;
                     m_collisionSplit = i;
                 }
                 else
@@ -402,7 +381,7 @@ public class FireBreathDynamic : MonoBehaviour
         {
             for (int i = 0; i < m_splits + 1; i++)
             {
-                float currentDist = (xStep * i);
+                float currentDist = (xStep * (i + 1));
                 m_whip[i] = whipOrigin + (whipDirection * currentDist);
 //                m_whipTangent[i] = whipTangent;
 //                m_whipCollision[i] = false;
@@ -413,7 +392,7 @@ public class FireBreathDynamic : MonoBehaviour
         for (int i = 0; i < m_splits + 1; i++)
         {
             Vector3 distance = m_whip[i] - m_realWhip[i];
-            float fq = 1.0f - Mathf.Pow((i / (m_splits + 1)), m_fireFlexFactor);
+            float fq = Mathf.Pow(1.0f - (i / (m_splits + 1)), m_fireFlexFactor);
 //            float rq = Mathf.Clamp(fq + (Vector3.Dot(distance, distance) / mrq) * m_fireFlexFactor * Time.deltaTime, 0.0f, 1.0f);
 //            float rq = Mathf.Clamp(fq + (m_fireFlexFactor * Time.deltaTime), 0.0f, 1.0f);
             float rq = Mathf.Clamp(fq + ((1.0f / m_fireFlexFactor) * Time.deltaTime), 0.0f, 1.0f);
@@ -434,26 +413,11 @@ public class FireBreathDynamic : MonoBehaviour
             else
             {
                 whipDirection = m_realWhip[i] - m_realWhip[i - 1];
-                whipDirection.z = 0.0f;
+//                whipDirection.z = 0.0f;
                 m_whipTangent[i] = Vector3.Normalize(Vector3.Cross(Vector3.forward, whipDirection));//transform.up;
             }
         }
-//        MoveWhip();
     }
-
-
-    void MoveWhip()
-	{
-		float xStep = m_distance / (m_splits + 1);
-		Vector3 move = transform.right.normalized;
-		Vector3 pos = transform.position;
-		for( int i = 0; i<m_splits + 1; i++ )
-		{
-			Vector3 shouldBePos = pos + move * xStep * (i+1);
-			m_whip[i] = Vector3.Lerp( m_whip[i], shouldBePos, (1.25f - (i/m_splits)) * Time.deltaTime * 15.0f);
-		}
-	}
-
 
     public void EnableFlame(bool value)
     {

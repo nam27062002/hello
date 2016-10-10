@@ -24,7 +24,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public enum ChestTestMode {
 		NONE = 0,
-		FIXED_0,	// Match amount of chests with enum index for convenience
+		FIXED_0,
 		FIXED_1,
 		FIXED_2,
 		FIXED_3,
@@ -86,28 +86,31 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// </summary>
 	public void LaunchAnim() {
 		// How many chests?
-		// [AOC] TODO!! Pending new chests system
 		List<Chest> collectedChests = new List<Chest>();
 		if(DebugSettings.resultsChestTestMode == ChestTestMode.NONE) {
 			// Real logic
-			if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
-				// [AOC] TODO!! 5 chests logic
-				collectedChests.Add(ChestManager.selectedChest);
+			// Grab all the chests in the REWARD_PENDING state
+			for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
+				if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
+					collectedChests.Add(ChestManager.dailyChests[i]);
+				}
 			}
 		} else {
 			// [AOC] DEBUG ONLY!!
 			int NUM_COLLECTED_CHESTS = (int)DebugSettings.resultsChestTestMode;
-			NUM_COLLECTED_CHESTS -= 1;	// 0-based index
+			NUM_COLLECTED_CHESTS -= 1;	// enum starts at 1
 			if(DebugSettings.resultsChestTestMode == ChestTestMode.RANDOM) {
 				NUM_COLLECTED_CHESTS = Random.Range(0, 5);
 			}
 
 			for(int i = 0; i < NUM_COLLECTED_CHESTS; i++) {
-				collectedChests.Add(ChestManager.selectedChest);
+				Chest newChest = new Chest();
+				newChest.ChangeState(Chest.State.PENDING_REWARD);
+				collectedChests.Add(newChest);
 			}
 		}
 
-		// Show the chests in the center
+		// Show the chests in the center, left to right
 		// Another option (check with design/UI) would be to show the daily chest progression, 
 		// in which case order should be linear (0-1-2-3-4) and probably the chest layout 
 		// different to give more relevance to latest chests (maybe some different asset?)
@@ -123,11 +126,16 @@ public class ResultsSceneSetup : MonoBehaviour {
 			m_chestSlots[i].gameObject.SetActive(false);
 		}
 
-		// Program animation of selected
+		// Program animation of selected slots
 		float totalDelay = 0f;
 		for(int i = 0; i < sortedSlots.Count; i++) {
+			// Get reward definition corresponding to this chest
+			int chestIdx = RewardManager.initialCollectedChests + i + 1;
+			DefinitionNode rewardDef = ChestManager.GetRewardDef(chestIdx);
+
+			// Launch with delay
 			StartCoroutine(
-				AnimateChestWithDelay(sortedSlots[i], collectedChests[i], totalDelay)
+				AnimateChestWithDelay(sortedSlots[i], rewardDef, totalDelay)
 			);
 			totalDelay += 0.5f;
 		}
@@ -162,17 +170,17 @@ public class ResultsSceneSetup : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Lauches the animation of the given chest slot with a specific chest data and delay.
+	/// Lauches the animation of the given chest slot with a specific chest reward data and delay.
 	/// </summary>
 	/// <param name="_slot">Slot to be animated.</param>
-	/// <param name="_chest">Chest data.</param>
+	/// <param name="_chestRewardDef">Chest reward data.</param>
 	/// <param name="_delay">Delay before launching the animation.</param>
-	private IEnumerator AnimateChestWithDelay(ResultsSceneChestSlot _slot, Chest _chest, float _delay) {
+	private IEnumerator AnimateChestWithDelay(ResultsSceneChestSlot _slot, DefinitionNode _chestRewardDef, float _delay) {
 		// Delay
 		yield return new WaitForSeconds(_delay);
 
 		// Do it!
 		_slot.gameObject.SetActive(true);
-		_slot.LaunchAnimation(_chest);
+		_slot.LaunchAnimation(_chestRewardDef);
 	}
 }

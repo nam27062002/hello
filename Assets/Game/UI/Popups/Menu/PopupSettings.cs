@@ -18,7 +18,7 @@ public class PopupSettings : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Settings/PF_PopupSettings";
+	public static readonly string PATH = "UI/Popups/PF_PopupSettings";
 
     public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
 }

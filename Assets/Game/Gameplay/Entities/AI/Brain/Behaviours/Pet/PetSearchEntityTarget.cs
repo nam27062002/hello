@@ -1,8 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System;
 
 namespace AI {
 	namespace Behaviour {	
+
+		[System.Serializable]
+		public class PetSearchEntityTargetData : StateComponentData {
+			[Comment("Comma Separated list", 5)]
+			public string m_preferedEntitiesList;
+		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Entity Target")]
 		public class PetSearchEntityTarget : StateComponent {
@@ -23,6 +31,18 @@ namespace AI {
 			DragonPlayer m_owner;
 			float m_range;
 
+			private PetSearchEntityTargetData m_data;
+			private List<string> m_preferedEntities = new List<string>();
+
+
+			public override StateComponentData CreateData() {
+				return new PetSearchEntityTargetData();
+			}
+
+			public override System.Type GetDataType() {
+				return typeof(PetSearchEntityTargetData);
+			}
+
 			protected override void OnInitialise() {
 				m_timer = 0f;
 				m_shutdownSensorTime = 0f;
@@ -40,6 +60,22 @@ namespace AI {
 
 				m_owner = InstanceManager.player;
 				m_range = m_owner.data.GetScaleAtLevel( m_owner.data.progression.lastLevel) * 10f;
+				m_data = m_pilot.GetComponentData<PetSearchEntityTargetData>();
+
+				if (!string.IsNullOrEmpty( m_data.m_preferedEntitiesList) )
+				{
+					// Use the separator string to split the string value
+					string[] splitResult = m_data.m_preferedEntitiesList.Split(new string[] { "," }, StringSplitOptions.None);
+					m_preferedEntities = new List<string>( splitResult );
+				}
+
+				// if prefered entieies we should tell the mouth
+				EatBehaviour eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
+
+				for( int i = 0; i<m_preferedEntities.Count; i++ )
+				{
+					eatBehaviour.AddToIgnoreTierList( m_preferedEntities[i] );
+				}
 
 			}
 
@@ -63,6 +99,38 @@ namespace AI {
 					m_timer -= Time.deltaTime;
 				} else {
 					Vector3 centerPos = m_owner.transform.position;
+
+
+					// if prefered entieies check first
+					if ( m_preferedEntities.Count > 0 )
+					{
+						m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range * 2, m_checkEntities);	
+						for (int e = 0; e < m_numCheckEntities; e++) 
+						{
+							Entity entity = m_checkEntities[e];
+							if (  m_preferedEntities.Contains( entity.sku) )
+							{
+								Machine machine = entity.GetComponent<Machine>();
+								if (
+									machine != null && machine.CanBeBitten() && !machine.isPetTarget
+								)
+								{
+									// Check if physics reachable
+									RaycastHit hit;
+									Vector3 dir = entity.circleArea.center - m_machine.position;
+									bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+									if ( !hasHit )
+									{
+										// Check if closed? Not for the moment
+										m_transitionParam[0] = entity.transform;
+										Transition( OnEnemyInRange, m_transitionParam);
+										return;
+									}
+								}
+							}
+						}
+					}
+
 					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
 					for (int e = 0; e < m_numCheckEntities; e++) 
 					{

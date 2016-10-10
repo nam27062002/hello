@@ -23,7 +23,7 @@ public class PopupPause : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Pause/PF_PopupPause";
+	public static readonly string PATH = "UI/Popups/PF_PopupPause";
 
 	public enum Tabs {
 		MISSIONS,

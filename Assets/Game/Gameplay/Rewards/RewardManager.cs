@@ -1,4 +1,4 @@
-﻿// ScoreManager.cs
+// ScoreManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 22/10/2015.
@@ -130,6 +130,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_dragonInitialTotalXPProgress; }
 	}
 
+	// Chests - store chest progression at the beginning of the game
+	private int m_initialCollectedChests = 0;
+	public static int initialCollectedChests {
+		get { return instance.m_initialCollectedChests; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -244,7 +250,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_isHighScore = false;
 
 		// Current dragon progress
-		if (DragonManager.currentDragon != null) {
+		if(DragonManager.currentDragon != null) {
 			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
 			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
 			instance.m_dragonInitialTotalXPProgress = DragonManager.currentDragon.progression.progressByXp;
@@ -253,6 +259,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			instance.m_dragonInitialLevelProgress = 0;
 			instance.m_dragonInitialTotalXPProgress = 0;
 		}
+
+		// Chests
+		instance.m_initialCollectedChests = ChestManager.collectedAndPendingChests;
 	}
 
 	/// <summary>

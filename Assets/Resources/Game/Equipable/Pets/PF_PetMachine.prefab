@@ -1745,7 +1745,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsSound: 
+  m_wingsIdleSound: 
+  m_wingsFlyingSound: 
   m_eatSound: 
   m_eatBigSound: 
   m_wingsWindSound: 
@@ -1792,8 +1793,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 1
     max: 1
-  m_timeBeforeBackHome: 2
-  m_serializedJson: '[{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false}]'
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424
