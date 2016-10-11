@@ -14,10 +14,10 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Simple script to control the camera on the level selection screen.
+/// Main script to control several aspects of the Goals screen 3D scene.
 /// </summary>
 [RequireComponent(typeof(MenuCameraAnimatorBySnapPoints))]
-public class LevelSelectionCameraController : MonoBehaviour {
+public class GoalsSceneController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -28,6 +28,21 @@ public class LevelSelectionCameraController : MonoBehaviour {
 	// Exposed setup
 	[Tooltip("Should match the tab id's on the UI to link each tab to a snap point in the camera animator")]
 	[SerializeField] private List<string> m_tabNames = new List<string>();
+
+	// Info panel
+	[Space]
+	[SerializeField] private Transform m_infoPanelUIAnchor = null;
+	public Transform infoPanelUIAnchor {
+		get { return m_infoPanelUIAnchor; }
+	}
+
+	// Chest references
+	[Space]
+	[Tooltip("Always 5 slots, please!")]
+	[SerializeField] private GoalsSceneChestSlot[] m_chestSlots = new GoalsSceneChestSlot[5];
+	public GoalsSceneChestSlot[] chestSlots {
+		get { return m_chestSlots; }
+	}
 
 	// Internal
 	private MenuCameraAnimatorBySnapPoints m_cameraAnimator = null;
@@ -49,6 +64,16 @@ public class LevelSelectionCameraController : MonoBehaviour {
 	private void Awake() {
 		// Subscribe to external events
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnTabChanged);
+		Messenger.AddListener(GameEvents.CHESTS_RESET, OnChestsReset);
+		Messenger.AddListener(GameEvents.CHESTS_PROCESSED, OnChestsProcessed);
+	}
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		// Initialize chests
+		RefreshChests();
 	}
 
 	/// <summary>
@@ -57,6 +82,44 @@ public class LevelSelectionCameraController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnTabChanged);
+		Messenger.RemoveListener(GameEvents.CHESTS_RESET, OnChestsReset);
+		Messenger.RemoveListener(GameEvents.CHESTS_PROCESSED, OnChestsProcessed);
+	}
+
+	/// <summary>
+	/// A change has occurred on the inspector. Validate its values.
+	/// </summary>
+	private void OnValidate() {
+		// There must be exactly 5 chest slots
+		if(m_chestSlots.Length != 5) {
+			// Create a new array with exactly 5 slots and copy as many values as we can
+			GoalsSceneChestSlot[] chestSlots = new GoalsSceneChestSlot[5];
+			for(int i = 0; i < m_chestSlots.Length && i < chestSlots.Length; i++) {
+				chestSlots[i] = m_chestSlots[i];
+			}
+			m_chestSlots = chestSlots;
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Refreshs the chests.
+	/// </summary>
+	private void RefreshChests() {
+		// Chest by chest
+		for(int i = 0; i < m_chestSlots.Length; i++) {
+			// Skip if chest not initialized
+			if(m_chestSlots[i] == null) continue;
+
+			// Initialize with the state of that chest
+			if(ChestManager.dailyChests[i].collected) {
+				m_chestSlots[i].view.Open();
+			} else {
+				m_chestSlots[i].view.Close();
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -73,5 +136,19 @@ public class LevelSelectionCameraController : MonoBehaviour {
 
 		// Animate camera to target snap point
 		cameraAnimator.SnapTo(_data.toScreenIdx);
+	}
+
+	/// <summary>
+	/// Chest Manager has reset the chests timer.
+	/// </summary>
+	private void OnChestsReset() {
+		RefreshChests();
+	}
+
+	/// <summary>
+	/// Chest Manager has processed the chests and given the reward.
+	/// </summary>
+	private void OnChestsProcessed() {
+		RefreshChests();
 	}
 }

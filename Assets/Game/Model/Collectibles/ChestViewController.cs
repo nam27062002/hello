@@ -72,11 +72,22 @@ public class ChestViewController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Open this instance.
+	/// Launch the open animation.
 	/// </summary>
 	public void Open() {
 		// Launch animation - particle effect will be launched with the animation event
 		m_animator.SetTrigger("open");
+	}
+
+	/// <summary>
+	/// Launch the close animation.
+	/// </summary>
+	public void Close() {
+		// Stop particles
+		if(m_openFX != null) m_openFX.Stop();
+
+		// Launch close animation
+		m_animator.SetTrigger("close");
 	}
 
 	//------------------------------------------------------------------------//

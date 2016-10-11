@@ -25,14 +25,6 @@ public class GameSceneControllerBase : SceneController {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private Camera m_gameCamera = null;
-	public Camera gameCamera {
-		get { return m_gameCamera; }
-	}
-
-	// Important references
-
 	// Time
 	protected float m_elapsedSeconds = 0;
 	public float elapsedSeconds {

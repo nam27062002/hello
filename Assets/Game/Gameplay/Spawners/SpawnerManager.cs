@@ -257,7 +257,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private void OnLevelLoaded() {
 		// Make sure camera reference is valid
 		// Spawners are only used in the game and level editor scenes, so we can be sure that both game camera and game scene controller will be present
-		Camera gameCamera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
+		Camera gameCamera = InstanceManager.sceneController.mainCamera;
 		m_newCamera = gameCamera.GetComponent<GameCamera>();
 
 		// Create and populate QuadTree

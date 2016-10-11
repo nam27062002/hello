@@ -56,12 +56,6 @@ public class MenuScreensController : NavigationScreenSystem {
 		}
 	}
 
-	[Space]
-	[SerializeField] private Camera m_camera = null;
-	public Camera camera { 
-		get { return m_camera; }
-	}
-
 	// Use it to track actual screen changes
 	private bool m_tweening = false;
 	public bool tweening {
@@ -98,8 +92,8 @@ public class MenuScreensController : NavigationScreenSystem {
 		MenuScreenScene targetScene = GetScene(m_currentScreenIdx);
 		if(targetScene != null
 		&& targetScene.cameraSnapPoint != null
-		&& m_camera != null) {
-			targetScene.cameraSnapPoint.Apply(m_camera);
+		&& InstanceManager.sceneController.mainCamera != null) {
+			targetScene.cameraSnapPoint.Apply(InstanceManager.sceneController.mainCamera);
 		}
 	}
 
@@ -152,12 +146,12 @@ public class MenuScreensController : NavigationScreenSystem {
 		MenuScreenScene targetScene = GetScene(_newScreenIdx);
 		if(targetScene != null
 		&& targetScene.cameraSnapPoint != null
-		&& m_camera != null) {
+		&& InstanceManager.sceneController.mainCamera != null) {
 			// Perform camera transition!
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
 			tweenParams.OnComplete(OnCameraTweenCompleted);
-			targetScene.cameraSnapPoint.TweenTo(m_camera, 0.5f, tweenParams); 
+			targetScene.cameraSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams); 
 			m_tweening = true;
 		}
 	}
