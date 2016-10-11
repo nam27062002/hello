@@ -48,7 +48,12 @@ public class MenuScreensController : NavigationScreenSystem {
 
 	// Other properties
 	public MenuScreenScene currentScene {
-		get { return m_scenes[currentScreenIdx]; }
+		get {
+			if(MathUtils.IsBetween(currentScreenIdx, 0, m_scenes.Length)) {
+				return m_scenes[currentScreenIdx]; 
+			}
+			return null;
+		}
 	}
 
 	[Space]

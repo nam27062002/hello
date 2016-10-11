@@ -71,7 +71,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Store some references
 		for(int i = 0; i < m_powers.Length; i++) {
 			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
-			Debug.Log("power anim for " + i + ": " + (m_powerAnims[i] == null ? "NULL" : m_powerAnims[i].ToString()));
 		}
 
 		m_wardrobe = UsersManager.currentUser.wardrobe;
@@ -128,7 +127,6 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Get target dragon
 		// If we have a disguise preview set, select the dragon for that disguise first
-		Debug.Log("PREVIEWING DISGUISE " + _initialDisguiseSku);
 		if(!string.IsNullOrEmpty(_initialDisguiseSku)) {
 			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _initialDisguiseSku);
 			if(disguiseDef == null) {
@@ -257,7 +255,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnShow() {
 		// Make sure the screen is properly initialized
-		Debug.Log("ON SHOW");
 		Initialize();
 	}
 
@@ -266,7 +263,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnHide() {
 		// Make sure the screen is properly finalized
-		Debug.Log("ON HIDE");
 		Finalize();
 	}
 

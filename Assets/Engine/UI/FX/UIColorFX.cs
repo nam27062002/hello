@@ -87,16 +87,21 @@ public class UIColorFX : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Destroy created material.
+	/// Component has been disabled.
 	/// </summary>
 	void OnDisable() {
-		if(m_imageMaterial) {
-			DestroyImmediate(m_imageMaterial);
+		// On editor mode, destroy materials every time we unselect the object.
+		if(!Application.isPlaying) {
+			DestroyMaterials();
 		}
+	}
 
-		if(m_fontMaterial) {
-			DestroyImmediate(m_fontMaterial);
-		}
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	void OnDestroy() {
+		// Destroy created materials
+		DestroyMaterials();
 	}
 
 	/// <summary>
@@ -142,6 +147,21 @@ public class UIColorFX : MonoBehaviour {
 			foreach(Text txt in texts) {
 				txt.material = m_fontMaterial;
 			}
+		}
+	}
+
+	/// <summary>
+	/// Destroy the custom materials.
+	/// </summary>
+	private void DestroyMaterials() {
+		if(m_imageMaterial != null) {
+			DestroyImmediate(m_imageMaterial);
+			m_imageMaterial = null;
+		}
+
+		if(m_fontMaterial != null) {
+			DestroyImmediate(m_fontMaterial);
+			m_fontMaterial = null;
 		}
 	}
 }

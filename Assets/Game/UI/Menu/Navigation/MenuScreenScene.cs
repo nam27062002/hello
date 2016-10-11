@@ -26,6 +26,7 @@ public class MenuScreenScene : MonoBehaviour {
 	[SerializeField] private CameraSnapPoint m_cameraSnapPoint = null;
 	public CameraSnapPoint cameraSnapPoint { 
 		get { return m_cameraSnapPoint; }
+		set { m_cameraSnapPoint = value; }
 	}
 
 	//------------------------------------------------------------------//

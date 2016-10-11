@@ -1,7 +1,7 @@
-﻿// MenuDragonScroller3DEditor.cs
+﻿// MenuCameraAnimatorByCurvesByCurvesEditor.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 11/02/2016.
+// Created by Alger Ortín Castellví on 10/10/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
@@ -14,11 +14,11 @@ using UnityEditor;
 // CLASSES																//
 //----------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the MenuDragonScroller3D class.
+/// Custom editor for the MenuCameraAnimatorByCurves class.
 /// </summary>
-[CustomEditor(typeof(MenuDragonScroller3D))]
+[CustomEditor(typeof(MenuCameraAnimatorByCurves))]
 [CanEditMultipleObjects]
-public class MenuDragonScroller3DEditor : Editor {
+public class MenuCameraAnimatorByCurvesByCurvesEditor : Editor {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -27,7 +27,7 @@ public class MenuDragonScroller3DEditor : Editor {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Casted target object
-	MenuDragonScroller3D targetMenuDragonScroller3D { get { return target as MenuDragonScroller3D; }}
+	MenuCameraAnimatorByCurves targetMenuCameraAnimatorByCurves { get { return target as MenuCameraAnimatorByCurves; }}
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -65,28 +65,28 @@ public class MenuDragonScroller3DEditor : Editor {
 		EditorGUILayout.Space();
 
 		// Interactive controls - if required fields are set
-		if(targetMenuDragonScroller3D.cameraPath == null || targetMenuDragonScroller3D.lookAtPath == null) {
+		if(targetMenuCameraAnimatorByCurves.cameraPath == null || targetMenuCameraAnimatorByCurves.lookAtPath == null) {
 			// Info box
 			EditorGUILayout.HelpBox("Required fields not set", MessageType.Error);
 		} else {
 			// Use properties rather than directly setting the values
 			// Delta
 			EditorGUI.BeginChangeCheck();
-			float newDelta = EditorGUILayout.Slider("Delta", targetMenuDragonScroller3D.delta, 0f, 1f);
+			float newDelta = EditorGUILayout.Slider("Delta", targetMenuCameraAnimatorByCurves.delta, 0f, 1f);
 			if(EditorGUI.EndChangeCheck()) {
-				Undo.RecordObject(target, "MenuDragonScroller3D.delta");
-				targetMenuDragonScroller3D.delta = newDelta;
+				Undo.RecordObject(target, "MenuCameraAnimatorByCurves.delta");
+				targetMenuCameraAnimatorByCurves.delta = newDelta;
 			}
 
 			// Debug buttons - only when application is playing, otherwise tweens don't work
 			if(Application.isPlaying) {
 				EditorGUILayout.BeginHorizontal(); {
 					if(GUILayout.Button("<-")) {
-						targetMenuDragonScroller3D.SnapTo(targetMenuDragonScroller3D.cameraPath.snapPoint - 1);
+						targetMenuCameraAnimatorByCurves.SnapTo(targetMenuCameraAnimatorByCurves.cameraPath.snapPoint - 1);
 					}
 
 					if(GUILayout.Button("->")) {
-						targetMenuDragonScroller3D.SnapTo(targetMenuDragonScroller3D.cameraPath.snapPoint + 1);
+						targetMenuCameraAnimatorByCurves.SnapTo(targetMenuCameraAnimatorByCurves.cameraPath.snapPoint + 1);
 					}
 				} EditorGUILayoutExt.EndHorizontalSafe();
 			}
@@ -98,9 +98,9 @@ public class MenuDragonScroller3DEditor : Editor {
 		// Debug camera section
 		EditorGUILayout.Space();
 		EditorGUILayoutExt.Separator(new SeparatorAttribute("Debug Utils"));
-		PathFollower posPath = targetMenuDragonScroller3D.FindComponentRecursive<PathFollower>("PosPath");
-		PathFollower lookAtPath = targetMenuDragonScroller3D.FindComponentRecursive<PathFollower>("LookAtPath");
-		CameraSnapPoint camSnapPoint = targetMenuDragonScroller3D.FindComponentRecursive<CameraSnapPoint>();
+		PathFollower posPath = targetMenuCameraAnimatorByCurves.FindComponentRecursive<PathFollower>("PosPath");
+		PathFollower lookAtPath = targetMenuCameraAnimatorByCurves.FindComponentRecursive<PathFollower>("LookAtPath");
+		CameraSnapPoint camSnapPoint = targetMenuCameraAnimatorByCurves.FindComponentRecursive<CameraSnapPoint>();
 		GameObject menuCameraObj = GameObject.Find("Camera3D");
 		if(posPath == null || lookAtPath == null) {
 			EditorGUILayout.HelpBox("Either the PosPath or the LookAtPath followers couldn't be found.", MessageType.Error);
@@ -110,8 +110,8 @@ public class MenuDragonScroller3DEditor : Editor {
 			EditorGUILayout.HelpBox("Menu camera couldn't be found.", MessageType.Error);
 		} else {
 			// Aux vars
-			float debugDelta = EditorPrefs.GetFloat("MenuDragonScroller3D.debugDelta", 0f);
-			int debugSnapPoint = EditorPrefs.GetInt("MenuDragonScroller3D.debugSnapPoint", 0);
+			float debugDelta = EditorPrefs.GetFloat("MenuCameraAnimatorByCurves.debugDelta", 0f);
+			int debugSnapPoint = EditorPrefs.GetInt("MenuCameraAnimatorByCurves.debugSnapPoint", 0);
 
 			// By delta
 			EditorGUI.BeginChangeCheck();
@@ -128,8 +128,8 @@ public class MenuDragonScroller3DEditor : Editor {
 				debugSnapPoint = posPath.snapPoint;
 
 				// Store to prefs
-				EditorPrefs.SetFloat("MenuDragonScroller3D.debugDelta", debugDelta);
-				EditorPrefs.SetInt("MenuDragonScroller3D.debugSnapPoint", debugSnapPoint);
+				EditorPrefs.SetFloat("MenuCameraAnimatorByCurves.debugDelta", debugDelta);
+				EditorPrefs.SetInt("MenuCameraAnimatorByCurves.debugSnapPoint", debugSnapPoint);
 			}
 
 			// By snap point
@@ -147,8 +147,8 @@ public class MenuDragonScroller3DEditor : Editor {
 				debugDelta = posPath.delta;
 
 				// Store to prefs
-				EditorPrefs.SetInt("MenuDragonScroller3D.debugSnapPoint", debugSnapPoint);
-				EditorPrefs.SetFloat("MenuDragonScroller3D.debugDelta", debugDelta);
+				EditorPrefs.SetInt("MenuCameraAnimatorByCurves.debugSnapPoint", debugSnapPoint);
+				EditorPrefs.SetFloat("MenuCameraAnimatorByCurves.debugDelta", debugDelta);
 			}
 		}
 	}
