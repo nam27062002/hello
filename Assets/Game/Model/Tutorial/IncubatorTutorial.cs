@@ -52,7 +52,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	private void Awake() 
 	{
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 		Messenger.AddListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
 	}
 
@@ -62,7 +62,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_INCUBATION_STARTED, OnEggIncubationStarted);
 	}
 
@@ -154,7 +154,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	/// The current menu screen has changed.
 	/// </summary>
 	/// <param name="_event">Event data.</param>
-	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEvent _event) {
+	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
 		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
 

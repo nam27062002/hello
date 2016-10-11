@@ -98,7 +98,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events.
 		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
 	/// <summary>
@@ -133,7 +133,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
 	/// <summary>
@@ -608,7 +608,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// Navigation screen has changed (animation starts now).
 	/// </summary>
 	/// <param name="_event">Event data.</param>
-	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEvent _event) {
+	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
 		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
 

@@ -55,7 +55,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
 	/// <summary>
@@ -63,7 +63,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -73,7 +73,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Navigation screen has changed (animation starts now).
 	/// </summary>
 	/// <param name="_event">Event data.</param>
-	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEvent _event) {
+	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
 		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
 
