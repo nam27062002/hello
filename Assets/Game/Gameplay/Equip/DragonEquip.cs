@@ -136,7 +136,7 @@ public class DragonEquip : MonoBehaviour {
 
 		// [AOC] HACK!! Older dragons still don't have the proper materials ----
 		// 		 To be removed
-		if(m_dragonSku != "dragon_baby") {
+		if(m_dragonSku != "dragon_baby" && m_dragonSku != "dragon_classic") {
 			Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
 			Material[] materials = renderer.materials;
 			if(materials.Length > 0) materials[0] = bodyMat;
