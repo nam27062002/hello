@@ -139,7 +139,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
-	private float m_waterMovementModifier = 0;
+	// private float m_waterMovementModifier = 0;
 
 	public float m_dargonAcceleration = 20;
 	public float m_dragonMass = 10;
@@ -182,6 +182,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_boostMultiplier;
 
 	private bool m_grab = false;
+
+	private float m_inverseGravityWater = -2;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -279,6 +281,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
+					m_inverseGravityWater = -2;
 					m_animator.SetBool("swim", false);
 					m_animator.SetBool("fly down", false);
 				}break;
@@ -585,8 +588,30 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private void UpdateWaterMovement()
 	{
-		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * 0.5f * m_currentSpeedMultiplier);
 		Vector3 impulse = m_controls.GetImpulse(1);
+
+		float gravity = 9.81f * m_dragonGravityModifier * m_inverseGravityWater;
+		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+		acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
+
+		// stroke's Drag
+		m_impulse = m_rbody.velocity;
+
+		float impulseMag = m_impulse.magnitude;
+		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+		m_direction = m_impulse.normalized;
+		RotateToDirection( impulse );
+
+		m_rbody.velocity = m_impulse;
+
+		m_inverseGravityWater -= Time.deltaTime * 0.5f;
+
+
+
+
+
+
+		/*
 
 		if ( impulse.y > 0 )
 		{
@@ -598,23 +623,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 		else
 		{
-			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 0.25f, Time.deltaTime);
+			m_waterMovementModifier = Mathf.Lerp( m_waterMovementModifier, 0.0f, Time.deltaTime);
 		}
 
-		// impulse.y += m_speedValue * m_waterMovementModifier;
-		impulse.y += 1 * m_waterMovementModifier;
-	
+		m_impulse = m_rbody.velocity;
+		m_impulse.y += m_parabolicMovementValue * Time.deltaTime;
+		m_impulse.x += m_dargonAcceleration * 0.75f * impulse.x * Time.deltaTime;
 
-
-		if (impulse != Vector3.zero) 
-		{
-			ComputeFinalImpulse(impulse);
-			RotateToDirection( m_impulse );
-		} else {
-			ChangeState(State.Idle);
-		}
-
+		m_direction = m_impulse.normalized;
+		RotateToDirection( m_direction );
 		m_rbody.velocity = m_impulse;
+		*/
 	}
 
 	private void UpdateParabolicMovement( float moveValue )
@@ -835,7 +854,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void StartWaterMovement()
 	{
-		m_waterMovementModifier = 0;
+		// m_waterMovementModifier = 0;
 
 		// Trigger animation
 		m_animationEventController.OnInsideWater();
