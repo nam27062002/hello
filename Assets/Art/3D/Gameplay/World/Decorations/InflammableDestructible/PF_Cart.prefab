@@ -333,7 +333,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_explosionParticle: PF_WoodHit
+  m_burningTime: 5
+  m_explosionParticle: PS_SplintersDestruction
   m_ashesAsset: 
 --- !u!114 &11448586
 MonoBehaviour:
@@ -349,9 +350,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_WoodToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 1
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11461700
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -366,9 +364,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_WoodToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 1
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11465220
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -395,9 +390,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_WoodToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 1
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -435,7 +427,7 @@ MonoBehaviour:
   m_zone1Interaction: 1
   m_knockBackStrength: 0
   m_feddbackParticle: PS_Splinters
-  m_destroyParticle: PS_Splinters
+  m_destroyParticle: PS_SplintersDestruction
 --- !u!114 &114000013011904384
 MonoBehaviour:
   m_ObjectHideFlags: 1

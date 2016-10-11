@@ -543,6 +543,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		Vector3 dir = m_motion.direction;
 		dir.z = 0;
+		dir.Normalize();
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
 		Vector3 arcOrigin = m_suction.position - (dir * arcRadius);
 

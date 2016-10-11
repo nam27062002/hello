@@ -516,9 +516,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_WoodToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11411572
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -533,9 +530,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_MetalToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11422846
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -550,9 +544,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_MetalToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11457918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -579,9 +570,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_WoodToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11465022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -596,9 +584,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_MetalToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11467670
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -610,7 +595,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_explosionParticle: PF_WoodHit
+  m_burningTime: 5
+  m_explosionParticle: PS_SplintersDestruction
   m_ashesAsset: 
 --- !u!114 &11470726
 MonoBehaviour:
@@ -626,9 +612,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_MetalToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11479120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -643,9 +626,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_WoodToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11491530
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -660,9 +640,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_MetalToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!114 &11499792
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -677,9 +654,6 @@ MonoBehaviour:
   m_breathHitParticle: PS_NotBurnable_WoodToon
   m_hitParticleMatchDirection: 0
   m_hitRadius: 0
-  m_resistanceMax: 10
-  m_burningTime: 10
-  m_damagePerSecond: 6
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -717,7 +691,7 @@ MonoBehaviour:
   m_zone1Interaction: 0
   m_knockBackStrength: 0
   m_feddbackParticle: PS_Splinters
-  m_destroyParticle: PS_Splinters
+  m_destroyParticle: PS_SplintersDestruction
 --- !u!114 &114000012266572282
 MonoBehaviour:
   m_ObjectHideFlags: 1

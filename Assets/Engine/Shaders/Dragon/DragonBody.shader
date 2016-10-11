@@ -109,13 +109,13 @@ SubShader {
      			fixed3 pointLights = fixed3(0,0,0);
      			for (int index = 0; index <1; index++)
 	            {    
-		               float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
-		               float3 vertexToLightSource = lightPosition.xyz - i.posWorld.xyz;
-		               float3 lightDirection = normalize(vertexToLightSource);
-		               float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
-		               float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
-		               float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
-		               pointLights = pointLights + diffuseReflection;
+					float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
+					float3 vertexToLightSource = lightPosition.xyz - i.posWorld.xyz;
+					float3 lightDirection = normalize(vertexToLightSource);
+					float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
+					float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
+					float3 diffuseReflection = attenuation * unity_LightColor[index].rgb * max(0.0, dot(normalDirection, lightDirection));         
+					pointLights = pointLights + diffuseReflection;
 	            }
 
 	            // Inner lights
