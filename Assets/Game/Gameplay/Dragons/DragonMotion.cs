@@ -10,6 +10,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using Assets.Code.Game.Currents;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -64,6 +65,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Movement control
 	private Vector3 m_impulse;
 	private Vector3 m_direction;
+	private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
 	private Quaternion m_desiredRotation;
 	private Vector3 m_angularVelocity;
 	private float m_boostSpeedMultiplier;
@@ -184,6 +186,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private bool m_grab = false;
 
 	private float m_inverseGravityWater = -2;
+
+	private RegionManager m_regionManager;
+	public Current                              current { get; set; }
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -408,7 +414,72 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_animator.SetFloat("height", m_height);
 
 		UpdateBodyBending();
+
+		if(m_regionManager == null)
+		{
+			RegionManager.Init();
+			m_regionManager = RegionManager.Instance;
+		}
+		CheckForCurrents ();
 	}
+
+
+ 	private void CheckForCurrents()
+    {
+		// if the region manager is in place...
+        if(m_regionManager != null)
+        {
+			// if it's not in a current...
+			if(current == null)
+            {
+				// ... and it's visible...
+				// if(m_isVisible)
+				{
+					// we're not inside a current, check for entry
+					current = m_regionManager.CheckIfObjIsInCurrent(gameObject);
+					if(current != null)
+					{
+						// notify the machine that it's now in a current.
+						// m_machine.EnteredInCurrent(current);
+					}
+				}
+            }
+            else
+            {
+                // we're already inside a current, check for exit
+                Vector3 pos = m_transform.position;
+				//1.- Check if we are out of bounds of the current
+				//2.- If we are no longer visible remove ourselves from the current as well ( most likely we have been killed by a mine which makes our renderers inactive )
+				//(We dont want the camera to follow an invisible corpse)
+				/*
+				if(!m_isVisible)
+				{
+					// if the object is no longer visible, remove it immediately
+					current.splineForce.RemoveObject(gameObject, true);
+					current = null;
+				}
+				else 
+				*/
+
+				if(!current.Contains(pos.x, pos.y))
+                {
+					if(current.splineForce != null)
+					{
+						// gently apply an exit force before leaving the current
+						current.splineForce.RemoveObject(gameObject, false);
+					}
+					current = null;
+                }
+
+				if(current == null )
+				{
+					// notify the machine that it's no more in a current.
+					// m_machine.ExitedFromCurrent();
+				}
+			}
+        }	
+	}	
+
 
 	void LateUpdate()
 	{
@@ -567,13 +638,24 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
 			m_direction = m_impulse.normalized;
 			RotateToDirection( impulse );
+
+
 		}
 		else
 		{
 			ComputeImpulseToZero();
 			ChangeState( State.Idle );
 		}
+
+		AddExternalForce();
+
 		m_rbody.velocity = m_impulse;
+	}
+
+	private void AddExternalForce()
+	{
+		m_impulse += m_externalForce;
+		m_externalForce = Vector3.zero;
 	}
 
 	float GetTargetSpeedMultiplier()
@@ -660,7 +742,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			// Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
 			Vector3 impulse = Vector3.up * 1 * 0.1f;			
 			ComputeFinalImpulse(impulse);	
-			m_rbody.velocity = m_impulse;
 		}
 		else 
 		{
@@ -676,10 +757,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_direction = Vector3.left;
 		}
 
-		m_rbody.velocity = m_impulse;
-		RotateToDirection(m_direction, true);
 
+		RotateToDirection(m_direction, true);
 		m_desiredRotation = m_transform.rotation;
+
+		AddExternalForce();
+		m_rbody.velocity = m_impulse;
+
+
 	}
 
 	private void ComputeFinalImpulse(Vector3 _impulse) {
@@ -785,6 +870,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public void AddForce(Vector3 _force) {
 		m_impulse = _force;
 		ChangeState(State.Stunned);
+	}
+
+	public void AddExternalForce( Vector3 _force )
+	{
+		m_externalForce += _force;
 	}
 
 	public Transform GetAttackPointNear(Vector3 _point) {
