@@ -242,6 +242,10 @@ public class PolyMesh : MonoBehaviour {
 			}
 			return m_meshCollider;
 		}
+		set
+		{
+			m_meshCollider = value;
+		}
 	}
 
 	//------------------------------------------------------------------------//
