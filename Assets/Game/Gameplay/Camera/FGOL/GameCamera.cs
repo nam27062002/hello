@@ -53,14 +53,6 @@ public class GameCamera : MonoBehaviour
 	// camera-shake
 	private float				m_cameraShake = 0.0f;
 
-#if UNITY_EDITOR
-	private bool				m_updateZoom = true;
-	public bool UpdateZoom
-	{
-		get { return m_updateZoom; }
-		set { m_updateZoom = value; }
-	}
-#endif
 
 	public enum TrackAheadMode
     {
@@ -301,8 +293,27 @@ public class GameCamera : MonoBehaviour
 			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
 
+		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
+		{
+			MoveToSpawnPos( LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME );
+			SetTargetObject( InstanceManager.player.gameObject );
+			m_state = State.PLAY;
+		}
+		else
+		{
+			MoveToSpawnPos(InstanceManager.player.data.def.sku);
+			SetTargetObject( InstanceManager.player.gameObject );
+			m_state = State.INTRO;
+			m_animatedCamera.transform.position = m_position;
+			m_animatedCamera.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
+			m_animatedCamera.PlayIntro();
+			m_unityCamera.enabled = false;	
+		}
+	}
 
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + InstanceManager.player.data.def.sku);
+	private void MoveToSpawnPos( string sku )
+	{
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" +sku );
 		if(spawnPointObj == null) 
 		{
 			// We couldn't find a spawn point for this specific type, try to find a generic one
@@ -312,23 +323,6 @@ public class GameCamera : MonoBehaviour
 		m_position = pos;
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 		m_transform.position = m_position;
-
-		SetTargetObject( InstanceManager.player.gameObject );
-
-		if ( InstanceManager.GetSceneController<LevelEditor.LevelEditorSceneController>() )
-		{
-			m_state = State.PLAY;
-
-		}
-		else
-		{
-			m_state = State.INTRO;
-			m_animatedCamera.transform.position = m_position;
-			m_animatedCamera.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
-			m_animatedCamera.PlayIntro();
-			m_unityCamera.enabled = false;	
-		}
-
 	}
 
 	void OnDestroy()
@@ -368,9 +362,10 @@ public class GameCamera : MonoBehaviour
 
 	private void IntroDone()
 	{
-		// if ( m_state == State.INTRO )
+		if ( m_state == State.INTRO )
 		{
 			// m_state = State.INTRO_DONE;
+			m_state = State.PLAY;
 			m_unityCamera.enabled = true;
 			GetCameraSetup( m_animatedCamera.m_canera );
 		}
@@ -424,10 +419,11 @@ public class GameCamera : MonoBehaviour
 		// When camera target is assigned on the first frame, get the camera into a good position
 		// ASAP so things like spawners don't mess up before we get to our first update.
 		// TODO: consider just doing this based on m_snap, and get rid of firstTime flag?
+
 		if(m_firstTime)
 		{
-			m_position = m_targetTransform.position;
-			m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
+			// m_position = m_targetTransform.position;
+			// m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 
 			UpdateValues();
 		}
@@ -561,11 +557,6 @@ public class GameCamera : MonoBehaviour
 	void PlayUpdate()
 	{
 
-
-#if UNITY_EDITOR
-		float prevZ = transform.position.z;
-#endif
-
 		float dt = Time.deltaTime;
 		Vector3 targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
 		UpdateTrackAheadVector(m_targetMachine);
@@ -650,13 +641,6 @@ public class GameCamera : MonoBehaviour
 
 #if DEBUG_DRAW_BOUNDS
 		DebugDraw.DrawBounds2D(m_screenWorldBounds);
-#endif
-
-#if UNITY_EDITOR
-		if(!m_updateZoom)
-		{
-			transform.position = new Vector3(transform.position.x, transform.position.y, prevZ);
-		}
 #endif
 	}
 
