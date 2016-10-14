@@ -129,8 +129,8 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 			// Only if camera is not already moving!
 			if(!m_menuScreensController.tweening) {
 				// Move camera! ^_^
-				m_menuScreensController.camera.transform.position = m_cameraPath.position;
-				m_menuScreensController.camera.transform.LookAt(m_lookAtPath.position);
+				InstanceManager.sceneController.mainCamera.transform.position = m_cameraPath.position;
+				InstanceManager.sceneController.mainCamera.transform.LookAt(m_lookAtPath.position);
 			}
 		}
 	}

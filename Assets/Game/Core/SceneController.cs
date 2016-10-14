@@ -32,6 +32,12 @@ public class SceneController : MonoBehaviour {
 	[Comment("Mark it only if the scene doesn't have any dependency with previous scenes.")]
 	[SerializeField] private bool m_standaloneScene = false;
 
+	[Comment("Optional, main camera of the scene for faster global access", 10f)]
+	[SerializeField] private Camera m_mainCamera = null;
+	public Camera mainCamera {
+		get { return m_mainCamera; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

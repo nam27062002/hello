@@ -98,7 +98,7 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// </summary>
 	private void ApplyPosOffset() {
 		if (m_camera == null) {
-			m_camera = InstanceManager.GetSceneController<GameSceneControllerBase>().gameCamera;
+			m_camera = InstanceManager.sceneController.mainCamera;
 		}
 
 		// Animation has already applied its position to the number based on (0,0)

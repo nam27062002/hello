@@ -86,7 +86,7 @@ public class MenuCameraAnimatorBySnapPoints : MonoBehaviour {
 		if(m_menuScreensController.currentScene != m_targetScene) return;
 
 		// Get target camera
-		Camera targetCam = m_menuScreensController.camera;
+		Camera targetCam = InstanceManager.sceneController.mainCamera;
 		if(targetCam == null) return;
 
 		// Figure out target snap point

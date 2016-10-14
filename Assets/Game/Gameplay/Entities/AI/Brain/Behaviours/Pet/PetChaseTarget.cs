@@ -8,6 +8,7 @@ namespace AI {
 			public float speed;
 			public string attackPoint;
 			public float chaseTimeout;
+			public Range m_cooldown;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Chase Target")]
@@ -29,6 +30,8 @@ namespace AI {
 			protected MachineEatBehaviour m_eatBehaviour;
 			protected float m_timer;
 
+			private object[] m_transitionParam;
+
 			public override StateComponentData CreateData() {
 				return new PetChaseTargetData();
 			}
@@ -43,6 +46,8 @@ namespace AI {
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
 				m_target = null;
+
+				m_transitionParam = new object[1];
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -110,7 +115,8 @@ namespace AI {
 							if ( collision.collider.gameObject.layer == LayerMask.NameToLayer("ground") )
 							{	
 								// We go back
-								Transition(OnCollisionDetected);
+								m_transitionParam[0] = m_data.m_cooldown.GetRandom();
+								Transition(OnCollisionDetected, m_transitionParam);
 								return;
 							}
 						}
@@ -130,7 +136,8 @@ namespace AI {
 						m_timer += Time.deltaTime;
 						if ( m_timer >= m_data.chaseTimeout )
 						{
-							Transition(OnChaseTimeOut);
+							m_transitionParam[0] = m_data.m_cooldown.GetRandom();
+							Transition(OnChaseTimeOut, m_transitionParam);
 						}
 						else
 						{
@@ -150,7 +157,8 @@ namespace AI {
 					}
 
 				} else {
-					Transition(OnEnemyOutOfSight);
+					m_transitionParam[0] = m_data.m_cooldown.GetRandom();
+					Transition(OnEnemyOutOfSight, m_transitionParam);
 				}
 			}
 		}

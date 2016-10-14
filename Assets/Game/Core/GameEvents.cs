@@ -36,11 +36,11 @@ public enum GameEvents {
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
 
 	// Entity events
-	ENTITY_EATEN,		// params: Transform _entity, Reward _reward
-	ENTITY_BURNED,		// params: Transform _entity, Reward _reward
-	ENTITY_DESTROYED,	// params: Transform _entity, Reward _reward
-	FLOCK_EATEN,		// params: Transform _entity, Reward _reward
-	ENTITY_ESCAPED,		// params: Transform _entity
+	ENTITY_EATEN,				// params: Transform _entity, Reward _reward
+	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
+	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
+	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
+	ENTITY_ESCAPED,				// params: Transform _entity
 
 	// Player events
 	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
@@ -50,11 +50,12 @@ public enum GameEvents {
 	PLAYER_KO,					// no params
 	PLAYER_DIED,				// no params
 	PLAYER_FREE_REVIVE,			// no params
-	PLAYER_REVIVE,			// no params
+	PLAYER_REVIVE,				// no params
 
 	// Collectible events
 	CHEST_COLLECTED,			// params: Chest _chest
 	CHESTS_RESET,				// no params
+	CHESTS_PROCESSED,			// no params					// ChestManager has processed the chests and given the rewards
 	EGG_COLLECTED,				// params: CollectibleEgg _egg
 	EGG_COLLECTED_FAIL,			// params: CollectibleEgg _egg
 

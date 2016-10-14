@@ -15,7 +15,7 @@ public class FireBreathDynamic : MonoBehaviour
 	// Cached components
 	private MeshFilter m_meshFilter = null;
 
-    public float m_distance = 10;
+    public float m_distance = 5;
     public float m_aplitude = 6;
     private float m_splits = 5;
 
@@ -207,7 +207,7 @@ public class FireBreathDynamic : MonoBehaviour
             m_UV[i].Set(0.5f + yDisplacement, vStep * step);
             m_UV[i + 1].Set(0.5f - yDisplacement, vStep * step);
 
-            if (i > 6)
+            if (i > 4)
             {
                 m_color[i] = m_color[i + 1] = (whipIndex > m_collisionSplit) ? m_collisionColor : m_flameColor;
             }
@@ -270,7 +270,7 @@ public class FireBreathDynamic : MonoBehaviour
 
 	
 	// Update is called once per frame
-	void Update () 
+	void FixedUpdate () 
 	{
 //        MoveWhip();
         UpdateWhip();
@@ -395,7 +395,7 @@ public class FireBreathDynamic : MonoBehaviour
             float fq = Mathf.Pow(1.0f - (i / (m_splits + 1)), m_fireFlexFactor);
 //            float rq = Mathf.Clamp(fq + (Vector3.Dot(distance, distance) / mrq) * m_fireFlexFactor * Time.deltaTime, 0.0f, 1.0f);
 //            float rq = Mathf.Clamp(fq + (m_fireFlexFactor * Time.deltaTime), 0.0f, 1.0f);
-            float rq = Mathf.Clamp(fq + ((1.0f / m_fireFlexFactor) * Time.deltaTime), 0.0f, 1.0f);
+            float rq = Mathf.Clamp(fq + ((1.0f / m_fireFlexFactor) * Time.fixedDeltaTime), 0.0f, 1.0f);
 
             m_realWhip[i] = Vector3.Lerp(m_realWhip[i], m_whip[i], rq);
 

@@ -24,6 +24,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly int NUM_DAILY_CHESTS = 5;
+	public static readonly int RESET_PERIOD = 24;	// [AOC] HARDCODED!! Hours
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -208,13 +209,16 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 				} break;
 
 				case "pc": {
-					instance.m_user.AddCoins(rewardDef.GetAsInt("pc"));
+					instance.m_user.AddPC(rewardDef.GetAsInt("amount"));
 				} break;
 			}
 		}
 
 		// Save persistence
 		PersistenceManager.Save();
+
+		// Notify game
+		Messenger.Broadcast(GameEvents.CHESTS_PROCESSED);
 	}
 
 	/// <summary>
@@ -252,7 +256,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		}
 
 		// Reset timer
-		resetTimestamp = DateTime.UtcNow.AddHours(24);	// [AOC] HARDCODED!!
+		resetTimestamp = DateTime.UtcNow.AddHours(RESET_PERIOD);
 
 		// Notify game
 		Messenger.Broadcast(GameEvents.CHESTS_RESET);
