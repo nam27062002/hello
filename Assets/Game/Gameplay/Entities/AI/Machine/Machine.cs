@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Assets.Code.Game.Currents;
 
 namespace AI {
 	public class Machine : MonoBehaviour, IMachine, ISpawnable, MotionInterface {	
@@ -64,6 +65,12 @@ namespace AI {
 		bool m_isPetTarget = false;
 		public bool isPetTarget{ get{ return m_isPetTarget;} set { m_isPetTarget = value; } }
 
+
+		// Currents
+		private RegionManager 	m_regionManager;
+		public Current			current { get; set; }
+		public Vector3		m_externalForces;	// Mostly for currents
+
 		//---------------------------------------------------------------------------------
 
 		// Use this for initialization
@@ -117,6 +124,8 @@ namespace AI {
 
 			m_signals.SetOnEnableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnInvulnerable);
 			m_signals.SetOnDisableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnVulnerable);
+
+			m_externalForces = Vector3.zero;
 		}
 
 		void OnEnable() {
@@ -253,7 +262,16 @@ namespace AI {
 					}
 				}
 
-				if (m_enableMotion) m_motion.Update();
+				if (m_enableMotion) {
+					if(m_regionManager == null)
+					{
+						m_regionManager = RegionManager.Instance;
+					}
+					CheckForCurrents ();
+					m_motion.externalVelocity = m_externalForces;
+					m_motion.Update();
+					m_externalForces = Vector3.zero;
+				}
 				if (m_enableSensor) m_sensor.Update();
 
 				//forward special actions
@@ -263,6 +281,64 @@ namespace AI {
 			}
 			m_inflammable.Update();
 		}
+
+		public void AddExternalForce( Vector3 force )
+		{
+			m_externalForces += force;
+		}
+
+		private void CheckForCurrents()
+	    {
+			// if the region manager is in place...
+	        if(m_regionManager != null)
+	        {
+				// if it's not in a current...
+				if(current == null)
+	            {
+					// ... and it's visible...
+					if(m_entity.isOnScreen)
+					{
+						// we're not inside a current, check for entry
+						current = m_regionManager.CheckIfObjIsInCurrent(gameObject);
+						if(current != null)
+						{
+							// notify the machine that it's now in a current.
+							// m_machine.EnteredInCurrent(current);
+						}
+					}
+	            }
+	            else
+	            {
+	                // we're already inside a current, check for exit
+	                Vector3 pos = transform.position;
+					//1.- Check if we are out of bounds of the current
+					//2.- If we are no longer visible remove ourselves from the current as well ( most likely we have been killed by a mine which makes our renderers inactive )
+					//(We dont want the camera to follow an invisible corpse)
+
+					if(!m_entity.isOnScreen)
+					{
+						// if the object is no longer visible, remove it immediately
+						current.splineForce.RemoveObject(gameObject, true);
+						current = null;
+					}
+					else if(!current.Contains(pos.x, pos.y))
+	                {
+						if(current.splineForce != null)
+						{
+							// gently apply an exit force before leaving the current
+							current.splineForce.RemoveObject(gameObject, false);
+						}
+						current = null;
+	                }
+
+					if(current == null )
+					{
+						// notify the machine that it's no more in a current.
+						// m_machine.ExitedFromCurrent();
+					}
+				}
+	        }	
+		}	
 
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
 			m_signals.SetValue(_signal, _activated, _params);

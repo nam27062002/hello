@@ -70,6 +70,9 @@ namespace AI {
 		private Transform m_attackTarget = null;
 		public Transform attackTarget { get{ return m_attackTarget; } set{ m_attackTarget = value; } }
 
+		private Vector3 m_externalVelocity;
+		public Vector3 externalVelocity{ get{ return m_externalVelocity; } set{ m_externalVelocity = value; } }
+
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public MachineMotion() {}
 
@@ -224,7 +227,7 @@ namespace AI {
 
 					if (m_isGrounded || m_walkOnWalls) {						
 						UpdateVelocity();
-						m_rbody.velocity = m_velocity + (forceGravity / m_mass) * Time.deltaTime;
+						m_rbody.velocity = m_velocity + (forceGravity / m_mass) * Time.deltaTime + m_externalVelocity;
 					} else {
 						// free fall, drag, friction and stuff
 						const float airDensity = 1.293f;
@@ -235,12 +238,12 @@ namespace AI {
 						m_acceleration = (forceGravity + forceDrag);
 
 						m_velocity += m_acceleration * Time.deltaTime;
-						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity);
+						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity) + m_externalVelocity;
 						m_rbody.velocity = m_velocity;
 					}
 				} else {
 					UpdateVelocity();
-					m_rbody.velocity = m_velocity;
+					m_rbody.velocity = m_velocity + m_externalVelocity;
 				}
 
 				Debug.DrawLine(position, position + m_rbody.velocity, Color.yellow);
