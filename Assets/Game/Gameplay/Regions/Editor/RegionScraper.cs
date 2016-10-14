@@ -54,10 +54,9 @@ class RegionScraper
             if (polyMeshes[i].gameObject.tag == tag)
             {
 				List<Vector3> vertices = new List<Vector3>(polyMeshes[i].keyPoints);
-				Vector3 pos = polyMeshes[i].gameObject.transform.position;
 				// Add polymesh position
 				for( int j = 0;j<vertices.Count; j++ )
-					vertices[j] += pos;
+					vertices[j] += polyMeshes[i].gameObject.transform.TransformPoint( vertices[j] );
 
                 regions.Add(Create(polyMeshes[i].gameObject.name, vertices, polyMeshes[i].GetComponent<BezierSplineForce>()));
 
