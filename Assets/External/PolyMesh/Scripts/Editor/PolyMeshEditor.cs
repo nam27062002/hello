@@ -2082,6 +2082,8 @@ public class PolyMeshEditor : Editor {
 		// [AOC] In this particular case, we want collisions to be on the "Ground" layed, so make sure it's done
 		obj.SetLayerRecursively("Ground");
 
+		Selection.activeGameObject = obj;
+
 		// Done!
 		return obj;
 	}
@@ -2098,6 +2100,8 @@ public class PolyMeshEditor : Editor {
 		// Add and initialize the MeshRenderer component
 		MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
 		renderer.material = AssetDatabase.LoadAssetAtPath<Material>("Assets/" + DEFAULT_MATERIAL_PATH + ".mat");
+
+		Selection.activeGameObject = obj;
 
 		// Done!
 		return obj;
