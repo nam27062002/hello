@@ -53,7 +53,13 @@ class RegionScraper
         {
             if (polyMeshes[i].gameObject.tag == tag)
             {
-                regions.Add(Create(polyMeshes[i].gameObject.name, polyMeshes[i].keyPoints, polyMeshes[i].GetComponent<BezierSplineForce>()));
+				List<Vector3> vertices = new List<Vector3>(polyMeshes[i].keyPoints);
+				Vector3 pos = polyMeshes[i].gameObject.transform.position;
+				// Add polymesh position
+				for( int j = 0;j<vertices.Count; j++ )
+					vertices[j] += pos;
+
+                regions.Add(Create(polyMeshes[i].gameObject.name, vertices, polyMeshes[i].GetComponent<BezierSplineForce>()));
 
                 if (tag == "MissionArea")
                 {
