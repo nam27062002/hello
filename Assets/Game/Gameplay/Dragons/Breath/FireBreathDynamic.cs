@@ -287,7 +287,10 @@ public class FireBreathDynamic : MonoBehaviour
         //        whipEnd.transform.SetLocalPosX(m_distance * effectScale);
         whipEnd.transform.localPosition = particlePos;
 
-        whipEnd.transform.SetLocalScale(effectScale);
+//        Debug.Log("ScaleQuick:" + whipEnd.transform.GetGlobalScaleQuick());
+//        Debug.Log("ScaleLossy:" + whipEnd.transform.lossyScale);
+
+        //        whipEnd.transform.SetLocalScale(effectScale);
 
 
     }

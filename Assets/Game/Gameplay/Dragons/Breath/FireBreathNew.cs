@@ -71,8 +71,13 @@ public class FireBreathNew : DragonBreathBehaviour {
 
         Transform m_tongue = transform.FindTransformRecursive("Fire_Dummy");
         GameObject tempFire = Instantiate<GameObject>(m_dragonFlame);
-        tempFire.transform.parent = m_tongue;
+
+//        tempFire.transform.parent = m_tongue;
+        tempFire.transform.SetParent(m_tongue, true);
+        //tempFire.transform.SetParentAndReset(m_tongue);
+
         tempFire.transform.localPosition = Vector3.zero;
+//        tempFire.transform.SetLocalScale(1.0f / transform.GetGlobalScaleQuick());
 
 #if FIRETEST
         tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
@@ -82,7 +87,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         dragonFlameInstance = tempFire.GetComponent<DragonBreath2>();
 #endif
 
-        tempFire.transform.localScale = Vector3.one;
+//        tempFire.transform.localScale = Vector3.one;
 
         dragonFlameInstance.EnableFlame(false);
 
