@@ -61,10 +61,15 @@ class RegionScraper
 
                 regions.Add(Create(polyMeshes[i].gameObject.name, vertices, polyMeshes[i].GetComponent<BezierSplineForce>()));
 
+                /*
                 if (tag == "MissionArea")
                 {
                     AddCollider(polyMeshes[i]);
                 }
+                */
+				polyMeshes[i].meshCollider.convex = true;
+                polyMeshes[i].meshCollider.isTrigger = true;
+				
             }
         }
 

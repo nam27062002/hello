@@ -68,12 +68,6 @@ namespace Assets.Code.Game.Spline
 				//When againgst current, if we recently changes segments, lerp the tangent from the current segment's tanget and the previous segmnet's tangent
 				if (objMachine != null || objDragon != null)
 				{
-					//Vector3 machineVelocity = objMachine.velocity;
-                    //Ease in step change, so the direction does not change drastically in one frame when we change segments of the spline.
-
-                    // Do this regardless of dot product now (DB)
-                    //float dot = Vector3.Dot (velocity, machineVelocity);
-                    //if (dot < 0.0f && step != previousStep)
                     if (step != previousStep)
                     {
                         velocity = EaseInStepChange (velocity, tangent, step);                        
@@ -103,8 +97,8 @@ namespace Assets.Code.Game.Spline
 				}
 
                 //Debug.Log("Adding velocity = " + velocity);
-				//if(objMachine != null)
-				//	objMachine.ApplyExternalVelocity(velocity);
+				if(objMachine != null)
+					objMachine.AddExternalForce(velocity );
 				if ( objDragon != null )
 					objDragon.AddExternalForce( velocity );
             }

@@ -647,12 +647,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			ChangeState( State.Idle );
 		}
 
-		AddExternalForce();
+		ApplyExternalForce();
 
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void AddExternalForce()
+	private void ApplyExternalForce()
 	{
 		m_impulse += m_externalForce;
 		m_externalForce = Vector3.zero;
@@ -761,7 +761,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		RotateToDirection(m_direction, true);
 		m_desiredRotation = m_transform.rotation;
 
-		AddExternalForce();
+		ApplyExternalForce();
 		m_rbody.velocity = m_impulse;
 
 
