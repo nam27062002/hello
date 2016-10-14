@@ -26,7 +26,6 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
-		private float m_timer = 0.5f;
 
         private bool m_started = false;
 
@@ -37,6 +36,7 @@ namespace LevelEditor {
         /// Initialization.
         /// </summary>
         override protected void Awake() {
+        	m_started = false;
             ApplicationManager.CreateInstance();            
 
             // Initialize some required managers
@@ -94,14 +94,6 @@ namespace LevelEditor {
 			} else {
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
-
-				// Quick'n'dirty timer to place the dragon at the spawn point
-				if(m_timer > 0f) {
-					m_timer -= Time.deltaTime;
-					if(m_timer <= 0f)
-						if (InstanceManager.player)
-					 		InstanceManager.player.MoveToSpawnPoint(true);
-				}
 			}
 		}
 
@@ -187,6 +179,11 @@ namespace LevelEditor {
 					} break;
 				}
 			}
+		}
+
+		public override bool IsLevelLoaded()
+		{
+			return m_started;
 		}
 	}
 }
