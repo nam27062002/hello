@@ -6,10 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: lightning
-  m_Shader: {fileID: 4800000, guid: e2e52a5da952247b0a2b911f92db4e3c, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: FireMaterialBlue
+  m_Shader: {fileID: 4800000, guid: b5d133454c866364f90d201e1c7baed2, type: 3}
+  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
+    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -19,6 +20,12 @@ Material:
         name: _BumpMap
       second:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ColorRamp
+      second:
+        m_Texture: {fileID: 2800000, guid: b88c7d4413e935e41b78f7052190e170, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -46,15 +53,33 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
+        name: _FireTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 39ebe1fc487c0a142943fc3daa8a4423, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _GlowTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 19913b7074723c940a80fcfbdc79de59, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 0b07f4dc3c0bca74f87e76351e1b83de, type: 3}
+        m_Texture: {fileID: 2800000, guid: 19913b7074723c940a80fcfbdc79de59, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
       second:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _NoiseTex
+      second:
+        m_Texture: {fileID: 2800000, guid: b883c2cb833d7a443998ec04d8fa7faa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -71,8 +96,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
+        name: _Alpha
+      second: 1
+    - first:
+        name: _AlphaThreshold
+      second: 0
+    - first:
         name: _BumpScale
       second: 1
+    - first:
+        name: _ColorSteps
+      second: 4
     - first:
         name: _Cutoff
       second: 0.5
@@ -82,6 +116,9 @@ Material:
     - first:
         name: _DstBlend
       second: 0
+    - first:
+        name: _FirePower
+      second: 2.63
     - first:
         name: _GlossMapScale
       second: 1
@@ -104,14 +141,32 @@ Material:
         name: _Parallax
       second: 0.02
     - first:
+        name: _Power
+      second: 3
+    - first:
+        name: _Radius
+      second: 0.5
+    - first:
+        name: _RampOffset
+      second: 0.1
+    - first:
+        name: _Seed
+      second: 1
+    - first:
         name: _SmoothnessTextureChannel
       second: 0
     - first:
         name: _SpecularHighlights
       second: 1
     - first:
+        name: _Speed
+      second: 0.7
+    - first:
         name: _SrcBlend
       second: 1
+    - first:
+        name: _StepsMargin
+      second: 8
     - first:
         name: _UVSec
       second: 0
@@ -126,5 +181,8 @@ Material:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
-        name: _TintColor
-      second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+        name: _GlowColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _GlowColorMult
+      second: {r: 1, g: 1, b: 1, a: 1}
