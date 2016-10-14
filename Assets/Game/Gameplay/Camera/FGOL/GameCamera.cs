@@ -313,7 +313,7 @@ public class GameCamera : MonoBehaviour
 
 	private void MoveToSpawnPos( string sku )
 	{
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" +sku );
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + sku );
 		if(spawnPointObj == null) 
 		{
 			// We couldn't find a spawn point for this specific type, try to find a generic one
