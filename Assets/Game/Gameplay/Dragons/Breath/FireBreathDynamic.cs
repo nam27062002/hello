@@ -15,7 +15,7 @@ public class FireBreathDynamic : MonoBehaviour
 	// Cached components
 	private MeshFilter m_meshFilter = null;
 
-    public float m_distance = 5;
+    public float m_distance = 1;
     public float m_aplitude = 6;
     private float m_splits = 5;
 
@@ -58,7 +58,7 @@ public class FireBreathDynamic : MonoBehaviour
 
     public float timeDelay = 0.25f;
 
-    public float effectScale = 1.0f;
+    public float m_effectScale = 1.0f;
 
     private float m_lastTime;
 
@@ -117,7 +117,7 @@ public class FireBreathDynamic : MonoBehaviour
         m_whipTangent = new Vector3[(int)m_splits + 1];
 //        m_whipCollision = new bool[(int)m_splits + 1];
 
-        float xStep = (m_distance * effectScale) / (m_splits + 1);
+        float xStep = (m_distance * m_effectScale) / (m_splits + 1);
 		Vector3 move = transform.right;
 		Vector3 pos = transform.position;
 		for( int i = 0; i < (m_splits + 1); i++ )
@@ -182,7 +182,7 @@ public class FireBreathDynamic : MonoBehaviour
 
         for ( int i = 2; i < m_numPos; i += 2 )
 		{
-			float yDisplacement = m_shapeCurve.Evaluate(step/(float)(m_splits+2)) * m_aplitude;
+			float yDisplacement = m_shapeCurve.Evaluate(step/(float)(m_splits+2)) * m_aplitude * m_effectScale*0.25f;
 
             Vector3 whipTangent = transform.InverseTransformDirection(m_whipTangent[whipIndex]);
 
@@ -282,7 +282,8 @@ public class FireBreathDynamic : MonoBehaviour
         m_mesh.colors = m_color;
 
         Vector3 particlePos = whipEnd.transform.localPosition;
-        float particleDistance = m_distance * Mathf.Pow(effectScale, 1.5f);
+        float particleDistance = m_distance * (m_effectScale*0.5f);       
+        //Mathf.Pow(effectScale, 1.5f);
         particlePos.x = m_collisionDistance < particleDistance ? m_collisionDistance : particleDistance;
         //        whipEnd.transform.SetLocalPosX(m_distance * effectScale);
         whipEnd.transform.localPosition = particlePos;
@@ -313,12 +314,12 @@ public class FireBreathDynamic : MonoBehaviour
             gameObject.active = false;
         }
 
-        float xStep = (flameAnim * m_distance * effectScale) / (m_splits + 1);
+        float xStep = (flameAnim * m_distance * m_effectScale) / (m_splits + 1);
 //        m_collisionSplit = (int)m_splits + 1;
         m_collisionSplit = (int)m_splits - 1;
         m_collisionDistance = 10000000.0f;
 
-        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance * effectScale * 2.0f, m_groundLayerMask))
+        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance * m_effectScale * 2.0f, m_groundLayerMask))
         {
 
             if (Time.time > m_lastTime + m_collisionFireDelay)
