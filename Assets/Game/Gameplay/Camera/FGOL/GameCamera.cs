@@ -349,15 +349,13 @@ public class GameCamera : MonoBehaviour
 
 	private void CountDownEnded()
 	{
-	/*
 		if ( m_state == State.INTRO )
 		{
-			m_state = State.INTRO_DONE;
+			// m_state = State.INTRO_DONE;
+			m_state = State.PLAY;
 			m_unityCamera.enabled = true;
 			GetCameraSetup( m_animatedCamera.m_canera );
-	 	}
-	 	*/
-		m_state = State.PLAY;
+		}
 	}
 
 	private void IntroDone()
