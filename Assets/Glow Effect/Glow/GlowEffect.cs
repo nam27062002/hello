@@ -140,10 +140,6 @@ namespace GlowEffect
                 // blur
                 RenderTexture blurA = RenderTexture.GetTemporary(downsampleSize, downsampleSize, 0, RenderTextureFormat.ARGB32);
                 RenderTexture blurB = RenderTexture.GetTemporary(downsampleSize, downsampleSize, 0, RenderTextureFormat.ARGB32);
-
-                if (blurA == null || blurB == null)
-                    return;
-
                 if (blurIterations % 2 == 0) {
                     glowMaterial.SetTexture("_Glow", blurA);
                 } else {
