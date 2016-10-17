@@ -52,11 +52,18 @@ namespace AI {
 
 			protected override void OnExit(State newState) {				
 				m_pilot.SlowDown(false);
+				m_pilot.ReleaseAction(Pilot.Action.Scared);
 			}
 
 			protected override void OnUpdate() {
 				ActionPoint ap = null;
 				Transform enemy = m_machine.enemy;
+
+				if (m_machine.GetSignal(Signals.Type.Danger)) {
+					m_pilot.PressAction(Pilot.Action.Scared); 
+				} else {
+					m_pilot.ReleaseAction(Pilot.Action.Scared); 
+				}
 
 				// Let's see if we have found an action point
 				m_actionPointTimer -= Time.deltaTime;
