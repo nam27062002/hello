@@ -109,6 +109,9 @@ namespace AI {
 						m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					}
 
+					float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;
+
+					m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
 					m_impulse += m_externalImpulse;
 
 					if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
@@ -116,10 +119,6 @@ namespace AI {
 							m_direction = m_impulse.normalized;
 						}
 					}
-
-					float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;
-
-					m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
 
 					Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
 				}

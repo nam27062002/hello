@@ -20,9 +20,7 @@ namespace AI {
 			// m_impulse = Vector3.zero;
 
 			if (speed > 0.01f) {
-				m_target.y = transform.position.y;
-
-				//m_direction = GetGroundDirection();
+				TransformTarget();				 
 
 				Vector3 v = m_target - transform.position;	
 				v = v.normalized * speed;
@@ -42,30 +40,32 @@ namespace AI {
 				}
 			}
 		}
-		/*
-		private Vector3 GetGroundDirection() {			
-			Vector3 distance = Vector3.down * 15f;
-			Vector3 leftSensor  = transform.position - Vector3.right * 0.5f;
-			Vector3 rightSensor = transform.position + Vector3.right * 0.5f;
 
-			RaycastHit leftHit;
-			RaycastHit rightHit;
+		private void TransformTarget() {
+			// ground line
+			Vector3 groundP1 = transform.position;
+			Vector3 groundP2 = groundP1 + m_machine.groundDirection;
 
-			bool hasLeftHit = Physics.Linecast(leftSensor, leftSensor + distance, out leftHit, m_groundMask);
-			bool hasRightHit = Physics.Linecast(rightSensor, rightSensor + distance, out rightHit, m_groundMask);
+			// target line
+			Vector3 targetP1 = m_target;
+			Vector3 targetP2 =targetP1;
+			targetP2.y = 0;
 
-			if (m_impulse.x >= 0) {
-				if (hasLeftHit && hasRightHit) {
-					return (rightHit.point - leftHit.point).normalized;
-				}
-				return Vector3.right;
-			} else {
-				if (hasLeftHit && hasRightHit) {
-					return (leftHit.point - rightHit.point).normalized;
-				}
-				return Vector3.left;
+			float groundA = groundP2.y - groundP1.y;
+			float groundB = groundP1.x - groundP2.x;
+			float groundC = groundA * groundP1.x + groundB * groundP1.y;
+
+			float targetA = targetP2.y - targetP1.y;
+			float targetB = targetP1.x - targetP2.x;
+			float targetC = targetA * targetP1.x + targetB * targetP1.y;
+
+			float det = groundA * targetB - targetA * groundB;
+
+			if (det != 0) {
+				m_target.x = (targetB * groundC - groundB * targetC) / det;
+				m_target.y = (groundA * targetC - targetA * groundC) / det;
 			}
-		}*/
+		}
 
 		void OnDrawGizmosSelected() {
 			Gizmos.color = Color.white;

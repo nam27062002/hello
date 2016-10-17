@@ -907,6 +907,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public Vector3 direction {
 		get { return m_direction; }
 	}
+
+	public Vector3 groundDirection {
+		get { return Vector3.zero; }
+	}
 		
 	public Vector3 velocity {
 		get { return m_impulse; }

@@ -8,6 +8,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	[SerializeField] private GameObject m_explosionPrefab = null;
 	[SerializeField] private Range m_scaleRange = new Range(1f, 5f);
 	[SerializeField] private Range m_rotationRange = new Range(0f, 360f);
+	[SerializeField] private float m_knockback = 0;
 
 	private float m_damage;
 	private bool m_hasBeenShot;
@@ -123,6 +124,18 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		}
 
 		if (_hitDragon) {
+			if (m_knockback > 0) {
+				DragonMotion dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+
+				Vector3 knockBack = dragonMotion.transform.position - transform.position;
+				knockBack.z = 0f;
+				knockBack.Normalize();
+
+				knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockback, 1f));
+
+				dragonMotion.AddForce(knockBack);
+			}
+
 			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
 		}
 
