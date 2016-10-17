@@ -68,7 +68,7 @@ Shader "Hungry Dragon/UnderWater"
 				{
 					v2f o;
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.x * 62.2f) + _Time.y * 6.52f);
-					float sinY = sin((v.vertex.y * 35.0f) + _Time.y) + sin((v.vertex.y * 15.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
+					float sinY = sin((v.vertex.y * 35.0f) + _Time.y) + sin((v.vertex.y * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					v.vertex.z += (sinX + sinY) * 0.002 * step(0.0, v.vertex.z) * v.color.g;
 
 //					v.vertex.z += ((sin((v.vertex.x * 60.0f) + _Time.z) * 1.0) + sin((v.vertex.y * 75.0f) + _Time.w) * 0.5) * 0.004 * step(0.0, v.vertex.z) * v.color.g;
@@ -101,7 +101,7 @@ Shader "Hungry Dragon/UnderWater"
 					float z = depth;// i.uv.y;
 //					i.uv.y = depthR;
 //					float4 prj = float4(i.uv, z, 0.0f);
-					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy) * (z * 2.02f) * _ProjectionParams.w) * 2.0f;
+					fixed4 col = tex2D(_MainTex, 2.0f * (i.uv.xy) * (z * 2.0f) * _ProjectionParams.w) * 2.0f;
 //					fixed4 col = tex2Dproj(_MainTex, 1.01f * prj) * 2.0f;
 					//				fixed4 col = tex2Dproj(_MainTex, (i.scrPos) * depth * 0.1f);
 					col.w = 0.0f;

@@ -161,7 +161,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 31472345}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 3
   startDelay:
     scalar: 0
@@ -199,12 +199,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 0
   looping: 1
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 1
+  autoRandomSeed: 1
   scalingMode: 2
+  randomSeed: 0
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -702,7 +703,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     z:
       scalar: 1
       maxCurve:
@@ -737,7 +738,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     separateAxes: 0
   RotationModule:
     enabled: 1
@@ -1453,7 +1454,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     z:
       scalar: 1
       maxCurve:
@@ -1488,7 +1489,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     range: {x: 0, y: 1}
     separateAxes: 0
   RotationBySpeedModule:
@@ -1940,8 +1941,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0ce350907f0a04dac7f11ca0bf1e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorA: {r: 1, g: 1, b: 0, a: 1}
-  colorB: {r: 0.43706292, g: 0.43706292, b: 0, a: 1}
+  colorA:
+    r: 1
+    g: 1
+    b: 0
+    a: 1
+  colorB:
+    r: 0.43706292
+    g: 0.43706292
+    b: 0
+    a: 1
   speed: 0.25
   glowMaterial: {fileID: 2100000, guid: d0a61d41bfdf72945a42865abbcd6fd3, type: 2}
 --- !u!114 &67041251
@@ -1955,8 +1964,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0ce350907f0a04dac7f11ca0bf1e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorA: {r: 1, g: 0, b: 0, a: 1}
-  colorB: {r: 0, g: 0.91044784, b: 1, a: 1}
+  colorA:
+    r: 1
+    g: 0
+    b: 0
+    a: 1
+  colorB:
+    r: 0
+    g: 0.91044784
+    b: 1
+    a: 1
   speed: 1
   glowMaterial: {fileID: 2100000, guid: d74da7b64cef1df479945a3ff8722528, type: 2}
 --- !u!1 &213145976
@@ -2071,10 +2088,12 @@ MonoBehaviour:
   blurIterations: 4
   blurSpread: 1
   glowStrength: 2
-  ignoreLayers:
-    serializedVersion: 2
-    m_Bits: 16
-  glowColorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+  ignoreLayers: {}
+  glowColorMultiplier:
+    r: 1
+    g: 1
+    b: 1
+    a: 1
 --- !u!1 &214569440
 GameObject:
   m_ObjectHideFlags: 0
@@ -2727,7 +2746,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 591059867}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 2
   startDelay:
     scalar: 0
@@ -2765,12 +2784,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 0
   looping: 1
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 1
+  autoRandomSeed: 1
   scalingMode: 2
+  randomSeed: 0
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -3278,7 +3298,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     z:
       scalar: 1
       maxCurve:
@@ -3313,7 +3333,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     separateAxes: 0
   RotationModule:
     enabled: 1
@@ -4029,7 +4049,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     z:
       scalar: 1
       maxCurve:
@@ -4064,7 +4084,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      minMaxState: 0
+      minMaxState: 1
     range: {x: 0, y: 1}
     separateAxes: 0
   RotationBySpeedModule:
@@ -6682,8 +6702,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0ce350907f0a04dac7f11ca0bf1e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorA: {r: 1, g: 0, b: 0, a: 0}
-  colorB: {r: 0, g: 0.91044784, b: 1, a: 0}
+  colorA:
+    r: 1
+    g: 0
+    b: 0
+    a: 0
+  colorB:
+    r: 0
+    g: 0.91044784
+    b: 1
+    a: 0
   speed: 1
   glowMaterial: {fileID: 2100000, guid: bcda9aba2b11a134ca836f5a98ea425e, type: 2}
 --- !u!114 &1927249534
@@ -6697,8 +6725,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0ce350907f0a04dac7f11ca0bf1e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorA: {r: 1, g: 1, b: 0, a: 1}
-  colorB: {r: 0, g: 0, b: 0, a: 1}
+  colorA:
+    r: 1
+    g: 1
+    b: 0
+    a: 1
+  colorB:
+    r: 0
+    g: 0
+    b: 0
+    a: 1
   speed: 0.25
   glowMaterial: {fileID: 2100000, guid: fe657c5502bd3ab4aa509bf89c5aea0e, type: 2}
 --- !u!1 &1929964036
