@@ -17,7 +17,7 @@ public class BezierSplineEditor : Editor
     int pointsPerCurve = 4;
 
     private const float handleSize = 0.05f;
-    private const float pickSize = 0.05f;
+    private const float pickSize = 0.1f;
 
     private int selectedIndex = -1;
 
@@ -165,7 +165,12 @@ public class BezierSplineEditor : Editor
             EditorUtility.SetDirty(spline);
         }
 
-		selectAllPoints = (GUILayout.Toggle(selectAllPoints, "Select All Points"));
+		bool t = (GUILayout.Toggle(selectAllPoints, "Select All Points"));
+		if ( t != selectAllPoints )
+		{
+			selectAllPoints = t;
+			EditorUtility.SetDirty(spline);
+		}
 
         isEditMode = (GUILayout.Toggle(isEditMode, "Edit mode"));
 

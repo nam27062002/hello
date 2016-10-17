@@ -19,16 +19,13 @@ namespace Assets.Code.Game.Spline
         private BezierControlPointMode[] modes;
 
         [SerializeField]
-        private float[] length;
-
-        [SerializeField]
         public bool optimize = true;
 
         [SerializeField]
         public float optimizeDotCheck = 0.7f;
 
         [SerializeField]
-        public int stepsPerCurve = 500;
+        public int stepsPerCurve = 10;
 
         [Serializable]
         public class DistancePosMapEntry
@@ -169,8 +166,6 @@ namespace Assets.Code.Game.Spline
                 BezierControlPointMode.free,
                 BezierControlPointMode.free
             };
-
-            length = new float[] { 0.0f };
         }
 
         public Vector3 GetPoint(float t)
@@ -258,34 +253,32 @@ namespace Assets.Code.Game.Spline
 
         public void RemoveLastCurve()
         {
-            Array.Resize(ref points, points.Length - 3);
+        	if ( points.Length > 4 )
+        	{
+	            Array.Resize(ref points, points.Length - 3);
 
-            // when adding another curve, we get one more control point, so inflate the modes array
-            Array.Resize(ref modes, modes.Length - 1);
-
-            Array.Resize(ref length, length.Length - 1);
-
+	            // when adding another curve, we get one more control point, so inflate the modes array
+	            Array.Resize(ref modes, modes.Length - 1);
+            }
             Refresh();
         }
 
         public void RemoveFirstCurve()
         {
-            // shift all elements forward and remove the last curve
-            for(int i = 0; i < points.Length - 3; i++)
-            {
-                points[i] = points[i + 3];
+        	if ( points.Length > 4 )
+        	{
+	            // shift all elements forward and remove the last curve
+	            for(int i = 0; i < points.Length - 3; i++)
+	            {
+	                points[i] = points[i + 3];
+	            }
+	            // same for modes
+	            for(int j = 0; j < modes.Length - 1; j++)
+	            {
+	                modes[j] = modes[j + 1];
+	            }
+	            RemoveLastCurve();
             }
-            // same for modes
-            for(int j = 0; j < modes.Length - 1; j++)
-            {
-                modes[j] = modes[j + 1];
-            }
-            // same for lengths
-            for(int i = 0; i < length.Length - 1; i++)
-            {
-                length[i] = length[i + 1];
-            }
-            RemoveLastCurve();
             Refresh();
         }
 
@@ -315,11 +308,6 @@ namespace Assets.Code.Game.Spline
                     modes[i] = modes[i + 1];
                 }
                 Array.Resize(ref modes, modes.Length - 1);
-                for(int i = modeIndex; i < length.Length - 1; i++)
-                {
-                    length[i] = length[i + 1];
-                }
-                Array.Resize(ref length, length.Length - 1);
                 //EnforceMode(index);
                 Refresh();
             }
