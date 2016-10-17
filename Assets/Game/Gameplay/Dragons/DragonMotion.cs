@@ -36,6 +36,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		None,
 	};
 
+	private const float m_waterImpulseMultiplier = 0.75f;
+	private const float m_onWaterCollisionMultiplier = 0.5f;
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
@@ -953,6 +956,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( m_particleController != null )
 			m_particleController.OnEnterWater();
 
+		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
+
 		// Change state
 		ChangeState(State.InsideWater);
 	}
@@ -1122,11 +1127,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			case State.InsideWater:
 			{
-				if ( m_impulse.y < 0 )
+				if ( m_impulse.y < 0 )	// if going deep
 				{
-					m_impulse.y = 0;		
+					m_impulse = Vector3.up * m_impulse.magnitude * m_onWaterCollisionMultiplier;	
 				}
-				m_impulse.x = -m_impulse.x;
 			}break;
 
 			case State.OuterSpace: {
