@@ -5,7 +5,6 @@ using System.Linq;
 
 public class GlowMaterialInspector : MaterialEditor
 {
-
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -14,12 +13,6 @@ public class GlowMaterialInspector : MaterialEditor
             return;
 
         var material = target as Material;
-
-        if (GUILayout.Button("Reset Glow"))
-        {
-            material.shaderKeywords = new string[] { "GLOWEFFECT_USE_MAINTEX_OFF", "GLOWEFFECT_USE_GLOWTEX_OFF", "GLOWEFFECT_USE_GLOWCOLOR_OFF",
-                                                      "GLOWEFFECT_USE_VERTEXCOLOR_OFF", "GLOWEFFECT_MULTIPLY_COLOR_OFF" };
-        }
         ShowGlowMaterialKeywords(material);
     }
 

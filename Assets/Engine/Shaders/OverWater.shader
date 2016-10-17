@@ -77,7 +77,7 @@ Shader "Hungry Dragon/OverWater"
 				{
 					v2f o;
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.x * 62.2f) + _Time.y * 6.52f);
-					float sinY = sin((v.vertex.y * 35.0f) + _Time.y) + sin((v.vertex.y * 15.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
+					float sinY = sin((v.vertex.y * 35.0f) + _Time.y) + sin((v.vertex.y * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
 					v.vertex.z += (sinX + sinY) * 0.002 * step(0.0, v.vertex.z) * v.color.g;
 
 //					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
@@ -111,13 +111,13 @@ Shader "Hungry Dragon/OverWater"
 					//				float depth = tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.scrPos)).x;
 
 					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
-						sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS);
+										 sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS);
 
 					//					fixed4 col = tex2D(_MainTex, 3.0f * (i.uv.xy) * (depthR * 1.02f) * _ProjectionParams.w ) * 2.0f;
 					float z = depth;// i.uv.y;
 									//					i.uv.y = depthR;
 									//					float4 prj = float4(i.uv, z, 0.0f);
-					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy) * (z * 2.02f) * _ProjectionParams.w) * 2.0f;
+					fixed4 col = tex2D(_MainTex, 2.0f * (i.uv.xy) * (z * 2.0f) * _ProjectionParams.w) * 2.0f;
 					//				fixed4 col = tex2Dproj(_MainTex, (i.scrPos) * depth * 0.1f);
 					col.w = 0.0f;
 					col = lerp(_Color, col, clamp(1.0 - (depth * 0.02f), 0.0f, 1.0f));
