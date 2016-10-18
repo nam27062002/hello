@@ -30,6 +30,7 @@ MonoBehaviour:
   - m_name: Go Back at Home
     m_componentAssets:
     - {fileID: 11400000, guid: b31814d08b4154570a0d89d29f7bc112, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   - m_name: Fall down
     m_componentAssets: []
   - m_name: Locked in Cage Idle
@@ -120,6 +121,9 @@ MonoBehaviour:
     from: 10
   - to: 1
     id: onBackAtHome
+    from: 4
+  - to: 3
+    id: onEnemyInRange
     from: 4
   - to: 5
     id: onFallDown
