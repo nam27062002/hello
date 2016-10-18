@@ -8,8 +8,7 @@ public class NetTest : MonoBehaviour
 {
 	public GameObject m_loginButton;
 	public GameObject m_actionButtons;
-	public GameObject m_waitingText;
-	public GameObject m_mergeLayout;
+	public GameObject m_waitingText;	
 
     private enum ESocialAPI
     {
@@ -26,8 +25,7 @@ public class NetTest : MonoBehaviour
 		// CUSTOM SERVER
 		m_loginButton.SetActive(false);
 		m_actionButtons.SetActive(false);
-		m_waitingText.SetActive(false);
-		m_mergeLayout.SetActive(false);
+		m_waitingText.SetActive(false);		
 		
         switch (socialAPI)
         {
@@ -117,12 +115,7 @@ public class NetTest : MonoBehaviour
                 Debug.Log("No social API assigned");
                 break;
         }                
-    }
-	
-
-	public void MergeButton()
-	{
-	}
+    }		
 
 	public void OnResetDeviceInfo()
 	{
