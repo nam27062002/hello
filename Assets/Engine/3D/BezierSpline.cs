@@ -536,6 +536,59 @@ namespace Assets.Code.Game.Spline
             Refresh();
         }
 
+
+        public void AddControlPointAfter( int controlPointIndex )
+        {
+			if ( controlPointIndex % 3 != 0 )	// it's not a control point
+        		return;
+
+        	if ( controlPointIndex  == points.Length - 1)
+        	{
+        		AddCurve();
+        	}
+        	else
+        	/*
+        	else if ( controlPointIndex == 0 )
+        	{
+        		
+        	}
+        	else
+        	*/
+        	{
+        		int controlIndex = controlPointIndex / 3;
+				float t1 = controlIndex / (float)curveCount;
+				float t2 = (controlIndex +1) / (float)curveCount;
+				float diff = t2 - t1;
+				Vector3 beforeMid = GetPoint( t1 + (diff / 3.0f) );
+        		Vector3 mid = GetPoint( t1 + (diff / 2.0f) );
+				Vector3 afterMid = GetPoint( t1 + ( 2 * diff / 3 ) );
+
+				Array.Resize(ref points, points.Length + 3);
+	            // move on up by 3 places
+				for(int i = points.Length - 1; i >= (controlPointIndex + 2) && (i-3) >= 0; i--)
+	            {
+	                points[i] = points[i - 3];
+	            }
+		      	
+				points[controlPointIndex + 2] = transform.InverseTransformPoint( beforeMid );
+				points[controlPointIndex + 3] = transform.InverseTransformPoint(mid);
+				points[controlPointIndex + 4] = transform.InverseTransformPoint(afterMid);
+
+	            Array.Resize(ref modes, modes.Length + 1);
+				int nodeIndex = controlPointIndex / 3;
+	            for(int i = modes.Length - 1; i > nodeIndex; i--)
+	            {
+	                modes[i] = modes[i - 1];
+	            }
+	            modes[nodeIndex+1] = BezierControlPointMode.free;
+
+	            EnforceMode(nodeIndex+1);
+
+	            Refresh();
+            }
+        }
+
+
         public void DrawOptimizedPoints()
         {
 #if UNITY_EDITOR

@@ -95,6 +95,8 @@ public class BezierSplineEditor : Editor
                 Undo.RecordObject(spline, "Add middle point");
                 spline.AddPointClosestToRay(worldRay);
                 EditorUtility.SetDirty(spline);
+				SceneView.RepaintAll();
+				Repaint();
             }
 
             Event.current.Use();
@@ -104,7 +106,7 @@ public class BezierSplineEditor : Editor
     public override void OnInspectorGUI()
     {
         //Debug.Log("INSPECTOR GUI");
-
+        bool showBar = false;
         spline = target as BezierSpline;
         if((selectedIndex > 0) && (selectedIndex < spline.pointCount))
         {
@@ -133,6 +135,9 @@ public class BezierSplineEditor : Editor
                 spline.SetControlPointMode(selectedIndex, mode);
                 EditorUtility.SetDirty(spline);
             }
+
+			showBar = true;
+
         }
 
         // main points only
@@ -143,10 +148,22 @@ public class BezierSplineEditor : Editor
                 Undo.RecordObject(spline, "Delete point");
                 spline.DeleteControlPoint(selectedIndex);
                 EditorUtility.SetDirty(spline);
+                selectedIndex = -1;
             }
+
+            if ( GUILayout.Button("Add New Point") )
+            {
+				Undo.RecordObject(spline, "Add Point");
+				spline.AddControlPointAfter( selectedIndex);
+				EditorUtility.SetDirty(spline);
+            }
+            showBar = true;
         }
 
-        if(GUILayout.Button("Add Point"))
+        if ( showBar )
+			EditorGUILayout.TextArea("",GUI.skin.horizontalSlider);
+
+        if(GUILayout.Button("Add Point At End"))
         {
             Undo.RecordObject(spline, "Add Point");
             spline.AddCurve();
