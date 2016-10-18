@@ -41,7 +41,7 @@ class RegionScraper
              regionHolder.m_levelMissionAreas[i] = (MissionArea)temp[i];
         }
 
-        EditorUtility.SetDirty(regionHolder);
+		EditorApplication.MarkSceneDirty();
     }
 
     static Region[] GetRegions(string tag)
@@ -56,7 +56,7 @@ class RegionScraper
 				List<Vector3> vertices = new List<Vector3>(polyMeshes[i].keyPoints);
 				// Add polymesh position
 				for( int j = 0;j<vertices.Count; j++ )
-					vertices[j] += polyMeshes[i].gameObject.transform.TransformPoint( vertices[j] );
+					vertices[j] = polyMeshes[i].gameObject.transform.TransformPoint( vertices[j] );
 
                 regions.Add(Create(polyMeshes[i].gameObject.name, vertices, polyMeshes[i].GetComponent<BezierSplineForce>()));
 
