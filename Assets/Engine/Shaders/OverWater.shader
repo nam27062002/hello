@@ -117,7 +117,7 @@ Shader "Hungry Dragon/OverWater"
 					float z = depth;// i.uv.y;
 									//					i.uv.y = depthR;
 									//					float4 prj = float4(i.uv, z, 0.0f);
-					fixed4 col = tex2D(_MainTex, 2.0f * (i.uv.xy) * (z * 2.0f) * _ProjectionParams.w) * 2.0f;
+					fixed4 col = tex2D(_MainTex, 4.0f * (i.uv.xy + anim) * (z * 2.0f) * _ProjectionParams.w) * 2.0f;
 					//				fixed4 col = tex2Dproj(_MainTex, (i.scrPos) * depth * 0.1f);
 					col.w = 0.0f;
 					col = lerp(_Color, col, clamp(1.0 - (depth * 0.02f), 0.0f, 1.0f));

@@ -60,6 +60,8 @@ public class FireBreathDynamic : MonoBehaviour
 
     public float m_effectScale = 1.0f;
 
+    public float m_sizeQuad = 4.0f;
+
     private float m_lastTime;
 
     private float enableTime = 0.0f;
@@ -318,6 +320,9 @@ public class FireBreathDynamic : MonoBehaviour
 //        m_collisionSplit = (int)m_splits + 1;
         m_collisionSplit = (int)m_splits - 1;
         m_collisionDistance = 10000000.0f;
+
+
+        Debug.DrawLine(transform.position, transform.position + transform.right * m_distance * m_effectScale * 2.0f);
 
         if (Physics.Raycast(transform.position, transform.right, out hit, m_distance * m_effectScale * 2.0f, m_groundLayerMask))
         {
