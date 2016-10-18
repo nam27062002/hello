@@ -13,8 +13,6 @@ using System.Collections;
 
 public class GameCamera : MonoBehaviour
 {
-	private const float Z_FAR = 10f; // we'll need two layers of activation
-
 	private const float			m_maxTrackAheadScaleX = 0.15f;
     private const float         m_maxTrackAheadScaleY = 0.2f; //JO
 	private const float			m_trackBlendRate = 1.0f;
@@ -106,7 +104,6 @@ public class GameCamera : MonoBehaviour
     private Vector3             m_rotation;
 	private float				m_fov = m_defaultFOV;						// Vertical FOV in degrees
 	private FastBounds2D		m_screenWorldBounds = new FastBounds2D();	// 2D bounds of the camera view at the z=0 plane
-	private FastBounds2D		m_screenZfarWorldBounds = new FastBounds2D(); // entities located at Zone 2 of our world
 	private FastBounds2D		m_backgroundWorldBounds = new FastBounds2D();	// same, at Z for background spawners
 
 	// Camera bounds (from Dragon)
@@ -116,9 +113,6 @@ public class GameCamera : MonoBehaviour
 	public FastBounds2D 		activationMaxRect { get { return m_activationMax; }}
 	private FastBounds2D 		m_deactivation = new FastBounds2D();
 	public FastBounds2D 		deactivationRect { get { return m_deactivation; }}
-
-	private FastBounds2D 		m_activationZfarMin = new FastBounds2D();
-	private FastBounds2D 		m_activationZfarMax = new FastBounds2D();
 
 
 	private int					m_pixelWidth = 640;
@@ -1063,8 +1057,8 @@ public class GameCamera : MonoBehaviour
         m_cameraRays[3] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, m_unityCamera.pixelHeight, z));
 		
 		// generate two world bounds, one for z=0, one for background spawners
-		float[] depth = {0f, Z_FAR, SpawnerManager.BACKGROUND_LAYER_Z};
-		FastBounds2D[] bounds = {m_screenWorldBounds, m_screenZfarWorldBounds, m_backgroundWorldBounds};
+		float[] depth = {0f, SpawnerManager.BACKGROUND_LAYER_Z};
+		FastBounds2D[] bounds = {m_screenWorldBounds, m_backgroundWorldBounds};
 
 		for (int j = 0; j < depth.Length; j++) {			
 			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, depth[j]));			
@@ -1104,17 +1098,7 @@ public class GameCamera : MonoBehaviour
 		m_deactivation.Set( m_screenWorldBounds );
 		expand = m_deactivationDistance;
 		m_deactivation.ExpandBy( expand, expand );
-		m_deactivation.ExpandBy( -expand, -expand );
-
-		m_activationZfarMin.Set( m_screenZfarWorldBounds );
-		expand = m_activationDistance;
-		m_activationZfarMin.ExpandBy(expand, expand);
-		m_activationZfarMin.ExpandBy(-expand, -expand);
-
-		m_activationZfarMax.Set( m_screenZfarWorldBounds );
-		expand = m_activationDistance + m_activationRange;
-		m_activationZfarMax.ExpandBy( expand, expand );
-		m_activationZfarMax.ExpandBy( -expand, -expand );     	
+		m_deactivation.ExpandBy( -expand, -expand );  	
 	}
 	
 	// On-screen tests.  In Hungry Dragons, these were static for performance.
@@ -1126,7 +1110,7 @@ public class GameCamera : MonoBehaviour
 		return m_screenWorldBounds.Contains(ref pos);
 	}
 	public bool IsPointOnScreen2D(ref Vector3 pos)
-	{
+	{		
 		return m_screenWorldBounds.Contains(pos);
 	}
 	public bool IsPointOnScreen2D(float x, float y)
@@ -1136,7 +1120,7 @@ public class GameCamera : MonoBehaviour
 
 
 	// Same tests from Dragon Camera
-	public bool IsInsideActivationMinArea(Vector3 _point) {
+	public bool IsInsideActivationMinArea(Vector3 _point) {		
 		_point.z = 0;
 		return m_activationMin.Contains(_point);
 	}
@@ -1148,7 +1132,6 @@ public class GameCamera : MonoBehaviour
 		return m_activationMin.Intersects(_bounds);
 	}
 
-
 	public bool IsInsideActivationMaxArea(Vector3 _point) {
 		_point.z = 0;
 		return m_activationMax.Contains(_point);
@@ -1158,11 +1141,10 @@ public class GameCamera : MonoBehaviour
 		Vector3 center = _bounds.center;
 		center.z = 0;
 		_bounds.center = center;
-
 		return m_activationMax.Intersects(_bounds);
 	}
 
-	public bool IsInsideActivationArea(Vector3 _point) {
+	public bool IsInsideActivationArea(Vector3 _point) {		
 		_point.z = 0;
 		return !m_activationMin.Contains(_point) && m_activationMax.Contains(_point);
 	}

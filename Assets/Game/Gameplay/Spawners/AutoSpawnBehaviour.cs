@@ -49,15 +49,14 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
 		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
-		GameObject viewBurned = transform.FindChild("view_burned").gameObject;
-		Collider collider = GetComponent<Collider>();
-		if (collider != null) {
-			m_bounds = collider.bounds;
-		} else {
-			m_bounds = viewBurned.GetComponent<Renderer>().bounds;
-		}
+		GameObject view = transform.FindChild("view").gameObject;
+		m_bounds = view.GetComponent<Renderer>().bounds;
 
-		m_rect = new Rect(m_bounds.min.x, m_bounds.min.y, m_bounds.size.x, m_bounds.size.y);
+		Vector2 position = (Vector2)m_bounds.min;
+		Vector2 size = (Vector2)m_bounds.size;
+		Vector2 extraSize = size * (transform.position.z * 4f) / 100f; // we have to increase the size due to z depth
+
+		m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
 	}
 
 	public void Initialize() {
