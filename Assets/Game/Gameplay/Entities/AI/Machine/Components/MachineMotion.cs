@@ -46,6 +46,9 @@ namespace AI {
 		private Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
 
+		private Vector3 m_groundDirection;
+		public Vector3 groundDirection { get { return m_groundDirection; } }
+
 		private Vector3 m_upVector;
 		public Vector3 upVector { get { return m_upVector; } set { m_upVector = value;} }
 
@@ -126,7 +129,8 @@ namespace AI {
 			m_velocity = Vector3.zero;
 			m_acceleration = Vector3.zero;
 			m_collisionNormal = Vector3.up;
-			m_direction = (UnityEngine.Random.Range(0f, 1f) < 0.6f)? Vector3.right : Vector3.left;
+			m_direction = Vector3.forward;//(UnityEngine.Random.Range(0f, 1f) < 0.6f)? Vector3.right : Vector3.left;
+			m_groundDirection = Vector3.right;
 
 			if (m_mass < 0f) {
 				m_mass = 0f;
@@ -227,7 +231,7 @@ namespace AI {
 
 					if (m_isGrounded || m_walkOnWalls) {						
 						UpdateVelocity();
-						m_rbody.velocity = m_velocity + (forceGravity / m_mass) * Time.deltaTime + m_externalVelocity;
+						m_rbody.velocity = m_velocity + ((forceGravity * 2f) / m_mass) * Time.deltaTime + m_externalVelocity;
 					} else {
 						// free fall, drag, friction and stuff
 						const float airDensity = 1.293f;
@@ -413,48 +417,57 @@ namespace AI {
 
 		private bool GetCollisionNormal() {			
 			Vector3 normal = Vector3.up;
-			Vector3 up = m_upVector;
 
-			Vector3 start = position + (up * 2f);
-			Vector3 end = position - (up * 2f);
-		
-			RaycastHit hit;
-			bool hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
-			Debug.DrawLine(start, end, Color.black);
-
-			if (hasHit) {
-				normal = hit.normal;
-			}
+			bool hasHit = CheckCollision(m_upVector, ref normal, ref m_groundDirection);
 
 			if (m_walkOnWalls) {
 				if (!hasHit) {
-					start = position - (up * 2f);
-					end = position + (up * 2f);
-					hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
+					hasHit = CheckCollision(m_upVector * -1, ref normal, ref m_groundDirection);
 				}
 
-				if (hasHit) {
-					normal = hit.normal;
-				}
-
-				// check forward to find change on the ground beforehand
-				RaycastHit hitForward;
-				Vector3 upVector = normal;
-				start = position + m_direction + (normal * 2f);
-				end = position + m_direction - (normal * 2f);
-
-				Debug.DrawLine(start, end, Color.magenta);
-				if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
-					upVector = (normal * 0.25f) + (hitForward.normal * 0.75f);
-					m_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
-				}
-			
-				m_upVector = upVector.normalized;
+				m_upVector = normal;
+				m_direction = m_groundDirection;
 				Debug.DrawLine(position, position + m_upVector, Color.cyan);
 			}
 
 			m_collisionNormal = normal;
 			return hasHit;
+		}
+
+		private bool CheckCollision(Vector3 _up, ref Vector3 _normal, ref Vector3 _direction) {
+			Vector3 start = position + (_up * 3f);
+			Vector3 end = position - (_up * 3f);
+
+			// first cast
+			RaycastHit hit;
+			bool hasHit = Physics.Linecast(start, end, out hit, m_groundMask);
+			Debug.DrawLine(start, end, Color.black);
+
+			if (hasHit) {
+				_normal = hit.normal;
+			
+				// cast forward
+				RaycastHit hitForward;
+				start = position + (m_direction * 0.5f) + (_normal * 3f);
+				end = position + (m_direction * 0.5f) - (_normal * 3f);
+
+				Debug.DrawLine(start, end, Color.magenta);
+				if (hasHit && Physics.Linecast(start, end, out hitForward, m_groundMask)) {
+					_normal = (_normal * 0.25f) + (hitForward.normal * 0.75f);
+					_normal.Normalize();
+
+					_direction = (hitForward.point - hit.point).normalized; // outdate direction using the two hits
+				} else {
+					_direction = m_direction;
+				}
+
+				return true;
+			}
+
+			_normal = Vector3.up;
+			_direction = Vector3.right;
+
+			return false;
 		}
 	}
 }

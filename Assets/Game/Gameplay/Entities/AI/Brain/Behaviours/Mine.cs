@@ -30,6 +30,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<MineData>();
 				m_originalPostion = m_machine.position;
+				m_pilot.SetDirection(Vector3.forward, true);
 			}
 
 			protected override void OnUpdate() {				

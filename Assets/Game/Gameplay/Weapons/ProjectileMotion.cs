@@ -110,6 +110,14 @@ public class ProjectileMotion : Initializable, MotionInterface
 		}
 	}
 
+	public Vector3 groundDirection 
+	{ 
+		get
+		{
+			return Vector3.zero;
+		}
+	}
+
 	public Vector3 velocity 
 	{ 	
 		get
