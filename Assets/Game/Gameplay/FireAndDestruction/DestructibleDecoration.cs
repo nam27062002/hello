@@ -52,7 +52,7 @@ public class DestructibleDecoration : Initializable {
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
-	private void OnLevelLoaded() {		
+	private void OnLevelLoaded() {
 		m_entity = GetComponent<Entity>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_collider = GetComponent<BoxCollider>();
@@ -68,7 +68,6 @@ public class DestructibleDecoration : Initializable {
 			Destroy(this);
 		} else {
 			m_view = transform.FindChild("view").gameObject;
-
 			m_colliderCenter = m_collider.center;
 
 			if (m_zone == ZoneManager.Zone.Zone1) {
@@ -82,14 +81,14 @@ public class DestructibleDecoration : Initializable {
 			} else if (m_zone == ZoneManager.Zone.Zone2) {
 				m_collider.enabled = true;
 				m_collider.isTrigger = true;
-
-				Vector3 colliderCenterTransform = Vector3.zero;
-				colliderCenterTransform.x = transform.position.x;
-				colliderCenterTransform.y = transform.position.y + m_collider.center.y;
-				colliderCenterTransform.z = 0;
-				colliderCenterTransform = transform.InverseTransformPoint(colliderCenterTransform);
-				m_collider.center = colliderCenterTransform;
 			}
+
+			Vector3 colliderCenterTransform = Vector3.zero;
+			colliderCenterTransform.x = transform.position.x;
+			colliderCenterTransform.y = transform.position.y + m_collider.center.y;
+			colliderCenterTransform.z = 0;
+			colliderCenterTransform = transform.InverseTransformPoint(colliderCenterTransform);
+			m_collider.center = colliderCenterTransform;
 		}
 
 		m_spawned = true;
@@ -102,12 +101,12 @@ public class DestructibleDecoration : Initializable {
 
 		if (m_zone == ZoneManager.Zone.Zone1) {
 			switch (m_zone1Interaction) {
-				case InteractionType.Collision:		m_collider.enabled = true;	break;
-				case InteractionType.GoThrough: 	m_collider.enabled = false; break;
+				case InteractionType.Collision:	m_collider.isTrigger = false;	break;
+				case InteractionType.GoThrough: m_collider.isTrigger = true; 	break;
 			}
-		} else if (m_zone == ZoneManager.Zone.Zone2) {
-			m_collider.enabled = true;
 		}
+
+		m_collider.enabled = true;
 	}
 
 	void OnCollisionEnter(Collision _other) {
@@ -129,22 +128,21 @@ public class DestructibleDecoration : Initializable {
 		if (m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
-					Vector3 particlePosition = transform.position + m_colliderCenter;
-					particlePosition.y = _other.transform.position.y;
-
-					if (particlePosition.x < _other.transform.position.x) {
-						particlePosition.x += m_collider.size.x * 0.5f;
-					} else {
-						particlePosition.x -= m_collider.size.x * 0.5f;
-					}
-
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						if (m_feddbackParticle != "") {
+							Vector3 particlePosition = transform.position + m_colliderCenter;
+							particlePosition.y = _other.transform.position.y;
+
+							if (particlePosition.x < _other.transform.position.x) {
+								particlePosition.x += m_collider.size.x * 0.5f;
+							} else {
+								particlePosition.x -= m_collider.size.x * 0.5f;
+							}
 							ParticleManager.Spawn(m_feddbackParticle, particlePosition);
 						}
 					} else {
 						if (m_destroyParticle != "") {
-							ParticleManager.Spawn(m_destroyParticle, particlePosition);
+							ParticleManager.Spawn(m_destroyParticle, transform.position);
 						}
 
 						if (m_zone == ZoneManager.Zone.Zone1 && m_knockBackStrength > 0f) {
