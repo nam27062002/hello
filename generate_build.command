@@ -133,7 +133,7 @@ fi
 if $BUILD_IOS; then
     # Generate XCode project
     echo
-    echo "BUILDER: Generating XCode Project TEST ..."
+    echo "BUILDER: Generating XCode Project..."
     "${UNITY_APP}" "${UNITY_PARAMS}" -buildTarget ios -executeMethod Builder.GenerateXcode -outputDir "${OUTPUT_DIR}" | grep "BUILDER"
 
     # Make sure output dirs exist
