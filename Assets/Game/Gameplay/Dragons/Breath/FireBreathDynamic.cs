@@ -29,8 +29,6 @@ public class FireBreathDynamic : MonoBehaviour
 //    bool[] m_whipCollision;
 
     private int m_collisionSplit = 0;
-    private float m_collisionDistance = 0.0f;
-    private float m_particleDistance = 0.0f;
 
     public Color m_initialColor;
     public Color m_flameColor;
@@ -44,6 +42,10 @@ public class FireBreathDynamic : MonoBehaviour
     public string m_collisionFirePrefab;
     public float m_collisionFireDelay = 0.5f;
     public int m_collisionEmiters = 10;
+
+    private float m_collisionMaxDistance = 0.0f;
+    private float m_collisionDistance = 0.0f;
+    private float m_particleDistance = 0.0f;
 
     private float flameAnimationTime = 0.0f;
 
@@ -67,19 +69,9 @@ public class FireBreathDynamic : MonoBehaviour
     private float enableTime = 0.0f;
     private bool enableState = false;
 
-
-    private ParticleSystem fireToonCopy;
-
-    T CopyComponent<T>(T original, GameObject destination) where T : Component
+    public void setCollisionMaxDistance(float distance)
     {
-        System.Type type = original.GetType();
-        Component copy = destination.AddComponent(type);
-        System.Reflection.FieldInfo[] fields = type.GetFields();
-        foreach (System.Reflection.FieldInfo field in fields)
-        {
-            field.SetValue(copy, field.GetValue(original));
-        }
-        return copy as T;
+        m_collisionMaxDistance = distance;
     }
 
     // Use this for initialization
@@ -168,7 +160,7 @@ public class FireBreathDynamic : MonoBehaviour
 		}
 	}
 
-    void ReshapeFromWhip( /* float angle? */)
+    void ReshapeFromWhip()
 	{
 		m_pos[0] = m_pos[1] = Vector3.zero;
 
@@ -322,9 +314,9 @@ public class FireBreathDynamic : MonoBehaviour
         m_collisionDistance = 10000000.0f;
 
 
-        Debug.DrawLine(transform.position, transform.position + transform.right * m_distance * m_effectScale * 2.0f);
+//        Debug.DrawLine(transform.position, transform.position + transform.right * m_distance * m_effectScale * 2.0f);
 
-        if (Physics.Raycast(transform.position, transform.right, out hit, m_distance * m_effectScale * 2.0f, m_groundLayerMask))
+        if (Physics.Raycast(transform.position, transform.right, out hit, m_collisionMaxDistance, m_groundLayerMask))
         {
 
             if (Time.time > m_lastTime + m_collisionFireDelay)

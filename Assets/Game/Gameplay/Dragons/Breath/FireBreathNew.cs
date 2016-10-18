@@ -97,15 +97,17 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;
 
-        m_length = 5.0f * dragonFlameInstance.m_effectScale; // m_dragon.data.def.GetAsFloat("furyBaseLenght");
-        m_length *= transform.localScale.x;
+        m_length = dragonFlameInstance.m_sizeQuad * dragonFlameInstance.m_effectScale; // m_dragon.data.def.GetAsFloat("furyBaseLenght");
+//        m_length *= transform.localScale.x;
       	float lengthIncrease = m_length * m_dragon.data.fireSkill.value;
         m_length += lengthIncrease;
         //      m_length = 2.0f;
 
-		m_actualLength = m_length;
+        dragonFlameInstance.setCollisionMaxDistance(m_length);
+        m_length *= transform.localScale.x;
+        m_actualLength = m_length;
 
-		m_sphCenter = m_mouthTransform.position;
+        m_sphCenter = m_mouthTransform.position;
 		m_sphRadius = 0;
 
 		m_direction = Vector2.zero;
