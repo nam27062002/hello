@@ -19,16 +19,13 @@ namespace Assets.Code.Game.Spline
         private BezierControlPointMode[] modes;
 
         [SerializeField]
-        private float[] length;
-
-        [SerializeField]
         public bool optimize = true;
 
         [SerializeField]
         public float optimizeDotCheck = 0.7f;
 
         [SerializeField]
-        public int stepsPerCurve = 500;
+        public int stepsPerCurve = 10;
 
         [Serializable]
         public class DistancePosMapEntry
@@ -169,8 +166,6 @@ namespace Assets.Code.Game.Spline
                 BezierControlPointMode.free,
                 BezierControlPointMode.free
             };
-
-            length = new float[] { 0.0f };
         }
 
         public Vector3 GetPoint(float t)
@@ -258,34 +253,32 @@ namespace Assets.Code.Game.Spline
 
         public void RemoveLastCurve()
         {
-            Array.Resize(ref points, points.Length - 3);
+        	if ( points.Length > 4 )
+        	{
+	            Array.Resize(ref points, points.Length - 3);
 
-            // when adding another curve, we get one more control point, so inflate the modes array
-            Array.Resize(ref modes, modes.Length - 1);
-
-            Array.Resize(ref length, length.Length - 1);
-
+	            // when adding another curve, we get one more control point, so inflate the modes array
+	            Array.Resize(ref modes, modes.Length - 1);
+            }
             Refresh();
         }
 
         public void RemoveFirstCurve()
         {
-            // shift all elements forward and remove the last curve
-            for(int i = 0; i < points.Length - 3; i++)
-            {
-                points[i] = points[i + 3];
+        	if ( points.Length > 4 )
+        	{
+	            // shift all elements forward and remove the last curve
+	            for(int i = 0; i < points.Length - 3; i++)
+	            {
+	                points[i] = points[i + 3];
+	            }
+	            // same for modes
+	            for(int j = 0; j < modes.Length - 1; j++)
+	            {
+	                modes[j] = modes[j + 1];
+	            }
+	            RemoveLastCurve();
             }
-            // same for modes
-            for(int j = 0; j < modes.Length - 1; j++)
-            {
-                modes[j] = modes[j + 1];
-            }
-            // same for lengths
-            for(int i = 0; i < length.Length - 1; i++)
-            {
-                length[i] = length[i + 1];
-            }
-            RemoveLastCurve();
             Refresh();
         }
 
@@ -315,11 +308,6 @@ namespace Assets.Code.Game.Spline
                     modes[i] = modes[i + 1];
                 }
                 Array.Resize(ref modes, modes.Length - 1);
-                for(int i = modeIndex; i < length.Length - 1; i++)
-                {
-                    length[i] = length[i + 1];
-                }
-                Array.Resize(ref length, length.Length - 1);
                 //EnforceMode(index);
                 Refresh();
             }
@@ -547,6 +535,59 @@ namespace Assets.Code.Game.Spline
 
             Refresh();
         }
+
+
+        public void AddControlPointAfter( int controlPointIndex )
+        {
+			if ( controlPointIndex % 3 != 0 )	// it's not a control point
+        		return;
+
+        	if ( controlPointIndex  == points.Length - 1)
+        	{
+        		AddCurve();
+        	}
+        	else
+        	/*
+        	else if ( controlPointIndex == 0 )
+        	{
+        		
+        	}
+        	else
+        	*/
+        	{
+        		int controlIndex = controlPointIndex / 3;
+				float t1 = controlIndex / (float)curveCount;
+				float t2 = (controlIndex +1) / (float)curveCount;
+				float diff = t2 - t1;
+				Vector3 beforeMid = GetPoint( t1 + (diff / 3.0f) );
+        		Vector3 mid = GetPoint( t1 + (diff / 2.0f) );
+				Vector3 afterMid = GetPoint( t1 + ( 2 * diff / 3 ) );
+
+				Array.Resize(ref points, points.Length + 3);
+	            // move on up by 3 places
+				for(int i = points.Length - 1; i >= (controlPointIndex + 2) && (i-3) >= 0; i--)
+	            {
+	                points[i] = points[i - 3];
+	            }
+		      	
+				points[controlPointIndex + 2] = transform.InverseTransformPoint( beforeMid );
+				points[controlPointIndex + 3] = transform.InverseTransformPoint(mid);
+				points[controlPointIndex + 4] = transform.InverseTransformPoint(afterMid);
+
+	            Array.Resize(ref modes, modes.Length + 1);
+				int nodeIndex = controlPointIndex / 3;
+	            for(int i = modes.Length - 1; i > nodeIndex; i--)
+	            {
+	                modes[i] = modes[i - 1];
+	            }
+	            modes[nodeIndex+1] = BezierControlPointMode.free;
+
+	            EnforceMode(nodeIndex+1);
+
+	            Refresh();
+            }
+        }
+
 
         public void DrawOptimizedPoints()
         {
