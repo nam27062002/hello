@@ -142,7 +142,6 @@ if $BUILD_IOS; then
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
-    /usr/libexec/PlistBuddy -c "Set :NSAppTransportSecurity:NSAllowsArbitraryLoads false" "$SCRIPT_PATH/xcode/Info.plist"
     ARCHIVE_FILE="${GAME_NAME}_${VERSION_ID}.xcarchive"
     STAGE_IPA_FILE="${GAME_NAME}_${VERSION_ID}_${DATE}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
