@@ -50,7 +50,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		m_gameSceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
 		GameObject view = transform.FindChild("view").gameObject;
-		m_bounds = view.GetComponent<Renderer>().bounds;
+		m_bounds = view.GetComponentInChildren<Renderer>().bounds;
 
 		Vector2 position = (Vector2)m_bounds.min;
 		Vector2 size = (Vector2)m_bounds.size;
