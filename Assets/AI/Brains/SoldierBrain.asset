@@ -29,7 +29,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: dc38d9cf90c3d49bab291061fb8b1f57, type: 2}
   - m_name: Go Back at Home
     m_componentAssets:
-    - {fileID: 11400000, guid: b43802a58baa94c3e8fb9482dd9b136c, type: 2}
+    - {fileID: 11400000, guid: b31814d08b4154570a0d89d29f7bc112, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
   - m_name: Guard Out Of Range
     m_componentAssets:
     - {fileID: 11400000, guid: 9f822a57e0f754c25bac67c6de963f75, type: 2}
@@ -50,7 +51,7 @@ MonoBehaviour:
     id: onEnemyInRange
     from: 0
   - to: 7
-    id: onOutsideArea
+    id: 
     from: 0
   - to: 7
     id: onOutsideArea
@@ -111,6 +112,9 @@ MonoBehaviour:
     from: 7
   - to: 1
     id: onBackAtHome
+    from: 4
+  - to: 3
+    id: onEnemyInRange
     from: 4
   m_firstState_A: 0
   m_firstState_B: 0
