@@ -9,7 +9,7 @@ public class WaterController : MonoBehaviour {
 
 	void Awake () {
 		// Particle pool created in order to make it be loaded in order to avoid a performance spike the first time the dragon dives into water
-		ParticleManager.CreatePool("PS_Dive");
+		ParticleManager.CreatePool("PS_Dive", "Water");
 	}
 
 	// Use this for initialization
