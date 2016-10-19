@@ -13,7 +13,7 @@ public class watercamera : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        //        GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
+        //        GetComponent<Camera>().depthTextureMode = DepthTextureMode.DepthNormals;
         GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
     }
 

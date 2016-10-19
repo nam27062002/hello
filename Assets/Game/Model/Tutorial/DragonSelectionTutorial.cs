@@ -48,6 +48,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
 	private State m_state = State.IDLE;
+	private float m_targetDelta = 0f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -111,6 +112,11 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Yes! Start scroll back animation
 					m_state = State.BACK;
 					m_timer.Start(m_backDuration * 1000);
+
+					// Compute target delta
+					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentDragon);
+					int menuOrder = (def == null) ? 0 : def.GetAsInt("order");
+					m_targetDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(menuOrder);
 				}
 			} break;
 
@@ -120,15 +126,15 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Yes! Stop tutorial
 					StopTutorial();
 
-					// Make sure we have the first dragon selected
-					m_scroller.cameraAnimator.SnapTo(0);
+					// Make sure we have the initial dragon selected
+					m_scroller.FocusDragon(UsersManager.currentUser.currentDragon, true);
 
 					// Update tutorial flag and save persistence
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
 					PersistenceManager.Save();
 				} else {
 					// Timer not finished, scroll
-					m_scroller.cameraAnimator.delta = 1f - m_timer.GetDelta(m_ease);	// [AOC] Reverse scroll!
+					m_scroller.cameraAnimator.delta = Mathf.Lerp(1f, m_targetDelta, m_timer.GetDelta(m_ease));	// [AOC] Reverse scroll!
 				}
 			} break;
 		}

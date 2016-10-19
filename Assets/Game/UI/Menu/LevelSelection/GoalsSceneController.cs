@@ -81,7 +81,7 @@ public class GoalsSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnTabChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnTabChanged);
 		Messenger.RemoveListener(GameEvents.CHESTS_RESET, OnChestsReset);
 		Messenger.RemoveListener(GameEvents.CHESTS_PROCESSED, OnChestsProcessed);
 	}
