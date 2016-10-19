@@ -85,7 +85,9 @@ public class MineBehaviour : Initializable {
 				{
 					m_dragon.ReceiveDamage(m_damage, DamageType.NORMAL, this.transform);
 				}
-				motion.AddForce(_collision.impulse.normalized * m_forceStrength);
+				Vector3 impulse = _collision.impulse;
+				impulse.z = 0;
+				motion.AddForce(impulse.normalized * m_forceStrength);
 				Explode();
 			}
 		}

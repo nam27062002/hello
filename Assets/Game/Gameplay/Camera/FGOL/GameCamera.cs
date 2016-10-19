@@ -268,6 +268,7 @@ public class GameCamera : MonoBehaviour
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
 
 		GameObject go = Instantiate(m_animatedCameraPrefab) as GameObject;
 		m_animatedCamera = go.GetComponent<AnimatedCamera>();
@@ -333,6 +334,7 @@ public class GameCamera : MonoBehaviour
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.RemoveListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.RemoveListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
 
 		// Unsubscribe from external events.
 		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
@@ -368,6 +370,11 @@ public class GameCamera : MonoBehaviour
 			m_unityCamera.enabled = true;
 			GetCameraSetup( m_animatedCamera.m_canera );
 		}
+	}
+
+	private void OnCameraShake( float duration, float intensity)
+	{
+		SetCameraShake( duration );
 	}
 
 

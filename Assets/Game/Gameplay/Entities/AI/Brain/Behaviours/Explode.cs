@@ -6,6 +6,7 @@ namespace AI {
 		[System.Serializable]
 		public class ExplodeData : StateComponentData {
 			public float damage = 5f;
+			public float cameraShakeDuration = 1.0f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Explode")]
@@ -37,7 +38,13 @@ namespace AI {
 						if (dragon.HasMineShield()) {
 							dragon.LoseMineShield();
 						} else {
-							dragon.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
+							DragonHealthBehaviour health = dragon.GetComponent<DragonHealthBehaviour>();
+							if ( health != null)
+							{
+								health.ReceiveDamage(m_data.damage, DamageType.NORMAL, m_machine.transform);
+								if ( health.IsAlive() )
+									Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, m_data.cameraShakeDuration, 0);		
+							}
 						}
 
 						DragonMotion dragonMotion = dragon.GetComponent<DragonMotion>();
