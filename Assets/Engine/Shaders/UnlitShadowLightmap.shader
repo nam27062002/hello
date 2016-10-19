@@ -27,6 +27,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
+//				#include "Lighting.cginc"
+
 				#include "HungryDragon.cginc"
 
 				struct appdata_t {
@@ -90,6 +92,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 				}
 			ENDCG
 		}
-
 	}
+
+	Fallback "Mobile/VertexLit"
 }
