@@ -9,7 +9,7 @@ public class FlyLoopBehaviour : StateMachineBehaviour {
 	
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		ResetTimer();
+		// ResetTimer();
 	}
 	
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
