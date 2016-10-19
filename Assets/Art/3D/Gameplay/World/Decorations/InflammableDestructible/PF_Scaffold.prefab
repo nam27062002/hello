@@ -166,11 +166,12 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 479000}
-  - 114: {fileID: 11408994}
-  - 114: {fileID: 11401264}
   - 114: {fileID: 114000013114265422}
+  - 114: {fileID: 11401264}
+  - 114: {fileID: 11408994}
+  - 114: {fileID: 114000011925858432}
   - 65: {fileID: 65000013700007226}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: PF_Scaffold
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -718,7 +719,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138210}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.12, y: 4.15, z: 0}
+  m_LocalPosition: {x: 39.60047, y: 0.191, z: 13.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -912,7 +913,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_burningTime: 5
-  m_explosionParticle: PS_SplintersDestruction
+  m_explosionParticle: PS_SmokeExplosion
   m_ashesAsset: 
 --- !u!114 &11409866
 MonoBehaviour:
@@ -1191,8 +1192,23 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 2.95, y: 4.53, z: 2.64}
+  m_Center: {x: 0, y: 2.27, z: 0}
+--- !u!114 &114000011925858432
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Interaction: 0
+  m_knockBackStrength: 10
+  m_feddbackParticle: PS_SplintersRocks
+  m_destroyParticle: PS_SmokeExplosion
 --- !u!114 &114000013114265422
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1204,4 +1220,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: cart
+  m_sku: village_house_01
