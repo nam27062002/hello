@@ -34,9 +34,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	[SerializeField] private int m_flockBonus = 0;
 
 	[Separator("Activation")]
-	[Tooltip("For the spawners that must spawn even when the dragon is not near (i.e. the spawners around the start area)")]
-	[SerializeField] private bool m_activeOnStart = false;
-
 	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
 	[SerializeField] private SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
@@ -136,10 +133,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 		m_allEntitiesKilledByPlayer = false;
 
 		m_readyToBeDisabled = false;
-
-		if (m_activeOnStart) {
-			Spawn();
-		}
 	}
 
 	public void ResetSpawnTimer()
