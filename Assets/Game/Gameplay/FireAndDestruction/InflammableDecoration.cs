@@ -23,6 +23,7 @@ public class InflammableDecoration : Initializable {
 	private DeltaTimer m_timer = new DeltaTimer();
 
 	private AutoSpawnBehaviour m_autoSpawner;
+	private DestructibleDecoration m_destructibleBehaviour;
 	private Vector3 m_startPosition;
 
 	private Dictionary<Renderer, Material[]> m_originalMaterials = new Dictionary<Renderer, Material[]>();
@@ -71,11 +72,12 @@ public class InflammableDecoration : Initializable {
 			for (int i = 0; i < m_fireNodes.Length; i++) {
 				Destroy(m_fireNodes[i].gameObject);
 			}
-			Destroy(m_viewBurned);
+			if (m_viewBurned) Destroy(m_viewBurned);
 			Destroy(m_autoSpawner);
 			Destroy(m_entity);
 			Destroy(this);
 		} else {
+			m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
 			m_view = transform.FindChild("view").gameObject;
 			m_burned = false;
 
@@ -97,6 +99,8 @@ public class InflammableDecoration : Initializable {
 	}
 
 	public override void Initialize() {
+		enabled = true;
+
 		m_view.SetActive(true);
 		m_viewBurned.SetActive(false);
 
@@ -148,9 +152,17 @@ public class InflammableDecoration : Initializable {
 							if (m_collider) m_collider.enabled = false;
 						}
 					} else {
+						bool isBurning = false;
 						m_burned = true;
 						for (int i = 0; i < m_fireNodes.Length; i++) {
+							isBurning = isBurning || m_fireNodes[i].IsBurning();
 							m_burned = m_burned && m_fireNodes[i].IsBurning();
+						}
+
+						if (isBurning) {
+							if (m_destructibleBehaviour != null) {
+								m_destructibleBehaviour.enabled = false;
+							}
 						}
 
 						if (m_burned) {
