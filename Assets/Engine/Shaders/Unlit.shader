@@ -2,6 +2,7 @@
 
 Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 {
+
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
@@ -38,10 +39,6 @@ Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
-			float4 _FogColor;
-			float _FogStart;
-			float _FogEnd;
-			
 			HG_FOG_VARIABLES
 
 
