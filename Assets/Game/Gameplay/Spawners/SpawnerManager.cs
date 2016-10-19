@@ -45,13 +45,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 	private List<ISpawner> m_spawning;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Inititalization.
-	/// </summary>
-	private void Awake() {
+    private float m_lastX, m_lastY;
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Inititalization.
+    /// </summary>
+    private void Awake() {
 		m_spawners = new List<ISpawner>();
 		m_spawning = new List<ISpawner>();
 	}
@@ -74,10 +76,13 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
+    
+
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+
 		// Only if enabled!
 		if(!m_enabled) return;
 		if(m_spawnersTree == null) return;
@@ -112,50 +117,69 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			//
 			m_selectedSpawners.Clear();
 
-			// Get activation bounds
-			// Update every frame in case camera bounds change (i.e. zoom in/out)
-			if(m_newCamera != null) {
+            // Get activation bounds
+            // Update every frame in case camera bounds change (i.e. zoom in/out)
+            float currentX = 0, currentY = 0;
+            if (m_newCamera != null) {
 				m_minRect = m_newCamera.activationMinRect;
 				m_maxRect = m_newCamera.activationMaxRect;
-			} 
+                currentX = m_newCamera.position.x;
+                currentY = m_newCamera.position.y;
+            }
 
-			// Split it in 4 rectangles that the quadtree can process
-			// 1: bottom sub-rect
-			m_subRect[0].Set(
-				m_maxRect.x0, 
-				m_maxRect.y0,
-				m_maxRect.w,
-				m_minRect.y0 - m_maxRect.y0
-			);
-			m_spawnersTree.GetHashSetInRange(m_subRect[0], ref m_selectedSpawners);
-
-			// 2: right sub-rect
-			m_subRect[1].Set(
-				m_minRect.x1, 
-				m_minRect.y0,
-				m_maxRect.x1 - m_minRect.x1,
-				m_minRect.h
-			);
-			m_spawnersTree.GetHashSetInRange(m_subRect[1], ref m_selectedSpawners);
-
-			// 3: top sub-rect
-			m_subRect[2].Set(
-				m_maxRect.x0,
-				m_minRect.y1,
-				m_maxRect.w,
-				m_maxRect.y1 - m_minRect.y1
-			);
-			m_spawnersTree.GetHashSetInRange(m_subRect[2], ref m_selectedSpawners);
-
-			// 4: left sub-rect
-			m_subRect[3].Set(
-				m_maxRect.x0,
-				m_minRect.y0,
-				m_minRect.x0 - m_maxRect.x0,
-				m_minRect.h
-			);
-			m_spawnersTree.GetHashSetInRange(m_subRect[3], ref m_selectedSpawners);
-
+            if (currentY - m_lastY < -1)
+            {
+                // Split it in 4 rectangles that the quadtree can process
+                // 1: bottom sub-rect
+                m_subRect[0].Set(
+                    m_maxRect.x0,
+                    m_maxRect.y0,
+                    m_maxRect.w,
+                    m_minRect.y0 - m_maxRect.y0
+                );
+                m_spawnersTree.GetHashSetInRange(m_subRect[0], ref m_selectedSpawners);
+                m_lastY = currentY;
+                //Debug.LogError("BOTTOM");
+            }
+            if (currentX - m_lastX > 1)
+            {
+                // 2: right sub-rect
+                m_subRect[1].Set(
+                    m_minRect.x1,
+                    m_minRect.y0,
+                    m_maxRect.x1 - m_minRect.x1,
+                    m_minRect.h
+                );
+                m_spawnersTree.GetHashSetInRange(m_subRect[1], ref m_selectedSpawners);
+                m_lastX = currentX;
+                //Debug.LogError("RIGHT");
+            }
+            if (currentY - m_lastY > 1)
+            {
+                    // 3: top sub-rect
+                    m_subRect[2].Set(
+                    m_maxRect.x0,
+                    m_minRect.y1,
+                    m_maxRect.w,
+                    m_maxRect.y1 - m_minRect.y1
+                );
+                m_spawnersTree.GetHashSetInRange(m_subRect[2], ref m_selectedSpawners);
+                m_lastY = currentY;
+                //Debug.LogError("TOP");
+            }
+            if (currentX - m_lastX < -1)
+            {
+                // 4: left sub-rect
+                m_subRect[3].Set(
+                    m_maxRect.x0,
+                    m_minRect.y0,
+                    m_minRect.x0 - m_maxRect.x0,
+                    m_minRect.h
+                );
+                m_spawnersTree.GetHashSetInRange(m_subRect[3], ref m_selectedSpawners);
+                m_lastX = currentX;
+                //Debug.LogError("LEFT");
+            }
 			// Process all selected spawners!
 			foreach(ISpawner item in m_selectedSpawners) {
 				if (item.CanRespawn()) {
