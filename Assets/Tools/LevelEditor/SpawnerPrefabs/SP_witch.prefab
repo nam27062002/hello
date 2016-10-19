@@ -9,9 +9,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 496654}
   - 114: {fileID: 11449404}
-  - 114: {fileID: 11443338}
   - 114: {fileID: 11453016}
   - 114: {fileID: 11451560}
+  - 114: {fileID: 114000011517519070}
   m_Layer: 0
   m_Name: SP_witch
   m_TagString: Untagged
@@ -26,28 +26,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188156}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.72, y: 8.84, z: 0}
+  m_LocalPosition: {x: 28.7, y: 16.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11443338
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 188156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -1, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
 --- !u!114 &11449404
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -114,3 +98,17 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 188156}
   m_IsPrefabParent: 1
+--- !u!114 &114000011517519070
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 188156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.37285328, y: -0.37285995}
+  size: {x: 27.814997, y: 10.85}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
