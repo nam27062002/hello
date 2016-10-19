@@ -73,8 +73,8 @@ public class DestructibleDecoration : Initializable {
 			if (m_collider) Destroy(m_collider);
 			if (m_viewDestroyed) Destroy(m_viewDestroyed);
 			Destroy(m_autoSpawner);
-			Destroy(m_entity);
 			Destroy(this);
+			Destroy(m_entity);
 		} else {
 			m_view = transform.FindChild("view").gameObject;
 			m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
