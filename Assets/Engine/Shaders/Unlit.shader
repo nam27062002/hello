@@ -2,6 +2,7 @@
 
 Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 {
+
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
@@ -19,6 +20,7 @@ Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -33,20 +35,22 @@ Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 				HG_FOG_COORDS(1)
 			};
 
+
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
-			float4 _FogColor;
-			float _FogStart;
-			float _FogEnd;
-			
+			HG_FOG_VARIABLES
+
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				// float3 normal = UnityObjectToWorldNormal(v.normal);
-				HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
+//				HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex), _FogStart, _FogEnd, _FogColor);	// Fog
+				HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
+
 				return o;
 			} 
 			
@@ -56,7 +60,8 @@ Shader "Hungry Dragon/Unlit Custom Fog (Background entities)"
 				fixed4 col = tex2D(_MainTex, i.uv);
      			// fixed4 diffuse = max(0,dot( i.normal, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0;
 
-     			HG_APPLY_FOG(i, col, _FogColor);	// Fog
+//     			HG_APPLY_FOG(i, col, _FogColor);	// Fog
+				HG_APPLY_FOG(i, col);	// Fog
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;
 			}
