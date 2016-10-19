@@ -227,7 +227,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	/// <param name="_mission">The mision that has just been completed.</param>
     private void OnMissionCompleted(Mission _mission)
-    {
-        UsersManager.currentUser.userMissions.missionsCompletedAmount++;
+    {        
     }
 }

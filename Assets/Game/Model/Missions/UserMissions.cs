@@ -39,9 +39,6 @@ public class UserMissions
     {
         set { m_ownedDragons = value; }
     }
-
-    // Returns the amount of missions completed by the user since so far. This counter is used to meassure the user's progress
-    public int missionsCompletedAmount { get; set; }
     
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -300,11 +297,7 @@ public class UserMissions
 				// Load data into the target mission
 				m_missions[i].Load(activeMissions[i]);
 			}
-		}
-
-        // Amount of missions completed by the user so far
-        string key = "missionsCompletedAmount";
-        missionsCompletedAmount = _data.ContainsKey(key) ? _data["missionsCompletedAmount"].AsInt : 0;
+		}        
     }
 	
 	/// <summary>
@@ -321,10 +314,7 @@ public class UserMissions
 			missions.Add (GetMission((Mission.Difficulty)i).Save());
 		}
 		data.Add("activeMissions", missions);
-
-        // Amount of missions completed by the user so far
-        data.Add("missionsCompletedAmount", missionsCompletedAmount + "");
-
+        
         // Generation Index
         SimpleJSON.JSONArray idxs = new SimpleJSON.JSONArray();
 		for( int i = 0; i<m_generationIdx.Length; i++ )
