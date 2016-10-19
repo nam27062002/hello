@@ -287,6 +287,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Stunned:
 					m_impulse = Vector3.zero;
 					m_stunnedTimer = 0;
+					m_rbody.freezeRotation = false;
 					break;
 				case State.InsideWater:
 				{
@@ -330,7 +331,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 				case State.Stunned:
 					m_rbody.velocity = m_impulse;
+					m_rbody.angularVelocity = Vector3.zero;
+					m_direction = m_impulse.normalized;
 					m_stunnedTimer = m_stunnedTime;
+					m_rbody.freezeRotation = true;
 					m_animator.SetTrigger("damage");
 					break;
 				case State.InsideWater:
