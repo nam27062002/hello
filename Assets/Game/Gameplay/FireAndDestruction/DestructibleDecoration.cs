@@ -21,6 +21,7 @@ public class DestructibleDecoration : Initializable {
 	private ZoneManager.Zone m_zone;
 
 	private GameObject m_view;
+	private GameObject m_viewDestroyed;
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private BoxCollider m_collider;
@@ -64,11 +65,13 @@ public class DestructibleDecoration : Initializable {
 
 		if (m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
+			if (m_viewDestroyed) Destroy(m_viewDestroyed);
 			Destroy(m_autoSpawner);
 			Destroy(m_entity);
 			Destroy(this);
 		} else {
 			m_view = transform.FindChild("view").gameObject;
+			m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
 			m_colliderCenter = m_collider.center;
 
 			if (m_zone == ZoneManager.Zone.Zone1) {
@@ -97,7 +100,10 @@ public class DestructibleDecoration : Initializable {
 	}
 
 	public override void Initialize() {
+		enabled = true;
+
 		m_view.SetActive(true);
+		m_viewDestroyed.SetActive(false);
 		m_spawned = true;
 
 		if (m_zone == ZoneManager.Zone.Zone1) {
@@ -111,7 +117,7 @@ public class DestructibleDecoration : Initializable {
 	}
 
 	void OnCollisionEnter(Collision _other) {
-		if (m_spawned) {
+		if (enabled && m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
@@ -126,7 +132,7 @@ public class DestructibleDecoration : Initializable {
 	}
 
 	void OnTriggerEnter(Collider _other) {
-		if (m_spawned) {
+		if (enabled && m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
@@ -160,6 +166,7 @@ public class DestructibleDecoration : Initializable {
 
 						m_autoSpawner.StartRespawn();
 						m_view.SetActive(false);
+						m_viewDestroyed.SetActive(true);
 						m_spawned = false;
 					}
 				}
@@ -168,7 +175,7 @@ public class DestructibleDecoration : Initializable {
 	}
 
 	void OnTriggerExit(Collider _other) {
-		if (m_spawned) {
+		if (enabled && m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					Vector3 particlePosition = transform.position + m_colliderCenter;

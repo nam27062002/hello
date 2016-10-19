@@ -394,10 +394,12 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 419374}
-  - 114: {fileID: 11470414}
-  - 114: {fileID: 11421516}
   - 114: {fileID: 114000012946585860}
-  m_Layer: 0
+  - 114: {fileID: 11421516}
+  - 114: {fileID: 11470414}
+  - 114: {fileID: 114000011040620184}
+  - 65: {fileID: 65000013560866170}
+  m_Layer: 16
   m_Name: PF_Farm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1017,7 +1019,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 147038}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000016292068}
-  m_LocalPosition: {x: 32.02, y: 5.060509, z: 8.27}
+  m_LocalPosition: {x: -34.74, y: 0.03, z: 10.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
   m_Children:
@@ -2121,8 +2123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_burningTime: 12
-  m_explosionParticle: PF_FarmHouseExplosion
+  m_burningTime: 10
+  m_explosionParticle: PS_SmokeExplosion
   m_ashesAsset: 
 --- !u!114 &11476348
 MonoBehaviour:
@@ -2317,6 +2319,33 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 147038}
   m_IsPrefabParent: 1
+--- !u!65 &65000013560866170
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 147038}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.16, y: 9.16, z: 7.91}
+  m_Center: {x: -3.22, y: 4.45, z: 0}
+--- !u!114 &114000011040620184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 147038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Interaction: 0
+  m_knockBackStrength: 10
+  m_feddbackParticle: PS_SplintersWheat
+  m_destroyParticle: PS_SmokeExplosion
 --- !u!114 &114000012946585860
 MonoBehaviour:
   m_ObjectHideFlags: 1
