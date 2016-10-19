@@ -7,6 +7,10 @@ public class WaterController : MonoBehaviour {
 	private BoxCollider m_bounds;
 	private GameObject m_waterTrail;
 
+	void Awake () {
+		// Particle pool created in order to make it be loaded in order to avoid a performance spike the first time the dragon dives into water
+		ParticleManager.CreatePool("PS_Dive");
+	}
 
 	// Use this for initialization
 	void Start () {
