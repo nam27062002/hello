@@ -35,6 +35,12 @@ public class DestructibleDecoration : Initializable {
 
 
 	//-------------------------------------------------------------------------------------------//
+	// Use this for initialization
+	void Start() {		
+		ParticleManager.CreatePool(m_feddbackParticle);
+		ParticleManager.CreatePool(m_destroyParticle);
+	}
+
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
