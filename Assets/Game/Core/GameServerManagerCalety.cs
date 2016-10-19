@@ -46,7 +46,14 @@ public class GameServerManagerCalety : GameServerManager
 
             if (m_onResponse != null)
             {
-                m_onResponse(null, 200);
+                JSONNode response = ServerManager.SharedInstance.GetServerAuthBConfig();
+                string responseAsString = null;
+                if (response != null)
+                {
+                    responseAsString = response.ToString();
+                }
+
+                m_onResponse(responseAsString, 200);
             }
         }
 
@@ -669,16 +676,21 @@ public class GameServerManagerCalety : GameServerManager
             switch (Commands_CurrentCommand)
             {
                 case ECommand.Login:
-                {
+                {                   
                     // [DGR] SERVER: Receive these parameters from server
                     response = new Dictionary<string, object>();
                     response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
                     response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
                     response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
                                                                                               //response["authState"] = Authenticator.AuthState.NewSocialLogin.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+                    if (result != null)
+                    {
+                        string key = "upgradeAvailable";
+                            response[key] = result.ContainsKey(key) && Convert.ToBoolean(result[key]);
 
-                    response["upgradeAvailable"] = false.ToString(); // response.ContainsKey("upgradeAvailable") && Convert.ToBoolean(response["upgradeAvailable"]);
-                    response["cloudSaveAvailable"] = false.ToString(); //Convert.ToBoolean(response["cloudSaveAvailable"]);
+                        key = "cloudSaveAvailable";
+                        response[key] = result.ContainsKey(key) && Convert.ToBoolean(result[key]);                        
+                    }
                 }
                 break;
 

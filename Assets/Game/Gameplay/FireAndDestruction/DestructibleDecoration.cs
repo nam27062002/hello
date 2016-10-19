@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Entity))]
 public class DestructibleDecoration : Initializable {
 
 	private enum InteractionType {

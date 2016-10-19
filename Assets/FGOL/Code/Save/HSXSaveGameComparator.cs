@@ -54,26 +54,26 @@ public class HSXSaveGameComparator : SaveGameComparator
             {
                 Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local Save");
                 Debug.Log("dragonsOwned: " + m_localProgress.dragonsOwned);
-                Debug.Log("missionsCompleted: " + m_localProgress.missionsCompleted);
+                Debug.Log("eggsCollected: " + m_localProgress.eggsCollected);
                 Debug.Log("timePlayed: " + m_localProgress.timePlayed);
                 Debug.Log("iapPurchaseMade: " + m_localProgress.iapPurchaseMade);
                 Debug.Log("timestamp: " + local.Timestamp);
 
                 Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud Save");
                 Debug.Log("dragonsOwned: " + m_cloudProgress.dragonsOwned);
-                Debug.Log("missionsCompleted: " + m_cloudProgress.missionsCompleted);
+                Debug.Log("eggsCollected: " + m_cloudProgress.eggsCollected);
                 Debug.Log("timePlayed: " + m_cloudProgress.timePlayed);
                 Debug.Log("iapPurchaseMade: " + m_cloudProgress.iapPurchaseMade);
                 Debug.Log("timestamp: " + cloud.Timestamp);
 
                 //Check local save progress and automatically replace with cloud if its a brand new save!
-                if (m_localProgress.dragonsOwned <= 1 && m_localProgress.missionsCompleted == 0 && m_cloudProgress.timePlayed == 0 && !m_localProgress.iapPurchaseMade)
+                if (m_localProgress.dragonsOwned <= 1 && m_localProgress.eggsCollected == 0 && m_cloudProgress.timePlayed == 0 && !m_localProgress.iapPurchaseMade)
                 {
                     Debug.Log("HSXSaveGameComparator (CompareSaves) :: Brand New Save UseCloud");                    
                     state = ConflictState.UseCloud;                    
                 }
-                //If dragons and mission are equal
-                else if (m_localProgress.dragonsOwned == m_cloudProgress.dragonsOwned && m_localProgress.missionsCompleted == m_cloudProgress.missionsCompleted)
+                //If dragons and the amount of eggs collected are equal
+                else if (m_localProgress.dragonsOwned == m_cloudProgress.dragonsOwned && m_localProgress.eggsCollected == m_cloudProgress.eggsCollected)
                 {
                     if (m_localProgress.timePlayed == m_cloudProgress.timePlayed)
                     {
@@ -118,16 +118,16 @@ public class HSXSaveGameComparator : SaveGameComparator
                 //If just the dragons are equal
                 else if (m_localProgress.dragonsOwned == m_cloudProgress.dragonsOwned)
                 {
-                    if (m_localProgress.missionsCompleted > m_cloudProgress.missionsCompleted)
+                    if (m_localProgress.eggsCollected > m_cloudProgress.eggsCollected)
                     {
                         if (m_localProgress.timePlayed >= m_cloudProgress.timePlayed && local.Timestamp >= cloud.Timestamp)
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local Missions greater UseLocal");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local Eggs Collected greater UseLocal");
                             state = ConflictState.UseLocal;
                         }
                         else
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local Missions greater but time player or timestamp less RecommendLocal");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local Eggs Collected greater but time player or timestamp less RecommendLocal");
                             state = ConflictState.RecommendLocal;
                         }
                     }
@@ -135,18 +135,18 @@ public class HSXSaveGameComparator : SaveGameComparator
                     {
                         if (m_localProgress.timePlayed <= m_cloudProgress.timePlayed && local.Timestamp <= cloud.Timestamp)
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud Missions greater UseCloud");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud Eggs Collected greater UseCloud");
                             state = ConflictState.UseCloud;
                         }
                         else
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud Missions greater but time player or timestamp less RecommendCloud");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud Eggs Collected greater but time player or timestamp less RecommendCloud");
                             state = ConflictState.RecommendCloud;
                         }
                     }
                 }
-                //If just the missions are equal
-                else if (m_localProgress.missionsCompleted == m_cloudProgress.missionsCompleted)
+                //If just the Eggs Collected are equal
+                else if (m_localProgress.eggsCollected == m_cloudProgress.eggsCollected)
                 {
                     if (m_localProgress.dragonsOwned > m_cloudProgress.dragonsOwned)
                     {
@@ -178,44 +178,44 @@ public class HSXSaveGameComparator : SaveGameComparator
                 //If the local dragons are greater
                 else if (m_localProgress.dragonsOwned > m_cloudProgress.dragonsOwned)
                 {
-                    if (m_localProgress.missionsCompleted > m_cloudProgress.missionsCompleted)
+                    if (m_localProgress.eggsCollected > m_cloudProgress.eggsCollected)
                     {
                         if (m_localProgress.timePlayed >= m_cloudProgress.timePlayed && local.Timestamp >= cloud.Timestamp)
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local dragons and mission greater UseLocal");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local dragons and Eggs Collected greater UseLocal");
                             state = ConflictState.UseLocal;
                         }
                         else
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local dragons and mission greater but time player or timestamp less RecommendLocal");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local dragons and Eggs Collected greater but time player or timestamp less RecommendLocal");
                             state = ConflictState.RecommendLocal;
                         }
                     }
                     else
                     {
-                        Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local dragons greater but missions less UserDecision");
+                        Debug.Log("HSXSaveGameComparator (CompareSaves) :: Local dragons greater but Eggs Collected less UserDecision");
                         state = ConflictState.UserDecision;
                     }
                 }
                 //If the local dragons are less
                 else if (m_localProgress.dragonsOwned < m_cloudProgress.dragonsOwned)
                 {
-                    if (m_localProgress.missionsCompleted < m_cloudProgress.missionsCompleted)
+                    if (m_localProgress.eggsCollected < m_cloudProgress.eggsCollected)
                     {
                         if (m_localProgress.timePlayed <= m_cloudProgress.timePlayed && local.Timestamp <= cloud.Timestamp)
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud dragons and mission greater UseCloud");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud dragons and Eggs Collected greater UseCloud");
                             state = ConflictState.UseCloud;
                         }
                         else
                         {
-                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud dragons and mission greater but time player or timestamp less RecommendCloud");
+                            Debug.Log("HSXSaveGameComparator (CompareSaves) :: Cloud dragons and Eggs Collected greater but time player or timestamp less RecommendCloud");
                             state = ConflictState.RecommendCloud;
                         }
                     }
                     else
                     {
-                        Debug.Log("HSXSaveGameComparator (CompareSaves) :: cloud dragons greater but missions less UserDecision");
+                        Debug.Log("HSXSaveGameComparator (CompareSaves) :: cloud dragons greater but Eggs Collected less UserDecision");
                         state = ConflictState.UserDecision;
                     }
                 }

@@ -554,8 +554,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_egg.eggData.state != Egg.State.OPENING) return;
 
 		// Collect the egg! - this automatically empties the incubator
-		m_egg.eggData.Collect();
-		PersistenceManager.Save();
+		m_egg.eggData.Collect();		
 
 		// Animation will be triggered by the EGG_COLLECTED event
 	}

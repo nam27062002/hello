@@ -145,8 +145,13 @@ public class UserProfile : UserSaveSystem
 		set{ m_incubationEndTimestamp = value; }
 	}
 
-	// Chests
-	private Chest[] m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];	// Should always have the same length
+    /// <summary>
+    /// Amount of eggs collected (already rewarded) by the user so far
+    /// </summary>
+    public int eggsCollected { get; set; }    
+
+    // Chests
+    private Chest[] m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];	// Should always have the same length
 	public Chest[] dailyChests {
 		get { return m_dailyChests; }
 	}
@@ -478,7 +483,10 @@ public class UserProfile : UserSaveSystem
 
 		// Incubator timer
 		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], System.Globalization.CultureInfo.InvariantCulture);
-	}
+
+        // Eggs collected
+        eggsCollected = _data["collectedAmount"].AsInt;
+    }
 
 	/// <summary>
 	/// Load the data related to the chests.
@@ -592,7 +600,10 @@ public class UserProfile : UserSaveSystem
 		// Incubator timer
 		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-		return data;
+        // Eggs collected
+        data.Add("collectedAmount", eggsCollected.ToString());
+
+        return data;
 	}
 
 	/// <summary>

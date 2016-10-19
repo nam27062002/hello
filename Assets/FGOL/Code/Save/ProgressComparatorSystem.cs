@@ -3,7 +3,7 @@
 public class ProgressComparatorSystem : SaveSystem
 {
     public int dragonsOwned = 0;
-    public int missionsCompleted = 0;
+    public int eggsCollected = 0;
     public int timePlayed = 0;
     public bool iapPurchaseMade = false;
     public int lastModified = 0;
@@ -16,7 +16,7 @@ public class ProgressComparatorSystem : SaveSystem
     public override void Reset()
     {
         dragonsOwned = 0;
-        missionsCompleted = 0;
+        eggsCollected = 0;
         timePlayed = 0;
         iapPurchaseMade = false;
     }
@@ -31,7 +31,8 @@ public class ProgressComparatorSystem : SaveSystem
         UserProfile.Load();
 
         dragonsOwned = UserProfile.GetNumOwnedDragons();
-        missionsCompleted = (UserProfile.userMissions == null) ? 0 : UserProfile.userMissions.missionsCompletedAmount;
+        eggsCollected = UserProfile.eggsCollected;                
+
         timePlayed = UserProfile.timePlayed;
         iapPurchaseMade = UserProfile.iapPurchaseMade;                
     }

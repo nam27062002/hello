@@ -310,6 +310,8 @@ public class Egg {
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
 		}
 
+        UsersManager.currentUser.eggsCollected++;
+
 		// Save persistence
 		PersistenceManager.Save();
 
