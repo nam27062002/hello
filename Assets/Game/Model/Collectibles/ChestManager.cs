@@ -159,11 +159,11 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 				spawner = validSpawners.GetRandomValue();
 
 				// Update chest
-				// If chest was in the INIT state, change to NOT_COLLECTED
+				// If chest was in the INIT state, change to NOT_COLLECTED and assign the new spawner to it
 				if(pendingChests[i].state == Chest.State.INIT) {
 					pendingChests[i].ChangeState(Chest.State.NOT_COLLECTED);
 				}
-				pendingChests[i].spawnPointID = validSpawners[i].name;
+				pendingChests[i].spawnPointID = spawner.name;
 
 				// Initialize spawner
 				spawner.Initialize(pendingChests[i]);

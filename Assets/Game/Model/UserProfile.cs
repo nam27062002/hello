@@ -279,7 +279,8 @@ public class UserProfile : UserSaveSystem
 
         string jsonAsString = m_saveData.ToString();
         if (jsonAsString != null)
-        {            
+        {   
+			Debug.Log("LOADING USER PROFILE: " + jsonAsString);
             JSONNode json = JSON.Parse(jsonAsString);
             Load(json);
         }       
@@ -495,23 +496,21 @@ public class UserProfile : UserSaveSystem
 	private void LoadChestsData(SimpleJSON.JSONClass _data) {
 		// Amount of chests is constant
 		SimpleJSON.JSONArray chestsArray = _data["chests"].AsArray;
-		if(chestsArray != null) {
-			for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
-				// If chest was not created, do it now
-				if(dailyChests[i] == null) {
-					dailyChests[i] = new Chest();
-				}
+		for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
+			// If chest was not created, do it now
+			if(dailyChests[i] == null) {
+				dailyChests[i] = new Chest();
+			}
 
-				// If we have data for this chest, load it
-				if(i < chestsArray.Count) {
-					dailyChests[i].Load(chestsArray[i]);
-				}
+			// If we have data for this chest, load it
+			if(chestsArray != null && i < chestsArray.Count) {
+				dailyChests[i].Load(chestsArray[i]);
+			}
 
-				// A chest should never initially be in the INIT state, nor in the REWARD_PENDING. Validate that.
-				if(dailyChests[i].state == Chest.State.INIT
-				|| dailyChests[i].state == Chest.State.PENDING_REWARD) {
-					dailyChests[i].ChangeState(Chest.State.NOT_COLLECTED);
-				}
+			// A chest should never initially be in the INIT state, nor in the REWARD_PENDING. Validate that.
+			if(dailyChests[i].state == Chest.State.INIT
+			|| dailyChests[i].state == Chest.State.PENDING_REWARD) {
+				dailyChests[i].ChangeState(Chest.State.NOT_COLLECTED);
 			}
 		}
 
