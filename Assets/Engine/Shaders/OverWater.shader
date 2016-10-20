@@ -97,7 +97,7 @@ Shader "Hungry Dragon/OverWater"
 //					o.normal = mul(unity_WorldToObject, normalize());
 //					o.normal = normalize(mul(float3(sinX , sinY, 1.0f), unity_WorldToObject).xyz);
 
-					o.normal = normalize(mul(unity_ObjectToWorld, float4(sinX, sinY, -3.5f, 1.0)).xyz);
+					o.normal = normalize(mul(unity_ObjectToWorld, float4(sinX, sinY, -3.5f, 0.0)).xyz);
 //					o.normal = normalize(mul(v.normal, unity_WorldToObject));
 
 					o.viewDir = o.vertex - _WorldSpaceCameraPos;
