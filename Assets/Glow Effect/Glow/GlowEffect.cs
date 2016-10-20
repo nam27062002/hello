@@ -62,6 +62,7 @@ namespace GlowEffect
                 Debug.Log("Disabling the Glow Effect. Image effects are not supported (do you have Unity Pro?)");
                 enabled = false;
             }
+			origCamera.depthTextureMode = DepthTextureMode.Depth;
 
             normalizedRect = new Rect(0, 0, 1, 1);
         }

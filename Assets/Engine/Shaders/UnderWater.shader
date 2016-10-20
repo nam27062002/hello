@@ -112,7 +112,7 @@ Shader "Hungry Dragon/UnderWater"
 					//				fixed4 col = tex2Dproj(_MainTex, (i.scrPos) * depth * 0.1f);
 					col.w = 0.0f;
 //					col = lerp(_Color, col, clamp(1.0 - ((depthR + 10.0) * 0.05f), 0.0f, 1.0f));
-					float w = clamp(1.0 - ((depthR + 10.0) * 0.05f), 0.0f, 1.0f);
+					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
 					col = lerp(fixed4(_Color) + col * w * 30.0, col, w);
 					return col;
 					//				depth = (depth - _ProjectionParams.y) / (_ProjectionParams.z - _ProjectionParams.y);
