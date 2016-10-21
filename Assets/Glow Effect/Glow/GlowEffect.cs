@@ -53,16 +53,28 @@ namespace GlowEffect
         public void Awake()
         {
             origCamera = GetComponent<Camera>();
+
+#if !PRODUCTION
+            Debug_Awake();
+#endif
+        }
+
+        public void OnDestroy()
+        {
+#if !PRODUCTION
+            Debug_OnDestroy();
+#endif
         }
 
         public void Start()
         {
             // Disable if we don't support image effects
-            if (!SystemInfo.supportsImageEffects) {
+            if (!SystemInfo.supportsImageEffects)
+            {
                 Debug.Log("Disabling the Glow Effect. Image effects are not supported (do you have Unity Pro?)");
                 enabled = false;
             }
-			origCamera.depthTextureMode = DepthTextureMode.Depth;
+            origCamera.depthTextureMode = DepthTextureMode.Depth;
 
             normalizedRect = new Rect(0, 0, 1, 1);
         }
@@ -188,5 +200,33 @@ namespace GlowEffect
             Shader.DisableKeyword("GLOWEFFECT_MULTIPLY_COLOR");
             Shader.DisableKeyword("GLOWEFFECT_MULTIPLY_COLOR_OFF");
         }
+
+        #region debug
+        private void Debug_Awake()
+        {
+            Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+
+            // Enable/Disable object depending on the flag
+            Debug_SetActive();
+        }
+
+        private void Debug_OnDestroy()
+        {
+            Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+        }
+
+        private void Debug_OnChanged(string _id, bool _newValue)
+        {            
+            if (_id == DebugSettings.INGAME_GLOW)
+            {
+                // Enable/Disable object
+                Debug_SetActive();
+            }
+        }
+
+        private void Debug_SetActive() {
+            enabled = DebugSettings.Get(DebugSettings.INGAME_GLOW);
+        }
+        #endregion
     }
 }
