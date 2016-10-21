@@ -56,12 +56,24 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     private void Awake() {
 		m_spawners = new List<ISpawner>();
 		m_spawning = new List<ISpawner>();
-	}
 
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
+#if !PRODUCTION
+        Debug_Awake();
+#endif
+    }
+
+    protected override void OnDestroy() {
+        base.OnDestroy();
+
+#if !PRODUCTION
+        Debug_OnDestroy();
+#endif
+    }
+
+    /// <summary>
+    /// Component enabled.
+    /// </summary>
+    private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
@@ -321,4 +333,30 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Make sure manager is disabled
 		m_enabled = false;
 	}
+
+    #region debug
+    private void Debug_Awake() {        
+        Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+
+        // Enable/Disable object depending on the flag
+        Debug_SetActive();
+    }
+
+    private void Debug_OnDestroy() {        
+        Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+    }
+
+    private void Debug_OnChanged(string _id, bool _newValue) {
+        // Show collisions cheat?
+        if (_id == DebugSettings.INGAME_SPAWNERS)
+        {
+            // Enable/Disable object
+            Debug_SetActive();
+        }
+    }
+
+    private void Debug_SetActive() {
+        m_enabled = DebugSettings.Get(DebugSettings.INGAME_SPAWNERS);        
+    }  
+    #endregion
 }
