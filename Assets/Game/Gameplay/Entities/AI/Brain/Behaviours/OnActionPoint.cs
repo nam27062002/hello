@@ -46,7 +46,13 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				
+				if (m_machine.enemy != null) {
+					if (m_machine.enemy.position.x < m_machine.position.x) {
+						m_pilot.SetDirection(Vector3.left, true);
+					} else {
+						m_pilot.SetDirection(Vector3.right, true);
+					}
+				}
 			}
 		}
 	}

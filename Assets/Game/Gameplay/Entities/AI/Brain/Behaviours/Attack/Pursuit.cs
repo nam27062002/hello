@@ -23,10 +23,12 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
 
+
 			private enum PursuitState {
 				Move_Towards = 0,
 				Move_Away
 			};
+
 
 			protected PursuitData m_data;
 			protected Transform m_target;
@@ -53,7 +55,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.SetMoveSpeed(m_data.speed);
+				m_pilot.SetMoveSpeed(m_data.speed, false);
 				m_pilot.SlowDown(true);
 
 				m_target = null;
