@@ -142,7 +142,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	private void OnDestroy() {
-		if ( SpawnerManager.instance != null )
+		if ( SpawnerManager.isInstanceCreated )
 			SpawnerManager.instance.Unregister(this);
 	}
 

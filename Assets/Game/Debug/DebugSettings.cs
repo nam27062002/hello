@@ -34,13 +34,15 @@ public static class DebugSettings {
 	public static readonly string NEW_CAMERA_SYSTEM		 = "NEW_CAMERA_SYSTEM";
 	public static readonly string RESULTS_SCREEN_CHEST_TEST_MODE = "RESULTS_SCREEN_CHEST_TEST_MODE";
 	public static readonly string RESULTS_SCREEN_EGG_TEST_MODE = "RESULTS_SCREEN_EGG_TEST_MODE";
+    public static readonly string INGAME_HUD = "INGAME_HUD";
+    public static readonly string INGAME_SPAWNERS = "INGAME_SPAWNERS";
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-	// Mainly shortcuts, all settings can be accessed using the Prefs class
-	// Gameplay
-	public static bool invulnerable { 
+    //------------------------------------------------------------------//
+    // PROPERTIES														//
+    //------------------------------------------------------------------//
+    // Mainly shortcuts, all settings can be accessed using the Prefs class
+    // Gameplay
+    public static bool invulnerable { 
 		get { return Prefs.GetBoolPlayer(DRAGON_INVULNERABLE, false); }
 		set { Prefs.SetBoolPlayer(DRAGON_INVULNERABLE, value); }
 	}
@@ -88,17 +90,27 @@ public static class DebugSettings {
 	public static ResultsSceneSetup.EggTestMode resultsEggTestMode {
 		get { return (ResultsSceneSetup.EggTestMode)Prefs.GetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)ResultsSceneSetup.EggTestMode.NONE); }
 		set { Prefs.SetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)value); }
-	}
+	}    
 
-	//------------------------------------------------------------------//
-	// METHODS															//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Get the value of a debug setting.
-	/// </summary>
-	/// <param name="_id">Identifier of the debug setting to be obtained. Usually one of the constants in this class.</param>
-	/// <returns>The value of the requested setting, <c>false</c> if the setting ID was not recognized.</returns>
-	public static bool Get(string _id) {
+    //------------------------------------------------------------------//
+    // METHODS															//
+    //------------------------------------------------------------------//
+
+    public static void Init() {
+        // Properties that need to be positive by default should be initialized here
+        string key = INGAME_HUD;        
+        Set(key, Prefs.GetBoolPlayer(key, true));
+
+        key = INGAME_SPAWNERS;        
+        Set(key, Prefs.GetBoolPlayer(key, true));        
+    }
+
+    /// <summary>
+    /// Get the value of a debug setting.
+    /// </summary>
+    /// <param name="_id">Identifier of the debug setting to be obtained. Usually one of the constants in this class.</param>
+    /// <returns>The value of the requested setting, <c>false</c> if the setting ID was not recognized.</returns>
+    public static bool Get(string _id) {
 		return Prefs.GetBoolPlayer(_id, false);
 	}
 

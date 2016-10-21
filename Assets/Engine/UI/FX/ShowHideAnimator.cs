@@ -93,6 +93,7 @@ public class ShowHideAnimator : MonoBehaviour {
 
 	// Events
 	public ShowHideAnimatorEvent OnShowPreAnimation = new ShowHideAnimatorEvent();
+	public ShowHideAnimatorEvent OnShowPreAnimationAfterDelay = new ShowHideAnimatorEvent();
 	public ShowHideAnimatorEvent OnShowPostAnimation = new ShowHideAnimatorEvent();
 	public ShowHideAnimatorEvent OnHidePreAnimation = new ShowHideAnimatorEvent();
 	public ShowHideAnimatorEvent OnHidePostAnimation = new ShowHideAnimatorEvent();
@@ -431,8 +432,17 @@ public class ShowHideAnimator : MonoBehaviour {
 			} break;
 		}
 
+		m_sequence.PrependCallback( PostDelayCallback );
+
 		// Insert delay at the beginning of the sequence
 		m_sequence.PrependInterval(m_tweenDelay);
+
+
+	}
+
+	protected virtual void PostDelayCallback()
+	{
+		OnShowPreAnimationAfterDelay.Invoke(this);
 	}
 
 	/// <summary>
@@ -455,6 +465,7 @@ public class ShowHideAnimator : MonoBehaviour {
 					} else {
 						m_delayTimer = 0f;
 						m_delaying = false;
+						OnShowPreAnimationAfterDelay.Invoke(this);
 						SetAnimTrigger("show");
 					}
 				} else {
