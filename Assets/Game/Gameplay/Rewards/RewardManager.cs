@@ -1,4 +1,4 @@
-﻿// ScoreManager.cs
+// ScoreManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 22/10/2015.
@@ -30,7 +30,7 @@ public class ScoreMultiplier {
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
 /// </summary>
-public class RewardManager : SingletonMonoBehaviour<RewardManager> {
+public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -125,9 +125,15 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		get { return instance.m_dragonInitialLevelProgress; }
 	}
 
-	private float m_dragonInitialUnlockProgress = 0;
-	public static float dragonInitialUnlockProgress {
-		get { return instance.m_dragonInitialUnlockProgress; }
+	private float m_dragonInitialTotalXPProgress = 0;
+	public static float dragonInitialTotalXPProgress {
+		get { return instance.m_dragonInitialTotalXPProgress; }
+	}
+
+	// Chests - store chest progression at the beginning of the game
+	private int m_initialCollectedChests = 0;
+	public static int initialCollectedChests {
+		get { return instance.m_initialCollectedChests; }
 	}
 
 	//------------------------------------------------------------------//
@@ -149,7 +155,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.AddListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -162,7 +168,7 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.RemoveListener<float, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -205,14 +211,14 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		for(int i = 0; i < defs.Count; i++) {
 			// Create a new score multiplier
 			newMult = new ScoreMultiplier();
-			newMult.multiplier = defs[i].Get<float>("multiplier");
-			newMult.requiredKillStreak = defs[i].Get<int>("requiredKillStreak");
-			newMult.duration = defs[i].Get<float>("duration");
+			newMult.multiplier = defs[i].GetAsFloat("multiplier");
+			newMult.requiredKillStreak = defs[i].GetAsInt("requiredKillStreak");
+			newMult.duration = defs[i].GetAsFloat("duration");
 
 			// Feedback messages
 			feedbackDefs = defs[i].GetChildNodesByTag("FeedbackMessage");
 			for(int j = 0; j < feedbackDefs.Count; j++) {
-				newMult.feedbackMessages.Add(feedbackDefs[j].Get<string>("tidMessage"));
+				newMult.feedbackMessages.Add(feedbackDefs[j].GetAsString("tidMessage"));
 			}
 
 			// Store new multiplier
@@ -239,15 +245,23 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 		instance.SetScoreMultiplier(0);
 
 		instance.m_sceneController = InstanceManager.GetSceneController<GameSceneControllerBase>();
-		// Survival Bonus
 		instance.ParseSurvivalBonus( InstanceManager.player.data.tierDef.sku );
 
 		instance.m_isHighScore = false;
 
 		// Current dragon progress
-		instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
-		instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
-		instance.m_dragonInitialUnlockProgress = DragonManager.currentDragon.progression.progressByXp;
+		if(DragonManager.currentDragon != null) {
+			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
+			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+			instance.m_dragonInitialTotalXPProgress = DragonManager.currentDragon.progression.progressByXp;
+		} else {
+			instance.m_dragonInitialLevel = 1;
+			instance.m_dragonInitialLevelProgress = 0;
+			instance.m_dragonInitialTotalXPProgress = 0;
+		}
+
+		// Chests
+		instance.m_initialCollectedChests = ChestManager.collectedAndPendingChests;
 	}
 
 	/// <summary>
@@ -256,9 +270,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public static void ApplyRewardsToProfile() {
 		// Just do it :)
-		UserProfile.AddCoins(instance.m_coins);
-		UserProfile.AddCoins(instance.CalculateSurvivalBonus());
-		UserProfile.AddPC(instance.m_pc);
+		UsersManager.currentUser.AddCoins(instance.m_coins);
+		UsersManager.currentUser.AddCoins(instance.CalculateSurvivalBonus());
+		UsersManager.currentUser.AddPC(instance.m_pc);
 	}
 
 	//------------------------------------------------------------------//
@@ -460,8 +474,9 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	/// The player has received damage.
 	/// </summary>
 	/// <param name="_amount">The amount of damage received.</param>
+	/// <param name="_type">The type of damage received.</param>
 	/// <param name="_source">The source of the damage.</param>
-	private void OnDamageReceived(float _amount, Transform _source) {
+	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) {
 		// Break current streak
 		if (m_currentScoreMultiplier != 0)
 		{
@@ -476,10 +491,10 @@ public class RewardManager : SingletonMonoBehaviour<RewardManager> {
 	private void OnGameEnded()
 	{
 		// Check final score and mark if its a new HighScore
-		if ( m_score > UserProfile.highScore )
+		if ( m_score > UsersManager.currentUser.highScore )
 		{
 			m_isHighScore = true;
-			UserProfile.highScore = m_score;
+			UsersManager.currentUser.highScore = m_score;
 			PersistenceManager.Save();
 		}
 		else

@@ -1,3 +1,6 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
 // Simplified Bumped Specular shader. Differences from regular Bumped Specular one:
 // - no Main Color nor Specular Color
 // - specular lighting directions are approximated per vertex
@@ -65,10 +68,10 @@ SubShader
 			o.uv = v.texcoord.xy;
 
 			// Normal
-			o.normal = normalize(mul(v.normal, (float3x3)_World2Object).xyz);
+			o.normal = normalize(mul(v.normal, (float3x3)unity_WorldToObject).xyz);
 
 			// Half View - See: Blinn-Phong
-			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(_Object2World, v.vertex).xyz);
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
 	        float3 lightDirection = normalize(_LightDir.rgb);
 	        o.halfDir = normalize(lightDirection + viewDirection);
 	        

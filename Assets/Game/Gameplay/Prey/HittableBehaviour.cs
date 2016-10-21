@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Entity))]
+[RequireComponent(typeof(Entity_Old))]
 public class HittableBehaviour : MonoBehaviour {
 
 	[SerializeField] private float m_healthRegen = 0.05f;
-	private Entity m_prey;
+	private Entity_Old m_prey;
 
 	// Use this for initialization
 	void Start() {
-		m_prey = GetComponent<Entity>();
+		m_prey = GetComponent<Entity_Old>();
 	}
 
 	void FixedUpdate() {

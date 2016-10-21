@@ -41,6 +41,6 @@ public class MenuWipButton : MonoBehaviour {
 	/// </summary>
 	public void OnWipButton() {
 		// Show feedback
-		UIFeedbackText target = UIFeedbackText.CreateAndLaunch(Localization.Localize(m_tid), m_pos, transform.parent as RectTransform);
+        UIFeedbackText target = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(m_tid), m_pos, transform.parent as RectTransform);
 	}
 }

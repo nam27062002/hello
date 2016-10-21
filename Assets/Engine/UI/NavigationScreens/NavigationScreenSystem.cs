@@ -7,6 +7,8 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
+using System;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -22,7 +24,7 @@ public class NavigationScreenSystem : MonoBehaviour {
 	public static readonly int SCREEN_NONE = -1;
 
 	// Auxiliar class to send multiple data with the event
-	public class ScreenChangedEvent {
+	public class ScreenChangedEventData {
 		public NavigationScreenSystem dispatcher = null;
 
 		public NavigationScreen fromScreen = null;
@@ -33,6 +35,10 @@ public class NavigationScreenSystem : MonoBehaviour {
 
 		public bool animated = false;
 	};
+
+	// Events, subscribe as needed via inspector or code
+	[Serializable] public class ScreenChangedEvent : UnityEvent<ScreenChangedEventData> { }
+	[Serializable] public class ScreenIndexChangedEvent : UnityEvent<int> { }
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -49,6 +55,11 @@ public class NavigationScreenSystem : MonoBehaviour {
 		get { return m_screens; }
 	}
 
+	// Exposed events
+	public ScreenChangedEvent OnScreenChanged = new ScreenChangedEvent();
+	public ScreenIndexChangedEvent OnScreenIndexChanged = new ScreenIndexChangedEvent();
+
+	// Navigation logic
 	protected int m_currentScreenIdx = SCREEN_NONE;
 	public int currentScreenIdx {
 		get { return m_currentScreenIdx; }
@@ -79,14 +90,17 @@ public class NavigationScreenSystem : MonoBehaviour {
 				initialScreenSet = true;
 
 				// Notify game!
-				ScreenChangedEvent evt = new ScreenChangedEvent();
+				ScreenChangedEventData evt = new ScreenChangedEventData();
 				evt.dispatcher = this;
 				evt.fromScreen = null;
 				evt.fromScreenIdx = SCREEN_NONE;
 				evt.toScreen = currentScreen;
 				evt.toScreenIdx = i;
 				evt.animated = false;
-				Messenger.Broadcast<ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, evt);
+				Messenger.Broadcast<ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, evt);
+
+				OnScreenChanged.Invoke(evt);
+				OnScreenIndexChanged.Invoke(i);
 			} else {
 				m_screens[i].Hide(NavigationScreen.AnimType.NONE);
 			}
@@ -153,6 +167,10 @@ public class NavigationScreenSystem : MonoBehaviour {
 		// Get last screen
 		int lastScreenIdx = SCREEN_NONE;
 		if(m_screenHistory.Count > 0) lastScreenIdx = m_screenHistory.Last();
+
+		// Aux vars
+		NavigationScreen currentScreen = (m_currentScreenIdx == SCREEN_NONE) ? null : m_screens[m_currentScreenIdx];
+		NavigationScreen newScreen = (_newScreenIdx == SCREEN_NONE) ? null : m_screens[_newScreenIdx];
 		
 		// Figure out animation direction based on current and new screen indexes
 		if(_animType == NavigationScreen.AnimType.AUTO) {
@@ -176,21 +194,20 @@ public class NavigationScreenSystem : MonoBehaviour {
 				m_screenHistory.RemoveAt(m_screenHistory.Count - 1);
 			} else {
 				// Moving forward to a new screen!
-				m_screenHistory.Add(m_currentScreenIdx);
+				// Don't add to history if going back to this screen is not allowed
+				if(currentScreen != null && currentScreen.allowBackToThisScreen) {
+					m_screenHistory.Add(m_currentScreenIdx);
+				}
 			}
 		}
 
 		// Hide current screen (if any)
-		NavigationScreen currentScreen = null;
-		if(m_currentScreenIdx != SCREEN_NONE) {
-			currentScreen = m_screens[m_currentScreenIdx];
+		if(currentScreen != null) {
 			currentScreen.Hide(_animType);
 		}
 		
 		// Show new screen (if any)
-		NavigationScreen newScreen = null;
-		if(_newScreenIdx != SCREEN_NONE) {
-			newScreen = m_screens[_newScreenIdx];
+		if(newScreen != null) {
 			newScreen.Show(_animType);
 		}
 
@@ -199,14 +216,17 @@ public class NavigationScreenSystem : MonoBehaviour {
 		m_currentScreenIdx = _newScreenIdx;
 
 		// Notify game!
-		ScreenChangedEvent evt = new ScreenChangedEvent();
+		ScreenChangedEventData evt = new ScreenChangedEventData();
 		evt.dispatcher = this;
 		evt.fromScreen = currentScreen;
 		evt.fromScreenIdx = oldScreenIdx;
 		evt.toScreen = newScreen;
 		evt.toScreenIdx = _newScreenIdx;
 		evt.animated = _animType != NavigationScreen.AnimType.NONE;
-		Messenger.Broadcast<ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, evt);
+		Messenger.Broadcast<ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, evt);
+
+		OnScreenChanged.Invoke(evt);
+		OnScreenIndexChanged.Invoke(_newScreenIdx);
 	}
 
 	/// <summary>

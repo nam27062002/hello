@@ -14,7 +14,7 @@ public class SpawnBehaviour : MonoBehaviour {
 	private int m_index;
 	public int index { get { return m_index; } }
 
-	private GameCameraController m_camera;
+	private GameCamera m_newCamera;
 
 	private bool m_wasEatenOrBurned;
 
@@ -22,17 +22,17 @@ public class SpawnBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	void Start() {
-		m_camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
 	}
 
 	void OnEnable() {
-		EntityManager.instance.Register(GetComponent<Entity>());
+		//EntityManager.instance.Register(GetComponent<Entity_Old>());
 		m_wasEatenOrBurned = false;
 	}
 
 	void OnDisable() {
-		if (EntityManager.instance != null)
-			EntityManager.instance.Unregister(GetComponent<Entity>());
+		//if (EntityManager.instance != null)
+			//EntityManager.instance.Unregister(GetComponent<Entity_Old>());
 
 		if (m_spawner) {
 			m_spawner.RemoveEntity(gameObject, m_wasEatenOrBurned);
@@ -46,9 +46,17 @@ public class SpawnBehaviour : MonoBehaviour {
 	}
 
 	void LateUpdate() {
-		if (m_deactivate && m_camera.IsInsideDeactivationArea(transform.position)) {
-			if (m_spawner) {
-				gameObject.SetActive(false);
+		
+		if (m_deactivate) 
+		{
+			bool isInsideDeactivationArea = m_newCamera.IsInsideDeactivationArea(transform.position);
+
+			if ( isInsideDeactivationArea )
+			{
+				if (m_spawner) 
+				{
+					gameObject.SetActive(false);
+				}
 			}
 		}
 	}

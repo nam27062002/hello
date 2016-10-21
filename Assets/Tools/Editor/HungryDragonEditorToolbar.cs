@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.Animations;
 using System;
@@ -115,23 +116,25 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// Level Editor
 			if(GUILayout.Button(new GUIContent("LE", "Level Editor"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene4();
+				HungryDragonEditorMenu.ShowLevelEditorWindow();
 			}
 
 			// Popups
 			if(GUILayout.Button(new GUIContent("P", "Popups Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene5();
+				HungryDragonEditorMenu.OpenScene4();
 			}
 
 			// Add a separator
 			GUILayout.Space(SEPARATOR_SIZE);
 
-			// Some more dummy buttons
-			for(int i = 0; i < 2; i++) {
-				// Button
-				if(GUILayout.Button(new GUIContent(i.ToString(), "Dummy button " + i), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-					Debug.Log("Dummy button " + i + " pressed!");
-				}
+			// Multipurpose button 1
+			if(GUILayout.Button(new GUIContent("?", "Multipurpose button"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				Debug.Log("Multipurpose button not implemented!");
+			}
+
+			// Multipurpose button 2
+			if(GUILayout.Button(new GUIContent("?", "Multipurpose button"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				Debug.Log("Multipurpose button not implemented!");
 			}
 
 			// Right margin

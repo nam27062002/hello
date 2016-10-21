@@ -1,49 +1,53 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public abstract class EatBehaviour : MonoBehaviour {
-	struct PreyData {		
+	protected struct PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
 		public Transform startParent;
 		public Vector3 startScale;
-		public EdibleBehaviour prey;
+		public AI.Machine prey;
 	};
 
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------	
 
-	[SerializeField]private float m_absorbTime;
-	[SerializeField]private float m_minEatAnimTime;
-	[SerializeField]private float m_eatDistance;
+	[SerializeField]private float m_absorbTime = 1;
+	[SerializeField]private float m_minEatAnimTime = 1;
+	[SerializeField]protected float m_eatDistance = 1;
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
-	public DragonTier tier { get { return m_tier; } }
 
-	private List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
+	protected List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
 
 	protected DragonTier m_tier;
 	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
 
-	private float m_eatingTimer;
-	private float m_eatingTime;
-	protected bool m_slowedDown;
-	private float m_holdPreyTimer = 0;
-	protected EdibleBehaviour m_holdingPrey = null;
-	protected Transform m_holdTransform = null;
+	protected float m_eatingTimer;
+	protected float m_eatingTime;
 
+	// Hold stuff
+	private float m_holdPreyTimer = 0;
+	protected AI.Machine m_holdingPrey = null;
+	protected DragonPlayer m_holdingPlayer = null;
+	protected DragonHealthBehaviour m_holdingPlayerHealth = null;
+	protected Transform m_holdTransform = null;
+	public Transform holdTransform{ get{ return m_holdTransform; } }
+	protected bool m_grabbingPrey = false;
+
+	// Attacking/Targeting
 	protected Transform m_attackTarget = null;
 	protected float m_attackTimer = 0;
 
-
-	private Transform m_suction;
-	private Transform m_mouth;
+	// 
+	protected Transform m_suction;
+	protected Transform m_mouth;
 	public Transform mouth
 	{
 		get{ return m_mouth; }
 	}
-	private Transform m_head;
-	protected Animator m_animator;
+	protected Transform m_head;
 
 	protected MotionInterface m_motion;
 
@@ -55,58 +59,97 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private float m_noAttackTime = 0;
 	private float m_holdingBlood = 0;
 
-	protected bool m_canHold = true;		// if this eater can hold a prey
+	// config
+	protected bool m_isPlayer = true;		// If eating entity is the player
+	protected bool m_rewardsPlayer = false;	
+	protected bool m_canLatchOnPlayer = false;
+	protected bool m_canEatEntities = true;
+	protected bool m_waitJawsEvent = false;	// if wait for jaws closing event or just wait time
 	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
 	protected int m_limitEatingValue = 1;	// limit value
-	protected bool m_isPlayer = true;
+	protected bool m_canHold = true;		// if this eater can hold a prey
 
-
+		// Hold config
 	protected float m_holdStunTime;
 	protected float m_holdDamage;
+	public float holdDamage{ get{ return m_holdDamage; } set{ m_holdDamage = value; } }
 	protected float m_holdBoostDamageMultiplier;
 	protected float m_holdHealthGainRate;
 	protected float m_holdDuration;
-
-	protected DragonBoostBehaviour m_boost;
+	public float holdDuration{ get{ return m_holdDuration; } set{ m_holdDuration = value; } }
 
 	// Arc detection values
-
 	private const float m_minAngularSpeed = 0;
 	private const float m_maxAngularSpeed = 12;
 	private const float m_minArcAngle = 60;
 	private const float m_maxArcAngle = 180;
+		// Multiplies eating distance to detect targets
 	private const float m_eatDetectionRadiusMultiplier = 4;
+		// Increases bite distance based on angular speed
 	private const float m_angleSpeedMultiplier = 1.2f;
+		// Inceases bite distance based on speed
 	private const float m_speedRadiusMultiplier = 0.1f;
 
-	protected bool m_waitJawsEvent = false;
+	// This are tmp variables we reuse every time we need to find targets
+	private Entity[] m_checkEntities = new Entity[20];
+	private Collider[] m_checkPlayer = new Collider[2];
+	private int m_numCheckEntities = 0;
+	private int m_playerColliderMask = -1;
+
+	protected bool m_pauseEating = false;
+
+	public delegate void OnEvent();
+	public OnEvent onBiteKill;
+	public OnEvent onEndEating;
+	public OnEvent onEndLatching;
+
+
+	private List<string> m_ignoreTierList = new List<string>();
 
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	void Awake () {
+	protected virtual void Awake () {
 		m_eatingTimer = 0;
-		m_animator = transform.FindChild("view").GetComponent<Animator>();
-		m_boost = GetComponent<DragonBoostBehaviour>();
 
 		m_prey = new List<PreyData>();
 		m_bloodEmitter = new List<GameObject>();
 
-		m_slowedDown = false;
-
-		GetMouth();
+		MouthCache();
 		m_holdStunTime = 0.5f;
 		m_holdDamage = 10;
 		m_holdBoostDamageMultiplier = 3;
 		m_holdHealthGainRate = 10;
 		m_holdDuration = 1;
+
+		m_playerColliderMask = 1 << LayerMask.NameToLayer("Player");
 	}
 
-	protected void SetupHoldParametersForTier( string tierSku)
+	// find mouth transform 
+	private void MouthCache() 
+	{
+		m_mouth = transform.FindTransformRecursive("Fire_Dummy");
+		m_head = transform.FindTransformRecursive("Dragon_Head");
+
+		m_suction = transform.FindTransformRecursive("Fire_Dummy");
+		if (m_suction == null) {
+			m_suction = m_mouth;
+		}
+	}
+
+	/// <summary>
+	/// Adds to ignore tier list. Adds and sku to an ignore tier list. This eating behaviour will be able to eat this entities event if it doesn't meet the tier requierement
+	/// </summary>
+	/// <param name="entitySku">Entity sku.</param>
+	public void AddToIgnoreTierList( string entitySku )
+	{
+		m_ignoreTierList.Add( entitySku );
+	}
+
+	protected void SetupHoldParametersForTier( string tierSku )
 	{
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.HOLD_PREY_TIER, "tier", tierSku);
-
 		if ( def != null)
 		{
 			m_holdStunTime = def.GetAsFloat("stunTime");
@@ -117,11 +160,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	void OnDisable() {
+	protected virtual void OnDisable() {
 		m_eatingTimer = 0;
-		if (m_slowedDown) {
-			SlowDown(false);
-		}
 
 		for (int i = 0; i < m_prey.Count; i++) {	
 			if (m_prey[i].prey != null) {
@@ -134,14 +174,20 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 
 		m_prey.Clear();
-
-		if (m_animator && m_animator.isInitialized) {
-			m_animator.SetBool("eat", false);
-		}
 	}
 
 	public bool IsEating() {
 		return enabled && m_prey.Count > 0;
+	}
+
+	public bool IsLatching()
+	{
+		return m_holdingPlayer != null || (!m_grabbingPrey && m_holdingPrey);
+	}
+
+	public bool IsGrabbing()
+	{
+		return m_grabbingPrey;
 	}
 
 	// Update is called once per frame
@@ -149,7 +195,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		if (m_prey.Count > 0)
 		{
-			Chew();
+			UpdateEating();
 		}
 
 		if ( m_attackTarget != null )
@@ -157,17 +203,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			m_attackTimer -= Time.deltaTime;
 			if ( m_attackTimer <= 0 && !m_waitJawsEvent)
 			{
-				// Bite kill!
-				FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
-				m_attackTarget = null;
-
-				if ( m_prey.Count <= 0 )
-				{
-					m_animator.SetBool("eat", false);
-				}
-
-				if (m_holdingPrey == null)
-					TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+				OnJawsClose();
 			}
 		}
 		else
@@ -181,10 +217,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				UpdateHoldingPrey();
 			}
+			else if ( m_holdingPlayer )
+			{
+				UpdateLatchOnPlayer();	// A Type of holding
+			}
 			else 
 			{
-				if (m_noAttackTime <= 0)	// no attack time y no estoy intentando comerme algo? y si ya estoy comiendo? empiezo un nuevo bite?
-					TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+				if (m_noAttackTime <= 0 && !m_pauseEating)	// no attack time y no estoy intentando comerme algo? y si ya estoy comiendo? empiezo un nuevo bite?
+					TargetSomethingToEat();	// Buscar target
 				
 			}
 		}
@@ -193,19 +233,41 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	}
 
+	/// <summary>
+	/// Pauses the eating. End eating what it has in the mouth but does not let anything else in
+	/// </summary>
+	public virtual void PauseEating()
+	{
+		m_pauseEating = true;
+		StopAttackTarget();
+		if ( m_holdingPrey != null || m_holdingPlayer != null)
+			EndHold();
+	}
+
+	/// <summary>
+	/// Resumes the eating.
+	/// </summary>
+	public void ResumeEating( float timeNoAttack = 0 )
+	{
+		m_pauseEating = false;	
+		m_noAttackTime = timeNoAttack;
+	}
+
+	/// <summary>
+	/// Function called when the eater closes the jaw. It can come from an animation event or timed event
+	/// </summary>
 	public void OnJawsClose()
 	{
 		// Bite kill!
-		FindSomethingToEat(m_prey.Count <= 0 && m_canHold);
-		m_attackTarget = null;
-
-		if ( m_prey.Count <= 0 )
+		if ( m_holdingPrey == null && !m_pauseEating)
 		{
-			m_animator.SetBool("eat", false);
+			StopAttackTarget();
+			BiteKill(m_prey.Count <= 0 && m_canHold);
+			if (onBiteKill != null)
+				onBiteKill();
+			// if ( m_holdingPrey == null )
+			// 	TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 		}
-
-		if (m_holdingPrey == null)
-			TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 	}
 
 	public Transform GetAttackTarget()
@@ -222,16 +284,17 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	private void Eat(EdibleBehaviour _prey) {
+	/// <summary>
+	/// EATING FUNCTIONS
+	/// </summary>
+
+	/// Start Eating _prey
+	protected virtual void Eat(AI.Machine _prey) {
 		
-		_prey.OnEat();
+		_prey.Bite();
 
 		// Yes!! Eat it!!
 		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _prey.biteResistance);
-
-		if (m_eatingTime >= 0.5f) {
-			SlowDown(true);
-		}
 
 		PreyData preyData = new PreyData();
 
@@ -243,233 +306,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 		preyData.prey = _prey;
 
 		m_prey.Add(preyData);
-
-		m_animator.SetBool("eat", true);
-
-		if (m_eatingTime >= 0.5f || m_prey.Count > 2) 
-		{
-			m_animator.SetTrigger("eat crazy");
-		}
-		/*
-		Vector3 bloodPos = m_mouth.position;
-		bloodPos.z = -50f;
-		m_bloodEmitter.Add(ParticleManager.Spawn("bloodchurn-large", bloodPos));
-		*/
 	}
 
-	virtual protected void StartHold(EdibleBehaviour _prey) 
-	{
-		// look for closer hold point
-		float distance = float.MaxValue;
-		List<Transform> points = _prey.holdPreyPoints;
-		m_holdTransform = null;
-		for( int i = 0; i<points.Count; i++ )
-		{
-			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
-			{
-				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
-				m_holdTransform = points[i];
-			}
-		}
-
-		if ( m_holdTransform == null )
-			m_holdTransform = _prey.transform;
-
-		_prey.OnHoldBy(this);
-		m_holdingPrey = _prey;
-		m_holdPreyTimer = m_holdDuration;
-		m_animator.SetBool("eatHold", true);
-
-	}
-
-	private void UpdateHoldingPrey()
-	{
-		if (m_holdingBlood <= 0)
-		{
-			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood/"));
-			m_holdingBlood = 0.5f;
-		}
-		else
-		{
-			m_holdingBlood -= Time.deltaTime;
-		}
-
-		// damage prey
-
-		float damage = m_holdDamage;
-		// if active boost
-		if (m_boost.IsBoostActive())
-		{
-			damage *= m_holdBoostDamageMultiplier;
-			// Increase eating speed
-			m_animator.SetFloat("eatingSpeed", m_holdBoostDamageMultiplier / 2.0f);
-		}
-		else
-		{
-			// Change speed back
-			m_animator.SetFloat("eatingSpeed", 1);
-		}
-
-		m_holdingPrey.HoldingDamage( damage * Time.deltaTime);
-		if ( m_holdingPrey.isDead() )
-		{
-			m_holdingPrey.OnSwallow( m_mouth , true);
-
-			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -50f;
-			m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood/"));
-			m_holdingBlood = 0.5f;
-
-			EndHold();
-		}
-		else
-		{
-			// Swallow
-			m_holdPreyTimer -= Time.deltaTime;
-			if ( m_holdPreyTimer <= 0 ) // or prey is death
-			{
-				// release prey
-				// Escaped Event
-				Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
-				m_holdingPrey.ReleaseHold();
-				EndHold();
-			}	
-		}
-	}
-
-	virtual protected void EndHold()
-	{
-		m_holdingPrey = null;
-		m_noAttackTime = m_holdStunTime;
-		m_animator.SetBool("eatHold", false);
-
-		// Set back default speed
-
-		// Check if boosting!!
-		if (m_boost.IsBoostActive())
-		{
-			m_animator.SetFloat("eatingSpeed", m_boost.boostMultiplier);
-		}
-		else
-		{
-			m_animator.SetFloat("eatingSpeed", 1);
-		}
-	}
-
-	private void Swallow(EdibleBehaviour _prey) {
-		_prey.OnSwallow( m_mouth );
-	}
-
-	private void TargetSomethingToEat()
-	{
-		float arcRadius = m_eatDistance * transform.localScale.x ;
-		if (DebugSettings.eatDistancePowerUp) {
-			arcRadius *= 2;
-		}
-
-		float speed = m_motion.velocity.magnitude;
-		float angularSpeed = m_motion.angularVelocity.magnitude;
-
-		float eatRadius = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, arcRadius, arcRadius * m_angleSpeedMultiplier);
-		arcRadius = eatRadius * m_eatDetectionRadiusMultiplier;
-		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
-
-		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
-		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * eatRadius);
-
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(arcOrigin, arcRadius);
-		for (int e = 0; e < preys.Length; e++) 
-		{
-			Entity entity = preys[e];
-			if (entity.isEdible) 
-			{
-				if (entity.edibleFromTier <= m_tier || ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )) 	// if we find a prey we can eat
-				{
-					// Start bite attempt
-					Vector3 heading = (entity.transform.position - arcOrigin);
-					float dot = Vector3.Dot(heading, m_motion.direction);
-					if ( dot > 0)
-					{
-						// Check arc
-						Vector3 circleCenter = entity.circleArea.center;
-						circleCenter.z = 0;
-						if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, m_motion.direction, circleCenter, entity.circleArea.radius))
-						{
-							m_attackTarget = entity.transform;
-							m_attackTimer = 0.2f;
-
-							// Start attack animation
-							m_animator.SetBool("eat", true);
-						}
-					}
-					break;
-				}
-			}
-		}
-	}
-
-	private void FindSomethingToEat( bool _canHold = true ) 
-	{
-		float eatDistance = m_eatDistance * transform.localScale.x;
-		if (DebugSettings.eatDistancePowerUp) {
-			eatDistance *= 2;
-		}
-
-		float angularSpeed = m_motion.angularVelocity.magnitude;
-		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
-
-		EdibleBehaviour preyToHold = null;
-		List<EdibleBehaviour> preysToEat = new List<EdibleBehaviour>();
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_suction.position, eatDistance);
-		for (int e = 0; e < preys.Length; e++) {
-			Entity entity = preys[e];
-			if (entity.isEdible) {
-				if (entity.edibleFromTier <= m_tier) 
-				{
-					if ( m_limitEating && preysToEat.Count < m_limitEatingValue || !m_limitEating)
-					{
-						EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-						if (edible.CanBeEaten(m_motion.direction)) 
-						{
-							preysToEat.Add(edible);
-						}
-					}
-				}
-				else if ( entity.canBeHolded && (entity.holdFromTier <= m_tier) )
-				{
-					if (_canHold)
-					{
-						EdibleBehaviour edible = entity.GetComponent<EdibleBehaviour>();
-						if (edible.CanBeEaten(m_motion.direction)) 
-						{
-							preyToHold = edible;
-							break;
-						}
-					}
-				}
-				else 
-				{
-					if ( m_isPlayer )
-						Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier);
-				}
-			}
-		}
-
-		if ( preyToHold != null )
-		{
-			StartHold(preyToHold);
-		}
-		else if ( preysToEat.Count > 0 )
-		{
-			for( int i = 0; i<preysToEat.Count; i++ )
-				Eat(preysToEat[i]);
-		}
-	}
-
-	private void Chew() {
+	/// <summary>
+	/// Eating Update
+	/// </summary>
+	protected virtual void UpdateEating() {
 		bool empty = true;
+
 		for (int i = 0; i < m_prey.Count; i++) {
 			if (m_prey[i].prey != null) {
 				PreyData prey = m_prey[i];
@@ -501,13 +345,331 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if (empty) {
 			m_prey.Clear();
+			if ( onEndEating != null)
+				onEndEating();
+		}
+	}
 
-			if (m_slowedDown) {
-				SlowDown(false);
+	///
+	/// END EATING
+	///
+
+	/// <summary>
+	/// HOLDING FUNCTIONS
+	/// </summary>
+
+	/// Start holding a prey machine
+	virtual protected void StartHold( AI.Machine _prey, bool grab = false) 
+	{
+		m_grabbingPrey = grab;
+		// look for closer hold point
+		SerchClosestTransform( _prey.holdPreyPoints );
+
+		if ( m_holdTransform == null )
+			m_holdTransform = _prey.transform;
+
+		// TODO (MALH): Check if bite and grab or bite and hold
+		_prey.BiteAndHold();
+
+		m_holdingPrey = _prey;
+		m_holdingPlayer = null;
+		m_holdPreyTimer = m_holdDuration;
+	}
+
+	virtual protected void StartLatchOnPlayer( DragonPlayer player )
+	{
+		m_grabbingPrey = false;
+
+		SerchClosestTransform( player.holdPreyPoints );
+
+		if ( m_holdTransform == null )
+			m_holdTransform = player.transform;
+
+		// TODO (MALH): Check if bite and grab or bite and hold
+
+		m_holdingPlayer = player;
+		m_holdingPlayer.StartLatchedOn();
+
+		m_holdingPrey = null;
+		m_holdPreyTimer = m_holdDuration;
+
+	}
+
+	virtual protected void SerchClosestTransform( List<Transform> holdPreyPoints )
+	{
+		float distance = float.MaxValue;
+		List<Transform> points = holdPreyPoints;
+		m_holdTransform = null;
+		for( int i = 0; i<points.Count; i++ )
+		{
+			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
+			{
+				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
+				m_holdTransform = points[i];
+			}
+		}
+	}
+
+	/// <summary>
+	/// Update holding a prey
+	/// </summary>
+	protected virtual void UpdateHoldingPrey()
+	{
+		if (m_holdingBlood <= 0)
+		{
+			StartBlood();
+		}
+		else
+		{
+			m_holdingBlood -= Time.deltaTime;
+		}
+
+		// damage prey
+		float damage = m_holdDamage;
+		if ( IsBoosting() )
+		{
+			damage *= m_holdBoostDamageMultiplier;
+		}
+
+		m_holdingPrey.ReceiveDamage(damage * Time.deltaTime);
+		if (m_holdingPrey.IsDead())
+		{
+			Swallow(m_holdingPrey);
+			StartBlood();
+			EndHold();
+		}
+		else
+		{
+			// Swallow
+			m_holdPreyTimer -= Time.deltaTime;
+			if ( m_holdPreyTimer <= 0 ) // or prey is death
+			{
+				// release prey
+				// Escaped Event
+				if ( m_isPlayer )
+					Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
+				EndHold();
+			}	
+		}
+	}
+
+	protected virtual void UpdateLatchOnPlayer()
+	{
+		if (m_holdingBlood <= 0)
+		{
+			StartBlood();
+		}
+		else
+		{
+			m_holdingBlood -= Time.deltaTime;
+		}
+
+		// damage prey
+		float damage = m_holdDamage;
+		if ( IsBoosting() )
+		{
+			damage *= m_holdBoostDamageMultiplier;
+		}
+
+		m_holdingPlayer.dragonHealthBehaviour.ReceiveDamage( damage * Time.deltaTime, DamageType.LATCH, transform, false);
+		if (!m_holdingPlayer.IsAlive())
+		{
+			StartBlood();
+			EndHold();
+		}
+		else
+		{
+			// Swallow
+			m_holdPreyTimer -= Time.deltaTime;
+			if ( m_holdingPlayer.dragonBoostBehaviour.IsBoostActive() )
+				m_holdPreyTimer -= Time.deltaTime;
+			if ( m_holdPreyTimer <= 0 ) // or prey is death
+			{
+				EndHold();
+			}	
+		}
+	}
+
+
+	/// Check if boosting while eating. To be implemented by derived classes
+	public virtual bool IsBoosting()
+	{ 
+		return false; 
+	}
+
+	/// <summary>
+	/// Ends the hold.
+	/// </summary>
+	virtual public void EndHold()
+	{
+		if ( m_holdingPrey != null)
+		{
+			if ( !m_grabbingPrey && onEndLatching != null)
+				onEndLatching();
+				
+			m_holdingPrey.ReleaseHold();
+			m_holdingPrey.SetVelocity(m_motion.velocity * 2f);
+			m_holdingPrey = null;
+		}
+		else if ( m_holdingPlayer != null)
+		{
+			if (onEndLatching != null)
+				onEndLatching();
+			m_holdingPlayer.EndLatchedOn();
+			m_holdingPlayer = null;
+		}
+
+		m_noAttackTime = m_holdStunTime;
+	}
+
+	/// <summary>
+	/// END HOLD
+	/// </summary>
+
+
+	/// <summary>
+	/// Targets something to eat. Searches fot a victim and starts the jaw movement
+	/// </summary>
+	private void TargetSomethingToEat()
+	{
+		float angularSpeed = m_motion.angularVelocity.magnitude;
+
+		float eatDistance = GetEatDistance();
+		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
+
+		float speed = m_motion.velocity.magnitude;
+		float arcRadius = eatDistance * m_eatDetectionRadiusMultiplier;
+		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
+
+		Vector3 dir = m_motion.direction;
+		dir.z = 0;
+		dir.Normalize();
+		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
+		Vector3 arcOrigin = m_suction.position - (dir * eatDistance);
+
+		m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
+		for (int e = 0; e < m_numCheckEntities; e++) 
+		{
+			Entity entity = m_checkEntities[e];
+			if (entity.IsEdible())
+			{
+				// Start bite attempt
+				Vector3 heading = (entity.transform.position - arcOrigin);
+				float dot = Vector3.Dot(heading, dir);
+				if ( dot > 0)
+				{
+					// Check arc
+					Vector3 circleCenter = entity.circleArea.center;
+					circleCenter.z = 0;
+					if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, dir, circleCenter, entity.circleArea.radius))
+					{
+						StartAttackTarget( entity.transform );
+						break;
+					}
+				}
+
+			}
+		}
+	}
+
+	public virtual void StartAttackTarget( Transform _transform )
+	{
+		m_attackTarget = _transform;
+		m_attackTimer = 0.2f;
+	}
+
+	public virtual void StopAttackTarget()
+	{
+		m_attackTarget = null;
+	}
+
+	/// <summary>
+	/// On jaws closed we check what can we eat
+	/// </summary>
+	/// <param name="_canHold">If set to <c>true</c> can hold.</param>
+	protected virtual void BiteKill( bool _canHold = true ) 
+	{
+		float angularSpeed = m_motion.angularVelocity.magnitude;
+
+		float eatDistance = GetEatDistance();
+		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
+
+		if (m_canLatchOnPlayer && InstanceManager.player != null && !InstanceManager.player.BeingLatchedOn())
+		{
+			m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_suction.position, eatDistance, m_checkPlayer, m_playerColliderMask);
+			if ( m_numCheckEntities > 0 )
+			{
+				// Sart latching on player
+				StartLatchOnPlayer( InstanceManager.player );
+			}
+		}
+
+		if ( m_canEatEntities && m_holdingPlayer == null )
+		{
+			AI.Machine preyToHold = null;
+			Entity entityToHold = null;
+			List<AI.Machine> preysToEat = new List<AI.Machine>();
+			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
+			for (int e = 0; e < m_numCheckEntities; e++) {
+				Entity entity = m_checkEntities[e];
+				if ( entity.IsEdible() )
+				{
+					if (entity.IsEdible(m_tier) || m_ignoreTierList.Contains( entity.sku ))
+					{
+						if (m_limitEating && (preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
+						{
+							AI.Machine machine = entity.GetComponent<AI.Machine>();
+							if (!machine.IsDead() && !machine.IsDying()) {
+									preysToEat.Add(machine);
+							}
+						}
+					}
+					else if (entity.CanBeHolded(m_tier))
+					{
+						if (_canHold)
+						{
+							AI.Machine machine = entity.GetComponent<AI.Machine>();
+							preyToHold = machine;
+							entityToHold = entity;
+						}
+					}
+					else 
+					{
+						if (m_isPlayer)
+							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier, entity.sku);
+					}
+				}
 			}
 
-			m_animator.SetBool("eat", false);
+			if ( preyToHold != null )
+			{
+				StartHold(preyToHold, entityToHold.CanBeGrabbed( m_tier));
+			}
+			else if ( preysToEat.Count > 0 )
+			{
+				for( int i = 0; i<preysToEat.Count; i++ )
+					Eat(preysToEat[i]);
+			}
 		}
+
+		m_attackTarget = null;
+	}
+
+	/// <summary>
+	/// Returns the distance this entity can eat something
+	/// </summary>
+	/// <returns>The find eating distance.</returns>
+	protected virtual float GetEatDistance()
+	{
+		return m_eatDistance * transform.localScale.x;
+	}
+
+
+	private void StartBlood(){
+		Vector3 bloodPos = m_mouth.position;
+		bloodPos.z = -50f;
+		m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
+		m_holdingBlood = 0.5f;
 	}
 
 	private void UpdateBlood() {
@@ -531,57 +693,50 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	protected abstract void SlowDown(bool _enable);
 
-
-	// find mouth transform 
-	private void GetMouth() {
-		m_mouth = transform.FindTransformRecursive("Fire_Dummy");
-		m_head = transform.FindTransformRecursive("Dragon_Head");
-
-		m_suction = transform.FindTransformRecursive("Fire_Dummy");
-		if (m_suction == null) {
-			m_suction = m_mouth;
-		}
+	/// On kill function over prey. Eating or holding
+	private void Swallow(AI.Machine _prey) {
+		_prey.BeingSwallowed(m_mouth, m_rewardsPlayer);//( m_mouth );
 	}
 
+	/// <summary>
+	/// GIZMO
+	/// </summary>
 	void OnDrawGizmos() {
 		if (m_suction == null) {
-			GetMouth();
+			MouthCache();
 		}
 		if ( m_motion == null )
 			return;
 
-		float speed = m_motion.velocity.magnitude;
 		float angularSpeed = m_motion.angularVelocity.magnitude;
 
 		// Eating Distance
-		float eatRadius = m_eatDistance * transform.localScale.x;
-		if (DebugSettings.eatDistancePowerUp) {
-			eatRadius *= 2;
-		}
+		float eatRadius = GetEatDistance();
 		eatRadius = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatRadius, eatRadius * m_angleSpeedMultiplier);
 
 		Gizmos.color = Color.white;
 		Gizmos.DrawWireSphere(m_suction.position, eatRadius);
 
 		// Eat Detect Distance
+		float speed = m_motion.velocity.magnitude;
 		float arcRadius = eatRadius * m_eatDetectionRadiusMultiplier;
 		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
 
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
-		Vector3 arcOrigin = m_suction.position - (Vector3)(m_motion.direction * eatRadius);
+		Vector2 dir = (Vector2)m_motion.direction;
+		Vector3 arcOrigin = m_suction.position - (Vector3)(dir * eatRadius);
 
 		// Draw Arc
 		Gizmos.color = Color.yellow;
 		Gizmos.DrawWireSphere(arcOrigin, arcRadius);
 		Gizmos.color = Color.red;
-		Debug.DrawLine(arcOrigin, arcOrigin + (Vector3)(m_motion.direction * arcRadius));
+		Debug.DrawLine(arcOrigin, arcOrigin + (Vector3)(dir * arcRadius));
 
-		Vector2 dUp = m_motion.direction.RotateDegrees(arcAngle/2.0f);
+		Vector2 dUp = dir.RotateDegrees(arcAngle/2.0f);
 		Debug.DrawLine( arcOrigin, arcOrigin + (Vector3)(dUp * arcRadius) );
-		Vector2 dDown = m_motion.direction.RotateDegrees(-arcAngle/2.0f);
+		Vector2 dDown = dir.RotateDegrees(-arcAngle/2.0f);
 		Debug.DrawLine( arcOrigin, arcOrigin + (Vector3)(dDown * arcRadius) );
 
 	}

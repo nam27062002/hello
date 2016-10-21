@@ -76,8 +76,8 @@ public class CameraSnapPoint : MonoBehaviour {
 
 		// Position and lookAt points
 		Gizmos.color = Colors.WithAlpha(Colors.red, 0.75f);
-		Gizmos.DrawSphere(m_lookAtPoint.transform.position, 1f);
-		Gizmos.DrawSphere(m_lookAtPoint.lookAtPointGlobal, 1f);
+		Gizmos.DrawSphere(m_lookAtPoint.transform.position, 0.5f);
+		Gizmos.DrawSphere(m_lookAtPoint.lookAtPointGlobal, 0.5f);
 
 		// Camera frustum
 		// If not defined, use main camera values in a different color

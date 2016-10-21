@@ -34,7 +34,7 @@ public class UIScene3D : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// References
 	protected Camera m_camera = null;
-	public Camera camera {
+	new public Camera camera {
 		get { return m_camera; }
 	}
 
@@ -88,7 +88,6 @@ public class UIScene3D : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Destroy created render texture as well
-		m_camera.targetTexture = null;
 		if(m_renderTexture != null) {
 			m_renderTexture.Release();
 			Destroy(m_renderTexture);

@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 
 public class DragonEquip : MonoBehaviour {
+	private static readonly string DISGUISE_CHANGE_PS = "PS_DisguiseChange";
+	private static readonly string DISGUISE_CHANGE_PS_FOLDER = "Menu";
 
 	private string m_dragonSku;
+
+	public static int m_numPets = 1;
 
 	void Awake() {
 		DragonPlayer player = GetComponent<DragonPlayer>();
@@ -15,7 +19,10 @@ public class DragonEquip : MonoBehaviour {
 			m_dragonSku = preview.sku;
 		}
 
-		EquipDisguise(Wardrobe.GetEquipedDisguise(m_dragonSku));
+		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+
+
+
 
 		/* TODO: refractor full equip function
 		 Dictionary<Equipable.AttachPoint, string> equip = dragon.data.equip;
@@ -42,6 +49,37 @@ public class DragonEquip : MonoBehaviour {
 		}*/
 	}
 
+	void Start()
+	{
+
+		Dictionary<Equipable.AttachPoint, string> equip = new Dictionary<Equipable.AttachPoint, string>();
+		for( int i = 0; i<m_numPets; i++ )
+		{
+			if ( i == 0 )
+				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetMachine");	
+			else if ( i == 1 )
+				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetGhostBuster");	
+			else
+				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetArmored");	
+		}
+
+		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
+		for (int i = 0; i < points.Length; i++) {
+			Equipable.AttachPoint point = points[i].point;
+			if (equip.ContainsKey(point)) {
+				string item = equip[point];
+
+				string pet = "Game/Equipable/Pets/" + item;
+				GameObject prefabObj = Resources.Load<GameObject>(pet);
+				GameObject equipable = Instantiate<GameObject>(prefabObj);
+
+				// get equipable object!
+				points[i].Equip(equipable.GetComponent<Equipable>());
+			}
+		}
+
+	}
+
 	public void PreviewDisguise(string _disguise) {
 		EquipDisguise(_disguise);
 	}
@@ -64,7 +102,10 @@ public class DragonEquip : MonoBehaviour {
 
 	private void OnDisguiseChanged(string _sku) {
 		if (m_dragonSku == _sku) {
-			EquipDisguise(Wardrobe.GetEquipedDisguise(m_dragonSku));
+			// Show some FX and cool animation!
+			// https://youtu.be/RFqw3xiuSvQ?t=8m45s
+			ParticleManager.Spawn(DISGUISE_CHANGE_PS, transform.position + new Vector3(0f, 1.5f, -4f), DISGUISE_CHANGE_PS_FOLDER);	// [AOC] Hardcoded offset! :(
+			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 		}
 	}
 	
@@ -95,7 +136,7 @@ public class DragonEquip : MonoBehaviour {
 
 		// [AOC] HACK!! Older dragons still don't have the proper materials ----
 		// 		 To be removed
-		if(m_dragonSku != "dragon_baby") {
+		if(m_dragonSku != "dragon_baby" && m_dragonSku != "dragon_classic") {
 			Renderer renderer = transform.FindChild("view").GetComponentInChildren<Renderer>();
 			Material[] materials = renderer.materials;
 			if(materials.Length > 0) materials[0] = bodyMat;

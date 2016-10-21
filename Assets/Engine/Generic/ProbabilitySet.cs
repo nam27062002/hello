@@ -143,6 +143,21 @@ public class ProbabilitySet {
 	}
 
 	/// <summary>
+	/// Add a new element and set a probability to it.
+	/// Consistency of the set (aka total of the probabilities is 1) is not guaranteed after this method is called.
+	/// You can call Validate() after all elements have been added to make sure the set is valid.
+	/// </summary>
+	/// <returns>The newly added element.</returns>
+	/// <param name="_label">Label for the new element.</param>
+	/// <param name="_probability">Probability for the new element [0..1].</param>
+	public Element AddElement(string _label, float _probability) {
+		// Just add new element and set its probability
+		Element e = AddElement(_label);
+		e.probability = _probability;
+		return e;
+	}
+
+	/// <summary>
 	/// Removes last element of the set.
 	/// All other elements probabilities will be readjusted, regardless of their lock status.
 	/// </summary>
@@ -198,7 +213,7 @@ public class ProbabilitySet {
 	/// </summary>
 	/// <param name="_elementIdx">The index of the element to be modified.</param>
 	/// <param name="_probability">The new probability [0..1] for the target element.</param>
-	/// <param name="_redistribute">If <c>true></c>, all probabilities will be adjusted to add up 1. Be careful when using <c>false</c>, since you could end up with an invalid probability set.</param>
+	/// <param name="_redistribute">If <c>true></c>, all probabilities will be adjusted to add up 1. Be careful when using <c>false</c>, since you could end up with an invalid probability set. You can call Validate() after having set all teh probabilities to make sure the set is valid.,</param>
 	public void SetProbability(int _elementIdx, float _probability, bool _redistribute = true) {
 		// Check params
 		if(_elementIdx < 0 || _elementIdx >= numElements) return;

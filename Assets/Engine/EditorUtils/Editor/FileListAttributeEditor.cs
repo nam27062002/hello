@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -24,7 +25,8 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Data that mus be kept between opening the sku list popup and capturing its result
-	private List<FileInfo> m_files = null;
+	private List<FileInfo> m_files = new List<FileInfo>();
+	private List<string> m_options = new List<string>();
 	private SerializedProperty m_targetProperty = null;
 
 	//------------------------------------------------------------------//
@@ -45,32 +47,26 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 			return;
 		}
 
+		// Store property
+		m_targetProperty = _property;
+
 		// Obtain the attribute
 		FileListAttribute attr = attribute as FileListAttribute;
 
-		// Create the skus list
-		m_files = new List<FileInfo>();
+		// Clear both the files and the options lists
+		m_files.Clear();
+		m_options.Clear();
 
 		// Insert "NONE" option at the beginning
 		if(attr.m_allowEmptyValue) {
 			m_files.Add(null);	// "NONE" value is ""
+			m_options.Add("-");
 		}
 
-		// Get the file list
+		// Get the file list (recursively)
 		string dirPath = Application.dataPath + "/" + attr.m_folderPath;
 		DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-		m_files.AddRange(dirInfo.GetFiles(attr.m_filter));	// Use file filter
-
-		// Clean up displayed names
-		// Strip filename from full file path
-		string[] options = new string[m_files.Count];
-		for(int i = 0; i < options.Length; i++) {
-			if(i == 0 && attr.m_allowEmptyValue) {
-				options[i] = "---- NONE";
-			} else {
-				options[i] = Path.GetFileNameWithoutExtension(m_files[i].Name);
-			}
-		}
+		ScanFiles(dirInfo, attr.m_filter);
 
 		// Find out current selected value
 		// If current value was not found, force it to first value (which will be "NONE" if allowed)
@@ -85,12 +81,11 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 		}
 		
 		// Display the property
-		// Show button using the popup style with the current value
+		// Unity's Popup control manages the sub-menu logic! ^_^
 		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
-		Rect contentPos = EditorGUI.PrefixLabel(m_pos, _label);
-		if(GUI.Button(contentPos, options[selectedIdx], EditorStyles.popup)) {
-			m_targetProperty = _property;
-			SelectionPopupWindow.Show(options, OnFileSelected);
+		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, selectedIdx, m_options.ToArray());
+		if(newSelectedIdx != selectedIdx) {
+			OnFileSelected(newSelectedIdx);
 		}
 
 		// Leave room for next property drawer
@@ -112,6 +107,35 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 			m_targetProperty.stringValue = StringUtils.FormatPath(m_files[_selectedIdx].FullName, attr.m_format);	// Options array match the file list, so no need to do anything else :)
 		}
 		m_targetProperty.serializedObject.ApplyModifiedProperties();
+	}
+
+	/// <summary>
+	/// Scan all the files (recursively) within a folder and adds them both to the m_files and m_options lists.
+	/// Doesn't clear the lists.
+	/// Unity's *.meta files will be excluded.
+	/// </summary>
+	/// <param name="_dirInfo">Directory to scan.</param>
+	/// <param name="_filter">The search string to match against the names of files in path. This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions.</param>
+	/// <param name="_optionsPrefix">The prefix to be used when adding the file name to the options list. Used for nesting the foldable menu.</param>
+	private void ScanFiles(DirectoryInfo _dirInfo, string _filter, string _prefix = "") {
+		// Scan target dir's files
+		FileInfo[] files = _dirInfo.GetFiles(_filter).Where(_file => !_file.Extension.EndsWith(".meta")).ToArray();	// Use file filter, exclude .meta files
+
+		// Add files to files list
+		m_files.AddRange(files);
+
+		// Clean up displayed names and add to the options list as well
+		for(int i = 0; i < files.Length; i++) {
+			m_options.Add(_prefix + Path.GetFileNameWithoutExtension(files[i].Name));	// Strip filename from full file path and attach prefix
+		}
+
+		// Recursively scan subdirs as well
+		DirectoryInfo[] dirs = _dirInfo.GetDirectories();
+		for(int i = 0; i < dirs.Length; i++) {
+			// Update prefix (so all files in this subdir are in nested menus
+			string prefix = _prefix + dirs[i].Name + "/";
+			ScanFiles(dirs[i], _filter, prefix);
+		}
 	}
 }
 

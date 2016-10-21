@@ -225,65 +225,65 @@ public static class EditorGUILayoutExt {
 
 		// String
 		if(t == typeof(string)) {
-			string value = Prefs.GetString(_prefId, (string)(object)_defaultValue);
+			string value = Prefs.GetStringEditor(_prefId, (string)(object)_defaultValue);
 			value = EditorGUILayout.TextField(_label, value, _options);
-			Prefs.SetString(_prefId, value);
+			Prefs.SetStringEditor(_prefId, value);
 			return (T)(object)value;
 		}
 
 		// Float
 		else if(t == typeof(float)) {
-			float value = Prefs.GetFloat(_prefId, (float)(object)_defaultValue);
+			float value = Prefs.GetFloatEditor(_prefId, (float)(object)_defaultValue);
 			value = EditorGUILayout.FloatField(_label, value, _options);
-			Prefs.SetFloat(_prefId, value);
+			Prefs.SetFloatEditor(_prefId, value);
 			return (T)(object)value;
 		}
 
 		// Int
 		else if(t == typeof(int)) {
-			int value = Prefs.GetInt(_prefId, (int)(object)_defaultValue);
+			int value = Prefs.GetIntEditor(_prefId, (int)(object)_defaultValue);
 			value = EditorGUILayout.IntField(_label, value, _options);
-			Prefs.SetInt(_prefId, value);
+			Prefs.SetIntEditor(_prefId, value);
 			return (T)(object)value;
 		}
 
 		// Bool
 		else if(t == typeof(bool)) {
-			bool value = Prefs.GetBool(_prefId, (bool)(object)_defaultValue);
+			bool value = Prefs.GetBoolEditor(_prefId, (bool)(object)_defaultValue);
 			value = EditorGUILayout.Toggle(_label, value, _options);
-			Prefs.SetBool(_prefId, value);
+			Prefs.SetBoolEditor(_prefId, value);
 			return (T)(object)value;
 		}
 
 		// Enum
 		else if(t.IsEnum) {
-			Enum value = (Enum)(object)Prefs.Get<T>(_prefId, _defaultValue);
+			Enum value = (Enum)(object)Prefs.Get<T>(_prefId, _defaultValue, Prefs.Mode.EDITOR);
 			value = EditorGUILayout.EnumPopup(_label, value, _options);
-			Prefs.Set<T>(_prefId, (T)(object)value);
+			Prefs.Set<T>(_prefId, (T)(object)value, Prefs.Mode.EDITOR);
 			return (T)(object)value;
 		}
 
 		// Vector2
 		else if(t == typeof(Vector2)) {
-			Vector2 value = Prefs.GetVector2(_prefId, (Vector2)(object)_defaultValue);
+			Vector2 value = Prefs.GetVector2Editor(_prefId, (Vector2)(object)_defaultValue);
 			value = EditorGUILayout.Vector2Field(_label, value, _options);
-			Prefs.SetVector2(_prefId, value);
+			Prefs.SetVector2Editor(_prefId, value);
 			return (T)(object)value;
 		}
 
 		// Vector3
 		else if(t == typeof(Vector3)) {
-			Vector3 value = Prefs.GetVector3(_prefId, (Vector3)(object)_defaultValue);
+			Vector3 value = Prefs.GetVector3Editor(_prefId, (Vector3)(object)_defaultValue);
 			value = EditorGUILayout.Vector3Field(_label, value, _options);
-			Prefs.SetVector3(_prefId, value);
+			Prefs.SetVector3Editor(_prefId, value);
 			return (T)(object)value;
 		}
 
 		// Color
 		else if(t == typeof(Color)) {
-			Color value = Prefs.GetColor(_prefId, (Color)(object)_defaultValue);
+			Color value = Prefs.GetColorEditor(_prefId, (Color)(object)_defaultValue);
 			value = EditorGUILayout.ColorField(_label, value, _options);
-			Prefs.SetColor(_prefId, value);
+			Prefs.SetColorEditor(_prefId, value);
 			return (T)(object)value;
 		}
 

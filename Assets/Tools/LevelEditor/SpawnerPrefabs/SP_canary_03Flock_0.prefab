@@ -9,10 +9,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 469734}
   - 114: {fileID: 11493408}
-  - 114: {fileID: 11416354}
-  - 114: {fileID: 11469870}
   - 114: {fileID: 11447668}
-  - 114: {fileID: 11490694}
+  - 114: {fileID: 11420220}
+  - 114: {fileID: 114000010445204272}
   m_Layer: 0
   m_Name: SP_canary_03Flock_0
   m_TagString: Untagged
@@ -27,13 +26,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 110368}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 93.79, y: -40.49, z: 0}
+  m_LocalPosition: {x: 36.71, y: 9.94, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11416354
+--- !u!114 &11420220
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -41,19 +40,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 110368}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1aacd4a6157b43dfb51dc936d9e9f7c, type: 3}
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_amountSecsInPast: 0.25
-  m_guideFunction: 3
-  m_guideSpeed: 0.25
-  m_secondaryGuideSpeed: 0
-  m_sensePlayer: 0
-  m_innerRadius: 10
-  m_outterRadius: 20
-  m_targetDistance: 0
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
+  m_entityPrefab: {fileID: 172044, guid: daea9b0c26be442c7af4f9b51cb001b5, type: 2}
+  m_entityPrefabStr: Air/PF_Canary_03
+  m_quantity:
+    min: 20
+    max: 20
+  m_scale:
+    min: 0.7
+    max: 0.7
+  m_rails: 1
+  m_flockBonus: 25
+  m_minTier: 0
+  m_activationChance: 100
+  m_alwaysActive: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
+  m_spawnTime:
+    min: 0
+    max: 0
+  m_maxSpawns: 0
 --- !u!114 &11447668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -65,47 +73,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11469870
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 110368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e41b79b4192e24dd2add814a1be140ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 127370, guid: 17d160ed51e25024dbd5ad98c07f0fb9, type: 2}
-  m_quantity:
-    min: 8
-    max: 8
-  m_scale:
-    min: 0.6
-    max: 0.6
-  m_flockBonus: 25
-  m_alwaysActive: 0
-  m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
-  m_spawnTime:
-    min: 40
-    max: 45
-  m_maxSpawns: 0
---- !u!114 &11490694
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 110368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0.05168152, y: 0}
-  size: {x: 23.641891, y: 3.6924105}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11493408
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -131,3 +98,19 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 110368}
   m_IsPrefabParent: 1
+--- !u!114 &114000010445204272
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 110368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}

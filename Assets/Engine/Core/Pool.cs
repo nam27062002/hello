@@ -69,7 +69,7 @@ public class Pool {
 		m_containerObj = null;
 	}
 	
-	public GameObject Get()
+	public GameObject Get(bool _activate)
 	{			
 		if ( m_freeObjects.Count <= 0 && m_canGrow)
 		{
@@ -79,7 +79,7 @@ public class Pool {
 		if ( m_freeObjects.Count > 0)
 		{
 			GameObject go = m_freeObjects.Dequeue();
-			go.SetActive( true );
+			go.SetActive(_activate);
 			m_notFreeObjects.Add( go );
 			return go;
 		}
@@ -92,6 +92,7 @@ public class Pool {
 		if ( m_notFreeObjects.Contains(go) )
 		{
 			m_notFreeObjects.Remove( go );
+			go.transform.SetParent(m_containerObj.transform);		// Return particle system to pool's hierarchy
 			go.SetActive( false );
 			m_freeObjects.Enqueue( go );
 		}
@@ -99,8 +100,56 @@ public class Pool {
 		{
 			// Debug.LogError("Object " + go.name + "doesn't belong to pool " + m_containerObj.name);
 		}
+	}
 
-		
+	/// <summary>
+	/// Resize the pool to the target size.
+	/// If smaller than current size, some objects might be destroyed!
+	/// </summary>
+	/// <param name="_newSize">New size of the pool.</param>
+	public void Resize(int _newSize) {
+		// At least 0!
+		_newSize = Mathf.Max(0, _newSize);
+
+		// Compare to current size
+		int sizeDiff = _newSize - (m_freeObjects.Count + m_notFreeObjects.Count);
+
+		// Smaller than current size?
+		if(sizeDiff < 0) {
+			// Destroy objects
+			// If there are not enough objects in the free queue, pull back some objects from the not free queue first
+			int toDestroy = Mathf.Abs(sizeDiff);
+			int toReturn = toDestroy - m_freeObjects.Count;
+			if(toReturn > 0) {
+				// Store them first in a list (only way to iterate a hash set is via iterator)
+				List<GameObject> toReturnList = new List<GameObject>();
+				foreach(GameObject obj in m_notFreeObjects) {
+					// If we reach the target amount, stop looping
+					toReturnList.Add(obj);
+					if(toReturnList.Count == toReturn) break;
+				}
+
+				// Return objects to the pool
+				for(int i = 0; i < toReturnList.Count; i++) {
+					Return(toReturnList[i]);
+				}
+			}
+
+			// Destroy as many objects from the free list as needed
+			while(toDestroy > 0 && m_freeObjects.Count > 0) {
+				GameObject obj = m_freeObjects.Dequeue();
+				GameObject.Destroy(obj);
+				toDestroy--;
+			}
+		}
+
+		// Bigger than current size?
+		else if(sizeDiff > 0) {
+			// Create as many objects as needed
+			for(int i = 0; i < sizeDiff; i++) {
+				m_freeObjects.Enqueue(Instantiate());
+			}
+		}
 	}
 
 	private GameObject Instantiate()

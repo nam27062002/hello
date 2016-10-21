@@ -59,6 +59,7 @@ public class HUDRevive : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 		m_timer.Stop();
 		m_paidReviveCount = 0;
 		m_freeReviveCount = 0;
@@ -78,6 +79,7 @@ public class HUDRevive : MonoBehaviour {
 	void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 
 		// Restore timescale
 		Time.timeScale = 1f;
@@ -105,26 +107,7 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	private void DoRevive() {
 		// Revive!
-		bool wasStarving = InstanceManager.player.IsStarving();
-		bool wasCritical = InstanceManager.player.IsCritical();
 		InstanceManager.player.ResetStats(true);
-
-		// Disable status effects if required
-		if(wasStarving != InstanceManager.player.IsStarving()) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, InstanceManager.player.IsStarving());
-		}
-		if(wasCritical != InstanceManager.player.IsCritical()) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, InstanceManager.player.IsCritical());
-		}
-
-		// Stop timer
-		m_timer.Stop();
-
-		// Hide
-		m_animator.Hide();
-
-		// Restore timescale
-		Time.timeScale = 1f;
 	}
 
 	//------------------------------------------------------------------------//
@@ -137,9 +120,9 @@ public class HUDRevive : MonoBehaviour {
 		// Perform transaction
 		// If not enough funds, pause timer and open PC shop popup
 		long costPC = m_paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
-		if(UserProfile.pc >= costPC) {
+		if(UsersManager.currentUser.pc >= costPC) {
 			// Perform transaction
-			UserProfile.AddPC(-costPC);
+			UsersManager.currentUser.AddPC(-costPC);
 			PersistenceManager.Save();
 
 			// Do it!
@@ -147,7 +130,7 @@ public class HUDRevive : MonoBehaviour {
 			DoRevive();
 		} else {
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 
 		// [AOC] TEMP!! Disable currency popup
@@ -192,7 +175,7 @@ public class HUDRevive : MonoBehaviour {
 			m_pcText.text = StringUtils.FormatNumber((m_freeReviveCount + m_paidReviveCount) + 1);	// [AOC] TODO!! Actual revive cost formula
 
 		// Free revive available?
-		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UserProfile.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
+		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);
 
 		// Reset timer and control vars
 		m_timer.Start(m_reviveAvailableSecs * 1000);
@@ -204,6 +187,18 @@ public class HUDRevive : MonoBehaviour {
 
 		// Slow motion
 		Time.timeScale = 0.25f;
+	}
+
+	private void OnPlayerRevive()
+	{
+		// Stop timer
+		m_timer.Stop();
+
+		// Hide
+		m_animator.Hide();
+
+		// Restore timescale
+		Time.timeScale = 1f;
 	}
 
 	/// <summary>

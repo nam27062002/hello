@@ -5,11 +5,11 @@ using System.Collections;
 public class DragonEatToggle : MonoBehaviour {
 
 	private bool m_enabled;
-	private DragonEatBehaviour m_eatComponent;
+	private PlayerEatBehaviour m_eatComponent;
 	
 	void Start() {
 		if (InstanceManager.player != null) {
-			m_eatComponent = InstanceManager.player.GetComponent<DragonEatBehaviour>();
+			m_eatComponent = InstanceManager.player.GetComponent<PlayerEatBehaviour>();
 		}
 		m_enabled = true;
 	}

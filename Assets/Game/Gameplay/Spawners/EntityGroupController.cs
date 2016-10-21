@@ -3,12 +3,15 @@ using System.Collections;
 
 public class EntityGroupController : MonoBehaviour 
 {
+	public AI.Group flock;
+	
 	private GameObject[] m_entities;
 	public GameObject[] entities { get { return m_entities; } }
 
 	// Use this for initialization
 	public void Init(int _maxEntities)
 	{
+		flock = new AI.Group();
 		m_entities = new GameObject[_maxEntities];
 	}
 

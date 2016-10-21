@@ -23,6 +23,7 @@ public class SkuListAttribute : ListAttribute {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	public string m_category = DefinitionsCategory.UNKNOWN;
+	private bool m_allowNullValue = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -42,10 +43,18 @@ public class SkuListAttribute : ListAttribute {
 	/// </summary>
 	public override void ValidateOptions() {
 		// If definitions are not loaded, do it now
-		if(!ContentManager.ready) ContentManager.InitContent();
+		if(!ContentManager.ready){
+			ContentManager.InitContent();
+		}
 
 		// Get sku list
-		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(m_category);
+		// Create a duplicate, we are inserting data!!
+		List<string> skus = new List<string>(DefinitionsManager.SharedInstance.GetSkuList(m_category));
+
+		// Add the empty option if required
+		if(m_allowNullValue) {
+			skus.Insert(0, "");
+		}
 
 		// Convert to object array
 		m_options = skus.Cast<string, object>().ToArray();

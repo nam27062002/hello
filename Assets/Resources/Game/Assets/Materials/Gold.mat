@@ -2,15 +2,16 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 5
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Gold
-  m_Shader: {fileID: 4800000, guid: 69c45e77c03924bf88b96b0260110964, type: 3}
+  m_Shader: {fileID: 4800000, guid: 6d5b904f7c5fb4c8585e7bf89c215a7d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
+  stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -44,6 +45,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
@@ -52,13 +60,6 @@ Material:
       data:
         first:
           name: _EmissionMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _DetailMask
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -94,14 +95,6 @@ Material:
     m_Floats:
       data:
         first:
-          name: _Cutoff
-        second: .5
-      data:
-        first:
-          name: _Parallax
-        second: .0199999996
-      data:
-        first:
           name: _SrcBlend
         second: 1
       data:
@@ -110,12 +103,20 @@ Material:
         second: 0
       data:
         first:
+          name: _Cutoff
+        second: 0.5
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
+      data:
+        first:
           name: _ZWrite
         second: 1
       data:
         first:
           name: _Glossiness
-        second: .5
+        second: 0.5
       data:
         first:
           name: _BumpScale
@@ -159,7 +160,7 @@ Material:
       data:
         first:
           name: _CubeIntensity
-        second: .745000005
+        second: 0.745
       data:
         first:
           name: _RimPower
@@ -180,7 +181,7 @@ Material:
       data:
         first:
           name: _RimColour
-        second: {r: .537313461, g: .467324197, b: .224548921, a: 1}
+        second: {r: 0.53731346, g: 0.4673242, b: 0.22454892, a: 1}
       data:
         first:
           name: _CausticColour
@@ -188,12 +189,12 @@ Material:
       data:
         first:
           name: _Tint
-        second: {r: .589552283, g: .367785633, b: .12319003, a: 1}
+        second: {r: 0.5895523, g: 0.36778563, b: 0.12319003, a: 1}
       data:
         first:
           name: _RimColor
-        second: {r: 1, g: .819999993, b: .200000003, a: 0}
+        second: {r: 1, g: 0.82, b: 0.2, a: 0}
       data:
         first:
           name: _ReflColor
-        second: {r: .5, g: .300000012, b: 0, a: 0}
+        second: {r: 0.5, g: 0.3, b: 0, a: 0}

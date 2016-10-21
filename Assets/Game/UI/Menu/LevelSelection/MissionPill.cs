@@ -162,7 +162,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Progress
 		// Optionally hide progress for singlerun missions
-		bool show = !m_mission.def.Get<bool>("singleRun") || m_showProgressForSingleRunMissions;
+		bool show = !m_mission.def.GetAsBool("singleRun") || m_showProgressForSingleRunMissions;
 		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
 		if(show) {
 			m_activeObj.FindComponentRecursive<Localizer>("ProgressText").Localize("TID_FRACTION", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
@@ -239,7 +239,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActivationPending() {
 		// Info text
-		m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = Localization.Localize("TID_MISSIONS_ACTIVATION_PENDING");
+        m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = LocalizationManager.SharedInstance.Localize("TID_MISSIONS_ACTIVATION_PENDING");
 
 		// Cooldown remaining time
 		m_cooldownText.text = "";
@@ -308,9 +308,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Make sure we have enough PC to remove the mission
 		int costPC = m_mission.removeCostPC;
-		if(UserProfile.pc >= costPC) {
+		if(UsersManager.currentUser.pc >= costPC) {
 			// Do it!
-			UserProfile.AddPC(-costPC);
+			UsersManager.currentUser.AddPC(-costPC);
 			MissionManager.RemoveMission(m_missionDifficulty);
 			PersistenceManager.Save();
 		} else {
@@ -318,7 +318,7 @@ public class MissionPill : MonoBehaviour {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
@@ -331,9 +331,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Make sure we have enough PC to remove the mission
 		int costPC = m_mission.skipCostPC;
-		if(UserProfile.pc >= costPC) {
+		if(UsersManager.currentUser.pc >= costPC) {
 			// Do it!
-			UserProfile.AddPC(-costPC);
+			UsersManager.currentUser.AddPC(-costPC);
 			MissionManager.SkipMission(m_missionDifficulty);
 			PersistenceManager.Save();
 		} else {
@@ -341,7 +341,7 @@ public class MissionPill : MonoBehaviour {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 

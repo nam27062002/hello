@@ -3,7 +3,7 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Custom/Burned" {
+Shader "Hungry Dragon/Burned" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 	_SpeedX("Fire Speed X", float) = 0
@@ -21,6 +21,7 @@ SubShader {
 			#pragma multi_compile_fog
 						
 			#include "UnityCG.cginc"
+			// #include "HungryDragon.cginc"
 
 			struct appdata_t {
 				float4 vertex : POSITION; 
@@ -31,7 +32,7 @@ SubShader {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
 				half2 texcoord2 : TEXCOORD2;
-				UNITY_FOG_COORDS(1)
+				// HG_FOG_COORDS(1)
 			};
 
 			sampler2D _MainTex; 
@@ -47,7 +48,7 @@ SubShader {
 				half x = 0.5 + (_Time.y * _SpeedX);
 				half y = 0.5 + (_Time.y * _SpeedY);
 				o.texcoord2 = o.texcoord + frac( half2( x, y));
-				UNITY_TRANSFER_FOG(o,o.vertex);
+				// HG_TRANSFER_FOG(o, mul(_Object2World, v.vertex), _FogStart, _FogEnd);	// Fog
 				return o;
 			}
 			
@@ -55,7 +56,7 @@ SubShader {
 			{
 				fixed4 col = tex2D(_MainTex, i.texcoord);
 				fixed4 col2 = tex2D(_MainTex, i.texcoord2);
-				UNITY_APPLY_FOG(i.fogCoord, col);
+				// HG_APPLY_FOG(i, col, _FogColor);	// Fog
 				col = col + (col2 * col);
 				UNITY_OPAQUE_ALPHA(col.a);
 				return col;

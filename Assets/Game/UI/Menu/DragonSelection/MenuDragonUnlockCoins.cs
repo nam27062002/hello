@@ -73,15 +73,15 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 		long priceCoins = data.def.GetAsLong("unlockPriceCoins");
-		if(UserProfile.coins >= priceCoins) {
-			UserProfile.AddCoins(-priceCoins);
+		if(UsersManager.currentUser.coins >= priceCoins) {
+			UsersManager.currentUser.AddCoins(-priceCoins);
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 }

@@ -23,9 +23,8 @@ public class GameSceneControllerBase : SceneController {
 	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
-	// PROPERTIES														//
+	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// [AOC] We want these to be consulted but never set from outside, so don't add a setter
 	// Time
 	protected float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
@@ -33,14 +32,8 @@ public class GameSceneControllerBase : SceneController {
 	}
 
 	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-
-
-	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-
 	public virtual bool IsLevelLoaded()
 	{
 		return true;

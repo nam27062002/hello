@@ -152,7 +152,9 @@ public static class ListExt {
 	/// <returns>A new list with all the elements casted.</returns>
 	public static List<U> Cast<T, U>(this List<T> _list) {
 		// Linq makes it easy for us
-		return _list.Cast<U>().ToList();
+		//return _list.Cast<U>().ToList();	// [AOC] This would modify the original list rather than creating a new one!
+		List<T> returnList = new List<T>(_list);	// Create a duplicate list
+		return returnList.Cast<U>().ToList();	// Cast the duplicate
 	}
 
 	/// <summary>

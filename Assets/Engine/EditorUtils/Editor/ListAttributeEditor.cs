@@ -45,12 +45,16 @@ public class ListAttributeEditor : ExtendedPropertyDrawer {
 		// Find out current selected value as well
 		int selectedIdx = -1;
 		List<string> options = new List<string>(attr.m_options.Length);
+		string label = "";
 		if(attr.m_options.Length == 0) {
-			options.Add("");
+			options.Add("-");
 		} else {
 			for(int i = 0; i < attr.m_options.Length; i++) {
 				// Add string representing this option
-				options.Add(attr.m_options[i].ToString());
+				// Empty strings don't appear on the list, use "-" instead
+				label = attr.m_options[i].ToString();
+				if(string.IsNullOrEmpty(label)) label = "-";
+				options.Add(label);
 
 				// Is it the current value?
 				if(target.Equals(attr.m_options[i])) {

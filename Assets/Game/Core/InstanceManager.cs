@@ -17,7 +17,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
+public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -29,17 +29,16 @@ public class InstanceManager : SingletonMonoBehaviour<InstanceManager> {
 	}
 
 	// Only during game scene, reference to the dragon
-	private DragonPlayer m_player = null;
+	private DragonPlayer m_player = null;	// DEPRECATED
 	public static DragonPlayer player {
 		get { return instance.m_player; }
 		set { if(instance != null) instance.m_player = value; }
 	}
 
-	// Only during game scene, reference to the pet
-	private DragonPet m_pet = null;
-	public static DragonPet pet {
-		get { return instance.m_pet; }
-		set { if(instance != null) instance.m_pet = value; }
+	private GameCamera m_gameCamera = null;
+	public static GameCamera gameCamera {
+		get { return instance.m_gameCamera; }
+		set { if(instance != null) instance.m_gameCamera = value; }
 	}
 
 	//------------------------------------------------------------------//

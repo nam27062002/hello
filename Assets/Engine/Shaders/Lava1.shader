@@ -1,4 +1,4 @@
-﻿Shader "Sandstorm/Lava1" {
+﻿Shader "Hungry Dragon/Lava1" {
 Properties 
 	{
 		_MainTex ("Base layer (RGB)", 2D) = "white" {}

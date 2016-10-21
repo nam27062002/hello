@@ -26,30 +26,42 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
-		private float m_timer = 0.5f;
 
-		//------------------------------------------------------------------//
-		// GENERIC METHODS													//
-		//------------------------------------------------------------------//
-		/// <summary>
-		/// Initialization.
-		/// </summary>
-		override protected void Awake() {
-			ContentManager.InitContent();
+        private bool m_started = false;
 
-			// Load the dragon
-			DragonManager.LoadDragon(LevelEditor.settings.testDragon);
-			InstanceManager.player.playable = false;
+        //------------------------------------------------------------------//
+        // GENERIC METHODS													//
+        //------------------------------------------------------------------//
+        /// <summary>
+        /// Initialization.
+        /// </summary>
+        override protected void Awake() {
+        	m_started = false;
+            ApplicationManager.CreateInstance();            
 
-			// Call parent
-			base.Awake();
+            // Initialize some required managers
+            ContentManager.InitContent();			
+			SpawnerManager.CreateInstance();
+
+            UsersManager.CreateInstance();
+            SaveFacade.Instance.Init();
+            PersistenceManager.Init();
+            PersistenceManager.Load();
+
+            // Load the dragon
+            DragonManager.LoadDragon(LevelEditor.settings.testDragon);
+            if (InstanceManager.player != null)
+                InstanceManager.player.playable = false;
+
+            // Call parent
+            base.Awake();
 		}
 
 		/// <summary>
 		/// First update.
 		/// </summary>
 		private void Start() {
-			StartGame();
+			
 		}
 
 		/// <summary>
@@ -59,14 +71,15 @@ namespace LevelEditor {
 			// Subscribe to external events
 			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 			Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
-
-			SpawnerManager.instance.EnableSpawners();
 		}
 		
 		/// <summary>
 		/// Component disabled.
 		/// </summary>
 		private void OnDisable() {
+			// Simulate end game
+			Messenger.Broadcast(GameEvents.GAME_ENDED);
+
 			// Unsubscribe from external events
 			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 			Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
@@ -76,13 +89,11 @@ namespace LevelEditor {
 		/// Called every frame.
 		/// </summary>
 		private void Update() {
-			// Update running time
-			m_elapsedSeconds += Time.deltaTime;
-
-			// Quick'n'dirty timer to place the dragon at the spawn point
-			if(m_timer > 0f) {
-				m_timer -= Time.deltaTime;
-				if(m_timer <= 0f) InstanceManager.player.MoveToSpawnPoint();
+			if (!m_started) {
+				StartGame();
+			} else {
+				// Update running time
+				m_elapsedSeconds += Time.deltaTime;
 			}
 		}
 
@@ -105,21 +116,31 @@ namespace LevelEditor {
 		/// Do all the necessary stuff to start a game.
 		/// </summary>
 		private void StartGame() {
+			// Simulate level loaded
+			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+
+			// Run spawner manager
+			SpawnerManager.instance.EnableSpawners();
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 
 			// Put player in position and make it playable
-			InstanceManager.player.MoveToSpawnPoint();
+			InstanceManager.player.MoveToSpawnPoint(true);
 			InstanceManager.player.playable = true;
 
 			// Enable reward manager to see coins/score feedback
 			RewardManager.Reset();
 
-			// Spawn chest
-			ChestManager.SelectChest();
+			// Spawn collectibles
+			// [AOC] By designers request, let's keep all collectibles visible in the level editor
+			//ChestManager.SelectChest();
+			//EggManager.SelectCollectibleEgg();
 
 			// Reset timer
 			m_elapsedSeconds = 0;
+
+			m_started = true;
 		}
 
 		//------------------------------------------------------------------//
@@ -158,6 +179,11 @@ namespace LevelEditor {
 					} break;
 				}
 			}
+		}
+
+		public override bool IsLevelLoaded()
+		{
+			return m_started;
 		}
 	}
 }

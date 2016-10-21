@@ -115,19 +115,19 @@ public class Localizer : MonoBehaviour {
 		string[] processedReplacements = new string[m_replacements.Length];
 		for(int i = 0; i < m_replacements.Length; i++) {
 			switch(m_caseType) {
-				case Case.REPLACEMENTS_LOWER_CASE: 	processedReplacements[i] = m_replacements[i].ToLower(Localization.culture);	break;
-				case Case.REPLACEMENTS_UPPER_CASE: 	processedReplacements[i] = m_replacements[i].ToUpper(Localization.culture);	break;
+                case Case.REPLACEMENTS_LOWER_CASE: 	processedReplacements[i] = m_replacements[i].ToLower(LocalizationManager.SharedInstance.Culture);	break;
+                case Case.REPLACEMENTS_UPPER_CASE: 	processedReplacements[i] = m_replacements[i].ToUpper(LocalizationManager.SharedInstance.Culture);	break;
 				default: 							processedReplacements[i] = m_replacements[i];								break;
 			}
 		}
 
 		// Perform the localization
-		string localizedString = Localization.Localize(m_tid, replacements);
+        string localizedString = LocalizationManager.SharedInstance.Localize(m_tid, replacements);
 
 		// Process full string
 		switch(m_caseType) {
-			case Case.LOWER_CASE: 	localizedString = localizedString.ToLower(Localization.culture);	break;
-			case Case.UPPER_CASE: 	localizedString = localizedString.ToUpper(Localization.culture);	break;
+            case Case.LOWER_CASE: 	localizedString = localizedString.ToLower(LocalizationManager.SharedInstance.Culture);	break;
+            case Case.UPPER_CASE: 	localizedString = localizedString.ToUpper(LocalizationManager.SharedInstance.Culture);	break;
 		}
 
 		// Apply to textfield

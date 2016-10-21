@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 
 //----------------------------------------------------------------------//
@@ -17,62 +18,77 @@ using DG.Tweening;
 /// 
 /// </summary>
 public class MenuPlayScreen : MonoBehaviour {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+    //------------------------------------------------------------------//
+    // CONSTANTS														//
+    //------------------------------------------------------------------//
+
+    //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//
+    public GameObject m_badge;
+	public Button m_connectButton;	
+
+    [SerializeField]
+    private GameObject m_incentivizeLabel = null;
+    private Localizer m_incentivizeLabelLocalizer;
+
+    private SocialFacade.Network m_socialNetwork = SocialFacade.Network.Default;
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() 
+	{		        
+        m_incentivizeLabelLocalizer = m_incentivizeLabel.GetComponent<Localizer>();
+        PersistenceManager.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
+
+        if (m_socialNetwork == SocialFacade.Network.Default)
+        {
+            m_socialNetwork = SocialManager.GetSelectedSocialNetwork();
+        }               
+
+        Refresh();
+    }
 	
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
-	public GameObject m_connectButton;
-	
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() 
-	{
-		ExternalPlatformManager.instance.OnLogin += OnExternalLogin;
-		ExternalPlatformManager.instance.OnLoginError += OnExternalLoginError;
-
-		// Check if external connected to hide m_ConnectionButton;
-		if (ExternalPlatformManager.instance.loginState != ExternalPlatformManager.State.NOT_LOGGED)
-		{
-			// Hide connecting button
-			m_connectButton.SetActive(false);
-		}
-	}
-
-	void OnDestroy()
-	{
-		if (ExternalPlatformManager.instance != null)
-		{
-			ExternalPlatformManager.instance.OnLogin -= OnExternalLogin;
-			ExternalPlatformManager.instance.OnLoginError -= OnExternalLoginError;
-		}
-	}
-
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	private void OnEnable() 
+	{
 		// Hide menu HUD
 		InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceHide(false);
+
+        // Check Facebook/Weibo Connect visibility        
+        Refresh();
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Show menu HUD, except if the dragon selection tutorial hasn't yet been completed
-		if(UserProfile.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
-			InstanceManager.GetSceneController<MenuSceneController>().hud.GetComponent<ShowHideAnimator>().ForceShow(false);
-		}
+        // [DGR] If this game object has been disabled because the flow is switching scenes then nothing is done, otherwise UsersManager could be recreated during a transition of scenes
+        // causing "Some objects were not cleaned up when closing the scene" error as a consequence of spawning new GameObjects from OnDestroy
+        if (GameSceneManager.instance != null && !GameSceneManager.isLoading)
+        {
+            // Show menu HUD, except if the dragon selection tutorial hasn't yet been completed
+            if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && InstanceManager.instance != null)
+            {
+                MenuSceneController menuSceneController = InstanceManager.GetSceneController<MenuSceneController>();
+                if (menuSceneController != null && menuSceneController.hud != null)
+                {
+                    ShowHideAnimator hideAnimator = menuSceneController.hud.GetComponent<ShowHideAnimator>();
+                    if (hideAnimator != null)
+                    {
+                        hideAnimator.ForceShow(false);
+                    }
+                }                
+            }
 
-		// Save flag to not display this screen again
-		GameVars.playScreenShown = true;
+            // Save flag to not display this screen again
+            GameVars.playScreenShown = true;
+        }
 	}
 
 	//------------------------------------------------------------------//
@@ -80,23 +96,46 @@ public class MenuPlayScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 
 	public void OnConnectBtn()
-	{
-		// TODO(miguel): Disable Connection button until OnExternalLogin or OnExternalLoginError to avoid 
-		ExternalPlatformManager.instance.Login();
-	}
+	{        
+        PersistenceManager.Popups_OpenLoadingPopup();
+        if (SocialManager.GetSelectedSocialNetwork() != m_socialNetwork)
+        {
+            Debug.LogError("You are trying to switch networks. There should be a proper flow in place for this.");
+        }
 
-	public void OnExternalLogin()
-	{
-		// TODO(miguel): Hide animation
-		m_connectButton.SetActive(false);
-	}
+        //[DGR] No support added yet
+        //HSXAnalyticsManager.Instance.loginContext = "MainMenu";
 
-	public void OnExternalLoginError()
-	{
-		//TODO(miguel) : Enable connection button
-	}
+        SocialManager.Instance.Login(m_socialNetwork, delegate (bool success)
+        {
+            PersistenceManager.Popups_CloseLoadingPopup();
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
+            Refresh();
+        });
+    }
+   
+    private void Refresh()
+    {
+        // By default we consider that the button has to be enabled. Next We check the login state, so it will be disabled if the user's logged in
+        m_badge.SetActive(true);
+        m_connectButton.interactable = true;
+        
+        m_incentivizeLabel.SetActive(!SocialManager.Instance.WasLoginIncentivised(SocialManager.GetSelectedSocialNetwork()));
+        
+        AuthManager.LoginState loginState = AuthManager.LoginState.NeverLoggedIn;
+        loginState = AuthManager.Instance.GetNetworkLoginState(SocialManagerUtilities.GetLoginTypeFromSocialNetwork(m_socialNetwork));
+
+        switch (loginState)
+        {
+            case AuthManager.LoginState.LoggedIn:
+                m_badge.SetActive(false);
+                break;
+            default:
+                break;
+        }
+    }
+   
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
 }

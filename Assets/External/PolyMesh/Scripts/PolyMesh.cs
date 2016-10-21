@@ -230,8 +230,8 @@ public class PolyMesh : MonoBehaviour {
 	public float pinkMeshOffset = 0f;
 	
 	public GameObject mergeObject;
-	public int startPoint;
-	public int endPoint;
+	public int mergeStartPoint;
+	public int mergeEndPoint;
 
 	//public MeshCollider meshCollider;		// [AOC] We will have the collider to the same object containing the polymesh, for clarity and keeping the hierarchy clean
 	private MeshCollider m_meshCollider = null;
@@ -241,6 +241,10 @@ public class PolyMesh : MonoBehaviour {
 				m_meshCollider = GetComponent<MeshCollider>();
 			}
 			return m_meshCollider;
+		}
+		set
+		{
+			m_meshCollider = value;
 		}
 	}
 
@@ -477,13 +481,17 @@ public class PolyMesh : MonoBehaviour {
 	void OnDrawGizmos() {
 		if(showOutline) {
 			Gizmos.color = Color.magenta;
-			float depth = -pinkMeshOffset;
+			float depth = -pinkMeshOffset * transform.lossyScale.z;
 			Vector3 offset = transform.position; // fix for pink outline
 
 			List<Vector3> points = GetEdgePoints();
+			// transform points from local space to world space
+			for( int i = 0; i< points.Count; i++  )
+				points[i] = transform.TransformPoint( points[i]);
+
 			for(int i = 0; i < points.Count - 1; i++) {
-				Vector3 point1 = new Vector3(points[i].x, points[i].y, points[i].z - depth) + offset;
-				Vector3 point2 = new Vector3(points[i + 1].x, points[i + 1].y, points[i + 1].z - depth) + offset;
+				Vector3 point1 = new Vector3(points[i].x, points[i].y, points[i].z - depth);
+				Vector3 point2 = new Vector3(points[i + 1].x, points[i + 1].y, points[i + 1].z - depth);
 
 				Gizmos.DrawLine(point1, point2);
 				if(showNormals) {
@@ -493,8 +501,8 @@ public class PolyMesh : MonoBehaviour {
 			}
 			int last = points.Count - 1;
 			if(last > 0) {
-				Vector3 startPoint = new Vector3(points[last].x, points[last].y, points[last].z - depth) + offset;
-				Vector3 endPoint = new Vector3(points[0].x, points[0].y, points[0].z - depth) + offset;
+				Vector3 startPoint = new Vector3(points[last].x, points[last].y, points[last].z - depth);
+				Vector3 endPoint = new Vector3(points[0].x, points[0].y, points[0].z - depth);
 				Gizmos.DrawLine(startPoint, endPoint);
 				if(showNormals) {
 					Vector3 n = Vector3.Cross(Vector3.forward, endPoint - startPoint).normalized;
@@ -511,8 +519,8 @@ public class PolyMesh : MonoBehaviour {
 		if(mergeObject) {
 			List<Vector3> points = mergeObject.GetComponent<PolyMesh>().keyPoints;
 			
-			int myStartPoint = startPoint; //selectedIndices[0];
-			int myEndPoint = endPoint; //selectedIndices[1];
+			int myStartPoint = mergeStartPoint; //selectedIndices[0];
+			int myEndPoint = mergeEndPoint; //selectedIndices[1];
 			
 			int otherStartPoint = 0;
 			int otherEndPoint = 0;

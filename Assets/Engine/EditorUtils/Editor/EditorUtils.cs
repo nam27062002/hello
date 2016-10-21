@@ -94,7 +94,8 @@ public static class EditorUtils {
 	/// <returns>The newly created object.</returns>
 	/// <param name="_name">The name to give to the new object.</param>
 	/// <param name="_parent">The parent where the new object should be attached. If <c>null</c>, the object will be created at the hierarchy's root.</param>
-	public static GameObject CreateGameObject(string _name, GameObject _parent) {
+	/// <param name="_focus">Whether to select and focus the newly created game object or not.</param>
+	public static GameObject CreateGameObject(string _name, GameObject _parent, bool _focus) {
 		// Create the object
 		GameObject newObj = new GameObject(_name);
 
@@ -106,7 +107,7 @@ public static class EditorUtils {
 		}
 
 		// Focus new object and return
-		FocusObject(newObj, true, true, false);
+		if(_focus) FocusObject(newObj, true, true, false);
 		return newObj;
 	}
 
@@ -129,7 +130,7 @@ public static class EditorUtils {
 			// No canvas in the scene at all? Then create a new one.
 			else {
 				// Create a new canvas
-				GameObject canvasObj = CreateGameObject("Canvas", _parent);
+				GameObject canvasObj = CreateGameObject("Canvas", _parent, false);
 				canvasObj.layer = LayerMask.NameToLayer("UI");
 				canvas = canvasObj.AddComponent<Canvas>();
 				canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -140,7 +141,7 @@ public static class EditorUtils {
 				// If there is no event system, create one as well
 				EventSystem esys = UnityEngine.Object.FindObjectOfType<EventSystem>();
 				if(esys == null) {
-					GameObject esysObj = CreateGameObject("EventSystem", null);
+					GameObject esysObj = CreateGameObject("EventSystem", null, false);
 					esysObj.AddComponent<EventSystem>();
 					esysObj.AddComponent<StandaloneInputModule>();
 					esysObj.AddComponent<TouchInputModule>();
@@ -149,7 +150,7 @@ public static class EditorUtils {
 		}
 
 		// Use standard GameObject creator
-		GameObject newObj = CreateGameObject(_name, _parent);
+		GameObject newObj = CreateGameObject(_name, _parent, true);
 
 		// Since it's a UI object, set layer and add the RectTransform component
 		RectTransform rectTransform = newObj.AddComponent<RectTransform>();

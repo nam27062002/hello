@@ -21,7 +21,7 @@ public class GameSceneController : GameSceneControllerBase {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly string NAME = "SC_Game";
-	public static readonly float COUNTDOWN = 3f;	// Seconds
+	public static readonly float COUNTDOWN = 5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
 	public static readonly float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
 
 	public enum EStates {
@@ -36,7 +36,10 @@ public class GameSceneController : GameSceneControllerBase {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private GameObject m_resultsScreen;
+	[SerializeField] private ResultsSceneController m_resultsScene;
+	public ResultsSceneController resultsScene {
+		get { return m_resultsScene; }
+	}
 
 	// Countdown
 	public float countdown {
@@ -100,8 +103,10 @@ public class GameSceneController : GameSceneControllerBase {
 		base.Awake();
 
 		// Load the dragon
-		DragonManager.LoadDragon(UserProfile.currentDragon);
+		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
+
 
 	/// <summary>
 	/// First update.
@@ -145,7 +150,8 @@ public class GameSceneController : GameSceneControllerBase {
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
-						ChangeState(EStates.RUNNING);
+						Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+						// ChangeState(EStates.RUNNING);
 					}
 				}
 			} break;
@@ -165,8 +171,8 @@ public class GameSceneController : GameSceneControllerBase {
 						SpawnerManager.instance.DisableSpawners();
 
 						// Enable Results screen and move the camera to that position
-						if (m_resultsScreen != null) {
-							m_resultsScreen.SetActive(true);
+						if(m_resultsScene != null) {
+							m_resultsScene.Show();
 						}
 					}
 				}
@@ -184,6 +190,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Call parent
 		base.OnDestroy();
+
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -278,8 +286,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// InstanceManager.player.MoveToSpawnPoint();
 				InstanceManager.player.StartIntroMovement();
 
-				// Spawn chest
-				ChestManager.SelectChest();
+				// Spawn collectibles
+				ChestManager.OnLevelLoaded();
+				EggManager.SelectCollectibleEgg();
 				
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_STARTED);
@@ -287,7 +296,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 			case EStates.COUNTDOWN: {
 				// Notify the game
-				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+				// Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
 			} break;
 
 			case EStates.RUNNING: {
@@ -300,22 +309,22 @@ public class GameSceneController : GameSceneControllerBase {
 		switch(_newState) {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
-				m_levelLoadingTask = LevelManager.LoadLevel(UserProfile.currentLevel);
+				m_levelLoadingTask = LevelManager.LoadLevel(UsersManager.currentUser.currentLevel);
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;
 
 				// Check whether the tutorial popup must be displayed
-				if(!UserProfile.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
+				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)) {
 					// Open popup
 					PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
-					UserProfile.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
 					PersistenceManager.Save();
 				}
 			} break;
 
 			case EStates.COUNTDOWN: {
-				LevelManager.SetArtSceneActive(UserProfile.currentLevel);
+				LevelManager.SetArtSceneActive(UsersManager.currentUser.currentLevel);
 				// Start countdown timer
 				m_timer = COUNTDOWN;
 
@@ -337,6 +346,9 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.FINISHED: {
 				// Disable dragon
 				InstanceManager.player.playable = false;
+
+                // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
+                SaveFacade.Instance.timePlayed += (int)m_elapsedSeconds;
 			} break;
 		}
 		
@@ -361,5 +373,10 @@ public class GameSceneController : GameSceneControllerBase {
 	public override bool IsLevelLoaded()
 	{
 		return state > EStates.LOADING_LEVEL;
+	}
+
+	private void CountDownEnded()
+	{
+		ChangeState(EStates.RUNNING);
 	}
 }

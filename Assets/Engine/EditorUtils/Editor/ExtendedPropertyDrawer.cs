@@ -26,7 +26,7 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 	// Aux vars
 	protected Rect m_pos = new Rect();
 	protected int m_indentLevelBackup = 0;
-	protected SerializedProperty m_currentProperty = null;
+	protected SerializedProperty m_rootProperty = null;
 	protected string m_currentKey = "";
 
 	// There is only one instance of the editor for all properties of the same type 
@@ -55,7 +55,7 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 		// Aux vars
 		m_pos = _position;
 		m_indentLevelBackup = EditorGUI.indentLevel;
-		m_currentProperty = _property;
+		m_rootProperty = _property.Copy();
 		m_currentKey = _property.propertyPath;
 
 		// Reset property height
@@ -120,6 +120,15 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 	protected void DrawAndAdvance(SerializedProperty _property) {
 		m_pos.height = EditorGUI.GetPropertyHeight(_property);
 		EditorGUI.PropertyField(m_pos, _property, true);
+		AdvancePos();
+	}
+
+	/// <summary>
+	/// Draw an indented separator and advance position.
+	/// </summary>
+	protected void DrawSeparatorAndAdvance() {
+		Rect indentedPos = EditorGUI.IndentedRect(m_pos);
+		m_pos.height = EditorGUILayoutExt.Separator(indentedPos, new SeparatorAttribute());
 		AdvancePos();
 	}
 

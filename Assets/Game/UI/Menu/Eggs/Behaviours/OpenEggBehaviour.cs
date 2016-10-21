@@ -68,8 +68,7 @@ public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 		if(m_tapCount >= TAPS_TO_OPEN) {
 			// Do it!
 			// Open FX are managed externally
-			GetComponent<EggController>().eggData.Collect();
-			PersistenceManager.Save();
+			GetComponent<EggController>().eggData.Collect();			
 		}
 
 		// Otherwise show some FX

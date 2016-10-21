@@ -38,6 +38,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
 	[SerializeField] private GameObject m_killFeedbackContainer = null;
 	[SerializeField] private GameObject m_escapeFeedbackContainer = null;
+	[SerializeField] private GameObject m_3dFeedbackContainer = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -50,6 +51,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// No more than X simultaneous messages on screen!
 		// Use container if defined to keep hierarchy clean
 
+		// Score
 		if(m_scoreFeedbackPrefab != null) {
 			// Must be created within the canvas
 			Transform parent = this.transform;
@@ -59,14 +61,18 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			PoolManager.CreatePool(m_scoreFeedbackPrefab, parent, 15);
 		}
 
+		// Coins
 		if(m_coinsFeedbackPrefab != null) {
 			PoolManager.CreatePool(m_coinsFeedbackPrefab, 5);
 		}
 
+		// PC
 		if(m_pcFeedbackPrefab != null) {
-			PoolManager.CreatePool(m_pcFeedbackPrefab, 3);
+			// Use a dedicated camera as parent, that way the feedback will be positioned relative to the viewport
+			PoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false);
 		}
 
+		// Kill Feedback
 		if(m_killFeedbackPrefab != null) {
 			Transform parent = this.transform;
 			if(m_killFeedbackContainer != null) {
@@ -75,6 +81,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			PoolManager.CreatePool(m_killFeedbackPrefab, parent, 5, false);
 		}
 			
+		// Flock Bonus
 		if(m_flockBonusFeedbackPrefab != null) { 
 			Transform parent = this.transform;
 			if(m_scoreFeedbackContainer != null) {
@@ -83,6 +90,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			PoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, 2);
 		}
 
+		// Escape
 		if ( m_escapedFeedbackPrefab != null )
 		{
 			Transform parent = this.transform;
@@ -169,7 +177,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if (obj != null) 
 		{
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-			worldFeedback.Spawn( Localization.Get( tid ) , _entity.position);
+            worldFeedback.Spawn( LocalizationManager.SharedInstance.Get( tid ) , _entity.position);
 		}
 	}
 	
@@ -216,7 +224,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 		// PC
 		if(m_pcFeedbackPrefab != null && _reward.pc > 0) {
-			// [AOC] TODO!!
+			GameObject obj = PoolManager.GetInstance(m_pcFeedbackPrefab.name);
+			obj.SetActive(true);
 		}
 	}
 
@@ -256,7 +265,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// Spawn flock feedback bonus, score will be displayed as any other score feedback
 		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name);
 		if (flockBonus != null) {
-			string text = Localization.Localize("TID_FEEDBACK_FLOCK_BONUS");
+            string text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_FLOCK_BONUS");
 			WorldFeedbackController worldFeedback = flockBonus.GetComponent<WorldFeedbackController>();
 			worldFeedback.Spawn(text, _entity.position);
 		}

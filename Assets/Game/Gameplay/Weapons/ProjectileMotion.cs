@@ -91,14 +91,18 @@ public class ProjectileMotion : Initializable, MotionInterface
 
 	}
 
-	public Vector2 position 
+	public Vector3 position 
 	{ 
 		get
 		{
 			return m_position;	
 		}
+		set
+		{
+			m_position = value;
+		}
 	}
-	public Vector2 direction 
+	public Vector3 direction 
 	{ 
 		get
 		{
@@ -106,7 +110,15 @@ public class ProjectileMotion : Initializable, MotionInterface
 		}
 	}
 
-	public Vector2 velocity 
+	public Vector3 groundDirection 
+	{ 
+		get
+		{
+			return Vector3.zero;
+		}
+	}
+
+	public Vector3 velocity 
 	{ 	
 		get
 		{
@@ -114,11 +126,11 @@ public class ProjectileMotion : Initializable, MotionInterface
 		}
 	}
 
-	public Vector2 angularVelocity
+	public Vector3 angularVelocity
 	{
 		get
 		{
-			return Vector2.zero;
+			return Vector3.zero;
 		}
 	}
 
@@ -130,8 +142,4 @@ public class ProjectileMotion : Initializable, MotionInterface
 		}
 	}
 
-	public void SetSpeedMultiplier(float _value)
-	{
-		
-	}
 }

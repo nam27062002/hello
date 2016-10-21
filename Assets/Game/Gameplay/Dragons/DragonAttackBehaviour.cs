@@ -76,7 +76,8 @@ public class DragonAttackBehaviour : MonoBehaviour {
 	public void OnAttack() {
 		
 		if (m_target != null) {
-			float damage = m_motion.currentSpeedMultiplier;
+			// float damage = m_motion.currentSpeedMultiplier;
+			float damage = 1;
 			if (damage > 1) {
 				damage *= m_damage;
 			}

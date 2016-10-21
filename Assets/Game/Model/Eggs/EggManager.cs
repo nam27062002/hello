@@ -17,22 +17,15 @@ using System.Collections.Generic;
 /// <summary>
 /// Global manager of eggs.
 /// Has its own asset in the Resources/Singletons folder with all the required parameters.
+/// Slot 0 of the incubator is considered the active egg, which can be incubated, opened, etc.
+/// The other slots are just for storage. Inventory should always be filled from 0 to N, and 
+/// eggs are automatically shifted when the egg in slot 0 is collected.
 /// </summary>
-public class EggManager : SingletonMonoBehaviour<EggManager> {
+public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly int INVENTORY_SIZE = 3;
-
-	/// <summary>
-	/// Auxiliar class for persistence load/save.
-	/// </summary>
-	[Serializable]
-	public class SaveData {
-		public Egg.SaveData[] inventory = new Egg.SaveData[INVENTORY_SIZE];
-		public Egg.SaveData incubatingEgg = null;
-		public DateTime incubationEndTimestamp = DateTime.UtcNow;
-	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -41,9 +34,12 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	[SerializeField] private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
 
 	// Inventory
-	[SerializeField] private Egg[] m_inventory = new Egg[INVENTORY_SIZE];
 	public static Egg[] inventory {
-		get { return instance.m_inventory; }
+		get { 
+			if ( instance.m_user != null )
+				return instance.m_user.eggsInventory; 
+			return null;
+		}
 	}
 
 	public static bool isInventoryEmpty {
@@ -65,31 +61,19 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	}
 
 	// Incubator
-	[SerializeField] private Egg m_incubatingEgg = null;
 	public static Egg incubatingEgg {
-		get { return instance.m_incubatingEgg; }
+		get {
+			return inventory[0];	// Always first slot
+		}
 	}
 
-	[SerializeField] private DateTime m_incubationEndTimestamp;
-	public static DateTime incubationEndTimestamp { get { return instance.m_incubationEndTimestamp; }}
-	public static DateTime incubationStartTimestamp { get { return incubationEndTimestamp - incubationDuration; }}
-	public static TimeSpan incubationDuration { get { return new TimeSpan(0, 0, isIncubating ? (int)(incubatingEgg.def.GetAsFloat("incubationMinutes") * 60f) : 0); }}
-	public static TimeSpan incubationElapsed { get { return DateTime.UtcNow - incubationStartTimestamp; }}
-	public static TimeSpan incubationRemaining { get { return incubationEndTimestamp - DateTime.UtcNow; }}
-	public static float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
+	// In-game collectible egg
+	// Should be initialized at the start of the game by calling the SelectCollectibleEgg() method.
+	private CollectibleEgg m_collectibleEgg = null;
+	public static CollectibleEgg collectibleEgg { get { return instance.m_collectibleEgg; }}
 
-	public static bool isIncubatorAvailable {
-		get { return incubatingEgg == null; }
-	}
-
-	public static bool isIncubating {
-		get { return incubatingEgg != null && incubatingEgg.state == Egg.State.INCUBATING; }
-	}
-
-	public static bool isReadyForCollection {
-		// True if we have an egg incubating and timer has finished
-		get { return incubatingEgg != null && incubatingEgg.state == Egg.State.READY; }
-	}
+	// Internal
+	UserProfile m_user;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -129,7 +113,6 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
 	}
 
 	/// <summary>
@@ -137,21 +120,20 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Egg>(GameEvents.EGG_COLLECTED, OnEggCollected);
 	}
 
 	/// <summary>
 	/// Monobehaviour update implementation.
 	/// </summary>
 	public void Update() {
-		// Check for incubator deadline
-		if(isIncubating) {
-			if(DateTime.UtcNow >= m_incubationEndTimestamp) {
-				// Incubation done!
-				m_incubatingEgg.ChangeState(Egg.State.READY);
+		// Must be initialized
+		if(!IsReady()) return;
 
-				// Dispatch game event
-				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, m_incubatingEgg);
+		// Check for incubator deadline
+		if(incubatingEgg != null && incubatingEgg.isIncubating) {
+			if(DateTime.UtcNow >= incubatingEgg.incubationEndTimestamp) {
+				// Incubation done!
+				incubatingEgg.ChangeState(Egg.State.READY);
 			}
 		}
 	}
@@ -168,15 +150,18 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	public static int AddEggToInventory(Egg _newEgg) {
 		for(int i = 0; i < INVENTORY_SIZE; i++) {
 			// Is the slot empty?
-			if(instance.m_inventory[i] == null) {
+			if(instance.m_user.eggsInventory[i] == null) {
 				// Yes!! Store egg
-				instance.m_inventory[i] = _newEgg;
-				_newEgg.ChangeState(Egg.State.STORED);
+				instance.m_user.eggsInventory[i] = _newEgg;
 
-				// Dispatch game event
-				Messenger.Broadcast<Egg, int>(GameEvents.EGG_ADDED_TO_INVENTORY, _newEgg, i);
+				// Set initial state - if the first empty slot is the incubating slot, mark it as "ready for incubation"
+				if(i == 0) {
+					_newEgg.ChangeState(Egg.State.READY_FOR_INCUBATION);
+				} else {
+					_newEgg.ChangeState(Egg.State.STORED);
+				}
 
-				// Return slot idnex
+				// Return slot index
 				return i;
 			}
 		}
@@ -186,71 +171,41 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 	}
 
 	/// <summary>
-	/// Puts an egg into the incubator, provided incubator is empty.
-	/// Resets incubation timer and sets Egg state to INCUBATING.
-	/// If the egg is in the inventory, removes it, freeing its slot.
-	/// Nothing will happen if the incubator is full or the target egg is not valid or is already incubating/collected.
+	/// Removes an egg from the the inventory, shifting all the eggs in the following slots one slot to the left.
+	/// Doesn't change the state of the egg.
 	/// </summary>
-	/// <returns>Whether the operation was successful or not.</returns>
-	/// <param name="_targetEgg">The egg to be moved to the incubator.</param>
-	public static bool PutEggToIncubator(Egg _targetEgg) {
-		// Prechecks
-		if(_targetEgg == null) return false;
-		if(!isIncubatorAvailable) return false;
-		if(inventory.IndexOf(_targetEgg) < 0) return false;
+	/// <returns>The inventory slot from where the egg was removed. <c>-1</c> if the egg wasn't found in the inventory.</returns>
+	/// <param name="_egg">The egg to be added to the inventory.</param>
+	public static int RemoveEggFromInventory(Egg _egg) {
+		// Ignore if egg is not valid
+		if(_egg == null) return -1;
 
-		// Move egg
-		instance.m_incubatingEgg = _targetEgg;
+		// Find the slot the egg is in
+		for(int i = 0; i < INVENTORY_SIZE; i++) {
+			// Is this the slot?
+			if(inventory[i] == _egg) {
+				// Yes!! Remove the egg
+				inventory[i] = null;
 
-		// If required, empty inventory slot
-		int slotIdx = inventory.IndexOf(_targetEgg);
-		if(slotIdx >= 0) {
-			instance.m_inventory[slotIdx] = null;
+				// Shift the rest of slots to the left
+				for(int j = i + 1; j < INVENTORY_SIZE; j++) {
+					// Move to the left and clear slot j
+					inventory[j-1] = inventory[j];
+					inventory[j] = null;
+				}
+
+				// If an egg has been moved to the incubator slot, make sure it's ready to incubate
+				if(inventory[0] != null && inventory[0].state == Egg.State.STORED) {
+					inventory[0].ChangeState(Egg.State.READY_FOR_INCUBATION);
+				}
+
+				// Return the slot the egg was in
+				return i;
+			}
 		}
 
-		// Reset incubation timer
-		float incubationMinutes = _targetEgg.def.GetAsFloat("incubationMinutes");
-		instance.m_incubationEndTimestamp = DateTime.UtcNow.AddMinutes(incubationMinutes);
-
-		// Change egg logic state
-		_targetEgg.ChangeState(Egg.State.INCUBATING);
-
-		// Dispatch game event
-		Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, incubatingEgg);
-
-		return true;
-	}
-
-	/// <summary>
-	/// Compute the cost in PC to skip the incubation timer (only if an egg is incubating).
-	/// </summary>
-	/// <returns>The cost in PC of skipping the incubation timer. 0 if no egg is incubating or incubation has finished.</returns>
-	public static int GetIncubationSkipCostPC() {
-		// If no egg is incubating or incubation has finished, return 0.
-		if(incubatingEgg == null || isReadyForCollection) return 0;
-
-		// Skip is free during the tutorial
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) return 0;
-
-		// Just use standard time/pc formula
-		return GameSettings.ComputePCForTime(incubationRemaining);
-	}
-
-	/// <summary>
-	/// Skip the incubation timer, provided an egg is incubating and timer hasn't already finished.
-	/// </summary>
-	/// <returns><c>true</c>, if incubation was skiped, <c>false</c> otherwise.</returns>
-	public static bool SkipIncubation() {
-		// Skip if there is no egg incubating
-		if(!isIncubating) return false;
-
-		// Incubation done!
-		instance.m_incubatingEgg.ChangeState(Egg.State.READY);
-
-		// Dispatch game event
-		Messenger.Broadcast(GameEvents.EGG_INCUBATION_ENDED, instance.m_incubatingEgg);
-
-		return true;
+		// The egg wasn't found in the inventory
+		return -1;
 	}
 
 	/// <summary>
@@ -263,91 +218,79 @@ public class EggManager : SingletonMonoBehaviour<EggManager> {
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
 	/// <summary>
-	/// An egg has been collected.
+	/// Select a random egg from the current level and define it as the active egg.
+	/// All other eggs in the level will be removed.
+	/// A level must be loaded beforehand, otherwise nothing will happen.
+	/// To be called at the start of the game.
 	/// </summary>
-	/// <param name="_egg">Egg.</param>
-	private void OnEggCollected(Egg _egg) {
-		// If it's the one in the incubator, clear incubator
-		if(_egg == incubatingEgg) {
-			// Clear incubator
-			m_incubatingEgg = null;
+	public static void SelectCollectibleEgg() {
+		// Get all the eggs in the scene
+		GameObject[] eggs = GameObject.FindGameObjectsWithTag(CollectibleEgg.TAG);
+		if(eggs.Length > 0) {
+			// [AOC] Filter by dragon tier (blockers, etc.)
+			List<GameObject> filteredEggs = new List<GameObject>();
+			DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
+			for(int i = 0; i < eggs.Length; i++) {
+				if(eggs[i].GetComponent<CollectibleEgg>().requiredTier <= currentTier) {
+					filteredEggs.Add(eggs[i]);
+				}
+			}
 
-			// Notify game
-			Messenger.Broadcast(GameEvents.EGG_INCUBATOR_CLEARED);
+			// Grab a random one from the list and define it as active egg
+			// Don't enable egg during the first run
+			GameObject eggObj = null;
+			if(UsersManager.currentUser.gamesPlayed > 0) { 
+				eggObj = filteredEggs.GetRandomValue();
+				instance.m_collectibleEgg = eggObj.GetComponent<CollectibleEgg>();
+			}
 
-			// If tutorial wasn't completed, do it now
-			if(!UserProfile.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER)) {
-				UserProfile.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR_SKIP_TIMER, true);
-				PersistenceManager.Save();
+			// Remove the rest of eggs from the scene
+			for(int i = 0; i < eggs.Length; i++) {
+				// Skip if selected egg
+				if(eggs[i] == eggObj) continue;
+
+				// Delete from scene otherwise
+				GameObject.Destroy(eggs[i]);
+				eggs[i] = null;
 			}
 		}
 	}
+
+	/// <summary>
+	/// To be called at the end of the game.
+	/// If the collectible egg was found, adds it to the inventory.
+	/// Otherwise clears the collectible egg.
+	/// </summary>
+	public static void ProcessCollectibleEgg() {
+		// Was the collectible egg found?
+		if(instance.m_collectibleEgg != null && instance.m_collectibleEgg.collected) {
+			// Add the egg to the inventory
+			AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));		// [AOC] Collectible egg is always a standard egg
+
+			// Save persistence
+			PersistenceManager.Save();
+		}
+
+		// In any case, clear the collectible egg
+		instance.m_collectibleEgg = null;
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
 
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Load state from a persistence object.
-	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(SaveData _data) {
-		// Inventory
-		for(int i = 0; i < INVENTORY_SIZE; i++) {
-			// In case INVENTORY_SIZE changes (if persisted is bigger, just ignore remaining data, if lower fill new slots with null)
-			if(i < _data.inventory.Length) {
-				// Either create new egg, delete egg or update existing egg
-				if(inventory[i] == null && _data.inventory[i] != null) {			// Create new egg?
-					instance.m_inventory[i] = Egg.CreateFromSaveData(_data.inventory[i]);
-				} else if(inventory[i] != null && _data.inventory[i] == null) {	// Delete egg?
-					instance.m_inventory[i] = null;
-				} else if(inventory[i] != null && _data.inventory[i] != null) {	// Update egg?
-					instance.m_inventory[i].Load(_data.inventory[i]);
-				}
-			} else {
-				instance.m_inventory[i] = null;
-			}
-		}
-
-		// Incubator - same 3 cases
-		if(incubatingEgg == null && _data.incubatingEgg != null) {			// Create new egg?
-			instance.m_incubatingEgg = Egg.CreateFromSaveData(_data.incubatingEgg);
-		} else if(incubatingEgg != null && _data.incubatingEgg == null) {	// Delete egg?
-			instance.m_incubatingEgg = null;
-		} else if(incubatingEgg != null && _data.incubatingEgg != null) {	// Update egg?
-			instance.m_incubatingEgg.Load(_data.incubatingEgg);
-		}
-
-		// Incubator timer
-		instance.m_incubationEndTimestamp = _data.incubationEndTimestamp;
+	public static bool IsReady()
+	{
+		return instance.m_user != null;
 	}
 
-	/// <summary>
-	/// Create and return a persistence save data object initialized with the data.
-	/// </summary>
-	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static SaveData Save() {
-		// Create new object, initialize and return it
-		SaveData data = new SaveData();
+	public static void SetupUser( UserProfile user)
+	{
+		instance.m_user = user;
+	} 
 
-		// Inventory
-		for(int i = 0; i < INVENTORY_SIZE; i++) {
-			if(inventory[i] != null) {
-				data.inventory[i] = inventory[i].Save();
-			}
-		}
-
-		// Incubator
-		if(incubatingEgg != null) {
-			data.incubatingEgg = incubatingEgg.Save();
-		}
-
-		// Incubator timer
-		data.incubationEndTimestamp = instance.m_incubationEndTimestamp;
-
-		return data;
-	}
 }

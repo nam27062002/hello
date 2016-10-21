@@ -229,22 +229,13 @@ namespace LevelEditor {
 			Spawner sp = null;
 			if ( IsPathBehaviour( entityPrefab ) )
 			{
-				sp = newSpawnerObj.AddComponent<PathSpawner>();
 				spawnerName += "Path";
-			}
-			else if ( IsFlockBehaviour( entityPrefab ) )
-			{
-				sp = newSpawnerObj.AddComponent<FlockSpawner>();
-				spawnerName += "Flock";
 			}
 			else
 			{
 				sp = newSpawnerObj.AddComponent<Spawner>();
 			}
-
-			if ( entityPrefab.GetComponent<EntityGroupBehaviour>() != null )
-				newSpawnerObj.AddComponent<EntityGroupController>();
-				
+							
 
 			/*
 			// Old version
@@ -307,12 +298,12 @@ namespace LevelEditor {
 
 		bool IsPathBehaviour( GameObject _entity)
 		{
-			return _entity.GetComponent<FollowPathBehaviour>() != null;	
+			return false; //_entity.GetComponent<FollowPathBehaviour>() != null; DEPRECATED
 		}
 
 		bool IsFlockBehaviour( GameObject _entity )
 		{
-			return _entity.GetComponent<FlockBehaviour>() != null;	
+			return false;//_entity.GetComponent<FlockBehaviour>() != null;	DEPRECATED
 		}
 
 

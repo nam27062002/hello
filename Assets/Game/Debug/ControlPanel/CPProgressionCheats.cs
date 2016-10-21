@@ -63,7 +63,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		PersistenceManager.Clear();
 
 		// If required, tutorial will be auto-completed next time we reload the profile
-		Prefs.SetBool("skipTutorialCheat", _skipTutorial);
+		PlayerPrefs.DeleteAll();
+		Prefs.SetBoolPlayer("skipTutorialCheat", _skipTutorial);
 
 		// Restart game
 		FlowManager.Restart();
@@ -80,8 +81,8 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Update profile - make sure amount is valid
 		// Use longs to allow big numbers
-		long toAdd = System.Math.Max(amount - UserProfile.coins, -UserProfile.coins);	// Min 0 coins! This will exclude negative amounts :)
-		UserProfile.AddCoins(toAdd);
+		long toAdd = System.Math.Max(amount - UsersManager.currentUser.coins, -UsersManager.currentUser.coins);	// Min 0 coins! This will exclude negative amounts :)
+		UsersManager.currentUser.AddCoins(toAdd);
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -97,8 +98,9 @@ public class CPProgressionCheats : MonoBehaviour {
 		long amount = long.Parse(input.text);
 
 		// Update profile - make sure amount is valid
-		long toAdd = System.Math.Max(amount - UserProfile.pc, -UserProfile.pc);	// Min 0 pc! This will exclude negative amounts :)
-		UserProfile.AddPC(toAdd);
+		UserProfile currentUser = UsersManager.instance.m_currentUser;
+		long toAdd = System.Math.Max(amount - currentUser.pc, -currentUser.pc);	// Min 0 pc! This will exclude negative amounts :)
+		currentUser.AddPC(toAdd);
 
 		// Save persistence
 		PersistenceManager.Save();
@@ -139,9 +141,36 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(!CheckScene()) return;
 
 		// Add it to the inventory
-		int slotIdx = EggManager.AddEggToInventory(Egg.CreateRandom(true));
+		int slotIdx = EggManager.AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));
 
 		// If successful, save persistence
 		if(slotIdx >= 0) PersistenceManager.Save();
+	}
+
+	/// <summary>
+	/// Simulates daily chest collection (no menu refresh for now, reload menu for that).
+	/// </summary>
+	public void OnAddDailyChest() {
+		// Find the first non-collected chest
+		Chest ch = null;
+		foreach(Chest chest in ChestManager.dailyChests) {
+			if(!chest.collected) {
+				ch = chest;
+				break;
+			}
+		}
+
+		// Mark it as collected and process rewards
+		if(ch != null) {
+			ch.ChangeState(Chest.State.PENDING_REWARD);
+			ChestManager.ProcessChests();
+		}
+	}
+
+	/// <summary>
+	/// Simulate daily chests timer expiration.
+	/// </summary>
+	public void OnResetDailyChests() {
+		ChestManager.Reset();
 	}
 }

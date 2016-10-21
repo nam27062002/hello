@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// Global manager of dragons. Stores current state of all dragons in the game
 /// (level, stats, upgrades, etc).
 /// </summary>
-public class DragonManager : SingletonMonoBehaviour<DragonManager> {
+public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -25,6 +25,8 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	UserProfile m_user;
+
 	// The data
 	// We will keep it in a dictionary, but have lists with commonly used sorting ways
 	private Dictionary<string, DragonData> m_dragonsBySku = null;
@@ -39,23 +41,23 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 
 	// Shortcut to get the data of the currently selected dragon
 	public static DragonData currentDragon {
-		get { return GetDragonData(UserProfile.currentDragon); }
+		get { return GetDragonData(instance.m_user.currentDragon); }
 	}
 
-	// Shortcut to get the data of the dragon following the currently selected
-	// Null for last dragon
-	public static DragonData nextDragon {
+	// Shortcut to get the data of the biggest owned dragon (following progression order)
+	// Null if there are no dragons owned (should never happen)
+	public static DragonData biggestOwnedDragon {
 		get {
-			// [AOC] We could use the "order" field, but I don't trust it to be always consistent with the dragons list, so just search by sku
-			for(int i = 0; i < instance.m_dragonsByOrder.Count - 1; i++) {	// [AOC] Skip last dragon (since it doesn't have a "next" dragon)
-				// Is it the current dragon?
-				if(instance.m_dragonsByOrder[i].def.sku == UserProfile.currentDragon) {
-					// Yes! Return next dragon
-					return instance.m_dragonsByOrder[i + 1];	// [AOC] Should be safe since we're excluding last dragon from the loop
+			// Reverse-iterate all the dragons by order and find the biggest one owned
+			for(int i = instance.m_dragonsByOrder.Count - 1; i >= 0; i--) {
+				// Is it owned?
+				if(instance.m_dragonsByOrder[i].isOwned) {
+					// Yes! Return dragon
+					return instance.m_dragonsByOrder[i];
 				}
 			}
 
-			// Current dragon not found or was last dragon
+			// No dragons owned (should never happen)
 			return null;
 		}
 	}
@@ -68,22 +70,8 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	protected void Awake() {
 		// Create a dragon data object for every known dragon definition
-		m_dragonsBySku = new Dictionary<string, DragonData>();
-		DragonData newDragonData = null;
-		List<DefinitionNode> defs = new List<DefinitionNode>();
-		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
-		for(int i = 0; i < defs.Count; i++) {
-			newDragonData = new DragonData();
-			newDragonData.Init(defs[i]);
-			m_dragonsBySku[defs[i].sku] = newDragonData;
-		}
-
-		// Initialize ordered list
-		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		m_dragonsBySku = null;
 		m_dragonsByOrder = new List<DragonData>();
-		for(int i = 0; i < defs.Count; i++) {
-			m_dragonsByOrder.Add(m_dragonsBySku[defs[i].sku]);
-		}
 	}
 
 	//------------------------------------------------------------------//
@@ -128,7 +116,8 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 	public static List<DragonData> GetDragonsByLockState(DragonData.LockState _lockState) {
 		// Iterate the dragons list looking for those belonging to the target tier
 		List<DragonData> list = new List<DragonData>();
-		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
+		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) 
+		{
 			// Does this dragon match the required lockstate?
 			if(kvp.Value.lockState == _lockState || _lockState == DragonData.LockState.ANY) {
 				// Yes!! Add it to the list
@@ -185,42 +174,35 @@ public class DragonManager : SingletonMonoBehaviour<DragonManager> {
 
 		// Load the prefab for the dragon with the given ID
 		GameObject prefabObj = Resources.Load<GameObject>(data.def.GetAsString("gamePrefab"));
+
 		Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property
 		playerObj = Instantiate<GameObject>(prefabObj);
 		playerObj.name = GameSettings.playerName;
+			
 	}
 
-	//------------------------------------------------------------------//
-	// PERSISTENCE														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Load state from a persistence object.
-	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public static void Load(DragonData.SaveData[] _data) {
-		// We don't trust array order, so do it by sku
-		for(int i = 0; i < _data.Length; i++) {
-			// If not initialized, initialize with default values
-			if(_data[i] == null) {
-				_data[i] = new DragonData.SaveData();
-				_data[i].sku = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS)[i];	// This is risky, order of the SaveData does not necessary match order of the definitions - shouldn't happen though
-			}
-			GetDragonData(_data[i].sku).Load(_data[i]);
+	public static void SetupUser( UserProfile user)
+	{
+		instance.m_user = user;
+		instance.m_dragonsBySku = user.dragonsBySku;
+
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS, ref defs);
+
+		// Initialize ordered list
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		instance.m_dragonsByOrder.Clear();
+		for(int i = 0; i < defs.Count; i++) {
+			instance.m_dragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
 		}
 	}
-	
+
 	/// <summary>
-	/// Create and return a persistence save data object initialized with the data.
+	/// Has a user been loaded into the manager?
 	/// </summary>
-	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
-	public static DragonData.SaveData[] Save() {
-		// Create new object, initialize and return it
-		List<DragonData.SaveData> data = new List<DragonData.SaveData>();
-		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
-			data.Add(kvp.Value.Save());
-		}
-		return data.ToArray();
+	public static bool IsReady() {
+		return instance.m_user != null;
 	}
 }

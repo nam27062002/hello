@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 443504}
   - 114: {fileID: 11470430}
   - 114: {fileID: 11466250}
-  - 114: {fileID: 11442258}
+  - 114: {fileID: 114000011470102414}
   m_Layer: 0
   m_Name: SP_hawk_0
   m_TagString: Untagged
@@ -25,26 +25,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 124210}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 105, y: 43.1, z: 0}
+  m_LocalPosition: {x: -82.4, y: 43.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11442258
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 124210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -0.20887756, y: 0.10443878}
-  size: {x: 50, y: 9.056156}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11466250
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -56,21 +42,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 119150, guid: 9505892c2f1f04805b8924dddf7b78ec, type: 2}
+  m_entityPrefab: {fileID: 182380, guid: 454eadd56badb4c2eaef2e11684c12cf, type: 2}
+  m_entityPrefabStr: Air/PF_Hawk
   m_quantity:
     min: 1
     max: 1
   m_scale:
     min: 1
     max: 1
+  m_rails: 1
   m_flockBonus: 0
+  m_minTier: 0
+  m_activationChance: 100
   m_alwaysActive: 0
-  m_activeOnStart: 0
-  m_enableTime: 0
-  m_disableTime: 0
+  m_activationTriggers: []
+  m_deactivationTriggers: []
   m_spawnTime:
-    min: 45
-    max: 45
+    min: 0
+    max: 0
   m_maxSpawns: 0
 --- !u!114 &11470430
 MonoBehaviour:
@@ -97,3 +86,26 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 124210}
   m_IsPrefabParent: 1
+--- !u!114 &114000011470102414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 124210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 0
+  m_innerRadius: 8
+  m_outterRadius: 16
+  m_targetDistance: 7.5
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -28,8 +29,6 @@ public class DragonPlayer : MonoBehaviour {
 
 	private DragonData m_data = null;
 	public DragonData data { get { return m_data; }}
-
-	private DragonBreathBehaviour m_dragonBreath;
 
 	[Header("Life & energy")]
 	private float m_health;
@@ -61,15 +60,8 @@ public class DragonPlayer : MonoBehaviour {
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
-	public float furyProgression
-	{
-		get { return m_dragonBreath.GetFuryProgression(); }
-	}
-
-	public float superFuryProgression
-	{
-		get{ return m_dragonBreath.GetSuperFuryProgression(); }
-	}
+	private List<Transform> m_holdPreyPoints = new List<Transform>();
+	public List<Transform> holdPreyPoints { get{ return m_holdPreyPoints; } }
 
 	// Interaction
 	public bool playable {
@@ -77,7 +69,7 @@ public class DragonPlayer : MonoBehaviour {
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
 			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
-			GetComponent<DragonEatBehaviour>().enabled = value;		// Eat stuff
+			GetComponent<PlayerEatBehaviour>().enabled = value;		// Eat stuff
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}
@@ -88,6 +80,40 @@ public class DragonPlayer : MonoBehaviour {
 	public DragonBreathBehaviour breathBehaviour
 	{
 		get{ return m_breathBehaviour; }
+	}
+
+	private DragonMotion m_dragonMotion = null;
+	public DragonMotion dragonMotion
+	{
+		get{ return m_dragonMotion; }
+	}
+
+	private PlayerEatBehaviour m_dragonEatBehaviour = null;
+	public PlayerEatBehaviour dragonEatBehaviour
+	{
+		get{ return m_dragonEatBehaviour; }
+	}
+
+	private DragonHealthBehaviour m_dragonHeatlhBehaviour = null;
+	public DragonHealthBehaviour dragonHealthBehaviour
+	{
+		get{ return m_dragonHeatlhBehaviour; }
+	}
+
+	private DragonBoostBehaviour m_dragonBoostBehaviour = null;
+	public DragonBoostBehaviour dragonBoostBehaviour
+	{
+		get{ return m_dragonBoostBehaviour; }
+	}
+
+	public float furyProgression
+	{
+		get { return m_breathBehaviour.GetFuryProgression(); }
+	}
+
+	public float superFuryProgression
+	{
+		get{ return m_breathBehaviour.GetSuperFuryProgression(); }
 	}
 
 	// Internal
@@ -128,10 +154,19 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
+		m_dragonMotion = GetComponent<DragonMotion>();
+		m_dragonEatBehaviour =  GetComponent<PlayerEatBehaviour>();
+		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
+		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
+		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
+		if (holdPoints != null) {
+			for (int i = 0;i<holdPoints.Length; i++) {
+				m_holdPreyPoints.Add(holdPoints[i].transform);
+			}
+		}
 
-		m_dragonBreath = GetComponent<DragonBreathBehaviour>();
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
@@ -170,6 +205,10 @@ public class DragonPlayer : MonoBehaviour {
 	/// Reset some variable stats for this dragon.
 	/// </summary>
 	public void ResetStats(bool _revive) {
+
+		bool wasStarving = IsStarving();
+		bool wasCritical = IsCritical();
+
 		m_health = m_healthMax;
 		m_energy = m_energyMax;
 
@@ -179,6 +218,21 @@ public class DragonPlayer : MonoBehaviour {
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
 		} else {
 			m_invulnerableAfterReviveTimer = 0;
+		}
+
+		if ( _revive )
+		{
+			bool isStarving = IsStarving();
+			if(wasStarving != isStarving) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+			}
+
+			bool isCritical = IsCritical();
+			if(wasCritical != isCritical) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
+			}
+
+			Messenger.Broadcast(GameEvents.PLAYER_REVIVE);
 		}
 	}
 
@@ -206,31 +260,37 @@ public class DragonPlayer : MonoBehaviour {
 				ResetStats(true);
 				Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
 			}
+			// If I have an angel pet and aura still playing
+
 			else
 			{
 				// Send global even
 				Messenger.Broadcast(GameEvents.PLAYER_KO);
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
-				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, false);
-
+					// Hode Starving and Critical effects
+				if (wasStarving)
+					Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, false);
+				if (wasCritical)
+					Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, false);
 				// Make dragon unplayable (xD)
 				playable = false;
 			}
 		}
-
-		// Check for starvation
-		bool isStarving = IsStarving();
-		if(wasStarving != isStarving) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
-		}
-
-		bool isCritical = IsCritical();
-		if(wasCritical != isCritical) {
-			Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
-
-			// Special case: if we're leaving the critical stat but we're still starving, toggle starving mode
-			if(!isCritical && isStarving) {
+		else
+		{
+			// Check for starvation
+			bool isStarving = IsStarving();
+			if(wasStarving != isStarving) {
 				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+			}
+
+			bool isCritical = IsCritical();
+			if(wasCritical != isCritical) {
+				Messenger.Broadcast<bool>(GameEvents.PLAYER_CRITICAL_TOGGLED, isCritical);
+
+				// Special case: if we're leaving the critical stat but we're still starving, toggle starving mode
+				if(!isCritical && isStarving) {
+					Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
+				}
 			}
 		}
 	}
@@ -252,7 +312,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns><c>true</c> if this instance is fury on; otherwise, <c>false</c>.</returns>
 	public bool IsFuryOn() {
 		
-		return m_dragonBreath.IsFuryOn() && m_dragonBreath.type == DragonBreathBehaviour.Type.Standard;
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Standard;
 	}
 
 
@@ -262,7 +322,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
 	public bool IsSuperFuryOn() {
 		
-		return m_dragonBreath.IsFuryOn() && m_dragonBreath.type == DragonBreathBehaviour.Type.Super;
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Super;
 	}
 
 
@@ -274,26 +334,38 @@ public class DragonPlayer : MonoBehaviour {
 	/// at its current position.
 	/// Uses GameObject.Find, so don't abuse it!
 	/// </summary>
-	public void MoveToSpawnPoint() {
-		// Look for a default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + data.def.sku);
+	/// <param name="_levelEditor">Try to use the level editor's spawn point?</param>
+	public void MoveToSpawnPoint(bool _levelEditor) {
+		// Use level editor's spawn point or try to use specific's dragon spawn point?
+		GameObject spawnPointObj = null;
+		if(_levelEditor) {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+			if ( spawnPointObj == null )
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+		} else {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+		}
+
+		// If we couldn't find a valid spawn point, try to find a generic one
 		if(spawnPointObj == null) {
-			// We couldn't find a spawn point for this specific type, try to find a generic one
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
+
+		// Move to position
 		if(spawnPointObj != null) {
 			transform.position = spawnPointObj.transform.position;
-
+			/*
 			if (InstanceManager.pet != null) {
 				InstanceManager.pet.transform.position = spawnPointObj.transform.position;
 			}
+			*/
 		}
 	}
 
 	public void StartIntroMovement()
 	{
 		// Look for a default spawn point for this dragon type in the scene and move the dragon there
-		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + data.def.sku);
+		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME +"_" + data.def.sku);
 		if(spawnPointObj == null) {
 			// We couldn't find a spawn point for this specific type, try to find a generic one
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
@@ -301,11 +373,7 @@ public class DragonPlayer : MonoBehaviour {
 		if(spawnPointObj != null) 
 		{
 			Vector3 introPos = spawnPointObj.transform.position;
-			transform.position = introPos + Vector3.left * 30;
-			if (InstanceManager.pet != null) {
-				InstanceManager.pet.transform.position = introPos;
-			}
-			GetComponent<DragonMotion>().StartIntroMovement(introPos);
+			m_dragonMotion.StartIntroMovement(introPos);
 		}
 	}
 
@@ -426,5 +494,22 @@ public class DragonPlayer : MonoBehaviour {
 	public void SetMineShields( int numHits )
 	{
 		m_mineShield = numHits;
+	}
+
+	public void StartLatchedOn()
+	{
+		m_dragonMotion.StartLatchedOnMovement();
+		m_dragonEatBehaviour.PauseEating();
+	}
+
+	public void EndLatchedOn()
+	{
+		m_dragonMotion.EndLatchedOnMovement();
+		m_dragonEatBehaviour.ResumeEating( 2.5f );
+	}
+
+	public bool BeingLatchedOn()
+	{
+		return m_dragonMotion.isLatchedMovement;
 	}
 }

@@ -32,6 +32,8 @@ namespace LevelEditor {
 			public GUIStyle groupListStyle = null;	// Option style for a SelectionGrid element
 			public GUIStyle whiteScrollListStyle = null;	// Scroll list with white background
 			public GUIStyle boxStyle = null;	// Background boxes
+			public GUIStyle sectionHeaderStyle = null;	// Section title, background + title + button
+			public GUIStyle sectionContentStyle = null;	// Section content background
 		}
 
 		//------------------------------------------------------------------//
@@ -40,7 +42,8 @@ namespace LevelEditor {
 		// Sections
 		private ILevelEditorSection[] m_sections = new ILevelEditorSection[] {
 			new SectionLevels(),
-			new SectionSimulation()
+			new SectionSimulation(),
+			new SectionDragonSpawn()
 		};
 
 		// Styles
@@ -64,11 +67,12 @@ namespace LevelEditor {
 		}
 		 
 		// Section shortcuts - don't change order in the array!!
-		public SectionLevels sectionLevels { get { return m_sections[0] as SectionLevels; }}
-		public SectionSimulation sectionSimulation { get { return m_sections[1] as SectionSimulation; }}
+		public static SectionLevels sectionLevels { get { return instance.m_sections[0] as SectionLevels; }}
+		public static SectionSimulation sectionSimulation { get { return instance.m_sections[1] as SectionSimulation; }}
+		public static SectionDragonSpawn sectionDragonSpawn { get { return instance.m_sections[2] as SectionDragonSpawn; }}
 
 		// Styles shortcut
-		public Styles styles { get { return m_styles; }}
+		public static Styles styles { get { return instance.m_styles; }}
 
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
@@ -156,6 +160,10 @@ namespace LevelEditor {
 			// If editor scene was not loaded, do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
 			if(!levelEditorScene.isLoaded) {
+				// Close any non-editable scenes
+				CloseNonEditableScenes();
+
+				// Open the scene
 				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
 			}
 		}
@@ -169,6 +177,63 @@ namespace LevelEditor {
 			EditorSceneManager.CloseScene(levelEditorScene, true);
 		}
 
+		/// <summary>
+		/// Close any open scene that doesn't have the "Level" component.
+		/// </summary>
+		public void CloseNonEditableScenes() {
+			// [AOC] Alternative, bug-free version
+			//		 Make sure at least that neither the SC_Loading, SC_Menu, SC_Game nor SC_Popups scenes are open to avoid conflicts with the LevelEditor
+			// 		 Ask to save current scenes first
+			EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+			string[] toCheck = new string[] { "SC_Loading", "SC_Menu", "SC_Game", "SC_Popups" };
+			List<Scene> scenesToRemove = new List<Scene>();
+			for(int i = 0; i < toCheck.Length; i++) {
+				Scene sc = EditorSceneManager.GetSceneByName(toCheck[i]);
+				if(sc.IsValid()) {
+					scenesToRemove.Add(sc);
+				}
+			}
+
+
+
+			// [AOC] DISABLE FOR NOW, LOOKS BUGGY
+			/*
+			// Close any "non-editable" open scene (aka no Level object)
+			List<Scene> scenesToRemove = new List<Scene>();
+			for(int i = 0; i < EditorSceneManager.sceneCount; i++) {
+				Scene sc = EditorSceneManager.GetSceneAt(i);
+
+				// Skip if it's the level editor scene!
+				if(sc.path == EDITOR_SCENE_PATH) continue;
+
+				// Look for the Level component at any point in the scene hierarchy
+				Level level = null;
+				foreach(GameObject go in sc.GetRootGameObjects()) {
+					// Does this root object contain a Level component?
+					level = go.FindComponentRecursive<Level>();
+					if(level != null) {
+						break;	// Check next scene
+					}
+				}
+
+				// If the scene didn't contain any Level object, close it
+				if(level == null) {
+					scenesToRemove.Add(sc);
+				}
+			}*/
+
+			// We always need at least one scene, so if none of the current scenes are valid, open the level editor scene before removing them
+			if(scenesToRemove.Count == EditorSceneManager.sceneCount) {
+				// Open the scene
+				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
+			}
+
+			// Remove non-editable scenes
+			for(int i = 0; i < scenesToRemove.Count; i++) {
+				EditorSceneManager.CloseScene(scenesToRemove[i], true);
+			}
+		}
+
 		//------------------------------------------------------------------//
 		// WINDOW METHODS													//
 		//------------------------------------------------------------------//
@@ -176,6 +241,8 @@ namespace LevelEditor {
 		/// Update the inspector window.
 		/// </summary>
 		public void OnGUI() {
+			if (!ContentManager.m_ready)
+				return;
 			// Initialize styles - must be done during the OnGUI call
 			if(m_styles == null) {
 				InitStyles();
@@ -186,7 +253,7 @@ namespace LevelEditor {
 
 			EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true)); {
 				// Mode selector
-				LevelEditorSettings.Mode newMode = (LevelEditorSettings.Mode)GUILayout.Toolbar((int)LevelEditor.settings.selectedMode, new string[] {"SPAWNERS", "COLLISION", "ART" }, GUILayout.Height(50));
+				LevelEditorSettings.Mode newMode = (LevelEditorSettings.Mode)GUILayout.Toolbar((int)LevelEditor.settings.selectedMode, new string[] {"SPAWNERS", "COLLISION", "ART", "SOUND" }, GUILayout.Height(50));
 				if(newMode != LevelEditor.settings.selectedMode) {
 					// Mode changed! Do whatever needed
 					LevelEditor.settings.selectedMode = newMode;
@@ -195,13 +262,14 @@ namespace LevelEditor {
 				}
 
 				// Draw sections
-				// Level section - always drawn
+				// Level section
 				sectionLevels.OnGUI();
 
-				// Simulation section - only if spawners level is loaded
-				if(sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS) != null) {
-					sectionSimulation.OnGUI();
-				}
+				// Dragon spawn section
+				sectionDragonSpawn.OnGUI();
+
+				// Simulation section
+				sectionSimulation.OnGUI();
 			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 
@@ -252,6 +320,27 @@ namespace LevelEditor {
 				m_styles.boxStyle = new GUIStyle(EditorStyles.helpBox);
 				m_styles.boxStyle.padding = new RectOffset(10, 10, 10, 10);
 			}
+
+			{ // Section header style
+				GUIStyle newStyle = new GUIStyle(EditorStyles.helpBox);
+
+				newStyle.fontSize = EditorStyles.boldLabel.fontSize;
+				newStyle.fontSize = 11;
+				newStyle.fontStyle = FontStyle.Bold;
+				newStyle.alignment = TextAnchor.MiddleLeft;
+				newStyle.margin = new RectOffset(4, 4, 4, -1);	// No separation with content box
+
+				m_styles.sectionHeaderStyle = newStyle;
+			}
+
+			{ // Section content style
+				GUIStyle newStyle = new GUIStyle(m_styles.sectionHeaderStyle);
+
+				newStyle.margin = new RectOffset(4, 4, -1, 4);	// No separation with header box
+				newStyle.padding = new RectOffset(10, 10, 10, 10);
+
+				m_styles.sectionContentStyle = newStyle;
+			}
 		}
 
 		//------------------------------------------------------------------//
@@ -269,12 +358,13 @@ namespace LevelEditor {
 
 			// If an art scene is opened, make it the main scene (so the lightning setup is the right one)
 			// Except for Mac, where some lightning settings make Unity crash -_-
-			#if !UNITY_EDITOR_OSX
-			Level artLevel = sectionLevels.GetLevel(LevelEditorSettings.Mode.ART);
-			if(artLevel != null) {
-				EditorSceneManager.SetActiveScene(artLevel.gameObject.scene);
+			// #if !UNITY_EDITOR_OSX
+			// TODO MALH: Select proper scene from art
+			List<Level> artLevel = sectionLevels.GetLevel(LevelEditorSettings.Mode.ART);
+			if(artLevel != null && artLevel.Count !=0) {
+				EditorSceneManager.SetActiveScene(artLevel[0].gameObject.scene);
 			}
-			#endif
+			// #endif
 
 			// Force a repaint
 			Repaint();

@@ -59,7 +59,7 @@ public class AddCoinsPerSecond : MonoBehaviour {
 			m_timer -= Time.deltaTime;
 			if(m_timer <= 0) {
 				// Add a random amount of coins
-				UserProfile.AddCoins((long)m_coinsRange.GetRandom());
+				UsersManager.currentUser.AddCoins((long)m_coinsRange.GetRandom());
 				
 				// Reset timer
 				m_timer = m_intervalRange.GetRandom();

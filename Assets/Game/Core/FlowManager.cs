@@ -19,7 +19,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class FlowManager : SingletonMonoBehaviour<FlowManager> {
+public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -61,20 +61,30 @@ public class FlowManager : SingletonMonoBehaviour<FlowManager> {
 		GameSceneManager.SwitchScene(GameSceneController.NAME);
 	}
 
+    /// <summary>
+    /// Returns whether or not the flow is in the game scene and it has been completely loaded
+    /// </summary>
+    /// <returns></returns>
+    public static bool IsInGameScene()
+    {
+        return GameSceneManager.currentScene == GameSceneController.NAME && !GameSceneManager.isLoading;
+    }
+
 	/// <summary>
 	/// Interrupts current flow and restarts the application.
 	/// </summary>
 	public static void Restart() {
-		// Delete key singletons that must be reloaded
-		DragonManager.DestroyInstance();
-		UserProfile.DestroyInstance();
-		InstanceManager.DestroyInstance();
+		// Delete key singletons that must be reloaded		
 		GameVars.DestroyInstance();
-		PoolManager.Clear(true);
-		ParticleManager.Clear();
+		
+        //[DGR] We need to destroy SaveFacade system because a new instance of UserProfile will be created when restarting so we need to make sure this system
+        //is going to use the new UserProfile instance
+        //SaveFacade.DestroyInstance();     
+        SaveFacade.Instance.Reset();   
 
-		// Change to the loading scene
-		GameSceneManager.SwitchScene(LoadingSceneController.NAME);
+        // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
+        // from the editor)
+        GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);
 	}
 }
 

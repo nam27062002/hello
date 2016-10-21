@@ -38,7 +38,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public Vector2 direction { get { return m_direction; } }
 
 	protected DragonPlayer m_dragon;
-	private DragonEatBehaviour 		m_eatBehaviour;
 	private DragonHealthBehaviour 	m_healthBehaviour;
 	private DragonAttackBehaviour 	m_attackBehaviour;
 	protected Animator m_animator;
@@ -123,7 +122,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 
 		m_dragon = GetComponent<DragonPlayer>();
-		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();		
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
@@ -140,7 +138,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_furyMax = m_furyBase;
 		m_currentFury = 0;
 
-		if (!UserProfile.furyUsed) {
+		if (!UsersManager.currentUser.furyUsed) {
 			m_currentFury = m_furyMax * 0.5f;
 		}
 
@@ -201,7 +199,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			m_isFuryOn = false;
 			m_animator.SetBool("breath", false);// Stop fury rush (if active)
 			if (m_healthBehaviour) m_healthBehaviour.enabled = true;
-			if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 			if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 			Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, Type.None);
 		}
@@ -214,7 +211,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void Update() {
 		// Cheat for infinite fire
-		bool cheating = ( UnityEngine.Debug.isDebugBuild && (DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+		bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
 
 		if (m_isFuryOn) 
@@ -238,33 +235,37 @@ public class DragonBreathBehaviour : MonoBehaviour {
 						
 					}break;
 				}
+				
+				// With fury on boost is infinite
+				m_dragon.AddEnergy(m_dragon.energyMax);
 
 				if ( m_currentRemainingFuryDuration <= 0) 
 				{
 					EndFury();
 					m_animator.SetBool("breath", false);
-
-				} else {				
+				} 
+				else
+				{
 					Breath();
 					m_animator.SetBool("breath", true);
 				}
 			}
 		} else {
 
-			if(cheating) 
+			if (cheating)
 			{
-				if ( DebugSettings.infiniteFire )
+				if (DebugSettings.infiniteFire)
 					AddFury(m_furyMax - m_currentFury);	// Set to max fury
-				else if ( DebugSettings.infiniteSuperFire )
-					UserProfile.superFuryProgression = (int)m_superFuryMax;
+				else if (DebugSettings.infiniteSuperFire)
+					UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
 			}
 
-			if ( UserProfile.superFuryProgression >= m_superFuryMax )
+			if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
 			{
 				BeginFury( Type.Super );
 
 			}
-			else if (m_currentFury >= m_furyMax) 
+			else if (m_currentFury >= m_furyMax)
 			{
 				BeginFury( Type.Standard );
 			}
@@ -286,7 +287,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	virtual public bool IsInsideArea(Vector2 _point) { return false; }
-	virtual public bool Overlaps( CircleArea2D _circle) { return false; }
+	virtual public bool Overlaps( CircleAreaBounds _circle) { return false; }
 	virtual protected void ExtendedStart() {}
 	virtual protected void ExtendedUpdate() {}
 
@@ -295,7 +296,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_type = _type;
 		m_isFuryOn = true;
 
-		UserProfile.furyUsed = true;
+		UsersManager.currentUser.furyUsed = true;
 
 		switch( m_type )
 		{
@@ -325,7 +326,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 
 		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
-		if (m_eatBehaviour) m_eatBehaviour.enabled = false;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = false;
 
 		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, true, m_type);
@@ -337,14 +337,14 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		{
 			case Type.Standard:
 			{
-				UserProfile.superFuryProgression++;
+				UsersManager.currentUser.superFuryProgression++;
 				m_currentFury = 0;
 				m_furyRushesCompleted++;
 			}break;
 			case Type.Super:
 			{
 				// Set super fury counter to 0
-				UserProfile.superFuryProgression = 0;
+				UsersManager.currentUser.superFuryProgression = 0;
 			}break;
 
 		}
@@ -352,7 +352,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_currentFury = Mathf.Clamp(m_furyRushesCompleted * m_scoreToAddForNextFuryRushes, 0, m_maxScoreToAddForNextFuryRushes);
 
 		if (m_healthBehaviour) m_healthBehaviour.enabled = true;
-		if (m_eatBehaviour) m_eatBehaviour.enabled = true;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 
 		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, m_type);
@@ -390,27 +389,24 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 		else
 		{
-			return UserProfile.superFuryProgression/m_superFuryMax;
+			return UsersManager.currentUser.superFuryProgression/m_superFuryMax;
 		}
 	}
 
 
 	// First version to check burn/explode flags. This should be cached? or only consulted once?
 
-	public bool CanBurn( InflammableBehaviour _inflammable)
-	{
-		if ( m_spawnEffects != null )
-		{
-			return m_spawnEffects.GetAsBool( _inflammable.sku , false);
+	public bool CanBurn(Entity _entity) {
+		if (m_spawnEffects != null ) {
+			return m_spawnEffects.GetAsBool( _entity.sku , false);
 		}
 		return false;
 	}
 
-	public bool CanBurn( InflammableDecoration _decoration )
-	{
+	public bool CanBurn(InflammableDecoration _decoration) {
 		if ( m_decorationEffects != null )
 		{
-			string param = m_decorationEffects.Get( _decoration.sku, "" );
+			string param = m_decorationEffects.GetAsString( _decoration.sku );
 			if ( param.Equals("explode") || param.Equals("true") )
 				return true;
 		}
@@ -421,7 +417,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 		if ( m_decorationEffects != null )
 		{
-			string param = m_decorationEffects.Get( _decoration.sku, "" );
+			string param = m_decorationEffects.GetAsString( _decoration.sku );
 			if ( param.Equals("explode"))
 				return true;
 		}

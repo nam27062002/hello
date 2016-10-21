@@ -24,9 +24,9 @@ public class EggUIScene3D : UIScene3D {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	private EggController m_egg = null;
+	private EggController m_eggView = null;
 	public EggController egg {
-		get { return m_egg; }
+		get { return m_eggView; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -75,7 +75,12 @@ public class EggUIScene3D : UIScene3D {
 		// If not null, create a new view for the target egg
 		EggController eggView = null;
 		if(_newEgg != null) {
-			_newEgg.ChangeState(Egg.State.SHOWROOM);
+			// Unless it's the same egg we have loaded, in wich case we won't do anything
+			if(m_eggView != null && m_eggView.eggData == _newEgg) {
+				return;
+			}
+
+			// Create the new egg view
 			eggView = _newEgg.CreateView();
 		}
 
@@ -86,22 +91,22 @@ public class EggUIScene3D : UIScene3D {
 	/// <summary>
 	/// Defines the egg to be rendered by this scene.
 	/// </summary>
-	/// <param name="_newEgg">The view to be rendered. Use <c>null</c> to clear view. If another egg is being rendered, it will be destroyed.</param>
-	public void SetEgg(EggController _newEgg) {
+	/// <param name="_newEggView">The view to be rendered. Use <c>null</c> to clear view. If another egg is being rendered, it will be destroyed.</param>
+	public void SetEgg(EggController _newEggView) {
 		// If egg is different than current one, clear current one
-		if(_newEgg != m_egg) {
-			if(m_egg != null) {
-				GameObject.Destroy(m_egg.gameObject);
-				m_egg = null;
+		if(_newEggView != m_eggView) {
+			if(m_eggView != null) {
+				GameObject.Destroy(m_eggView.gameObject);
+				m_eggView = null;
 			}
 		}
 
 		// If new egg is not null, attach it
-		if(_newEgg != null) {
-			_newEgg.transform.SetParent(this.transform, false);
-			_newEgg.transform.localPosition = Vector3.zero;
-			_newEgg.gameObject.SetLayerRecursively(UIScene3DManager.LAYER_NAME);
-			m_egg = _newEgg;
+		if(_newEggView != null) {
+			_newEggView.transform.SetParent(this.transform, false);
+			_newEggView.transform.localPosition = Vector3.zero;
+			_newEggView.gameObject.SetLayerRecursively(UIScene3DManager.LAYER_NAME);
+			m_eggView = _newEggView;
 		}
 	}
 

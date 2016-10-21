@@ -37,6 +37,66 @@ public class CircleAreaBounds : AreaBounds {
 		return m_bounds.Contains(_point);
 	}
 
+	public bool IsInside(Vector2 _point) {
+		Vector3 c = center;
+
+		Vector2 v;
+		v.x = c.x;
+		v.y = c.y;
+
+		v = (v - _point);
+		float sqrMagnitude = v.sqrMagnitude;
+		return (sqrMagnitude <= m_radius * m_radius);
+	}
+
+	public bool Overlaps(Rect _r) {
+		Vector2 distance;
+
+		distance.x = Mathf.Abs(center.x - _r.center.x);
+		distance.y = Mathf.Abs(center.y - _r.center.y);
+
+		// too far away
+		if (distance.x > (_r.width/2.0f + m_radius)) { return false; }
+		if (distance.y > (_r.height/2.0f + m_radius)) { return false; }
+
+		// center inside rectangle
+		if (distance.x <= (_r.width/2.0f)) { return true; } 
+		if (distance.y <= (_r.height/2.0f)) { return true; }
+
+		// Other cases
+		// sqr magnitude
+		float cornerDistance_sq = Mathf.Pow( (distance.x - _r.width/2), 2) + Mathf.Pow((distance.y - _r.height/2), 2);
+
+		return (cornerDistance_sq <= (m_radius * m_radius));
+	}
+
+	public bool OverlapsSegment(Vector2 _a, Vector2 _b) {
+		Vector2 aToCenter;
+		aToCenter.x = center.x - _a.x;
+		aToCenter.y = center.y - _a.y;
+
+		Vector2 aToB = _b - _a;
+		Vector2 closestPoint = Vector2.zero;
+
+		float k = Vector2.Dot( aToCenter, aToB);
+		if (k < 0) {
+			closestPoint = _a;
+		} else {
+			float magnitude = aToB.magnitude;
+			k = k / magnitude;
+			if ( k < magnitude )
+			{
+				closestPoint = _a + aToB.normalized * k;
+			}
+			else
+			{
+				closestPoint = _b;
+			}
+		}
+
+		return IsInside(closestPoint);
+	}
+
 	public void DrawGizmo() {
 		Color color = Color.white;
 		color.a = 0.25f;

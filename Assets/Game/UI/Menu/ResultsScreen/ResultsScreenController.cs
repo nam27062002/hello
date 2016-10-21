@@ -54,7 +54,6 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -62,7 +61,6 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -88,7 +86,7 @@ public class ResultsScreenController : MonoBehaviour {
 		m_coinsAnimator.SetValue(0, (int)(RewardManager.coins + survivalBonus));
 		m_bonusCoinsAnimator.SetValue(0, RewardManager.instance.CalculateSurvivalBonus()); //TODO: get bouns coins from Reward Manager
 
-		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(UserProfile.highScore));
+		m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(UsersManager.currentUser.highScore));
 
 		m_newHighScoreDeco.SetActive(RewardManager.isHighScore);
 
@@ -174,52 +172,52 @@ public class ResultsScreenController : MonoBehaviour {
 
 
 	/// <summary>
-	/// Go back to menu!
+	/// Try to go back to the menu. If a popup is pending (chest reward, egg reward), it will be displayed instead.
 	/// </summary>
-	private void GoToMenu() {
-		// Update global stats
-		UserProfile.gamesPlayed = UserProfile.gamesPlayed + 1;
+	/// <returns>Whether we're going back to the menu (<c>true</c>) or we've been interrupted by some pending popup (<c>false</c>).</returns>
+	private bool TryGoToMenu() {
+		// Check for any impediment to go to the menu (i.e. pending popups)
+		if(false) {
+			// Nothing for now
+		}
 
-		// Apply rewards to user profile
-		RewardManager.ApplyRewardsToProfile();
+		// Nothing else to show, go back to the menu!
+		else {
+			// Update global stats
+			UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 
-		// Process Missions: give rewards and generate new missions replacing those completed
-		MissionManager.ProcessMissions();
+			// Apply rewards to user profile
+			RewardManager.ApplyRewardsToProfile();
 
-		// Clear chest manager
-		ChestManager.ClearSelectedChest();
+			// Process Missions: give rewards and generate new missions replacing those completed
+			MissionManager.ProcessMissions();
 
-		// Save persistence
-		PersistenceManager.Save();
+			// Process collectible chests: give rewards and update collected chests count
+			ChestManager.ProcessChests();
 
-		// Go back to main menu
-		FlowManager.GoToMenu();
+			// Process collectible egg
+			EggManager.ProcessCollectibleEgg();
+
+			// Save persistence
+			PersistenceManager.Save(true);
+
+			// Go back to main menu
+			FlowManager.GoToMenu();
+
+			return true;
+		}
+
+		return false;
 	}
 
 	//------------------------------------------------------------------//
 	// DELEGATES														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// A popup has been closed.
-	/// </summary>
-	/// <param name="_popup">The popup that has been closed</param>
-	public void OnPopupClosed(PopupController _popup) {
-		// Was it the chest reward popup?
-		if(_popup.GetComponent<PopupChestReward>() != null) {
-			// Go back to menu
-			GoToMenu();
-		}
-	}
-
-	/// <summary>
 	/// Go back to the main menu, finalizing all the required stuff in the game scene.
 	/// </summary>
 	public void OnGoToMenu() {
-		// If we found a chest, open the chest reward popup
-		if(ChestManager.selectedChest != null && ChestManager.selectedChest.collected) {
-			PopupManager.OpenPopupAsync(PopupChestReward.PATH);
-		} else {
-			GoToMenu();
-		}
+		// Use internal method
+		TryGoToMenu();
 	}
 }

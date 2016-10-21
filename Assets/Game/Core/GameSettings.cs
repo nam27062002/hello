@@ -34,24 +34,28 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private string m_playerName = "Player";
 	public static string playerName { get { return instance.m_playerName; }}
 
-	[Comment("Increase intervals for dragon's health drain.\nTODO!! Must be re-designed and implemented.")]
-	[SerializeField] private List<TimeDrain> m_healthDrainIncForTime;
-	public static List<TimeDrain> healthDrainIncForTime { get { return instance.m_healthDrainIncForTime; } }
-
 	[Separator("Versioning")]
+	[Comment("Used by the development team, QC, etc. to identify each build internally.\nFormat X.Y.Z where:\n    - X: Development Stage [1..4] (1 - Preproduction, 2 - Production, 3 - Soft Launch, 4 - Worldwide Launch)\n    - Y: Sprint Number [1..N]\n    - Z: Build Number [1..N] within the sprint, increased by 1 for each new build")]
 	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
 	public static Version internalVersion { get { return instance.m_internalVersion; }}
 
-	[SerializeField] private Version m_iOSVersion = new Version(1, 0, 0);
-	public static Version iOSVersion { get { return instance.m_iOSVersion; }}
+	[Comment("Public version number displayed in the stores, used by the players to identify different application updates\nFormat X.Y where:\n    - X: Arbitrary, only changed on major game change (usually never)\n        - 0 during Preproduction/Production\n        - [1..N] at Soft/WW Launch\n    - Y: Increased for every push to the app store [1..N]", 10f)]
+	[SerializeField] private string m_publicVersioniOS = "0.1";
+	public static string publicVersioniOS { 
+		get { return instance.m_publicVersioniOS; }
+		set { instance.m_publicVersioniOS = value; }
+	}
 
-	[SerializeField] private Version m_androidVersion = new Version(1, 0, 0);
-	public static Version androidVersion { get { return instance.m_androidVersion; }}
+	[SerializeField] private string m_publicVersionGGP = "0.1";
+	public static string publicVersionGGP { 
+		get { return instance.m_publicVersionGGP; }
+		set { instance.m_publicVersionGGP = value; }
+	}
 
-	[SerializeField] private int m_androidVersionCode = 0;
-	public static int androidVersionCode { 
-		get { return instance.m_androidVersionCode; }
-		set { instance.m_androidVersionCode = value; }
+	[SerializeField] private string m_publicVersionAmazon = "0.1";
+	public static string publicVersionAmazon { 
+		get { return instance.m_publicVersionAmazon; }
+		set { instance.m_publicVersionAmazon = value; }
 	}
 
 	//------------------------------------------------------------------//

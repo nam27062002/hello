@@ -3,11 +3,15 @@
 // - no lightmap support
 // - no per-material color
 
-Shader "Unlit/BurnToAshes (Transparent)" {
+Shader "Hungry Dragon/BurnToAshes (Transparent)" {
 Properties {
-	_MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
-	_AshLevel( "Ash Level", Range (0, 1)) = 0
-	_AlphaMask ("Alpha Mask", 2D) = "white" {}
+	_BurnMask ("Burn Mask", 2D) = "white" {}
+//	_AlphaMask ("Alpha Mask", 2D) = "white" {}
+	_ColorRamp("Color Ramp", 2D) = "white" {}
+	_AshLevel("Ash Level", Range(0, 1)) = 0
+	_AshWidth("Ash Width", Range(0, 0.5)) = 0.01
+	_BurnMaskScale("Burn Mask Scale", Range(1.0, 8.0)) = 2.0
+
 }
 
 SubShader {
@@ -37,32 +41,38 @@ SubShader {
 				UNITY_FOG_COORDS(1)
 			};
 
-			sampler2D _MainTex;
-			sampler2D _AlphaMask;
-			float4 _MainTex_ST;
-			uniform float _AshLevel;
+			sampler2D _BurnMask;
+//			sampler2D _AlphaMask;
+			sampler2D _ColorRamp;
+			float4 _BurnMask_ST;
+			float _AshLevel;
+			float _AshWidth;
+			float _BurnMaskScale;
 
 			v2f vert (appdata_t v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+				o.texcoord = TRANSFORM_TEX(v.texcoord, _BurnMask);
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
-			
+
 			fixed4 frag (v2f i) : SV_Target
 			{
-				clip(tex2D(_MainTex, i.texcoord).rgb - _AshLevel);
-				fixed alpha = tex2D( _AlphaMask, i.texcoord ).a;
-				fixed4 col = fixed4(0,0,0,1);
-				UNITY_APPLY_FOG(i.fogCoord, col);
-				col.a = alpha;
+				fixed fragAlpha = tex2D(_BurnMask, i.texcoord * _BurnMaskScale).r - _AshLevel;
+				clip(fragAlpha);
 
+				fixed ashIdx = clamp(fragAlpha / _AshWidth, 0.0, 1.0);
+//				fixed alpha = tex2D( _AlphaMask, i.texcoord ).a;
+				fixed3 ashColor = tex2D(_ColorRamp, fixed2(ashIdx, 0.0));
+				fixed4 col = fixed4(ashColor, 1.0);
+				UNITY_APPLY_FOG(i.fogCoord, col);
+//				col.a = alpha;
 				return col;
 			}
 		ENDCG
+		}
 	}
-}
 
 }

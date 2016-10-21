@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class QuadTreeNode {
+public class QuadTreeNode<T> where T : IQuadTreeItem {
 
 	private Rect m_bounds;
 	public 	Rect bounds { get { return m_bounds; } }
 
-	private QuadTreeNode m_parent;
-	public  QuadTreeNode parent { get { return m_parent; } set { m_parent = value; } }
+	private QuadTreeNode<T> m_parent;
+	public  QuadTreeNode<T> parent { get { return m_parent; } set { m_parent = value; } }
 
-	private QuadTreeNode[] m_child;
-	public  QuadTreeNode[] child { get { return m_child; } }
+	private QuadTreeNode<T>[] m_child;
+	public  QuadTreeNode<T>[] child { get { return m_child; } }
 
-	private List<Transform> m_items;
-	public	List<Transform> items { get { return m_items; } }
+	private List<T> m_items;
+	public	List<T> items { get { return m_items; } }
 
 	private uint m_depth;
 
@@ -24,14 +24,14 @@ public class QuadTreeNode {
 	/***********/
 	public QuadTreeNode() {
 
-		m_child = new QuadTreeNode[4];
-		m_items = new List<Transform>();
+		m_child = new QuadTreeNode<T>[4];
+		m_items = new List<T>();
 
 		Init(0, null, new Rect());
 	}
 
 
-	public void Init(uint _level, QuadTreeNode _parent, Rect _rect) {
+	public void Init(uint _level, QuadTreeNode<T> _parent, Rect _rect) {
 
 		m_depth = _level;
 		m_bounds = _rect;
@@ -53,58 +53,52 @@ public class QuadTreeNode {
 	public bool IsLeaf() 					{ return m_child[0] == null; }
 	public bool Contains(Vector2 _point)	{ return m_bounds.Contains(_point); }
 	//public bool Contains(Vector3 _point)	{ return m_bounds.Contains(_point); }
-	public bool Intersects(Rect _rect) 		{ return _rect.Overlaps(_rect); }
+	public bool Intersects(Rect _rect) 		{ return m_bounds.Overlaps(_rect); }
 	/*************/
 
 
 	/*********************/
 	/** Node Management **/
 	/*********************/
-	public QuadTreeNode Insert(Transform _item, ref Dictionary<Transform, QuadTreeNode> _indexTable) {
+	public void Insert(T _item, ref Dictionary<T, List<QuadTreeNode<T>>> _indexTable) {
 
-		if (Contains(_item.position)) {
+		if (Intersects(_item.boundingRect)) {
 			if (IsLeaf()) {
-				if (m_items.Count < QuadTree.MAX_ELEMENTS || m_depth >= QuadTree.MAX_DEPTH) {
-					_indexTable[_item] = this;				
+				if (m_items.Count < QuadTree<T>.MAX_ELEMENTS || m_depth >= QuadTree<T>.MAX_DEPTH) {
+					if (!_indexTable.ContainsKey(_item)) {
+						_indexTable[_item] = new List<QuadTreeNode<T>>();
+					}
+					_indexTable[_item].Add(this);
 					m_items.Add(_item);
-					return this;
+					return;
 				} else {
 					Subdivide(ref _indexTable);
 				}
 			}
 			
 			for (int i = 0; i < m_child.Length; i++) {
-				QuadTreeNode n = m_child[i].Insert(_item, ref _indexTable);
-				if (n != null)
-					return n;
+				m_child[i].Insert(_item, ref _indexTable);
 			}
 		}
-		
-		return null;
-
 	}
 
-	public QuadTreeNode InsertFromLeaf(Transform _item, ref Dictionary<Transform, QuadTreeNode> _indexTable) {
+	public void InsertFromLeaf(T _item, ref Dictionary<T, List<QuadTreeNode<T>>> _indexTable) {
 
-		if (Contains(_item.position))  {
-			return Insert(_item, ref _indexTable);
+		if (Intersects(_item.boundingRect)) {
+			Insert(_item, ref _indexTable);
 		} else if (m_parent != null) {
-			return m_parent.InsertFromLeaf(_item, ref _indexTable);
+			m_parent.InsertFromLeaf(_item, ref _indexTable);
 		}
-		
-		return null;
 	}
 	
-	public void Remove(Transform _item, ref Dictionary<Transform, QuadTreeNode> _indexTable) {
-
+	public void Remove(T _item, ref Dictionary<T, List<QuadTreeNode<T>>> _indexTable) {
 		m_items.Remove(_item);
-		Join(ref _indexTable);
 	}
 		
-	private void Subdivide(ref Dictionary<Transform, QuadTreeNode> _indexTable) {
+	private void Subdivide(ref Dictionary<T, List<QuadTreeNode<T>>> _indexTable) {
 
 		for (int i = 0; i < m_child.Length; i++) {
-			m_child[i] = new QuadTreeNode();
+			m_child[i] = new QuadTreeNode<T>();
 		}
 
 		m_child[0].Init(m_depth + 1, this, new Rect(m_bounds.min.x, 	m_bounds.center.y, 	m_bounds.width * 0.5f, m_bounds.height * 0.5f));
@@ -114,16 +108,14 @@ public class QuadTreeNode {
 
 		for (int i = 0; i < m_items.Count; i++) {
 			for (int j = 0; j < m_child.Length; j++) {
-				if (m_child[j].Insert(m_items[i], ref _indexTable) != null) {
-					break;
-				}
+				m_child[j].Insert(m_items[i], ref _indexTable);
 			}
 		}
 
 		m_items.Clear();
 	}
 
-	private void Join(ref Dictionary<Transform, QuadTreeNode> _indexTable) {
+	private void Join(ref Dictionary<T, List<QuadTreeNode<T>>> _indexTable) {
 
 		if (IsLeaf()) {
 			if (m_parent != null) {
@@ -133,7 +125,7 @@ public class QuadTreeNode {
 			int tmpSize = 0;
 
 			for (int i = 0; i < 4; i++) {
-				QuadTreeNode c = m_child[i];
+				QuadTreeNode<T> c = m_child[i];
 				
 				if (c.IsLeaf()) {
 					tmpSize += c.m_items.Count;
@@ -142,7 +134,7 @@ public class QuadTreeNode {
 				}				
 			}
 			
-			if (tmpSize <= QuadTree.MAX_ELEMENTS) {
+			if (tmpSize <= QuadTree<T>.MAX_ELEMENTS) {
 				// free childs
 				for (int i = 0; i < 4; i++)	{
 					m_items.AddRange(m_child[i].m_items);
@@ -151,7 +143,8 @@ public class QuadTreeNode {
 				
 				// Move all the data
 				for (int i = 0; i < m_items.Count; i++) {
-					_indexTable[m_items[i]] = this;
+					_indexTable[m_items[i]].Clear();
+					_indexTable[m_items[i]].Add(this);
 				}
 			}
 		}

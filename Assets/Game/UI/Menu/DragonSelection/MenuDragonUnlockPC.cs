@@ -71,21 +71,19 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// </summary>
 	public void OnUnlock() 
 	{
-		// Play Sound
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Unlock dragon
 		DragonData data = DragonManager.GetDragonData(InstanceManager.GetSceneController<MenuSceneController>().selectedDragon);
 		long pricePC = data.def.GetAsLong("unlockPricePC");
-		if(UserProfile.pc >= pricePC) {
-			UserProfile.AddPC(-pricePC);
+		if(UsersManager.currentUser.pc >= pricePC) {
+			UsersManager.currentUser.AddPC(-pricePC);
 			data.Acquire();
 			PersistenceManager.Save();
 		} else {
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 }

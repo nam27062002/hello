@@ -100,7 +100,7 @@ public class MissionObjective {
 		if(!enabled) return;
 
 		// Skip during first game session (tutorial)
-		if(UserProfile.gamesPlayed < 1) return;
+		if(UsersManager.currentUser.gamesPlayed < 1) return;
 
 		// Skip if already completed
 		if(isCompleted) return;
@@ -154,7 +154,7 @@ public class MissionObjective {
 	/// <returns>The name properly formatted.</returns>
 	public virtual string GetName() {
 		// Default
-		return Localization.Localize(GetNameTID());
+        return LocalizationManager.SharedInstance.Localize(GetNameTID());
 	}
 
 	/// <summary>
@@ -164,7 +164,7 @@ public class MissionObjective {
 	/// <returns>The description properly formatted.</returns>
 	public virtual string GetDescription() {
 		// Default
-		return Localization.Localize(GetDescriptionTID());
+        return LocalizationManager.SharedInstance.Localize(GetDescriptionTID());
 	}
 
 	/// <summary>

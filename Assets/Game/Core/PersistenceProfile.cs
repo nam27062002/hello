@@ -21,7 +21,7 @@ public class PersistenceProfile : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly string RESOURCES_FOLDER = "Game/PersistenceProfiles/";
-	public static readonly string DEFAULT_PROFILE = "PF_Default";	// This one must always exist
+	public static readonly string DEFAULT_PROFILE = "Default";	// This one must always exist
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -32,10 +32,10 @@ public class PersistenceProfile : MonoBehaviour {
 	public bool canBeDeleted { get { return m_canBeDeleted; }}
 
 	// The actual data
-	[SerializeField] private PersistenceManager.SaveData m_data = null;
-	public PersistenceManager.SaveData data {
+	[SerializeField] private SimpleJSON.JSONClass m_data = null;
+	public SimpleJSON.JSONClass data {
 		get { 
-			if(m_data == null) m_data = new PersistenceManager.SaveData();
+			if(m_data == null) m_data = new SimpleJSON.JSONClass();
 			return m_data; 
 		}
 		set { m_data = value; }

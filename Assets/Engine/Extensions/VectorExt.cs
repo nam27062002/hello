@@ -47,4 +47,31 @@ public static class VectorExt {
 	public static float Distance(this Vector3 _v1, Vector3 _v2) {
 		return Vector3.Distance(_v1, _v2);
 	}
+
+	/// <summary>
+	/// Initializes the vector fields with the given string in the format "(x.x, y.y, z.z)" 
+	/// (same as ToString() output with invariant culture).
+	/// From http://answers.unity3d.com/questions/1134997/string-to-vector3.html
+	/// </summary>
+	/// <returns>A new vector with the values from the parsed string.</returns>
+	/// <param name="_str">The string to be parsed.</param>
+	public static Vector3 ParseVector3(string _str) {
+		// Remove the parentheses
+		if(_str.StartsWith("(") && _str.EndsWith(")")) {
+			_str = _str.Substring(1, _str.Length - 2);
+		}
+
+		// Remove all spaces
+		_str.Replace(" ", "");
+
+		// Split individual components
+		string[] componentsStr = _str.Split(',');
+
+		// Store them into the new vector
+		Vector3 v = new Vector3();
+		if(componentsStr.Length > 0) v.x = float.Parse(componentsStr[0], System.Globalization.CultureInfo.InvariantCulture);
+		if(componentsStr.Length > 1) v.y = float.Parse(componentsStr[1], System.Globalization.CultureInfo.InvariantCulture);
+		if(componentsStr.Length > 2) v.z = float.Parse(componentsStr[2], System.Globalization.CultureInfo.InvariantCulture);
+		return v;
+	}
 }

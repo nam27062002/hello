@@ -50,8 +50,42 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events.
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+	}
+
+	/// <summary>
+	/// Raises the disable event.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe to external events.
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Navigation screen has changed (animation starts now).
+	/// </summary>
+	/// <param name="_event">Event data.</param>
+	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
+		// Only if it comes from the main screen navigation system
+		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
+
+		// If leaving this screen, remove "new" flag from eggs
+		if(_event.fromScreenIdx == (int)MenuScreens.DRAGON_SELECTION) {
+            PersistenceManager.Save(true);
+
+			for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) {
+				if(EggManager.inventory[i] != null) {
+					EggManager.inventory[i].isNew = false;
+				}
+			}
+		}
+	}
 }

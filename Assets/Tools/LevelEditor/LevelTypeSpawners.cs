@@ -22,6 +22,7 @@ namespace LevelEditor {
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
 		public static readonly string DRAGON_SPAWN_POINT_NAME = "DragonSpawn";	// Concatenate DragonId for specific spawn points
+		public static readonly string LEVEL_EDITOR_SPAWN_POINT_NAME = "LevelEditor";
 		private static readonly string DRAGON_SPAWN_POINTS_CONTAINER_NAME = "DragonSpawnPoints";
 
 		//------------------------------------------------------------------//
@@ -67,12 +68,6 @@ namespace LevelEditor {
 				spawnPointObj = new GameObject(name);
 				spawnPointObj.transform.position = new Vector3(0, 20, 0);
 				spawnPointObj.transform.SetParent(spawnContainerObj.transform, true);
-			}
-
-			GameCameraController camera = GameObject.Find("PF_GameCamera").GetComponent<GameCameraController>();
-
-			if (camera != null && spawnPointObj != null) {
-				camera.transform.position = spawnPointObj.transform.position;
 			}
 
 			return spawnPointObj;

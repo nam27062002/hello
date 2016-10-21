@@ -6,11 +6,14 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public delegate void OnAttackStartDelegate();
 	public delegate void OnAttackDealDamageDelegate();
 	public delegate void OnAttackEndDelegate();
+	public delegate void OnEatDelegate();
 
 	public event OnAttachprojectile 		onAttachProjectile;
 	public event OnAttackStartDelegate 		onAttackStart;
 	public event OnAttackDealDamageDelegate onAttackDealDamage;
 	public event OnAttackEndDelegate 		onAttackEnd;
+	public event OnEatDelegate 				onEat;
+
 
 
 	// ------------------------------------------------------- //
@@ -33,5 +36,11 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public void AttackEnd() {
 		if (onAttackEnd != null)
 			onAttackEnd();
+	}
+
+	public void EatEvent()
+	{
+		if (onEat != null)
+			onEat();
 	}
 }

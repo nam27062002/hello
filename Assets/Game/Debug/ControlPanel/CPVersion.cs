@@ -27,6 +27,6 @@ public class CPVersion : MonoBehaviour {
 	private void Start() {
 		// Just initialize text
 		Text versionText = GetComponent<Text>();
-		versionText.text = "Version " + GameSettings.internalVersion.ToString();
+		versionText.text = "Version " + GameSettings.internalVersion;
 	}
 }

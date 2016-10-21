@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -46,14 +47,22 @@ namespace LevelEditor {
 		/// </summary>
 		public void OnGUI() {
 			// Group everything within a box
-			EditorGUILayout.BeginVertical(LevelEditorWindow.instance.styles.boxStyle); {
+			EditorGUILayout.BeginVertical(LevelEditorWindow.styles.boxStyle); {
 				// Title
 				GUI.skin.label.alignment = TextAnchor.UpperCenter;
 				GUILayout.Label("Groups");
 				GUI.skin.label.alignment = TextAnchor.UpperLeft;
 				
 				// Aux vars
-				Group[] groups = LevelEditorWindow.instance.sectionLevels.activeLevel.GetComponentsInChildren<Group>();
+				List<Level> levels = LevelEditorWindow.sectionLevels.activeLevels;
+				List<Group> groupsList = new List<Group>();
+				for( int i = 0; i<levels.Count; i++ )
+				{
+					Group[] g = levels[i].GetComponentsInChildren<Group>();	
+					groupsList.AddRange(g);
+				}
+				Group[] groups = groupsList.ToArray();
+				 
 					
 				// Spacing
 				GUILayout.Space(2);
@@ -62,7 +71,7 @@ namespace LevelEditor {
 				EditorGUILayout.BeginHorizontal(); {
 					if(GUILayout.Button("New")) {
 						// An external window will manage it
-						AddGroupWindow.Show(LevelEditorWindow.instance.sectionLevels.activeLevel, OnGroupCreated);
+						// AddGroupWindow.Show(LevelEditorWindow.sectionLevels.activeLevels, OnGroupCreated);
 					}
 					
 					GUI.enabled = (m_selectedGroup != null);
@@ -101,7 +110,7 @@ namespace LevelEditor {
 				EditorGUILayoutExt.Separator(new SeparatorAttribute(2f));
 						
 				// Scroll list
-				m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos, LevelEditorWindow.instance.styles.whiteScrollListStyle, GUILayout.Height(LIST_HEIGHT)); {
+				m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos, LevelEditorWindow.styles.whiteScrollListStyle, GUILayout.Height(LIST_HEIGHT)); {
 					// Generate labels and found selected index
 					int selectedIdx = -1;
 					string[] labels = new string[groups.Length];
@@ -114,12 +123,12 @@ namespace LevelEditor {
 
 					// Compute how many rows we can fit and distribute all items in columns
 					float height = LIST_HEIGHT - 30f;	// Approx size of margins and deco stuff
-					float rows = Mathf.Floor(height/LevelEditorWindow.instance.styles.groupListStyle.CalcSize(new GUIContent("sample label")).y);
+					float rows = Mathf.Floor(height/LevelEditorWindow.styles.groupListStyle.CalcSize(new GUIContent("sample label")).y);
 					int cols = Mathf.CeilToInt((float)(labels.Length)/rows);
 					
 					// Detect selection change
 					GUI.changed = false;
-					selectedIdx = GUILayout.SelectionGrid(selectedIdx, labels, cols, LevelEditorWindow.instance.styles.groupListStyle);
+					selectedIdx = GUILayout.SelectionGrid(selectedIdx, labels, cols, LevelEditorWindow.styles.groupListStyle);
 					if(GUI.changed) {
 						// Focus new selected group
 						m_selectedGroup = groups[selectedIdx];

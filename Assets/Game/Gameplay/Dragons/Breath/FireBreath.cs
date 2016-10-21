@@ -63,6 +63,9 @@ public class FireBreath : DragonBreathBehaviour {
 	float m_timeToNextLoopAudio = 0;
 	AudioSource m_lastAudioSource;
 
+	private Entity[] m_checkEntities = new Entity[50];
+	private int m_numCheckEntities = 0;
+
 	override protected void ExtendedStart() {
 
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameParticle), m_maxParticles, false);
@@ -71,8 +74,8 @@ public class FireBreath : DragonBreathBehaviour {
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_superFlameUpParticle), m_maxParticles, false);
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/" + m_flameLight), 1, false);
 
-		m_groundMask = 1 << LayerMask.NameToLayer("Ground") | 1 << LayerMask.NameToLayer("Water");
-		m_noPlayerMask = ~(1 << LayerMask.NameToLayer("Player"));
+		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
+		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
 		m_mouthTransform = GetComponent<DragonMotion>().tongue;
 		m_headTransform = GetComponent<DragonMotion>().head;
@@ -106,11 +109,11 @@ public class FireBreath : DragonBreathBehaviour {
 		return false; 
 	}
 
-	override public bool Overlaps( CircleArea2D _circle)
+	override public bool Overlaps(CircleAreaBounds _circle)
 	{
 		if (m_isFuryOn) 
 		{
-			if (_circle.Overlaps( m_bounds2D )) 
+			if (_circle.Overlaps(m_bounds2D)) 
 			{
 				if (IsInsideTriangle( _circle.center ))
 				{
@@ -302,25 +305,21 @@ public class FireBreath : DragonBreathBehaviour {
 		//--------------------------------------------------------------------------------------------
 		// try to burn things!!!
 		// search for preys!
-		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
-		for (int i = 0; i < preys.Length; i++) 
+		// Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_sphCenter, m_sphRadius);
+		m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_sphCenter, m_sphRadius, m_checkEntities);
+		for (int i = 0; i < m_numCheckEntities; i++) 
 		{
-			InflammableBehaviour entity =  preys[i].GetComponent<InflammableBehaviour>();
-			if (entity != null) 
+			Entity prey = m_checkEntities[i];
+			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
-				Entity prey = preys[i];
-				if ((prey.circleArea != null && Overlaps(prey.circleArea)) || IsInsideArea(entity.transform.position)) 
-				{
-					// Check if I can burn it
-					if (CanBurn( entity ) || m_type == Type.Super)
-					{
-						entity.Burn(damage * Time.deltaTime, transform);
+				if (CanBurn(prey) || m_type == Type.Super) {
+					AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
+					if (machine != null) {
+						machine.Burn(damage * Time.deltaTime, transform);
 					}
-					else
-					{
-						// Show message saying I cannot burn it
-						Messenger.Broadcast<DragonTier>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT);
-					}
+				} else {
+					// Show message saying I cannot burn it
+					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 				}
 			}
 		}

@@ -7,7 +7,7 @@ public class RectAreaBounds : AreaBounds {
 
 	public RectAreaBounds(Vector3 _center, Vector2 _size) {
 		m_size = _size;
-		m_size.z = 1f;
+		m_size.z = 4f;
 		m_extents = m_size * 0.5f;
 		m_bounds = new Bounds(_center, m_size);
 	}
@@ -47,8 +47,7 @@ public class RectAreaBounds : AreaBounds {
 		return m_bounds.center + offset;
 	}
 		
-	public bool Contains(Vector3 _point) {		
-		_point.z = m_bounds.center.z;
+	public bool Contains(Vector3 _point) {	
 		return m_bounds.Contains(_point);
 	}
 

@@ -31,7 +31,7 @@ public class SpawnerIconGeneratorEditor : Editor {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	private GameObject m_entityPrefab = null;
+	// private GameObject m_entityPrefab = null;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -42,7 +42,7 @@ public class SpawnerIconGeneratorEditor : Editor {
 	public void OnEnable() {
 		Spawner sp = typedTarget.GetComponent<Spawner>();
 		if(sp != null) {
-			m_entityPrefab = sp.m_entityPrefab;
+			// m_entityPrefab = sp.m_entityPrefab;
 		}
 	}
 
@@ -179,7 +179,7 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// </summary>
 	/// <param name="_entityPrefab">The prefab whose icon we want to create.</param>
 	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
-	public static void GenerateIcon(GameObject _entityPrefab, Color _backgroundColor) {
+	public static void GenerateIcon(GameObject _entityPrefab, Color _backgroundColor, string _name) {
 		// Generate a new texture
 		Texture2D tex = AssetPreview.GetAssetPreview(_entityPrefab);
 		if(tex != null) {
@@ -203,7 +203,8 @@ public class SpawnerIconGeneratorEditor : Editor {
 			// Save to file (replace any existing)
 			// [AOC] We must save it to a file in order to persist between sessions, otherwise the icon will be reseted once the scene is closed
 			byte[] bytes = tex.EncodeToPNG();
-			string iconFilePath = Application.dataPath + "/Gizmos/Spawners/" + _entityPrefab.name + ".png";
+			string iconFilePath = Application.dataPath + "/Gizmos/" + _name;
+			Directory.CreateDirectory( Path.GetDirectoryName(iconFilePath) );
 			System.IO.File.WriteAllBytes(iconFilePath, bytes);
 
 			// Import newly created png to assets database (so we have a GUID and all)
@@ -227,10 +228,16 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
 	public static void GenerateSpawnerIconsInResources(Color _backgroundColor) {
 		// Load all prefabs under the Entites folder
-		List<GameObject> entityPrefabs = ResourcesExt.LoadRecursively("Game/Entities");
-		for(int i = 0; i < entityPrefabs.Count; i++) {
-			// Just create an icon for each prefab
-			GenerateIcon(entityPrefabs[i], _backgroundColor);
+		string resourcesPath = Application.dataPath + "/Resources/";
+		string prefabsPath =  resourcesPath + IEntity.ENTITY_PREFABS_PATH;
+
+		string[] files = Directory.GetFiles(prefabsPath, "*.prefab", SearchOption.AllDirectories);
+		foreach (string f in files) 
+		{
+			string name = f.Substring(resourcesPath.Length);
+			name = name.Substring(0, name.Length - (".prefab").Length);
+			GameObject go = Resources.Load<GameObject>( name );
+			GenerateIcon(go, _backgroundColor, name + ".png");
 		}
 	}
 }

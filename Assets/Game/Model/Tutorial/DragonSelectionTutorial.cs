@@ -48,6 +48,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
 	private State m_state = State.IDLE;
+	private float m_targetDelta = 0f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -62,7 +63,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_canvasGroup = GetComponent<CanvasGroup>();
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -71,7 +72,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEvent>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -101,7 +102,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_timer.Start(m_backDuration * 1000);
 				} else {
 					// Timer not finished, scroll
-					m_scroller.delta = m_timer.GetDelta(m_ease);
+					m_scroller.cameraAnimator.delta = m_timer.GetDelta(m_ease);
 				}
 			} break;
 
@@ -111,6 +112,11 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Yes! Start scroll back animation
 					m_state = State.BACK;
 					m_timer.Start(m_backDuration * 1000);
+
+					// Compute target delta
+					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentDragon);
+					int menuOrder = (def == null) ? 0 : def.GetAsInt("order");
+					m_targetDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(menuOrder);
 				}
 			} break;
 
@@ -120,15 +126,15 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Yes! Stop tutorial
 					StopTutorial();
 
-					// Make sure we have the first dragon selected
-					m_scroller.SnapTo(0);
+					// Make sure we have the initial dragon selected
+					m_scroller.FocusDragon(UsersManager.currentUser.currentDragon, true);
 
 					// Update tutorial flag and save persistence
-					UserProfile.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
+					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
 					PersistenceManager.Save();
 				} else {
 					// Timer not finished, scroll
-					m_scroller.delta = 1f - m_timer.GetDelta(m_ease);	// [AOC] Reverse scroll!
+					m_scroller.cameraAnimator.delta = Mathf.Lerp(1f, m_targetDelta, m_timer.GetDelta(m_ease));	// [AOC] Reverse scroll!
 				}
 			} break;
 		}
@@ -150,7 +156,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			if(m_canvasGroup != null) m_canvasGroup.alpha = 0;
 
 			// Instant scroll to first dragon
-			m_scroller.delta = 0f;
+			m_scroller.cameraAnimator.delta = 0f;
 
 			// Start timer
 			m_timer.Start(m_delay * 1000);
@@ -185,7 +191,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// The current menu screen has changed.
 	/// </summary>
 	/// <param name="_event">Event data.</param>
-	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEvent _event) {
+	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
 		// Only if it comes from the main screen navigation system
 		if(_event.dispatcher != InstanceManager.GetSceneController<MenuSceneController>().screensController) return;
 
@@ -197,7 +203,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		}
 
 		// If the tutorial wasn't completed, launch it now
-		if(!UserProfile.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
 			StartTutorial();
 		}
 	}

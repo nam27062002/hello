@@ -23,7 +23,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[Header("Data")]
-	// [SkuList(DefinitionsCategory.DRAGON_SKILLS)]
+	[List("speed", "fire", "energy")]
 	public string m_skillSku;
 
 	[Header("References")]
@@ -115,7 +115,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		m_levelUpButton.interactable = skillData.CanUnlockNextLevel();
 		Text buttonText = m_levelUpButton.FindComponentRecursive<Text>("Text");
 		if(skillData.level == skillData.lastLevel) {
-			buttonText.text = Localization.Localize("TID_MAX");
+            buttonText.text = LocalizationManager.SharedInstance.Localize("TID_MAX");
 		} else {
 			buttonText.text = StringUtils.FormatNumber(skillData.nextLevelUnlockPrice);
 		}
@@ -128,19 +128,17 @@ public class MenuDragonSkillBar : MonoBehaviour {
 		// Get skill data
 		DragonSkill skillData = DragonManager.currentDragon.GetSkill(m_skillSku);
 
-		// Play Sound
-		AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Enough resources?
-		if(UserProfile.coins < skillData.nextLevelUnlockPrice) {
+		if(UsersManager.currentUser.coins < skillData.nextLevelUnlockPrice) {
 			// Show currency shop
 			//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
 
 			// Currency popup / Resources flow disabled for now
-			UIFeedbackText.CreateAndLaunch(Localization.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		} else {
 			// Perform transaction
-			UserProfile.AddCoins(-skillData.nextLevelUnlockPrice);
+			UsersManager.currentUser.AddCoins(-skillData.nextLevelUnlockPrice);
 
 			// Do it! ^_^
 			skillData.UnlockNextLevel();

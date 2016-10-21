@@ -27,20 +27,12 @@ public class EmptyGraphic : Graphic {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	[SerializeField] private bool m_gizmoOnlyWhenSelected = true;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Function you can override to generate specific vertex generation in your application.
-	/// Used by Text, Image, and RawImage for example to generate vertices specific to their use case.
-	/// For Unity 5.2 and lower.
-	/// </summary>
-	/// <param name="_vbo">List to fill with vertices.</param>
-	protected override void OnFillVBO(List<UIVertex> _vbo) {
-		// Just don't fill the list :D
-		_vbo.Clear();
-	}
+	#if UNITY_5_3_OR_NEWER
 
 	/// <summary>
 	/// Callback function when a UI element needs to generate vertices.
@@ -51,10 +43,43 @@ public class EmptyGraphic : Graphic {
 		_vh.Clear();
 	}
 
+	#else
+
 	/// <summary>
-	/// Draw gizmos on scene.
+	/// Function you can override to generate specific vertex generation in your application.
+	/// Used by Text, Image, and RawImage for example to generate vertices specific to their use case.
+	/// For Unity 5.2 and lower.
 	/// </summary>
-	void OnDrawGizmos() {
+	/// <param name="_vbo">List to fill with vertices.</param>
+	protected override void OnFillVBO(List<UIVertex> _vbo) {
+	// Just don't fill the list :D
+	_vbo.Clear();
+	}
+
+	#endif
+
+	/// <summary>
+	/// Draw gizmos on scene (when object is selected).
+	/// </summary>
+	private void OnDrawGizmosSelected() {
+		// Do nothing if always drawing gizmos (gizmos will be done by the normal OnDrawGizmos() call)
+		if(!m_gizmoOnlyWhenSelected) return;
+		DoGizmos();
+	}
+
+	/// <summary>
+	/// Always.
+	/// </summary>
+	private void OnDrawGizmos() {
+		// Do nothing if only drawing gizmos when selected (gizmos will be done by the OnDrawGizmosSelected() call)
+		if(m_gizmoOnlyWhenSelected) return;
+		DoGizmos();
+	}
+
+	/// <summary>
+	/// Do the actual gizmos drawing.
+	/// </summary>
+	private void DoGizmos() {
 		// Color and matrix
 		Gizmos.color = color;
 		Gizmos.matrix = transform.localToWorldMatrix;

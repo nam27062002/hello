@@ -92,8 +92,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		}
 
 		if (m_active) {
-			// Don't drain energy if cheat is enabled
-			if(!UnityEngine.Debug.isDebugBuild || !DebugSettings.infiniteBoost) {
+			// Don't drain energy if cheat is enabled or dragon fury is on
+			if(!DebugSettings.infiniteBoost && !m_dragon.IsFuryOn()) {
 				m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain);
 				if (m_dragon.energy <= 0f) {
 					StopBoost();
@@ -108,7 +108,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private void StartBoost() 
 	{
 		m_active = true;
-		m_motion.targetSpeedMultiplier = m_boostMultiplier;
+		m_motion.boostSpeedMultiplier = m_boostMultiplier;
 		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
 		{
@@ -122,7 +122,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	public void StopBoost() 
 	{
 		m_active = false;
-		m_motion.targetSpeedMultiplier = 1;
+		m_motion.boostSpeedMultiplier = 1;
 		// DeactivateTrails();
 		if (m_animator && m_animator.isInitialized && !m_insideWater)
 		{

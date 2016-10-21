@@ -16,9 +16,8 @@ using UnityEngine.UI;
 /// <summary>
 /// Main control of a single egg prefab in the menu.
 /// </summary>
-[RequireComponent(typeof(IncubatorEggBehaviour))]
-[RequireComponent(typeof(OpenEggBehaviour))]
-[RequireComponent(typeof(ReadyEggBehaviour))]
+//[RequireComponent(typeof(OpenEggBehaviour))]
+//[RequireComponent(typeof(ReadyEggBehaviour))]
 public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -27,6 +26,9 @@ public class EggController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Exposed
+	[SerializeField] private GameObject m_incubatorFX;
+
 	// Data
 	private Egg m_eggData = null;
 	public Egg eggData {
@@ -35,11 +37,6 @@ public class EggController : MonoBehaviour {
 	}
 
 	// Egg behaviours
-	private IncubatorEggBehaviour m_incubatorBehaviour = null;
-	public IncubatorEggBehaviour incubatorBehaviour {
-		get { return m_incubatorBehaviour; }
-	}
-
 	private OpenEggBehaviour m_openBehaviour = null;
 	public OpenEggBehaviour openBehaviour {
 		get { return m_openBehaviour; }
@@ -61,7 +58,6 @@ public class EggController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_incubatorBehaviour = GetComponent<IncubatorEggBehaviour>();
 		m_openBehaviour = GetComponent<OpenEggBehaviour>();
 		m_readyBehaviour = GetComponent<ReadyEggBehaviour>();
 		m_animator = GetComponentInChildren<Animator>();
@@ -105,13 +101,40 @@ public class EggController : MonoBehaviour {
 		if(m_eggData == null) return;
 
 		// Enable/disable behaviours based on current egg's state
-		m_incubatorBehaviour.enabled = (m_eggData.state == Egg.State.STORED);
 		m_openBehaviour.enabled = (m_eggData.state == Egg.State.OPENING);
 		m_readyBehaviour.enabled = (m_eggData.state == Egg.State.READY);
 
-		// Update animator! - Luckily animator is self-managed
-		m_animator.SetInteger("egg_state", (int)m_eggData.state);
-		m_animator.SetTrigger("egg_state_changed");
+		// Launch different animations depending on state
+		switch(m_eggData.state) {
+			case Egg.State.INIT:
+			case Egg.State.STORED:
+			case Egg.State.OPENING:
+			case Egg.State.COLLECTED: {
+				m_animator.SetTrigger("idle");
+			} break;
+
+			case Egg.State.READY_FOR_INCUBATION:
+			case Egg.State.SHOWROOM: {
+				m_animator.SetTrigger("idle_rotation");
+			} break;
+
+			case Egg.State.INCUBATING: {
+				m_animator.SetTrigger("incubating");
+			} break;
+
+			case Egg.State.READY: {
+				m_animator.SetTrigger("ready");
+			} break;
+		}
+
+		// In addition, if it's the egg on the incubator show some nice FX
+		if(m_incubatorFX != null) {
+			bool showFX = (m_eggData.state == Egg.State.READY_FOR_INCUBATION
+						|| m_eggData.state == Egg.State.INCUBATING
+						|| m_eggData.state == Egg.State.READY);
+			//m_incubatorFX.SetActive(showFX);
+			m_incubatorFX.SetActive(false);	// Disable for now
+		}
 	}
 
 	//------------------------------------------------------------------//

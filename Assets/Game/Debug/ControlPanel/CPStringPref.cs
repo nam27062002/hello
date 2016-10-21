@@ -42,7 +42,7 @@ public class CPStringPref : CPPrefBase {
 	/// </summary>
 	override public void Refresh() {
 		base.Refresh();
-		m_input.text = Prefs.GetString(id);
+		m_input.text = Prefs.GetStringPlayer(id);
 	}
 
 	//------------------------------------------------------------------//
@@ -52,6 +52,6 @@ public class CPStringPref : CPPrefBase {
 	/// The toggle has changed.
 	/// </summary>
 	public void OnValueChanged() {
-		Prefs.SetString(id, m_input.text);
+		Prefs.SetStringPlayer(id, m_input.text);
 	}
 }

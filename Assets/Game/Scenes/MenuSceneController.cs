@@ -62,15 +62,15 @@ public class MenuSceneController : SceneController {
 		base.Awake();
 
 		// Initialize selected dragon getting the one from the profile
-		m_selectedDragon = UserProfile.currentDragon;	// UserProfile should be loaded and initialized by now
+		m_selectedDragon = UsersManager.currentUser.currentDragon;	// UserProfile should be loaded and initialized by now
 
 		// Initialize the selected level in a similar fashion
-		m_selectedLevel = UserProfile.currentLevel;		// UserProfile should be loaded and initialized by now
+		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
 		// Shortcut to screens controller
-		m_screensController = GetComponent<MenuScreensController>();
+		m_screensController = GetComponent<MenuScreensController>();        
 	}
-
+	
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
@@ -78,7 +78,6 @@ public class MenuSceneController : SceneController {
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.AddListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	/// <summary>
@@ -88,7 +87,6 @@ public class MenuSceneController : SceneController {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.RemoveListener<string>(GameEvents.MENU_LEVEL_SELECTED, OnLevelSelected);
 	}
 
 	//------------------------------------------------------------------//
@@ -113,6 +111,16 @@ public class MenuSceneController : SceneController {
 		return screensController.GetScene((int)_screen);
 	}
 
+	/// <summary>
+	/// Changes dragon selected to the given one.
+	/// </summary>
+	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
+	public void SetSelectedDragon(string _sku) {
+		// Let dragon screen do the job
+		MenuDragonScreenController dragonScreen = GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>();
+		dragonScreen.dragonSelector.SetSelectedDragon(_sku);
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -120,15 +128,6 @@ public class MenuSceneController : SceneController {
 	/// Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-		// If selected level is unlocked, update profile
-		if(m_selectedLevel != UserProfile.currentLevel && LevelManager.IsLevelUnlocked(m_selectedLevel)) {
-			// Update profile
-			UserProfile.currentLevel = m_selectedLevel;
-			
-			// Save persistence
-			PersistenceManager.Save();
-		}
-
 		// Go to game!
 		// [AOC] No need to block the button, the GameFlow already controls spamming
 		FlowManager.GoToGame();
@@ -143,9 +142,9 @@ public class MenuSceneController : SceneController {
 		m_selectedDragon = _sku;
 
 		// If owned and different from profile's current dragon, update profile
-		if(_sku != UserProfile.currentDragon && DragonManager.GetDragonData(_sku).isOwned) {
+		if(_sku != UsersManager.currentUser.currentDragon && DragonManager.GetDragonData(_sku).isOwned) {
 			// Update profile
-			UserProfile.currentDragon = _sku;
+			UsersManager.currentUser.currentDragon = _sku;
 		
 			// Save persistence
 			PersistenceManager.Save();
@@ -162,15 +161,6 @@ public class MenuSceneController : SceneController {
 	public void OnDragonAcquired(DragonData _data) {
 		// Just make it the current dragon
 		OnDragonSelected(_data.def.sku);
-	}
-
-	/// <summary>
-	/// A level has been selected.
-	/// </summary>
-	/// <param name="_levelSku">The sku of the selected level.</param>
-	public void OnLevelSelected(string _levelSku) {
-		// Update menu selected level
-		m_selectedLevel = _levelSku;
 	}
 }
 

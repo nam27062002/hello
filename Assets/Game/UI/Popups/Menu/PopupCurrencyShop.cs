@@ -22,7 +22,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string PATH = "UI/Popups/Shop/PF_PopupCurrencyShop";
+	public static readonly string PATH = "UI/Popups/PF_PopupCurrencyShop";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -73,8 +73,8 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	public void OnAddCoins() {
 		// Just do it
-		UserProfile.AddCoins(m_coinsAmount);
-		PersistenceManager.Save();
+		UsersManager.currentUser.AddCoins(m_coinsAmount);
+		PersistenceManager.Save(true);
 
 		// Close popup?
 		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
@@ -85,8 +85,8 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	public void OnAddPC() {
 		// Just do it
-		UserProfile.AddPC(m_pcAmount);
-		PersistenceManager.Save();
+		UsersManager.currentUser.AddPC(m_pcAmount);
+		PersistenceManager.Save(true);
 
 		// Close popup?
 		if(m_closeAfterPurchase) GetComponent<PopupController>().Close(true);
