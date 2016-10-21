@@ -534,18 +534,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		float angularSpeed = m_motion.angularVelocity.magnitude;
 
-		float arcRadius = GetEatDistance();
-		arcRadius = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, arcRadius, arcRadius * m_angleSpeedMultiplier);
+		float eatDistance = GetEatDistance();
+		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
 		float speed = m_motion.velocity.magnitude;
-		arcRadius = arcRadius * m_eatDetectionRadiusMultiplier;
+		float arcRadius = eatDistance * m_eatDetectionRadiusMultiplier;
 		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
 
 		Vector3 dir = m_motion.direction;
 		dir.z = 0;
 		dir.Normalize();
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
-		Vector3 arcOrigin = m_suction.position - (dir * arcRadius);
+		Vector3 arcOrigin = m_suction.position - (dir * eatDistance);
 
 		m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
 		for (int e = 0; e < m_numCheckEntities; e++) 
