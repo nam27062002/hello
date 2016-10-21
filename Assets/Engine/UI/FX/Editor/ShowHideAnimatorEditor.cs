@@ -104,6 +104,7 @@ public class ShowHideAnimatorEditor : Editor {
 		if(onShowPreAnimationProp.isExpanded) {
 			EditorGUI.indentLevel++;
 			DoProperty("OnShowPreAnimation");
+			DoProperty("OnShowPreAnimationAfterDelay");
 			DoProperty("OnShowPostAnimation");
 			DoProperty("OnHidePreAnimation");
 			DoProperty("OnHidePostAnimation");
