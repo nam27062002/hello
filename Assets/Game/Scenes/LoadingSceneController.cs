@@ -99,6 +99,10 @@ public class LoadingSceneController : SceneController {
 		PoolManager.CreateInstance(true);
 		ParticleManager.CreateInstance(true);
 		PopupManager.CreateInstance(true);
+		FirePropagationManager.CreateInstance(true);
+		SpawnerManager.CreateInstance(true);
+		SpawnerAreaManager.CreateInstance(true);
+		EntityManager.CreateInstance(true);
 		InstanceManager.CreateInstance(true);
 		
         // Load persistence        

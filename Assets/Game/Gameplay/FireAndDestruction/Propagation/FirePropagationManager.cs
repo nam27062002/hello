@@ -32,9 +32,6 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	void Start() {
 		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireNewProc"), 25, true);
 		ParticleManager.CreatePool("SmokeParticle", "", 25);
-
-		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
-		m_timer = m_checkFireTime;
 	}
 
 	/// <summary>
@@ -68,6 +65,9 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		for(int i = 0; i < m_fireNodes.Count; i++) {
 			m_fireNodesTree.Insert(m_fireNodes[i]);
 		}
+
+		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
+		m_timer = m_checkFireTime;
 	}
 
 	public static void Insert(FireNode _fireNode) {
