@@ -179,6 +179,9 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		// Do it - only player prefs!
 		PlayerPrefs.DeleteAll();
 
+        // The default value of some settings is true so we need to initialize them
+        DebugSettings.Init();
+
 		// Refresh control panel
 		// Double toggle! xD
 		Toggle();

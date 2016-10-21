@@ -27,6 +27,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	/// </summary>
 	protected void Awake()
     {
+#if !PRODUCTION
+        DebugSettings.Init();
+#endif
         Setting_Init();
 
         Reset();
@@ -60,13 +63,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         SaveLoadIsCompleted = false;
         Game_IsInGame = false;
         Game_IsPaused = false;
-        Debug_IsPaused = false;
+        Debug_IsPaused = false;        
     }
 
     public bool NeedsToRestartFlow { get; set; }
 
-    private bool SaveLoadIsCompleted { get; set; }    
-
+    private bool SaveLoadIsCompleted { get; set; }
+    
     protected void Update()
     {        
         // To Debug
@@ -75,7 +78,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             //NeedsToRestartFlow = true;           
             //Debug_ToggleIsPaused();
 
-            Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+            //Settings_SetSoundIsEnabled(!Settings_GetSoundIsEnabled(), true);
+            //Debug.Log("eggs collected = " + UsersManager.currentUser.eggsCollected);            
         }*/     
         
         if (NeedsToRestartFlow)
