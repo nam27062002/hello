@@ -109,8 +109,8 @@ SubShader {
      			fixed3 pointLights = fixed3(0,0,0);
      			for (int index = 0; index <1; index++)
 	            {    
-					float4 lightPosition = float4(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index], 1.0);
-					float3 vertexToLightSource = lightPosition.xyz - i.posWorld.xyz;
+					float3 lightPosition = float3(unity_4LightPosX0[index], unity_4LightPosY0[index], unity_4LightPosZ0[index]);
+					float3 vertexToLightSource = lightPosition - i.posWorld;
 					float3 lightDirection = normalize(vertexToLightSource);
 					float squaredDistance = dot(vertexToLightSource, vertexToLightSource);
 					float attenuation = 1.0 / (1.0 + unity_4LightAtten0[index] * squaredDistance);
@@ -118,14 +118,14 @@ SubShader {
 					pointLights = pointLights + diffuseReflection;
 	            }
 
-	            // Inner lights
-     			fixed4 selfIlluminate = ( main * (detail.r * _InnerLightAdd * _InnerLightColor));
-
 				// Specular
-				float specularLight = pow(max(dot( normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
+				float specularLight = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * detail.g;
+
+	            // Inner lights
+     			fixed4 selfIlluminate = (main * (detail.r * _InnerLightAdd * _InnerLightColor));
 
 				// fixed4 col = (diffuse + fixed4(pointLights + ShadeSH9(float4(normalDirection, 1.0)),1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
-				fixed4 col = (diffuse + fixed4(pointLights + i.vLight,1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
+				fixed4 col = (diffuse + fixed4(pointLights + i.vLight, 1)) * main * _ColorMultiply + _ColorAdd + specularLight + selfIlluminate; // To use ShaderSH9 better done in vertex shader
 				UNITY_OPAQUE_ALPHA(col.a); 
 
 				return col; 

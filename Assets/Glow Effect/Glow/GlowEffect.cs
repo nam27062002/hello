@@ -53,28 +53,15 @@ namespace GlowEffect
         public void Awake()
         {
             origCamera = GetComponent<Camera>();
-
-#if !PRODUCTION
-            Debug_Awake();
-#endif
-        }
-
-        public void OnDestroy()
-        {
-#if !PRODUCTION
-            Debug_OnDestroy();
-#endif
         }
 
         public void Start()
         {
             // Disable if we don't support image effects
-            if (!SystemInfo.supportsImageEffects)
-            {
+            if (!SystemInfo.supportsImageEffects) {
                 Debug.Log("Disabling the Glow Effect. Image effects are not supported (do you have Unity Pro?)");
                 enabled = false;
             }
-            origCamera.depthTextureMode = DepthTextureMode.Depth;
 
             normalizedRect = new Rect(0, 0, 1, 1);
         }
@@ -163,6 +150,7 @@ namespace GlowEffect
                 } else {
                     Graphics.Blit(replaceRenderTexture, blurB, glowMaterial, 1);
                 }
+/*
                 for (int i = 1; i < blurIterations; ++i) {
                     if (i % 2 == 0) {
                         blurB.DiscardContents();
@@ -172,10 +160,51 @@ namespace GlowEffect
                         Graphics.Blit(blurB, blurA, glowMaterial, 1);
                     }
                 }
-                // calculate glow
-                Graphics.Blit(source, destination, glowMaterial, 0);
-                RenderTexture.ReleaseTemporary(blurA);
-                RenderTexture.ReleaseTemporary(blurB);
+ */
+
+#if UNITY_IOS
+                bool isIPhone5 = (iOS.Device.generation == iOS.DeviceGeneration.Iphone5);
+#else
+                bool isIPhone5 = false;
+#endif
+                if (isIPhone5)
+                {
+                    RenderTexture.ReleaseTemporary(blurA);
+                    for (int i = 1; i < blurIterations; i++)
+                    {
+                        blurA = RenderTexture.GetTemporary(downsampleSize, downsampleSize, 0, RenderTextureFormat.ARGB32);
+                        Graphics.Blit(blurB, blurA, glowMaterial, 1);
+                        RenderTexture.ReleaseTemporary(blurB);
+                        blurB = blurA;
+                    }
+
+                    glowMaterial.SetTexture("_Glow", blurA);
+
+                    // calculate glow
+                    Graphics.Blit(source, destination, glowMaterial, 0);
+                    RenderTexture.ReleaseTemporary(blurA);
+                }
+                else
+                {
+                    for (int i = 1; i < blurIterations; ++i)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            blurB.DiscardContents();
+                            Graphics.Blit(blurA, blurB, glowMaterial, 1);
+                        }
+                        else
+                        {
+                            blurA.DiscardContents();
+                            Graphics.Blit(blurB, blurA, glowMaterial, 1);
+                        }
+                    }
+                    // calculate glow
+                    Graphics.Blit(source, destination, glowMaterial, 0);
+                    RenderTexture.ReleaseTemporary(blurA);
+                    RenderTexture.ReleaseTemporary(blurB);
+                }
+                    
             } else {
                 Graphics.Blit(source, destination, glowMaterial, (((int)glowMode % 2 == 1) ? 4 : 3));
             }
@@ -200,33 +229,5 @@ namespace GlowEffect
             Shader.DisableKeyword("GLOWEFFECT_MULTIPLY_COLOR");
             Shader.DisableKeyword("GLOWEFFECT_MULTIPLY_COLOR_OFF");
         }
-
-        #region debug
-        private void Debug_Awake()
-        {
-            Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
-
-            // Enable/Disable object depending on the flag
-            Debug_SetActive();
-        }
-
-        private void Debug_OnDestroy()
-        {
-            Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
-        }
-
-        private void Debug_OnChanged(string _id, bool _newValue)
-        {            
-            if (_id == DebugSettings.INGAME_GLOW)
-            {
-                // Enable/Disable object
-                Debug_SetActive();
-            }
-        }
-
-        private void Debug_SetActive() {
-            enabled = DebugSettings.Get(DebugSettings.INGAME_GLOW);
-        }
-        #endregion
     }
 }
