@@ -83,6 +83,7 @@ GameObject:
   - 114: {fileID: 11487054}
   - 114: {fileID: 114000013077924290}
   - 114: {fileID: 114000012469074318}
+  - 114: {fileID: 114000010816463694}
   m_Layer: 12
   m_Name: PF_DragonClassic
   m_TagString: Player
@@ -2542,7 +2543,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011004343132}
-  m_LocalRotation: {x: 0.0878658, y: -0.7016266, z: -0.0878657, w: 0.7016263}
+  m_LocalRotation: {x: 0.08786579, y: -0.70162654, z: -0.087865695, w: 0.70162624}
   m_LocalPosition: {x: 0, y: -0.365242, z: -4.312249}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3496,6 +3497,48 @@ MonoBehaviour:
   m_eatBigSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: 
+--- !u!114 &114000010816463694
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1669b0a062dc66842ab1bca41a93ebe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioObjectPrefab: {fileID: 100000, guid: b4423c09d0d59459584b60e427e2871a, type: 2}
+  Persistent: 0
+  UnloadAudioClipsOnDestroy: 0
+  UsePooledAudioObjects: 1
+  PlayWithZeroVolume: 0
+  EqualPowerCrossfade: 0
+  musicCrossFadeTime: 0
+  ambienceSoundCrossFadeTime: 0
+  specifyCrossFadeInAndOutSeperately: 0
+  _musicCrossFadeTime_In: 0
+  _musicCrossFadeTime_Out: 0
+  _ambienceSoundCrossFadeTime_In: 0
+  _ambienceSoundCrossFadeTime_Out: 0
+  AudioCategories: []
+  musicPlaylists:
+  - name: Default
+    playlistItems: []
+  musicPlaylist: []
+  loopPlaylist: 0
+  shufflePlaylist: 0
+  crossfadePlaylist: 0
+  delayBetweenPlaylistTracks: 1
+  _isAdditionalAudioController: 0
+  _audioDisabled: 0
+  _volume: 1
+  _currentInspectorSelection:
+    currentCategoryIndex: 0
+    currentItemIndex: -1
+    currentSubitemIndex: -1
+    currentPlaylistEntryIndex: 0
+    currentPlaylistIndex: 0
 --- !u!114 &114000010921502668
 MonoBehaviour:
   m_ObjectHideFlags: 1
