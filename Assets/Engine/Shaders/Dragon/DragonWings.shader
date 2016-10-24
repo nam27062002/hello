@@ -25,7 +25,7 @@ SubShader {
 	ZWrite on
 	Blend SrcAlpha OneMinusSrcAlpha 
 	Cull Off
-//	Cull Back
+//	Cull Front
 	ColorMask RGBA
 	
 	Pass {
