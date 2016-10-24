@@ -257,7 +257,8 @@ public class GameCamera : MonoBehaviour
 		m_bossCamMode = BossCamMode.NoBoss;
 		m_state = State.INTRO;
 #if !PRODUCTION
-	    // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
+        // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
+        Debug_Awake();
 #endif
 
 		InstanceManager.gameCamera = this;
@@ -345,9 +346,13 @@ public class GameCamera : MonoBehaviour
 		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
 
 		InstanceManager.gameCamera = null;
-	}
 
-	private void OnDebugSettingChanged(string _id, bool _newValue) {
+#if !PRODUCTION
+        Debug_OnDestroy();
+#endif
+    }
+
+    private void OnDebugSettingChanged(string _id, bool _newValue) {
 		// Show collisions cheat?
 		if(_id == DebugSettings.NEW_CAMERA_SYSTEM) {
 			// Enable/Disable object
@@ -1269,4 +1274,39 @@ public class GameCamera : MonoBehaviour
 			Gizmos.DrawWireCube(center, size);
 		}
 	}
+
+    #region debug
+    // This region is responsible for enabling/disabling the glow effect for profiling purposes. This code is placed here because GlowEffect is a third-party code so 
+    // we don't want to change it if it's not really necessary in order to make future updates easier
+    private void Debug_Awake()
+    {
+        Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+
+        // Enable/Disable object depending on the flag
+        Debug_SetActive();
+    }
+
+    private void Debug_OnDestroy()
+    {
+        Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+    }
+
+    private void Debug_OnChanged(string _id, bool _newValue)
+    {
+        if (_id == DebugSettings.INGAME_GLOW)
+        {
+            // Enable/Disable object
+            Debug_SetActive();
+        }
+    }
+
+    private void Debug_SetActive()
+    {
+        GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
+        if (glow != null)
+        {
+            glow.enabled = DebugSettings.Get(DebugSettings.INGAME_GLOW);
+        }
+    }
+    #endregion
 }
