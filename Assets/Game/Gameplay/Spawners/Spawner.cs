@@ -352,7 +352,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	private void Spawn() {
-		uint rail = 0;
+		int rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {
 			GameObject spawning = m_entities[i];
 			spawning.SetActive(true);
@@ -376,6 +376,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
 			if (pilot != null) {
+				pilot.SetRail(rail, (int)m_rails);
+				rail = (rail + 1) % (int)m_rails;
 				pilot.guideFunction = m_guideFunction;
 				pilot.Spawn(this);
 			}
@@ -388,16 +390,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 
 			AI.Machine machine = spawning.GetComponent<AI.Machine>();
-			if (machine != null) {
-				machine.SetRail(rail, m_rails);
-				rail = (rail + 1) % m_rails;
-
-				if (m_groupController) {	
-					machine.EnterGroup(ref m_groupController.flock);
-				}
+			if (machine != null && m_groupController) {				
+				machine.EnterGroup(ref m_groupController.flock);
 			}
-
-
 		}
 
 		// Disable this spawner after a number of spawns
@@ -435,6 +430,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	virtual protected Vector3 RandomStartDisplacement()	{
-		return Random.onUnitSphere * 2f;
+		Vector3 v = Random.onUnitSphere * 2f;
+		v.z = 0f;
+		return v;
 	}
 }

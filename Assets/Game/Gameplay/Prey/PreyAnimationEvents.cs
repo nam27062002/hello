@@ -14,8 +14,10 @@ public class PreyAnimationEvents : MonoBehaviour {
 	public event OnAttackEndDelegate 		onAttackEnd;
 	public event OnEatDelegate 				onEat;
 
-
-
+	// To avoid blend trees to fire the same event twice in one frame we will use a flag
+	// For the moment we use attack start flag for the archer
+	private bool m_attackStartFlag = true;
+	private bool m_attackEndFlag = false;
 	// ------------------------------------------------------- //
 
 	public void AttachProjectile() {
@@ -24,8 +26,13 @@ public class PreyAnimationEvents : MonoBehaviour {
 	}
 
 	public void AttackStart() {
-		if (onAttackStart != null)
-			onAttackStart();
+		if (m_attackStartFlag){
+			m_attackStartFlag = false;
+			m_attackEndFlag = true;
+			if (onAttackStart != null){
+				onAttackStart();
+			}
+		}
 	}
 
 	public void AttackDealDamage() {
@@ -34,8 +41,13 @@ public class PreyAnimationEvents : MonoBehaviour {
 	}
 
 	public void AttackEnd() {
-		if (onAttackEnd != null)
-			onAttackEnd();
+		if (m_attackEndFlag)
+		{
+			m_attackStartFlag = true;
+			m_attackEndFlag = false;
+			if (onAttackEnd != null)
+				onAttackEnd();
+		}
 	}
 
 	public void EatEvent()

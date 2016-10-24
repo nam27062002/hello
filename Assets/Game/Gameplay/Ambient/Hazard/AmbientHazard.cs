@@ -82,6 +82,9 @@ public class AmbientHazard : MonoBehaviour {
 	[SerializeField] private Animator m_animator = null;
 	// Optional
 
+	[Separator("Sound")]
+	[SerializeField] private string m_onActiveSound;
+
 	// Collision
 	[Separator("Collider")]
 	[SerializeField] private CollisionShape m_collisionShape = CollisionShape.CUBOID;
@@ -346,6 +349,9 @@ public class AmbientHazard : MonoBehaviour {
 				// Reset timer
 				m_stateTimer = 0f;
 				m_stateTargetTime = m_activationDuration;
+
+				if ( !string.IsNullOrEmpty(m_onActiveSound) )
+					AudioController.Play(m_onActiveSound, transform.position);
 
 				// Start particles!
 				ActivateParticles(true);

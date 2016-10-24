@@ -23,11 +23,15 @@ namespace AI {
 		[SerializeField] private StateMachine m_brainResource;
 		public StateMachine brainResource { get { return m_brainResource; }}
 
+		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
+		protected override float railSeparation { get { return m_railSeparation.GetRandom(); } }
+
 		[SerializeField] private Range m_speedFactorRange = new Range(1f, 1f);
 		private float m_speedFactor;
 		protected override float speedFactor { get { return m_speedFactor; } }
 
 
+		//--------------------------------------------------------------------//
 		public virtual bool avoidCollisions { get { return false; } set { } }
 
 		private StateMachine m_brain;
@@ -50,6 +54,10 @@ namespace AI {
 		//--------------------------------------------------------------------//
 		public virtual void Spawn(ISpawner _spawner) {
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
+
+			Vector3 pos = transform.position;
+			pos.z += zOffset;
+			transform.position = pos;
 
 			SetArea(_spawner);
 
@@ -78,7 +86,7 @@ namespace AI {
 		public void SetArea(ISpawner _spawner) {
 			if (_spawner != null) {
 				m_area = _spawner.area;
-				m_homePosition = _spawner.transform.position;
+				m_homePosition = transform.position;
 				m_guideFunction = _spawner.guideFunction;
 				m_target = m_homePosition;
 			}

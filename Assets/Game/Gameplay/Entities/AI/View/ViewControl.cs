@@ -45,9 +45,19 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[SeparatorAttribute]
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
+	[SerializeField] private string m_onEatenAudio;
+
+	[SeparatorAttribute]
+	[SerializeField] private string m_onBurnAudio;
 
 	[SeparatorAttribute]
 	[SerializeField] private ParticleData m_explosionParticles; // this will explode when burning
+	[SerializeField] private string m_onExplosionAudio;
+
+	[SeparatorAttribute("More Audios")]
+	[SerializeField] private string m_onAttackAudio;
+	[SerializeField] private string m_onScaredAudio;
+	[SerializeField] private string m_onPanicAudio;
 
 	[SeparatorAttribute("Skin")]
 	[SerializeField] private List<SkinData> m_skins = new List<SkinData>();
@@ -78,6 +88,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	private GameObject m_pcTrail = null;
 
+	private PreyAnimationEvents m_animEvents;
+
 	//-----------------------------------------------
 	// Use this for initialization
 	//-----------------------------------------------
@@ -85,6 +97,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
 		if (m_animator != null) m_animator.logWarnings = false;
+		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
+		if ( m_animEvents != null)
+			m_animEvents.onAttackStart += animEventsOnAttackStart;
 
 		// Load gold material
 		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
@@ -120,6 +135,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 
 		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
+	}
+
+	void animEventsOnAttackStart ()
+	{
+		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
+			AudioController.Play( m_onAttackAudio, transform.position );
 	}
 	//
 
@@ -304,6 +325,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		
 		if (m_scared != _scared) {
 			m_scared = _scared;
+			if ( !string.IsNullOrEmpty(m_onScaredAudio) )
+				AudioController.Play(m_onScaredAudio, transform.position);
 			m_animator.SetBool("scared", _scared);
 		}
 	}
@@ -317,6 +340,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 				// will we have a special animation when burning?
 				m_animator.speed = 0f;
 			} else {
+				if ( !string.IsNullOrEmpty(m_onPanicAudio) )
+					AudioController.Play( m_onPanicAudio, transform.position);
 				m_animator.SetBool("hold", _panic);
 			}
 		}
@@ -339,6 +364,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			return;
 		
 		if (!m_attack) {
+			if (!string.IsNullOrEmpty(m_onAttackAudio))
+				AudioController.Play(m_onAttackAudio, transform.position);
 			m_attack = true;
 			m_animator.SetBool("attack", true);
 		}
@@ -416,6 +443,14 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
 
+		if (_eaten){
+			if (!string.IsNullOrEmpty( m_onEatenAudio ))
+				AudioController.Play( m_onEatenAudio, transform.position);
+		}else{
+			if (!string.IsNullOrEmpty( m_onExplosionAudio ))
+				AudioController.Play( m_onExplosionAudio, transform.position);
+		}
+
 		// Stop pc trail effect (if any)
 		if(m_pcTrail != null) {
 			ParticleManager.ReturnInstance(m_pcTrail);
@@ -424,6 +459,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 	public void Burn() {
+		if ( !string.IsNullOrEmpty( m_onBurnAudio ) ){
+			AudioController.Play( m_onBurnAudio, transform.position);
+		}
 		m_animator.enabled = false;
 	}
 }
