@@ -281,7 +281,7 @@ public class GameCamera : MonoBehaviour
 		m_useDampCamera = DebugSettings.Get(DebugSettings.NEW_CAMERA_SYSTEM);
 
 	}
-
+	/*
 	IEnumerator Start() 
 	{
 		while( !InstanceManager.GetSceneController<GameSceneControllerBase>().IsLevelLoaded())
@@ -289,6 +289,9 @@ public class GameCamera : MonoBehaviour
 			yield return null;
 		}
 
+	}*/
+
+	public void Init() {
 		GameObject gameInputObj = GameObject.Find("PF_GameInput");
 		if(gameInputObj != null) 
 		{
@@ -311,6 +314,8 @@ public class GameCamera : MonoBehaviour
 			m_animatedCamera.PlayIntro();
 			m_unityCamera.enabled = false;	
 		}
+
+		UpdateBounds();
 	}
 
 	private void MoveToSpawnPos( string sku )
