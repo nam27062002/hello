@@ -22,7 +22,7 @@ public class HUDMultiplier : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private static readonly string COMBO_SFX_PATH = "audio/sfx/UI/ComboFX/hsx_ui_combo_%U0";
+	private static readonly string COMBO_SFX_PATH = "ui_combo_%U0";
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -136,7 +136,7 @@ public class HUDMultiplier : MonoBehaviour {
 				// And sound! ^^
 				m_comboSFXIdx = Mathf.Min(m_comboSFXIdx + 1, 10);	// Increase combo index! Max combo audio available sounds.
 				string audioPath = COMBO_SFX_PATH.Replace("%U0", m_comboSFXIdx.ToString());
-				AudioManager.instance.PlayClip(audioPath);
+				AudioController.Play( audioPath );
 			}
 		}
 	}
