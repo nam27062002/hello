@@ -1060,6 +1060,8 @@ public class GameCamera : MonoBehaviour
     
     private Ray[] m_cameraRays = new Ray[4];
     private Vector3[] m_cameraPts = new Vector3[4];
+    private FastBounds2D[] m_bounds = new FastBounds2D[2];
+    private float[] m_depth = new float[2];
 
     void UpdateBounds()
 	{
@@ -1072,22 +1074,24 @@ public class GameCamera : MonoBehaviour
         m_cameraRays[1] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, 0.0f, z));
         m_cameraRays[2] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, m_unityCamera.pixelHeight, z));
         m_cameraRays[3] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, m_unityCamera.pixelHeight, z));
-		
-		// generate two world bounds, one for z=0, one for background spawners
-		float[] depth = {0f, SpawnerManager.BACKGROUND_LAYER_Z};
-		FastBounds2D[] bounds = {m_screenWorldBounds, m_backgroundWorldBounds};
 
-		for (int j = 0; j < depth.Length; j++) {			
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, depth[j]));			
+        // generate two world bounds, one for z=0, one for background spawners
+        m_depth[0] = 0f;
+        m_depth[1] = SpawnerManager.BACKGROUND_LAYER_Z;
+        m_bounds[0] = m_screenWorldBounds;
+        m_bounds[1] = m_backgroundWorldBounds;
+
+		for (int j = 0; j < m_depth.Length; j++) {			
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, m_depth[j]));			
 						
 			for (int i=0; i<4; i++) {
 				Vector3? intersect = Util.RayPlaneIntersect(m_cameraRays[i], plane);
 				if(intersect != null) {
                     m_cameraPts[i] = (Vector3)intersect;
-					if(i == 0)	// initialize bounds with first point and zero size
-						bounds[j].Set(m_cameraPts[i].x, m_cameraPts[i].y, 0.0f, 0.0f);
+					if(i == 0)  // initialize bounds with first point and zero size
+                        m_bounds[j].Set(m_cameraPts[i].x, m_cameraPts[i].y, 0.0f, 0.0f);
 					else
-						bounds[j].Encapsulate(ref m_cameraPts[i]);
+                        m_bounds[j].Encapsulate(ref m_cameraPts[i]);
 				}
 			}
 			
