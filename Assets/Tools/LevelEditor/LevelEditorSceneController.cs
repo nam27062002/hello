@@ -116,18 +116,21 @@ namespace LevelEditor {
 		/// Do all the necessary stuff to start a game.
 		/// </summary>
 		private void StartGame() {
-			// Simulate level loaded
-			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
-
-			// Run spawner manager
-			SpawnerManager.instance.EnableSpawners();
-
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 
 			// Put player in position and make it playable
 			InstanceManager.player.MoveToSpawnPoint(true);
 			InstanceManager.player.playable = true;
+
+			// Init game camera
+			InstanceManager.gameCamera.Init();
+
+			// Simulate level loaded
+			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+
+			// Run spawner manager
+			SpawnerManager.instance.EnableSpawners();
 
 			// Enable reward manager to see coins/score feedback
 			RewardManager.Reset();
