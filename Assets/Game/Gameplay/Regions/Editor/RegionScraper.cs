@@ -68,7 +68,7 @@ class RegionScraper
                 */
 				polyMeshes[i].meshCollider.convex = true;
                 polyMeshes[i].meshCollider.isTrigger = true;
-				
+				polyMeshes[i].BuildMesh();
             }
         }
 
