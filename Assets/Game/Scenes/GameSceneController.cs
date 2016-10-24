@@ -276,6 +276,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// Delete loading task
 				m_levelLoadingTask = null;
 
+				// Init game camera
+				InstanceManager.gameCamera.Init();
+
 				// Dispatch game event
 				Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
 				

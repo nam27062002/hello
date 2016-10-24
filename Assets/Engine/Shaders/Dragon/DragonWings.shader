@@ -20,8 +20,8 @@ Properties {
 }
 
 SubShader {
-//	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
-	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" }
+	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "LightMode" = "ForwardBase" }
+//	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" }
 	ZWrite on
 	Blend SrcAlpha OneMinusSrcAlpha 
 	Cull Off
@@ -47,7 +47,6 @@ SubShader {
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
-				// float3 normal : NORMAL;
 				float3 halfDir : VECTOR;
 
 				float3 tangentWorld : TEXCOORD2;  
@@ -77,9 +76,6 @@ SubShader {
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-
-				// Normal
-				// o.normal = UnityObjectToWorldNormal(v.normal);
 
 				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);

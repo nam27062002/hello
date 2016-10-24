@@ -10,15 +10,24 @@ public class watercamera : MonoBehaviour {
     private Vector3 m_cameraEuler = Vector3.zero;
     private bool m_block = false;
 
+    private bool m_isGameCamera = false;
+
 
     // Use this for initialization
     void Start () {
         //        GetComponent<Camera>().depthTextureMode = DepthTextureMode.DepthNormals;
         GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
+        m_isGameCamera = (GetComponent<GameCamera>() != null);
     }
 
     // Update is called once per frame
     void Update () {
+
+        if (m_isGameCamera)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             m_block ^= true;

@@ -314,7 +314,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 		// Process all selected spawners!
 		foreach(ISpawner item in m_selectedSpawners) {
-			item.CanRespawn();
+			if (item.CanRespawn()) {
+				item.Respawn();
+			}
 		}
 	}
 
@@ -346,8 +348,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
     }
 
-    private void Debug_OnChanged(string _id, bool _newValue) {
-        // Show collisions cheat?
+    private void Debug_OnChanged(string _id, bool _newValue) {        
         if (_id == DebugSettings.INGAME_SPAWNERS)
         {
             // Enable/Disable object

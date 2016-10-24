@@ -36,6 +36,7 @@ public static class DebugSettings {
 	public static readonly string RESULTS_SCREEN_EGG_TEST_MODE = "RESULTS_SCREEN_EGG_TEST_MODE";
     public static readonly string INGAME_HUD = "INGAME_HUD";
     public static readonly string INGAME_SPAWNERS = "INGAME_SPAWNERS";
+    public static readonly string INGAME_GLOW = "INGAME_GLOW";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -102,7 +103,10 @@ public static class DebugSettings {
         Set(key, Prefs.GetBoolPlayer(key, true));
 
         key = INGAME_SPAWNERS;        
-        Set(key, Prefs.GetBoolPlayer(key, true));        
+        Set(key, Prefs.GetBoolPlayer(key, true));
+
+        key = INGAME_GLOW;
+        Set(key, Prefs.GetBoolPlayer(key, true));
     }
 
     /// <summary>
