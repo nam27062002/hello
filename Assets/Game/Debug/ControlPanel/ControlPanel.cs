@@ -49,7 +49,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
 	// Internal logic
 	private float m_activateTimer;
-	const int m_NumDeltaTimes = 30;
+    const int m_NumDeltaTimes = 30;
 	float[] m_DeltaTimes;
 	int m_DeltaIndex;
 
@@ -93,7 +93,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
 			if (pos.x < (Screen.width * 0.1f) && pos.y < (Screen.height * 0.1f))
 			{
-				m_activateTimer += Time.deltaTime;
+				m_activateTimer += Time.unscaledTime;
 				if ( m_activateTimer > m_activationTime )
 				{
 					Toggle();
@@ -136,9 +136,15 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				else
 				{
 					m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
+
+                    // Max FPS supported is 99 because it's the biggest value we have a string for
+                    if ( fps > 99 )
+                        fps = 99;
 				}
-				m_fpsCounter.text = ((int)fps).ToString("D");
-			} else { 
+
+                // The string is taken from this array to prevent memory from being generated every tick
+                m_fpsCounter.text = StringUtils.stringsFrom00To99[(int)fps];                
+            } else { 
 				m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
 				m_fpsCounter.text = "-";
 			}
