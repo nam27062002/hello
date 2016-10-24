@@ -33,7 +33,6 @@ public class MachineEditor : Editor {
 
 	// Store a reference of interesting properties for faster access
 	SerializedProperty m_motionProp = null;
-	SerializedProperty m_railSeparationProp = null;
 	SerializedProperty m_sensorProp = null;
 
 	//------------------------------------------------------------------------//
@@ -48,7 +47,6 @@ public class MachineEditor : Editor {
 
 		// Store a reference of interesting properties for faster access
 		m_motionProp = serializedObject.FindProperty("m_motion");
-		m_railSeparationProp = serializedObject.FindProperty("m_railSeparation");
 		m_sensorProp = serializedObject.FindProperty("m_sensor");
 	}
 
@@ -60,7 +58,6 @@ public class MachineEditor : Editor {
 		m_targetMachine = null;
 
 		m_motionProp = null;
-		m_railSeparationProp = null;
 		m_sensorProp = null;
 	}
 
@@ -89,7 +86,6 @@ public class MachineEditor : Editor {
 					// Draw activation properties
 					EditorGUI.indentLevel++; {
 						EditorGUILayout.PropertyField(m_motionProp, true);
-						EditorGUILayout.PropertyField(m_railSeparationProp, true);
 					} EditorGUI.indentLevel--;
 				}
 			} else if (p.name == "m_enableSensor") {
@@ -103,7 +99,7 @@ public class MachineEditor : Editor {
 						EditorGUILayout.PropertyField(m_sensorProp, true);
 					} EditorGUI.indentLevel--;
 				}
-			} else if (p.name == m_motionProp.name || p.name == m_railSeparationProp.name || p.name == m_sensorProp.name) {
+			} else if (p.name == m_motionProp.name || p.name == m_sensorProp.name) {
 				// do nothing
 			} else {
 				// Default

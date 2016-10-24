@@ -40,9 +40,6 @@ namespace AI {
 		
 		public Vector3 position { get { return m_machine.transform.position; } set { m_machine.transform.position = value; } }
 
-		private float m_zOffset; // if we use different rails for machines
-		public float zOffset { set { m_zOffset = value; } }
-
 		private Vector3 m_direction;
 		public Vector3 direction { get { return m_direction; } }
 
@@ -62,7 +59,6 @@ namespace AI {
 		public Vector3 angularVelocity { get{  if (m_rbody != null)return m_rbody.angularVelocity;return Vector3.zero; } }
 		private Vector3 m_acceleration;
 
-		private Collider m_collider;
 		private Rigidbody m_rbody;
 		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
@@ -83,7 +79,6 @@ namespace AI {
 		{
 			base.Attach (_machine, _entity, _pilot);
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
-			m_collider = m_machine.transform.FindComponentRecursive<Collider>();
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");

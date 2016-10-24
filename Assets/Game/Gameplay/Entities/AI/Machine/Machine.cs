@@ -11,7 +11,6 @@ namespace AI {
 		/**************/
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
 		[SerializeField] private MachineMotion m_motion = new MachineMotion();
-		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
 		[SerializeField] private bool m_affectedByDragonTrample = false;
 
 		[SerializeField] private bool m_enableSensor = true;
@@ -376,17 +375,6 @@ namespace AI {
 				return m_motion.faceDirection;
 			}
 			return false;
-		}
-
-		public void SetRail(uint _rail, uint _total) {
-			if (m_motion != null) {
-				if (_total > 1) {
-					float railSeparation = m_railSeparation.GetRandom();
-					m_motion.zOffset = (_rail * railSeparation) - (railSeparation * (_total / 2));
-				} else {
-					m_motion.zOffset = 0f;
-				}
-			}
 		}
 
 		// Group membership -> for collective behaviours

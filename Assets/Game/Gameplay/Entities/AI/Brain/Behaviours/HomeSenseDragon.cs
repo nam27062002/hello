@@ -38,7 +38,7 @@ namespace AI {
 				m_pilot.GoTo(m_pilot.homePosition);
 
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
-				if (dSqr < 1.5f) {
+				if (dSqr < 3f) {
 					Transition(OnBackAtHome);
 				}
 			}
