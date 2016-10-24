@@ -163,7 +163,9 @@ namespace GlowEffect
  */
 
 #if UNITY_IOS
-                bool isIPhone5 = (iOS.Device.generation == iOS.DeviceGeneration.Iphone5);
+//				bool isIPhone5 = (UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhone5) ||
+//								 (UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhone5C) ||
+				bool isIPhone5 = (UnityEngine.iOS.Device.generation < UnityEngine.iOS.DeviceGeneration.iPhone6);
 #else
                 bool isIPhone5 = false;
 #endif
