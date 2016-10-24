@@ -22,6 +22,7 @@ public class CoinsFeedbackController : MonoBehaviour {
 	// Exposed
 	[SerializeField] private Range m_particleRange;		// Amount of particles based on reward amount
 	[SerializeField] private Range m_rewardRange;		// Reward limits to compute the intensity of the effect
+	[SerializeField] private string m_audio;		// Reward audio
 
 	// Internal
 	private ParticleSystem m_ps;
@@ -87,5 +88,7 @@ public class CoinsFeedbackController : MonoBehaviour {
 
 		// Start particle system
 		m_ps.Play();
+
+		AudioController.Play(m_audio);
 	}
 }

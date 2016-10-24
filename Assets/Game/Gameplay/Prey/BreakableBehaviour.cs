@@ -7,6 +7,7 @@ public class BreakableBehaviour : MonoBehaviour
 	public DragonTier m_tierNoTurboBreak = 0;
 
 	public string m_onBreakParticle;
+	public string m_onBreakAudio;
 
 	void OnCollisionEnter( Collision collision )
 	{
@@ -42,6 +43,8 @@ public class BreakableBehaviour : MonoBehaviour
 				go.transform.rotation = transform.rotation;
 			}
 		}
+
+		AudioController.Play( m_onBreakAudio );
 
 		// Destroy
 		gameObject.SetActive( false );
