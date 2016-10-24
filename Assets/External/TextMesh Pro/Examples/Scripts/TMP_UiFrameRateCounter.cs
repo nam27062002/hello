@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿// Copyright (C) 2014 - 2016 Stephan Bouchard - All Rights Reserved
+// This code can only be used under the standard Unity Asset Store End User License Agreement
+// A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
+
+
+using UnityEngine;
 using System.Collections;
 
 
@@ -28,7 +33,7 @@ namespace TMPro.Examples
             if (!enabled)
                 return;
 
-            Application.targetFrameRate = -1;
+            Application.targetFrameRate = 120;
 
             GameObject frameCounter = new GameObject("Frame Counter");
             m_frameCounter_transform = frameCounter.AddComponent<RectTransform>();

@@ -1,3 +1,8 @@
+// Copyright (C) 2014 - 2016 Stephan Bouchard - All Rights Reserved
+// This code can only be used under the standard Unity Asset Store End User License Agreement
+// A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
+
+
 using UnityEngine;
 using System.Collections;
 
@@ -61,7 +66,7 @@ namespace TMPro.Examples
                 //m_textMeshPro.fontColor = new Color32(255, 255, 255, 255);
 
                 m_material01 = m_textMeshPro.font.material;
-                m_material02 = Resources.Load("Fonts & Materials/ARIAL SDF BEVEL", typeof(Material)) as Material; // Make sure the IMPACT SDF exists before calling this...  
+                m_material02 = Resources.Load("Fonts & Materials/ARIAL SDF - Drop Shadow", typeof(Material)) as Material; // Make sure the IMPACT SDF exists before calling this...  
 
 
             }
@@ -115,7 +120,7 @@ namespace TMPro.Examples
         {
             if (BenchmarkType == 0)
             {
-                m_textMeshPro.text = (m_frame % 1000).ToString();            
+                m_textMeshPro.text = (m_frame % 1000).ToString();
             }
             else if (BenchmarkType == 1)
             {

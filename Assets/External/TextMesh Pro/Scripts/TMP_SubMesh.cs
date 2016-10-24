@@ -78,7 +78,39 @@ namespace TMPro
         [SerializeField]
         private Material m_sharedMaterial;
 
-        internal Material m_fallbackMaterial;
+
+        /// <summary>
+        /// The fallback material created from the properties of the fallback source material.
+        /// </summary>
+        public Material fallbackMaterial
+        {
+            get { return m_fallbackMaterial; }
+            set
+            {
+                if (m_fallbackMaterial == value) return;
+
+                if (m_fallbackMaterial != null && m_fallbackMaterial != value)
+                    TMP_MaterialManager.ReleaseFallbackMaterial(m_fallbackMaterial);
+
+                m_fallbackMaterial = value;
+                TMP_MaterialManager.AddFallbackMaterialReference(m_fallbackMaterial);
+
+                SetSharedMaterial(m_fallbackMaterial);
+            }
+        }
+        private Material m_fallbackMaterial;
+
+
+        /// <summary>
+        /// The source material used by the fallback font
+        /// </summary>
+        public Material fallbackSourceMaterial
+        {
+            get { return m_fallbackSourceMaterial; }
+            set { m_fallbackSourceMaterial = value; }
+        }
+        private Material m_fallbackSourceMaterial;
+
 
         /// <summary>
         /// Is the text object using the default font asset material.
@@ -234,9 +266,19 @@ namespace TMPro
         void ON_MATERIAL_PROPERTY_CHANGED(bool isChanged, Material mat)
         {
             //Debug.Log("*** ON_MATERIAL_PROPERTY_CHANGED ***");
+            int targetMaterialID = mat.GetInstanceID();
+            int sharedMaterialID = m_sharedMaterial.GetInstanceID();
+            int fallbackSourceMaterialID = m_fallbackSourceMaterial == null ? 0 : m_fallbackSourceMaterial.GetInstanceID();
 
             // Filter events and return if the affected material is not this object's material.
-            if (mat.GetInstanceID() != m_sharedMaterial.GetInstanceID()) return;
+            if (targetMaterialID != sharedMaterialID)
+            {
+                // Check if event applies to the source fallback material
+                if (m_fallbackMaterial != null && fallbackSourceMaterialID == targetMaterialID)
+                    TMP_MaterialManager.CopyMaterialPresetProperties(mat, m_fallbackMaterial);
+                else
+                    return;
+            }
 
             if (m_TextComponent == null) m_TextComponent = GetComponentInParent<TextMeshPro>();
 
@@ -275,7 +317,7 @@ namespace TMPro
             if (m_TextComponent != null)
             {
                 m_TextComponent.havePropertiesChanged = true;
-                m_TextComponent.SetVerticesDirty();
+                //m_TextComponent.SetVerticesDirty();
             }
 
             //}

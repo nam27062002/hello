@@ -2,7 +2,7 @@
 // This code can only be used under the standard Unity Asset Store End User License Agreement
 // A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
 
-Shader "TMPro/Distance Field (Surface)" {
+Shader "TextMeshPro/Distance Field (Surface)" {
 
 Properties {
 	_FaceTex			("Fill Texture", 2D) = "white" {}
@@ -151,6 +151,6 @@ SubShader {
 }
 
 //Fallback "TMPro/Mobile/Distance Field (Surface)"
-CustomEditor "TMPro_SDFMaterialEditor"
+CustomEditor "TMPro.EditorUtilities.TMP_SDFShaderGUI"
 }
 

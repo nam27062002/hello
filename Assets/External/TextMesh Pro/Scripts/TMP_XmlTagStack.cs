@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿// Copyright (C) 2014 - 2016 Stephan Bouchard - All Rights Reserved
+// This code can only be used under the standard Unity Asset Store End User License Agreement
+// A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
+
+
+using UnityEngine;
 using System.Collections;
 
 
@@ -76,11 +81,26 @@ namespace TMPro
         /// <summary>
         /// Function to retrieve the current item from the stack.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>itemStack <T></returns>
         public T CurrentItem()
         {
-            return itemStack[index - 1];
+            if (index > 0)
+                return itemStack[index - 1];
+
+            return itemStack[0];
         }
 
+
+        /// <summary>
+        /// Function to retrieve the previous item without affecting the stack.
+        /// </summary>
+        /// <returns></returns>
+        public T PreviousItem()
+        {
+            if (index > 1)
+                return itemStack[index - 2];
+
+            return itemStack[0];
+        }
     }
 }

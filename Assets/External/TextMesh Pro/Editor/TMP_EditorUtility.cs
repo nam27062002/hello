@@ -87,7 +87,7 @@ namespace TMPro.EditorUtilities
             refs.Add(mat);
 
             // Get materials matching the search pattern.
-            string searchPattern = "t:Material" + " " + mat.name.Replace(" Material", "");
+            string searchPattern = "t:Material" + " " + fontAsset.name.Split(new char[] { ' ' })[0];
             string[] materialAssetGUIDs = AssetDatabase.FindAssets(searchPattern);
 
             for (int i = 0; i < materialAssetGUIDs.Length; i++)
@@ -259,6 +259,21 @@ namespace TMPro.EditorUtilities
                 characterSequence += first.ToString("X2") + "-" + last.ToString("X2");
 
             return characterSequence;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="thickness"></param>
+        /// <param name="color"></param>
+        public static void DrawBox(Rect rect, float thickness, Color color)
+        {
+            EditorGUI.DrawRect(new Rect(rect.x - thickness, rect.y + thickness, rect.width + thickness * 2, thickness), color);
+            EditorGUI.DrawRect(new Rect(rect.x - thickness, rect.y + thickness, thickness, rect.height - thickness * 2), color);
+            EditorGUI.DrawRect(new Rect(rect.x - thickness, rect.y + rect.height - thickness * 2, rect.width + thickness * 2, thickness), color);
+            EditorGUI.DrawRect(new Rect(rect.x + rect.width, rect.y + thickness, thickness, rect.height - thickness * 2), color);
         }
 
     }

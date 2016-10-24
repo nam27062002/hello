@@ -285,13 +285,14 @@ namespace TMPro
         /// This function returns a material instance using the material properties of a previous material but using the font atlas texture of the new font asset.
         /// </summary>
         /// <param name="sourceMaterial">The material containing the source material properties to be copied to the new material.</param>
-        /// <param name="sourceAtlasTexture">The font atlas texture that should be assigned to the new material.</param>
+        /// <param name="targetMaterial">The font atlas texture that should be assigned to the new material.</param>
         /// <returns></returns>
-        public static Material GetFallbackMaterial (Material sourceMaterial, Texture sourceAtlasTexture)
+        public static Material GetFallbackMaterial (Material sourceMaterial, Material targetMaterial)
         {
             int sourceID = sourceMaterial.GetInstanceID();
-            int texID = sourceAtlasTexture.GetInstanceID();
-            long key = (long)sourceID << 32 + texID;
+            Texture tex = targetMaterial.GetTexture(ShaderUtilities.ID_MainTex);
+            int texID = tex.GetInstanceID();
+            long key = (long)sourceID << 32 | (long)(uint)texID;
 
             FallbackMaterial fallback;
             if (m_fallbackMaterials.TryGetValue(key, out fallback))
@@ -300,23 +301,34 @@ namespace TMPro
                 return fallback.fallbackMaterial;
             }
 
+            //Debug.Log("Creating new fallback material.");
 
             // Create new material from the source material
             Material fallbackMaterial = new Material(sourceMaterial);
             fallbackMaterial.hideFlags = HideFlags.HideAndDontSave;
 
             #if UNITY_EDITOR
-                fallbackMaterial.name += " + " + sourceAtlasTexture.name;
+                fallbackMaterial.name += " + " + tex.name;
             #endif
 
-            fallbackMaterial.SetTexture(ShaderUtilities.ID_MainTex, sourceAtlasTexture);
-
+            fallbackMaterial.SetTexture(ShaderUtilities.ID_MainTex, tex);
+            // Retain material properties unique to target material.
+            fallbackMaterial.SetFloat(ShaderUtilities.ID_GradientScale, targetMaterial.GetFloat(ShaderUtilities.ID_GradientScale));
+            fallbackMaterial.SetFloat(ShaderUtilities.ID_TextureWidth, targetMaterial.GetFloat(ShaderUtilities.ID_TextureWidth));
+            fallbackMaterial.SetFloat(ShaderUtilities.ID_TextureHeight, targetMaterial.GetFloat(ShaderUtilities.ID_TextureHeight));
+            fallbackMaterial.SetFloat(ShaderUtilities.ID_WeightNormal, targetMaterial.GetFloat(ShaderUtilities.ID_WeightNormal));
+            fallbackMaterial.SetFloat(ShaderUtilities.ID_WeightBold, targetMaterial.GetFloat(ShaderUtilities.ID_WeightBold));
 
             fallback = new FallbackMaterial();
             fallback.baseID = sourceID;
             fallback.baseMaterial = sourceMaterial;
             fallback.fallbackMaterial = fallbackMaterial;
             fallback.count = 0;
+
+            #if UNITY_5_0 || UNITY_5_1
+            // Have to manually copy shader keywords in Unity 5.0 and 5.1
+            fallbackMaterial.shaderKeywords = sourceMaterial.shaderKeywords;
+            #endif
 
             m_fallbackMaterials.Add(key, fallback);
             m_fallbackMaterialLookup.Add(fallbackMaterial.GetInstanceID(), key);
@@ -346,6 +358,7 @@ namespace TMPro
                 FallbackMaterial fallback;
                 if (m_fallbackMaterials.TryGetValue(key, out fallback))
                 {
+                    //Debug.Log("Adding Fallback material " + fallback.fallbackMaterial.name + " with reference count of " + (fallback.count + 1));
                     fallback.count += 1;
                 }
             }
@@ -422,6 +435,8 @@ namespace TMPro
                 FallbackMaterial fallback;
                 if (m_fallbackMaterials.TryGetValue(key, out fallback))
                 {
+                    //Debug.Log("Releasing Fallback material " + fallback.fallbackMaterial.name + " with remaining reference count of " + (fallback.count - 1));
+
                     if (fallback.count > 1)
                         fallback.count -= 1;
                     else
@@ -456,6 +471,37 @@ namespace TMPro
             public Material stencilMaterial;
             public int count;
             public int stencilID;
+        }
+
+
+        /// <summary>
+        /// Function to copy the properties of a source material preset to another while preserving the unique font asset properties of the destination material.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        public static void CopyMaterialPresetProperties(Material source, Material destination)
+        {
+            // Save unique material properties
+            Texture dst_texture = destination.GetTexture(ShaderUtilities.ID_MainTex);
+            float dst_gradientScale = destination.GetFloat(ShaderUtilities.ID_GradientScale);
+            float dst_texWidth = destination.GetFloat(ShaderUtilities.ID_TextureWidth);
+            float dst_texHeight = destination.GetFloat(ShaderUtilities.ID_TextureHeight);
+            float dst_weightNormal = destination.GetFloat(ShaderUtilities.ID_WeightNormal);
+            float dst_weightBold = destination.GetFloat(ShaderUtilities.ID_WeightBold);
+
+            // Copy all material properties
+            destination.CopyPropertiesFromMaterial(source);
+
+            // Copy shader keywords
+            destination.shaderKeywords = source.shaderKeywords;
+
+            // Restore unique material properties
+            destination.SetTexture(ShaderUtilities.ID_MainTex, dst_texture);
+            destination.SetFloat(ShaderUtilities.ID_GradientScale, dst_gradientScale);
+            destination.SetFloat(ShaderUtilities.ID_TextureWidth, dst_texWidth);
+            destination.SetFloat(ShaderUtilities.ID_TextureHeight, dst_texHeight);
+            destination.SetFloat(ShaderUtilities.ID_WeightNormal, dst_weightNormal);
+            destination.SetFloat(ShaderUtilities.ID_WeightBold, dst_weightBold);
         }
 
 

@@ -56,6 +56,7 @@ namespace TMPro.EditorUtilities
         private SerializedProperty fontColor_prop;
         private SerializedProperty enableVertexGradient_prop;
         private SerializedProperty fontColorGradient_prop;
+        private SerializedProperty fontColorGradientPreset_prop;
         private SerializedProperty overrideHtmlColor_prop;
 
         private SerializedProperty fontSize_prop;
@@ -98,6 +99,7 @@ namespace TMPro.EditorUtilities
         private SerializedProperty checkPaddingRequired_prop;
         private SerializedProperty enableEscapeCharacterParsing_prop;
         private SerializedProperty useMaxVisibleDescender_prop;
+        private SerializedProperty isVolumetricText_prop;
 
         private SerializedProperty isOrthographic_prop;
         //private SerializedProperty isOverlay_prop;
@@ -160,7 +162,9 @@ namespace TMPro.EditorUtilities
             // Colors & Gradient
             fontColor_prop = serializedObject.FindProperty("m_fontColor");
             enableVertexGradient_prop = serializedObject.FindProperty ("m_enableVertexGradient");
-            fontColorGradient_prop = serializedObject.FindProperty ("m_fontColorGradient");    
+            fontColorGradient_prop = serializedObject.FindProperty ("m_fontColorGradient");
+            fontColorGradientPreset_prop = serializedObject.FindProperty("m_fontColorGradientPreset");
+
             overrideHtmlColor_prop = serializedObject.FindProperty("m_overrideHtmlColors");
 
             characterSpacing_prop = serializedObject.FindProperty("m_characterSpacing");
@@ -192,6 +196,7 @@ namespace TMPro.EditorUtilities
             checkPaddingRequired_prop = serializedObject.FindProperty("checkPaddingRequired");
             enableEscapeCharacterParsing_prop = serializedObject.FindProperty("m_parseCtrlCharacters");
             useMaxVisibleDescender_prop = serializedObject.FindProperty("m_useMaxVisibleDescender");
+            isVolumetricText_prop = serializedObject.FindProperty("m_isVolumetricText");
 
             //isMaskUpdateRequired_prop = serializedObject.FindProperty("isMaskUpdateRequired");
             //mask_prop = serializedObject.FindProperty("m_mask");
@@ -307,7 +312,8 @@ namespace TMPro.EditorUtilities
                 m_foldout.fontSettings = !m_foldout.fontSettings;
 
             // Update list of material presets if needed.
-            if (m_isPresetListDirty) m_materialPresetNames = GetMaterialPresets();
+            if (m_isPresetListDirty)
+                m_materialPresetNames = GetMaterialPresets();
 
             if (m_foldout.fontSettings)
             {
@@ -372,25 +378,49 @@ namespace TMPro.EditorUtilities
 
                 // VERTEX COLOR GRADIENT
                 EditorGUILayout.BeginHorizontal();
-                //EditorGUILayout.PrefixLabel("Color Gradient");
                 EditorGUILayout.PropertyField(enableVertexGradient_prop, new GUIContent("Color Gradient"), GUILayout.MinWidth(140), GUILayout.MaxWidth(200));
                 EditorGUIUtility.labelWidth = 95;
                 EditorGUILayout.PropertyField(overrideHtmlColor_prop, new GUIContent("Override Tags"));
                 EditorGUIUtility.labelWidth = labelWidth;
                 EditorGUILayout.EndHorizontal();
 
+                if (EditorGUI.EndChangeCheck())
+                    havePropertiesChanged = true;
+
                 if (enableVertexGradient_prop.boolValue)
                 {
-                    EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("topLeft"), new GUIContent("Top Left"));
-                    EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("topRight"), new GUIContent("Top Right"));
-                    EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("bottomLeft"), new GUIContent("Bottom Left"));
-                    EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("bottomRight"), new GUIContent("Bottom Right"));
-                }
-                if (EditorGUI.EndChangeCheck())
-                {
-                    havePropertiesChanged = true;
-                }
+                    EditorGUILayout.PropertyField(fontColorGradientPreset_prop, new GUIContent("Gradient (Preset)"));
 
+                    if (fontColorGradientPreset_prop.objectReferenceValue == null)
+                    {
+                        EditorGUI.BeginChangeCheck();
+                        EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("topLeft"), new GUIContent("Top Left"));
+                        EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("topRight"), new GUIContent("Top Right"));
+                        EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("bottomLeft"), new GUIContent("Bottom Left"));
+                        EditorGUILayout.PropertyField(fontColorGradient_prop.FindPropertyRelative("bottomRight"), new GUIContent("Bottom Right"));
+
+                        if (EditorGUI.EndChangeCheck())
+                            havePropertiesChanged = true;
+                    }
+                    else
+                    {
+
+                        SerializedObject obj = new SerializedObject(fontColorGradientPreset_prop.objectReferenceValue);
+
+                        EditorGUI.BeginChangeCheck();
+                        EditorGUILayout.PropertyField(obj.FindProperty("topLeft"), new GUIContent("Top Left"));
+                        EditorGUILayout.PropertyField(obj.FindProperty("topRight"), new GUIContent("Top Right"));
+                        EditorGUILayout.PropertyField(obj.FindProperty("bottomLeft"), new GUIContent("Bottom Left"));
+                        EditorGUILayout.PropertyField(obj.FindProperty("bottomRight"), new GUIContent("Bottom Right"));
+
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            obj.ApplyModifiedProperties();
+                            havePropertiesChanged = true;
+                            TMPro_EventManager.ON_COLOR_GRAIDENT_PROPERTY_CHANGED(fontColorGradientPreset_prop.objectReferenceValue as TMP_ColorGradient);
+                        }
+                    }
+                }
 
                 // FONT SIZE
                 EditorGUI.BeginChangeCheck();
@@ -486,7 +516,7 @@ namespace TMPro.EditorUtilities
                 // TEXT ALIGNMENT
                 EditorGUI.BeginChangeCheck();
 
-                rect = EditorGUILayout.GetControlRect(false, 17);
+                rect = EditorGUILayout.GetControlRect(false, 19);
                 GUIStyle btn = new GUIStyle(GUI.skin.button);
                 btn.margin = new RectOffset(1, 1, 1, 1);
                 btn.padding = new RectOffset(1, 1, 1, 0);
@@ -494,10 +524,10 @@ namespace TMPro.EditorUtilities
                 selAlignGrid_A = textAlignment_prop.enumValueIndex & ~28;
                 selAlignGrid_B = (textAlignment_prop.enumValueIndex & ~3) / 4;
 
-                GUI.Label(new Rect(rect.x, rect.y, 100, rect.height), "Alignment");
+                GUI.Label(new Rect(rect.x, rect.y + 2, 100, rect.height), "Alignment");
                 float columnB = EditorGUIUtility.labelWidth + 15;
                 selAlignGrid_A = GUI.SelectionGrid(new Rect(columnB, rect.y, 23 * 4, rect.height), selAlignGrid_A, TMP_UIStyleManager.alignContent_A, 4, btn);
-                selAlignGrid_B = GUI.SelectionGrid(new Rect(columnB + 23 * 4 + 10, rect.y, 23 * 5, rect.height), selAlignGrid_B, TMP_UIStyleManager.alignContent_B, 5, btn);
+                selAlignGrid_B = GUI.SelectionGrid(new Rect(columnB + 23 * 5 + 10, rect.y, 23 * 6, rect.height), selAlignGrid_B, TMP_UIStyleManager.alignContent_B, 6, btn);
 
                 if (EditorGUI.EndChangeCheck())
                 { 
@@ -669,9 +699,16 @@ namespace TMPro.EditorUtilities
                 EditorGUILayout.PropertyField(enableEscapeCharacterParsing_prop, new GUIContent("Parse Escape Characters"));
                 EditorGUILayout.PropertyField(useMaxVisibleDescender_prop, new GUIContent("Use Visible Descender"));
                 EditorGUILayout.EndHorizontal();
-
                 if (EditorGUI.EndChangeCheck())
                     havePropertiesChanged = true;
+
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(isVolumetricText_prop, new GUIContent("Enabled Volumetric Setup"));
+                if (EditorGUI.EndChangeCheck())
+                {
+                    havePropertiesChanged = true;
+                    m_textComponent.textInfo.ResetVertexLayout(isVolumetricText_prop.boolValue);
+                }
 
                 EditorGUIUtility.labelWidth = 135;
                 // EditorGUI.BeginChangeCheck();

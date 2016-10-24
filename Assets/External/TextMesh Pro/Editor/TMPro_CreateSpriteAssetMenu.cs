@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿// Copyright (C) 2014 - 2016 Stephan Bouchard - All Rights Reserved
+// This code can only be used under the standard Unity Asset Store End User License Agreement
+// A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
+
+
+using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-
-
 
 
 namespace TMPro.EditorUtilities
@@ -148,7 +151,7 @@ namespace TMPro.EditorUtilities
         /// <param name="spriteAsset"></param>
         private static void AddDefaultMaterial(TMP_SpriteAsset spriteAsset)
         {
-            Shader shader = Shader.Find("TMPro/Sprite");
+            Shader shader = Shader.Find("TextMeshPro/Sprite");
             Material material = new Material(shader);
             material.SetTexture(ShaderUtilities.ID_MainTex, spriteAsset.spriteSheet);
 
@@ -172,24 +175,15 @@ namespace TMPro.EditorUtilities
             {
                 Sprite sprite = sprites[i];
 
-                // Check if sprite already exists in the SpriteInfoList
+                // Check if the sprite is already contained in the SpriteInfoList
                 int index = -1;
-
-                if (spriteAsset.spriteInfoList[i].sprite != null)
+                if (spriteAsset.spriteInfoList.Count > i && spriteAsset.spriteInfoList[i].sprite != null)
                     index = spriteAsset.spriteInfoList.FindIndex(item => item.sprite.GetInstanceID() == sprite.GetInstanceID());
 
                 // Use existing SpriteInfo if it already exists
                 TMP_Sprite spriteInfo = index == -1 ? new TMP_Sprite() : spriteAsset.spriteInfoList[index];
 
                 Rect spriteRect = sprite.rect;
-                if (spriteInfo.name != sprite.name)
-                {
-                    // Preserve the existing sprite name.
-                    sprite.name = spriteInfo.name;
-                    //spriteInfo.name = sprite.name;
-                    spriteInfo.hashCode = TMP_TextUtilities.GetSimpleHashCode(spriteInfo.name);
-                }
-
                 spriteInfo.x = spriteRect.x;
                 spriteInfo.y = spriteRect.y;
                 spriteInfo.width = spriteRect.width;
@@ -220,7 +214,9 @@ namespace TMPro.EditorUtilities
                         id = j + 1;
                     }
 
-                    //spriteInfo.fileID = fileID;
+                    spriteInfo.sprite = sprite;
+                    spriteInfo.name = sprite.name;
+                    spriteInfo.hashCode = TMP_TextUtilities.GetSimpleHashCode(spriteInfo.name);
                     spriteInfo.id = id;
                     spriteInfo.xAdvance = spriteRect.width;
                     spriteInfo.scale = 1.0f;
@@ -229,6 +225,9 @@ namespace TMPro.EditorUtilities
                     spriteInfo.yOffset = spriteInfo.pivot.y;
 
                     spriteAsset.spriteInfoList.Add(spriteInfo);
+
+                    // Sort the Sprites by ID
+                    spriteAsset.spriteInfoList = spriteAsset.spriteInfoList.OrderBy(s => s.id).ToList();
                 }
                 else
                 {

@@ -1,3 +1,8 @@
+// Copyright (C) 2014 - 2016 Stephan Bouchard - All Rights Reserved
+// This code can only be used under the standard Unity Asset Store End User License Agreement
+// A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
+
+
 using UnityEngine;
 using System.Collections;
 
@@ -31,7 +36,7 @@ namespace TMPro.Examples
             {
                 if (SpawnType == 0)
                 {
-                    // TextMesh Pro Implementation                    
+                    // TextMesh Pro Implementation
                     GameObject go = new GameObject("Arial " + i);
 
                     if (lineHeight > orthoSize * 2) return;
@@ -41,9 +46,11 @@ namespace TMPro.Examples
                     TextMeshPro textMeshPro = go.AddComponent<TextMeshPro>();
                     TextContainer textContainer = go.GetComponent<TextContainer>();
                     //textMeshPro.fontSharedMaterial = material;
-                    //textMeshPro.font = Resources.Load("Fonts & Materials/Arial SDF Ortho", typeof(TextMeshProFont)) as TextMeshProFont;                                    
+                    //textMeshPro.font = Resources.Load("Fonts & Materials/Arial SDF Ortho", typeof(TextMeshProFont)) as TextMeshProFont;
                     //textMeshPro.anchor = AnchorPositions.Left;
                     textContainer.anchorPosition = TextContainerAnchors.Left;
+
+                    textMeshPro.enableWordWrapping = false;
                     textMeshPro.extraPadding = true;
                     textMeshPro.isOrthographic = true;
                     textMeshPro.fontSize = i;
@@ -62,11 +69,11 @@ namespace TMPro.Examples
 
                     //if (lineHeight > orthoSize * 2 * 0.9f) return;
 
-                    go.transform.position = m_Transform.position + new Vector3(ratio * -orthoSize * 0.975f, orthoSize * 0.975f - lineHeight, 1);          
+                    go.transform.position = m_Transform.position + new Vector3(ratio * -orthoSize * 0.975f, orthoSize * 0.975f - lineHeight, 1);
                                        
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.font = Resources.Load("Fonts/ARIAL", typeof(Font)) as Font;
-                    textMesh.renderer.sharedMaterial = textMesh.font.material;        
+                    textMesh.renderer.sharedMaterial = textMesh.font.material;
                     textMesh.anchor = TextAnchor.MiddleLeft;
                     textMesh.fontSize = i * 10;
 

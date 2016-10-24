@@ -93,7 +93,38 @@ namespace TMPro
         [SerializeField]
         private Material m_sharedMaterial;
 
-        internal Material m_fallbackMaterial;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Material fallbackMaterial
+        {
+            get { return m_fallbackMaterial; }
+            set
+            {
+                if (m_fallbackMaterial == value) return;
+
+                if (m_fallbackMaterial != null && m_fallbackMaterial != value)
+                    TMP_MaterialManager.ReleaseFallbackMaterial(m_fallbackMaterial);
+
+                m_fallbackMaterial = value;
+                TMP_MaterialManager.AddFallbackMaterialReference(m_fallbackMaterial);
+
+                SetSharedMaterial(m_fallbackMaterial);
+            }
+        }
+        private Material m_fallbackMaterial;
+
+
+        /// <summary>
+        /// The source material used by the fallback font
+        /// </summary>
+        public Material fallbackSourceMaterial
+        {
+            get { return m_fallbackSourceMaterial; }
+            set { m_fallbackSourceMaterial = value; }
+        }
+        private Material m_fallbackSourceMaterial;
 
 
         /// <summary>
@@ -263,6 +294,7 @@ namespace TMPro
             if (m_fallbackMaterial != null)
             {
                 TMP_MaterialManager.ReleaseFallbackMaterial(m_fallbackMaterial);
+                m_fallbackMaterial = null;
             }
 
             base.OnDisable();
@@ -320,9 +352,14 @@ namespace TMPro
             int targetMaterialID = mat.GetInstanceID();
             int sharedMaterialID = m_sharedMaterial.GetInstanceID();
             int maskingMaterialID = m_MaskMaterial == null ? 0 : m_MaskMaterial.GetInstanceID();
+            int fallbackSourceMaterialID = m_fallbackSourceMaterial == null ? 0 : m_fallbackSourceMaterial.GetInstanceID();
 
             // Filter events and return if the affected material is not this object's material.
             //if (targetMaterialID != sharedMaterialID && targetMaterialID != maskingMaterialID) return;
+
+            // Filter events and return if the affected material is not this object's material.
+            if (m_fallbackMaterial != null && fallbackSourceMaterialID == targetMaterialID)
+                TMP_MaterialManager.CopyMaterialPresetProperties(mat, m_fallbackMaterial);
 
             if (m_TextComponent == null) m_TextComponent = GetComponentInParent<TextMeshProUGUI>();
 
@@ -352,6 +389,16 @@ namespace TMPro
                     m_sharedMaterial.shaderKeywords = mat.shaderKeywords;
                     m_sharedMaterial.SetFloat(ShaderUtilities.ID_StencilID, 0);
                     m_sharedMaterial.SetFloat(ShaderUtilities.ID_StencilComp, 8);
+                }
+                else if (fallbackSourceMaterialID == targetMaterialID)
+                {
+                    float stencilID = m_MaskMaterial.GetFloat(ShaderUtilities.ID_StencilID);
+                    float stencilComp = m_MaskMaterial.GetFloat(ShaderUtilities.ID_StencilComp);
+                    m_MaskMaterial.CopyPropertiesFromMaterial(m_fallbackMaterial);
+                    m_MaskMaterial.shaderKeywords = m_fallbackMaterial.shaderKeywords;
+
+                    m_MaskMaterial.SetFloat(ShaderUtilities.ID_StencilID, stencilID);
+                    m_MaskMaterial.SetFloat(ShaderUtilities.ID_StencilComp, stencilComp);
                 }
             }
 
@@ -388,7 +435,12 @@ namespace TMPro
         {
             //if (spriteSheet != null && (obj as TMP_SpriteAsset == m_spriteAsset || obj as Texture2D == m_spriteAsset.spriteSheet))
             //{
-            SetVerticesDirty();
+            if (m_TextComponent != null)
+            {
+                m_TextComponent.havePropertiesChanged = true;
+                //m_TextComponent.SetVerticesDirty();
+            }
+
             //}
         }
 

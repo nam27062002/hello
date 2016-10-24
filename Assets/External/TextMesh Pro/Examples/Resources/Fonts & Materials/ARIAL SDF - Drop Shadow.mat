@@ -10,7 +10,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: cafd18099dfc0114896e0a8b277b81b6, type: 3}
   m_ShaderKeywords: OUTLINE_ON UNDERLAY_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -19,7 +19,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2831352, guid: 316f956b856b45c448987b5018ec3ef4, type: 2}
+          m_Texture: {fileID: 2806040, guid: 316f956b856b45c448987b5018ec3ef4, type: 2}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -254,6 +254,18 @@ Material:
         first:
           name: _MaskSoftnessY
         second: 0
+      data:
+        first:
+          name: _MaskInverse
+        second: 0
+      data:
+        first:
+          name: _MaskEdgeSoftness
+        second: .100000001
+      data:
+        first:
+          name: _MaskWipeControl
+        second: .5
     m_Colors:
       data:
         first:
@@ -295,3 +307,7 @@ Material:
         first:
           name: _MaskCoord
         second: {r: 0, g: 0, b: 100000, a: 100000}
+      data:
+        first:
+          name: _MaskEdgeColor
+        second: {r: 1, g: 1, b: 1, a: 1}

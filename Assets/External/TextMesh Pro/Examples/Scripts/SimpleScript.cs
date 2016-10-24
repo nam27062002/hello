@@ -1,3 +1,8 @@
+// Copyright (C) 2014 - 2016 Stephan Bouchard - All Rights Reserved
+// This code can only be used under the standard Unity Asset Store End User License Agreement
+// A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
+
+
 using UnityEngine;
 using System.Collections;
 
@@ -10,7 +15,7 @@ namespace TMPro.Examples
 
         private TextMeshPro m_textMeshPro;
         //private TextContainer m_textContainer;
-        //private TextMeshProFont m_FontAsset;
+        //private TMP_FontAsset m_FontAsset;
 
         private const string label = "The <#0050FF>count is: </color>{0:2}";
         private float m_frame;
@@ -24,7 +29,7 @@ namespace TMPro.Examples
             //m_textContainer = GetComponent<TextContainer>();
 
             // Load the Font Asset to be used.
-            //m_FontAsset = Resources.Load("Fonts & Materials/ARIAL SDF", typeof(TextMeshProFont)) as TextMeshProFont;
+            //m_FontAsset = Resources.Load("Fonts & Materials/ARIAL SDF", typeof(TMP_FontAsset)) as TMP_FontAsset;
             //m_textMeshPro.font = m_FontAsset;
 
             // Assign Material to TextMesh Pro Component

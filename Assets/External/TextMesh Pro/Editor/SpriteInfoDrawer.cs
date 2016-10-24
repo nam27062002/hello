@@ -63,10 +63,11 @@ namespace TMPro.EditorUtilities
             if (EditorGUI.EndChangeCheck())
             {
                 Sprite sprite = prop_sprite.objectReferenceValue as Sprite;
-                sprite.name = prop_name.stringValue;
+                if (sprite != null)
+                    sprite.name = prop_name.stringValue;
 
                 // Recompute hashCode for new name
-                prop_hashCode.intValue = TMP_TextUtilities.GetSimpleHashCode(sprite.name);
+                prop_hashCode.intValue = TMP_TextUtilities.GetSimpleHashCode(prop_name.stringValue);
                 // Check to make sure for duplicates
                 property.serializedObject.ApplyModifiedProperties();
                 // Dictionary needs to be updated since HashCode has changed.

@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ARIAL SDF - Yellow
-  m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 8e6b9842dbb1a5a4887378afab854e63, type: 3}
+  m_ShaderKeywords: UNDERLAY_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -19,7 +19,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2831352, guid: 316f956b856b45c448987b5018ec3ef4, type: 2}
+          m_Texture: {fileID: 2806040, guid: 316f956b856b45c448987b5018ec3ef4, type: 2}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -78,11 +78,11 @@ Material:
       data:
         first:
           name: _FaceDilate
-        second: 0
+        second: .100000001
       data:
         first:
           name: _OutlineWidth
-        second: 0
+        second: .150000006
       data:
         first:
           name: _OutlineSoftness
@@ -122,11 +122,11 @@ Material:
       data:
         first:
           name: _ScaleRatioB
-        second: .899999976
+        second: .810000062
       data:
         first:
           name: _ScaleRatioC
-        second: .899999976
+        second: .810000062
       data:
         first:
           name: _TextureWidth
@@ -226,11 +226,11 @@ Material:
       data:
         first:
           name: _UnderlayOffsetX
-        second: 0
+        second: .5
       data:
         first:
           name: _UnderlayOffsetY
-        second: 0
+        second: -.5
       data:
         first:
           name: _UnderlayDilate
@@ -238,7 +238,7 @@ Material:
       data:
         first:
           name: _UnderlaySoftness
-        second: 0
+        second: .0500000007
       data:
         first:
           name: _MaskSoftnessX
@@ -247,7 +247,19 @@ Material:
         first:
           name: _MaskSoftnessY
         second: 0
+      data:
+        first:
+          name: _FaceShininess
+        second: 0
+      data:
+        first:
+          name: _OutlineShininess
+        second: 0
     m_Colors:
+      data:
+        first:
+          name: _SpecColor
+        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: _ClipRect

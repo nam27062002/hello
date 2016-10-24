@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Bangers SDF Glow
-  m_Shader: {fileID: 4800000, guid: d98344dc0789f5c4f8cfb7465b67e2fe, type: 3}
+  m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
   m_ShaderKeywords: GLOW_ON MASK_OFF UNDERLAY_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -25,13 +25,6 @@ Material:
       data:
         first:
           name: _BumpMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _MaskTex
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -53,6 +46,13 @@ Material:
       data:
         first:
           name: _Cube
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MaskTex
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -89,23 +89,31 @@ Material:
       data:
         first:
           name: _FaceDilate
-        second: 0.1
+        second: .100000001
       data:
         first:
-          name: _UnderlayOffsetX
-        second: 0.869
+          name: _OutlineWidth
+        second: .209999993
       data:
         first:
-          name: _UnderlayOffsetY
-        second: -1
-      data:
-        first:
-          name: _UnderlayDilate
+          name: _OutlineSoftness
         second: 0
       data:
         first:
-          name: _UnderlaySoftness
-        second: 0
+          name: _GlowOffset
+        second: .432999998
+      data:
+        first:
+          name: _GlowInner
+        second: .148000002
+      data:
+        first:
+          name: _GlowOuter
+        second: .158000007
+      data:
+        first:
+          name: _GlowPower
+        second: .907999992
       data:
         first:
           name: _WeightNormal
@@ -113,15 +121,31 @@ Material:
       data:
         first:
           name: _WeightBold
-        second: 0.5
+        second: .5
       data:
         first:
-          name: _OutlineWidth
-        second: 0.21
-      data:
-        first:
-          name: _OutlineSoftness
+          name: _ShaderFlags
         second: 0
+      data:
+        first:
+          name: _ScaleRatioA
+        second: .909090936
+      data:
+        first:
+          name: _ScaleRatioB
+        second: .818181813
+      data:
+        first:
+          name: _ScaleRatioC
+        second: .818181813
+      data:
+        first:
+          name: _TextureWidth
+        second: 1024
+      data:
+        first:
+          name: _TextureHeight
+        second: 1024
       data:
         first:
           name: _GradientScale
@@ -140,108 +164,12 @@ Material:
         second: 0
       data:
         first:
-          name: _TextureWidth
-        second: 1024
-      data:
-        first:
-          name: _TextureHeight
-        second: 1024
-      data:
-        first:
-          name: _MaskSoftnessX
-        second: 0
-      data:
-        first:
-          name: _MaskSoftnessY
-        second: 0
-      data:
-        first:
           name: _VertexOffsetX
         second: 0
       data:
         first:
           name: _VertexOffsetY
         second: 0
-      data:
-        first:
-          name: _ShaderFlags
-        second: 0
-      data:
-        first:
-          name: _ScaleRatioA
-        second: 0.90909094
-      data:
-        first:
-          name: _ScaleRatioB
-        second: 0.8181818
-      data:
-        first:
-          name: _ScaleRatioC
-        second: 0.8181818
-      data:
-        first:
-          name: _Bevel
-        second: 0.5
-      data:
-        first:
-          name: _LightAngle
-        second: 3.1416
-      data:
-        first:
-          name: _GlowOffset
-        second: 0.433
-      data:
-        first:
-          name: _GlowPower
-        second: 0.908
-      data:
-        first:
-          name: _GlowOuter
-        second: 0.158
-      data:
-        first:
-          name: _BevelOffset
-        second: 0
-      data:
-        first:
-          name: _BevelWidth
-        second: 0
-      data:
-        first:
-          name: _BevelClamp
-        second: 0
-      data:
-        first:
-          name: _BevelRoundness
-        second: 0
-      data:
-        first:
-          name: _SpecularPower
-        second: 2
-      data:
-        first:
-          name: _Reflectivity
-        second: 10
-      data:
-        first:
-          name: _Diffuse
-        second: 0.5
-      data:
-        first:
-          name: _Ambient
-        second: 0.5
-      data:
-        first:
-          name: _BumpOutline
-        second: 0
-      data:
-        first:
-          name: _BumpFace
-        second: 0
-      data:
-        first:
-          name: _GlowInner
-        second: 0.148
       data:
         first:
           name: _FaceUVSpeedX
@@ -260,7 +188,75 @@ Material:
         second: 0
       data:
         first:
-          name: _MaskID
+          name: _Bevel
+        second: .5
+      data:
+        first:
+          name: _BevelOffset
+        second: 0
+      data:
+        first:
+          name: _BevelWidth
+        second: 0
+      data:
+        first:
+          name: _BevelClamp
+        second: 0
+      data:
+        first:
+          name: _BevelRoundness
+        second: 0
+      data:
+        first:
+          name: _LightAngle
+        second: 3.14159989
+      data:
+        first:
+          name: _SpecularPower
+        second: 2
+      data:
+        first:
+          name: _Reflectivity
+        second: 10
+      data:
+        first:
+          name: _Diffuse
+        second: .5
+      data:
+        first:
+          name: _Ambient
+        second: .5
+      data:
+        first:
+          name: _BumpOutline
+        second: 0
+      data:
+        first:
+          name: _BumpFace
+        second: 0
+      data:
+        first:
+          name: _UnderlayOffsetX
+        second: .869000018
+      data:
+        first:
+          name: _UnderlayOffsetY
+        second: -1
+      data:
+        first:
+          name: _UnderlayDilate
+        second: 0
+      data:
+        first:
+          name: _UnderlaySoftness
+        second: 0
+      data:
+        first:
+          name: _MaskSoftnessX
+        second: 0
+      data:
+        first:
+          name: _MaskSoftnessY
         second: 0
       data:
         first:
@@ -269,6 +265,10 @@ Material:
       data:
         first:
           name: _OutlineShininess
+        second: 0
+      data:
+        first:
+          name: _MaskID
         second: 0
     m_Colors:
       data:
@@ -285,20 +285,8 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _UnderlayColor
-        second: {r: 1, g: 0, b: 0, a: 0.5}
-      data:
-        first:
           name: _OutlineColor
-        second: {r: 0, g: 0.25517216, b: 1, a: 1}
-      data:
-        first:
-          name: _MaskCoord
-        second: {r: 0, g: 0, b: 100000, a: 100000}
-      data:
-        first:
-          name: _EnvMatrixRotation
-        second: {r: 0, g: 0, b: 0, a: 0}
+        second: {r: 0, g: .255172163, b: 1, a: 1}
       data:
         first:
           name: _GlowColor
@@ -315,3 +303,15 @@ Material:
         first:
           name: _ReflectOutlineColor
         second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EnvMatrixRotation
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _UnderlayColor
+        second: {r: 1, g: 0, b: 0, a: .5}
+      data:
+        first:
+          name: _MaskCoord
+        second: {r: 0, g: 0, b: 100000, a: 100000}
