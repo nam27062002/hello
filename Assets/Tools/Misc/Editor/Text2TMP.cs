@@ -264,11 +264,54 @@ public class Text2TMP : EditorWindow {
 		if(fx != null) {
 			// Find all the material presets for the target font
 			Material[] materials = TMP_EditorUtility.FindMaterialReferences(data.font);
+			Dictionary<string, Material> matDict = new Dictionary<string, Material>(materials.Length);
+			for(int i = 0; i < materials.Length; i++) {
+				matDict[materials[i].name] = materials[i];
+			}
 
-			// [AOC] TODO!!
+			// Select one based on Text FX setup
+			// Simple selection for now
+			string matName = "";
+			if(data.font.name == "FNT_Default") {
+				if(fx.m_outline) {
+					matName = "FNT_Default_Stroke";
+				}
+			} else {
+				if(fx.m_outline) {
+					// Special ones with shadow
+					if(fx.m_shadow) {
+						// By color
+						if(fx.m_shadowColor == Colors.ParseHexString("FB846CFF")) {
+							matName = data.font.name + "_Stroke_Shadow_PC";
+						} else if(fx.m_shadowColor == Colors.ParseHexString("FFB60FFF")) {
+							matName = data.font.name + "_Stroke_Shadow_SC";
+						} else {
+							matName = data.font.name + "_Stroke";
+						}
+					}
+
+					// Special ones by color
+					else {
+						if(fx.m_outlineColor == Colors.ParseHexString("3e3b31FF")) {
+							matName = data.font.name + "_SC";
+						} else if(fx.m_outlineColor == Colors.ParseHexString("7D2300FF")) {
+							matName = data.font.name + "_SC";
+						} else if(fx.m_outlineColor == Colors.ParseHexString("362528FF")) {
+							matName = data.font.name + "_PC";
+						} else {
+							matName = data.font.name + "_Stroke";
+						}
+					}
+				}
+			}
+
+			// Apply material (if valid)
+			if(matDict.ContainsKey(matName)) {
+				tmpText.fontSharedMaterial = matDict[matName];
+			}
 
 			// Remove TextFX component
-			//DestroyImmediate(fx);
+			DestroyImmediate(fx);
 		}
 	}
 

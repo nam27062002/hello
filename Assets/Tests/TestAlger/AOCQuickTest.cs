@@ -67,7 +67,10 @@ public class AOCQuickTest : MonoBehaviour {
 	/// </summary>
 	public void OnTestButton() {
 		//this.GetComponent<Image>().sprite = ResourcesExt.LoadFromSpritesheet("UI/Metagame/Tiers/spritesheet_tiers", "icon_xl");
-		this.GetComponent<Image>().sprite = ResourcesExt.LoadSprite("UI/Metagame/Tiers/spritesheet_tiers/icon_xl");
+		//this.GetComponent<Image>().sprite = ResourcesExt.LoadSprite("UI/Metagame/Tiers/spritesheet_tiers/icon_xl");
+		string[] textPool = {"AOC RULEZ", "UI OP", "TMP FTW"};
+		Text txt = this.GetComponent<Text>();
+		if(txt != null) txt.text = textPool[UnityEngine.Random.Range(0, textPool.Length)];
 	}
 
 	private void FontReplacementTest() {
