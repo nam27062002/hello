@@ -1078,7 +1078,7 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
-  m_onAttackAudio: 
+  m_onAttackAudio: Bow
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_skins: []
@@ -1094,6 +1094,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 2658ae5ddcd9c41e59779c17b4252252, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 0.75
     max: 1.25
@@ -1124,9 +1127,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
