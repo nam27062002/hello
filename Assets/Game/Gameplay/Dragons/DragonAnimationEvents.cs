@@ -19,6 +19,13 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public string m_wingsStrongFlap;
 	private AudioObject m_wingsStrongFlapAO;
 
+	public string m_levelUpSound;
+
+	public string m_starvingSound;
+	private AudioObject m_starvingSoundAO;
+
+	public string m_hitSound;
+
 	protected Animator m_animator;
 
 
@@ -38,6 +45,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	}
 
+
 	void OnDestroy()
 	{
 		if (m_eventsRegistered)
@@ -49,12 +57,22 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private void OnLevelUp(DragonData _data) 
 	{
+		if ( !string.IsNullOrEmpty( m_levelUpSound ) )
+			AudioController.Play( m_levelUpSound );
 		m_animator.SetTrigger("LevelUp");
 	}
 
 	private void OnStarving( bool starving)
 	{
 		m_animator.SetBool( "starving", starving);
+		if (!string.IsNullOrEmpty( m_starvingSound)){
+			if ( starving ){
+				m_starvingSoundAO = AudioController.Play(m_starvingSound, transform);
+			}else{
+				if ( m_starvingSoundAO.IsPlaying() )
+					m_starvingSoundAO.Stop();
+			}
+		}
 	}
 
 	public void OnAttackEvent() {
@@ -75,7 +93,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_bostBehaviour.DeactivateTrails();
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 		{
-			m_wingsWindSoundAO.Pause();
+			m_wingsWindSoundAO.Stop();
 		}
 	}
 
@@ -131,6 +149,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	}
 
+	public void HitEvent()
+	{
+		if ( !string.IsNullOrEmpty( m_hitSound ) )
+			AudioController.Play(m_hitSound);
+	}
+
 	private void MuteWindSounds()
 	{
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
@@ -141,6 +165,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_wingsFlyingSoundAO.volume = 0;
 		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
 			m_wingsStrongFlapAO.volume = 0;
+		if (m_starvingSoundAO != null && m_starvingSoundAO.IsPlaying())
+			m_starvingSoundAO.volume = 0;
 	}
 
 	private void UnmuteWindSounds()
@@ -153,6 +179,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_wingsFlyingSoundAO.volume = m_wingsFlyingSoundAO.volumeItem;
 		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
 			m_wingsStrongFlapAO.volume = m_wingsStrongFlapAO.volumeItem;
+		if (m_starvingSoundAO != null && m_starvingSoundAO.IsPlaying())
+			m_starvingSoundAO.volume = m_starvingSoundAO.volumeItem;
 	}
 
 	public void OnInsideWater()
@@ -175,10 +203,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 		UnmuteWindSounds();
 	}
 
-
-
 	public void IntroDone()
 	{
 		Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
 	}
+
+
 }
