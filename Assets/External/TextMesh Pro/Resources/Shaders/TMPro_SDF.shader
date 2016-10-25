@@ -273,7 +273,9 @@ SubShader {
 
 		#if GLOW_ON
 			float4 glowColor = GetGlowColor(sd, scale);
-			faceColor.rgb += glowColor.rgb * glowColor.a;
+			// [AOC] We don't want the glow to be additive!! Interpolate instead :)
+			//faceColor.rgb += glowColor.rgb * glowColor.a;
+			faceColor.rgb = lerp(faceColor.rgb, glowColor.rgb, glowColor.a);
 		#endif
 
 		// #if !MASK_OFF
