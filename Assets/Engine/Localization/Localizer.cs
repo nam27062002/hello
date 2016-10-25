@@ -17,7 +17,7 @@ using UnityEngine.UI;
 /// on a textfield.
 /// Use this when possible rather than directly setting the text's value.
 /// </summary>
-[RequireComponent(typeof(Text))]
+//[RequireComponent(typeof(Text))]
 public class Localizer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
