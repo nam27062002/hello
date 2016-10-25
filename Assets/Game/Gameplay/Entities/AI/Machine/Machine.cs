@@ -242,7 +242,7 @@ namespace AI {
 					bool isLatching = dragonEat.IsLatching();
 					bool isGrabbing = dragonEat.IsGrabbing();
 
-					if (true || isEating || isLatching || isGrabbing) {
+					if (isEating || isLatching || isGrabbing) {
 						Vector3 speed = InstanceManager.player.dragonMotion.velocity;
 						m_motion.SetVelocity(speed * 10f);
 						SetSignal(Signals.Type.FallDown, true);

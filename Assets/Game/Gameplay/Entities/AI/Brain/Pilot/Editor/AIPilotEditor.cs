@@ -43,8 +43,10 @@ public class AIPilotEditor : Editor {
 		// Get target object
 		m_targetAIPilot = target as AIPilot;
 
-		// Laod and validate stored data
-		Load();
+        m_targetAIPilot.databaseKey = target.name;
+
+        // Load and validate stored data
+        Load();
 		m_targetAIPilot.ValidateComponentsData();
 	}
 
@@ -59,62 +61,67 @@ public class AIPilotEditor : Editor {
 		m_targetAIPilot = null;
 	}
 
-	/// <summary>
+    /// <summary>
 	/// Draw the inspector.
 	/// </summary>
 	public override void OnInspectorGUI() {
-		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
-		serializedObject.Update();
+        // Update the serialized object - always do this in the beginning of OnInspectorGUI.
+        serializedObject.Update();
 
-		// Default inspector
-		EditorGUI.BeginChangeCheck();
-		DrawDefaultInspector();
+        // Default inspector
+        EditorGUI.BeginChangeCheck();
+        DrawDefaultInspector();
 
-		// If there have been changes, validate required component data
-		if(EditorGUI.EndChangeCheck()) {
-			m_targetAIPilot.ValidateComponentsData();
-		}
+        // If there have been changes, validate required component data
+        if (EditorGUI.EndChangeCheck()) {
+            m_targetAIPilot.ValidateComponentsData();
+        }
 
-		// Draw the data list!
-		Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
-		if (Application.isPlaying && m_targetAIPilot != null && m_targetAIPilot.brain != null){
-			EditorGUILayout.Space();
-			EditorGUILayout.LabelField("Current State: " + m_targetAIPilot.brain.current.name);
-		}
+        // Draw the data list!
+        Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
+        if (Application.isPlaying && m_targetAIPilot != null && m_targetAIPilot.brain != null) {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Current State: " + m_targetAIPilot.brain.current.name);
+        }
 
-		EditorGUILayout.Space();
-		EditorGUILayoutExt.Separator(new SeparatorAttribute("State Machine Components Data"));
-		foreach(AIPilot.StateComponentDataKVP kvp in m_targetAIPilot.componentsData) {
-			// Skip if data is null (meaning this component type doesn't need a data object)
-			if(kvp.data == null) continue;
+        EditorGUILayout.Space();
+        EditorGUILayoutExt.Separator(new SeparatorAttribute("State Machine Components Data"));
+        Dictionary<string, AIPilot.StateComponentDataKVP> componentsData = BrainDataBase.instance.GetDataFor(m_targetAIPilot.databaseKey);
 
-			// Make it foldable!
-			// [AOC] Let's do nicer visuals than the boring default foldout!
-			Type dataType = kvp.data.GetType();
-			//kvp.folded = !EditorGUILayout.Foldout(!kvp.folded, dataType.Name);
-			if(GUILayout.Button((kvp.folded ? "► " : "▼ ") + dataType.Name, "ShurikenModuleTitle", GUILayout.ExpandWidth(true))) {
-				kvp.folded = !kvp.folded;
-			}
-			if(!kvp.folded) {
-				EditorGUI.indentLevel++;
+        if (componentsData != null) {
+            foreach (AIPilot.StateComponentDataKVP kvp in componentsData.Values) {
+                // Skip if data is null (meaning this component type doesn't need a data object)
+                if (kvp.data == null) continue;
 
-				// Unity's default editor doesn't know how to draw an object referenced by its base class, so we have to do it by ourselves -_-
-				// Find and iterate all properties of this data object
-				FieldInfo[] fields = TypeUtil.GetFields(dataType);
-				foreach(FieldInfo f in fields) {
-					object currentValue = f.GetValue(kvp.data);
-					object newValue = DoField(f, currentValue);
-					f.SetValue(kvp.data, newValue);
-				}
+                // Make it foldable!
+                // [AOC] Let's do nicer visuals than the boring default foldout!
+                Type dataType = kvp.data.GetType();
+                //kvp.folded = !EditorGUILayout.Foldout(!kvp.folded, dataType.Name);
+                if (GUILayout.Button((kvp.folded ? "► " : "▼ ") + dataType.Name, "ShurikenModuleTitle", GUILayout.ExpandWidth(true))) {
+                    kvp.folded = !kvp.folded;
+                }
+                if (!kvp.folded) {
+                    EditorGUI.indentLevel++;
 
-				EditorGUI.indentLevel--;
-			}
-		}
+                    // Unity's default editor doesn't know how to draw an object referenced by its base class, so we have to do it by ourselves -_-
+                    // Find and iterate all properties of this data object
+                    FieldInfo[] fields = TypeUtil.GetFields(dataType);
+                    foreach (FieldInfo f in fields)
+                    {
+                        object currentValue = f.GetValue(kvp.data);
+                        object newValue = DoField(f, currentValue);
+                        f.SetValue(kvp.data, newValue);
+                    }
 
-		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
-		serializedObject.ApplyModifiedProperties();
-	}
+                    EditorGUI.indentLevel--;
+                }
+            }
+        }
 
+        // Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
+        serializedObject.ApplyModifiedProperties();
+    }
+    
 	/// <summary>
 	/// The scene is being refreshed.
 	/// </summary>
