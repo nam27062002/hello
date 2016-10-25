@@ -89,6 +89,7 @@ public class CoinsFeedbackController : MonoBehaviour {
 		// Start particle system
 		m_ps.Play();
 
-		AudioController.Play(m_audio);
+        if (!string.IsNullOrEmpty(m_audio))
+		    AudioController.Play(m_audio);
 	}
 }

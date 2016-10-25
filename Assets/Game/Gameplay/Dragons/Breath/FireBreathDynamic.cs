@@ -60,18 +60,18 @@ public class FireBreathDynamic : MonoBehaviour
 
     public float timeDelay = 0.25f;
 
-    public float m_effectScale = 1.0f;
-
-    public float m_sizeQuad = 4.0f;
+    private float m_effectScale = 1.0f;
+    public float m_debugScale = -1.0f;
 
     private float m_lastTime;
 
     private float enableTime = 0.0f;
     private bool enableState = false;
 
-    public void setCollisionMaxDistance(float distance)
+    public void setEffectScale(float distance)
     {
-        m_collisionMaxDistance = distance;
+        m_collisionMaxDistance = distance * 2.0f;
+
     }
 
     // Use this for initialization
@@ -85,8 +85,22 @@ public class FireBreathDynamic : MonoBehaviour
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
         whipEnd = transform.FindChild("WhipEnd").gameObject;
-//        ParticleSystem fireToonInstance = whipEnd.GetComponentInChildren<ParticleSystem>();
-//        fireToonCopy = CopyComponent<ParticleSystem>(fireToonInstance, fireToonInstance.gameObject);
+        Transform particles = whipEnd.transform.FindChild("FireConeToon");
+        Transform particlesMask = whipEnd.transform.FindChild("FireConeToonMask");
+        Transform effectEnd = particlesMask.FindChild("EffectEnd");
+        float refDistance = (effectEnd.position - transform.position).magnitude;
+
+        if (m_debugScale > 0.0f)
+        {
+            m_effectScale = m_debugScale;
+        }
+        else
+        {
+            m_effectScale = (m_collisionMaxDistance) / refDistance;
+        }
+
+        particles.SetLocalScale(m_effectScale * particles.GetGlobalScaleQuick());
+        particlesMask.SetLocalScale(m_effectScale * particlesMask.GetGlobalScaleQuick());
 
         InitWhip();
 		InitArrays();
@@ -281,6 +295,7 @@ public class FireBreathDynamic : MonoBehaviour
         particlePos.x = m_collisionDistance < particleDistance ? m_collisionDistance : particleDistance;
         //        whipEnd.transform.SetLocalPosX(m_distance * effectScale);
         whipEnd.transform.localPosition = particlePos;
+        whipEnd.transform.SetLocalScale(whipEnd.transform.GetGlobalScaleQuick() * m_effectScale);
 
 //        Debug.Log("ScaleQuick:" + whipEnd.transform.GetGlobalScaleQuick());
 //        Debug.Log("ScaleLossy:" + whipEnd.transform.lossyScale);

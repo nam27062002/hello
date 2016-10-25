@@ -56,6 +56,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[SeparatorAttribute("More Audios")]
 	[SerializeField] private string m_onAttackAudio;
+	private AudioObject m_onAttackAudioAO;
 	[SerializeField] private string m_onScaredAudio;
 	[SerializeField] private string m_onPanicAudio;
 
@@ -98,8 +99,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_animator = transform.FindComponentRecursive<Animator>();
 		if (m_animator != null) m_animator.logWarnings = false;
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
-		if ( m_animEvents != null)
+		if ( m_animEvents != null){
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
+			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
+		}
 
 		// Load gold material
 		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
@@ -140,7 +143,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	void animEventsOnAttackStart ()
 	{
 		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
-			AudioController.Play( m_onAttackAudio, transform.position );
+			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform.position );
+	}
+
+	void animEventsOnAttackEnd ()
+	{
+		if ( m_onAttackAudioAO != null && m_onAttackAudioAO.IsPlaying() && m_onAttackAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+			m_onAttackAudioAO.Stop();
 	}
 	//
 
@@ -364,8 +373,6 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			return;
 		
 		if (!m_attack) {
-			if (!string.IsNullOrEmpty(m_onAttackAudio))
-				AudioController.Play(m_onAttackAudio, transform.position);
 			m_attack = true;
 			m_animator.SetBool("attack", true);
 		}

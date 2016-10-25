@@ -126,7 +126,7 @@ public class HUDMultiplier : MonoBehaviour {
 				// Make sure "out" trigger is consumed
 				m_anim.ResetTrigger("out");
 				m_anim.SetTrigger("in");
-				m_anim.SetTrigger("changed");
+				m_anim.SetTrigger("change");
 
 				// Trigger particle effect as well
 				m_changePS.gameObject.SetActive(true);

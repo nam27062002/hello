@@ -8,11 +8,9 @@ Shader "Hungry Dragon/Unlit Transparent Custom Fog (Background entities & Clouds
 	}
 	SubShader
 	{
-		Tags {  "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
-
 		Pass
 		{
-			Tags {  "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			Tags {  "Queue"="Transparent+20" "IgnoreProjector"="true" "RenderType"="Transparent" }
 			Blend SrcAlpha OneMinusSrcAlpha 
 			ZWrite off
 			CGPROGRAM

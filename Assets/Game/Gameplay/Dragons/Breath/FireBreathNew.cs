@@ -34,7 +34,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 	private int m_noPlayerMask;
 
 	private Transform m_mouthTransform;
-	private Transform m_headTransform;
+//	private Transform m_headTransform;
 
 	private Vector2 m_directionP;
 
@@ -69,15 +69,13 @@ public class FireBreathNew : DragonBreathBehaviour {
 
     override protected void ExtendedStart() {
 
-        Transform m_tongue = transform.FindTransformRecursive("Fire_Dummy");
+        DragonMotion dragonMotion = GetComponent<DragonMotion>();
+
         GameObject tempFire = Instantiate<GameObject>(m_dragonFlame);
 
-//        tempFire.transform.parent = m_tongue;
-        tempFire.transform.SetParent(m_tongue, true);
-        //tempFire.transform.SetParentAndReset(m_tongue);
+        tempFire.transform.SetParent(dragonMotion.tongue, true);
 
         tempFire.transform.localPosition = Vector3.zero;
-//        tempFire.transform.SetLocalScale(1.0f / transform.GetGlobalScaleQuick());
 
 #if FIRETEST
         tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
@@ -87,24 +85,24 @@ public class FireBreathNew : DragonBreathBehaviour {
         dragonFlameInstance = tempFire.GetComponent<DragonBreath2>();
 #endif
 
-//        tempFire.transform.localScale = Vector3.one;
-
         dragonFlameInstance.EnableFlame(false);
 
         m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
-		m_mouthTransform = GetComponent<DragonMotion>().tongue;
-		m_headTransform = GetComponent<DragonMotion>().head;
 
-        m_length = dragonFlameInstance.m_sizeQuad * dragonFlameInstance.m_effectScale; // m_dragon.data.def.GetAsFloat("furyBaseLenght");
-//        m_length *= transform.localScale.x;
+        m_mouthTransform = dragonMotion.tongue;
+//		m_headTransform = dragonMotion.head;
+
+        float furyBaseLenght = m_dragon.data.def.GetAsFloat("furyBaseLenght");
+        m_length = furyBaseLenght;
+        m_length *= transform.localScale.x;
       	float lengthIncrease = m_length * m_dragon.data.fireSkill.value;
         m_length += lengthIncrease;
-        //      m_length = 2.0f;
 
-        dragonFlameInstance.setCollisionMaxDistance(m_length);
-        m_length *= transform.localScale.x;
+        //dragonFlameInstance.setCollisionMaxDistance((furyBaseLenght * dragonFlameInstance.m_effectScale) + lengthIncrease);
+        dragonFlameInstance.setEffectScale(m_length);
+        //        m_length *= transform.localScale.x;
         m_actualLength = m_length;
 
         m_sphCenter = m_mouthTransform.position;
@@ -174,7 +172,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     }
 
     override protected void Breath(){
-		m_direction = m_mouthTransform.position - m_headTransform.position;
+        m_direction = -m_mouthTransform.right;// m_mouthTransform.position - m_headTransform.position;
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
 
