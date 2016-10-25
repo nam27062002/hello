@@ -94,7 +94,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         m_mouthTransform = dragonMotion.tongue;
 //		m_headTransform = dragonMotion.head;
 
-        float furyBaseLenght = 5.0f;// m_dragon.data.def.GetAsFloat("furyBaseLenght");
+        float furyBaseLenght = m_dragon.data.def.GetAsFloat("furyBaseLenght");
         m_length = furyBaseLenght;
         m_length *= transform.localScale.x;
       	float lengthIncrease = m_length * m_dragon.data.fireSkill.value;
