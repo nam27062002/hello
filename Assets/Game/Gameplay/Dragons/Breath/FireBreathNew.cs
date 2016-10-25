@@ -299,7 +299,8 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if ( _other.tag == "Water" )
 		{
-			ResumeFury();
+			if ( m_isFuryPaused )
+				ResumeFury();
 		}
 	}
 
