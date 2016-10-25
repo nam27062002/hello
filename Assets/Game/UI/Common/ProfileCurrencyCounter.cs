@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -32,7 +33,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	[SerializeField] private Type m_type = Type.COINS;
 
 	// References
-	[SerializeField] private Text m_text = null;
+	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Animator m_anim = null;
 
 	//------------------------------------------------------------------//
