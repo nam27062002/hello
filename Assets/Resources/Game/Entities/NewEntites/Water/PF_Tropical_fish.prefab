@@ -123,14 +123,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 49187d524b36743a7ba28d0b7c3542f6, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_speedFactorRange:
     min: 1
     max: 1
-  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":15,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"followAheadFactor":0,"frequencyOffset":{"min":-5,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":0,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3,"followAheadFactor":1,"frequencyOffset":{"min":-5,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_Tropical_fish
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
@@ -207,7 +207,7 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
+    m_limitVerticalRotation: 0
     m_faceUpAngle: 45
     m_faceDownAngle: 30
   m_affectedByDragonTrample: 0
