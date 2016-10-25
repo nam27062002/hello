@@ -430,7 +430,7 @@ MonoBehaviour:
     name: PF_Mine_Explosion
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_onExplosionAudio: 
+  m_onExplosionAudio: Explosion_Big
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
@@ -473,9 +473,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
@@ -612,6 +609,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 91d304c73d1dd42ca947fb91474a6252, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 1
     max: 1
