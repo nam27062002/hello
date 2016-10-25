@@ -84,8 +84,13 @@ namespace AI {
 		}
 
 		public void SetArea(ISpawner _spawner) {
-			if (_spawner != null) {
-				m_area = _spawner.area;
+            if (_spawner == null) {
+                m_area = new RectAreaBounds(transform.position, Vector3.one * 2f);
+                m_homePosition = transform.position;
+                m_guideFunction = null;
+                m_target = m_homePosition;
+            } else {
+                m_area = _spawner.area;
 				m_homePosition = transform.position;
 				m_guideFunction = _spawner.guideFunction;
 				m_target = m_homePosition;
@@ -139,13 +144,7 @@ namespace AI {
 			public string typeName = "";
 			public StateComponentData data;
 			public bool folded = false;			// [AOC] For the editor
-		}
-
-		// Custom data for each state machine component
-		// [AOC] Although public, it shouldn't be modified (only by the editor).
-		// [AOC] Don't show in the default inspector, we will draw the list via the AIPilot's custom editor
-		[HideInInspector] private List<StateComponentDataKVP> m_componentsData = new List<StateComponentDataKVP>();
-		public List<StateComponentDataKVP> componentsData { get { return m_componentsData; }}
+		}		
 
 		// [AOC] Unfortunately Unity doesn't serialize custom abstract classes, nor behaves well with inheritance,
 		//		 so we must manage serialization of the state component data on our own.
@@ -153,22 +152,28 @@ namespace AI {
 		// See HSX's GameData class
 		[SerializeField][HideInInspector] private string m_serializedJson = "[]";
 
-		/// <summary>
-		/// Gets the data linked to the target component type.
-		/// </summary>
-		/// <returns>The component data linked to the requested component type. <c>null</c> if there is no data for the given type.</returns>
-		/// <typeparam name="T">Type of the state component whose data we want.</typeparam>
-		public T GetComponentData<T>() where T : StateComponentData {
-			// Iterate the components data list looking for the target data type
-			// Since Unity doesn't serialize System.Type, use the Type.FullName to compare types
-			string typeName = typeof(T).FullName;
-			for(int i = 0; i < m_componentsData.Count; i++) {
-				// Is it the target component data type?
-				if(m_componentsData[i].typeName == typeName) {
-					return (T)m_componentsData[i].data;
-				}
-			}
-			return null;
+        // [MSF] We can't access the prefab name while serializing, so we need to store a Key to save and retrieve its data.
+        //          We'll use the prefab name as a Key. The editor will update this value.
+        [SerializeField]
+        [HideInInspector]
+        private string m_databaseKey = "";
+        public string databaseKey { get { return m_databaseKey; } set { m_databaseKey = value; } }
+
+        /// <summary>
+        /// Gets the data linked to the target component type.
+        /// </summary>
+        /// <returns>The component data linked to the requested component type. <c>null</c> if there is no data for the given type.</returns>
+        /// <typeparam name="T">Type of the state component whose data we want.</typeparam>
+        public T GetComponentData<T>() where T : StateComponentData {
+            // Since Unity doesn't serialize System.Type, use the Type.FullName to compare types
+            string typeName = typeof(T).FullName;
+            StateComponentDataKVP kvp = BrainDataBase.instance.GetDataFor(m_databaseKey, typeName);
+            if (kvp != null)
+            {
+                return (T)kvp.data;
+            }
+
+            return null;
 		}
 
 		/// <summary>
@@ -180,13 +185,13 @@ namespace AI {
 		public void ValidateComponentsData() {
 			// Special case: brainResource not initialized
 			if(brainResource == null) {
-				m_componentsData.Clear();
-				return;
-			}
+                BrainDataBase.instance.ClearDataFor(m_databaseKey);
+                return;
+            }
 
-			// Iterate all components in all states of the state machine
-			// If a data object for that component type doesn't exist, add it
-			HashSet<string> validatedDataTypes = new HashSet<string>();	// Store component names for later usage
+            // Iterate all components in all states of the state machine
+            // If a data object for that component type doesn't exist, add it
+            HashSet<string> validatedDataTypes = new HashSet<string>();	// Store component names for later usage
 			foreach(State state in brainResource.states) {
 				foreach(StateComponent component in state.componentAssets) {
 					// If this component doesn't require a data object, skip it
@@ -195,41 +200,33 @@ namespace AI {
 
 					// If this component data type has already been checked, skip it
 					string typeName = component.GetDataType().FullName;
-					if(validatedDataTypes.Add(typeName)) {		// Returns true if the value was not already in the hash
-						// Check whether we have a data object for this component type
-						// Inefficient, but since it's an editor code, we don't care
-						StateComponentDataKVP kvp = m_componentsData.Find(x => x.typeName == typeName);
+					if(validatedDataTypes.Add(typeName)) {      // Returns true if the value was not already in the hash
+                        // Check whether we have a data object for this component type
+                        // Inefficient, but since it's an editor code, we don't care
+                        StateComponentDataKVP kvp = BrainDataBase.instance.GetDataFor(m_databaseKey, typeName);
 
-						// If data wasn't found, create one and add it to the pilot
-						if(kvp == null) {
+
+                        // If data wasn't found, create one and add it to the pilot
+                        if (kvp == null) {
 							kvp = new StateComponentDataKVP();
 							kvp.typeName = typeName;
-							kvp.data = component.CreateData();	// [AOC] CreateData() will create the proper data object for this specific component type
-							m_componentsData.Add(kvp);	
-						}
-					}
+							kvp.data = component.CreateData();  // [AOC] CreateData() will create the proper data object for this specific component type
+                            BrainDataBase.instance.AddDataFor(m_databaseKey, kvp);
+                        }
+                    }
 				}
 			}
+            
+            BrainDataBase.instance.ValidateTypes(m_databaseKey, validatedDataTypes);
+        }
 
-			// Iterate all data objects.
-			// If a data type is no longer required by any of the components on the state machine, delete it
-			// Reverse iteration since we'll be deleting items from the same list we're iterating
-			for(int i = m_componentsData.Count - 1; i >= 0; i--) {
-				// Is it a validated data type?
-				if(!validatedDataTypes.Contains(m_componentsData[i].typeName)) {
-					// No, delete it
-					m_componentsData.RemoveAt(i);
-				}
-			}
-		}
-
-		//--------------------------------------------------------------------//
-		// ISerializationCallbackReceiver IMPLEMENTATION					  //
-		//--------------------------------------------------------------------//
-		/// <summary>
-		/// Serialization is about to start.
-		/// </summary>
-		public void OnBeforeSerialize() {
+        //--------------------------------------------------------------------//
+        // ISerializationCallbackReceiver IMPLEMENTATION					  //
+        //--------------------------------------------------------------------//
+        /// <summary>
+        /// Serialization is about to start.
+        /// </summary>
+        public void OnBeforeSerialize() {
 			// Nothing to do
 		}
 
@@ -241,71 +238,83 @@ namespace AI {
 			LoadFromJson();
 		}
 
-		/// <summary>
-		/// Save to the json string.
-		/// </summary>
-		public void SaveToJson() {
-			// [AOC] Since Unity doesn't serialize custom classes inheriting from an abstract class, 
-			//		 we'll serialize it on our own via reflection into a json
-			//		 Copied from HSX
+        /// <summary>
+        /// Save to the json string.
+        /// </summary>
+        public void SaveToJson() {
+            // [AOC] Since Unity doesn't serialize custom classes inheriting from an abstract class, 
+            //		 we'll serialize it on our own via reflection into a json
+            //		 Copied from HSX
 
-			// Make sure all required data components for this pilot are created
-			// [AOC] Doing it every time can be costly, try to figure out a better way
-			ValidateComponentsData();
+            if (string.IsNullOrEmpty(m_databaseKey)) {
+                return;
+            }
 
-			// Put all data into a JSON
-			List<object> serializedDatas = new List<object>();
-			for(int i = 0; i < m_componentsData.Count; i++) {
-				// Create a new data dictionary for this component data
-				Dictionary<string, object> data;
+            // Make sure all required data components for this pilot are created
+            // [AOC] Doing it every time can be costly, try to figure out a better way
+            ValidateComponentsData();
 
-				// Add data structure fields
-				data = m_componentsData[i].data.Serialize();
-				data.Add("dataType", m_componentsData[i].typeName);
+            // Put all data into a JSON
+            List<object> serializedDatas = new List<object>();
+            Dictionary<string, StateComponentDataKVP> componentsData = BrainDataBase.instance.GetDataFor(m_databaseKey);
+            if (componentsData != null) {
+                foreach (StateComponentDataKVP componentData in componentsData.Values) {
+                    // Create a new data dictionary for this component data
+                    Dictionary<string, object> data;
 
-				// Add extra info fields
-				data.Add("editorFolded", m_componentsData[i].folded);
+                    // Add data structure fields
+                    data = componentData.data.Serialize();
+                    data.Add("dataType", componentData.typeName);
 
-				// Store it to the list
-				serializedDatas.Add(data);
-			}
-			m_serializedJson = FGOLMiniJSON.Json.Serialize(serializedDatas);
-			//m_serializedJson = new JsonFormatter().PrettyPrint(m_serializedJson);		// [AOC] Optionally, for debug purposes mainly
-		}
+                    // Add extra info fields
+                    data.Add("editorFolded", componentData.folded);
 
-		/// <summary>
-		/// Load from the json.
-		/// </summary>
-		public void LoadFromJson() {
-			// [AOC] Since Unity doesn't serialize custom classes inheriting from an abstract class, 
-			//		 we'll serialize it on our own via reflection into a json
-			//		 Copied from HSX
+                    // Store it to the list
+                    serializedDatas.Add(data);
+                }
+                m_serializedJson = FGOLMiniJSON.Json.Serialize(serializedDatas);
+                //m_serializedJson = new JsonFormatter().PrettyPrint(m_serializedJson);		// [AOC] Optionally, for debug purposes mainly
 
-			// Parse the JSON
-			if(string.IsNullOrEmpty(m_serializedJson)) m_serializedJson = "[]";	// [AOC] Make sure it's a valid json string
-			List<object> serializedDatas = FGOLMiniJSON.Json.Deserialize(m_serializedJson) as List<object>;
+                BrainDataBase.instance.ClearDataFor(m_databaseKey);
+            }
+        }
 
-			// Clear components data list
-			m_componentsData.Clear();
+        /// <summary>
+        /// Load from the json.
+        /// </summary>
+        public void LoadFromJson() {
+            // [AOC] Since Unity doesn't serialize custom classes inheriting from an abstract class, 
+            //		 we'll serialize it on our own via reflection into a json
+            //		 Copied from HSX
 
-			// Iterate all the elements in the json array - each one corresponds to a component data object
-			for(int i = 0; i < serializedDatas.Count; i++) {
-				// Create a new component data kvp and initialize it with the json's values
-				StateComponentDataKVP newKvp = new StateComponentDataKVP();
-				Dictionary<string, object> data = serializedDatas[i] as Dictionary<string, object>;
+            if (string.IsNullOrEmpty(m_databaseKey)) {
+                return;
+            }
 
-				// Create and initialize the data object
-				newKvp.typeName = data["dataType"] as string;
-				Type dataType = Type.GetType(newKvp.typeName);
-				newKvp.data = (StateComponentData)Activator.CreateInstance(dataType);
-				newKvp.data.Deserialize(data);
+            if (!BrainDataBase.instance.HasDataFor(m_databaseKey)) {
+                // Parse the JSON
+                if (string.IsNullOrEmpty(m_serializedJson)) m_serializedJson = "[]";    // [AOC] Make sure it's a valid json string
+                List<object> serializedDatas = FGOLMiniJSON.Json.Deserialize(m_serializedJson) as List<object>;
 
-				// Add other custom values
-				newKvp.folded = (bool)data["editorFolded"];
+                // Iterate all the elements in the json array - each one corresponds to a component data object
+                for (int i = 0; i < serializedDatas.Count; i++) {
+                    // Create a new component data kvp and initialize it with the json's values
+                    StateComponentDataKVP newKvp = new StateComponentDataKVP();
+                    Dictionary<string, object> data = serializedDatas[i] as Dictionary<string, object>;
 
-				// Store into the components data list
-				m_componentsData.Add(newKvp);
-			}
-		}
-	}
+                    // Create and initialize the data object
+                    newKvp.typeName = data["dataType"] as string;
+                    Type dataType = Type.GetType(newKvp.typeName);
+                    newKvp.data = (StateComponentData)Activator.CreateInstance(dataType);
+                    newKvp.data.Deserialize(data);
+
+                    // Add other custom values
+                    newKvp.folded = (bool)data["editorFolded"];
+
+                    // Store into the components data list
+                    BrainDataBase.instance.AddDataFor(m_databaseKey, newKvp);
+                }
+            }
+        }
+    }
 }

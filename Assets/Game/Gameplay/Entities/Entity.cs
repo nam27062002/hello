@@ -52,8 +52,9 @@ public class Entity : IEntity {
 	// Attributes
 	//-----------------------------------------------
 	private ISpawner m_spawner;
+    private bool m_spawned = false;
 
-	private float m_checkOnScreenTimer = 0;
+    private float m_checkOnScreenTimer = 0;
 
 	private GameCamera m_newCamera;
 
@@ -141,20 +142,23 @@ public class Entity : IEntity {
 		m_health = m_maxHealth;
 
 		base.Spawn(_spawner);
-	}
 
-	public override void Disable(bool _destroyed) {
+        m_spawned = true;
+    }
+
+    public override void Disable(bool _destroyed) {
 		base.Disable( _destroyed );
 		m_spawner.RemoveEntity(gameObject, _destroyed);
-	}
+        m_spawned = false;
+    }
 
-	/// <summary>
-	/// Get a Reward struct initialized with the reward to be given when killing this
-	/// prey, taking in account its golden/pc chances and status.
-	/// </summary>
-	/// <returns>The reward to be given to the player when killing this unit.</returns>
-	/// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
-	public Reward GetOnKillReward(bool _burnt) {
+    /// <summary>
+    /// Get a Reward struct initialized with the reward to be given when killing this
+    /// prey, taking in account its golden/pc chances and status.
+    /// </summary>
+    /// <returns>The reward to be given to the player when killing this unit.</returns>
+    /// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
+    public Reward GetOnKillReward(bool _burnt) {
 		// Create a copy of the base rewards and tune them
 		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
@@ -215,21 +219,23 @@ public class Entity : IEntity {
 
 	// Update is called once per frame
 	void Update () {
-		m_checkOnScreenTimer -= Time.deltaTime;
-		if (m_checkOnScreenTimer <= 0) 
-		{	
-			if(m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
-			m_checkOnScreenTimer = 0.5f;
-		}
+        if (m_spawned) {
+            m_checkOnScreenTimer -= Time.deltaTime;
+            if (m_checkOnScreenTimer <= 0) {
+                if (m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
+                m_checkOnScreenTimer = 0.5f;
+            }
+        }
 	}
 
 	void LateUpdate() {
-		// check camera to destroy this entity if it is outside view area
-		if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) 
-		{
-			if (m_spawner != null) {
-				Disable(false);
-			}
-		}
+        if (m_spawned) {
+            // check camera to destroy this entity if it is outside view area
+            if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) {
+                if (m_spawner != null) {
+                    Disable(false);
+                }
+            }
+        }
 	}
 }

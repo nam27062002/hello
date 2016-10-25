@@ -11,6 +11,7 @@ public class DragonTint : MonoBehaviour
 
 	Renderer[] m_dragonRenderers = null;
 	List<Material> m_materials = new List<Material>();
+	List<Material> m_bodyMaterials = new List<Material>();
 
 	float m_otherColorTimer = 0;
 
@@ -30,6 +31,8 @@ public class DragonTint : MonoBehaviour
 
 	// Shield
 	float m_shieldValue = 0;
+
+	float m_deathAlpha = 1;
 
 	// Use this for initialization
 	void Start () 
@@ -56,7 +59,11 @@ public class DragonTint : MonoBehaviour
 			{
 				string shaderName = mats[j].shader.name;
 				if ( shaderName.Contains("Wings") || shaderName.Contains("Dragon") )
+				{
 					m_materials.Add( mats[j] );
+					if (shaderName.Contains("Body"))
+						m_bodyMaterials.Add( mats[i] );
+				}
 			}
 		}
 	}
@@ -64,12 +71,16 @@ public class DragonTint : MonoBehaviour
 	void OnEnable() 
 	{
 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
 	void OnDisable() 
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener(GameEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
 	private void OnDamageReceived(float _amount, DamageType _type, Transform _source) 
@@ -81,8 +92,21 @@ public class DragonTint : MonoBehaviour
 	// Update is called once per frame
 	void LateUpdate () 
 	{
+		Color multiplyColor = m_caveColor;
 		// Color multiply
-		SetColorMultiply(m_caveColor);
+		if ( !m_health.IsAlive() )
+		{
+			// To alpha
+			m_deathAlpha -= Time.deltaTime;
+		}
+		else
+		{
+			// To opaque
+			m_deathAlpha += Time.deltaTime;
+		}
+		m_deathAlpha = Mathf.Clamp01(m_deathAlpha);
+		multiplyColor.a = m_deathAlpha;
+		SetColorMultiply(multiplyColor);
 
 		// Color add
 		m_damageTimer -= Time.deltaTime;
@@ -149,6 +173,7 @@ public class DragonTint : MonoBehaviour
 
 	void SetColorAdd( Color c)
 	{
+		c.a = 0;
 		for( int i = 0; i<m_materials.Count; i++ )	
 			m_materials[i].SetColor("_ColorAdd", c );
 	}
@@ -164,5 +189,18 @@ public class DragonTint : MonoBehaviour
 		m_caveColor = c;
 	}
 
+	private void OnPlayerKo()
+	{
+		// Switch body material to wings
+		for( int i = 0; i<m_bodyMaterials.Count; i++ )
+			m_bodyMaterials[i].shader = Shader.Find("Hungry Dragon/Dragon/Wings (Transparent)");
+	}
+
+	private void OnPlayerRevive()
+	{
+		// Switch back body materials
+		for( int i = 0; i<m_bodyMaterials.Count; i++ )
+			m_bodyMaterials[i].shader = Shader.Find("Hungry Dragon/Dragon/Body");
+	}
 
 }

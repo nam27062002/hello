@@ -84,7 +84,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -197,9 +197,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
@@ -233,7 +230,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 0}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 0
     max: 0
   m_serializedJson: '[]'
+  m_databaseKey: PF_GoodJunkBottle
