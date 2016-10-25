@@ -26,7 +26,7 @@ namespace AI {
 		public MachineSensor() {}
 
 		public override void Init() {
-			if ( InstanceManager.player != null )
+			if (InstanceManager.player != null)
 				m_enemy = InstanceManager.player.transform;
 
 			m_senseTimer = 0f;
