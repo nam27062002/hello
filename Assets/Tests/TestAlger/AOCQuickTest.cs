@@ -66,6 +66,11 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
+		//this.GetComponent<Image>().sprite = ResourcesExt.LoadFromSpritesheet("UI/Metagame/Tiers/spritesheet_tiers", "icon_xl");
+		this.GetComponent<Image>().sprite = ResourcesExt.LoadSprite("UI/Metagame/Tiers/spritesheet_tiers/icon_xl");
+	}
+
+	private void FontReplacementTest() {
 		// Select a new font
 		string[] fonts = {
 			"FNT_Default",
