@@ -33,6 +33,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		OuterSpace,
 		Intro,
 		Latching,
+		Dead,
+		Reviving,
 		None,
 	};
 
@@ -193,6 +195,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private RegionManager m_regionManager;
 	public Current                              current { get; set; }
 
+	private Vector3 m_diePosition;
+	private Vector3 m_revivePosition;
+	private float m_reviveTimer;
+	private const float m_reviveDuration = 1;
+	private float m_deadTimer = 0;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -249,6 +256,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
+
+		m_tongue = transform.FindTransformRecursive("Fire_Dummy");
 	}
 
 	/// <summary>
@@ -362,6 +371,21 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Latching:
 				{
 					m_groundCollider.enabled = false;
+				}break;
+				case State.Dead:
+				{
+					m_animator.SetTrigger("dead");
+					// Save Position!
+					m_diePosition = transform.position;
+					m_deadTimer = 0;
+				}break;
+				case State.Reviving:
+				{
+					m_reviveTimer = m_reviveDuration;
+					m_impulse = Vector3.zero;
+					m_rbody.velocity = Vector3.zero;
+					m_animator.Play("BaseLayer.Idle");
+					m_revivePosition = transform.position;
 				}break;
 			}
 
@@ -565,7 +589,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.Idle:
-				FlyAwayFromGround();
+				UpdateIdleMovement();
 				// UpdateMovement();
 				break;
 
@@ -601,7 +625,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_impulse = Vector3.zero;
 				m_rbody.velocity = Vector3.zero;
 			}break;
-
+			case State.Dead:
+			{
+				DeadFall();
+			}break;
+			case State.Reviving:
+			{
+				m_reviveTimer -= Time.deltaTime;
+				transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
+				if ( m_reviveTimer <= 0 )
+					ChangeState( State.Idle);
+			}break;
 		}
 		
 		m_rbody.angularVelocity = m_angularVelocity;
@@ -740,7 +774,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void FlyAwayFromGround() {
+	private void UpdateIdleMovement() {
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
@@ -753,6 +787,55 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		else 
 		{
 			ComputeImpulseToZero();
+		}
+
+		if ( current == null){
+			if ( oldDirection.x > 0 ){
+				m_direction = Vector3.right;	
+			}else{
+				m_direction = Vector3.left;
+			}
+		}else{
+			m_direction = (m_impulse + m_externalForce).normalized;
+		}
+
+		RotateToDirection(m_direction, true);
+		m_desiredRotation = m_transform.rotation;
+
+		ApplyExternalForce();
+
+
+
+		m_rbody.velocity = m_impulse;
+	}
+
+	private void IdleRotation( Vector3 oldRotation )
+	{
+		
+	}
+
+	private void DeadFall(){
+
+		Vector3 oldDirection = m_direction;
+		CheckGround( out m_raycastHit);
+		if (m_height >= 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
+
+			m_deadTimer += Time.deltaTime;
+
+			m_impulse = m_rbody.velocity;
+			if ( m_deadTimer < 1.5f * Time.timeScale )
+			{
+				float gravity = 9.81f * m_dragonGravityModifier * 50;
+				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+
+				// stroke's Drag
+				float impulseMag = m_impulse.magnitude;
+				m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+			}
+			else
+			{
+				ComputeImpulseToZero();
+			}
 		}
 
 		if ( oldDirection.x > 0 )
@@ -770,9 +853,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		ApplyExternalForce();
 		m_rbody.velocity = m_impulse;
-
-
 	}
+
 
 	private void ComputeFinalImpulse(Vector3 _impulse) {
 		// we keep the velocity value
@@ -965,6 +1047,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_particleController.OnEnterWater();
 
 		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
+		m_impulse = rbody.velocity;
 
 		// Change state
 		ChangeState(State.InsideWater);
@@ -1099,6 +1182,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		
 	}
 
+	public void Die(){
+		ChangeState(State.Dead);
+	}
+
+	public void Revive(){
+		ChangeState(State.Reviving);
+	}
+
 	/// <summary>
 	/// Raises the trigger enter event.
 	/// </summary>
@@ -1137,7 +1228,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				if ( m_impulse.y < 0 )	// if going deep
 				{
-					m_impulse = Vector3.up * m_impulse.magnitude * m_onWaterCollisionMultiplier;	
+					m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
 				}
 			}break;
 

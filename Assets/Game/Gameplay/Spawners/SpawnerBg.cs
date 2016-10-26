@@ -235,7 +235,7 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 
 		ExtendedSpawn();
 
-		uint rail = 0;
+		int rail = 0;
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			AI.AIPilot pilot = m_entities[i].GetComponent<AI.AIPilot>();
 			pilot.guideFunction = m_guideFunction;
@@ -251,6 +251,8 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 
 			pilot.transform.position = pos;
 			pilot.transform.localScale = Vector3.one * m_scale.GetRandom();
+			pilot.SetRail(rail, (int)m_rails);
+			rail = (rail + 1) % (int)m_rails;
 
 			pilot.Spawn(this);
 
@@ -262,9 +264,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 			}
 
 			AI.IMachine machine = pilot.GetComponent<AI.IMachine>();
-			machine.SetRail(rail, m_rails);
-			rail = (rail + 1) % m_rails;
-
 			if (m_groupController) {	
 				machine.EnterGroup(ref m_groupController.flock);
 			}

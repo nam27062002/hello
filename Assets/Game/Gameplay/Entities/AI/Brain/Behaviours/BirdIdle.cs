@@ -51,7 +51,7 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) {				
 				//let's find a rest position
 				RaycastHit hit;
-				Vector3 start = m_pilot.area.RandomInside();
+				Vector3 start = (_oldState == null)? m_pilot.area.RandomInside() : m_machine.position;
 				Vector3 end = start;
 
 				if (m_data.restUpsideDown) {
@@ -68,9 +68,9 @@ namespace AI {
 					m_direction = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-0.5f, -1f));
 					m_direction.Normalize();
 
-					if (m_data.teleport) {
+					if (m_data.teleport && _oldState == null) {
 						m_machine.position = m_restPoint;
-						m_pilot.SetMoveSpeed(0, false);
+						m_pilot.Stop();
 						m_pilot.SetDirection(m_direction);
 
 						m_idleState = IdleState.Rest;
@@ -93,10 +93,11 @@ namespace AI {
 			protected override void OnUpdate() {
 				if (m_idleState == IdleState.GoToRestPoint) {
 					float m = (m_machine.position - m_restPoint).sqrMagnitude;
-					float d = 0.1f;
+					float d = 1f;
 
 					if (m < d * d) {
-						m_pilot.SetMoveSpeed(0, false);
+						m_machine.position = m_restPoint;
+						m_pilot.Stop();
 						m_pilot.SetDirection(m_direction);
 						m_idleState = IdleState.Rest;
 					}

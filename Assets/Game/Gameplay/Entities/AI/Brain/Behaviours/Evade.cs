@@ -45,7 +45,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				bool avoid = m_machine.GetSignal(Signals.Type.Warning);
+				bool avoid = m_machine.GetSignal(Signals.Type.Danger);
 				m_pilot.Avoid(avoid);
 
 				if (avoid) {

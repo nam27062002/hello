@@ -20,6 +20,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 
 	protected List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
+    private List<AI.Machine> m_preysToEat; // Temporary list needed when eating. It's defined here to prevent memory from being generated when eating
 
 	protected DragonTier m_tier;
 	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
@@ -114,7 +115,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 		m_eatingTimer = 0;
 
 		m_prey = new List<PreyData>();
-		m_bloodEmitter = new List<GameObject>();
+        m_preysToEat = new List<AI.Machine>();
+        m_bloodEmitter = new List<GameObject>();
 
 		MouthCache();
 		m_holdStunTime = 0.5f;
@@ -608,7 +610,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			AI.Machine preyToHold = null;
 			Entity entityToHold = null;
-			List<AI.Machine> preysToEat = new List<AI.Machine>();
+            
 			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
 			for (int e = 0; e < m_numCheckEntities; e++) {
 				Entity entity = m_checkEntities[e];
@@ -616,11 +618,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 				{
 					if (entity.IsEdible(m_tier) || m_ignoreTierList.Contains( entity.sku ))
 					{
-						if (m_limitEating && (preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
+						if (m_limitEating && (m_preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
 						{
 							AI.Machine machine = entity.GetComponent<AI.Machine>();
 							if (!machine.IsDead() && !machine.IsDying()) {
-									preysToEat.Add(machine);
+                                m_preysToEat.Add(machine);
 							}
 						}
 					}
@@ -645,11 +647,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				StartHold(preyToHold, entityToHold.CanBeGrabbed( m_tier));
 			}
-			else if ( preysToEat.Count > 0 )
+			else if (m_preysToEat.Count > 0 )
 			{
-				for( int i = 0; i<preysToEat.Count; i++ )
-					Eat(preysToEat[i]);
-			}
+				for( int i = 0; i< m_preysToEat.Count; i++ )
+					Eat(m_preysToEat[i]);
+
+                // Clears it up since it's a temporary list. It's defined as global to prevent memory from being generated every time the creature eats
+                m_preysToEat.Clear();
+            }
 		}
 
 		m_attackTarget = null;

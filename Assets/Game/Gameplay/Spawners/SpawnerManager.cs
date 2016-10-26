@@ -47,6 +47,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
     private float m_lastX, m_lastY;
 
+    private System.Diagnostics.Stopwatch m_watch = new System.Diagnostics.Stopwatch();
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -199,16 +201,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 				}
 			}
 		}
-
-		System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-		watch.Start();
+		
+		m_watch.Start();
 		for (int i = 0; i < m_spawning.Count; i++) {
 			ISpawner sp = m_spawning[i];
 			if (sp.Respawn()) {
 				m_spawning.Remove(sp);
 				i = Mathf.Max(0, i - 1);
 			}
-			if (watch.ElapsedMilliseconds >= 9f) {
+			if (m_watch.ElapsedMilliseconds >= 9f) {
 				break;
 			}
 		}

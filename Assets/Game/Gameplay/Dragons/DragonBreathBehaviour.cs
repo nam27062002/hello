@@ -104,6 +104,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	private DefinitionNode m_decorationEffects = null;
 
 
+	public string m_breathSound;
+    private AudioObject m_breathSoundAO;
+    public string m_superBreathSound;
+    private AudioObject m_superBreathSoundAO;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -307,6 +312,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 				// Set coins multiplier for burn
 				RewardManager.burnCoinsMultiplier = m_superFuryCoinsMultiplier;
+
+				if ( !string.IsNullOrEmpty(m_superBreathSound) )
+					m_superBreathSoundAO = AudioController.Play( m_superBreathSound, transform);
+
 			}break;
 			case Type.Standard:
 			{
@@ -314,14 +323,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 				// Set coins multiplier for burn
 				RewardManager.burnCoinsMultiplier = 1;
-			}break;
-		}
 
-		switch( Random.Range(0,3) )
-		{
-			case 0:AudioManager.instance.PlayClip("audio/sfx/Dragon/AI_ANY_ONO_ORG_REA_GENE_ZEDS_001_005_GENE");break;
-			case 1:AudioManager.instance.PlayClip("audio/sfx/Dragon/AI_ANY_ONO_ORG_REA_GENE_ZEGS_001_002_GENE");break;
-			case 2:AudioManager.instance.PlayClip("audio/sfx/Dragon/AI_ANY_ONO_ORG_REA_GENE_ZEGS_001_003_GENE");break;
+				if ( !string.IsNullOrEmpty(m_breathSound) )
+					m_breathSoundAO = AudioController.Play( m_breathSound, transform);
+			}break;
 		}
 
 
@@ -340,11 +345,17 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				UsersManager.currentUser.superFuryProgression++;
 				m_currentFury = 0;
 				m_furyRushesCompleted++;
+
+				if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() )
+					m_breathSoundAO.Stop();
 			}break;
 			case Type.Super:
 			{
 				// Set super fury counter to 0
 				UsersManager.currentUser.superFuryProgression = 0;
+
+				if (m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() )
+					m_superBreathSoundAO.Stop();
 			}break;
 
 		}
@@ -422,6 +433,27 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				return true;
 		}
 		return false;
+	}
+
+	public virtual void PauseFury()
+	{
+		m_isFuryPaused = true;
+		m_animator.SetBool("breath", false);
+		switch( m_type )
+		{
+			case Type.Standard: if ( m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Pause();break;
+			case Type.Super: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Pause();break;
+		}
+	}
+
+	public virtual void ResumeFury()
+	{
+		m_isFuryPaused = false;
+		switch( m_type )
+		{
+			case Type.Standard: if ( m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Unpause();break;
+			case Type.Super: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Unpause();break;
+		}
 	}
 
 }

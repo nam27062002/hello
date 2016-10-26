@@ -113,17 +113,6 @@ namespace AI {
 			return false;
 		}
 
-		public void SetRail(uint _rail, uint _total) {
-			if (m_motion != null) {
-				if (_total > 1) {
-					float railSeparation = m_railSeparation.GetRandom();
-					m_motion.zOffset = (_rail * railSeparation) - (railSeparation * (_total / 2));
-				} else {
-					m_motion.zOffset = 0f;
-				}
-			}
-		}
-
 		// Group membership -> for collective behaviours
 		public void	EnterGroup(ref Group _group) {
 			if (m_group != _group) {

@@ -91,10 +91,16 @@ MonoBehaviour:
   - name: PS_Blood_Green_Small
     path: Blood
     offset: {x: 0, y: 0, z: 0}
+  m_onEatenAudio: 
+  m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_onExplosionAudio: 
+  m_onAttackAudio: 
+  m_onScaredAudio: 
+  m_onPanicAudio: 
   m_skins: []
   m_web: {fileID: 120000010357201152}
   m_spinneret: {fileID: 485126}
@@ -148,10 +154,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 149e4273dfd374fb6882be1ff3ae96bc, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 0.75
     max: 1.25
   m_serializedJson: '[{"hangDownChance":{"min":100,"max":100},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":20,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_databaseKey: PF_SpiderSmall
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -180,11 +190,8 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
-  m_enableSensor: 0
+  m_enableSensor: 1
   m_sensor:
     m_sightRadius: 0
     m_maxRadius: 0
@@ -1223,7 +1230,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -1246,7 +1253,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: c56f4e3a2002446b4ad30769db4133bc, type: 3}
   m_Bones:
   - {fileID: 4000014013803430}

@@ -23,6 +23,7 @@ public class HUDTime : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	private Text m_valueTxt;
+	private long m_lastSecondsPrinted;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -34,6 +35,7 @@ public class HUDTime : MonoBehaviour {
 		// Get external references
 		m_valueTxt = GetComponent<Text>();
 		m_valueTxt.text = "00:00";
+		m_lastSecondsPrinted = -1;
 	}
 
 	/// <summary>
@@ -57,8 +59,13 @@ public class HUDTime : MonoBehaviour {
 	/// Updates the displayed score.
 	/// </summary>
 	private void UpdateTime() {
-		// Do it!
-		// Both for game and level editor
-		m_valueTxt.text = TimeUtils.FormatTime(InstanceManager.GetSceneController<GameSceneControllerBase>().elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+
+		long elapsedSeconds = (long)InstanceManager.GetSceneController<GameSceneControllerBase>().elapsedSeconds;
+		if(elapsedSeconds != m_lastSecondsPrinted) {		
+			// Do it!
+			// Both for game and level editor
+			m_valueTxt.text = TimeUtils.FormatTime(elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
+			m_lastSecondsPrinted = elapsedSeconds;
+		}
 	}
 }

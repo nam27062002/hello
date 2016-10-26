@@ -103,9 +103,6 @@ public class DisableInSeconds : MonoBehaviour {
         }
 
         Disable();
-
-        Debug.Log(gameObject + ".OnBecameInvisible");
-
     }
 
 

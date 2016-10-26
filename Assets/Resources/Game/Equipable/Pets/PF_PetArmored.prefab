@@ -1751,6 +1751,9 @@ MonoBehaviour:
   m_eatBigSound: 
   m_wingsWindSound: 
   m_wingsStrongFlap: 
+  m_levelUpSound: 
+  m_starvingSound: 
+  m_hitSound: 
 --- !u!114 &114000011637225726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1773,10 +1776,16 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_onEatenParticles: []
+  m_onEatenAudio: 
+  m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_onExplosionAudio: 
+  m_onAttackAudio: 
+  m_onScaredAudio: 
+  m_onPanicAudio: 
   m_skins: []
 --- !u!114 &114000011716939334
 MonoBehaviour:
@@ -1790,10 +1799,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 1
     max: 1
   m_serializedJson: '[{"speed":20,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"preferedEntitiesList":"mine_small,mine_big","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false}]'
+  m_databaseKey: PF_PetArmored
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
 --- !u!114 &114000012458514424
@@ -1834,9 +1847,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
@@ -1857,6 +1867,7 @@ MonoBehaviour:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
+  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012669857030
 MonoBehaviour:
   m_ObjectHideFlags: 1

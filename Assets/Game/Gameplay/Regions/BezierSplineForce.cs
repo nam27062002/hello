@@ -78,6 +78,7 @@ namespace Assets.Code.Game.Spline
                         velocity *= (1.0f - t);
                     }                    
 				}
+					
 
 				//If it has been set as 'hasExitCurrent', it means we have exit the current a few moments ago
 				//so we have to apply still some force to the object. Force will decrease with time, until the moment that
@@ -85,7 +86,9 @@ namespace Assets.Code.Game.Spline
 				if(isExitingCurrent)
 				{
 					//Lerp a decreasing factor that we will multiply to the current force to simulate that the current affects us less and less
-					float outOfCurrentFactor = Mathf.Lerp ( 1.0f, 0.0f, ( currentTimeOutsideCurrent )/ timeToLerpForceAfterExit );
+					float outOfCurrentFactor = 0;
+					if (timeToLerpForceAfterExit > 0)
+						Mathf.Lerp ( 1.0f, 0.0f, ( currentTimeOutsideCurrent )/ timeToLerpForceAfterExit );
 					velocity *= outOfCurrentFactor;
 					currentTimeOutsideCurrent += Time.fixedDeltaTime;
 
@@ -98,7 +101,7 @@ namespace Assets.Code.Game.Spline
 
                 //Debug.Log("Adding velocity = " + velocity);
 				if(objMachine != null)
-					objMachine.AddExternalForce(velocity );
+					objMachine.AddExternalForce(velocity);
 				if ( objDragon != null )
 					objDragon.AddExternalForce( velocity );
             }

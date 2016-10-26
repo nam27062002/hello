@@ -91,10 +91,16 @@ MonoBehaviour:
   - name: PS_Blood_Green_Small
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_onEatenAudio: 
+  m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_onExplosionAudio: 
+  m_onAttackAudio: 
+  m_onScaredAudio: 
+  m_onPanicAudio: 
   m_skins: []
   m_web: {fileID: 120000013362175846}
   m_spinneret: {fileID: 485126}
@@ -148,10 +154,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: d97bc6b71841b4b529dc58761912caed, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 1
     max: 1
   m_serializedJson: '[{"hangDownChance":{"min":0.5,"max":0.75},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"projectileName":"PF_ArrowPoison","projectileSpawnTransformName":"spinneret","damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":1.5,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":-1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_databaseKey: PF_SpiderGreen
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -180,9 +190,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:

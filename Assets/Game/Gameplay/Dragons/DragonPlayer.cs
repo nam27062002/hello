@@ -189,6 +189,26 @@ public class DragonPlayer : MonoBehaviour {
 		SetBoostModifier( m_energyModifier );
 	}
 
+	public void ReviveScale()
+	{
+		gameObject.transform.localScale = Vector3.zero;
+		StartCoroutine("ReviveScaleCoroutine");
+	}
+
+	IEnumerator ReviveScaleCoroutine()
+	{
+		float duration = 1;
+		float timer = 0;
+
+		while( timer < duration )
+		{
+			timer += Time.deltaTime;
+			gameObject.transform.localScale = Vector3.one * data.scale * Mathf.Clamp01( timer / duration);
+			yield return null;
+		}
+		playable = true;
+	}
+
 	private void Update() {
 		if (m_invulnerableAfterReviveTimer > 0) {
 			m_invulnerableAfterReviveTimer -= Time.deltaTime;
@@ -212,7 +232,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_health = m_healthMax;
 		m_energy = m_energyMax;
 
-		playable = true;
+
 
 		if (_revive) {
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
@@ -222,6 +242,9 @@ public class DragonPlayer : MonoBehaviour {
 
 		if ( _revive )
 		{
+			m_dragonMotion.Revive();
+			ReviveScale();
+
 			bool isStarving = IsStarving();
 			if(wasStarving != isStarving) {
 				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
@@ -233,6 +256,10 @@ public class DragonPlayer : MonoBehaviour {
 			}
 
 			Messenger.Broadcast(GameEvents.PLAYER_REVIVE);
+		}
+		else
+		{
+			playable = true;
 		}
 	}
 
@@ -264,6 +291,8 @@ public class DragonPlayer : MonoBehaviour {
 
 			else
 			{
+				m_dragonMotion.Die();
+
 				// Send global even
 				Messenger.Broadcast(GameEvents.PLAYER_KO);
 					// Hode Starving and Critical effects

@@ -50,6 +50,9 @@ public class HUDStatBar : MonoBehaviour {
 
 	private bool m_ready = false; // patch for particles!
 
+    private float m_extraBarLastValue = -1f;
+    private float m_extraBarLastMaxValue = -1f;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -85,8 +88,8 @@ public class HUDStatBar : MonoBehaviour {
 		}
 
 		m_instantSet = true;
-		m_ready = false;
-	}
+		m_ready = false;        
+    }
 
 	IEnumerator Start()
 	{
@@ -152,28 +155,39 @@ public class HUDStatBar : MonoBehaviour {
 				float targetExtraValue = GetExtraValue();
 				float targetValue = GetValue();
 				float targetValueStep = 0f;
-
+                
 				if (m_baseBar != null) {
-					m_baseBar.minValue = 0f;
-					m_baseBar.maxValue = targetExtraValue;
-					targetValueStep = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
-				}
+                    if (m_baseBar.minValue != 0f)
+                        m_baseBar.minValue = 0f;
 
+                    if (m_baseBar.maxValue != targetExtraValue)
+                        m_baseBar.maxValue = targetExtraValue;
+
+                    targetValueStep = Mathf.Lerp(m_baseBar.value, targetValue, Time.deltaTime);
+                }
+                
 				if (m_extraBar != null) {
-					m_extraBar.minValue = 0f;
-					m_extraBar.maxValue = targetExtraValue; // this is the max value with all the bonus
+                    if (m_extraBar.minValue != 0f)
+                        m_extraBar.minValue = 0f;
+
+                    if (m_extraBar.maxValue != targetExtraValue)
+                        m_extraBar.maxValue = targetExtraValue; // this is the max value with all the bonus
+
 					targetValueStep = Mathf.Lerp(m_extraBar.value, targetValue, Time.deltaTime);
 				}
 
-				//Extra bar
+				//Extra bar                
 				if (m_extraBar != null) {
 					if (m_instantSet) {
-						m_extraBar.value = targetValue;
+                        if (m_extraBar.value != targetValue)
+                            m_extraBar.value = targetValue;
+
 						m_instantSet = false;
 					} else {
-						// If going up, animate, otherwise instant set
-						if (targetValue > m_extraBar.value) m_extraBar.value = targetValueStep;
-						else 								m_extraBar.value = targetValue;
+                        // If going up, animate, otherwise instant set
+                        float value = (targetValue > m_extraBar.value) ? targetValueStep : targetValue;                        
+                        if (m_extraBar.value != value)
+                            m_extraBar.value = value;						
 					}
 				}
 
@@ -183,15 +197,18 @@ public class HUDStatBar : MonoBehaviour {
 					targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
 
 					if (m_instantSet) {
-						m_baseBar.value = targetValue;
+                        if (m_baseBar.value != targetValue)
+                            m_baseBar.value = targetValue;
+
 						m_instantSet = false;
 					} else {
-						// If going up, animate, otherwise instant set
-						if (targetValue > m_baseBar.value) m_baseBar.value = targetValueStep;
-						else 								m_baseBar.value = targetValue;
+                        // If going up, animate, otherwise instant set
+                        float value = (targetValue > m_baseBar.value) ? targetValueStep : targetValue;
+                        if (m_baseBar.value != value)
+                            m_baseBar.value = value;                      
 					}
 				}
-
+                
 				if (m_type == Type.SuperFury || m_type == Type.Fury) {
 					if (m_particles != null) {
 						if (Math.Abs(targetValue - targetValueStep) > 0.001f) {
@@ -203,14 +220,18 @@ public class HUDStatBar : MonoBehaviour {
 				}
 
 				// Text
-				if (m_valueTxt != null) {
-					m_valueTxt.text = String.Format("{0}/{1}",
-					                                StringUtils.FormatNumber(m_extraBar.value, 0),
-					                                StringUtils.FormatNumber(m_extraBar.maxValue, 0));
+				if (m_valueTxt != null && 
+                    (m_extraBarLastValue != m_extraBar.value || m_extraBarLastMaxValue != m_extraBar.maxValue)) {
+                    m_extraBarLastValue = m_extraBar.value;
+                    m_extraBarLastMaxValue = m_extraBar.maxValue;
+
+                    m_valueTxt.text = String.Format("{0}/{1}",
+					                                StringUtils.FormatNumber(m_extraBarLastValue, 0),
+					                                StringUtils.FormatNumber(m_extraBarLastMaxValue, 0));                    
 				}
 			}
 
-			if ( m_type == Type.SuperFury )
+			if ( m_type == Type.SuperFury)
 			{
 				m_timer -= Time.deltaTime;
 				if ( m_timer <= 0 )

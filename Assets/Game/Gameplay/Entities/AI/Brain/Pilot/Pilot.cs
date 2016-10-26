@@ -31,7 +31,7 @@ namespace AI {
 		public IGuideFunction guideFunction { 
 			get { return m_guideFunction; } 
 			set { 
-				m_guideFunction = value; 	
+				m_guideFunction = value;
 				if (m_guideFunction != null) {
 					m_area = m_guideFunction.GetBounds();
 				}
@@ -41,6 +41,8 @@ namespace AI {
 		protected IMachine m_machine;
 
 		protected bool[] m_actions;
+
+		protected virtual float railSeparation { get { return 1f; } }
 
 		// speed and leerping between values, trying to achieve smooth speed changes
 		protected virtual float speedFactor { get { return 1f; } }
@@ -54,6 +56,8 @@ namespace AI {
 		private float m_currentSpeed;
 		public float speed { get { return m_currentSpeed * speedFactor; } }
 
+		private float m_zOffset;
+		protected float zOffset { get { return m_zOffset; } }
 
 		//
 		protected Vector3 m_externalImpulse;
@@ -77,6 +81,8 @@ namespace AI {
 
 			m_currentSpeed = 0;
 
+			m_zOffset = 0;
+
 			m_impulse = Vector3.zero;
 			m_direction = Vector3.right;
 			m_directionForced = false;
@@ -98,6 +104,15 @@ namespace AI {
 		}
 
 		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
+
+		// all the movement will be offset to follow a specific rail
+		public void SetRail(int _rail, int _total) {
+			if (_total > 1) {
+				m_zOffset = (_rail - (_total / 2)) * railSeparation;
+			} else {
+				m_zOffset = 0;
+			}
+		}
 
 		public void SetMoveSpeed(float _speed, bool _blend = true) {
 			m_moveSpeed = _speed;

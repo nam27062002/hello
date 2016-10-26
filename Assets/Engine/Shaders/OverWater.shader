@@ -1,14 +1,3 @@
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
 // Unlit shader, with shadows
 // - no lighting
 // - can receive shadows
@@ -20,7 +9,7 @@ Shader "Hungry Dragon/OverWater"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_DetailTex("Base (RGB)", 2D) = "white" {}
+		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_Color("Tint (RGB)", color) = (1, 0, 0, 1)
 	}
 
@@ -51,6 +40,8 @@ Shader "Hungry Dragon/OverWater"
 
 				#define CAUSTIC_ANIM_SCALE  4.0f
 				#define CAUSTIC_RADIUS  0.1125f
+//				#define CAUSTIC_ANIM_SCALE  0.0f
+//				#define CAUSTIC_RADIUS  0.0f
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -93,10 +84,6 @@ Shader "Hungry Dragon/OverWater"
 
 //					o.uv = TRANSFORM_TEX(o.scrPos, _MainTex);
 
-//					o.normal = mul(UNITY_MATRIX_MVP, normalize(float3(sinX, sinY, 0.5f)));
-//					o.normal = mul(unity_WorldToObject, normalize());
-//					o.normal = normalize(mul(float3(sinX , sinY, 1.0f), unity_WorldToObject).xyz);
-
 					o.normal = normalize(mul(unity_ObjectToWorld, float4(sinX, sinY, -3.5f, 0.0)).xyz);
 //					o.normal = normalize(mul(v.normal, unity_WorldToObject));
 
@@ -110,11 +97,12 @@ Shader "Hungry Dragon/OverWater"
 				fixed4 frag (v2f i) : SV_Target
 				{
 
-					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 4.02f) * CAUSTIC_RADIUS,
-										 sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 3.04f) * CAUSTIC_RADIUS + _Time.y * 0.5);
+//					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 4.02f) * CAUSTIC_RADIUS,
+//										 sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 3.04f) * CAUSTIC_RADIUS + _Time.y * 0.5);
+					float2 anim = float2(0.0, _Time.y * 0.5);
 
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
-					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.5)) * 0.5f;
+					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
 
 //					col.xyz = 2.0 * i.color.xyz * col.xyz;
 
@@ -131,40 +119,5 @@ Shader "Hungry Dragon/OverWater"
 				}
 			ENDCG
 		}
-		// Pass to render object as a shadow caster
-//		Pass {
-//			Name "ShadowCaster"
-//			Tags { "LightMode" = "ShadowCaster" }
-//
-//			Fog {Mode Off}
-//			ZWrite On ZTest LEqual Cull Off
-//			Offset 1, 1
-//
-//			CGPROGRAM
-//				#pragma vertex vert
-//				#pragma fragment frag
-//				#pragma multi_compile_shadowcaster
-//				#pragma fragmentoption ARB_precision_hint_fastest
-//
-//				#include "UnityCG.cginc"
-//				#include "AutoLight.cginc"
-//
-//				struct v2f { 
-//					V2F_SHADOW_CASTER;
-//				};
-//
-//				v2f vert (appdata_base v)
-//				{
-//					v2f o;
-//					TRANSFER_SHADOW_CASTER(o)
-//					return o;
-//				}
-//
-//				float4 frag (v2f i) : COLOR
-//				{
-//					SHADOW_CASTER_FRAGMENT(i)
-//				}
-//			ENDCG
-//		} //Pass
 	}
 }
