@@ -256,6 +256,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
+
+		m_tongue = transform.FindTransformRecursive("Fire_Dummy");
 	}
 
 	/// <summary>
