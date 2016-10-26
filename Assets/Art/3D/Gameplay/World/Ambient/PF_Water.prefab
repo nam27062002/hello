@@ -28,8 +28,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 430940}
-  - 114: {fileID: 11453854}
   - 65: {fileID: 6540400}
+  - 114: {fileID: 114000012489351380}
   m_Layer: 4
   m_Name: AmbientAudio
   m_TagString: Untagged
@@ -135,19 +135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e5ae1bfcd7f4d108f8e5734623e3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11453854
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 164028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02dde1f656c074bb89d0ee7792c33d64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ambientSound: Ambient/hsx_amb_under
-  m_reverb: 0
 --- !u!114 &11462240
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -170,3 +157,15 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 131046}
   m_IsPrefabParent: 1
+--- !u!114 &114000012489351380
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 164028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78c58ff63a8ed4da39b03f6d907bcbce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ambientSound: 
