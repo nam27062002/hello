@@ -16,7 +16,6 @@ public class DestructibleDecoration : Initializable {
 	[CommentAttribute("Add a destroy effect when this object is trampled by Dragon.")]
 	[SerializeField] private string m_destroyParticle = "";
 
-	[SeparatorAttribute("Audios")]
 	[CommentAttribute("Audio When Dragon completely destroys the object.")]
 	[SerializeField] private string m_onDestroyAudio = "";
 	[CommentAttribute("Audio When Dragon interacts with object but does not destroy it.")]

@@ -91,7 +91,7 @@ Shader "Hungry Dragon/UnderWater"
 					fixed4 col = tex2D(_MainTex, 20.0f * (i.uv.xy + anim) * (z * 2.0f) * _ProjectionParams.w) * 0.1f;
 					col.w = 0.0f;
 					float w = clamp(1.0 - ((depthR + 10.0) * 0.04f), 0.0f, 1.0f);
-					col = lerp(fixed4(_Color) + col * w * 30.0, col, w);
+					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
 					return col;
 				}
 			ENDCG
