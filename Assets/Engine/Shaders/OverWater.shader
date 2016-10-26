@@ -20,7 +20,7 @@ Shader "Hungry Dragon/OverWater"
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_DetailTex("Base (RGB)", 2D) = "white" {}
+		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_Color("Tint (RGB)", color) = (1, 0, 0, 1)
 	}
 
@@ -49,8 +49,10 @@ Shader "Hungry Dragon/OverWater"
 //				#include "AutoLight.cginc"
 //				#include "HungryDragon.cginc"
 
-				#define CAUSTIC_ANIM_SCALE  4.0f
-				#define CAUSTIC_RADIUS  0.1125f
+//				#define CAUSTIC_ANIM_SCALE  4.0f
+//				#define CAUSTIC_RADIUS  0.1125f
+				#define CAUSTIC_ANIM_SCALE  0.0f
+				#define CAUSTIC_RADIUS  0.0f
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -114,7 +116,7 @@ Shader "Hungry Dragon/OverWater"
 										 sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 3.04f) * CAUSTIC_RADIUS + _Time.y * 0.5);
 
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
-					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.5)) * 0.5f;
+					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
 
 //					col.xyz = 2.0 * i.color.xyz * col.xyz;
 
@@ -123,6 +125,7 @@ Shader "Hungry Dragon/OverWater"
 //					col.xyz = one - 2.0 * (one - i.color.xyz * 1.25) * (one - col.xyz);	// Overlay
 
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
+//					col.xyz = col.xyz * (one - i.color.xyz);
 
 					float3 ref = normalize(-unity_LightPosition[0].xyz + i.viewDir);
 					float reflectLight = 0.0;// pow(clamp(dot(i.normal, ref), 0.0f, 4.0f), 50.0f);

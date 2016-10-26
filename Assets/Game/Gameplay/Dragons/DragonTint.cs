@@ -97,7 +97,7 @@ public class DragonTint : MonoBehaviour
 		if ( !m_health.IsAlive() )
 		{
 			// To alpha
-			m_deathAlpha -= Time.deltaTime;
+			m_deathAlpha -= Time.deltaTime * 1.0f/Time.timeScale * 0.5f;
 		}
 		else
 		{

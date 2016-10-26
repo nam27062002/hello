@@ -16,7 +16,7 @@ public class GameCamera : MonoBehaviour
 	private const float			m_maxTrackAheadScaleX = 0.15f;
     private const float         m_maxTrackAheadScaleY = 0.2f; //JO
 	private const float			m_trackBlendRate = 1.0f;
-	private const float			m_defaultFOV = 45.0f;
+	private const float			m_defaultFOV = 30.0f;
 	private const float			m_minZ = 10.0f;
 	private const float			m_frameWidthDefault = 20.0f;
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
