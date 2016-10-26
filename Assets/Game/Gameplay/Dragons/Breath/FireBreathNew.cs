@@ -49,9 +49,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	private int m_frame;
 
-	float m_timeToNextLoopAudio = 0;
-	AudioSource m_lastAudioSource;
-
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
@@ -73,7 +70,9 @@ public class FireBreathNew : DragonBreathBehaviour {
 
         GameObject tempFire = Instantiate<GameObject>(m_dragonFlame);
 
-        tempFire.transform.SetParent(dragonMotion.tongue, true);
+        Transform mouth = transform.FindTransformRecursive("mouth");
+
+        tempFire.transform.SetParent(mouth, true);
 
         tempFire.transform.localPosition = Vector3.zero;
 
@@ -91,7 +90,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
 
-        m_mouthTransform = dragonMotion.tongue;
+        m_mouthTransform = mouth; // dragonMotion.tongue;
 //		m_headTransform = dragonMotion.head;
 
         float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLenght");
@@ -114,7 +113,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 //		m_light = null;
 	}
-
 
     override public bool IsInsideArea(Vector2 _point) { 
 	
@@ -155,18 +153,12 @@ public class FireBreathNew : DragonBreathBehaviour {
 	override protected void BeginFury(Type _type) 
 	{
 		base.BeginFury( _type);
-		m_lastAudioSource  = AudioManager.instance.PlayClip("audio/sfx/Burning/Flamethrower first");
-		m_timeToNextLoopAudio = m_lastAudioSource.clip.length;
         dragonFlameInstance.EnableFlame(true);
     }
 
     override protected void EndFury() 
 	{
 		base.EndFury();
-		// Stop loop clip!
-		m_lastAudioSource.Stop();
-		m_lastAudioSource = null;
-		AudioManager.instance.PlayClip("audio/sfx/Burning/Flamethrower End");
         dragonFlameInstance.EnableFlame(false);
     }
 
@@ -175,24 +167,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
 
-		m_timeToNextLoopAudio -= Time.deltaTime;
-		if ( m_timeToNextLoopAudio <= 0f )
-		{
-			switch( Random.Range(0,2))
-			{
-				case 0:
-				{
-					m_lastAudioSource  = AudioManager.instance.PlayClip("audio/sfx/Burning/loop 1");
-				}break;
-				case 1:
-				{
-					m_lastAudioSource  = AudioManager.instance.PlayClip("audio/sfx/Burning/loop 2");
-				}break;
-			}
-			m_timeToNextLoopAudio = m_lastAudioSource.clip.length;
-		}
-
-		float length = m_length;
+        float length = m_length;
 		if ( m_type == Type.Super )
 			length = m_length * m_superFuryLengthMultiplier;
 
@@ -314,6 +289,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 			{
 				m_isFuryPaused = true;
 				m_animator.SetBool("breath", false);
+                PauseFury();
 			}
 
 		}
@@ -323,7 +299,24 @@ public class FireBreathNew : DragonBreathBehaviour {
 	{
 		if ( _other.tag == "Water" )
 		{
-			m_isFuryPaused = false;
+            if (m_isFuryPaused)
+            {
+                ResumeFury();
+            }
+            m_isFuryPaused = false;
 		}
 	}
+
+    public override void PauseFury()
+    {
+        base.PauseFury();
+        dragonFlameInstance.EnableFlame(false);
+    }
+
+    public override void ResumeFury()
+    {
+        base.ResumeFury();
+        dragonFlameInstance.EnableFlame(true);
+    }
+
 }
