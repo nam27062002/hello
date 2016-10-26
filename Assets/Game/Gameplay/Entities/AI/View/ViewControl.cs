@@ -59,6 +59,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private AudioObject m_onAttackAudioAO;
 	[SerializeField] private string m_onScaredAudio;
 	[SerializeField] private string m_onPanicAudio;
+	[SerializeField] private string m_idleAudio;
+	private AudioObject m_idleAudioAO;
 
 	[SeparatorAttribute("Skin")]
 	[SerializeField] private List<SkinData> m_skins = new List<SkinData>();
@@ -209,7 +211,18 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 					m_pcTrail.transform.localPosition = Vector3.zero;
 				}
 			}
+
+			if (!string.IsNullOrEmpty(m_idleAudio))
+			{
+				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
+			}
 		}
+	}
+
+	void OnDisable()
+	{
+		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+			m_idleAudioAO.Stop();
 	}
 
 	protected virtual void Update() {
@@ -446,6 +459,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {}
 
 	public void Die(bool _eaten = false) {
+
+		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+			m_idleAudioAO.Stop();
+
 		if (m_explosionParticles.name != "") {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
@@ -466,6 +483,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 	public void Burn() {
+		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+			m_idleAudioAO.Stop();
+
 		if ( !string.IsNullOrEmpty( m_onBurnAudio ) ){
 			AudioController.Play( m_onBurnAudio, transform.position);
 		}
