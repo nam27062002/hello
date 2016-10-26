@@ -587,7 +587,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.Idle:
-				FlyAwayFromGround();
+				UpdateIdleMovement();
 				// UpdateMovement();
 				break;
 
@@ -772,7 +772,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void FlyAwayFromGround() {
+	private void UpdateIdleMovement() {
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
@@ -787,21 +787,29 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			ComputeImpulseToZero();
 		}
 
-		if ( oldDirection.x > 0 )
-		{
-			m_direction = Vector3.right;	
+		if ( current == null){
+			if ( oldDirection.x > 0 ){
+				m_direction = Vector3.right;	
+			}else{
+				m_direction = Vector3.left;
+			}
+		}else{
+			m_direction = (m_impulse + m_externalForce).normalized;
 		}
-		else
-		{
-			m_direction = Vector3.left;
-		}
-
 
 		RotateToDirection(m_direction, true);
 		m_desiredRotation = m_transform.rotation;
 
 		ApplyExternalForce();
+
+
+
 		m_rbody.velocity = m_impulse;
+	}
+
+	private void IdleRotation( Vector3 oldRotation )
+	{
+		
 	}
 
 	private void DeadFall(){
