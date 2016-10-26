@@ -12,6 +12,8 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.Animations;
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -128,8 +130,12 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			GUILayout.Space(SEPARATOR_SIZE);
 
 			// Multipurpose button 1
-			if(GUILayout.Button(new GUIContent("?", "Multipurpose button"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				Debug.Log("Multipurpose button not implemented!");
+			if(GUILayout.Button(new GUIContent("MR", "Find missing and null refs"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				//Debug.Log("Multipurpose button not implemented!");
+				FindMissingReferencesTool.FindMissingReferences(true, 
+					typeof(UnityEngine.UI.Text), 
+					typeof(TMPro.TextMeshProUGUI)
+				);
 			}
 
 			// Multipurpose button 2
