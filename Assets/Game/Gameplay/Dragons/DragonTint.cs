@@ -62,7 +62,7 @@ public class DragonTint : MonoBehaviour
 				{
 					m_materials.Add( mats[j] );
 					if (shaderName.Contains("Body"))
-						m_bodyMaterials.Add( mats[i] );
+						m_bodyMaterials.Add( mats[j] );
 				}
 			}
 		}
