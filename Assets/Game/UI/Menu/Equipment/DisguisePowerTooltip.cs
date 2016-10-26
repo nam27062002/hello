@@ -27,7 +27,7 @@ public class DisguisePowerTooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Localizer m_nameText = null;
-	[SerializeField] private Text m_descriptionText = null;
+	[SerializeField] private TMPro.TextMeshProUGUI m_descriptionText = null;
 	[Space]
 	[SerializeField] private Image m_powerIcon = null;
 	[SerializeField] private GameObject m_lockInfo = null;

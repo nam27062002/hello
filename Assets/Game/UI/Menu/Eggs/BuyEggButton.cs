@@ -25,7 +25,7 @@ public class BuyEggButton : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Text m_priceText = null;
+	[SerializeField] private TMPro.TextMeshProUGUI m_priceText = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

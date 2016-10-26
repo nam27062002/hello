@@ -21,7 +21,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	public Text m_priceText;
+	public TMPro.TextMeshProUGUI m_priceText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

@@ -10,6 +10,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -40,9 +41,9 @@ public class MissionPill : MonoBehaviour {
 	[SerializeField] private GameObject m_activeObj = null;
 
 	// Cooldown group
-	private Text m_cooldownText = null;
+	private TextMeshProUGUI m_cooldownText = null;
 	private Slider m_cooldownBar = null;
-	private Text m_skipCostText = null;	// Optional
+	private TextMeshProUGUI m_skipCostText = null;	// Optional
 
 	// Data
 	private Mission m_mission = null;
@@ -69,9 +70,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Find other references
 		// [AOC] Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
-		m_cooldownText = m_cooldownObj.FindComponentRecursive<Text>("CooldownTimeText");
+		m_cooldownText = m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("CooldownTimeText");
 		m_cooldownBar = m_cooldownObj.FindComponentRecursive<Slider>("CooldownBar");
-		m_skipCostText = m_cooldownObj.FindComponentRecursive<Text>("TextCost");
+		m_skipCostText = m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
 
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
@@ -158,7 +159,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActive() {
 		// Mission description
-		m_activeObj.FindComponentRecursive<Text>("MissionText").text = m_mission.objective.GetDescription();
+		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("MissionText").text = m_mission.objective.GetDescription();
 
 		// Progress
 		// Optionally hide progress for singlerun missions
@@ -170,11 +171,11 @@ public class MissionPill : MonoBehaviour {
 		}
 
 		// Reward
-		m_activeObj.FindComponentRecursive<Text>("RewardText").text = StringUtils.FormatNumber(m_mission.rewardCoins);
+		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = StringUtils.FormatNumber(m_mission.rewardCoins);
 
 		// Remove cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		Text removeCostText = m_activeObj.FindComponentRecursive<Text>("TextCost");
+		TextMeshProUGUI removeCostText = m_activeObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
 		if(removeCostText != null) removeCostText.text = StringUtils.FormatNumber(m_mission.removeCostPC);
 
 		// Check if this mission is complete

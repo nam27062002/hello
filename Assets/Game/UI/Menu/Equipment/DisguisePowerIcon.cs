@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -28,7 +29,7 @@ public class DisguisePowerIcon : MonoBehaviour {
 	// Exposed References
 	[SerializeField] private Image m_powerIcon = null;
 	[SerializeField] private GameObject m_lockIcon = null;
-	[SerializeField] private Text m_shortDescriptionText = null;
+	[SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
 
 	// Exposed Setup
 	[Space]

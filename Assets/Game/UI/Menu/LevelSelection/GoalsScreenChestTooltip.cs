@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -30,13 +31,13 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 
 	// External refs
 	[Space]
-	[SerializeField] private Text m_nameText = null;
+	[SerializeField] private TextMeshProUGUI m_nameText = null;
 	[Space]
 	[SerializeField] private GameObject m_coinsRewardIcon = null;
-	[SerializeField] private Text m_coinsRewardText = null;
+	[SerializeField] private TextMeshProUGUI m_coinsRewardText = null;
 	[Space]
 	[SerializeField] private GameObject m_pcRewardIcon = null;
-	[SerializeField] private Text m_pcRewardText = null;
+	[SerializeField] private TextMeshProUGUI m_pcRewardText = null;
 	[Space]
 	[SerializeField] private GameObject m_checkMark = null;
 

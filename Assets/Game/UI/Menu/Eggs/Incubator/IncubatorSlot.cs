@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -38,8 +39,8 @@ public class IncubatorSlot : MonoBehaviour {
 
 	[Space]
 	[SerializeField] private Slider m_incubationTimeSlider = null;
-	[SerializeField] private Text m_incubationTimeText = null;
-	[SerializeField] private Text m_skipCostText = null;
+	[SerializeField] private TextMeshProUGUI m_incubationTimeText = null;
+	[SerializeField] private TextMeshProUGUI m_skipCostText = null;
 	[SerializeField] private UINotification m_newNotification = null;
 
 	// Show/Hide elements
