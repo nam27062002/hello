@@ -199,6 +199,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector3 m_revivePosition;
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1;
+	private float m_deadTimer = 0;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -374,6 +375,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					m_animator.SetTrigger("dead");
 					// Save Position!
 					m_diePosition = transform.position;
+					m_deadTimer = 0;
 				}break;
 				case State.Reviving:
 				{
@@ -807,15 +809,23 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
 		if (m_height >= 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
-			
-			float gravity = 9.81f * m_dragonGravityModifier;
-			Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
 
-			// stroke's Drag
+			m_deadTimer += Time.deltaTime;
+
 			m_impulse = m_rbody.velocity;
+			if ( m_deadTimer < 1.5f * Time.timeScale )
+			{
+				float gravity = 9.81f * m_dragonGravityModifier * 50;
+				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
 
-			float impulseMag = m_impulse.magnitude;
-			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+				// stroke's Drag
+				float impulseMag = m_impulse.magnitude;
+				m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+			}
+			else
+			{
+				ComputeImpulseToZero();
+			}
 		}
 
 		if ( oldDirection.x > 0 )
