@@ -1207,7 +1207,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				if ( m_impulse.y < 0 )	// if going deep
 				{
-					m_impulse = m_impulse.magnitude * m_onWaterCollisionMultiplier;	
+					m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
 				}
 			}break;
 
