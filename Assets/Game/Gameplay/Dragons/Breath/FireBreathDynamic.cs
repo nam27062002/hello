@@ -1,10 +1,16 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections;
 
 public class FireBreathDynamic : MonoBehaviour 
 {
-	// Mesh cache
-	private int[] m_triangles = null;
+
+    // consts
+    public static readonly float CURRENT_DRAGONBABY_REFERENCEVALUE = 2.1985f;
+    public static readonly float CURRENT_DRAGONCLASSIC_REFERENCEVALUE = 5.535f;
+
+    // Mesh cache
+    private int[] m_triangles = null;
 	private Vector3[] m_pos = null;
 	private Vector2[] m_UV = null;
     private Color[] m_color = null;
@@ -68,10 +74,20 @@ public class FireBreathDynamic : MonoBehaviour
     private float enableTime = 0.0f;
     private bool enableState = false;
 
-    public void setEffectScale(float distance)
+    public void setEffectScale(float furyBaseLenght, float dragonScale, float lengthIncrease)
     {
-        m_collisionMaxDistance = distance * 2.0f;
+        m_collisionMaxDistance = (furyBaseLenght * dragonScale) + lengthIncrease;
 
+        if (m_debugScale > 0.0f)
+        {
+            m_effectScale = m_debugScale;
+        }
+        else
+        {
+            m_effectScale = 1.0f + ((m_collisionMaxDistance - CURRENT_DRAGONBABY_REFERENCEVALUE) / (CURRENT_DRAGONCLASSIC_REFERENCEVALUE - CURRENT_DRAGONBABY_REFERENCEVALUE));
+        }
+
+        m_collisionMaxDistance *= 2.0f;
     }
 
     // Use this for initialization
@@ -89,7 +105,7 @@ public class FireBreathDynamic : MonoBehaviour
         Transform particlesMask = whipEnd.transform.FindChild("FireConeToonMask");
         Transform effectEnd = particlesMask.FindChild("EffectEnd");
         float refDistance = (effectEnd.position - transform.position).magnitude;
-
+/*
         if (m_debugScale > 0.0f)
         {
             m_effectScale = m_debugScale;
@@ -98,7 +114,7 @@ public class FireBreathDynamic : MonoBehaviour
         {
             m_effectScale = (m_collisionMaxDistance) / refDistance;
         }
-
+*/
         particles.SetLocalScale(m_effectScale * particles.GetGlobalScaleQuick());
         particlesMask.SetLocalScale(m_effectScale * particlesMask.GetGlobalScaleQuick());
 
@@ -321,7 +337,6 @@ public class FireBreathDynamic : MonoBehaviour
 //        m_collisionSplit = (int)m_splits + 1;
         m_collisionSplit = (int)m_splits - 1;
         m_collisionDistance = 10000000.0f;
-
 
 //        Debug.DrawLine(transform.position, transform.position + transform.right * m_distance * m_effectScale * 2.0f);
 

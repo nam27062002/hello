@@ -88,9 +88,9 @@ Shader "Hungry Dragon/UnderWater"
 										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
 					float z = depthR;// i.uv.y;
-					fixed4 col = tex2D(_MainTex, 20.0f * (i.uv.xy + anim) * (z * 2.0f) * _ProjectionParams.w) * 0.2f;
+					fixed4 col = tex2D(_MainTex, 20.0f * (i.uv.xy + anim) * (z * 2.0f) * _ProjectionParams.w) * 0.1f;
 					col.w = 0.0f;
-					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
+					float w = clamp(1.0 - ((depthR + 10.0) * 0.04f), 0.0f, 1.0f);
 					col = lerp(fixed4(_Color) + col * w * 30.0, col, w);
 					return col;
 				}
