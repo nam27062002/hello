@@ -1037,6 +1037,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_particleController.OnEnterWater();
 
 		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
+		m_impulse = rbody.velocity;
 
 		// Change state
 		ChangeState(State.InsideWater);
