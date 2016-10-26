@@ -10,6 +10,7 @@ public class Catapult : MonoBehaviour {
 	[SeparatorAttribute]
 	[SerializeField] private float m_tossDelay = 5f;
 	[SerializeField] private string m_ammoName;
+	[SerializeField] private string m_ammoSpawnTransformName;
 
 	[SeparatorAttribute]
 	[SerializeField] private bool m_forcePreview = false;
@@ -20,7 +21,11 @@ public class Catapult : MonoBehaviour {
 	private float m_hAngle;
 	private float m_timer;
 
+	private Animator m_animator;
+	private PreyAnimationEvents m_animEvents;
+
 	private GameObject m_ammo;
+	private Transform m_ammoTransform;
 
 
 	// Use this for initialization
@@ -31,32 +36,47 @@ public class Catapult : MonoBehaviour {
 		GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoName);
 		PoolManager.CreatePool(projectilePrefab, 2, true);
 
-		LoadAmmo();
+		FindAmmoSpawnTransform();
 
-		m_timer = m_tossDelay;
+		m_timer = 0;
+
+		m_animator	 = transform.FindComponentRecursive<Animator>();
+		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
+		m_animEvents.onAttachProjectile += new PreyAnimationEvents.OnAttachprojectile(OnLoadAmmo);
+		m_animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnToss);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		m_timer -= Time.deltaTime;
-		if (m_timer <= 0) {
-			if (m_ammo != null) {
-				CatapultAmmo catapultAmmo = m_ammo.GetComponent<CatapultAmmo>();
-				catapultAmmo.Toss(m_initialVelocity, m_vAngle, m_hAngle);
+		if (m_timer > 0f) {
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0f) {
+				m_animator.SetTrigger("toss");
+				m_timer = 0f;
 			}
-
-			LoadAmmo();
-			m_timer = m_tossDelay;
 		}
 	}
 
-	private void LoadAmmo() {
+	private void OnLoadAmmo() {
 		m_ammo = PoolManager.GetInstance(m_ammoName);
 
 		if (m_ammo != null) {
 			CatapultAmmo catapultAmmo = m_ammo.GetComponent<CatapultAmmo>();
-			catapultAmmo.AttachTo(transform);
+			catapultAmmo.AttachTo(m_ammoTransform);
 		}
+
+		m_timer = m_tossDelay;
+	}
+
+	private void OnToss() {
+		if (m_ammo != null) {
+			CatapultAmmo catapultAmmo = m_ammo.GetComponent<CatapultAmmo>();
+			catapultAmmo.Toss(m_initialVelocity, m_vAngle, m_hAngle);
+		}
+	}
+
+	private void FindAmmoSpawnTransform() {
+		m_ammoTransform = transform.FindTransformRecursive(m_ammoSpawnTransformName);
 	}
 
 	private void GetHorizontalAngle() {
@@ -78,18 +98,19 @@ public class Catapult : MonoBehaviour {
 	// 
 	private void OnDrawGizmosSelected() {
 		if (m_forcePreview || !Application.isPlaying) {
+			FindAmmoSpawnTransform();
 			GetHorizontalAngle();
 
 			float time = 0;
 			float maxTime = m_previewMaxTime;
 			float step = Mathf.Max(0.5f, m_previewStep);
 
-			Vector3 lastTarget = transform.position + Vector3.zero;
+			Vector3 lastTarget = m_ammoTransform.position + Vector3.zero;
 			Vector3 target = lastTarget;
 
 			Gizmos.color = Color.white;
 			for (time = step; time < maxTime ; time += step) {
-				target = transform.position;
+				target = m_ammoTransform.position;
 				target.x += GetX(time * 0.1f);
 				target.y += GetY(time * 0.1f);
 				target.z += GetZ(time * 0.1f);
