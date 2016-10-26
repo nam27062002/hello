@@ -60,8 +60,6 @@ GameObject:
   - 114: {fileID: 114000013011904384}
   - 114: {fileID: 11465220}
   - 114: {fileID: 11428340}
-  - 114: {fileID: 114000011931421630}
-  - 65: {fileID: 65000010941343384}
   m_Layer: 16
   m_Name: PF_Cart
   m_TagString: Untagged
@@ -151,10 +149,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 170472}
-  m_LocalRotation: {x: -0, y: 0.99018604, z: -0, w: 0.13975574}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: -195.75699, z: 0}
+  m_LocalRotation: {x: -0, y: 0.9650789, z: -0, w: -0.26195937}
+  m_LocalPosition: {x: 545.85, y: -13.199997, z: -0.46}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
+  m_LocalEulerAnglesHint: {x: 0, y: -149.59601, z: 0}
   m_Children:
   - {fileID: 457372}
   - {fileID: 414354}
@@ -401,33 +399,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 170472}
   m_IsPrefabParent: 1
---- !u!65 &65000010941343384
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 170472}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.9, y: 2.3, z: 1.73}
-  m_Center: {x: 0.54, y: 1.13, z: 0}
---- !u!114 &114000011931421630
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 170472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_zone1Interaction: 1
-  m_knockBackStrength: 0
-  m_feddbackParticle: PS_Splinters
-  m_destroyParticle: PS_SplintersDestruction
 --- !u!114 &114000013011904384
 MonoBehaviour:
   m_ObjectHideFlags: 1

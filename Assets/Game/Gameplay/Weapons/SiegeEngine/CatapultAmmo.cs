@@ -6,6 +6,10 @@ public class CatapultAmmo : MonoBehaviour {
 	[SerializeField] private float m_damage;
 	[SerializeField] private string m_hitParticle = "";
 
+	[SeparatorAttribute]
+	[SerializeField] private float m_speedFactor = 1f;
+	[SerializeField] private float m_rotationSpeedFactor = 1f;
+
 	private Transform m_oldParent;
 
 	private bool m_hasBeenTossed;
@@ -52,9 +56,9 @@ public class CatapultAmmo : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		if (m_hasBeenTossed) {
-			m_elapsedTime += Time.deltaTime * m_vo * 0.125f;
+			m_elapsedTime += Time.deltaTime * m_vo * 0.125f * m_speedFactor;
 			transform.position = m_po + UpdateMovement(m_elapsedTime);
-			transform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f, m_rotAxis);
+			transform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeedFactor, m_rotAxis);
 
 			//TODO: check out of camera/visible	
 		}
@@ -81,6 +85,10 @@ public class CatapultAmmo : MonoBehaviour {
 
 	private void Explode(bool _hitDragon) {		
 		ParticleManager.Spawn(m_hitParticle, transform.position);
+
+		if (_hitDragon) {
+			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
+		}
 
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance(gameObject);

@@ -62,7 +62,7 @@ public class DragonTint : MonoBehaviour
 				{
 					m_materials.Add( mats[j] );
 					if (shaderName.Contains("Body"))
-						m_bodyMaterials.Add( mats[i] );
+						m_bodyMaterials.Add( mats[j] );
 				}
 			}
 		}
@@ -97,7 +97,7 @@ public class DragonTint : MonoBehaviour
 		if ( !m_health.IsAlive() )
 		{
 			// To alpha
-			m_deathAlpha -= Time.deltaTime;
+			m_deathAlpha -= Time.deltaTime * 1.0f/Time.timeScale * 0.5f;
 		}
 		else
 		{
