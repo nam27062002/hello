@@ -69,7 +69,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_starvingLimit = settings.GetAsFloat("healthWarningThreshold");	// 0.20
 		m_starvingHealthModifier = settings.GetAsFloat("healthWarningModifier");	// 0.5
 
-		m_damageMultiplier = 10;
+		m_damageMultiplier = 0;
 		//
 		m_damageAnimState = Animator.StringToHash("Damage");
 	}
