@@ -788,7 +788,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			ComputeImpulseToZero();
 		}
-
+		bool slowly = true;
 		if ( current == null){
 			if ( oldDirection.x > 0 ){
 				m_direction = Vector3.right;	
@@ -797,9 +797,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}
 		}else{
 			m_direction = (m_impulse + m_externalForce).normalized;
+			slowly = false;
 		}
 
-		RotateToDirection(m_direction, true);
+		RotateToDirection(m_direction, slowly);
 		m_desiredRotation = m_transform.rotation;
 
 		ApplyExternalForce();
@@ -848,7 +849,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 
 
-		RotateToDirection(m_direction, true);
+		RotateToDirection(m_direction, false);
 		m_desiredRotation = m_transform.rotation;
 
 		ApplyExternalForce();
