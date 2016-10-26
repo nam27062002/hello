@@ -34,7 +34,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 	private int m_noPlayerMask;
 
 	private Transform m_mouthTransform;
-//	private Transform m_headTransform;
 
 	private Vector2 m_directionP;
 
@@ -71,6 +70,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         GameObject tempFire = Instantiate<GameObject>(m_dragonFlame);
 
         Transform mouth = transform.FindTransformRecursive("mouth");
+        m_mouthTransform = mouth; // dragonMotion.tongue;
 
         tempFire.transform.SetParent(mouth, true);
 
@@ -88,10 +88,6 @@ public class FireBreathNew : DragonBreathBehaviour {
 
         m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
-
-
-        m_mouthTransform = mouth; // dragonMotion.tongue;
-//		m_headTransform = dragonMotion.head;
 
         float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLenght");
         m_length = furyBaseLength;
@@ -163,7 +159,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     }
 
     override protected void Breath(){
-        m_direction = -m_mouthTransform.right;// m_mouthTransform.position - m_headTransform.position;
+        m_direction = -m_mouthTransform.right;
 		m_direction.Normalize();
 		m_directionP.Set(m_direction.y, -m_direction.x);
 
