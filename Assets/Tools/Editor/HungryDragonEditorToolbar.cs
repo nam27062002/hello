@@ -130,17 +130,18 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			GUILayout.Space(SEPARATOR_SIZE);
 
 			// Multipurpose button 1
-			if(GUILayout.Button(new GUIContent("MR", "Find missing and null refs"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				//Debug.Log("Multipurpose button not implemented!");
+			if(GUILayout.Button(new GUIContent("MT", "Find missing and null Text and TextMeshProUGUI refs"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				FindMissingReferencesTool.FindMissingReferences(true, 
-					typeof(UnityEngine.UI.Text), 
-					typeof(TMPro.TextMeshProUGUI)
+					new Type[] { typeof(UnityEngine.UI.Text), typeof(TMPro.TextMeshProUGUI) }
 				);
 			}
 
 			// Multipurpose button 2
-			if(GUILayout.Button(new GUIContent("?", "Multipurpose button"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				Debug.Log("Multipurpose button not implemented!");
+			if(GUILayout.Button(new GUIContent("MS", "Find missing and null Sprite refs in Image components"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				FindMissingReferencesTool.FindMissingReferences(true, 
+					new Type[] { typeof(UnityEngine.Sprite) },
+					new Type[] { typeof(UnityEngine.UI.Image) }
+				);
 			}
 
 			// Right margin

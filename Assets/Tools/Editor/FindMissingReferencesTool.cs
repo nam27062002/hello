@@ -38,8 +38,9 @@ public class FindMissingReferencesTool {
 	/// <param name="_context">Context string.</param>
 	/// <param name="_objs">The list of objects to be checked.</param>
 	/// <param name="_includeNull">Optionally look for null values as well.</param>
-	/// <param name="_typeFilter">Filter only some specific component types. Leave empty to include all types.</param>
-	private static void FindMissingReferences(string _context, GameObject[] _objs, bool _includeNull, params Type[] _typeFilter) {
+	/// <param name="_typeFilter">Filter only some specific object types (the type of the missing ref object). <c>null</c> to include all types.</param>
+	/// <param name="_componentFilter">Filter only some specific component types (the component containing the missing ref). <c>null</c> to include all types.</param>
+	private static void FindMissingReferences(string _context, GameObject[] _objs, bool _includeNull, Type[] _typeFilter = null, Type[] _componentFilter = null) {
 		// Looking for types by name is quite expensive, so better cache it :)
 		Dictionary<string, Type> typesCache = new Dictionary<string, Type>();	// Dictionary of <SerializedProperty.type, Type>
 
@@ -62,6 +63,13 @@ public class FindMissingReferencesTool {
 				// Missing script! ^_^
 				if(!comp) {
 					Debug.LogError("Missing Component in GO: " + FullPath(obj), obj);
+					continue;
+				}
+
+				// Check component type!
+				// Ignore if filter list is null
+				if(_componentFilter!= null && !_componentFilter.Contains(comp.GetType())) {
+					// Component type not in the filter list, skip to next component
 					continue;
 				}
 
@@ -105,8 +113,8 @@ public class FindMissingReferencesTool {
 								if(targetType == null) continue;
 
 								// Is it one of the target types?
-								// Ignore check if filter list is empty
-								if(_typeFilter.Length == 0 || _typeFilter.Contains(targetType)) {
+								// Ignore check if filter list is null
+								if(_typeFilter == null || _typeFilter.Contains(targetType)) {
 									// [AOC] Missing ref! Print error
 									matches++;
 									string errorMessage = string.Format(
@@ -137,8 +145,9 @@ public class FindMissingReferencesTool {
 	/// Finds the missing references in all open scenes.
 	/// </summary>
 	/// <param name="_includeNull">Optionally look for null values as well.</param>
-	/// <param name="_typeFilter">Filter only some specific component types. Leave empty to include all types.</param>
-	public static void FindMissingReferences(bool _includeNull, params Type[] _typeFilter) {
+	/// <param name="_typeFilter">Filter only some specific object types (the type of the missing ref object). <c>null</c> to include all types.</param>
+	/// <param name="_componentFilter">Filter only some specific component types (the component containing the missing ref). <c>null</c> to include all types.</param>
+	public static void FindMissingReferences(bool _includeNull, Type[] _typeFilter = null, Type[] _componentFilter = null) {
 		// [AOC] Super-hardcore call that returns all loaded objects, no matter the state
 		//		 Use HideFlags to filter Unity's system objects
 		GameObject[] objs = Resources.FindObjectsOfTypeAll<GameObject>()
@@ -148,7 +157,7 @@ public class FindMissingReferencesTool {
 			}).ToArray();
 
 		// Find missing refs!
-		FindMissingReferences(EditorApplication.currentScene, objs, _includeNull, _typeFilter);
+		FindMissingReferences(EditorApplication.currentScene, objs, _includeNull, _typeFilter, _componentFilter);
 	}
 
 	/// <summary>
