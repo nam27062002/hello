@@ -171,12 +171,12 @@ public class MissionPill : MonoBehaviour {
 		}
 
 		// Reward
-		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = StringUtils.FormatNumber(m_mission.rewardCoins);
+		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = UIConstants.TMP_SPRITE_SC + StringUtils.FormatNumber(m_mission.rewardCoins);
 
 		// Remove cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
 		TextMeshProUGUI removeCostText = m_activeObj.FindComponentRecursive<TextMeshProUGUI>("TextCost");
-		if(removeCostText != null) removeCostText.text = StringUtils.FormatNumber(m_mission.removeCostPC);
+		if(removeCostText != null) removeCostText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(m_mission.removeCostPC);
 
 		// Check if this mission is complete
 		GameObject completedObj = m_activeObj.FindObjectRecursive("CompletedMission");
@@ -232,7 +232,7 @@ public class MissionPill : MonoBehaviour {
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) m_skipCostText.text = StringUtils.FormatNumber(m_mission.skipCostPC);
+		if(m_skipCostText != null) m_skipCostText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(m_mission.skipCostPC);
 	}
 
 	/// <summary>
@@ -368,7 +368,6 @@ public class MissionPill : MonoBehaviour {
 	private void OnMissionStateChanged(Mission _mission, Mission.State _oldState, Mission.State _newState) {
 		// Is it this mission?
 		if(m_mission == _mission) {
-			Debug.Log(_mission.difficulty + " from " + _oldState + " to " + _newState);
 			Refresh();
 		}
 	}

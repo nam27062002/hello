@@ -26,13 +26,21 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 		PC
 	}
 
+	public enum IconType {
+		NONE,
+		LEFT,
+		RIGHT
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Setup
 	[SerializeField] private Type m_type = Type.COINS;
+	[SerializeField] private IconType m_iconType = IconType.RIGHT;	// Typical HUD top-right counter
 
 	// References
+	[Space]
 	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Animator m_anim = null;
 
@@ -79,13 +87,33 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	/// Update the text with the current value from the profile.
 	/// </summary>
 	private void UpdateText() {
+		// Select text and icon based on currency
+		string text = "";
+		string iconString = "";
 		switch(m_type) {
 			case Type.COINS: {
-				m_text.text = StringUtils.FormatNumber(UsersManager.currentUser.coins);
+				text = StringUtils.FormatNumber(UsersManager.currentUser.coins);
+				iconString = UIConstants.TMP_SPRITE_SC;
 			} break;
 
 			case Type.PC: {
-				m_text.text = StringUtils.FormatNumber(UsersManager.currentUser.pc);
+				text = StringUtils.FormatNumber(UsersManager.currentUser.pc);
+				iconString = UIConstants.TMP_SPRITE_PC;
+			} break;
+		}
+
+		// Apply to textfield based on icon type
+		switch(m_iconType) {
+			case IconType.NONE: {
+				m_text.text = text;
+			} break;
+
+			case IconType.LEFT: {
+				m_text.text = iconString + text;
+			} break;
+
+			case IconType.RIGHT: {
+				m_text.text = text + iconString;
 			} break;
 		}
 	}

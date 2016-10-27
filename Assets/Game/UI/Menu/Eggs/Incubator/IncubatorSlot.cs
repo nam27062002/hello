@@ -121,9 +121,9 @@ public class IncubatorSlot : MonoBehaviour {
 
 				// If cost is 0, use the "free" word instead
 				if(costPC == 0) {
-					m_skipCostText.text = LocalizationManager.SharedInstance.Localize("TID_GEN_EXCLAMATION_EXPRESSION", LocalizationManager.SharedInstance.Localize("TID_GEN_FREE"));
+					m_skipCostText.text = UIConstants.TMP_SPRITE_PC + LocalizationManager.SharedInstance.Localize("TID_GEN_EXCLAMATION_EXPRESSION", LocalizationManager.SharedInstance.Localize("TID_GEN_FREE"));
 				} else {
-					m_skipCostText.text = StringUtils.FormatNumber(costPC);
+					m_skipCostText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(costPC);
 				}
 			}
 		}

@@ -63,7 +63,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 		if(data == null) return;
 
 		// Update price
-		m_priceText.text = StringUtils.FormatNumber(data.def.GetAsLong("unlockPriceCoins"));
+		m_priceText.text = UIConstants.TMP_SPRITE_SC + StringUtils.FormatNumber(data.def.GetAsLong("unlockPriceCoins"));
 	}
 
 	/// <summary>
