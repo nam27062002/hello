@@ -106,6 +106,9 @@ public class CollectibleChest : MonoBehaviour {
 		// If already collected, skip
 		if(m_chestData.collected) return;
 
+		if (InstanceManager.player != null && !InstanceManager.player.IsAlive())
+			return;
+
 		// Change chest state
 		m_chestData.ChangeState(Chest.State.PENDING_REWARD);
 
