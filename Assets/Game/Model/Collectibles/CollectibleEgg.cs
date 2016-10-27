@@ -80,6 +80,9 @@ public class CollectibleEgg : MonoBehaviour {
 		// If already collected, skip
 		if(m_state == State.COLLECTED) return;
 
+		if (InstanceManager.player != null && !InstanceManager.player.IsAlive())
+			return;
+
 		// If inventory is full, don't collect
 		if(EggManager.IsReady() && EggManager.isInventoryFull) {
 			// Broadcast message to show some feedback
