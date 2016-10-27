@@ -62,7 +62,8 @@ public class FireBreathDynamic : MonoBehaviour
 
 
     private Vector3 lastInitialPosition;
-    private GameObject whipEnd;
+    private GameObject m_whipEnd;
+    private GameObject m_collisionPlane;
 
     public float timeDelay = 0.25f;
 
@@ -73,6 +74,11 @@ public class FireBreathDynamic : MonoBehaviour
 
     private float enableTime = 0.0f;
     private bool enableState = false;
+
+    private Transform mt_particles;
+    private Transform mt_particlesMask;
+    private ParticleSystem mp_particles;
+    private ParticleSystem mp_particlesMask;
 
     public void setEffectScale(float furyBaseLenght, float dragonScale, float lengthIncrease)
     {
@@ -100,21 +106,15 @@ public class FireBreathDynamic : MonoBehaviour
 
         m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
 
-        whipEnd = transform.FindChild("WhipEnd").gameObject;
-        Transform particles = whipEnd.transform.FindChild("FireConeToon");
-        Transform particlesMask = whipEnd.transform.FindChild("FireConeToonMask");
-/*
-        if (m_debugScale > 0.0f)
-        {
-            m_effectScale = m_debugScale;
-        }
-        else
-        {
-            m_effectScale = (m_collisionMaxDistance) / refDistance;
-        }
-*/
-        particles.SetLocalScale(m_effectScale * particles.GetGlobalScaleQuick());
-        particlesMask.SetLocalScale(m_effectScale * particlesMask.GetGlobalScaleQuick());
+        m_whipEnd = transform.FindChild("WhipEnd").gameObject;
+        m_collisionPlane = transform.FindChild("WhipEnd/collisionPlane").gameObject;
+        mt_particles = m_whipEnd.transform.FindChild("FireConeToon");
+        mt_particlesMask = m_whipEnd.transform.FindChild("FireConeToonMask");
+        mp_particles = mt_particles.GetComponent<ParticleSystem>();
+        mp_particlesMask = mt_particlesMask.GetComponent<ParticleSystem>();
+
+        mt_particles.SetLocalScale(m_effectScale);
+        mt_particlesMask.SetLocalScale(m_effectScale);
 
         InitWhip();
 		InitArrays();
@@ -125,7 +125,7 @@ public class FireBreathDynamic : MonoBehaviour
 
         CreateMesh();
 
-        lastInitialPosition = whipEnd.transform.position;
+        lastInitialPosition = m_whipEnd.transform.position;
 
         flameAnimationTime = m_FlameAnimation[m_FlameAnimation.length - 1].time;
         enableTime = m_lastTime = Time.time;
@@ -244,7 +244,7 @@ public class FireBreathDynamic : MonoBehaviour
 
 //        Debug.Log("lastInitialPositionVariation: " + (lastInitialPosition - transform.position).ToString());
 
-        lastInitialPosition = whipEnd.transform.position;
+        lastInitialPosition = m_whipEnd.transform.position;
     }
 
     void InitUVs()
@@ -303,12 +303,12 @@ public class FireBreathDynamic : MonoBehaviour
 		m_mesh.vertices = m_pos;
         m_mesh.colors = m_color;
 
-        Vector3 particlePos = whipEnd.transform.localPosition;
+        Vector3 particlePos = m_whipEnd.transform.localPosition;
         float particleDistance = m_distance * (m_effectScale*0.5f);       
         //Mathf.Pow(effectScale, 1.5f);
         particlePos.x = m_collisionDistance < particleDistance ? m_collisionDistance : particleDistance;
         //        whipEnd.transform.SetLocalPosX(m_distance * effectScale);
-        whipEnd.transform.localPosition = particlePos;
+        m_whipEnd.transform.localPosition = particlePos;
 //        whipEnd.transform.SetLocalScale(whipEnd.transform.GetGlobalScaleQuick() * m_effectScale);
 
     }
@@ -352,6 +352,14 @@ public class FireBreathDynamic : MonoBehaviour
                 m_lastTime = Time.time;
             }
 
+
+            m_collisionPlane.transform.position = hit.point;
+            m_collisionPlane.transform.up = hit.normal;
+
+            mp_particles.collision.SetPlane(0, m_collisionPlane.transform);
+            mp_particlesMask.collision.SetPlane(0, m_collisionPlane.transform);
+
+
             m_collisionDistance = hit.distance;
 
             Vector3 hitNormal = hit.normal;
@@ -382,6 +390,9 @@ public class FireBreathDynamic : MonoBehaviour
         }
         else
         {
+            mp_particles.collision.SetPlane(0, null);
+            mp_particlesMask.collision.SetPlane(0, null);
+
             for (int i = 0; i < m_splits + 1; i++)
             {
                 float currentDist = (xStep * (i + 1));
