@@ -766,6 +766,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// check collision with ground, only down?
 		m_impulse.y += moveValue * Time.deltaTime;
+		float abs = Mathf.Abs( moveValue ) * 10;
+#if DEBUG
+		if ( m_impulse.y < -abs || m_impulse.y > abs )
+			Debug.LogWarning("Possible Movement error!");
+#endif
+		m_impulse.y = Mathf.Clamp( m_impulse.y, -abs, abs);
+
 
 		m_impulse.x += impulse.x * m_parabolicXControl;
 
@@ -826,7 +833,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
-				float gravity = 9.81f * m_dragonGravityModifier * 50;
+				float gravity = 9.81f * m_dragonGravityModifier * 35;
 				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
 
 				// stroke's Drag
@@ -1249,10 +1256,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 		}
 
-	}
-
-	void OnCollisionStay(Collision collision)
-	{
 	}
 
 }
