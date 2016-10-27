@@ -16,6 +16,12 @@ public class DestructibleDecoration : Initializable {
 	[CommentAttribute("Add a destroy effect when this object is trampled by Dragon.")]
 	[SerializeField] private string m_destroyParticle = "";
 
+	[CommentAttribute("Audio When Dragon completely destroys the object.")]
+	[SerializeField] private string m_onDestroyAudio = "";
+	[CommentAttribute("Audio When Dragon interacts with object but does not destroy it.")]
+	[SerializeField] private string m_onFeedbackAudio = "";
+
+
 	private ZoneManager m_zoneManager;
 	private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
@@ -32,6 +38,8 @@ public class DestructibleDecoration : Initializable {
 	private bool m_spawned = false;
 
 	private DragonBreathBehaviour m_breath;
+
+
 
 
 	//-------------------------------------------------------------------------------------------//
@@ -153,6 +161,9 @@ public class DestructibleDecoration : Initializable {
 							}
 							ParticleManager.Spawn(m_feddbackParticle, particlePosition);
 						}
+
+						if ( !string.IsNullOrEmpty(m_onFeedbackAudio) )
+							AudioController.Play(m_onFeedbackAudio, transform.position + m_colliderCenter);
 					} else {
 						if (m_destroyParticle != "") {
 							ParticleManager.Spawn(m_destroyParticle, transform.position);
@@ -170,10 +181,15 @@ public class DestructibleDecoration : Initializable {
 							dragonMotion.AddForce(knockBack);
 						}
 
+						if ( !string.IsNullOrEmpty(m_onDestroyAudio) )
+							AudioController.Play(m_onDestroyAudio, transform.position + m_collider.center);
+
 						m_autoSpawner.StartRespawn();
 						m_view.SetActive(false);
 						m_viewDestroyed.SetActive(true);
 						m_spawned = false;
+
+
 					}
 				}
 			}
@@ -184,19 +200,22 @@ public class DestructibleDecoration : Initializable {
 		if (enabled && m_spawned) {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
-					Vector3 particlePosition = transform.position + m_colliderCenter;
-					particlePosition.y = _other.transform.position.y;
-
-					if (particlePosition.x < _other.transform.position.x) {
-						particlePosition.x += m_collider.size.x * 0.5f;
-					} else {
-						particlePosition.x -= m_collider.size.x * 0.5f;
-					}
-
 					if (m_effect == ZoneManager.ZoneEffect.S) {
-						if (m_feddbackParticle != "") {
+						Vector3 particlePosition = transform.position + m_colliderCenter;
+						particlePosition.y = _other.transform.position.y;
+
+						if (particlePosition.x < _other.transform.position.x) {
+							particlePosition.x += m_collider.size.x * 0.5f;
+						} else {
+							particlePosition.x -= m_collider.size.x * 0.5f;
+						}
+
+						if ( m_feddbackParticle != "") {
 							ParticleManager.Spawn(m_feddbackParticle, particlePosition);
 						}
+
+						if ( !string.IsNullOrEmpty(m_onFeedbackAudio) )
+							AudioController.Play(m_onFeedbackAudio, transform.position + m_colliderCenter);
 					}
 				}
 			}

@@ -103,8 +103,6 @@ public class FireBreathDynamic : MonoBehaviour
         whipEnd = transform.FindChild("WhipEnd").gameObject;
         Transform particles = whipEnd.transform.FindChild("FireConeToon");
         Transform particlesMask = whipEnd.transform.FindChild("FireConeToonMask");
-        Transform effectEnd = particlesMask.FindChild("EffectEnd");
-        float refDistance = (effectEnd.position - transform.position).magnitude;
 /*
         if (m_debugScale > 0.0f)
         {

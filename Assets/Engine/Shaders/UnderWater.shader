@@ -82,7 +82,7 @@ Shader "Hungry Dragon/UnderWater"
 				fixed4 frag (v2f i) : SV_Target
 				{
 					float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, (i.scrPos)).x) * 1.0f;
-					float depthR = (depth - (i.scrPos.z * 1.0f));
+					float depthR = (depth - i.scrPos.z);
 
 					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 0.02f) * CAUSTIC_RADIUS,
 										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
@@ -90,8 +90,8 @@ Shader "Hungry Dragon/UnderWater"
 					float z = depthR;// i.uv.y;
 					fixed4 col = tex2D(_MainTex, 20.0f * (i.uv.xy + anim) * (z * 2.0f) * _ProjectionParams.w) * 0.1f;
 					col.w = 0.0f;
-					float w = clamp(1.0 - ((depthR + 10.0) * 0.04f), 0.0f, 1.0f);
-					col = lerp(fixed4(_Color) + col * w * 30.0, col, w);
+					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
+					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
 					return col;
 				}
 			ENDCG
