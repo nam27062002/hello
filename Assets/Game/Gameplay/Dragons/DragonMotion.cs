@@ -117,6 +117,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
+	private State m_stateAfterRevive = State.None;
+
 	private Transform m_tongue;
 	private Transform m_head;
 	private Transform m_cameraLookAt;
@@ -315,6 +317,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				{
 					m_groundCollider.enabled = true;
 				}break;
+				case State.Reviving:
+				{
+					m_rbody.detectCollisions = true;
+				}break;
 			}
 
 			// entering new state
@@ -381,11 +387,19 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Reviving:
 				{
+					m_rbody.detectCollisions = false;
 					m_reviveTimer = m_reviveDuration;
 					m_impulse = Vector3.zero;
 					m_rbody.velocity = Vector3.zero;
-					m_animator.Play("BaseLayer.Idle");
 					m_revivePosition = transform.position;
+					m_animator.Play("BaseLayer.Idle");
+
+					if ( m_direction.x > 0 ){
+						m_direction = Vector3.right;	
+					}else{
+						m_direction = Vector3.left;
+					}
+
 				}break;
 			}
 
@@ -633,8 +647,29 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				m_reviveTimer -= Time.deltaTime;
 				transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
+
+				RotateToDirection(m_direction, false);
+				m_desiredRotation = m_transform.rotation;
+
 				if ( m_reviveTimer <= 0 )
-					ChangeState( State.Idle);
+				{
+					transform.position = m_diePosition;
+					switch( m_stateAfterRevive )
+					{
+						case State.InsideWater:
+						{
+							ChangeState( State.InsideWater );
+						}break;
+						case State.OuterSpace:
+						{
+							ChangeState( State.OuterSpace );
+						}break;
+						default:
+						{
+							ChangeState( State.Idle);
+						}break;
+					}
+				}
 			}break;
 		}
 		
@@ -1204,28 +1239,40 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <param name="_other">Other.</param>
 	void OnTriggerEnter(Collider _other)
 	{
+		Debug.Log( "OnTriggerEnter:" + _other.tag);
 		if ( _other.tag == "Water" )
 		{
 			// Enable Bubbles
-			StartWaterMovement();
+			if (IsAliveState())
+				StartWaterMovement();
+			m_stateAfterRevive = State.InsideWater;
 		}
 		else if ( _other.tag == "Space" )
 		{
-			StartSpaceMovement();
+			if (IsAliveState())
+				StartSpaceMovement();
+			m_stateAfterRevive = State.OuterSpace;
 		}
+		
 	}
 
 	void OnTriggerExit( Collider _other )
 	{
+		Debug.Log( "OnTriggerExit:" + _other.tag);
 		if ( _other.tag == "Water" )
 		{
 			// Disable Bubbles
-			EndWaterMovement();
+			if (IsAliveState())
+				EndWaterMovement();
+			m_stateAfterRevive = State.Idle;
 		}
 		else if ( _other.tag == "Space" )
 		{
-			EndSpaceMovement();
+			if (IsAliveState())
+				EndSpaceMovement();
+			m_stateAfterRevive = State.Idle;
 		}
+		
 	}
 
 	void OnCollisionEnter(Collision collision) 
@@ -1256,6 +1303,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 		}
 
+	}
+
+	private bool IsAliveState()
+	{
+		if (m_state == State.Dead || m_state == State.Reviving )
+			return false;
+		return true;
 	}
 
 }
