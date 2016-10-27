@@ -10,9 +10,9 @@ public class CatapultAmmo : MonoBehaviour {
 	[SerializeField] private float m_speedFactor = 1f;
 	[SerializeField] private float m_rotationSpeedFactor = 1f;
 
-	private Transform m_oldParent;
+	private Transform m_oldParent = null;
 
-	private bool m_hasBeenTossed;
+	private bool m_hasBeenTossed = false;
 
 	private Vector3 m_po;
 	private float m_vo;
@@ -23,11 +23,6 @@ public class CatapultAmmo : MonoBehaviour {
 
 	private float m_elapsedTime;
 
-	// Use this for initialization
-	void Start () {
-		m_oldParent = null;
-		m_hasBeenTossed = false;
-	}
 
 	public void AttachTo(Transform _parent) {
 		m_oldParent = transform.parent;
@@ -83,7 +78,7 @@ public class CatapultAmmo : MonoBehaviour {
 		}
 	}
 
-	private void Explode(bool _hitDragon) {		
+	public void Explode(bool _hitDragon) {		
 		ParticleManager.Spawn(m_hitParticle, transform.position);
 
 		if (_hitDragon) {
