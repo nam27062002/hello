@@ -18,6 +18,19 @@ namespace FGOL.Authentication
             Default
         }
 
+        public static string LoginTypeToCaletySocialPlatform(LoginType loginType)
+        {
+            string returnValue = null;
+            switch (loginType)
+            {
+                case LoginType.Facebook:
+                    returnValue = CaletyConstants.SOCIAL_PLATFORM_FACEBOOK;
+                    break;
+            }
+
+            return returnValue;
+        }
+
         public class LoginCredentials
         {
             public string socialID = null;

@@ -784,7 +784,11 @@ public class GameServerManagerCalety : GameServerManager
     private void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)
     {        
         Log("CaletyExtensions_LogInToServerThruPlatform");        
-        ServerManager.SharedInstance.SetNetworkPlatform(platformId);
+        if (!string.IsNullOrEmpty(platformId))
+        {
+            ServerManager.SharedInstance.SetSocialPlatform(platformId);
+        }
+
         ServerManager.SharedInstance.Server_SendAuth(platformUserId, platformToken);
     }
 
