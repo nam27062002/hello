@@ -38,8 +38,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		None,
 	};
 
-	private const float m_waterImpulseMultiplier = 0.75f;
-	private const float m_onWaterCollisionMultiplier = 0.5f;
+	public static float m_waterImpulseMultiplier = 0.75f;
+	public static float m_onWaterCollisionMultiplier = 0.5f;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -130,6 +130,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	// Parabolic movement
 	[Header("Parabolic Movement")]
 	[SerializeField] private float m_parabolicMovementValue = 10;
+	public float parabolicMovementValue
+	{
+		get { return m_parabolicMovementValue; }
+		set { m_parabolicMovementValue = value; }
+	}
 	public float m_parabolicXControl = 10;
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
 	[SerializeField] private float m_outerSpaceRecoveryTime = 0.5f;
