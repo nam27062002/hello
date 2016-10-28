@@ -1086,7 +1086,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void OnImpact(Vector3 _origin, float _damage, float _intensity, Transform _source) {
 		// m_dragon.AddLife(-_damage);
-		m_health.ReceiveDamage( _damage, DamageType.NORMAL , _source, false);
+		m_health.ReceiveDamage(_damage, DamageType.NORMAL , _source, false);
+	}
+
+	public bool IsInsideWater() {
+		return m_state == State.InsideWater;
 	}
 
 	public void StartWaterMovement()

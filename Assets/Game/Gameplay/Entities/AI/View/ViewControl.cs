@@ -376,11 +376,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animator.SetBool("falling", _falling);
 		}
 	}
-
-	public void Latching( bool _latching){
 		
-	}
-
 	public void Attack() {
 		if (m_panic)
 			return;
