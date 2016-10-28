@@ -71,7 +71,7 @@ public class NetTest : MonoBehaviour
         if ((socialAPI == ESocialAPI.Calety && SocialPlatformManager.SharedInstance.IsLoggedIn()) ||
             (socialAPI == ESocialAPI.FGOL && SocialFacade.Instance.IsLoggedIn(SocialFacade.Network.Facebook)))
         {
-            GameServerManager.SharedInstance.LogInToServerThruPlatform("facebook", SocialPlatformManager.SharedInstance.GetUserId(), SocialPlatformManager.SharedInstance.GetToken(),
+            GameServerManager.SharedInstance.LogInToServerThruPlatform(FGOL.Authentication.User.LoginTypeToCaletySocialPlatform(FGOL.Authentication.User.LoginType.Facebook), SocialPlatformManager.SharedInstance.GetUserId(), SocialPlatformManager.SharedInstance.GetToken(),
                 delegate (Error commandError, Dictionary<string, object> response)
                 {
                     if (commandError == null)
