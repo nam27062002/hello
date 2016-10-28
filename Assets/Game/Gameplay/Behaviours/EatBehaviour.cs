@@ -5,10 +5,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected struct PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
+		public float eatingAnimationDuration;
 		public Transform startParent;
 		public Vector3 startScale;
 		public AI.Machine prey;
+		public Quaternion dyingRotation;
 	};
+
+	private const float m_rotateToMouthSpeed = 800;
+	private const float m_rotateToMouthThreshold = 5;
 
 	//-----------------------------------------------
 	// Attributes
@@ -24,9 +29,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected DragonTier m_tier;
 	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
-
-	protected float m_eatingTimer;
-	protected float m_eatingTime;
 
 	// Hold stuff
 	private float m_holdPreyTimer = 0;
@@ -114,7 +116,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Use this for initialization
 	protected virtual void Awake () {
-		m_eatingTimer = 0;
 
 		m_prey = new List<PreyData>();
         m_preysToEat = new List<AI.Machine>();
@@ -165,7 +166,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	protected virtual void OnDisable() {
-		m_eatingTimer = 0;
 
 		for (int i = 0; i < m_prey.Count; i++) {	
 			if (m_prey[i].prey != null) {
@@ -297,17 +297,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 		
 		_prey.Bite();
 
-		// Yes!! Eat it!!
-		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _prey.biteResistance);
-
 		PreyData preyData = new PreyData();
 
+		float eatTime = Mathf.Max(m_minEatAnimTime, m_eatSpeedFactor * _prey.biteResistance);
+
 		preyData.startParent = _prey.transform.parent;
-		_prey.transform.parent = transform;
+		_prey.transform.parent = m_suction;
 		preyData.startScale = _prey.transform.localScale;
-		preyData.absorbTimer = m_absorbTime;
-		preyData.eatingAnimationTimer = Mathf.Max(m_minEatAnimTime, m_eatingTimer);
+		preyData.absorbTimer = eatTime * 0.5f;
+		preyData.eatingAnimationTimer = preyData.absorbTimer;
+		preyData.eatingAnimationDuration = preyData.eatingAnimationTimer;
 		preyData.prey = _prey;
+		preyData.dyingRotation = _prey.GetDyingFixRot();
 
 		m_prey.Add(preyData);
 	}
@@ -318,29 +319,41 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected virtual void UpdateEating() {
 		bool empty = true;
 
+		Vector3 tongueDir = (m_mouth.position - m_head.position).normalized;
+
 		for (int i = 0; i < m_prey.Count; i++) {
 			if (m_prey[i].prey != null) {
 				PreyData prey = m_prey[i];
 
-				prey.absorbTimer -= Time.deltaTime;
-				prey.eatingAnimationTimer -= Time.deltaTime;
+				Quaternion localRot = prey.prey.transform.localRotation;
+				float fixRotStep = m_rotateToMouthSpeed * Time.deltaTime;
+				prey.prey.transform.localRotation = Quaternion.RotateTowards( localRot, prey.dyingRotation, fixRotStep);
+				// prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, tongueDir), 0.25f);
 
-				float t = 1 - Mathf.Max(0, m_prey[i].absorbTimer / m_absorbTime);
-				Vector3 tongueDir = (m_mouth.position - m_head.position).normalized;
-
-				// swallow entity
-				prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_mouth.position, t);
-				prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
-				prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, tongueDir), 0.25f);
-
-				// remaining time eating
-				if (m_prey[i].eatingAnimationTimer <= 0) 
+				if ( prey.absorbTimer > 0 )
 				{
-					prey.prey.transform.parent = prey.startParent;
-					Swallow(prey.prey);
-					prey.prey = null;
-					prey.startParent = null;
+					prey.absorbTimer -= Time.deltaTime;
+					float t = 1 - Mathf.Max(0, prey.absorbTimer / prey.eatingAnimationDuration);
+					// swallow entity
+					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_mouth.position, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
 				}
+				else
+				{
+					prey.eatingAnimationTimer -= Time.deltaTime;
+					float t = Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
+					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_head.position, t);
+					// remaining time eating
+					if (prey.eatingAnimationTimer <= 0) 
+					{
+						prey.prey.transform.parent = prey.startParent;
+						Swallow(prey.prey);
+						prey.prey = null;
+						prey.startParent = null;
+					}
+				}
+
+
 
 				m_prey[i] = prey;
 				empty = false;

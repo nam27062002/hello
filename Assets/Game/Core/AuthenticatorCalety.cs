@@ -29,7 +29,7 @@ public class AuthenticatorCalety : Authenticator
         //parameters["credentials"] = Json.Serialize(credentials.ToDictionary());
 
         Log("Authenticate " + network.ToString() + " socialID = " + credentials.socialID);
-        GameServerManager.SharedInstance.LogInToServerThruPlatform(network.ToString(), credentials.socialID, credentials.accessToken, 
+        GameServerManager.SharedInstance.LogInToServerThruPlatform(User.LoginTypeToCaletySocialPlatform(network), credentials.socialID, credentials.accessToken, 
             delegate (Error commandError, Dictionary<string, object> response)
             {
                 Log("OnLoginToServerThruPlatform " + commandError);

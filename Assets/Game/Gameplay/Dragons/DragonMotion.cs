@@ -58,6 +58,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// References to components
 	Animator  				m_animator;
+	FlyLoopBehaviour		m_flyLoopBehaviour;
 	DragonPlayer			m_dragon;
 	DragonHealthBehaviour	m_health;
 	DragonControl			m_controls;
@@ -218,6 +219,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
+		m_flyLoopBehaviour	= m_animator.GetBehaviour<FlyLoopBehaviour>();
 		m_dragon			= GetComponent<DragonPlayer>();
 		m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControl>();
@@ -491,25 +493,28 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						// notify the machine that it's now in a current.
 						// m_machine.EnteredInCurrent(current);
+
+
 					}
 				}
             }
             else
             {
-                // we're already inside a current, check for exit
                 Vector3 pos = m_transform.position;
-				//1.- Check if we are out of bounds of the current
-				//2.- If we are no longer visible remove ourselves from the current as well ( most likely we have been killed by a mine which makes our renderers inactive )
-				//(We dont want the camera to follow an invisible corpse)
-				/*
-				if(!m_isVisible)
+				if(current != null)
 				{
-					// if the object is no longer visible, remove it immediately
-					current.splineForce.RemoveObject(gameObject, true);
-					current = null;
+					if ( current.IsInCurrentDirection( gameObject ) )	// if agains current we dont allow to glide
+					{
+						m_flyLoopBehaviour.allowGlide = true;
+					}
+					else
+					{
+						m_animator.SetBool("glide", false);
+						m_flyLoopBehaviour.allowGlide = false;
+					}
+
 				}
-				else 
-				*/
+					
 
 				if(!current.Contains(pos.x, pos.y))
                 {
@@ -523,6 +528,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 				if(current == null )
 				{
+					m_flyLoopBehaviour.allowGlide = true;
 					// notify the machine that it's no more in a current.
 					// m_machine.ExitedFromCurrent();
 				}
@@ -1248,7 +1254,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	/// <param name="_other">Other.</param>
 	void OnTriggerEnter(Collider _other)
 	{
-		Debug.Log( "OnTriggerEnter:" + _other.tag);
 		if ( _other.tag == "Water" )
 		{
 			// Enable Bubbles
@@ -1267,7 +1272,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	void OnTriggerExit( Collider _other )
 	{
-		Debug.Log( "OnTriggerExit:" + _other.tag);
 		if ( _other.tag == "Water" )
 		{
 			// Disable Bubbles

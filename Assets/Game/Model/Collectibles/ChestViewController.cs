@@ -67,6 +67,7 @@ public class ChestViewController : MonoBehaviour {
 				m_glowFX.Play();
 			} else {
 				m_glowFX.Stop();
+				//m_glowFX.Clear();
 			}
 		}
 	}
