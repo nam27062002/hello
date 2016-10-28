@@ -31,6 +31,14 @@ public class Text2TMPEditor : Editor {
 		get { return (Text2TMP)target; }
 	}
 
+	private enum ErrorCode {
+		NONE = -1,
+		FONT_REPLACEMENTS_NOT_INITIALIZED,
+		NO_OBJECT_SELECTED,
+		SELECTED_OBJECT_HAS_TMP,
+		SELECTED_OBJECT_NOT_TEXT
+	};
+
 	// Since we can't have the Unity's Text and the TMP Text components alive at the same time, store all the required data into an aux temp struct in order to do the conversion
 	private struct ConversionData {
 		// Vars
@@ -262,35 +270,105 @@ public class Text2TMPEditor : Editor {
 			GUILayout.Space(5f);
 		} EditorGUILayout.EndHorizontal();
 
-		// Check required conditions
-		bool error = true;
+		// Error check
+		ErrorCode error = ErrorCode.NONE;
 		if(instance.m_fontReplacements.Count == 0) {
-			EditorGUILayout.HelpBox("Initialize the replacement fonts array first!", MessageType.Error);
+			error = ErrorCode.FONT_REPLACEMENTS_NOT_INITIALIZED;
+
 		} else if(Selection.activeGameObject == null) {
-			EditorGUILayout.HelpBox("No object selected!", MessageType.Error);
+			error = ErrorCode.NO_OBJECT_SELECTED;
 		} else {
 			if(Selection.gameObjects.Length == 1) {
 				// Single object selected, check component type
 				if(Selection.activeGameObject.GetComponent<TextMeshProUGUI>() != null) {
-					EditorGUILayout.HelpBox("Selected object already has a TMP component!", MessageType.Error);
+					error = ErrorCode.SELECTED_OBJECT_HAS_TMP;
 				} else if(Selection.activeGameObject.GetComponent<Text>() == null) {
-					EditorGUILayout.HelpBox("Selected object doesn't have a Text component", MessageType.Error);
-				} else {
-					error = false;
+					error = ErrorCode.SELECTED_OBJECT_NOT_TEXT;
 				}
 			} else {
-				error = false;	// Multiple objects, skip component check
+				error = ErrorCode.NONE;	// Multiple objects, skip component check
 			}
 		}
 
-		// Show button
-		GUI.enabled = !error;
-		if(GUILayout.Button("Convert to TMP", GUILayout.Height(50f))) {
-			for(int i = 0; i < Selection.gameObjects.Length; i++) {
-				ConvertToTMP(Selection.gameObjects[i]);
+		// Show buttons
+		GUILayout.Space(20f);
+		EditorGUILayout.BeginVertical(); {
+			// BUTTON 1: Do all texts in the selected objects (non-recursive)
+			GUI.enabled = (error == ErrorCode.NONE);	// All errors are blockers
+			if(GUILayout.Button("Convert selected Texts to TMP", GUILayout.Height(50f))) {
+				int totalObjects = Selection.gameObjects.Length;
+				int processedObjects = 0;
+				int successCount = 0;
+				foreach(GameObject obj in Selection.gameObjects) {
+					// Show progress bar
+					processedObjects++;
+					if(EditorUtility.DisplayCancelableProgressBar("Text2TMP", "Processing " + processedObjects + "/" + totalObjects + " text objects (" + obj.name + ")", (float)processedObjects/(float)totalObjects)) {
+						break;
+					}
+
+					// Do it! And track success
+					if(ConvertToTMP(obj)) {
+						successCount++;
+					}
+				}
+
+				// Clear progress bar and show summary
+				EditorUtility.ClearProgressBar();
+				EditorUtility.DisplayDialog("Text2TMP Done!", "Successfully converted " + successCount + "/" + processedObjects + " objects!", "Ok");
 			}
+			GUI.enabled = true;
+
+			// BUTTON 2: Do all texts within the selected object hierarchy
+			GUI.enabled = (error != ErrorCode.FONT_REPLACEMENTS_NOT_INITIALIZED
+						&& error != ErrorCode.NO_OBJECT_SELECTED);
+			if(GUILayout.Button("Traverse selected objects hierarchy and convert all Texts to TMP", GUILayout.Height(50f))) {
+				int totalObjects = 0;
+				int processedObjects = 0;
+				int successCount = 0;
+				foreach(GameObject obj in Selection.gameObjects) {
+					// Get all Text components in the hierarchy
+					Text[] textsInHierarchy = obj.GetComponentsInChildren<Text>(true);
+					totalObjects += textsInHierarchy.Length;
+					foreach(Text t in textsInHierarchy) {
+						// Show progress bar
+						processedObjects++;
+						if(EditorUtility.DisplayCancelableProgressBar("Text2TMP", "Processing " + processedObjects + "/" + totalObjects + " text objects (" + t.name + ")", (float)processedObjects/(float)totalObjects)) {
+							break;
+						}
+
+						// Do it! And track success
+						if(ConvertToTMP(t.gameObject)) {
+							successCount++;
+						}
+					}
+				}
+
+				// Clear progress bar and show summary
+				EditorUtility.ClearProgressBar();
+				EditorUtility.DisplayDialog("Text2TMP Done!", "Successfully converted " + successCount + "/" + processedObjects + " objects!", "Ok");
+			}
+			GUI.enabled = true;
+		} EditorGUILayout.EndVertical();
+
+		// Show errors
+		GUILayout.Space(20f);
+		switch(error) {
+			case ErrorCode.FONT_REPLACEMENTS_NOT_INITIALIZED: {
+				EditorGUILayout.HelpBox("Initialize the replacement fonts array first!", MessageType.Error);
+			} break;
+
+			case ErrorCode.NO_OBJECT_SELECTED: {
+				EditorGUILayout.HelpBox("No object selected!", MessageType.Error);
+			} break;
+
+			case ErrorCode.SELECTED_OBJECT_HAS_TMP: {
+				EditorGUILayout.HelpBox("Selected object already has a TMP component!", MessageType.Warning);
+			} break;
+
+			case ErrorCode.SELECTED_OBJECT_NOT_TEXT: {
+				EditorGUILayout.HelpBox("Selected object doesn't have a Text component", MessageType.Warning);
+			} break;
 		}
-		GUI.enabled = true;
 
 		// Apply changes to the serializedProperty - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties ();
@@ -302,18 +380,18 @@ public class Text2TMPEditor : Editor {
 	/// <summary>
 	/// Convert selected object from a Unity Text to a TMP.
 	/// </summary>
-	private void ConvertToTMP(GameObject _obj) {
+	private bool ConvertToTMP(GameObject _obj) {
 		// Valid object?
 		if(_obj == null) {
 			Debug.LogError("Selected object is null!");
-			return;
+			return false;
 		}
 
 		// Object has a Text component?
 		Text targetText = _obj.GetComponent<Text>();
 		if(targetText == null) {
 			Debug.LogError("Selected object " + _obj.name + " doesn't have a Text component to be converted.");
-			return;
+			return false;
 		}
 
 		// Start the conversion!
@@ -324,7 +402,7 @@ public class Text2TMPEditor : Editor {
 		// Validate some data
 		if(data.fontReplacement == null) {
 			Debug.LogError("Couldn't find a suitable font to replace " + targetText.font.name + ", aborting conversion");
-			return;
+			return false;
 		}
 
 		// Register undo action
@@ -337,7 +415,7 @@ public class Text2TMPEditor : Editor {
 		TextMeshProUGUI tmpText = _obj.AddComponent<TextMeshProUGUI>();
 		if(tmpText == null) {
 			Debug.LogError("Couldn't create a new TextMeshProUGUI component");
-			return;
+			return false;
 		}
 
 		// Finish the conversion!
@@ -418,6 +496,8 @@ public class Text2TMPEditor : Editor {
 			// Remove TextFX component
 			DestroyImmediate(fx);
 		}
+
+		return true;
 	}
 
 	//------------------------------------------------------------------------//
