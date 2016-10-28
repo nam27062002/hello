@@ -341,7 +341,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				sb.Length = 0;
 				string dragonName = sb.Append("<color=").Append(Colors.silver.ToHexString("#")).Append(">").Append(targetDragonDef.GetLocalized("tidName")).Append("</color>").ToString();
 				sb.Length = 0;
-				string rewardCoins = sb.Append("<color=").Append(GameConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
+				string rewardCoins = sb.Append("<color=").Append(UIConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
 
 				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
 				int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(rewardedItemDef.sku);
