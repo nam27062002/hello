@@ -112,40 +112,8 @@ public class Text2TMPEditor : Editor {
 
 		// Element
 		m_fontReplacementsEditor.drawElementCallback = (Rect _rect, int _idx, bool _isActive, bool _isFocused) => {
-			// Directly using objects
-			/*Text2TMP.FontReplacement item = (Text2TMP.FontReplacement)m_fontReplacementsEditor.list[_idx];
-
-			float separatorWidth = 50f;
-			float itemWidth = (_rect.width - separatorWidth)/2f;
-			_rect.y += 2;	// Some padding
-			_rect.height = EditorGUIUtility.singleLineHeight;
-
-			// Source font
-			_rect.width = itemWidth;
-			item.sourceFont = (Font)EditorGUI.ObjectField(_rect, GUIContent.none, item.sourceFont, typeof(Font), false);
-
-			// Separator
-			float labelWidth = 20f;
-			_rect.x += _rect.width;
-			_rect.x += (separatorWidth - labelWidth)/2f;	// "Center" label within the separator space
-			_rect.width = labelWidth;
-			EditorGUI.LabelField(_rect, "->");
-
-			// Replacement font
-			_rect.x += _rect.width + (separatorWidth - labelWidth)/2f;
-			_rect.width = itemWidth;
-			item.targetFont = (TMP_FontAsset)EditorGUI.ObjectField(_rect, GUIContent.none, item.targetFont, typeof(TMP_FontAsset), false);
-
-			// Sizes*/
-
-			// Using serialized properties without customization
-			/*SerializedProperty p = m_fontReplacementsEditor.serializedProperty.GetArrayElementAtIndex(_idx);
-			_rect.height = EditorGUI.GetPropertyHeight(p, new GUIContent(p.displayName), true);
-			EditorGUI.PropertyField(_rect, p, true);*/
-
-			// Using customized serialized properties
 			// Aux vars
-			Rect sourceRect = _rect;	// Vackup
+			Rect sourceRect = _rect;	// Backup
 			float separatorWidth = 50f;
 			float itemWidth = (_rect.width - separatorWidth)/2f;
 			_rect.y += 2;	// Some padding
@@ -390,7 +358,7 @@ public class Text2TMPEditor : Editor {
 		// Object has a Text component?
 		Text targetText = _obj.GetComponent<Text>();
 		if(targetText == null) {
-			Debug.LogError("Selected object " + _obj.name + " doesn't have a Text component to be converted.");
+			Debug.LogError("Selected object " + _obj.name + " doesn't have a Text component to be converted.", _obj);
 			return false;
 		}
 
@@ -401,7 +369,7 @@ public class Text2TMPEditor : Editor {
 
 		// Validate some data
 		if(data.fontReplacement == null) {
-			Debug.LogError("Couldn't find a suitable font to replace " + targetText.font.name + ", aborting conversion");
+			Debug.LogError("Couldn't find a suitable font to replace " + targetText.font.name + ", aborting conversion", _obj);
 			return false;
 		}
 
@@ -414,7 +382,7 @@ public class Text2TMPEditor : Editor {
 		// Add a new TMP object
 		TextMeshProUGUI tmpText = _obj.AddComponent<TextMeshProUGUI>();
 		if(tmpText == null) {
-			Debug.LogError("Couldn't create a new TextMeshProUGUI component");
+			Debug.LogError("Couldn't create a new TextMeshProUGUI component", _obj);
 			return false;
 		}
 
