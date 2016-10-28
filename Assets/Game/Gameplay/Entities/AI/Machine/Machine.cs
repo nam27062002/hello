@@ -6,6 +6,15 @@ namespace AI {
 	public class Machine : MonoBehaviour, IMachine, ISpawnable, MotionInterface {	
 		protected static int m_groundMask;
 
+		public enum RotateToMouthType
+		{
+			No,										// does not have any special rotation applied while being eaten
+			TailFirst,								// rotates to be swallowed tail first - use with swallow shader
+			HeadFirst,								// rotates to be swallowed head first - "
+			ClosestFirst,							// rotates to swallow either head or tail first, whichever is closer - "
+			Sideways,								// turns sideways - use when breaking into corpse chunks with centre chunk staying in mouth
+		};
+
 		/**************/
 		/*			  */
 		/**************/
@@ -22,6 +31,13 @@ namespace AI {
 
 		[SerializeField][Range(0f, 100f)] private float m_onEatenSoundProbability = 50.0f;
 		[SerializeField] private List<string> m_onEatenSounds = new List<string>();
+
+		[SeparatorAttribute("Other")]
+		[SerializeField] private RotateToMouthType m_rotateToMouth;
+		public RotateToMouthType rotateToMouth{
+			get{ return m_rotateToMouth; }
+			set{ m_rotateToMouth = value; }
+		}
 
 
 		private IEntity m_entity = null;
@@ -69,7 +85,7 @@ namespace AI {
 		// Currents
 		private RegionManager 	m_regionManager;
 		public Current			current { get; set; }
-		public Vector3		m_externalForces;	// Mostly for currents
+		private Vector3		m_externalForces;	// Mostly for currents
 
 		//---------------------------------------------------------------------------------
 
@@ -505,6 +521,37 @@ namespace AI {
 			m_viewControl.StopEating();
 		}
 
+		// Get the local rot that this thing should try to rotate towards if it is set to
+		// try to align to head-first etc.
+		public virtual Quaternion GetDyingFixRot()
+		{
+			Quaternion result = Quaternion.identity;
+
+			if(m_rotateToMouth == RotateToMouthType.No)
+				return result;
+
+			if(m_rotateToMouth == RotateToMouthType.Sideways)
+			{
+				float diff = Quaternion.Angle(transform.localRotation, Quaternion.AngleAxis(90.0f, Vector3.up));
+				float rot = (diff > 90.0f) ? 270.0f : 90.0f;
+				result = Quaternion.AngleAxis(rot, Vector3.up);
+			}
+			else
+			{
+				bool headFirst = (m_rotateToMouth == RotateToMouthType.HeadFirst);
+				if(m_rotateToMouth == RotateToMouthType.ClosestFirst)
+				{
+					Transform trParent = transform.parent;	// null check on this to handle case of attacker being deleted or something
+					if((trParent != null) &&  trParent.InverseTransformDirection(transform.right).x < 0.0f)
+						headFirst = true;
+				}
+				result = headFirst ? Quaternion.AngleAxis(180.0f, Vector3.up) : Quaternion.identity;
+			}
+
+			result = result * Quaternion.AngleAxis(90f, Vector3.forward);
+
+			return result;
+		}
 
 
 		public virtual bool Burn(float _damage, Transform _transform) {

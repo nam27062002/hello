@@ -80,7 +80,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	protected override void Eat(AI.Machine _prey) {
 		base.Eat( _prey );
 		m_animator.SetBool("eat", true);
-		if (m_eatingTime >= 0.5f || m_prey.Count > 2) 
+		if (m_prey[ m_prey.Count - 1 ].eatingAnimationDuration >= 0.5f || m_prey.Count > 2) 
 		{
 			m_animator.SetTrigger("eat crazy");
 		}
