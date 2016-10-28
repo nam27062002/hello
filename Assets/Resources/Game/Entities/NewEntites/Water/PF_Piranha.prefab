@@ -501,11 +501,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &114000012500185668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -524,7 +524,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"stunTime":{"min":0.4,"max":0.6},"damage":1,"duration":10,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":0.7,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":9.5,"arrivalRadius":0.5,"timeout":{"min":2,"max":4},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"stunTime":{"min":0.4,"max":0.6},"damage":1,"duration":1000,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":0.7,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":9.5,"arrivalRadius":0.5,"timeout":{"min":2,"max":4},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false}]'
   m_databaseKey: PF_Piranha
   m_avoidDistanceAttenuation: 2.5
   m_avoidCollisions: 1
