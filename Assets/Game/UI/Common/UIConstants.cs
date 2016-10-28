@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Static class for some global UI constants and utils.
 /// </summary>
-public class UIConstants {
+public static class UIConstants {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -24,4 +24,6 @@ public class UIConstants {
 	public const string TMP_SPRITE_PC = "<sprite name=\"icon_pc\">";
 
 	// Colors
+	public static readonly Color COINS_TEXT_COLOR = new Color(1f, 0.8f, 0.1f);
+	public static readonly Color PC_TEXT_COLOR = new Color(0.9f, 0.5f, 0.8f);
 }

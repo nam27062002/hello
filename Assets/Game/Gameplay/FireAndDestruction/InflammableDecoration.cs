@@ -104,7 +104,6 @@ public class InflammableDecoration : Initializable {
 		m_view.SetActive(true);
 		m_viewBurned.SetActive(false);
 
-		transform.localScale = Vector3.one;
 		m_burned = false;
 
 		for (int i = 0; i < m_fireNodes.Length; i++) {
