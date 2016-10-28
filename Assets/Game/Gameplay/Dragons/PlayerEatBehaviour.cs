@@ -18,17 +18,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 
-	private void MouthCache() 
-	{
-		m_mouth = transform.FindTransformRecursive("Fire_Dummy");
-		m_head = transform.FindTransformRecursive("Dragon_Head");
-
-		m_suction = transform.FindTransformRecursive("Fire_Dummy");
-		if (m_suction == null) {
-			m_suction = m_mouth;
-		}
-	}
-
 	protected void OnEnable() {
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
