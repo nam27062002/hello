@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
@@ -38,8 +39,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_toggleButton; }
 	}
 
-	[SerializeField] private Text m_fpsCounter;
-	public static Text fpsCounter {
+	[SerializeField] private TextMeshProUGUI m_fpsCounter;
+	public static TextMeshProUGUI fpsCounter {
 		get { return instance.m_fpsCounter; }
 	}
 

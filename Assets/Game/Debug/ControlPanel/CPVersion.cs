@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -16,7 +17,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Simple widget to display number version.
 /// </summary>
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class CPVersion : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -26,7 +27,7 @@ public class CPVersion : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Just initialize text
-		Text versionText = GetComponent<Text>();
+		TextMeshProUGUI versionText = GetComponent<TextMeshProUGUI>();
 		versionText.text = "Version " + GameSettings.internalVersion;
 	}
 }
