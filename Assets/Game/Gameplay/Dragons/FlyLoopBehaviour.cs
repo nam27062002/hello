@@ -5,7 +5,12 @@ public class FlyLoopBehaviour : StateMachineBehaviour {
 
 	public Range m_timeToGlide = new Range(3f, 4f);
 	private float m_timer = 4f;
-	
+	private bool m_allowGlide = true;
+	public bool allowGlide
+	{
+		get{ return m_allowGlide; }
+		set{ m_allowGlide = value; }
+	}
 	
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -18,10 +23,13 @@ public class FlyLoopBehaviour : StateMachineBehaviour {
 
 	// OnStateUpdate is called before OnStateUpdate is called on any state inside this state machine
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		m_timer -= Time.deltaTime;
-		if (m_timer <= 0) {
-			animator.SetBool("glide", true);
-			ResetTimer();
+		if ( m_allowGlide )
+		{
+			m_timer -= Time.deltaTime;
+			if (m_timer <= 0) {
+				animator.SetBool("glide", true);
+				ResetTimer();
+			}
 		}
 	}
 
