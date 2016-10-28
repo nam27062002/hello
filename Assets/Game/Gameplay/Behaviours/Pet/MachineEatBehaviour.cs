@@ -7,6 +7,9 @@ public class MachineEatBehaviour : EatBehaviour {
 	public DragonTier eaterTier { get {return m_eaterTier; }}
 	public bool m_isPet = false;
 
+	[SerializeField] private bool m_isAquatic = false;
+	protected override bool isAquatic { get { return m_isAquatic; } }
+
 	private AI.Machine m_machine;
 
 	override protected void Awake() {

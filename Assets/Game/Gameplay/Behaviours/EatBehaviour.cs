@@ -76,6 +76,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected int m_limitEatingValue = 1;	// limit value
 	protected bool m_canHold = true;		// if this eater can hold a prey
 
+	protected virtual bool isAquatic { get { return false; } }
+
 		// Hold config
 	protected float m_holdStunTime;
 	protected float m_holdDamage;
@@ -500,8 +502,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			// Swallow
 			m_holdPreyTimer -= Time.deltaTime;
+
 			if ( m_holdingPlayer.dragonBoostBehaviour.IsBoostActive() )
 				m_holdPreyTimer -= Time.deltaTime;
+
+			if (isAquatic) {
+				if (!m_holdingPlayer.dragonMotion.IsInsideWater())
+					m_holdPreyTimer -= Time.deltaTime;
+			}
+
 			if ( m_holdPreyTimer <= 0 ) // or prey is death
 			{
 				EndHold();
