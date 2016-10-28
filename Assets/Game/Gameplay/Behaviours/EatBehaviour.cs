@@ -703,7 +703,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (m_bloodEmitter.Count > 0) {
 			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -1f;
+			//bloodPos.z = 0f;
 
 			for (int i = 0; i < m_bloodEmitter.Count; i++) {
 				if (m_bloodEmitter[i] != null && m_bloodEmitter[i].activeInHierarchy) {

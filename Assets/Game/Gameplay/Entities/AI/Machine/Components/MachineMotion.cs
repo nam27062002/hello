@@ -66,6 +66,8 @@ namespace AI {
 		private Quaternion m_rotation;
 		private Quaternion m_targetRotation;
 
+		private float m_latchBlending = 1f;
+
 		private Transform m_attackTarget = null;
 		public Transform attackTarget { get{ return m_attackTarget; } set{ m_attackTarget = value; } }
 
@@ -174,7 +176,6 @@ namespace AI {
 		}
 
 
-		private float m_latchBlending = 1f;
 		public override void Update() {
 
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
@@ -183,13 +184,11 @@ namespace AI {
 				return;
 			} else if (m_machine.GetSignal(Signals.Type.Latching)) {
 				Stop();
-				m_rotation = m_machine.transform.localRotation;
-				m_targetRotation = Quaternion.identity;
+				m_targetRotation = m_pilot.targetRotation;
 				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed * m_latchBlending);
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
-				m_machine.transform.localRotation = m_rotation;
-
-				m_machine.transform.localPosition = Vector3.Lerp(m_machine.transform.localPosition, Vector3.zero, Time.deltaTime * m_latchBlending);
+				m_machine.transform.rotation = m_rotation;
+				m_machine.transform.position = Vector3.Lerp( m_machine.transform.position, m_pilot.target, Time.deltaTime * m_latchBlending);
 
 				if (m_latchBlending < 10f)
 					m_latchBlending += 0.1f;
@@ -198,9 +197,7 @@ namespace AI {
 				return;	
 			}
 
-			if (m_latchBlending > 1f) {
-				m_latchBlending = 1f;
-			}
+			m_latchBlending = 1f;
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				Stop();
