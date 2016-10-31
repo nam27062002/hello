@@ -48,6 +48,7 @@ public class RectAreaBounds : AreaBounds {
 	}
 		
 	public bool Contains(Vector3 _point) {	
+		_point.z = 0;
 		return m_bounds.Contains(_point);
 	}
 
