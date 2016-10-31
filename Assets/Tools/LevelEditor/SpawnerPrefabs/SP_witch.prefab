@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11449404}
   - 114: {fileID: 11453016}
   - 114: {fileID: 11451560}
-  - 114: {fileID: 114000011517519070}
+  - 114: {fileID: 114000012118004404}
   m_Layer: 0
   m_Name: SP_witch
   m_TagString: Untagged
@@ -98,7 +98,7 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 188156}
   m_IsPrefabParent: 1
---- !u!114 &114000011517519070
+--- !u!114 &114000012118004404
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -106,9 +106,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 188156}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.37285328, y: -0.37285995}
-  size: {x: 27.814997, y: 10.85}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  m_circular: 1
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: -15.458689, y: -0.018384933, z: 0}
+  - {x: -12.684946, y: 0.047136307, z: 2.2096734}
+  - {x: 2.0283108, y: -0.030330658, z: 4.419347}
+  - {x: 13.957218, y: -0.026241302, z: 2.2096734}
+  - {x: 18.52224, y: -0.022153854, z: 0}
+  - {x: 14.2277565, y: 0.023759842, z: -2.7352695}
+  - {x: 0.06708908, y: -0.001821518, z: -5.470539}
+  - {x: -12.628891, y: 0.025644302, z: -2.7352695}
