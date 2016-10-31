@@ -18,17 +18,6 @@ public class PlayerEatBehaviour : EatBehaviour {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 
-	private void MouthCache() 
-	{
-		m_mouth = transform.FindTransformRecursive("Fire_Dummy");
-		m_head = transform.FindTransformRecursive("Dragon_Head");
-
-		m_suction = transform.FindTransformRecursive("Fire_Dummy");
-		if (m_suction == null) {
-			m_suction = m_mouth;
-		}
-	}
-
 	protected void OnEnable() {
 		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
@@ -80,7 +69,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	protected override void Eat(AI.Machine _prey) {
 		base.Eat( _prey );
 		m_animator.SetBool("eat", true);
-		if (m_eatingTime >= 0.5f || m_prey.Count > 2) 
+		if (m_prey[ m_prey.Count - 1 ].eatingAnimationDuration >= 0.5f || m_prey.Count > 2) 
 		{
 			m_animator.SetTrigger("eat crazy");
 		}

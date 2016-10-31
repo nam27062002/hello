@@ -9,6 +9,11 @@ public class DragonParticleController : MonoBehaviour
 	private ParticleSystem m_levelUpInstance;
 
 	[Space]
+	public GameObject m_revive;
+	public Transform m_reviveAnchor;
+	private ParticleSystem m_reviveInstance;
+
+	[Space]
 	public GameObject m_bubbles;
 	public Transform m_bubblesAnchor;
 	private ParticleSystem m_bubblesInstance;
@@ -28,6 +33,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
+		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
 
@@ -38,11 +44,13 @@ public class DragonParticleController : MonoBehaviour
 	void OnEnable() {
 		// Register events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener(GameEvents.PLAYER_REVIVE, OnRevive);
 	}
 
 	void Update()
@@ -78,6 +86,11 @@ public class DragonParticleController : MonoBehaviour
 	{
 		m_levelUpInstance.Play();
 		m_waterDepth = data.scale + m_waterDepthIncrease;
+	}
+
+	void OnRevive()
+	{
+		m_reviveInstance.Play();
 	}
 
 

@@ -46,7 +46,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112626}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.095, y: 0.207, z: 0}
+  m_LocalPosition: {x: -0.095, y: -0.223, z: -0.467}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -59,7 +59,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156466}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 61.682625, y: 11.026831, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: -71.401, y: 0, z: 0}
   m_Children:
@@ -86,12 +86,12 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 120
-    m_faceDirection: 0
+    m_faceDirection: 1
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 0
+    m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
   m_affectedByDragonTrample: 0
@@ -110,11 +110,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11407728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
-  m_animA: 
+  m_animA: latch
   m_animB: 
   m_animC: 
   m_onEatenParticles:
@@ -488,7 +488,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000014156430214}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.43, z: -0.467}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -503,7 +503,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011497161668}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.046, y: 0, z: 0}
+  m_LocalPosition: {x: -0.046, y: -0.43, z: -0.467}
   m_LocalScale: {x: 1.6, y: 1.6, z: 1.6}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -712,7 +712,7 @@ Animator:
   m_GameObject: {fileID: 1000011497161668}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c6fdd3d4f1d784deab8a3182b7372bbd, type: 3}
-  m_Controller: {fileID: 22100000, guid: b9a913efd07054b46b5b3ec8beb0e474, type: 2}
+  m_Controller: {fileID: 9100000, guid: f16c10052c8bc45fd86f109fe03a61f7, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -737,6 +737,7 @@ MonoBehaviour:
   m_burpSounds: []
   m_eaterTier: 0
   m_isPet: 0
+  m_isAquatic: 0
 --- !u!114 &114000014120770688
 MonoBehaviour:
   m_ObjectHideFlags: 1
