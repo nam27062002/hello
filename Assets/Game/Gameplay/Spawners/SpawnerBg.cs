@@ -118,7 +118,8 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	}
 
 	private void OnDestroy() {
-		SpawnerManager.instance.Unregister(this);
+		if (SpawnerManager.isInstanceCreated)
+			SpawnerManager.instance.Unregister(this);
 	}
 
 	public void Initialize() {

@@ -197,7 +197,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			// Process all selected spawners!
 			foreach(ISpawner item in m_selectedSpawners) {
 				if (item.CanRespawn()) {
+					//add item into respawn list and begin the respawn process
 					m_spawning.Add(item);
+					item.Respawn();
 				}
 			}
 		}
