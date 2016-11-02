@@ -37,6 +37,7 @@ public static class DebugSettings {
     public static readonly string INGAME_HUD = "INGAME_HUD";
     public static readonly string INGAME_SPAWNERS = "INGAME_SPAWNERS";
     public static readonly string INGAME_GLOW = "INGAME_GLOW";
+	public static readonly string DPAD_MODE = "DPAD_MODE";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -92,6 +93,11 @@ public static class DebugSettings {
 		get { return (ResultsSceneSetup.EggTestMode)Prefs.GetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)ResultsSceneSetup.EggTestMode.NONE); }
 		set { Prefs.SetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)value); }
 	}    
+
+	public static TouchControlsDPad.Mode dPadMode {
+		get { return (TouchControlsDPad.Mode)Prefs.GetIntPlayer(DPAD_MODE, (int)TouchControlsDPad.Mode.FIXED); }
+		set { Prefs.SetIntPlayer(DPAD_MODE, (int)value); }
+	}
 
     //------------------------------------------------------------------//
     // METHODS															//
