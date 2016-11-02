@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class ResultsScreenController : MonoBehaviour {
 
@@ -8,7 +9,7 @@ public class ResultsScreenController : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed members
-	[SerializeField] private Text m_timeLabel = null;
+	[SerializeField] private TextMeshProUGUI m_timeLabel = null;
 	[SerializeField] private NumberTextAnimator m_scoreAnimator = null;
 	[SerializeField] private NumberTextAnimator m_coinsAnimator = null;
 	[SerializeField] private NumberTextAnimator m_bonusCoinsAnimator = null;

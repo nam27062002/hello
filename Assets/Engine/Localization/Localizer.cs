@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -17,7 +18,7 @@ using UnityEngine.UI;
 /// on a textfield.
 /// Use this when possible rather than directly setting the text's value.
 /// </summary>
-[RequireComponent(typeof(Text))]
+//[RequireComponent(typeof(TextMeshProUGUI))]
 public class Localizer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -52,8 +53,8 @@ public class Localizer : MonoBehaviour {
 	}
 
 	// References
-	private Text m_text = null;
-	public Text text {
+	private TextMeshProUGUI m_text = null;
+	public TextMeshProUGUI text {
 		get { return m_text; }
 	}
 
@@ -65,7 +66,7 @@ public class Localizer : MonoBehaviour {
 	/// </summary>
 	public void Awake() {
 		// Check required stuff
-		m_text = GetComponent<Text>();
+		m_text = GetComponent<TextMeshProUGUI>();
 		DebugUtils.Assert(m_text != null, "Required member!");
 
 		// If tid is not defined, grab text as tid

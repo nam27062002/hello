@@ -25,7 +25,7 @@ public class BuyEggButton : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Text m_priceText = null;
+	[SerializeField] private TMPro.TextMeshProUGUI m_priceText = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -36,7 +36,7 @@ public class BuyEggButton : MonoBehaviour {
 	private void OnEnable() {
 		// Set price
 		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
-		m_priceText.text = StringUtils.FormatNumber(eggDef.GetAsInt("pricePC"));
+		m_priceText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(eggDef.GetAsInt("pricePC"));
 	}
 
 	//------------------------------------------------------------------------//

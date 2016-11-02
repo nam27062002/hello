@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using System.Text;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -19,7 +20,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Specific controller for a score feedback.
 /// </summary>
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class ScoreFeedback : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -41,7 +42,7 @@ public class ScoreFeedback : MonoBehaviour {
 	}
 
 	// References
-	private Text m_text = null;
+	private TextMeshProUGUI m_text = null;
 
 	// Internal
 	private float m_baseFontSize = 0f;
@@ -55,7 +56,7 @@ public class ScoreFeedback : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get references
-		m_text = GetComponent<Text>();
+		m_text = GetComponent<TextMeshProUGUI>();
 
 		// Init internal vars
 		m_baseFontSize = m_text.fontSize;

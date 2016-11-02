@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -72,7 +73,7 @@ public class DisguiseRarityTitle : MonoBehaviour {
 
 			// Set text
 			if(match) {
-				Text text = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<Text>();
+				TextMeshProUGUI text = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<TextMeshProUGUI>();
 				if(text != null) {
 					if(_disguiseDef == null) {
 						text.text = LocalizationManager.SharedInstance.Localize("TID_DISGUISE_DEFAULT_NAME");
@@ -103,7 +104,7 @@ public class DisguiseRarityTitle : MonoBehaviour {
 
 			// Set text
 			if(match) {
-				Text text = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<Text>();
+				TextMeshProUGUI text = m_backgroundsByRarity[i].gameObject.GetComponentInChildren<TextMeshProUGUI>();
 				if(text != null) text.text = _text;
 			}
 		}
