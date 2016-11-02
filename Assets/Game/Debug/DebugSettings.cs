@@ -1,4 +1,4 @@
-﻿// DebugSettings.cs
+// DebugSettings.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 23/09/2015.
@@ -41,11 +41,13 @@ public static class DebugSettings {
 	public const string INGAME_HUD						= "INGAME_HUD";
 	public const string INGAME_SPAWNERS					= "INGAME_SPAWNERS";
 	public const string INGAME_GLOW						= "INGAME_GLOW";
+	public const string INGAME_PARTICLES_FEEDBACK 		= "INGAME_PARTICLES_FEEDBACK";
+    public const string INGAME_PARTICLES_EATEN 			= "INGAME_PARTICLES_EATEN";
 
-	public static readonly string DPAD_MODE 			= "DPAD_MODE";
-	public static readonly string DPAD_SMOOTH_FACTOR 	= "DPAD_SMOOTH_FACTOR";
-	public static readonly string DPAD_THRESHOLD 		= "DPAD_THRESHOLD";
-	public static readonly string DPAD_CLAMP_DOT 		= "DPAD_CLAMP_DOT";
+	public const string DPAD_MODE 						= "DPAD_MODE";
+	public const string DPAD_SMOOTH_FACTOR 				= "DPAD_SMOOTH_FACTOR";
+	public const string DPAD_THRESHOLD 					= "DPAD_THRESHOLD";
+	public const string DPAD_CLAMP_DOT 					= "DPAD_CLAMP_DOT";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -114,6 +116,12 @@ public static class DebugSettings {
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
 
         key = INGAME_GLOW;
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
+
+		key = INGAME_PARTICLES_FEEDBACK;
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
+
+        key = INGAME_PARTICLES_EATEN;
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
     }
 }

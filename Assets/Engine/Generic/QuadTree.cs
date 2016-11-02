@@ -178,9 +178,15 @@ public class QuadTree<T> where T : IQuadTreeItem {
 		m_nodes.Clear();
 		PreOrderGetNodes(m_root, ref m_nodes);
 
-		Gizmos.color = _color;
 		for (int i = 0; i < m_nodes.Count; i++) {
+			Gizmos.color = _color;
 			Gizmos.DrawWireCube(m_nodes[i].bounds.center, m_nodes[i].bounds.size);
+			if (m_nodes[i].IsLeaf()) {
+				for (int j = 0; j < m_nodes[i].items.Count; j++) {
+					Gizmos.color = Colors.coral;
+					Gizmos.DrawWireCube((Vector3)m_nodes[i].items[j].boundingRect.center, (Vector3)m_nodes[i].items[j].boundingRect.size);
+				}
+			}
 		}
 	}
 }

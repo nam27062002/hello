@@ -315,4 +315,6 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	{
 		return Random.onUnitSphere * 2f;
 	}
+
+	public void DrawStateGizmos() {}
 }
