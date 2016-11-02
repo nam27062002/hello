@@ -21,7 +21,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	public Text m_priceText;
+	public TMPro.TextMeshProUGUI m_priceText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,7 +63,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 		if(data == null) return;
 
 		// Update price
-		m_priceText.text = StringUtils.FormatNumber(data.def.GetAsLong("unlockPricePC"));
+		m_priceText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(data.def.GetAsLong("unlockPricePC"));
 	}
 
 	/// <summary>

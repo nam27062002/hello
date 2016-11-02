@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -16,7 +17,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Simple controller to update a textfield with a game countdown.
 /// </summary>
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 [RequireComponent(typeof(Animator))]
 public class HUDCountdown : MonoBehaviour {
 	//------------------------------------------------------------------//
@@ -27,7 +28,7 @@ public class HUDCountdown : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
-	private Text m_text = null;
+	private TextMeshProUGUI m_text = null;
 	private Animator m_anim = null;
 	private GameSceneController m_scene = null;
 
@@ -43,7 +44,7 @@ public class HUDCountdown : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get required references
-		m_text = GetComponent<Text>();
+		m_text = GetComponent<TextMeshProUGUI>();
 		DebugUtils.Assert(m_text != null, "Required component!");
 
 		m_anim = GetComponent<Animator>();

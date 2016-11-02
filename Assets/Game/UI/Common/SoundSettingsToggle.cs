@@ -15,9 +15,6 @@ public class SoundSettingsToggle : MonoBehaviour
     [SerializeField]
     private Slider m_slider;
 
-    [SerializeField]
-    private Image m_handler;
-
     void Awake()
     {
         Refresh();
@@ -47,12 +44,10 @@ public class SoundSettingsToggle : MonoBehaviour
         if (ApplicationManager.instance.Settings_GetSoundIsEnabled())
         {
             m_slider.value = m_slider.maxValue;
-            m_handler.color = Colors.ParseHexString("0x00ff00");
         }
         else
         {
             m_slider.value = m_slider.minValue;
-            m_handler.color = Colors.ParseHexString("0xff0000");
         }
     }
 }

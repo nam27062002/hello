@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -15,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Animate a textfield by interpolating between two numbers.
 /// </summary>
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class NumberTextAnimator : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -32,8 +33,8 @@ public class NumberTextAnimator : MonoBehaviour {
 	}
 
 	// References
-	private Text m_targetTxt;
-	public Text text {
+	private TextMeshProUGUI m_targetTxt;
+	public TextMeshProUGUI text {
 		get { return m_targetTxt; }
 	}
 
@@ -64,7 +65,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	void Awake() {
 		// Get target text component
-		m_targetTxt = gameObject.GetComponent<Text>();	// Should have one, since we're using the [RequireComponent] tag
+		m_targetTxt = gameObject.GetComponent<TextMeshProUGUI>();	// Should have one, since we're using the [RequireComponent] tag
 	}
 	
 	/// <summary>
