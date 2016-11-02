@@ -287,7 +287,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     // This region is responsible for enabling/disabling the feedback particles for profiling purposes. 
     private void Debug_Awake()
     {
-        Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
@@ -295,7 +295,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
     private void Debug_OnDestroy()
     {
-        Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+        Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id, bool _newValue)
@@ -309,7 +309,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
     private void Debug_SetActive()
     {
-        enabled = DebugSettings.Get(DebugSettings.INGAME_PARTICLES_FEEDBACK);        
+        enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_FEEDBACK);        
     }
     #endregion
 }
