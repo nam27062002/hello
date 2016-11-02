@@ -19,7 +19,7 @@ namespace AI {
 		/*			  */
 		/**************/
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
-		[SerializeField] private MachineMotion m_motion = new MachineMotion();
+		[SerializeField] protected MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private bool m_affectedByDragonTrample = false;
 
 		[SerializeField] private bool m_enableSensor = true;
@@ -152,7 +152,7 @@ namespace AI {
 			LeaveGroup();
 		}
 
-		public void Spawn(ISpawner _spawner) {			
+		public virtual void Spawn(ISpawner _spawner) {			
 			m_motion.Init();
 			m_sensor.Init();
 			m_edible.Init();
@@ -269,7 +269,7 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		void Update() {
+		protected virtual void Update() {
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {

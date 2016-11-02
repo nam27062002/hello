@@ -149,4 +149,6 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 		Gizmos.color = Colors.coral;
 		Gizmos.DrawSphere(transform.position + m_spawnPosition, 0.5f);
 	}
+
+	public void DrawStateGizmos() {}
 }
