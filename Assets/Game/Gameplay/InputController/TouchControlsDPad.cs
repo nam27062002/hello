@@ -153,7 +153,7 @@ public class TouchControlsDPad : TouchControls {
 			// Compute new D-Pad pos!
 			// Threshold reached?
 			Vector3 dPadPos = m_initialTouchPos;
-			if(m_dPadMoving) threshold = 0.01f;	// When moving, ignore threshold (aka move untilthe current touch os is reached) (actually make it a bit more generous, otherwise we never stop moving!)
+			if(m_dPadMoving) threshold = 0.01f;	// When moving, ignore threshold (aka move until the current touch pos is reached) (actually make it a bit more generous, otherwise we never stop moving!)
 			if(delta > 1f + threshold) {
 				// Move in the direction of the current touch pos, proportional to the distance but applying a speed factor (0 min speed multiplier, 1 instant)
 				Vector3 targetDistance = m_diffVec - (m_diffVecNorm * m_radiusToCheck);	// Stick dot to the edge!
