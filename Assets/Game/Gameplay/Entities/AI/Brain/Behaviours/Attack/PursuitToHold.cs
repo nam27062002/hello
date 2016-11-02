@@ -84,7 +84,7 @@ namespace AI {
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				} else if ( m_player != null ){
-					if ( !m_player.IsAlive() /*|| m_player.BeingLatchedOn()*/ )
+					if ( !m_player.IsAlive() || m_player.BeingLatchedOn() )
 					{
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
 						Transition(OnEnemyOutOfSight, m_transitionParam);

@@ -5,10 +5,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected struct PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
+		public float eatingAnimationDuration;
 		public Transform startParent;
 		public Vector3 startScale;
 		public AI.Machine prey;
+		public Quaternion dyingRotation;
 	};
+
+	private const float m_rotateToMouthSpeed = 800;
+	private const float m_rotateToMouthThreshold = 5;
 
 	//-----------------------------------------------
 	// Attributes
@@ -25,9 +30,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected DragonTier m_tier;
 	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
 
-	protected float m_eatingTimer;
-	protected float m_eatingTime;
-
 	// Hold stuff
 	private float m_holdPreyTimer = 0;
 	protected AI.Machine m_holdingPrey = null;
@@ -41,14 +43,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected Transform m_attackTarget = null;
 	protected float m_attackTimer = 0;
 
-	// 
+	// First position when swallowing. Rotation has to end here
 	protected Transform m_suction;
+	// Second position when swallowing. Prey moved directly to this point while applying swallow shader
+	protected Transform m_swallow;
+	// Only used to update swallow shader
+	protected Transform m_bite;
+	// Used to check near target and check distance for killing/eating. Also to reparent eating preys
 	protected Transform m_mouth;
 	public Transform mouth
 	{
 		get{ return m_mouth; }
 	}
-	protected Transform m_head;
 
 	protected MotionInterface m_motion;
 
@@ -69,6 +75,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
 	protected int m_limitEatingValue = 1;	// limit value
 	protected bool m_canHold = true;		// if this eater can hold a prey
+
+	protected virtual bool isAquatic { get { return false; } }
 
 		// Hold config
 	protected float m_holdStunTime;
@@ -112,7 +120,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Use this for initialization
 	protected virtual void Awake () {
-		m_eatingTimer = 0;
 
 		m_prey = new List<PreyData>();
         m_preysToEat = new List<AI.Machine>();
@@ -129,15 +136,17 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	// find mouth transform 
-	private void MouthCache() 
+	protected virtual void MouthCache() 
 	{
-		m_mouth = transform.FindTransformRecursive("Fire_Dummy");
-		m_head = transform.FindTransformRecursive("Dragon_Head");
+		m_mouth = transform.FindTransformRecursive("Fire_Dummy");// SuctionPoint
+		m_bite = transform.FindTransformRecursive("BitePoint");
+		m_swallow = transform.FindTransformRecursive("Dragon_Head");// SwallowPoint
+		m_suction = transform.FindTransformRecursive("SuctionPoint");
 
-		m_suction = transform.FindTransformRecursive("Fire_Dummy");
-		if (m_suction == null) {
+		if ( m_bite == null )
+			m_bite = m_mouth;	
+		if (m_suction == null)
 			m_suction = m_mouth;
-		}
 	}
 
 	/// <summary>
@@ -163,7 +172,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	protected virtual void OnDisable() {
-		m_eatingTimer = 0;
 
 		for (int i = 0; i < m_prey.Count; i++) {	
 			if (m_prey[i].prey != null) {
@@ -295,17 +303,18 @@ public abstract class EatBehaviour : MonoBehaviour {
 		
 		_prey.Bite();
 
-		// Yes!! Eat it!!
-		m_eatingTimer = m_eatingTime = (m_eatSpeedFactor * _prey.biteResistance);
-
 		PreyData preyData = new PreyData();
 
+		float eatTime = Mathf.Max(m_minEatAnimTime, m_eatSpeedFactor * _prey.biteResistance);
+
 		preyData.startParent = _prey.transform.parent;
-		_prey.transform.parent = transform;
+		_prey.transform.parent = m_mouth;
 		preyData.startScale = _prey.transform.localScale;
-		preyData.absorbTimer = m_absorbTime;
-		preyData.eatingAnimationTimer = Mathf.Max(m_minEatAnimTime, m_eatingTimer);
+		preyData.absorbTimer = eatTime * 0.5f;
+		preyData.eatingAnimationTimer = preyData.absorbTimer;
+		preyData.eatingAnimationDuration = preyData.eatingAnimationTimer;
 		preyData.prey = _prey;
+		preyData.dyingRotation = _prey.GetDyingFixRot();
 
 		m_prey.Add(preyData);
 	}
@@ -320,25 +329,35 @@ public abstract class EatBehaviour : MonoBehaviour {
 			if (m_prey[i].prey != null) {
 				PreyData prey = m_prey[i];
 
-				prey.absorbTimer -= Time.deltaTime;
-				prey.eatingAnimationTimer -= Time.deltaTime;
+				Quaternion localRot = prey.prey.transform.localRotation;
+				float fixRotStep = m_rotateToMouthSpeed * Time.deltaTime;
+				prey.prey.transform.localRotation = Quaternion.RotateTowards( localRot, prey.dyingRotation, fixRotStep);
+				// prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, tongueDir), 0.25f);
 
-				float t = 1 - Mathf.Max(0, m_prey[i].absorbTimer / m_absorbTime);
-				Vector3 tongueDir = (m_mouth.position - m_head.position).normalized;
-
-				// swallow entity
-				prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_mouth.position, t);
-				prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
-				prey.prey.transform.rotation = Quaternion.Lerp(prey.prey.transform.rotation, Quaternion.AngleAxis(-90f, tongueDir), 0.25f);
-
-				// remaining time eating
-				if (m_prey[i].eatingAnimationTimer <= 0) 
+				if ( prey.absorbTimer > 0 )
 				{
-					prey.prey.transform.parent = prey.startParent;
-					Swallow(prey.prey);
-					prey.prey = null;
-					prey.startParent = null;
+					prey.absorbTimer -= Time.deltaTime;
+					float t = 1 - Mathf.Max(0, prey.absorbTimer / prey.eatingAnimationDuration);
+					// swallow entity
+					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_suction.position, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
 				}
+				else
+				{
+					prey.eatingAnimationTimer -= Time.deltaTime;
+					float t = Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
+					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_swallow.position, t);
+					// remaining time eating
+					if (prey.eatingAnimationTimer <= 0) 
+					{
+						prey.prey.transform.parent = prey.startParent;
+						Swallow(prey.prey);
+						prey.prey = null;
+						prey.startParent = null;
+					}
+				}
+
+
 
 				m_prey[i] = prey;
 				empty = false;
@@ -483,8 +502,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			// Swallow
 			m_holdPreyTimer -= Time.deltaTime;
+
 			if ( m_holdingPlayer.dragonBoostBehaviour.IsBoostActive() )
 				m_holdPreyTimer -= Time.deltaTime;
+
+			if (isAquatic) {
+				if (!m_holdingPlayer.dragonMotion.IsInsideWater())
+					m_holdPreyTimer -= Time.deltaTime;
+			}
+
 			if ( m_holdPreyTimer <= 0 ) // or prey is death
 			{
 				EndHold();
@@ -547,7 +573,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		dir.z = 0;
 		dir.Normalize();
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
-		Vector3 arcOrigin = m_suction.position - (dir * eatDistance);
+		Vector3 arcOrigin = m_mouth.position - (dir * eatDistance);
 
 		m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
 		for (int e = 0; e < m_numCheckEntities; e++) 
@@ -598,7 +624,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if (m_canLatchOnPlayer && InstanceManager.player != null && !InstanceManager.player.BeingLatchedOn())
 		{
-			m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_suction.position, eatDistance, m_checkPlayer, m_playerColliderMask);
+			m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_mouth.position, eatDistance, m_checkPlayer, m_playerColliderMask);
 			if ( m_numCheckEntities > 0 )
 			{
 				// Sart latching on player
@@ -611,7 +637,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			AI.Machine preyToHold = null;
 			Entity entityToHold = null;
             
-			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_suction.position, eatDistance, m_checkEntities);
+			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_mouth.position, eatDistance, m_checkEntities);
 			for (int e = 0; e < m_numCheckEntities; e++) {
 				Entity entity = m_checkEntities[e];
 				if ( entity.IsEdible() )
@@ -681,7 +707,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (m_bloodEmitter.Count > 0) {
 			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;
-			bloodPos.z = -1f;
+			//bloodPos.z = 0f;
 
 			for (int i = 0; i < m_bloodEmitter.Count; i++) {
 				if (m_bloodEmitter[i] != null && m_bloodEmitter[i].activeInHierarchy) {
@@ -721,7 +747,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		eatRadius = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatRadius, eatRadius * m_angleSpeedMultiplier);
 
 		Gizmos.color = Color.white;
-		Gizmos.DrawWireSphere(m_suction.position, eatRadius);
+		Gizmos.DrawWireSphere(m_mouth.position, eatRadius);
 
 		// Eat Detect Distance
 		float speed = m_motion.velocity.magnitude;
@@ -731,7 +757,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
 		Vector2 dir = (Vector2)m_motion.direction;
-		Vector3 arcOrigin = m_suction.position - (Vector3)(dir * eatRadius);
+		Vector3 arcOrigin = m_mouth.position - (Vector3)(dir * eatRadius);
 
 		// Draw Arc
 		Gizmos.color = Color.yellow;
