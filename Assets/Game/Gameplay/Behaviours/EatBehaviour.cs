@@ -757,6 +757,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
 		Vector2 dir = (Vector2)m_motion.direction;
+		dir.Normalize();
 		Vector3 arcOrigin = m_mouth.position - (Vector3)(dir * eatRadius);
 
 		// Draw Arc
