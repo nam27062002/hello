@@ -56,7 +56,7 @@ public class DragonEquip : MonoBehaviour {
 		for( int i = 0; i<m_numPets; i++ )
 		{
 			if ( i == 0 )
-				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetMachine");	
+				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetFroggy");	
 			else if ( i == 1 )
 				equip.Add(Equipable.AttachPoint.Pet_1+i, "PF_PetGhostBuster");	
 			else
