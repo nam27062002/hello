@@ -1,14 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class TouchControlsDPad : TouchControls {
+
+	// [AOC] Different modes
+	public enum Mode {
+		FIXED,
+		FOLLOW_TOUCH,
+		FOLLOW_TOUCH_SMOOTH
+	};
 	
 	// INSPECTOR VARIABLES
+	[Space]
 	public GameObject m_dpadObj;
 	public GameObject m_dpadDotObj;
 
-	
 	// PRIVATE VARIABLES - DPAD SPECIFIC
 	private float m_radiusToCheck = 40.0f;
 	private float m_boostRadiusToCheck = 50.0f;// another 10 pixels 
@@ -37,6 +45,9 @@ public class TouchControlsDPad : TouchControls {
 		get{ return m_directionChanged; }
 	}
 
+	// [AOC] Debug
+	private TextMeshProUGUI m_debugText = null;
+
 	// Use this for initialization
 	override public void Start () 
 	{
@@ -45,6 +56,7 @@ public class TouchControlsDPad : TouchControls {
 		m_dPadDotRectTransform = m_dpadDotObj.transform as RectTransform;
 		m_dPadContainerRectTransform = m_dPadRectTransform.parent as RectTransform;
 		m_dPadContainerRectTransform.anchoredPosition = Vector2.zero;	// Make sure it's centered to its anchors, which we will be moving around!
+		m_debugText = m_dPadContainerRectTransform.FindComponentRecursive<TextMeshProUGUI>();	// Optional
 
 		base.Start();
 		
@@ -57,12 +69,17 @@ public class TouchControlsDPad : TouchControls {
 			
 		m_dpadObj.SetActive(false);
 		m_dpadDotObj.SetActive(false);
+		if(m_debugText != null) m_debugText.gameObject.SetActive(false);
 	}
 	
 	override public void SetRender(bool enable)
 	{
 		m_dpadObj.SetActive(enable);
 		m_dpadDotObj.SetActive(enable);
+
+		#if UNITY_EDITOR
+		if(m_debugText != null) m_debugText.gameObject.SetActive(enable);
+		#endif
 	}
 	
 	override public void SetTouchObjRendering(bool on)
@@ -75,25 +92,75 @@ public class TouchControlsDPad : TouchControls {
 			// Using the anchors allows us to directly set relative position [0..1] within the parent
 			// Since the parent of the container is directly the full-screen canvas, 
 			// we just have to compute the relative pos of the touch in relation to the screen and apply it directly
+
+			// Some aux vars
+			float delta = m_diffVec.magnitude/m_radiusToCheck;
+			float clampedDelta = Mathf.Clamp01(delta);
+
+			// Debug text
+			if(m_debugText != null) m_debugText.text = delta.ToString();
+
+			// Compute whole D-Pad position
+			// Behave differently based on current mode
+			Vector3 dPadPos = Vector3.zero;
+			Mode dPadMode = DebugSettings.dPadMode;
+			switch(dPadMode) {
+				// D-Pad remains fixed at initial touch position, only Dot moves
+				case Mode.FIXED: {
+					dPadPos = m_initialTouchPos;
+				} break;
+
+				// D-Pad follows the touch if dot exits the check radius
+				case Mode.FOLLOW_TOUCH: {
+					// If the dot is outside the max radius, change initial touch position to reposition the whole pad
+					if(delta > 1f) {
+						// Reposition towards the current touch, but keep the direction!
+						m_initialTouchPos.x = m_currentTouchPos.x - m_diffVecNorm.x * m_radiusToCheck;
+						m_initialTouchPos.y = m_currentTouchPos.y - m_diffVecNorm.y * m_radiusToCheck;
+					}
+					dPadPos = m_initialTouchPos;
+				} break;
+
+				// D-Pad slowly follows the touch if dot exits the check radius
+				case Mode.FOLLOW_TOUCH_SMOOTH: {
+					// If the dot is outside the max radius, change initial touch position to reposition the whole pad
+					if(delta > 1f) {
+						// Move in the direction of the dot, proportional amount to the delta
+						m_initialTouchPos.x += m_diffVecNorm.x * (delta - 1f);
+						m_initialTouchPos.y += m_diffVecNorm.y * (delta - 1f);
+					}
+					dPadPos = m_initialTouchPos;
+				} break;
+			}
+
+			// Fit to screen
+			FitInScreen(ref dPadPos);
+
+			// Transform from touch coords to relative [0..1] and apply
 			Vector2 correctedDPadPos = new Vector2(
-				(m_initialTouchPos.x / Screen.width),
-				(m_initialTouchPos.y / Screen.height)
+				(dPadPos.x / Screen.width),
+				(dPadPos.y / Screen.height)
 			);
 			m_dPadContainerRectTransform.anchorMin = correctedDPadPos;
 			m_dPadContainerRectTransform.anchorMax = correctedDPadPos;
 
-			// Move dot a distance within the pad's size in the same orientation as the touch diff vector and proportional to it
-			// Using the anchors allows us to directly set relative position [0..1] within the parent
-			Vector3 diff = (m_currentTouchPos - m_initialTouchPos);
-			Vector3 dir = Vector3.Normalize(diff);
-			float delta = Mathf.Clamp01(diff.magnitude/m_radiusToCheck);
-			Vector2 correctedDPadDotPos = new Vector2(
-				dir.x * delta * 0.5f + 0.5f,	// Scale from [-1..1] to [0..1]
-				dir.y * delta * 0.5f + 0.5f		// Scale from [-1..1] to [0..1]
-			);
-			m_dPadDotRectTransform.anchorMin = correctedDPadDotPos;
-			m_dPadDotRectTransform.anchorMax = correctedDPadDotPos;
-
+			// Compute Dot position relative to the parent
+			// Behave differently based on current mode
+			switch(dPadMode) {
+				// Same behaviour for both modes
+				case Mode.FIXED:
+				case Mode.FOLLOW_TOUCH:
+				case Mode.FOLLOW_TOUCH_SMOOTH: {
+					// Move dot a distance within the pad's size in the same orientation as the touch diff vector and proportional to it
+					// Using the anchors allows us to directly set relative position [0..1] within the parent
+					Vector2 correctedDPadDotPos = new Vector2(
+						m_diffVecNorm.x * clampedDelta * 0.5f + 0.5f,	// Scale from [-1..1] to [0..1]
+						m_diffVecNorm.y * clampedDelta * 0.5f + 0.5f		// Scale from [-1..1] to [0..1]
+					);
+					m_dPadDotRectTransform.anchorMin = correctedDPadDotPos;
+					m_dPadDotRectTransform.anchorMax = correctedDPadDotPos;
+				} break;
+			}
 		}
 	}
 	
@@ -123,33 +190,14 @@ public class TouchControlsDPad : TouchControls {
 	override public bool OnTouchPress()
 	{
 		// ensure touch is within the borders
-		float radius = 1.25f * m_radiusToCheck;
-		Vector2 touchPos = GameInput.touchPosition[0];
-		
 		//if ( App.inGame )
 		{
-			// player touched in the border... snap the circle and dot (and touch) to however far it can go...
-			if(touchPos.x < radius)
-				m_initialTouchPos.x = radius;
-			else if(touchPos.x > (Screen.width - radius))
-				m_initialTouchPos.x = Screen.width - radius;
-			else
-				m_initialTouchPos.x = touchPos.x;
-			
-			// do the same for y
-			if(touchPos.y < radius)
-				m_initialTouchPos.y = radius;
-			else if(touchPos.y > (Screen.height - radius))
-				m_initialTouchPos.y = Screen.height - radius;
-			else
-				m_initialTouchPos.y = touchPos.y;
-							
-
-			m_initialTouchPos.z = 0;
+			m_initialTouchPos = GameInput.touchPosition[0];
+			FitInScreen(ref m_initialTouchPos);
 		}			
 		return true;
 	}
-	
+
 	override public bool OnTouchHeld()
 	{
 		RefreshCurrentTouchPos();
@@ -239,5 +287,35 @@ public class TouchControlsDPad : TouchControls {
 		{
 			m_decelerate = false;
 		}
+	}
+
+	/// <summary>
+	/// Validates the position given and corrects it so it fits within the screen's borders.
+	/// </summary>
+	/// <param name="_pos">Position.</param>
+	private void FitInScreen(ref Vector3 _pos) {
+		// Tolerance distance
+		float radius = 1.25f * m_radiusToCheck;
+
+		// Check X
+		if(_pos.x < radius) {
+			_pos.x = radius;
+		} else if(_pos.x > (Screen.width - radius)) {
+			_pos.x = Screen.width - radius;
+		} else {
+			_pos.x = _pos.x;
+		}
+
+		// Do the same for y
+		if(_pos.y < radius) {
+			_pos.y = radius;
+		} else if(_pos.y > (Screen.height - radius)) {
+			_pos.y = Screen.height - radius;
+		} else {
+			_pos.y = _pos.y;
+		}
+
+		// Z is always 0
+		_pos.z = 0;
 	}
 }
