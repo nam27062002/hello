@@ -436,22 +436,16 @@ public class Text2TMPEditor : Editor {
 							matName = tmpText.font.name + "_Stroke_Shadow_PC";
 						} else if(fx.m_shadowColor == Colors.ParseHexString("FFB60FFF")) {
 							matName = tmpText.font.name + "_Stroke_Shadow_SC";
+						} else if(fx.m_shadowColor == Colors.ParseHexString("000000FF")) {
+							matName = tmpText.font.name + "_Stroke_Shadow";
 						} else {
 							matName = tmpText.font.name + "_Stroke";
 						}
 					}
 
-					// Special ones by color
+					// Stroke only
 					else {
-						if(fx.m_outlineColor == Colors.ParseHexString("3e3b31FF")) {
-							matName = tmpText.font.name + "_SC";
-						} else if(fx.m_outlineColor == Colors.ParseHexString("7D2300FF")) {
-							matName = tmpText.font.name + "_SC";
-						} else if(fx.m_outlineColor == Colors.ParseHexString("362528FF")) {
-							matName = tmpText.font.name + "_PC";
-						} else {
-							matName = tmpText.font.name + "_Stroke";
-						}
+						matName = tmpText.font.name + "_Stroke";
 					}
 				}
 			}

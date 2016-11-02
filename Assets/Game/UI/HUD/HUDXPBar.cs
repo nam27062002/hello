@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -22,9 +23,9 @@ public class HUDXPBar : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[SerializeField] private Slider m_bar;
-	[SerializeField] private Text m_levelXpText;
-	[SerializeField] private Text m_totalXpText;
-	[SerializeField] private Text m_gameXpText;
+	[SerializeField] private TextMeshProUGUI m_levelXpText;
+	[SerializeField] private TextMeshProUGUI m_totalXpText;
+	[SerializeField] private TextMeshProUGUI m_gameXpText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

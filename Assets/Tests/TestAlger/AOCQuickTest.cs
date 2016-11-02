@@ -45,7 +45,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		
+		Text t = null;
 	}
 
 	/// <summary>

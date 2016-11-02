@@ -43,8 +43,9 @@ public class DebugUtils {
 	/// <returns>The result of evaluating the condition.</returns>
 	/// <param name="_checkCondition">The condition to be evaluated. If false, the assert will be triggered.</param> 
 	/// <param name="_message">The message to be displayed in case of error.</param>
+	/// <param name="_contextObj">The object that triggered the asset (optional).</param>
 	/// <param name="_softAssert">If true, execution won't be interrupted.</param>
-	static public bool Assert(bool _checkCondition, string _message, bool _softAssert = false) {
+	static public bool Assert(bool _checkCondition, string _message, Object _contextObj = null, bool _softAssert = false) {
 		#if ENABLE_ASSERTS
 		// Skip if we've reached the asserts limit
 		if(s_assertCount >= MAX_ASSERTS) return _checkCondition;
@@ -73,7 +74,7 @@ public class DebugUtils {
 			}
 
 			// Trace to the console as well
-			UnityEngine.Debug.LogError("ASSERT! " + sAssertInfo);
+			UnityEngine.Debug.LogError("ASSERT! " + sAssertInfo, _contextObj);
 
 			// Break execution
 			if(!_softAssert) {
@@ -96,8 +97,9 @@ public class DebugUtils {
 	/// <returns>The result of evaluating the condition.</returns>
 	/// <param name="_checkCondition">The condition to be evaluated. If false, the assert will be triggered.</param> 
 	/// <param name="_message">The message to be displayed in case of error.</param>
-	static public bool SoftAssert(bool _checkCondition, string _message) {
-		return DebugUtils.Assert(_checkCondition, _message);
+	/// <param name="_contextObj">The object that triggered the asset (optional).</param>
+	static public bool SoftAssert(bool _checkCondition, string _message, Object _contextObj = null) {
+		return DebugUtils.Assert(_checkCondition, _message, _contextObj, true);
 	}
 
 #if !ENABLE_LOG || PRODUCTION

@@ -240,7 +240,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActivationPending() {
 		// Info text
-        m_cooldownObj.FindComponentRecursive<Text>("CooldownInfoText").text = LocalizationManager.SharedInstance.Localize("TID_MISSIONS_ACTIVATION_PENDING");
+		m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("CooldownInfoText").text = LocalizationManager.SharedInstance.Localize("TID_MISSIONS_ACTIVATION_PENDING");
 
 		// Cooldown remaining time
 		m_cooldownText.text = "";

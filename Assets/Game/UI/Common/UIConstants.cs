@@ -26,4 +26,7 @@ public static class UIConstants {
 	// Colors
 	public static readonly Color COINS_TEXT_COLOR = new Color(1f, 0.8f, 0.1f);
 	public static readonly Color PC_TEXT_COLOR = new Color(0.9f, 0.5f, 0.8f);
+
+	// Asset paths in Resources
+	public const string UI_SPRITESHEET_PATH = "UI/Common/SpriteSheets/UI_spritesheet";
 }

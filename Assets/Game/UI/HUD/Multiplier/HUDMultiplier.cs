@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -28,7 +29,7 @@ public class HUDMultiplier : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private Text m_text = null;
+	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Text m_maskText = null;
 	[SerializeField] private Image m_progressFill = null;
 	[SerializeField] private ParticleSystem m_changePS = null;

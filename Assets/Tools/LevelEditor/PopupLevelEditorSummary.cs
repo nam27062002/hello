@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -36,9 +37,9 @@ namespace LevelEditor {
 		// MEMBERS															//
 		//------------------------------------------------------------------//
 		// Exposed members
-		[SerializeField] Text scoreLabel = null;
-		[SerializeField] Text timeLabel = null;
-		[SerializeField] Text coinsLabel = null;
+		[SerializeField] TextMeshProUGUI scoreLabel = null;
+		[SerializeField] TextMeshProUGUI timeLabel = null;
+		[SerializeField] TextMeshProUGUI coinsLabel = null;
 
 		// Popup result
 		public Result result = Result.NONE;
