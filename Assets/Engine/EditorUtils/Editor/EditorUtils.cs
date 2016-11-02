@@ -14,6 +14,7 @@ using System;
 using System.Reflection;
 using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -367,5 +368,41 @@ public static class EditorUtils {
 			}
 		}
 		return result;
+	}
+
+	/// <summary>
+	/// Given a serialized property of type ObjectReference, return the name of the expected object type.
+	/// </summary>
+	/// <returns>The name of the property's reference object expected type.</returns>
+	/// <param name="_property">The property to be analyzed.</param>
+	public static string GetPropertyObjectReferenceTypeName(SerializedProperty _property) {
+		// Ignore if not of objectReferenceType
+		if(_property.propertyType != SerializedPropertyType.ObjectReference) return "";
+
+		// Black magic using reflection
+		// From http://answers.unity3d.com/questions/929293/get-field-type-of-serializedproperty.html
+		// Get type name
+		string typeName = _property.type;
+		Match match = Regex.Match(typeName, @"PPtr<\$(.*?)>");
+		if(match.Success) {
+			typeName = match.Groups[1].Value;
+		}
+		return typeName;
+	}
+
+	/// <summary>
+	/// Given a serialized property of type ObjectReference, return the possible expected object types.
+	/// </summary>
+	/// <returns>All the possible Types matching the property's reference object type name.</returns>
+	/// <param name="_property">The property to be analyzed.</param>
+	public static Type[] GetPropertyObjectReferenceTypes(SerializedProperty _property) {
+		// Ignore if not of objectReferenceType
+		if(_property.propertyType != SerializedPropertyType.ObjectReference) return null;
+
+		// Find matching types!
+		// TypeUtils help us with that
+		string typeName = GetPropertyObjectReferenceTypeName(_property);
+		Type[] types = TypeUtil.GetTypesByClassName(typeName);
+		return types;
 	}
 }

@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -21,10 +22,10 @@ public class CPStats : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	public Text m_DeviceModel;
-	public Text m_FpsLabel;
-	public Text m_ScreenSize;
-	public Text m_LevelName;
+	public TextMeshProUGUI m_DeviceModel;
+	public TextMeshProUGUI m_FpsLabel;
+	public TextMeshProUGUI m_ScreenSize;
+	public TextMeshProUGUI m_LevelName;
 
 	ControlPanel m_ControlPanel;
 

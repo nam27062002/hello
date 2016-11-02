@@ -1,9 +1,46 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
 public static class TypeUtil {
+	/// <summary>
+	/// Find a Type by its class name.
+	/// Can be either the assembly-qualified name (faster search) or the simple 
+	/// name (much more expensive).
+	/// The first Type matching the name will be returned. Check GetTypesByClassName method to get all Types matching the name.
+	/// </summary>
+	/// <returns>The target Type, <c>null</c> if no Type with the given name was found.</returns>
+	/// <param name="_typeName">Type name to look for.</param>
+	public static Type GetTypeByClassName(string _typeName) {
+		// Try using Type directly (assembly-qualified name)
+		Type type = Type.GetType(_typeName);
+		if(type != null) return type;
+
+		// Type not found, check all assemblies
+		// Unfortunately Assembly.GetType(_typeName) only works with full type name, so we have to do a full search (sloooooow)
+		type = AppDomain.CurrentDomain.GetAssemblies()
+			.SelectMany(_assembly => _assembly.GetTypes())
+			.FirstOrDefault(_type => _type.Name == _typeName);
+		return type;
+	}
+
+	/// <summary>
+	/// Find all Types matching a given class name.
+	/// Quite expensive, use carefully.
+	/// </summary>
+	/// <returns>All Types matching _typename, <c>null</c> if no Type with the given name was found.</returns>
+	/// <param name="_typeName">Type name to look for.</param>
+	public static Type[] GetTypesByClassName(string _typeName) {
+		// Type not found, check all assemblies
+		// Unfortunately Assembly.GetType(_typeName) only works with full type name, so we have to do a full search (sloooooow)
+		IEnumerable<Type> matchingTypes = AppDomain.CurrentDomain.GetAssemblies()
+			.SelectMany(_assembly => _assembly.GetTypes())
+			.Where(_type => _type.Name == _typeName);
+		return matchingTypes.ToArray();
+	}
+
 	/// <summary>
 	/// 
 	/// </summary>

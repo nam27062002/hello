@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// This class is responsible for handling the save tab in the settings popup. This tab is used for three things:
@@ -458,7 +459,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private Image m_userAvatarImage;
 
     [SerializeField]
-    private Text m_userNameText;
+    private TextMeshProUGUI m_userNameText;
     
     [SerializeField]
     private Localizer m_userNotLoggedInMessageText;

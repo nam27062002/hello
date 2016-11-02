@@ -75,6 +75,22 @@ public class HungryDragonEditorMenu {
 	}
 
 	/// <summary>
+	/// Find missing references on scene.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Find Missing References", false, 2)]
+	public static void FindMissingReferences() {
+		FindMissingReferencesTool.FindMissingReferences(false);
+	}
+
+	/// <summary>
+	/// Find missing references on scene.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Find Missing And NULL References", false, 3)]
+	public static void FindMissingAndNullReferences() {
+		FindMissingReferencesTool.FindMissingReferences(true);
+	}
+
+	/// <summary>
 	/// Custom toolbar for the project.
 	/// </summary>
 	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 50)]

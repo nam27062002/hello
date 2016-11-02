@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -24,7 +25,7 @@ public class CPEnumPref : CPPrefBase {
 	// Exposed references
 	[Comment("System.Type.AssemblyQualifiedName")]
 	[SerializeField] private string m_enumTypeName = "";
-	[SerializeField] private Dropdown m_dropdown = null;
+	[SerializeField] private TMP_Dropdown m_dropdown = null;
 	[SerializeField] private int m_defaultValue = 0;
 
 	// Internal
@@ -77,7 +78,7 @@ public class CPEnumPref : CPPrefBase {
 			int currentValue = Prefs.GetIntPlayer(id, m_defaultValue);
 			for(int i = 0; i < m_enumValues.Length; i++) {
 				// Add the option
-				m_dropdown.options.Add(new Dropdown.OptionData(optionNames[i]));
+				m_dropdown.options.Add(new TMP_Dropdown.OptionData(optionNames[i]));
 
 				// Is it the current option?
 				if(currentValue == m_enumValues[i]) {

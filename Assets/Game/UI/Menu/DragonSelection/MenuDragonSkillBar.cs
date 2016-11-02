@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -30,7 +31,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 	public GameObject m_levelsParent;	// game object containing all the toggles to show the levels
 	private List<Toggle> m_levelToggles = new List<Toggle>();
 	public Localizer m_labelText;
-	public Text m_valueText;
+	public TextMeshProUGUI m_valueText;
 	public Button m_levelUpButton;
 	
 	//------------------------------------------------------------------//
@@ -113,7 +114,7 @@ public class MenuDragonSkillBar : MonoBehaviour {
 
 		// Level up button
 		m_levelUpButton.interactable = skillData.CanUnlockNextLevel();
-		Text buttonText = m_levelUpButton.FindComponentRecursive<Text>("Text");
+		TextMeshProUGUI buttonText = m_levelUpButton.FindComponentRecursive<TextMeshProUGUI>("Text");
 		if(skillData.level == skillData.lastLevel) {
             buttonText.text = LocalizationManager.SharedInstance.Localize("TID_MAX");
 		} else {

@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -18,12 +19,12 @@ using System.Collections;
 /// <summary>
 /// Simple controller for a score counter in the hud.
 /// </summary>
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class HUDSpeed : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private Text m_valueTxt;
+	private TextMeshProUGUI m_valueTxt;
 	private DragonMotion m_dragonMotion;
 	
 	//------------------------------------------------------------------//
@@ -35,7 +36,7 @@ public class HUDSpeed : MonoBehaviour {
 	private void Awake() 
 	{
 		// Get external references
-		m_valueTxt = GetComponent<Text>();
+		m_valueTxt = GetComponent<TextMeshProUGUI>();
 		m_valueTxt.text = "0";
 	}
 
