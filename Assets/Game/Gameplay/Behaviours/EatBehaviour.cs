@@ -573,7 +573,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 		dir.z = 0;
 		dir.Normalize();
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
-		Vector3 arcOrigin = m_mouth.position - (dir * eatDistance);
+		Vector3 mouthPos = m_mouth.position;
+		mouthPos.z = 0;
+		Vector3 arcOrigin = mouthPos - (dir * eatDistance);
 
 		m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
 		for (int e = 0; e < m_numCheckEntities; e++) 
@@ -757,6 +759,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
 		Vector2 dir = (Vector2)m_motion.direction;
+		dir.Normalize();
 		Vector3 arcOrigin = m_mouth.position - (Vector3)(dir * eatRadius);
 
 		// Draw Arc
