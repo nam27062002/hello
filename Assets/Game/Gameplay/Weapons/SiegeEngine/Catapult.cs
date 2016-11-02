@@ -31,6 +31,8 @@ public class Catapult : Initializable {
 	[SerializeField] private float m_previewStep = 1f;
 	[SerializeField] private float m_previewMaxTime = 20f;
 
+	[SeparatorAttribute("Audio")]
+	[SerializeField] private string m_onTossAudio = "";
 
 	private float m_hAngle;
 	private float m_timer;
@@ -98,6 +100,8 @@ public class Catapult : Initializable {
 
 		if (m_toss) {
 			if (Aim()) {
+				if ( !string.IsNullOrEmpty(m_onTossAudio) )
+					AudioController.Play(m_onTossAudio);
 				m_animator.SetTrigger("toss");
 				m_toss = false;
 			}

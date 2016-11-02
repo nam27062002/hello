@@ -10,6 +10,9 @@ public class CatapultAmmo : MonoBehaviour {
 	[SerializeField] private float m_speedFactor = 1f;
 	[SerializeField] private float m_rotationSpeedFactor = 1f;
 
+	[SeparatorAttribute("Audio")]
+	[SerializeField] private string m_onExplodeAudio = "";
+
 	private Transform m_oldParent = null;
 
 	private bool m_hasBeenTossed = false;
@@ -84,6 +87,9 @@ public class CatapultAmmo : MonoBehaviour {
 		if (_hitDragon) {
 			InstanceManager.player.GetComponent<DragonHealthBehaviour>().ReceiveDamage(m_damage, DamageType.NORMAL);
 		}
+
+		if (!string.IsNullOrEmpty(m_onExplodeAudio))
+			AudioController.Play(m_onExplodeAudio);
 
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance(gameObject);

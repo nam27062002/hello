@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using System.Text;
 using System.Collections;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -29,8 +30,8 @@ public class CPServerTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private ScrollRect m_outputScroll = null;
-	[SerializeField] private Text m_outputText = null;
-    [SerializeField] private Text m_accountIdText = null;
+	[SerializeField] private TextMeshProUGUI m_outputText = null;
+	[SerializeField] private TextMeshProUGUI m_accountIdText = null;
 
 
 
@@ -79,7 +80,7 @@ public class CPServerTab : MonoBehaviour {
 	/// <returns>The text introduced in the given InputField.</returns>
 	/// <param name="_inputField">The game object containing the target InputField.</param>
 	private string GetInputText(GameObject _inputField) {
-		InputField inputField = _inputField.FindComponentRecursive<InputField>();
+		TMP_InputField inputField = _inputField.FindComponentRecursive<TMP_InputField>();
 		if(inputField != null) {
 			return inputField.text;
 		}

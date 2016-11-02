@@ -2,14 +2,15 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using TMPro;
 
 public class PopupMergeProfilePill : MonoBehaviour 
 {
-	public Text m_name;
-	public Text m_softCurrency;
-	public Text m_hardCurrency;
-	public Text m_maxScore;
-	public Text m_dragons;
+	public TextMeshProUGUI m_name;
+	public TextMeshProUGUI m_softCurrency;
+	public TextMeshProUGUI m_hardCurrency;
+	public TextMeshProUGUI m_maxScore;
+	public TextMeshProUGUI m_dragons;
 
 	[Space]
 	public Color m_normalTextColor = Color.white;

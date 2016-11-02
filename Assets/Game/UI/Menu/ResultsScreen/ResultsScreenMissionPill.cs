@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -28,8 +29,8 @@ public class ResultsScreenMissionPill : ResultsScreenCarouselPill {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Image m_missionIcon = null;
-	[SerializeField] private Text m_missionText = null;
-	[SerializeField] private Text m_rewardText = null;
+	[SerializeField] private TextMeshProUGUI m_missionText = null;
+	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[SerializeField] private Image m_completedFXIcon = null;
 	[SerializeField] private NumberTextAnimator m_coinsTotalAnimator = null;
 

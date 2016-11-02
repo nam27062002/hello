@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using TMPro;
 
 [RequireComponent(typeof(Slider))]
 public class SliderValueText : MonoBehaviour {
 
-	public Text text = null;
+	public TextMeshProUGUI text = null;
 	public bool showMax = true;
 
 	private Slider slider = null;

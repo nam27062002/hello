@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -17,12 +18,12 @@ using System;
 /// <summary>
 /// Simple controller for a score counter in the hud.
 /// </summary>
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class HUDScore : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private Text m_valueTxt;
+	private TextMeshProUGUI m_valueTxt;
 	private Animator m_anim;
 	
 	//------------------------------------------------------------------//
@@ -33,7 +34,7 @@ public class HUDScore : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_valueTxt = GetComponent<Text>();
+		m_valueTxt = GetComponent<TextMeshProUGUI>();
 		m_valueTxt.text = "0";
 
 		m_anim = GetComponent<Animator>();
