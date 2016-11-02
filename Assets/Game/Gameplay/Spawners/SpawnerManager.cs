@@ -277,6 +277,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			Gizmos.DrawSphere(item.boundingRect.center, 0.5f);
 		}
 
+		// All spawners gizmos
+		for (int i = 0; i < m_spawners.Count; i++) {
+			m_spawners[i].DrawStateGizmos();
+		}
+
 		// Sub-rectangles
 		Gizmos.color = Colors.WithAlpha(Colors.lime, 0.5f);
 		Gizmos.DrawCube(new Vector3(m_subRect[0].center.x, m_subRect[0].center.y, 0f), new Vector3(m_subRect[0].width, m_subRect[0].height, 1f));

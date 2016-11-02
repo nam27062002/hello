@@ -458,6 +458,17 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 	}
 
+	public void DrawStateGizmos() {
+		switch (m_state) {
+			case State.Init:					Gizmos.color = Color.grey; 		break;
+			case State.Respawning: 				Gizmos.color = Color.yellow; 	break;
+			case State.Create_Instances: 		Gizmos.color = Color.red; 		break;
+			case State.Activating_Instances: 	Gizmos.color = Color.blue; 		break;
+			case State.Alive:					Gizmos.color = Color.green; 	break;
+		}
+		Gizmos.DrawWireSphere(transform.position, 0.25f * GizmosExt.GetGizmoSize(transform.position));
+	}
+
 	void OnDrawGizmos() {
 		// Only if editor allows it
 		if(showSpawnerInEditor) {
@@ -471,14 +482,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			#endif
 		}
 
-		switch (m_state) {
-			case State.Init:					Gizmos.color = Color.grey; 		break;
-			case State.Respawning: 				Gizmos.color = Color.yellow; 	break;
-			case State.Create_Instances: 		Gizmos.color = Color.red; 		break;
-			case State.Activating_Instances: 	Gizmos.color = Color.blue; 		break;
-			case State.Alive:					Gizmos.color = Color.green; 	break;
-		}
-		Gizmos.DrawWireSphere(transform.position, 0.25f * GizmosExt.GetGizmoSize(transform.position));
+		DrawStateGizmos();
 	}
 
 
