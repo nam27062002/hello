@@ -38,6 +38,8 @@ public static class DebugSettings {
     public static readonly string INGAME_SPAWNERS = "INGAME_SPAWNERS";
     public static readonly string INGAME_GLOW = "INGAME_GLOW";
 	public static readonly string DPAD_MODE = "DPAD_MODE";
+    public static readonly string INGAME_PARTICLES_FEEDBACK = "INGAME_PARTICLES_FEEDBACK";
+    public static readonly string INGAME_PARTICLES_EATEN = "INGAME_PARTICLES_EATEN";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -112,6 +114,12 @@ public static class DebugSettings {
         Set(key, Prefs.GetBoolPlayer(key, true));
 
         key = INGAME_GLOW;
+        Set(key, Prefs.GetBoolPlayer(key, true));
+
+        key = INGAME_PARTICLES_FEEDBACK;
+        Set(key, Prefs.GetBoolPlayer(key, true));
+
+        key = INGAME_PARTICLES_EATEN;
         Set(key, Prefs.GetBoolPlayer(key, true));
     }
 
