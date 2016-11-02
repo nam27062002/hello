@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -31,7 +32,7 @@ public class CPListPref : CPPrefBase {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
-	[SerializeField] private Text m_text;
+	[SerializeField] private TextMeshProUGUI m_text;
 
 	// Internal
 	[SerializeField] private PrefType m_type = PrefType.STRING;

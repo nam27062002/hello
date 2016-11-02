@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -19,7 +20,7 @@ using System.Collections.Generic;
 /// Extends from Unity's text component for more flexibility.
 /// TODO!! Pool
 /// </summary>
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class UIFeedbackText : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -41,8 +42,8 @@ public class UIFeedbackText : MonoBehaviour {
 		get { return m_sequence; }
 	}
 
-	private Text m_text = null;
-	public Text text {
+	private TextMeshProUGUI m_text = null;
+	public TextMeshProUGUI text {
 		get { return m_text; }
 	}
 	
@@ -54,7 +55,7 @@ public class UIFeedbackText : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get Text reference
-		m_text = GetComponent<Text>();
+		m_text = GetComponent<TextMeshProUGUI>();
 	}
 
 	/// <summary>

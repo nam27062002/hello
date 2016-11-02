@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -17,7 +18,7 @@ using UnityEngine.UI;
 /// Generic controller for any feedback to be placed in relation to the 3D world.
 /// </summary>
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class WorldFeedbackController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -28,7 +29,7 @@ public class WorldFeedbackController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Required components
 	private Animator m_anim = null;
-	private Text m_text = null;
+	private TextMeshProUGUI m_text = null;
 	private RectTransform m_rectTransform = null;
 
 	// Internal vars
@@ -49,10 +50,10 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		m_anim = GetComponent<Animator>();
-		m_text = GetComponent<Text>();
+		m_text = GetComponent<TextMeshProUGUI>();
 		m_rectTransform = transform as RectTransform;
-		DebugUtils.Assert(m_anim != null, "Required Component!!");
-		DebugUtils.Assert(m_text != null, "Required Component!!");
+		DebugUtils.Assert(m_anim != null, "Required Component!!", this);
+		DebugUtils.Assert(m_text != null, "Required Component!!", this);
 	}
 
 	/// <summary>
