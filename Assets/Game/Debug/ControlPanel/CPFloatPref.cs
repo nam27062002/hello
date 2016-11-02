@@ -1,8 +1,8 @@
-﻿// CPStringPref.cs
+﻿// CPFloatPref.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 27/11/2015.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 02/11/2016.
+// Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
@@ -16,14 +16,15 @@ using UnityEngine.UI;
 /// <summary>
 /// Widget to set/get a string value stored in Prefs (i.e. cheats).
 /// </summary>
-public class CPStringPref : CPPrefBase {
+public class CPFloatPref : CPPrefBase {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Exposed value
+	// Exposed setup
 	[Space]
-	[SerializeField] private string m_defaultValue = "";
-	[SerializeField] private InputField m_input;
+	[SerializeField] private float m_defaultValue = 0f;
+	[SerializeField] private Range m_range = new Range(0f, 1f);
+	[SerializeField] private Slider m_slider = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -33,10 +34,12 @@ public class CPStringPref : CPPrefBase {
 	/// </summary>
 	override protected void Awake() {
 		// Check requirements
-		DebugUtils.Assert(m_input != null, "Required component!");
+		DebugUtils.Assert(m_slider != null, "Required component!");
 
-		// Init input
-		m_input.onValueChanged.AddListener(OnValueChanged);
+		// Initialize slider
+		m_slider.minValue = m_range.min;
+		m_slider.maxValue = m_range.max;
+		m_slider.onValueChanged.AddListener(OnValueChanged);
 
 		// Call parent
 		base.Awake();
@@ -46,7 +49,7 @@ public class CPStringPref : CPPrefBase {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		m_input.onValueChanged.RemoveListener(OnValueChanged);
+		m_slider.onValueChanged.RemoveListener(OnValueChanged);
 	}
 
 	/// <summary>
@@ -54,7 +57,7 @@ public class CPStringPref : CPPrefBase {
 	/// </summary>
 	override public void Refresh() {
 		base.Refresh();
-		m_input.text = Prefs.GetStringPlayer(id, m_defaultValue);
+		m_slider.value = Prefs.GetFloatPlayer(id, m_defaultValue);
 	}
 
 	//------------------------------------------------------------------//
@@ -63,9 +66,9 @@ public class CPStringPref : CPPrefBase {
 	/// <summary>
 	/// The toggle has changed.
 	/// </summary>
-	public void OnValueChanged(string _newValue) {
-		Prefs.SetStringPlayer(id, _newValue);
-		Messenger.Broadcast<string, string>(GameEvents.CP_STRING_CHANGED, id, _newValue);
+	public void OnValueChanged(float _value) {
+		Prefs.SetFloatPlayer(id, _value);
+		Messenger.Broadcast<string, float>(GameEvents.CP_FLOAT_CHANGED, id, _value);
 		Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 	}
 }
