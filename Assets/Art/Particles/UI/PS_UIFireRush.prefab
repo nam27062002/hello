@@ -38,6 +38,7 @@ GameObject:
   - 224: {fileID: 224000012674957242}
   - 198: {fileID: 198000012863352064}
   - 199: {fileID: 199000012862273064}
+  - 114: {fileID: 114000010780305596}
   m_Layer: 5
   m_Name: PS_UIFireRush
   m_TagString: Untagged
@@ -58,6 +59,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 224000012674957242}
   m_RootOrder: 0
+--- !u!114 &114000010780305596
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014122279092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cb4c8fd4f7a45e481525a55b840ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_onPopupOpened:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  m_onAllPopupsClosed:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!198 &198000012267734690
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -2193,7 +2215,7 @@ ParticleSystem:
     m_UseMeshColors: 1
     randomDirection: 1
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 2
     m_Type: 0
     rate:

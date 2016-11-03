@@ -10,6 +10,7 @@ GameObject:
   - 224: {fileID: 22442574}
   - 198: {fileID: 19875982}
   - 199: {fileID: 19978076}
+  - 114: {fileID: 114000013877299314}
   m_Layer: 5
   m_Name: PS_UIGenericSparkling
   m_TagString: Untagged
@@ -67,7 +68,7 @@ ParticleSystem:
   moveWithTransform: 1
   autoRandomSeed: 1
   scalingMode: 2
-  randomSeed: 2037136946
+  randomSeed: -675252129
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -1809,3 +1810,24 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 152870}
   m_IsPrefabParent: 1
+--- !u!114 &114000013877299314
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 152870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cb4c8fd4f7a45e481525a55b840ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_onPopupOpened:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  m_onAllPopupsClosed:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
