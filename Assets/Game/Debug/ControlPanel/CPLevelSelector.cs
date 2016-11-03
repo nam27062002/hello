@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -26,7 +27,7 @@ public class CPLevelSelector : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Dropdown m_dropdown = null;
+	[SerializeField] private TMP_Dropdown m_dropdown = null;
 
 	// Internal
 	private List<DefinitionNode> m_levelDefs = null;
@@ -72,7 +73,7 @@ public class CPLevelSelector : MonoBehaviour {
 		int selectedIdx = 0;
 		for(int i = 0; i < m_levelDefs.Count; i++) {
 			// Add the option
-			m_dropdown.options.Add(new Dropdown.OptionData(m_levelDefs[i].GetLocalized("tidName")));
+			m_dropdown.options.Add(new TMP_Dropdown.OptionData(m_levelDefs[i].GetLocalized("tidName")));
 
 			// Is it the current level?
 			if(m_levelDefs[i].sku == UsersManager.currentUser.currentLevel) {

@@ -7,6 +7,7 @@ public interface ISpawner : IQuadTreeItem {
 	bool CanRespawn();
 	bool Respawn(); //return true if it respawned completelly
 	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
+	void DrawStateGizmos();
 
 	AreaBounds area{ get; }
 	IGuideFunction guideFunction{ get; }

@@ -26,10 +26,14 @@ public class Catapult : Initializable {
 	[SerializeField] private string m_ammoName;
 	[SerializeField] private string m_ammoSpawnTransformName;
 
-	[SeparatorAttribute]
+	[SeparatorAttribute("Audio")]
+	[SerializeField] private string m_onTossAudio = "";
+
+	[SeparatorAttribute("Debug")]
 	[SerializeField] private bool m_forcePreview = false;
 	[SerializeField] private float m_previewStep = 1f;
 	[SerializeField] private float m_previewMaxTime = 20f;
+	[SerializeField] private Vector3 m_debugTarget = Vector3.zero;
 
 
 	private float m_hAngle;
@@ -97,7 +101,9 @@ public class Catapult : Initializable {
 		}
 
 		if (m_toss) {
-			if (Aim()) {
+			if (m_target != null && Aim(m_target.position)) {
+				if ( !string.IsNullOrEmpty(m_onTossAudio) )
+					AudioController.Play(m_onTossAudio);
 				m_animator.SetTrigger("toss");
 				m_toss = false;
 			}
@@ -157,20 +163,18 @@ public class Catapult : Initializable {
 		return m_ammoTransform.position + m_eyeOffset.x * transform.forward + transform.forward * m_eyeRadius + m_eyeOffset.y * transform.up + m_eyeOffset.z * transform.right;
 	}
 
-	private bool Aim() {
-		if (m_target != null) {
-			Vector3 eye = Eye();
-			float sqrD = (m_target.position - eye).sqrMagnitude;
-			if (sqrD <= m_eyeRadius * m_eyeRadius) {
-				float r = m_eyeRadius * 0.5f;
-				float dY = (m_target.position.y - eye.y + r) / (r * 2f);
+	private bool Aim(Vector3 _target) {		
+		Vector3 eye = Eye();
+		float sqrD = (_target - eye).sqrMagnitude;
+		if (sqrD <= m_eyeRadius * m_eyeRadius) {
+			float r = m_eyeRadius * 0.5f;
+			float dY = (_target.y - eye.y + r) / (r * 2f);
 
-				m_vAngle = m_vAngleMin + (m_vAngleMax - m_vAngleMin) * dY;
-				if (m_vAngle > m_vAngleMax) m_vAngle = m_vAngleMax;
-				else if (m_vAngle < m_vAngleMin) m_vAngle = m_vAngleMin;
-								
-				return true;
-			}
+			m_vAngle = m_vAngleMin + (m_vAngleMax - m_vAngleMin) * dY;
+			if (m_vAngle > m_vAngleMax) m_vAngle = m_vAngleMax;
+			else if (m_vAngle < m_vAngleMin) m_vAngle = m_vAngleMin;
+							
+			return true;
 		}
 
 		return false;
@@ -186,20 +190,28 @@ public class Catapult : Initializable {
 			float step = Mathf.Max(0.5f, m_previewStep);
 
 			//--------------------------------------------------------------------------------
-			DrawToss(m_initialVelocity, m_vAngle, m_hAngle, maxTime, step);
+			float oldVAngle = m_vAngle;
+			Aim(Eye() + m_debugTarget);
+			DrawToss(Colors.magenta, m_initialVelocity, m_vAngle, m_hAngle, maxTime, step);
 
 			if (m_extraProjectiles != null) {
 				for (int i = 0; i < m_extraProjectiles.Length; i++) {
-					DrawToss(	m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, 
+					DrawToss(	Colors.coral,
+								m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, 
 								m_vAngle + m_extraProjectiles[i].vAngleOffset, 
 								m_hAngle + m_extraProjectiles[i].hAngleOffset,
 								maxTime, step);
 				}
 			}
+			m_vAngle = oldVAngle;
 
 			//--------------------------------------------------------------------------------
 			DrawMinMaxToss(m_initialVelocity, m_vAngleMin, m_hAngle, maxTime, step);
 			DrawMinMaxToss(m_initialVelocity, m_vAngleMax, m_hAngle, maxTime, step);
+
+			//--------------------------------------------------------------------------------
+			Gizmos.color = Colors.magenta;
+			Gizmos.DrawWireSphere(Eye() + m_debugTarget, 0.5f);
 
 			//--------------------------------------------------------------------------------
 			Gizmos.color = Color.yellow;
@@ -207,11 +219,11 @@ public class Catapult : Initializable {
 		}
 	}
 
-	private void DrawToss(float _vo, float _vAngle, float _hAngle, float _maxTime, float _step) {
+	private void DrawToss(Color _color, float _vo, float _vAngle, float _hAngle, float _maxTime, float _step) {
 		Vector3 lastTarget = m_ammoTransform.position + Vector3.zero;
 		Vector3 target = lastTarget;
 
-		Gizmos.color = Color.white;
+		Gizmos.color = _color;
 		for (float time = _step; time < _maxTime ; time += _step) {
 			target = m_ammoTransform.position + GetTargetAt(time * 0.1f, _vo, _vAngle, _hAngle);
 
@@ -239,7 +251,7 @@ public class Catapult : Initializable {
 
 			if (Physics.Linecast(lastTarget, target)) { break; }
 
-			Gizmos.DrawSphere(target, 0.05f);
+			Gizmos.DrawSphere(target, 0.15f);
 			lastTarget = target;
 		}
 	}

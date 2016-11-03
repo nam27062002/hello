@@ -101,6 +101,22 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		if(!m_enabled) return;
 		if(m_spawnersTree == null) return;
 
+		// Get activation bounds
+		// Update every frame in case camera bounds change (i.e. zoom in/out)
+		float currentX = 0, currentY = 0;
+		if (m_newCamera != null) {
+			m_minRect = m_newCamera.activationMinRect;
+			m_maxRect = m_newCamera.activationMaxRect;
+			currentX = m_newCamera.position.x;
+			currentY = m_newCamera.position.y;
+		}
+
+		const float delta = 0.5f;
+		bool checkBottom = (currentY - m_lastY) < -delta;
+		bool checkRight = (currentX - m_lastX) > delta;
+		bool checkTop = (currentY - m_lastY) > delta;
+		bool checkLeft = (currentX - m_lastX) < -delta;
+
 		// Update timer (optimization to avoid performing the update every frame)
 		// Pre-optimization: ~10% CPU usage, 36-39 FPS
 		// 0.2s: 37-40 FPS
@@ -130,18 +146,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			//        max.x0                         max.x1
 			//
 			m_selectedSpawners.Clear();
+			           
 
-            // Get activation bounds
-            // Update every frame in case camera bounds change (i.e. zoom in/out)
-            float currentX = 0, currentY = 0;
-            if (m_newCamera != null) {
-				m_minRect = m_newCamera.activationMinRect;
-				m_maxRect = m_newCamera.activationMaxRect;
-                currentX = m_newCamera.position.x;
-                currentY = m_newCamera.position.y;
-            }
-
-            if (currentY - m_lastY < -1)
+			if (checkBottom)
             {
                 // Split it in 4 rectangles that the quadtree can process
                 // 1: bottom sub-rect
@@ -155,7 +162,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 m_lastY = currentY;
                 //Debug.LogError("BOTTOM");
             }
-            if (currentX - m_lastX > 1)
+			if (checkRight)
             {
                 // 2: right sub-rect
                 m_subRect[1].Set(
@@ -168,7 +175,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 m_lastX = currentX;
                 //Debug.LogError("RIGHT");
             }
-            if (currentY - m_lastY > 1)
+			if (checkTop)
             {
                     // 3: top sub-rect
                     m_subRect[2].Set(
@@ -181,7 +188,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 m_lastY = currentY;
                 //Debug.LogError("TOP");
             }
-            if (currentX - m_lastX < -1)
+			if (checkLeft)
             {
                 // 4: left sub-rect
                 m_subRect[3].Set(
@@ -197,7 +204,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			// Process all selected spawners!
 			foreach(ISpawner item in m_selectedSpawners) {
 				if (item.CanRespawn()) {
+					//add item into respawn list and begin the respawn process
 					m_spawning.Add(item);
+					item.Respawn();
 				}
 			}
 		}
@@ -275,6 +284,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			Gizmos.DrawSphere(item.boundingRect.center, 0.5f);
 		}
 
+		// All spawners gizmos
+		for (int i = 0; i < m_spawners.Count; i++) {
+			m_spawners[i].DrawStateGizmos();
+		}
+
 		// Sub-rectangles
 		Gizmos.color = Colors.WithAlpha(Colors.lime, 0.5f);
 		Gizmos.DrawCube(new Vector3(m_subRect[0].center.x, m_subRect[0].center.y, 0f), new Vector3(m_subRect[0].width, m_subRect[0].height, 1f));
@@ -316,7 +330,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Process all selected spawners!
 		foreach(ISpawner item in m_selectedSpawners) {
 			if (item.CanRespawn()) {
-				item.Respawn();
+				int iterations = 0;
+				do {
+					iterations++;
+				} while (iterations < 100 && !item.Respawn());
 			}
 		}
 	}
@@ -339,14 +356,14 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
     #region debug
     private void Debug_Awake() {        
-        Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
     }
 
     private void Debug_OnDestroy() {        
-        Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id, bool _newValue) {        
@@ -358,7 +375,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     }
 
     private void Debug_SetActive() {
-        m_enabled = DebugSettings.Get(DebugSettings.INGAME_SPAWNERS);        
+		m_enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_SPAWNERS);        
     }  
     #endregion
 }

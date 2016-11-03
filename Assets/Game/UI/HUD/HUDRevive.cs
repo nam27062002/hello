@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -29,7 +30,7 @@ public class HUDRevive : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private Localizer m_timerText = null;
-	[SerializeField] private Text m_pcText = null;
+	[SerializeField] private TextMeshProUGUI m_pcText = null;
 	[SerializeField] private GameObject m_freeReviveButton = null;
 
 	// Exposed setup
@@ -172,7 +173,7 @@ public class HUDRevive : MonoBehaviour {
 	private void OnPlayerKo() {
 		// Initialize PC cost
 		if ( m_pcText != null )
-			m_pcText.text = StringUtils.FormatNumber((m_freeReviveCount + m_paidReviveCount) + 1);	// [AOC] TODO!! Actual revive cost formula
+			m_pcText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber((m_freeReviveCount + m_paidReviveCount) + 1);	// [AOC] TODO!! Actual revive cost formula
 
 		// Free revive available?
 		m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && m_freeReviveCount < m_freeRevivesPerGame);

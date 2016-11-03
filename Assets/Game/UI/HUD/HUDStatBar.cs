@@ -12,6 +12,8 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
@@ -38,7 +40,7 @@ public class HUDStatBar : MonoBehaviour {
 
 	private Slider m_extraBar;
 	private Slider m_baseBar;
-	private Text m_valueTxt;
+	private TextMeshProUGUI m_valueTxt;
 	private GameObject m_icon;
 	private GameObject m_iconAnimated = null;
 	private List<GameObject> m_extraIcons = null;
@@ -73,7 +75,7 @@ public class HUDStatBar : MonoBehaviour {
 		if ( child != null )
 			m_baseBar = child.GetComponent<Slider>();
 
-		m_valueTxt = gameObject.FindComponentRecursive<Text>("TextValue");
+		m_valueTxt = gameObject.FindComponentRecursive<TextMeshProUGUI>("TextValue");
 
 		m_particles = gameObject.FindComponentRecursive<ParticleSystem>();
 		if (m_particles != null)

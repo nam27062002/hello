@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -75,7 +76,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnSetCoins() {
 		// Get amount from linked input field
-		InputField input = GetComponentInChildren<InputField>();
+		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
 		if(input == null) Debug.Log("Requires a nested Input Field!");
 		long amount = long.Parse(input.text);
 
@@ -93,7 +94,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnSetPC() {
 		// Get amount from linked input field
-		InputField input = GetComponentInChildren<InputField>();
+		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
 		if(input == null) Debug.Log("Requires a nested Input Field!");
 		long amount = long.Parse(input.text);
 

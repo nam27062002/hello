@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -22,9 +23,9 @@ public class HUDXPBar : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	[SerializeField] private Slider m_bar;
-	[SerializeField] private Text m_levelXpText;
-	[SerializeField] private Text m_totalXpText;
-	[SerializeField] private Text m_gameXpText;
+	[SerializeField] private TextMeshProUGUI m_levelXpText;
+	[SerializeField] private TextMeshProUGUI m_totalXpText;
+	[SerializeField] private TextMeshProUGUI m_gameXpText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -34,10 +35,10 @@ public class HUDXPBar : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
 		// Only show if allowed!
-		this.gameObject.SetActive(DebugSettings.Get(DebugSettings.SHOW_XP_BAR));
+		this.gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.SHOW_XP_BAR));
 	}
 
 	/// <summary>
@@ -45,7 +46,7 @@ public class HUDXPBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 	}
 
 	/// <summary>

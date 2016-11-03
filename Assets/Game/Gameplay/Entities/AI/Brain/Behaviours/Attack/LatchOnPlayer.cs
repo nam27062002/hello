@@ -5,7 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class LatchData : StateComponentData {
-			public Range stunTime = new Range( 4,6 );
+			public Range retreatTime = new Range( 4,6 );
 			public float damage = 1;
 			public float duration = 2;
 
@@ -53,7 +53,7 @@ namespace AI {
 				m_eatBehaviour.holdDuration = m_data.duration;
 
 				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.stunTime.GetRandom(); // retreat time
+				m_transitionParam[0] = m_data.retreatTime.GetRandom(); // retreat time
 
 				base.OnInitialise();
 			}

@@ -276,10 +276,10 @@ public class GameCamera : MonoBehaviour
 
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
 
-		m_useDampCamera = DebugSettings.Get(DebugSettings.NEW_CAMERA_SYSTEM);
+		m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
 
 	}
 	/*
@@ -343,7 +343,7 @@ public class GameCamera : MonoBehaviour
 		Messenger.RemoveListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
 
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
 		InstanceManager.gameCamera = null;
 
@@ -356,7 +356,7 @@ public class GameCamera : MonoBehaviour
 		// Show collisions cheat?
 		if(_id == DebugSettings.NEW_CAMERA_SYSTEM) {
 			// Enable/Disable object
-			m_useDampCamera = DebugSettings.Get(DebugSettings.NEW_CAMERA_SYSTEM);
+			m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
 		}
 	}
 
@@ -1284,7 +1284,7 @@ public class GameCamera : MonoBehaviour
     // we don't want to change it if it's not really necessary in order to make future updates easier
     private void Debug_Awake()
     {
-        Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
@@ -1292,7 +1292,7 @@ public class GameCamera : MonoBehaviour
 
     private void Debug_OnDestroy()
     {
-        Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id, bool _newValue)
@@ -1309,7 +1309,7 @@ public class GameCamera : MonoBehaviour
         GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
         if (glow != null)
         {
-            glow.enabled = DebugSettings.Get(DebugSettings.INGAME_GLOW);
+			glow.enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_GLOW);
         }
     }
     #endregion

@@ -1,11 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
-public class WaterController : MonoBehaviour {
+public class WaterController : MonoBehaviour, IQuadTreeItem {
 		
 	private DragonMotion m_player;
 	private BoxCollider m_bounds;
 	private GameObject m_waterTrail;
+
+	private Rect m_boundingRect;
+	public Rect boundingRect { get { return m_boundingRect; } }
+
 
 	void Awake () {
 		// Particle pool created in order to make it be loaded in order to avoid a performance spike the first time the dragon dives into water
@@ -16,6 +20,10 @@ public class WaterController : MonoBehaviour {
 	void Start () {
 		m_player = InstanceManager.player.GetComponent<DragonMotion>();
 		m_bounds = GetComponent<BoxCollider>();
+
+		m_boundingRect = new Rect(transform.TransformPoint(m_bounds.center - m_bounds.size * 0.5f), new Vector2(transform.localScale.x * m_bounds.size.x, transform.localScale.y * m_bounds.size.y));
+
+		WaterAreaManager.instance.Register(this);
 	}
 	
 	// Update is called once per frame

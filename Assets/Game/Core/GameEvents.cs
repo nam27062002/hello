@@ -9,11 +9,16 @@
 /// Please keep the params documented!
 /// </summary>
 public enum GameEvents {
-	// Debug events
+	// Debug and control panel events
 	DEBUG_MENU_DRAGON_SELECTED = EngineEvents.END,
 	DEBUG_SIMULATION_FINISHED,
 	DEBUG_UNLOCK_LEVELS,
-	DEBUG_SETTING_CHANGED,		// params: string _settingID, bool _newValue
+	CP_PREF_CHANGED,			// params _string _prefID
+	CP_BOOL_CHANGED,			// params: string _prefID, bool _newValue
+	CP_STRING_CHANGED,			// params: string _prefID, string _newValue
+	CP_INT_CHANGED,				// params: string _prefID, int _newValue
+	CP_FLOAT_CHANGED,			// params: string _prefID, float _newValue
+	CP_ENUM_CHANGED,			// params: string _prefID, int _newValue (should be casted to target enum)
 
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount

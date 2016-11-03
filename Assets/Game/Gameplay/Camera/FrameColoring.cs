@@ -20,6 +20,7 @@ public class FrameColoring : MonoBehaviour
 
 	void Start()
 	{
+		m_material = new Material( m_material );
 		m_value = 0;
 		m_color = Color.black;
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
