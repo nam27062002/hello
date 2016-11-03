@@ -373,7 +373,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
 				m_entityAlive++;
 
-				if (watch.ElapsedMilliseconds >= 9f) {
+				if (watch.ElapsedMilliseconds >= SpawnerManager.SPAWNING_MAX_TIME) {
 					break;
 				}
 			}
