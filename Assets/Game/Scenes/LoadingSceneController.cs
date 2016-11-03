@@ -124,6 +124,11 @@ public class LoadingSceneController : SceneController {
         }
 
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
+
+		// [AOC] If the setting is enabled, replace missing TIDs for english ones
+		if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
+			LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
+		}
     }    
 
     /// <summary>
