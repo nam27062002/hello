@@ -47,6 +47,7 @@ public static class DebugSettings {
 	public const string DPAD_MODE 						= "DPAD_MODE";
 	public const string DPAD_SMOOTH_FACTOR 				= "DPAD_SMOOTH_FACTOR";
 	public const string DPAD_THRESHOLD 					= "DPAD_THRESHOLD";
+	public const string DPAD_BREAK_TOLERANCE			= "DPAD_BREAK_TOLERANCE";
 	public const string DPAD_CLAMP_DOT 					= "DPAD_CLAMP_DOT";
 
     //------------------------------------------------------------------//
