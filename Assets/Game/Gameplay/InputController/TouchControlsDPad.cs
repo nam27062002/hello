@@ -34,9 +34,10 @@ public class TouchControlsDPad : TouchControls {
 	private RectTransform m_dPadDotRectTransform = null;
 
 	// [AOC] D-Pad setup and logic
-	private Mode m_dPadMode = Mode.FIXED; 
-	private float m_dPadThreshold = 0f;
-	private float m_dPadSmoothFactor = 0f;
+	private Mode m_dPadMode = Mode.FOLLOW_CUSTOM; 
+	private float m_dPadThreshold = 2f;
+	private float m_dPadSmoothFactor = 0.5f;
+	private float m_dPadBreakTolerance = 0.1f;
 	private bool m_dPadClampDot = true;
 	private bool m_dPadMoving = false;	// Internal logic, is the D-Pad moving?
 
@@ -136,11 +137,13 @@ public class TouchControlsDPad : TouchControls {
 
 				// D-Pad follows the touch if dot exits the check radius
 				case Mode.FOLLOW_TOUCH: {
+					threshold = 0f;
 					smoothFactor = 1f;
 				} break;
 
 				// D-Pad slowly follows the touch if dot exits the check radius
 				case Mode.FOLLOW_TOUCH_SMOOTH: {
+					threshold = 0f;
 					smoothFactor = 0.15f;
 				} break;
 
@@ -153,7 +156,7 @@ public class TouchControlsDPad : TouchControls {
 			// Compute new D-Pad pos!
 			// Threshold reached?
 			Vector3 dPadPos = m_initialTouchPos;
-			if(m_dPadMoving) threshold = 0.01f;	// When moving, ignore threshold (aka move until the current touch pos is reached) (actually make it a bit more generous, otherwise we never stop moving!)
+			if(m_dPadMoving) threshold = m_dPadBreakTolerance;	// When moving, ignore threshold (aka move until the current touch pos is reached) (actually make it a bit more generous, otherwise we never stop moving!)
 			if(delta > 1f + threshold) {
 				// Move in the direction of the current touch pos, proportional to the distance but applying a speed factor (0 min speed multiplier, 1 instant)
 				Vector3 targetDistance = m_diffVec - (m_diffVecNorm * m_radiusToCheck);	// Stick dot to the edge!
@@ -375,6 +378,10 @@ public class TouchControlsDPad : TouchControls {
 
 		else if(_prefId == DebugSettings.DPAD_SMOOTH_FACTOR) {
 			m_dPadSmoothFactor = Prefs.GetFloatPlayer(DebugSettings.DPAD_SMOOTH_FACTOR, m_dPadSmoothFactor);
+		}
+
+		else if(_prefId == DebugSettings.DPAD_BREAK_TOLERANCE) {
+			m_dPadBreakTolerance = Prefs.GetFloatPlayer(DebugSettings.DPAD_BREAK_TOLERANCE, m_dPadBreakTolerance);
 		}
 
 		else if(_prefId == DebugSettings.DPAD_CLAMP_DOT) {
