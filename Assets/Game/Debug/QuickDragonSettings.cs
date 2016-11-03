@@ -9,7 +9,8 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderUp;
 	public Slider m_sliderDown;
 	public Slider m_sliderGravity;
-	public Slider m_sliderParabolicMovement;
+	public Slider m_sliderParabolicMovementConstant;
+	public Slider m_sliderParabolicMovementAdd;
 	public Slider m_sliderWaterX;
 	public Slider m_sliderWaterEnterMultiplier;
 	public Slider m_sliderWaterCollisionMultiplier;
@@ -33,7 +34,8 @@ public class QuickDragonSettings : MonoBehaviour {
 				case EntityManager.OverlapingMethod.Box: m_eatTypeDropDown.value = 2;break;
 			}
 			m_sliderGravity.value = m_motion.m_dragonGravityModifier;
-			m_sliderParabolicMovement.value = m_motion.parabolicMovementValue;
+			m_sliderParabolicMovementConstant.value = m_motion.parabolicMovementConstant;
+			m_sliderParabolicMovementAdd.value = m_motion.parabolicMovementAdd;
 			m_sliderWaterX.value = m_motion.m_parabolicXControl;
 
 		}	
@@ -86,10 +88,16 @@ public class QuickDragonSettings : MonoBehaviour {
 		DragonEquip.m_numPets = numPets;
 	}
 
-	public void SetParabolicMovement( float _size )
+	public void SetParabolicConstant( float _size )
 	{
 		if ( m_motion != null )
-			m_motion.parabolicMovementValue = _size;
+			m_motion.parabolicMovementConstant = _size;
+	}
+
+	public void SetParabolicAdd( float _size )
+	{
+		if ( m_motion != null )
+			m_motion.parabolicMovementAdd = _size;
 	}
 
 	public void SetWaterXMove( float _size )
