@@ -22,6 +22,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	//------------------------------------------------------------------------//
 	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
 	public const float BACKGROUND_LAYER_Z = 45f;
+    public const float SPAWNING_MAX_TIME = 4f; // Max time (in milliseconds) allowed to spend on spawning entities
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -218,7 +219,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 				m_spawning.Remove(sp);
 				i = Mathf.Max(0, i - 1);
 			}
-			if (m_watch.ElapsedMilliseconds >= 9f) {
+			if (m_watch.ElapsedMilliseconds >= SPAWNING_MAX_TIME) {
 				break;
 			}
 		}
