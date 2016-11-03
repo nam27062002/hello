@@ -160,7 +160,7 @@ public class Catapult : Initializable {
 	}
 
 	private Vector3 Eye() {
-		return m_ammoTransform.position + m_eyeOffset.x * transform.forward + transform.forward * m_eyeRadius + m_eyeOffset.y * transform.up + m_eyeOffset.z * transform.right;
+		return transform.position + m_eyeOffset.x * transform.forward + transform.forward * m_eyeRadius + m_eyeOffset.y * transform.up + m_eyeOffset.z * transform.right;
 	}
 
 	private bool Aim(Vector3 _target) {		
