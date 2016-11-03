@@ -103,14 +103,6 @@ public class Entity : IEntity {
 		m_feedbackData.InitFromDef(m_def);
 	}
 
-	// Use this for initialization
-	IEnumerator Start () 
-	{
-		
-		while( Camera.main == null )
-			yield return null;
-		m_newCamera = Camera.main.GetComponent<GameCamera>();
-	}
 
 	void OnEnable() {
 		EntityManager.instance.Register(this);
@@ -142,6 +134,8 @@ public class Entity : IEntity {
 		m_health = m_maxHealth;
 
 		base.Spawn(_spawner);
+
+		m_newCamera = InstanceManager.gameCamera;
 
         m_spawned = true;
     }

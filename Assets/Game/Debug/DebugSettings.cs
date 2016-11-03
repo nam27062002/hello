@@ -1,4 +1,4 @@
-﻿// DebugSettings.cs
+// DebugSettings.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 23/09/2015.
@@ -21,23 +21,34 @@ public static class DebugSettings {
 	//------------------------------------------------------------------//
 	// Use the Prefs class to access their values
 	// Cheats
-	public static readonly string DRAGON_INVULNERABLE 	 = "DRAGON_INVULNERABLE";
-	public static readonly string DRAGON_INFINITE_FIRE 	 = "DRAGON_INFINITE_FIRE";
-	public static readonly string DRAGON_INFINITE_SUPER_FIRE 	 = "DRAGON_INFINITE_SUPER_FIRE";
-	public static readonly string DRAGON_INFINITE_BOOST  = "DRAGON_INFINITE_BOOST";
-	public static readonly string DRAGON_EAT			 = "DRAGON_EAT";
-	public static readonly string DRAGON_DIVE			 = "DRAGON_DIVE";
-	public static readonly string DRAGON_EAT_DISTANCE_POWER_UP = "DRAGON_EAT_DISTANCE_POWER_UP";
-	public static readonly string DRAGON_SLOW_POWER_UP   = "DRAGON_SLOW_POWER_UP";
-	public static readonly string SHOW_XP_BAR			 = "SHOW_XP_BAR";
-	public static readonly string SHOW_COLLISIONS		 = "SHOW_COLLISIONS";
-	public static readonly string NEW_CAMERA_SYSTEM		 = "NEW_CAMERA_SYSTEM";
-	public static readonly string RESULTS_SCREEN_CHEST_TEST_MODE = "RESULTS_SCREEN_CHEST_TEST_MODE";
-	public static readonly string RESULTS_SCREEN_EGG_TEST_MODE = "RESULTS_SCREEN_EGG_TEST_MODE";
-    public static readonly string INGAME_HUD = "INGAME_HUD";
-    public static readonly string INGAME_SPAWNERS = "INGAME_SPAWNERS";
-    public static readonly string INGAME_GLOW = "INGAME_GLOW";
-	public static readonly string DPAD_MODE = "DPAD_MODE";
+	public const string DRAGON_INVULNERABLE 	 		= "DRAGON_INVULNERABLE";
+	public const string DRAGON_INFINITE_FIRE 	 		= "DRAGON_INFINITE_FIRE";
+	public const string DRAGON_INFINITE_SUPER_FIRE 	 	= "DRAGON_INFINITE_SUPER_FIRE";
+	public const string DRAGON_INFINITE_BOOST  			= "DRAGON_INFINITE_BOOST";
+	public const string DRAGON_EAT			 			= "DRAGON_EAT";
+	public const string DRAGON_DIVE			 			= "DRAGON_DIVE";
+	public const string DRAGON_EAT_DISTANCE_POWER_UP 	= "DRAGON_EAT_DISTANCE_POWER_UP";
+	public const string DRAGON_SLOW_POWER_UP   			= "DRAGON_SLOW_POWER_UP";
+
+	public const string SHOW_XP_BAR			 			= "SHOW_XP_BAR";
+	public const string SHOW_COLLISIONS					= "SHOW_COLLISIONS";
+
+	public const string NEW_CAMERA_SYSTEM		 		= "NEW_CAMERA_SYSTEM";
+
+	public const string RESULTS_SCREEN_CHEST_TEST_MODE 	= "RESULTS_SCREEN_CHEST_TEST_MODE";
+	public const string RESULTS_SCREEN_EGG_TEST_MODE 	= "RESULTS_SCREEN_EGG_TEST_MODE";
+
+	public const string INGAME_HUD						= "INGAME_HUD";
+	public const string INGAME_SPAWNERS					= "INGAME_SPAWNERS";
+	public const string INGAME_GLOW						= "INGAME_GLOW";
+	public const string INGAME_PARTICLES_FEEDBACK 		= "INGAME_PARTICLES_FEEDBACK";
+    public const string INGAME_PARTICLES_EATEN 			= "INGAME_PARTICLES_EATEN";
+
+	public const string DPAD_MODE 						= "DPAD_MODE";
+	public const string DPAD_SMOOTH_FACTOR 				= "DPAD_SMOOTH_FACTOR";
+	public const string DPAD_THRESHOLD 					= "DPAD_THRESHOLD";
+	public const string DPAD_BREAK_TOLERANCE			= "DPAD_BREAK_TOLERANCE";
+	public const string DPAD_CLAMP_DOT 					= "DPAD_CLAMP_DOT";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -92,48 +103,26 @@ public static class DebugSettings {
 	public static ResultsSceneSetup.EggTestMode resultsEggTestMode {
 		get { return (ResultsSceneSetup.EggTestMode)Prefs.GetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)ResultsSceneSetup.EggTestMode.NONE); }
 		set { Prefs.SetIntPlayer(RESULTS_SCREEN_EGG_TEST_MODE, (int)value); }
-	}    
-
-	public static TouchControlsDPad.Mode dPadMode {
-		get { return (TouchControlsDPad.Mode)Prefs.GetIntPlayer(DPAD_MODE, (int)TouchControlsDPad.Mode.FIXED); }
-		set { Prefs.SetIntPlayer(DPAD_MODE, (int)value); }
 	}
 
     //------------------------------------------------------------------//
     // METHODS															//
     //------------------------------------------------------------------//
-
     public static void Init() {
         // Properties that need to be positive by default should be initialized here
         string key = INGAME_HUD;        
-        Set(key, Prefs.GetBoolPlayer(key, true));
+        Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
 
         key = INGAME_SPAWNERS;        
-        Set(key, Prefs.GetBoolPlayer(key, true));
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
 
         key = INGAME_GLOW;
-        Set(key, Prefs.GetBoolPlayer(key, true));
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
+
+		key = INGAME_PARTICLES_FEEDBACK;
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
+
+        key = INGAME_PARTICLES_EATEN;
+		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
     }
-
-    /// <summary>
-    /// Get the value of a debug setting.
-    /// </summary>
-    /// <param name="_id">Identifier of the debug setting to be obtained. Usually one of the constants in this class.</param>
-    /// <returns>The value of the requested setting, <c>false</c> if the setting ID was not recognized.</returns>
-    public static bool Get(string _id) {
-		return Prefs.GetBoolPlayer(_id, false);
-	}
-
-	/// <summary>
-	/// Set the value of a debug setting.
-	/// </summary>
-	/// <param name="_id">ID of the setting to be set.</param>
-	/// <param name="_value">New value for the setting with the given ID.</param>
-	public static void Set(string _id, bool _value) {
-		// Set new value
-		Prefs.SetBoolPlayer(_id, _value);
-
-		// Notify game
-		Messenger.Broadcast<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, _id, _value);
-	}
 }

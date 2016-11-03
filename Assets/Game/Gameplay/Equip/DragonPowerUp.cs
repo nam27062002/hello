@@ -5,23 +5,20 @@ public class DragonPowerUp : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly Color COLOR_HEALTH = new Color(0f, 1f, 0f);
-	public static readonly Color COLOR_BOOST = new Color(0f, 0.75f, 0.6f);
-	public static readonly Color COLOR_FIRE = new Color(1f, 0.6f, 0.1f);
-	public static readonly Color COLOR_BITE = new Color(1f, 1f, 1f);
-	public static readonly Color COLOR_SPEED = new Color(1f, 1f, 1f);
+	public static readonly Color COLOR_HEALTH = new Color(0.7f, 0.8f, 0.24f);
+	public static readonly Color COLOR_BOOST = new Color(0.38f, 1f, 0.78f);
+	public static readonly Color COLOR_FIRE = new Color(0.99f, 0.51f, 0.5f);
+	public static readonly Color COLOR_BITE = new Color(1f, 42f, 29f);
+	public static readonly Color COLOR_SPEED = new Color(0.38f, 1f, 0.78f);
 
-	public static readonly Color COLOR_GOLD = new Color(1f, 0.7f, 0.2f);
-	public static readonly Color COLOR_PC = new Color(1f, 0f, 0.5f);
+	public static readonly Color COLOR_GOLD = new Color(1f, 0.71f, 0.1f);
+	public static readonly Color COLOR_PC = new Color(0.96f, 0.46f, 1f);
 
-	public static readonly Color COLOR_CHESTS = new Color(1f, 0.6f, 0f);
-	public static readonly Color COLOR_EGGS = new Color(0.75f, 0.33f, 1f);
-
-	public static readonly Color COLOR_MINE = new Color(0.8f, 0.8f, 0.8f);
-	public static readonly Color COLOR_POISON = new Color(0.6f, 1f, 0.1f);
-	public static readonly Color COLOR_OBSTACLE = new Color(0.7f, 0.7f, 0.6f);
-	public static readonly Color COLOR_ENTITY = new Color(0.2f, 0.8f, 0.9f);
-	public static readonly Color COLOR_WATER = new Color(0.2f, 0.8f, 0.9f);
+	public static readonly Color COLOR_MINE = new Color(0.63f, 0.63f, 0.63f);
+	public static readonly Color COLOR_POISON = new Color(0f, 1f, 0f);
+	public static readonly Color COLOR_OBSTACLE = new Color(0.8f, 0.45f, 0f);
+	public static readonly Color COLOR_ENTITY = new Color(1f, 1f, 1f);
+	public static readonly Color COLOR_WATER = new Color(0f, 0.91f, 100f);
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
