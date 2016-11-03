@@ -65,7 +65,7 @@ public class CPBoolPref : CPPrefBase {
 	/// </summary>
 	public void OnValueChanged(bool _newValue) {
 		Prefs.SetBoolPlayer(id, _newValue);
-		Messenger.Broadcast<string, bool>(GameEvents.CP_STRING_CHANGED, id, _newValue);
+		Messenger.Broadcast<string, bool>(GameEvents.CP_BOOL_CHANGED, id, _newValue);
 		Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 	}
 }
