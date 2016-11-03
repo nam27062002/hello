@@ -24,8 +24,9 @@ public class PlayerEatBehaviour : EatBehaviour {
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
-	protected void Start() 
+	override protected void Start() 
 	{
+        base.Start();
 		m_dragon = GetComponent<DragonPlayer>();
 		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
 		m_motion = GetComponent<DragonMotion>();

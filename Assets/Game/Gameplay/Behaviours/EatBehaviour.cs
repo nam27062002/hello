@@ -24,8 +24,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	[SerializeField]protected float m_eatDistance = 1;
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 
+    private const int MAX_PREYS = 20;
 	protected List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
-    private List<AI.Machine> m_preysToEat; // Temporary list needed when eating. It's defined here to prevent memory from being generated when eating
+    private AI.Machine[] m_preysToEat; // Temporary list needed when eating. It's defined here to prevent memory from being generated when eating
 
 	protected DragonTier m_tier;
 	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
@@ -121,8 +122,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Use this for initialization
 	protected virtual void Awake () {
 
-		m_prey = new List<PreyData>();
-        m_preysToEat = new List<AI.Machine>();
+		m_prey = new List<PreyData>();        
         m_bloodEmitter = new List<GameObject>();
 
 		MouthCache();
@@ -134,6 +134,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		m_playerColliderMask = 1 << LayerMask.NameToLayer("Player");
 	}
+
+    protected virtual void Start () {
+        if (m_canEatEntities) {
+            int amount = (m_limitEating) ? m_limitEatingValue : MAX_PREYS;
+            m_preysToEat = new AI.Machine[amount];
+        }
+    }
 
 	// find mouth transform 
 	protected virtual void MouthCache() 
@@ -640,18 +647,32 @@ public abstract class EatBehaviour : MonoBehaviour {
 			Entity entityToHold = null;
             
 			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_mouth.position, eatDistance, m_checkEntities);
-			for (int e = 0; e < m_numCheckEntities; e++) {
+
+            int numPreysToEat = 0;
+            int maxPreysToEat = m_preysToEat.Length;
+            for (int e = 0; e < m_numCheckEntities; e++)
+            {
 				Entity entity = m_checkEntities[e];
 				if ( entity.IsEdible() )
-				{
+                {
 					if (entity.IsEdible(m_tier) || m_ignoreTierList.Contains( entity.sku ))
-					{
-						if (m_limitEating && (m_preysToEat.Count + m_prey.Count) < m_limitEatingValue || !m_limitEating)
-						{
-							AI.Machine machine = entity.GetComponent<AI.Machine>();
-							if (!machine.IsDead() && !machine.IsDying()) {
-                                m_preysToEat.Add(machine);
-							}
+                    {
+						if (m_limitEating && (numPreysToEat + m_prey.Count) < m_limitEatingValue || !m_limitEating)
+                        {
+                            // Makes sure that it won't exceed the max limit
+                            if (numPreysToEat < maxPreysToEat)
+                            {
+                                AI.Machine machine = entity.GetComponent<AI.Machine>();
+                                if (!machine.IsDead() && !machine.IsDying())
+                                {
+                                    m_preysToEat[numPreysToEat] = machine;
+                                    numPreysToEat++;
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Current amount of entities being eaten exceeds the max limit " + maxPreysToEat);
+                            }
 						}
 					}
 					else if (entity.CanBeHolded(m_tier))
@@ -675,13 +696,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				StartHold(preyToHold, entityToHold.CanBeGrabbed( m_tier));
 			}
-			else if (m_preysToEat.Count > 0 )
+			else if (numPreysToEat > 0 )
 			{
-				for( int i = 0; i< m_preysToEat.Count; i++ )
-					Eat(m_preysToEat[i]);
-
-                // Clears it up since it's a temporary list. It's defined as global to prevent memory from being generated every time the creature eats
-                m_preysToEat.Clear();
+				for( int i = 0; i< numPreysToEat; i++ )
+					Eat(m_preysToEat[i]);               
             }
 		}
 
