@@ -46,10 +46,10 @@ public class GameCameraDebug : MonoBehaviour {
 		m_camera = GetComponent<Camera>();
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
 		// Initialize by simulating a toggle of the setting
-		OnDebugSettingChanged(DebugSettings.SHOW_COLLISIONS, DebugSettings.Get(DebugSettings.SHOW_COLLISIONS));
+		OnDebugSettingChanged(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
 	}
 
 	/// <summary>
@@ -57,7 +57,7 @@ public class GameCameraDebug : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 	}
 
 	/// <summary>

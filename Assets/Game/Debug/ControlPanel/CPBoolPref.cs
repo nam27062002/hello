@@ -20,7 +20,9 @@ public class CPBoolPref : CPPrefBase {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// References
+	// Exposed setup
+	[Space]
+	[SerializeField] private bool m_defaultValue = false;
 	[SerializeField] private Toggle m_toggle;
 
 	//------------------------------------------------------------------//
@@ -33,8 +35,18 @@ public class CPBoolPref : CPPrefBase {
 		// Check requirements
 		DebugUtils.Assert(m_toggle != null, "Required component!");
 
+		// Init toggle
+		m_toggle.onValueChanged.AddListener(OnValueChanged);
+
 		// Call parent
 		base.Awake();
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		m_toggle.onValueChanged.RemoveListener(OnValueChanged);
 	}
 
 	/// <summary>
@@ -42,7 +54,7 @@ public class CPBoolPref : CPPrefBase {
 	/// </summary>
 	override public void Refresh() {
 		base.Refresh();
-		m_toggle.isOn = DebugSettings.Get(id);
+		m_toggle.isOn = Prefs.GetBoolPlayer(id, m_defaultValue);
 	}
 
 	//------------------------------------------------------------------//
@@ -51,7 +63,9 @@ public class CPBoolPref : CPPrefBase {
 	/// <summary>
 	/// The toggle has changed.
 	/// </summary>
-	public void OnValueChanged() {
-		DebugSettings.Set(id, m_toggle.isOn);
+	public void OnValueChanged(bool _newValue) {
+		Prefs.SetBoolPlayer(id, _newValue);
+		Messenger.Broadcast<string, bool>(GameEvents.CP_BOOL_CHANGED, id, _newValue);
+		Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 	}
 }

@@ -35,10 +35,10 @@ public class HUDXPBar : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
 		// Only show if allowed!
-		this.gameObject.SetActive(DebugSettings.Get(DebugSettings.SHOW_XP_BAR));
+		this.gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.SHOW_XP_BAR));
 	}
 
 	/// <summary>
@@ -46,7 +46,7 @@ public class HUDXPBar : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 	}
 
 	/// <summary>

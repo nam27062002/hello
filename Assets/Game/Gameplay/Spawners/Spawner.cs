@@ -391,7 +391,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 			return true;
 		}
 
-		return false;
+		return m_state == State.Alive;
 	}
 
 	private void Spawn() {

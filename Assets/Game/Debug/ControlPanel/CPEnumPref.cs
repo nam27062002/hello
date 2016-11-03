@@ -24,9 +24,9 @@ public class CPEnumPref : CPPrefBase {
 	//------------------------------------------------------------------//
 	// Exposed references
 	[Comment("System.Type.AssemblyQualifiedName")]
+	[SerializeField] private int m_defaultValue = 0;
 	[SerializeField] private string m_enumTypeName = "";
 	[SerializeField] private TMP_Dropdown m_dropdown = null;
-	[SerializeField] private int m_defaultValue = 0;
 
 	// Internal
 	private Type m_enumType = null;
@@ -42,8 +42,18 @@ public class CPEnumPref : CPPrefBase {
 		// Check requirements
 		DebugUtils.Assert(m_dropdown != null, "Required component!");
 
+		// Init dropdown
+		m_dropdown.onValueChanged.AddListener(OnValueChanged);
+
 		// Call parent
 		base.Awake();
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		m_dropdown.onValueChanged.RemoveListener(OnValueChanged);
 	}
 
 	private void Update() {
@@ -107,6 +117,8 @@ public class CPEnumPref : CPPrefBase {
 	public void OnValueChanged(int _newValueIdx) {
 		if(m_enumValues != null) {
 			Prefs.SetIntPlayer(id, _newValueIdx);
+			Messenger.Broadcast<string, int>(GameEvents.CP_STRING_CHANGED, id, m_enumValues[_newValueIdx]);
+			Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 		}
 	}
 }
