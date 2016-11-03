@@ -132,12 +132,19 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// Parabolic movement
 	[Header("Parabolic Movement")]
-	[SerializeField] private float m_parabolicMovementValue = 10;
-	public float parabolicMovementValue
+	[SerializeField] private float m_parabolicMovementConstant = 10;
+	public float parabolicMovementConstant
 	{
-		get { return m_parabolicMovementValue; }
-		set { m_parabolicMovementValue = value; }
+		get { return m_parabolicMovementConstant; }
+		set { m_parabolicMovementConstant = value; }
 	}
+	[SerializeField] private float m_parabolicMovementAdd = 10;
+	public float parabolicMovementAdd
+	{
+		get { return m_parabolicMovementAdd; }
+		set { m_parabolicMovementAdd = value; }
+	}
+	private Vector3 m_startParabolicPosition;
 	public float m_parabolicXControl = 10;
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
 	[SerializeField] private float m_outerSpaceRecoveryTime = 0.5f;
@@ -297,7 +304,6 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	
 	private void ChangeState(State _nextState) {
 		if (m_state != _nextState) {
-			Debug.Log("Change State " + _nextState);
 			// we are leaving old state
 			switch (m_state) {
 				case State.Fly:
@@ -375,6 +381,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						m_animator.SetBool("fly down", true);
 					}
+					m_startParabolicPosition = transform.position;
 				}break;
 				case State.ExitingWater:
 				{
@@ -383,6 +390,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
+					m_startParabolicPosition = transform.position;
 				}break;
 				case State.ExitingSpace:
 				{
@@ -656,13 +664,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}
 				else
 				{
-					UpdateParabolicMovement( m_parabolicMovementValue);
+					float distance = m_startParabolicPosition.y - transform.position.y;
+					UpdateParabolicMovement( 1, distance);
 				}
 			}break;
 			case State.OuterSpace:
 			case State.ExitingSpace:
-				UpdateParabolicMovement( -m_parabolicMovementValue);
-				break;
+			{
+				float distance = transform.position.y - m_startParabolicPosition.y;
+				UpdateParabolicMovement( -1, distance);
+			}break;
 			case State.Intro:
 			{
 				// m_impulse = (m_destination - transform.position).normalized;
@@ -832,13 +843,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		*/
 	}
 
-	private void UpdateParabolicMovement( float moveValue )
+	private void UpdateParabolicMovement( float sign, float distance )
 	{
 		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
 		Vector3 impulse = m_controls.GetImpulse(Time.deltaTime * GetTargetSpeedMultiplier());
 
 		// check collision with ground, only down?
-		m_impulse.y += moveValue * Time.deltaTime;
+		float moveValue = sign * (m_parabolicMovementConstant + ( m_parabolicMovementAdd * distance ));
+		m_impulse.y += Time.deltaTime * moveValue;
 		float abs = Mathf.Abs( moveValue ) * 10;
 #if DEBUG
 		if ( m_impulse.y < -abs || m_impulse.y > abs )
@@ -1133,6 +1145,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
 		m_impulse = rbody.velocity;
+
 
 		// Change state
 		ChangeState(State.InsideWater);
