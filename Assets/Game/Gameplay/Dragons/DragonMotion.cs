@@ -851,13 +851,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		// check collision with ground, only down?
 		float moveValue = sign * (m_parabolicMovementConstant + ( m_parabolicMovementAdd * distance ));
 		m_impulse.y += Time.deltaTime * moveValue;
+		/*
 		float abs = Mathf.Abs( moveValue ) * 10;
 #if DEBUG
 		if ( m_impulse.y < -abs || m_impulse.y > abs )
 			Debug.LogWarning("Possible Movement error!");
 #endif
 		m_impulse.y = Mathf.Clamp( m_impulse.y, -abs, abs);
-
+		*/
 
 		m_impulse.x += impulse.x * m_parabolicXControl;
 
