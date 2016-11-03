@@ -7,6 +7,9 @@ public class MachineEatBehaviour : EatBehaviour {
 	public DragonTier eaterTier { get {return m_eaterTier; }}
 	public bool m_isPet = false;
 
+	[SerializeField] private bool m_isAquatic = false;
+	protected override bool isAquatic { get { return m_isAquatic; } }
+
 	private AI.Machine m_machine;
 
 	override protected void Awake() {
@@ -95,4 +98,25 @@ public class MachineEatBehaviour : EatBehaviour {
 			m_machine.StopEating();
 	}
 
+
+	// find mouth transform 
+	protected override void MouthCache() 
+	{
+		if (m_isPet)
+		{
+			m_mouth = transform.FindTransformRecursive("Fire_Dummy");// SuctionPoint
+			m_bite = transform.FindTransformRecursive("BitePoint");
+			m_swallow = transform.FindTransformRecursive("Pet_Head");// SwallowPoint
+			m_suction = transform.FindTransformRecursive("SuctionPoint");
+
+			if ( m_bite == null )
+				m_bite = m_mouth;	
+			if (m_suction == null)
+				m_suction = m_mouth;
+		}
+		else
+		{
+			base.MouthCache();
+		}
+	}
 }

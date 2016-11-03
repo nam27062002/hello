@@ -8,6 +8,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -25,8 +26,7 @@ public class HUDPc : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
-	[SerializeField] private Text m_text = null;
-	[SerializeField] private Image m_icon = null;
+	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Animator m_anim = null;
 
 	private CanvasGroup m_canvasGroup = null;
@@ -93,7 +93,7 @@ public class HUDPc : MonoBehaviour {
 	/// </summary>
 	private void UpdateText() {
 		// Do it!
-		m_text.text = StringUtils.FormatNumber(RewardManager.pc);
+		m_text.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(RewardManager.pc);
 	}
 	
 	//------------------------------------------------------------------//

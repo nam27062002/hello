@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class QuickDragonSettings : MonoBehaviour {
 
@@ -12,8 +13,8 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderWaterX;
 	public Slider m_sliderWaterEnterMultiplier;
 	public Slider m_sliderWaterCollisionMultiplier;
-	public Dropdown m_eatTypeDropDown;
-	public Dropdown m_numPetsDropDown;
+	public TMP_Dropdown m_eatTypeDropDown;
+	public TMP_Dropdown m_numPetsDropDown;
 	private DragonMotion m_motion;
 
 	void OnEnable()

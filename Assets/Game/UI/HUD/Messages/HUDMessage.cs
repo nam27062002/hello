@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -339,18 +340,14 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_entitySku">The entity we're trying to eat.</param>
 	private void OnBiggerDragonNeeded(DragonTier _requiredTier, string _entitySku)  {
 		// Setup text
-		// TODO: we'll add all the icons into a font and we'll print the icons as a character.
-		Image icon = this.FindComponentRecursive<Image>();
 		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, "order", ((int)_requiredTier).ToString());
-		if(tierDef != null) {
-			// Show icon
-			icon.enabled = true;
-
-			// Load proper icon
-			icon.sprite = Resources.Load<Sprite>(tierDef.GetAsString("icon"));	// [AOC] An async/precached load might be required
+		TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+		if(tierDef == null) {
+			// We don't know the exact tier, use generic text
+			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_BIGGER_DRAGON");
 		} else {
-			// Disable icon
-			icon.enabled = false;
+			// Use tier icon
+			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", "<sprite name=\"" + tierDef.Get("icon") + "\">");
 		}
 
 		// If already visible and trying to eat the same entity, don't restart the animation
@@ -371,7 +368,7 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_mission">The mission that has been completed.</param>
 	private void OnMissionCompleted(Mission _mission) {
 		// Init text
-		this.FindComponentRecursive<Text>("MissionObjectiveText").text = _mission.objective.GetDescription();
+		this.FindComponentRecursive<TextMeshProUGUI>("MissionObjectiveText").text = _mission.objective.GetDescription();
 
 		// Show!
 		Show();

@@ -337,11 +337,11 @@ public class OpenEggScreenController : MonoBehaviour {
 
 				// Aux texts
 				sb.Length = 0;
-				string rewardName = sb.Append("<color=").Append(Colors.silver.ToHexString("#")).Append(">").Append(rewardedItemDef.GetLocalized("tidName")).Append("</color>").ToString();
+				string rewardName = sb.Append("<color=#FFD26CFF>").Append(rewardedItemDef.GetLocalized("tidName")).Append("</color>").ToString();
 				sb.Length = 0;
-				string dragonName = sb.Append("<color=").Append(Colors.silver.ToHexString("#")).Append(">").Append(targetDragonDef.GetLocalized("tidName")).Append("</color>").ToString();
+				string dragonName = sb.Append("<color=#FFD26CFF>").Append(targetDragonDef.GetLocalized("tidName")).Append("</color>").ToString();
 				sb.Length = 0;
-				string rewardCoins = sb.Append("<color=").Append(GameConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
+				string rewardCoins = sb.Append("<color=").Append(UIConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
 
 				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
 				int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(rewardedItemDef.sku);

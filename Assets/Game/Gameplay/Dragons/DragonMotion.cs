@@ -30,7 +30,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Fly_Down,
 		Stunned,
 		InsideWater,
+		ExitingWater,
 		OuterSpace,
+		ExitingSpace,
 		Intro,
 		Latching,
 		Dead,
@@ -139,6 +141,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	public float m_parabolicXControl = 10;
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
 	[SerializeField] private float m_outerSpaceRecoveryTime = 0.5f;
+	[SerializeField] private float m_insideWaterRecoveryTime = 0.1f;
+	private float m_recoverTimer;
 
 	private bool m_canMoveInsideWater = false;
 	public bool canDive
@@ -293,6 +297,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	
 	private void ChangeState(State _nextState) {
 		if (m_state != _nextState) {
+			Debug.Log("Change State " + _nextState);
 			// we are leaving old state
 			switch (m_state) {
 				case State.Fly:
@@ -371,9 +376,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						m_animator.SetBool("fly down", true);
 					}
 				}break;
+				case State.ExitingWater:
+				{
+					m_recoverTimer = m_insideWaterRecoveryTime;
+				}break;
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
+				}break;
+				case State.ExitingSpace:
+				{
+					m_recoverTimer = m_outerSpaceRecoveryTime;
 				}break;
 				case State.Intro:
 				{
@@ -458,6 +471,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				RotateToDirection( m_holdPreyTransform.forward );
 				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
 				transform.position += deltaPosition - m_tongue.position;
+			}break;
+			case State.ExitingWater:
+			{
+				m_recoverTimer -= Time.deltaTime;
+				if ( m_recoverTimer <= 0 )
+					ChangeState( State.Fly );
+			}break;
+			case State.ExitingSpace:
+			{
+				m_recoverTimer -= Time.deltaTime;
+				if ( m_recoverTimer <= 0 )
+					ChangeState( State.Fly_Down );
 			}break;
 		}
 
@@ -623,6 +648,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				UpdateMovement();
 				break;
 			case State.InsideWater:
+			case State.ExitingWater:
 			{
 				if (m_canMoveInsideWater)
 				{
@@ -634,6 +660,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}
 			}break;
 			case State.OuterSpace:
+			case State.ExitingSpace:
 				UpdateParabolicMovement( -m_parabolicMovementValue);
 				break;
 			case State.Intro:
@@ -1086,7 +1113,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void OnImpact(Vector3 _origin, float _damage, float _intensity, Transform _source) {
 		// m_dragon.AddLife(-_damage);
-		m_health.ReceiveDamage( _damage, DamageType.NORMAL , _source, false);
+		m_health.ReceiveDamage(_damage, DamageType.NORMAL , _source, false);
+	}
+
+	public bool IsInsideWater() {
+		return m_state == State.InsideWater;
 	}
 
 	public void StartWaterMovement()
@@ -1120,14 +1151,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_particleController.OnExitWater();
 
 		// Wait a second
-		StartCoroutine( EndWaterCoroutine() );
+		ChangeState( State.ExitingWater );
 	}
-
-	IEnumerator EndWaterCoroutine()
-	{
-		yield return new WaitForSeconds(0.1f);
-		ChangeState( State.Fly);
-	} 
 
 	public void StartSpaceMovement()
 	{
@@ -1153,18 +1178,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_particleController.OnExitOuterSpace();
 		}
 
-		// Wait a second 
-		StartCoroutine( EndSpaceCoroutine() );
+		ChangeState( State.ExitingSpace );
 	}
-
-	IEnumerator EndSpaceCoroutine()
-	{
-		// The faster we go, the longer it takes for the player to recover control
-		/*float relativeImpulseY = Mathf.InverseLerp(1f, 15f, m_impulse.y);
-		float delay = Mathf.Lerp(0.1f, 0.75f, relativeImpulseY);*/
-		yield return new WaitForSeconds(m_outerSpaceRecoveryTime);
-		ChangeState( State.Fly_Down);
-	} 
 
 	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
 	{
@@ -1271,7 +1286,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( _other.tag == "Water" )
 		{
 			// Disable Bubbles
-			if (IsAliveState())
+			if (IsAliveState() )
 				EndWaterMovement();
 			m_stateAfterRevive = State.Idle;
 		}

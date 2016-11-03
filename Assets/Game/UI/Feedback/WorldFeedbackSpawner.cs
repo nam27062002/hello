@@ -42,7 +42,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------//    
 	/// <summary>
 	/// First update call.
 	/// </summary>
@@ -99,12 +99,16 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			}
 			PoolManager.CreatePool(m_escapedFeedbackPrefab, parent, 2, false);
 		}
-	}
 
-	/// <summary>
-	/// The spawner has been enabled.
-	/// </summary>
-	private void OnEnable() {
+#if !PRODUCTION      
+        Debug_Awake();
+#endif
+    }
+
+    /// <summary>
+    /// The spawner has been enabled.
+    /// </summary>
+    private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnEaten);
@@ -131,18 +135,20 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
+#if !PRODUCTION
+        Debug_OnDestroy();
+#endif
+    }
 
-	}
-
-	//------------------------------------------------------------------//
-	// INTERNAL															//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Spawn a kill message feedback with the given text and entity.
-	/// </summary>
-	/// <param name="_type">The type of feedback to be displayed.</param>
-	/// <param name="_entity">The source of the kill.</param>
-	private void SpawnKillFeedback(FeedbackData.Type _type, Transform _entity) {
+    //------------------------------------------------------------------//
+    // INTERNAL															//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Spawn a kill message feedback with the given text and entity.
+    /// </summary>
+    /// <param name="_type">The type of feedback to be displayed.</param>
+    /// <param name="_entity">The source of the kill.</param>
+    private void SpawnKillFeedback(FeedbackData.Type _type, Transform _entity) {
 		// Some checks first
 		if(_entity == null) return;
 
@@ -276,4 +282,34 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	{
 		SpawnEscapedFeedback(_entity);
 	}
+
+    #region debug
+    // This region is responsible for enabling/disabling the feedback particles for profiling purposes. 
+    private void Debug_Awake()
+    {
+        Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChanged);
+
+        // Enable/Disable object depending on the flag
+        Debug_SetActive();
+    }
+
+    private void Debug_OnDestroy()
+    {
+        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChanged);
+    }
+
+    private void Debug_OnChanged(string _id)
+    {
+        if (_id == DebugSettings.INGAME_PARTICLES_FEEDBACK)
+        {
+            // Enable/Disable object
+            Debug_SetActive();
+        }
+    }
+
+    private void Debug_SetActive()
+    {
+        enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_FEEDBACK);        
+    }
+    #endregion
 }

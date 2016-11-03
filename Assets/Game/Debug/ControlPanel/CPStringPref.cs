@@ -20,7 +20,9 @@ public class CPStringPref : CPPrefBase {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// References
+	// Exposed value
+	[Space]
+	[SerializeField] private string m_defaultValue = "";
 	[SerializeField] private InputField m_input;
 
 	//------------------------------------------------------------------//
@@ -33,8 +35,18 @@ public class CPStringPref : CPPrefBase {
 		// Check requirements
 		DebugUtils.Assert(m_input != null, "Required component!");
 
+		// Init input
+		m_input.onValueChanged.AddListener(OnValueChanged);
+
 		// Call parent
 		base.Awake();
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		m_input.onValueChanged.RemoveListener(OnValueChanged);
 	}
 
 	/// <summary>
@@ -42,7 +54,7 @@ public class CPStringPref : CPPrefBase {
 	/// </summary>
 	override public void Refresh() {
 		base.Refresh();
-		m_input.text = Prefs.GetStringPlayer(id);
+		m_input.text = Prefs.GetStringPlayer(id, m_defaultValue);
 	}
 
 	//------------------------------------------------------------------//
@@ -51,7 +63,9 @@ public class CPStringPref : CPPrefBase {
 	/// <summary>
 	/// The toggle has changed.
 	/// </summary>
-	public void OnValueChanged() {
-		Prefs.SetStringPlayer(id, m_input.text);
+	public void OnValueChanged(string _newValue) {
+		Prefs.SetStringPlayer(id, _newValue);
+		Messenger.Broadcast<string, string>(GameEvents.CP_STRING_CHANGED, id, _newValue);
+		Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 	}
 }

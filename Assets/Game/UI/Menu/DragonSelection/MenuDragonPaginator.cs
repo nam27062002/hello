@@ -54,7 +54,10 @@ public class MenuDragonPaginator : TabSystem {
 
 			// Load the icon corresponding to the target tier
 			Image tierIcon = newInstanceObj.GetComponent<Image>();
-			if(tierIcon != null) tierIcon.sprite = Resources.Load<Sprite>(tierDefs[i].GetAsString("icon"));
+			//if(tierIcon != null) tierIcon.sprite = Resources.Load<Sprite>(tierDefs[i].GetAsString("icon"));
+			if(tierIcon != null) {
+				tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierDefs[i].GetAsString("icon"));
+			}
 
 			// Add a listener to the button to select the first dragon of that tier whenever the button is pressed
 			SelectableButton tierButton = newInstanceObj.GetComponent<SelectableButton>();

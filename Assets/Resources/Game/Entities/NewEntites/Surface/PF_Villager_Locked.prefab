@@ -970,7 +970,7 @@ MonoBehaviour:
   - name: PS_Blood_Explosion_Small
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-  m_onEatenAudio: 
+  m_onEatenAudio: Villager_Dead
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -978,8 +978,9 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
   m_onAttackAudio: 
-  m_onScaredAudio: 
-  m_onPanicAudio: 
+  m_onScaredAudio: Villager_Scream
+  m_onPanicAudio: Villager_Scream
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &11476190
 MonoBehaviour:
@@ -1026,11 +1027,11 @@ MonoBehaviour:
   - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v04
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v03
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v02
+  m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11484900
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2202,11 +2203,11 @@ MonoBehaviour:
   - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v04
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v03
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v02
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011055342836
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2335,6 +2336,7 @@ MonoBehaviour:
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!135 &135000012126987150
 SphereCollider:

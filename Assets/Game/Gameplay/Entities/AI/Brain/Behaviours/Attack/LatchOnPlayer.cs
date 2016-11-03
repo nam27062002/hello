@@ -5,7 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class LatchData : StateComponentData {
-			public Range stunTime = new Range( 4,6 );
+			public Range retreatTime = new Range( 4,6 );
 			public float damage = 1;
 			public float duration = 2;
 
@@ -53,7 +53,7 @@ namespace AI {
 				m_eatBehaviour.holdDuration = m_data.duration;
 
 				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.stunTime.GetRandom(); // retreat time
+				m_transitionParam[0] = m_data.retreatTime.GetRandom(); // retreat time
 
 				base.OnInitialise();
 			}
@@ -68,7 +68,6 @@ namespace AI {
 				m_eatBehaviour.holdDuration = m_data.duration;
 
 				m_holdTransform = null;
-				m_machine.SetSignal(Signals.Type.Latching, true);
 			}
 
 			protected override void OnExit(State _newState) {
@@ -77,7 +76,6 @@ namespace AI {
 				m_eatBehaviour.enabled = false;
 				m_holdTransform = null;
 				m_pilot.ReleaseAction(Pilot.Action.Latching);
-				m_machine.SetSignal(Signals.Type.Latching, false);
 			}
 
 			void OnBiteKillEvent()
@@ -88,13 +86,17 @@ namespace AI {
 				}
 				else
 				{
+					m_holdTransform = m_eatBehaviour.holdTransform;
+
 					m_originalParent = m_pilot.transform.parent;
 					m_pilot.transform.parent = m_holdTransform;
 
 					m_pilot.PressAction(Pilot.Action.Latching);
-					m_holdTransform = m_eatBehaviour.holdTransform;
 					m_pilot.GoTo( m_holdTransform.position );
 					m_pilot.RotateTo( m_holdTransform.rotation );
+
+					m_machine.SetSignal(Signals.Type.Latching, true);
+					m_pilot.PressAction(Pilot.Action.Button_A);
 				}
 			}
 
@@ -116,6 +118,9 @@ namespace AI {
 
 			void OnEndLatchingEvent()
 			{	
+				m_machine.SetSignal(Signals.Type.Latching, false);
+				m_pilot.ReleaseAction(Pilot.Action.Button_A);
+
 				m_pilot.transform.parent = m_originalParent;
 				Transition(OnEndLatching, m_transitionParam);
 			}

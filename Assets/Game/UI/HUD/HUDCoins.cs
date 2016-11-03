@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -25,7 +26,7 @@ public class HUDCoins : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
-	[SerializeField] private Text m_text = null;
+	[SerializeField] private TextMeshProUGUI m_text = null;
 	[SerializeField] private Animator m_anim = null;
 
 	//------------------------------------------------------------------//
@@ -71,7 +72,7 @@ public class HUDCoins : MonoBehaviour {
 	/// </summary>
 	private void UpdateText() {
 		// Do it!
-		m_text.text = StringUtils.FormatNumber(RewardManager.coins);
+		m_text.text = UIConstants.TMP_SPRITE_SC + StringUtils.FormatNumber(RewardManager.coins);
 	}
 	
 	//------------------------------------------------------------------//

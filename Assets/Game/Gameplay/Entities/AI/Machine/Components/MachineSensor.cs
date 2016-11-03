@@ -36,9 +36,12 @@ namespace AI {
 		}
 
 		public override void Update() {
-			if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.Panic)) {
+			if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.Panic) || m_machine.GetSignal(Signals.Type.FallDown)) {
 				m_machine.SetSignal(Signals.Type.Warning, false);
 				m_machine.SetSignal(Signals.Type.Danger, false);
+				m_machine.SetSignal(Signals.Type.Critical, 	false);
+
+				m_senseTimer = 1f;
 			} else {
 				float distanceSqr = 0f;
 				bool isInsideSightArea = m_machine.GetSignal(Signals.Type.Warning);
