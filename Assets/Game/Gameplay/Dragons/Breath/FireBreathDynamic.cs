@@ -55,9 +55,6 @@ public class FireBreathDynamic : MonoBehaviour
 
     private float flameAnimationTime = 0.0f;
 
-    public string m_groundLayer;
-    public string[] m_enemyLayers;
-
     private int m_groundLayerMask;
 
 
@@ -104,7 +101,7 @@ public class FireBreathDynamic : MonoBehaviour
         m_meshFilter = GetComponent<MeshFilter>();
 		m_numPos = (int)(4 + m_splits * 2);
 
-        m_groundLayerMask = LayerMask.GetMask(m_groundLayer);
+        m_groundLayerMask = LayerMask.GetMask("Ground", "GroundVisible", "Water");
 
         m_whipEnd = transform.FindChild("WhipEnd").gameObject;
         m_collisionPlane = transform.FindChild("WhipEnd/collisionPlane").gameObject;
