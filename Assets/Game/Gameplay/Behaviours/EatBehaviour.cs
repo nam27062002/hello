@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public abstract class EatBehaviour : MonoBehaviour {
-	protected struct PreyData {		
+	protected class PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
 		public float eatingAnimationDuration;
@@ -24,10 +24,13 @@ public abstract class EatBehaviour : MonoBehaviour {
 	[SerializeField]protected float m_eatDistance = 1;
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 
+    private static int maxPreysSoFar = 0;
     private const int MAX_PREYS = 20;
-	protected List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
-    private AI.Machine[] m_preysToEat; // Temporary list needed when eating. It's defined here to prevent memory from being generated when eating
+	protected PreyData[] m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
+    private AI.Machine[] m_preysToEat; // Temporary array needed when eating. It's defined here to prevent memory from being generated when eating
 
+    protected int PreyCount { get; set; }
+    
 	protected DragonTier m_tier;
 	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
 
@@ -120,9 +123,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Methods
 	//-----------------------------------------------
 	// Use this for initialization
-	protected virtual void Awake () {
-
-		m_prey = new List<PreyData>();        
+	protected virtual void Awake () {		
         m_bloodEmitter = new List<GameObject>();
 
 		MouthCache();
@@ -139,6 +140,11 @@ public abstract class EatBehaviour : MonoBehaviour {
         if (m_canEatEntities) {
             int amount = (m_limitEating) ? m_limitEatingValue : MAX_PREYS;
             m_preysToEat = new AI.Machine[amount];
+            m_prey = new PreyData[amount];
+            for (int i = 0; i < amount; i++)
+            {
+                m_prey[i] = new PreyData();
+            }
         }
     }
 
@@ -178,23 +184,29 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 	}
 
-	protected virtual void OnDisable() {
+	protected virtual void OnDisable()
+    {
+        if (m_prey != null)
+        {
+            int count = m_prey.Length;
+            for (int i = 0; i < count; i++)
+            {
+                if (m_prey[i].prey != null)
+                {
+                    PreyData prey = m_prey[i];
+                    prey.prey.transform.parent = prey.startParent;
+                    Swallow(m_prey[i].prey);
+                    prey.prey = null;
+                    prey.startParent = null;
+                }
+            }
 
-		for (int i = 0; i < m_prey.Count; i++) {	
-			if (m_prey[i].prey != null) {
-				PreyData prey = m_prey[i];
-				prey.prey.transform.parent = prey.startParent;
-				Swallow(m_prey[i].prey);
-				prey.prey = null;
-				prey.startParent = null;
-			}
-		}
-
-		m_prey.Clear();
+            PreyCount = 0;
+        }		
 	}
 
 	public bool IsEating() {
-		return enabled && m_prey.Count > 0;
+		return enabled && PreyCount > 0;
 	}
 
 	public bool IsLatching()
@@ -210,7 +222,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update() 
 	{
-		if (m_prey.Count > 0)
+		if (PreyCount > 0)
 		{
 			UpdateEating();
 		}
@@ -224,7 +236,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			}
 		}
 		else
-		{
+		{            
 			if ( m_noAttackTime > 0 )
 			{
 				m_noAttackTime -= Time.deltaTime;
@@ -243,11 +255,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 				if (m_noAttackTime <= 0 && !m_pauseEating)	// no attack time y no estoy intentando comerme algo? y si ya estoy comiendo? empiezo un nuevo bite?
 					TargetSomethingToEat();	// Buscar target
 				
-			}
+			}            
 		}
 
-		UpdateBlood();
-
+		UpdateBlood();        
 	}
 
 	/// <summary>
@@ -279,11 +290,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_holdingPrey == null && !m_pauseEating)
 		{
 			StopAttackTarget();
-			BiteKill(m_prey.Count <= 0 && m_canHold);
+			BiteKill(PreyCount <= 0 && m_canHold);
 			if (onBiteKill != null)
 				onBiteKill();
-			// if ( m_holdingPrey == null )
-			// 	TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
+			 //if ( m_holdingPrey == null )
+			 //	TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 		}
 	}
 
@@ -306,33 +317,64 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// </summary>
 
 	/// Start Eating _prey
-	protected virtual void Eat(AI.Machine _prey) {
-		
-		_prey.Bite();
+	protected void Eat(AI.Machine prey)
+    {
+        PreyData preyData = null;
+        if (m_prey != null)
+        {
+            // Searches for an empty PreyData
+            int i;
+            int count = m_prey.Length;
+            for (i = 0; i < count; i++)
+            {
+                if (m_prey[i].prey == null)
+                {
+                    break;
+                }
+            }
 
-		PreyData preyData = new PreyData();
+            // prey is bitten If an available PreyData was found the
+            if (i < count)
+            {
+                prey.Bite();
 
-		float eatTime = Mathf.Max(m_minEatAnimTime, m_eatSpeedFactor * _prey.biteResistance);
+                preyData = m_prey[i];
+                float eatTime = Mathf.Max(m_minEatAnimTime, m_eatSpeedFactor * prey.biteResistance);
 
-		preyData.startParent = _prey.transform.parent;
-		_prey.transform.parent = m_mouth;
-		preyData.startScale = _prey.transform.localScale;
-		preyData.absorbTimer = eatTime * 0.5f;
-		preyData.eatingAnimationTimer = preyData.absorbTimer;
-		preyData.eatingAnimationDuration = preyData.eatingAnimationTimer;
-		preyData.prey = _prey;
-		preyData.dyingRotation = _prey.GetDyingFixRot();
+                preyData.startParent = prey.transform.parent;
+                prey.transform.parent = m_mouth;
+                preyData.startScale = prey.transform.localScale;
+                preyData.absorbTimer = eatTime * 0.5f;
+                preyData.eatingAnimationTimer = preyData.absorbTimer;
+                preyData.eatingAnimationDuration = preyData.eatingAnimationTimer;
+                preyData.prey = prey;
+                preyData.dyingRotation = prey.GetDyingFixRot();
+                PreyCount++;
 
-		m_prey.Add(preyData);
+                if (PreyCount > maxPreysSoFar)
+                {
+                    maxPreysSoFar = PreyCount;
+                    //Debug.LogWarning("MAX = " + maxPreysSoFar + " i = " + i + " count = " + count);
+                }
+            }
+            else
+            {
+                Debug.Log("Eat is not allowed: Not available PreyData found");
+            }
+        }
+
+        EatExtended(preyData);        
 	}
+
+    protected virtual void EatExtended(PreyData preyData) {}
 
 	/// <summary>
 	/// Eating Update
 	/// </summary>
-	protected virtual void UpdateEating() {
-		bool empty = true;
-
-		for (int i = 0; i < m_prey.Count; i++) {
+	protected virtual void UpdateEating() {		
+        int count = (m_prey == null) ? 0 : m_prey.Length;
+        PreyCount = 0;
+		for (int i = 0; i < count; i++) {
 			if (m_prey[i].prey != null) {
 				PreyData prey = m_prey[i];
 
@@ -348,7 +390,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_suction.position, t);
 					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
-				}
+                    PreyCount++;
+                }
 				else
 				{
 					prey.eatingAnimationTimer -= Time.deltaTime;
@@ -362,17 +405,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 						prey.prey = null;
 						prey.startParent = null;
 					}
-				}
-
-
-
-				m_prey[i] = prey;
-				empty = false;
-			}
+                    else
+                    {
+                        PreyCount++;
+                    }
+				}                
+            }
 		}
 
-		if (empty) {
-			m_prey.Clear();
+		if (PreyCount == 0) {			
 			if ( onEndEating != null)
 				onEndEating();
 		}
@@ -536,8 +577,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// Ends the hold.
 	/// </summary>
 	virtual public void EndHold()
-	{
-		if ( m_holdingPrey != null)
+	{		
+        if ( m_holdingPrey != null)
 		{
 			if ( !m_grabbingPrey && onEndLatching != null)
 				onEndLatching();
@@ -554,7 +595,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			m_holdingPlayer = null;
 		}
 
-		m_noAttackTime = m_holdStunTime;
+		m_noAttackTime = m_holdStunTime;        
 	}
 
 	/// <summary>
@@ -610,9 +651,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	public virtual void StartAttackTarget( Transform _transform )
-	{
+	{        
 		m_attackTarget = _transform;
-		m_attackTimer = 0.2f;
+		m_attackTimer = 0.2f;     
 	}
 
 	public virtual void StopAttackTarget()
@@ -649,7 +690,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_mouth.position, eatDistance, m_checkEntities);
 
             int numPreysToEat = 0;
-            int maxPreysToEat = m_preysToEat.Length;
+            int maxPreysToEat = m_preysToEat.Length;            
             for (int e = 0; e < m_numCheckEntities; e++)
             {
 				Entity entity = m_checkEntities[e];
@@ -657,7 +698,7 @@ public abstract class EatBehaviour : MonoBehaviour {
                 {
 					if (entity.IsEdible(m_tier) || m_ignoreTierList.Contains( entity.sku ))
                     {
-						if (m_limitEating && (numPreysToEat + m_prey.Count) < m_limitEatingValue || !m_limitEating)
+						if (m_limitEating && (numPreysToEat + PreyCount) < m_limitEatingValue || !m_limitEating)
                         {
                             // Makes sure that it won't exceed the max limit
                             if (numPreysToEat < maxPreysToEat)
@@ -673,7 +714,7 @@ public abstract class EatBehaviour : MonoBehaviour {
                             {
                                 Debug.LogWarning("Current amount of entities being eaten exceeds the max limit " + maxPreysToEat);
                             }
-						}
+                        }
 					}
 					else if (entity.CanBeHolded(m_tier))
 					{
@@ -690,7 +731,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier, entity.sku);
 					}
 				}
-			}
+			}                       
 
 			if ( preyToHold != null )
 			{
@@ -699,7 +740,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			else if (numPreysToEat > 0 )
 			{
 				for( int i = 0; i< numPreysToEat; i++ )
-					Eat(m_preysToEat[i]);               
+					Eat(m_preysToEat[i]);  
             }
 		}
 
