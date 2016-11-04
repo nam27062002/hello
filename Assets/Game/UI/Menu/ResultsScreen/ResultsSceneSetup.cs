@@ -131,6 +131,9 @@ public class ResultsSceneSetup : MonoBehaviour {
 		for(int i = 0; i < sortedSlots.Count; i++) {
 			// Get reward definition corresponding to this chest
 			int chestIdx = RewardManager.initialCollectedChests + i + 1;
+			if(DebugSettings.resultsChestTestMode != ChestTestMode.NONE) {
+				chestIdx = i + 1;
+			}
 			DefinitionNode rewardDef = ChestManager.GetRewardDef(chestIdx);
 
 			// Launch with delay
