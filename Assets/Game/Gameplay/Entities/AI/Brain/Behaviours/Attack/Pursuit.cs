@@ -103,23 +103,30 @@ namespace AI {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
 							ChangeState(PursuitState.Move_Away);
 						} else {
-							float m = 0;
+							bool onRange = false;
+							bool onGuardArea = false;
+
 							if (m_targetEntity != null) {
-								m = (m_machine.position - m_targetEntity.circleArea.center).sqrMagnitude;
+								float m = (m_machine.eye - m_targetEntity.circleArea.center).sqrMagnitude;
+								onRange = m < m_data.arrivalRadius * m_data.arrivalRadius;
+								if (m_data.hasGuardState) {
+									m = Mathf.Abs(m_machine.eye.x - m_target.position.x);
+									onGuardArea = m <= 1f;
+								}
 							} else {
-								m = (m_machine.position - m_target.position).sqrMagnitude;
+								onRange = m_machine.GetSignal(Signals.Type.Danger);
+								if (m_data.hasGuardState) {
+									onGuardArea = m_machine.GetSignal(Signals.Type.Critical);
+								}
 							}
 
-							if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
+							if (onRange) {
 								m_transitionParam[0] = m_target;
 								Transition(OnEnemyInRange, m_transitionParam);
 							} else {
-								if (m_data.hasGuardState) {
-									m = Mathf.Abs(m_machine.position.x - m_target.position.x);
-									if (m <= 1f) {
-										m_transitionParam[0] = m_target;
-										Transition(OnEnemyInGuardArea, m_transitionParam);
-									}
+								if (onGuardArea) {
+									m_transitionParam[0] = m_target;
+									Transition(OnEnemyInGuardArea, m_transitionParam);
 								}
 
 								if (m_targetEntity != null) {
@@ -133,10 +140,10 @@ namespace AI {
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
 							// Player is inside our Critical area and we can't attack it from here, me should move back a bit
 							Vector3 direction = Vector3.left;
-							if (m_target.position.x < m_machine.position.x) {
+							if (m_target.position.x < m_machine.eye.x) {
 								direction = Vector3.right;
 							}
-							Vector3 target = m_machine.position + direction * m_data.speed;
+							Vector3 target = m_machine.eye + direction * m_data.speed;
 							m_pilot.GoTo(target);
 						} else {
 							ChangeState(PursuitState.Move_Towards);

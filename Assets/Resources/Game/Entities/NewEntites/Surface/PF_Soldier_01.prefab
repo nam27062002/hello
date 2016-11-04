@@ -1182,9 +1182,12 @@ MonoBehaviour:
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 1.5, z: 0}
-    m_senseDelay:
-      min: 0.75
+    m_radiusOffset:
+      min: 0.8
       max: 1.5
+    m_senseDelay:
+      min: 0
+      max: 0.25
   m_onSpawnSoundProbability: 0
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
@@ -1267,6 +1270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b50cf50e7834c5397a1f060efb7791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: 1bc6a6f8f3bad4cb59a9ab4625e5fd20, type: 2}
   m_railSeparation:
     min: 2
@@ -1274,7 +1278,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":1},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7.5,"arrivalRadius":3,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":22,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":0,"max":0},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":5.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":1},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7.5,"arrivalRadius":4,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":22,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":0,"max":0},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":5.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_Soldier_01
 --- !u!137 &13791830
 SkinnedMeshRenderer:

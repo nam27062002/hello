@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace AI {
 	public interface IMachine : MotionInterface {
 
+		Vector3 eye			{ get; }
 		Vector3 target		{ get; }
 		Vector3 upVector	{ get; set; }
 		Transform enemy 	{ get; } 
