@@ -2461,6 +2461,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelUp: {fileID: 147012, guid: 80e922c7232c34f6e9e257feb581ee77, type: 2}
   m_levelUpAnchor: {fileID: 488014}
+  m_revive: {fileID: 0}
+  m_reviveAnchor: {fileID: 0}
   m_bubbles: {fileID: 105258, guid: f3cddb62f324a4668b40f72b9be4eb4e, type: 2}
   m_bubblesAnchor: {fileID: 4000012015477780}
   m_cloudTrail: {fileID: 1000011103382704, guid: 07168ca503d1d42c48cefb0bca335cec,
@@ -2480,10 +2482,12 @@ MonoBehaviour:
   m_stunnedTime: 0.5
   m_velocityBlendRate: 256
   m_rotBlendRate: 350
-  m_parabolicMovementValue: 12
+  m_parabolicMovementConstant: 10
+  m_parabolicMovementAdd: 10
   m_parabolicXControl: 10
   m_cloudTrailMinSpeed: 7.5
   m_outerSpaceRecoveryTime: 0.5
+  m_insideWaterRecoveryTime: 0.1
   m_dargonAcceleration: 20
   m_dragonMass: 10
   m_dragonFricction: 15

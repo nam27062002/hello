@@ -32,6 +32,9 @@ namespace AI {
 			protected float m_timer;
 			protected float m_timeOut;
 
+			private EatBehaviour m_eatBehaviour;
+
+
 
 			private object[] m_transitionParam;
 
@@ -48,6 +51,10 @@ namespace AI {
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
 				m_transitionParam = new object[1];
+
+				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
+				m_eatBehaviour.enabled = false;
+				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -71,8 +78,25 @@ namespace AI {
 				{
 					m_player = InstanceManager.player;
 				}
+
+				m_eatBehaviour.enabled = true;
+
 				m_timer = 0;
 				m_timeOut = m_data.timeout.GetRandom();
+
+				//m_pilot.PressAction(Pilot.Action.Button_A);
+			}
+
+			protected override void OnExit(State _newState) {
+				//m_pilot.ReleaseAction(Pilot.Action.Button_A);
+			}
+
+			void OnBiteKillEvent()
+			{
+				if ( m_eatBehaviour.IsLatching() )
+				{
+					Transition(OnEnemyInRange);
+				}
 			}
 
 			protected override void OnUpdate() {	
@@ -101,8 +125,8 @@ namespace AI {
 
 				float m = (m_machine.position - m_target.position).sqrMagnitude;
 				if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
-					m_transitionParam[0] = m_target;
-					Transition(OnEnemyInRange, m_transitionParam);
+				//	m_transitionParam[0] = m_target;
+				//	Transition(OnEnemyInRange, m_transitionParam);
 				} else {
 					m_timer += Time.deltaTime;
 					if ( m_timer > m_timeOut )

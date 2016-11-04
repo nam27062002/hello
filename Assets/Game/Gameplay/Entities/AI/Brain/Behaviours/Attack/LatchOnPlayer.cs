@@ -44,8 +44,7 @@ namespace AI {
 
 				m_myMachine = m_pilot.GetComponent<AI.Machine>();
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
-				m_eatBehaviour.enabled = false;
-				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
+
 				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;
 
 				m_data = m_pilot.GetComponentData<LatchData>();
@@ -61,13 +60,19 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 
 				base.OnEnter(oldState, param);
-				// Get Target!
-				m_eatBehaviour.StartAttackTarget( InstanceManager.player.transform);
-				m_eatBehaviour.enabled = true;
-				m_eatBehaviour.holdDamage = m_data.damage;
-				m_eatBehaviour.holdDuration = m_data.duration;
 
-				m_holdTransform = null;
+				// Get Target!
+				m_holdTransform = m_eatBehaviour.holdTransform;
+
+				m_originalParent = m_pilot.transform.parent;
+				m_pilot.transform.parent = m_holdTransform;
+
+				m_pilot.PressAction(Pilot.Action.Latching);
+				m_pilot.GoTo( m_holdTransform.position );
+				m_pilot.RotateTo( m_holdTransform.rotation );
+
+				m_machine.SetSignal(Signals.Type.Latching, true);
+				m_pilot.PressAction(Pilot.Action.Button_A);
 			}
 
 			protected override void OnExit(State _newState) {
@@ -75,29 +80,10 @@ namespace AI {
 					m_eatBehaviour.EndHold();
 				m_eatBehaviour.enabled = false;
 				m_holdTransform = null;
+
+				m_machine.SetSignal(Signals.Type.Latching, false);
 				m_pilot.ReleaseAction(Pilot.Action.Latching);
-			}
-
-			void OnBiteKillEvent()
-			{
-				if ( !m_eatBehaviour.IsLatching() )
-				{
-					Transition(OnBiteFail);
-				}
-				else
-				{
-					m_holdTransform = m_eatBehaviour.holdTransform;
-
-					m_originalParent = m_pilot.transform.parent;
-					m_pilot.transform.parent = m_holdTransform;
-
-					m_pilot.PressAction(Pilot.Action.Latching);
-					m_pilot.GoTo( m_holdTransform.position );
-					m_pilot.RotateTo( m_holdTransform.rotation );
-
-					m_machine.SetSignal(Signals.Type.Latching, true);
-					m_pilot.PressAction(Pilot.Action.Button_A);
-				}
+				m_pilot.ReleaseAction(Pilot.Action.Button_A);
 			}
 
 			protected override void OnUpdate()
@@ -118,9 +104,6 @@ namespace AI {
 
 			void OnEndLatchingEvent()
 			{	
-				m_machine.SetSignal(Signals.Type.Latching, false);
-				m_pilot.ReleaseAction(Pilot.Action.Button_A);
-
 				m_pilot.transform.parent = m_originalParent;
 				Transition(OnEndLatching, m_transitionParam);
 			}
