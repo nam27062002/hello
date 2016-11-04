@@ -191,7 +191,7 @@ namespace AI {
 				m_machine.transform.position = Vector3.Lerp( m_machine.transform.position, m_pilot.target, Time.deltaTime * m_latchBlending);
 
 				if (m_latchBlending < 10f)
-					m_latchBlending += 0.1f;
+					m_latchBlending += 0.1f * 2f;
 
 				m_viewControl.Move(0);
 				return;	
