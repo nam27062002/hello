@@ -60,6 +60,7 @@ namespace AI {
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
 
+		public Vector3 eye				{ get { if (m_enableSensor && m_sensor != null) return m_sensor.sensorPosition; else return transform.position; } }
 		public Vector3 target			{ get { return m_pilot.target; } }
 		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
 		public Vector3 groundDirection	{ get { if (m_enableMotion && m_motion != null) return m_motion.groundDirection; else return Vector3.zero; } }
