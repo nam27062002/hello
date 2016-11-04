@@ -577,27 +577,45 @@ public abstract class EatBehaviour : MonoBehaviour {
 		mouthPos.z = 0;
 		Vector3 arcOrigin = mouthPos - (dir * eatDistance);
 
-		m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
-		for (int e = 0; e < m_numCheckEntities; e++) 
-		{
-			Entity entity = m_checkEntities[e];
-			if (entity.IsEdible())
+		if (m_canLatchOnPlayer) {
+			Vector3 heading = (InstanceManager.player.transform.position - arcOrigin);
+			float dot = Vector3.Dot(heading, dir);
+			if ( dot > 0)
 			{
-				// Start bite attempt
-				Vector3 heading = (entity.transform.position - arcOrigin);
-				float dot = Vector3.Dot(heading, dir);
-				if ( dot > 0)
+				SphereCollider sc = InstanceManager.player.dragonMotion.groundCollider;
+
+				// Check arc
+				Vector3 circleCenter = sc.transform.TransformPoint(sc.center);
+				circleCenter.z = 0;
+				if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, dir, circleCenter, sc.radius))
 				{
-					// Check arc
-					Vector3 circleCenter = entity.circleArea.center;
-					circleCenter.z = 0;
-					if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, dir, circleCenter, entity.circleArea.radius))
+					StartAttackTarget( sc.transform );
+				}
+			}
+		}
+
+		if (m_canEatEntities && m_attackTarget == null) {
+			m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( arcOrigin, arcRadius, m_checkEntities);
+			for (int e = 0; e < m_numCheckEntities; e++) 
+			{
+				Entity entity = m_checkEntities[e];
+				if (entity.IsEdible())
+				{
+					// Start bite attempt
+					Vector3 heading = (entity.transform.position - arcOrigin);
+					float dot = Vector3.Dot(heading, dir);
+					if ( dot > 0)
 					{
-						StartAttackTarget( entity.transform );
-						break;
+						// Check arc
+						Vector3 circleCenter = entity.circleArea.center;
+						circleCenter.z = 0;
+						if (MathUtils.TestCircleVsArc( arcOrigin, arcAngle, arcRadius, dir, circleCenter, entity.circleArea.radius))
+						{
+							StartAttackTarget( entity.transform );
+							break;
+						}
 					}
 				}
-
 			}
 		}
 	}
