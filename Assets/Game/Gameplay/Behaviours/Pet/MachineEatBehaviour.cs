@@ -44,7 +44,7 @@ public class MachineEatBehaviour : EatBehaviour {
 			animEvents.onEat += OnJawsClose;
 			m_waitJawsEvent = true;
 		}
-		// else
+		else
 		{
 			m_waitJawsEvent = false;
 		}
@@ -118,5 +118,11 @@ public class MachineEatBehaviour : EatBehaviour {
 		{
 			base.MouthCache();
 		}
+	}
+
+	override protected void OnDrawGizmos() {
+		if ( m_motion == null )
+			m_motion = GetComponent<AI.Machine>();
+		base.OnDrawGizmos();
 	}
 }

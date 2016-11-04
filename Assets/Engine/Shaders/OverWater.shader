@@ -15,6 +15,7 @@ Shader "Hungry Dragon/OverWater"
 
 	SubShader {
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
+//		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 		LOD 100
 
 		Pass {  
@@ -22,9 +23,9 @@ Shader "Hungry Dragon/OverWater"
 			Blend SrcAlpha OneMinusSrcAlpha
 			// Blend One One
 			//Blend OneMinusDstColor One
-			//Cull Off
+			Cull Off
 //			Lightning Off
-			ZWrite Off
+			ZWrite On
 			Fog{ Color(0, 0, 0, 0) }
 
 			CGPROGRAM
@@ -46,13 +47,13 @@ Shader "Hungry Dragon/OverWater"
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 uv : TEXCOORD0;
-					float3 normal : NORMAL;
+//					float3 normal : NORMAL;
 					float4 color : COLOR;
 				}; 
 
 				struct v2f {
 					float4 vertex : SV_POSITION;
-					float3 normal : NORMAL;
+//					float3 normal : NORMAL;
 					float3 viewDir: TEXCOORD2;
 					half2 uv : TEXCOORD0;
 					float4 scrPos:TEXCOORD1;
@@ -84,7 +85,7 @@ Shader "Hungry Dragon/OverWater"
 
 //					o.uv = TRANSFORM_TEX(o.scrPos, _MainTex);
 
-					o.normal = normalize(mul(unity_ObjectToWorld, float4(sinX, sinY, -3.5f, 0.0)).xyz);
+//					o.normal = normalize(mul(unity_ObjectToWorld, float4(sinX, sinY, -3.5f, 0.0)).xyz);
 //					o.normal = normalize(mul(v.normal, unity_WorldToObject));
 
 					o.viewDir = o.vertex - _WorldSpaceCameraPos;
@@ -104,18 +105,10 @@ Shader "Hungry Dragon/OverWater"
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
 
-//					col.xyz = 2.0 * i.color.xyz * col.xyz;
-
 					fixed3 one = fixed3(1, 1, 1);
-					// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
-//					col.xyz = one - 2.0 * (one - i.color.xyz * 1.25) * (one - col.xyz);	// Overlay
-
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 
-					float3 ref = normalize(-unity_LightPosition[0].xyz + i.viewDir);
-					float reflectLight = 0.0;// pow(clamp(dot(i.normal, ref), 0.0f, 4.0f), 50.0f);
-
-					return col + fixed4(0.0, reflectLight, reflectLight, 0.0f);
+					return col;
 				}
 			ENDCG
 		}
