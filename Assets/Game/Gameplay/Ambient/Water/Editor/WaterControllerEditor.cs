@@ -34,7 +34,7 @@ public class WaterControllerEditor : Editor {
 	{
 		if ( target == null ) return;
 		Transform _tr = ((WaterController)target).transform;
-		Handles.color = Color.magenta;
+		Handles.color = Color.yellow;
 
 		float squareSpeed = m_startSpeed * m_startSpeed;
 
