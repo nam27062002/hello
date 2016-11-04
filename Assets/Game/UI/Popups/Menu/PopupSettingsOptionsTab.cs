@@ -61,6 +61,29 @@ public class PopupSettingsOptionsTab : MonoBehaviour
         m_languageText.Localize(m_languageDefs[m_selectedIdx].Get("tidName"));  // [AOC] CHECK!! Each language in its own language
     }
 
+	/// <summary>
+	/// Do all the required actions to change to a target language.
+	/// </summary>
+	/// <param name="_languageSku">Language sku.</param>
+	private void SetLanguage(string _languageSku) {
+		// Change localization!
+		if (LocalizationManager.SharedInstance.SetLanguage(_languageSku))
+		{
+			// Store new language
+			PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, _languageSku);
+
+			// [AOC] If the setting is enabled, replace missing TIDs for english ones
+			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
+				LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
+			}
+		}
+
+		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
+
+		// Update text!
+		RefreshText();
+	}
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
@@ -73,15 +96,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
         m_selectedIdx--;
         if (m_selectedIdx < 0) m_selectedIdx = m_languageDefs.Count - 1;
 
-        // Change localization!
-        if (LocalizationManager.SharedInstance.SetLanguage(m_languageDefs[m_selectedIdx].sku))
-        {
-            PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, m_languageDefs[m_selectedIdx].sku);
-        }
-
-        Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
-        // Update text!
-        RefreshText();
+        // Do it!
+		SetLanguage(m_languageDefs[m_selectedIdx].sku);
     }
 
     /// <summary>
@@ -93,14 +109,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
         m_selectedIdx++;
         if (m_selectedIdx >= m_languageDefs.Count) m_selectedIdx = 0;
 
-        // Change localization!
-        if (LocalizationManager.SharedInstance.SetLanguage(m_languageDefs[m_selectedIdx].sku))
-        {
-            PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, m_languageDefs[m_selectedIdx].sku);
-        }
-
-        Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
-        // Update text!
-        RefreshText();
+		// Do it!
+		SetLanguage(m_languageDefs[m_selectedIdx].sku);
     }
 }
