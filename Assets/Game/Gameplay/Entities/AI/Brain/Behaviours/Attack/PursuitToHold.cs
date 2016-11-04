@@ -34,6 +34,8 @@ namespace AI {
 
 			private EatBehaviour m_eatBehaviour;
 
+			private bool m_enemyInRange = false;
+
 
 
 			private object[] m_transitionParam;
@@ -80,7 +82,7 @@ namespace AI {
 				}
 
 				m_eatBehaviour.enabled = true;
-
+				m_enemyInRange = false;
 				m_timer = 0;
 				m_timeOut = m_data.timeout.GetRandom();
 
@@ -89,28 +91,37 @@ namespace AI {
 
 			protected override void OnExit(State _newState) {
 				//m_pilot.ReleaseAction(Pilot.Action.Button_A);
+				m_enemyInRange = false;
 			}
 
 			void OnBiteKillEvent()
 			{
 				if ( m_eatBehaviour.IsLatching() )
 				{
-					Transition(OnEnemyInRange);
+					m_enemyInRange = true;
+
 				}
 			}
 
-			protected override void OnUpdate() {	
+			protected override void OnUpdate() {
+				if (m_enemyInRange)	{
+					Transition(OnEnemyInRange);
+					m_enemyInRange = false;
+					return;
+				}
 				if (m_targetMachine != null) {
 					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()) {
 						m_targetMachine = null;
 						m_targetEntity = null;
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						m_eatBehaviour.enabled = false;
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				} else if ( m_player != null ){
 					if ( !m_player.IsAlive() || m_player.BeingLatchedOn() )
 					{
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						m_eatBehaviour.enabled = false;
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				}
@@ -132,6 +143,7 @@ namespace AI {
 					if ( m_timer > m_timeOut )
 					{
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						m_eatBehaviour.enabled = false;
 						Transition( OnPursuitTimeOut, m_transitionParam );
 					}
 					else
