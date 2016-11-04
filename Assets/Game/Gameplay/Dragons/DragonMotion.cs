@@ -69,6 +69,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	SphereCollider 			m_groundCollider;
 	PlayerEatBehaviour		m_eatBehaviour;
 
+	public SphereCollider groundCollider { get { return m_groundCollider; } } 
+
 
 	// Movement control
 	private Vector3 m_impulse;

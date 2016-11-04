@@ -10,7 +10,7 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow Cutoff (On Line Decorations)"
 	Properties 
 	{
 		_MainTex ("Base (RGBA)", 2D) = "white" {}
-		_CutOff  ("alpha Cutoff", float) = 0.5
+		_CutOff  ("alpha Cutoff", Range(0.0, 1.0)) = 0.5
 	}
 
 	SubShader {
