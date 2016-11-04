@@ -227,7 +227,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			{
 				UpdateHoldingPrey();
 			}
-			else if ( m_holdingPlayer )
+			else if ( m_holdingPlayer != null )
 			{
 				UpdateLatchOnPlayer();	// A Type of holding
 			}
@@ -269,7 +269,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public void OnJawsClose()
 	{
 		// Bite kill!
-		if ( m_holdingPrey == null && !m_pauseEating)
+		if ( m_holdingPrey == null && !m_pauseEating && m_holdingPlayer == null)
 		{
 			StopAttackTarget();
 			BiteKill(m_prey.Count <= 0 && m_canHold);
@@ -753,7 +753,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	/// <summary>
 	/// GIZMO
 	/// </summary>
-	void OnDrawGizmos() {
+	protected virtual void OnDrawGizmos() {
 		if (m_suction == null) {
 			MouthCache();
 		}

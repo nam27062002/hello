@@ -42,7 +42,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 			animEvents.onEatEvent += onEatEvent;
 			m_waitJawsEvent = true;
 		}
-		m_waitJawsEvent = false;// not working propertly for the moment!
+		// m_waitJawsEvent = false;// not working propertly for the moment!
 	}
 
 	override protected void OnDisable()
@@ -78,7 +78,7 @@ public class PlayerEatBehaviour : EatBehaviour {
 	protected override void UpdateEating()
 	{
 		base.UpdateEating();
-		if ( m_prey.Count <= 0 )
+		if ( m_prey.Count <= 0 && m_attackTarget == null)
 			m_animator.SetBool("eat", false);	
 	}
 

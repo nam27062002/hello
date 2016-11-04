@@ -103,7 +103,7 @@ public class Catapult : Initializable {
 		if (m_toss) {
 			if (m_target != null && Aim(m_target.position)) {
 				if ( !string.IsNullOrEmpty(m_onTossAudio) )
-					AudioController.Play(m_onTossAudio);
+					AudioController.Play(m_onTossAudio, transform.position);
 				m_animator.SetTrigger("toss");
 				m_toss = false;
 			}
