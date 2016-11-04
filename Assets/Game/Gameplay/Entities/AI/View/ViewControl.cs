@@ -80,6 +80,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_swim;
 	private bool m_inSpace;
 	private bool m_moving;
+	private bool m_attackingTarget;
 
 	private float m_desiredBlendX;
 	private float m_desiredBlendY;
@@ -164,6 +165,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_swim = false;
 		m_inSpace = false;
 		m_moving = false;
+		m_attackingTarget = false;
 
 		if (m_animator != null) {
 			m_animator.enabled = true;
@@ -405,11 +407,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void StartAttackTarget()
 	{
+		m_attackingTarget = true;
 		m_animator.SetBool("eat", true);
 	}
 
 	public void StopAttackTarget()
 	{
+		m_attackingTarget = false;
 		m_animator.SetBool("eat", false);
 	}
 
@@ -420,7 +424,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void StopEating()
 	{
-		m_animator.SetBool("eat", false);
+		if (!m_attackingTarget)
+			m_animator.SetBool("eat", false);
 	}
 
 	public void StartSwimming()
