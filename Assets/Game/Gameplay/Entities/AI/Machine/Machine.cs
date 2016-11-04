@@ -40,10 +40,10 @@ namespace AI {
 		}
 
 
-		private IEntity m_entity = null;
-		private Pilot m_pilot = null;
-		private ViewControl m_viewControl = null;
-		private Collider m_collider = null;
+		protected IEntity m_entity = null;
+		protected Pilot m_pilot = null;
+		protected ViewControl m_viewControl = null;
+		protected Collider m_collider = null;
 
 		private Signals m_signals;
 
