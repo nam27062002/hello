@@ -22,10 +22,16 @@ public class WaterMesh : MonoBehaviour
 	
 	private Vector3 m_position;
 
+
+    public bool generateMesh = true;
 	
 	void Awake()
 	{
-		BoxCollider bounds = GetComponent<BoxCollider>();
+        if (!generateMesh)
+        {
+            return;
+        }
+        BoxCollider bounds = GetComponent<BoxCollider>();
 		
 		m_cellSpacing = (int)Mathf.Max(1, Mathf.Max(bounds.size.x * 0.1f, bounds.size.z * 0.1f));
 
@@ -140,15 +146,17 @@ public class WaterMesh : MonoBehaviour
 	{
 		m_transform = transform;
 		m_position = m_transform.position;
-	
-		m_mesh = GetComponent<MeshFilter>().mesh;
-		m_mesh.Clear();
-			
-		m_mesh.vertices = m_vertices;
-		m_mesh.triangles = m_indices;
-		m_mesh.colors = m_colours;
-		m_mesh.uv = m_UV;
-		m_mesh.uv2 = m_UV;
-		m_position = m_transform.position;
+
+        if (!generateMesh)
+        {
+            m_mesh = GetComponent<MeshFilter>().mesh;
+            m_mesh.Clear();
+
+            m_mesh.vertices = m_vertices;
+            m_mesh.triangles = m_indices;
+            m_mesh.colors = m_colours;
+            m_mesh.uv = m_UV;
+            m_mesh.uv2 = m_UV;
+        }
 	}
 }
