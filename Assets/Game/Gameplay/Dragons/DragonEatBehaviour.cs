@@ -9,10 +9,10 @@ public class DragonEatBehaviour : EatBehaviour {
 	private Dictionary<string, float> m_eatingBoosts = new Dictionary<string, float>();
 	private Animator m_animator;
 	protected bool m_pausedOnFury = false;
+    
+    //--------------
 
-	//--------------
-
-	override protected void Awake()
+    override protected void Awake()
 	{
 		base.Awake();
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
@@ -24,8 +24,9 @@ public class DragonEatBehaviour : EatBehaviour {
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
-	protected void Start() 
+	override protected void Start() 
 	{
+        base.Start();
 		m_dragon = GetComponent<DragonPlayer>();
 		m_dragonBoost = GetComponent<DragonBoostBehaviour>();
 		m_motion = GetComponent<DragonMotion>();
@@ -66,19 +67,20 @@ public class DragonEatBehaviour : EatBehaviour {
 	}
 
 
-	protected override void Eat(AI.Machine _prey) {
-		base.Eat( _prey );
-		m_animator.SetBool("eat", true);
-		if (m_prey[ m_prey.Count - 1 ].eatingAnimationDuration >= 0.5f || m_prey.Count > 2) 
-		{
-			m_animator.SetTrigger("eat crazy");
-		}
+    protected override void EatExtended(PreyData preyData)
+    {        		
+        m_animator.SetBool("eat", true);        
+        if ((preyData != null && preyData.eatingAnimationDuration >= 0.5f) ||
+            PreyCount > 2)
+        {                        
+            m_animator.SetTrigger("eat crazy");            
+        }             
 	}
 
 	protected override void UpdateEating()
 	{
 		base.UpdateEating();
-		if ( m_prey.Count <= 0 && m_attackTarget == null)
+		if ( PreyCount <= 0 && m_attackTarget == null)
 			m_animator.SetBool("eat", false);	
 	}
 
@@ -95,7 +97,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_dragon.AddLife(reward.health);
 		}
 
-		m_dragon.AddEnergy(reward.energy);
+		m_dragon.AddEnergy(reward.energy);        
 	}
 
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
@@ -202,7 +204,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_animator.SetFloat("eatingSpeed", 1);
 		}
 
-		m_animator.SetBool("eatHold", false);
+		m_animator.SetBool("eatHold", false);        
 	}
 
 	override public bool IsBoosting(){
@@ -219,8 +221,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			ret *= 2;
 		}
 		return ret;
-	}
-
+	}    
 
 	public override void StartAttackTarget (Transform _transform)
 	{
