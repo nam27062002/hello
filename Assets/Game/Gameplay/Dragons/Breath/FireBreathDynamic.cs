@@ -4,6 +4,22 @@ using System.Collections;
 
 public class FireBreathDynamic : MonoBehaviour 
 {
+    [System.Serializable]
+    public struct CollisionPrefab
+    {
+        [SerializeField]
+        public string[] m_CollisionLayers;
+        [SerializeField]
+        public string m_CollisionPrefab;
+        public float m_CollisionDelay;
+        public int m_CollisionEmiters;
+
+        [HideInInspector, SerializeField]
+        public int m_iCollisionLayerMask;
+        [HideInInspector, SerializeField]
+        public string m_CollisionPrefabPath;
+    }
+
 
     // consts
     public static readonly float CURRENT_DRAGONBABY_REFERENCEVALUE = 2.1985f;
@@ -44,10 +60,12 @@ public class FireBreathDynamic : MonoBehaviour
     public AnimationCurve m_FlameAnimation;
     public AnimationCurve m_FlexCurve;
 
+    public CollisionPrefab[] m_collisionPrefabs;
 
-    public string m_collisionFirePrefab;
-    public float m_collisionFireDelay = 0.5f;
-    public int m_collisionEmiters = 10;
+//    public string m_collisionFirePrefab;
+//    public string m_collisionFirePrefabPath = "";
+//    public float m_collisionFireDelay = 0.5f;
+//    public int m_collisionEmiters = 10;
 
     private float m_collisionMaxDistance = 0.0f;
     private float m_collisionDistance = 0.0f;
@@ -55,14 +73,12 @@ public class FireBreathDynamic : MonoBehaviour
 
     private float flameAnimationTime = 0.0f;
 
-    private int m_groundLayerMask;
+    private int m_AllLayerMask;
 
 
     private Vector3 lastInitialPosition;
     private GameObject m_whipEnd;
     private GameObject m_collisionPlane;
-
-    public float timeDelay = 0.25f;
 
     private float m_effectScale = 1.0f;
     public float m_debugScale = -1.0f;
@@ -72,8 +88,6 @@ public class FireBreathDynamic : MonoBehaviour
     private float enableTime = 0.0f;
     private bool enableState = false;
 
-    private Transform mt_particles;
-    private Transform mt_particlesMask;
     private ParticleSystem mp_particles;
     private ParticleSystem mp_particlesMask;
 
@@ -96,22 +110,53 @@ public class FireBreathDynamic : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
-        ParticleManager.CreatePool(m_collisionFirePrefab, "", m_collisionEmiters);
+        //        ParticleManager.CreatePool(m_collisionFirePrefab, m_collisionFirePrefabPath, m_collisionEmiters);
+
+        m_AllLayerMask = 0;
+        for (int i = 0; i < m_collisionPrefabs.Length; i++)
+        {
+            int layerMask = 0;
+            for (int c = 0; c < m_collisionPrefabs[i].m_CollisionLayers.Length; c++)
+            {
+                layerMask |= LayerMask.GetMask(m_collisionPrefabs[i].m_CollisionLayers[c]);
+            }
+            m_collisionPrefabs[i].m_iCollisionLayerMask = layerMask;
+            m_AllLayerMask |= layerMask;
+
+            string cp = m_collisionPrefabs[i].m_CollisionPrefab;
+            int backslash = cp.LastIndexOf('/');
+            if (backslash >= 0)
+            {
+                m_collisionPrefabs[i].m_CollisionPrefabPath = cp.Substring(0, backslash);
+                m_collisionPrefabs[i].m_CollisionPrefab = cp.Substring(backslash + 1);
+            }
+            else
+            {
+                m_collisionPrefabs[i].m_CollisionPrefabPath = "";
+            }
+
+            ParticleManager.CreatePool(m_collisionPrefabs[i].m_CollisionPrefab,
+                                       m_collisionPrefabs[i].m_CollisionPrefabPath,
+                                       m_collisionPrefabs[i].m_CollisionEmiters);
+
+        }
+
+
+//        m_groundLayerMask = LayerMask.GetMask("Ground", "GroundVisible", "Water");
+
         // Cache
         m_meshFilter = GetComponent<MeshFilter>();
-		m_numPos = (int)(4 + m_splits * 2);
-
-        m_groundLayerMask = LayerMask.GetMask("Ground", "GroundVisible", "Water");
+        m_numPos = (int)(4 + m_splits * 2);
 
         m_whipEnd = transform.FindChild("WhipEnd").gameObject;
         m_collisionPlane = transform.FindChild("WhipEnd/collisionPlane").gameObject;
-        mt_particles = m_whipEnd.transform.FindChild("FireConeToon");
-        mt_particlesMask = m_whipEnd.transform.FindChild("FireConeToonMask");
-        mp_particles = mt_particles.GetComponent<ParticleSystem>();
-        mp_particlesMask = mt_particlesMask.GetComponent<ParticleSystem>();
+//        mt_particles = m_whipEnd.transform.FindChild("FireConeToon");
+//        mt_particlesMask = m_whipEnd.transform.FindChild("FireConeToonMask");
+        mp_particles = m_whipEnd.transform.FindChild("FireConeToon").GetComponent<ParticleSystem>();
+        mp_particlesMask = m_whipEnd.transform.FindChild("FireConeToonMask").GetComponent<ParticleSystem>();
 
-        mt_particles.SetLocalScale(m_effectScale);
-        mt_particlesMask.SetLocalScale(m_effectScale);
+        mp_particles.transform.SetLocalScale(m_effectScale);
+        mp_particlesMask.transform.SetLocalScale(m_effectScale);
 
         InitWhip();
 		InitArrays();
@@ -201,7 +246,7 @@ public class FireBreathDynamic : MonoBehaviour
 
         for ( int i = 2; i < m_numPos; i += 2 )
 		{
-			float yDisplacement = m_shapeCurve.Evaluate(step/(float)(m_splits+2)) * m_aplitude * m_effectScale*0.25f;
+			float yDisplacement = m_shapeCurve.Evaluate(step / (float)(m_splits+2)) * m_aplitude * m_effectScale*0.25f;
 
             Vector3 whipTangent = transform.InverseTransformDirection(m_whipTangent[whipIndex]);
 
@@ -335,18 +380,27 @@ public class FireBreathDynamic : MonoBehaviour
 
 //        Debug.DrawLine(transform.position, transform.position + transform.right * m_distance * m_effectScale * 2.0f);
 
-        if (Physics.Raycast(transform.position, transform.right, out hit, m_collisionMaxDistance, m_groundLayerMask))
+        if (Physics.Raycast(transform.position, transform.right, out hit, m_collisionMaxDistance, m_AllLayerMask))
         {
 
-            if (Time.time > m_lastTime + m_collisionFireDelay)
-            {
-                GameObject colFire = ParticleManager.Spawn(m_collisionFirePrefab, hit.point, "");
-                if (colFire != null)
-                {
-                    colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
-                }
+            int hitLayer = 1 << hit.transform.gameObject.layer;
 
-                m_lastTime = Time.time;
+            foreach (CollisionPrefab cp in m_collisionPrefabs)
+            {
+                if ((cp.m_iCollisionLayerMask & hitLayer) != 0)
+                {
+                    if (Time.time > m_lastTime + cp.m_CollisionDelay)
+                    {
+                        GameObject colFire = ParticleManager.Spawn(cp.m_CollisionPrefab, hit.point, cp.m_CollisionPrefabPath);
+                        if (colFire != null)
+                        {
+                            colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
+                        }
+
+                        m_lastTime = Time.time;
+                    }
+                    break;
+                }
             }
 
 
