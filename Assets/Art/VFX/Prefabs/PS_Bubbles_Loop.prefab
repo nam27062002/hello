@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 495994}
   - 198: {fileID: 19851978}
   - 199: {fileID: 19971804}
+  - 114: {fileID: 114000010304273844}
   m_Layer: 0
   m_Name: PS_Bubbles_Loop
   m_TagString: Untagged
@@ -39,7 +40,7 @@ ParticleSystem:
   serializedVersion: 4
   lengthInSec: 0.5
   startDelay:
-    scalar: 0
+    scalar: 1
     maxCurve:
       serializedVersion: 2
       m_Curve:
@@ -80,7 +81,7 @@ ParticleSystem:
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 1940342758
+  randomSeed: 78246347
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -1757,7 +1758,7 @@ ParticleSystemRenderer:
   m_LengthScale: 2
   m_SortingFudge: 0
   m_NormalDirection: 1
-  m_RenderAlignment: 0
+  m_RenderAlignment: 1
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}
@@ -1774,3 +1775,16 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 105258}
   m_IsPrefabParent: 1
+--- !u!114 &114000010304273844
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 105258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 1
+  m_returnTo: 1
