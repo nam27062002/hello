@@ -1079,7 +1079,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.9
     max: 1.1
-  m_serializedJson: '[{"restTime":{"min":240,"max":240},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":12.5,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":11,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false}]'
   m_databaseKey: PF_Horse
 --- !u!114 &11485410
 MonoBehaviour:
@@ -1103,10 +1103,15 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_onEatenParticles:
-  - name: PS_Blood_Explosion_Medium
+  - name: PS_Blood_Explosion_Large
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 

@@ -60,8 +60,10 @@ public class DragonPlayer : MonoBehaviour {
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
-	private List<Transform> m_holdPreyPoints = new List<Transform>();
-	public List<Transform> holdPreyPoints { get{ return m_holdPreyPoints; } }
+	private HoldPreyPoint[] m_holdPreyPoints = null;
+	public HoldPreyPoint[] holdPreyPoints { get{ return m_holdPreyPoints; } }
+
+	private int m_numLatching = 0;
 
 	// Interaction
 	public bool playable {
@@ -160,13 +162,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
-		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
-		if (holdPoints != null) {
-			for (int i = 0;i<holdPoints.Length; i++) {
-				m_holdPreyPoints.Add(holdPoints[i].transform);
-			}
-		}
-
+		m_holdPreyPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
@@ -527,18 +523,33 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void StartLatchedOn()
 	{
-		m_dragonMotion.StartLatchedOnMovement();
-		m_dragonEatBehaviour.PauseEating();
+		m_numLatching++;
+		if ( m_numLatching == 1 )
+		{
+			m_dragonMotion.StartLatchedOnMovement();
+			m_dragonEatBehaviour.PauseEating();
+		}
 	}
 
 	public void EndLatchedOn()
 	{
-		m_dragonMotion.EndLatchedOnMovement();
-		m_dragonEatBehaviour.ResumeEating( 2.5f );
+		m_numLatching--;
+		if ( m_numLatching == 0 )
+		{
+			m_dragonMotion.EndLatchedOnMovement();
+			m_dragonEatBehaviour.ResumeEating( 2.5f );
+		}
 	}
 
 	public bool BeingLatchedOn()
 	{
-		return m_dragonMotion.isLatchedMovement;
+		return m_numLatching > 0;
+	}
+
+	public bool HasFreeHoldPoint()
+	{
+		for( int i = 0; i< m_holdPreyPoints.Length; i++ )
+			if ( !m_holdPreyPoints[i].holded ) return true;
+		return false;
 	}
 }
