@@ -42,6 +42,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected DragonHealthBehaviour m_holdingPlayerHealth = null;
 	protected Transform m_holdTransform = null;
 	public Transform holdTransform{ get{ return m_holdTransform; } }
+	protected HoldPreyPoint m_holdPoint;
 	protected bool m_grabbingPrey = false;
 
 	// Attacking/Targeting
@@ -75,6 +76,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_isPlayer = true;		// If eating entity is the player
 	protected bool m_rewardsPlayer = false;	
 	protected bool m_canLatchOnPlayer = false;
+	public virtual bool canMultipleLatchOnPlayer { get { return false; } }
 	protected bool m_canEatEntities = true;
 	protected bool m_waitJawsEvent = false;	// if wait for jaws closing event or just wait time
 	protected bool m_limitEating = false;	// If there is a limit on eating preys at a time
@@ -436,6 +438,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if ( m_holdTransform == null )
 			m_holdTransform = _prey.transform;
+		else
+			m_holdPoint.holded = true;
 
 		// TODO (MALH): Check if bite and grab or bite and hold
 		_prey.BiteAndHold();
@@ -453,6 +457,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		if ( m_holdTransform == null )
 			m_holdTransform = player.transform;
+		else
+			m_holdPoint.holded = true;
 
 		// TODO (MALH): Check if bite and grab or bite and hold
 
@@ -464,17 +470,20 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	}
 
-	virtual protected void SerchClosestTransform( List<Transform> holdPreyPoints )
+	virtual protected void SerchClosestTransform( HoldPreyPoint[] holdPreyPoints )
 	{
 		float distance = float.MaxValue;
-		List<Transform> points = holdPreyPoints;
+
 		m_holdTransform = null;
-		for( int i = 0; i<points.Count; i++ )
+		if ( holdPreyPoints != null )
+		for( int i = 0; i<holdPreyPoints.Length; i++ )
 		{
-			if ( Vector3.SqrMagnitude( m_mouth.position - points[i].position) < distance )
+			HoldPreyPoint point = holdPreyPoints[i];
+			if ( !point.holded && Vector3.SqrMagnitude( m_mouth.position - point.transform.position) < distance )
 			{
-				distance = Vector3.SqrMagnitude( m_mouth.position - points[i].position);
-				m_holdTransform = points[i];
+				distance = Vector3.SqrMagnitude( m_mouth.position - point.transform.position);
+				m_holdTransform = point.transform;
+				m_holdPoint = point;
 			}
 		}
 	}
@@ -595,6 +604,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 			m_holdingPlayer = null;
 		}
 
+		m_holdTransform = null;
+		if ( m_holdPoint != null )
+			m_holdPoint.holded = false;
+
 		m_noAttackTime = m_holdStunTime;        
 	}
 
@@ -690,13 +703,22 @@ public abstract class EatBehaviour : MonoBehaviour {
 		float eatDistance = GetEatDistance();
 		eatDistance = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, eatDistance, eatDistance * m_angleSpeedMultiplier);
 
-		if (m_canLatchOnPlayer && InstanceManager.player != null && !InstanceManager.player.BeingLatchedOn())
+		if (m_canLatchOnPlayer && InstanceManager.player != null)
 		{
-			m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_mouth.position, eatDistance, m_checkPlayer, m_playerColliderMask);
-			if ( m_numCheckEntities > 0 )
+			bool canLatch = false;
+			if ( canMultipleLatchOnPlayer && InstanceManager.player.HasFreeHoldPoint())
+				canLatch = true;
+			else
+				canLatch = !InstanceManager.player.BeingLatchedOn();
+
+			if ( canLatch )
 			{
-				// Sart latching on player
-				StartLatchOnPlayer( InstanceManager.player );
+				m_numCheckEntities = Physics.OverlapSphereNonAlloc( m_mouth.position, eatDistance, m_checkPlayer, m_playerColliderMask);
+				if ( m_numCheckEntities > 0 )
+				{
+					// Sart latching on player
+					StartLatchOnPlayer( InstanceManager.player );
+				}
 			}
 		}
 
