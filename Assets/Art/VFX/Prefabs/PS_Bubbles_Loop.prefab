@@ -10,7 +10,6 @@ GameObject:
   - 4: {fileID: 495994}
   - 198: {fileID: 19851978}
   - 199: {fileID: 19971804}
-  - 114: {fileID: 114000010304273844}
   m_Layer: 0
   m_Name: PS_Bubbles_Loop
   m_TagString: Untagged
@@ -38,9 +37,9 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105258}
   serializedVersion: 4
-  lengthInSec: 0.5
+  lengthInSec: 1
   startDelay:
-    scalar: 1
+    scalar: 0.3
     maxCurve:
       serializedVersion: 2
       m_Curve:
@@ -75,7 +74,7 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 0
@@ -470,11 +469,11 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 0
       minMaxState: 3
-    cnt0: 20
+    cnt0: 2
     cnt1: 30
     cnt2: 30
     cnt3: 30
-    cntmax0: 40
+    cntmax0: 5
     cntmax1: 30
     cntmax2: 30
     cntmax3: 30
@@ -482,7 +481,7 @@ ParticleSystem:
     time1: 0
     time2: 0
     time3: 0
-    m_BurstCount: 0
+    m_BurstCount: 1
   SizeModule:
     enabled: 1
     curve:
@@ -1775,16 +1774,3 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 105258}
   m_IsPrefabParent: 1
---- !u!114 &114000010304273844
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 105258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeTime: 1
-  m_returnTo: 1
