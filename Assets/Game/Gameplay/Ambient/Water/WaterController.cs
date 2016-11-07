@@ -58,7 +58,7 @@ public class WaterController : MonoBehaviour, IQuadTreeItem {
 			m_waterTrail = null;
 		}
 	}
-
+	/*
 	void OnTriggerEnter (Collider _other) {
 		if ( _other.tag == "Player" )
 			CreateSplash(m_player.velocity.y, _other.transform);
@@ -89,4 +89,5 @@ public class WaterController : MonoBehaviour, IQuadTreeItem {
 			else  					 ParticleManager.Spawn("PS_Dive", pos, "Water");
 		}
 	}
+	*/
 }
