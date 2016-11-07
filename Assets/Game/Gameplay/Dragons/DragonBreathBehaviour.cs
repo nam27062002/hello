@@ -346,8 +346,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				m_currentFury = 0;
 				m_furyRushesCompleted++;
 
-				if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() )
+				if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ){
 					m_breathSoundAO.Stop();
+					m_breathSoundAO = null;
+				}
 			}break;
 			case Type.Super:
 			{
@@ -355,7 +357,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				UsersManager.currentUser.superFuryProgression = 0;
 
 				if (m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() )
+				{
 					m_superBreathSoundAO.Stop();
+					m_superBreathSoundAO = null;
+				}
 			}break;
 
 		}
