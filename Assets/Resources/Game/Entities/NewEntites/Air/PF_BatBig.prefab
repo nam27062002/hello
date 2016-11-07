@@ -59,7 +59,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156466}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 61.682625, y: 11.026831, z: 0}
+  m_LocalPosition: {x: -61.093315, y: 8.358482, z: 4.171521}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: -71.401, y: 0, z: 0}
   m_Children:
@@ -103,6 +103,9 @@ MonoBehaviour:
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
     m_senseDelay:
       min: 0
       max: 0
@@ -146,7 +149,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":8,"restUpsideDown":true,"teleport":true,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":1,"duration":1.5,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":40,"arrivalRadius":2,"timeout":{"min":2,"max":2.5},"onFailShutdown":{"min":1,"max":2},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":3,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":3,"restUpsideDown":true,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":40,"arrivalRadius":0.25,"timeout":{"min":4,"max":6},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":1,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_BatBig
   m_avoidDistanceAttenuation: 0.75
   m_avoidCollisions: 1
@@ -202,6 +205,11 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -563,7 +571,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010540736836}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2, z: 0.392}
+  m_LocalPosition: {x: 0, y: 0.463, z: 0.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -656,7 +664,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000014249680244}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.211, z: 0.291}
+  m_LocalPosition: {x: 0, y: 0.551, z: 0.304}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -734,7 +742,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_absorbTime: 1
   m_minEatAnimTime: 1
-  m_eatDistance: 1
+  m_eatDistance: 0.5
   m_burpSounds: []
   m_eaterTier: 0
   m_isPet: 0
