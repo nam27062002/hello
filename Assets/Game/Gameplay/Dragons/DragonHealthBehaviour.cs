@@ -94,6 +94,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 				m_dots.RemoveAt(i);
 			}
 		}
+
+		#if DEBUG
+			if ( Input.GetKeyDown( KeyCode.M) )
+				m_dragon.AddLife( -m_dragon.health );
+		#endif
 	}
 
 	public bool IsAlive() {
