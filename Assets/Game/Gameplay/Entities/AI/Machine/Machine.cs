@@ -223,6 +223,7 @@ namespace AI {
 
 			if ( _other.tag == "Water" )
 			{
+				m_viewControl.EnterWater( _other, m_pilot.impulse );
 				m_viewControl.StartSwimming();	
 			}
 			else if (_other.tag == "Space" )
@@ -240,6 +241,7 @@ namespace AI {
 
 			if ( _other.tag == "Water" )
 			{
+				m_viewControl.ExitWater( _other, m_pilot.impulse );
 				m_viewControl.StopSwimming();	
 			}
 			else if (_other.tag == "Space" )

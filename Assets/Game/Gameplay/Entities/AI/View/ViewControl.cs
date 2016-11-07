@@ -48,6 +48,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_onEatenAudio;
 
 	[SeparatorAttribute]
+	[SerializeField] private float m_speedToWaterSplash;
+	[SerializeField] private ParticleData m_waterSplashParticle;
+
+	[SeparatorAttribute]
 	[SerializeField] private string m_onBurnAudio;
 
 	[SeparatorAttribute]
@@ -426,6 +430,25 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	{
 		if (!m_attackingTarget)
 			m_animator.SetBool("eat", false);
+	}
+
+	public void EnterWater( Collider _other, Vector3 impulse ){
+		CreateSplash( _other, Mathf.Abs(impulse.y) );
+	}
+
+	public void ExitWater( Collider _other, Vector3 impulse){
+		CreateSplash( _other, Mathf.Abs(impulse.y));
+	}
+
+	private void CreateSplash( Collider _other, float verticalImpulse )
+	{
+		if ( verticalImpulse >= m_speedToWaterSplash && !string.IsNullOrEmpty(m_waterSplashParticle.name) )
+		{
+			Vector3 pos = transform.position;
+			float waterY = _other.transform.position.y;
+			pos.y = waterY;
+			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
+		}
 	}
 
 	public void StartSwimming()

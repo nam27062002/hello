@@ -23,11 +23,20 @@ public class DragonParticleController : MonoBehaviour
 	public Transform m_cloudTrailAnchor;
 	private ParticleSystem m_cloudTrailInstance;
 
+	[Space]
+	public float m_minSpeedEnterSplash;
+	public string m_waterEnterSplash;
+	public float m_minSpeedExitSplash;
+	public string m_waterExitSplash;
+	public string m_waterSplashFolder = "Water";
+
+
 	private Transform _transform;
 	private bool m_insideWater = false;
 	private float m_waterY = 0;
 	private float m_waterDepth = 5;
 	private const float m_waterDepthIncrease = 2;
+	private DragonMotion m_dargonMotion;
 
 	void Start () 
 	{
@@ -36,9 +45,14 @@ public class DragonParticleController : MonoBehaviour
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
-
+		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
 		m_waterDepth = InstanceManager.player.data.scale + m_waterDepthIncrease;
 		_transform = transform;
+
+		if ( !string.IsNullOrEmpty(m_waterEnterSplash) )
+			ParticleManager.CreatePool(m_waterEnterSplash, m_waterSplashFolder);
+		if ( !string.IsNullOrEmpty(m_waterExitSplash) )
+			ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
 	}
 
 	void OnEnable() {
@@ -94,17 +108,32 @@ public class DragonParticleController : MonoBehaviour
 	}
 
 
-	public void OnEnterWater()
+	public void OnEnterWater( Collider _other )
 	{
 		m_waterY = _transform.position.y;
 		m_insideWater = true;
+
+		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedEnterSplash )
+			CreateSplash(_other, m_waterEnterSplash);
 	}
 
-	public void OnExitWater()
+	public void OnExitWater( Collider _other )
 	{
 		m_insideWater = false;
 		if ( m_bubblesInstance != null && m_bubblesInstance.isPlaying)
 			m_bubblesInstance.Stop();
+
+		if ( m_dargonMotion != null && Mathf.Abs(m_dargonMotion.velocity.y) >= m_minSpeedExitSplash )
+			CreateSplash(_other, m_waterExitSplash);
+	}
+
+	private void CreateSplash( Collider _other, string particleName )
+	{
+		Vector3 pos = _transform.position;
+		float waterY = _other.transform.position.y;
+		pos.y = waterY;
+
+		ParticleManager.Spawn(particleName, pos, m_waterSplashFolder);
 	}
 
 	public void OnEnterOuterSpace() {
