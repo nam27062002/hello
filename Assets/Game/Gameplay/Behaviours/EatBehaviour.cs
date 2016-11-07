@@ -25,8 +25,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 
     private static int maxPreysSoFar = 0;
-    private const int MAX_PREYS = 20;
-	protected PreyData[] m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
+    private const int MAX_PREYS = 40; // Max amount of preys allowed to be eaten simultaneously
+    protected PreyData[] m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
     private AI.Machine[] m_preysToEat; // Temporary array needed when eating. It's defined here to prevent memory from being generated when eating
 
     protected int PreyCount { get; set; }
