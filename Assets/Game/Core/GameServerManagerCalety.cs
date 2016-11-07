@@ -31,6 +31,7 @@ public class GameServerManagerCalety : GameServerManager
 
         public GameSessionDelegate(OnResponse onResponse)
         {
+            Debug.TaggedLog(tag, "GameSessionDelegate instantiated");
             m_onResponse = onResponse;
         }
 
