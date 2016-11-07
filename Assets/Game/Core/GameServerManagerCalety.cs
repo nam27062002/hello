@@ -26,9 +26,10 @@ public class GameServerManagerCalety : GameServerManager
         public SimpleJSON.JSONClass m_lastRecievedUniverse = null;
         public int m_saveDataCounter = 0;
 
-        private Action<string, int> m_onResponse;
+        public delegate bool OnResponse(string response, int responseCode);
+        private OnResponse m_onResponse;
 
-        public GameSessionDelegate(Action<string, int> onResponse)
+        public GameSessionDelegate(OnResponse onResponse)
         {
             m_onResponse = onResponse;
         }
@@ -520,7 +521,7 @@ public class GameServerManagerCalety : GameServerManager
         }        
     }
 
-    private void Commands_OnResponse(string responseData, int statusCode)
+    private bool Commands_OnResponse(string responseData, int statusCode)
     {
         Error error = null;
         Dictionary<string, object> response = null;
@@ -735,7 +736,8 @@ public class GameServerManagerCalety : GameServerManager
             LogWarning(Commands_CurrentCommand, error);
         }
 
-        Commands_OnExecuteCommandDone(error, response);        
+        Commands_OnExecuteCommandDone(error, response);
+        return error == null;       
     }
     #endregion
 
@@ -757,14 +759,12 @@ public class GameServerManagerCalety : GameServerManager
 
     private bool CaletyExtensions_OnPing(string strResponse, string strCmd, int iResponseCode)
     {
-        Commands_OnResponse(strResponse, iResponseCode);
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);        
     }
 
     private bool CaletyExtensions_OnGetTime(string strResponse, string strCmd, int iResponseCode)
     {
-        Commands_OnResponse(strResponse, iResponseCode);
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);        
     }
 
     private bool CaletyExtensions_OnGetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
@@ -777,15 +777,13 @@ public class GameServerManagerCalety : GameServerManager
             strResponse = defaultJson.ToString();
         }
 
-        Commands_OnResponse(strResponse, iResponseCode);        
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);                
     }
 
     public bool CaletyExtensions_OnSetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
     {
         Log("OnSetPersistenceResponse statusCode=" + iResponseCode);
-        Commands_OnResponse(strResponse, iResponseCode);
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);        
     }
 
     private void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)
