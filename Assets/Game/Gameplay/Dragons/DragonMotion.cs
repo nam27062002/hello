@@ -67,7 +67,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_groundCollider;
-	PlayerEatBehaviour		m_eatBehaviour;
+	DragonEatBehaviour		m_eatBehaviour;
 
 	public SphereCollider groundCollider { get { return m_groundCollider; } } 
 
@@ -259,7 +259,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_rbody = GetComponent<Rigidbody>();
 		m_groundCollider = GetComponentInChildren<SphereCollider>();
-		m_eatBehaviour = GetComponent<PlayerEatBehaviour>();
+		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_height = 10f;
 
 		m_boostSpeedMultiplier = 1;

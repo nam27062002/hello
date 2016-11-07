@@ -1410,9 +1410,9 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 8
-    m_maxRadius: 6
-    m_minRadius: 4
+    m_sightRadius: 12
+    m_maxRadius: 10
+    m_minRadius: 8
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 3}
@@ -1485,6 +1485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1492,7 +1493,7 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.9
     max: 1.4
-  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":13,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":4,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":4,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
   m_databaseKey: PF_Witch
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 1

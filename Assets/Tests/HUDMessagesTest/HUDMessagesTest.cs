@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -27,11 +28,22 @@ public class HUDMessagesTest : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	public float m_hp = 100f;
-	public Text m_hpText = null;
+	public TextMeshProUGUI m_hpText = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		// We need missions definitions for the test, as well as localization
+		ContentManager.InitContent();
+		LocalizationManager.SharedInstance.SetLanguage("lang_english");
+
+		// Init HP text
+		SimulateStarvation(0f);
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -47,7 +59,7 @@ public class HUDMessagesTest : MonoBehaviour {
 
 		// Apply differential
 		m_hp += _hpDiff;
-		if(m_hpText != null) m_hpText.text = m_hp.ToString();
+		if(m_hpText != null) m_hpText.text = m_hp + " HP";
 
 		// Get new state
 		bool isStarving = m_hp < 50f;
@@ -83,7 +95,8 @@ public class HUDMessagesTest : MonoBehaviour {
 				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
 			} break;
 
-			//case 5:		Messenger.Broadcast<Collectible>(GameEvents.CHEST_COLLECTED, null);			break; //[MSF] Collectible component was a Prototype
+			case 5:		Messenger.Broadcast<CollectibleChest>(GameEvents.CHEST_COLLECTED, null);	break;
+			case 6:		Messenger.Broadcast<CollectibleEgg>(GameEvents.EGG_COLLECTED, null);		break;
 			default:	break;
 		}
 	}
