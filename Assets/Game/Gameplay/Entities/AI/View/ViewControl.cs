@@ -5,13 +5,6 @@ using System.Collections.Generic;
 public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[Serializable]
-	public class ParticleData {
-		public string name = "";
-		public string path = "";
-		public Vector3 offset = Vector3.zero;
-	}
-
-	[Serializable]
 	public class SkinData {
 		public Material skin;
 		[Range(0f, 100f)] public float m_chance = 0f;
@@ -124,10 +117,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		// particle management
 		if (m_onEatenParticles.Count <= 0) {
 			// if this entity doesn't have any particles attached, set the standard blood particle
-			ParticleData data = new ParticleData();
-			data.name = "PS_Blood_Explosion_Small";
-			data.path = "Blood/";
-			data.offset = Vector3.back * 10f;
+			ParticleData data = new ParticleData("PS_Blood_Explosion_Small", "Blood/", Vector3.back * 10f);
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
