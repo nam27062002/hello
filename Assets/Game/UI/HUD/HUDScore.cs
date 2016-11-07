@@ -44,7 +44,9 @@ public class HUDScore : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		UpdateScore();
+        LastScorePrinted = -1;
+        NeedsToUpdateScore = true;
+        UpdateScore();
 	}
 
 	/// <summary>
@@ -63,6 +65,13 @@ public class HUDScore : MonoBehaviour {
 		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
 	}
 
+    private void Update() {
+        if (NeedsToUpdateScore) {
+            UpdateScore();
+            NeedsToUpdateScore = false;
+        }        
+    }
+
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
@@ -70,9 +79,17 @@ public class HUDScore : MonoBehaviour {
 	/// Updates the displayed score.
 	/// </summary>
 	private void UpdateScore() {
-		// Do it!
-		m_valueTxt.text = StringUtils.FormatNumber(RewardManager.score);
-	}
+        if (LastScorePrinted != RewardManager.score) {
+            // Do it!
+            m_valueTxt.text = StringUtils.FormatNumber(RewardManager.score);
+
+            LastScorePrinted = RewardManager.score;
+            NeedsToUpdateScore = false;
+        }
+    }
+
+    private bool NeedsToUpdateScore { get; set; }
+    private long LastScorePrinted { get; set; }
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
@@ -85,7 +102,7 @@ public class HUDScore : MonoBehaviour {
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// We only care about score rewards
 		if(_reward.score > 0) {
-			UpdateScore();
+            NeedsToUpdateScore = true;
 			if(m_anim != null) m_anim.SetTrigger("start");
 		}
 	}
