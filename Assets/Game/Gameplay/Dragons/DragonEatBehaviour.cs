@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerEatBehaviour : EatBehaviour {		
+public class DragonEatBehaviour : EatBehaviour {		
 
 	private DragonPlayer m_dragon;
 	private DragonBoostBehaviour m_dragonBoost;

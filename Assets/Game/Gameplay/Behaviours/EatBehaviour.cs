@@ -19,10 +19,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------	
 
-	[SerializeField]private float m_absorbTime = 1;
+	// [SerializeField]private float m_absorbTime = 1;
 	[SerializeField]private float m_minEatAnimTime = 1;
 	[SerializeField]protected float m_eatDistance = 1;
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
+	[SerializeField] protected ParticleData m_holdingBloodParticle = new ParticleData( "PS_Blood_Explosion_Medium", "Blood", Vector3.zero);
 
 	protected List<PreyData> m_prey;// each prey that falls near the mouth while running the eat animation, will be swallowed at the same time
     private List<AI.Machine> m_preysToEat; // Temporary list needed when eating. It's defined here to prevent memory from being generated when eating
@@ -60,7 +61,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private List<GameObject> m_bloodEmitter;
 
-	public List<string> m_burpSounds = new List<string>();
+	public string m_burpSound = "";
 	// public AudioSource m_burpAudio;
 
 	private float m_noAttackTime = 0;
@@ -287,10 +288,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected void Burp()
 	{
-		if ( m_burpSounds.Count > 0 )
+		if ( !string.IsNullOrEmpty(m_burpSound) )
 		{
-			string name = m_burpSounds[ Random.Range( 0, m_burpSounds.Count ) ];
-			AudioManager.instance.PlayClip(name);
+			AudioController.Play( m_burpSound );
 		}
 	}
 
@@ -719,7 +719,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private void StartBlood(){
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
-		m_bloodEmitter.Add(ParticleManager.Spawn("PS_Blood_Explosion_Medium", bloodPos, "Blood"));
+		m_bloodEmitter.Add(ParticleManager.Spawn(m_holdingBloodParticle.name, bloodPos + m_holdingBloodParticle.offset, m_holdingBloodParticle.path));
 		m_holdingBlood = 0.5f;
 	}
 
