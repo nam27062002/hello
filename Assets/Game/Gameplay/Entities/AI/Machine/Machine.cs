@@ -255,7 +255,7 @@ namespace AI {
 				// lets check if dragon is trampling this entity
 				if (!GetSignal(Signals.Type.FallDown) && _other.gameObject.tag == "Player") {
 					// is in trample mode? - dragon has the mouth full
-					PlayerEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
+					DragonEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
 
 					bool isEating	= dragonEat.IsEating();
 					bool isLatching = dragonEat.IsLatching();

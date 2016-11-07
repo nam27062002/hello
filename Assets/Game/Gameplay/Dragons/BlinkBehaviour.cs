@@ -4,12 +4,12 @@ using System.Collections;
 public class BlinkBehaviour : StateMachineBehaviour {
 
 	[SerializeField] private Range m_delay = new Range(2f, 10f);
-	private bool m_blinking;
+	// private bool m_blinking;
 	private float m_timer;
 
 	// OnStateMachineEnter is called when entering a statemachine via its Entry Node
 	override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash){
-		m_blinking = false;
+		// m_blinking = false;
 		m_timer = m_delay.GetRandom();
 	}
 
