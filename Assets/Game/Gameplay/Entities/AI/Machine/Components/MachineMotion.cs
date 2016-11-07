@@ -178,6 +178,10 @@ namespace AI {
 
 		public override void Update() {
 
+			if (m_pilot.IsActionPressed(Pilot.Action.Stop)) {
+				Stop();
+			}
+
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
 				Stop();
 				m_rotation = m_machine.transform.rotation;
