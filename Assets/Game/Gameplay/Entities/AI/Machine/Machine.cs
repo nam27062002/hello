@@ -488,7 +488,7 @@ namespace AI {
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 
-		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
+		public HoldPreyPoint[] holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
 		public void BiteAndHold() {
 			m_isHolded = true;

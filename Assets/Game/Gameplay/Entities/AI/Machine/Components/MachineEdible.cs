@@ -8,8 +8,8 @@ namespace AI {
 		private float m_biteResistance = 1f;
 		public float biteResistance { get { return m_biteResistance; }}
 
-		private List<Transform> m_holdPreyPoints = new List<Transform>();
-		public List<Transform> holdPreyPoints { get{ return m_holdPreyPoints; } }
+		private HoldPreyPoint[] m_holdPreyPoints = null;
+		public HoldPreyPoint[] holdPreyPoints { get{ return m_holdPreyPoints; } }
 
 		private ViewControl m_viewControl;
 
@@ -21,12 +21,7 @@ namespace AI {
 
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_biteResistance = (m_entity as Entity).def.GetAsFloat("biteResistance");
-			HoldPreyPoint[] holdPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
-			if (holdPoints != null) {
-				for (int i = 0;i<holdPoints.Length; i++) {
-					m_holdPreyPoints.Add(holdPoints[i].transform);
-				}
-			}
+			m_holdPreyPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
 		}
 
 		public override void Init() {}

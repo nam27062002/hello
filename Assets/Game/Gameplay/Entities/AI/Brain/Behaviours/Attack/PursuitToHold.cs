@@ -118,7 +118,14 @@ namespace AI {
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				} else if ( m_player != null ){
-					if ( !m_player.IsAlive() || m_player.BeingLatchedOn() )
+
+					bool canLatch = false;
+					if ( m_eatBehaviour.canMultipleLatchOnPlayer && InstanceManager.player.HasFreeHoldPoint())
+						canLatch = true;
+					else
+						canLatch = !InstanceManager.player.BeingLatchedOn();
+
+					if ( !m_player.IsAlive() || !canLatch )
 					{
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
 						m_eatBehaviour.enabled = false;
@@ -133,6 +140,13 @@ namespace AI {
 					m_target = SearchClosestHoldPoint( m_targetMachine.holdPreyPoints );
 				else
 					m_target = SearchClosestHoldPoint( m_player.holdPreyPoints );
+
+
+				if ( m_target == null )	{
+					m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+					m_eatBehaviour.enabled = false;
+					Transition( OnPursuitTimeOut, m_transitionParam );
+				}
 
 				float m = (m_machine.position - m_target.position).sqrMagnitude;
 				if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
@@ -158,17 +172,17 @@ namespace AI {
 				
 			}
 
-			virtual protected Transform SearchClosestHoldPoint( List<Transform> holdPreyPoints )
+			virtual protected Transform SearchClosestHoldPoint( HoldPreyPoint[] holdPreyPoints )
 			{
 				float distance = float.MaxValue;
-				List<Transform> points = holdPreyPoints;
 				Transform holdTransform = null;
-				for( int i = 0; i<points.Count; i++ )
+				for( int i = 0; i<holdPreyPoints.Length; i++ )
 				{
-					if ( Vector3.SqrMagnitude( m_machine.position - points[i].position) < distance )
+					HoldPreyPoint point = holdPreyPoints[i];
+					if ( !point.holded && Vector3.SqrMagnitude( m_machine.position - point.transform.position) < distance )
 					{
-						distance = Vector3.SqrMagnitude( m_machine.position - points[i].position);
-						holdTransform = points[i];
+						distance = Vector3.SqrMagnitude( m_machine.position - point.transform.position);
+						holdTransform = point.transform;
 					}
 				}
 				return holdTransform;
