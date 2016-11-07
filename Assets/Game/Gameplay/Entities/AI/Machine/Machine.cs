@@ -60,6 +60,7 @@ namespace AI {
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
 
+		public Vector3 eye				{ get { if (m_enableSensor && m_sensor != null) return m_sensor.sensorPosition; else return transform.position; } }
 		public Vector3 target			{ get { return m_pilot.target; } }
 		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
 		public Vector3 groundDirection	{ get { if (m_enableMotion && m_motion != null) return m_motion.groundDirection; else return Vector3.zero; } }
@@ -222,6 +223,7 @@ namespace AI {
 
 			if ( _other.tag == "Water" )
 			{
+				m_viewControl.EnterWater( _other, m_pilot.impulse );
 				m_viewControl.StartSwimming();	
 			}
 			else if (_other.tag == "Space" )
@@ -239,6 +241,7 @@ namespace AI {
 
 			if ( _other.tag == "Water" )
 			{
+				m_viewControl.ExitWater( _other, m_pilot.impulse );
 				m_viewControl.StopSwimming();	
 			}
 			else if (_other.tag == "Space" )
@@ -252,7 +255,7 @@ namespace AI {
 				// lets check if dragon is trampling this entity
 				if (!GetSignal(Signals.Type.FallDown) && _other.gameObject.tag == "Player") {
 					// is in trample mode? - dragon has the mouth full
-					PlayerEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
+					DragonEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
 
 					bool isEating	= dragonEat.IsEating();
 					bool isLatching = dragonEat.IsLatching();

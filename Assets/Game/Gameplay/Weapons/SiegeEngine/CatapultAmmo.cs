@@ -89,7 +89,7 @@ public class CatapultAmmo : MonoBehaviour {
 		}
 
 		if (!string.IsNullOrEmpty(m_onExplodeAudio))
-			AudioController.Play(m_onExplodeAudio);
+			AudioController.Play(m_onExplodeAudio, transform.position);
 
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance(gameObject);

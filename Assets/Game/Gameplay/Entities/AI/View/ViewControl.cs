@@ -5,13 +5,6 @@ using System.Collections.Generic;
 public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[Serializable]
-	public class ParticleData {
-		public string name = "";
-		public string path = "";
-		public Vector3 offset = Vector3.zero;
-	}
-
-	[Serializable]
 	public class SkinData {
 		public Material skin;
 		[Range(0f, 100f)] public float m_chance = 0f;
@@ -48,6 +41,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_onEatenAudio;
 
 	[SeparatorAttribute]
+	[SerializeField] private float m_speedToWaterSplash;
+	[SerializeField] private ParticleData m_waterSplashParticle;
+
+	[SeparatorAttribute]
 	[SerializeField] private string m_onBurnAudio;
 
 	[SeparatorAttribute]
@@ -80,6 +77,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_swim;
 	private bool m_inSpace;
 	private bool m_moving;
+	private bool m_attackingTarget;
 
 	private float m_desiredBlendX;
 	private float m_desiredBlendY;
@@ -119,10 +117,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		// particle management
 		if (m_onEatenParticles.Count <= 0) {
 			// if this entity doesn't have any particles attached, set the standard blood particle
-			ParticleData data = new ParticleData();
-			data.name = "PS_Blood_Explosion_Small";
-			data.path = "Blood/";
-			data.offset = Vector3.back * 10f;
+			ParticleData data = new ParticleData("PS_Blood_Explosion_Small", "Blood/", Vector3.back * 10f);
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
@@ -164,6 +159,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_swim = false;
 		m_inSpace = false;
 		m_moving = false;
+		m_attackingTarget = false;
 
 		if (m_animator != null) {
 			m_animator.enabled = true;
@@ -405,11 +401,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void StartAttackTarget()
 	{
+		m_attackingTarget = true;
 		m_animator.SetBool("eat", true);
 	}
 
 	public void StopAttackTarget()
 	{
+		m_attackingTarget = false;
 		m_animator.SetBool("eat", false);
 	}
 
@@ -420,7 +418,27 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void StopEating()
 	{
-		m_animator.SetBool("eat", false);
+		if (!m_attackingTarget)
+			m_animator.SetBool("eat", false);
+	}
+
+	public void EnterWater( Collider _other, Vector3 impulse ){
+		CreateSplash( _other, Mathf.Abs(impulse.y) );
+	}
+
+	public void ExitWater( Collider _other, Vector3 impulse){
+		CreateSplash( _other, Mathf.Abs(impulse.y));
+	}
+
+	private void CreateSplash( Collider _other, float verticalImpulse )
+	{
+		if ( verticalImpulse >= m_speedToWaterSplash && !string.IsNullOrEmpty(m_waterSplashParticle.name) )
+		{
+			Vector3 pos = transform.position;
+			float waterY = _other.transform.position.y;
+			pos.y = waterY;
+			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
+		}
 	}
 
 	public void StartSwimming()

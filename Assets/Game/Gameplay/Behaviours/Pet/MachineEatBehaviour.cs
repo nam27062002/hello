@@ -44,7 +44,7 @@ public class MachineEatBehaviour : EatBehaviour {
 			animEvents.onEat += OnJawsClose;
 			m_waitJawsEvent = true;
 		}
-		// else
+		else
 		{
 			m_waitJawsEvent = false;
 		}
@@ -82,19 +82,18 @@ public class MachineEatBehaviour : EatBehaviour {
 
 
 
-	protected override void Eat(AI.Machine _prey) {
-		base.Eat( _prey );
+    protected override void EatExtended(PreyData preyData) {         
 		if ( m_machine )
 		{
 			// Start Eating Animation!
 			m_machine.StartEating();
-		}
+		}        
 	}
 
 	protected override void UpdateEating()
 	{
 		base.UpdateEating();
-		if ( m_prey.Count <= 0 && m_machine)
+		if (PreyCount <= 0 && m_machine)
 			m_machine.StopEating();
 	}
 
@@ -118,5 +117,11 @@ public class MachineEatBehaviour : EatBehaviour {
 		{
 			base.MouthCache();
 		}
+	}
+
+	override protected void OnDrawGizmos() {
+		if ( m_motion == null )
+			m_motion = GetComponent<AI.Machine>();
+		base.OnDrawGizmos();
 	}
 }

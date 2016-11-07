@@ -119,6 +119,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		if (InstanceManager.player.data.tier >= m_minTier) {
 			if (!string.IsNullOrEmpty(m_entityPrefabStr) && rnd <= m_activationChance) {
+
+				if (m_quantity.max < m_quantity.min) {
+					m_quantity.min = m_quantity.max;
+				}
+
 				m_entities = new GameObject[m_quantity.max];
 
 				if (m_rails == 0) m_rails = 1;

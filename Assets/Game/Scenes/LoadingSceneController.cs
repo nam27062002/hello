@@ -103,6 +103,7 @@ public class LoadingSceneController : SceneController {
 		FirePropagationManager.CreateInstance(true);
 		SpawnerManager.CreateInstance(true);
 		SpawnerAreaManager.CreateInstance(true);
+		WaterAreaManager.CreateInstance(true);
 		EntityManager.CreateInstance(true);
 		InstanceManager.CreateInstance(true);
 		

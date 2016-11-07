@@ -69,7 +69,7 @@ public class DragonPlayer : MonoBehaviour {
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
 			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
-			GetComponent<PlayerEatBehaviour>().enabled = value;		// Eat stuff
+			GetComponent<DragonEatBehaviour>().enabled = value;		// Eat stuff
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}
@@ -88,8 +88,8 @@ public class DragonPlayer : MonoBehaviour {
 		get{ return m_dragonMotion; }
 	}
 
-	private PlayerEatBehaviour m_dragonEatBehaviour = null;
-	public PlayerEatBehaviour dragonEatBehaviour
+	private DragonEatBehaviour m_dragonEatBehaviour = null;
+	public DragonEatBehaviour dragonEatBehaviour
 	{
 		get{ return m_dragonEatBehaviour; }
 	}
@@ -155,7 +155,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 		m_dragonMotion = GetComponent<DragonMotion>();
-		m_dragonEatBehaviour =  GetComponent<PlayerEatBehaviour>();
+		m_dragonEatBehaviour =  GetComponent<DragonEatBehaviour>();
 		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 

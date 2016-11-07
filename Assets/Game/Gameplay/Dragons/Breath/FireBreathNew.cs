@@ -96,7 +96,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         m_length += lengthIncrease;
 
         dragonFlameInstance.setEffectScale(furyBaseLength, transform.localScale.x, lengthIncrease);
-        //        m_length *= transform.localScale.x;
+        m_length *= 2.0f;
         m_actualLength = m_length;
 
         m_sphCenter = m_mouthTransform.position;

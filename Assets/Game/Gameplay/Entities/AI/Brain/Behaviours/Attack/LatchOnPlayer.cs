@@ -78,6 +78,8 @@ namespace AI {
 			protected override void OnExit(State _newState) {
 				if ( m_eatBehaviour.IsLatching() )
 					m_eatBehaviour.EndHold();
+
+				m_pilot.transform.parent = m_originalParent;
 				m_eatBehaviour.enabled = false;
 				m_holdTransform = null;
 
@@ -94,7 +96,7 @@ namespace AI {
 					if (m_myMachine.IsDead() || m_myMachine.IsDying())	{
 						if ( m_eatBehaviour.IsLatching() )
 							m_eatBehaviour.EndHold();
-						OnEndLatchingEvent();
+						// OnEndLatchingEvent();
 					}else{	
 						m_pilot.GoTo( m_holdTransform.position );
 						m_pilot.RotateTo( m_holdTransform.rotation );
@@ -104,7 +106,6 @@ namespace AI {
 
 			void OnEndLatchingEvent()
 			{	
-				m_pilot.transform.parent = m_originalParent;
 				Transition(OnEndLatching, m_transitionParam);
 			}
 		}
