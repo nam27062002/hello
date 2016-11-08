@@ -146,7 +146,8 @@ namespace AI {
 		}
 
 		void OnEnable() {
-			m_signals.Init();
+			if (m_signals!= null) 
+				m_signals.Init();
 		}
 
 		void OnDisable() {
