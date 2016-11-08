@@ -74,8 +74,14 @@ public class DestructibleDecoration : Initializable {
 		m_collider = GetComponent<BoxCollider>();
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		m_zone = m_zoneManager.GetZone(transform.position.z);
-		m_effect = m_zoneManager.GetDestructionEffectCode(transform.position, m_entity.sku);
+		if ( m_zoneManager != null ){
+			m_zone = m_zoneManager.GetZone(transform.position.z);
+			m_effect = m_zoneManager.GetDestructionEffectCode(transform.position, m_entity.sku);
+		}else{
+			m_zone = ZoneManager.Zone.None;
+			m_effect = ZoneManager.ZoneEffect.None;
+			Debug.LogWarning("No Zone Manager");
+		}
 
 		if (m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
