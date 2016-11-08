@@ -1,54 +1,42 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &128360
+--- !u!1 &111670
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 466290}
-  - 114: {fileID: 11434038}
-  - 114: {fileID: 11410184}
-  - 114: {fileID: 114000013089147956}
-  - 114: {fileID: 114000013242502822}
+  - 4: {fileID: 495222}
+  - 114: {fileID: 11418398}
+  - 114: {fileID: 11419134}
+  - 114: {fileID: 114000010166161932}
   m_Layer: 0
-  m_Name: SP_starlingFlock_0
+  m_Name: SP_Richman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &466290
+--- !u!4 &495222
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128360}
+  m_GameObject: {fileID: 111670}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -266.7, y: 17, z: 5.68}
+  m_LocalPosition: {x: -19.940002, y: 0.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11410184
+--- !u!114 &11418398
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11434038
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128360}
+  m_GameObject: {fileID: 111670}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa2aecfe88da48e8b391e33aa7cb815, type: 3}
@@ -57,6 +45,22 @@ MonoBehaviour:
   m_positionLock: 000001
   m_rotationLock: 010101
   m_scaleLock: 010101
+--- !u!114 &11419134
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 111670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_circular: 0
+  m_smoothRadius: 0.5
+  m_points:
+  - {x: 14.948425, y: 0.0710555, z: 0.003083229}
+  - {x: -15.2127, y: 0.057125896, z: -0.08276129}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -66,27 +70,28 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 128360}
+  m_RootGameObject: {fileID: 111670}
   m_IsPrefabParent: 1
---- !u!114 &114000013089147956
+--- !u!114 &114000010166161932
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128360}
+  m_GameObject: {fileID: 111670}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_entityPrefab: {fileID: 158028, guid: a423c52c5d96f47f0b91444d924e844f, type: 2}
-  m_entityPrefabStr: Air/PF_Starling
+  m_entityPrefab: {fileID: 1000011936320888, guid: 6cbaad3b4cb614fc5ab394afcdb9001f,
+    type: 2}
+  m_entityPrefabStr: Surface/PF_Richman
   m_quantity:
-    min: 15
-    max: 15
+    min: 1
+    max: 1
   m_scale:
-    min: 1.4
-    max: 1.4
+    min: 1.45
+    max: 1.55
   m_rails: 1
   m_flockBonus: 0
   m_minTier: 0
@@ -98,26 +103,3 @@ MonoBehaviour:
     min: 0
     max: 0
   m_maxSpawns: 0
---- !u!114 &114000013242502822
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_guideFunction: 0
-  m_innerRadius: 10
-  m_outterRadius: 20
-  m_targetDistance: 5
-  m_depthAmplitude: 1
-  m_depthFrequency: 3
-  m_scale: {x: 1, y: 1, z: 1}
-  m_rotation: {x: 0, y: 0, z: 0}
-  m_boundsScale: {x: 0, y: 0, z: 0}
-  m_forcePreview: 0
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
