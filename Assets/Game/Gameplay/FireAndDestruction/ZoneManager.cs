@@ -51,7 +51,7 @@ public class ZoneManager : MonoBehaviour {
 			//should explode?
 			string minTier = burnDef.Get("minTierExplode");
 			if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
-				return ZoneEffect.L;
+				return ZoneEffect.M; //TODO: this should be an explosion, but it's not yet ready ("L")
 			} else {
 				//should burn?
 				minTier = burnDef.Get("minTierBurn");
@@ -71,7 +71,7 @@ public class ZoneManager : MonoBehaviour {
 	}
 
 	public ZoneEffect GetDestructionEffectCode(Vector3 _pos, string _sku) {
-		Zone zone = GetZone(_pos.z);
+		/*Zone zone = GetZone(_pos.z);
 
 		if (zone != Zone.None) {
 			if (m_burnDestructionDefinitions == null) {
@@ -90,8 +90,9 @@ public class ZoneManager : MonoBehaviour {
 					return ZoneEffect.S; 
 				}
 			}
-		}
+		}*/
 
+		// TOOD: the destruction effects will be disabled until we have enough time 
 		return ZoneEffect.None;
 	}
 
