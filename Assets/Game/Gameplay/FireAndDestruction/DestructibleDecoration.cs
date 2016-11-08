@@ -85,10 +85,11 @@ public class DestructibleDecoration : Initializable {
 
 		if (m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
-			if (m_viewDestroyed) Destroy(m_viewDestroyed);
-			Destroy(m_autoSpawner);
+			//TODO: find a better way to clean prefabs
+			//if (m_viewDestroyed) Destroy(m_viewDestroyed);
+			//Destroy(m_autoSpawner);
 			Destroy(this);
-			Destroy(m_entity);
+			//Destroy(m_entity);
 		} else {
 			m_view = transform.FindChild("view").gameObject;
 			m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
