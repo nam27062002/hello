@@ -18,7 +18,13 @@ using DG.Tweening;
 /// <summary>
 /// Controller for the disguises screen.
 /// </summary>
+[RequireComponent(typeof(NavigationShowHideAnimator))]
 public class DisguisesScreenController : MonoBehaviour {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	public const int MAX_PILLS = 9;
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -48,6 +54,17 @@ public class DisguisesScreenController : MonoBehaviour {
 	private string m_dragonSku = "";
 	private Wardrobe m_wardrobe = null;
 
+	// Internal references
+	private NavigationShowHideAnimator m_animator = null;
+	private NavigationShowHideAnimator animator {
+		get { 
+			if(m_animator == null) {
+				m_animator = GetComponent<NavigationShowHideAnimator>();
+			}
+			return m_animator;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -55,9 +72,15 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Instantiate pills
-		m_pills = new DisguisePill[9];
-		for (int i = 0; i < 9; i++) {
+		// Clear all content of the scroll list (used to do the layout)
+		int numChildren = m_scrollList.content.childCount;
+		for(int i = numChildren - 1; i >= 0; i--) {	// Reverse loop since we're erasing
+			GameObject.Destroy(m_scrollList.content.transform.GetChild(i).gameObject);
+		}
+
+		// Instantiate pills - as many as needed!
+		m_pills = new DisguisePill[MAX_PILLS];
+		for (int i = 0; i < MAX_PILLS; i++) {
 			GameObject pill = GameObject.Instantiate<GameObject>(m_pillPrefab);
 			pill.transform.parent = m_scrollList.content;
 			pill.transform.localScale = Vector3.one;
@@ -66,14 +89,18 @@ public class DisguisesScreenController : MonoBehaviour {
 			//m_pills[i].OnPillClicked.AddListener(OnPillClicked);		// [AOC] Will be handled by the snap scroll list
 		}
 
-		m_dragonSku = "";
 
 		// Store some references
 		for(int i = 0; i < m_powers.Length; i++) {
 			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
 		}
 
+		m_dragonSku = "";
 		m_wardrobe = UsersManager.currentUser.wardrobe;
+
+		// Subscribe to animator's events
+		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
+		animator.OnHidePostAnimation.AddListener(OnHidePostAnimation);
 	}
 
 	/// <summary>
@@ -135,7 +162,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
-		// Store current dragon (should've been initialized by the Equipment screen)
+		// Store current dragon
 		m_dragonSku = menuController.selectedDragon;
 
 		// Find out initial disguise
@@ -146,7 +173,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		// Find the 3D dragon preview
-		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.EQUIPMENT);
+		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DISGUISES);
 		if(scene3D != null) {
 			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku);
 			if(preview != null) m_previewAnchor = preview.transform;
@@ -224,7 +251,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Hide all powerups
 		for(int i = 0; i < m_powerAnims.Length; i++) {
-			m_powerAnims[i].Hide();
+			if(m_powerAnims[i] != null) m_powerAnims[i].Hide();
 		}
 
 		// Hide rarity
@@ -251,18 +278,20 @@ public class DisguisesScreenController : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The screen is about to be shown.
+	/// Screen is about to be open.
 	/// </summary>
-	public void OnShow() {
-		// Make sure the screen is properly initialized
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnShowPreAnimation(ShowHideAnimator _animator) {
+		// Refresh with initial data!
 		Initialize();
 	}
 
 	/// <summary>
-	/// The screen has been hidden.
+	/// Screen has just closed
 	/// </summary>
-	public void OnHide() {
-		// Make sure the screen is properly finalized
+	/// <param name="_animator">The animator that triggered the event.</param>
+	public void OnHidePostAnimation(ShowHideAnimator _animator) {
+		// Make sure screens are properly finalized
 		Finalize();
 	}
 

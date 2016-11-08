@@ -151,12 +151,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		// Get the level
 		m_furyDuration = m_dragon.data.def.GetAsFloat("furyBaseDuration");
-		float durationIncrease = m_furyDuration * m_dragon.data.fireSkill.value;
-		m_furyDuration += durationIncrease;
-
 		m_damage = m_dragon.data.def.GetAsFloat("furyBaseDamage");
-		float damageIncrease = m_damage * m_dragon.data.fireSkill.value;
-		m_damage += damageIncrease;
 
 		m_furyRushesCompleted = 0;
 		m_scoreToAddForNextFuryRushes = (int)(AdditionalGoldRushCompletitionPercentageForConsecutiveRushes * (float)m_furyMax);

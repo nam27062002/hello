@@ -9,7 +9,7 @@ public class DragonSpeedChange : MonoBehaviour {
 	void Start() {
 		if (InstanceManager.player != null) {
 			Slider slider = GetComponent<Slider>();
-			m_speed = InstanceManager.player.data.speedSkill.value;
+			m_speed = InstanceManager.player.data.def.GetAsFloat("speedBase");
 			slider.value = m_speed;
 		}
 	}
