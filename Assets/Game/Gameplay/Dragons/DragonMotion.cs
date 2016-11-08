@@ -77,7 +77,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector3 m_direction;
 	private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
 	private Quaternion m_desiredRotation;
-	private Vector3 m_angularVelocity;
+	private Vector3 m_angularVelocity = Vector3.zero;
 	private float m_boostSpeedMultiplier;
 	public float boostSpeedMultiplier
 	{
@@ -291,6 +291,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		canDive = DebugSettings.dive;
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
+		m_angularVelocity = Vector3.zero;
 		m_lastPosition = transform.position;
 		m_lastSpeed = 0;
 
