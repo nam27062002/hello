@@ -109,12 +109,19 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 	private State m_state = State.Init;
 
-	
-	//-----------------------------------------------
-	// Methods
-	//-----------------------------------------------
-	// Use this for initialization
-	protected virtual void Start() {
+    /// <summary>
+    /// Watch used to meassure time time spent on spawning entities. It's defined static to save memory.
+    /// </summary>
+    private static System.Diagnostics.Stopwatch sm_watch;
+
+    private int m_entitiesActivated;
+    private int m_rail = 0;
+
+    //-----------------------------------------------
+    // Methods
+    //-----------------------------------------------
+    // Use this for initialization
+    protected virtual void Start() {
 		float rnd = Random.Range(0f, 100f);
 
 		if (InstanceManager.player.data.tier >= m_minTier) {
@@ -158,8 +165,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 
 		// we are not goin to use this spawner, lets destroy it
-		Destroy(gameObject);
-	}
+		Destroy(gameObject);        
+    }
 
 	private void OnDestroy() {
 		if (SpawnerManager.isInstanceCreated)
@@ -372,19 +379,24 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 
 		if (m_state == State.Create_Instances) {
-			System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-			watch.Start();
+            if (sm_watch == null) {
+                sm_watch = new System.Diagnostics.Stopwatch();
+                sm_watch.Start();
+            }
+
+            long start = sm_watch.ElapsedMilliseconds;
 			for (uint i = m_entityAlive; i < m_entitySpawned; i++) {			
 				m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
 				m_entityAlive++;
 
-				if (watch.ElapsedMilliseconds >= SpawnerManager.SPAWNING_MAX_TIME) {
+				if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
 					break;
 				}
 			}
 
 			if (m_entityAlive == m_entitySpawned) {
-				m_state = State.Activating_Instances;
+                m_entitiesActivated = 0;
+                m_state = State.Activating_Instances;
 			}
 
 			return false;
@@ -392,25 +404,41 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		if (m_state == State.Activating_Instances) {
 			Spawn();
-			m_state = State.Alive;
-			return true;
+
+            if (m_entitiesActivated == m_entitySpawned)
+            {
+                // Disable this spawner after a number of spawns
+                if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0)
+                {
+                    m_respawnCount++;
+                    if (m_respawnCount == m_maxSpawns)
+                    {
+                        gameObject.SetActive(false);
+                        SpawnerManager.instance.Unregister(this);
+                    }
+                }
+
+                m_state = State.Alive;                
+            }
 		}
 
 		return m_state == State.Alive;
-	}
+	}    
 
-	private void Spawn() {
-		int rail = 0;
-		for (int i = 0; i < m_entitySpawned; i++) {
-			GameObject spawning = m_entities[i];
-			spawning.SetActive(true);
+	private void Spawn() {        
+        long start = sm_watch.ElapsedMilliseconds;
+        while (m_entitiesActivated < m_entitySpawned) {
+			GameObject spawning = m_entities[m_entitiesActivated];
+            if (!spawning.activeSelf) {
+                spawning.SetActive(true);
+            }
 
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
 				m_guideFunction.ResetTime();
 			}
 
-			if (i > 0) {
+			if (m_entitiesActivated > 0) {
 				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
 			}
 
@@ -424,8 +452,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
 			if (pilot != null) {
-				pilot.SetRail(rail, (int)m_rails);
-				rail = (rail + 1) % (int)m_rails;
+				pilot.SetRail(m_rail, (int)m_rails);
+                m_rail = (m_rail + 1) % (int)m_rails;
 				pilot.guideFunction = m_guideFunction;
 				pilot.Spawn(this);
 			}
@@ -441,17 +469,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 			if (machine != null && m_groupController) {				
 				machine.EnterGroup(ref m_groupController.flock);
 			}
-		}
 
-		// Disable this spawner after a number of spawns
-		if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0) {
-			m_respawnCount++;
-			if (m_respawnCount == m_maxSpawns) {
-				gameObject.SetActive(false);
-				SpawnerManager.instance.Unregister(this);
-			}
-		}
-	}
+            m_entitiesActivated++;           
+
+            if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
+                break;
+            }            
+        }       
+	}    
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();
