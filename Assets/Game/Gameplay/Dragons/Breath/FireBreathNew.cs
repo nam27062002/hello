@@ -89,13 +89,11 @@ public class FireBreathNew : DragonBreathBehaviour {
         m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible");
 		m_noPlayerMask = ~LayerMask.GetMask("Player");
 
-        float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLenght");
+        float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
         m_length = furyBaseLength;
         m_length *= transform.localScale.x;
-      	float lengthIncrease = m_length * m_dragon.data.fireSkill.value;
-        m_length += lengthIncrease;
-
-        dragonFlameInstance.setEffectScale(furyBaseLength, transform.localScale.x, lengthIncrease);
+      	
+        dragonFlameInstance.setEffectScale(furyBaseLength, transform.localScale.x);
         m_length *= 2.0f;
         m_actualLength = m_length;
 

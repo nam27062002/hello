@@ -29,7 +29,6 @@ public class ContentManager
 		// Dragons
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[]{"Rules/dragonDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_TIERS, new string[]{"Rules/dragonTierDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_SKILLS, new string[]{"Rules/dragonSkillDefinitions", "Rules/dragonSkillProgressionDefinitions"});
 
 		// Entites
 		kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, new string[]{"Rules/entityDefinitions"});

@@ -67,7 +67,6 @@ public enum GameEvents {
 	// Dragon collection events
 	DRAGON_ACQUIRED,			// params: DragonData _data
 	DRAGON_LEVEL_UP,			// params: DragonData _data
-	DRAGON_SKILL_UPGRADED,		// params: DragonSkill _skill	// [AOC] TODO!! We might want to know whose dragon this skill belongs to - figure out how
 
 	// Menu events
 	MENU_DRAGON_SELECTED,		 // params: string _selectedDragonSku	// [AOC] Triggered when the dragon hovered in the dragon selection screen changes
