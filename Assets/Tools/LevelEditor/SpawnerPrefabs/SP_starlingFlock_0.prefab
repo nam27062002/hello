@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11434038}
   - 114: {fileID: 11410184}
   - 114: {fileID: 114000013089147956}
-  - 114: {fileID: 114000010668689048}
+  - 114: {fileID: 114000013242502822}
   m_Layer: 0
   m_Name: SP_starlingFlock_0
   m_TagString: Untagged
@@ -26,7 +26,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128360}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 234.29999, y: -118, z: 0}
+  m_LocalPosition: {x: -266.7, y: 17, z: 5.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -68,20 +68,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 128360}
   m_IsPrefabParent: 1
---- !u!114 &114000010668689048
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 128360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 5.884674, y: 0.053390503}
-  size: {x: 33.236725, y: 19.090416}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114000013089147956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -112,3 +98,26 @@ MonoBehaviour:
     min: 0
     max: 0
   m_maxSpawns: 0
+--- !u!114 &114000013242502822
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 128360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 5
+  m_depthAmplitude: 1
+  m_depthFrequency: 3
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_forcePreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
