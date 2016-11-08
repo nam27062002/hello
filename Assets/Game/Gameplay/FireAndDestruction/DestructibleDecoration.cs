@@ -74,15 +74,22 @@ public class DestructibleDecoration : Initializable {
 		m_collider = GetComponent<BoxCollider>();
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		m_zone = m_zoneManager.GetZone(transform.position.z);
-		m_effect = m_zoneManager.GetDestructionEffectCode(transform.position, m_entity.sku);
+		if ( m_zoneManager != null ){
+			m_zone = m_zoneManager.GetZone(transform.position.z);
+			m_effect = m_zoneManager.GetDestructionEffectCode(transform.position, m_entity.sku);
+		}else{
+			m_zone = ZoneManager.Zone.None;
+			m_effect = ZoneManager.ZoneEffect.None;
+			Debug.LogWarning("No Zone Manager");
+		}
 
 		if (m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
-			if (m_viewDestroyed) Destroy(m_viewDestroyed);
-			Destroy(m_autoSpawner);
+			//TODO: find a better way to clean prefabs
+			//if (m_viewDestroyed) Destroy(m_viewDestroyed);
+			//Destroy(m_autoSpawner);
 			Destroy(this);
-			Destroy(m_entity);
+			//Destroy(m_entity);
 		} else {
 			m_view = transform.FindChild("view").gameObject;
 			m_viewDestroyed = transform.FindChild("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one

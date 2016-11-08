@@ -213,13 +213,14 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		}
 		
 		m_watch.Start();
-		for (int i = 0; i < m_spawning.Count; i++) {
+        long start = m_watch.ElapsedMilliseconds;
+        for (int i = 0; i < m_spawning.Count; i++) {
 			ISpawner sp = m_spawning[i];
 			if (sp.Respawn()) {
 				m_spawning.Remove(sp);
 				i = Mathf.Max(0, i - 1);
 			}
-			if (m_watch.ElapsedMilliseconds >= SPAWNING_MAX_TIME) {
+			if (m_watch.ElapsedMilliseconds - start >= SPAWNING_MAX_TIME) {
 				break;
 			}
 		}
