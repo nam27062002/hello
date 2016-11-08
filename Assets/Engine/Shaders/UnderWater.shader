@@ -30,6 +30,12 @@ Shader "Hungry Dragon/UnderWater"
 			ZWrite Off
 			Fog{ Color(0, 0, 0, 0) }
 
+			Stencil
+			{
+				Ref 5
+				Comp NotEqual
+			}
+
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
@@ -92,6 +98,7 @@ Shader "Hungry Dragon/UnderWater"
 					col.w = 0.0f;
 					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
 					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
+					col.r;
 					return col;
 				}
 			ENDCG
