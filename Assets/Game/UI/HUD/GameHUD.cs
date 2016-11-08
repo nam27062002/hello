@@ -21,7 +21,7 @@ public class GameHUD : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-
+	public GameObject m_speedGameObject;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -69,10 +69,15 @@ public class GameHUD : MonoBehaviour {
             // Enable/Disable object
             Debug_SetActive();
         }
+        else if ( _id == DebugSettings.SHOW_SPEED )
+        {
+			m_speedGameObject.SetActive( _newValue );
+        }
     }
 
     private void Debug_SetActive() {
 		gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD));
+		m_speedGameObject.SetActive( Prefs.GetBoolPlayer(DebugSettings.SHOW_SPEED) );
     }
 #endregion   
 }
