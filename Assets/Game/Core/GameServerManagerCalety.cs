@@ -26,10 +26,12 @@ public class GameServerManagerCalety : GameServerManager
         public SimpleJSON.JSONClass m_lastRecievedUniverse = null;
         public int m_saveDataCounter = 0;
 
-        private Action<string, int> m_onResponse;
+        public delegate bool OnResponse(string response, int responseCode);
+        private OnResponse m_onResponse;
 
-        public GameSessionDelegate(Action<string, int> onResponse)
+        public GameSessionDelegate(OnResponse onResponse)
         {
+            Debug.TaggedLog(tag, "GameSessionDelegate instantiated");
             m_onResponse = onResponse;
         }
 
@@ -520,10 +522,17 @@ public class GameServerManagerCalety : GameServerManager
         }        
     }
 
-    private void Commands_OnResponse(string responseData, int statusCode)
+    private bool Commands_OnResponse(string responseData, int statusCode)
     {
         Error error = null;
         Dictionary<string, object> response = null;
+
+        // 426 code means that there's a new version of the application available. We simulate that the response was 200 (SUCCESS) because we don't want to force the
+        // user to upgrade
+        if (statusCode == 426)
+        {
+            statusCode = 200;
+        }
 
         int status = (int)Math.Floor(statusCode / 100.0);
 
@@ -728,7 +737,8 @@ public class GameServerManagerCalety : GameServerManager
             LogWarning(Commands_CurrentCommand, error);
         }
 
-        Commands_OnExecuteCommandDone(error, response);        
+        Commands_OnExecuteCommandDone(error, response);
+        return error == null;       
     }
     #endregion
 
@@ -741,7 +751,7 @@ public class GameServerManagerCalety : GameServerManager
     private void CaletyExtensions_Init()
     {
 		// All codes need to be handled in order to be sure that the game will continue regardless the network error
-		int[] codes = new int[] { 200, 301, 302, 303, 304, 305, 306, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 500, 501, 502, 503, 504, 505 };
+		int[] codes = new int[] { 200, 301, 302, 303, 304, 305, 306, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 426, 500, 501, 502, 503, 504, 505 };
         NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_PING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnPing);
         NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_TIME, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetTime);
         NetworkManager.SharedInstance.RegistryEndPoint(COMMAND_GET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnGetPersistenceResponse);
@@ -750,14 +760,12 @@ public class GameServerManagerCalety : GameServerManager
 
     private bool CaletyExtensions_OnPing(string strResponse, string strCmd, int iResponseCode)
     {
-        Commands_OnResponse(strResponse, iResponseCode);
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);        
     }
 
     private bool CaletyExtensions_OnGetTime(string strResponse, string strCmd, int iResponseCode)
     {
-        Commands_OnResponse(strResponse, iResponseCode);
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);        
     }
 
     private bool CaletyExtensions_OnGetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
@@ -770,15 +778,13 @@ public class GameServerManagerCalety : GameServerManager
             strResponse = defaultJson.ToString();
         }
 
-        Commands_OnResponse(strResponse, iResponseCode);        
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);                
     }
 
     public bool CaletyExtensions_OnSetPersistenceResponse(string strResponse, string strCmd, int iResponseCode)
     {
         Log("OnSetPersistenceResponse statusCode=" + iResponseCode);
-        Commands_OnResponse(strResponse, iResponseCode);
-        return true;
+        return Commands_OnResponse(strResponse, iResponseCode);        
     }
 
     private void CaletyExtensions_LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken)

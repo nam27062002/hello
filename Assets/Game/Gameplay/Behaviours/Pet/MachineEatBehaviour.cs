@@ -10,6 +10,9 @@ public class MachineEatBehaviour : EatBehaviour {
 	[SerializeField] private bool m_isAquatic = false;
 	protected override bool isAquatic { get { return m_isAquatic; } }
 
+	[SerializeField] private bool m_canMultipleLatchOnPlayer = false;
+	public override bool canMultipleLatchOnPlayer { get { return m_canMultipleLatchOnPlayer; } }
+
 	private AI.Machine m_machine;
 
 	override protected void Awake() {
@@ -82,19 +85,18 @@ public class MachineEatBehaviour : EatBehaviour {
 
 
 
-	protected override void Eat(AI.Machine _prey) {
-		base.Eat( _prey );
+    protected override void EatExtended(PreyData preyData) {         
 		if ( m_machine )
 		{
 			// Start Eating Animation!
 			m_machine.StartEating();
-		}
+		}        
 	}
 
 	protected override void UpdateEating()
 	{
 		base.UpdateEating();
-		if ( m_prey.Count <= 0 && m_machine)
+		if (PreyCount <= 0 && m_machine)
 			m_machine.StopEating();
 	}
 

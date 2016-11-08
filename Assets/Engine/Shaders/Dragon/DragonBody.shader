@@ -19,12 +19,22 @@ Properties {
 }
 
 SubShader {
-	Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase" }
+	Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
 	ZWrite On
-	LOD 100
+	Cull Back
+//	LOD 100
+	ColorMask RGBA
 	
 	Pass {
-		Cull Back
+
+		Stencil
+		{
+			Ref 5
+			Comp always
+			Pass Replace
+			ZFail keep
+		}
+
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag

@@ -13,11 +13,18 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" "Queue" = "Geometry"}
+		Tags { "RenderType"="Opaque" "Queue"="Geometry" "LightMode"="ForwardBase" }
 		LOD 100
 		
 		Pass {  
-			Tags { "LightMode" = "ForwardBase" }
+			Stencil
+			{
+				Ref 4
+				Comp always
+				Pass Replace
+				ZFail keep
+			}
+
 
 			CGPROGRAM
 				#pragma vertex vert
