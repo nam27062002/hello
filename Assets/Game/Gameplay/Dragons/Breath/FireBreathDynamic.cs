@@ -91,9 +91,9 @@ public class FireBreathDynamic : MonoBehaviour
     private ParticleSystem mp_particles;
     private ParticleSystem mp_particlesMask;
 
-    public void setEffectScale(float furyBaseLenght, float dragonScale, float lengthIncrease)
+    public void setEffectScale(float furyBaseLength, float dragonScale)
     {
-        m_collisionMaxDistance = (furyBaseLenght * dragonScale) + lengthIncrease;
+        m_collisionMaxDistance = (furyBaseLength * dragonScale);
 
         if (m_debugScale > 0.0f)
         {

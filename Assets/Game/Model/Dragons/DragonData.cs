@@ -59,19 +59,6 @@ public class DragonData {
 	private Range m_scaleRange = new Range(1f, 1f);
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
 
-	// Skills
-		// Speed Base
-	[SerializeField] private DragonSkill m_speedSkill = null;
-	public DragonSkill speedSkill { get { return m_speedSkill; }}
-
-		// Boost size
-	[SerializeField] private DragonSkill m_energySkill = null;
-	public DragonSkill energySkill { get { return m_energySkill; }}
-
-		// Fire Size
-	[SerializeField] private DragonSkill m_fireSkill = null;
-	public DragonSkill fireSkill { get { return m_fireSkill; }}
-
 	// Pets
 	[SerializeField] private List<string> m_pets;
 	public List<string> pets { get { return m_pets; } }
@@ -85,7 +72,8 @@ public class DragonData {
 	}
 
 	// Debug
-	private float m_scaleOffset = 0;
+	private float m_scaleOffset = 0f;
+	private float m_speedOffset = 0f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -105,11 +93,6 @@ public class DragonData {
 		// Level-dependant stats
 		m_healthRange = m_def.GetAsRange("health");
 		m_scaleRange = m_def.GetAsRange("scale");
-		
-		// Skills
-		m_speedSkill = new DragonSkill(this, "speed");
-		m_energySkill = new DragonSkill(this, "energy");
-		m_fireSkill = new DragonSkill(this, "fire");
 
 		// Items
 		m_pets = new List<string>();
@@ -122,23 +105,6 @@ public class DragonData {
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Gets the skill.
-	/// </summary>
-	/// <returns>The skill.</returns>
-	/// <param name="_sku">The sku of the wanted skill.</param>
-	public DragonSkill GetSkill(string _sku) {
-		// [AOC] Quick'n'dirty
-		if(m_speedSkill.def.sku == _sku) {
-			return m_speedSkill;
-		} else if(m_energySkill.def.sku == _sku) {
-			return m_energySkill;
-		} else if(m_fireSkill.def.sku == _sku) {
-			return m_fireSkill;
-		}
-		return null;
-	}
-
 	/// <summary>
 	/// Compute the max health at a specific level.
 	/// </summary>
@@ -163,7 +129,7 @@ public class DragonData {
 	/// Offsets speed value. Used for Debug purposes on Preproduction fase.
 	/// </summary>
 	public void OffsetSpeedValue(float _speed) {
-		m_speedSkill.OffsetValue(_speed);
+		m_speedOffset = _speed;
 	}
 
 	/// <summary>
@@ -217,9 +183,6 @@ public class DragonData {
 	{	
 		m_owned = false;
 		m_progression.Load(0,0);
-		m_speedSkill.Load(0);
-		m_energySkill.Load(0);
-		m_fireSkill.Load(0);
 		m_disguise = "";
 		m_pets.Clear();
 	}
@@ -239,11 +202,6 @@ public class DragonData {
 		m_owned = _data["owned"].AsBool;
 
 		progression.Load(_data["xp"].AsFloat, _data["level"].AsInt);
-
-		// Skills
-		m_speedSkill.Load(_data["speedSkillLevel"].AsInt);
-		m_energySkill.Load(_data["boostSkillLevel"].AsInt);
-		m_fireSkill.Load(_data["fireSkillLevel"].AsInt);
 
 		// Disguise
 		if ( _data.ContainsKey("disguise") )
@@ -277,10 +235,6 @@ public class DragonData {
 		data.Add("owned", m_owned.ToString());
 		data.Add("xp", progression.xp.ToString());
 		data.Add("level", progression.level.ToString());
-		
-		data.Add("speedSkillLevel", m_speedSkill.level.ToString());
-		data.Add("boostSkillLevel", m_energySkill.level.ToString());
-		data.Add("fireSkillLevel", m_fireSkill.level.ToString());
 
 		data.Add("disguise", m_disguise);
 

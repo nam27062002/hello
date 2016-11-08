@@ -26,7 +26,6 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 	// [AOC] Key is the name of the property before which the separator should be placed. Value is the text of the separator.
 	private static readonly Dictionary<string, string> m_separators = new Dictionary<string, string> {
 		{ "m_id", "General Data" },
-		{ "m_skills", "Skills" },
 		{ "m_unlockPriceCoins", "Progression" },
 		{ "m_healthRange", "Level-dependant Stats" },
 		{ "m_healthDrainPerSecond", "Constant Stats"} 
@@ -84,26 +83,6 @@ public class DragonDataEditor : ExtendedPropertyDrawer {
 			// Properties requiring special treatment
 			// ID can't be changed, so don't do anything else
 			if(_property.name == "m_id") {
-				drawDefault = false;
-			}
-
-			// Skills
-			else if(_property.name == "m_skills") {
-				// Skills is an array of fixed length (4), but we will display each skill as an individual property - since we don't want to allow changing its size or order
-				// Each skill must be foldable
-				// Skill type can't be change and will be used as label
-				// Unlock prices is another array of fixed length (6) with custom labels for each level, but in this case we want to allow folding it
-				SerializedProperty skillProp = null;
-				for(int i = 0; i < _property.arraySize; i++) {
-					// Get skill property
-					skillProp = _property.GetArrayElementAtIndex(i);
-					
-					// Draw it using its own custom property drawer
-					m_pos.height = EditorGUI.GetPropertyHeight(skillProp);
-					EditorGUI.PropertyField(m_pos, skillProp, true);
-					AdvancePos();
-				}
-
 				drawDefault = false;
 			}
 
