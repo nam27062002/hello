@@ -263,11 +263,22 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_collisionFirePrefab: PS_BonfireToonBlue
-  m_collisionFireDelay: 0.2
-  m_collisionEmiters: 10
-  m_groundLayer: Ground
-  m_enemyLayers: []
+  m_collisionPrefabs:
+  - m_CollisionLayers:
+    - Ground
+    - GroundVisible
+    m_CollisionPrefab: PS_BonfireToonBlue
+    m_CollisionDelay: 0.2
+    m_CollisionEmiters: 10
+    m_iCollisionLayerMask: 0
+    m_CollisionPrefabPath: 
+  - m_CollisionLayers:
+    - Water
+    m_CollisionPrefab: Water/PS_BoilingWater
+    m_CollisionDelay: 0.2
+    m_CollisionEmiters: 10
+    m_iCollisionLayerMask: 0
+    m_CollisionPrefabPath: 
   timeDelay: 0.25
   m_debugScale: -1
 --- !u!198 &198000012915345330

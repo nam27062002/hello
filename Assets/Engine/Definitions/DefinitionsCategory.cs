@@ -38,7 +38,6 @@ public class DefinitionsCategory
 	// Dragons
 	public const string DRAGONS = "DRAGONS";
 	public const string DRAGON_TIERS = "DRAGON_TIERS";
-	public const string DRAGON_SKILLS = "DRAGON_SKILLS";	// Contains skillDefinitions and skillProgressionDefinitions. The latter have a definition for each dragon (matching skus).
 
 	// Entities
 	public const string ENTITIES = "ENTITIES";

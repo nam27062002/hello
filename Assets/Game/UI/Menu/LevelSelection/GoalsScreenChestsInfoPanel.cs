@@ -43,7 +43,7 @@ public class GoalsScreenChestsInfoPanel : MonoBehaviour {
 	private void Start() {
 		// Get anchor ref
 		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
-		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.LEVEL_SELECTION);
+		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
 		GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
 		m_3dAnchor = goalScene.infoPanelUIAnchor;
 	}
