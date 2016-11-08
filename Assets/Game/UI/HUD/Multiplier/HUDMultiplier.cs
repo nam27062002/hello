@@ -19,7 +19,7 @@ using TMPro;
 /// Simple controller for the score multiplier display in the hud.
 /// </summary>
 [RequireComponent(typeof(Animator))]
-public class HUDMultiplier : MonoBehaviour {
+public class HUDMultiplier : HudWidget {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -28,40 +28,37 @@ public class HUDMultiplier : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private TextMeshProUGUI m_text = null;
+	// Exposed setup	
 	[SerializeField] private Text m_maskText = null;
-	[SerializeField] private Image m_progressFill = null;
+    [SerializeField] private TextMeshProUGUI m_overlayText = null;
+    [SerializeField] private Image m_progressFill = null;
 	[SerializeField] private ParticleSystem m_changePS = null;
-
-	// Other external references
-	private Animator m_anim = null;
-
+    
 	// Internal logic
 	private int m_comboSFXIdx = 0;
-	
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		m_anim = GetComponent<Animator>();
+
+    private long m_multiplierToShow;
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    protected override void Awake() {
+        base.Awake();
 		m_changePS.gameObject.SetActive(false);
 	}
 
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		UpdateText(RewardManager.currentScoreMultiplier);
-	}
+    protected override void Start() {
+        base.Start();
+        SetMultiplierToShow(RewardManager.currentScoreMultiplier, true);                
+    }
 
-	/// <summary>
-	/// The spawner has been enabled.
-	/// </summary>
-	private void OnEnable() {
+    /// <summary>
+    /// The spawner has been enabled.
+    /// </summary>
+    private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<ScoreMultiplier, ScoreMultiplier>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
@@ -77,7 +74,9 @@ public class HUDMultiplier : MonoBehaviour {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	protected override void Update() {
+        base.Update();
+
 		// If we have a valid multiplier, show progress to reach next one
 		if(RewardManager.currentScoreMultiplier != RewardManager.defaultScoreMultiplier) {
 			Vector3 scale = m_progressFill.rectTransform.localScale;
@@ -86,59 +85,86 @@ public class HUDMultiplier : MonoBehaviour {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// INTERNAL UTILS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Updates the displayed multiplier.
-	/// </summary>
-	/// <param name="_mult">The multiplier we want to display.</param>
-	private void UpdateText(ScoreMultiplier _mult) {
-		// Do it! Except if going back to "no multiplier"
-		if(_mult != null && _mult != RewardManager.defaultScoreMultiplier) {
-			m_text.text = StringUtils.FormatNumber(_mult.multiplier, 0);
-			m_maskText.text = m_text.text;
-		}
-	}
+    //------------------------------------------------------------------//
+    // INTERNAL UTILS													//
+    //------------------------------------------------------------------//
+    private void SetMultiplierToShow(ScoreMultiplier _mult, bool immediate)
+    {
+        // We just keep the integer part
+        m_multiplierToShow = (long)(_mult.multiplier);
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Current score multiplier has changed.
-	/// </summary>
-	/// <param name="_oldMultiplier">The previous multiplier.</param>
-	/// <param name="_newMultiplier">The new multiplier.</param>
-	private void OnMultiplierChanged(ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier) {
-		// Update text
-		UpdateText(_newMultiplier);
+        // Do it! Except if going back to "no multiplier"
+        if (_mult != null && _mult != RewardManager.defaultScoreMultiplier)
+        {            
+            UpdateValue(m_multiplierToShow, false, immediate);
+        }
+    }
 
-		// Launch anim
-		if(m_anim != null) {
-			// If it's the default multiplier, fade out
-			if(_newMultiplier == RewardManager.defaultScoreMultiplier) {
-				// Make sure "in" trigger is consumed
-				m_anim.ResetTrigger("in");
-				m_anim.SetTrigger("out");
+    protected override string GetValueAsString() {
+        return StringUtils.FormatNumber(m_multiplierToShow);
+    }
 
-				// Reset combo index
-				m_comboSFXIdx = 0;
-			} else {
-				// Make sure "out" trigger is consumed
-				m_anim.ResetTrigger("out");
-				m_anim.SetTrigger("in");
-				m_anim.SetTrigger("change");
 
-				// Trigger particle effect as well
-				m_changePS.gameObject.SetActive(true);
-				m_changePS.Stop();
-				m_changePS.Play();
+    /// <summary>
+    /// Updates the displayed multiplier.
+    /// </summary>
+    /// <param name="_mult">The multiplier we want to display.</param>
+    protected override void PrintValueExtended() {
+        base.PrintValueExtended();
+        if (m_maskText != null)
+            m_maskText.text = m_valueTxt.text;
 
-				// And sound! ^^
-				m_comboSFXIdx = Mathf.Min(m_comboSFXIdx + 1, 10);	// Increase combo index! Max combo audio available sounds.
-				string audioPath = COMBO_SFX_PATH.Replace("%U0", m_comboSFXIdx.ToString());
-				AudioController.Play( audioPath );
-			}
-		}
-	}
+        if (m_overlayText != null)
+            m_overlayText.text = m_valueTxt.text;
+    }
+       
+    protected override void PlayAnimExtended() {
+        // Launch anim
+        if (m_anim != null)
+        {
+            long m_defaultScoreMultiplier = (long)RewardManager.defaultScoreMultiplier.multiplier;
+
+            // If it's the default multiplier, fade out
+            if (m_multiplierToShow == m_defaultScoreMultiplier)
+            {
+                // Make sure "in" trigger is consumed
+                m_anim.ResetTrigger("in");
+                m_anim.SetTrigger("out");
+
+                // Reset combo index
+                m_comboSFXIdx = 0;
+            }
+            else
+            {
+                // Make sure "out" trigger is consumed
+                m_anim.ResetTrigger("out");
+                m_anim.SetTrigger("in");
+                m_anim.SetTrigger("change");
+
+                // Trigger particle effect as well
+                m_changePS.gameObject.SetActive(true);
+                m_changePS.Stop();
+                m_changePS.Play();
+
+                // And sound! ^^
+                m_comboSFXIdx = Mathf.Min(m_comboSFXIdx + 1, 10);   // Increase combo index! Max combo audio available sounds.
+                string audioPath = COMBO_SFX_PATH.Replace("%U0", m_comboSFXIdx.ToString());
+                AudioController.Play(audioPath);
+            }
+        }
+    }
+
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Current score multiplier has changed.
+    /// </summary>
+    /// <param name="_oldMultiplier">The previous multiplier.</param>
+    /// <param name="_newMultiplier">The new multiplier.</param>
+    private void OnMultiplierChanged(ScoreMultiplier _oldMultiplier, ScoreMultiplier _newMultiplier) {
+        // Update text
+        SetMultiplierToShow(_newMultiplier, false);
+        NeedsToPlayAnim = true;
+    }
 }
