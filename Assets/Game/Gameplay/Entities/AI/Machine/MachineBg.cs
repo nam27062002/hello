@@ -138,7 +138,7 @@ namespace AI {
 		}
 
 		private void PlaySound(string _clip) {
-			AudioManager.instance.PlayClip(_clip);
+			AudioController.Play(_clip, transform.position);
 		}
 
 		// External interactions
