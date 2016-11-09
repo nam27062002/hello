@@ -1141,6 +1141,11 @@ MonoBehaviour:
   m_animC: 
   m_onEatenParticles: []
   m_onEatenAudio: 
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -1262,13 +1267,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_absorbTime: 0.1
   m_minEatAnimTime: 0.1
   m_eatDistance: 0.5
-  m_burpSounds: []
+  m_holdingBloodParticle:
+    name: PS_Blood_Explosion_Medium
+    path: Blood
+    offset: {x: 0, y: 0, z: 0}
+  m_burpSound: 
   m_eaterTier: 0
   m_isPet: 1
   m_isAquatic: 0
+  m_canMultipleLatchOnPlayer: 0
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1
