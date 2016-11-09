@@ -26,11 +26,8 @@ namespace AI {
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		[SeparatorAttribute("Sounds")]
-		[SerializeField][Range(0f, 100f)] private float m_onSpawnSoundProbability = 40.0f;
-		[SerializeField] private List<string> m_onSpawnSounds = new List<string>();
-
-		[SerializeField][Range(0f, 100f)] private float m_onEatenSoundProbability = 50.0f;
-		[SerializeField] private List<string> m_onEatenSounds = new List<string>();
+		[SerializeField] private string m_onSpawnSound = "";
+		[SerializeField] private string m_onEatenSound = "";
 
 		[SeparatorAttribute("Other")]
 		[SerializeField] private RotateToMouthType m_rotateToMouth;
@@ -55,7 +52,6 @@ namespace AI {
 
 
 		private bool m_willPlaySpawnSound;
-		private bool m_willPlayEatenSound;
 
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
@@ -162,8 +158,7 @@ namespace AI {
 
 			if (m_collider != null) m_collider.enabled = true;
 
-			m_willPlaySpawnSound = m_onSpawnSounds.Count > 0 && Random.Range(0, 100f) < m_onSpawnSoundProbability;
-			m_willPlayEatenSound = m_onEatenSounds.Count > 0 && Random.Range(0, 100f) < m_onEatenSoundProbability;
+			m_willPlaySpawnSound = true;
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
@@ -277,7 +272,7 @@ namespace AI {
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
-						PlaySound(m_onSpawnSounds[Random.Range(0, m_onSpawnSounds.Count)]);
+						PlaySound(m_onSpawnSound);
 						m_willPlaySpawnSound = false;
 					}
 				}
@@ -421,7 +416,7 @@ namespace AI {
 		}
 
 		private void PlaySound(string _clip) {
-			AudioManager.instance.PlayClip(_clip);
+			AudioController.Play(_clip, transform.position);
 		}
 
 		// External interactions
@@ -477,14 +472,10 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
-			if (m_willPlayEatenSound) {
-				if (m_entity.isOnScreen) {
-					PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
-					m_willPlayEatenSound = false;
-				}
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {
+			if (m_entity.isOnScreen) {
+				PlaySound(m_onEatenSound);
 			}
-
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 

@@ -288,7 +288,7 @@ public class PolyMeshEditor : Editor {
 			EditorGUILayout.BeginHorizontal(); {
 				// [AOC] Hardcode Hack to make buttons respect indentation and have the same size
 				int numItems = 2;
-				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth, 10f));
+				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth - 20f, 10f));
 				rect.width -= rect.x + numItems * 4f;	// Remove indentation and (hardcoded) spacing between items
 
 				GUILayout.Space(rect.x);
@@ -312,7 +312,7 @@ public class PolyMeshEditor : Editor {
 			EditorGUILayout.BeginHorizontal(); {
 				// [AOC] Hardcode Hack to make buttons respect indentation and have the same size
 				int numItems = 2;
-				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth, 10f));
+				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth - 20f, 10f));
 				rect.width -= rect.x + numItems * 4f;	// Remove indentation and (hardcoded) spacing between items
 
 				GUILayout.Space(rect.x);
@@ -333,7 +333,7 @@ public class PolyMeshEditor : Editor {
 			EditorGUILayout.BeginHorizontal(); {
 				// [AOC] Hardcode Hack to make buttons respect indentation and have the same size
 				int numItems = 1;
-				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth, 10f));
+				Rect rect = EditorGUI.IndentedRect(new Rect(0, 0, EditorGUIUtility.currentViewWidth - 20f, 10f));
 				rect.width -= rect.x + numItems * 4f;	// Remove indentation and (hardcoded) spacing between items
 
 				GUILayout.Space(rect.x);

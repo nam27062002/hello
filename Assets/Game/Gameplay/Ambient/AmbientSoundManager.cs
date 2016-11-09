@@ -7,7 +7,7 @@ public class AmbientSoundManager : MonoBehaviour
 	DragonPlayer m_player;
 
 	// Music layers!
-	AudioManager m_audioManager;
+	// AudioManager m_audioManager;
 	private float m_furyVolume;
 	private float m_starvingVolume;
 
@@ -32,7 +32,7 @@ public class AmbientSoundManager : MonoBehaviour
 		sign = 1;
 		m_currentNodes = new List<AmbientSoundNode>();
 
-		m_audioManager = AudioManager.instance;
+		// m_audioManager = AudioManager.instance;
 
 		/*
 		m_audioManager.MusicCrossFade( AudioManager.Channel.DEFAULT, "audio/music/Piano", 0.1f);
@@ -93,14 +93,14 @@ public class AmbientSoundManager : MonoBehaviour
 			else
 				m_furyVolume -= Time.deltaTime;
 			m_furyVolume = Mathf.Clamp01( m_furyVolume );
-			m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_1, m_furyVolume);
+			// m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_1, m_furyVolume);
 
 			if ( m_player.IsStarving() )
 				m_starvingVolume += Time.deltaTime;
 			else
 				m_starvingVolume -= Time.deltaTime;
 			m_starvingVolume = Mathf.Clamp01( m_starvingVolume );
-			m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
+			// m_audioManager.SetMusicVolume( AudioManager.Channel.LAYER_2, m_starvingVolume);
 		}
 // #endif
 
@@ -172,8 +172,8 @@ public class AmbientSoundManager : MonoBehaviour
 		if ( !m_currentNodes.Contains(node) )
 		{
 			m_currentNodes.Add( node );
-			if ( node.m_reverb )
-				m_audioManager.SfxReverb( 0.5f );
+			// if ( node.m_reverb )
+			//	m_audioManager.SfxReverb( 0.5f );
 			StartCoroutine( AudioClipLoad( node.m_ambientSound ) );
 		}
 	}
@@ -185,7 +185,7 @@ public class AmbientSoundManager : MonoBehaviour
 			m_currentNodes.Remove(node);
 			if ( m_currentNodes.Count <= 0 )
 			{
-				m_audioManager.SfxNormal( 0.5f);
+				// m_audioManager.SfxNormal( 0.5f);
 				StartCoroutine( AudioClipLoad( m_defaultSound ) );
 			}
 		}

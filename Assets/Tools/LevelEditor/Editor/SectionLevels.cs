@@ -433,6 +433,7 @@ namespace LevelEditor {
 			m_levelsSkuList.Clear();
 			foreach( string str in defs.Keys)
 				m_levelsSkuList.Add(str);
+
 			// Show selection popup
 			SelectionPopupWindow.Show(m_levelsSkuList.ToArray(), OnLoadScenesFromDefinitions);
 
