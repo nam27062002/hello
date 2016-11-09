@@ -27,10 +27,10 @@ namespace AI {
 
 		[SeparatorAttribute("Sounds")]
 		[SerializeField][Range(0f, 100f)] private float m_onSpawnSoundProbability = 40.0f;
-		[SerializeField] private List<string> m_onSpawnSounds = new List<string>();
+		[SerializeField] private string m_onSpawnSound = "";
 
 		[SerializeField][Range(0f, 100f)] private float m_onEatenSoundProbability = 50.0f;
-		[SerializeField] private List<string> m_onEatenSounds = new List<string>();
+		[SerializeField] private string m_onEatenSound = "";
 
 		[SeparatorAttribute("Other")]
 		[SerializeField] private RotateToMouthType m_rotateToMouth;
@@ -162,8 +162,8 @@ namespace AI {
 
 			if (m_collider != null) m_collider.enabled = true;
 
-			m_willPlaySpawnSound = m_onSpawnSounds.Count > 0 && Random.Range(0, 100f) < m_onSpawnSoundProbability;
-			m_willPlayEatenSound = m_onEatenSounds.Count > 0 && Random.Range(0, 100f) < m_onEatenSoundProbability;
+			m_willPlaySpawnSound = !string.IsNullOrEmpty(m_onSpawnSound) && Random.Range(0, 100f) < m_onSpawnSoundProbability;
+			m_willPlayEatenSound = !string.IsNullOrEmpty(m_onEatenSound) && Random.Range(0, 100f) < m_onEatenSoundProbability;
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
@@ -277,7 +277,7 @@ namespace AI {
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
-						PlaySound(m_onSpawnSounds[Random.Range(0, m_onSpawnSounds.Count)]);
+						PlaySound(m_onSpawnSound);
 						m_willPlaySpawnSound = false;
 					}
 				}
@@ -421,7 +421,7 @@ namespace AI {
 		}
 
 		private void PlaySound(string _clip) {
-			AudioManager.instance.PlayClip(_clip);
+			AudioController.Play(_clip, transform.position);
 		}
 
 		// External interactions
@@ -481,7 +481,7 @@ namespace AI {
 		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
 			if (m_willPlayEatenSound) {
 				if (m_entity.isOnScreen) {
-					PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
+					PlaySound(m_onEatenSound);
 					m_willPlayEatenSound = false;
 				}
 			}
