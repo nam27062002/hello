@@ -26,10 +26,7 @@ namespace AI {
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		[SeparatorAttribute("Sounds")]
-		[SerializeField][Range(0f, 100f)] private float m_onSpawnSoundProbability = 40.0f;
 		[SerializeField] private string m_onSpawnSound = "";
-
-		[SerializeField][Range(0f, 100f)] private float m_onEatenSoundProbability = 50.0f;
 		[SerializeField] private string m_onEatenSound = "";
 
 		[SeparatorAttribute("Other")]
@@ -55,7 +52,6 @@ namespace AI {
 
 
 		private bool m_willPlaySpawnSound;
-		private bool m_willPlayEatenSound;
 
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
@@ -162,8 +158,7 @@ namespace AI {
 
 			if (m_collider != null) m_collider.enabled = true;
 
-			m_willPlaySpawnSound = !string.IsNullOrEmpty(m_onSpawnSound) && Random.Range(0, 100f) < m_onSpawnSoundProbability;
-			m_willPlayEatenSound = !string.IsNullOrEmpty(m_onEatenSound) && Random.Range(0, 100f) < m_onEatenSoundProbability;
+			m_willPlaySpawnSound = true;
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
@@ -478,14 +473,10 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
-			if (m_willPlayEatenSound) {
-				if (m_entity.isOnScreen) {
-					PlaySound(m_onEatenSound);
-					m_willPlayEatenSound = false;
-				}
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {
+			if (m_entity.isOnScreen) {
+				PlaySound(m_onEatenSound);
 			}
-
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 
