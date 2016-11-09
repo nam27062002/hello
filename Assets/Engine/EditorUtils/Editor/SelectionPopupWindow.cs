@@ -57,16 +57,22 @@ public class SelectionPopupWindow : EditorWindow {
 		Rect pos = new Rect();
 		pos.width = Screen.width * 0.8f;
 		pos.height = pos.width * 1.5f;	// Nice proportion
-		pos.x = Screen.width/2f - pos.width/2f;
-		// [AOC] Unfortunately, we can't obtain the mouse position outside the OnGUI call, so pospone this step
-		//pos.y = Event.current.mousePosition.y + 7f;	// A little bit lower
-		pos.y = Screen.height/2f - pos.height/2f;
+		
+		// [AOC] Careful! We can't obtain the mouse position outside the OnGUI call, pospone this step using the moveToCursorPending if that's the case
+		bool isOnGUI = true;	// [AOC] How to know that?
+		if(isOnGUI) {
+			pos.x = Event.current.mousePosition.x;
+			pos.y = Event.current.mousePosition.y + 7f;	// A little bit lower
+		} else {
+			pos.x = Screen.width/2f - pos.width/2f;
+			pos.y = Screen.height/2f - pos.height/2f;
+		}
 
 		// Use the positioned opener
 		SelectionPopupWindow window = Show(pos, _options, _handler);
 
 		// Indicate that repositioning is pending
-		window.m_moveToCursorPending = true;
+		window.m_moveToCursorPending = !isOnGUI;
 		return window;
 	}
 
