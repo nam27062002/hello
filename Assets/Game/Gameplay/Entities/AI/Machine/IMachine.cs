@@ -36,7 +36,7 @@ namespace AI {
 		void Bite();
 		void BeingSwallowed(Transform _transform, bool rewardPlayer);
 		void BiteAndHold();
-		bool Burn(float _damage, Transform _transform);
+		bool Burn(Transform _transform);
 
 		void SetVelocity(Vector3 _v);
 	}

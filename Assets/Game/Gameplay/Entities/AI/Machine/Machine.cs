@@ -449,8 +449,7 @@ namespace AI {
 			return m_entity.health <= 0 || m_signals.GetValue(Signals.Type.Destroyed);
 		}
 
-		public bool IsDying()
-		{
+		public bool IsDying() {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
@@ -558,13 +557,11 @@ namespace AI {
 		}
 
 
-		public virtual bool Burn(float _damage, Transform _transform) {
+		public virtual bool Burn(Transform _transform) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
-					ReceiveDamage(_damage);
-					if (m_entity.health <= 0) {
-						m_inflammable.Burn(_transform);
-					}
+					ReceiveDamage(9999f);
+					m_inflammable.Burn(_transform);
 				}
 				return true;
 			}

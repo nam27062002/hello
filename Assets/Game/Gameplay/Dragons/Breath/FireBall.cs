@@ -4,7 +4,6 @@ using System.Collections;
 public class FireBall : MonoBehaviour 
 {
 	Vector3 m_direction;
-	float m_damage;
 	CircleArea2D m_area;
 	float m_timer;
 
@@ -42,10 +41,9 @@ public class FireBall : MonoBehaviour
 		m_breath = _breath;
 	}
 
-	public void Shoot( Vector3 _direction, float _damage)
+	public void Shoot( Vector3 _direction)
 	{
 		m_direction = _direction;
-		m_damage = _damage;
 		m_timer = 0;
 	}
 
@@ -71,7 +69,7 @@ public class FireBall : MonoBehaviour
 			{
 				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
 				if (machine != null) {
-					machine.Burn(m_damage, transform);
+					machine.Burn(transform);
 				}
 			}
 			/*

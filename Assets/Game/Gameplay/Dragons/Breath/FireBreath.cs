@@ -310,10 +310,10 @@ public class FireBreath : DragonBreathBehaviour {
 			Entity prey = m_checkEntities[i];
 			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
-				if (CanBurn(prey) || m_type == Type.Super) {
+				if (prey.IsBurnable(m_tier) || m_type == Type.Super) {
 					AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
 					if (machine != null) {
-						machine.Burn(damage * Time.deltaTime, transform);
+						machine.Burn(transform);
 					}
 				} else {
 					// Show message saying I cannot burn it
