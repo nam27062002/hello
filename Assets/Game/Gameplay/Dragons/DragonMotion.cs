@@ -51,6 +51,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	[SerializeField] private float m_velocityBlendRate = 256.0f;
 	[SerializeField] private float m_rotBlendRate = 350.0f;
 
+	[SerializeField] private bool m_capVerticalRotation = true;
+	[SerializeField] private float m_capUpRotationAngle = 40.0f;
+	[SerializeField] private float m_capDownRotationAngle = 60.0f;
+
 
 	protected Rigidbody m_rbody;
 	public Rigidbody rbody
@@ -148,6 +152,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	}
 	private Vector3 m_startParabolicPosition;
 	public float m_parabolicXControl = 10;
+
+	[Space]
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
 	[SerializeField] private float m_outerSpaceRecoveryTime = 0.5f;
 	[SerializeField] private float m_insideWaterRecoveryTime = 0.1f;
@@ -752,18 +758,24 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
 
+			// bool ignoreGravity = OverWaterMovement( ref impulse );
+			bool ignoreGravity = false;
+
 			// v_max = a/f
 			// t_max = 5/f
 
-			float gravity = 9.81f * m_dragonGravityModifier;
+			float gravity = 0;
+			if (!ignoreGravity)
+				gravity = 9.81f * m_dragonGravityModifier;
 			Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
 			acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
 
 			// stroke's Drag
 			m_impulse = m_rbody.velocity;
-
 			float impulseMag = m_impulse.magnitude;
+
 			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+
 			m_direction = m_impulse.normalized;
 			RotateToDirection( impulse );
 
@@ -778,6 +790,34 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		ApplyExternalForce();
 
 		m_rbody.velocity = m_impulse;
+	}
+
+	private bool OverWaterMovement( ref Vector3 impulse )
+	{
+		float degrees = impulse.ToAngleDegrees();
+		// Debug.Log(degrees);
+		float angle = 30.0f;
+		if ( (degrees < angle && degrees > -angle) || (degrees > 180-angle || degrees < -180.0f+angle) )
+		{
+			// if hitting water check impulse angle 
+			bool hittingWater = Physics.Raycast( m_transform.position, Vector3.down, out m_raycastHit, 100, 1<<LayerMask.NameToLayer("Water"));
+			if ( hittingWater )
+			{
+				
+				// Debug.Log("Correct!");
+				// Correct impulse
+				if (degrees < angle && degrees > -angle)
+				{
+					impulse = Vector3.right;
+					return true;
+				}else if(degrees > 180-angle || degrees < -180.0f+angle)
+				{	
+					impulse = Vector3.left;
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void ApplyExternalForce()
@@ -990,19 +1030,30 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if(blendRate > Mathf.Epsilon)
 		{
 			float angle = dir.ToAngleDegrees();
+			float roll = angle;
 			float pitch = angle;
-			float twist = angle;
 			float yaw = 0;
-			Quaternion qPitch = Quaternion.Euler(0.0f, 0.0f, pitch);
+
+
+			Quaternion qRoll = Quaternion.Euler(0.0f, 0.0f, roll);
 			Quaternion qYaw = Quaternion.Euler(0.0f, yaw, 0.0f);
-			Quaternion qTwist = Quaternion.Euler(twist, 0.0f, 0.0f);
-			m_desiredRotation = qYaw * qPitch * qTwist;
-			Vector3 eulerRot = m_desiredRotation.eulerAngles;		
-			if (dir.y > 0.25f) {
-				eulerRot.z = Mathf.Min(40f, eulerRot.z);
-			} else if (dir.y < -0.25f) {
-				eulerRot.z = Mathf.Max(300f, eulerRot.z);
+			Quaternion qPitch = Quaternion.Euler(pitch, 0.0f, 0.0f);
+			m_desiredRotation = qYaw * qRoll * qPitch;
+			Vector3 eulerRot = m_desiredRotation.eulerAngles;
+			if (m_capVerticalRotation)
+			{
+				// top cap
+				if (eulerRot.z > m_capUpRotationAngle && eulerRot.z < 180 - m_capUpRotationAngle) 
+				{
+					eulerRot.z = m_capUpRotationAngle;
+				}
+				// bottom cap
+				else if ( eulerRot.z > 180 + m_capDownRotationAngle && eulerRot.z < 360-m_capDownRotationAngle )
+				{
+					eulerRot.z = -m_capDownRotationAngle;
+				}
 			}
+
 			m_desiredRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
 			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(transform.rotation, m_desiredRotation, blendRate);
 		}
@@ -1284,6 +1335,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	{
 		if ( _other.tag == "Water" )
 		{
+			// Check direction?
+
 			// Enable Bubbles
 			if (IsAliveState())
 				StartWaterMovement( _other );
