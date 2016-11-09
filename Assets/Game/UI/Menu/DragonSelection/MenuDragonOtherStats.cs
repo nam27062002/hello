@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -21,8 +22,8 @@ public class MenuDragonOtherStats : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	public Text m_healthText;
-	public Text m_scaleText;
+	public TextMeshProUGUI m_healthText;
+	public TextMeshProUGUI m_scaleText;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

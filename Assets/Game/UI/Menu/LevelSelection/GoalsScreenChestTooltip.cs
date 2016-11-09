@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -30,13 +31,10 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 
 	// External refs
 	[Space]
-	[SerializeField] private Text m_nameText = null;
+	[SerializeField] private TextMeshProUGUI m_nameText = null;
 	[Space]
-	[SerializeField] private GameObject m_coinsRewardIcon = null;
-	[SerializeField] private Text m_coinsRewardText = null;
-	[Space]
-	[SerializeField] private GameObject m_pcRewardIcon = null;
-	[SerializeField] private Text m_pcRewardText = null;
+	[SerializeField] private TextMeshProUGUI m_coinsRewardText = null;
+	[SerializeField] private TextMeshProUGUI m_pcRewardText = null;
 	[Space]
 	[SerializeField] private GameObject m_checkMark = null;
 
@@ -59,7 +57,7 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 	private void Start() {
 		// Get anchor ref
 		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
-		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.LEVEL_SELECTION);
+		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
 		GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
 		m_3dAnchor = goalScene.chestSlots[m_chestIdx].uiAnchor;
 
@@ -77,16 +75,13 @@ public class GoalsScreenChestTooltip : MonoBehaviour {
 		DefinitionNode rewardDef = ChestManager.GetRewardDef(m_chestIdx + 1);
 		bool isPC = rewardDef.Get("type") == "pc";
 
-		m_coinsRewardIcon.SetActive(!isPC);
-		m_pcRewardIcon.SetActive(isPC);
-
 		m_coinsRewardText.gameObject.SetActive(!isPC);
 		m_pcRewardText.gameObject.SetActive(isPC);
 
 		if(isPC) {
-			m_pcRewardText.text = StringUtils.FormatNumber(rewardDef.GetAsInt("amount"));
+			m_pcRewardText.text = UIConstants.TMP_SPRITE_PC + StringUtils.FormatNumber(rewardDef.GetAsInt("amount"));
 		} else {
-			m_coinsRewardText.text = StringUtils.FormatNumber(rewardDef.GetAsInt("amount"));
+			m_coinsRewardText.text = UIConstants.TMP_SPRITE_SC + StringUtils.FormatNumber(rewardDef.GetAsInt("amount"));
 		}
 
 		// Do a first refresh!

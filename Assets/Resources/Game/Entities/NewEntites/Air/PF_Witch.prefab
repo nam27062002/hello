@@ -1399,7 +1399,7 @@ MonoBehaviour:
     m_mass: 6
     m_defaultUpVector: 0
     m_orientationSpeed: 60
-    m_faceDirection: 0
+    m_faceDirection: 1
     m_rollRotation: 1
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -1407,15 +1407,12 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 355
     m_faceDownAngle: 5
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 7
-    m_maxRadius: 5
-    m_minRadius: 3
+    m_sightRadius: 12
+    m_maxRadius: 10
+    m_minRadius: 8
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 3}
@@ -1426,11 +1423,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 4.5
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11465654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1475,6 +1472,7 @@ MonoBehaviour:
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &11485536
 MonoBehaviour:
@@ -1487,11 +1485,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 0.9
     max: 1.4
-  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":13,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":4,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"projectileName":"PF_LightningStrike","projectileSpawnTransformName":"projectile","damage":30,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":4,"stop":false,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false}]'
+  m_databaseKey: PF_Witch
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 1
 --- !u!137 &13726440
@@ -1503,7 +1506,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -1526,7 +1529,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300002, guid: 7fdeeba0d0cd94faa865a16cde3ff800, type: 3}
   m_Bones:
   - {fileID: 431852}
@@ -1574,7 +1577,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -1597,7 +1600,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: 7fdeeba0d0cd94faa865a16cde3ff800, type: 3}
   m_Bones:
   - {fileID: 406902}

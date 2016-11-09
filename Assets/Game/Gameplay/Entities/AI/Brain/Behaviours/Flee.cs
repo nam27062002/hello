@@ -14,8 +14,6 @@ namespace AI {
 
 			private FleeData m_data;
 
-			private Vector3 m_target;
-
 			public override StateComponentData CreateData() {
 				return new FleeData();
 			}
@@ -26,14 +24,12 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<FleeData>();
-
 				m_machine.SetSignal(Signals.Type.Alert, true);
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SetBoostSpeed(m_data.speed);
-				m_target = m_machine.position;
 				m_pilot.PressAction(Pilot.Action.Avoid);
 			}
 
@@ -43,7 +39,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				bool boost = m_machine.GetSignal(Signals.Type.Danger);
+				bool boost = m_machine.GetSignal(Signals.Type.Critical);
 
 				if (boost) {
 					m_pilot.PressAction(Pilot.Action.Boost);

@@ -48,8 +48,10 @@ namespace AI {
 			Vector3 groundP2 = groundP1 + m_machine.groundDirection;
 
 			// target line
+			m_target.z = m_homePosition.z;
+
 			Vector3 targetP1 = m_target;
-			Vector3 targetP2 =targetP1;
+			Vector3 targetP2 = targetP1;
 			targetP2.y = 0;
 
 			float groundA = groundP2.y - groundP1.y;

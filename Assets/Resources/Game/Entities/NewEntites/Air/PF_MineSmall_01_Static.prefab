@@ -167,7 +167,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 460288}
   - 137: {fileID: 13799596}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Mines_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -370,9 +370,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
@@ -422,10 +419,11 @@ MonoBehaviour:
     name: PF_Mine_Explosion
     path: 
     offset: {x: 0, y: 0, z: 0}
-  m_onExplosionAudio: 
+  m_onExplosionAudio: Explosion_Med
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &11452834
 MonoBehaviour:
@@ -460,7 +458,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -483,7 +481,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: 16b8ca593a4924cac828962a3d7e32ef, type: 3}
   m_Bones:
   - {fileID: 495566}
@@ -538,10 +536,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: 01e097987dda34dae88639be166bccba, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 1
     max: 1
   m_serializedJson: '[{"amplitude":0,"frequency":0,"dataType":"AI.Behaviour.MineData","editorFolded":false},{"damage":30,"cameraShakeDuration":0.75,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_databaseKey: PF_MineSmall_01_Static
 --- !u!114 &114000010995971012
 MonoBehaviour:
   m_ObjectHideFlags: 1

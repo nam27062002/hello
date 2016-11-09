@@ -11,12 +11,14 @@ namespace AI {
 		[SerializeField] private bool m_senseAbove = true;
 		[SerializeField] private bool m_senseBelow = true;
 		[SerializeField] private Vector3 m_sensorOffset = Vector3.zero;
-		private Vector3 sensorPosition { get { return m_machine.transform.position + (m_machine.transform.rotation * m_sensorOffset); } }
+		public Vector3 sensorPosition { get { return m_machine.transform.position + (m_machine.transform.rotation * m_sensorOffset); } }
+		[SerializeField] private Range m_radiusOffset = new Range(0.9f, 1.1f);
 		[SerializeField] private Range m_senseDelay = new Range(0.25f, 1.25f);
 
 		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
 		public Transform enemy { get { return m_enemy; } }
 
+		private float m_radiusOffsetFactor;
 		private float m_enemyRadiusSqr;
 		private float m_senseTimer;
 
@@ -26,19 +28,24 @@ namespace AI {
 		public MachineSensor() {}
 
 		public override void Init() {
-			if ( InstanceManager.player != null )
+			if (InstanceManager.player != null)
 				m_enemy = InstanceManager.player.transform;
 
 			m_senseTimer = 0f;
 			m_enemyRadiusSqr = 0f;
 
+			m_radiusOffsetFactor = m_radiusOffset.GetRandom();
+
 			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
 
 		public override void Update() {
-			if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.Panic)) {
+			if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.Panic) || m_machine.GetSignal(Signals.Type.FallDown)) {
 				m_machine.SetSignal(Signals.Type.Warning, false);
 				m_machine.SetSignal(Signals.Type.Danger, false);
+				m_machine.SetSignal(Signals.Type.Critical, 	false);
+
+				m_senseTimer = 1f;
 			} else {
 				float distanceSqr = 0f;
 				bool isInsideSightArea = m_machine.GetSignal(Signals.Type.Warning);
@@ -59,7 +66,7 @@ namespace AI {
 					Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);
 					distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
 
-					isInsideSightArea = distanceSqr < m_sightRadius * m_sightRadius;
+					isInsideSightArea = distanceSqr < m_sightRadius * m_sightRadius * m_radiusOffsetFactor;
 
 					if (isInsideSightArea) {
 						m_senseTimer = m_senseDelay.GetRandom();
@@ -75,9 +82,9 @@ namespace AI {
 							distanceSqr = vectorToPlayer.sqrMagnitude - m_enemyRadiusSqr;
 						}
 
-						if (distanceSqr < m_maxRadius * m_maxRadius) {
+						if (distanceSqr < m_maxRadius * m_maxRadius * m_radiusOffsetFactor) {
 							// check if the dragon is inside the sense zone
-							if (distanceSqr < m_minRadius * m_minRadius) {
+							if (distanceSqr < m_minRadius * m_minRadius * m_radiusOffsetFactor) {
 								isInsideMinArea = true;
 							}
 							isInsideMaxArea = true;

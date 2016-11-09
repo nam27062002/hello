@@ -66,6 +66,8 @@ namespace AI {
 		private Quaternion m_rotation;
 		private Quaternion m_targetRotation;
 
+		private float m_latchBlending = 1f;
+
 		private Transform m_attackTarget = null;
 		public Transform attackTarget { get{ return m_attackTarget; } set{ m_attackTarget = value; } }
 
@@ -173,25 +175,33 @@ namespace AI {
 			}
 		}
 
+
 		public override void Update() {
+
+			if (m_pilot.IsActionPressed(Pilot.Action.Stop)) {
+				Stop();
+			}
 
 			if (m_machine.GetSignal(Signals.Type.Biting)) {
 				Stop();
 				m_rotation = m_machine.transform.rotation;
 				return;
-			}else if ( m_machine.GetSignal(Signals.Type.Latching) ){
+			} else if (m_machine.GetSignal(Signals.Type.Latching)) {
 				Stop();
 				m_targetRotation = m_pilot.targetRotation;
-				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed * 10.0f);
+				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed * m_latchBlending);
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 				m_machine.transform.rotation = m_rotation;
+				m_machine.transform.position = Vector3.Lerp( m_machine.transform.position, m_pilot.target, Time.deltaTime * m_latchBlending);
 
-				m_machine.transform.position =  Vector3.Lerp( m_machine.transform.position, m_pilot.target, Time.deltaTime * 10.0f);
+				if (m_latchBlending < 10f)
+					m_latchBlending += 0.1f * 2f;
 
 				m_viewControl.Move(0);
-				m_viewControl.Latching(true);
 				return;	
 			}
+
+			m_latchBlending = 1f;
 
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				Stop();

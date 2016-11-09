@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -28,7 +29,7 @@ public class CPPrefBase : MonoBehaviour {
 	// References
 	[Space(5)]
 	[Comment("Label is optional.")]
-	[SerializeField] protected Text m_label;
+	[SerializeField] protected TextMeshProUGUI m_label;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//

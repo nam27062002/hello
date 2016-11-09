@@ -113,7 +113,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011746809226}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -2.29}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_activeTime: 1
+  m_activeTime: 0.6
   m_returnTo: 1
 --- !u!198 &198000011335847754
 ParticleSystem:
@@ -153,7 +153,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011727470116}
   serializedVersion: 4
-  lengthInSec: 0.2
+  lengthInSec: 0.4
   startDelay:
     scalar: 0
     maxCurve:
@@ -190,18 +190,18 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: -1007693607
+  randomSeed: -668669089
   InitialModule:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 0.2
+      scalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -517,7 +517,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     startRotation:
-      scalar: 6.283185
+      scalar: 3.1415925
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -542,8 +542,8 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     randomizeRotationDirection: 0
-    gravityModifier: 1
-    maxNumParticles: 12
+    gravityModifier: 3
+    maxNumParticles: 24
     size3D: 0
     rotation3D: 0
   ShapeModule:
@@ -571,7 +571,7 @@ ParticleSystem:
     serializedVersion: 2
     m_Type: 0
     rate:
-      scalar: 24
+      scalar: 36
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1105,10 +1105,10 @@ ParticleSystem:
       minMaxState: 1
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 0
+    enabled: 1
     m_Mode: 0
     m_Curve:
-      scalar: 0
+      scalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1904,13 +1904,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
-  moveWithTransform: 1
+  moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 982887194
+  randomSeed: -1872855020
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -2267,7 +2267,7 @@ ParticleSystem:
       minMaxState: 3
     randomizeRotationDirection: 0
     gravityModifier: 0
-    maxNumParticles: 1
+    maxNumParticles: 3
     size3D: 0
     rotation3D: 0
   ShapeModule:
@@ -2295,7 +2295,7 @@ ParticleSystem:
     serializedVersion: 2
     m_Type: 0
     rate:
-      scalar: 0
+      scalar: 6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2337,7 +2337,7 @@ ParticleSystem:
     cntmax1: 30
     cntmax2: 30
     cntmax3: 30
-    time0: 0.01
+    time0: 0
     time1: 0
     time2: 0
     time3: 0
@@ -3638,13 +3638,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 0
   autoRandomSeed: 1
   scalingMode: 1
-  randomSeed: 801732430
+  randomSeed: 941574341
   InitialModule:
     serializedVersion: 2
     enabled: 1

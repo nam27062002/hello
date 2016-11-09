@@ -60,8 +60,10 @@ public class DragonPlayer : MonoBehaviour {
 	private int m_freeRevives = 0;
 	private int m_tierIncreaseBreak = 0;
 
-	private List<Transform> m_holdPreyPoints = new List<Transform>();
-	public List<Transform> holdPreyPoints { get{ return m_holdPreyPoints; } }
+	private HoldPreyPoint[] m_holdPreyPoints = null;
+	public HoldPreyPoint[] holdPreyPoints { get{ return m_holdPreyPoints; } }
+
+	private int m_numLatching = 0;
 
 	// Interaction
 	public bool playable {
@@ -69,7 +71,7 @@ public class DragonPlayer : MonoBehaviour {
 			// Enable/disable all the components that make the dragon playable
 			// Add as many as needed
 			GetComponent<DragonControlPlayer>().enabled = value;	// Move around
-			GetComponent<PlayerEatBehaviour>().enabled = value;		// Eat stuff
+			GetComponent<DragonEatBehaviour>().enabled = value;		// Eat stuff
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}
@@ -88,8 +90,8 @@ public class DragonPlayer : MonoBehaviour {
 		get{ return m_dragonMotion; }
 	}
 
-	private PlayerEatBehaviour m_dragonEatBehaviour = null;
-	public PlayerEatBehaviour dragonEatBehaviour
+	private DragonEatBehaviour m_dragonEatBehaviour = null;
+	public DragonEatBehaviour dragonEatBehaviour
 	{
 		get{ return m_dragonEatBehaviour; }
 	}
@@ -135,7 +137,7 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
-		m_energyMax = m_data.energySkill.value;
+		m_energyMax = m_data.def.GetAsFloat("energyBase");
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
 		m_healthWarningThreshold = def.GetAsFloat("healthWarningThreshold");
 		m_healthCriticalThreshold = def.GetAsFloat("healthCriticalThreshold");
@@ -155,18 +157,12 @@ public class DragonPlayer : MonoBehaviour {
 		// Get external refernces
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 		m_dragonMotion = GetComponent<DragonMotion>();
-		m_dragonEatBehaviour =  GetComponent<PlayerEatBehaviour>();
+		m_dragonEatBehaviour =  GetComponent<DragonEatBehaviour>();
 		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
-		HoldPreyPoint[] holdPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
-		if (holdPoints != null) {
-			for (int i = 0;i<holdPoints.Length; i++) {
-				m_holdPreyPoints.Add(holdPoints[i].transform);
-			}
-		}
-
+		m_holdPreyPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
@@ -187,6 +183,26 @@ public class DragonPlayer : MonoBehaviour {
 		gameObject.transform.localScale = Vector3.one * data.scale;
 		SetHealthModifier( m_healthModifier );
 		SetBoostModifier( m_energyModifier );
+	}
+
+	public void ReviveScale()
+	{
+		gameObject.transform.localScale = Vector3.zero;
+		StartCoroutine("ReviveScaleCoroutine");
+	}
+
+	IEnumerator ReviveScaleCoroutine()
+	{
+		float duration = 1;
+		float timer = 0;
+
+		while( timer < duration )
+		{
+			timer += Time.deltaTime;
+			gameObject.transform.localScale = Vector3.one * data.scale * Mathf.Clamp01( timer / duration);
+			yield return null;
+		}
+		playable = true;
 	}
 
 	private void Update() {
@@ -212,7 +228,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_health = m_healthMax;
 		m_energy = m_energyMax;
 
-		playable = true;
+
 
 		if (_revive) {
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
@@ -222,6 +238,9 @@ public class DragonPlayer : MonoBehaviour {
 
 		if ( _revive )
 		{
+			m_dragonMotion.Revive();
+			ReviveScale();
+
 			bool isStarving = IsStarving();
 			if(wasStarving != isStarving) {
 				Messenger.Broadcast<bool>(GameEvents.PLAYER_STARVING_TOGGLED, isStarving);
@@ -233,6 +252,10 @@ public class DragonPlayer : MonoBehaviour {
 			}
 
 			Messenger.Broadcast(GameEvents.PLAYER_REVIVE);
+		}
+		else
+		{
+			playable = true;
 		}
 	}
 
@@ -264,6 +287,8 @@ public class DragonPlayer : MonoBehaviour {
 
 			else
 			{
+				m_dragonMotion.Die();
+
 				// Send global even
 				Messenger.Broadcast(GameEvents.PLAYER_KO);
 					// Hode Starving and Critical effects
@@ -480,7 +505,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void SetBoostModifier( float value )
 	{
-		m_energyBase = m_data.energySkill.value;
+		m_energyBase = m_data.def.GetAsFloat("energyBase");
 		m_energyModifier = value;
 		m_energyMax = m_energyBase + ( m_energyModifier / 100.0f * m_energyBase );
 		m_energy = m_energyMax;
@@ -498,18 +523,33 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void StartLatchedOn()
 	{
-		m_dragonMotion.StartLatchedOnMovement();
-		m_dragonEatBehaviour.PauseEating();
+		m_numLatching++;
+		if ( m_numLatching == 1 )
+		{
+			m_dragonMotion.StartLatchedOnMovement();
+			m_dragonEatBehaviour.PauseEating();
+		}
 	}
 
 	public void EndLatchedOn()
 	{
-		m_dragonMotion.EndLatchedOnMovement();
-		m_dragonEatBehaviour.ResumeEating( 2.5f );
+		m_numLatching--;
+		if ( m_numLatching == 0 )
+		{
+			m_dragonMotion.EndLatchedOnMovement();
+			m_dragonEatBehaviour.ResumeEating( 2.5f );
+		}
 	}
 
 	public bool BeingLatchedOn()
 	{
-		return m_dragonMotion.isLatchedMovement;
+		return m_numLatching > 0;
+	}
+
+	public bool HasFreeHoldPoint()
+	{
+		for( int i = 0; i< m_holdPreyPoints.Length; i++ )
+			if ( !m_holdPreyPoints[i].holded ) return true;
+		return false;
 	}
 }

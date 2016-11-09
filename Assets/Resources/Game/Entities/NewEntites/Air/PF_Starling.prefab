@@ -487,18 +487,18 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 8
-    m_maxRadius: 4
+    m_sightRadius: 9
+    m_maxRadius: 5
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
     m_senseDelay:
       min: 0
       max: 0
@@ -506,11 +506,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11430914
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -548,11 +548,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":8,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":2,"separation":1.75,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":4,"followAheadFactor":0,"frequencyOffset":{"min":1,"max":5},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"changeLeaderTime":10,"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"boostSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":8,"followAheadFactor":0,"frequencyOffset":{"min":2,"max":3},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_databaseKey: PF_Starling
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
 --- !u!114 &11468462
@@ -581,6 +586,11 @@ MonoBehaviour:
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -590,6 +600,7 @@ MonoBehaviour:
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &11488244
 MonoBehaviour:
@@ -617,7 +628,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -640,7 +651,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: 53fe7763a145045dda51f3682e0043cd, type: 3}
   m_Bones:
   - {fileID: 460420}

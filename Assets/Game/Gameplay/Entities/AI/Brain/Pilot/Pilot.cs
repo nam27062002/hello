@@ -24,6 +24,8 @@ namespace AI {
 
 		//----------------------------------------------------------------------------------------------------------------
 
+		[SerializeField] private float m_blendSpeedFactor = 1f;
+
 		protected AreaBounds m_area;
 		public AreaBounds area { get { return m_area; } set { m_area = value; } }
 
@@ -157,9 +159,9 @@ namespace AI {
 
 		protected virtual void Update() {
 			if (IsActionPressed(Action.Boost)) {
-				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime);
+				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * m_blendSpeedFactor);
 			} else {
-				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime);
+				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime * m_blendSpeedFactor);
 			}
 		}
 	}

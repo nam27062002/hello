@@ -44,6 +44,8 @@ namespace LevelEditor {
 		private FileInfo[] m_fileList = null;
 		private float m_autoSaveTimer = 0f;
 
+		private List<string> m_levelsSkuList = new List<string>();
+
 		// Every type of scene goes in a different sub-folder
 		private string assetDirForCurrentMode {
 			get { 
@@ -198,7 +200,11 @@ namespace LevelEditor {
 			
 			// Some more spacing
 			GUILayout.Space(5f);
-			
+
+			if(GUILayout.Button("Load Scenes From Definition")) {
+				OnLoadScenesFromDefinition();
+			}
+
 			// Toolbar
 			EditorGUILayout.BeginVertical(LevelEditorWindow.styles.boxStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 				EditorGUILayout.BeginHorizontal(); {
@@ -335,6 +341,22 @@ namespace LevelEditor {
 			// Clear some references
 			activeLevels = null;
 		}
+
+		private void UnloadAllLevels()
+		{
+			PromptSaveDialog();
+
+			for( int j = 0; j<(int)LevelEditorSettings.Mode.COUNT; j++ )
+			{
+				if ( m_activeLevels[j] != null )
+				{
+					// Close the scene containing the active level
+					for( int i = 0; i<m_activeLevels[j].Count; i++ )
+						EditorSceneManager.CloseScene(m_activeLevels[j][i].gameObject.scene, true);
+					m_activeLevels[j] = null;
+				}
+			}
+		}
 		
 		/// <summary>
 		/// Check changes performed on the current level vs its prefab.
@@ -403,7 +425,62 @@ namespace LevelEditor {
 			Selection.activeObject = activeLevels[0].gameObject;
 			EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + name + ".unity"));
 		}
-		
+
+		private void OnLoadScenesFromDefinition(){
+			//  DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, _sku);
+
+			Dictionary<string,DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS);
+			m_levelsSkuList.Clear();
+			foreach( string str in defs.Keys)
+				m_levelsSkuList.Add(str);
+
+			// Show selection popup
+			SelectionPopupWindow.Show(m_levelsSkuList.ToArray(), OnLoadScenesFromDefinitions);
+
+		}
+
+		private void OnLoadScenesFromDefinitions( int id )
+		{
+			string sku = m_levelsSkuList[id];
+
+			UnloadAllLevels();
+
+			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, sku);
+
+			LevelEditorSettings.Mode oldMode = LevelEditor.settings.selectedMode;
+
+			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.SPAWNERS;
+			List<string> spawnersScene = def.GetAsList<string>("spawnersScene");
+			for( int i = 0; i<spawnersScene.Count; i++ )
+			{
+				OnLoadLevel( spawnersScene[i] + ".unity" );
+			}
+
+			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.COLLISION;
+			List<string> collisionScene = def.GetAsList<string>("collisionScene");
+			for( int i = 0; i<collisionScene.Count; i++ )
+			{
+				OnLoadLevel( collisionScene[i] + ".unity");
+			}
+
+			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.SOUND;
+			List<string> soundScene = def.GetAsList<string>("soundScene");
+			for( int i = 0; i<soundScene.Count; i++ )
+			{
+				OnLoadLevel( soundScene[i] + ".unity");
+			}
+
+			LevelEditor.settings.selectedMode = LevelEditorSettings.Mode.ART;
+			List<string> artScene = def.GetAsList<string>("artScene");
+			for( int i = 0; i<artScene.Count; i++ )
+			{
+				OnLoadLevel( artScene[i] + ".unity");
+			}
+
+			LevelEditor.settings.selectedMode = oldMode;
+		}
+
+
 		/// <summary>
 		/// The "Open" button has been pressed.
 		/// </summary>
@@ -504,8 +581,13 @@ namespace LevelEditor {
 			// Unload current level - will ask to save it
 			UnloadLevel(true);
 
+			OnLoadLevel( m_fileList[_selectedIdx].Name );
+		}
+
+		public void OnLoadLevel( string levelName )
+		{
 			// Load the new level scene and store reference to the level object
-			EditorSceneManager.OpenScene(assetDirForCurrentMode + "/" + m_fileList[_selectedIdx].Name, OpenSceneMode.Additive);
+			EditorSceneManager.OpenScene(assetDirForCurrentMode + "/" + levelName, OpenSceneMode.Additive);
 			activeLevels = new List<Level>();
 			switch(LevelEditor.settings.selectedMode) {
 				case LevelEditorSettings.Mode.SPAWNERS:		activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeSpawners>());		break;
@@ -516,7 +598,8 @@ namespace LevelEditor {
 			
 			// Focus the level object in the hierarchy and ping the opened scene in the project window
 			Selection.activeObject = activeLevels[0].gameObject;
-			EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + activeLevels[0].gameObject.scene.name + ".unity"));
+			for( int i = 0; i<activeLevels.Count;i++ )
+				EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + activeLevels[i].gameObject.scene.name + ".unity"));
 		}
 
 		/// <summary>
@@ -529,19 +612,9 @@ namespace LevelEditor {
 			
 			// Do it!!
 			activeLevels.Clear();
-			// Load the new level scene and store reference to the level object
-			EditorSceneManager.OpenScene(assetDirForCurrentMode + "/" + m_fileList[_selectedIdx].Name, OpenSceneMode.Additive);
-			switch(LevelEditor.settings.selectedMode) {
-				case LevelEditorSettings.Mode.SPAWNERS:		activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeSpawners>());		break;
-				case LevelEditorSettings.Mode.COLLISION:	activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeCollision>());	break;
-				case LevelEditorSettings.Mode.ART:			activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeArt>());			break;
-				case LevelEditorSettings.Mode.SOUND:		activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeSound>());			break;
-			}
-			
-			// Focus the level object in the hierarchy and ping the opened scene in the project window
-			Selection.activeObject = activeLevels[0].gameObject;
-			for( int i = 0; i<activeLevels.Count;i++ )
-				EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + activeLevels[i].gameObject.scene.name + ".unity"));
+
+			OnLoadLevel( m_fileList[_selectedIdx].Name );
+
 		}
 
 

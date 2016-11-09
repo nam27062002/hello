@@ -53,7 +53,7 @@ MonoBehaviour:
     m_walkOnWalls: 0
     m_mass: 3
     m_defaultUpVector: 0
-    m_orientationSpeed: 460
+    m_orientationSpeed: 200
     m_faceDirection: 0
     m_rollRotation: 0
     m_limitHorizontalRotation: 0
@@ -62,9 +62,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 1
-    max: 1.5
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
@@ -74,18 +71,21 @@ MonoBehaviour:
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
     m_senseDelay:
-      min: 2
-      max: 4
+      min: 1
+      max: 2
   m_onSpawnSoundProbability: 0
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11455198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -123,11 +123,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b50cf50e7834c5397a1f060efb7791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
+  m_railSeparation:
+    min: 0.75
+    max: 1
   m_speedFactorRange:
     min: 0.7
     max: 1.3
-  m_serializedJson: '[{"restTime":{"min":2,"max":6},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":1.7,"timeToIdle":{"min":2,"max":4},"timeToChangeDirection":{"min":4,"max":8},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":3.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5,"checkDragonPositionTime":2,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false},"jump":{"id":1,"active":false},"goOn":{"id":2,"active":true},"home":{"id":3,"active":true}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_databaseKey: PF_Sheep_01
 --- !u!114 &11485410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -139,10 +144,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 1
-  m_runSpeed: 5
-  m_minPlaybakSpeed: 0.5
-  m_maxPlaybakSpeed: 1.5
+  m_walkSpeed: 0.25
+  m_runSpeed: 4
+  m_minPlaybakSpeed: 0.1
+  m_maxPlaybakSpeed: 0.75
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
@@ -150,10 +155,15 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_onEatenParticles:
-  - name: PS_Blood_Explosion_Small
+  - name: PS_Blood_Explosion_Medium
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -163,6 +173,7 @@ MonoBehaviour:
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins:
   - skin: {fileID: 2100000, guid: 5228811cbcc5f44acbfc977a362e93f9, type: 2}
     m_chance: 25
@@ -928,7 +939,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -951,7 +962,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: d6f86c65761be486ab764a5a23db31b0, type: 3}
   m_Bones:
   - {fileID: 4000011757623392}

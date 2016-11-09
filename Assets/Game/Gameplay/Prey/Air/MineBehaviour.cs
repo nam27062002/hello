@@ -106,7 +106,7 @@ public class MineBehaviour : Initializable {
 			string soundName = m_explosionSounds[ Random.Range(0, m_explosionSounds.Count) ];
 			if (!string.IsNullOrEmpty( soundName ))
 			{
-				AudioManager.instance.PlayClip( soundName );
+				// AudioManager.instance.PlayClip( soundName );
 			}
 		}
 

@@ -29,17 +29,13 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		m_fireNodeAudio.outputAudioMixerGroup = (Resources.Load("audio/SfxMixer") as UnityEngine.Audio.AudioMixer).FindMatchingGroups("Master")[0];
 	}
 
-	void Start() {
-		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireNewProc"), 25, true);
-		ParticleManager.CreatePool("SmokeParticle", "", 25);
-	}
-
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -48,12 +44,17 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
+
+		PoolManager.CreatePool((GameObject)Resources.Load("Particles/PF_FireNewProc"), 25, true);
+		ParticleManager.CreatePool("SmokeParticle", "", 25);
+
 		// Create and populate QuadTree
 		// Get map bounds!
 		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
@@ -68,6 +69,15 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
 		m_timer = m_checkFireTime;
+	}
+
+	/// <summary>
+	/// The game has ended.
+	/// </summary>
+	private void OnGameEnded() {
+		// Clear QuadTree
+		m_fireNodesTree = null;
+		m_fireNodes.Clear();
 	}
 
 	public static void Insert(FireNode _fireNode) {

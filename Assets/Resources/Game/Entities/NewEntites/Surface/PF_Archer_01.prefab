@@ -1061,7 +1061,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 1
     m_walkOnWalls: 0
-    m_mass: 5
+    m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
     m_faceDirection: 0
@@ -1075,15 +1075,18 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 12.5
-    m_maxRadius: 11
-    m_minRadius: 4
+    m_sightRadius: 16.5
+    m_maxRadius: 15
+    m_minRadius: 5
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 1.5, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
     m_senseDelay:
-      min: 0
-      max: 0
+      min: 0.5
+      max: 1
   m_onSpawnSoundProbability: 0
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
@@ -1091,11 +1094,11 @@ MonoBehaviour:
   - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v04
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v03
   - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v02
+  m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11402592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1157,16 +1160,22 @@ MonoBehaviour:
   - name: PS_Blood_Explosion_Small
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-  m_onEatenAudio: 
+  m_onEatenAudio: Soldier_Dead
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onExplosionAudio: 
-  m_onAttackAudio: 
+  m_onAttackAudio: Bow
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &11470568
 MonoBehaviour:
@@ -1191,6 +1200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b50cf50e7834c5397a1f060efb7791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: 776837644347f4fd1b6fb6868af723eb, type: 2}
   m_railSeparation:
     min: 2
@@ -1198,7 +1208,8 @@ MonoBehaviour:
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":1},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3.5,"arrivalRadius":7,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":5,"consecutiveAttacks":6,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":1,"max":1},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":1},"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3.5,"arrivalRadius":7,"hasGuardState":true,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"projectileName":"PF_Arrow","projectileSpawnTransformName":"Human_R_Weapon_01","damage":5,"consecutiveAttacks":6,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":0,"max":0},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_databaseKey: PF_Archer_01
 --- !u!137 &13708154
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1208,7 +1219,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -1231,7 +1242,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: ed9c487590b6a4533bfcfec4b63dfffe, type: 3}
   m_Bones:
   - {fileID: 402318}
@@ -1274,7 +1285,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -1297,7 +1308,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300002, guid: ed9c487590b6a4533bfcfec4b63dfffe, type: 3}
   m_Bones:
   - {fileID: 407096}

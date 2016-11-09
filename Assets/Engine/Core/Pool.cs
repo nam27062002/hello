@@ -79,8 +79,8 @@ public class Pool {
 		if ( m_freeObjects.Count > 0)
 		{
 			GameObject go = m_freeObjects.Dequeue();
-			go.SetActive(_activate);
-			m_notFreeObjects.Add( go );
+            if (_activate) go.SetActive(true);
+            m_notFreeObjects.Add( go );
 			return go;
 		}
 		return null;

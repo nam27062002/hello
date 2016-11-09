@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -21,7 +22,7 @@ public class HUDDamageMessage : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private Text m_text = null;
+	private TextMeshProUGUI m_text = null;
 	private Animator m_anim = null;
 	
 	//------------------------------------------------------------------//
@@ -32,7 +33,7 @@ public class HUDDamageMessage : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_text = GetComponent<Text>();
+		m_text = GetComponent<TextMeshProUGUI>();
 		m_text.text = "";
 
 		m_anim = GetComponent<Animator>();

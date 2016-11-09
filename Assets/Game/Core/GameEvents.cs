@@ -9,11 +9,16 @@
 /// Please keep the params documented!
 /// </summary>
 public enum GameEvents {
-	// Debug events
+	// Debug and control panel events
 	DEBUG_MENU_DRAGON_SELECTED = EngineEvents.END,
 	DEBUG_SIMULATION_FINISHED,
 	DEBUG_UNLOCK_LEVELS,
-	DEBUG_SETTING_CHANGED,		// params: string _settingID, bool _newValue
+	CP_PREF_CHANGED,			// params _string _prefID
+	CP_BOOL_CHANGED,			// params: string _prefID, bool _newValue
+	CP_STRING_CHANGED,			// params: string _prefID, string _newValue
+	CP_INT_CHANGED,				// params: string _prefID, int _newValue
+	CP_FLOAT_CHANGED,			// params: string _prefID, float _newValue
+	CP_ENUM_CHANGED,			// params: string _prefID, int _newValue (should be casted to target enum)
 
 	// Profile events
 	PROFILE_COINS_CHANGED,		// params: long _oldAmount, long _newAmount
@@ -62,7 +67,6 @@ public enum GameEvents {
 	// Dragon collection events
 	DRAGON_ACQUIRED,			// params: DragonData _data
 	DRAGON_LEVEL_UP,			// params: DragonData _data
-	DRAGON_SKILL_UPGRADED,		// params: DragonSkill _skill	// [AOC] TODO!! We might want to know whose dragon this skill belongs to - figure out how
 
 	// Menu events
 	MENU_DRAGON_SELECTED,		 // params: string _selectedDragonSku	// [AOC] Triggered when the dragon hovered in the dragon selection screen changes

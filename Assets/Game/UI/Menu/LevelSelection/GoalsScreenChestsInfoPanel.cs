@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -26,8 +27,8 @@ public class GoalsScreenChestsInfoPanel : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// External refs
-	[SerializeField] private Text m_collectedText = null;
-	[SerializeField] private Text m_timerText = null;
+	[SerializeField] private TextMeshProUGUI m_collectedText = null;
+	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[SerializeField] private Slider m_timerBar = null;
 
 	// Internal
@@ -42,7 +43,7 @@ public class GoalsScreenChestsInfoPanel : MonoBehaviour {
 	private void Start() {
 		// Get anchor ref
 		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
-		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.LEVEL_SELECTION);
+		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
 		GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
 		m_3dAnchor = goalScene.infoPanelUIAnchor;
 	}

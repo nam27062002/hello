@@ -429,14 +429,11 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 350
     m_faceDownAngle: 10
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 6
-    m_maxRadius: 2
+    m_sightRadius: 8
+    m_maxRadius: 4
     m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -448,11 +445,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 0
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11451842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -464,11 +461,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 0.75
     max: 1.25
-  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":9.5,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":20,"separation":2,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":6,"followAheadFactor":2,"frequencyOffset":{"min":2,"max":10},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":9.5,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"changeLeaderTime":20,"separation":1.5,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":6,"followAheadFactor":2,"frequencyOffset":{"min":2,"max":10},"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_databaseKey: PF_Crow
   m_avoidDistanceAttenuation: 6
   m_avoidCollisions: 1
 --- !u!114 &11451964
@@ -494,11 +496,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_walkSpeed: 6
-  m_runSpeed: 8
+  m_walkSpeed: 5
+  m_runSpeed: 7
   m_minPlaybakSpeed: 0.5
-  m_maxPlaybakSpeed: 8
-  m_onBoostMaxPlaybackSpeed: 0
+  m_maxPlaybakSpeed: 3.5
+  m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 
@@ -518,6 +520,7 @@ MonoBehaviour:
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &11483602
 MonoBehaviour:
@@ -542,7 +545,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -565,7 +568,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: a7e8fd2069b6e4eaeb50d17cf10ce3c0, type: 3}
   m_Bones:
   - {fileID: 402268}

@@ -21,7 +21,7 @@ Properties {
 
 SubShader {
 	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "LightMode" = "ForwardBase" }
-//	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" }
+//	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
 	ZWrite on
 	Blend SrcAlpha OneMinusSrcAlpha 
 	Cull Off
@@ -29,6 +29,15 @@ SubShader {
 	ColorMask RGBA
 	
 	Pass {
+
+		Stencil
+		{
+			Ref 5
+			Comp always
+			Pass Replace
+			ZFail keep
+		}
+
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag

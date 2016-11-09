@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -31,7 +32,7 @@ public class CPListPref : CPPrefBase {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
-	[SerializeField] private Text m_text;
+	[SerializeField] private TextMeshProUGUI m_text;
 
 	// Internal
 	[SerializeField] private PrefType m_type = PrefType.STRING;
@@ -89,18 +90,22 @@ public class CPListPref : CPPrefBase {
 			case PrefType.INT: {
 				m_selectedIdx = m_selectedIdx % m_intValues.Length;
 				Prefs.SetIntPlayer(id, m_intValues[m_selectedIdx]);
+				Messenger.Broadcast<string, int>(GameEvents.CP_INT_CHANGED, id, m_intValues[m_selectedIdx]);
 			} break;
 
 			case PrefType.FLOAT: {
 				m_selectedIdx = m_selectedIdx % m_floatValues.Length;
 				Prefs.SetFloatPlayer(id, m_floatValues[m_selectedIdx]);
+				Messenger.Broadcast<string, float>(GameEvents.CP_FLOAT_CHANGED, id, m_floatValues[m_selectedIdx]);
 			} break;
 
 			case PrefType.STRING: {
 				m_selectedIdx = m_selectedIdx % m_stringValues.Length;
 				Prefs.SetStringPlayer(id, m_stringValues[m_selectedIdx]);
+				Messenger.Broadcast<string, string>(GameEvents.CP_PREF_CHANGED, id, m_stringValues[m_selectedIdx]);
 			} break;
 		}
+		Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
 
 		// Update text
 		Refresh();

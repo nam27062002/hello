@@ -5,7 +5,7 @@ namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class LatchData : StateComponentData {
-			public Range stunTime = new Range( 4,6 );
+			public Range retreatTime = new Range( 4,6 );
 			public float damage = 1;
 			public float duration = 2;
 
@@ -44,8 +44,7 @@ namespace AI {
 
 				m_myMachine = m_pilot.GetComponent<AI.Machine>();
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
-				m_eatBehaviour.enabled = false;
-				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
+
 				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;
 
 				m_data = m_pilot.GetComponentData<LatchData>();
@@ -53,7 +52,7 @@ namespace AI {
 				m_eatBehaviour.holdDuration = m_data.duration;
 
 				m_transitionParam = new object[1];
-				m_transitionParam[0] = m_data.stunTime.GetRandom(); // retreat time
+				m_transitionParam[0] = m_data.retreatTime.GetRandom(); // retreat time
 
 				base.OnInitialise();
 			}
@@ -61,41 +60,32 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 
 				base.OnEnter(oldState, param);
-				// Get Target!
-				m_eatBehaviour.StartAttackTarget( InstanceManager.player.transform);
-				m_eatBehaviour.enabled = true;
-				m_eatBehaviour.holdDamage = m_data.damage;
-				m_eatBehaviour.holdDuration = m_data.duration;
 
-				m_holdTransform = null;
+				// Get Target!
+				m_holdTransform = m_eatBehaviour.holdTransform;
+
+				m_originalParent = m_pilot.transform.parent;
+				m_pilot.transform.parent = m_holdTransform;
+
+				m_pilot.PressAction(Pilot.Action.Latching);
+				m_pilot.GoTo( m_holdTransform.position );
+				m_pilot.RotateTo( m_holdTransform.rotation );
+
 				m_machine.SetSignal(Signals.Type.Latching, true);
+				m_pilot.PressAction(Pilot.Action.Button_A);
 			}
 
 			protected override void OnExit(State _newState) {
 				if ( m_eatBehaviour.IsLatching() )
 					m_eatBehaviour.EndHold();
+
+				m_pilot.transform.parent = m_originalParent;
 				m_eatBehaviour.enabled = false;
 				m_holdTransform = null;
-				m_pilot.ReleaseAction(Pilot.Action.Latching);
+
 				m_machine.SetSignal(Signals.Type.Latching, false);
-			}
-
-			void OnBiteKillEvent()
-			{
-				if ( !m_eatBehaviour.IsLatching() )
-				{
-					Transition(OnBiteFail);
-				}
-				else
-				{
-					m_originalParent = m_pilot.transform.parent;
-					m_pilot.transform.parent = m_holdTransform;
-
-					m_pilot.PressAction(Pilot.Action.Latching);
-					m_holdTransform = m_eatBehaviour.holdTransform;
-					m_pilot.GoTo( m_holdTransform.position );
-					m_pilot.RotateTo( m_holdTransform.rotation );
-				}
+				m_pilot.ReleaseAction(Pilot.Action.Latching);
+				m_pilot.ReleaseAction(Pilot.Action.Button_A);
 			}
 
 			protected override void OnUpdate()
@@ -106,7 +96,7 @@ namespace AI {
 					if (m_myMachine.IsDead() || m_myMachine.IsDying())	{
 						if ( m_eatBehaviour.IsLatching() )
 							m_eatBehaviour.EndHold();
-						OnEndLatchingEvent();
+						// OnEndLatchingEvent();
 					}else{	
 						m_pilot.GoTo( m_holdTransform.position );
 						m_pilot.RotateTo( m_holdTransform.rotation );
@@ -116,7 +106,6 @@ namespace AI {
 
 			void OnEndLatchingEvent()
 			{	
-				m_pilot.transform.parent = m_originalParent;
 				Transition(OnEndLatching, m_transitionParam);
 			}
 		}

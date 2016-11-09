@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 599667404}
+  m_SkyboxMaterial: {fileID: 846327501}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -262,7 +262,67 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 561120304}
   m_Mesh: {fileID: 4300002, guid: a03004b89ebc446b8bbf04a2f161e791, type: 3}
---- !u!21 &599667404
+--- !u!1 &720585757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 720585758}
+  m_Layer: 0
+  m_Name: GRP_Lights_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &720585758
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 720585757}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 1727207648}
+  - {fileID: 1718322589}
+  - {fileID: 471818985}
+  - {fileID: 1901677808}
+  m_Father: {fileID: 1718090952}
+  m_RootOrder: 0
+--- !u!1 &818287772
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 818287773}
+  m_Layer: 0
+  m_Name: GRP_Garden_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &818287773
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 818287772}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1901677808}
+  m_RootOrder: 0
+--- !u!21 &846327501
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -414,66 +474,34 @@ Material:
     - first:
         name: _SunPos
       second: {r: 1, g: 0, b: 0, a: 0}
---- !u!1 &720585757
+--- !u!1 &886531103
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 720585758}
+  - 4: {fileID: 886531104}
   m_Layer: 0
-  m_Name: GRP_Lights_1
+  m_Name: Singletons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &720585758
+--- !u!4 &886531104
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 720585757}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 1727207648}
-  - {fileID: 1718322589}
-  - {fileID: 471818985}
-  - {fileID: 1901677808}
-  m_Father: {fileID: 1718090952}
-  m_RootOrder: 0
---- !u!1 &818287772
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 818287773}
-  m_Layer: 0
-  m_Name: GRP_Garden_1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &818287773
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 818287772}
+  m_GameObject: {fileID: 886531103}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 1901677808}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
 --- !u!1 &919715022
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,6 +587,50 @@ Transform:
   - {fileID: 451167706}
   m_Father: {fileID: 1718090952}
   m_RootOrder: 1
+--- !u!1 &1541169736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1541169737}
+  - 114: {fileID: 1541169738}
+  m_Layer: 0
+  m_Name: ZoneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1541169737
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1541169736}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1718090952}
+  m_RootOrder: 3
+--- !u!114 &1541169738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1541169736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6e20b0b49bc4f02b8d46e16ba6eeb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Size: 5
+  m_zone2Size: 5
+  m_zone1Color: {r: 1, g: 1, b: 0.5, a: 0.45}
+  m_zone2Color: {r: 0.5, g: 0, b: 0, a: 0.25}
 --- !u!1 &1559800075
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,6 +700,7 @@ Transform:
   - {fileID: 720585758}
   - {fileID: 1378422372}
   - {fileID: 1862227762}
+  - {fileID: 1541169737}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!1 &1718322588

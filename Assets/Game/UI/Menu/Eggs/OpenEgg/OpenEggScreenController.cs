@@ -337,11 +337,11 @@ public class OpenEggScreenController : MonoBehaviour {
 
 				// Aux texts
 				sb.Length = 0;
-				string rewardName = sb.Append("<color=").Append(Colors.silver.ToHexString("#")).Append(">").Append(rewardedItemDef.GetLocalized("tidName")).Append("</color>").ToString();
+				string rewardName = sb.Append("<color=#FFD26CFF>").Append(rewardedItemDef.GetLocalized("tidName")).Append("</color>").ToString();
 				sb.Length = 0;
-				string dragonName = sb.Append("<color=").Append(Colors.silver.ToHexString("#")).Append(">").Append(targetDragonDef.GetLocalized("tidName")).Append("</color>").ToString();
+				string dragonName = sb.Append("<color=#FFD26CFF>").Append(targetDragonDef.GetLocalized("tidName")).Append("</color>").ToString();
 				sb.Length = 0;
-				string rewardCoins = sb.Append("<color=").Append(GameConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
+				string rewardCoins = sb.Append("<color=").Append(UIConstants.COINS_TEXT_COLOR.ToHexString("#")).Append(">").Append(StringUtils.FormatNumber(rewardData.coins)).Append("</color>").ToString();
 
 				// Different texts if the disguise was just unlocked, it was upgraded or it was already maxed
 				int disguiseLevel = UsersManager.currentUser.wardrobe.GetDisguiseLevel(rewardedItemDef.sku);
@@ -568,22 +568,18 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_egg == null) return;
 		if(m_egg.eggData.state != Egg.State.COLLECTED) return;
 
-		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-
 		// Depending on opened egg's reward, perform different actions
+		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
 		switch(m_egg.eggData.rewardData.type) {
 			case "suit": {
-				// Go to the disguises screen
-				EquipmentScreenController equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT).GetComponent<EquipmentScreenController>();
-				equipmentScreen.Setup("", m_egg.eggData.rewardData.value, "", EquipmentScreenController.Tab.DISGUISES);
-				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
+				// No longer given via egs
 			} break;
 
 			case "pet": {
-				// Go to the disguises screen
-				EquipmentScreenController equipmentScreen = screensController.GetScreen((int)MenuScreens.EQUIPMENT).GetComponent<EquipmentScreenController>();
-				equipmentScreen.Setup("", "", m_egg.eggData.rewardData.value, EquipmentScreenController.Tab.PETS);
-				screensController.GoToScreen((int)MenuScreens.EQUIPMENT);
+				// Go to the pets screen
+				PetsScreenController petScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
+				petScreen.Initialize(m_egg.eggData.rewardData.value);
+				screensController.GoToScreen((int)MenuScreens.PETS);
 			} break;
 		}
 	}

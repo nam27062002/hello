@@ -5,13 +5,6 @@ using System.Collections.Generic;
 public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[Serializable]
-	public class ParticleData {
-		public string name = "";
-		public string path = "";
-		public Vector3 offset = Vector3.zero;
-	}
-
-	[Serializable]
 	public class SkinData {
 		public Material skin;
 		[Range(0f, 100f)] public float m_chance = 0f;
@@ -48,6 +41,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_onEatenAudio;
 
 	[SeparatorAttribute]
+	[SerializeField] private float m_speedToWaterSplash;
+	[SerializeField] private ParticleData m_waterSplashParticle;
+
+	[SeparatorAttribute]
 	[SerializeField] private string m_onBurnAudio;
 
 	[SeparatorAttribute]
@@ -56,8 +53,11 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	[SeparatorAttribute("More Audios")]
 	[SerializeField] private string m_onAttackAudio;
+	private AudioObject m_onAttackAudioAO;
 	[SerializeField] private string m_onScaredAudio;
 	[SerializeField] private string m_onPanicAudio;
+	[SerializeField] private string m_idleAudio;
+	private AudioObject m_idleAudioAO;
 
 	[SeparatorAttribute("Skin")]
 	[SerializeField] private List<SkinData> m_skins = new List<SkinData>();
@@ -77,6 +77,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	private bool m_swim;
 	private bool m_inSpace;
 	private bool m_moving;
+	private bool m_attackingTarget;
 
 	private float m_desiredBlendX;
 	private float m_desiredBlendY;
@@ -98,8 +99,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_animator = transform.FindComponentRecursive<Animator>();
 		if (m_animator != null) m_animator.logWarnings = false;
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
-		if ( m_animEvents != null)
+		if ( m_animEvents != null){
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
+			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
+		}
 
 		// Load gold material
 		m_materialGold = Resources.Load<Material>("Game/Assets/Materials/Gold");
@@ -114,10 +117,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		// particle management
 		if (m_onEatenParticles.Count <= 0) {
 			// if this entity doesn't have any particles attached, set the standard blood particle
-			ParticleData data = new ParticleData();
-			data.name = "PS_Blood_Explosion_Small";
-			data.path = "Blood/";
-			data.offset = Vector3.back * 10f;
+			ParticleData data = new ParticleData("PS_Blood_Explosion_Small", "Blood/", Vector3.back * 10f);
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
@@ -140,7 +140,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	void animEventsOnAttackStart ()
 	{
 		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
-			AudioController.Play( m_onAttackAudio, transform.position );
+			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform.position );
+	}
+
+	void animEventsOnAttackEnd ()
+	{
+		if ( m_onAttackAudioAO != null && m_onAttackAudioAO.IsPlaying() && m_onAttackAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+			m_onAttackAudioAO.Stop();
 	}
 	//
 
@@ -153,6 +159,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		m_swim = false;
 		m_inSpace = false;
 		m_moving = false;
+		m_attackingTarget = false;
 
 		if (m_animator != null) {
 			m_animator.enabled = true;
@@ -200,7 +207,18 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 					m_pcTrail.transform.localPosition = Vector3.zero;
 				}
 			}
+
+			if (!string.IsNullOrEmpty(m_idleAudio))
+			{
+				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
+			}
 		}
+	}
+
+	void OnDisable()
+	{
+		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+			m_idleAudioAO.Stop();
 	}
 
 	protected virtual void Update() {
@@ -235,7 +253,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	//Particles
 	public void SpawnEatenParticlesAt(Transform _transform) {
-		for( int i = 0; i < m_onEatenParticles.Count; i++) {
+#if !PRODUCTION
+        // If the debug settings for particles eaten is disabled then they are not spawned
+        if (!Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_EATEN))
+            return;
+#endif
+
+        for ( int i = 0; i < m_onEatenParticles.Count; i++) {
 			ParticleData data = m_onEatenParticles[i];
 			if (!string.IsNullOrEmpty(data.name)) {
 				GameObject go = ParticleManager.Spawn(data.name, transform.position + data.offset, data.path);
@@ -354,18 +378,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			m_animator.SetBool("falling", _falling);
 		}
 	}
-
-	public void Latching( bool _latching){
 		
-	}
-
 	public void Attack() {
 		if (m_panic)
 			return;
 		
 		if (!m_attack) {
-			if (!string.IsNullOrEmpty(m_onAttackAudio))
-				AudioController.Play(m_onAttackAudio, transform.position);
 			m_attack = true;
 			m_animator.SetBool("attack", true);
 		}
@@ -383,11 +401,13 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void StartAttackTarget()
 	{
+		m_attackingTarget = true;
 		m_animator.SetBool("eat", true);
 	}
 
 	public void StopAttackTarget()
 	{
+		m_attackingTarget = false;
 		m_animator.SetBool("eat", false);
 	}
 
@@ -398,7 +418,27 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void StopEating()
 	{
-		m_animator.SetBool("eat", false);
+		if (!m_attackingTarget)
+			m_animator.SetBool("eat", false);
+	}
+
+	public void EnterWater( Collider _other, Vector3 impulse ){
+		CreateSplash( _other, Mathf.Abs(impulse.y) );
+	}
+
+	public void ExitWater( Collider _other, Vector3 impulse){
+		CreateSplash( _other, Mathf.Abs(impulse.y));
+	}
+
+	private void CreateSplash( Collider _other, float verticalImpulse )
+	{
+		if ( verticalImpulse >= m_speedToWaterSplash && !string.IsNullOrEmpty(m_waterSplashParticle.name) )
+		{
+			Vector3 pos = transform.position;
+			float waterY = _other.transform.position.y;
+			pos.y = waterY;
+			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
+		}
 	}
 
 	public void StartSwimming()
@@ -439,6 +479,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	protected virtual void OnSpecialAnimationExit(SpecialAnims _anim) {}
 
 	public void Die(bool _eaten = false) {
+
+		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+			m_idleAudioAO.Stop();
+
 		if (m_explosionParticles.name != "") {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
@@ -459,6 +503,9 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 	public void Burn() {
+		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+			m_idleAudioAO.Stop();
+
 		if ( !string.IsNullOrEmpty( m_onBurnAudio ) ){
 			AudioController.Play( m_onBurnAudio, transform.position);
 		}

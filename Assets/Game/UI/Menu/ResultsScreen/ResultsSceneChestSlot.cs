@@ -56,7 +56,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 		// Skip reward setup if def is not valid
 		if(_chestRewardDef != null) {
 			// Aux vars
-			string rewardPrefabPath = "";
+			string rewardPrefabPath = COINS_REWARD_PREFAB;	// [AOC] Let's show coins by default (debug purposes)
 
 			// PC or coins?
 			switch(_chestRewardDef.Get("type")) {
@@ -94,8 +94,10 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// </summary>
 	public void OnChestOpened() {
 		// Launch reward animation!
-		m_rewardObj.SetActive(true);
-		m_rewardObj.GetComponent<Animator>().SetTrigger("in");
+		if(m_rewardObj != null) {
+			m_rewardObj.SetActive(true);
+			m_rewardObj.GetComponent<Animator>().SetTrigger("in");
+		}
 	}
 
 	/// <summary>

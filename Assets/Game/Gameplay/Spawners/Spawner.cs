@@ -15,6 +15,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 		public float value = 0f;
 	}
 
+	private enum State {
+		Init = 0,
+		Respawning,
+		Create_Instances,
+		Activating_Instances,
+		Alive
+	}
+
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -99,16 +107,30 @@ public class Spawner : MonoBehaviour, ISpawner {
 		set { m_showSpawnerInEditor = value; }
 	}
 
-	
-	//-----------------------------------------------
-	// Methods
-	//-----------------------------------------------
-	// Use this for initialization
-	protected virtual void Start() {
+	private State m_state = State.Init;
+
+    /// <summary>
+    /// Watch used to meassure time time spent on spawning entities. It's defined static to save memory.
+    /// </summary>
+    private static System.Diagnostics.Stopwatch sm_watch;
+
+    private int m_entitiesActivated;
+    private int m_rail = 0;
+
+    //-----------------------------------------------
+    // Methods
+    //-----------------------------------------------
+    // Use this for initialization
+    protected virtual void Start() {
 		float rnd = Random.Range(0f, 100f);
 
 		if (InstanceManager.player.data.tier >= m_minTier) {
 			if (!string.IsNullOrEmpty(m_entityPrefabStr) && rnd <= m_activationChance) {
+
+				if (m_quantity.max < m_quantity.min) {
+					m_quantity.min = m_quantity.max;
+				}
+
 				m_entities = new GameObject[m_quantity.max];
 
 				if (m_rails == 0) m_rails = 1;
@@ -135,14 +157,19 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 				SpawnerManager.instance.Register(this);
 				SpawnerAreaManager.instance.Register(this);
+
+				gameObject.SetActive(false);
+
+				return;
 			}
 		}
 
-		gameObject.SetActive(false);
-	}
+		// we are not goin to use this spawner, lets destroy it
+		Destroy(gameObject);        
+    }
 
 	private void OnDestroy() {
-		if ( SpawnerManager.isInstanceCreated )
+		if (SpawnerManager.isInstanceCreated)
 			SpawnerManager.instance.Unregister(this);
 	}
 
@@ -157,6 +184,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_allEntitiesKilledByPlayer = false;
 
 		m_readyToBeDisabled = false;
+
+		m_state = State.Respawning;
 	}
 
 	public void ResetSpawnTimer()
@@ -175,45 +204,52 @@ public class Spawner : MonoBehaviour, ISpawner {
 		m_entityAlive = 0;
 		m_respawnTime = -1;
 		m_allEntitiesKilledByPlayer = false;
+
+		m_state = State.Respawning;
 	}
 
 	// entities can remove themselves when are destroyed by the player or auto-disabled when are outside of camera range
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
-		bool found = false;
-		for (int i = 0; i < m_entitySpawned; i++) {			
-			if (m_entities[i] == _entity) 
-			{
-				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
-				m_entities[i] = null;
-				if (_killedByPlayer) {
-					m_entitiesKilled++;
+		if (m_state == State.Alive) {
+			bool found = false;
+			for (int i = 0; i < m_entitySpawned; i++) {			
+				if (m_entities[i] == _entity) 
+				{
+					PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
+					m_entities[i] = null;
+					if (_killedByPlayer) {
+						m_entitiesKilled++;
+					}
+					m_entityAlive--;
+					found = true;
 				}
-				m_entityAlive--;
-				found = true;
 			}
-		}
 
-		if (found) {
-			// all the entities are dead
-			if (m_entityAlive == 0) {
-				m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
+			if (found) {
+				// all the entities are dead
+				if (m_entityAlive == 0) {
+					m_allEntitiesKilledByPlayer = m_entitiesKilled == m_entitySpawned;
 
-				if (m_allEntitiesKilledByPlayer) {
-					// check if player has destroyed all the flock
-					if (m_flockBonus > 0) {
-						Reward reward = new Reward();
-						reward.score = (int)(m_flockBonus * m_entitiesKilled);
-						Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
+					if (m_allEntitiesKilledByPlayer) {
+						// check if player has destroyed all the flock
+						if (m_flockBonus > 0) {
+							Reward reward = new Reward();
+							reward.score = (int)(m_flockBonus * m_entitiesKilled);
+							Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _entity.transform, reward);
+						}
+
+						// Program the next spawn time
+						m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+					} else {
+						m_respawnTime = -1; // instant respawn, because player didn't kill all the entities
 					}
 
-					// Program the next spawn time
-					m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
-				} else {
-					m_respawnTime = -1; // instant respawn, because player didn't kill all the entities
-				}
+					m_state = State.Respawning;
 
-				if (m_readyToBeDisabled) {
-					SpawnerManager.instance.Unregister(this);
+					if (m_readyToBeDisabled) {
+						SpawnerManager.instance.Unregister(this);
+						Destroy(gameObject);
+					}
 				}
 			}
 		}
@@ -229,22 +265,25 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		// Rest of the spawners
 		else {
-			// If we can spawn, do it
-			if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
-				// If we don't have any entity alive, proceed
-				if(m_entityAlive == 0) {
-					// Respawn on cooldown?
-					if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
-						// Everything ok! Spawn!
-						return true;
+			if (m_state == State.Respawning) {
+				// If we can spawn, do it
+				if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+					// If we don't have any entity alive, proceed
+					if(m_entityAlive == 0) {
+						// Respawn on cooldown?
+						if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
+							// Everything ok! Spawn!
+							return true;
+						}
 					}
 				}
-			}
 
-			// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
-			else if(m_readyToBeDisabled) {
-				if(m_entityAlive == 0) {
-					SpawnerManager.instance.Unregister(this);
+				// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
+				else if(m_readyToBeDisabled) {
+					if(m_entityAlive == 0) {
+						SpawnerManager.instance.Unregister(this);
+						Destroy(gameObject);
+					}
 				}
 			}
 		}
@@ -265,6 +304,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		// If already ready to be disabled, no need for further checks
 		if(m_readyToBeDisabled) return false;
+
+		if(m_state != State.Respawning) return false;
 
 		// Check start conditions
 		bool startConditionsOk = (m_activationTriggers.Length == 0);	// If there are no activation triggers defined, the spawner will be considered ready
@@ -319,7 +360,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
 	public bool Respawn() {
-		if (m_entityAlive == 0) {
+
+		if (m_state == State.Respawning) {
 			if (m_entitiesKilled == m_entitySpawned) {
 				m_entitySpawned = (uint)m_quantity.GetRandom();
 			} else {
@@ -330,39 +372,73 @@ public class Spawner : MonoBehaviour, ISpawner {
 			m_entitiesKilled = 0;
 			m_allEntitiesKilledByPlayer = false;
 			m_respawnTime = -1;
+
+			m_state = State.Create_Instances;
+
+			return false;
 		}
 
-		System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-		watch.Start();
-		for (uint i = m_entityAlive; i < m_entitySpawned; i++) {			
-			m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
-			m_entityAlive++;
+		if (m_state == State.Create_Instances) {
+            if (sm_watch == null) {
+                sm_watch = new System.Diagnostics.Stopwatch();
+                sm_watch.Start();
+            }
 
-			if (watch.ElapsedMilliseconds >= 9f) {
-				break;
+            long start = sm_watch.ElapsedMilliseconds;
+			for (uint i = m_entityAlive; i < m_entitySpawned; i++) {			
+				m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
+				m_entityAlive++;
+
+				if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
+					break;
+				}
 			}
+
+			if (m_entityAlive == m_entitySpawned) {
+                m_entitiesActivated = 0;
+                m_state = State.Activating_Instances;
+			}
+
+			return false;
 		}
 
-		if (m_entityAlive == m_entitySpawned) {
+		if (m_state == State.Activating_Instances) {
 			Spawn();
-			return true;
+
+            if (m_entitiesActivated == m_entitySpawned)
+            {
+                // Disable this spawner after a number of spawns
+                if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0)
+                {
+                    m_respawnCount++;
+                    if (m_respawnCount == m_maxSpawns)
+                    {
+                        gameObject.SetActive(false);
+                        SpawnerManager.instance.Unregister(this);
+                    }
+                }
+
+                m_state = State.Alive;                
+            }
 		}
 
-		return false;
-	}
+		return m_state == State.Alive;
+	}    
 
-	private void Spawn() {
-		int rail = 0;
-		for (int i = 0; i < m_entitySpawned; i++) {
-			GameObject spawning = m_entities[i];
-			spawning.SetActive(true);
+	private void Spawn() {        
+        long start = sm_watch.ElapsedMilliseconds;
+        while (m_entitiesActivated < m_entitySpawned) {
+			GameObject spawning = m_entities[m_entitiesActivated];
+            if (!spawning.activeSelf) {
+                spawning.SetActive(true);
+            }
 
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
 				m_guideFunction.ResetTime();
 			}
 
-			if (i > 0) {
+			if (m_entitiesActivated > 0) {
 				pos += RandomStartDisplacement(); // don't let multiple entities spawn on the same point
 			}
 
@@ -376,8 +452,8 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 			AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
 			if (pilot != null) {
-				pilot.SetRail(rail, (int)m_rails);
-				rail = (rail + 1) % (int)m_rails;
+				pilot.SetRail(m_rail, (int)m_rails);
+                m_rail = (m_rail + 1) % (int)m_rails;
 				pilot.guideFunction = m_guideFunction;
 				pilot.Spawn(this);
 			}
@@ -393,17 +469,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 			if (machine != null && m_groupController) {				
 				machine.EnterGroup(ref m_groupController.flock);
 			}
-		}
 
-		// Disable this spawner after a number of spawns
-		if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0) {
-			m_respawnCount++;
-			if (m_respawnCount == m_maxSpawns) {
-				gameObject.SetActive(false);
-				SpawnerManager.instance.Unregister(this);
-			}
-		}
-	}
+            m_entitiesActivated++;           
+
+            if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
+                break;
+            }            
+        }       
+	}    
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();
@@ -415,19 +488,34 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 	}
 
+	public void DrawStateGizmos() {
+		switch (m_state) {
+			case State.Init:					Gizmos.color = Color.grey; 		break;
+			case State.Respawning: 				Gizmos.color = Color.yellow; 	break;
+			case State.Create_Instances: 		Gizmos.color = Color.red; 		break;
+			case State.Activating_Instances: 	Gizmos.color = Color.blue; 		break;
+			case State.Alive:					Gizmos.color = Color.green; 	break;
+		}
+		Gizmos.DrawWireSphere(transform.position, 0.25f * GizmosExt.GetGizmoSize(transform.position));
+	}
+
 	void OnDrawGizmos() {
 		// Only if editor allows it
 		if(showSpawnerInEditor) {
 			// Draw spawn area
 			GetArea().DrawGizmo();
-
+				
 			// Draw icon! - only in editor!
 			#if UNITY_EDITOR
 				// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
 				Gizmos.DrawIcon(transform.position, IEntity.ENTITY_PREFABS_PATH + this.m_entityPrefabStr, true);
 			#endif
 		}
+
+		DrawStateGizmos();
 	}
+
+
 
 	virtual protected Vector3 RandomStartDisplacement()	{
 		Vector3 v = Random.onUnitSphere * 2f;

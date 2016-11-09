@@ -65,7 +65,12 @@ public class InflammableDecoration : Initializable {
 		m_collider = GetComponent<BoxCollider>();
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		m_zoneEffect = m_zoneManager.GetFireEffectCode(transform.position, m_entity.sku);
+		if ( m_zoneManager != null )
+			m_zoneEffect = m_zoneManager.GetFireEffectCode(transform.position, m_entity.sku);
+		else{
+			m_zoneEffect = ZoneManager.ZoneEffect.None;
+			Debug.LogWarning("No Zone Manager");
+		}
 
 		if (m_zoneEffect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
@@ -104,7 +109,6 @@ public class InflammableDecoration : Initializable {
 		m_view.SetActive(true);
 		m_viewBurned.SetActive(false);
 
-		transform.localScale = Vector3.one;
 		m_burned = false;
 
 		for (int i = 0; i < m_fireNodes.Length; i++) {

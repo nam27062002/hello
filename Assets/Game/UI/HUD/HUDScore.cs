@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -17,34 +18,10 @@ using System;
 /// <summary>
 /// Simple controller for a score counter in the hud.
 /// </summary>
-[RequireComponent(typeof(Text))]
-public class HUDScore : MonoBehaviour {
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-	private Text m_valueTxt;
-	private Animator m_anim;
-	
+public class HUDScore : HudWidget {	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		// Get external references
-		m_valueTxt = GetComponent<Text>();
-		m_valueTxt.text = "0";
-
-		m_anim = GetComponent<Animator>();
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		UpdateScore();
-	}
+	//------------------------------------------------------------------//		
 
 	/// <summary>
 	/// The spawner has been enabled.
@@ -62,30 +39,29 @@ public class HUDScore : MonoBehaviour {
 		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
 	}
 
-	//------------------------------------------------------------------//
-	// INTERNAL UTILS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Updates the displayed score.
-	/// </summary>
-	private void UpdateScore() {
-		// Do it!
-		m_valueTxt.text = StringUtils.FormatNumber(RewardManager.score);
-	}
+    //------------------------------------------------------------------//
+    // INTERNAL UTILS													//
+    //------------------------------------------------------------------//    
+    protected override string GetValueAsString() {
+        return StringUtils.FormatNumber(GetValue());
+    }
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// A reward has been applied, show feedback for it.
-	/// </summary>
-	/// <param name="_reward">The reward that has been applied.</param>
-	/// <param name="_entity">The entity that triggered the reward. Can be null.</param>
-	private void OnRewardApplied(Reward _reward, Transform _entity) {
+    private long GetValue(){
+        return RewardManager.score;
+    }
+
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// A reward has been applied, show feedback for it.
+    /// </summary>
+    /// <param name="_reward">The reward that has been applied.</param>
+    /// <param name="_entity">The entity that triggered the reward. Can be null.</param>
+    private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// We only care about score rewards
 		if(_reward.score > 0) {
-			UpdateScore();
-			if(m_anim != null) m_anim.SetTrigger("start");
-		}
+            UpdateValue(GetValue(), true);            
+        }
 	}
 }

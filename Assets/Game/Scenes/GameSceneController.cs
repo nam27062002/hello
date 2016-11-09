@@ -185,7 +185,6 @@ public class GameSceneController : GameSceneControllerBase {
 	/// </summary>
 	override protected void OnDestroy() {
 		// Clear pools
-		FirePropagationManager.DestroyInstance();
 		PoolManager.Clear(true);
 
 		// Call parent

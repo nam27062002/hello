@@ -10,6 +10,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -34,8 +35,8 @@ public class PopupCurrencyShop : MonoBehaviour {
 
 	// Exposed References
 	[Separator]
-	[SerializeField] private Text m_coinsAmountText = null;
-	[SerializeField] private Text m_pcAmountText = null;
+	[SerializeField] private TextMeshProUGUI m_coinsAmountText = null;
+	[SerializeField] private TextMeshProUGUI m_pcAmountText = null;
 
 	// Other setup parameters
 	private bool m_closeAfterPurchase = true;

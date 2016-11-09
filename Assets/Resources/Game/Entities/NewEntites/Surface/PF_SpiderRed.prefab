@@ -124,6 +124,11 @@ MonoBehaviour:
     path: Blood
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -133,6 +138,7 @@ MonoBehaviour:
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
   m_web: {fileID: 120000012288428370}
   m_spinneret: {fileID: 485126}
@@ -208,11 +214,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: b4eb82ab3429a4adb899460c45432a77, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 1
     max: 1
   m_serializedJson: '[{"hangDownChance":{"min":1,"max":1},"hangDownDistance":{"min":4,"max":6},"hangDownSpeed":2.5,"restTime":{"min":5,"max":8},"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"damage":25,"consecutiveAttacks":200,"attackDelay":2,"retreatTime":5,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":2.5,"timeToIdle":{"min":4,"max":5},"timeToChangeDirection":{"min":5,"max":25},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_databaseKey: PF_SpiderRed
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
 --- !u!114 &11492210
@@ -241,9 +252,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
@@ -253,6 +261,9 @@ MonoBehaviour:
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0.3, z: 2}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
     m_senseDelay:
       min: 0.25
       max: 0.5
@@ -260,11 +271,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 50
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!135 &13560964
 SphereCollider:
   m_ObjectHideFlags: 1

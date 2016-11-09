@@ -7,6 +7,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -59,5 +60,70 @@ public static class ResourcesExt {
 
 		// Done!
 		return prefabsList;
+	}
+
+	/// <summary>
+	/// Loads a single sprite from the Resources folder, either a single sprite or a sprite within a spritesheet.
+	/// If a single sprite with the given path doesn't exist, the last section of the path will be considered as a
+	/// sprite id within a spritesheet and the rest of the path as the spritesheet path in Resources.
+	/// Not very efficient, specially with large atlases. Don't abuse it.
+	/// If several sprites from the same spritesheet are to be loaded, better check out LoadSpritesheet() method.
+	/// </summary>
+	/// <returns>The requested sprite, <c>null</c> if it wasn't found.</returns>
+	/// <param name="_path">The path of either the single sprite or the spritesheet + the sprite name. Relative to the Resources folder. No extension.</param>
+	public static Sprite LoadSprite(string _path) {
+		// Attempt to load it as a sprite
+		Sprite target = Resources.Load<Sprite>(_path);
+
+		// If success, we're done!
+		if(target != null) return target;
+
+		// If not successful, strip last part of the path and try to load it as a spritesheet
+		string spriteName = Path.GetFileNameWithoutExtension(_path);	// That should do it
+		string spritesheetPath = _path.Replace("/" + spriteName, "");
+		Debug.Log(spriteName + "\n" + spritesheetPath);
+
+		// Use the other aux methods in this class
+		return LoadFromSpritesheet(spritesheetPath, spriteName);
+	}
+
+	/// <summary>
+	/// Loads a single sprite from a spritesheet, by name.
+	/// Not very efficient, specially with large atlases. Don't abuse it.
+	/// If several sprites from the same spritesheet are to be loaded, better check out LoadSpritesheet() method.
+	/// </summary>
+	/// <returns>The requested sprite, <c>null</c> if it wasn't found.</returns>
+	/// <param name="_spritesheetPath">The path of the spritesheet relative to the Resources folder. No extension.</param>
+	/// <param name="_spriteName">The name of the sprite within the spritesheet.</param>
+	public static Sprite LoadFromSpritesheet(string _spritesheetPath, string _spriteName) {
+		// Load the spritesheet
+		Sprite[] sprites = Resources.LoadAll<Sprite>(_spritesheetPath);
+
+		// Find our target sprite
+		for(int i = 0; i < sprites.Length; i++) {
+			if(sprites[i].name == _spriteName) return sprites[i];
+		}
+
+		// Sprite not found :(
+		return null;
+	}
+
+	/// <summary>
+	/// Loads a spritesheet into a dictionary, by name.
+	/// </summary>
+	/// <returns>A new dictionary with containing all the sprites in a spritesheets by name.</returns>
+	/// <param name="_spritesheetPath">The path of the spritesheet relative to the Resources folder. No extension.</param>
+	public static Dictionary<string, Sprite> LoadSpritesheet(string _spritesheetPath) {
+		// Load the spritesheet
+		Sprite[] sprites = Resources.LoadAll<Sprite>(_spritesheetPath);
+
+		// Create and initialize the dictionary
+		Dictionary<string, Sprite> dict = new Dictionary<string, Sprite>(sprites.Length);
+		for(int i = 0; i < sprites.Length; i++) {
+			dict.Add(sprites[i].name, sprites[i]);
+		}
+
+		// Done!
+		return dict;
 	}
 }

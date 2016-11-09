@@ -45,10 +45,14 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
+	void Awake()
+	{
+		m_dragon = GetComponent<DragonPlayer>();
+	}
 
 	// Use this for initialization
 	void Start() {
-		m_dragon = GetComponent<DragonPlayer>();
+		
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 		m_gameController = InstanceManager.GetSceneController<GameSceneControllerBase>();
 
@@ -65,6 +69,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_starvingLimit = settings.GetAsFloat("healthWarningThreshold");	// 0.20
 		m_starvingHealthModifier = settings.GetAsFloat("healthWarningModifier");	// 0.5
 
+		m_damageMultiplier = 0;
 		//
 		m_damageAnimState = Animator.StringToHash("Damage");
 	}
@@ -89,6 +94,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 				m_dots.RemoveAt(i);
 			}
 		}
+
+		#if DEBUG
+			if ( Input.GetKeyDown( KeyCode.M) )
+				m_dragon.AddLife( -m_dragon.health );
+		#endif
 	}
 
 	public bool IsAlive() {
@@ -193,6 +203,6 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		PlayHitAnimation();
+		// PlayHitAnimation();
 	}
 }

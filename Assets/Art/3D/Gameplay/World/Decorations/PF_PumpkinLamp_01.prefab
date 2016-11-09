@@ -260,6 +260,7 @@ GameObject:
   - 59: {fileID: 59000012952996422}
   - 65: {fileID: 65000011691256078}
   - 114: {fileID: 114000011016884820}
+  - 114: {fileID: 114000011856199628}
   m_Layer: 11
   m_Name: Lamp
   m_TagString: Untagged
@@ -888,6 +889,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityMultiplier: 1
+--- !u!114 &114000011856199628
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013016703146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c57d4ee76f4447e49baed888803c700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerEvent: 3
+  audioID: 
+  position: 2
 --- !u!114 &114000012176229570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2354,7 +2369,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012333443284}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 1
   startDelay:
     scalar: 0
@@ -2392,12 +2407,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 63433504
   looping: 1
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 0
+  autoRandomSeed: 0
   scalingMode: 1
+  randomSeed: 63433504
   InitialModule:
     serializedVersion: 2
     enabled: 1

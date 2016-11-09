@@ -32,6 +32,11 @@ namespace AI {
 			protected float m_timer;
 			protected float m_timeOut;
 
+			private EatBehaviour m_eatBehaviour;
+
+			private bool m_enemyInRange = false;
+
+
 
 			private object[] m_transitionParam;
 
@@ -48,6 +53,10 @@ namespace AI {
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
 				m_transitionParam = new object[1];
+
+				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
+				m_eatBehaviour.enabled = false;
+				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -71,22 +80,55 @@ namespace AI {
 				{
 					m_player = InstanceManager.player;
 				}
+
+				m_eatBehaviour.enabled = true;
+				m_enemyInRange = false;
 				m_timer = 0;
 				m_timeOut = m_data.timeout.GetRandom();
+
+				//m_pilot.PressAction(Pilot.Action.Button_A);
 			}
 
-			protected override void OnUpdate() {	
+			protected override void OnExit(State _newState) {
+				//m_pilot.ReleaseAction(Pilot.Action.Button_A);
+				m_enemyInRange = false;
+			}
+
+			void OnBiteKillEvent()
+			{
+				if ( m_eatBehaviour.IsLatching() )
+				{
+					m_enemyInRange = true;
+
+				}
+			}
+
+			protected override void OnUpdate() {
+				if (m_enemyInRange)	{
+					Transition(OnEnemyInRange);
+					m_enemyInRange = false;
+					return;
+				}
 				if (m_targetMachine != null) {
 					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()) {
 						m_targetMachine = null;
 						m_targetEntity = null;
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						m_eatBehaviour.enabled = false;
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				} else if ( m_player != null ){
-					if ( !m_player.IsAlive() /*|| m_player.BeingLatchedOn()*/ )
+
+					bool canLatch = false;
+					if ( m_eatBehaviour.canMultipleLatchOnPlayer && InstanceManager.player.HasFreeHoldPoint())
+						canLatch = true;
+					else
+						canLatch = !InstanceManager.player.BeingLatchedOn();
+
+					if ( !m_player.IsAlive() || !canLatch )
 					{
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						m_eatBehaviour.enabled = false;
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				}
@@ -99,15 +141,23 @@ namespace AI {
 				else
 					m_target = SearchClosestHoldPoint( m_player.holdPreyPoints );
 
+
+				if ( m_target == null )	{
+					m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+					m_eatBehaviour.enabled = false;
+					Transition( OnPursuitTimeOut, m_transitionParam );
+				}
+
 				float m = (m_machine.position - m_target.position).sqrMagnitude;
 				if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
-					m_transitionParam[0] = m_target;
-					Transition(OnEnemyInRange, m_transitionParam);
+				//	m_transitionParam[0] = m_target;
+				//	Transition(OnEnemyInRange, m_transitionParam);
 				} else {
 					m_timer += Time.deltaTime;
 					if ( m_timer > m_timeOut )
 					{
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+						m_eatBehaviour.enabled = false;
 						Transition( OnPursuitTimeOut, m_transitionParam );
 					}
 					else
@@ -122,17 +172,17 @@ namespace AI {
 				
 			}
 
-			virtual protected Transform SearchClosestHoldPoint( List<Transform> holdPreyPoints )
+			virtual protected Transform SearchClosestHoldPoint( HoldPreyPoint[] holdPreyPoints )
 			{
 				float distance = float.MaxValue;
-				List<Transform> points = holdPreyPoints;
 				Transform holdTransform = null;
-				for( int i = 0; i<points.Count; i++ )
+				for( int i = 0; i<holdPreyPoints.Length; i++ )
 				{
-					if ( Vector3.SqrMagnitude( m_machine.position - points[i].position) < distance )
+					HoldPreyPoint point = holdPreyPoints[i];
+					if ( !point.holded && Vector3.SqrMagnitude( m_machine.position - point.transform.position) < distance )
 					{
-						distance = Vector3.SqrMagnitude( m_machine.position - points[i].position);
-						holdTransform = points[i];
+						distance = Vector3.SqrMagnitude( m_machine.position - point.transform.position);
+						holdTransform = point.transform;
 					}
 				}
 				return holdTransform;

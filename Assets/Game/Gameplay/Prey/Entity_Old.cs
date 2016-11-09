@@ -170,7 +170,7 @@ public class Entity_Old : Initializable {
 					if (Random.Range( 0, 100.0f ) < m_onAppearSoundProbability)
 					{
 						string soundName = m_onApprearSounds[ Random.Range( 0, m_onApprearSounds.Count ) ];
-						AudioManager.instance.PlayClip( soundName );
+						// AudioManager.instance.PlayClip( soundName );
 					}
 				}
 				m_isOnScreen = test;

@@ -2172,7 +2172,7 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_onEatenParticles:
-  - name: PF_feathers_3D
+  - name: PS_Blood_Explosion_Large
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onEatenAudio: 
@@ -2185,6 +2185,7 @@ MonoBehaviour:
   m_onAttackAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
+  m_idleAudio: 
   m_skins: []
 --- !u!114 &11408366
 MonoBehaviour:
@@ -2226,10 +2227,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_brainResource: {fileID: 11400000, guid: c760dbb27a96d47638f54e858ef575d3, type: 2}
+  m_railSeparation:
+    min: 0.5
+    max: 1
   m_speedFactorRange:
     min: 1
     max: 1
   m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":17,"arrivalRadius":1,"hasGuardState":false,"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":140,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":4,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":2,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false}]'
+  m_databaseKey: PF_DragonEnemyDevil
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
 --- !u!114 &11443234
@@ -2281,9 +2286,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
-  m_railSeparation:
-    min: 0.5
-    max: 1
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
@@ -2300,11 +2302,11 @@ MonoBehaviour:
   m_onSpawnSounds: []
   m_onEatenSoundProbability: 4.5
   m_onEatenSounds: []
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11472212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2345,6 +2347,9 @@ MonoBehaviour:
   m_eatBigSound: ','
   m_wingsWindSound: 0
   m_wingsStrongFlap: 4
+  m_levelUpSound: 
+  m_starvingSound: 
+  m_hitSound: 
 --- !u!135 &13523742
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -2366,7 +2371,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -2390,7 +2395,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300000, guid: 56799b5a1d579454fad676ddfde81d78, type: 3}
   m_Bones:
   - {fileID: 417396}

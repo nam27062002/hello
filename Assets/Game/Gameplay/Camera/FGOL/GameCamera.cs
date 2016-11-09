@@ -16,7 +16,7 @@ public class GameCamera : MonoBehaviour
 	private const float			m_maxTrackAheadScaleX = 0.15f;
     private const float         m_maxTrackAheadScaleY = 0.2f; //JO
 	private const float			m_trackBlendRate = 1.0f;
-	private const float			m_defaultFOV = 45.0f;
+	private const float			m_defaultFOV = 30.0f;
 	private const float			m_minZ = 10.0f;
 	private const float			m_frameWidthDefault = 20.0f;
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
@@ -194,10 +194,13 @@ public class GameCamera : MonoBehaviour
 
 	private TouchControlsDPad	m_touchControls = null;
 
-	public GameObject m_animatedCameraPrefab;
-	private AnimatedCamera m_animatedCamera;
 	public bool m_useDampCamera = false;
 
+	public float m_introDuration = 10.0f;
+	private float m_introTimer = 0;
+	public float m_introDisplacement = 10;
+	private Vector3	m_introPosition;
+	public AnimationCurve m_introMoveCurve;
 
 	enum State
 	{
@@ -271,15 +274,11 @@ public class GameCamera : MonoBehaviour
 		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
 		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
 
-		GameObject go = Instantiate(m_animatedCameraPrefab) as GameObject;
-		m_animatedCamera = go.GetComponent<AnimatedCamera>();
-
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
-
-		m_useDampCamera = DebugSettings.Get(DebugSettings.NEW_CAMERA_SYSTEM);
+		m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
 
 	}
 	/*
@@ -310,10 +309,9 @@ public class GameCamera : MonoBehaviour
 			MoveToSpawnPos(InstanceManager.player.data.def.sku);
 			SetTargetObject( InstanceManager.player.gameObject );
 			m_state = State.INTRO;
-			m_animatedCamera.transform.position = m_position;
-			m_animatedCamera.transform.localScale = Vector3.one * InstanceManager.player.data.scale;
-			m_animatedCamera.PlayIntro();
-			m_unityCamera.enabled = false;	
+			m_introTimer = m_introDuration;
+			m_introPosition = m_position;
+			m_position += Vector3.left * m_introDisplacement;
 		}
 
 		UpdateBounds();
@@ -343,7 +341,7 @@ public class GameCamera : MonoBehaviour
 		Messenger.RemoveListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
 
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
 		InstanceManager.gameCamera = null;
 
@@ -356,7 +354,7 @@ public class GameCamera : MonoBehaviour
 		// Show collisions cheat?
 		if(_id == DebugSettings.NEW_CAMERA_SYSTEM) {
 			// Enable/Disable object
-			m_useDampCamera = DebugSettings.Get(DebugSettings.NEW_CAMERA_SYSTEM);
+			m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
 		}
 	}
 
@@ -366,8 +364,6 @@ public class GameCamera : MonoBehaviour
 		{
 			// m_state = State.INTRO_DONE;
 			m_state = State.PLAY;
-			m_unityCamera.enabled = true;
-			GetCameraSetup( m_animatedCamera.m_canera );
 		}
 	}
 
@@ -377,8 +373,6 @@ public class GameCamera : MonoBehaviour
 		{
 			// m_state = State.INTRO_DONE;
 			m_state = State.PLAY;
-			m_unityCamera.enabled = true;
-			GetCameraSetup( m_animatedCamera.m_canera );
 		}
 	}
 
@@ -559,25 +553,38 @@ public class GameCamera : MonoBehaviour
 	}
 
 
-
-	void GetCameraSetup( Camera otherCamera )
+	bool PlayingIntro()
 	{
-		m_fov = otherCamera.fieldOfView;
-		m_position = otherCamera.transform.position;
-		m_rotation = otherCamera.transform.eulerAngles;
-		m_transform.position = m_position;
-
-		UpdateValues();
+		return m_introTimer > 0;
 	}
 
 	void PlayUpdate()
 	{
-
 		float dt = Time.deltaTime;
-		Vector3 targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
-		UpdateTrackAheadVector(m_targetMachine);
+		Vector3 targetPosition;
+
+		if ( m_introTimer <= 0 ){
+			targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
+			UpdateTrackAheadVector(m_targetMachine);
+		}else{
+			m_introTimer -= Time.deltaTime;
+			float delta = m_introTimer / m_introDuration;
+			m_trackAheadVector = Vector3.zero;
+			float displacement = m_introMoveCurve.Evaluate(1.0f-delta) * m_introDisplacement;
+			targetPosition = m_introPosition + (Vector3.left * displacement);
+
+			if ( m_introTimer <= 0 )
+			{
+				m_posFrom = m_transform.position;
+				m_isLerpingBetweenTargets = true;
+				m_positionLerp = 0.0f;
+
+				m_trackAheadPos = m_position;
+				m_trackAheadPos.z = 0;
+			}
+		}
+
 		Vector3 desiredPos = targetPosition - m_trackAheadVector;
-        
         // water-line camera position offsetiness
         /*
         if(m_targetObject != null)
@@ -1011,7 +1018,7 @@ public class GameCamera : MonoBehaviour
 	{
 		m_transform.position = m_position + Random.insideUnitSphere * m_cameraShake;
 
-		if((m_targetTransform != null))
+		if((m_targetTransform != null) && !PlayingIntro())
 		{
 			Vector3 targetTrackAhead = m_trackAheadVector * m_trackAheadScale;
 			Vector3 targetTrackPos =  m_targetTransform.position + targetTrackAhead;
@@ -1284,7 +1291,7 @@ public class GameCamera : MonoBehaviour
     // we don't want to change it if it's not really necessary in order to make future updates easier
     private void Debug_Awake()
     {
-        Messenger.AddListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
@@ -1292,7 +1299,7 @@ public class GameCamera : MonoBehaviour
 
     private void Debug_OnDestroy()
     {
-        Messenger.RemoveListener<string, bool>(GameEvents.DEBUG_SETTING_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id, bool _newValue)
@@ -1309,7 +1316,7 @@ public class GameCamera : MonoBehaviour
         GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
         if (glow != null)
         {
-            glow.enabled = DebugSettings.Get(DebugSettings.INGAME_GLOW);
+			glow.enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_GLOW);
         }
     }
     #endregion

@@ -30,14 +30,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		Fly_Down,
 		Stunned,
 		InsideWater,
+		ExitingWater,
 		OuterSpace,
+		ExitingSpace,
 		Intro,
 		Latching,
+		Dead,
+		Reviving,
 		None,
 	};
 
-	private const float m_waterImpulseMultiplier = 0.75f;
-	private const float m_onWaterCollisionMultiplier = 0.5f;
+	public static float m_waterImpulseMultiplier = 0.75f;
+	public static float m_onWaterCollisionMultiplier = 0.5f;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -56,13 +60,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// References to components
 	Animator  				m_animator;
+	FlyLoopBehaviour		m_flyLoopBehaviour;
 	DragonPlayer			m_dragon;
 	DragonHealthBehaviour	m_health;
 	DragonControl			m_controls;
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_groundCollider;
-	PlayerEatBehaviour		m_eatBehaviour;
+	DragonEatBehaviour		m_eatBehaviour;
+
+	public SphereCollider groundCollider { get { return m_groundCollider; } } 
 
 
 	// Movement control
@@ -70,7 +77,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private Vector3 m_direction;
 	private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
 	private Quaternion m_desiredRotation;
-	private Vector3 m_angularVelocity;
+	private Vector3 m_angularVelocity = Vector3.zero;
 	private float m_boostSpeedMultiplier;
 	public float boostSpeedMultiplier
 	{
@@ -115,6 +122,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 	}
 
+	private State m_stateAfterRevive = State.None;
+
 	private Transform m_tongue;
 	private Transform m_head;
 	private Transform m_cameraLookAt;
@@ -125,10 +134,24 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	// Parabolic movement
 	[Header("Parabolic Movement")]
-	[SerializeField] private float m_parabolicMovementValue = 10;
+	[SerializeField] private float m_parabolicMovementConstant = 10;
+	public float parabolicMovementConstant
+	{
+		get { return m_parabolicMovementConstant; }
+		set { m_parabolicMovementConstant = value; }
+	}
+	[SerializeField] private float m_parabolicMovementAdd = 10;
+	public float parabolicMovementAdd
+	{
+		get { return m_parabolicMovementAdd; }
+		set { m_parabolicMovementAdd = value; }
+	}
+	private Vector3 m_startParabolicPosition;
 	public float m_parabolicXControl = 10;
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
 	[SerializeField] private float m_outerSpaceRecoveryTime = 0.5f;
+	[SerializeField] private float m_insideWaterRecoveryTime = 0.1f;
+	private float m_recoverTimer;
 
 	private bool m_canMoveInsideWater = false;
 	public bool canDive
@@ -193,6 +216,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private RegionManager m_regionManager;
 	public Current                              current { get; set; }
 
+	private Vector3 m_diePosition;
+	private Vector3 m_revivePosition;
+	private float m_reviveTimer;
+	private const float m_reviveDuration = 1;
+	private float m_deadTimer = 0;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -204,6 +232,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Get references
 		m_animator			= transform.FindChild("view").GetComponent<Animator>();
+		m_flyLoopBehaviour	= m_animator.GetBehaviour<FlyLoopBehaviour>();
 		m_dragon			= GetComponent<DragonPlayer>();
 		m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControl>();
@@ -230,7 +259,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		m_rbody = GetComponent<Rigidbody>();
 		m_groundCollider = GetComponentInChildren<SphereCollider>();
-		m_eatBehaviour = GetComponent<PlayerEatBehaviour>();
+		m_eatBehaviour = GetComponent<DragonEatBehaviour>();
 		m_height = 10f;
 
 		m_boostSpeedMultiplier = 1;
@@ -245,10 +274,12 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Movement Setup
 		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
-		m_dargonAcceleration = m_dragon.data.speedSkill.value;
+		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
+
+		m_tongue = transform.FindTransformRecursive("Fire_Dummy");
 	}
 
 	/// <summary>
@@ -260,6 +291,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		canDive = DebugSettings.dive;
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
+		m_angularVelocity = Vector3.zero;
 		m_lastPosition = transform.position;
 		m_lastSpeed = 0;
 
@@ -306,6 +338,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				{
 					m_groundCollider.enabled = true;
 				}break;
+				case State.Reviving:
+				{
+					m_rbody.detectCollisions = true;
+				}break;
 			}
 
 			// entering new state
@@ -348,10 +384,20 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						m_animator.SetBool("fly down", true);
 					}
+					m_startParabolicPosition = transform.position;
+				}break;
+				case State.ExitingWater:
+				{
+					m_recoverTimer = m_insideWaterRecoveryTime;
 				}break;
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
+					m_startParabolicPosition = transform.position;
+				}break;
+				case State.ExitingSpace:
+				{
+					m_recoverTimer = m_outerSpaceRecoveryTime;
 				}break;
 				case State.Intro:
 				{
@@ -362,6 +408,29 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				case State.Latching:
 				{
 					m_groundCollider.enabled = false;
+				}break;
+				case State.Dead:
+				{
+					m_animator.SetTrigger("dead");
+					// Save Position!
+					m_diePosition = transform.position;
+					m_deadTimer = 0;
+				}break;
+				case State.Reviving:
+				{
+					m_rbody.detectCollisions = false;
+					m_reviveTimer = m_reviveDuration;
+					m_impulse = Vector3.zero;
+					m_rbody.velocity = Vector3.zero;
+					m_revivePosition = transform.position;
+					m_animator.Play("BaseLayer.Idle");
+
+					if ( m_direction.x > 0 ){
+						m_direction = Vector3.right;	
+					}else{
+						m_direction = Vector3.left;
+					}
+
 				}break;
 			}
 
@@ -414,6 +483,18 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				Vector3 deltaPosition = Vector3.Lerp( m_tongue.position, m_holdPreyTransform.position, Time.deltaTime * 8);	// Mouth should be moving and orienting
 				transform.position += deltaPosition - m_tongue.position;
 			}break;
+			case State.ExitingWater:
+			{
+				m_recoverTimer -= Time.deltaTime;
+				if ( m_recoverTimer <= 0 )
+					ChangeState( State.Fly );
+			}break;
+			case State.ExitingSpace:
+			{
+				m_recoverTimer -= Time.deltaTime;
+				if ( m_recoverTimer <= 0 )
+					ChangeState( State.Fly_Down );
+			}break;
 		}
 
 
@@ -448,25 +529,28 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						// notify the machine that it's now in a current.
 						// m_machine.EnteredInCurrent(current);
+
+
 					}
 				}
             }
             else
             {
-                // we're already inside a current, check for exit
                 Vector3 pos = m_transform.position;
-				//1.- Check if we are out of bounds of the current
-				//2.- If we are no longer visible remove ourselves from the current as well ( most likely we have been killed by a mine which makes our renderers inactive )
-				//(We dont want the camera to follow an invisible corpse)
-				/*
-				if(!m_isVisible)
+				if(current != null)
 				{
-					// if the object is no longer visible, remove it immediately
-					current.splineForce.RemoveObject(gameObject, true);
-					current = null;
+					if ( current.IsInCurrentDirection( gameObject ) )	// if agains current we dont allow to glide
+					{
+						m_flyLoopBehaviour.allowGlide = true;
+					}
+					else
+					{
+						m_animator.SetBool("glide", false);
+						m_flyLoopBehaviour.allowGlide = false;
+					}
+
 				}
-				else 
-				*/
+					
 
 				if(!current.Contains(pos.x, pos.y))
                 {
@@ -480,6 +564,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 				if(current == null )
 				{
+					m_flyLoopBehaviour.allowGlide = true;
 					// notify the machine that it's no more in a current.
 					// m_machine.ExitedFromCurrent();
 				}
@@ -565,7 +650,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	void FixedUpdate() {
 		switch (m_state) {
 			case State.Idle:
-				FlyAwayFromGround();
+				UpdateIdleMovement();
 				// UpdateMovement();
 				break;
 
@@ -574,6 +659,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				UpdateMovement();
 				break;
 			case State.InsideWater:
+			case State.ExitingWater:
 			{
 				if (m_canMoveInsideWater)
 				{
@@ -581,12 +667,16 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}
 				else
 				{
-					UpdateParabolicMovement( m_parabolicMovementValue);
+					float distance = m_startParabolicPosition.y - transform.position.y;
+					UpdateParabolicMovement( 1, distance);
 				}
 			}break;
 			case State.OuterSpace:
-				UpdateParabolicMovement( -m_parabolicMovementValue);
-				break;
+			case State.ExitingSpace:
+			{
+				float distance = transform.position.y - m_startParabolicPosition.y;
+				UpdateParabolicMovement( -1, distance);
+			}break;
 			case State.Intro:
 			{
 				// m_impulse = (m_destination - transform.position).normalized;
@@ -601,7 +691,38 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				m_impulse = Vector3.zero;
 				m_rbody.velocity = Vector3.zero;
 			}break;
+			case State.Dead:
+			{
+				DeadFall();
+			}break;
+			case State.Reviving:
+			{
+				m_reviveTimer -= Time.deltaTime;
+				transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
 
+				RotateToDirection(m_direction, false);
+				m_desiredRotation = m_transform.rotation;
+
+				if ( m_reviveTimer <= 0 )
+				{
+					transform.position = m_diePosition;
+					switch( m_stateAfterRevive )
+					{
+						case State.InsideWater:
+						{
+							ChangeState( State.InsideWater );
+						}break;
+						case State.OuterSpace:
+						{
+							ChangeState( State.OuterSpace );
+						}break;
+						default:
+						{
+							ChangeState( State.Idle);
+						}break;
+					}
+				}
+			}break;
 		}
 		
 		m_rbody.angularVelocity = m_angularVelocity;
@@ -725,13 +846,22 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		*/
 	}
 
-	private void UpdateParabolicMovement( float moveValue )
+	private void UpdateParabolicMovement( float sign, float distance )
 	{
 		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
 		Vector3 impulse = m_controls.GetImpulse(Time.deltaTime * GetTargetSpeedMultiplier());
 
 		// check collision with ground, only down?
-		m_impulse.y += moveValue * Time.deltaTime;
+		float moveValue = sign * (m_parabolicMovementConstant + ( m_parabolicMovementAdd * distance ));
+		m_impulse.y += Time.deltaTime * moveValue;
+		/*
+		float abs = Mathf.Abs( moveValue ) * 10;
+#if DEBUG
+		if ( m_impulse.y < -abs || m_impulse.y > abs )
+			Debug.LogWarning("Possible Movement error!");
+#endif
+		m_impulse.y = Mathf.Clamp( m_impulse.y, -abs, abs);
+		*/
 
 		m_impulse.x += impulse.x * m_parabolicXControl;
 
@@ -740,7 +870,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void FlyAwayFromGround() {
+	private void UpdateIdleMovement() {
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
@@ -754,6 +884,56 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		{
 			ComputeImpulseToZero();
 		}
+		bool slowly = true;
+		if ( current == null){
+			if ( oldDirection.x > 0 ){
+				m_direction = Vector3.right;	
+			}else{
+				m_direction = Vector3.left;
+			}
+		}else{
+			m_direction = (m_impulse + m_externalForce).normalized;
+			slowly = false;
+		}
+
+		RotateToDirection(m_direction, slowly);
+		m_desiredRotation = m_transform.rotation;
+
+		ApplyExternalForce();
+
+
+
+		m_rbody.velocity = m_impulse;
+	}
+
+	private void IdleRotation( Vector3 oldRotation )
+	{
+		
+	}
+
+	private void DeadFall(){
+
+		Vector3 oldDirection = m_direction;
+		CheckGround( out m_raycastHit);
+		if (m_height >= 2f * transform.localScale.y) { // dragon will fly up to avoid mesh intersection
+
+			m_deadTimer += Time.deltaTime;
+
+			m_impulse = m_rbody.velocity;
+			if ( m_deadTimer < 1.5f * Time.timeScale )
+			{
+				float gravity = 9.81f * m_dragonGravityModifier * 35;
+				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+
+				// stroke's Drag
+				float impulseMag = m_impulse.magnitude;
+				m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+			}
+			else
+			{
+				ComputeImpulseToZero();
+			}
+		}
 
 		if ( oldDirection.x > 0 )
 		{
@@ -765,14 +945,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		}
 
 
-		RotateToDirection(m_direction, true);
+		RotateToDirection(m_direction, false);
 		m_desiredRotation = m_transform.rotation;
 
 		ApplyExternalForce();
 		m_rbody.velocity = m_impulse;
-
-
 	}
+
 
 	private void ComputeFinalImpulse(Vector3 _impulse) {
 		// we keep the velocity value
@@ -950,10 +1129,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	public void OnImpact(Vector3 _origin, float _damage, float _intensity, Transform _source) {
 		// m_dragon.AddLife(-_damage);
-		m_health.ReceiveDamage( _damage, DamageType.NORMAL , _source, false);
+		m_health.ReceiveDamage(_damage, DamageType.NORMAL , _source, false);
 	}
 
-	public void StartWaterMovement()
+	public bool IsInsideWater() {
+		return m_state == State.InsideWater;
+	}
+
+	public void StartWaterMovement( Collider _other )
 	{
 		// m_waterMovementModifier = 0;
 
@@ -962,15 +1145,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Trigger particles
 		if ( m_particleController != null )
-			m_particleController.OnEnterWater();
+			m_particleController.OnEnterWater( _other );
 
 		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
+		m_impulse = rbody.velocity;
+
 
 		// Change state
 		ChangeState(State.InsideWater);
 	}
 
-	public void EndWaterMovement()
+	public void EndWaterMovement( Collider _other )
 	{
 		if (m_animator )
 			m_animator.SetBool("boost", false);
@@ -980,17 +1165,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 		// Trigger particles
 		if (m_particleController != null)
-			m_particleController.OnExitWater();
+			m_particleController.OnExitWater( _other );
 
 		// Wait a second
-		StartCoroutine( EndWaterCoroutine() );
+		ChangeState( State.ExitingWater );
 	}
-
-	IEnumerator EndWaterCoroutine()
-	{
-		yield return new WaitForSeconds(0.1f);
-		ChangeState( State.Fly);
-	} 
 
 	public void StartSpaceMovement()
 	{
@@ -1016,18 +1195,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			m_particleController.OnExitOuterSpace();
 		}
 
-		// Wait a second 
-		StartCoroutine( EndSpaceCoroutine() );
+		ChangeState( State.ExitingSpace );
 	}
-
-	IEnumerator EndSpaceCoroutine()
-	{
-		// The faster we go, the longer it takes for the player to recover control
-		/*float relativeImpulseY = Mathf.InverseLerp(1f, 15f, m_impulse.y);
-		float delay = Mathf.Lerp(0.1f, 0.75f, relativeImpulseY);*/
-		yield return new WaitForSeconds(m_outerSpaceRecoveryTime);
-		ChangeState( State.Fly_Down);
-	} 
 
 	public void StartGrabPreyMovement(AI.Machine prey, Transform _holdPreyTransform)
 	{
@@ -1099,6 +1268,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		
 	}
 
+	public void Die(){
+		ChangeState(State.Dead);
+	}
+
+	public void Revive(){
+		ChangeState(State.Reviving);
+	}
+
 	/// <summary>
 	/// Raises the trigger enter event.
 	/// </summary>
@@ -1108,12 +1285,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( _other.tag == "Water" )
 		{
 			// Enable Bubbles
-			StartWaterMovement();
+			if (IsAliveState())
+				StartWaterMovement( _other );
+			m_stateAfterRevive = State.InsideWater;
 		}
 		else if ( _other.tag == "Space" )
 		{
-			StartSpaceMovement();
+			if (IsAliveState())
+				StartSpaceMovement();
+			m_stateAfterRevive = State.OuterSpace;
 		}
+		
 	}
 
 	void OnTriggerExit( Collider _other )
@@ -1121,12 +1303,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( _other.tag == "Water" )
 		{
 			// Disable Bubbles
-			EndWaterMovement();
+			if (IsAliveState() )
+				EndWaterMovement( _other );
+			m_stateAfterRevive = State.Idle;
 		}
 		else if ( _other.tag == "Space" )
 		{
-			EndSpaceMovement();
+			if (IsAliveState())
+				EndSpaceMovement();
+			m_stateAfterRevive = State.Idle;
 		}
+		
 	}
 
 	void OnCollisionEnter(Collision collision) 
@@ -1137,7 +1324,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				if ( m_impulse.y < 0 )	// if going deep
 				{
-					m_impulse = Vector3.up * m_impulse.magnitude * m_onWaterCollisionMultiplier;	
+					m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
 				}
 			}break;
 
@@ -1159,8 +1346,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	}
 
-	void OnCollisionStay(Collision collision)
+	private bool IsAliveState()
 	{
+		if (m_state == State.Dead || m_state == State.Reviving )
+			return false;
+		return true;
 	}
 
 }

@@ -6,28 +6,41 @@ namespace AI {
 	public class Machine : MonoBehaviour, IMachine, ISpawnable, MotionInterface {	
 		protected static int m_groundMask;
 
+		public enum RotateToMouthType
+		{
+			No,										// does not have any special rotation applied while being eaten
+			TailFirst,								// rotates to be swallowed tail first - use with swallow shader
+			HeadFirst,								// rotates to be swallowed head first - "
+			ClosestFirst,							// rotates to swallow either head or tail first, whichever is closer - "
+			Sideways,								// turns sideways - use when breaking into corpse chunks with centre chunk staying in mouth
+		};
+
 		/**************/
 		/*			  */
 		/**************/
 		[SerializeField] private bool m_enableMotion = true; // TODO: find a way to dynamically add this components
-		[SerializeField] private MachineMotion m_motion = new MachineMotion();
+		[SerializeField] protected MachineMotion m_motion = new MachineMotion();
 		[SerializeField] private bool m_affectedByDragonTrample = false;
 
 		[SerializeField] private bool m_enableSensor = true;
 		[SerializeField] private MachineSensor m_sensor = new MachineSensor();
 
 		[SeparatorAttribute("Sounds")]
-		[SerializeField][Range(0f, 100f)] private float m_onSpawnSoundProbability = 40.0f;
-		[SerializeField] private List<string> m_onSpawnSounds = new List<string>();
+		[SerializeField] private string m_onSpawnSound = "";
+		[SerializeField] private string m_onEatenSound = "";
 
-		[SerializeField][Range(0f, 100f)] private float m_onEatenSoundProbability = 50.0f;
-		[SerializeField] private List<string> m_onEatenSounds = new List<string>();
+		[SeparatorAttribute("Other")]
+		[SerializeField] private RotateToMouthType m_rotateToMouth;
+		public RotateToMouthType rotateToMouth{
+			get{ return m_rotateToMouth; }
+			set{ m_rotateToMouth = value; }
+		}
 
 
-		private IEntity m_entity = null;
-		private Pilot m_pilot = null;
-		private ViewControl m_viewControl = null;
-		private Collider m_collider = null;
+		protected IEntity m_entity = null;
+		protected Pilot m_pilot = null;
+		protected ViewControl m_viewControl = null;
+		protected Collider m_collider = null;
 
 		private Signals m_signals;
 
@@ -39,11 +52,11 @@ namespace AI {
 
 
 		private bool m_willPlaySpawnSound;
-		private bool m_willPlayEatenSound;
 
 		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } }
 
+		public Vector3 eye				{ get { if (m_enableSensor && m_sensor != null) return m_sensor.sensorPosition; else return transform.position; } }
 		public Vector3 target			{ get { return m_pilot.target; } }
 		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
 		public Vector3 groundDirection	{ get { if (m_enableMotion && m_motion != null) return m_motion.groundDirection; else return Vector3.zero; } }
@@ -69,7 +82,7 @@ namespace AI {
 		// Currents
 		private RegionManager 	m_regionManager;
 		public Current			current { get; set; }
-		public Vector3		m_externalForces;	// Mostly for currents
+		private Vector3		m_externalForces;	// Mostly for currents
 
 		//---------------------------------------------------------------------------------
 
@@ -129,14 +142,15 @@ namespace AI {
 		}
 
 		void OnEnable() {
-			m_signals.Init();
+			if (m_signals!= null) 
+				m_signals.Init();
 		}
 
 		void OnDisable() {
 			LeaveGroup();
 		}
 
-		public void Spawn(ISpawner _spawner) {			
+		public virtual void Spawn(ISpawner _spawner) {			
 			m_motion.Init();
 			m_sensor.Init();
 			m_edible.Init();
@@ -144,8 +158,7 @@ namespace AI {
 
 			if (m_collider != null) m_collider.enabled = true;
 
-			m_willPlaySpawnSound = m_onSpawnSounds.Count > 0 && Random.Range(0, 100f) < m_onSpawnSoundProbability;
-			m_willPlayEatenSound = m_onEatenSounds.Count > 0 && Random.Range(0, 100f) < m_onEatenSoundProbability;
+			m_willPlaySpawnSound = true;
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
@@ -206,6 +219,7 @@ namespace AI {
 
 			if ( _other.tag == "Water" )
 			{
+				m_viewControl.EnterWater( _other, m_pilot.impulse );
 				m_viewControl.StartSwimming();	
 			}
 			else if (_other.tag == "Space" )
@@ -223,6 +237,7 @@ namespace AI {
 
 			if ( _other.tag == "Water" )
 			{
+				m_viewControl.ExitWater( _other, m_pilot.impulse );
 				m_viewControl.StopSwimming();	
 			}
 			else if (_other.tag == "Space" )
@@ -236,13 +251,13 @@ namespace AI {
 				// lets check if dragon is trampling this entity
 				if (!GetSignal(Signals.Type.FallDown) && _other.gameObject.tag == "Player") {
 					// is in trample mode? - dragon has the mouth full
-					PlayerEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
+					DragonEatBehaviour dragonEat = InstanceManager.player.dragonEatBehaviour; 
 
 					bool isEating	= dragonEat.IsEating();
 					bool isLatching = dragonEat.IsLatching();
 					bool isGrabbing = dragonEat.IsGrabbing();
 
-					if (true || isEating || isLatching || isGrabbing) {
+					if (isEating || isLatching || isGrabbing) {
 						Vector3 speed = InstanceManager.player.dragonMotion.velocity;
 						m_motion.SetVelocity(speed * 10f);
 						SetSignal(Signals.Type.FallDown, true);
@@ -253,11 +268,11 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		void Update() {
+		protected virtual void Update() {
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
-						PlaySound(m_onSpawnSounds[Random.Range(0, m_onSpawnSounds.Count)]);
+						PlaySound(m_onSpawnSound);
 						m_willPlaySpawnSound = false;
 					}
 				}
@@ -401,7 +416,7 @@ namespace AI {
 		}
 
 		private void PlaySound(string _clip) {
-			AudioManager.instance.PlayClip(_clip);
+			AudioController.Play(_clip, transform.position);
 		}
 
 		// External interactions
@@ -458,18 +473,14 @@ namespace AI {
 			}
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {			
-			if (m_willPlayEatenSound) {
-				if (m_entity.isOnScreen) {
-					PlaySound(m_onEatenSounds[Random.Range(0, m_onEatenSounds.Count)]);
-					m_willPlayEatenSound = false;
-				}
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer) {
+			if (m_entity.isOnScreen) {
+				PlaySound(m_onEatenSound);
 			}
-
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
 		}
 
-		public List<Transform> holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
+		public HoldPreyPoint[] holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
 		public void BiteAndHold() {
 			m_isHolded = true;
@@ -505,6 +516,37 @@ namespace AI {
 			m_viewControl.StopEating();
 		}
 
+		// Get the local rot that this thing should try to rotate towards if it is set to
+		// try to align to head-first etc.
+		public virtual Quaternion GetDyingFixRot()
+		{
+			Quaternion result = Quaternion.identity;
+
+			if(m_rotateToMouth == RotateToMouthType.No)
+				return result;
+
+			if(m_rotateToMouth == RotateToMouthType.Sideways)
+			{
+				float diff = Quaternion.Angle(transform.localRotation, Quaternion.AngleAxis(90.0f, Vector3.up));
+				float rot = (diff > 90.0f) ? 270.0f : 90.0f;
+				result = Quaternion.AngleAxis(rot, Vector3.up);
+			}
+			else
+			{
+				bool headFirst = (m_rotateToMouth == RotateToMouthType.HeadFirst);
+				if(m_rotateToMouth == RotateToMouthType.ClosestFirst)
+				{
+					Transform trParent = transform.parent;	// null check on this to handle case of attacker being deleted or something
+					if((trParent != null) &&  trParent.InverseTransformDirection(transform.right).x < 0.0f)
+						headFirst = true;
+				}
+				result = headFirst ? Quaternion.AngleAxis(180.0f, Vector3.up) : Quaternion.identity;
+			}
+
+			result = result * Quaternion.AngleAxis(90f, Vector3.forward);
+
+			return result;
+		}
 
 
 		public virtual bool Burn(float _damage, Transform _transform) {

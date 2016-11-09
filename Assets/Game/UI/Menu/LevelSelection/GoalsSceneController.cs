@@ -114,7 +114,7 @@ public class GoalsSceneController : MonoBehaviour {
 			if(m_chestSlots[i] == null) continue;
 
 			// Initialize with the state of that chest
-			if(ChestManager.dailyChests[i].collected) {
+			if(ChestManager.collectedChests > i) {
 				m_chestSlots[i].view.Open();
 			} else {
 				m_chestSlots[i].view.Close();
