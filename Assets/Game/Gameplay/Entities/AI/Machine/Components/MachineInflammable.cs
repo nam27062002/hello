@@ -31,12 +31,26 @@ namespace AI {
 		private float m_timer;
 		private State m_state;
 		private State m_nextState;
+		private Vector3 m_fireOffset;
 
 
 		//-----------------------------------------------
 		public MachineInflammable() {}
 
-		public override void Init() {
+		public override void Init() {			
+			Collider collider = m_machine.transform.FindComponentRecursive<Collider>();
+
+			m_fireOffset = Vector3.zero;
+			if (collider != null) {
+				if (collider.GetType() == typeof(CapsuleCollider)) {
+					m_fireOffset = ((CapsuleCollider)collider).center;
+				} else if (collider.GetType() == typeof(SphereCollider)) {
+					m_fireOffset = ((SphereCollider)collider).center;
+				} else if (collider.GetType() == typeof(BoxCollider)) {
+					m_fireOffset = ((BoxCollider)collider).center;
+				}
+			}
+
 			// Renderers And Materials
 			if (m_renderers == null) {
 				m_renderers = m_machine.GetComponentsInChildren<Renderer>();
@@ -86,8 +100,7 @@ namespace AI {
 			}
 
 			// throw particles or explode
-			// 
-
+			ParticleManager.Spawn("PS_BonfireToon", m_machine.position + m_fireOffset);
 
 			// reward
 			Reward reward = (m_entity as Entity).GetOnKillReward(true);

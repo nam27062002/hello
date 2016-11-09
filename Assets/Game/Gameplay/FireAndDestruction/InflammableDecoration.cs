@@ -65,7 +65,7 @@ public class InflammableDecoration : Initializable {
 		m_collider = GetComponent<BoxCollider>();
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		if ( m_zoneManager != null )
+		if (m_zoneManager != null)
 			m_zoneEffect = m_zoneManager.GetFireEffectCode(transform.position, m_entity.sku);
 		else{
 			m_zoneEffect = ZoneManager.ZoneEffect.None;

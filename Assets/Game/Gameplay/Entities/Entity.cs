@@ -29,6 +29,10 @@ public class Entity : IEntity {
 	private float m_pcChance = 0f;
 	public float pcChance { get { return m_pcChance; }}
 
+	private bool m_isBurnable;
+	private DragonTier m_burnableFromTier = 0;
+	public DragonTier burnableFromTier { get { return m_burnableFromTier; } }
+
 	private bool m_isEdible;
 	private DragonTier m_edibleFromTier = 0;
 	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
@@ -84,6 +88,9 @@ public class Entity : IEntity {
 		// Simple data
 		m_goldenChance = m_def.GetAsFloat("goldenChance");
 		m_pcChance = m_def.GetAsFloat("pcChance");
+
+		m_isBurnable = m_def.GetAsBool("isBurnable");
+		m_burnableFromTier = (DragonTier)m_def.GetAsInt("burnableFromTier");
 
 		m_isEdible = m_def.GetAsBool("isEdible");
 		m_edibleFromTier = (DragonTier)m_def.GetAsInt("edibleFromTier");
@@ -169,7 +176,13 @@ public class Entity : IEntity {
 		return newReward;
 	}
 
+	public bool IsBurnable() {
+		return allowBurnable && m_isBurnable;
+	}
 
+	public bool IsBurnable(DragonTier _tier) {
+		return allowBurnable && m_isBurnable && (m_burnableFromTier <= _tier);
+	}
 
 	public bool IsEdible() {
 		return allowEdible && m_isEdible;
@@ -191,19 +204,14 @@ public class Entity : IEntity {
 		return allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
-	public bool IntersectsWith(Vector2 _center, float _radius) 
-	{
-		if (m_bounds != null) 
-		{
+	public bool IntersectsWith(Vector2 _center, float _radius) {
+		if (m_bounds != null) {
 			return m_bounds.Overlaps(_center, _radius);
 		} 
-		else 
-		{
-			// return _r.Contains(transform.position);
-			float sqrMagnitude = (_center - (Vector2)transform.position).sqrMagnitude;
-			return ( sqrMagnitude <= _radius * _radius );
-		}
-		return false;
+
+		// return _r.Contains(transform.position);
+		float sqrMagnitude = (_center - (Vector2)transform.position).sqrMagnitude;
+		return ( sqrMagnitude <= _radius * _radius );	
 	}
 
 

@@ -185,10 +185,10 @@ public class FireLightning : DragonBreathBehaviour {
 		Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_dir, m_maxAmplitude, m_actualLength);
 		for (int i = 0; i < preys.Length; i++) 
 		{
-			if (CanBurn(preys[i]) || m_type == Type.Super) {
+			if (preys[i].IsBurnable(m_tier) || m_type == Type.Super) {
 				AI.Machine machine =  preys[i].GetComponent<AI.Machine>();
 				if (machine != null) {					
-					machine.Burn(damage * Time.deltaTime, transform);					
+					machine.Burn(transform);					
 				}
 			}
 			/*
