@@ -59,8 +59,6 @@ public class DefinitionsCategory
 	public const string DISGUISES_POWERUPS = "DISGUISES_POWERUPS";
 
 	// Fire and Destruction properties
-	public const string FIRE_SPAWN_EFFECTS = "FIRE_SPAWN_EFFECTS";
-	public const string FIRE_DECORATION_EFFECTS = "FIRE_DECORATION_EFFECTS";
 	public const string BURN_DESTRUCTION_DECORATION = "BURN_DECORATION";
 
 	// Hold Prey

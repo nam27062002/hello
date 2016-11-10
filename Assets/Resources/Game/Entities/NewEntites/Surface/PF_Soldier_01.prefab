@@ -1162,7 +1162,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 1
     m_walkOnWalls: 0
-    m_mass: 5
+    m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
     m_faceDirection: 0
@@ -1176,9 +1176,9 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 12
-    m_maxRadius: 4
-    m_minRadius: 1
+    m_sightRadius: 10
+    m_maxRadius: 6.5
+    m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 1.5, z: 0}
@@ -1188,13 +1188,8 @@ MonoBehaviour:
     m_senseDelay:
       min: 0
       max: 0.25
-  m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds:
-  - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v04
-  - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v03
-  - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v02
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
@@ -1242,6 +1237,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 1.37, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 

@@ -223,9 +223,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private void StartFireEffect() {
 		FirePropagationManager.InsertBurning(transform);
 		if (m_fireSprite == null) {
-			m_fireSprite = PoolManager.GetInstance("PF_FireNewProc");
+			m_fireSprite = PoolManager.GetInstance("PF_FireProc");
 
-			m_fireSprite.GetComponentInChildren<Animator>().SetBool("burn", true);
+			m_fireSprite.GetComponentInChildren<Animator>(false).SetBool("burn", true);
 			m_fireSprite.transform.position = transform.position;
 			m_fireSprite.transform.localScale = transform.localScale * Random.Range( 0.55f, 1.45f);
 			m_fireSprite.transform.localRotation = transform.localRotation;

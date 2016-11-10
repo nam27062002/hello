@@ -110,16 +110,6 @@ public class Entity : IEntity {
 		m_feedbackData.InitFromDef(m_def);
 	}
 
-
-	void OnEnable() {
-		EntityManager.instance.Register(this);
-	}
-
-	void OnDisable() {
-		if (EntityManager.instance != null)
-			EntityManager.instance.Unregister(this);
-	}
-
 	override public void Spawn(ISpawner _spawner) {
 		m_spawner = _spawner;
 
@@ -145,12 +135,16 @@ public class Entity : IEntity {
 		m_newCamera = InstanceManager.gameCamera;
 
         m_spawned = true;
+
+		EntityManager.instance.Register(this);
     }
 
     public override void Disable(bool _destroyed) {
 		base.Disable( _destroyed );
 		m_spawner.RemoveEntity(gameObject, _destroyed);
         m_spawned = false;
+
+		EntityManager.instance.Unregister(this);
     }
 
     /// <summary>
