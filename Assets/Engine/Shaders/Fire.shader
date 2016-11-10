@@ -8,24 +8,15 @@
 		_Flamethrower("Flame thrower", Range(0.0, 5.0)) = 0.8
 		_Flamedistance("Flame distance", Range(0.0, 5.0)) = 1.5
 
-//		_GlowTex("Glow Texture", 2D) = "white" {}
-//		_GlowColor("Glow Color", Color) = (1, 1, 1, 1)
-//		_GlowColorMult("Glow Color Multiplier", Color) = (1, 1, 1, 1)
-
 	}
 
 	SubShader
 	{
-//		Tags {"Queue"="Transparent+5" "IgnoreProjector"="True" "RenderType"="Transparent"}
 		Tags{ "Queue" = "Transparent" "RenderType" = "ExcludeAdditive" }
-//		Tags{ "Queue" = "Transparent+5" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-//		Tags {"Queue" = "Geometry- 2"  "RenderType" = "Glow"}
 		LOD 100
 		Blend SrcAlpha OneMinusSrcAlpha 
-		// Blend One One
 		Cull Off
 		ZWrite Off
-
 
 		Pass
 		{
@@ -62,9 +53,6 @@
 			float _Flamethrower;
 			float _Flamedistance;
 
-//			uniform half4 _GlowColor;
-//			uniform half4 _GlowColorMult;
-
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -84,13 +72,10 @@
 
 				noise *= 0.5;
 				noise.g = (noise.g * i.uv.y * _Flamedistance);
-//				noise.g = (noise.g * _Flamedistance);
 
 				noise.r = 0.0f;
 				fixed4 col = tex2D(_MainTex, i.uv - noise.rg);
 				col.a *= smoothstep(0.025, 0.15, noise.g);
-
-//				col.a *= smoothstep(0.95, 1.0, 1.0 - abs(i.uv.x - 0.5));
 
 				return col * i.color;
 			}
