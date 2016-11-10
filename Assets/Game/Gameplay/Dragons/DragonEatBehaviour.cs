@@ -18,11 +18,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_animator = transform.FindChild("view").GetComponent<Animator>();
 	}
 
-	protected void OnEnable() {
-		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-	}
 
 	override protected void Start() 
 	{
@@ -43,7 +38,18 @@ public class DragonEatBehaviour : EatBehaviour {
 			animEvents.onEatEvent += onEatEvent;
 			m_waitJawsEvent = true;
 		}
+
+		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		// m_waitJawsEvent = false;// not working propertly for the moment!
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	override protected void OnDisable()
@@ -54,10 +60,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		{
 			m_animator.SetBool("eat", false);
 		}
-
-		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_EATEN, OnEntityEaten);
-		Messenger.RemoveListener(GameEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 
@@ -215,8 +217,10 @@ public class DragonEatBehaviour : EatBehaviour {
 	protected override float GetEatDistance()
 	{
 		float ret = m_eatDistance * transform.localScale.x;
-		if ( m_dragonBoost.IsBoostActive() )
-			ret *= 2;
+
+		//if ( m_dragonBoost.IsBoostActive() )
+		//	ret *= 2;
+
 		if (DebugSettings.eatDistancePowerUp) {
 			ret *= 2;
 		}

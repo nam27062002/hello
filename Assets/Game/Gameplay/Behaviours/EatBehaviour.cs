@@ -104,7 +104,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Increases bite distance based on angular speed
 	private const float m_angleSpeedMultiplier = 1.2f;
 		// Inceases bite distance based on speed
-	private const float m_speedRadiusMultiplier = 0.1f;
+	private const float m_speedRadiusMultiplier = 0.25f;
 
 	// This are tmp variables we reuse every time we need to find targets
 	private Entity[] m_checkEntities = new Entity[20];
@@ -235,6 +235,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			m_attackTimer -= Time.deltaTime;
 			if ( m_attackTimer <= 0 && !m_waitJawsEvent)
 			{
+				m_attackTimer = 0.2f;
 				OnJawsClose();
 			}
 		}
@@ -418,6 +419,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (PreyCount == 0) {			
 			if ( onEndEating != null)
 				onEndEating();
+		}
+		else
+		{
+			BiteKill(false);
 		}
 	}
 
@@ -628,7 +633,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		float speed = m_motion.velocity.magnitude;
 		float arcRadius = eatDistance * m_eatDetectionRadiusMultiplier;
-		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
+		arcRadius = arcRadius + speed;
 
 		Vector3 dir = m_motion.direction;
 		dir.z = 0;
@@ -853,7 +858,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Eat Detect Distance
 		float speed = m_motion.velocity.magnitude;
 		float arcRadius = eatRadius * m_eatDetectionRadiusMultiplier;
-		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
+		arcRadius = arcRadius + speed *  m_speedRadiusMultiplier;
 
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
