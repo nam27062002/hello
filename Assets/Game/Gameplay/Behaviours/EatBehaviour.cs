@@ -229,7 +229,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			UpdateEating();
 		}
-		else if ( m_attackTarget != null )
+		else if ( m_attackTarget != null && m_isPlayer)
 		{
 			BiteKill();
 		}
@@ -237,7 +237,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_attackTarget != null )
 		{
 			m_attackTimer += Time.deltaTime;
-			if ( m_attackTimer > 0.2f && m_waitJawsEvent)
+			if ( m_attackTimer > 0.2f && !m_waitJawsEvent)
 			{
 				OnJawsClose();
 			}
