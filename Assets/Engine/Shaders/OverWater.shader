@@ -63,8 +63,8 @@ Shader "Hungry Dragon/OverWater"
 					v2f o;
 					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
 					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
-					float moveVertex = 1.0; // step(0.0, v.vertex.y);
-					v.vertex.y += (sinX + sinY) * 0.015 * moveVertex * v.color.w;
+					float moveVertex = 1.0;// step(0.0, v.vertex.y);
+					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);

@@ -16,7 +16,8 @@ Shader "Hungry Dragon/Lightmap And Recieve Shadow (On Line Decorations)"
 		Tags { "RenderType"="Opaque" "Queue"="Geometry" "LightMode"="ForwardBase" }
 		LOD 100
 		
-		Pass {  
+		Pass {		
+
 			Stencil
 			{
 				Ref 4
