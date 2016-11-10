@@ -15,6 +15,15 @@ Shader "Hungry Dragon/Bumped Diffuse (Spawners)"
 		{
 			Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase"}
 			Cull Back
+
+			Stencil
+			{
+				Ref 5
+				Comp always
+				Pass Replace
+				ZFail keep
+			}
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
