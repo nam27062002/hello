@@ -40,6 +40,8 @@ public class WaterMesh : MonoBehaviour
 		int numVertsX = (int)(bounds.size.x / m_cellSpacing);
 		int numVertsZ = (int)(bounds.size.z / m_cellSpacing);
 
+        if (numVertsX == 0 || numVertsZ == 0) return;
+
         m_numVertices = (numVertsX * numVertsZ) + numVertsX * 2;
         m_numTriangles = (numVertsX - 1) * (numVertsZ - 1) * 2;
         m_numTriangles2 = (numVertsX - 1) * 2;
