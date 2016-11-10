@@ -35,12 +35,12 @@ public class WaterMesh : MonoBehaviour
         }
         Bounds bounds = GetComponent<BoxCollider>().bounds;
 		
-		m_cellSpacing = (int)Mathf.Max(1, Mathf.Max(bounds.size.x * 0.1f, bounds.size.z * 0.1f));
+//		m_cellSpacing = (int)Mathf.Max(1, Mathf.Max(bounds.size.x * 0.1f, bounds.size.z * 0.1f));
 
 		int numVertsX = (int)(bounds.size.x / m_cellSpacing);
 		int numVertsZ = (int)(bounds.size.z / m_cellSpacing);
 
-        if (numVertsX == 0 || numVertsZ == 0) return;
+        if (numVertsX < 2 || numVertsZ < 2) return;
 
         m_numVertices = (numVertsX * numVertsZ) + numVertsX * 2;
         m_numTriangles = (numVertsX - 1) * (numVertsZ - 1) * 2;
@@ -68,7 +68,6 @@ public class WaterMesh : MonoBehaviour
                 m_colours[c++] = Color.gray;
             }
         }
-
 
         for (int x = 0; x < numVertsX; x++)
         {
