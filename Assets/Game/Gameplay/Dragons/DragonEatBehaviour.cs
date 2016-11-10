@@ -137,7 +137,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 	public override void StopAttackTarget()
 	{
-		if ( m_attackTarget != null )
+		if ( m_attackTarget != null && PreyCount <= 0)
 		{
 			m_animator.SetBool("eat", false);	// Stop targeting animation
 		}
