@@ -201,6 +201,7 @@ public class GameCamera : MonoBehaviour
 	public float m_introDisplacement = 10;
 	private Vector3	m_introPosition;
 	public AnimationCurve m_introMoveCurve;
+	public AnimationCurve m_introFrameWidthMultiplier;
 
 	enum State
 	{
@@ -643,7 +644,11 @@ public class GameCamera : MonoBehaviour
 
 		frameWidth += m_frameWidthIncrement;
 
-		if(m_hasSlowmo)
+		if ( PlayingIntro() )
+		{
+			frameWidth *= m_introFrameWidthMultiplier.Evaluate( 1.0f - (m_introTimer/m_introDuration) );
+		}
+		else if(m_hasSlowmo)
 		{
 			frameWidth -= m_frameWidthDecrement;
 		}
