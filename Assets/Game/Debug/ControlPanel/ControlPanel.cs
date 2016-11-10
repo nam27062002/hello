@@ -181,6 +181,15 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				m_fpsCounter.text = NEGATIVE_STRING_AS_STRING;
 			}
 		}
+
+
+		// Quick Cheats
+		if ( Input.GetKeyDown(KeyCode.L )){
+			if ( InstanceManager.player != null ){
+				// Dispatch global event
+				Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
+			}
+		}
 	}
 
 	public float GetFPS()

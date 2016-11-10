@@ -51,11 +51,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.data.def.GetAsFloat("energyMax");
 
+		/*
 		for( int i = 0; i<m_trails.Count; i++ )
 		{
 			TrailRenderer tr = m_trails[i].GetComponent<TrailRenderer>();
 			tr.sortingLayerName = "player";
 		}
+		*/
 
 		DeactivateTrails();
 	}
