@@ -16,12 +16,10 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase" }
 		LOD 100
 		
 		Pass {  
-			Tags { "LightMode" = "ForwardBase" }
-
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
@@ -80,7 +78,7 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 					fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 					fixed4 col2 = tex2D(_SecondTexture, i.texcoord);	// Color
 
-					float l = clamp(i.texcoord.x, 0.0, 1.0);//i.color.a;
+					float l = i.color.a; // clamp(i.texcoord.x, 0.0, 1.0);//i.color.a;
 					col = lerp( col2, col, l);
 
 					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
@@ -100,4 +98,6 @@ Shader "Hungry Dragon/Texture Blending Vertex Color + Lightmap And Recieve Shado
 
 		}
 	}
+
+	Fallback "Mobile/VertexLit"
 }
