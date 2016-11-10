@@ -229,13 +229,16 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			UpdateEating();
 		}
+		else if ( m_attackTarget != null )
+		{
+			BiteKill();
+		}
 
 		if ( m_attackTarget != null )
 		{
-			m_attackTimer -= Time.deltaTime;
-			if ( m_attackTimer <= 0 && !m_waitJawsEvent)
+			m_attackTimer += Time.deltaTime;
+			if ( m_attackTimer > 0.2f && m_waitJawsEvent)
 			{
-				m_attackTimer = 0.2f;
 				OnJawsClose();
 			}
 		}
@@ -689,7 +692,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public virtual void StartAttackTarget( Transform _transform )
 	{        
 		m_attackTarget = _transform;
-		m_attackTimer = 0.2f;     
+		m_attackTimer = 0;
 	}
 
 	public virtual void StopAttackTarget()
@@ -789,7 +792,7 @@ public abstract class EatBehaviour : MonoBehaviour {
             }
 		}
 
-		m_attackTarget = null;
+		// m_attackTarget = null;
 	}
 
 	/// <summary>
