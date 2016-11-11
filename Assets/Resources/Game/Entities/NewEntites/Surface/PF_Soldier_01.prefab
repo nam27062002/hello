@@ -267,8 +267,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 425314}
-  - 114: {fileID: 11414130}
   - 114: {fileID: 11433244}
+  - 114: {fileID: 11414130}
   - 114: {fileID: 11498554}
   - 114: {fileID: 11433280}
   - 114: {fileID: 11470958}
@@ -1146,7 +1146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: soldier_01
+  m_sku: soldier
+  m_isPet: 0
 --- !u!114 &11433280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1162,7 +1163,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 1
     m_walkOnWalls: 0
-    m_mass: 5
+    m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
     m_faceDirection: 0
@@ -1176,9 +1177,9 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 12
-    m_maxRadius: 4
-    m_minRadius: 1
+    m_sightRadius: 10
+    m_maxRadius: 6.5
+    m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 1.5, z: 0}
@@ -1237,6 +1238,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 1.37, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 

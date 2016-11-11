@@ -71,12 +71,14 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 
 		// Iterate defs and add them to the skus list
 		foreach(KeyValuePair<string, List<DefinitionNode>> kvp in defsByCategory) {
-			// Add a separator for each category
-			m_skus.Add(SelectionPopupWindow.SECTION + kvp.Key);
+			if (kvp.Value.Count > 0) {
+				// Add a separator for each category
+				m_skus.Add(SelectionPopupWindow.SECTION + kvp.Key);
 
-			// Add each individual entity sku
-			for(int i = 0; i < kvp.Value.Count; i++) {
-				m_skus.Add(kvp.Value[i].sku);
+				// Add each individual entity sku
+				for(int i = 0; i < kvp.Value.Count; i++) {
+					m_skus.Add(kvp.Value[i].sku);
+				}
 			}
 		}
 

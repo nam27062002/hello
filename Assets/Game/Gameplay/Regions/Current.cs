@@ -29,6 +29,9 @@ public class Current : Region
 
 	public bool IsInCurrentDirection(GameObject gameObject)
 	{
+		if (splineForce == null) 
+			return false;
+		
 		return splineForce.IsInCurrentDirection(gameObject);
 	}
 
