@@ -12,6 +12,7 @@ public class Entity : IEntity {
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
 
+	[SerializeField] private bool m_isPet = false;
 
 	/************/
 	private DefinitionNode m_def;
@@ -113,14 +114,11 @@ public class Entity : IEntity {
 	override public void Spawn(ISpawner _spawner) {
 		m_spawner = _spawner;
 
-		if ( InstanceManager.player != null )
-		{
+		if (InstanceManager.player != null) {
 			DragonTier tier = InstanceManager.player.data.tier;
 			m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
 			m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
-		}
-		else
-		{
+		} else {
 			m_isGolden = false;
 			m_isPC = false;
 		}
@@ -136,15 +134,20 @@ public class Entity : IEntity {
 
         m_spawned = true;
 
-		EntityManager.instance.Register(this);
+		if (!m_isPet) {
+			EntityManager.instance.Register(this);
+		}
     }
 
     public override void Disable(bool _destroyed) {
-		base.Disable( _destroyed );
-		m_spawner.RemoveEntity(gameObject, _destroyed);
-        m_spawned = false;
+		base.Disable(_destroyed);
 
-		EntityManager.instance.Unregister(this);
+		if (!m_isPet) {
+			m_spawner.RemoveEntity(gameObject, _destroyed);
+        	m_spawned = false;
+
+			EntityManager.instance.Unregister(this);
+		}
     }
 
     /// <summary>

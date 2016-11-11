@@ -100,14 +100,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private const float m_minArcAngle = 60;
 	private const float m_maxArcAngle = 180;
 		// Multiplies eating distance to detect targets
-	private const float m_eatDetectionRadiusMultiplier = 4;
+	private const float m_eatDetectionRadiusMultiplier = 2;
 		// Increases bite distance based on angular speed
 	private const float m_angleSpeedMultiplier = 1.2f;
 		// Inceases bite distance based on speed
 	private const float m_speedRadiusMultiplier = 0.25f;
 
 	// This are tmp variables we reuse every time we need to find targets
-	private Entity[] m_checkEntities = new Entity[20];
+	private Entity[] m_checkEntities = new Entity[30];
 	private Collider[] m_checkPlayer = new Collider[2];
 	private int m_numCheckEntities = 0;
 	private int m_playerColliderMask = -1;
@@ -229,7 +229,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			UpdateEating();
 		}
-		else if ( m_attackTarget != null )
+		else if ( m_attackTarget != null && m_isPlayer)
 		{
 			BiteKill();
 		}
@@ -237,7 +237,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if ( m_attackTarget != null )
 		{
 			m_attackTimer += Time.deltaTime;
-			if ( m_attackTimer > 0.2f && m_waitJawsEvent)
+			if ( m_attackTimer > 0.2f && !m_waitJawsEvent)
 			{
 				OnJawsClose();
 			}
