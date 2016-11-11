@@ -97,14 +97,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Arc detection values
 	private const float m_minAngularSpeed = 0;
 	private const float m_maxAngularSpeed = 12;
-	private const float m_minArcAngle = 60;
-	private const float m_maxArcAngle = 180;
+	private const float m_minArcAngle = 75;
+	private const float m_maxArcAngle = 90;
 		// Multiplies eating distance to detect targets
-	private const float m_eatDetectionRadiusMultiplier = 2;
+	private const float m_eatDetectionRadiusMultiplier = 2.75f;
 		// Increases bite distance based on angular speed
 	private const float m_angleSpeedMultiplier = 1.2f;
 		// Inceases bite distance based on speed
-	private const float m_speedRadiusMultiplier = 0.25f;
+	private const float m_speedRadiusMultiplier = 0.15f;
 
 	// This are tmp variables we reuse every time we need to find targets
 	private Entity[] m_checkEntities = new Entity[30];
