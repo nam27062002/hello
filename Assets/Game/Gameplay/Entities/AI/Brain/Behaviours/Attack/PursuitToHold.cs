@@ -33,6 +33,7 @@ namespace AI {
 			protected float m_timeOut;
 
 			private EatBehaviour m_eatBehaviour;
+			private Transform m_mouth;
 
 			private bool m_enemyInRange = false;
 
@@ -57,6 +58,8 @@ namespace AI {
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 				m_eatBehaviour.enabled = false;
 				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
+
+				m_mouth = m_machine.transform.FindTransformRecursive("Fire_Dummy");
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -143,7 +146,7 @@ namespace AI {
 					m_eatBehaviour.enabled = false;
 					Transition(OnPursuitTimeOut, m_transitionParam);
 				} else {
-					float m = (m_machine.position - m_target.position).sqrMagnitude;
+					float m = (m_mouth.position - m_target.position).sqrMagnitude;
 					if (m > m_data.arrivalRadius * m_data.arrivalRadius) {
 						m_timer += Time.deltaTime;
 						if (m_timer > m_timeOut) {
@@ -165,8 +168,8 @@ namespace AI {
 				Transform holdTransform = null;
 				for (int i = 0; i<holdPreyPoints.Length; i++) {
 					HoldPreyPoint point = holdPreyPoints[i];
-					if (!point.holded && Vector3.SqrMagnitude( m_machine.position - point.transform.position) < distance) {
-						distance = Vector3.SqrMagnitude( m_machine.position - point.transform.position);
+					if (!point.holded && Vector3.SqrMagnitude( m_mouth.position - point.transform.position) < distance) {
+						distance = Vector3.SqrMagnitude(m_mouth.position - point.transform.position);
 						holdTransform = point.transform;
 					}
 				}
