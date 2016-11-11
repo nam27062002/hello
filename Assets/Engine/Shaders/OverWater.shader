@@ -11,6 +11,7 @@ Shader "Hungry Dragon/OverWater"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_Color("Tint (RGB)", color) = (1, 0, 0, 1)
+		_WaterSpeed("Speed ", Float) = 0.5
 	}
 
 	SubShader {
@@ -56,6 +57,7 @@ Shader "Hungry Dragon/OverWater"
 				sampler2D _DetailTex;
 				float4 _DetailTex_ST;
 				float4 _Color;
+				float _WaterSpeed;
 
 
 				v2f vert (appdata_t v) 
@@ -83,7 +85,7 @@ Shader "Hungry Dragon/OverWater"
 
 //					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 4.02f) * CAUSTIC_RADIUS,
 //										 sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 3.04f) * CAUSTIC_RADIUS + _Time.y * 0.5);
-					float2 anim = float2(0.0, _Time.y * 0.5);
+					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
 
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
