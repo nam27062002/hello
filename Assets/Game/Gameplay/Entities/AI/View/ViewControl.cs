@@ -435,7 +435,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if ( verticalImpulse >= m_speedToWaterSplash && !string.IsNullOrEmpty(m_waterSplashParticle.name) )
 		{
 			Vector3 pos = transform.position;
-			float waterY = _other.transform.position.y;
+			float waterY =  _other.bounds.center.y + _other.bounds.extents.y;
 			pos.y = waterY;
 			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
 		}
