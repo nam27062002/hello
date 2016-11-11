@@ -36,18 +36,19 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
-	[SeparatorAttribute]
+	[SeparatorAttribute("Eaten")]
 	[SerializeField] private List<ParticleData> m_onEatenParticles = new List<ParticleData>();
 	[SerializeField] private string m_onEatenAudio;
 
-	[SeparatorAttribute]
+	[SeparatorAttribute("Water")]
 	[SerializeField] private float m_speedToWaterSplash;
 	[SerializeField] private ParticleData m_waterSplashParticle;
 
-	[SeparatorAttribute]
+	[SeparatorAttribute("Burn")]
+	[SerializeField] private ParticleData m_burnParticle;
 	[SerializeField] private string m_onBurnAudio;
 
-	[SeparatorAttribute]
+	[SeparatorAttribute("Explode")]
 	[SerializeField] private ParticleData m_explosionParticles; // this will explode when burning
 	[SerializeField] private string m_onExplosionAudio;
 
@@ -128,6 +129,10 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			if (!string.IsNullOrEmpty(data.name)) {
 				ParticleManager.CreatePool(data.name, data.path);
 			}
+		}
+
+		if (m_burnParticle.name != "") {
+			ParticleManager.CreatePool(m_burnParticle.name, m_burnParticle.path, 20);
 		}
 
 		if (m_explosionParticles.name != "") {
@@ -399,65 +404,55 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	public void StartAttackTarget()
-	{
+	public void StartAttackTarget() {
 		m_attackingTarget = true;
 		m_animator.SetBool("eat", true);
 	}
 
-	public void StopAttackTarget()
-	{
+	public void StopAttackTarget() {
 		m_attackingTarget = false;
 		m_animator.SetBool("eat", false);
 	}
 
-	public void StartEating()
-	{
+	public void StartEating() {
 		m_animator.SetBool("eat", true);
 	}
 
-	public void StopEating()
-	{
+	public void StopEating() {
 		if (!m_attackingTarget)
 			m_animator.SetBool("eat", false);
 	}
 
-	public void EnterWater( Collider _other, Vector3 impulse ){
+	public void EnterWater(Collider _other, Vector3 impulse) {
 		CreateSplash( _other, Mathf.Abs(impulse.y) );
 	}
 
-	public void ExitWater( Collider _other, Vector3 impulse){
+	public void ExitWater( Collider _other, Vector3 impulse) {
 		CreateSplash( _other, Mathf.Abs(impulse.y));
 	}
 
-	private void CreateSplash( Collider _other, float verticalImpulse )
-	{
-		if ( verticalImpulse >= m_speedToWaterSplash && !string.IsNullOrEmpty(m_waterSplashParticle.name) )
-		{
+	private void CreateSplash(Collider _other, float verticalImpulse) {
+		if (verticalImpulse >= m_speedToWaterSplash && !string.IsNullOrEmpty(m_waterSplashParticle.name)) {
 			Vector3 pos = transform.position;
-			float waterY = _other.transform.position.y;
+			float waterY =  _other.bounds.center.y + _other.bounds.extents.y;
 			pos.y = waterY;
 			ParticleManager.Spawn(m_waterSplashParticle.name, transform.position + m_waterSplashParticle.offset, m_waterSplashParticle.path);
 		}
 	}
 
-	public void StartSwimming()
-	{
+	public void StartSwimming() {
 		m_swim = true;
 	}
 
-	public void StopSwimming()
-	{
+	public void StopSwimming() {
 		m_swim = false;
 	}
 
-	public void FlyToSpace()
-	{
+	public void FlyToSpace() {
 		m_inSpace = true;
 	}
 
-	public void ReturnFromSpace()
-	{
+	public void ReturnFromSpace() {
 		m_inSpace = false;
 	}
 
@@ -480,35 +475,43 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 
 	public void Die(bool _eaten = false) {
 
-		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying()) {
 			m_idleAudioAO.Stop();
+		}
 
-		if (m_explosionParticles.name != "") {
+		if (!string.IsNullOrEmpty(m_explosionParticles.name)) {
 			ParticleManager.Spawn(m_explosionParticles.name, transform.position + m_explosionParticles.offset, m_explosionParticles.path);
 		}
 
-		if (_eaten){
-			if (!string.IsNullOrEmpty( m_onEatenAudio ))
-				AudioController.Play( m_onEatenAudio, transform.position);
-		}else{
-			if (!string.IsNullOrEmpty( m_onExplosionAudio ))
-				AudioController.Play( m_onExplosionAudio, transform.position);
+		if (_eaten) {
+			if (!string.IsNullOrEmpty(m_onEatenAudio))
+				AudioController.Play(m_onEatenAudio, transform.position);
+		} else {
+			if (!string.IsNullOrEmpty(m_onExplosionAudio))
+				AudioController.Play(m_onExplosionAudio, transform.position);
 		}
 
 		// Stop pc trail effect (if any)
-		if(m_pcTrail != null) {
+		if (m_pcTrail != null) {
 			ParticleManager.ReturnInstance(m_pcTrail);
 			m_pcTrail = null;
 		}
 	}
 
 	public void Burn() {
-		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
+		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying())
 			m_idleAudioAO.Stop();
 
-		if ( !string.IsNullOrEmpty( m_onBurnAudio ) ){
-			AudioController.Play( m_onBurnAudio, transform.position);
+		if (string.IsNullOrEmpty(m_explosionParticles.name)) {
+			if (!string.IsNullOrEmpty(m_burnParticle.name)) {
+				ParticleManager.Spawn(m_burnParticle.name, transform.position + m_burnParticle.offset, m_burnParticle.path);
+			}
 		}
+
+		if (!string.IsNullOrEmpty(m_onBurnAudio)) {
+			AudioController.Play(m_onBurnAudio, transform.position);
+		}
+
 		m_animator.enabled = false;
 	}
 }

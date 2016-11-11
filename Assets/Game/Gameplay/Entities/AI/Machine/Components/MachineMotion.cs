@@ -62,6 +62,7 @@ namespace AI {
 		private Rigidbody m_rbody;
 		private ViewControl m_viewControl;
 		private Transform m_eye; // for aiming purpose
+		private Vector3 m_mouthOffset;
 
 		private Quaternion m_rotation;
 		private Quaternion m_targetRotation;
@@ -84,6 +85,8 @@ namespace AI {
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 			m_eye = m_machine.transform.FindChild("eye");
+
+			m_mouthOffset = Vector3.zero;
 		}
 
 		public override void Init() {
@@ -148,6 +151,14 @@ namespace AI {
 			m_targetRotation = m_rotation;
 
 			m_machine.transform.rotation = m_rotation;
+
+			//----------------------------------------------------------------------------------
+		/*	Transform mouth = m_machine.transform.FindTransformRecursive("Fire_Dummy");
+			if (mouth != null) {
+				m_mouthOffset = mouth.position - m_machine.transform.position;
+			} else {
+				m_mouthOffset = Vector3.zero;
+			}*/
 		}
 
 		public void SetVelocity(Vector3 _v) {
@@ -192,7 +203,7 @@ namespace AI {
 				m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed * m_latchBlending);
 				m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 				m_machine.transform.rotation = m_rotation;
-				m_machine.transform.position = Vector3.Lerp( m_machine.transform.position, m_pilot.target, Time.deltaTime * m_latchBlending);
+				m_machine.transform.position = Vector3.Lerp( m_machine.transform.position, m_pilot.target + m_mouthOffset, Time.deltaTime * m_latchBlending);
 
 				if (m_latchBlending < 10f)
 					m_latchBlending += 0.1f * 2f;
