@@ -20,7 +20,7 @@ namespace AI {
 			base.Attach (_machine, _entity, _pilot);
 
 			m_viewControl = m_machine.GetComponent<ViewControl>();
-			m_biteResistance = (m_entity as Entity).def.GetAsFloat("biteResistance");
+			m_biteResistance = m_entity.def.GetAsFloat("biteResistance");
 			m_holdPreyPoints = m_pilot.transform.GetComponentsInChildren<HoldPreyPoint>();
 		}
 

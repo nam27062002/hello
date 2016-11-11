@@ -1077,6 +1077,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 1.05, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -1124,7 +1128,7 @@ MonoBehaviour:
   m_motion:
     m_useGravity: 1
     m_walkOnWalls: 0
-    m_mass: 5
+    m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
     m_faceDirection: 0
@@ -1138,9 +1142,9 @@ MonoBehaviour:
   m_affectedByDragonTrample: 0
   m_enableSensor: 1
   m_sensor:
-    m_sightRadius: 17
-    m_maxRadius: 15
-    m_minRadius: 5
+    m_sightRadius: 10
+    m_maxRadius: 6.5
+    m_minRadius: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 1.5, z: 0}
@@ -1204,7 +1208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: archer_02
+  m_sku: archer
+  m_isPet: 0
 --- !u!137 &13731994
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

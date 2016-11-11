@@ -300,7 +300,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 182268}
-  m_LocalRotation: {x: -0.1999368, y: 0.7512297, z: -0.4427629, w: 0.44681132}
+  m_LocalRotation: {x: -0.19993679, y: 0.75122964, z: -0.44276288, w: 0.4468113}
   m_LocalPosition: {x: 0.41354483, y: 0.43405345, z: 0.30855474}
   m_LocalScale: {x: 1.0000001, y: 1.0000004, z: 1.0000002}
   m_LocalEulerAnglesHint: {x: 29.115099, y: 103.816696, z: -52.8191}
@@ -379,18 +379,19 @@ MonoBehaviour:
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
     m_senseDelay:
       min: 0.25
       max: 1.25
-  m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 0
-  m_onEatenSounds: []
+  m_onSpawnSound: 
+  m_onEatenSound: 
+  m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
     m_dissolveTime: 1.5
     m_ashExceptions: []
-  m_externalForces: {x: 0, y: 0, z: 0}
 --- !u!114 &11442140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -414,6 +415,15 @@ MonoBehaviour:
   m_animC: 
   m_onEatenParticles: []
   m_onEatenAudio: 
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: PF_Mine_Explosion
@@ -436,7 +446,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: mine_small
+  m_sku: mine_01
+  m_isPet: 0
 --- !u!135 &13596940
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -535,6 +546,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
   m_brainResource: {fileID: 11400000, guid: 91d304c73d1dd42ca947fb91474a6252, type: 2}
   m_railSeparation:
     min: 0.5

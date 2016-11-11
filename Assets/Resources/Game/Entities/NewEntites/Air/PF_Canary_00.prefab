@@ -99,8 +99,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 444214}
-  - 114: {fileID: 114000010333019328}
   - 114: {fileID: 11492212}
+  - 114: {fileID: 114000010333019328}
   - 114: {fileID: 11475328}
   - 114: {fileID: 11430714}
   - 114: {fileID: 11439040}
@@ -504,6 +504,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -574,7 +578,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary
+  m_sku: bird_01
+  m_isPet: 0
 --- !u!137 &13794388
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
