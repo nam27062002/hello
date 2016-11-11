@@ -198,7 +198,11 @@ public class Spawner : MonoBehaviour, ISpawner {
 			if (m_entities[i] != null) {
 				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
 				m_entities[i] = null;
-			}
+                if (ProfilerSettingsManager.ENABLED)
+                {
+                    RemoveFromTotalLogicUnits(1);
+                }                
+            }
 		}
 
 		m_entityAlive = 0;
@@ -221,7 +225,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 						m_entitiesKilled++;
 					}
 					m_entityAlive--;
-					found = true;
+
+                    if (ProfilerSettingsManager.ENABLED)
+                    {
+                        RemoveFromTotalLogicUnits(1);
+                    }
+                         
+                    found = true;
 				}
 			}
 
@@ -389,7 +399,12 @@ public class Spawner : MonoBehaviour, ISpawner {
 				m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
 				m_entityAlive++;
 
-				if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
+                if (ProfilerSettingsManager.ENABLED)
+                {
+                    AddToTotalLogicUnits(1);
+                }
+
+                if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
 					break;
 				}
 			}
@@ -470,7 +485,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				machine.EnterGroup(ref m_groupController.flock);
 			}
 
-            m_entitiesActivated++;           
+            m_entitiesActivated++;                 
 
             if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
                 break;
@@ -522,4 +537,33 @@ public class Spawner : MonoBehaviour, ISpawner {
 		v.z = 0f;
 		return v;
 	}
+
+    #region profiler
+    private static float sm_totalLogicUnits = 0;
+    public static float totalLogicUnitsSpawned
+    {
+        get
+        {
+            return sm_totalLogicUnits;
+        }       
+    } 
+    
+    private void AddToTotalLogicUnits(int amount)
+    {
+        ProfilerSettings settings = ProfilerSettingsManager.SettingsCached;
+        if (settings != null)
+        {
+            sm_totalLogicUnits += settings.GetLogicUnits(m_entityPrefabStr) * amount;
+            if (sm_totalLogicUnits < 0f)
+            {
+                sm_totalLogicUnits = 0f;
+            }
+        }        
+    }
+
+    private void RemoveFromTotalLogicUnits(int amount)
+    {
+        AddToTotalLogicUnits(-amount);        
+    }
+    #endregion
 }

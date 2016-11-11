@@ -44,8 +44,15 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_fpsCounter; }
 	}
 
-	// Exposed setup
-	[Space]
+    [SerializeField]
+    private TextMeshProUGUI m_logicUnitsCounter;
+    public static TextMeshProUGUI logicUnitsCounter
+    {
+        get { return instance.m_logicUnitsCounter; }
+    }
+
+    // Exposed setup
+    [Space]
 	[SerializeField] private float m_activationTime = 3f;
 
 	// Internal logic
@@ -100,7 +107,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
 		m_fpsCounter.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
-		m_activateTimer = 0;
+        m_logicUnitsCounter.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
+        m_activateTimer = 0;
 	}
 
 	void Start()
@@ -182,9 +190,16 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 			}
 		}
 
+        if (m_logicUnitsCounter != null && ProfilerSettingsManager.ENABLED)
+        {
+            int value = (int)Spawner.totalLogicUnitsSpawned;
+            // The string is taken from this array to prevent memory from being generated every tick
+            m_logicUnitsCounter.text = IntegerToString(value);            
+        }
 
-		// Quick Cheats
-		if ( Input.GetKeyDown(KeyCode.L )){
+
+        // Quick Cheats
+        if ( Input.GetKeyDown(KeyCode.L )){
 			if ( InstanceManager.player != null ){
 				// Dispatch global event
 				Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
