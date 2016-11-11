@@ -45,11 +45,10 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	}
 
     [SerializeField]
+    private TextMeshProUGUI m_entitiesCounter;
+
+    [SerializeField]
     private TextMeshProUGUI m_logicUnitsCounter;
-    public static TextMeshProUGUI logicUnitsCounter
-    {
-        get { return instance.m_logicUnitsCounter; }
-    }
 
     // Exposed setup
     [Space]
@@ -107,7 +106,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
 		m_fpsCounter.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
-        m_logicUnitsCounter.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
+        m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
+
         m_activateTimer = 0;
 	}
 
@@ -189,6 +189,13 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				m_fpsCounter.text = NEGATIVE_STRING_AS_STRING;
 			}
 		}
+
+        if (m_entitiesCounter != null && ProfilerSettingsManager.ENABLED)
+        {
+            int value = Spawner.totalEntities;
+            // The string is taken from this array to prevent memory from being generated every tick
+            m_entitiesCounter.text = IntegerToString(value);
+        }
 
         if (m_logicUnitsCounter != null && ProfilerSettingsManager.ENABLED)
         {

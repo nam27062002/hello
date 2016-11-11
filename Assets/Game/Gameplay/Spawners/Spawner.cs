@@ -539,31 +539,50 @@ public class Spawner : MonoBehaviour, ISpawner {
 	}
 
     #region profiler
-    private static float sm_totalLogicUnits = 0;
+    private static float sm_totalLogicUnits = 0f;    
     public static float totalLogicUnitsSpawned
     {
         get
         {
             return sm_totalLogicUnits;
         }       
-    } 
-    
+    }
+
+    private static int sm_totalEntities = 0;
+    public static int totalEntities
+    {
+        get
+        {
+            return sm_totalEntities;
+        }
+    }
+
     private void AddToTotalLogicUnits(int amount)
     {
+        float logicUnitsCoef = 1f;
         ProfilerSettings settings = ProfilerSettingsManager.SettingsCached;
         if (settings != null)
+        {            
+            logicUnitsCoef = settings.GetLogicUnits(m_entityPrefabStr);                        
+        }
+
+        sm_totalEntities += amount;
+        sm_totalLogicUnits += logicUnitsCoef * amount;
+        if (sm_totalLogicUnits < 0f)
         {
-            sm_totalLogicUnits += settings.GetLogicUnits(m_entityPrefabStr) * amount;
-            if (sm_totalLogicUnits < 0f)
-            {
-                sm_totalLogicUnits = 0f;
-            }
-        }        
+            sm_totalLogicUnits = 0f;
+        }
     }
 
     private void RemoveFromTotalLogicUnits(int amount)
     {
         AddToTotalLogicUnits(-amount);        
+    }
+
+    public static void ResetTotalLogicUnitsSpawned()
+    {
+        sm_totalLogicUnits = 0f;
+        sm_totalEntities = 0;
     }
     #endregion
 }
