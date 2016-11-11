@@ -885,7 +885,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
         float gravity = 9.81f * m_dragonGravityModifier * -2.5f;// m_inverseGravityWater;
 		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;   // Gravity
-        acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass * 0.6f;	// User Force
+        acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass * 0.7f;	// User Force
 
 		// stroke's Drag
 		m_impulse = m_rbody.velocity;
@@ -901,7 +901,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         m_rbody.velocity = m_impulse;
 
         //m_inverseGravityWater -= Time.deltaTime * 0.5f;
-        m_inverseGravityWater -= Time.deltaTime * 0.08f;
+        m_inverseGravityWater -= Time.deltaTime * 0.1f;
         if (m_inverseGravityWater < 0) m_inverseGravityWater = 0;
 
 
@@ -1244,7 +1244,7 @@ private void UpdateParabolicMovement( float sign, float distance )
 		if ( m_particleController != null )
 			m_particleController.OnEnterWater( _other );
 
-		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
+        rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
 		m_impulse = rbody.velocity;
 
 
@@ -1424,6 +1424,7 @@ private void UpdateParabolicMovement( float sign, float distance )
 				if ( m_impulse.y < 0 )	// if going deep
 				{
 					//m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
+                    //m_impulse = m_impulse * 8;	
 				}
 			}break;
 
