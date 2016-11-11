@@ -159,7 +159,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	[SerializeField] private float m_insideWaterRecoveryTime = 0.1f;
 	private float m_recoverTimer;
 
-	private bool m_canMoveInsideWater = false;
+	private bool m_canMoveInsideWater = true;
 	public bool canDive
 	{
 		get
@@ -217,7 +217,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private bool m_grab = false;
 
-	private float m_inverseGravityWater = -2;
+	private float m_inverseGravityWater = -0.5f;
 
 	private RegionManager m_regionManager;
 	public Current                              current { get; set; }
@@ -329,7 +329,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					m_inverseGravityWater = -2;
+					m_inverseGravityWater = 1.0f;
 					m_animator.SetBool("swim", false);
 					m_animator.SetBool("fly down", false);
 				}break;
@@ -381,15 +381,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					break;
 				case State.InsideWater:
 				{
-					if ( m_canMoveInsideWater )
+					//if ( m_canMoveInsideWater )
 					{
-						m_animator.SetBool("move", false);
-						m_animator.SetBool("swim", true);
+						//m_animator.SetBool("move", false);
+						//m_animator.SetBool("swim", true);
 					}
-					else
+					/*else
 					{
 						m_animator.SetBool("fly down", true);
-					}
+					}*/
 					m_startParabolicPosition = transform.position;
 				}break;
 				case State.ExitingWater:
@@ -667,15 +667,15 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			case State.InsideWater:
 			case State.ExitingWater:
 			{
-				if (m_canMoveInsideWater)
+				//if (m_canMoveInsideWater)
 				{
 					UpdateWaterMovement();
 				}
-				else
+				/*else
 				{
 					float distance = m_startParabolicPosition.y - transform.position.y;
 					UpdateParabolicMovement( 1, distance);
-				}
+				}*/
 			}break;
 			case State.OuterSpace:
 			case State.ExitingSpace:
@@ -836,32 +836,78 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		return ((src * factor) + (dst * dt)) / (factor + dt);
 	}
 
+    /*
+    private void UpdateMovement() 
+	{
+		Vector3 impulse = m_controls.GetImpulse(1); 
+		if ( impulse != Vector3.zero )
+		{
+			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
+
+			// bool ignoreGravity = OverWaterMovement( ref impulse );
+			bool ignoreGravity = false;
+
+			// v_max = a/f
+			// t_max = 5/f
+
+			float gravity = 0;
+			if (!ignoreGravity)
+				gravity = 9.81f * m_dragonGravityModifier;
+			Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+			acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
+
+			// stroke's Drag
+			m_impulse = m_rbody.velocity;
+			float impulseMag = m_impulse.magnitude;
+
+			m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+
+			m_direction = m_impulse.normalized;
+			RotateToDirection( impulse );
+
+
+		}
+		else
+		{
+			ComputeImpulseToZero();
+			ChangeState( State.Idle );
+		}
+
+		ApplyExternalForce();
+
+		m_rbody.velocity = m_impulse;
+	}
+*/
 	private void UpdateWaterMovement()
 	{
 		Vector3 impulse = m_controls.GetImpulse(1);
+        if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
-		float gravity = 9.81f * m_dragonGravityModifier * m_inverseGravityWater;
-		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
-		acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass;	// User Force
+        float gravity = 9.81f * m_dragonGravityModifier * -2.5f;// m_inverseGravityWater;
+		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;   // Gravity
+        acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass * 0.7f;	// User Force
 
 		// stroke's Drag
 		m_impulse = m_rbody.velocity;
 
 		float impulseMag = m_impulse.magnitude;
-		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
+		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * 1.0f * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
 		RotateToDirection( impulse );
 
-		m_rbody.velocity = m_impulse;
+        //ApplyExternalForce
+        //m_impulse += Vector3.down * gravity * m_dragonMass * Time.deltaTime;
 
-		m_inverseGravityWater -= Time.deltaTime * 0.5f;
+        m_rbody.velocity = m_impulse;
+
+        //m_inverseGravityWater -= Time.deltaTime * 0.5f;
+        m_inverseGravityWater -= Time.deltaTime * 0.1f;
+        if (m_inverseGravityWater < 0) m_inverseGravityWater = 0;
 
 
 
 
-
-
-		/*
+        /*
 
 		if ( impulse.y > 0 )
 		{
@@ -884,9 +930,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		RotateToDirection( m_direction );
 		m_rbody.velocity = m_impulse;
 		*/
-	}
+}
 
-	private void UpdateParabolicMovement( float sign, float distance )
+private void UpdateParabolicMovement( float sign, float distance )
 	{
 		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
 		Vector3 impulse = m_controls.GetImpulse(Time.deltaTime * GetTargetSpeedMultiplier());
@@ -1198,7 +1244,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		if ( m_particleController != null )
 			m_particleController.OnEnterWater( _other );
 
-		rbody.velocity = rbody.velocity * m_waterImpulseMultiplier;
+        rbody.velocity = rbody.velocity * 2.0f;// m_waterImpulseMultiplier;
 		m_impulse = rbody.velocity;
 
 
@@ -1377,7 +1423,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			{
 				if ( m_impulse.y < 0 )	// if going deep
 				{
-					m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
+					//m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
+                    //m_impulse = m_impulse * 8;	
 				}
 			}break;
 

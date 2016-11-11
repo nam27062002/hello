@@ -194,7 +194,7 @@ public class DragonParticleController : MonoBehaviour
 	private void CreateSplash( Collider _other, string particleName )
 	{
 		Vector3 pos = _transform.position;
-		float waterY = _other.transform.position.y;
+		float waterY = _other.bounds.center.y + _other.bounds.extents.y;
 		pos.y = waterY;
 
 		ParticleManager.Spawn(particleName, pos, m_waterSplashFolder);
