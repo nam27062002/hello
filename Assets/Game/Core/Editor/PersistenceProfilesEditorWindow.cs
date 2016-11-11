@@ -594,7 +594,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
                         ret = true;
                     }
                 }
-                catch (System.Exception e) {
+                catch (System.Exception) {
                     Debug.Log("Cannot parse json result");
                 }
             }
