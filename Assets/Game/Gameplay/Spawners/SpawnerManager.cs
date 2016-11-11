@@ -347,15 +347,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Clear QuadTree
 		m_spawnersTree = null;
 		m_selectedSpawners.Clear();
+
+        DisableSpawners();
 		m_spawners.Clear();
 
 		// Drop camera references
 		m_newCamera = null;
 
 		// Make sure manager is disabled
-		m_enabled = false;
-
-        Spawner.ResetTotalLogicUnitsSpawned();
+		m_enabled = false;       
     }
 
     #region debug
