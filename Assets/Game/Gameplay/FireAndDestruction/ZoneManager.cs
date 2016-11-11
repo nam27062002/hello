@@ -25,44 +25,29 @@ public class ZoneManager : MonoBehaviour {
 	public Color zone1Color { get { return m_zone1Color; } }
 	public Color zone2Color { get { return m_zone2Color; } }
 
-	private string m_dragonTier;
-	private Dictionary<string, DefinitionNode> m_burnDestructionDefinitions;
+	private DragonTier m_dragonTier = DragonTier.COUNT;
 
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 	void Start() {
 		//load definitions 
-		m_dragonTier = InstanceManager.player.data.tierDef.sku;
-		m_burnDestructionDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DESTRUCTION_DECORATION);
+		m_dragonTier = InstanceManager.player.data.tier;
 	}
 
-	public ZoneEffect GetFireEffectCode(Vector3 _pos, string _sku) {
-		Zone zone = GetZone(_pos.z);
+	public ZoneEffect GetFireEffectCode(Decoration _deco) {
+		if (_deco.isBurnable) {
+			Zone zone = GetZone(_deco.transform.position.z);
 
-		if (zone != Zone.None) {
-			if (m_burnDestructionDefinitions == null) {
-				m_dragonTier = InstanceManager.player.data.tierDef.sku;
-				m_burnDestructionDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DESTRUCTION_DECORATION);
-			}
+			if (zone != Zone.None) {
+				if (m_dragonTier == DragonTier.COUNT) {
+					m_dragonTier = InstanceManager.player.data.tier;
+				}
 
-			DefinitionNode burnDef = m_burnDestructionDefinitions[_sku];
-
-			//should explode?
-			string minTier = burnDef.Get("minTierExplode");
-			if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
-				return ZoneEffect.M; //TODO: this should be an explosion, but it's not yet ready ("L")
-			} else {
-				//should burn?
-				minTier = burnDef.Get("minTierBurn");
-				if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
-					return ZoneEffect.M;
-				} else {
-					//should feedback?
-					minTier = burnDef.Get("minTierFeedback");
-					if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
-						return ZoneEffect.S; 
-					}
+				if (m_dragonTier >= _deco.minTierBurn) {
+					return ZoneEffect.M; // should burn?
+				} else if (m_dragonTier >= _deco.minTierBurnFeedback) {
+					return ZoneEffect.S; // should give feedback?
 				}
 			}
 		}
@@ -70,28 +55,7 @@ public class ZoneManager : MonoBehaviour {
 		return ZoneEffect.None;
 	}
 
-	public ZoneEffect GetDestructionEffectCode(Vector3 _pos, string _sku) {
-		/*Zone zone = GetZone(_pos.z);
-
-		if (zone != Zone.None) {
-			if (m_burnDestructionDefinitions == null) {
-				m_dragonTier = InstanceManager.player.data.tierDef.sku;
-				m_burnDestructionDefinitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.BURN_DESTRUCTION_DECORATION);
-			}
-
-			DefinitionNode burnDef = m_burnDestructionDefinitions[_sku];
-			string minTier = burnDef.Get("minTierBurn");
-			if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
-				return ZoneEffect.M;
-			} else {
-				//should feedback?
-				minTier = burnDef.Get("minTierFeedback");
-				if (string.CompareOrdinal(m_dragonTier, minTier) >= 0) {
-					return ZoneEffect.S; 
-				}
-			}
-		}*/
-
+	public ZoneEffect GetDestructionEffectCode(Decoration _deco) {		
 		// TOOD: the destruction effects will be disabled until we have enough time 
 		return ZoneEffect.None;
 	}

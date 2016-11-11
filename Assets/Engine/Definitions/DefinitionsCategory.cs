@@ -40,8 +40,10 @@ public class DefinitionsCategory
 	public const string DRAGON_TIERS = "DRAGON_TIERS";
 
 	// Entities
-	public const string ENTITIES = "ENTITIES";
-	public const string ENTITY_CATEGORIES = "ENTITY_CATEGORIES";
+	public const string PETS 				= "PETS";
+	public const string ENTITIES 			= "ENTITIES";
+	public const string DECORATIONS 		= "DECORATIONS";
+	public const string ENTITY_CATEGORIES 	= "ENTITY_CATEGORIES";
 
 	// Game
 	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";
@@ -57,9 +59,6 @@ public class DefinitionsCategory
 	public const string DISGUISES = "DISGUISES";
 	public const string DISGUISES_EQUIP = "DISGUISES_EQUIP";
 	public const string DISGUISES_POWERUPS = "DISGUISES_POWERUPS";
-
-	// Fire and Destruction properties
-	public const string BURN_DESTRUCTION_DECORATION = "BURN_DECORATION";
 
 	// Hold Prey
 	public const string HOLD_PREY_TIER = "HOLD_PREY_TIER";

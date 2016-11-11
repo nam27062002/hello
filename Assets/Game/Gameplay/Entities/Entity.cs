@@ -7,7 +7,6 @@ public class Entity : IEntity {
 	// Properties
 	//-----------------------------------------------
 	// Exposed to inspector
-	[FormerlySerializedAs("m_typeID")]
 	[EntitySkuList]
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
@@ -15,8 +14,6 @@ public class Entity : IEntity {
 	[SerializeField] private bool m_isPet = false;
 
 	/************/
-	private DefinitionNode m_def;
-	public DefinitionNode def { get { return m_def; } }
 
 	private CircleArea2D m_bounds;
 	public CircleArea2D circleArea { get{ return m_bounds; } }
@@ -112,6 +109,8 @@ public class Entity : IEntity {
 	}
 
 	override public void Spawn(ISpawner _spawner) {
+		base.Spawn(_spawner);
+
 		m_spawner = _spawner;
 
 		if (InstanceManager.player != null) {
@@ -127,8 +126,6 @@ public class Entity : IEntity {
 		m_checkOnScreenTimer = 0;
 
 		m_health = m_maxHealth;
-
-		base.Spawn(_spawner);
 
 		m_newCamera = InstanceManager.gameCamera;
 

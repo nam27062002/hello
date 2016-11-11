@@ -39,8 +39,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private GameObject m_fireSprite;
 	private GameCamera m_newCamera;
 
-	private Reward m_reward;
-
 	private State m_state;
 	private State m_nextState;
 
@@ -52,9 +50,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 
 		m_newCamera = Camera.main.GetComponent<GameCamera>();
-		m_reward = new Reward();
-		m_reward.coins = 0;
-		m_reward.origin = "firenode";
 
 		m_area = new CircleAreaBounds(transform.position, m_hitRadius);
 
@@ -64,8 +59,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		gameObject.SetActive(false);
 	}
 
-	public void Init(int _goldReward, ZoneManager.ZoneEffect _effect) {
-		m_reward.coins = _goldReward;
+	public void Init(ZoneManager.ZoneEffect _effect) {		
 		m_zoneEffect = _effect;
 		Reset();
 
@@ -111,8 +105,6 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 				} else {
 					m_nextState = State.Spreading;
 				}
-
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_reward);
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
 				if (_dragonBreath && m_timer <= 0f) {
