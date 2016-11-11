@@ -70,7 +70,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 #if !PRODUCTION
         Debug_OnDestroy();
-#endif
+#endif      
     }
 
     /// <summary>
@@ -354,7 +354,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 		// Make sure manager is disabled
 		m_enabled = false;
-	}
+
+        Spawner.ResetTotalLogicUnitsSpawned();
+    }
 
     #region debug
     private void Debug_Awake() {        
