@@ -22,6 +22,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// [SerializeField]private float m_absorbTime = 1;
 	[SerializeField]private float m_minEatAnimTime = 1;
 	[SerializeField]protected float m_eatDistance = 1;
+	// Multiplies eating distance to detect targets
+	[SerializeField]protected float m_eatDetectionRadiusMultiplier = 2.75f;
+	// Inceases bite distance based on speed
+	[SerializeField]protected float m_eatDetectionSpeedRadiusMultiplier = 0.15f;
+
 	public float eatDistanceSqr { get { return (m_eatDistance * transform.localScale.x) * (m_eatDistance * transform.localScale.x); } }
 	[SerializeField] protected ParticleData m_holdingBloodParticle = new ParticleData( "PS_Blood_Explosion_Medium", "Blood", Vector3.zero);
 
@@ -99,12 +104,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 	private const float m_maxAngularSpeed = 12;
 	private const float m_minArcAngle = 75;
 	private const float m_maxArcAngle = 90;
-		// Multiplies eating distance to detect targets
-	private const float m_eatDetectionRadiusMultiplier = 2.75f;
+		
 		// Increases bite distance based on angular speed
 	private const float m_angleSpeedMultiplier = 1.2f;
-		// Inceases bite distance based on speed
-	private const float m_speedRadiusMultiplier = 0.15f;
+		
 
 	// This are tmp variables we reuse every time we need to find targets
 	private Entity[] m_checkEntities = new Entity[30];
@@ -636,7 +639,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		float speed = m_motion.velocity.magnitude;
 		float arcRadius = eatDistance * m_eatDetectionRadiusMultiplier;
-		arcRadius = arcRadius + speed;
+		arcRadius = arcRadius + speed * m_eatDetectionSpeedRadiusMultiplier;
 
 		Vector3 dir = m_motion.direction;
 		dir.z = 0;
@@ -861,7 +864,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Eat Detect Distance
 		float speed = m_motion.velocity.magnitude;
 		float arcRadius = eatRadius * m_eatDetectionRadiusMultiplier;
-		arcRadius = arcRadius + speed *  m_speedRadiusMultiplier;
+		arcRadius = arcRadius + speed *  m_eatDetectionSpeedRadiusMultiplier;
 
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);
