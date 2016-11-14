@@ -191,9 +191,9 @@ public class Spawner : MonoBehaviour, ISpawner {
 	public void ResetSpawnTimer()
 	{
 		m_respawnTime = -1;
-	}
+	}    
 
-	public void ForceRemoveEntities() {
+    public void ForceRemoveEntities() {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] != null) {
 				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
@@ -264,8 +264,14 @@ public class Spawner : MonoBehaviour, ISpawner {
 			}
 		}
 	}
-		
-	public bool CanRespawn() {		
+    
+    public ERespawnPendingTask RespawnPendingTask { get; set; }
+
+    public bool IsRespawningWithDelay() {
+        return m_state == State.Respawning || m_state == State.Create_Instances || m_state == State.Activating_Instances;
+    }
+
+    public bool CanRespawn() {		
 		// Ignore all logic for always active spawners
 		if (m_alwaysActive) {
 			if (m_entityAlive == 0) {
@@ -368,7 +374,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 
 		return endConditionsOk;
 	}
-
+    
 	public bool Respawn() {
 
 		if (m_state == State.Respawning) {
@@ -394,7 +400,7 @@ public class Spawner : MonoBehaviour, ISpawner {
                 sm_watch.Start();
             }
 
-            long start = sm_watch.ElapsedMilliseconds;
+            long start = sm_watch.ElapsedMilliseconds;                       
 			for (uint i = m_entityAlive; i < m_entitySpawned; i++) {			
 				m_entities[i] = PoolManager.GetInstance(m_entityPrefabStr, false);
 				m_entityAlive++;

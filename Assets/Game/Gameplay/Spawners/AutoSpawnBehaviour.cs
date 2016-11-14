@@ -61,9 +61,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	public void Initialize() {
 		m_state = State.Idle;
-	}
+	}    
 
-	public void ForceRemoveEntities() {
+    public void ForceRemoveEntities() {
 
 	}
 
@@ -72,8 +72,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
 		m_state = State.Respawning;
 	}
+    
+    public ERespawnPendingTask RespawnPendingTask { get; set; }
+    public bool IsRespawningWithDelay() { return false; }
 
-	public bool CanRespawn() {
+    public bool CanRespawn() {
 		if (m_state == State.Respawning) {
 			if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
 				bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);

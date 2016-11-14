@@ -10,6 +10,7 @@ public class Patrol : MonoBehaviour {
 
 	[SerializeField] private Vector3[]  m_nodes = new Vector3[2];
 	[SerializeField] private Color  	m_nodeColor = Colors.magenta;
+	[SerializeField] private bool		m_circular = false;
 
 	[SerializeField] private float m_speed = 3f;
 	[SerializeField] private float m_rotationSpeed = 420f;
@@ -104,23 +105,26 @@ public class Patrol : MonoBehaviour {
 		m_animator.SetBool("move", true);
 
 		//change target
-		if (m_targetIndex == m_nodes.Length - 1) {
-			m_listDirection = -1;
+		if (m_circular) {
+			m_targetIndex = (m_targetIndex + 1) % m_nodes.Length;
+		} else {
+			if (m_targetIndex == m_nodes.Length - 1) {
+				m_listDirection = -1;
+			}
+
+			if (m_targetIndex == 0) {
+				m_listDirection = 1;
+			}
+
+			m_targetIndex += m_listDirection;
 		}
 
-		if (m_targetIndex == 0) {
-			m_listDirection = 1;
-		}
-
-		m_targetIndex += m_listDirection;
 		m_direction = m_nodes[m_targetIndex] - m_position;
 		m_direction.Normalize();
 
-		if (m_direction.x >= 0) {
-			m_targetRotation = Quaternion.LookRotation(Vector3.right + Vector3.back * 0.1f, Vector3.up); 
-		} else {
-			m_targetRotation = Quaternion.LookRotation(Vector3.left + Vector3.back * 0.1f, Vector3.up);		
-		}
+		Vector3 lookAt = m_direction;
+		lookAt.y = 0;
+		m_targetRotation = Quaternion.LookRotation(lookAt + Vector3.back * 0.1f, Vector3.up);		
 
 		m_state = State.Walk;
 	}
