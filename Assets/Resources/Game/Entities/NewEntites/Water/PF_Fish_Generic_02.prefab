@@ -257,6 +257,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -332,10 +336,8 @@ MonoBehaviour:
     m_senseDelay:
       min: 1
       max: 2
-  m_onSpawnSoundProbability: 40
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds: []
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -366,7 +368,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: canary
+  m_sku: fish_02
+  m_isPet: 0
 --- !u!136 &136000010683048776
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -82,10 +82,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected float m_superFuryDamageMultiplier;
 	protected float m_superFuryLengthMultiplier;
 
-	private DefinitionNode m_spawnEffects = null;
-	private DefinitionNode m_decorationEffects = null;
-
-
 	public string m_breathSound;
     private AudioObject m_breathSoundAO;
     public string m_superBreathSound;
@@ -116,10 +112,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_bounds2D = new Rect();
 
 		m_tier = m_dragon.data.tier;
-
-		// From dragon tier get burning possibilities
-		m_spawnEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "tier", m_dragon.data.tierDef.sku);
-		m_decorationEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "tier", m_dragon.data.tierDef.sku);
 
 		// Init content cache
 		m_furyBase = m_dragon.data.def.GetAsFloat("furyMax");

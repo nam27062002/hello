@@ -167,13 +167,15 @@ public class GameSceneController : GameSceneControllerBase {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
 						// Disable dragon and entities!
-						InstanceManager.player.gameObject.SetActive(false);
-						SpawnerManager.instance.DisableSpawners();
+						InstanceManager.player.gameObject.SetActive(false);						
 
-						// Enable Results screen and move the camera to that position
-						if(m_resultsScene != null) {
-							m_resultsScene.Show();
-						}
+                        // Clear pools to save memory as entities don't need to be shown in the results screen
+                        PoolManager.Clear(true);
+
+                        // Enable Results screen and move the camera to that position
+                        if (m_resultsScene != null) {
+						    m_resultsScene.Show();
+					    }
 					}
 				}
 			} break;

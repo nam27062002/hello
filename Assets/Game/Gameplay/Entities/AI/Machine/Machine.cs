@@ -158,7 +158,7 @@ namespace AI {
 
 			if (m_collider != null) m_collider.enabled = true;
 
-			m_willPlaySpawnSound = true;
+			m_willPlaySpawnSound = !string.IsNullOrEmpty( m_onSpawnSound );
 		}
 
 		public void OnTrigger(string _trigger, object[] _param = null) {
@@ -416,7 +416,8 @@ namespace AI {
 		}
 
 		private void PlaySound(string _clip) {
-			AudioController.Play(_clip, transform.position);
+			if ( !string.IsNullOrEmpty(_clip) )
+				AudioController.Play(_clip, transform.position);
 		}
 
 		// External interactions

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class WaterMesh : MonoBehaviour 
 {
-	public float m_cellSpacing = 5.0f;
+	public float m_cellSize = 5.0f;
 	
 	private Transform m_transform = null;
 	private float m_width;
@@ -24,6 +24,9 @@ public class WaterMesh : MonoBehaviour
 	
 	private Vector3 m_position;
 
+    private Vector3 m_colliderCenter;
+    private Vector3 m_colliderSize;
+
 
     public bool generateMesh = true;
 	
@@ -33,12 +36,21 @@ public class WaterMesh : MonoBehaviour
         {
             return;
         }
-        Bounds bounds = GetComponent<BoxCollider>().bounds;
-		
-//		m_cellSpacing = (int)Mathf.Max(1, Mathf.Max(bounds.size.x * 0.1f, bounds.size.z * 0.1f));
+        BoxCollider box = GetComponent<BoxCollider>();
+        Vector3 center = box.center;
+        Vector3 size = box.size;
+        Bounds bounds = box.bounds;
+        Vector3 lscale = transform.localScale;
 
-		int numVertsX = (int)(bounds.size.x / m_cellSpacing);
-		int numVertsZ = (int)(bounds.size.z / m_cellSpacing);
+        //		m_cellSpacing = (int)Mathf.Max(1, Mathf.Max(bounds.size.x * 0.1f, bounds.size.z * 0.1f));
+
+        Vector3 min = bounds.min;// - transform.position;//bounds.center;
+        Vector3 max = bounds.max;// - transform.position;//bounds.center;
+//        Vector3 lscale = transform.localScale;
+        transform.SetLocalScale(1.0f);
+
+        int numVertsX = (int)(bounds.size.x / m_cellSize);
+		int numVertsZ = (int)(bounds.size.z / m_cellSize);
 
         if (numVertsX < 2 || numVertsZ < 2) return;
 
@@ -53,17 +65,17 @@ public class WaterMesh : MonoBehaviour
         m_colours = new Color[m_numVertices];
 
 
-        float uvspacing = 2.0f / m_cellSpacing;
+        float uvspacing = 2.0f / m_cellSize;
 
-        Vector3 min = bounds.min;// - transform.position;//bounds.center;
-        Vector3 max = bounds.max;// - transform.position;//bounds.center;
+//        Vector3 min = bounds.min;// - transform.position;//bounds.center;
+//        Vector3 max = bounds.max;// - transform.position;//bounds.center;
 
         int c = 0;
         for (int z = numVertsZ; z > 0; z--)
         {
             for (int x = 0; x < numVertsX; x++)
             {
-                m_vertices[c] = transform.InverseTransformPoint(new Vector3(min.x + (x * m_cellSpacing), max.y, min.z + (z * m_cellSpacing)));
+                m_vertices[c] = transform.InverseTransformPoint(new Vector3(min.x + (x * m_cellSize), max.y, min.z + (z * m_cellSize)));
                 m_UV[c] = new Vector2(-z * uvspacing, x * uvspacing);
                 m_colours[c++] = Color.gray;
             }
@@ -71,7 +83,7 @@ public class WaterMesh : MonoBehaviour
 
         for (int x = 0; x < numVertsX; x++)
         {
-            m_vertices[c] = transform.InverseTransformPoint(new Vector3(min.x + (x * m_cellSpacing), min.y, min.z + (m_cellSpacing)));
+            m_vertices[c] = transform.InverseTransformPoint(new Vector3(min.x + (x * m_cellSize), min.y, min.z + (m_cellSize)));
             m_UV[c] = new Vector2(1.0f * uvspacing, x * uvspacing);
             m_colours[c++] = Color.gray;
         }
@@ -124,6 +136,11 @@ public class WaterMesh : MonoBehaviour
             c += 6;
         }
 
+        //        min.Set(lscale.x / min.x, lscale.y / min.y, lscale.z / min.z);
+        //        max.Set(lscale.x / max.x, lscale.y / max.y, lscale.z / max.z);
+        m_colliderCenter.Set(center.x * lscale.x, center.y * lscale.y, center.z * lscale.z);
+        m_colliderSize.Set(size.x * lscale.x, size.y * lscale.y, size.z * lscale.z);
+//        box.bounds.SetMinMax(min, max);
 
     }
 
@@ -146,6 +163,11 @@ public class WaterMesh : MonoBehaviour
             m_mesh.subMeshCount = 2;
             m_mesh.SetTriangles(m_indices, 0);
             m_mesh.SetTriangles(m_indices2, 1);
+
+
+            BoxCollider box = GetComponent<BoxCollider>();
+            box.center = m_colliderCenter;
+            box.size = m_colliderSize;
         }
     }
 }
