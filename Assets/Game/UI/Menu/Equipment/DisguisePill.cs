@@ -44,7 +44,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	private GameObject m_lockIcon;
 	private GameObject m_selection;
 	private GameObject m_equippedIcon;
-
+	private Localizer m_infoText;
 
 	//------------------------------------------//
 
@@ -54,17 +54,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_lockIcon = transform.FindObjectRecursive("IconLock");
 		m_selection = transform.FindObjectRecursive("SelectionEffect");
 		m_equippedIcon = transform.FindObjectRecursive("IconTick");
-	}
-
-	public void LoadAsDefault(Sprite _spr) {
-		m_def = null;
-
-		m_iconBg.SetActive(false);
-		m_lockIcon.SetActive(false);
-		m_selection.SetActive(false);
-		m_equippedIcon.SetActive(false);
-
-		m_icon.sprite = _spr;
+		m_infoText = transform.FindComponentRecursive<Localizer>("InfoText");
 	}
 
 	public void Load(DefinitionNode _def, bool _locked, bool _owned, Sprite _spr) {
@@ -79,11 +69,14 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			m_icon.color = Color.white;
 			m_iconBg.SetActive(false);
 			m_lockIcon.SetActive(false);
+			m_infoText.gameObject.SetActive(false);
 		} else {
 			// Locked
 			m_icon.color = Color.gray;
 			m_iconBg.SetActive(true);
 			m_lockIcon.SetActive(true);
+			m_infoText.gameObject.SetActive(true);
+			m_infoText.Localize("TID_LEVEL", (_def.GetAsInt("unlockLevel") + 1).ToString());
 		}
 
 		m_equippedIcon.SetActive(false);
