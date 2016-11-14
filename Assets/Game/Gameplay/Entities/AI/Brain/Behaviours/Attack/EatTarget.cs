@@ -16,7 +16,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 				m_eatBehaviour.enabled = false;
-				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
+				m_eatBehaviour.onJawsClosed += OnBiteKillEvent;
 				m_eatBehaviour.onEndEating += OnEndEatingEvent;
 				base.OnInitialise();
 			}

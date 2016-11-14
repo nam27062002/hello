@@ -56,7 +56,7 @@ namespace AI {
 
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 				m_eatBehaviour.enabled = false;
-				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
+				m_eatBehaviour.onJawsClosed += OnBiteKillEvent;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {

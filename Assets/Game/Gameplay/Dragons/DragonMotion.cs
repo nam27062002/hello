@@ -207,8 +207,11 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
 	private float m_introTimer;
 	private const float m_introDuration = 3;
+	private Vector3 m_introTarget;
+	private Vector3 m_destination;
+	private float m_introDisplacement = 60;
 
-	// private Vector3 m_destination;
+
 	private Transform m_preyPreviousTransformParent;
 	private AI.Machine m_holdPrey = null;
 	private Transform m_holdPreyTransform = null;
@@ -227,6 +230,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1;
 	private float m_deadTimer = 0;
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -339,7 +344,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Intro:
 				{
-				}break;
+					m_rbody.isKinematic = false;
+					m_animator.SetBool("boost", false);
+					m_animator.SetBool("move", false);
+ 				}break;
 				case State.Latching:
 				{
 					m_groundCollider.enabled = true;
@@ -407,9 +415,14 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				}break;
 				case State.Intro:
 				{
-					m_animator.Play("BaseLayer.Intro");
+					m_rbody.isKinematic = true;
+					m_animator.SetBool("boost", true);
+					m_animator.SetBool("move", true);
 					m_introTimer = m_introDuration;
-					RotateToDirection( Vector3.right );
+					m_impulse = Vector3.zero;
+					m_direction = Vector3.right;
+					m_desiredRotation = Quaternion.Euler(0,90.0f,0);
+					transform.rotation = m_desiredRotation;
 				}break;
 				case State.Latching:
 				{
@@ -475,13 +488,20 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 				break;
 			case State.Intro:
 			{
+			/*
 				m_introTimer -= Time.deltaTime;
 				if ( m_introTimer <= 0 )
+				{
 					ChangeState( State.Idle );
-				RotateToDirection( Vector3.right );
-				// float delta = m_introTimer / m_introDuration;
-				// m_destination = Vector3.left * 30 * Mathf.Sin( delta * Mathf.PI * 0.5f);
-				// m_destination += m_introTarget;
+				}else{	
+					float delta = m_introTimer / m_introDuration;
+					m_destination = Vector3.left * m_introDisplacement * delta;//Mathf.Sin( delta * Mathf.PI * 0.5f);
+					m_destination += m_introTarget;
+
+					m_impulse = Vector3.zero;
+					m_direction = Vector3.right;
+				}
+				*/
 			}break;
 			case State.Latching:
 			{
@@ -685,12 +705,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 			}break;
 			case State.Intro:
 			{
-				// m_impulse = (m_destination - transform.position).normalized;
-				// m_direction = m_impulse;
-				// m_impulse *= m_speedValue;
-				// transform.position = m_destination;
-				// m_rbody.velocity = Vector3.zero;
-				// transform.rotation.SetLookRotation( Vector3.right );
+				m_introTimer -= Time.deltaTime;
+				if ( m_introTimer <= 0 )
+				{
+					ChangeState( State.Idle );
+				}else{	
+					float delta = m_introTimer / m_introDuration;
+					m_destination = Vector3.left * m_introDisplacement * delta;//Mathf.Sin( delta * Mathf.PI * 0.5f);
+					m_destination += m_introTarget;
+					m_rbody.MovePosition( m_destination );
+				}
+
 			}break;
 			case State.Latching:
 			{
@@ -931,8 +956,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_rbody.velocity = m_impulse;
 		*/
 }
-
-private void UpdateParabolicMovement( float sign, float distance )
+	
+	private void UpdateParabolicMovement( float sign, float distance )
 	{
 		// Vector3 impulse = m_controls.GetImpulse(m_speedValue * m_currentSpeedMultiplier * Time.deltaTime * 0.1f);
 		Vector3 impulse = m_controls.GetImpulse(Time.deltaTime * GetTargetSpeedMultiplier());
@@ -1354,8 +1379,8 @@ private void UpdateParabolicMovement( float sign, float distance )
 
 	public void StartIntroMovement(Vector3 introTarget)
 	{
-		// m_introTarget = introTarget;
-		m_transform.position = introTarget;
+		m_introTarget = introTarget;
+		m_transform.position = introTarget + Vector3.left * m_introDisplacement;
 		m_introTimer = m_introDuration;
 		ChangeState(State.Intro);
 	}

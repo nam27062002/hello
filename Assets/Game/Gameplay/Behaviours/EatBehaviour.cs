@@ -115,7 +115,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_pauseEating = false;
 
 	public delegate void OnEvent();
-	public OnEvent onBiteKill;
+	public OnEvent onJawsClosed;
 	public OnEvent onEndEating;
 	public OnEvent onEndLatching;
 
@@ -298,11 +298,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			StopAttackTarget();
 			BiteKill(PreyCount <= 0 && m_canHold);
-			if (onBiteKill != null)
-				onBiteKill();
 			 //if ( m_holdingPrey == null )
 			 //	TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 		}
+		if (onJawsClosed != null)
+			onJawsClosed();
 	}
 
 	public Transform GetAttackTarget()
