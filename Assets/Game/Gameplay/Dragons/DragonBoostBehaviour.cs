@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Xft;
 
 public class DragonBoostBehaviour : MonoBehaviour {
 	
@@ -17,6 +18,9 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private bool m_ready;
 
 	public List<GameObject> m_trails;
+    public List<XWeaponTrail> m_xweapontrail;
+
+
 	private bool m_trailsActive = false;
 	private bool m_insideWater = false;
 
@@ -58,6 +62,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 			tr.sortingLayerName = "player";
 		}
 		*/
+
+        foreach (GameObject go in m_trails)
+        {
+            m_xweapontrail.Add(go.GetComponent<XWeaponTrail>());
+        }
 
 		DeactivateTrails();
 	}
@@ -148,11 +157,14 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	public void ActivateTrails()
 	{
 		m_trailsActive = true;
-		if (!m_insideWater)
-		for( int i = 0; i<m_trails.Count; i++ )
-		{
-			m_trails[i].SetActive(true);
-		}
+        if (!m_insideWater)
+        {
+            for (int i = 0; i < m_trails.Count; i++)
+            {
+                m_xweapontrail[i].Activate();
+                m_trails[i].SetActive(true);
+            }
+        }
 	}
 
 	public void DeactivateTrails()
@@ -160,7 +172,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_trailsActive = false;
 		for( int i = 0; i<m_trails.Count; i++ )
 		{
-			m_trails[i].SetActive(false);
+            m_xweapontrail[i].Deactivate();
+            m_trails[i].SetActive(false);
 		}
 	}
 
