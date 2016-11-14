@@ -23,7 +23,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
 	public const float BACKGROUND_LAYER_Z = 45f;
     public const float SPAWNING_MAX_TIME = 4f; // Max time (in milliseconds) allowed to spend on spawning entities
-
+    
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -104,9 +104,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         {
             m_spawnersWithPendingRespawning[i] = null;
         }        
-    }
-
-    int maxSpawning = 0;
+    }    
 
 	/// <summary>
 	/// Called every frame.
@@ -150,9 +148,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
             // 2)A spawner startes respawning and it wasn't done at last frame and it's not going to be selected at the current frame and it's inside the deactivation area:
             // In this case we need to remove all entities that the spawner has already created because they would be deactivated anyway
             if (m_selectedSpawners != null)
-            {                
-                Vector3 cameraPosition = m_newCamera.transform.position;
-
+            {                                
                 // Loops through all spawners selected at the last frame to identify cases 1) and 2)
                 foreach (ISpawner item in m_selectedSpawners)
                 {                    
