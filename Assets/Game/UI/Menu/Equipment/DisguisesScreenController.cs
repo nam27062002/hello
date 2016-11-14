@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -34,9 +35,17 @@ public class DisguisesScreenController : MonoBehaviour {
 
 	// References
 	[Separator("Scene References")]
-	[SerializeField] private DisguiseRarityTitle m_disguiseTitle;
+	[SerializeField] private DisguisesScreenTitle m_title = null;
 	[SerializeField] private DisguisePowerIcon[] m_powers;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
+
+	[Space]
+	[SerializeField] private CurrencyButton m_SCButton = null;
+	[SerializeField] private CurrencyButton m_PCButton = null;
+
+	[Space]
+	[SerializeField] private ShowHideAnimator m_lockIcon = null;
+	[SerializeField] private Localizer m_lockText = null;
 
 	// Preview
 	private Transform m_previewAnchor;
@@ -51,7 +60,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	private ShowHideAnimator[] m_powerAnims = new ShowHideAnimator[3];
 
 	// Other data
-	private string m_dragonSku = "";
+	private DragonData m_dragonData = null;
 	private Wardrobe m_wardrobe = null;
 
 	// Internal references
@@ -95,12 +104,16 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_powerAnims[i] = m_powers[i].GetComponent<ShowHideAnimator>();
 		}
 
-		m_dragonSku = "";
+		m_dragonData = null;
 		m_wardrobe = UsersManager.currentUser.wardrobe;
 
 		// Subscribe to animator's events
 		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
 		animator.OnHidePostAnimation.AddListener(OnHidePostAnimation);
+
+		// Subscribe to purchase buttons
+		m_SCButton.button.onClick.AddListener(OnPurchaseDisguiseButton);
+		m_PCButton.button.onClick.AddListener(OnPurchaseDisguiseButton);
 	}
 
 	/// <summary>
@@ -134,7 +147,13 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		
+		// Unsubscribe from animatior events
+		animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
+		animator.OnHidePostAnimation.RemoveListener(OnHidePostAnimation);
+
+		// Unsubscribe from purchase buttons
+		m_SCButton.button.onClick.RemoveListener(OnPurchaseDisguiseButton);
+		m_PCButton.button.onClick.RemoveListener(OnPurchaseDisguiseButton);
 	}
 
 	//------------------------------------------------------------------------//
@@ -147,48 +166,33 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// <summary>
 	/// Setup the screen with the data of the currently selected dragon.
 	/// </summary>
-	/// <param name="_initialDisguiseSku">The disguise to focus. If it's from a different dragon than the current one, the target dragon will be selected. Leave empty to load current setup.</param>
-	public void Initialize(string _initialDisguiseSku = "") {
+	public void Initialize() {
 		// Aux vars
 		MenuSceneController menuController = InstanceManager.GetSceneController<MenuSceneController>();
 
-		// Get target dragon
-		// If we have a disguise preview set, select the dragon for that disguise first
-		if(!string.IsNullOrEmpty(_initialDisguiseSku)) {
-			DefinitionNode disguiseDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _initialDisguiseSku);
-			if(disguiseDef == null) {
-				// Invalid disguise sku!
-				_initialDisguiseSku = "";
-			}
-		}
-
 		// Store current dragon
-		m_dragonSku = menuController.selectedDragon;
+		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
-		// Find out initial disguise
-		// Dragon's current disguise by default, but can be overriden by setting the previewDisguise property before opening the screen
-		string currentDisguise = UsersManager.currentUser.GetEquipedDisguise(m_dragonSku);
-		if(_initialDisguiseSku != "") {
-			currentDisguise = _initialDisguiseSku;
-		}
+		// Find out initial disguise - dragon's current disguise
+		string currentDisguise = UsersManager.currentUser.GetEquipedDisguise(m_dragonData.def.sku);
 
 		// Find the 3D dragon preview
 		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DISGUISES);
 		if(scene3D != null) {
-			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonSku);
+			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller3D>().GetDragonPreview(m_dragonData.def.sku);
 			if(preview != null) m_previewAnchor = preview.transform;
 			//m_dragonRotationArrowsPos = scene.transform.FindChild("Arrows");
 		}
 
-		// get disguises levels of the current dragon
-		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonSku);
+		// Get all the disguises of the current dragon
+		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_dragonData.def.sku);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
 		// Load disguise icons for this dragon
-		Sprite[] icons = Resources.LoadAll<Sprite>("UI/Metagame/Disguises/" + m_dragonSku);
+		Dictionary<string, Sprite> icons = ResourcesExt.LoadSpritesheet("UI/Metagame/Disguises/" + m_dragonData.def.sku);
 
 		// Hide all the info
-		m_disguiseTitle.GetComponent<ShowHideAnimator>().ForceHide(false);
+		m_title.showHideAnimator.ForceHide(false);
 		for(int i = 0; i < m_powerAnims.Length; i++) {
 			m_powerAnims[i].ForceHide(false);
 		}
@@ -198,23 +202,20 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill = null;
 		DisguisePill initialPill = m_pills[0];	// There will always be at least the default pill
 		for (int i = 0; i < m_pills.Length; i++) {
-			if (i <= defList.Count) {
-				if (i == 0) {
-					// First pill is the default one
-					m_pills[i].LoadAsDefault(GetFromCollection(ref icons, "icon_default"));
-				} else {
-					// Standard pill
-					DefinitionNode def = defList[i - 1];
+			if (i < defList.Count) {
+				// Init pill
+				DefinitionNode def = defList[i];
+				Sprite spr = icons[def.GetAsString("icon")];
+				bool locked = (def.GetAsInt("unlockLevel") > (m_dragonData.progression.level + 1));
+				bool owned = m_wardrobe.IsDisguiseOwned(def.sku);
+				m_pills[i].Load(def, locked, owned, spr);
 
-					Sprite spr = GetFromCollection(ref icons, def.GetAsString("icon"));
-					int level = m_wardrobe.GetDisguiseLevel(def.sku);
-					m_pills[i].Load(def, level, spr);
-
-					// Is it the initial pill?
-					if(def.sku == currentDisguise) {
-						initialPill = m_pills[i];
-					}
+				// Is it the initial pill?
+				if(def.sku == currentDisguise) {
+					initialPill = m_pills[i];
 				}
+
+				// Set initial state
 				m_pills[i].Use(false);
 				m_pills[i].Select(false);
 				m_pills[i].gameObject.SetActive(true);
@@ -235,17 +236,15 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_initialDisguiseSku">The disguise to focus. If it's from a different dragon than the current one, the target dragon will be selected. Leave empty to load current setup.</param>
 	public void Finalize() {
-		// Restore equiped disguise on target dragon (either a valid equipable disguise or the default one)
+		// Restore equiped disguise on target dragon
 		bool newEquip = false;
 		if(m_equippedPill != null) {
-			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, m_equippedPill.sku);
-		} else {
-			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonSku, "default");
+			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_equippedPill.def.sku);
 		}
 
 		// Broadcast message
 		if(newEquip) {
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
 		PersistenceManager.Save();
 
@@ -254,24 +253,8 @@ public class DisguisesScreenController : MonoBehaviour {
 			if(m_powerAnims[i] != null) m_powerAnims[i].Hide();
 		}
 
-		// Hide rarity
-		m_disguiseTitle.GetComponent<ShowHideAnimator>().Hide();
-	}
-
-	/// <summary>
-	/// Given an array of sprites, get the first one with a target name.
-	/// </summary>
-	/// <returns>The first sprite in the <paramref name="_array"/> with name <paramref name="_name"/>.</returns>
-	/// <param name="_array">The array to be looked.</param>
-	/// <param name="_name">The name we're looking for.</param>
-	private Sprite GetFromCollection(ref Sprite[] _array, string _name) {
-		for (int i = 0; i < _array.Length; i++) {
-			if (_array[i].name == _name) {
-				return _array[i];
-			}
-		}
-
-		return null;
+		// Hide header
+		m_title.GetComponent<ShowHideAnimator>().Hide();
 	}
 
 	//------------------------------------------------------------------------//
@@ -310,37 +293,31 @@ public class DisguisesScreenController : MonoBehaviour {
 	void OnPillClicked(DisguisePill _pill) {
 		// Skip if pill is already the selected one
 		if(m_selectedPill == _pill) return;
+		if(_pill.def == null) return;
 
 		// SFX - not during the intialization
 		// if(m_selectedPill != null) AudioManager.instance.PlayClip("audio/sfx/UI/hsx_ui_button_select");
 
 		// Update and Show/Hide title
-		ShowHideAnimator titleAnimator = m_disguiseTitle.GetComponent<ShowHideAnimator>();
-		titleAnimator.Hide(false);
-		titleAnimator.Set(_pill != null);
-		m_disguiseTitle.InitFromDefinition(_pill.def);
+		m_title.InitFromDef(_pill.def);
+		m_title.showHideAnimator.Hide(false);
+		m_title.showHideAnimator.Set(_pill != null);
 
 		// Remove highlight from previously selected pill
 		if(m_selectedPill != null) m_selectedPill.Select(false);
 
 		// Refresh power icons
-		// Except default disguise, which has no powers whatsoever
-		if(_pill.isDefault) {
-			// Hide all power icons
-			for(int i = 0; i < m_powerAnims.Length; i++) {
-				m_powerAnims[i].Hide();
-			}
-		} else {
-			// Init powers
-			DefinitionNode powerSetDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES_POWERUPS, _pill.powerUpSet);
-			for(int i = 0; i < 3; i++) {
-				// Get def
-				string powerUpSku = powerSetDef.GetAsString("powerup"+(i+1).ToString());
-				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
+		for(int i = 0; i < 3; i++) {
+			// Get def
+			string powerUpSku = _pill.def.GetAsString("powerup" + i.ToString());
+			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
+			// If no power, hide the power icon
+			if(powerDef == null) {
+				m_powerAnims[i].Hide();
+			} else {
 				// Refresh data
-				bool locked = (i >= _pill.level);
-				m_powers[i].InitFromDefinition(powerDef, locked);
+				m_powers[i].InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
 
 				// Show
 				// Force an instant hide first to force the animation to be launched
@@ -349,21 +326,67 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
+		// Refresh the lock info
+		if(m_lockIcon != null) {
+			if(_pill.locked) {
+				m_lockIcon.RestartShow();	// Restart animation
+			} else {
+				m_lockIcon.Hide();
+			}
+		}
+
+		if(m_lockText != null) {
+			ShowHideAnimator anim = m_lockText.GetComponent<ShowHideAnimator>();
+			if(_pill.locked) {
+				m_lockText.Localize("Reach level %U0 on %U1 to unlock!", StringUtils.FormatNumber(_pill.def.GetAsInt("unlockLevel") + 1), m_dragonData.def.GetLocalized("tidName"));	// [AOC] HARDCODED!!
+				anim.RestartShow();	// Restart animation
+			} else {
+				anim.Hide();
+			}
+		}
+
+		// Refresh unlock buttons
+		float priceSC = _pill.def.GetAsFloat("priceSC");
+		float pricePC = _pill.def.GetAsFloat("priceHC");
+		bool isPC = pricePC > priceSC;
+		if(m_SCButton != null) {
+			// Show button?
+			// Only if disguise is neither owned nor locked and is purchased with SC
+			if(!isPC && !_pill.owned && !_pill.locked) {
+				// Set price and restart animation
+				m_SCButton.SetAmount(priceSC, CurrencyButton.CurrencyIcon.SC);
+				m_SCButton.animator.RestartShow();
+			} else {
+				m_SCButton.animator.Hide();
+			}
+		}
+
+		if(m_PCButton != null) {
+			// Show button?
+			// Only if disguise is neither owned nor locked and is purchased with PC
+			if(isPC && !_pill.owned && !_pill.locked) {
+				// Set price and restart animation
+				m_PCButton.SetAmount(pricePC, CurrencyButton.CurrencyIcon.PC);
+				m_PCButton.animator.RestartShow();
+			} else {
+				m_PCButton.animator.Hide();
+			}
+		}
+
 		// Store as selected pill and show highlight
 		m_selectedPill = _pill;
 		m_selectedPill.Select(true);
 
 		// Apply selected disguise to dragon preview
-		if(UsersManager.currentUser.EquipDisguise(m_dragonSku, m_selectedPill.sku)) {
+		if(UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_selectedPill.def.sku)) {
 			// Notify game
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonSku);
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
 
 		// If selected disguise is equippable, do it
-		// To be equipable must be unlocked as well as the target dragon
+		// To be equipable, it must be owned
 		if(m_selectedPill != m_equippedPill 
-		&& m_selectedPill.level > 0
-		&& DragonManager.GetDragonData(m_dragonSku).isOwned) {
+		&& m_selectedPill.owned) {
 			// Refresh previous equipped pill
 			if(m_equippedPill != null) {
 				m_equippedPill.Use(false);
@@ -373,6 +396,68 @@ public class DisguisesScreenController : MonoBehaviour {
 			m_selectedPill.Use(true);
 			m_equippedPill = m_selectedPill;
 			PersistenceManager.Save();
+		}
+	}
+
+	/// <summary>
+	/// Purchase button has been pressed (either SC or PC).
+	/// </summary>
+	public void OnPurchaseDisguiseButton() {
+		// Buy currently selected skin
+		// Check required data
+		if(m_selectedPill == null) return;
+		if(m_selectedPill.def == null) return;
+		if(m_selectedPill.owned) return;	// Skin already owned! Buttons shouldn't be visible
+		if(m_selectedPill.locked) return;	// Skin locked! Buttons shouldn't be visible
+
+		// All checks passed, get price and currency
+		long priceSC = m_selectedPill.def.GetAsLong("priceSC");
+		long pricePC = m_selectedPill.def.GetAsLong("priceHC");
+		bool isPC = pricePC > priceSC;
+
+		// Perform transaction
+		bool success = false;
+		if(isPC) {
+			if(UsersManager.currentUser.pc >= pricePC) {
+				// Perform transaction
+				UsersManager.currentUser.AddPC(-pricePC);
+				success = true;
+			} else {
+				// Open PC shop popup
+				// Currency popup / Resources flow disabled for now
+				//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
+		} else {
+			if(UsersManager.currentUser.coins >= priceSC) {
+				// Perform transaction
+				UsersManager.currentUser.AddCoins(-priceSC);
+				success = true;
+			} else {
+				// Open SC shop popup
+				// Currency popup / Resources flow disabled for now
+				//PopupManager.OpenPopupInstant(PopupCurrencyShop.PATH);
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
+		}
+
+		// Unlock the disguise
+		if(success) {
+			// Unlock it!
+			m_wardrobe.UnlockDisguise(m_selectedPill.def.sku);
+
+			// Reload selected pill
+			m_selectedPill.Load(m_selectedPill.def, false, true, m_selectedPill.icon.sprite);
+
+			// Save!
+			PersistenceManager.Save(true);
+
+			// Show some nice FX
+			// Let's re-select the skin for now
+			DisguisePill pill = m_selectedPill;
+			m_selectedPill = null;
+			m_equippedPill = null;
+			OnPillClicked(pill);
 		}
 	}
 }

@@ -106,7 +106,8 @@ public class DragonProgression : SerializableClass {
 		for(int i = 1; i < numLevels; i++) {
 			// Magic formula from content!
 			// xp to complete level X = ([order] + 1)*[xpCoefA] + X*[xpCoefB]
-			m_levelsXp[i] = (dragonIdx * coefA) + (i * coefB);
+			//m_levelsXp[i] = (dragonIdx * coefA) + (i * coefB);
+			m_levelsXp[i] = (i * coefB);	// [AOC] Why add a base value?? I think it's just Hadrian's internal math, no need for it
 		}
 	}
 

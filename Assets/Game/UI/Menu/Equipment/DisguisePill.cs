@@ -14,7 +14,6 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	public DisguisePillEvent OnPillClicked = new DisguisePillEvent();
 
 	//------------------------------------------//
-	// Will be NULL if default disguise
 	private DefinitionNode m_def;
 	public DefinitionNode def {
 		get { return m_def; }
@@ -30,17 +29,17 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		}
 	}
 
-	private int m_level;
+	private bool m_owned = false;
+	public bool owned { get { return m_owned; } }
 
-	public int level { get { return m_level; } }
-	public bool isDefault { get { return (m_def == null); } }
-	public string sku { get { if (m_def != null) return m_def.sku; else return "default"; } }
-	public string powerUpSet { get { if (m_def != null) return m_def.GetAsString("powerupSet"); else return ""; } }
-	public string tidName { get { if (m_def != null) return m_def.Get("tidName"); else return "TID_DISGUISE_DEFAULT_NAME"; } }
+	private bool m_locked = true;
+	public bool locked { get { return m_locked; } }
+
+	private Image m_icon;
+	public Image icon { get { return m_icon; } }
 
 	//------------------------------------------//
 
-	private Image m_disguiseIcon;
 	private GameObject m_iconBg;
 	private GameObject m_lockIcon;
 	private GameObject m_selection;
@@ -50,8 +49,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------//
 
 	void Awake() {
-		m_disguiseIcon = transform.FindComponentRecursive<Image>("DragonSkinIcon");
-
+		m_icon = transform.FindComponentRecursive<Image>("DragonSkinIcon");
 		m_iconBg = transform.FindObjectRecursive("IconBg");
 		m_lockIcon = transform.FindObjectRecursive("IconLock");
 		m_selection = transform.FindObjectRecursive("SelectionEffect");
@@ -60,28 +58,30 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	public void LoadAsDefault(Sprite _spr) {
 		m_def = null;
-		m_level = 1;
 
 		m_iconBg.SetActive(false);
 		m_lockIcon.SetActive(false);
 		m_selection.SetActive(false);
 		m_equippedIcon.SetActive(false);
 
-		m_disguiseIcon.sprite = _spr;
+		m_icon.sprite = _spr;
 	}
 
-	public void Load(DefinitionNode _def, int _level, Sprite _spr) {
+	public void Load(DefinitionNode _def, bool _locked, bool _owned, Sprite _spr) {
+		// Store data
 		m_def = _def;
-		m_level = _level;
+		m_locked = _locked;
+		m_owned = _owned;
 
-		if (_level > 0) {
+		// Locked?
+		if(!_locked) {
 			// Unlocked
-			m_disguiseIcon.color = Color.white;
+			m_icon.color = Color.white;
 			m_iconBg.SetActive(false);
 			m_lockIcon.SetActive(false);
 		} else {
 			// Locked
-			m_disguiseIcon.color = Color.gray;
+			m_icon.color = Color.gray;
 			m_iconBg.SetActive(true);
 			m_lockIcon.SetActive(true);
 		}
@@ -89,11 +89,11 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_equippedIcon.SetActive(false);
 		m_selection.SetActive(false);
 
-		m_disguiseIcon.sprite = _spr;
+		m_icon.sprite = _spr;
 	}
 
 	public void Use(bool _value) {
-		if (m_level > 0) {
+		if(m_owned) {
 			m_iconBg.SetActive(_value);
 			m_equippedIcon.SetActive(_value);
 		}
@@ -111,11 +111,6 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
 	public void OnPointerClick(PointerEventData _eventData) {
-		// [AOC] Quick'n'dirty: find a parent snapping scroll list and move it to this item
-		/*SnappingScrollRect scrollList = GetComponentInParent<SnappingScrollRect>();
-		if(scrollList != null) {
-			scrollList.SelectPoint(this, true);
-		}*/
 		OnPillClicked.Invoke(this);
 	}
 }
