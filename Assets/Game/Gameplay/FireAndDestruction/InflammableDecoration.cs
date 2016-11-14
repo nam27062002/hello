@@ -29,7 +29,7 @@ public class InflammableDecoration : Initializable {
 	private Dictionary<Renderer, Material[]> m_originalMaterials = new Dictionary<Renderer, Material[]>();
 	private Material m_ashMaterial;
 
-	private Entity m_entity;
+	private Decoration m_entity;
 	public string sku { get { return m_entity.sku; } }
 
 
@@ -58,15 +58,15 @@ public class InflammableDecoration : Initializable {
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-		m_entity = GetComponent<Entity>();
+		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_viewBurned = transform.FindChild("view_burned").gameObject;
 		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
 		m_collider = GetComponent<BoxCollider>();
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		if ( m_zoneManager != null )
-			m_zoneEffect = m_zoneManager.GetFireEffectCode(transform.position, m_entity.sku);
+		if (m_zoneManager != null)
+			m_zoneEffect = m_zoneManager.GetFireEffectCode(m_entity);
 		else{
 			m_zoneEffect = ZoneManager.ZoneEffect.None;
 			Debug.LogWarning("No Zone Manager");
@@ -86,11 +86,8 @@ public class InflammableDecoration : Initializable {
 			m_view = transform.FindChild("view").gameObject;
 			m_burned = false;
 
-			int coins = (m_entity == null)? 0 : m_entity.reward.coins;
-			int coinsPerNode = coins / m_fireNodes.Length;
-
 			for (int i = 0; i < m_fireNodes.Length; i++) {
-				m_fireNodes[i].Init(coinsPerNode, m_zoneEffect);
+				m_fireNodes[i].Init(m_zoneEffect);
 			}
 			m_startPosition = transform.position;
 

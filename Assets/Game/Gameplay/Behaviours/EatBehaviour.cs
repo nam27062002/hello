@@ -97,17 +97,17 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Arc detection values
 	private const float m_minAngularSpeed = 0;
 	private const float m_maxAngularSpeed = 12;
-	private const float m_minArcAngle = 60;
-	private const float m_maxArcAngle = 180;
+	private const float m_minArcAngle = 75;
+	private const float m_maxArcAngle = 90;
 		// Multiplies eating distance to detect targets
-	private const float m_eatDetectionRadiusMultiplier = 4;
+	private const float m_eatDetectionRadiusMultiplier = 2.75f;
 		// Increases bite distance based on angular speed
 	private const float m_angleSpeedMultiplier = 1.2f;
 		// Inceases bite distance based on speed
-	private const float m_speedRadiusMultiplier = 0.1f;
+	private const float m_speedRadiusMultiplier = 0.15f;
 
 	// This are tmp variables we reuse every time we need to find targets
-	private Entity[] m_checkEntities = new Entity[20];
+	private Entity[] m_checkEntities = new Entity[30];
 	private Collider[] m_checkPlayer = new Collider[2];
 	private int m_numCheckEntities = 0;
 	private int m_playerColliderMask = -1;
@@ -115,7 +115,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected bool m_pauseEating = false;
 
 	public delegate void OnEvent();
-	public OnEvent onBiteKill;
+	public OnEvent onJawsClosed;
 	public OnEvent onEndEating;
 	public OnEvent onEndLatching;
 
@@ -229,11 +229,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			UpdateEating();
 		}
+		else if ( m_attackTarget != null && m_isPlayer)
+		{
+			BiteKill();
+		}
 
 		if ( m_attackTarget != null )
 		{
-			m_attackTimer -= Time.deltaTime;
-			if ( m_attackTimer <= 0 && !m_waitJawsEvent)
+			m_attackTimer += Time.deltaTime;
+			if ( m_attackTimer > 0.2f && !m_waitJawsEvent)
 			{
 				OnJawsClose();
 			}
@@ -294,11 +298,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 		{
 			StopAttackTarget();
 			BiteKill(PreyCount <= 0 && m_canHold);
-			if (onBiteKill != null)
-				onBiteKill();
 			 //if ( m_holdingPrey == null )
 			 //	TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
 		}
+		if (onJawsClosed != null)
+			onJawsClosed();
 	}
 
 	public Transform GetAttackTarget()
@@ -418,6 +422,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 		if (PreyCount == 0) {			
 			if ( onEndEating != null)
 				onEndEating();
+		}
+		else
+		{
+			BiteKill(false);
 		}
 	}
 
@@ -628,7 +636,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 		float speed = m_motion.velocity.magnitude;
 		float arcRadius = eatDistance * m_eatDetectionRadiusMultiplier;
-		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
+		arcRadius = arcRadius + speed;
 
 		Vector3 dir = m_motion.direction;
 		dir.z = 0;
@@ -684,7 +692,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	public virtual void StartAttackTarget( Transform _transform )
 	{        
 		m_attackTarget = _transform;
-		m_attackTimer = 0.2f;     
+		m_attackTimer = 0;
 	}
 
 	public virtual void StopAttackTarget()
@@ -784,7 +792,7 @@ public abstract class EatBehaviour : MonoBehaviour {
             }
 		}
 
-		m_attackTarget = null;
+		// m_attackTarget = null;
 	}
 
 	/// <summary>
@@ -853,7 +861,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 		// Eat Detect Distance
 		float speed = m_motion.velocity.magnitude;
 		float arcRadius = eatRadius * m_eatDetectionRadiusMultiplier;
-		arcRadius = arcRadius + speed * m_speedRadiusMultiplier;
+		arcRadius = arcRadius + speed *  m_speedRadiusMultiplier;
 
 		// Eating arc
 		float arcAngle = Util.Remap(angularSpeed, m_minAngularSpeed, m_maxAngularSpeed, m_minArcAngle, m_maxArcAngle);

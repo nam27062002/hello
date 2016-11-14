@@ -40,7 +40,7 @@ public class CoinsFeedbackController : MonoBehaviour {
 		DebugUtils.Assert(m_ps != null, "Required component!");
 
 		// Store default max particles -> emission rate ratio
-		m_maxParticlesToEmissionRateRatio = m_ps.emissionRate/m_ps.maxParticles;
+		// m_maxParticlesToEmissionRateRatio = m_ps.emission.rate/(float)m_ps.maxParticles;
 	}
 	
 	/// <summary>
@@ -50,7 +50,7 @@ public class CoinsFeedbackController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Wait for particle system to end
-		if(m_ps.isStopped) {
+		if(m_ps.isStopped && m_ps.particleCount <= 0) {
 			// De-activate game object and return it to the pool
 			gameObject.SetActive(false);
 			PoolManager.ReturnInstance(this.gameObject);
@@ -84,7 +84,9 @@ public class CoinsFeedbackController : MonoBehaviour {
 		// Edit particle system to adjust to the given amount
 		float fDelta = Mathf.InverseLerp(m_rewardRange.min, m_rewardRange.max, (float)_iAmount);
 		m_ps.maxParticles = (int)Mathf.Lerp((float)m_particleRange.min, (float)m_particleRange.max, fDelta);
-		m_ps.emissionRate = m_ps.maxParticles * m_maxParticlesToEmissionRateRatio;
+
+		// var emision = m_ps.emission;
+		// emision.rate = m_ps.maxParticles * m_maxParticlesToEmissionRateRatio;
 
 		// Start particle system
 		m_ps.Play();

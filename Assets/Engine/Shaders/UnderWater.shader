@@ -73,11 +73,14 @@ Shader "Hungry Dragon/UnderWater"
 				v2f vert (appdata_t v) 
 				{
 					v2f o;
-					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.x * 62.2f) + _Time.y * 6.52f);
-					float sinY = sin((v.vertex.y * 35.0f) + _Time.y) + sin((v.vertex.y * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
-					v.vertex.z += (sinX + sinY) * 0.001 * step(0.0, v.vertex.z) * v.color.w;
+					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
+					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
+					float moveVertex = 1.0;// step(0.0, v.vertex.y);
+					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
+
+
 					o.scrPos = ComputeScreenPos(o.vertex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
@@ -94,7 +97,7 @@ Shader "Hungry Dragon/UnderWater"
 										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
 					float z = depthR;// i.uv.y;
-					fixed4 col = tex2D(_MainTex, 20.0f * (i.uv.xy + anim) * (z * 2.0f) * _ProjectionParams.w) * 0.1f;
+					fixed4 col = tex2D(_MainTex, 20.0f * (i.uv.xy + anim) * (z * 6.0f) * _ProjectionParams.w) * 0.1f;
 					col.w = 0.0f;
 					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
 					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);

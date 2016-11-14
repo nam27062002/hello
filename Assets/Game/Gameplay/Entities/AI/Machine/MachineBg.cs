@@ -174,7 +174,7 @@ namespace AI {
 			
 		}
 
-		public virtual bool Burn(float _damage, Transform _transform) {
+		public virtual bool Burn(Transform _transform) {
 			
 			return false;
 		}

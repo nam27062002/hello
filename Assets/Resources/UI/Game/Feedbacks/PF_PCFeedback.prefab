@@ -50,6 +50,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 460630}
   - 114: {fileID: 11438124}
+  - 114: {fileID: 114000014006777976}
   m_Layer: 15
   m_Name: GemSpin
   m_TagString: Untagged
@@ -389,19 +390,41 @@ MonoBehaviour:
   updateType: 0
   isSpeedBased: 0
   hasOnStart: 0
-  hasOnPlay: 0
+  hasOnPlay: 1
   hasOnUpdate: 0
   hasOnStepComplete: 0
   hasOnComplete: 0
   hasOnTweenCreated: 0
   onStart:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114000014006777976}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   onPlay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114000014006777976}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   onUpdate:
@@ -755,7 +778,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 181720}
-  serializedVersion: 4
+  serializedVersion: 2
   lengthInSec: 2
   startDelay:
     scalar: 0.15
@@ -793,13 +816,12 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
+  randomSeed: 0
   looping: 0
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 1
-  autoRandomSeed: 1
   scalingMode: 0
-  randomSeed: 0
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -2469,7 +2491,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 165514}
-  serializedVersion: 4
+  serializedVersion: 2
   lengthInSec: 2
   startDelay:
     scalar: 0.15
@@ -2507,13 +2529,12 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
+  randomSeed: 0
   looping: 0
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 1
-  autoRandomSeed: 1
   scalingMode: 0
-  randomSeed: 0
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -4203,7 +4224,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 181996}
-  serializedVersion: 4
+  serializedVersion: 2
   lengthInSec: 0.15
   startDelay:
     scalar: 0.1
@@ -4241,13 +4262,12 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
+  randomSeed: 0
   looping: 0
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 1
-  autoRandomSeed: 1
   scalingMode: 0
-  randomSeed: 0
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -6087,6 +6107,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_currentObj: {fileID: 0}
   m_currentFont: 0
+--- !u!114 &114000014006777976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: Diamond_In
 --- !u!114 &114000014036870450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6098,4 +6130,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_audioId: Diamond
+  m_audioId: Diamond_Out

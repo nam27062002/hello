@@ -85,10 +85,6 @@ namespace AI {
 				}
 			}
 
-			// throw particles or explode
-			// 
-
-
 			// reward
 			Reward reward = (m_entity as Entity).GetOnKillReward(true);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);

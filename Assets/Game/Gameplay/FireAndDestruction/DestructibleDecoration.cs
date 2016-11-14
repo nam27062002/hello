@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Entity))]
 public class DestructibleDecoration : Initializable {
 
 	private enum InteractionType {
@@ -31,7 +30,7 @@ public class DestructibleDecoration : Initializable {
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private BoxCollider m_collider;
-	private Entity m_entity;
+	private Decoration m_entity;
 
 	private Vector3 m_colliderCenter;
 
@@ -69,15 +68,15 @@ public class DestructibleDecoration : Initializable {
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-		m_entity = GetComponent<Entity>();
+		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_collider = GetComponent<BoxCollider>();
 
 		m_zoneManager = GameObjectExt.FindComponent<ZoneManager>(true);
-		if ( m_zoneManager != null ){
+		if (m_zoneManager != null) {
 			m_zone = m_zoneManager.GetZone(transform.position.z);
-			m_effect = m_zoneManager.GetDestructionEffectCode(transform.position, m_entity.sku);
-		}else{
+			m_effect = m_zoneManager.GetDestructionEffectCode(m_entity);
+		} else {
 			m_zone = ZoneManager.Zone.None;
 			m_effect = ZoneManager.ZoneEffect.None;
 			Debug.LogWarning("No Zone Manager");

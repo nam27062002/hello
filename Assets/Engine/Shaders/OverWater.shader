@@ -11,20 +11,16 @@ Shader "Hungry Dragon/OverWater"
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_Color("Tint (RGB)", color) = (1, 0, 0, 1)
+		_WaterSpeed("Speed ", Float) = 0.5
 	}
 
 	SubShader {
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-//		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 		LOD 100
 
 		Pass {  
-//			Tags { "LightMode" = "ForwardBase" }
 			Blend SrcAlpha OneMinusSrcAlpha
-			// Blend One One
-			//Blend OneMinusDstColor One
 			Cull Off
-//			Lightning Off
 			ZWrite On
 			Fog{ Color(0, 0, 0, 0) }
 
@@ -36,24 +32,18 @@ Shader "Hungry Dragon/OverWater"
 
 				#pragma multi_compile_particles
 				#include "UnityCG.cginc"
-//				#include "AutoLight.cginc"
-//				#include "HungryDragon.cginc"
 
 				#define CAUSTIC_ANIM_SCALE  4.0f
 				#define CAUSTIC_RADIUS  0.1125f
-//				#define CAUSTIC_ANIM_SCALE  0.0f
-//				#define CAUSTIC_RADIUS  0.0f
 
 				struct appdata_t {
 					float4 vertex : POSITION;
 					float2 uv : TEXCOORD0;
-//					float3 normal : NORMAL;
 					float4 color : COLOR;
 				}; 
 
 				struct v2f {
 					float4 vertex : SV_POSITION;
-//					float3 normal : NORMAL;
 					float3 viewDir: TEXCOORD2;
 					half2 uv : TEXCOORD0;
 					float4 scrPos:TEXCOORD1;
@@ -67,26 +57,21 @@ Shader "Hungry Dragon/OverWater"
 				sampler2D _DetailTex;
 				float4 _DetailTex_ST;
 				float4 _Color;
+				float _WaterSpeed;
 
 
 				v2f vert (appdata_t v) 
 				{
 					v2f o;
-					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.x * 62.2f) + _Time.y * 6.52f);
-					float sinY = sin((v.vertex.y * 35.0f) + _Time.y) + sin((v.vertex.y * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
-					v.vertex.z += (sinX + sinY) * 0.001 * step(0.0, v.vertex.z) * v.color.w;
-
-//					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+					float sinX = sin((v.vertex.x * 22.1f) + _Time.y) + sin((v.vertex.x * 42.2f) + _Time.y * 5.7f) + sin((v.vertex.z * 62.2f) + _Time.y * 6.52f);
+					float sinY = sin((v.vertex.z * 35.0f) + _Time.y) + sin((v.vertex.z * 65.3f) + _Time.y * 5.7f) + sin((v.vertex.x * 21.2f) + _Time.y * 6.52f);
+					float moveVertex = 1.0;// step(0.0, v.vertex.y);
+					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
 
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-
-//					o.uv = TRANSFORM_TEX(o.scrPos, _MainTex);
-
-//					o.normal = normalize(mul(unity_ObjectToWorld, float4(sinX, sinY, -3.5f, 0.0)).xyz);
-//					o.normal = normalize(mul(v.normal, unity_WorldToObject));
 
 					o.viewDir = o.vertex - _WorldSpaceCameraPos;
 
@@ -100,7 +85,7 @@ Shader "Hungry Dragon/OverWater"
 
 //					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 4.02f) * CAUSTIC_RADIUS,
 //										 sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 3.04f) * CAUSTIC_RADIUS + _Time.y * 0.5);
-					float2 anim = float2(0.0, _Time.y * 0.5);
+					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
 
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;

@@ -502,10 +502,8 @@ MonoBehaviour:
     m_senseDelay:
       min: 0
       max: 0
-  m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 0
-  m_onEatenSounds: []
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 0
   m_inflammable:
     m_ashesAsset: 
@@ -522,7 +520,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: starling
+  m_sku: starling_01
+  m_isPet: 0
 --- !u!114 &11439036
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -589,6 +588,10 @@ MonoBehaviour:
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
     name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
     path: 
     offset: {x: 0, y: 0, z: 0}
   m_onBurnAudio: 

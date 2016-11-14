@@ -7,15 +7,13 @@ public class Entity : IEntity {
 	// Properties
 	//-----------------------------------------------
 	// Exposed to inspector
-	[FormerlySerializedAs("m_typeID")]
 	[EntitySkuList]
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
 
+	[SerializeField] private bool m_isPet = false;
 
 	/************/
-	private DefinitionNode m_def;
-	public DefinitionNode def { get { return m_def; } }
 
 	private CircleArea2D m_bounds;
 	public CircleArea2D circleArea { get{ return m_bounds; } }
@@ -28,6 +26,10 @@ public class Entity : IEntity {
 
 	private float m_pcChance = 0f;
 	public float pcChance { get { return m_pcChance; }}
+
+	private bool m_isBurnable;
+	private DragonTier m_burnableFromTier = 0;
+	public DragonTier burnableFromTier { get { return m_burnableFromTier; } }
 
 	private bool m_isEdible;
 	private DragonTier m_edibleFromTier = 0;
@@ -85,6 +87,9 @@ public class Entity : IEntity {
 		m_goldenChance = m_def.GetAsFloat("goldenChance");
 		m_pcChance = m_def.GetAsFloat("pcChance");
 
+		m_isBurnable = m_def.GetAsBool("isBurnable");
+		m_burnableFromTier = (DragonTier)m_def.GetAsInt("burnableFromTier");
+
 		m_isEdible = m_def.GetAsBool("isEdible");
 		m_edibleFromTier = (DragonTier)m_def.GetAsInt("edibleFromTier");
 
@@ -103,27 +108,16 @@ public class Entity : IEntity {
 		m_feedbackData.InitFromDef(m_def);
 	}
 
-
-	void OnEnable() {
-		EntityManager.instance.Register(this);
-	}
-
-	void OnDisable() {
-		if (EntityManager.instance != null)
-			EntityManager.instance.Unregister(this);
-	}
-
 	override public void Spawn(ISpawner _spawner) {
+		base.Spawn(_spawner);
+
 		m_spawner = _spawner;
 
-		if ( InstanceManager.player != null )
-		{
+		if (InstanceManager.player != null) {
 			DragonTier tier = InstanceManager.player.data.tier;
 			m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
 			m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
-		}
-		else
-		{
+		} else {
 			m_isGolden = false;
 			m_isPC = false;
 		}
@@ -133,17 +127,24 @@ public class Entity : IEntity {
 
 		m_health = m_maxHealth;
 
-		base.Spawn(_spawner);
-
 		m_newCamera = InstanceManager.gameCamera;
 
         m_spawned = true;
+
+		if (!m_isPet) {
+			EntityManager.instance.Register(this);
+		}
     }
 
     public override void Disable(bool _destroyed) {
-		base.Disable( _destroyed );
-		m_spawner.RemoveEntity(gameObject, _destroyed);
-        m_spawned = false;
+		base.Disable(_destroyed);
+
+		if (!m_isPet) {
+			m_spawner.RemoveEntity(gameObject, _destroyed);
+        	m_spawned = false;
+
+			EntityManager.instance.Unregister(this);
+		}
     }
 
     /// <summary>
@@ -169,7 +170,13 @@ public class Entity : IEntity {
 		return newReward;
 	}
 
+	public bool IsBurnable() {
+		return allowBurnable && m_isBurnable;
+	}
 
+	public bool IsBurnable(DragonTier _tier) {
+		return allowBurnable && m_isBurnable && (m_burnableFromTier <= _tier);
+	}
 
 	public bool IsEdible() {
 		return allowEdible && m_isEdible;
@@ -191,19 +198,14 @@ public class Entity : IEntity {
 		return allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
-	public bool IntersectsWith(Vector2 _center, float _radius) 
-	{
-		if (m_bounds != null) 
-		{
+	public bool IntersectsWith(Vector2 _center, float _radius) {
+		if (m_bounds != null) {
 			return m_bounds.Overlaps(_center, _radius);
 		} 
-		else 
-		{
-			// return _r.Contains(transform.position);
-			float sqrMagnitude = (_center - (Vector2)transform.position).sqrMagnitude;
-			return ( sqrMagnitude <= _radius * _radius );
-		}
-		return false;
+
+		// return _r.Contains(transform.position);
+		float sqrMagnitude = (_center - (Vector2)transform.position).sqrMagnitude;
+		return ( sqrMagnitude <= _radius * _radius );	
 	}
 
 

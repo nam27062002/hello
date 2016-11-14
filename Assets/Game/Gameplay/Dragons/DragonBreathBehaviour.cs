@@ -12,25 +12,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
-	[SerializeField]private float m_damage = 25f;
-	public float damage { 
-		get 
-		{ 
-			switch( m_type )
-			{
-				case Type.Standard:
-				{
-					return m_damage;
-				}
-				case Type.Super:
-				{
-					return m_damage * m_superFuryDamageMultiplier;
-				}
-			}
-			return m_damage;
-		} 
-	}
-	
 	protected Rect m_bounds2D;
 	public Rect bounds2D { get { return m_bounds2D; } }
 
@@ -89,6 +70,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 
+	protected DragonTier m_tier;
 
 	private int m_furyRushesCompleted;
 	private float m_scoreToAddForNextFuryRushes;
@@ -99,10 +81,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected float m_superFuryCoinsMultiplier;
 	protected float m_superFuryDamageMultiplier;
 	protected float m_superFuryLengthMultiplier;
-
-	private DefinitionNode m_spawnEffects = null;
-	private DefinitionNode m_decorationEffects = null;
-
 
 	public string m_breathSound;
     private AudioObject m_breathSoundAO;
@@ -133,10 +111,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_isFuryOn = false;
 		m_bounds2D = new Rect();
 
-
-		// From dragon tier get burning possibilities
-		m_spawnEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_SPAWN_EFFECTS, "tier", m_dragon.data.tierDef.sku);
-		m_decorationEffects = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.FIRE_DECORATION_EFFECTS, "tier", m_dragon.data.tierDef.sku);
+		m_tier = m_dragon.data.tier;
 
 		// Init content cache
 		m_furyBase = m_dragon.data.def.GetAsFloat("furyMax");
@@ -151,7 +126,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		// Get the level
 		m_furyDuration = m_dragon.data.def.GetAsFloat("furyBaseDuration");
-		m_damage = m_dragon.data.def.GetAsFloat("furyBaseDamage");
 
 		m_furyRushesCompleted = 0;
 		m_scoreToAddForNextFuryRushes = (int)(AdditionalGoldRushCompletitionPercentageForConsecutiveRushes * (float)m_furyMax);
@@ -404,36 +378,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 
-
-	// First version to check burn/explode flags. This should be cached? or only consulted once?
-
-	public bool CanBurn(Entity _entity) {
-		if (m_spawnEffects != null ) {
-			return m_spawnEffects.GetAsBool( _entity.sku , false);
-		}
-		return false;
-	}
-
-	public bool CanBurn(InflammableDecoration _decoration) {
-		if ( m_decorationEffects != null )
-		{
-			string param = m_decorationEffects.GetAsString( _decoration.sku );
-			if ( param.Equals("explode") || param.Equals("true") )
-				return true;
-		}
-		return false;
-	}
-
-	public bool ShouldExplode( InflammableDecoration _decoration )
-	{
-		if ( m_decorationEffects != null )
-		{
-			string param = m_decorationEffects.GetAsString( _decoration.sku );
-			if ( param.Equals("explode"))
-				return true;
-		}
-		return false;
-	}
 
 	public virtual void PauseFury()
 	{

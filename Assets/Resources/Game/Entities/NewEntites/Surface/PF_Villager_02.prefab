@@ -940,13 +940,8 @@ MonoBehaviour:
     m_senseDelay:
       min: 1.5
       max: 3
-  m_onSpawnSoundProbability: 0
-  m_onSpawnSounds: []
-  m_onEatenSoundProbability: 50
-  m_onEatenSounds:
-  - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v04
-  - audio/sfx/human/a_crowd_md_efx_excited_agressive_male_a_v01
-  - audio/sfx/human/a_crowd_rnd_efx_excited_fear_male_b_v06
+  m_onSpawnSound: 
+  m_onEatenSound: 
   m_rotateToMouth: 3
   m_inflammable:
     m_ashesAsset: 
@@ -983,6 +978,10 @@ MonoBehaviour:
     name: 
     path: 
     offset: {x: 0, y: 0, z: 0}
+  m_burnParticle:
+    name: PF_BonfireToon
+    path: 
+    offset: {x: 0, y: 1.05, z: 0}
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -1052,6 +1051,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: villager_02
+  m_isPet: 0
 --- !u!137 &13776292
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

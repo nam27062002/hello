@@ -36,4 +36,3 @@ public class EntitySkuListAttribute : PropertyAttribute {
 		m_allowNullValue = _allowNullValue;
 	}
 }
-

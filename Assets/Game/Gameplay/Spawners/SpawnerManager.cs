@@ -70,7 +70,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 #if !PRODUCTION
         Debug_OnDestroy();
-#endif
+#endif      
     }
 
     /// <summary>
@@ -347,14 +347,16 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Clear QuadTree
 		m_spawnersTree = null;
 		m_selectedSpawners.Clear();
+
+        DisableSpawners();
 		m_spawners.Clear();
 
 		// Drop camera references
 		m_newCamera = null;
 
 		// Make sure manager is disabled
-		m_enabled = false;
-	}
+		m_enabled = false;       
+    }
 
     #region debug
     private void Debug_Awake() {        

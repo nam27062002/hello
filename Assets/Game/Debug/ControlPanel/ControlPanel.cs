@@ -44,8 +44,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_fpsCounter; }
 	}
 
-	// Exposed setup
-	[Space]
+    [SerializeField]
+    private TextMeshProUGUI m_entitiesCounter;
+
+    [SerializeField]
+    private TextMeshProUGUI m_logicUnitsCounter;
+
+    // Exposed setup
+    [Space]
 	[SerializeField] private float m_activationTime = 3f;
 
 	// Internal logic
@@ -54,19 +60,40 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	float[] m_DeltaTimes;
 	int m_DeltaIndex;
 
-    public static readonly string[] stringsFrom00To99 =
+    private static int MAX_INTEGER_AS_STRING = 150;
+    private static string[] integerAsStrings;
+    private static string NEGATIVE_STRING_AS_STRING = "-";
+
+    public static string IntegerToString(int number)
     {
-        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
-        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
-        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
-        "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
-        "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
-        "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
-        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
-    };
+        string returnValue = null;
+        if (integerAsStrings == null)
+        {
+            integerAsStrings = new string[MAX_INTEGER_AS_STRING + 2];
+            int i;
+            for (i = 1; i <= MAX_INTEGER_AS_STRING; i++)
+            {
+                integerAsStrings[i] = "" + i;
+            }
+            integerAsStrings[0] = "0";
+            integerAsStrings[MAX_INTEGER_AS_STRING + 1] = "+" + MAX_INTEGER_AS_STRING;
+        }
+
+        if (number < 0)
+        {
+            returnValue = NEGATIVE_STRING_AS_STRING;
+        }
+        else if (number > MAX_INTEGER_AS_STRING)
+        {
+            returnValue = integerAsStrings[MAX_INTEGER_AS_STRING + 1];
+        }
+        else
+        {
+            returnValue = integerAsStrings[number];
+        }
+
+        return returnValue;
+    }
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -79,7 +106,9 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
 		m_fpsCounter.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
-		m_activateTimer = 0;
+        m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
+
+        m_activateTimer = 0;
 	}
 
 	void Start()
@@ -138,7 +167,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
 		if ( m_fpsCounter != null )
 		{
-			float fps = GetFPS();
+			float fps = GetFPS();            
 			if(fps >= 0) {
 				if ( fps < 15 )
 				{
@@ -150,18 +179,37 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				}
 				else
 				{
-					m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
-
-                    // Max FPS supported is 99 because it's the biggest value we have a string for
-                    if ( fps > 99 )
-                        fps = 99;
+					m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;                   
 				}
 
                 // The string is taken from this array to prevent memory from being generated every tick
-                m_fpsCounter.text = stringsFrom00To99[(int)fps];                
+                m_fpsCounter.text = IntegerToString((int)fps);                
             } else { 
 				m_fpsCounter.color = FPS_THRESHOLD_COLOR_1;
-				m_fpsCounter.text = "-";
+				m_fpsCounter.text = NEGATIVE_STRING_AS_STRING;
+			}
+		}
+
+        if (m_entitiesCounter != null && ProfilerSettingsManager.ENABLED)
+        {
+            int value = Spawner.totalEntities;
+            // The string is taken from this array to prevent memory from being generated every tick
+            m_entitiesCounter.text = IntegerToString(value);
+        }
+
+        if (m_logicUnitsCounter != null && ProfilerSettingsManager.ENABLED)
+        {
+            int value = (int)Spawner.totalLogicUnitsSpawned;
+            // The string is taken from this array to prevent memory from being generated every tick
+            m_logicUnitsCounter.text = IntegerToString(value);            
+        }
+
+
+        // Quick Cheats
+        if ( Input.GetKeyDown(KeyCode.L )){
+			if ( InstanceManager.player != null ){
+				// Dispatch global event
+				Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
 			}
 		}
 	}

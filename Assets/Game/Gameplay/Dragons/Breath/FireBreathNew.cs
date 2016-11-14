@@ -215,7 +215,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 			
 		}
 
-		float lerpT = 0.15f;
+//		float lerpT = 0.15f;
 
 		//Vector3 pos = new Vector3(m_triP0.x, m_triP0.y, -8f);
 //		m_light.transform.position = m_triP0; //Vector3.Lerp(m_light.transform.position, pos, 1f);
@@ -237,14 +237,16 @@ public class FireBreathNew : DragonBreathBehaviour {
 			Entity prey = m_checkEntities[i];
 			if ((prey.circleArea != null && Overlaps((CircleAreaBounds)prey.circleArea.bounds)) || IsInsideArea(prey.transform.position)) 
 			{
-				if (CanBurn(prey) || m_type == Type.Super) {
-					AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
-					if (machine != null) {
-						machine.Burn(damage * Time.deltaTime, transform);
+				if (prey.IsBurnable()) {
+					if (prey.IsBurnable(m_tier) || m_type == Type.Super) {
+						AI.Machine machine =  m_checkEntities[i].GetComponent<AI.Machine>();
+						if (machine != null) {
+							machine.Burn(transform);
+						}
+					} else {
+						// Show message saying I cannot burn it
+						Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 					}
-				} else {
-					// Show message saying I cannot burn it
-					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 				}
 			}
 		}
