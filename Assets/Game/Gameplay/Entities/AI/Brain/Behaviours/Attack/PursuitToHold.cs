@@ -33,6 +33,7 @@ namespace AI {
 			protected float m_timeOut;
 
 			private EatBehaviour m_eatBehaviour;
+			private Transform m_mouth;
 
 			private bool m_enemyInRange = false;
 
@@ -56,7 +57,9 @@ namespace AI {
 
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 				m_eatBehaviour.enabled = false;
-				m_eatBehaviour.onJawsClosed += OnBiteKillEvent;
+				m_eatBehaviour.onBiteKill += OnBiteKillEvent;
+
+				m_mouth = m_machine.transform.FindTransformRecursive("Fire_Dummy");
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -110,85 +113,68 @@ namespace AI {
 					return;
 				}
 				if (m_targetMachine != null) {
-					if ( m_targetMachine.IsDead() || m_targetMachine.IsDying()) {
+					if (m_targetMachine.IsDead() || m_targetMachine.IsDying()) {
 						m_targetMachine = null;
 						m_targetEntity = null;
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
 						m_eatBehaviour.enabled = false;
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
-				} else if ( m_player != null ){
-
+				} else if (m_player != null) {
 					bool canLatch = false;
 					if ( m_eatBehaviour.canMultipleLatchOnPlayer && InstanceManager.player.HasFreeHoldPoint())
 						canLatch = true;
 					else
 						canLatch = !InstanceManager.player.BeingLatchedOn();
 
-					if ( !m_player.IsAlive() || !canLatch )
-					{
+					if (!m_player.IsAlive() || !canLatch) {
 						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
 						m_eatBehaviour.enabled = false;
 						Transition(OnEnemyOutOfSight, m_transitionParam);
 					}
 				}
 
-
-
 				Transform m_target = null;
-				if ( m_targetMachine != null)
-					m_target = SearchClosestHoldPoint( m_targetMachine.holdPreyPoints );
-				else
-					m_target = SearchClosestHoldPoint( m_player.holdPreyPoints );
+				if (m_targetMachine != null) {
+					m_target = SearchClosestHoldPoint(m_targetMachine.holdPreyPoints);
+				} else {
+					m_target = SearchClosestHoldPoint(m_player.holdPreyPoints);
+				}
 
-
-				if ( m_target == null )	{
+				if (m_target == null) {
 					m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
 					m_eatBehaviour.enabled = false;
-					Transition( OnPursuitTimeOut, m_transitionParam );
-				}
-
-				float m = (m_machine.position - m_target.position).sqrMagnitude;
-				if (m < m_data.arrivalRadius * m_data.arrivalRadius) {
-				//	m_transitionParam[0] = m_target;
-				//	Transition(OnEnemyInRange, m_transitionParam);
+					Transition(OnPursuitTimeOut, m_transitionParam);
 				} else {
-					m_timer += Time.deltaTime;
-					if ( m_timer > m_timeOut )
-					{
-						m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
-						m_eatBehaviour.enabled = false;
-						Transition( OnPursuitTimeOut, m_transitionParam );
-					}
-					else
-					{
-						if ( m_targetEntity != null )
-							m_pilot.GoTo(m_targetEntity.circleArea.center);	
-						else
-							m_pilot.GoTo(m_target.position);
+					float m = (m_mouth.position - m_target.position).sqrMagnitude;
+					if (m > m_data.arrivalRadius * m_data.arrivalRadius) {
+						m_timer += Time.deltaTime;
+						if (m_timer > m_timeOut) {
+							m_transitionParam[0] = m_data.onFailShutdown.GetRandom();
+							m_eatBehaviour.enabled = false;
+							Transition( OnPursuitTimeOut, m_transitionParam );
+						} else {
+							if (m_targetEntity != null)
+								m_pilot.GoTo(m_targetEntity.circleArea.center);	
+							else
+								m_pilot.GoTo(m_target.position);
+						}
 					}
 				}
-									
-				
 			}
 
-			virtual protected Transform SearchClosestHoldPoint( HoldPreyPoint[] holdPreyPoints )
-			{
+			virtual protected Transform SearchClosestHoldPoint(HoldPreyPoint[] holdPreyPoints) {
 				float distance = float.MaxValue;
 				Transform holdTransform = null;
-				for( int i = 0; i<holdPreyPoints.Length; i++ )
-				{
+				for (int i = 0; i<holdPreyPoints.Length; i++) {
 					HoldPreyPoint point = holdPreyPoints[i];
-					if ( !point.holded && Vector3.SqrMagnitude( m_machine.position - point.transform.position) < distance )
-					{
-						distance = Vector3.SqrMagnitude( m_machine.position - point.transform.position);
+					if (!point.holded && Vector3.SqrMagnitude( m_mouth.position - point.transform.position) < distance) {
+						distance = Vector3.SqrMagnitude(m_mouth.position - point.transform.position);
 						holdTransform = point.transform;
 					}
 				}
 				return holdTransform;
 			}
-
-
 		}
 	}
 }
