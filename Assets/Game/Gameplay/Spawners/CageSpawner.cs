@@ -58,9 +58,9 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 				m_entities[i].GetComponent<AI.IMachine>().UnlockFromCage();
 			}
 		}
-	}
+	}    
 
-	public void ForceRemoveEntities() {
+    public void ForceRemoveEntities() {
 		for (int i = 0; i < m_entities.Length; i++) {			
 			if (m_entities[i] != null) {
 				m_entities[i].transform.parent = m_parents[i];
@@ -85,8 +85,10 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 			}
 		}
 	}
-
-	public bool CanRespawn() 	{ return true; }
+    
+    public ERespawnPendingTask RespawnPendingTask { get; set; }
+    public bool IsRespawningWithDelay() { return false; }
+    public bool CanRespawn() 	{ return true; }
 	public bool Respawn()		{ Spawn(); return true; }
 
 	//---------------------------------------------------------------------------------------------------------
