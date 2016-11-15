@@ -73,7 +73,6 @@ public class DragonData {
 
 	// Debug
 	private float m_scaleOffset = 0f;
-	private float m_speedOffset = 0f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -123,13 +122,6 @@ public class DragonData {
 	public float GetScaleAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.lastLevel, _level);
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
-	}
-
-	/// <summary>
-	/// Offsets speed value. Used for Debug purposes on Preproduction fase.
-	/// </summary>
-	public void OffsetSpeedValue(float _speed) {
-		m_speedOffset = _speed;
 	}
 
 	/// <summary>

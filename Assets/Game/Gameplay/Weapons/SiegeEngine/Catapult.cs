@@ -52,16 +52,19 @@ public class Catapult : Initializable {
 
 
 	// Use this for initialization
-	void Start () {
+	void Awake() {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
-
-		GetHorizontalAngle();
 
 		m_ammo = null;
 		GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoName);
 		PoolManager.CreatePool(projectilePrefab, 3, true);
 
 		FindAmmoSpawnTransform();
+	}
+
+
+	void Start () {
+		GetHorizontalAngle();
 
 		m_target = InstanceManager.player.transform;
 
