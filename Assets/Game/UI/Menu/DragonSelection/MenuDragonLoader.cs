@@ -49,7 +49,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	}
 
 	[Space]
-	[List("idle", "fly_idle")]
+	[List("idle", "fly_idle", "fly_turbo")]
 	[SerializeField] private string m_initialAnim = "idle";
 	public string initialAnim {
 		get { return m_initialAnim; }
