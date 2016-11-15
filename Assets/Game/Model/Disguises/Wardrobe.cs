@@ -30,10 +30,15 @@ public class Wardrobe
 	/// </summary>
 	public void InitFromDefinitions() 
 	{
-		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DISGUISES);
+		Dictionary<string, DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DISGUISES);
 		m_disguises.Clear();
-		for (int i = 0; i < skus.Count; i++) {
-			m_disguises.Add(skus[i], 0);
+		foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
+			// Special case: if unlock level is 0, mark it as owned!
+			if(kvp.Value.GetAsInt("unlockLevel") <= 0) {
+				m_disguises.Add(kvp.Key, 1);
+			} else {
+				m_disguises.Add(kvp.Key, 0);
+			}
 		}
 	}
 

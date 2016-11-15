@@ -191,11 +191,15 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Load disguise icons for this dragon
 		Dictionary<string, Sprite> icons = ResourcesExt.LoadSpritesheet("UI/Metagame/Disguises/" + m_dragonData.def.sku);
 
-		// Hide all the info
-		m_title.showHideAnimator.ForceHide(false);
+		// Hide all the contextual info
 		for(int i = 0; i < m_powerAnims.Length; i++) {
-			m_powerAnims[i].ForceHide(false);
+			if(m_powerAnims[i] != null) m_powerAnims[i].ForceHide(false);
 		}
+		if(m_title != null) m_title.showHideAnimator.ForceHide(false);
+		if(m_lockIcon != null) m_lockIcon.ForceHide(false);
+		if(m_lockText != null) m_lockText.GetComponent<ShowHideAnimator>().ForceHide(false);
+		if(m_SCButton != null) m_SCButton.animator.ForceHide(false);
+		if(m_PCButton != null) m_PCButton.animator.ForceHide(false);
 
 		// Initialize pills
 		m_equippedPill = null;
@@ -456,7 +460,6 @@ public class DisguisesScreenController : MonoBehaviour {
 			// Let's re-select the skin for now
 			DisguisePill pill = m_selectedPill;
 			m_selectedPill = null;
-			m_equippedPill = null;
 			OnPillClicked(pill);
 		}
 	}

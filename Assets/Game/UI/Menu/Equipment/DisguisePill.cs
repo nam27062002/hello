@@ -40,20 +40,18 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	//------------------------------------------//
 
-	private GameObject m_iconBg;
 	private GameObject m_lockIcon;
 	private GameObject m_selection;
-	private GameObject m_equippedIcon;
+	private GameObject m_equippedFrame;
 	private Localizer m_infoText;
 
 	//------------------------------------------//
 
 	void Awake() {
 		m_icon = transform.FindComponentRecursive<Image>("DragonSkinIcon");
-		m_iconBg = transform.FindObjectRecursive("IconBg");
 		m_lockIcon = transform.FindObjectRecursive("IconLock");
 		m_selection = transform.FindObjectRecursive("SelectionEffect");
-		m_equippedIcon = transform.FindObjectRecursive("IconTick");
+		m_equippedFrame = transform.FindObjectRecursive("EquippedFrame");
 		m_infoText = transform.FindComponentRecursive<Localizer>("InfoText");
 	}
 
@@ -67,19 +65,17 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		if(!_locked) {
 			// Unlocked
 			m_icon.color = Color.white;
-			m_iconBg.SetActive(false);
 			m_lockIcon.SetActive(false);
 			m_infoText.gameObject.SetActive(false);
 		} else {
 			// Locked
 			m_icon.color = Color.gray;
-			m_iconBg.SetActive(true);
 			m_lockIcon.SetActive(true);
 			m_infoText.gameObject.SetActive(true);
 			m_infoText.Localize("TID_LEVEL", (_def.GetAsInt("unlockLevel") + 1).ToString());
 		}
 
-		m_equippedIcon.SetActive(false);
+		m_equippedFrame.SetActive(false);
 		m_selection.SetActive(false);
 
 		m_icon.sprite = _spr;
@@ -87,8 +83,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 	public void Use(bool _value) {
 		if(m_owned) {
-			m_iconBg.SetActive(_value);
-			m_equippedIcon.SetActive(_value);
+			m_equippedFrame.SetActive(_value);
 		}
 	}
 
