@@ -48,8 +48,6 @@ public class ContentManager
 
 		// Disguises
 		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[]{"Rules/disguisesDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES_EQUIP, new string[]{"Rules/disguiseEquipDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES_POWERUPS, new string[]{"Rules/disguisePowerUpsDefinitions"});
 
 		kDefinitionFiles.Add(DefinitionsCategory.HOLD_PREY_TIER, new string[]{"Rules/holdPreyTierSettingsDefinitions"});
 
