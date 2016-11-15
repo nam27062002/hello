@@ -5,9 +5,9 @@ using TMPro;
 
 public class QuickDragonSettings : MonoBehaviour {
 
-	public Slider m_sliderVelocity;
-	public Slider m_sliderUp;
-	public Slider m_sliderDown;
+	public Slider m_sliderAcceleration;
+	public Slider m_sliderMass;
+	public Slider m_sliderFricction;
 	public Slider m_sliderGravity;
 	public Slider m_sliderParabolicMovementConstant;
 	public Slider m_sliderParabolicMovementAdd;
@@ -24,9 +24,9 @@ public class QuickDragonSettings : MonoBehaviour {
 		{
 			m_motion = InstanceManager.player.GetComponent<DragonMotion>();
 
-			m_sliderVelocity.value = m_motion.m_dargonAcceleration;
-			m_sliderUp.value = m_motion.m_dragonMass;
-			m_sliderDown.value = m_motion.m_dragonFricction;
+			m_sliderAcceleration.value = m_motion.m_dargonAcceleration;
+			m_sliderMass.value = m_motion.m_dragonMass;
+			m_sliderFricction.value = m_motion.m_dragonFricction;
 			switch( EntityManager.instance.overlapingMethod )
 			{
 				case EntityManager.OverlapingMethod.EntitiesManager: m_eatTypeDropDown.value = 0;break;
@@ -46,19 +46,19 @@ public class QuickDragonSettings : MonoBehaviour {
 		m_numPetsDropDown.value = DragonEquip.m_numPets;	
 	}
 	
-	public void SetVelocityBend(float _size) 
+	public void SetDragonAcceleration(float _size) 
 	{
 		if ( m_motion != null )
 			m_motion.m_dargonAcceleration = _size;
 	}
 
-	public void SetUpBend(float _size) 
+	public void SetDragonMass(float _size) 
 	{
 		if ( m_motion != null )
 			m_motion.m_dragonMass = _size;
 	}
 
-	public void SetDownBend(float _size) 
+	public void SetDragonFricction(float _size) 
 	{
 		if ( m_motion != null )
 			m_motion.m_dragonFricction = _size;

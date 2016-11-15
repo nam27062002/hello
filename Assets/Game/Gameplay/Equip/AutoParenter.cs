@@ -11,20 +11,19 @@ using UnityEngine;
 public class AutoParenter : MonoBehaviour {
 	
 	[SerializeField] private string m_parentName;
+	[SerializeField] private Transform m_lookAtRoot;
 
 	void Awake() {
 		if (!string.IsNullOrEmpty(m_parentName)) {
 			Transform t = transform;
-			Transform p = t.root.FindTransformRecursive(m_parentName);
+			Transform p;
+			if (m_lookAtRoot == null)
+				 p = t.parent.FindTransformRecursive(m_parentName);
+			else
+				p = m_lookAtRoot.FindTransformRecursive(m_parentName);
 
 			if (p == null) {
                 string parentObjName = transform.name;
-
-				DragonPlayer dragon = GetComponentInParent<DragonPlayer>();
-
-				if (dragon != null) {
-					parentObjName = dragon.data.def.sku;
-                }
                 Debug.LogError(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
 			} else {
 				t.parent = p;
