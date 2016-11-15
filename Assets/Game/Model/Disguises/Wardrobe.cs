@@ -8,14 +8,11 @@ public class Wardrobe
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string SKIN_PATH = "Game/Equipable/Skins/";
-	public static readonly string ITEM_PATH = "Game/Equipable/Items/";
-
-	public static readonly int MAX_LEVEL = 3;
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// [AOC] Disguises no longer has levels. We'll keep the int value to track owned disguises though. 0 - not owned, 1 - owned.
 	private Dictionary<string, int> m_disguises;
 
 
@@ -33,49 +30,27 @@ public class Wardrobe
 	/// </summary>
 	public void InitFromDefinitions() 
 	{
-		List<string> skus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DISGUISES);
+		Dictionary<string, DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DISGUISES);
 		m_disguises.Clear();
-		for (int i = 0; i < skus.Count; i++) {
-			m_disguises.Add(skus[i], 0);
-		}
-	}
-
-	public static string GetRandomDisguise(string _dragonSku, string _rarity) {
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
-		List<string> disguises = new List<string>();
-
-		for (int i = 0; i < defs.Count; i++) {
-			if (defs[i].GetAsString("rarity") == _rarity) {
-				disguises.Add(defs[i].sku);
+		foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
+			// Special case: if unlock level is 0, mark it as owned!
+			if(kvp.Value.GetAsInt("unlockLevel") <= 0) {
+				m_disguises.Add(kvp.Key, 1);
+			} else {
+				m_disguises.Add(kvp.Key, 0);
 			}
 		}
-			
-		if (disguises.Count > 0) {
-			disguises.Shuffle<string>(Time.renderedFrameCount);
-			return disguises.GetRandomValue();
+	}
+
+	public bool IsDisguiseOwned(string _sku) {
+		if ( m_disguises != null && m_disguises.ContainsKey(_sku)) {
+			return m_disguises[_sku] > 0;
 		}
-
-		return "";
-	}
-
-
-	public int GetDisguiseValue(string _sku) {
-		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _sku).GetAsInt("value");
-	}
-
-	public int GetDisguiseLevel(string _sku) {
-		if ( m_disguises != null && m_disguises.ContainsKey(_sku))
-			return m_disguises[_sku];
-		return -1;
-	}
-
-	public bool LevelUpDisguise(string _sku) {
-		if (m_disguises[_sku] < MAX_LEVEL) {
-			m_disguises[_sku]++;
-			return true;
-		}
-
 		return false;
+	}
+
+	public void UnlockDisguise(string _sku) {
+		m_disguises[_sku] = 1;
 	}
 
 	//------------------------------------------------------------------//

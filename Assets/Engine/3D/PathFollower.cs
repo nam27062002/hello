@@ -63,8 +63,9 @@ public class PathFollower : MonoBehaviour {
 
 	public Vector3 position {
 		get {
-			if(m_path == null) return Vector3.zero;
-			return m_path.GetValue(delta); 
+			// Apply offset!
+			if(m_path == null) return Vector3.zero + offset;
+			return m_path.GetValue(delta) + offset;
 		}
 	}
 
@@ -97,6 +98,17 @@ public class PathFollower : MonoBehaviour {
 		get { return m_linkMode; }
 		set { 
 			m_linkMode = value; 
+			m_dirty = true;
+		}
+	}
+
+	// Extra
+	[Space]
+	[SerializeField] private Vector3 m_offset = Vector3.zero;
+	public Vector3 offset {
+		get { return m_offset; }
+		set { 
+			m_offset = offset; 
 			m_dirty = true;
 		}
 	}
@@ -168,7 +180,7 @@ public class PathFollower : MonoBehaviour {
 		if(m_target == null || m_path == null) return;
 
 		// Just do it!
-		m_target.position = m_path.GetValue(m_delta);
+		m_target.position = position;
 
 		// Not dirty anymore :)
 		m_dirty = false;

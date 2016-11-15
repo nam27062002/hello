@@ -8,6 +8,8 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -28,6 +30,19 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// GENERIC METHODS													//
 		//------------------------------------------------------------------//
+		[Serializable]
+		public class SpawnData
+		{
+			public string m_dragonSku;
+			public string m_prefabName;	
+
+			public SpawnData( string dragon, string prefab ){
+				m_dragonSku = dragon;
+				m_prefabName = prefab;
+			}
+		}
+		public List<SpawnData> m_spawnsData = new List<SpawnData>();
+
 		/// <summary>
 		/// Initialization.
 		/// </summary>
@@ -36,9 +51,31 @@ namespace LevelEditor {
 			base.Awake();
 
 			// Create default point if not already done
-			GetDragonSpawnPoint("", true);
+			if ( InstanceManager.player != null ){
+				string sku = InstanceManager.player.data.def.sku;
+				GameObject go = GetDragonSpawnPoint(sku, true);
+				// Spawn here eating entity
+				/*
+				for( int i = 0; i<m_spawnsData.Count; i++ ){
+					if ( m_spawnsData[i].m_dragonSku == sku ){
+						if ( !string.IsNullOrEmpty( m_spawnsData[i].m_prefabName ) ){
+							InstantiateSpawner( go, m_spawnsData[i].m_prefabName );
+						}
+					}
+				}
+				*/
+				InstantiateSpawner( go, "IntroSpawners/SP_Test" );
+			}else{
+				GetDragonSpawnPoint("", true);
+			}
 		}
 
+
+		void InstantiateSpawner( GameObject root, string spawner){
+			GameObject sp = (GameObject)Resources.Load( spawner );
+			GameObject go = GameObject.Instantiate(sp, root.transform) as GameObject;
+			go.transform.localPosition = Vector3.zero;
+		}
 		//------------------------------------------------------------------//
 		// OTHER METHODS													//
 		//------------------------------------------------------------------//

@@ -33,6 +33,7 @@ public class PathFollowerEditor : Editor {
 	SerializedProperty m_targetProp = null;
 	SerializedProperty m_pathProp = null;
 	SerializedProperty m_linkModeProp = null;
+	SerializedProperty m_offsetProp = null;
 
 	//------------------------------------------------------------------//
 	// METHODS															//
@@ -45,6 +46,7 @@ public class PathFollowerEditor : Editor {
 		m_targetProp = serializedObject.FindProperty("m_target");
 		m_pathProp = serializedObject.FindProperty("m_path");
 		m_linkModeProp = serializedObject.FindProperty("m_linkMode");
+		m_offsetProp = serializedObject.FindProperty("m_offset");
 	}
 
 	/// <summary>
@@ -99,8 +101,17 @@ public class PathFollowerEditor : Editor {
 			// Link mode
 			EditorGUILayout.PropertyField(m_linkModeProp);
 
+			// Offset
+			EditorGUI.BeginChangeCheck();
+			EditorGUILayout.Space();
+			EditorGUILayout.PropertyField(m_offsetProp);
+			if(EditorGUI.EndChangeCheck()) {
+				targetPathFollower.offset = m_offsetProp.vector3Value;
+			}
+
 			// Debug buttons - only when application is playing, otherwise tweens don't work
 			if(Application.isPlaying) {
+				EditorGUILayout.Space();
 				EditorGUILayout.BeginHorizontal(); {
 					if(GUILayout.Button("<-")) {
 						targetPathFollower.SnapTo(targetPathFollower.snapPoint - 1, 1f);

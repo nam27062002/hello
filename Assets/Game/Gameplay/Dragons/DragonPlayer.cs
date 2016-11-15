@@ -389,6 +389,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void StartIntroMovement()
 	{
+		m_dragonEatBehaviour.enabled = true;
 		// Look for a default spawn point for this dragon type in the scene and move the dragon there
 		GameObject spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME +"_" + data.def.sku);
 		if(spawnPointObj == null) {
