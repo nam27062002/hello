@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -27,6 +28,9 @@ public class WorldFeedbackController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	// Exposed setup
+	[SerializeField] private float m_delay = 0f;
+
 	// Required components
 	private Animator m_anim = null;
 	private TextMeshProUGUI m_text = null;
@@ -34,7 +38,7 @@ public class WorldFeedbackController : MonoBehaviour {
 
 	// Internal vars
 	private Vector3 m_targetWorldPos = Vector3.zero;
-
+	private float m_delayTimer = -1f;
 	private Camera m_camera = null;
 
 	//------------------------------------------------------------------//
@@ -61,37 +65,64 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// </summary>
 	private void LateUpdate() {
 		// Use late update to give time to the animation to apply the position
-		ApplyPosOffset();
+		// Wait until delay is over
+		if(m_delayTimer > 0f) {
+			// Update timer
+			m_delayTimer -= Time.deltaTime;
+			if(m_delayTimer <= 0f) {
+				// Timer finished, move to initial position and start animation
+				ApplyPosOffset();
+				m_anim.SetTrigger("start");
+
+				// Show on top
+				transform.SetAsLastSibling();
+			}
+		} else {
+			ApplyPosOffset();
+		}
 	}
 
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Start the animation of this feedback with the given data.
+	/// Configures the feedback with the given data, but doesn't launch any animation.
 	/// </summary>
 	/// <param name="_text">The text to be displayed.</param>
 	/// <param name="_worldPos">The reference world position to follow.</param>
-	public void Spawn(string _text, Vector3 _worldPos) {
+	public void Init(string _text, Vector3 _worldPos) {
 		// Init text
 		m_text.text = _text;
 
-		// Use base method
-		Spawn(_worldPos);
+		// Call base initializer
+		Init(_worldPos);
 	}
 
 	/// <summary>
-	/// Start the animation without changing the displayed text.
+	/// Configures the feedback with the given data, but doesn't launch any animation.
 	/// </summary>
 	/// <param name="_worldPos">The reference world position to follow.</param>
-	public void Spawn(Vector3 _worldPos) {
+	public void Init(Vector3 _worldPos) {
 		// Store target world pos
 		m_targetWorldPos = _worldPos;
 
-		// Move to initial position, activate object and start animation
-		ApplyPosOffset();
+		// Put it off-screen
+		m_rectTransform.anchorMin = Vector2.one * -1f;	// This should keep it off-screen
+		m_rectTransform.anchorMax = Vector2.one * -1f;
+
+		// Disable until Spawn() method is called
+		gameObject.SetActive(false);
+	}
+
+	/// <summary>
+	/// Start the animation using previously set data (via the Init() methods).
+	/// </summary>
+	public void Spawn() {
+		// Activate object (so update is called), but keep it off-screen until delay is over (Init() methods already did it)
 		gameObject.SetActive(true);
-		m_anim.SetTrigger("start");
+
+		// Reset delay timer
+		m_delayTimer = m_delay;
 	}
 
 	/// <summary>

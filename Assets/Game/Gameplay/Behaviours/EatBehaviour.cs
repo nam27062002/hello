@@ -226,7 +226,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update() 
+	protected virtual void Update() 
 	{
 		if (PreyCount > 0)
 		{

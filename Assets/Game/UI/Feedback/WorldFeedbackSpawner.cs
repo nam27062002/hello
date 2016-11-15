@@ -40,6 +40,9 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	[SerializeField] private GameObject m_escapeFeedbackContainer = null;
 	[SerializeField] private GameObject m_3dFeedbackContainer = null;
 
+	// Internal
+	private Queue<WorldFeedbackController> m_feedbacksQueue = new Queue<WorldFeedbackController>();	// [AOC] In order to prevent too many feedbacks appearing at once, use a queue to show them sequentially
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//    
@@ -140,6 +143,17 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 #endif
     }
 
+	/// <summary>
+	/// Update loop.
+	/// </summary>
+	private void Update() {
+		// Trigger feedbacks one at a time
+		if(m_feedbacksQueue.Count > 0) {
+			WorldFeedbackController fb = m_feedbacksQueue.Dequeue();
+			fb.Spawn();
+		}
+	}
+
     //------------------------------------------------------------------//
     // INTERNAL															//
     //------------------------------------------------------------------//
@@ -161,10 +175,11 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		if(string.IsNullOrEmpty(text)) return;
 
 		// Get an instance from the pool and spawn it!
-		GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name);
+		GameObject obj = PoolManager.GetInstance(m_killFeedbackPrefab.name, false);
 		if (obj != null) {
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-			worldFeedback.Spawn(text, _entity.position);
+			worldFeedback.Init(text, _entity.position);
+			m_feedbacksQueue.Enqueue(worldFeedback);
 		}
 	}
 
@@ -179,11 +194,12 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		}
 
 		// Get an instance from the pool and spawn it!
-		GameObject obj = PoolManager.GetInstance(m_escapedFeedbackPrefab.name);
+		GameObject obj = PoolManager.GetInstance(m_escapedFeedbackPrefab.name, false);
 		if (obj != null) 
 		{
 			WorldFeedbackController worldFeedback = obj.GetComponent<WorldFeedbackController>();
-            worldFeedback.Spawn( LocalizationManager.SharedInstance.Get( tid ) , _entity.position);
+            worldFeedback.Init( LocalizationManager.SharedInstance.Get( tid ) , _entity.position);
+			m_feedbacksQueue.Enqueue(worldFeedback);
 		}
 	}
 	
@@ -206,7 +222,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			// Get a score feedback instance and initialize it with the target reward
 			if(m_scoreFeedbackPrefab != null) {
 				// Get an instance from the pool
-				GameObject obj = PoolManager.GetInstance(m_scoreFeedbackPrefab.name);
+				GameObject obj = PoolManager.GetInstance(m_scoreFeedbackPrefab.name, false);
 
 				// Initialize score component
 				ScoreFeedback scoreFeedback = obj.GetComponent<ScoreFeedback>();
@@ -214,7 +230,8 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 				// Spawn
 				WorldFeedbackController controller = obj.GetComponent<WorldFeedbackController>();
-				controller.Spawn(worldPos);
+				controller.Init(worldPos);
+				m_feedbacksQueue.Enqueue(controller);
 			}
 		}
 
@@ -269,11 +286,12 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_reawrd">Reawrd.</param>
 	private void OnFlockEaten(Transform _entity, Reward _reward) {		
 		// Spawn flock feedback bonus, score will be displayed as any other score feedback
-		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name);
+		GameObject flockBonus = PoolManager.GetInstance(m_flockBonusFeedbackPrefab.name, false);
 		if (flockBonus != null) {
             string text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_FLOCK_BONUS");
 			WorldFeedbackController worldFeedback = flockBonus.GetComponent<WorldFeedbackController>();
-			worldFeedback.Spawn(text, _entity.position);
+			worldFeedback.Init(text, _entity.position);
+			m_feedbacksQueue.Enqueue(worldFeedback);
 		}
 	}
 
