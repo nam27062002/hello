@@ -85,8 +85,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	void Update () {
 		bool activate = Input.GetKey(KeyCode.X) || m_controls.action;
 
-		if (m_insideWater)
-			activate = false;
+		//if (m_insideWater)
+		//	activate = false;
 
 		if (activate) {
 			if (m_ready) {
@@ -105,7 +105,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if (m_active) {
 			// Don't drain energy if cheat is enabled or dragon fury is on
 			if(!DebugSettings.infiniteBoost && !m_dragon.IsFuryOn()) {
-				m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain);
+                if (m_insideWater)
+                    m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain * 5);
+                else
+                    m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain);
+            
 				if (m_dragon.energy <= 0f) {
 					StopBoost();
 				}
