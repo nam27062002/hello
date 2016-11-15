@@ -18,8 +18,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     private const int MAX_NUM_ENTITIES = 200;
     private const int NUM_ENTITIES_PERIOD = 10;
 
-    public GameObject m_prefabOption;
-    private Dictionary<string, Slider> m_prefabSliders;
+    public GameObject m_prefabOption;     
 
     void Awake()
     {
@@ -72,8 +71,7 @@ public class ProfilerControlPanelController : MonoBehaviour
             Dictionary<string, ProfilerSettings.SpawnerData> spawnerDatas = settings.SpawnerDatas;
             if (spawnerDatas != null)
             {
-                m_prefabNames = new List<string>();
-                m_prefabSliders = new Dictionary<string, Slider>();
+                m_prefabNames = new List<string>();                
 
                 TMP_Dropdown.OptionData optionData;
                 foreach (KeyValuePair<string, ProfilerSettings.SpawnerData> pair in spawnerDatas)
@@ -90,8 +88,7 @@ public class ProfilerControlPanelController : MonoBehaviour
                     if (m_prefabOption != null)
                     {
                         Transform thisParent = transform;
-                        GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);
-                        Slider slider;
+                        GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);                        
                         if (prefabOption != null)
                         {
                             prefabOption.transform.parent = thisParent;
@@ -99,13 +96,9 @@ public class ProfilerControlPanelController : MonoBehaviour
                             prefabOption.SetActive(true);                            
 
                             PrefabLogicUnits_SetLabel(prefabOption.transform, pair.Key);
-                            slider = prefabOption.GetComponentInChildren<Slider>();
-                            if (slider != null)
-                            {
 
-                                slider.value = pair.Value.logicUnits;
-                                m_prefabSliders.Add(pair.Key, slider);
-                            }
+                            //PrefabSlider_Add(pair.Key, pair.Value.logicUnits, prefabOption);                                                        
+                            PrefabOptions_Add(pair.Key, pair.Value.logicUnits, prefabOption);
                         }
                     }
                 }
@@ -145,19 +138,17 @@ public class ProfilerControlPanelController : MonoBehaviour
         if (PrefabLogicUnits_IsDirty)
         {
             ProfilerSettings settings = ProfilerSettingsManager.SettingsCached;
-            if (m_prefabSliders != null && settings != null)
-            {                
-                foreach (KeyValuePair<string, Slider> pair in m_prefabSliders)
-                {
-                    settings.SetLogicUnits(pair.Key, pair.Value.value);
-                }
+            if (settings != null)
+            {
+                //PrefabSliders_Update(settings);
+                PrefabOptions_Update(settings);
 
                 if (settings.isDirty)
                 {
                     ProfilerSettingsManager.SaveToCache();
                 }
-            }            
-            
+            }
+
             PrefabLogicUnits_IsDirty = false;
         }
     }
@@ -173,12 +164,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         {
             ProfilerSettingsManager.Spawner_Prefab = m_prefabNames[optionId];
         }
-    }
-
-    public void SetPrefabLogicUnits()
-    {
-        PrefabLogicUnits_IsDirty = true;
-    }
+    }    
 
     #region prefab_logic_units
     private void PrefabLogicUnits_SetLabel(Transform t, string value)
@@ -203,4 +189,103 @@ public class ProfilerControlPanelController : MonoBehaviour
 
     private bool PrefabLogicUnits_IsDirty { get; set; }
     #endregion
+
+    #region prefab_sliders
+    private Dictionary<string, Slider> m_prefabSliders;
+    
+    private void PrefabSlider_Add(string prefabName, float logicUnits, GameObject prefabOption)
+    {
+        Slider slider = prefabOption.GetComponentInChildren<Slider>();
+        if (slider != null)
+        {
+
+            slider.value = logicUnits;
+
+            if (m_prefabSliders == null)
+            {
+                m_prefabSliders = new Dictionary<string, Slider>();
+            }
+
+            m_prefabSliders.Add(prefabName, slider);
+        }
+    }
+
+    private void PrefabSliders_Update(ProfilerSettings settings)
+    {
+        if (m_prefabSliders != null && settings != null)
+        {
+            foreach (KeyValuePair<string, Slider> pair in m_prefabSliders)
+            {
+                settings.SetLogicUnits(pair.Key, pair.Value.value);
+            }            
+        }
+    }
+
+    public void PrefabSliders_SetLogicUnits()
+    {
+        PrefabLogicUnits_IsDirty = true;
+    }
+    #endregion
+
+    #region prefab_options
+    private const int MAX_LOGIC_UNITS = 10;
+    private const float LOGIC_UNITS_PERIOD = 0.5f;
+
+    private Dictionary<string, TMP_Dropdown> m_prefabDropDowns;
+
+    private void PrefabOptions_Add(string prefabName, float logicUnits, GameObject prefabOption)
+    {
+        TMP_Dropdown dropDown = prefabOption.GetComponentInChildren<TMP_Dropdown>();
+        if (dropDown != null)
+        {
+            dropDown.ClearOptions();
+
+            float min = float.MaxValue;
+            float diff;
+            float value = LOGIC_UNITS_PERIOD; 
+            
+            TMP_Dropdown.OptionData optionData;
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+            for (float i = LOGIC_UNITS_PERIOD; i <= MAX_LOGIC_UNITS; i += LOGIC_UNITS_PERIOD)
+            {
+                optionData = new TMP_Dropdown.OptionData();
+                optionData.text = i + "";
+                options.Add(optionData);
+                diff = Mathf.Abs(logicUnits - i);
+                if (diff < min)
+                {
+                    min = diff;
+                    value = i;
+                }
+            }
+
+            dropDown.AddOptions(options);            
+            dropDown.value = ((int)(value / LOGIC_UNITS_PERIOD)) - 1;            
+
+            if (m_prefabDropDowns == null)
+            {
+                m_prefabDropDowns = new Dictionary<string, TMP_Dropdown>();
+            }
+
+            m_prefabDropDowns.Add(prefabName, dropDown);
+        }
+    }
+
+    private void PrefabOptions_Update(ProfilerSettings settings)
+    {
+        if (m_prefabDropDowns != null && settings != null)
+        {
+            foreach (KeyValuePair<string, TMP_Dropdown> pair in m_prefabDropDowns)
+            {
+                settings.SetLogicUnits(pair.Key, (pair.Value.value + 1) * LOGIC_UNITS_PERIOD);
+            }
+        }
+    }
+
+    public void PrefabOptions_SetLogicUnits(int optionId)
+    {
+        PrefabLogicUnits_IsDirty = true;
+    }
+    #endregion
+
 }

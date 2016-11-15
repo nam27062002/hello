@@ -139,9 +139,9 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 	public void ResetSpawnTimer()
 	{
 		m_respawnTimer = 0;
-	}
+	}    
 
-	public void ForceRemoveEntities() {
+    public void ForceRemoveEntities() {
 		for (int i = 0; i < m_entitySpawned; i++) {			
 			if (m_entities[i] != null) {
 				PoolManager.ReturnInstance(m_entityPrefabStr, m_entities[i]);
@@ -192,8 +192,11 @@ public class SpawnerBg : MonoBehaviour, ISpawner {
 			}
 		}
 	}
-		
-	public bool CanRespawn() {		
+    
+    public ERespawnPendingTask RespawnPendingTask { get; set; }
+    public bool IsRespawningWithDelay() { return false; }
+
+    public bool CanRespawn() {		
 		
 		// If we don't have any entity alive, proceed
 		if(m_entityAlive == 0) {

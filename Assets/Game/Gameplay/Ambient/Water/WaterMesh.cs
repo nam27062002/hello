@@ -142,6 +142,9 @@ public class WaterMesh : MonoBehaviour
         m_colliderSize.Set(size.x * lscale.x, size.y * lscale.y, size.z * lscale.z);
 //        box.bounds.SetMinMax(min, max);
 
+
+		box.center = m_colliderCenter;
+		box.size = m_colliderSize;
     }
 
     // Use this for initialization
@@ -162,12 +165,7 @@ public class WaterMesh : MonoBehaviour
             //            m_mesh.triangles = m_indices;
             m_mesh.subMeshCount = 2;
             m_mesh.SetTriangles(m_indices, 0);
-            m_mesh.SetTriangles(m_indices2, 1);
-
-
-            BoxCollider box = GetComponent<BoxCollider>();
-            box.center = m_colliderCenter;
-            box.size = m_colliderSize;
+            m_mesh.SetTriangles(m_indices2, 1);            
         }
     }
 }
