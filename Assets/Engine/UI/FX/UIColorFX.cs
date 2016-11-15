@@ -66,24 +66,7 @@ public class UIColorFX : MonoBehaviour {
 		}
 
 		// Keep shaders updated
-		if(m_imageMaterial != null) {
-			m_imageMaterial.SetColor("_ColorMultiply", colorMultiply);
-			m_imageMaterial.SetColor("_ColorAdd", colorAdd);
-			m_imageMaterial.SetFloat("_Alpha", alpha);
-			m_imageMaterial.SetFloat("_BrightnessAmount", brightness);
-			m_imageMaterial.SetFloat("_SaturationAmount", saturation);
-			m_imageMaterial.SetFloat("_ContrastAmount", contrast);
-		}
-
-		// Keep shaders updated
-		if(m_fontMaterial != null) {
-			m_fontMaterial.SetColor("_ColorMultiply", colorMultiply);
-			m_fontMaterial.SetColor("_ColorAdd", colorAdd);
-			m_fontMaterial.SetFloat("_Alpha", alpha);
-			m_fontMaterial.SetFloat("_BrightnessAmount", brightness);
-			m_fontMaterial.SetFloat("_SaturationAmount", saturation);
-			m_fontMaterial.SetFloat("_ContrastAmount", contrast);
-		}
+		UpdateValues();
 	}
 
 	/// <summary>
@@ -111,11 +94,37 @@ public class UIColorFX : MonoBehaviour {
 	protected void OnValidate() {
 		// Make sure all children have the proper material (for children added after the component)
 		ApplyMaterials();
+		UpdateValues();
 	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Update the values on the shader.
+	/// </summary>
+	private void UpdateValues() {
+		// Image
+		if(m_imageMaterial != null) {
+			m_imageMaterial.SetColor("_ColorMultiply", colorMultiply);
+			m_imageMaterial.SetColor("_ColorAdd", colorAdd);
+			m_imageMaterial.SetFloat("_Alpha", alpha);
+			m_imageMaterial.SetFloat("_BrightnessAmount", brightness);
+			m_imageMaterial.SetFloat("_SaturationAmount", saturation);
+			m_imageMaterial.SetFloat("_ContrastAmount", contrast);
+		}
+
+		// Fonts
+		if(m_fontMaterial != null) {
+			m_fontMaterial.SetColor("_ColorMultiply", colorMultiply);
+			m_fontMaterial.SetColor("_ColorAdd", colorAdd);
+			m_fontMaterial.SetFloat("_Alpha", alpha);
+			m_fontMaterial.SetFloat("_BrightnessAmount", brightness);
+			m_fontMaterial.SetFloat("_SaturationAmount", saturation);
+			m_fontMaterial.SetFloat("_ContrastAmount", contrast);
+		}
+	}
+
 	/// <summary>
 	/// Make sure materials are created and apply them to all subchildren.
 	/// </summary>

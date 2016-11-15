@@ -76,7 +76,7 @@ public class GameHUD : MonoBehaviour {
     }
 
     private void Debug_SetActive() {
-		gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD));
+		gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD, true));
 		m_speedGameObject.SetActive( Prefs.GetBoolPlayer(DebugSettings.SHOW_SPEED) );
     }
 #endregion   

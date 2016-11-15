@@ -126,6 +126,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Add xp
 		float amount = data.progression.GetXpRangeForLevel(data.progression.level).distance * 0.33f;
 		data.progression.AddXp(amount, true);
+		UIFeedbackText.CreateAndLaunch("+" + amount, new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
 
 		// Save persistence
 		PersistenceManager.Save();
