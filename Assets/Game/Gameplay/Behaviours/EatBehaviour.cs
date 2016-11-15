@@ -228,11 +228,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	protected virtual void Update() 
 	{
-		if (PreyCount > 0)
-		{
-			UpdateEating();
-		}
-		else if ( m_attackTarget != null && m_isPlayer)
+		if (PreyCount <= 0 && m_attackTarget != null && m_isPlayer)
 		{
 			BiteKill();
 		}
@@ -269,6 +265,12 @@ public abstract class EatBehaviour : MonoBehaviour {
 		}
 
 		UpdateBlood();        
+	}
+
+	void LateUpdate()
+	{
+		if (PreyCount > 0)
+			UpdateEating();
 	}
 
 	/// <summary>
@@ -395,17 +397,17 @@ public abstract class EatBehaviour : MonoBehaviour {
 				if ( prey.absorbTimer > 0 )
 				{
 					prey.absorbTimer -= Time.deltaTime;
-					float t = 1 - Mathf.Max(0, prey.absorbTimer / prey.eatingAnimationDuration);
+					float t = 1.0f - Mathf.Max(0, prey.absorbTimer / prey.eatingAnimationDuration);
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_suction.position, t);
-					prey.prey.transform.localScale = Vector3.Lerp(prey.prey.transform.localScale, prey.startScale * 0.75f, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale, prey.startScale * 0.75f, t);
                     PreyCount++;
                 }
 				else
 				{
 					prey.eatingAnimationTimer -= Time.deltaTime;
-					float t = Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
-					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_swallow.position, t);
+					float t = 1.0f - Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
+					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, t);
 					// remaining time eating
 					if (prey.eatingAnimationTimer <= 0) 
 					{
