@@ -157,11 +157,15 @@ public abstract class EatBehaviour : MonoBehaviour {
 	// find mouth transform 
 	protected virtual void MouthCache() 
 	{
-		m_mouth = transform.FindTransformRecursive("Fire_Dummy");// SuctionPoint
-		m_bite = transform.FindTransformRecursive("BitePoint");
-		m_swallow = transform.FindTransformRecursive("Dragon_Head");// SwallowPoint
-		m_suction = transform.FindTransformRecursive("SuctionPoint");
+		m_mouth = transform.FindTransformRecursive("SuctionPoint");	// Check to eat
+		m_bite = transform.FindTransformRecursive("BitePoint");	// only to shader HSW
+		m_swallow = transform.FindTransformRecursive("SwallowPoint"); // second and last eating pre position
+		m_suction = transform.FindTransformRecursive("SuctionPoint");	// first eating prey position
 
+		if ( m_mouth == null )
+			m_mouth = transform.FindTransformRecursive("Fire_Dummy");
+		if ( m_swallow == null )
+			m_swallow = transform.FindTransformRecursive("Dragon_Head");
 		if ( m_bite == null )
 			m_bite = m_mouth;	
 		if (m_suction == null)
@@ -400,7 +404,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					float t = 1.0f - Mathf.Max(0, prey.absorbTimer / prey.eatingAnimationDuration);
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_suction.position, t);
-					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale, prey.startScale * 0.75f, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale, prey.startScale * 0.5f, t);
                     PreyCount++;
                 }
 				else
@@ -408,6 +412,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 					prey.eatingAnimationTimer -= Time.deltaTime;
 					float t = 1.0f - Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
 					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, t);
+					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale * 0.5f, prey.startScale * 0.25f, t);
 					// remaining time eating
 					if (prey.eatingAnimationTimer <= 0) 
 					{
@@ -744,7 +749,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
             int numPreysToEat = 0;
             int maxPreysToEat = m_preysToEat.Length;            
-            for (int e = 0; e < m_numCheckEntities; e++)
+            for (int e = 0; e < m_numCheckEntities && preyToHold == null; e++)
             {
 				Entity entity = m_checkEntities[e];
 				if ( entity.IsEdible() )
@@ -757,7 +762,7 @@ public abstract class EatBehaviour : MonoBehaviour {
                             if (numPreysToEat < maxPreysToEat)
                             {
                                 AI.Machine machine = entity.GetComponent<AI.Machine>();
-                                if (!machine.IsDead() && !machine.IsDying())
+                                if ( machine.CanBeBitten() )
                                 {
                                     m_preysToEat[numPreysToEat] = machine;
                                     numPreysToEat++;
@@ -774,8 +779,11 @@ public abstract class EatBehaviour : MonoBehaviour {
 						if (_canHold)
 						{
 							AI.Machine machine = entity.GetComponent<AI.Machine>();
-							preyToHold = machine;
-							entityToHold = entity;
+							if ( machine.CanBeBitten() )
+							{
+								preyToHold = machine;
+								entityToHold = entity;
+							}
 						}
 					}
 					else 

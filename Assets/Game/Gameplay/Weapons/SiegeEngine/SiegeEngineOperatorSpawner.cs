@@ -24,7 +24,7 @@ public class SiegeEngineOperatorSpawner : MonoBehaviour, ISpawner {
 	public AreaBounds area 				{ get { return m_areaBounds; } set { m_areaBounds = value; } }
 	public IGuideFunction guideFunction	{ get { return null; } }
 
-
+	private GameCamera m_newCamera;
 	private Machine m_operator;
 	private Pilot m_operatorPilot;
 
@@ -36,26 +36,22 @@ public class SiegeEngineOperatorSpawner : MonoBehaviour, ISpawner {
 	//-------------------------------------------------------------------
 	void Awake() {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
+
+		m_operator = null;
+		m_operatorPilot = null;
 	}
 
 	void Start() {
 		m_rect = new Rect((Vector2)transform.position, Vector2.zero);
 
-		SpawnerManager.instance.Register(this);
+		m_newCamera = Camera.main.GetComponent<GameCamera>();
 
 		// TODO[MALH]: Get path relative to quality version
 		PoolManager.CreatePool(m_entityPrefabStr, IEntity.ENTITY_PREFABS_PATH + m_entityPrefabStr, 1, true);
 	}
-
-	private void OnDestroy() {
-		if (SpawnerManager.isInstanceCreated)
-			SpawnerManager.instance.Unregister(this);
-	}
-
+		
 	//
-	public void Initialize() {		
-		m_operator = null;
-		m_operatorPilot = null;
+	public void Initialize() {
 	}
 	//-------------------------------------------------------------------
 
@@ -84,7 +80,9 @@ public class SiegeEngineOperatorSpawner : MonoBehaviour, ISpawner {
 
 	public bool CanRespawn() {
 		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Idle) {
-			return IsOperatorDead(); 
+			if (IsOperatorDead()) {
+				return m_newCamera.IsInsideDeactivationArea(m_spawnAtTransform.position);
+			}
 		}
 		return false;
 	}
@@ -140,7 +138,7 @@ public class SiegeEngineOperatorSpawner : MonoBehaviour, ISpawner {
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
 	}
 
-	public void OperartorDoShoot() {
+	public void OperatorDoShoot() {
 		m_operatorPilot.PressAction(Pilot.Action.Button_B);
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
 	}

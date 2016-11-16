@@ -207,6 +207,8 @@ public class GameServerManagerCalety : GameServerManager
             kServerConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion();
         }
 
+        kServerConfig.m_bIsNewVersionRestrictive = false;
+
 #if UNITY_EDITOR
         kServerConfig.m_strClientPlatformBuild = "editor";
 #elif UNITY_ANDROID
