@@ -11,7 +11,7 @@ public class Entity : IEntity {
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; } }
 
-	[SerializeField] private bool m_isPet = false;
+	[SerializeField] private bool m_dieOutsideFrustum = true;
 
 	/************/
 
@@ -131,20 +131,16 @@ public class Entity : IEntity {
 
         m_spawned = true;
 
-		if (!m_isPet) {
-			EntityManager.instance.Register(this);
-		}
+		EntityManager.instance.Register(this);
     }
 
     public override void Disable(bool _destroyed) {
 		base.Disable(_destroyed);
 
-		if (!m_isPet) {
-			m_spawner.RemoveEntity(gameObject, _destroyed);
-        	m_spawned = false;
+		m_spawner.RemoveEntity(gameObject, _destroyed);
+        m_spawned = false;
 
-			EntityManager.instance.Unregister(this);
-		}
+		EntityManager.instance.Unregister(this);
     }
 
     /// <summary>
@@ -225,7 +221,7 @@ public class Entity : IEntity {
 	}
 
 	void LateUpdate() {
-        if (m_spawned) {
+		if (m_spawned && m_dieOutsideFrustum) {
             // check camera to destroy this entity if it is outside view area
             if (m_newCamera != null && m_newCamera.IsInsideDeactivationArea(transform.position)) {
                 if (m_spawner != null) {

@@ -119,6 +119,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		if (m_onEatenParticles.Count <= 0) {
 			// if this entity doesn't have any particles attached, set the standard blood particle
 			ParticleData data = new ParticleData("PS_Blood_Explosion_Small", "Blood/", Vector3.back * 10f);
+			m_onEatenParticles.Add(data);
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
@@ -142,14 +143,12 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		ParticleManager.CreatePool("PS_EntityPCTrail", "Rewards", 5);
 	}
 
-	void animEventsOnAttackStart ()
-	{
+	void animEventsOnAttackStart() {
 		if ( !string.IsNullOrEmpty( m_onAttackAudio ) )
 			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform.position );
 	}
 
-	void animEventsOnAttackEnd ()
-	{
+	void animEventsOnAttackEnd() {
 		if ( m_onAttackAudioAO != null && m_onAttackAudioAO.IsPlaying() && m_onAttackAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
 			m_onAttackAudioAO.Stop();
 	}
@@ -220,8 +219,7 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	void OnDisable()
-	{
+	void OnDisable() {
 		if ( m_idleAudioAO != null && m_idleAudioAO.IsPlaying() )
 			m_idleAudioAO.Stop();
 	}

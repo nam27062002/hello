@@ -49,6 +49,7 @@ namespace AI {
 	        Collision,
 	        Trigger,
 			FallDown,
+			InWater,
 			LockedInCage,
 			Invulnerable,
 

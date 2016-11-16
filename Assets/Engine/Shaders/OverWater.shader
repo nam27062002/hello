@@ -82,9 +82,6 @@ Shader "Hungry Dragon/OverWater"
 				
 				fixed4 frag (v2f i) : SV_Target
 				{
-
-//					float2 anim = float2(sin(i.uv.x * CAUSTIC_ANIM_SCALE + _Time.y * 4.02f) * CAUSTIC_RADIUS,
-//										 sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 3.04f) * CAUSTIC_RADIUS + _Time.y * 0.5);
 					float2 anim = float2(0.0, _Time.y * _WaterSpeed);
 
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
