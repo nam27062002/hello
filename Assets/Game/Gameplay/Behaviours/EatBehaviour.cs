@@ -125,6 +125,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	private List<string> m_ignoreTierList = new List<string>();
 
+    private const float m_absorbDuration = 0.2f;
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -359,8 +361,8 @@ public abstract class EatBehaviour : MonoBehaviour {
                 preyData.startParent = prey.transform.parent;
                 prey.transform.parent = m_mouth;
                 preyData.startScale = prey.transform.localScale;
-                preyData.absorbTimer = eatTime * 0.5f;
-                preyData.eatingAnimationTimer = preyData.absorbTimer;
+                preyData.absorbTimer = m_absorbDuration;// eatTime * 0.5f;
+                preyData.eatingAnimationTimer = eatTime;
                 preyData.eatingAnimationDuration = preyData.eatingAnimationTimer;
                 preyData.prey = prey;
                 preyData.dyingRotation = prey.GetDyingFixRot();
@@ -401,7 +403,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				if ( prey.absorbTimer > 0 )
 				{
 					prey.absorbTimer -= Time.deltaTime;
-					float t = 1.0f - Mathf.Max(0, prey.absorbTimer / prey.eatingAnimationDuration);
+					float t = 1.0f - Mathf.Max(0, prey.absorbTimer / m_absorbDuration);
 					// swallow entity
 					prey.prey.transform.position = Vector3.Lerp(prey.prey.transform.position, m_suction.position, t);
 					prey.prey.transform.localScale = Vector3.Lerp(prey.startScale, prey.startScale * 0.5f, t);
