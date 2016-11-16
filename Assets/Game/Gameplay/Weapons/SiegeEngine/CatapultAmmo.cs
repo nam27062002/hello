@@ -27,11 +27,11 @@ public class CatapultAmmo : MonoBehaviour {
 	private float m_elapsedTime;
 
 
-	public void AttachTo(Transform _parent) {
+	public void AttachTo(Transform _parent, Vector3 _localPosition) {
 		m_oldParent = transform.parent;
 		transform.parent = _parent;
 		transform.forward = _parent.forward;
-		transform.localPosition = Vector3.zero;
+		transform.localPosition = _localPosition;
 
 		m_hasBeenTossed = false;
 	}
