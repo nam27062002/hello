@@ -4,6 +4,12 @@ using System.Collections;
 
 public class Catapult : Initializable {
 
+	private enum State {		
+		Reload = 0,
+		Loaded,
+		Toss
+	}
+
 	[Serializable]
 	private class ExtraToss {
 		public float vAngleOffset = 0f;
@@ -41,8 +47,6 @@ public class Catapult : Initializable {
 	private float m_hAngle;
 	private float m_timer;
 
-	private bool m_toss;
-
 	private Animator m_animator;
 	private PreyAnimationEvents m_animEvents;
 	private AutoSpawnBehaviour m_autoSpawner;
@@ -54,6 +58,7 @@ public class Catapult : Initializable {
 
 	private Transform m_target;
 
+	private State m_state;
 
 	// Use this for initialization
 	void Awake() {
@@ -74,30 +79,27 @@ public class Catapult : Initializable {
 		m_target = InstanceManager.player.transform;
 
 		m_timer = 0;
-		m_toss = false;
 
 		m_animator	 = transform.FindComponentRecursive<Animator>();
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
 		m_animEvents.onAttachProjectile += new PreyAnimationEvents.OnAttachprojectile(OnLoadAmmo);
 		m_animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnToss);
 		m_animEvents.onAttackEnd		+= new PreyAnimationEvents.OnAttackEndDelegate(OnReload);
+
+		m_timer = 0;
+		m_operatorAvailable = false;
+		m_state = State.Reload;
 	}
 
 	public override void Initialize() {
 		m_timer = 0;
-		m_toss = false;
-
-		if (m_operatorSpawner.IsOperatorDead())
-			m_operatorSpawner.Respawn();
 
 		m_operatorAvailable = false;
+		m_state = State.Reload;
 	}
 
 	// Update is called once per frame
-	void Update () {
-		if (m_autoSpawner == null)
-			return;
-
+	void Update () {		
 		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
 			for (int i = 0; i < m_ammo.Length; i++) {
 				if (m_ammo[i] != null) {
@@ -109,37 +111,40 @@ public class Catapult : Initializable {
 			return;
 		}
 
-		if (m_operatorSpawner.IsOperatorDead()) {
-			m_operatorAvailable = false;
+
+		if (m_operatorAvailable) {
+			if (m_operatorSpawner.IsOperatorDead()) {
+				m_operatorAvailable = false;
+				if (m_state == State.Reload) {
+					m_animator.StartPlayback();
+				}
+				return;
+			}
+		} else {
+			//check respawn conditions
+			if (m_operatorSpawner.CanRespawn()) {
+				m_operatorSpawner.Respawn();
+				m_operatorAvailable = true;
+				m_animator.StopPlayback();
+				if (m_state == State.Reload) { // reload time
+					OnReload();
+				}
+			}
+
 			return;
-		} else if (!m_operatorAvailable) {
-			m_operatorAvailable = true;
-
-			bool empty = true;
-			for (int i = 0; i < m_ammo.Length && empty; i++) {
-				empty = m_ammo[i] == null;
-			}
-
-			if (empty) { // reload time
-				OnReload();
-			}
 		}
 
-		if (m_timer > 0f) {
+		if (m_state == State.Loaded) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
-				m_toss = true;
+				if (m_target != null && Aim(m_target.position)) {
+					if (!string.IsNullOrEmpty(m_onTossAudio))
+						AudioController.Play(m_onTossAudio, transform.position);
+					m_animator.SetBool("toss", true);
+					m_operatorSpawner.OperatorDoShoot();
+					m_state = State.Toss;
+				}
 				m_timer = 0f;
-			}
-		}
-
-		if (m_toss) {
-			if (m_target != null && Aim(m_target.position)) {
-				if (!string.IsNullOrEmpty(m_onTossAudio) )
-					AudioController.Play(m_onTossAudio, transform.position);
-				m_animator.SetBool("toss", true);
-				m_operatorSpawner.OperartorDoShoot();
-				m_toss = false;
 			}
 		}
 	}
@@ -151,8 +156,7 @@ public class Catapult : Initializable {
 				m_ammo[i] = PoolManager.GetInstance(m_ammoName);
 
 				CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
-				catapultAmmo.AttachTo(m_ammoTransform);
-				catapultAmmo.transform.localPosition = m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset;
+				catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset);
 			}
 		}
 
@@ -160,13 +164,14 @@ public class Catapult : Initializable {
 			m_ammo[i] = PoolManager.GetInstance(m_ammoName);
 
 			CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
-			catapultAmmo.AttachTo(m_ammoTransform);
-			catapultAmmo.transform.localPosition = m_ammoTransform.rotation * m_initialPosition;
+			catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_initialPosition);
 		}
 
 		m_timer = m_tossDelay;
 
 		m_animator.SetBool("reload", false);
+
+		m_state = State.Loaded;
 	}
 
 	private void OnToss() {
@@ -178,7 +183,6 @@ public class Catapult : Initializable {
 									m_vAngle + m_extraProjectiles[i].vAngleOffset, 
 									m_hAngle + m_extraProjectiles[i].hAngleOffset
 								 );
-
 				m_ammo[i] = null;
 			}
 		}
@@ -193,8 +197,12 @@ public class Catapult : Initializable {
 	}
 
 	private void OnReload() {
-		m_animator.SetBool("reload", true);
-		m_operatorSpawner.OperatorDoReload();
+		if (m_operatorAvailable) {
+			m_animator.SetBool("reload", true);
+			m_operatorSpawner.OperatorDoReload();
+		}
+
+		m_state = State.Reload;
 	}
 
 	private void FindAmmoSpawnTransform() {
