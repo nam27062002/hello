@@ -34,14 +34,20 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_time = 0;
-				m_frequencyOffset = m_data.frequencyOffset.GetRandom();
-				m_offset = Random.onUnitSphere * m_data.followAheadFactor;
-				m_pilot.SlowDown(true);
+				m_frequencyOffset = m_data.frequencyOffset.GetRandom();                
+                Group group = m_pilot.m_machine.GetGroup();
+                if (group != null && group.HasOffsets()) {
+                    m_offset = group.GetOffset(m_pilot.m_machine);
+                } else {
+                    m_offset = Random.onUnitSphere * m_data.followAheadFactor;
+                }
+
+                m_pilot.SlowDown(true);
 				m_oldTarget = m_machine.position;
 			}
 
-			protected override void OnUpdate() {
-				m_pilot.SetMoveSpeed(m_data.speed);
+			protected override void OnUpdate() {             
+                m_pilot.SetMoveSpeed(m_data.speed);
 
 				IMachine leader = m_machine.GetGroup().leader;
 				Vector3 target = leader.target + m_offset;
