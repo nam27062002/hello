@@ -64,14 +64,18 @@ public class MonoBehaviourTemplateEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			if(p.name == "m_propertyRequiringSpecialTreatment") {
-				// Draw the property
-				EditorGUILayout.PropertyField(p);
+			// Unity's "script" property
+			if(p.name == "m_Script") {
+				// Draw the property, disabled
+				bool wasEnabled = GUI.enabled;
+				GUI.enabled = false;
+				EditorGUILayout.PropertyField(p, true);
+				GUI.enabled = wasEnabled;
+			}
 
-				// Example on working with multiple selection
-				if(!p.hasMultipleDifferentValues) {
-					// Do something different
-				}
+			// Properties we don't want to show
+			else if(p.name == "m_ObjectHideFlags") {
+				// Do nothing
 			}
 
 			// Default property display

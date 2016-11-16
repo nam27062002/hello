@@ -56,4 +56,22 @@ public static class TransformExt {
 		newRect.max = _sourceSpace.TransformPoint(new Vector3(_rect.xMax, _rect.yMax, 0f), _targetSpace);
 		return newRect;
 	}
+
+	/// <summary>
+	/// Destroy all children in the target transform.
+	/// </summary>
+	/// <param name="_t">The transform to be changed.</param>
+	/// <param name="_immediate">Immediate destroy?</param>
+	public static void DestroyAllChildren(this Transform _t, bool _immediate) {
+		// Reverse loop since we're destroying
+		int numChildren = _t.childCount;
+		for(int i = numChildren - 1; i >= 0; i--) {
+			// Immediate?
+			if(_immediate) {
+				Object.DestroyImmediate(_t.GetChild(i));
+			} else {
+				Object.Destroy(_t.GetChild(i));
+			}
+		}
+	}
 }
