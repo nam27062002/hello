@@ -9,10 +9,12 @@ public class Catapult : Initializable {
 		public float vAngleOffset = 0f;
 		public float hAngleOffset = 0f;
 		public float initialVelocityOffset = 0f;
+		public Vector3 initialPositionOffset = Vector3.zero;
 	}
 
 	[SerializeField] private float m_vAngle = 45f;
 	[SerializeField] private float m_initialVelocity = 10;
+	[SerializeField] private Vector3 m_initialPosition = Vector3.zero;
 	[SerializeField] private ExtraToss[] m_extraProjectiles;
 
 	[SeparatorAttribute]
@@ -44,8 +46,10 @@ public class Catapult : Initializable {
 	private Animator m_animator;
 	private PreyAnimationEvents m_animEvents;
 	private AutoSpawnBehaviour m_autoSpawner;
+	private SiegeEngineOperatorSpawner m_operatorSpawner;
 
-	private GameObject m_ammo;
+	private bool m_operatorAvailable;
+	private GameObject[] m_ammo;
 	private Transform m_ammoTransform;
 
 	private Transform m_target;
@@ -54,8 +58,9 @@ public class Catapult : Initializable {
 	// Use this for initialization
 	void Awake() {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
+		m_operatorSpawner = GetComponent<SiegeEngineOperatorSpawner>();
 
-		m_ammo = null;
+		m_ammo = new GameObject[m_extraProjectiles.Length + 1];
 		GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoName);
 		PoolManager.CreatePool(projectilePrefab, 3, true);
 
@@ -75,11 +80,17 @@ public class Catapult : Initializable {
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
 		m_animEvents.onAttachProjectile += new PreyAnimationEvents.OnAttachprojectile(OnLoadAmmo);
 		m_animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnToss);
+		m_animEvents.onAttackEnd		+= new PreyAnimationEvents.OnAttackEndDelegate(OnReload);
 	}
 
 	public override void Initialize() {
 		m_timer = 0;
 		m_toss = false;
+
+		if (m_operatorSpawner.IsOperatorDead())
+			m_operatorSpawner.Respawn();
+
+		m_operatorAvailable = false;
 	}
 
 	// Update is called once per frame
@@ -88,11 +99,30 @@ public class Catapult : Initializable {
 			return;
 
 		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
-			if (m_ammo != null) {
-				m_ammo.GetComponent<CatapultAmmo>().Explode(false);
-				m_ammo = null;
+			for (int i = 0; i < m_ammo.Length; i++) {
+				if (m_ammo[i] != null) {
+					m_ammo[i].GetComponent<CatapultAmmo>().Explode(false);
+					m_ammo[i] = null;
+				}
 			}
+			m_operatorAvailable = false;
 			return;
+		}
+
+		if (m_operatorSpawner.IsOperatorDead()) {
+			m_operatorAvailable = false;
+			return;
+		} else if (!m_operatorAvailable) {
+			m_operatorAvailable = true;
+
+			bool empty = true;
+			for (int i = 0; i < m_ammo.Length && empty; i++) {
+				empty = m_ammo[i] == null;
+			}
+
+			if (empty) { // reload time
+				OnReload();
+			}
 		}
 
 		if (m_timer > 0f) {
@@ -105,43 +135,66 @@ public class Catapult : Initializable {
 
 		if (m_toss) {
 			if (m_target != null && Aim(m_target.position)) {
-				if ( !string.IsNullOrEmpty(m_onTossAudio) )
+				if (!string.IsNullOrEmpty(m_onTossAudio) )
 					AudioController.Play(m_onTossAudio, transform.position);
-				m_animator.SetTrigger("toss");
+				m_animator.SetBool("toss", true);
+				m_operatorSpawner.OperartorDoShoot();
 				m_toss = false;
 			}
 		}
 	}
 
 	private void OnLoadAmmo() {
-		m_ammo = PoolManager.GetInstance(m_ammoName);
+		int i;
+		for (i = 0; i < m_ammo.Length - 1; i++) {
+			if (m_ammo[i] == null) {
+				m_ammo[i] = PoolManager.GetInstance(m_ammoName);
 
-		if (m_ammo != null) {
-			CatapultAmmo catapultAmmo = m_ammo.GetComponent<CatapultAmmo>();
+				CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
+				catapultAmmo.AttachTo(m_ammoTransform);
+				catapultAmmo.transform.localPosition = m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset;
+			}
+		}
+
+		if (m_ammo[i] == null) {
+			m_ammo[i] = PoolManager.GetInstance(m_ammoName);
+
+			CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
 			catapultAmmo.AttachTo(m_ammoTransform);
+			catapultAmmo.transform.localPosition = m_ammoTransform.rotation * m_initialPosition;
 		}
 
 		m_timer = m_tossDelay;
+
+		m_animator.SetBool("reload", false);
 	}
 
 	private void OnToss() {
-		if (m_ammo != null) {
-			CatapultAmmo catapultAmmo = m_ammo.GetComponent<CatapultAmmo>();
-			catapultAmmo.Toss(m_initialVelocity, m_vAngle, m_hAngle);
+		int i;
+		for (i = 0; i < m_ammo.Length - 1; i++) {
+			if (m_ammo[i] != null) {
+				CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
+				catapultAmmo.Toss(	m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, 
+									m_vAngle + m_extraProjectiles[i].vAngleOffset, 
+									m_hAngle + m_extraProjectiles[i].hAngleOffset
+								 );
 
-			if (m_extraProjectiles != null) {				
-				for (int i = 0; i < m_extraProjectiles.Length; i++) {
-					GameObject extraAmmo = PoolManager.GetInstance(m_ammoName);
-					catapultAmmo = extraAmmo.GetComponent<CatapultAmmo>();
-					catapultAmmo.AttachTo(m_ammoTransform);
-
-					catapultAmmo.Toss(	m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, 
-										m_vAngle + m_extraProjectiles[i].vAngleOffset, 
-										m_hAngle + m_extraProjectiles[i].hAngleOffset
-									 );
-				}
+				m_ammo[i] = null;
 			}
 		}
+
+		if (m_ammo[i] != null) {
+			CatapultAmmo catapultAmmo = m_ammo[i].GetComponent<CatapultAmmo>();
+			catapultAmmo.Toss(m_initialVelocity, m_vAngle, m_hAngle);
+			m_ammo[i] = null;
+		}
+
+		m_animator.SetBool("toss", false);
+	}
+
+	private void OnReload() {
+		m_animator.SetBool("reload", true);
+		m_operatorSpawner.OperatorDoReload();
 	}
 
 	private void FindAmmoSpawnTransform() {
@@ -156,8 +209,8 @@ public class Catapult : Initializable {
 		Vector3 zero = Vector3.zero;
 
 		zero.x = _vo * Mathf.Cos(_vAngle * Mathf.Deg2Rad) * Mathf.Sin(_hAngle * Mathf.Deg2Rad) * _t;
-		zero.y = _vo * Mathf.Sin(_vAngle * Mathf.Deg2Rad) * _t - (9.8f * _t * _t * 0.5f);;
-		zero.z = _vo * Mathf.Cos(_vAngle * Mathf.Deg2Rad) * Mathf.Cos(_hAngle * Mathf.Deg2Rad) * _t;;
+		zero.y = _vo * Mathf.Sin(_vAngle * Mathf.Deg2Rad) * _t - (9.8f * _t * _t * 0.5f);
+		zero.z = _vo * Mathf.Cos(_vAngle * Mathf.Deg2Rad) * Mathf.Cos(_hAngle * Mathf.Deg2Rad) * _t;
 
 		return zero;
 	}
@@ -183,7 +236,10 @@ public class Catapult : Initializable {
 		return false;
 	}
 
-	// Tools and Debug
+
+	//-------------------------------------------------------------------
+	// Debug
+	//-------------------------------------------------------------------
 	private void OnDrawGizmosSelected() {
 		if (m_forcePreview || !Application.isPlaying) {
 			FindAmmoSpawnTransform();
@@ -195,11 +251,12 @@ public class Catapult : Initializable {
 			//--------------------------------------------------------------------------------
 			float oldVAngle = m_vAngle;
 			Aim(Eye() + m_debugTarget);
-			DrawToss(Colors.magenta, m_initialVelocity, m_vAngle, m_hAngle, maxTime, step);
+			DrawToss(Colors.magenta, m_initialPosition, m_initialVelocity, m_vAngle, m_hAngle, maxTime, step);
 
 			if (m_extraProjectiles != null) {
 				for (int i = 0; i < m_extraProjectiles.Length; i++) {
 					DrawToss(	Colors.coral,
+								m_extraProjectiles[i].initialPositionOffset,
 								m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, 
 								m_vAngle + m_extraProjectiles[i].vAngleOffset, 
 								m_hAngle + m_extraProjectiles[i].hAngleOffset,
@@ -209,8 +266,8 @@ public class Catapult : Initializable {
 			m_vAngle = oldVAngle;
 
 			//--------------------------------------------------------------------------------
-			DrawMinMaxToss(m_initialVelocity, m_vAngleMin, m_hAngle, maxTime, step);
-			DrawMinMaxToss(m_initialVelocity, m_vAngleMax, m_hAngle, maxTime, step);
+			DrawMinMaxToss(m_initialPosition, m_initialVelocity, m_vAngleMin, m_hAngle, maxTime, step);
+			DrawMinMaxToss(m_initialPosition, m_initialVelocity, m_vAngleMax, m_hAngle, maxTime, step);
 
 			//--------------------------------------------------------------------------------
 			Gizmos.color = Colors.magenta;
@@ -222,13 +279,13 @@ public class Catapult : Initializable {
 		}
 	}
 
-	private void DrawToss(Color _color, float _vo, float _vAngle, float _hAngle, float _maxTime, float _step) {
-		Vector3 lastTarget = m_ammoTransform.position + Vector3.zero;
+	private void DrawToss(Color _color, Vector3 _po, float _vo, float _vAngle, float _hAngle, float _maxTime, float _step) {
+		Vector3 lastTarget = m_ammoTransform.position + _po;
 		Vector3 target = lastTarget;
 
 		Gizmos.color = _color;
 		for (float time = _step; time < _maxTime ; time += _step) {
-			target = m_ammoTransform.position + GetTargetAt(time * 0.1f, _vo, _vAngle, _hAngle);
+			target = m_ammoTransform.position + _po + GetTargetAt(time * 0.1f, _vo, _vAngle, _hAngle);
 
 			RaycastHit hitInfo;
 			if (Physics.Linecast(lastTarget, target, out hitInfo)) {
@@ -244,13 +301,13 @@ public class Catapult : Initializable {
 		}
 	}
 
-	private void DrawMinMaxToss(float _vo, float _vAngle, float _hAngle, float _maxTime, float _step) {
-		Vector3 lastTarget = m_ammoTransform.position + Vector3.zero;
+	private void DrawMinMaxToss(Vector3 _po, float _vo, float _vAngle, float _hAngle, float _maxTime, float _step) {
+		Vector3 lastTarget = m_ammoTransform.position + _po;
 		Vector3 target = lastTarget;
 
 		Gizmos.color = Color.cyan;
 		for (float time = _step; time < _maxTime ; time += _step) {
-			target = m_ammoTransform.position + GetTargetAt(time * 0.1f, _vo, _vAngle, _hAngle);
+			target = m_ammoTransform.position + _po + GetTargetAt(time * 0.1f, _vo, _vAngle, _hAngle);
 
 			if (Physics.Linecast(lastTarget, target)) { break; }
 

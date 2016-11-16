@@ -4,6 +4,7 @@
 		_MainTex("Base (RGB)", 2D) = "white" {}
 		_outlineStrength("Outline Strength", Float) = 1.0
 		_stepMargin("Step Margin", Float) = 0.3
+		_inkColor("Ink Color", Color) = (0.0, 0.0, 0.0, 1.0)
 	}
 
 	SubShader{
@@ -15,9 +16,9 @@
 			#include "UnityCG.cginc"
 
 			uniform sampler2D _MainTex;
-			uniform float _offMultiply;
 			uniform float _outlineStrength;
 			uniform float _stepMargin;
+			uniform float4 _inkColor;
 			uniform float4 _MainTex_TexelSize;
 
 			float gray(float4 col)
@@ -45,7 +46,7 @@
 //				float4 bw = float4(lum, lum, lum, 1.0);
 
 //				float4 result = c;
-				float4 result = lerp(col, float4(0.0, 0.0, 0.0, 1.0), smoothstep(0.0, _stepMargin, intensity) );
+				float4 result = lerp(col, _inkColor, smoothstep(0.0, _stepMargin, intensity) );
 				return result;
 			}
 			ENDCG

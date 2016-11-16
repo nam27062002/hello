@@ -21,7 +21,7 @@ public class ChestViewController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -38,6 +38,7 @@ public class ChestViewController : MonoBehaviour {
 
 	// Internal
 	private Animator m_animator = null;
+	private GameObject[] m_rewardViews = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -50,8 +51,18 @@ public class ChestViewController : MonoBehaviour {
 		m_animator = GetComponent<Animator>();
 
 		// Start with all particles stopped
-		if(m_glowFX != null) m_glowFX.Stop();
-		if(m_openFX != null) m_openFX.Stop();
+		ShowGlowFX(false);
+		if(m_openFX != null) {
+			m_openFX.Stop();
+			m_openFX.gameObject.SetActive(false);
+		}
+
+		// Get references (from FBX names)
+		// Respect enum name
+		m_rewardViews = new GameObject[] {
+			this.FindObjectRecursive("Gold"),
+			this.FindObjectRecursive("Gems")
+		};
 	}
 
 	//------------------------------------------------------------------------//
@@ -64,10 +75,12 @@ public class ChestViewController : MonoBehaviour {
 	public void ShowGlowFX(bool _show) {
 		if(m_glowFX != null) {
 			if(_show) {
+				m_glowFX.gameObject.SetActive(true);
 				m_glowFX.Play();
 			} else {
 				m_glowFX.Stop();
 				//m_glowFX.Clear();
+				m_glowFX.gameObject.SetActive(false);
 			}
 		}
 	}
@@ -75,9 +88,17 @@ public class ChestViewController : MonoBehaviour {
 	/// <summary>
 	/// Launch the open animation.
 	/// </summary>
-	public void Open() {
+	/// <param name="_reward">What reward to show after the open animation.</param>
+	public void Open(Chest.RewardType _reward) {
 		// Launch animation - particle effect will be launched with the animation event
 		m_animator.SetTrigger("open");
+
+		// Show the right reward
+		if(m_rewardViews != null) {
+			for(int i = 0; i < m_rewardViews.Length; i++) {
+				m_rewardViews[i].SetActive(i == (int)_reward);
+			}
+		}
 	}
 
 	/// <summary>
@@ -85,7 +106,10 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void Close() {
 		// Stop particles
-		if(m_openFX != null) m_openFX.Stop();
+		if(m_openFX != null) {
+			m_openFX.Stop();
+			m_openFX.gameObject.SetActive(false);
+		}
 
 		// Launch close animation
 		m_animator.SetTrigger("close");
@@ -99,7 +123,10 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void OnLidOpen() {
 		// Launch particle system
-		if(m_openFX != null) m_openFX.Play();
+		if(m_openFX != null) {
+			m_openFX.gameObject.SetActive(true);
+			m_openFX.Play();
+		}
 
 		// Notify delegates
 		OnChestOpenEvent.Invoke();

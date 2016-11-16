@@ -109,13 +109,16 @@ public class GoalsSceneController : MonoBehaviour {
 	/// </summary>
 	private void RefreshChests() {
 		// Chest by chest
+		Chest.RewardData rewardData;
 		for(int i = 0; i < m_chestSlots.Length; i++) {
 			// Skip if chest not initialized
 			if(m_chestSlots[i] == null) continue;
 
 			// Initialize with the state of that chest
 			if(ChestManager.collectedChests > i) {
-				m_chestSlots[i].view.Open();
+				// Figure out reward type to show the proper FX
+				rewardData = ChestManager.GetRewardData(i + 1);
+				m_chestSlots[i].view.Open(rewardData.type);
 			} else {
 				m_chestSlots[i].view.Close();
 			}

@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -47,6 +48,7 @@ public class CameraSnapPointEditor : Editor {
 			} else {
 				camObj = new GameObject();
 				m_editionCamera = camObj.AddComponent<Camera>();
+				m_editionCamera.depth = int.MaxValue;
 			}
 			camObj.name = "CameraSnapPointPreview";
 			camObj.hideFlags = HideFlags.DontSave;
@@ -150,9 +152,16 @@ public class CameraSnapPointEditor : Editor {
 			// Label
 			EditorGUILayout.PrefixLabel("Apply to camera");
 
-			// Camera selection
+			// Camera selection - exclude UI cameras
 			Camera[] sceneCameras = GameObject.FindObjectsOfType<Camera>();
-			m_customTargetCamera = EditorGUILayoutExt.Popup<Camera>("", m_customTargetCamera, sceneCameras);
+			List<Camera> validCameras = new List<Camera>();
+			for(int i = 0; i < sceneCameras.Length; i++) {
+				// Exclude UI cameras, for now it's enough by checking the name
+				if(!sceneCameras[i].name.Contains("UI")) {
+					validCameras.Add(sceneCameras[i]);
+				}
+			}
+			m_customTargetCamera = EditorGUILayoutExt.Popup<Camera>("", m_customTargetCamera, validCameras.ToArray());
 
 			// Apply button
 			bool wasEnabled = GUI.enabled;

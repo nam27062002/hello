@@ -205,6 +205,10 @@ namespace LevelEditor {
 				OnLoadScenesFromDefinition();
 			}
 
+			if(GUILayout.Button("Close All Scenes")) {
+				OnCloseAllScenes();
+			}
+
 			// Toolbar
 			EditorGUILayout.BeginVertical(LevelEditorWindow.styles.boxStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 				EditorGUILayout.BeginHorizontal(); {
@@ -431,11 +435,15 @@ namespace LevelEditor {
 
 			Dictionary<string,DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS);
 			m_levelsSkuList.Clear();
-			foreach( string str in defs.Keys)
-				m_levelsSkuList.Add(str);
+			List<string> options = new List<string>(defs.Count);
+
+			foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
+				m_levelsSkuList.Add(kvp.Key);
+				options.Add(kvp.Key + " (" + kvp.Value.Get("spawnersScene") + ", " + kvp.Value.Get("collisionScene") + ", " + kvp.Value.Get("artScene") + ")");
+			}
 
 			// Show selection popup
-			SelectionPopupWindow.Show(m_levelsSkuList.ToArray(), OnLoadScenesFromDefinitions);
+			SelectionPopupWindow.Show(options.ToArray(), OnLoadScenesFromDefinitions);
 
 		}
 
@@ -478,6 +486,13 @@ namespace LevelEditor {
 			}
 
 			LevelEditor.settings.selectedMode = oldMode;
+		}
+
+		/// <summary>
+		/// Close all currently open scenes.
+		/// </summary>
+		private void OnCloseAllScenes() {
+			UnloadAllLevels();
 		}
 
 

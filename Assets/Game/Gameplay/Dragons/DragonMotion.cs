@@ -221,8 +221,9 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 	private bool m_grab = false;
 
 	private float m_inverseGravityWater = -0.5f;
+	private float m_accWaterFactor = 0.72f;
 
-	private RegionManager m_regionManager;
+    private RegionManager m_regionManager;
 	public Current                              current { get; set; }
 
 	private Vector3 m_diePosition;
@@ -284,8 +285,8 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
 
 		// Movement Setup
-		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
-		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
+		m_dargonAcceleration = m_dragon.data.def.GetAsFloat("acceleration");
+		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
@@ -398,12 +399,17 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						m_animator.SetBool("fly down", true);
 					}*/
+                    m_accWaterFactor = 0.72f;
+                    m_inverseGravityWater = 1.5f;
 					m_startParabolicPosition = transform.position;
 				}break;
 				case State.ExitingWater:
 				{
 					m_recoverTimer = m_insideWaterRecoveryTime;
-				}break;
+                    m_accWaterFactor = 2.0f;
+
+                }
+                    break;
 				case State.OuterSpace:
 				{
 					m_animator.SetBool("fly down", true);
@@ -910,7 +916,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 
         float gravity = 9.81f * m_dragonGravityModifier * -3.0f;// m_inverseGravityWater;
 		Vector3 acceleration = Vector3.down * gravity * m_dragonMass;   // Gravity
-        acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass * 0.7f;	// User Force
+        acceleration += impulse * m_dargonAcceleration * GetTargetSpeedMultiplier() * m_dragonMass * m_accWaterFactor;	// User Force
 
 		// stroke's Drag
 		m_impulse = m_rbody.velocity;
@@ -926,7 +932,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         m_rbody.velocity = m_impulse;
 
         //m_inverseGravityWater -= Time.deltaTime * 0.5f;
-        m_inverseGravityWater -= Time.deltaTime * 0.2f;
+        m_inverseGravityWater -= Time.deltaTime * 0.22f;
         if (m_inverseGravityWater < 0) m_inverseGravityWater = 0;
 
 
