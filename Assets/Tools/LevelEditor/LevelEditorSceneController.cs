@@ -40,7 +40,7 @@ namespace LevelEditor {
             ApplicationManager.CreateInstance();            
 
             // Initialize some required managers
-            ContentManager.InitContent();			
+            ContentManager.InitContent(true);
 			SpawnerManager.CreateInstance();
 
             UsersManager.CreateInstance();
