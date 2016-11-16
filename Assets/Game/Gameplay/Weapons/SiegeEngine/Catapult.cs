@@ -51,6 +51,7 @@ public class Catapult : Initializable {
 	private PreyAnimationEvents m_animEvents;
 	private AutoSpawnBehaviour m_autoSpawner;
 	private SiegeEngineOperatorSpawner m_operatorSpawner;
+	private InflammableDecoration m_inflammable;
 
 	private bool m_operatorAvailable;
 	private GameObject[] m_ammo;
@@ -64,6 +65,7 @@ public class Catapult : Initializable {
 	void Awake() {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponent<SiegeEngineOperatorSpawner>();
+		m_inflammable = GetComponent<InflammableDecoration>();
 
 		m_ammo = new GameObject[m_extraProjectiles.Length + 1];
 		GameObject projectilePrefab = Resources.Load<GameObject>("Game/Projectiles/" + m_ammoName);
@@ -93,6 +95,7 @@ public class Catapult : Initializable {
 
 	public override void Initialize() {
 		m_timer = 0;
+		m_animator.StopPlayback();
 
 		m_operatorAvailable = false;
 		m_state = State.Reload;
@@ -100,7 +103,9 @@ public class Catapult : Initializable {
 
 	// Update is called once per frame
 	void Update () {		
-		if (m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
+		if (m_inflammable.IsBurning() 
+		|| 	m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
+			m_animator.StartPlayback();
 			for (int i = 0; i < m_ammo.Length; i++) {
 				if (m_ammo[i] != null) {
 					m_ammo[i].GetComponent<CatapultAmmo>().Explode(false);
@@ -124,6 +129,9 @@ public class Catapult : Initializable {
 			//check respawn conditions
 			if (m_operatorSpawner.CanRespawn()) {
 				m_operatorSpawner.Respawn();
+			}
+
+			if (!m_operatorSpawner.IsOperatorDead()) {				
 				m_operatorAvailable = true;
 				m_animator.StopPlayback();
 				if (m_state == State.Reload) { // reload time
