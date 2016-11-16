@@ -273,10 +273,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 420968}
-  - 114: {fileID: 11491102}
   - 114: {fileID: 11440808}
   m_Layer: 12
-  m_Name: head_1
+  m_Name: mouth
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -377,13 +376,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 199086}
-  m_LocalRotation: {x: 0.70071226, y: 0.094911575, z: -0.7007003, w: -0.094937935}
-  m_LocalPosition: {x: 0.000030517578, y: 0.07675171, z: -0.5038023}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.2190253, y: 0.0027592096, z: -0.005369364, w: -0.97570056}
+  m_LocalPosition: {x: 0, y: 0.065, z: 0.38}
+  m_LocalScale: {x: 0.9999999, y: 0.99999964, z: 0.99999976}
+  m_LocalEulerAnglesHint: {x: 25.277, y: -0.187, z: 0.57000005}
   m_Children: []
   m_Father: {fileID: 470162}
-  m_RootOrder: 7
+  m_RootOrder: 12
 --- !u!4 &429346
 Transform:
   m_ObjectHideFlags: 1
@@ -473,11 +472,12 @@ Transform:
   - {fileID: 414536}
   - {fileID: 411284}
   - {fileID: 495242}
-  - {fileID: 420968}
+  - {fileID: 4000010819481614}
   - {fileID: 4000013924919434}
   - {fileID: 4000010372385576}
   - {fileID: 4000011367010736}
   - {fileID: 4000011648505938}
+  - {fileID: 420968}
   m_Father: {fileID: 414586}
   m_RootOrder: 1
 --- !u!4 &481560
@@ -1018,7 +1018,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 199086}
+  m_GameObject: {fileID: 1000012825610552}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
@@ -2099,6 +2099,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1000012825610552
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000010819481614}
+  - 114: {fileID: 11491102}
+  - 114: {fileID: 114000013004202350}
+  m_Layer: 12
+  m_Name: head_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000012833952594
 GameObject:
   m_ObjectHideFlags: 1
@@ -2849,6 +2866,19 @@ Transform:
   - {fileID: 4000013964752524}
   m_Father: {fileID: 4000012541242528}
   m_RootOrder: 0
+--- !u!4 &4000010819481614
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012825610552}
+  m_LocalRotation: {x: 0.70071226, y: 0.094911575, z: -0.7007003, w: -0.094937935}
+  m_LocalPosition: {x: 0.000030517578, y: 0.07675171, z: -0.5038023}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 470162}
+  m_RootOrder: 7
 --- !u!4 &4000010928822206
 Transform:
   m_ObjectHideFlags: 1
@@ -3763,7 +3793,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.06649831, y: 0.59449834, z: 0.04942774, w: 0.79981667}
+  m_LocalRotation: {x: -0.0019618433, y: 0.4318562, z: 0.0009393467, w: 0.90193987}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4844,6 +4874,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114000013004202350
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012825610552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Head
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000013077924290
 MonoBehaviour:
   m_ObjectHideFlags: 1
