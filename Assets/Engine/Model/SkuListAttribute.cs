@@ -44,7 +44,7 @@ public class SkuListAttribute : ListAttribute {
 	public override void ValidateOptions() {
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
-			ContentManager.InitContent();
+			ContentManager.InitContent(true);
 		}
 
 		// Get sku list

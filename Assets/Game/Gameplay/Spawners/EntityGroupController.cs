@@ -8,11 +8,14 @@ public class EntityGroupController : MonoBehaviour
 	private GameObject[] m_entities;
 	public GameObject[] entities { get { return m_entities; } }
 
+    public float m_offsetRadius = 1f;
+
 	// Use this for initialization
 	public void Init(int _maxEntities)
 	{
 		flock = new AI.Group();
-		m_entities = new GameObject[_maxEntities];
+        flock.CreateOffsets(m_offsetRadius, _maxEntities);
+        m_entities = new GameObject[_maxEntities];
 	}
 
 	public void Add(GameObject _entity) 
