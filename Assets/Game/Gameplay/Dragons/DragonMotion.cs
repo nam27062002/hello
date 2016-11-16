@@ -924,16 +924,13 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 		float impulseMag = m_impulse.magnitude;
 		m_impulse += (acceleration * Time.deltaTime) - ( m_impulse.normalized * m_dragonFricction * 1.0f * impulseMag * Time.deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
-		RotateToDirection( impulse );
+		RotateToDirection(m_direction);
 
-        //ApplyExternalForce
-        //m_impulse += Vector3.down * gravity * m_dragonMass * Time.deltaTime;
 
         m_rbody.velocity = m_impulse;
 
-        //m_inverseGravityWater -= Time.deltaTime * 0.5f;
         m_inverseGravityWater -= Time.deltaTime * 0.22f;
-        if (m_inverseGravityWater < 0) m_inverseGravityWater = 0;
+        if (m_inverseGravityWater < 0.3f) m_inverseGravityWater = 0.3f;
 
 
 

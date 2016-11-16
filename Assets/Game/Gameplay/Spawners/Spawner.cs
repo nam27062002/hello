@@ -471,7 +471,13 @@ public class Spawner : MonoBehaviour, ISpawner {
 				entity.Spawn(this); // lets spawn Entity component first
 			}
 
-			AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
+            AI.Machine machine = spawning.GetComponent<AI.Machine>();
+            if (machine != null && m_groupController)
+            {
+                machine.EnterGroup(ref m_groupController.flock);
+            }
+
+            AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
 			if (pilot != null) {
 				pilot.SetRail(m_rail, (int)m_rails);
                 m_rail = (m_rail + 1) % (int)m_rails;
@@ -484,12 +490,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				if (component != entity && component != pilot) {
 					component.Spawn(this);
 				}
-			}
-
-			AI.Machine machine = spawning.GetComponent<AI.Machine>();
-			if (machine != null && m_groupController) {				
-				machine.EnterGroup(ref m_groupController.flock);
-			}
+			}			
 
             m_entitiesActivated++;                 
 

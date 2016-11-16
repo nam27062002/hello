@@ -34,6 +34,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 
 	// Internal
 	private GameObject m_rewardObj = null;
+	private Chest.RewardData m_rewardData = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -51,20 +52,20 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// <summary>
 	/// Setup and start animation with the given chest info.
 	/// </summary>
-	/// <param name="_chestRewardDef">Data to be displayed.</param>
-	public void LaunchAnimation(DefinitionNode _chestRewardDef) {
+	/// <param name="_chestRewardData">Data to be displayed.</param>
+	public void LaunchAnimation(Chest.RewardData _chestRewardData) {
 		// Skip reward setup if def is not valid
-		if(_chestRewardDef != null) {
+		if(_chestRewardData != null) {
 			// Aux vars
 			string rewardPrefabPath = COINS_REWARD_PREFAB;	// [AOC] Let's show coins by default (debug purposes)
 
 			// PC or coins?
-			switch(_chestRewardDef.Get("type")) {
-				case "coins": {
+			switch(_chestRewardData.type) {
+				case Chest.RewardType.SC: {
 					rewardPrefabPath = COINS_REWARD_PREFAB;
 				} break;
 
-				case "pc": {
+				case Chest.RewardType.PC: {
 					rewardPrefabPath = PC_REWARD_PREFAB;
 				} break;
 			}
@@ -78,9 +79,12 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 			// Set text
 			TextMesh text = m_rewardObj.FindComponentRecursive<TextMesh>();
 			if(text != null) {
-				text.text = "+" + StringUtils.FormatNumber(_chestRewardDef.GetAsInt("amount"));
+				text.text = "+" + StringUtils.FormatNumber(_chestRewardData.amount);
 			}
 		}
+
+		// Store data for further use
+		m_rewardData = _chestRewardData;
 
 		// Launch animation sequence
 		GetComponent<Animator>().SetTrigger("in");
@@ -105,7 +109,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// </summary>
 	public void OnChestLanded() {
 		// Launch the open animation
-		m_chest.Open();
+		m_chest.Open(m_rewardData != null ? m_rewardData.type : Chest.RewardType.SC);
 
 		// [AOC] TODO!! Play some SFX
 
