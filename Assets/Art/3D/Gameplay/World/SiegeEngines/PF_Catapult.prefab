@@ -745,7 +745,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012944877864}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0922798, y: 5.922571, z: 1.4590058}
+  m_LocalPosition: {x: 0.09, y: 5.922571, z: 1.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -924,6 +924,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dummy_Rock
+  m_lookAtRoot: {fileID: 0}
 --- !u!114 &114000010102554448
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1007,21 +1008,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_vAngle: 45
   m_initialVelocity: 20
-  m_initialPosition: {x: 0, y: 0.52, z: 0.06}
+  m_initialPosition: {x: 0, y: 0.32, z: -0.27}
   m_extraProjectiles:
   - vAngleOffset: 5.08
     hAngleOffset: 7.01
     initialVelocityOffset: 0.6
-    initialPositionOffset: {x: 0, y: -0.21, z: -0.28}
+    initialPositionOffset: {x: 0, y: -0.09, z: 0.05}
   - vAngleOffset: 13.14
     hAngleOffset: -7.92
     initialVelocityOffset: -1.47
-    initialPositionOffset: {x: 0, y: -0.21, z: 0.46}
+    initialPositionOffset: {x: 0, y: 0.57, z: 0.29}
   m_vAngleMin: 0
   m_vAngleMax: 60
   m_eyeOffset: {x: 5.22, y: 10.9, z: 0}
   m_eyeRadius: 13.6
-  m_tossDelay: 5
+  m_tossDelay: 1
   m_ammoName: PF_CatapultRock
   m_ammoSpawnTransformName: ammo
   m_onTossAudio: Catapult_Shoot

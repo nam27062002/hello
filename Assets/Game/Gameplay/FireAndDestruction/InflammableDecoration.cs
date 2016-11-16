@@ -19,6 +19,7 @@ public class InflammableDecoration : Initializable {
 	private BoxCollider m_collider;
 
 	private FireNode[] m_fireNodes;
+	private bool m_isBurning;
 	private bool m_burned;
 	private DeltaTimer m_timer = new DeltaTimer();
 
@@ -85,6 +86,7 @@ public class InflammableDecoration : Initializable {
 			m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
 			m_view = transform.FindChild("view").gameObject;
 			m_burned = false;
+			m_isBurning = false;
 
 			for (int i = 0; i < m_fireNodes.Length; i++) {
 				m_fireNodes[i].Init(m_zoneEffect);
@@ -107,6 +109,7 @@ public class InflammableDecoration : Initializable {
 		m_viewBurned.SetActive(false);
 
 		m_burned = false;
+		m_isBurning = false;
 
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Reset();
@@ -116,6 +119,10 @@ public class InflammableDecoration : Initializable {
 
 		transform.position = m_startPosition;
 		ResetViewMaterials();
+	}
+
+	public bool IsBurning() {
+		return m_isBurning;
 	}
 
 	// Update is called once per frame
@@ -153,14 +160,14 @@ public class InflammableDecoration : Initializable {
 							if (m_collider) m_collider.enabled = false;
 						}
 					} else {
-						bool isBurning = false;
+						m_isBurning = false;
 						m_burned = true;
 						for (int i = 0; i < m_fireNodes.Length; i++) {
-							isBurning = isBurning || m_fireNodes[i].IsBurning();
+							m_isBurning = m_isBurning || m_fireNodes[i].IsBurning();
 							m_burned = m_burned && m_fireNodes[i].IsBurning();
 						}
 
-						if (isBurning) {
+						if (m_isBurning) {
 							if (m_destructibleBehaviour != null) {
 								m_destructibleBehaviour.enabled = false;
 							}
@@ -205,20 +212,24 @@ public class InflammableDecoration : Initializable {
 	void ResetViewMaterials() {
 		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
-			renderers[i].materials = m_originalMaterials[ renderers[i] ];
+			if (m_originalMaterials.ContainsKey(renderers[i])) {
+				renderers[i].materials = m_originalMaterials[renderers[i]];
+			}
 		}
 	}
 
 	void SwitchViewToDissolve() {
 		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
 		for (int i = 0; i < renderers.Length; i++) {
-			Material[] materials = renderers[i].materials;
-			for (int m = 0; m < materials.Length; m++) 
-			{
-				m_ashMaterial.SetTexture("_MainTex", materials[m].mainTexture);
-				materials[m] = m_ashMaterial;
+			if (m_originalMaterials.ContainsKey(renderers[i])) {
+				Material[] materials = renderers[i].materials;
+				for (int m = 0; m < materials.Length; m++) 
+				{
+					m_ashMaterial.SetTexture("_MainTex", materials[m].mainTexture);
+					materials[m] = m_ashMaterial;
+				}
+				renderers[i].materials = materials;
 			}
-			renderers[i].materials = materials;
 		}
 		m_ashMaterial.SetFloat("_BurnLevel", 0);
 

@@ -174,11 +174,6 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.StopAttackTarget();
 	}
 
-	override protected void BiteKill( bool _canHold = true ) 
-	{
-		
-		base.BiteKill();
-	}
 
 	override protected void StartHold(AI.Machine _prey, bool grab = false) 
 	{

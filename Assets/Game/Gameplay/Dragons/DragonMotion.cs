@@ -399,7 +399,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 					{
 						m_animator.SetBool("fly down", true);
 					}*/
-                    m_accWaterFactor = 0.72f;
+                    m_accWaterFactor = 0.70f;
                     m_inverseGravityWater = 1.5f;
 					m_startParabolicPosition = transform.position;
 				}break;
@@ -930,7 +930,7 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
         m_rbody.velocity = m_impulse;
 
         m_inverseGravityWater -= Time.deltaTime * 0.22f;
-        if (m_inverseGravityWater < 0.3f) m_inverseGravityWater = 0.3f;
+        if (m_inverseGravityWater < 0.05f) m_inverseGravityWater = 0.05f;
 
 
 
