@@ -51,7 +51,7 @@ public class PetSkuListAttributeEditor : ExtendedPropertyDrawer {
 		PetSkuListAttribute attr = attribute as PetSkuListAttribute;
 
 		// If definitions are not loaded, do it now
-		if(!ContentManager.ready) ContentManager.InitContent();
+		if(!ContentManager.ready) ContentManager.InitContent(true);
 
 		// Get the definitions and sort them by category
 		m_skus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.PETS);

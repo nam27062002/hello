@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace AI {
 	public class Group {
 		private List<IMachine> m_members;
 		private int m_leader;
+        private Vector3[] m_offsets;     
 
 		public Group() {
 			m_leader = -1; // there is no one in charge of this flock
-			m_members = new List<IMachine>();
-		}
+			m_members = new List<IMachine>();            
+		}        
 
-		public void Enter(IMachine _member) {
+		public void Enter(IMachine _member) {            
 			m_members.Add(_member);
 
 			if (m_leader < 0) {
@@ -33,7 +35,7 @@ namespace AI {
 					m_members[m_leader].SetSignal(Signals.Type.Leader, true);
 				} else if (m_leader > index) {
 					m_leader--;
-				}
+				}                              
 			}
 		}
 
@@ -63,5 +65,29 @@ namespace AI {
 				return m_members[i];
 			}
 		}
-	}
+
+        public void CreateOffsets(float _radius, int _maxEntities) {
+            m_offsets = new Vector3[_maxEntities];            
+            Vector2 pos;
+            for (int i = 0; i < _maxEntities; i++) {
+                pos = UnityEngine.Random.insideUnitCircle * _radius;
+                m_offsets[i] = new Vector3(pos.x, pos.y, 0f);
+            }
+        }
+
+        public bool HasOffsets() {
+            return m_offsets != null;
+        }
+
+        public Vector3 GetOffset(IMachine machine)
+        {
+            if (m_offsets != null) {               
+                int index = m_members.IndexOf(machine);
+                if (index > -1)
+                    return m_offsets[index];
+            }
+
+            return Vector3.zero;
+        }
+    }
 }
