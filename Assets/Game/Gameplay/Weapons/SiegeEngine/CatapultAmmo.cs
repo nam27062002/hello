@@ -17,6 +17,7 @@ public class CatapultAmmo : MonoBehaviour {
 
 	private bool m_hasBeenTossed = false;
 
+	private Vector3 m_scale;
 	private Vector3 m_po;
 	private float m_vo;
 	private float m_vAngle;
@@ -26,12 +27,16 @@ public class CatapultAmmo : MonoBehaviour {
 
 	private float m_elapsedTime;
 
+	void Awake() {
+		m_scale = transform.localScale;
+	}
 
 	public void AttachTo(Transform _parent, Vector3 _localPosition) {
 		m_oldParent = transform.parent;
 		transform.parent = _parent;
 		transform.forward = _parent.forward;
 		transform.localPosition = _localPosition;
+		transform.localScale = Vector3.zero;
 
 		m_hasBeenTossed = false;
 	}
@@ -53,12 +58,18 @@ public class CatapultAmmo : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
+		transform.localScale = Vector3.Lerp(transform.localScale, m_scale, Time.smoothDeltaTime * 4f);
+
 		if (m_hasBeenTossed) {
 			m_elapsedTime += Time.deltaTime * m_vo * 0.125f * m_speedFactor;
 			transform.position = m_po + UpdateMovement(m_elapsedTime);
 			transform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeedFactor, m_rotAxis);
 
-			//TODO: check out of camera/visible	
+			if (m_elapsedTime > 30f) {
+				m_hasBeenTossed = false;
+				gameObject.SetActive(false);
+				PoolManager.ReturnInstance(gameObject);
+			}
 		}
 	}
 
@@ -91,6 +102,7 @@ public class CatapultAmmo : MonoBehaviour {
 		if (!string.IsNullOrEmpty(m_onExplodeAudio))
 			AudioController.Play(m_onExplodeAudio, transform.position);
 
+		m_hasBeenTossed = false;
 		gameObject.SetActive(false);
 		PoolManager.ReturnInstance(gameObject);
 	}
