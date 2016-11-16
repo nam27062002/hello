@@ -11,7 +11,7 @@ public class ContentManager
 			return m_ready;
 		}
 	}
-	public static void InitContent()
+    public static void InitContent(bool bAvoidDeltaContent = false)
 	{
 		Dictionary<string, string[]> kDefinitionFiles = new Dictionary<string,string[]>();
 
@@ -58,7 +58,7 @@ public class ContentManager
 
 
 
-		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles);
+        DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, bAvoidDeltaContent);
 		m_ready = true;
 
 		// Warn all other managers and definition consumers
