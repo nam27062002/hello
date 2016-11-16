@@ -34,9 +34,10 @@ public class GameServerManager
 
     public void Configure()
     {
-        if (!m_configured)
+		if (!m_configured)
         {
-            ExtendedConfigure();
+            
+			ExtendedConfigure();
             m_configured = true;            
         }
     }

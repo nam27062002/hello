@@ -54,7 +54,7 @@ AnimatorController:
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 0
+    m_DefaultBool: 1
     m_Controller: {fileID: 9100000}
   - m_Name: eat crazy
     m_Type: 9
@@ -2364,14 +2364,14 @@ AnimatorStateMachine:
       - {fileID: 110928710}
       - {fileID: 110915652}
     data:
+      first: {fileID: 110750844}
+      second:
+      - {fileID: 110995826}
+    data:
       first: {fileID: 110798358}
       second:
       - {fileID: 110906646}
       - {fileID: 110910672}
-    data:
-      first: {fileID: 110750844}
-      second:
-      - {fileID: 110995826}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: -312, y: -12, z: 0}
   m_EntryPosition: {x: -312, y: 36, z: 0}
@@ -3093,8 +3093,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_timeToGlide:
-    min: 5
-    max: 10
+    min: 10
+    max: 20
 --- !u!114 &114000014063069752
 MonoBehaviour:
   m_ObjectHideFlags: 1
