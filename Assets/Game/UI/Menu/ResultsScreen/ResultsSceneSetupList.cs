@@ -25,9 +25,9 @@ public class ResultsSceneSetupList : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private ResultsSceneSetup[] m_sceneSetups = null;
-	public ResultsSceneSetup[] scenesList {
-		get { return m_sceneSetups; }
+	[SerializeField] private GameObject[] m_setupPrefabs = null;
+	public GameObject[] setupPrefabs {
+		get { return m_setupPrefabs; }
 	}
 	
 	//------------------------------------------------------------------------//

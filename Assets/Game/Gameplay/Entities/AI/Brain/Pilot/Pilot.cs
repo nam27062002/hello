@@ -40,7 +40,7 @@ namespace AI {
 			} 
 		}
 
-		protected IMachine m_machine;
+		public IMachine m_machine;
 
 		protected bool[] m_actions;
 

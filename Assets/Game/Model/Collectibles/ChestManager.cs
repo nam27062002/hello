@@ -199,17 +199,17 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 
 			// Get reward corresponding to the current amount of collected chests
 			collectedCount++;
-			DefinitionNode rewardDef = GetRewardDef(collectedCount);
-			if(rewardDef == null) continue;	// Do nothing if a reward could not be found
+			Chest.RewardData rewardData = GetRewardData(collectedCount);
+			if(rewardData == null) continue;	// Do nothing if a reward could not be found
 
 			// Give reward
-			switch(rewardDef.Get("type")) {
-				case "coins": {
-					instance.m_user.AddCoins(rewardDef.GetAsInt("amount"));
+			switch(rewardData.type) {
+				case Chest.RewardType.SC: {
+					instance.m_user.AddCoins(rewardData.amount);
 				} break;
 
-				case "pc": {
-					instance.m_user.AddPC(rewardDef.GetAsInt("amount"));
+				case Chest.RewardType.PC: {
+					instance.m_user.AddPC(rewardData.amount);
 				} break;
 			}
 		}
@@ -222,17 +222,23 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	}
 
 	/// <summary>
-	/// Get the reward definition corresponding to a specific amount of collected chests.
+	/// Get the reward data corresponding to a specific amount of collected chests.
 	/// </summary>
-	/// <returns>The definition, <c>null</c> if something is wrong.</returns>
-	/// <param name="_collectedChests">Amount of collected chests to be considered.</param>
-	public static DefinitionNode GetRewardDef(int _collectedChests) {
-		// Pretty straightforward, just check the "collectedChests" variable on the chests rewards definitions
-		return DefinitionsManager.SharedInstance.GetDefinitionByVariable(
+	/// <returns>The reward data, <c>null</c> if something went wrong.</returns>
+	/// <param name="_collectedChests">Amount of collected chests to be considered [1..N].</param>
+	public static Chest.RewardData GetRewardData(int _collectedChests) {
+		// Get definition by checking the "collectedChests" variable on the chests rewards definitions
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable(
 			DefinitionsCategory.CHEST_REWARDS, 
 			"collectedChests", 
 			_collectedChests.ToString(System.Globalization.CultureInfo.InvariantCulture)
 		);
+
+		// Check for errors
+		if(def == null) return null;
+
+		// Create and initialize the data object with the definition and return
+		return new Chest.RewardData(def);
 	}
 
 	//------------------------------------------------------------------//

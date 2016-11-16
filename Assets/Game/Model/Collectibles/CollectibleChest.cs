@@ -90,8 +90,10 @@ public class CollectibleChest : MonoBehaviour {
 		if(m_mapMarker != null) m_mapMarker.SetActive(false);
 
 		// Open chest and launch FX
+		// Figure out reward type to show the proper FX
+		Chest.RewardData rewardData = ChestManager.GetRewardData(ChestManager.collectedAndPendingChests);
 		m_chestView.ShowGlowFX(false);
-		m_chestView.Open();
+		m_chestView.Open(rewardData.type);
 	}
 
 	//------------------------------------------------------------------//

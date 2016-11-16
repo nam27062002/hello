@@ -23,5 +23,4 @@ public interface ISpawner : IQuadTreeItem {
 	AreaBounds area{ get; }
 	IGuideFunction guideFunction{ get; }
 	Transform transform{ get; }
-	Rect boundingRect { get; }
 }

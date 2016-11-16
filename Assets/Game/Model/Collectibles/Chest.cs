@@ -30,6 +30,31 @@ public class Chest {
 		SHOWROOM		// Chest for display only, state is not relevant
 	};
 
+	public enum RewardType {
+		SC = 0,
+		PC,
+
+		COUNT
+	}
+
+	// Auxiliar struct to easily work with manage chest rewards
+	public class RewardData {
+		public DefinitionNode def;
+		public RewardType type;
+		public int amount;
+
+		public RewardData(DefinitionNode _def) {
+			def = _def;
+			if(def != null) {
+				amount = _def.GetAsInt("amount");
+				switch(_def.Get("type")) {
+					case "coins": 	type = RewardType.SC;	break;
+					case "pc":		type = RewardType.PC;	break;
+				}
+			}
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
