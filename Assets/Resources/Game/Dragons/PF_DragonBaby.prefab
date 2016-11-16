@@ -2516,6 +2516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2602,6 +2603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Head
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &11457052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2715,6 +2717,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_trails: []
+  m_xweapontrail: []
 --- !u!114 &11483596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3233,6 +3236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Neck1
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000010296751380
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3256,6 +3260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_RLeg_4
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000011810721982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3268,6 +3273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail4
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000011932549190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3291,6 +3297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Chest
+  m_lookAtRoot: {fileID: 414586}
 --- !u!114 &114000012469074318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3304,6 +3311,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 0.1
   m_eatDistance: 0.8
+  m_eatDetectionRadiusMultiplier: 2.75
+  m_eatDetectionSpeedRadiusMultiplier: 0.15
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
@@ -3320,8 +3329,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_breathSound: 
-  m_superBreathSound: 
+  m_breathSound: Dragon_Burst Mode
+  m_superBreathSound: Dragon_Burst Mode
   m_length: 6
   m_sizeCurve:
     serializedVersion: 2
@@ -4047,6 +4056,63 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
+    - Name: Dragon_Burst Mode
+      Loop: 4
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0.1
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 7
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 5e0eb134c27392a4da89d679585dd20b, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 0949ff3831d54d04893f11faef8739cf, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 0}
   musicPlaylists:
@@ -4062,8 +4128,8 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 5
-    currentSubitemIndex: 3
+    currentItemIndex: 6
+    currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
 --- !u!114 &114000013768390578
