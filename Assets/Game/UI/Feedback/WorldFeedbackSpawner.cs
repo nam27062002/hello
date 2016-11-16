@@ -46,6 +46,11 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//    
+    private void Awake()
+    {
+        Offsets_Init();
+    }
+
 	/// <summary>
 	/// First update call.
 	/// </summary>
@@ -214,11 +219,14 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// Find out spawn position
 		Vector3 worldPos = Vector3.zero;
-		if(_entity != null) worldPos = _entity.position;
+        if (_entity != null) {
+            // A random offset is added in order to prevent several particles from being located at the same position
+            worldPos = _entity.position + Offsets_GetRandomOffset();            
+        }        
 
-		// Show different feedback for different reward types
-		// Score
-		if(_reward.score > 0) {
+        // Show different feedback for different reward types
+        // Score
+        if (_reward.score > 0) {
 			// Get a score feedback instance and initialize it with the target reward
 			if(m_scoreFeedbackPrefab != null) {
 				// Get an instance from the pool
@@ -300,6 +308,38 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	{
 		SpawnEscapedFeedback(_entity);
 	}
+
+    #region offsets
+    // This region is responsible for storing some offsets to be used to spawn feedback particles, typically when an entity is eaten. Every time an entity is eaten a particle
+    // has to be spawned at the eater's mouth position plus an offset in order to prevent all particles from being spawned at the same position
+    private int OFFSETS_MAX = 40;
+    private Vector3[] m_offsets;
+
+    private void Offsets_Init()
+    {
+        if (m_offsets == null)
+        {
+            Offsets_CreateOffsets(1.6f, OFFSETS_MAX);
+        }
+    }
+
+    private void Offsets_CreateOffsets(float _radius, int _numPoints)
+    {
+        m_offsets = new Vector3[_numPoints];
+        Vector2 pos;
+        for (int i = 0; i < _numPoints; i++)
+        {
+            pos = UnityEngine.Random.insideUnitCircle * _radius;
+            m_offsets[i] = new Vector3(pos.x, pos.y, 0f);
+        }
+    }
+
+    private Vector3 Offsets_GetRandomOffset()
+    {
+        int _index = (int)UnityEngine.Random.Range(0, OFFSETS_MAX - 1);        
+        return m_offsets[_index];
+    }
+    #endregion
 
     #region debug
     // This region is responsible for enabling/disabling the feedback particles for profiling purposes. 
