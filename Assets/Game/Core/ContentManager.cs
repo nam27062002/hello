@@ -58,8 +58,7 @@ public class ContentManager
 
 
 
-        List<string> kRulesListToCalculateCRC = new List<string>();
-		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, ref kRulesListToCalculateCRC );
+		DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles);
 		m_ready = true;
 
 		// Warn all other managers and definition consumers
