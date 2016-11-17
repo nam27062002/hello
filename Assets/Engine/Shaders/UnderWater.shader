@@ -75,7 +75,8 @@ Shader "Hungry Dragon/UnderWater"
 
 
 					o.scrPos = ComputeScreenPos(o.vertex);
-					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+//					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+					o.uv = TRANSFORM_TEX(o.scrPos.xy, _MainTex);
 
 					o.color = v.color;
 					return o;
@@ -90,7 +91,7 @@ Shader "Hungry Dragon/UnderWater"
 										 (sin(i.uv.y * CAUSTIC_ANIM_SCALE + _Time.y * 0.04f) * CAUSTIC_RADIUS));
 
 					float z = depthR;// i.uv.y;
-					fixed4 col = tex2D(_MainTex, 7.0f * (i.uv.xy + anim) * (z * 10.0f) * _ProjectionParams.w) * 0.1f;
+					fixed4 col = tex2D(_MainTex, 3.0f * (i.uv.xy + anim) * (z * 4.0f) * _ProjectionParams.w) * 0.1f;
 					col.w = 0.0f;
 					float w = clamp(1.0 - ((depthR + 5.0) * 0.04f), 0.0f, 1.0f);
 					col = lerp(fixed4(_Color) + col * w * 20.0, col, w * w);
