@@ -40,6 +40,7 @@ namespace AI {
 		protected IEntity m_entity = null;
 		protected Pilot m_pilot = null;
 		protected ViewControl m_viewControl = null;
+		public ViewControl view { get { return m_viewControl; } }
 		protected Collider m_collider = null;
 
 		private Signals m_signals;
@@ -471,6 +472,10 @@ namespace AI {
 				PlaySound(m_onEatenSound);
 			}
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer);
+		}
+
+		public void EndSwallowed(Transform _transform){
+			m_edible.EndSwallowed(_transform);
 		}
 
 		public HoldPreyPoint[] holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
