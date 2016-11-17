@@ -259,7 +259,7 @@ public class HungryDragonEditorMenu {
 	/// <param name="_closeLevelEditor">Whether to force closing the level editor before opening the scene.</param>
 	public static void OpenScene(string _scenePath, bool _closeLevelEditor) {
 		// Ask to save current scenes first
-		EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+		if(!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
 		// If asked to close the level editor, do it now
 		if(_closeLevelEditor) {

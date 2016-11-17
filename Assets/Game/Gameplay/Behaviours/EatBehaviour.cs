@@ -337,7 +337,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	protected void Eat(AI.Machine prey)
     {
         PreyData preyData = null;
-        if (m_prey != null)
+        if (m_prey != null && prey.CanBeBitten())
         {
             // Searches for an empty PreyData
             int i;
@@ -380,7 +380,9 @@ public abstract class EatBehaviour : MonoBehaviour {
             }
         }
 
-        EatExtended(preyData);        
+        if (preyData != null)
+			EatExtended(preyData); 
+               
 	}
 
     protected virtual void EatExtended(PreyData preyData) {}
