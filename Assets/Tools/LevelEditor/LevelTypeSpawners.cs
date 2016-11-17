@@ -53,7 +53,7 @@ namespace LevelEditor {
 			// Create default point if not already done
 			if ( InstanceManager.player != null ){
 				string sku = InstanceManager.player.data.def.sku;
-				GameObject go = GetDragonSpawnPoint(sku, true);
+				GameObject go = GetDragonSpawnPoint(sku, false);
 				// Spawn here eating entity
 				/*
 				for( int i = 0; i<m_spawnsData.Count; i++ ){
@@ -92,19 +92,26 @@ namespace LevelEditor {
 
 			// Does the level have a spawn point for this dragon?
 			GameObject spawnPointObj = gameObject.FindObjectRecursive(name);
-			if(spawnPointObj == null && _createItIfNotFound) {
-				// No! Create one!
-				// Get the spawners container object (or create it if not found)
-				GameObject spawnContainerObj = gameObject.FindObjectRecursive(DRAGON_SPAWN_POINTS_CONTAINER_NAME);
-				if(spawnContainerObj == null) {
-					spawnContainerObj = new GameObject(DRAGON_SPAWN_POINTS_CONTAINER_NAME);
-					spawnContainerObj.transform.SetParent(this.gameObject.transform, true);
-				}
+			if(spawnPointObj == null) {
+				if (_createItIfNotFound)
+				{
+					// No! Create one!
+					// Get the spawners container object (or create it if not found)
+					GameObject spawnContainerObj = gameObject.FindObjectRecursive(DRAGON_SPAWN_POINTS_CONTAINER_NAME);
+					if(spawnContainerObj == null) {
+						spawnContainerObj = new GameObject(DRAGON_SPAWN_POINTS_CONTAINER_NAME);
+						spawnContainerObj.transform.SetParent(this.gameObject.transform, true);
+					}
 
-				// Now we can create the spawn point for that dragon
-				spawnPointObj = new GameObject(name);
-				spawnPointObj.transform.position = new Vector3(0, 20, 0);
-				spawnPointObj.transform.SetParent(spawnContainerObj.transform, true);
+					// Now we can create the spawn point for that dragon
+					spawnPointObj = new GameObject(name);
+					spawnPointObj.transform.position = new Vector3(0, 20, 0);
+					spawnPointObj.transform.SetParent(spawnContainerObj.transform, true);
+				}
+				else
+				{
+					spawnPointObj = gameObject.FindObjectRecursive(DRAGON_SPAWN_POINT_NAME);
+				}
 			}
 
 			return spawnPointObj;

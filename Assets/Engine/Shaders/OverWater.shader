@@ -10,12 +10,11 @@ Shader "Hungry Dragon/OverWater"
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
-		_Color("Tint (RGB)", color) = (1, 0, 0, 1)
 		_WaterSpeed("Speed ", Float) = 0.5
 	}
 
 	SubShader {
-		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent"  "LightMode" = "ForwardBase" }
 		LOD 100
 
 		Pass {  
@@ -27,17 +26,22 @@ Shader "Hungry Dragon/OverWater"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-							// make fog work
 				#pragma multi_compile_fog
+				#pragma multi_compile_fwdbase
+//				#pragma multi_compile_particles
 
-				#pragma multi_compile_particles
 				#include "UnityCG.cginc"
+				#include "AutoLight.cginc"
+//				#include "Lighting.cginc"
+				#include "HungryDragon.cginc"
+
 
 				#define CAUSTIC_ANIM_SCALE  4.0f
 				#define CAUSTIC_RADIUS  0.1125f
 
 				struct appdata_t {
 					float4 vertex : POSITION;
+					float3 normal : NORMAL;
 					float2 uv : TEXCOORD0;
 					float4 color : COLOR;
 				}; 
@@ -48,6 +52,8 @@ Shader "Hungry Dragon/OverWater"
 					half2 uv : TEXCOORD0;
 					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
+					LIGHTING_COORDS(2, 3)
+
 				};
 
 
@@ -56,7 +62,6 @@ Shader "Hungry Dragon/OverWater"
 				float4 _MainTex_ST;
 				sampler2D _DetailTex;
 				float4 _DetailTex_ST;
-				float4 _Color;
 				float _WaterSpeed;
 
 
@@ -70,13 +75,12 @@ Shader "Hungry Dragon/OverWater"
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.scrPos = ComputeScreenPos(o.vertex);
-
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-
 					o.viewDir = o.vertex - _WorldSpaceCameraPos;
 
-
 					o.color = v.color;
+					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+
 					return o;
 				}
 				
@@ -89,6 +93,10 @@ Shader "Hungry Dragon/OverWater"
 
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
+
+					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
+					col *= attenuation;
+
 
 					return col;
 				}

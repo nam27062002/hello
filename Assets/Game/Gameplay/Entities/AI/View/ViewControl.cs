@@ -225,20 +225,22 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 	}
 
 	protected virtual void Update() {
-		if (m_hasNavigationLayer) {
-			m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
-			m_animator.SetFloat("direction X", m_currentBlendX);
+		if (m_animator != null) {
+			if (m_hasNavigationLayer) {
+				m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
+				m_animator.SetFloat("direction X", m_currentBlendX);
 
-			m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
-			m_animator.SetFloat("direction Y", m_currentBlendY);
-		}
+				m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
+				m_animator.SetFloat("direction Y", m_currentBlendY);
+			}
 
-		m_animator.SetBool("swim", m_swim);
-		m_animator.SetBool("fly down", m_inSpace);
-		if (!m_swim){
-			m_animator.SetBool("move", m_moving);
-		}else{
-			m_animator.SetBool("move", false);
+			m_animator.SetBool("swim", m_swim);
+			m_animator.SetBool("fly down", m_inSpace);
+			if (!m_swim){
+				m_animator.SetBool("move", m_moving);
+			} else {
+				m_animator.SetBool("move", false);
+			}
 		}
 	}
 
@@ -510,6 +512,8 @@ public class ViewControl : MonoBehaviour, ISpawnable {
 			AudioController.Play(m_onBurnAudio, transform.position);
 		}
 
-		m_animator.enabled = false;
+		if (m_animator != null) {
+			m_animator.enabled = false;
+		}
 	}
 }
