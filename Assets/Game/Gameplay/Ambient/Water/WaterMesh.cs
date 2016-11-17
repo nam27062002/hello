@@ -84,7 +84,7 @@ public class WaterMesh : MonoBehaviour
         for (int x = 0; x < numVertsX; x++)
         {
             m_vertices[c] = transform.InverseTransformPoint(new Vector3(min.x + (x * m_cellSize), min.y, min.z + (m_cellSize)));
-            m_UV[c] = new Vector2(1.0f * uvspacing, x * uvspacing);
+            m_UV[c] = new Vector2(1.0f * uvspacing * min.y, x * uvspacing);
             m_colours[c++] = Color.gray;
         }
 
