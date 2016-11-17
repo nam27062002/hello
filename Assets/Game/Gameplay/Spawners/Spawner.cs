@@ -48,10 +48,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	[Tooltip("Spawners may not be present on every run (percentage).")]
 	[SerializeField][Range(0f, 100f)] private float m_activationChance = 100f;
 
-	[Tooltip("Meant for background spawners, will ignore respawn settings and activation triggers.")]
-	[SerializeField] private bool m_alwaysActive = false;
-	public bool alwaysActive { get { return m_alwaysActive; }}
-
 	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
 	[SerializeField] private SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
@@ -263,43 +259,28 @@ public class Spawner : MonoBehaviour, ISpawner {
 				}
 			}
 		}
-	}
-    
-    public ERespawnPendingTask RespawnPendingTask { get; set; }
-
-    public bool IsRespawningWithDelay() {
-        return m_state == State.Respawning || m_state == State.Create_Instances || m_state == State.Activating_Instances;
-    }
+	}        
 
     public bool CanRespawn() {		
 		// Ignore all logic for always active spawners
-		if (m_alwaysActive) {
-			if (m_entityAlive == 0) {
-				return true;
-			}
-		}
-
-		// Rest of the spawners
-		else {
-			if (m_state == State.Respawning) {
-				// If we can spawn, do it
-				if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
-					// If we don't have any entity alive, proceed
-					if(m_entityAlive == 0) {
-						// Respawn on cooldown?
-						if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
-							// Everything ok! Spawn!
-							return true;
-						}
+		if (m_state == State.Respawning) {
+			// If we can spawn, do it
+			if(CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+				// If we don't have any entity alive, proceed
+				if(m_entityAlive == 0) {
+					// Respawn on cooldown?
+					if(m_gameSceneController.elapsedSeconds > m_respawnTime) {
+						// Everything ok! Spawn!
+						return true;
 					}
 				}
+			}
 
-				// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
-				else if(m_readyToBeDisabled) {
-					if(m_entityAlive == 0) {
-						SpawnerManager.instance.Unregister(this);
-						Destroy(gameObject);
-					}
+			// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
+			else if(m_readyToBeDisabled) {
+				if(m_entityAlive == 0) {
+					SpawnerManager.instance.Unregister(this);
+					Destroy(gameObject);
 				}
 			}
 		}
@@ -315,8 +296,6 @@ public class Spawner : MonoBehaviour, ISpawner {
 	/// </returns><param name="_time">Elapsed game time.</param>
 	/// </returns><param name="_xp">Earned xp.</param>
 	public bool CanSpawn(float _time, float _xp) {
-		// If always active, we're done!
-		if(m_alwaysActive) return true;
 
 		// If already ready to be disabled, no need for further checks
 		if(m_readyToBeDisabled) return false;
