@@ -90,14 +90,11 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Instantiate pills - as many as needed!
 		m_pills = new DisguisePill[MAX_PILLS];
 		for (int i = 0; i < MAX_PILLS; i++) {
-			GameObject pill = GameObject.Instantiate<GameObject>(m_pillPrefab);
-			pill.transform.parent = m_scrollList.content;
+			GameObject pill = (GameObject)GameObject.Instantiate(m_pillPrefab, m_scrollList.content.transform, false);
 			pill.transform.localScale = Vector3.one;
-
 			m_pills[i] = pill.GetComponent<DisguisePill>();
 			//m_pills[i].OnPillClicked.AddListener(OnPillClicked);		// [AOC] Will be handled by the snap scroll list
 		}
-
 
 		// Store some references
 		for(int i = 0; i < m_powers.Length; i++) {

@@ -7,8 +7,8 @@ public class DragonPowerUp : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public static readonly Color COLOR_HEALTH = new Color(0.7f, 0.8f, 0.24f);
 	public static readonly Color COLOR_BOOST = new Color(0.38f, 1f, 0.78f);
-	public static readonly Color COLOR_FIRE = new Color(0.99f, 0.51f, 0.5f);
-	public static readonly Color COLOR_BITE = new Color(1f, 42f, 29f);
+	public static readonly Color COLOR_FIRE = new Color(1f, 0.64f, 0.22f);
+	public static readonly Color COLOR_BITE = new Color(1f, 0.5f, 0.44f);
 	public static readonly Color COLOR_SPEED = new Color(0.38f, 1f, 0.78f);
 
 	public static readonly Color COLOR_GOLD = new Color(1f, 0.71f, 0.1f);
@@ -16,7 +16,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 	public static readonly Color COLOR_MINE = new Color(0.63f, 0.63f, 0.63f);
 	public static readonly Color COLOR_POISON = new Color(0f, 1f, 0f);
-	public static readonly Color COLOR_OBSTACLE = new Color(0.8f, 0.45f, 0f);
+	public static readonly Color COLOR_OBSTACLE = new Color(0.87f, 0.67f, 0.20f);
 	public static readonly Color COLOR_ENTITY = new Color(1f, 1f, 1f);
 	public static readonly Color COLOR_WATER = new Color(0f, 0.91f, 100f);
 
