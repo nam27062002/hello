@@ -8,17 +8,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 424588}
-  - 114: {fileID: 114000013672329336}
-  - 114: {fileID: 114000012669857030}
-  - 114: {fileID: 114000011716939334}
-  - 114: {fileID: 114000012488899708}
-  - 114: {fileID: 11448730}
-  - 114: {fileID: 114000011637225726}
   - 54: {fileID: 54000013371132386}
-  - 135: {fileID: 135000013338795870}
-  - 114: {fileID: 114000013147041998}
   m_Layer: 0
-  m_Name: PF_PetFroggy
+  m_Name: PF_PetFroggyMenu
   m_TagString: Pet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,25 +23,13 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.903234, y: 1.47509, z: -1.8698664}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000012877512430}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11448730
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cd18c69356f446dfb8aebbf457a182a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_type: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -986,7 +966,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000014122255018}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.9063078, z: 0, w: 0.42261824}
   m_LocalPosition: {x: 0, y: -0.83, z: -0.251}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1090,7 +1070,7 @@ Animator:
   m_GameObject: {fileID: 1000014122255018}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 5154df1ebe81d4cd6806546fa3228976, type: 3}
-  m_Controller: {fileID: 22100000, guid: bdea54cbb92f740da9ad9f140ffb5a0f, type: 2}
+  m_Controller: {fileID: 22100000, guid: 5dd6d767742194813a2030ef2301e96d, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1117,182 +1097,6 @@ MonoBehaviour:
   m_levelUpSound: 
   m_starvingSound: 
   m_hitSound: 
---- !u!114 &114000011637225726
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_walkSpeed: 1
-  m_runSpeed: 2
-  m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 1.5
-  m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 1
-  m_hasRotationLayer: 0
-  m_animA: 
-  m_animB: 
-  m_animC: 
-  m_onEatenParticles: []
-  m_onEatenAudio: 
-  m_speedToWaterSplash: 0
-  m_waterSplashParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-  m_burnParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-  m_onBurnAudio: 
-  m_explosionParticles:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-  m_onExplosionAudio: 
-  m_onAttackAudio: 
-  m_onScaredAudio: 
-  m_onPanicAudio: 
-  m_idleAudio: 
-  m_skins: []
---- !u!114 &114000011716939334
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_speedFactorRange:
-    min: 1
-    max: 1
-  m_serializedJson: '[{"speed":20,"chaseTimeout":2,"cooldown":{"min":3,"max":6},"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false}]'
-  m_databaseKey: PF_PetFroggy
-  m_avoidDistanceAttenuation: 0
-  m_avoidCollisions: 0
---- !u!114 &114000012488899708
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f85054aa5383c400e9fcfa4ad623fd06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_enableMotion: 1
-  m_motion:
-    m_useGravity: 0
-    m_walkOnWalls: 0
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 360
-    m_faceDirection: 1
-    m_rollRotation: 0
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_onSpawnSound: 
-  m_onEatenSound: 
-  m_rotateToMouth: 0
-  m_inflammable:
-    m_ashesAsset: 
-    m_dissolveTime: 1.5
-    m_ashExceptions: []
---- !u!114 &114000012669857030
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 5
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &114000013147041998
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_minEatAnimTime: 0.1
-  m_eatDistance: 0.5
-  m_eatDetectionRadiusMultiplier: 2.75
-  m_eatDetectionSpeedRadiusMultiplier: 0.15
-  m_holdingBloodParticle:
-    name: PS_Blood_Explosion_Medium
-    path: Blood
-    offset: {x: 0, y: 0, z: 0}
-  m_burpSound: 
-  m_eaterTier: 0
-  m_isPet: 1
-  m_isAquatic: 0
-  m_canMultipleLatchOnPlayer: 0
---- !u!114 &114000013672329336
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e4b01ef8e8b54b638ddb530e3150fe3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: pet_01
---- !u!135 &135000013338795870
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 112168}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.69
-  m_Center: {x: 0, y: 0, z: -0.05}
 --- !u!137 &137000010792488202
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

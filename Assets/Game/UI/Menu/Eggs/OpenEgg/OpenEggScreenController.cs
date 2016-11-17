@@ -370,16 +370,12 @@ public class OpenEggScreenController : MonoBehaviour {
 				m_rewardView.transform.SetParentAndReset(m_rewardAnchor);	// Attach it to the anchor and reset transformation
 
 				// Use a MenuDragonLoader to simplify things
-				MenuDragonLoader loader = m_rewardView.AddComponent<MenuDragonLoader>();
-				loader.Setup(MenuDragonLoader.Mode.MANUAL, "fly_idle", true);
-				loader.LoadDragon(DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).GetRandomValue());
-
-				// Make it smaller since it's a pet
-				float scale = 0.4f;
-				m_rewardView.transform.localScale = Vector3.one * scale;
+				MenuPetLoader loader = m_rewardView.AddComponent<MenuPetLoader>();
+				loader.Setup(MenuPetLoader.Mode.MANUAL, "idle", true);
+				loader.Load("pet_01");	// [AOC] TODO!! Content not ready yet
 
 				// Animate it
-				m_rewardView.transform.DOScale(0f, scale * 0.75f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
+				m_rewardView.transform.DOScale(0f, 1f).SetDelay(0f).From().SetRecyclable(true).SetEase(Ease.OutElastic);
 				m_rewardView.transform.DOLocalRotate(m_rewardView.transform.localRotation.eulerAngles + Vector3.up * 360f, 10f, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetDelay(0.5f).SetRecyclable(true);
 			} break;
 				
