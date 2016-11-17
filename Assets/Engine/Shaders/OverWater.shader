@@ -49,7 +49,7 @@ Shader "Hungry Dragon/OverWater"
 				struct v2f {
 					float4 vertex : SV_POSITION;
 					float3 viewDir: TEXCOORD2;
-					half2 uv : TEXCOORD0;
+					float2 uv : TEXCOORD0;
 //					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
 //					LIGHTING_COORDS(2, 3)

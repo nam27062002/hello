@@ -53,7 +53,7 @@ Shader "Hungry Dragon/UnderWater"
 
 				struct v2f {
 					float4 vertex : SV_POSITION;
-					half2 uv : TEXCOORD0;
+					float2 uv : TEXCOORD0;
 					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
 				};
