@@ -395,10 +395,10 @@ public class DragonMotion : MonoBehaviour, MotionInterface {
 						//m_animator.SetBool("move", false);
 						//m_animator.SetBool("swim", true);
 					}
-					/*else
+					/*else*/
 					{
 						m_animator.SetBool("fly down", true);
-					}*/
+					}
                     m_accWaterFactor = 0.70f;
                     m_inverseGravityWater = 1.5f;
 					m_startParabolicPosition = transform.position;
