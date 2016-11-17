@@ -71,10 +71,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		// Program the next spawn time
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
 		m_state = State.Respawning;
-	}
-    
-    public ERespawnPendingTask RespawnPendingTask { get; set; }
-    public bool IsRespawningWithDelay() { return false; }
+	}        
 
     public bool CanRespawn() {
 		if (m_state == State.Respawning) {

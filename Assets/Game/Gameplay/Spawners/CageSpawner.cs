@@ -85,9 +85,7 @@ public class CageSpawner : MonoBehaviour, ISpawner {
 			}
 		}
 	}
-    
-    public ERespawnPendingTask RespawnPendingTask { get; set; }
-    public bool IsRespawningWithDelay() { return false; }
+        
     public bool CanRespawn() 	{ return true; }
 	public bool Respawn()		{ Spawn(); return true; }
 

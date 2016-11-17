@@ -259,13 +259,7 @@ public class Spawner : MonoBehaviour, ISpawner {
 				}
 			}
 		}
-	}
-    
-    public ERespawnPendingTask RespawnPendingTask { get; set; }
-
-    public bool IsRespawningWithDelay() {
-        return m_state == State.Create_Instances || m_state == State.Activating_Instances;
-    }
+	}        
 
     public bool CanRespawn() {		
 		// Ignore all logic for always active spawners
