@@ -153,7 +153,6 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// Animation callback to be called once the animation has finished.
 	/// </summary>
 	private void OnAnimFinished() {
-		gameObject.SetActive(false);
-		PoolManager.ReturnInstance( gameObject );
+		gameObject.SetActive(false);		
 	}
 }
