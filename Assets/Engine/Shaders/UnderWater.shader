@@ -34,11 +34,13 @@ Shader "Hungry Dragon/UnderWater"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				// make fog work
 				#pragma multi_compile_fog
+				#pragma multi_compile_fwdbase
 
-				#pragma multi_compile_particles
+//				#pragma multi_compile_particles
 				#include "UnityCG.cginc"
+				#include "AutoLight.cginc"
+
 
 				#define CAUSTIC_ANIM_SCALE  2.0f
 				#define CAUSTIC_RADIUS  0.125f
