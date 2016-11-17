@@ -251,6 +251,28 @@ public class CloudControllerEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+		// Allow moving control points around
+		Handles.matrix = Matrix4x4.identity;
+
+		// CP1
+		if(m_target.m_controlPoint1 != null) {
+			Vector3 newPos = Handles.PositionHandle(m_target.m_controlPoint1.position, Quaternion.identity);
+			if(newPos != m_target.m_controlPoint1.position) {
+				Undo.RecordObject(m_target.m_controlPoint1, "CloudController.CP1");
+				m_target.m_controlPoint1.position = newPos;
+				m_dirty = true;
+			}
+		}
+
+		// CP2
+		if(m_target.m_controlPoint2 != null) {
+			Vector3 newPos = Handles.PositionHandle(m_target.m_controlPoint2.position, Quaternion.identity);
+			if(newPos != m_target.m_controlPoint2.position) {
+				Undo.RecordObject(m_target.m_controlPoint2, "CloudController.CP2");
+				m_target.m_controlPoint2.position = newPos;
+				m_dirty = true;
+			}
+		}
 	}
 
 	/// <summary>
