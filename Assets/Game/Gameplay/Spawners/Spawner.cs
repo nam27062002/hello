@@ -403,35 +403,37 @@ public class Spawner : MonoBehaviour, ISpawner {
 		}
 
 		if (m_state == State.Activating_Instances) {
-			Spawn();
+            ActivateEntities();
 
+            // All entities have to be spawned once the spawner is ready otherwise they could be removed before the spawner is ready
             if (m_entitiesActivated == m_entitySpawned)
             {
-                // Disable this spawner after a number of spawns
-                if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0)
-                {
-                    m_respawnCount++;
-                    if (m_respawnCount == m_maxSpawns)
-                    {
-                        gameObject.SetActive(false);
-                        SpawnerManager.instance.Unregister(this);
-                    }
-                }
-
-                m_state = State.Alive;                
+                Spawn();                
             }
 		}
 
 		return m_state == State.Alive;
-	}    
+	}
 
-	private void Spawn() {        
+    private void ActivateEntities() {
         long start = sm_watch.ElapsedMilliseconds;
         while (m_entitiesActivated < m_entitySpawned) {
-			GameObject spawning = m_entities[m_entitiesActivated];
+            GameObject spawning = m_entities[m_entitiesActivated];
             if (!spawning.activeSelf) {
                 spawning.SetActive(true);
             }
+
+            m_entitiesActivated++;
+
+            if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
+                break;
+            }
+        }
+    }
+
+	private void Spawn() {                
+        for (int i=0; i < m_entitiesActivated; i++) {
+			GameObject spawning = m_entities[i];           
 
 			Vector3 pos = transform.position;
 			if (m_guideFunction != null) {
@@ -469,15 +471,22 @@ public class Spawner : MonoBehaviour, ISpawner {
 				if (component != entity && component != pilot) {
 					component.Spawn(this);
 				}
-			}			
+			}			            
+        }
 
-            m_entitiesActivated++;                 
+        // Disable this spawner after a number of spawns
+        if (m_allEntitiesKilledByPlayer && m_maxSpawns > 0)
+        {
+            m_respawnCount++;
+            if (m_respawnCount == m_maxSpawns)
+            {
+                gameObject.SetActive(false);
+                SpawnerManager.instance.Unregister(this);
+            }
+        }
 
-            if (sm_watch.ElapsedMilliseconds - start >= SpawnerManager.SPAWNING_MAX_TIME) {
-                break;
-            }            
-        }       
-	}    
+        m_state = State.Alive;
+    }    
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();
