@@ -77,8 +77,6 @@ Shader "Hungry Dragon/UnderWater"
 					v.vertex.y += (sinX + sinY) * 0.15 * moveVertex * v.color.w;
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
-
-
 					o.scrPos = ComputeScreenPos(o.vertex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
